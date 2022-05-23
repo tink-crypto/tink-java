@@ -1,0 +1,25 @@
+licenses(["notice"])
+
+java_test(
+    name = "KeysDownloaderTest",
+    size = "small",
+    srcs = ["KeysDownloaderTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/util:keys_downloader",
+        "@maven//:com_google_api_client_google_api_client",
+        "@maven//:com_google_http_client_google_http_client",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
+    name = "SecretByteArrayTest",
+    size = "small",
+    srcs = ["SecretByteArrayTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink/util:secret_byte_array",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)

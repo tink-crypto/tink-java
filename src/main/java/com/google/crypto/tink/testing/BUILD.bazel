@@ -1,0 +1,227 @@
+licenses(["notice"])
+
+package(
+    default_testonly = 1,
+    default_visibility = ["//visibility:public"],
+)
+
+java_library(
+    name = "test_util",
+    srcs = ["TestUtil.java"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//proto:aes_ctr_hmac_aead_java_proto",
+        "//proto:aes_ctr_hmac_streaming_java_proto",
+        "//proto:aes_ctr_java_proto",
+        "//proto:aes_eax_java_proto",
+        "//proto:aes_gcm_hkdf_streaming_java_proto",
+        "//proto:aes_gcm_java_proto",
+        "//proto:aes_siv_java_proto",
+        "//proto:common_java_proto",
+        "//proto:config_java_proto",
+        "//proto:ecdsa_java_proto",
+        "//proto:ecies_aead_hkdf_java_proto",
+        "//proto:hkdf_prf_java_proto",
+        "//proto:hmac_java_proto",
+        "//proto:rsa_ssa_pkcs1_java_proto",
+        "//proto:rsa_ssa_pss_java_proto",
+        "//proto:tink_java_proto",
+        "//src/main/java/com/google/crypto/tink:aead",
+        "//src/main/java/com/google/crypto/tink:cleartext_keyset_handle",
+        "//src/main/java/com/google/crypto/tink:key_template",
+        "//src/main/java/com/google/crypto/tink:primitive_set",
+        "//src/main/java/com/google/crypto/tink:registry",
+        "//src/main/java/com/google/crypto/tink:registry_cluster",
+        "//src/main/java/com/google/crypto/tink/aead:aead_config",
+        "//src/main/java/com/google/crypto/tink/daead:deterministic_aead_config",
+        "//src/main/java/com/google/crypto/tink/hybrid:hybrid_key_templates",
+        "//src/main/java/com/google/crypto/tink/mac:mac_config",
+        "//src/main/java/com/google/crypto/tink/prf:prf_config",
+        "//src/main/java/com/google/crypto/tink/streamingaead:streaming_aead_config",
+        "//src/main/java/com/google/crypto/tink/subtle:elliptic_curves",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "//src/main/java/com/google/crypto/tink/subtle:random",
+        "@com_google_protobuf//:protobuf_javalite",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+
+android_library(
+    name = "test_util-android",
+    srcs = ["TestUtil.java"],
+    deps = [
+        "//proto:aes_ctr_hmac_aead_java_proto_lite",
+        "//proto:aes_ctr_hmac_streaming_java_proto_lite",
+        "//proto:aes_ctr_java_proto_lite",
+        "//proto:aes_eax_java_proto_lite",
+        "//proto:aes_gcm_hkdf_streaming_java_proto_lite",
+        "//proto:aes_gcm_java_proto_lite",
+        "//proto:aes_siv_java_proto_lite",
+        "//proto:common_java_proto_lite",
+        "//proto:config_java_proto_lite",
+        "//proto:ecdsa_java_proto_lite",
+        "//proto:ecies_aead_hkdf_java_proto_lite",
+        "//proto:hkdf_prf_java_proto_lite",
+        "//proto:hmac_java_proto_lite",
+        "//proto:rsa_ssa_pkcs1_java_proto_lite",
+        "//proto:rsa_ssa_pss_java_proto_lite",
+        "//proto:tink_java_proto_lite",
+        "//src/main/java/com/google/crypto/tink:aead-android",
+        "//src/main/java/com/google/crypto/tink:cleartext_keyset_handle-android",
+        "//src/main/java/com/google/crypto/tink:key_template-android",
+        "//src/main/java/com/google/crypto/tink:primitive_set-android",
+        "//src/main/java/com/google/crypto/tink:registry-android",
+        "//src/main/java/com/google/crypto/tink:registry_cluster-android",
+        "//src/main/java/com/google/crypto/tink/aead:aead_config-android",
+        "//src/main/java/com/google/crypto/tink/daead:deterministic_aead_config-android",
+        "//src/main/java/com/google/crypto/tink/hybrid:hybrid_key_templates-android",
+        "//src/main/java/com/google/crypto/tink/mac:mac_config-android",
+        "//src/main/java/com/google/crypto/tink/prf:prf_config-android",
+        "//src/main/java/com/google/crypto/tink/streamingaead:streaming_aead_config-android",
+        "//src/main/java/com/google/crypto/tink/subtle:elliptic_curves-android",
+        "//src/main/java/com/google/crypto/tink/subtle:hex-android",
+        "//src/main/java/com/google/crypto/tink/subtle:random-android",
+        "@com_google_protobuf//:protobuf_javalite",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_library(
+    name = "streaming_test_util",
+    srcs = ["StreamingTestUtil.java"],
+    deps = [
+        ":test_util",
+        "//src/main/java/com/google/crypto/tink:streaming_aead",
+        "//src/main/java/com/google/crypto/tink/subtle:random",
+        "@maven//:junit_junit",
+    ],
+)
+
+android_library(
+    name = "streaming_test_util-android",
+    srcs = ["StreamingTestUtil.java"],
+    deps = [
+        ":test_util-android",
+        "//src/main/java/com/google/crypto/tink:streaming_aead-android",
+        "//src/main/java/com/google/crypto/tink/subtle:random-android",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_library(
+    name = "key_type_manager_test_util",
+    srcs = ["KeyTypeManagerTestUtil.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:key_template",
+        "//src/main/java/com/google/crypto/tink/internal:key_type_manager",
+        "@com_google_protobuf//:protobuf_javalite",
+        "@maven//:com_google_truth_truth",
+    ],
+)
+
+android_library(
+    name = "key_type_manager_test_util-android",
+    srcs = ["KeyTypeManagerTestUtil.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:key_template-android",
+        "//src/main/java/com/google/crypto/tink/internal:key_type_manager-android",
+        "@com_google_protobuf//:protobuf_javalite",
+        "@maven//:com_google_truth_truth",
+    ],
+)
+
+java_library(
+    name = "wycheproof_test_util",
+    srcs = ["WycheproofTestUtil.java"],
+    deps = [
+        ":test_util",
+        "//src/main/java/com/google/crypto/tink/subtle:elliptic_curves",
+        "//src/main/java/com/google/crypto/tink/subtle:enums",
+        "@maven//:com_google_code_gson_gson",
+    ],
+)
+
+android_library(
+    name = "wycheproof_test_util-android",
+    srcs = ["WycheproofTestUtil.java"],
+    deps = [
+        ":test_util-android",
+        "//src/main/java/com/google/crypto/tink/subtle:elliptic_curves-android",
+        "//src/main/java/com/google/crypto/tink/subtle:enums-android",
+        "@maven//:com_google_code_gson_gson",
+    ],
+)
+
+java_library(
+    name = "fake_kms_client",
+    srcs = ["FakeKmsClient.java"],
+    deps = [
+        "//proto:tink_java_proto",
+        "//src/main/java/com/google/crypto/tink:aead",
+        "//src/main/java/com/google/crypto/tink:binary_keyset_reader",
+        "//src/main/java/com/google/crypto/tink:binary_keyset_writer",
+        "//src/main/java/com/google/crypto/tink:cleartext_keyset_handle",
+        "//src/main/java/com/google/crypto/tink:key_template",
+        "//src/main/java/com/google/crypto/tink:kms_client",
+        "//src/main/java/com/google/crypto/tink:registry_cluster",
+        "//src/main/java/com/google/crypto/tink/aead:aes_ctr_hmac_aead_key_manager",
+        "//src/main/java/com/google/crypto/tink/subtle:base64",
+        "//src/main/java/com/google/crypto/tink/subtle:validators",
+    ],
+)
+
+java_library(
+    name = "hpke_test_util",
+    srcs = [
+        "HpkeTestEncryption.java",
+        "HpkeTestId.java",
+        "HpkeTestSetup.java",
+        "HpkeTestUtil.java",
+        "HpkeTestVector.java",
+    ],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/hybrid/internal:hpke_util",
+        "//src/main/java/com/google/crypto/tink/subtle:bytes",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "//src/main/java/com/google/crypto/tink/subtle:subtle_util_cluster",
+        "@maven//:com_google_code_gson_gson",
+    ],
+)
+
+android_library(
+    name = "fake_kms_client-android",
+    srcs = ["FakeKmsClient.java"],
+    deps = [
+        "//proto:tink_java_proto_lite",
+        "//src/main/java/com/google/crypto/tink:aead-android",
+        "//src/main/java/com/google/crypto/tink:binary_keyset_reader-android",
+        "//src/main/java/com/google/crypto/tink:binary_keyset_writer-android",
+        "//src/main/java/com/google/crypto/tink:cleartext_keyset_handle-android",
+        "//src/main/java/com/google/crypto/tink:key_template-android",
+        "//src/main/java/com/google/crypto/tink:kms_client-android",
+        "//src/main/java/com/google/crypto/tink:registry_cluster-android",
+        "//src/main/java/com/google/crypto/tink/aead:aes_ctr_hmac_aead_key_manager-android",
+        "//src/main/java/com/google/crypto/tink/subtle:base64-android",
+        "//src/main/java/com/google/crypto/tink/subtle:validators-android",
+    ],
+)
+
+android_library(
+    name = "hpke_test_util-android",
+    srcs = [
+        "HpkeTestEncryption.java",
+        "HpkeTestId.java",
+        "HpkeTestSetup.java",
+        "HpkeTestUtil.java",
+        "HpkeTestVector.java",
+    ],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/hybrid/internal:hpke_util-android",
+        "//src/main/java/com/google/crypto/tink/subtle:bytes-android",
+        "//src/main/java/com/google/crypto/tink/subtle:hex-android",
+        "//src/main/java/com/google/crypto/tink/subtle:subtle_util_cluster-android",
+        "@maven//:com_google_code_gson_gson",
+    ],
+)

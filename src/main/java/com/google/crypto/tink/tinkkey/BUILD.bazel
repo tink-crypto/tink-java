@@ -1,0 +1,83 @@
+load("@build_bazel_rules_android//android:rules.bzl", "android_library")
+
+licenses(["notice"])
+
+package(default_visibility = ["//visibility:public"])
+
+java_library(
+    name = "tink_key",
+    srcs = ["TinkKey.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:key_template",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "secret_key_access",
+    srcs = ["SecretKeyAccess.java"],
+    deps = [
+        ":key_access",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "key_access",
+    srcs = ["KeyAccess.java"],
+    deps = ["@maven//:com_google_errorprone_error_prone_annotations"],
+)
+
+java_library(
+    name = "key_handle",
+    srcs = ["KeyHandle.java"],
+    deps = [
+        ":key_access",
+        ":tink_key",
+        "//proto:tink_java_proto",
+        "//src/main/java/com/google/crypto/tink:key_template",
+        "//src/main/java/com/google/crypto/tink:registry",
+        "//src/main/java/com/google/crypto/tink/internal:util",
+        "//src/main/java/com/google/crypto/tink/tinkkey/internal:proto_key",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
+    name = "tink_key-android",
+    srcs = ["TinkKey.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:key_template-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
+    name = "secret_key_access-android",
+    srcs = ["SecretKeyAccess.java"],
+    deps = [
+        ":key_access-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
+    name = "key_access-android",
+    srcs = ["KeyAccess.java"],
+    deps = ["@maven//:com_google_errorprone_error_prone_annotations"],
+)
+
+android_library(
+    name = "key_handle-android",
+    srcs = ["KeyHandle.java"],
+    deps = [
+        ":key_access-android",
+        ":tink_key-android",
+        "//proto:tink_java_proto_lite",
+        "//src/main/java/com/google/crypto/tink:key_template-android",
+        "//src/main/java/com/google/crypto/tink:registry-android",
+        "//src/main/java/com/google/crypto/tink/internal:util-android",
+        "//src/main/java/com/google/crypto/tink/tinkkey/internal:proto_key-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)

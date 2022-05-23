@@ -1,0 +1,225 @@
+licenses(["notice"])
+
+package(default_visibility = ["//visibility:public"])
+
+java_library(
+    name = "hkdf_prf_key_manager",
+    srcs = ["HkdfPrfKeyManager.java"],
+    deps = [
+        ":prf_set",
+        "//proto:common_java_proto",
+        "//proto:hkdf_prf_java_proto",
+        "//proto:tink_java_proto",
+        "//src/main/java/com/google/crypto/tink:key_template",
+        "//src/main/java/com/google/crypto/tink:registry",
+        "//src/main/java/com/google/crypto/tink/internal:key_type_manager",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_factory",
+        "//src/main/java/com/google/crypto/tink/subtle:enums",
+        "//src/main/java/com/google/crypto/tink/subtle:random",
+        "//src/main/java/com/google/crypto/tink/subtle:validators",
+        "//src/main/java/com/google/crypto/tink/subtle/prf:hkdf_streaming_prf",
+        "//src/main/java/com/google/crypto/tink/subtle/prf:prf_impl",
+        "//src/main/java/com/google/crypto/tink/subtle/prf:streaming_prf",
+        "@com_google_protobuf//:protobuf_javalite",
+    ],
+)
+
+java_library(
+    name = "prf_key_templates",
+    srcs = ["PrfKeyTemplates.java"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":aes_cmac_prf_key_manager",
+        ":hkdf_prf_key_manager",
+        ":hmac_prf_key_manager",
+        "//proto:aes_cmac_prf_java_proto",
+        "//proto:common_java_proto",
+        "//proto:hkdf_prf_java_proto",
+        "//proto:hmac_prf_java_proto",
+        "//proto:tink_java_proto",
+    ],
+)
+
+java_library(
+    name = "prf_config",
+    srcs = ["PrfConfig.java"],
+    deps = [
+        ":aes_cmac_prf_key_manager",
+        ":hkdf_prf_key_manager",
+        ":hmac_prf_key_manager",
+        ":prf_set_wrapper",
+        "//src/main/java/com/google/crypto/tink/config:tink_fips",
+    ],
+)
+
+java_library(
+    name = "prf_set",
+    srcs = [
+        "Prf.java",
+        "PrfSet.java",
+    ],
+    visibility = ["//visibility:public"],
+    deps = ["@maven//:com_google_errorprone_error_prone_annotations"],
+)
+
+java_library(
+    name = "prf_set_wrapper",
+    srcs = ["PrfSetWrapper.java"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":prf_set",
+        "//proto:tink_java_proto",
+        "//src/main/java/com/google/crypto/tink:primitive_set",
+        "//src/main/java/com/google/crypto/tink:primitive_wrapper",
+        "//src/main/java/com/google/crypto/tink:registry",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
+    name = "hkdf_prf_key_manager-android",
+    srcs = ["HkdfPrfKeyManager.java"],
+    deps = [
+        ":prf_set-android",
+        "//proto:common_java_proto_lite",
+        "//proto:hkdf_prf_java_proto_lite",
+        "//proto:tink_java_proto_lite",
+        "//src/main/java/com/google/crypto/tink:key_template-android",
+        "//src/main/java/com/google/crypto/tink:registry-android",
+        "//src/main/java/com/google/crypto/tink/internal:key_type_manager-android",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_factory-android",
+        "//src/main/java/com/google/crypto/tink/subtle:enums-android",
+        "//src/main/java/com/google/crypto/tink/subtle:random-android",
+        "//src/main/java/com/google/crypto/tink/subtle:validators-android",
+        "//src/main/java/com/google/crypto/tink/subtle/prf:hkdf_streaming_prf-android",
+        "//src/main/java/com/google/crypto/tink/subtle/prf:prf_impl-android",
+        "//src/main/java/com/google/crypto/tink/subtle/prf:streaming_prf-android",
+        "@com_google_protobuf//:protobuf_javalite",
+    ],
+)
+
+java_library(
+    name = "aes_cmac_prf_key_manager",
+    srcs = ["AesCmacPrfKeyManager.java"],
+    deps = [
+        ":prf_set",
+        "//proto:aes_cmac_prf_java_proto",
+        "//proto:tink_java_proto",
+        "//src/main/java/com/google/crypto/tink:key_template",
+        "//src/main/java/com/google/crypto/tink:registry",
+        "//src/main/java/com/google/crypto/tink/internal:key_type_manager",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_factory",
+        "//src/main/java/com/google/crypto/tink/subtle:prf_aes_cmac",
+        "//src/main/java/com/google/crypto/tink/subtle:random",
+        "//src/main/java/com/google/crypto/tink/subtle:validators",
+        "@com_google_protobuf//:protobuf_javalite",
+    ],
+)
+
+android_library(
+    name = "aes_cmac_prf_key_manager-android",
+    srcs = ["AesCmacPrfKeyManager.java"],
+    deps = [
+        ":prf_set-android",
+        "//proto:aes_cmac_prf_java_proto_lite",
+        "//proto:tink_java_proto_lite",
+        "//src/main/java/com/google/crypto/tink:key_template-android",
+        "//src/main/java/com/google/crypto/tink:registry-android",
+        "//src/main/java/com/google/crypto/tink/internal:key_type_manager-android",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_factory-android",
+        "//src/main/java/com/google/crypto/tink/subtle:prf_aes_cmac-android",
+        "//src/main/java/com/google/crypto/tink/subtle:random-android",
+        "//src/main/java/com/google/crypto/tink/subtle:validators-android",
+        "@com_google_protobuf//:protobuf_javalite",
+    ],
+)
+
+java_library(
+    name = "hmac_prf_key_manager",
+    srcs = ["HmacPrfKeyManager.java"],
+    deps = [
+        ":prf_set",
+        "//proto:common_java_proto",
+        "//proto:hmac_prf_java_proto",
+        "//proto:tink_java_proto",
+        "//src/main/java/com/google/crypto/tink:key_template",
+        "//src/main/java/com/google/crypto/tink:registry",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
+        "//src/main/java/com/google/crypto/tink/internal:key_type_manager",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_factory",
+        "//src/main/java/com/google/crypto/tink/subtle:prf_hmac_jce",
+        "//src/main/java/com/google/crypto/tink/subtle:random",
+        "//src/main/java/com/google/crypto/tink/subtle:validators",
+        "@com_google_protobuf//:protobuf_javalite",
+    ],
+)
+
+android_library(
+    name = "hmac_prf_key_manager-android",
+    srcs = ["HmacPrfKeyManager.java"],
+    deps = [
+        ":prf_set-android",
+        "//proto:common_java_proto_lite",
+        "//proto:hmac_prf_java_proto_lite",
+        "//proto:tink_java_proto_lite",
+        "//src/main/java/com/google/crypto/tink:key_template-android",
+        "//src/main/java/com/google/crypto/tink:registry-android",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util-android",
+        "//src/main/java/com/google/crypto/tink/internal:key_type_manager-android",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_factory-android",
+        "//src/main/java/com/google/crypto/tink/subtle:prf_hmac_jce-android",
+        "//src/main/java/com/google/crypto/tink/subtle:random-android",
+        "//src/main/java/com/google/crypto/tink/subtle:validators-android",
+        "@com_google_protobuf//:protobuf_javalite",
+    ],
+)
+
+android_library(
+    name = "prf_key_templates-android",
+    srcs = ["PrfKeyTemplates.java"],
+    deps = [
+        ":aes_cmac_prf_key_manager-android",
+        ":hkdf_prf_key_manager-android",
+        ":hmac_prf_key_manager-android",
+        "//proto:aes_cmac_prf_java_proto_lite",
+        "//proto:common_java_proto_lite",
+        "//proto:hkdf_prf_java_proto_lite",
+        "//proto:hmac_prf_java_proto_lite",
+        "//proto:tink_java_proto_lite",
+    ],
+)
+
+android_library(
+    name = "prf_config-android",
+    srcs = ["PrfConfig.java"],
+    deps = [
+        ":aes_cmac_prf_key_manager-android",
+        ":hkdf_prf_key_manager-android",
+        ":hmac_prf_key_manager-android",
+        ":prf_set_wrapper-android",
+        "//src/main/java/com/google/crypto/tink/config:tink_fips-android",
+    ],
+)
+
+android_library(
+    name = "prf_set_wrapper-android",
+    srcs = ["PrfSetWrapper.java"],
+    deps = [
+        ":prf_set-android",
+        "//proto:tink_java_proto_lite",
+        "//src/main/java/com/google/crypto/tink:primitive_set-android",
+        "//src/main/java/com/google/crypto/tink:primitive_wrapper-android",
+        "//src/main/java/com/google/crypto/tink:registry-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
+    name = "prf_set-android",
+    srcs = [
+        "Prf.java",
+        "PrfSet.java",
+    ],
+    visibility = ["//visibility:public"],
+    deps = ["@maven//:com_google_errorprone_error_prone_annotations"],
+)
