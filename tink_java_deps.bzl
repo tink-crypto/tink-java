@@ -3,7 +3,6 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
 
 TINK_MAVEN_ARTIFACTS = [
-    # Placeholder for args4j:args4j:2.33. Please ignore.
     # Placeholder for com.amazonaws:aws-java-sdk-core:1.12.182. Please ignore.
     # Placeholder for com.amazonaws:aws-java-sdk-kms:1.12.182. Please ignore.
     "com.google.auto:auto-common:1.2.1",
