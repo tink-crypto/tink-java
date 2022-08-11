@@ -16,24 +16,15 @@
 
 set -euo pipefail
 
-# If we are running on Kokoro cd into the repository.
-if [[ -n "${KOKORO_ROOT:-}" ]]; then
+export XCODE_VERSION=11.3
+export DEVELOPER_DIR="/Applications/Xcode_${XCODE_VERSION}.app/Contents/Developer"
+export ANDROID_HOME="/Users/kbuilder/Library/Android/sdk"
+export COURSIER_OPTS="-Djava.net.preferIPv6Addresses=true"
+
+if [[ -n "${KOKORO_ROOT:-}" ]] ; then
   cd "${KOKORO_ARTIFACTS_DIR}/git/tink_java"
-  use_bazel.sh "$(cat examples/.bazelversion)"
+  use_bazel.sh "$(cat .bazelversion)"
 fi
 
-: "${TINK_BASE_DIR:="$(cd .. && pwd)"}"
-
-# Sourcing required to update caller's environment.
-source ./kokoro/testutils/install_python3.sh
 ./kokoro/testutils/update_android_sdk.sh
-
-cp "examples/WORKSPACE" "examples/WORKSPACE.bak"
-
-./kokoro/testutils/replace_http_archive_with_local_repository.py \
-  -f "examples/WORKSPACE" \
-  -t "${TINK_BASE_DIR}"
-
-./kokoro/testutils/run_bazel_tests.sh "examples"
-
-mv "examples/WORKSPACE.bak" "examples/WORKSPACE"
+./kokoro/testutils/run_bazel_tests.sh "."

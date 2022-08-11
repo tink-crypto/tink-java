@@ -23,4 +23,4 @@ if [[ -n "${KOKORO_ROOT:-}" ]] ; then
 fi
 
 ./kokoro/testutils/update_android_sdk.sh
-./kokoro/testutils/run_bazel_tests.sh .
+./kokoro/testutils/run_bazel_tests.sh "."
