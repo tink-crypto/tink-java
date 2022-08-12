@@ -29,8 +29,6 @@ fi
 
 : "${TINK_BASE_DIR:="$(cd .. && pwd)"}"
 
-# Sourcing required to update caller's environment.
-source ./kokoro/testutils/install_python3.sh
 ./kokoro/testutils/update_android_sdk.sh
 
 cp "examples/WORKSPACE" "examples/WORKSPACE.bak"
