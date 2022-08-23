@@ -19,149 +19,86 @@ r"""Utility that replaces http_archive with local_repository in WORKSPACE files.
 Usage:
   ./kokoro/testutils/replace_http_archive_with_local_repository.py \
     -f <workspace directory> \
-    -t <tink local base path>
+    -t <root folder containing the local dependencies>
 
 For examples:
+  # Assume we have:
+  #   /tmp/git/tink_cc
+  #   /tmp/git/tink_examples
+  # From /tmp/git/tink_examples run:
   ./kokoro/testutils/replace_http_archive_with_local_repository.py \
     -f "cc/WORKSPACE" \
-    -t "../../tink"
-
-TODO(b/236795986): Add unit tests for this script.
+    -t /tmp/git
 """
 
 import argparse
+import os
 import re
 import textwrap
 
-_TINK_POLIREPO_GITHUB_ORG_URL = 'https://github.com/tink-crypto'
+# Holds (bazel dependency name, git repo name, git branch).
+_TINK_REPO_NAME_AND_BRANCH = (
+    ('tink_cc', 'tink-cc', 'master'),
+    ('tink_cc_awskms', 'tink-cc-awskms', 'main'),
+    ('tink_cc_gcpkms', 'tink-cc-gcpkms', 'main'),
+    ('tink_java', 'tink-java', 'main'),
+    ('tink_java_awskms', 'tink-java-awskms', 'main'),
+    ('tink_java_gcpkms', 'tink-java-gcpkms', 'main'),
+    ('tink_py', 'tink-py', 'main'),
+    ('tink_go', 'tink-go', 'main'),
+)
 
 
 def _replace_http_archive_with_local_repository(workspace_content: str,
-                                                tink_base_path: str) -> None:
-  """Replaces http_archive with local_repository in workspace_content.
+                                                bazel_dep_name: str,
+                                                git_repo_name: str,
+                                                local_dir_path: str,
+                                                branch: str) -> str:
+  """Replaces a single http_archive with local_repository in workspace_content.
 
   Args:
     workspace_content: Content of the WORKSPACE file to modify.
-    tink_base_path: Path to the local Tink folder.
+    bazel_dep_name: Name of the bazel dependency, e.g., tink_cc.
+    git_repo_name: Name of the repo in github.com/tink-crypto, e.g., tink-cc.
+    local_dir_path: Path to the local folder, e.g., /tmp/git/tink_cc.
+    branch: Main branch used by the repo, e.g, main.
 
   Returns:
     The modified WORKSPACE file content.
   """
-  # Tink C++.
-  tink_cc_before = textwrap.dedent(f"""\
+  before = textwrap.dedent(f"""\
       http_archive(
-          name = "tink_cc",
-          urls = ["{_TINK_POLIREPO_GITHUB_ORG_URL}/tink-cc/archive/master.zip"],
-          strip_prefix = "tink-cc-master",
+          name = "{bazel_dep_name}",
+          urls = ["https://github.com/tink-crypto/{git_repo_name}/archive/{branch}.zip"],
+          strip_prefix = "{git_repo_name}-{branch}",
       )""")
-  tink_cc_after = textwrap.dedent(f"""\
+  after = textwrap.dedent(f"""\
       local_repository(
-          name = "tink_cc",
-          path = "{tink_base_path}/tink_cc",
+          name = "{bazel_dep_name}",
+          path = "{local_dir_path}",
       )""")
-  workspace_content = workspace_content.replace(tink_cc_before, tink_cc_after)
+  return workspace_content.replace(before, after)
 
-  # Tink C++ AWS-KMS.
-  tink_cc_awskms_before = textwrap.dedent(f"""\
-      http_archive(
-          name = "tink_cc_awskms",
-          urls = ["{_TINK_POLIREPO_GITHUB_ORG_URL}/tink-cc-awskms/archive/main.zip"],
-          strip_prefix = "tink-cc-awskms-main",
-      )""")
-  tink_cc_awskms_after = textwrap.dedent(f"""\
-      local_repository(
-          name = "tink_cc_awskms",
-          path = "{tink_base_path}/tink_cc_awskms",
-      )""")
-  workspace_content = workspace_content.replace(tink_cc_awskms_before,
-                                                tink_cc_awskms_after)
 
-  # Tink C++ Google Cloud KMS.
-  tink_cc_gcpkms_before = textwrap.dedent(f"""\
-      http_archive(
-          name = "tink_cc_gcpkms",
-          urls = ["{_TINK_POLIREPO_GITHUB_ORG_URL}/tink-cc-gcpkms/archive/main.zip"],
-          strip_prefix = "tink-cc-gcpkms-main",
-      )""")
-  tink_cc_gcpkms_after = textwrap.dedent(f"""\
-      local_repository(
-          name = "tink_cc_gcpkms",
-          path = "{tink_base_path}/tink_cc_gcpkms",
-      )""")
-  workspace_content = workspace_content.replace(tink_cc_gcpkms_before,
-                                                tink_cc_gcpkms_after)
+def _replace_all_http_archive_with_local_repository(
+    workspace_content: str, local_deps_root_dir: str) -> str:
+  """Replaces all http_archive with local_repository in workspace_content.
 
-  # Tink Java.
-  tink_java_before = textwrap.dedent(f"""\
-      http_archive(
-          name = "tink_java",
-          urls = ["{_TINK_POLIREPO_GITHUB_ORG_URL}/tink-java/archive/main.zip"],
-          strip_prefix = "tink-java-main",
-      )""")
-  tink_java_after = textwrap.dedent(f"""\
-      local_repository(
-          name = "tink_java",
-          path = "{tink_base_path}/tink_java",
-      )""")
-  workspace_content = workspace_content.replace(tink_java_before,
-                                                tink_java_after)
-  # Tink Java Google Cloud KMS.
-  tink_java_gcpkms_before = textwrap.dedent(f"""\
-      http_archive(
-          name = "tink_java_gcpkms",
-          urls = ["{_TINK_POLIREPO_GITHUB_ORG_URL}/tink-java-gcpkms/archive/main.zip"],
-          strip_prefix = "tink-java-gcpkms-main",
-      )""")
-  tink_java_gcpkms_after = textwrap.dedent(f"""\
-      local_repository(
-          name = "tink_java_gcpkms",
-          path = "{tink_base_path}/tink_java_gcpkms",
-      )""")
-  workspace_content = workspace_content.replace(tink_java_gcpkms_before,
-                                                tink_java_gcpkms_after)
-  # Tink Java AWS KMS.
-  tink_java_awskms_before = textwrap.dedent(f"""\
-      http_archive(
-          name = "tink_java_awskms",
-          urls = ["{_TINK_POLIREPO_GITHUB_ORG_URL}/tink-java-awskms/archive/main.zip"],
-          strip_prefix = "tink-java-awskms-main",
-      )""")
-  tink_java_awskms_after = textwrap.dedent(f"""\
-      local_repository(
-          name = "tink_java_awskms",
-          path = "{tink_base_path}/tink_java_awskms",
-      )""")
-  workspace_content = workspace_content.replace(tink_java_awskms_before,
-                                                tink_java_awskms_after)
-  # Tink Python.
-  tink_py_before = textwrap.dedent(f"""\
-      http_archive(
-          name = "tink_py",
-          urls = ["{_TINK_POLIREPO_GITHUB_ORG_URL}/tink-py/archive/main.zip"],
-          strip_prefix = "tink-py-main",
-      )""")
-  tink_py_after = textwrap.dedent(f"""\
-      local_repository(
-          name = "tink_py",
-          path = "{tink_base_path}/tink_py",
-      )""")
-  workspace_content = workspace_content.replace(tink_py_before,
-                                                tink_py_after)
-  # Tink Go.
-  tink_go_before = textwrap.dedent(f"""\
-      http_archive(
-          name = "tink_go",
-          urls = ["{_TINK_POLIREPO_GITHUB_ORG_URL}/tink-go/archive/main.zip"],
-          strip_prefix = "tink-go-main",
-      )""")
-  tink_go_after = textwrap.dedent(f"""\
-      local_repository(
-          name = "tink_go",
-          path = "{tink_base_path}/tink_go",
-      )""")
-  workspace_content = workspace_content.replace(tink_go_before,
-                                                tink_go_after)
+  Args:
+    workspace_content: Content of the WORKSPACE file to modify.
+    local_deps_root_dir: Directory that contains the local dependencies to use.
 
+  Returns:
+    The modified WORKSPACE file content.
+  """
+  for bazel_dep_name, git_repo_name, branch in _TINK_REPO_NAME_AND_BRANCH:
+    workspace_content = _replace_http_archive_with_local_repository(
+        workspace_content=workspace_content,
+        bazel_dep_name=bazel_dep_name,
+        git_repo_name=git_repo_name,
+        local_dir_path=os.path.join(local_deps_root_dir,
+                                    git_repo_name.replace('-', '_')),
+        branch=branch)
   # Remove loading of http_archive if there are no other http_archive entries
   # left in workspace_content.
   if not re.search(
@@ -170,7 +107,6 @@ def _replace_http_archive_with_local_repository(workspace_content: str,
         load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
         """)
     workspace_content = workspace_content.replace(http_archive_load, '')
-
   return workspace_content
 
 
@@ -178,13 +114,13 @@ def main():
   parser = argparse.ArgumentParser(
       description='Replaces http_archive rules with local_repository rules')
   parser.add_argument('--workspace_file_path', '-f', required=True)
-  parser.add_argument('--tink_base_path', '-t', required=True)
+  parser.add_argument('--local_deps_root_dir', '-t', required=True)
   args = parser.parse_args()
 
   with open(args.workspace_file_path, 'r') as workspace_file:
     content = workspace_file.read()
-    content = _replace_http_archive_with_local_repository(
-        content, args.tink_base_path)
+    content = _replace_all_http_archive_with_local_repository(
+        content, args.local_deps_root_dir)
   with open(args.workspace_file_path, 'w') as workspace_file:
     workspace_file.write(content)
 
