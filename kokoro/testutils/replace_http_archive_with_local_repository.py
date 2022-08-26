@@ -49,6 +49,7 @@ _TINK_REPO_NAME_AND_BRANCH = (
     ('tink_go_gcpkms', 'tink-go-gcpkms', 'main'),
     ('com_github_tink_crypto_tink_go', 'tink-go', 'main'),
     ('com_github_tink_crypto_tink_go_gcpkms', 'tink-go-gcpkms', 'main'),
+    ('com_github_tink_crypto_tink_go_awskms', 'tink-go-awskms', 'main'),
 )
 
 
