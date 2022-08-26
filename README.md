@@ -1,7 +1,6 @@
 # Tink Java
 
-<!-- copybara:tink_placeholder(GCP Ubuntu badge) -->
-<!-- copybara:tink_placeholder(MacOs badge) -->
+<!-- copybara:tink_placeholder(Build badges) -->
 
 Using crypto in your application [shouldn't have to][devs_are_users_too_slides]
 feel like juggling chainsaws in the dark. Tink is a crypto library written by a
