@@ -23,7 +23,8 @@ export COURSIER_OPTS="-Djava.net.preferIPv6Addresses=true"
 
 # If we are running on Kokoro cd into the repository.
 if [[ -n "${KOKORO_ROOT:-}" ]]; then
-  cd "${KOKORO_ARTIFACTS_DIR}/git/tink_java"
+  TINK_BASE_DIR="$(echo "${KOKORO_ARTIFACTS_DIR}"/git*)"
+  cd "${TINK_BASE_DIR}/tink_java"
   use_bazel.sh "$(cat examples/.bazelversion)"
 fi
 
