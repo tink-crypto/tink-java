@@ -2,13 +2,13 @@
 
 <!-- GCP Ubuntu --->
 
-[tink_java_bazel_badge_gcp_ubuntu]: https://storage.googleapis.com/tink-kokoro-build-badges/tink-cc-bazel-gcp-ubuntu.svg
-[tink_java_examples_bazel_badge_gcp_ubuntu]: https://storage.googleapis.com/tink-kokoro-build-badges/tink-cc-bazel-gcp-ubuntu.svg
+[tink_java_bazel_badge_gcp_ubuntu]: https://storage.googleapis.com/tink-kokoro-build-badges/tink-java-bazel-gcp-ubuntu.svg
+[tink_java_examples_bazel_badge_gcp_ubuntu]: https://storage.googleapis.com/tink-kokoro-build-badges/tink-java-examples-bazel-gcp-ubuntu.svg
 
 <!-- MacOS --->
 
-[tink_java_bazel_badge_macos]: https://storage.googleapis.com/tink-kokoro-build-badges/tink-cc-bazel-macos-external.svg
-[tink_java_examples_bazel_badge_macos]: https://storage.googleapis.com/tink-kokoro-build-badges/tink-cc-bazel-macos-external.svg
+[tink_java_bazel_badge_macos]: https://storage.googleapis.com/tink-kokoro-build-badges/tink-java-bazel-macos-external.svg
+[tink_java_examples_bazel_badge_macos]: https://storage.googleapis.com/tink-kokoro-build-badges/tink-java-examples-bazel-macos-external.svg
 
 **Test**      | **GCP Ubuntu**                                                              | **MacOS**
 ------------- | --------------------------------------------------------------------------- | ---------
