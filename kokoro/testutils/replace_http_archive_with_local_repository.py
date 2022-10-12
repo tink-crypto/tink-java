@@ -36,20 +36,20 @@ import os
 import re
 import textwrap
 
-# Holds (bazel dependency name, git repo name, git branch).
-_TINK_REPO_NAME_AND_BRANCH = (
-    ('tink_cc', 'tink-cc', 'master'),
-    ('tink_cc_awskms', 'tink-cc-awskms', 'main'),
-    ('tink_cc_gcpkms', 'tink-cc-gcpkms', 'main'),
-    ('tink_java', 'tink-java', 'main'),
-    ('tink_java_awskms', 'tink-java-awskms', 'main'),
-    ('tink_java_gcpkms', 'tink-java-gcpkms', 'main'),
-    ('tink_py', 'tink-py', 'main'),
-    ('tink_go', 'tink-go', 'main'),
-    ('tink_go_gcpkms', 'tink-go-gcpkms', 'main'),
-    ('com_github_tink_crypto_tink_go', 'tink-go', 'main'),
-    ('com_github_tink_crypto_tink_go_gcpkms', 'tink-go-gcpkms', 'main'),
-    ('com_github_tink_crypto_tink_go_awskms', 'tink-go-awskms', 'main'),
+# Holds (bazel dependency name, git repo name).
+_TINK_REPO_NAME = (
+    ('tink_cc', 'tink-cc'),
+    ('tink_cc_awskms', 'tink-cc-awskms'),
+    ('tink_cc_gcpkms', 'tink-cc-gcpkms'),
+    ('tink_java', 'tink-java'),
+    ('tink_java_awskms', 'tink-java-awskms'),
+    ('tink_java_gcpkms', 'tink-java-gcpkms'),
+    ('tink_py', 'tink-py'),
+    ('tink_go', 'tink-go'),
+    ('tink_go_gcpkms', 'tink-go-gcpkms'),
+    ('com_github_tink_crypto_tink_go', 'tink-go'),
+    ('com_github_tink_crypto_tink_go_gcpkms', 'tink-go-gcpkms'),
+    ('com_github_tink_crypto_tink_go_awskms', 'tink-go-awskms'),
 )
 
 
@@ -95,14 +95,14 @@ def _replace_all_http_archive_with_local_repository(
   Returns:
     The modified WORKSPACE file content.
   """
-  for bazel_dep_name, git_repo_name, branch in _TINK_REPO_NAME_AND_BRANCH:
+  for bazel_dep_name, git_repo_name in _TINK_REPO_NAME:
     workspace_content = _replace_http_archive_with_local_repository(
         workspace_content=workspace_content,
         bazel_dep_name=bazel_dep_name,
         git_repo_name=git_repo_name,
         local_dir_path=os.path.join(local_deps_root_dir,
                                     git_repo_name.replace('-', '_')),
-        branch=branch)
+        branch='main')
   # Remove loading of http_archive if there are no other http_archive entries
   # left in workspace_content.
   if not re.search(
