@@ -14,7 +14,10 @@
 # limitations under the License.
 ################################################################################
 
-set -euo pipefail
+set -eu
+
+# Version of Android build-tools required for gradle.
+readonly ANDROID_BUILD_TOOLS_VERSION="28.0.3"
 
 if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]] ; then
   TINK_BASE_DIR="$(echo "${KOKORO_ARTIFACTS_DIR}"/git*)"
@@ -23,7 +26,19 @@ if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]] ; then
 fi
 
 ./kokoro/testutils/update_android_sdk.sh
-# Install the latest snapshot locally.
+
+if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]]; then
+  yes | "${ANDROID_HOME}/tools/bin/sdkmanager" \
+    "build-tools;${ANDROID_BUILD_TOOLS_VERSION}"
+  yes | "${ANDROID_HOME}/tools/bin/sdkmanager" --licenses
+fi
+
+# Install the latest snapshot for tink-java and tink-android locally.
 ./maven/maven_deploy_library.sh install tink maven/tink-java.pom.xml HEAD
-# Run examples/helloworld against the local artifact.
+./maven/maven_deploy_library.sh install tink-android \
+  maven/tink-java-android.pom.xml HEAD
+
+# Run the Java and Android helloworld examples against the local artifacts.
 ./kokoro/testutils/test_maven_snapshot.sh -l "examples/helloworld/pom.xml"
+./examples/android/helloworld/gradlew -PmavenLocation=local \
+  -p ./examples/android/helloworld build
