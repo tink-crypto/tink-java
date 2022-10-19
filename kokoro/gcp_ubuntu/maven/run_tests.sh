@@ -42,12 +42,3 @@ fi
 ./kokoro/testutils/test_maven_snapshot.sh -l "examples/helloworld/pom.xml"
 ./examples/android/helloworld/gradlew -PmavenLocation=local \
   -p ./examples/android/helloworld build
-
-
-if [[ "${KOKORO_JOB_NAME}" == \
-      "tink/github/java/gcp_ubuntu/maven/continuous" ]]; then
-  readonly GIT_CREDENTIALS="ise-crypto:${GITHUB_ACCESS_TOKEN}"
-  readonly GITHUB_URL="https://${GIT_CREDENTIALS}@github.com/tink-crypto/tink-java.git"
-  ./maven/maven_deploy_library.sh -u "${GITHUB_URL}" snapshot tink \
-    maven/tink-java.pom.xml HEAD
-fi
