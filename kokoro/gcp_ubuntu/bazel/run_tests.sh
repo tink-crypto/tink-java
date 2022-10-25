@@ -130,7 +130,6 @@ main() {
 
   test_build_bazel_file
 
-  ./kokoro/testutils/update_android_sdk.sh
   ./kokoro/testutils/run_bazel_tests.sh .
 }
 

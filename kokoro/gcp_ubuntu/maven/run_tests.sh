@@ -26,14 +26,6 @@ if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]] ; then
   "${KOKORO_GFILE_DIR}/use_bazel.sh" "$(cat .bazelversion)"
 fi
 
-./kokoro/testutils/update_android_sdk.sh
-
-if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]]; then
-  yes | "${ANDROID_HOME}/tools/bin/sdkmanager" \
-    "build-tools;${ANDROID_BUILD_TOOLS_VERSION}"
-  yes | "${ANDROID_HOME}/tools/bin/sdkmanager" --licenses
-fi
-
 # Install the latest snapshot for tink-java and tink-android locally.
 ./maven/maven_deploy_library.sh install tink maven/tink-java.pom.xml HEAD
 ./maven/maven_deploy_library.sh install tink-android \
