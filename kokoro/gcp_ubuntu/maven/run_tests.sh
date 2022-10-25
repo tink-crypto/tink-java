@@ -22,7 +22,8 @@ readonly ANDROID_BUILD_TOOLS_VERSION="28.0.3"
 if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]] ; then
   TINK_BASE_DIR="$(echo "${KOKORO_ARTIFACTS_DIR}"/git*)"
   cd "${TINK_BASE_DIR}/tink_java"
-  use_bazel.sh "$(cat .bazelversion)"
+  chmod +x "${KOKORO_GFILE_DIR}/use_bazel.sh"
+  "${KOKORO_GFILE_DIR}/use_bazel.sh" "$(cat .bazelversion)"
 fi
 
 ./kokoro/testutils/update_android_sdk.sh
