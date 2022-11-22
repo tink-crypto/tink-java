@@ -16,6 +16,8 @@
 
 set -euo pipefail
 
+BAZEL_CMD="bazel"
+
 #######################################
 # Prints and error message with the missing deps for the given target diff-ing
 # the expected and actual list of targets.
@@ -68,7 +70,7 @@ test_build_bazel_file() {
   #  * testonly targets,
   #  * targets in tink_java_integration_prefix.
   local -r expected_tink_deps="$(mktemp)"
-  bazel query "kind(java_library,${tink_java_prefix}/...) \
+  "${BAZEL_CMD}" query "kind(java_library,${tink_java_prefix}/...) \
 except attr(testonly,1,${tink_java_prefix}/...) \
 except kind(java_library,${tink_java_integration_prefix}/...)" \
     > "${expected_tink_deps}"
@@ -76,17 +78,18 @@ except kind(java_library,${tink_java_integration_prefix}/...)" \
   # Targets in tink_java_prefix and tink_java_android_prefix of type
   # android_library, excluding testonly targets.
   local -r expected_android_deps="$(mktemp)"
-  bazel query "kind(android_library,${tink_java_prefix}/...) \
+  "${BAZEL_CMD}" query "kind(android_library,${tink_java_prefix}/...) \
 except attr(testonly,1,${tink_java_prefix}/...)" \
     > "${expected_android_deps}"
-  bazel query "kind(android_library,${tink_java_android_prefix}/...) \
+  "${BAZEL_CMD}" query "kind(android_library,${tink_java_android_prefix}/...) \
 except attr(testonly,1,${tink_java_prefix}/...)" \
     >> "${expected_android_deps}"
 
   # Dependencies of //:tink of type java_library that are in tink_java_prefix.
   # Note: Considering only direct dependencies of the target.
   local -r actual_java_targets="$(mktemp)"
-  bazel query "filter(${tink_java_prefix},kind(java_library,deps(//:tink,1)))" \
+  "${BAZEL_CMD}" query \
+    "filter(${tink_java_prefix},kind(java_library,deps(//:tink,1)))" \
     > "${actual_java_targets}"
 
   local error_in_tink="false"
@@ -101,9 +104,9 @@ except attr(testonly,1,${tink_java_prefix}/...)" \
   # tink_java_prefix and tink_java_android_prefix.
   # Note: Considering only direct dependencies of the target.
   local -r actual_android_targets="$(mktemp)"
-  bazel query "filter(${tink_java_prefix}, \
+  "${BAZEL_CMD}" query "filter(${tink_java_prefix}, \
 kind(android_library,deps(//:tink-android,2)))" > "${actual_android_targets}"
-  bazel query "filter(${tink_java_android_prefix}, \
+  "${BAZEL_CMD}" query "filter(${tink_java_android_prefix}, \
 kind(android_library,deps(//:tink-android,2)))" >> "${actual_android_targets}"
 
   local error_in_tink_android="false"
@@ -124,12 +127,15 @@ main() {
   if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]] ; then
     TINK_BASE_DIR="$(echo "${KOKORO_ARTIFACTS_DIR}"/git*)"
     cd "${TINK_BASE_DIR}/tink_java"
-    chmod +x "${KOKORO_GFILE_DIR}/use_bazel.sh"
-    "${KOKORO_GFILE_DIR}/use_bazel.sh" "$(cat .bazelversion)"
   fi
 
-  test_build_bazel_file
+  # Prefer using Bazelisk if available.
+  if command -v "bazelisk" &> /dev/null; then
+    BAZEL_CMD="bazelisk"
+  fi
+  readonly BAZEL_CMD
 
+  test_build_bazel_file
   ./kokoro/testutils/run_bazel_tests.sh .
 }
 

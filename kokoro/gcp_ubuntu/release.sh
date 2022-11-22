@@ -61,8 +61,6 @@ main() {
   if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]] ; then
     readonly TINK_BASE_DIR="$(echo "${KOKORO_ARTIFACTS_DIR}"/git*)"
     cd "${TINK_BASE_DIR}/tink_java"
-    chmod +x "${KOKORO_GFILE_DIR}/use_bazel.sh"
-    "${KOKORO_GFILE_DIR}/use_bazel.sh" "$(cat .bazelversion)"
   fi
 
   create_github_release
