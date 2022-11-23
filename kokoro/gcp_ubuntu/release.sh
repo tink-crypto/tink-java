@@ -32,11 +32,12 @@ set -euo pipefail
 create_github_release() {
   local -a github_release_opt=()
   if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]] ; then
-    # TODO(b/259058631): Add -r and -t after GitHub credentials are injected.
-    # Without -r, the release script will only print the git commands.
+    # TODO(b/259058631): Add -r when testing is complete. Without -r the release
+    # script will only print the git commands.
     # Note: KOKORO_GIT_COMMIT is populated by Kokoro.
     github_release_opt+=(
       -c "${KOKORO_GIT_COMMIT}"
+      -t "${GITHUB_ACCESS_TOKEN}"
     )
   fi
   readonly github_release_opt
