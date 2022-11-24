@@ -16,8 +16,11 @@
 
 set -euo pipefail
 
-# This is expected to be injected by Kokoro. Use an invalid value by default.
-: "${TINK_JAVA_VERSION:=invalid}"
+# Fail if RELEASE_VERSION is not set.
+if [[ -z "${RELEASE_VERSION:-}" ]]; then
+  echo "RELEASE_VERSION must be set" >2&
+  exit 1
+fi
 
 readonly TINK_JAVA_GITHUB_URL="github.com/tink-crypto/tink-java"
 IS_KOKORO="false"
@@ -32,7 +35,7 @@ readonly IS_KOKORO
 # Globals:
 #   GITHUB_ACCESS_TOKEN (optional from Kokoro)
 #   IS_KOKORO
-#   TINK_JAVA_VERSION
+#   RELEASE_VERSION
 #   TINK_JAVA_GITHUB_URL
 #
 #######################################
@@ -52,9 +55,9 @@ create_maven_release() {
   )
 
   ./maven/maven_deploy_library.sh "${maven_deploy_library_options[@]}" release \
-    tink maven/tink-java.pom.xml "${TINK_JAVA_VERSION}"
+    tink maven/tink-java.pom.xml "${RELEASE_VERSION}"
   ./maven/maven_deploy_library.sh "${maven_deploy_library_options[@]}" release \
-    tink-android maven/tink-java-android.pom.xml "${TINK_JAVA_VERSION}"
+    tink-android maven/tink-java-android.pom.xml "${RELEASE_VERSION}"
 }
 
 main() {

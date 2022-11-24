@@ -16,8 +16,11 @@
 
 set -euo pipefail
 
-# This is expected to be injected by Kokoro. Use an invalid value by default.
-: "${TINK_JAVA_VERSION:=invalid}"
+# Fail if RELEASE_VERSION is not set.
+if [[ -z "${RELEASE_VERSION:-}" ]]; then
+  echo "RELEASE_VERSION must be set" >2&
+  exit 1
+fi
 
 IS_KOKORO="false"
 if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]]; then
@@ -36,7 +39,7 @@ readonly IS_KOKORO
 #   GITHUB_ACCESS_TOKEN (optional from Kokoro)
 #   TMPDIR
 #   IS_KOKORO
-#   TINK_JAVA_VERSION
+#   RELEASE_VERSION
 #
 #######################################
 create_github_release() {
@@ -63,7 +66,7 @@ create_github_release() {
 
   pushd "${tmp_folder}"
   # Create a GitHub release branch/tag.
-  "${release_script}" "${github_release_opt[@]}" "${TINK_JAVA_VERSION}" \
+  "${release_script}" "${github_release_opt[@]}" "${RELEASE_VERSION}" \
     tink-java
   popd
 }
