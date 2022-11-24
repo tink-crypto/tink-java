@@ -19,19 +19,29 @@ set -euo pipefail
 # This is expected to be injected by Kokoro. Use an invalid value by default.
 : "${TINK_JAVA_VERSION:=invalid}"
 
+IS_KOKORO="false"
+if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]]; then
+  IS_KOKORO="true"
+fi
+readonly IS_KOKORO
+
+# If not defined, default to /tmp.
+: "${TMPDIR:="/tmp"}"
+
 #######################################
 # Create a GitHub release.
 #
 # Globals:
-#   KOKORO_ARTIFACTS_DIR (optional from Kokoro)
 #   KOKORO_GIT_COMMIT (optional from Kokoro)
-#   TMPDIR (optional from Kokoro)
+#   GITHUB_ACCESS_TOKEN (optional from Kokoro)
+#   TMPDIR
+#   IS_KOKORO
 #   TINK_JAVA_VERSION
 #
 #######################################
 create_github_release() {
   local -a github_release_opt=()
-  if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]] ; then
+  if [[ "${IS_KOKORO}" == "true" ]] ; then
     # TODO(b/259058631): Add -r when testing is complete. Without -r the release
     # script will only print the git commands.
     # Note: KOKORO_GIT_COMMIT is populated by Kokoro.
@@ -43,7 +53,7 @@ create_github_release() {
   readonly github_release_opt
 
   # If running on Kokoro, TMPDIR is populated with the tmp folder.
-  local -r tmp_folder="$(mktemp -d "${TMPDIR:-"/tmp"}/release_XXXXXX")"
+  local -r tmp_folder="$(mktemp -d "${TMPDIR}/release_XXXXXX")"
   local -r release_script="$(pwd)/kokoro/testutils/create_github_release.sh"
   if [[ ! -f "${release_script}" ]]; then
     echo "${release_script} not found."
@@ -59,14 +69,11 @@ create_github_release() {
 }
 
 main() {
-  if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]] ; then
+  if [[ "${IS_KOKORO}" == "true" ]] ; then
     readonly TINK_BASE_DIR="$(echo "${KOKORO_ARTIFACTS_DIR}"/git*)"
     cd "${TINK_BASE_DIR}/tink_java"
   fi
-
   create_github_release
-
-  # TODO(b/259058631): Add Maven release.
 }
 
 main "$@"
