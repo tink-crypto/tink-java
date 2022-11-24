@@ -70,7 +70,7 @@ process_params() {
   readonly ACCESS_TOKEN
 
   VERSION="$1"
-  if [[ ! "${VERSION}" =~ [0-9]+.[0-9]+.[0-9]+ ]]; then
+  if [[ ! "${VERSION}" =~ ^[0-9]+.[0-9]+.[0-9]+$ ]]; then
     echo "Invalid version format: expected MAJOR.MINOR.PATCH, got ${VERSION}"
     usage
   fi
