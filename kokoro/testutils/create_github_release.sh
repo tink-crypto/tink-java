@@ -96,7 +96,11 @@ process_params() {
   readonly RELEASE_BRANCH="$(echo "${VERSION}" | cut -d'.' -f1,2)"
   readonly TAG="v${VERSION}"
 
-  local -r github_refs="$(git ls-remote ${GITHUB_REPO_URL})"
+  # Splitting declaration and assignment guarantees correct propagation of the
+  # exit code of the subshell.
+  local github_refs
+  github_refs="$(git ls-remote "${GITHUB_REPO_URL}")"
+  readonly github_refs
   local -r expected_release_branch="refs/heads/${RELEASE_BRANCH}"
   local -r expected_release_tag="refs/tags/${TAG}"
   if echo "${github_refs}" | grep "${expected_release_branch}" > /dev/null; then
