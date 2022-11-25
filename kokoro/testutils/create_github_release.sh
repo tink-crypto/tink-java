@@ -126,7 +126,7 @@ print_command() {
 }
 
 #######################################
-# Run command if DO_RELEASE is true.
+# Runs a command if DO_RELEASE is true.
 #
 # Args:
 #   Command to execute.
@@ -135,7 +135,6 @@ print_command() {
 #
 #######################################
 run_command() {
-  print_command "$@"
   if [[ "${DO_RELEASE}" == "false" ]]; then
     echo "  *** Dry run, command not executed. ***"
     return 0
@@ -143,6 +142,18 @@ run_command() {
   # Actually run the command.
   "$@"
   return $?
+}
+
+#######################################
+# Prints and runs a command.
+#
+# Args:
+#   Command to execute.
+#
+#######################################
+print_and_run_command() {
+  print_command "$@"
+  run_command "$@"
 }
 
 #######################################
@@ -162,13 +173,13 @@ git_checkout_release_branch() {
     # Target branch does not exist so we create the release branch.
     if [[ -n "${COMMIT_HASH:-}" ]]; then
       # Use COMMIT_HASH as HEAD for this branch.
-      run_command git branch "${RELEASE_BRANCH}" "${COMMIT_HASH}"
+      print_and_run_command git branch "${RELEASE_BRANCH}" "${COMMIT_HASH}"
     else
-      run_command git branch "${RELEASE_BRANCH}"
+      print_and_run_command git branch "${RELEASE_BRANCH}"
     fi
-    run_command git push origin "${RELEASE_BRANCH}"
+    print_and_run_command git push origin "${RELEASE_BRANCH}"
   fi
-  run_command git checkout "${RELEASE_BRANCH}"
+  print_and_run_command git checkout "${RELEASE_BRANCH}"
 }
 
 #######################################
@@ -181,14 +192,19 @@ git_checkout_release_branch() {
 #
 #######################################
 git_create_release_tag() {
-  run_command git tag -a "${TAG}" -m "${REPO_NAME} version ${VERSION}"
-  run_command git push origin "${TAG}"
+  print_and_run_command git tag -a "${TAG}" -m "${REPO_NAME} version ${VERSION}"
+  print_and_run_command git push origin "${TAG}"
 }
 
 main() {
   process_params "$@"
+  # Avoid logging the full URL; replace GIT_URL with a version that omits user
+  # and access token.
+  local -r protocol="$(echo "${GITHUB_REPO_URL}" | cut -d':' -f1)"
+  local -r github_repo="$(echo "${GITHUB_REPO_URL}" | cut -d'@' -f2)"
+  print_command git clone "${protocol}://...@${github_repo}"
   run_command git clone "${GITHUB_REPO_URL}"
-  run_command cd "${REPO_NAME}"
+  print_and_run_command cd "${REPO_NAME}"
   git_checkout_release_branch
   git_create_release_tag
 }
