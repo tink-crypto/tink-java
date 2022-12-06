@@ -16,16 +16,16 @@
 
 set -euo pipefail
 
-export XCODE_VERSION=11.3
+export XCODE_VERSION=14
 export DEVELOPER_DIR="/Applications/Xcode_${XCODE_VERSION}.app/Contents/Developer"
-export ANDROID_HOME="/Users/kbuilder/Library/Android/sdk"
+export ANDROID_HOME="/usr/local/share/android-sdk"
 export COURSIER_OPTS="-Djava.net.preferIPv6Addresses=true"
 
 # If we are running on Kokoro cd into the repository.
 if [[ -n "${KOKORO_ROOT:-}" ]]; then
   TINK_BASE_DIR="$(echo "${KOKORO_ARTIFACTS_DIR}"/git*)"
   cd "${TINK_BASE_DIR}/tink_java"
-  use_bazel.sh "$(cat examples/.bazelversion)"
+  export JAVA_HOME=$(/usr/libexec/java_home -v "1.8.0_292")
 fi
 
 : "${TINK_BASE_DIR:="$(cd .. && pwd)"}"
@@ -35,8 +35,7 @@ fi
 cp "examples/WORKSPACE" "examples/WORKSPACE.bak"
 
 ./kokoro/testutils/replace_http_archive_with_local_repository.py \
-  -f "examples/WORKSPACE" \
-  -t "${TINK_BASE_DIR}"
+  -f "examples/WORKSPACE" -t "${TINK_BASE_DIR}"
 
 ./kokoro/testutils/run_bazel_tests.sh "examples"
 

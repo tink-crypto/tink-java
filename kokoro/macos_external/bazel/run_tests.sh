@@ -16,16 +16,16 @@
 
 set -euo pipefail
 
-export XCODE_VERSION=11.3
+export XCODE_VERSION=14
 export DEVELOPER_DIR="/Applications/Xcode_${XCODE_VERSION}.app/Contents/Developer"
-export ANDROID_HOME="/Users/kbuilder/Library/Android/sdk"
+export ANDROID_HOME="/usr/local/share/android-sdk"
 export COURSIER_OPTS="-Djava.net.preferIPv6Addresses=true"
 
 if [[ -n "${KOKORO_ROOT:-}" ]] ; then
   TINK_BASE_DIR="$(echo "${KOKORO_ARTIFACTS_DIR}"/git*)"
   cd "${TINK_BASE_DIR}/tink_java"
-  use_bazel.sh "$(cat .bazelversion)"
+  export JAVA_HOME=$(/usr/libexec/java_home -v "1.8.0_292")
 fi
 
 ./kokoro/testutils/update_android_sdk.sh
-./kokoro/testutils/run_bazel_tests.sh "."
+./kokoro/testutils/run_bazel_tests.sh .
