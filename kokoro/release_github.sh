@@ -31,6 +31,15 @@ readonly IS_KOKORO
 # If not defined, default to /tmp.
 : "${TMPDIR:="/tmp"}"
 
+# WARNING: Setting this environment varialble to "true" will cause this script
+# to actually perform a release.
+: "${DO_MAKE_RELEASE:="false"}"
+
+if [[ ! "${DO_MAKE_RELEASE}" =~ ^(false|true)$ ]]; then
+  echo "DO_MAKE_RELEASE must be either \"true\" or \"false\"" >2&
+  exit 1
+fi
+
 #######################################
 # Create a GitHub release.
 #
@@ -45,14 +54,17 @@ readonly IS_KOKORO
 create_github_release() {
   local -a github_release_opt=()
   if [[ "${IS_KOKORO}" == "true" ]] ; then
-    # TODO(b/259058631): Add -r when testing is complete. Without -r the release
-    # script will only print the git commands.
     # Note: KOKORO_GIT_COMMIT is populated by Kokoro.
     github_release_opt+=(
       -c "${KOKORO_GIT_COMMIT}"
       -t "${GITHUB_ACCESS_TOKEN}"
     )
   fi
+
+  if [[ "${DO_MAKE_RELEASE}" == "true" ]]; then
+    github_release_opt+=( -r )
+  fi
+
   readonly github_release_opt
 
   # If running on Kokoro, TMPDIR is populated with the tmp folder.

@@ -29,6 +29,15 @@ if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]]; then
 fi
 readonly IS_KOKORO
 
+# WARNING: Setting this environment varialble to "true" will cause this script
+# to actually perform a release.
+: "${DO_MAKE_RELEASE:="false"}"
+
+if [[ ! "${DO_MAKE_RELEASE}" =~ ^(false|true)$ ]]; then
+  echo "DO_MAKE_RELEASE must be either \"true\" or \"false\"" >2&
+  exit 1
+fi
+
 #######################################
 # Create a Maven release on Sonatype.
 #
@@ -47,12 +56,11 @@ create_maven_release() {
   readonly gitub_protocol_and_auth
   local -r github_url="${gitub_protocol_and_auth}@${TINK_JAVA_GITHUB_URL}"
 
-  # TODO(b/259058631): Remove -d once this is finalized. With -d, this runs in
-  # dry run mode.
-  local -r maven_deploy_library_options=(
-    -u "${github_url}"
-    -d
-  )
+  local maven_deploy_library_options=( -u "${github_url}" )
+  if [[ "${DO_MAKE_RELEASE}" == "false" ]]; then
+    maven_deploy_library_options+=( -d )
+  fi
+  readonly maven_deploy_library_options
 
   ./maven/maven_deploy_library.sh "${maven_deploy_library_options[@]}" release \
     tink maven/tink-java.pom.xml "${RELEASE_VERSION}"
