@@ -19,7 +19,13 @@ set -eu
 # Version of Android build-tools required for gradle.
 readonly ANDROID_BUILD_TOOLS_VERSION="28.0.3"
 
+IS_KOKORO="false"
 if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]] ; then
+  IS_KOKORO="true"
+fi
+readonly IS_KOKORO
+
+if [[ "${IS_KOKORO}" == "true" ]] ; then
   TINK_BASE_DIR="$(echo "${KOKORO_ARTIFACTS_DIR}"/git*)"
   cd "${TINK_BASE_DIR}/tink_java"
 fi
@@ -33,3 +39,14 @@ fi
 ./kokoro/testutils/test_maven_snapshot.sh -l "examples/helloworld/pom.xml"
 ./examples/android/helloworld/gradlew -PmavenLocation=local \
   -p ./examples/android/helloworld build
+
+readonly GITHUB_JOB_NAME="tink/github/java/gcp_ubuntu/maven/continuous"
+
+if [[ "${IS_KOKORO}" == "true" \
+      && "${KOKORO_JOB_NAME}" == "${GITHUB_JOB_NAME}" ]]; then
+  # GITHUB_ACCESS_TOKEN is populated by Kokoro.
+  readonly GIT_CREDENTIALS="ise-crypto:${GITHUB_ACCESS_TOKEN}"
+  readonly GITHUB_URL="https://${GIT_CREDENTIALS}@github.com/tink-crypto/tink-java.git"
+  ./maven/maven_deploy_library.sh -u "${GITHUB_URL}" snapshot tink \
+    maven/tink-java.pom.xml HEAD
+fi
