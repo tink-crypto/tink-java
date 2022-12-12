@@ -171,6 +171,8 @@
 <div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 <div class="block"><code>repeated .google.crypto.tink.KeyTypeEntry entry = 2;</code></div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/PrimitiveSet.Builder.html#addFullPrimitiveAndOptionalPrimitive-P-P-com.google.crypto.tink.proto.Keyset.Key-">addFullPrimitiveAndOptionalPrimitive(P, P, Keyset.Key)</a></span> - Method in class com.google.crypto.tink.<a href="com/google/crypto/tink/PrimitiveSet.Builder.html" title="class in com.google.crypto.tink">PrimitiveSet.Builder</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/RawJwt.Builder.html#addJsonArrayClaim-java.lang.String-java.lang.String-">addJsonArrayClaim(String, String)</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/RawJwt.Builder.html" title="class in com.google.crypto.tink.jwt">RawJwt.Builder</a></dt>
 <dd>
 <div class="block">Adds a custom claim encoded in a JSON <code>String</code> to the JWT.</div>
@@ -259,8 +261,14 @@
 <dd>
 <div class="block">Adds a PEM.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/PrimitiveSet.Builder.html#addPrimaryFullPrimitiveAndOptionalPrimitive-P-P-com.google.crypto.tink.proto.Keyset.Key-">addPrimaryFullPrimitiveAndOptionalPrimitive(P, P, Keyset.Key)</a></span> - Method in class com.google.crypto.tink.<a href="com/google/crypto/tink/PrimitiveSet.Builder.html" title="class in com.google.crypto.tink">PrimitiveSet.Builder</a></dt>
+<dd>
+<div class="block">Adds the primary primitive and full primitive.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/PrimitiveSet.Builder.html#addPrimaryPrimitive-P-com.google.crypto.tink.proto.Keyset.Key-">addPrimaryPrimitive(P, Keyset.Key)</a></span> - Method in class com.google.crypto.tink.<a href="com/google/crypto/tink/PrimitiveSet.Builder.html" title="class in com.google.crypto.tink">PrimitiveSet.Builder</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Adds the primary primitive.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/PrimitiveSet.html#addPrimitive-P-com.google.crypto.tink.proto.Keyset.Key-">addPrimitive(P, Keyset.Key)</a></span> - Method in class com.google.crypto.tink.<a href="com/google/crypto/tink/PrimitiveSet.html" title="class in com.google.crypto.tink">PrimitiveSet</a></dt>
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
@@ -8015,6 +8023,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/AesGcmHkdfStreaming.html#getFirstSegmentOffset--">getFirstSegmentOffset()</a></span> - Method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/AesGcmHkdfStreaming.html" title="class in com.google.crypto.tink.subtle">AesGcmHkdfStreaming</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/PrimitiveSet.Entry.html#getFullPrimitive--">getFullPrimitive()</a></span> - Method in class com.google.crypto.tink.<a href="com/google/crypto/tink/PrimitiveSet.Entry.html" title="class in com.google.crypto.tink">PrimitiveSet.Entry</a></dt>
+<dd>
+<div class="block">Returns the full primitive for this entry.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/HkdfPrfParams.Builder.html#getHash--">getHash()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/HkdfPrfParams.Builder.html" title="class in com.google.crypto.tink.proto">HkdfPrfParams.Builder</a></dt>
 <dd>
 <div class="block"><code>.google.crypto.tink.HashType hash = 1;</code></div>
@@ -11077,7 +11089,9 @@
 <div class="block">Returns the unique entry where isPrimary() = true and getStatus() = ENABLED.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/PrimitiveSet.html#getPrimary--">getPrimary()</a></span> - Method in class com.google.crypto.tink.<a href="com/google/crypto/tink/PrimitiveSet.html" title="class in com.google.crypto.tink">PrimitiveSet</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Returns the entry with the primary primitive.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/PrfSet.html#getPrimaryId--">getPrimaryId()</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/PrfSet.html" title="class in com.google.crypto.tink.prf">PrfSet</a></dt>
 <dd>
 <div class="block">Returns the primary ID of the keyset.</div>
