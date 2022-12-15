@@ -139,7 +139,7 @@
 <dd>
 <div class="block">Adds an entry to a keyset</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/monitoring/MonitoringKeysetInfo.Builder.html#addEntry-com.google.crypto.tink.KeyStatus-int-com.google.crypto.tink.Parameters-">addEntry(KeyStatus, int, Parameters)</a></span> - Method in class com.google.crypto.tink.monitoring.<a href="com/google/crypto/tink/monitoring/MonitoringKeysetInfo.Builder.html" title="class in com.google.crypto.tink.monitoring">MonitoringKeysetInfo.Builder</a></dt>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/monitoring/MonitoringKeysetInfo.Builder.html#addEntry-com.google.crypto.tink.KeyStatus-int-java.lang.String-java.lang.String-">addEntry(KeyStatus, int, String, String)</a></span> - Method in class com.google.crypto.tink.monitoring.<a href="com/google/crypto/tink/monitoring/MonitoringKeysetInfo.Builder.html" title="class in com.google.crypto.tink.monitoring">MonitoringKeysetInfo.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/RegistryConfig.Builder.html#addEntry-com.google.crypto.tink.proto.KeyTypeEntry-">addEntry(KeyTypeEntry)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/RegistryConfig.Builder.html" title="class in com.google.crypto.tink.proto">RegistryConfig.Builder</a></dt>
 <dd>
@@ -8961,6 +8961,8 @@
 <div class="block">
  Actual keys in the Keyset.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/monitoring/MonitoringKeysetInfo.Entry.html#getKeyPrefix--">getKeyPrefix()</a></span> - Method in class com.google.crypto.tink.monitoring.<a href="com/google/crypto/tink/monitoring/MonitoringKeysetInfo.Entry.html" title="class in com.google.crypto.tink.monitoring">MonitoringKeysetInfo.Entry</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/KeysetHandle.html#getKeys--">getKeys()</a></span> - Method in class com.google.crypto.tink.<a href="com/google/crypto/tink/KeysetHandle.html" title="class in com.google.crypto.tink">KeysetHandle</a></dt>
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
@@ -9247,11 +9249,15 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacKeyManager.html#getKeyType--">getKeyType()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacKeyManager.html" title="class in com.google.crypto.tink.mac">HmacKeyManager</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/monitoring/MonitoringKeysetInfo.Entry.html#getKeyType--">getKeyType()</a></span> - Method in class com.google.crypto.tink.monitoring.<a href="com/google/crypto/tink/monitoring/MonitoringKeysetInfo.Entry.html" title="class in com.google.crypto.tink.monitoring">MonitoringKeysetInfo.Entry</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/AesCmacPrfKeyManager.html#getKeyType--">getKeyType()</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/AesCmacPrfKeyManager.html" title="class in com.google.crypto.tink.prf">AesCmacPrfKeyManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/HkdfPrfKeyManager.html#getKeyType--">getKeyType()</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/HkdfPrfKeyManager.html" title="class in com.google.crypto.tink.prf">HkdfPrfKeyManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/HmacPrfKeyManager.html#getKeyType--">getKeyType()</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/HmacPrfKeyManager.html" title="class in com.google.crypto.tink.prf">HmacPrfKeyManager</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/PrimitiveSet.Entry.html#getKeyType--">getKeyType()</a></span> - Method in class com.google.crypto.tink.<a href="com/google/crypto/tink/PrimitiveSet.Entry.html" title="class in com.google.crypto.tink">PrimitiveSet.Entry</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/EcdsaSignKeyManager.html#getKeyType--">getKeyType()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/EcdsaSignKeyManager.html" title="class in com.google.crypto.tink.signature">EcdsaSignKeyManager</a></dt>
 <dd>&nbsp;</dd>
@@ -10019,8 +10025,6 @@
 <dd>
 <div class="block">Returns the parameters of this key.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/monitoring/MonitoringKeysetInfo.Entry.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.monitoring.<a href="com/google/crypto/tink/monitoring/MonitoringKeysetInfo.Entry.html" title="class in com.google.crypto.tink.monitoring">MonitoringKeysetInfo.Entry</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/PrimitiveSet.Entry.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.<a href="com/google/crypto/tink/PrimitiveSet.Entry.html" title="class in com.google.crypto.tink">PrimitiveSet.Entry</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/EcdsaPublicKey.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/EcdsaPublicKey.html" title="class in com.google.crypto.tink.signature">EcdsaPublicKey</a></dt>
