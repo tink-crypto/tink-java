@@ -16,7 +16,7 @@ TINK_MAVEN_ARTIFACTS = [
     # Placeholder for com.google.auth:google-auth-library-oauth2-http:1.5.3. Please ignore.
     "com.google.code.findbugs:jsr305:3.0.1",
     "com.google.code.gson:gson:2.8.9",
-    "com.google.errorprone:error_prone_annotations:2.10.0",
+    "com.google.errorprone:error_prone_annotations:2.16",
     # Placeholder for com.google.http-client:google-http-client:1.39.0. Please ignore.
     # Placeholder for com.google.http-client:google-http-client-gson:1.39.0. Please ignore.
     # Placeholder for com.google.oauth-client:google-oauth-client:1.30.1. Please ignore.
