@@ -360,9 +360,10 @@ public&nbsp;void&nbsp;setPrimary(<a href="../../../../com/google/crypto/tink/Pri
 <li class="blockList">
 <h4>addPrimitive</h4>
 <pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
+ @CanIgnoreReturnValue
 public&nbsp;<a href="../../../../com/google/crypto/tink/PrimitiveSet.Entry.html" title="class in com.google.crypto.tink">PrimitiveSet.Entry</a>&lt;<a href="../../../../com/google/crypto/tink/PrimitiveSet.html" title="type parameter in PrimitiveSet">P</a>&gt;&nbsp;addPrimitive(<a href="../../../../com/google/crypto/tink/PrimitiveSet.html" title="type parameter in PrimitiveSet">P</a>&nbsp;primitive,
-                                                      <a href="../../../../com/google/crypto/tink/proto/Keyset.Key.html" title="class in com.google.crypto.tink.proto">Keyset.Key</a>&nbsp;key)
-                                               throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+                                                                             <a href="../../../../com/google/crypto/tink/proto/Keyset.Key.html" title="class in com.google.crypto.tink.proto">Keyset.Key</a>&nbsp;key)
+                                                                      throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">use <code>Builder.addPrimitive</code> or <code>Builder.addPrimaryPrimitive</code> instead.</span></div>
 <div class="block">Creates an entry in the primitive table.</div>
 <dl>
