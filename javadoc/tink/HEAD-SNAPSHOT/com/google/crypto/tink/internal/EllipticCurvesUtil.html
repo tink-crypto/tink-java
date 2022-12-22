@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":9,"i3":9};
+var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -182,6 +182,13 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="block">Returns whether <code>one</code> is the same <a href="https://docs.oracle.com/javase/8/docs/api/java/security/spec/ECParameterSpec.html?is-external=true" title="class or interface in java.security.spec"><code>ECParameterSpec</code></a> as <code>two</code>.</div>
 </td>
 </tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/security/spec/ECPoint.html?is-external=true" title="class or interface in java.security.spec">ECPoint</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/EllipticCurvesUtil.html#multiplyByGenerator-java.math.BigInteger-java.security.spec.ECParameterSpec-">multiplyByGenerator</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/math/BigInteger.html?is-external=true" title="class or interface in java.math">BigInteger</a>&nbsp;x,
+                   <a href="https://docs.oracle.com/javase/8/docs/api/java/security/spec/ECParameterSpec.html?is-external=true" title="class or interface in java.security.spec">ECParameterSpec</a>&nbsp;spec)</code>
+<div class="block">Calculates x times the generator of the give elliptic curve spec using the Montgomery ladder.</div>
+</td>
+</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -291,7 +298,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <a name="getModulus-java.security.spec.EllipticCurve-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getModulus</h4>
 <pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/math/BigInteger.html?is-external=true" title="class or interface in java.math">BigInteger</a>&nbsp;getModulus(<a href="https://docs.oracle.com/javase/8/docs/api/java/security/spec/EllipticCurve.html?is-external=true" title="class or interface in java.security.spec">EllipticCurve</a>&nbsp;curve)
@@ -302,6 +309,31 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dd><code>curve</code> - must be a prime order elliptic curve</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the order of the finite field over which curve is defined.</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="multiplyByGenerator-java.math.BigInteger-java.security.spec.ECParameterSpec-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>multiplyByGenerator</h4>
+<pre>public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/security/spec/ECPoint.html?is-external=true" title="class or interface in java.security.spec">ECPoint</a>&nbsp;multiplyByGenerator(<a href="https://docs.oracle.com/javase/8/docs/api/java/math/BigInteger.html?is-external=true" title="class or interface in java.math">BigInteger</a>&nbsp;x,
+                                          <a href="https://docs.oracle.com/javase/8/docs/api/java/security/spec/ECParameterSpec.html?is-external=true" title="class or interface in java.security.spec">ECParameterSpec</a>&nbsp;spec)
+                                   throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<div class="block">Calculates x times the generator of the give elliptic curve spec using the Montgomery ladder.
+
+ <p>This should only be used to validate keys, and not to sign or verify messages.
+
+ <p>See: <a href="https://en.wikipedia.org/wiki/Elliptic_curve_point_multiplication">Elliptic
+ curve point multiplication</a>.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>x</code> - must be larger than 0 and smaller than the order of the generator.</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the ECPoint that is x times the generator.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
 </dl>
