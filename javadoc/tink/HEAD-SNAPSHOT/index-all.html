@@ -1272,6 +1272,18 @@
 </dd>
 <dt><a href="com/google/crypto/tink/proto/AesGcmSivKeyOrBuilder.html" title="interface in com.google.crypto.tink.proto"><span class="typeNameLink">AesGcmSivKeyOrBuilder</span></a> - Interface in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/aead/AesGcmSivParameters.html" title="class in com.google.crypto.tink.aead"><span class="typeNameLink">AesGcmSivParameters</span></a> - Class in <a href="com/google/crypto/tink/aead/package-summary.html">com.google.crypto.tink.aead</a></dt>
+<dd>
+<div class="block">Describes the parameters of an <code>AesGcmSivSivKey</code></div>
+</dd>
+<dt><a href="com/google/crypto/tink/aead/AesGcmSivParameters.Builder.html" title="class in com.google.crypto.tink.aead"><span class="typeNameLink">AesGcmSivParameters.Builder</span></a> - Class in <a href="com/google/crypto/tink/aead/package-summary.html">com.google.crypto.tink.aead</a></dt>
+<dd>
+<div class="block">Builds a new AesGcmSivParameters instance.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/aead/AesGcmSivParameters.Variant.html" title="class in com.google.crypto.tink.aead"><span class="typeNameLink">AesGcmSivParameters.Variant</span></a> - Class in <a href="com/google/crypto/tink/aead/package-summary.html">com.google.crypto.tink.aead</a></dt>
+<dd>
+<div class="block">Describes how the prefix is computed.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/proto/AesSiv.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">AesSiv</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/subtle/AesSiv.html" title="class in com.google.crypto.tink.subtle"><span class="typeNameLink">AesSiv</span></a> - Class in <a href="com/google/crypto/tink/subtle/package-summary.html">com.google.crypto.tink.subtle</a></dt>
@@ -1392,6 +1404,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmKey.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmKey.Builder.html" title="class in com.google.crypto.tink.aead">AesGcmKey.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmParameters.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmParameters.Builder.html" title="class in com.google.crypto.tink.aead">AesGcmParameters.Builder</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmSivParameters.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmSivParameters.Builder.html" title="class in com.google.crypto.tink.aead">AesGcmSivParameters.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtValidator.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtValidator.Builder.html" title="class in com.google.crypto.tink.jwt">JwtValidator.Builder</a></dt>
 <dd>&nbsp;</dd>
@@ -1622,6 +1636,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmKey.html#builder--">builder()</a></span> - Static method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmKey.html" title="class in com.google.crypto.tink.aead">AesGcmKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmParameters.html#builder--">builder()</a></span> - Static method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmParameters.html" title="class in com.google.crypto.tink.aead">AesGcmParameters</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmSivParameters.html#builder--">builder()</a></span> - Static method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmSivParameters.html" title="class in com.google.crypto.tink.aead">AesGcmSivParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/PrimitiveRegistry.Builder.html#Builder--">Builder()</a></span> - Constructor for class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/PrimitiveRegistry.Builder.html" title="class in com.google.crypto.tink.internal">PrimitiveRegistry.Builder</a></dt>
 <dd>&nbsp;</dd>
@@ -4191,6 +4207,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmParameters.Variant.html#CRUNCHY">CRUNCHY</a></span> - Static variable in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmParameters.Variant.html" title="class in com.google.crypto.tink.aead">AesGcmParameters.Variant</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmSivParameters.Variant.html#CRUNCHY">CRUNCHY</a></span> - Static variable in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmSivParameters.Variant.html" title="class in com.google.crypto.tink.aead">AesGcmSivParameters.Variant</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/AesCmacParameters.Variant.html#CRUNCHY">CRUNCHY</a></span> - Static variable in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/AesCmacParameters.Variant.html" title="class in com.google.crypto.tink.mac">AesCmacParameters.Variant</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacParameters.Variant.html#CRUNCHY">CRUNCHY</a></span> - Static variable in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacParameters.Variant.html" title="class in com.google.crypto.tink.mac">HmacParameters.Variant</a></dt>
@@ -5145,6 +5163,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesEaxParameters.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesEaxParameters.html" title="class in com.google.crypto.tink.aead">AesEaxParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmParameters.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmParameters.html" title="class in com.google.crypto.tink.aead">AesGcmParameters</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmSivParameters.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmSivParameters.html" title="class in com.google.crypto.tink.aead">AesGcmSivParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/LegacyProtoParameters.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/LegacyProtoParameters.html" title="class in com.google.crypto.tink.internal">LegacyProtoParameters</a></dt>
 <dd>&nbsp;</dd>
@@ -9255,6 +9275,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmParameters.html#getKeySizeBytes--">getKeySizeBytes()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmParameters.html" title="class in com.google.crypto.tink.aead">AesGcmParameters</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmSivParameters.html#getKeySizeBytes--">getKeySizeBytes()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmSivParameters.html" title="class in com.google.crypto.tink.aead">AesGcmSivParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/AesCmacParameters.html#getKeySizeBytes--">getKeySizeBytes()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/AesCmacParameters.html" title="class in com.google.crypto.tink.mac">AesCmacParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacParameters.html#getKeySizeBytes--">getKeySizeBytes()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacParameters.html" title="class in com.google.crypto.tink.mac">HmacParameters</a></dt>
@@ -12803,6 +12825,10 @@
 <dd>
 <div class="block">Returns a variant object.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmSivParameters.html#getVariant--">getVariant()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmSivParameters.html" title="class in com.google.crypto.tink.aead">AesGcmSivParameters</a></dt>
+<dd>
+<div class="block">Returns a variant object.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/AesCmacParameters.html#getVariant--">getVariant()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/AesCmacParameters.html" title="class in com.google.crypto.tink.mac">AesCmacParameters</a></dt>
 <dd>
 <div class="block">Returns a variant object.</div>
@@ -13783,6 +13809,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmParameters.html#hashCode--">hashCode()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmParameters.html" title="class in com.google.crypto.tink.aead">AesGcmParameters</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmSivParameters.html#hashCode--">hashCode()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmSivParameters.html" title="class in com.google.crypto.tink.aead">AesGcmSivParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/LegacyProtoParameters.html#hashCode--">hashCode()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/LegacyProtoParameters.html" title="class in com.google.crypto.tink.internal">LegacyProtoParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/AesCmacParameters.html#hashCode--">hashCode()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/AesCmacParameters.html" title="class in com.google.crypto.tink.mac">AesCmacParameters</a></dt>
@@ -14031,6 +14059,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesEaxParameters.html#hasIdRequirement--">hasIdRequirement()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesEaxParameters.html" title="class in com.google.crypto.tink.aead">AesEaxParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmParameters.html#hasIdRequirement--">hasIdRequirement()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmParameters.html" title="class in com.google.crypto.tink.aead">AesGcmParameters</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmSivParameters.html#hasIdRequirement--">hasIdRequirement()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmSivParameters.html" title="class in com.google.crypto.tink.aead">AesGcmSivParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/LegacyProtoParameters.html#hasIdRequirement--">hasIdRequirement()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/LegacyProtoParameters.html" title="class in com.google.crypto.tink.internal">LegacyProtoParameters</a></dt>
 <dd>&nbsp;</dd>
@@ -19225,6 +19255,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmParameters.Variant.html#NO_PREFIX">NO_PREFIX</a></span> - Static variable in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmParameters.Variant.html" title="class in com.google.crypto.tink.aead">AesGcmParameters.Variant</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmSivParameters.Variant.html#NO_PREFIX">NO_PREFIX</a></span> - Static variable in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmSivParameters.Variant.html" title="class in com.google.crypto.tink.aead">AesGcmSivParameters.Variant</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/AesCmacParameters.Variant.html#NO_PREFIX">NO_PREFIX</a></span> - Static variable in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/AesCmacParameters.Variant.html" title="class in com.google.crypto.tink.mac">AesCmacParameters.Variant</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacParameters.Variant.html#NO_PREFIX">NO_PREFIX</a></span> - Static variable in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacParameters.Variant.html" title="class in com.google.crypto.tink.mac">HmacParameters.Variant</a></dt>
@@ -24109,6 +24141,10 @@
 <dd>
 <div class="block">Accepts key sizes of 16, 24 or 32 bytes.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmSivParameters.Builder.html#setKeySizeBytes-int-">setKeySizeBytes(int)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmSivParameters.Builder.html" title="class in com.google.crypto.tink.aead">AesGcmSivParameters.Builder</a></dt>
+<dd>
+<div class="block">Accepts key sizes of 16 and 32 bytes.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/AesCmacParameters.Builder.html#setKeySizeBytes-int-">setKeySizeBytes(int)</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/AesCmacParameters.Builder.html" title="class in com.google.crypto.tink.mac">AesCmacParameters.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacParameters.Builder.html#setKeySizeBytes-int-">setKeySizeBytes(int)</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacParameters.Builder.html" title="class in com.google.crypto.tink.mac">HmacParameters.Builder</a></dt>
@@ -25289,6 +25325,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmParameters.Builder.html#setVariant-com.google.crypto.tink.aead.AesGcmParameters.Variant-">setVariant(AesGcmParameters.Variant)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmParameters.Builder.html" title="class in com.google.crypto.tink.aead">AesGcmParameters.Builder</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmSivParameters.Builder.html#setVariant-com.google.crypto.tink.aead.AesGcmSivParameters.Variant-">setVariant(AesGcmSivParameters.Variant)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmSivParameters.Builder.html" title="class in com.google.crypto.tink.aead">AesGcmSivParameters.Builder</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/AesCmacParameters.Builder.html#setVariant-com.google.crypto.tink.mac.AesCmacParameters.Variant-">setVariant(AesCmacParameters.Variant)</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/AesCmacParameters.Builder.html" title="class in com.google.crypto.tink.mac">AesCmacParameters.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacParameters.Builder.html#setVariant-com.google.crypto.tink.mac.HmacParameters.Variant-">setVariant(HmacParameters.Variant)</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacParameters.Builder.html" title="class in com.google.crypto.tink.mac">HmacParameters.Builder</a></dt>
@@ -25742,6 +25780,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmParameters.Variant.html#TINK">TINK</a></span> - Static variable in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmParameters.Variant.html" title="class in com.google.crypto.tink.aead">AesGcmParameters.Variant</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmSivParameters.Variant.html#TINK">TINK</a></span> - Static variable in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmSivParameters.Variant.html" title="class in com.google.crypto.tink.aead">AesGcmSivParameters.Variant</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/AesCmacParameters.Variant.html#TINK">TINK</a></span> - Static variable in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/AesCmacParameters.Variant.html" title="class in com.google.crypto.tink.mac">AesCmacParameters.Variant</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacParameters.Variant.html#TINK">TINK</a></span> - Static variable in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacParameters.Variant.html" title="class in com.google.crypto.tink.mac">HmacParameters.Variant</a></dt>
@@ -26147,6 +26187,10 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmParameters.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmParameters.html" title="class in com.google.crypto.tink.aead">AesGcmParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmParameters.Variant.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmParameters.Variant.html" title="class in com.google.crypto.tink.aead">AesGcmParameters.Variant</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmSivParameters.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmSivParameters.html" title="class in com.google.crypto.tink.aead">AesGcmSivParameters</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmSivParameters.Variant.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmSivParameters.Variant.html" title="class in com.google.crypto.tink.aead">AesGcmSivParameters.Variant</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/LegacyProtoParameters.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/LegacyProtoParameters.html" title="class in com.google.crypto.tink.internal">LegacyProtoParameters</a></dt>
 <dd>&nbsp;</dd>
