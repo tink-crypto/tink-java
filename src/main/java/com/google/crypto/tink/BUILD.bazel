@@ -1,5 +1,5 @@
 load("@build_bazel_rules_android//android:rules.bzl", "android_library")
-load("//:tink_version.bzl", "TINK_VERSION_LABEL")
+load("//:version.bzl", "TINK_JAVA_VERSION_LABEL")
 load("//:template_rule.bzl", "template_rule")
 
 licenses(["notice"])
@@ -662,7 +662,7 @@ template_rule(
     src = "Version.java.templ",
     out = "Version.java",
     substitutions = {
-        "TINK_VERSION_LABEL": "%s" % TINK_VERSION_LABEL,
+        "TINK_JAVA_VERSION_LABEL": "%s" % TINK_JAVA_VERSION_LABEL,
     },
 )
 
