@@ -25,10 +25,53 @@ if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]] ; then
 fi
 readonly IS_KOKORO
 
+BAZEL_CMD="bazel"
+# Prefer using Bazelisk if available.
+if command -v "bazelisk" &> /dev/null; then
+  BAZEL_CMD="bazelisk"
+fi
+readonly BAZEL_CMD
+
+
 if [[ "${IS_KOKORO}" == "true" ]] ; then
   TINK_BASE_DIR="$(echo "${KOKORO_ARTIFACTS_DIR}"/git*)"
   cd "${TINK_BASE_DIR}/tink_java"
 fi
+
+#######################################
+# Checks if the direct dependencies of the //:tink Bazel target are in
+# maven/tink-java.pom.xml. In case of discrepancies, it prints the diff on
+# standard output and exits with exit code 1.
+#
+# Globals:
+#   None
+# Arguments:
+#   None
+#######################################
+function check_maven_deps() {
+  local -r maven_direct_deps="$(mktemp)"
+  mvn dependency:list -DoutputFile="${maven_direct_deps}" \
+    -DexcludeTransitive=true -f maven/tink-java.pom.xml -Dsort=true -q
+
+  # Get the list of deps and get them in the form:
+  #    <groupId>:<artifactId>:<version>
+  local -r actual_deps="$(cat "${maven_direct_deps}" \
+    | grep compile | cut -d: -f1,2,4 | sed -E 's/^\s+//')"
+
+  local -r bazel_direct_deps="$("${BAZEL_CMD}" query --output=build \
+    'attr(tags, .*,filter(@maven, deps(//:tink, 2)))' \
+      | grep maven_coordinates | cut -d'"' -f2 | cut -d'=' -f2 )"
+
+  # cmp -bl <(echo "${actual_deps}" ) <(echo "${bazel_direct_deps}")
+  if ! cmp -s <(echo "${bazel_direct_deps}" ) <(echo "${actual_deps}"); then
+    echo "There are the following mismatches between the dependencies in Bazel \
+and the POM file:"
+    diff <(echo "${bazel_direct_deps}" ) <(echo "${actual_deps}")
+    exit 1
+  fi
+}
+
+check_maven_deps
 
 # Install the latest snapshot for tink-java and tink-android locally.
 ./maven/maven_deploy_library.sh install tink maven/tink-java.pom.xml HEAD
