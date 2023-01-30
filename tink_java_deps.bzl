@@ -11,11 +11,11 @@ TINK_MAVEN_ARTIFACTS = [
     "com.google.auto:auto-common:1.2.1",
     "com.google.auto.service:auto-service:1.0.1",
     "com.google.auto.service:auto-service-annotations:1.0.1",
-    "com.google.api-client:google-api-client:1.33.2",
-    # Placeholder for com.google.apis:google-api-services-cloudkms:v1-rev108-1.25.0. Please ignore.
+    "com.google.api-client:google-api-client:2.2.0",
+    # Placeholder for com.google.apis:google-api-services-cloudkms:v1-rev20221107-2.0.0. Please ignore.
     # Placeholder for com.google.auth:google-auth-library-oauth2-http:1.5.3. Please ignore.
     "com.google.code.findbugs:jsr305:3.0.1",
-    "com.google.code.gson:gson:2.8.9",
+    "com.google.code.gson:gson:2.10",
     "com.google.errorprone:error_prone_annotations:2.16",
     "com.google.http-client:google-http-client:1.42.3",
     # Placeholder for com.google.http-client:google-http-client-gson:1.42.3. Please ignore.
