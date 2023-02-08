@@ -72,7 +72,7 @@ readonly POM_FILE_DEPS="$(cat "${MAVEN_DIRECT_DEPS}" \
 
 readonly BAZEL_MAVEN_DEPS="$("${BAZEL_CMD}" query --output=build \
   'attr(tags, .*,filter(@maven, deps('"${BAZEL_TARGET}"', 2)))' \
-    | grep maven_coordinates | cut -d'"' -f2 | cut -d'=' -f2 )"
+    | grep maven_coordinates | cut -d'"' -f2 | cut -d'=' -f2 | sort)"
 
 if ! cmp -s <(echo "${BAZEL_MAVEN_DEPS}" ) <(echo "${POM_FILE_DEPS}"); then
   echo "ERROR: There are the following mismatches between the dependencies in \
