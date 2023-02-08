@@ -62,6 +62,17 @@ create_maven_release() {
   fi
   readonly maven_deploy_library_options
 
+  if [[ "${IS_KOKORO}" == "true" ]]; then
+    # Import the PGP signing key and make the passphrase available as an env
+    # variable.
+    gpg --import --pinentry-mode loopback \
+      --passphrase-file \
+      "${KOKORO_KEYSTORE_DIR}/70968_tink_dev_maven_pgp_passphrase" \
+      --batch "${KOKORO_KEYSTORE_DIR}/70968_tink_dev_maven_pgp_secret_key"
+    export TINK_DEV_MAVEN_PGP_PASSPHRASE="$(cat \
+      "${KOKORO_KEYSTORE_DIR}/70968_tink_dev_maven_pgp_passphrase")"
+  fi
+
   ./maven/maven_deploy_library.sh "${maven_deploy_library_options[@]}" release \
     tink maven/tink-java.pom.xml "${RELEASE_VERSION}"
   ./maven/maven_deploy_library.sh "${maven_deploy_library_options[@]}" release \
