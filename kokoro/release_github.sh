@@ -69,17 +69,19 @@ create_github_release() {
 
   # If running on Kokoro, TMPDIR is populated with the tmp folder.
   local -r tmp_folder="$(mktemp -d "${TMPDIR}/release_XXXXXX")"
-  local -r release_script="$(pwd)/kokoro/testutils/create_github_release.sh"
-  if [[ ! -f "${release_script}" ]]; then
-    echo "${release_script} not found."
+  local -r release_util_script="$(pwd)/kokoro/testutils/github_release_util.sh"
+  if [[ ! -f "${release_util_script}" ]]; then
+    echo "${release_util_script} not found."
     echo "Make sure you run this script from the root of tink-java."
     return 1
   fi
 
   pushd "${tmp_folder}"
   # Create a GitHub release branch/tag.
-  "${release_script}" "${github_release_opt[@]}" "${RELEASE_VERSION}" \
-    tink-java
+  "${release_util_script}" create_branch "${github_release_opt[@]}" \
+    "${RELEASE_VERSION}" tink-java
+  "${release_util_script}" create_tag "${github_release_opt[@]}" \
+    "${RELEASE_VERSION}" tink-java
   popd
 }
 
