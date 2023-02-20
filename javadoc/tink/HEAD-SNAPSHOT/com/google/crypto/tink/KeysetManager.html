@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":42,"i3":10,"i4":42,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":42,"i11":42,"i12":10,"i13":9,"i14":9};
+var methods = {"i0":10,"i1":42,"i2":42,"i3":10,"i4":42,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":42,"i11":42,"i12":10,"i13":9,"i14":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -144,7 +144,9 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <td class="colFirst"><code><a href="../../../../com/google/crypto/tink/KeysetManager.html" title="class in com.google.crypto.tink">KeysetManager</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/KeysetManager.html#add-com.google.crypto.tink.tinkkey.KeyHandle-com.google.crypto.tink.tinkkey.KeyAccess-">add</a></span>(<a href="../../../../com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey">KeyHandle</a>&nbsp;keyHandle,
    <a href="../../../../com/google/crypto/tink/tinkkey/KeyAccess.html" title="class in com.google.crypto.tink.tinkkey">KeyAccess</a>&nbsp;access)</code>
-<div class="block">Adds the input <code>KeyHandle</code> to the existing keyset with <code>OutputPrefixType.TINK</code>.</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
+<div class="block"><span class="deprecationComment">Use KeysetManager.add(KeyHandle) instead.</span></div>
+</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
@@ -380,9 +382,11 @@ public&nbsp;<a href="../../../../com/google/crypto/tink/KeysetManager.html" titl
 <li class="blockList">
 <h4>add</h4>
 <pre>@CanIgnoreReturnValue
+ <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
 public&nbsp;<a href="../../../../com/google/crypto/tink/KeysetManager.html" title="class in com.google.crypto.tink">KeysetManager</a>&nbsp;add(<a href="../../../../com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey">KeyHandle</a>&nbsp;keyHandle,
-                                               <a href="../../../../com/google/crypto/tink/tinkkey/KeyAccess.html" title="class in com.google.crypto.tink.tinkkey">KeyAccess</a>&nbsp;access)
-                                        throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+                                                            <a href="../../../../com/google/crypto/tink/tinkkey/KeyAccess.html" title="class in com.google.crypto.tink.tinkkey">KeyAccess</a>&nbsp;access)
+                                                     throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">Use KeysetManager.add(KeyHandle) instead.</span></div>
 <div class="block">Adds the input <code>KeyHandle</code> to the existing keyset with <code>OutputPrefixType.TINK</code>.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
