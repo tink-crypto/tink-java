@@ -71,6 +71,6 @@ fi
 
 pushd "${TMP_DIR}"
 # Create a release branch.
-"${RELEASE_UTIL_SCRIPT}" create_branch "${GITHUB_RELEASE_UTIL_OPTS[@]}" \
+"${RELEASE_UTIL_SCRIPT}" "${GITHUB_RELEASE_UTIL_OPTS[@]}" create_branch \
   "${RELEASE_VERSION}" tink-java
 popd
