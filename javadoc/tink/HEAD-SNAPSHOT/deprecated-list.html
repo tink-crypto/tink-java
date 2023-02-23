@@ -344,21 +344,8 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colOne"><a href="com/google/crypto/tink/KeysetManager.html#add-com.google.crypto.tink.proto.KeyTemplate-">com.google.crypto.tink.KeysetManager.add(KeyTemplate)</a>
-<div class="block"><span class="deprecationComment">This method takes a KeyTemplate proto, which is an internal implementation detail.
-     Please use the add method that takes a <a href="com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink"><code>KeyTemplate</code></a> POJO.</span></div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/Registry.html#addCatalogue-java.lang.String-com.google.crypto.tink.Catalogue-">com.google.crypto.tink.Registry.addCatalogue(String, Catalogue&lt;?&gt;)</a>
 <div class="block"><span class="deprecationComment">Catalogues are no longer supported.</span></div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colOne"><a href="com/google/crypto/tink/KeysetManager.html#addNewKey-com.google.crypto.tink.proto.KeyTemplate-boolean-">com.google.crypto.tink.KeysetManager.addNewKey(KeyTemplate, boolean)</a>
-<div class="block"><span class="deprecationComment">Please use <a href="com/google/crypto/tink/KeysetManager.html#add-com.google.crypto.tink.proto.KeyTemplate-"><code>KeysetManager.add(com.google.crypto.tink.proto.KeyTemplate)</code></a>. This method adds a new key and when <code>asPrimary</code> is
-     true immediately promotes it to primary. However, when you do keyset rotation, you almost
-     never want to make the new key primary, because old binaries don't know the new key yet.</span></div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -524,65 +511,53 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><a href="com/google/crypto/tink/KeysetManager.html#promote-int-">com.google.crypto.tink.KeysetManager.promote(int)</a>
-<div class="block"><span class="deprecationComment">use <code>setPrimary</code></span></div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/KeysetHandle.html#readNoSecret-byte:A-">com.google.crypto.tink.KeysetHandle.readNoSecret(byte[])</a>
 <div class="block"><span class="deprecationComment">Use <code>TinkProtoKeysetFormat.parseKeysetWithoutSecret(serialized)</code> instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/Registry.html#registerKeyManager-java.lang.String-com.google.crypto.tink.KeyManager-">com.google.crypto.tink.Registry.registerKeyManager(String, KeyManager&lt;P&gt;)</a>
 <div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/Registry.html#registerKeyManager-com.google.crypto.tink.KeyManager-"><code>registerKeyManager(KeyManager&lt;P&gt;)</code></a></span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/Registry.html#registerKeyManager-java.lang.String-com.google.crypto.tink.KeyManager-boolean-">com.google.crypto.tink.Registry.registerKeyManager(String, KeyManager&lt;P&gt;, boolean)</a>
 <div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/Registry.html#registerKeyManager-com.google.crypto.tink.KeyManager-boolean-"><code>registerKeyManager(KeyManager&lt;P&gt;, boolean)</code></a></span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/mac/MacConfig.html#registerStandardKeyTypes--">com.google.crypto.tink.mac.MacConfig.registerStandardKeyTypes()</a>
 <div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/mac/MacConfig.html#register--"><code>MacConfig.register()</code></a></span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/hybrid/HybridEncryptConfig.html#registerStandardKeyTypes--">com.google.crypto.tink.hybrid.HybridEncryptConfig.registerStandardKeyTypes()</a>
 <div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/Config.html#register-com.google.crypto.tink.proto.RegistryConfig-"><code>Config.register(com.google.crypto.tink.proto.RegistryConfig)</code></a></span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/hybrid/HybridDecryptConfig.html#registerStandardKeyTypes--">com.google.crypto.tink.hybrid.HybridDecryptConfig.registerStandardKeyTypes()</a>
 <div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/Config.html#register-com.google.crypto.tink.proto.RegistryConfig-"><code>Config.register(com.google.crypto.tink.proto.RegistryConfig)</code></a></span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/signature/PublicKeyVerifyConfig.html#registerStandardKeyTypes--">com.google.crypto.tink.signature.PublicKeyVerifyConfig.registerStandardKeyTypes()</a>
 <div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/Config.html#register-com.google.crypto.tink.proto.RegistryConfig-"><code>Config.register(com.google.crypto.tink.proto.RegistryConfig)</code></a></span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/signature/PublicKeySignConfig.html#registerStandardKeyTypes--">com.google.crypto.tink.signature.PublicKeySignConfig.registerStandardKeyTypes()</a>
 <div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/Config.html#register-com.google.crypto.tink.proto.RegistryConfig-"><code>Config.register(com.google.crypto.tink.proto.RegistryConfig)</code></a></span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/aead/AeadConfig.html#registerStandardKeyTypes--">com.google.crypto.tink.aead.AeadConfig.registerStandardKeyTypes()</a>
 <div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/aead/AeadConfig.html#register--"><code>AeadConfig.register()</code></a></span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/KeysetHandle.Builder.html#removeAt-int-">com.google.crypto.tink.KeysetHandle.Builder.removeAt(int)</a>
 <div class="block"><span class="deprecationComment">Use <a href="com/google/crypto/tink/KeysetHandle.Builder.html#deleteAt-int-"><code>KeysetHandle.Builder.deleteAt(int)</code></a> or <a href="com/google/crypto/tink/KeysetHandle.Builder.html#getAt-int-"><code>KeysetHandle.Builder.getAt(int)</code></a> instead.</span></div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colOne"><a href="com/google/crypto/tink/KeysetManager.html#rotate-com.google.crypto.tink.proto.KeyTemplate-">com.google.crypto.tink.KeysetManager.rotate(KeyTemplate)</a>
-<div class="block"><span class="deprecationComment">Please use <a href="com/google/crypto/tink/KeysetManager.html#add-com.google.crypto.tink.proto.KeyTemplate-"><code>KeysetManager.add(com.google.crypto.tink.proto.KeyTemplate)</code></a>. This method adds a new key and immediately promotes it to
-     primary. However, when you do keyset rotation, you almost never want to make the new key
-     primary, because old binaries don't know the new key yet.</span></div>
 </td>
 </tr>
 <tr class="altColor">
