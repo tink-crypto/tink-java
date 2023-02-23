@@ -19284,9 +19284,7 @@
 <dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/NoSecretKeysetHandle.html" title="class in com.google.crypto.tink"><span class="typeNameLink">NoSecretKeysetHandle</span></a> - Class in <a href="com/google/crypto/tink/package-summary.html">com.google.crypto.tink</a></dt>
 <dd>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/KeysetHandle.html#readNoSecret-com.google.crypto.tink.KeysetReader-"><code>KeysetHandle.readNoSecret(com.google.crypto.tink.KeysetReader)</code></a> instead</span></div>
-</div>
+<div class="block">Static methods for reading cleartext keysets that don't contain any secret key material.</div>
 </dd>
 </dl>
 <a name="I:O">
@@ -19793,7 +19791,7 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/NoSecretKeysetHandle.html#parseFrom-byte:A-">parseFrom(byte[])</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/NoSecretKeysetHandle.html" title="class in com.google.crypto.tink">NoSecretKeysetHandle</a></dt>
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/NoSecretKeysetHandle.html#read-com.google.crypto.tink.KeysetReader-"><code>NoSecretKeysetHandle.read(com.google.crypto.tink.KeysetReader)</code></a> instead</span></div>
+<div class="block"><span class="deprecationComment">call <a href="com/google/crypto/tink/TinkProtoKeysetFormat.html#parseKeysetWithoutSecret-byte:A-"><code>TinkProtoKeysetFormat.parseKeysetWithoutSecret(byte[])</code></a> instead</span></div>
 </div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/AesCmacKey.html#parseFrom-java.nio.ByteBuffer-">parseFrom(ByteBuffer)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/AesCmacKey.html" title="class in com.google.crypto.tink.proto">AesCmacKey</a></dt>
@@ -22378,8 +22376,8 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/NoSecretKeysetHandle.html#read-com.google.crypto.tink.KeysetReader-">read(KeysetReader)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/NoSecretKeysetHandle.html" title="class in com.google.crypto.tink">NoSecretKeysetHandle</a></dt>
 <dd>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
-&nbsp;</dd>
+<div class="block">Note: we recommend to avoid this function (and use <code>TinkProtoKeysetFormat#parseKeysetWithoutSecret</code> instead).</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/SignaturePemKeysetReader.html#read--">read()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/SignaturePemKeysetReader.html" title="class in com.google.crypto.tink.signature">SignaturePemKeysetReader</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/RewindableReadableByteChannel.html#read-java.nio.ByteBuffer-">read(ByteBuffer)</a></span> - Method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/RewindableReadableByteChannel.html" title="class in com.google.crypto.tink.subtle">RewindableReadableByteChannel</a></dt>
