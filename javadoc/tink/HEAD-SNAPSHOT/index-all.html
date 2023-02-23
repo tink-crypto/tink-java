@@ -16983,10 +16983,14 @@
 <dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/subtle/Kwp.html" title="class in com.google.crypto.tink.subtle"><span class="typeNameLink">Kwp</span></a> - Class in <a href="com/google/crypto/tink/subtle/package-summary.html">com.google.crypto.tink.subtle</a></dt>
 <dd>
-<div class="block">Implements the key wrapping primitive KWP defined in NIST SP 800 38f.</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>
+<div class="block"><span class="deprecationComment">Tink does not support KeyWrap anymore. This implementation was fallback code for old
+     providers that did not implement KWP. It implements the same functionality as <code>Cipher.getInstance("AESWRAPPAD");</code>. Some provider use a different algorithm name: <code>Cipher.getInstance("AES/KWP/NoPadding");</code>.</span></div>
+</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/Kwp.html#Kwp-byte:A-">Kwp(byte[])</a></span> - Constructor for class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/Kwp.html" title="class in com.google.crypto.tink.subtle">Kwp</a></dt>
 <dd>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 <div class="block">Construct a new Instance for KWP.</div>
 </dd>
 </dl>
@@ -26280,6 +26284,7 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/Kwp.html#unwrap-byte:A-">unwrap(byte[])</a></span> - Method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/Kwp.html" title="class in com.google.crypto.tink.subtle">Kwp</a></dt>
 <dd>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 <div class="block">Unwraps a wrapped key.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/ChunkedMacComputation.html#update-java.nio.ByteBuffer-">update(ByteBuffer)</a></span> - Method in interface com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/ChunkedMacComputation.html" title="interface in com.google.crypto.tink.mac">ChunkedMacComputation</a></dt>
@@ -27076,6 +27081,7 @@ the order they are declared.</div>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/Kwp.html#wrap-byte:A-">wrap(byte[])</a></span> - Method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/Kwp.html" title="class in com.google.crypto.tink.subtle">Kwp</a></dt>
 <dd>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 <div class="block">Wraps some key material <code>data</code>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/prf/PrfImpl.html#wrap-com.google.crypto.tink.subtle.prf.StreamingPrf-">wrap(StreamingPrf)</a></span> - Static method in class com.google.crypto.tink.subtle.prf.<a href="com/google/crypto/tink/subtle/prf/PrfImpl.html" title="class in com.google.crypto.tink.subtle.prf">PrfImpl</a></dt>
