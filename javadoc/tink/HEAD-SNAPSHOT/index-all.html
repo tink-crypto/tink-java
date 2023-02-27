@@ -1826,7 +1826,6 @@
 <dl>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/tinkkey/KeyAccess.html#canAccessSecret--">canAccessSecret()</a></span> - Method in class com.google.crypto.tink.tinkkey.<a href="com/google/crypto/tink/tinkkey/KeyAccess.html" title="class in com.google.crypto.tink.tinkkey">KeyAccess</a></dt>
 <dd>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 <div class="block">Returns true if the <code>KeyAccess</code> instance grants access to a key's secret</div>
 </dd>
 <dt><a href="com/google/crypto/tink/Catalogue.html" title="interface in com.google.crypto.tink"><span class="typeNameLink">Catalogue</span></a>&lt;<a href="com/google/crypto/tink/Catalogue.html" title="type parameter in Catalogue">P</a>&gt; - Interface in <a href="com/google/crypto/tink/package-summary.html">com.google.crypto.tink</a></dt>
@@ -4079,15 +4078,13 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/tinkkey/KeyHandle.html#createFromKey-com.google.crypto.tink.tinkkey.TinkKey-com.google.crypto.tink.tinkkey.KeyAccess-">createFromKey(TinkKey, KeyAccess)</a></span> - Static method in class com.google.crypto.tink.tinkkey.<a href="com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey">KeyHandle</a></dt>
 <dd>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 <div class="block">Returns a <a href="com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey"><code>KeyHandle</code></a> instance with <code>key</code> as the underlying <a href="com/google/crypto/tink/tinkkey/TinkKey.html" title="interface in com.google.crypto.tink.tinkkey"><code>TinkKey</code></a> if the
  caller provides the correct <a href="com/google/crypto/tink/tinkkey/KeyAccess.html" title="class in com.google.crypto.tink.tinkkey"><code>KeyAccess</code></a> instance.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/tinkkey/KeyHandle.html#createFromKey-com.google.crypto.tink.proto.KeyData-com.google.crypto.tink.KeyTemplate.OutputPrefixType-">createFromKey(KeyData, KeyTemplate.OutputPrefixType)</a></span> - Static method in class com.google.crypto.tink.tinkkey.<a href="com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey">KeyHandle</a></dt>
 <dd>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="block"><span class="deprecationComment">Use the KeyHandle(TinkKey, KeyAccess) constructor instead.</span></div>
-</div>
+<div class="block">Returns a <a href="com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey"><code>KeyHandle</code></a> instance where the underlying <a href="com/google/crypto/tink/tinkkey/TinkKey.html" title="interface in com.google.crypto.tink.tinkkey"><code>TinkKey</code></a> wraps the input
+ <code>keyData</code>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/MacKeyTemplates.html#createHmacKeyTemplate-int-int-com.google.crypto.tink.proto.HashType-">createHmacKeyTemplate(int, int, HashType)</a></span> - Static method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/MacKeyTemplates.html" title="class in com.google.crypto.tink.mac">MacKeyTemplates</a></dt>
 <dd>&nbsp;</dd>
@@ -5531,7 +5528,6 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/tinkkey/KeyHandle.html#generateNew-com.google.crypto.tink.KeyTemplate-">generateNew(KeyTemplate)</a></span> - Static method in class com.google.crypto.tink.tinkkey.<a href="com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey">KeyHandle</a></dt>
 <dd>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 <div class="block">Generates a new <a href="com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey"><code>KeyHandle</code></a> that contains a fresh key generated according to <code>keyTemplate</code>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/X25519.html#generatePrivateKey--">generatePrivateKey()</a></span> - Static method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/X25519.html" title="class in com.google.crypto.tink.subtle">X25519</a></dt>
@@ -8396,7 +8392,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/tinkkey/KeyHandle.html#getId--">getId()</a></span> - Method in class com.google.crypto.tink.tinkkey.<a href="com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey">KeyHandle</a></dt>
 <dd>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 <div class="block">Returns the key ID of this key.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/PrimitiveSet.Entry.html#getIdentifier--">getIdentifier()</a></span> - Method in class com.google.crypto.tink.<a href="com/google/crypto/tink/PrimitiveSet.Entry.html" title="class in com.google.crypto.tink">PrimitiveSet.Entry</a></dt>
@@ -8670,7 +8665,6 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/tinkkey/KeyHandle.html#getKey-com.google.crypto.tink.tinkkey.KeyAccess-">getKey(KeyAccess)</a></span> - Method in class com.google.crypto.tink.tinkkey.<a href="com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey">KeyHandle</a></dt>
 <dd>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 <div class="block">Returns the underlying <a href="com/google/crypto/tink/tinkkey/TinkKey.html" title="interface in com.google.crypto.tink.tinkkey"><code>TinkKey</code></a> key if <code>access</code> is a <a href="com/google/crypto/tink/tinkkey/SecretKeyAccess.html" title="class in com.google.crypto.tink.tinkkey"><code>SecretKeyAccess</code></a> and
  the key has a secret, or if the key does not have a secret, otherwise throws a <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security"><code>GeneralSecurityException</code></a>.</div>
 </dd>
@@ -9241,12 +9235,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/tinkkey/KeyHandle.html#getKeyTemplate--">getKeyTemplate()</a></span> - Method in class com.google.crypto.tink.tinkkey.<a href="com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey">KeyHandle</a></dt>
 <dd>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 <div class="block">Returns the <a href="com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink"><code>KeyTemplate</code></a> of the underlying <a href="com/google/crypto/tink/tinkkey/TinkKey.html" title="interface in com.google.crypto.tink.tinkkey"><code>TinkKey</code></a>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/tinkkey/TinkKey.html#getKeyTemplate--">getKeyTemplate()</a></span> - Method in interface com.google.crypto.tink.tinkkey.<a href="com/google/crypto/tink/tinkkey/TinkKey.html" title="interface in com.google.crypto.tink.tinkkey">TinkKey</a></dt>
 <dd>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 <div class="block">A <code>TinkKey</code> should know the <code>KeyTemplate</code> from which it was generated,
  which in turn specifies the cryptographic algorithm in which the <code>TinkKey</code> should
  be used.</div>
@@ -12211,7 +12203,6 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/tinkkey/KeyHandle.html#getStatus--">getStatus()</a></span> - Method in class com.google.crypto.tink.tinkkey.<a href="com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey">KeyHandle</a></dt>
 <dd>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 <div class="block">Returns the status of the key.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/Keyset.Key.Builder.html#getStatusValue--">getStatusValue()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/Keyset.Key.Builder.html" title="class in com.google.crypto.tink.proto">Keyset.Key.Builder</a></dt>
@@ -14647,12 +14638,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/tinkkey/KeyHandle.html#hasSecret--">hasSecret()</a></span> - Method in class com.google.crypto.tink.tinkkey.<a href="com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey">KeyHandle</a></dt>
 <dd>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 <div class="block">Returns <code>true</code> if the underlying <a href="com/google/crypto/tink/tinkkey/TinkKey.html" title="interface in com.google.crypto.tink.tinkkey"><code>TinkKey</code></a> has a secret.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/tinkkey/TinkKey.html#hasSecret--">hasSecret()</a></span> - Method in interface com.google.crypto.tink.tinkkey.<a href="com/google/crypto/tink/tinkkey/TinkKey.html" title="interface in com.google.crypto.tink.tinkkey">TinkKey</a></dt>
 <dd>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 <div class="block">Returns true if the key contains secret key material, and false otherwise.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/MutableSerializationRegistry.html#hasSerializerForKey-KeyT-java.lang.Class-">hasSerializerForKey(KeyT, Class&lt;SerializationT&gt;)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/MutableSerializationRegistry.html" title="class in com.google.crypto.tink.internal">MutableSerializationRegistry</a></dt>
@@ -15249,7 +15238,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/tinkkey/SecretKeyAccess.html#insecureSecretAccess--">insecureSecretAccess()</a></span> - Static method in class com.google.crypto.tink.tinkkey.<a href="com/google/crypto/tink/tinkkey/SecretKeyAccess.html" title="class in com.google.crypto.tink.tinkkey">SecretKeyAccess</a></dt>
 <dd>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 <div class="block">Returns a <code>KeyAccess</code> instance where <code>canAccessSecret()</code> returns true.</div>
 </dd>
 <dt><a href="com/google/crypto/tink/InsecureSecretKeyAccess.html" title="class in com.google.crypto.tink"><span class="typeNameLink">InsecureSecretKeyAccess</span></a> - Class in <a href="com/google/crypto/tink/package-summary.html">com.google.crypto.tink</a></dt>
@@ -16526,9 +16514,7 @@
 <dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/tinkkey/KeyAccess.html" title="class in com.google.crypto.tink.tinkkey"><span class="typeNameLink">KeyAccess</span></a> - Class in <a href="com/google/crypto/tink/tinkkey/package-summary.html">com.google.crypto.tink.tinkkey</a></dt>
 <dd>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="block"><span class="deprecationComment">Use <a href="com/google/crypto/tink/SecretKeyAccess.html" title="class in com.google.crypto.tink"><code>SecretKeyAccess</code></a> instead.</span></div>
-</div>
+<div class="block">An access token for <code>TinkKey</code>.</div>
 </dd>
 <dt><a href="com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">KeyData</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>
@@ -16622,19 +16608,15 @@
 </dd>
 <dt><a href="com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey"><span class="typeNameLink">KeyHandle</span></a> - Class in <a href="com/google/crypto/tink/tinkkey/package-summary.html">com.google.crypto.tink.tinkkey</a></dt>
 <dd>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="block"><span class="deprecationComment">Use <a href="com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink"><code>Key</code></a> instead.</span></div>
-</div>
+<div class="block">Wraps a <a href="com/google/crypto/tink/tinkkey/TinkKey.html" title="interface in com.google.crypto.tink.tinkkey"><code>TinkKey</code></a> and enforces access to the underlying <a href="com/google/crypto/tink/tinkkey/TinkKey.html" title="interface in com.google.crypto.tink.tinkkey"><code>TinkKey</code></a> with <a href="com/google/crypto/tink/tinkkey/KeyAccess.html" title="class in com.google.crypto.tink.tinkkey"><code>KeyAccess</code></a>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/tinkkey/KeyHandle.html#KeyHandle-com.google.crypto.tink.tinkkey.TinkKey-com.google.crypto.tink.tinkkey.KeyHandle.KeyStatusType-int-">KeyHandle(TinkKey, KeyHandle.KeyStatusType, int)</a></span> - Constructor for class com.google.crypto.tink.tinkkey.<a href="com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey">KeyHandle</a></dt>
 <dd>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 <div class="block">Constructor intended for Tink internal purposes; allows one to set all the member variables of
  a <a href="com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey"><code>KeyHandle</code></a>.</div>
 </dd>
 <dt><a href="com/google/crypto/tink/tinkkey/KeyHandle.KeyStatusType.html" title="enum in com.google.crypto.tink.tinkkey"><span class="typeNameLink">KeyHandle.KeyStatusType</span></a> - Enum in <a href="com/google/crypto/tink/tinkkey/package-summary.html">com.google.crypto.tink.tinkkey</a></dt>
 <dd>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 <div class="block">KeyStatusType is metadata associated to a key which is only meaningful when the key is part of
  a <code>Keyset</code>.</div>
 </dd>
@@ -22195,7 +22177,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/tinkkey/KeyAccess.html#publicAccess--">publicAccess()</a></span> - Static method in class com.google.crypto.tink.tinkkey.<a href="com/google/crypto/tink/tinkkey/KeyAccess.html" title="class in com.google.crypto.tink.tinkkey">KeyAccess</a></dt>
 <dd>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 <div class="block">Returns a <code>KeyAccess</code> instance where <code>canAccessSecret()</code> returns false.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/X25519.html#publicFromPrivate-byte:A-">publicFromPrivate(byte[])</a></span> - Static method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/X25519.html" title="class in com.google.crypto.tink.subtle">X25519</a></dt>
@@ -23125,9 +23106,7 @@
 </dd>
 <dt><a href="com/google/crypto/tink/tinkkey/SecretKeyAccess.html" title="class in com.google.crypto.tink.tinkkey"><span class="typeNameLink">SecretKeyAccess</span></a> - Class in <a href="com/google/crypto/tink/tinkkey/package-summary.html">com.google.crypto.tink.tinkkey</a></dt>
 <dd>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="block"><span class="deprecationComment">Use <a href="com/google/crypto/tink/InsecureSecretKeyAccess.html" title="class in com.google.crypto.tink"><code>InsecureSecretKeyAccess</code></a> instead.</span></div>
-</div>
+<div class="block">A class used to generate <code>KeyAccess</code> instances granting secret access.</div>
 </dd>
 <dt><a href="com/google/crypto/tink/subtle/SelfKeyTestValidators.html" title="class in com.google.crypto.tink.subtle"><span class="typeNameLink">SelfKeyTestValidators</span></a> - Class in <a href="com/google/crypto/tink/subtle/package-summary.html">com.google.crypto.tink.subtle</a></dt>
 <dd>
@@ -25872,9 +25851,7 @@
 </dd>
 <dt><a href="com/google/crypto/tink/tinkkey/TinkKey.html" title="interface in com.google.crypto.tink.tinkkey"><span class="typeNameLink">TinkKey</span></a> - Interface in <a href="com/google/crypto/tink/tinkkey/package-summary.html">com.google.crypto.tink.tinkkey</a></dt>
 <dd>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="block"><span class="deprecationComment">Use <a href="com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink"><code>Key</code></a> instead.</span></div>
-</div>
+<div class="block"><code>TinkKey</code> represents how Tink views individual keys.</div>
 </dd>
 <dt><a href="com/google/crypto/tink/TinkProtoKeysetFormat.html" title="class in com.google.crypto.tink"><span class="typeNameLink">TinkProtoKeysetFormat</span></a> - Class in <a href="com/google/crypto/tink/package-summary.html">com.google.crypto.tink</a></dt>
 <dd>
@@ -26664,7 +26641,6 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/tinkkey/KeyHandle.KeyStatusType.html#valueOf-java.lang.String-">valueOf(String)</a></span> - Static method in enum com.google.crypto.tink.tinkkey.<a href="com/google/crypto/tink/tinkkey/KeyHandle.KeyStatusType.html" title="enum in com.google.crypto.tink.tinkkey">KeyHandle.KeyStatusType</a></dt>
 <dd>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 <div class="block">Returns the enum constant of this type with the specified name.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/config/internal/TinkFipsUtil.AlgorithmFipsCompatibility.html#values--">values()</a></span> - Static method in enum com.google.crypto.tink.config.internal.<a href="com/google/crypto/tink/config/internal/TinkFipsUtil.AlgorithmFipsCompatibility.html" title="enum in com.google.crypto.tink.config.internal">TinkFipsUtil.AlgorithmFipsCompatibility</a></dt>
@@ -26780,7 +26756,6 @@ the order they are declared.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/tinkkey/KeyHandle.KeyStatusType.html#values--">values()</a></span> - Static method in enum com.google.crypto.tink.tinkkey.<a href="com/google/crypto/tink/tinkkey/KeyHandle.KeyStatusType.html" title="enum in com.google.crypto.tink.tinkkey">KeyHandle.KeyStatusType</a></dt>
 <dd>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 <div class="block">Returns an array containing the constants of this enum type, in
 the order they are declared.</div>
 </dd>
