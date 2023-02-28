@@ -23,9 +23,9 @@ sh_test(
         "@platforms//os:linux",
     ],
     args = [
-        "$(rootpath :maven_deploy_library)",
-        "$(rootpath //kokoro/testutils:test_utils)",
-        "$(rootpath :maven_settings)",
+        "$(rlocationpath :maven_deploy_library)",
+        "$(rlocationpath //kokoro/testutils:test_utils)",
+        "$(rlocationpath :maven_settings)",
     ],
     data = [
         ":maven_deploy_library",

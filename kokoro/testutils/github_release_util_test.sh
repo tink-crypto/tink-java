@@ -16,7 +16,7 @@
 
 DEFAULT_DIR="$(pwd)"
 if [[ -n "${TEST_SRCDIR}" ]]; then
-  DEFAULT_DIR="${TEST_SRCDIR}/tink_java"
+  DEFAULT_DIR="${TEST_SRCDIR}"
 fi
 readonly DEFAULT_DIR
 readonly CLI="${DEFAULT_DIR}/${1:-"github_release_util.sh"}"

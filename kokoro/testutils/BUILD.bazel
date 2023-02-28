@@ -17,8 +17,8 @@ sh_test(
     size = "small",
     srcs = ["github_release_util_test.sh"],
     args = [
-        "$(rootpath :github_release_util.sh)",
-        "$(rootpath :test_utils)",
+        "$(rlocationpath :github_release_util.sh)",
+        "$(rlocationpath :test_utils)",
     ],
     data = [
         ":github_release_util.sh",
