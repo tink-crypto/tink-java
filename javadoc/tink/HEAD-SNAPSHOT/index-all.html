@@ -867,10 +867,18 @@
 <dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/proto/AesCtrHmacAead.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">AesCtrHmacAead</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.html" title="class in com.google.crypto.tink.aead"><span class="typeNameLink">AesCtrHmacAeadKey</span></a> - Class in <a href="com/google/crypto/tink/aead/package-summary.html">com.google.crypto.tink.aead</a></dt>
+<dd>
+<div class="block">Represents an AES-CTR-HMAC key used for computing AEAD.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/proto/AesCtrHmacAeadKey.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">AesCtrHmacAeadKey</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>
 <div class="block">
  key_type: type.googleapis.com/google.crypto.tink.AesCtrHmacAeadKey</div>
+</dd>
+<dt><a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.Builder.html" title="class in com.google.crypto.tink.aead"><span class="typeNameLink">AesCtrHmacAeadKey.Builder</span></a> - Class in <a href="com/google/crypto/tink/aead/package-summary.html">com.google.crypto.tink.aead</a></dt>
+<dd>
+<div class="block">Builder for AesCtrHmacAeadKey.</div>
 </dd>
 <dt><a href="com/google/crypto/tink/proto/AesCtrHmacAeadKey.Builder.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">AesCtrHmacAeadKey.Builder</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>
@@ -889,7 +897,7 @@
 <dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/aead/AesCtrHmacAeadKeyManager.html" title="class in com.google.crypto.tink.aead"><span class="typeNameLink">AesCtrHmacAeadKeyManager</span></a> - Class in <a href="com/google/crypto/tink/aead/package-summary.html">com.google.crypto.tink.aead</a></dt>
 <dd>
-<div class="block">This key manager generates new <a href="com/google/crypto/tink/proto/AesCtrHmacAeadKey.html" title="class in com.google.crypto.tink.proto"><code>AesCtrHmacAeadKey</code></a> keys and produces new instances of
+<div class="block">This key manager generates new <a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.html" title="class in com.google.crypto.tink.aead"><code>AesCtrHmacAeadKey</code></a> keys and produces new instances of
  <a href="com/google/crypto/tink/subtle/EncryptThenAuthenticate.html" title="class in com.google.crypto.tink.subtle"><code>EncryptThenAuthenticate</code></a>.</div>
 </dd>
 <dt><a href="com/google/crypto/tink/proto/AesCtrHmacAeadKeyOrBuilder.html" title="interface in com.google.crypto.tink.proto"><span class="typeNameLink">AesCtrHmacAeadKeyOrBuilder</span></a> - Interface in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
@@ -1339,6 +1347,8 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/internal/AesUtil.html#BLOCK_SIZE">BLOCK_SIZE</a></span> - Static variable in class com.google.crypto.tink.mac.internal.<a href="com/google/crypto/tink/mac/internal/AesUtil.html" title="class in com.google.crypto.tink.mac.internal">AesUtil</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.Builder.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadKey.Builder</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrHmacAeadParameters.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrHmacAeadParameters.Builder.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadParameters.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesEaxKey.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesEaxKey.Builder.html" title="class in com.google.crypto.tink.aead">AesEaxKey.Builder</a></dt>
@@ -1578,6 +1588,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/SignaturePemKeysetReader.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/SignaturePemKeysetReader.Builder.html" title="class in com.google.crypto.tink.signature">SignaturePemKeysetReader.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/util/KeysDownloader.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.util.<a href="com/google/crypto/tink/util/KeysDownloader.Builder.html" title="class in com.google.crypto.tink.util">KeysDownloader.Builder</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.html#builder--">builder()</a></span> - Static method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrHmacAeadParameters.html#builder--">builder()</a></span> - Static method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrHmacAeadParameters.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadParameters</a></dt>
 <dd>&nbsp;</dd>
@@ -5303,6 +5315,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/util/Bytes.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class com.google.crypto.tink.util.<a href="com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey(Key)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadKey</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesEaxKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey(Key)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesEaxKey.html" title="class in com.google.crypto.tink.aead">AesEaxKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey(Key)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmKey.html" title="class in com.google.crypto.tink.aead">AesGcmKey</a></dt>
@@ -5697,6 +5711,10 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/AesCmacKey.html#getAesKey--">getAesKey()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/AesCmacKey.html" title="class in com.google.crypto.tink.mac">AesCmacKey</a></dt>
 <dd>
 <div class="block">Returns the underlying AES key.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.html#getAesKeyBytes--">getAesKeyBytes()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadKey</a></dt>
+<dd>
+<div class="block">Returns the underlying AES key bytes.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrHmacAeadParameters.html#getAesKeySizeBytes--">getAesKeySizeBytes()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrHmacAeadParameters.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadParameters</a></dt>
 <dd>&nbsp;</dd>
@@ -8345,6 +8363,10 @@
 <dd>
 <div class="block"><code>.google.crypto.tink.HmacKey hmac_key = 3;</code></div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.html#getHmacKeyBytes--">getHmacKeyBytes()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadKey</a></dt>
+<dd>
+<div class="block">Returns the underlying HMAC key bytes.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/AesCtrHmacAeadKeyFormat.Builder.html#getHmacKeyFormat--">getHmacKeyFormat()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/AesCtrHmacAeadKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">AesCtrHmacAeadKeyFormat.Builder</a></dt>
 <dd>
 <div class="block"><code>.google.crypto.tink.HmacKeyFormat hmac_key_format = 2;</code></div>
@@ -8431,6 +8453,8 @@
 <div class="block">Returns the key ID of this key.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/PrimitiveSet.Entry.html#getIdentifier--">getIdentifier()</a></span> - Method in class com.google.crypto.tink.<a href="com/google/crypto/tink/PrimitiveSet.Entry.html" title="class in com.google.crypto.tink">PrimitiveSet.Entry</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.html#getIdRequirementOrNull--">getIdRequirementOrNull()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesEaxKey.html#getIdRequirementOrNull--">getIdRequirementOrNull()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesEaxKey.html" title="class in com.google.crypto.tink.aead">AesEaxKey</a></dt>
 <dd>&nbsp;</dd>
@@ -9890,6 +9914,8 @@
 <dd>
 <div class="block">Returns a <a href="com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util"><code>Bytes</code></a> instance which is prefixed to the ciphertext.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.html#getOutputPrefix--">getOutputPrefix()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadKey</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesEaxKey.html#getOutputPrefix--">getOutputPrefix()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesEaxKey.html" title="class in com.google.crypto.tink.aead">AesEaxKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmKey.html#getOutputPrefix--">getOutputPrefix()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmKey.html" title="class in com.google.crypto.tink.aead">AesGcmKey</a></dt>
@@ -10088,6 +10114,8 @@
 <dd>
 <div class="block">Returns the parameters of this key.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadKey</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesEaxKey.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesEaxKey.html" title="class in com.google.crypto.tink.aead">AesEaxKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmKey.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmKey.html" title="class in com.google.crypto.tink.aead">AesGcmKey</a></dt>
@@ -23243,6 +23271,8 @@
 <dd>
 <div class="block"><code>.google.crypto.tink.AesCtrKeyFormat aes_ctr_key_format = 1;</code></div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.Builder.html#setAesKeyBytes-com.google.crypto.tink.util.SecretBytes-">setAesKeyBytes(SecretBytes)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.Builder.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadKey.Builder</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/AesCmacKey.Builder.html#setAesKeyBytes-com.google.crypto.tink.util.SecretBytes-">setAesKeyBytes(SecretBytes)</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/AesCmacKey.Builder.html" title="class in com.google.crypto.tink.mac">AesCmacKey.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrHmacAeadParameters.Builder.html#setAesKeySizeBytes-int-">setAesKeySizeBytes(int)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrHmacAeadParameters.Builder.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadParameters.Builder</a></dt>
@@ -23879,6 +23909,8 @@
 <dd>
 <div class="block"><code>.google.crypto.tink.HmacKey hmac_key = 3;</code></div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.Builder.html#setHmacKeyBytes-com.google.crypto.tink.util.SecretBytes-">setHmacKeyBytes(SecretBytes)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.Builder.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadKey.Builder</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/AesCtrHmacAeadKeyFormat.Builder.html#setHmacKeyFormat-com.google.crypto.tink.proto.HmacKeyFormat-">setHmacKeyFormat(HmacKeyFormat)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/AesCtrHmacAeadKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">AesCtrHmacAeadKeyFormat.Builder</a></dt>
 <dd>
 <div class="block"><code>.google.crypto.tink.HmacKeyFormat hmac_key_format = 2;</code></div>
@@ -23905,6 +23937,8 @@
 <dd>
 <div class="block">Sets the HTTP transport.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.Builder.html#setIdRequirement-java.lang.Integer-">setIdRequirement(Integer)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.Builder.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadKey.Builder</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesEaxKey.Builder.html#setIdRequirement-java.lang.Integer-">setIdRequirement(Integer)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesEaxKey.Builder.html" title="class in com.google.crypto.tink.aead">AesEaxKey.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmKey.Builder.html#setIdRequirement-java.lang.Integer-">setIdRequirement(Integer)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmKey.Builder.html" title="class in com.google.crypto.tink.aead">AesGcmKey.Builder</a></dt>
@@ -24341,6 +24375,8 @@
 <div class="block">
  The following parameters are used to optimize RSA signature computation.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.Builder.html#setParameters-com.google.crypto.tink.aead.AesCtrHmacAeadParameters-">setParameters(AesCtrHmacAeadParameters)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrHmacAeadKey.Builder.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadKey.Builder</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesEaxKey.Builder.html#setParameters-com.google.crypto.tink.aead.AesEaxParameters-">setParameters(AesEaxParameters)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesEaxKey.Builder.html" title="class in com.google.crypto.tink.aead">AesEaxKey.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmKey.Builder.html#setParameters-com.google.crypto.tink.aead.AesGcmParameters-">setParameters(AesGcmParameters)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmKey.Builder.html" title="class in com.google.crypto.tink.aead">AesGcmKey.Builder</a></dt>
