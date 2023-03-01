@@ -8486,6 +8486,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/SignaturePrivateKey.html#getIdRequirementOrNull--">getIdRequirementOrNull()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/SignaturePrivateKey.html" title="class in com.google.crypto.tink.signature">SignaturePrivateKey</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/StreamingAeadKey.html#getIdRequirementOrNull--">getIdRequirementOrNull()</a></span> - Method in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/StreamingAeadKey.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadKey</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/Registry.html#getInputPrimitive-java.lang.Class-">getInputPrimitive(Class&lt;?&gt;)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink">Registry</a></dt>
 <dd>
 <div class="block">Returns the input primitive required when creating a <code>wrappedPrimitive</code>.</div>
@@ -10163,6 +10165,8 @@
 <dd>
 <div class="block">Returns the parameters of this key.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/StreamingAeadKey.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/StreamingAeadKey.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadKey</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/ParametersSerializer.html#getParametersClass--">getParametersClass()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/ParametersSerializer.html" title="class in com.google.crypto.tink.internal">ParametersSerializer</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/AesCmacKey.Builder.html#getParams--">getParams()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/AesCmacKey.Builder.html" title="class in com.google.crypto.tink.proto">AesCmacKey.Builder</a></dt>
@@ -14130,6 +14134,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/EcdsaParameters.html#hasIdRequirement--">hasIdRequirement()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/EcdsaParameters.html" title="class in com.google.crypto.tink.signature">EcdsaParameters</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/StreamingAeadParameters.html#hasIdRequirement--">hasIdRequirement()</a></span> - Method in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/StreamingAeadParameters.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/VerifiedJwt.html#hasIssuedAt--">hasIssuedAt()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/VerifiedJwt.html" title="class in com.google.crypto.tink.jwt">VerifiedJwt</a></dt>
 <dd>
 <div class="block">Returns true iff the <code>iat</code> claim is present.</div>
@@ -14859,6 +14865,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/AesCtrHmacAeadKeyFormat.html#HMAC_KEY_FORMAT_FIELD_NUMBER">HMAC_KEY_FORMAT_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/AesCtrHmacAeadKeyFormat.html" title="class in com.google.crypto.tink.proto">AesCtrHmacAeadKeyFormat</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/AesCtrHmacStreamingParams.html#HMAC_PARAMS_FIELD_NUMBER">HMAC_PARAMS_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/AesCtrHmacStreamingParams.html" title="class in com.google.crypto.tink.proto">AesCtrHmacStreamingParams</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/PrfConfig.html#HMAC_PRF_TYPE_URL">HMAC_PRF_TYPE_URL</a></span> - Static variable in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/PrfConfig.html" title="class in com.google.crypto.tink.prf">PrfConfig</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/MacKeyTemplates.html#HMAC_SHA256_128BITTAG">HMAC_SHA256_128BITTAG</a></span> - Static variable in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/MacKeyTemplates.html" title="class in com.google.crypto.tink.mac">MacKeyTemplates</a></dt>
 <dd>
@@ -25775,10 +25783,22 @@
      <code>StreamingAeadWrapper</code> instead.</span></div>
 </div>
 </dd>
+<dt><a href="com/google/crypto/tink/streamingaead/StreamingAeadKey.html" title="class in com.google.crypto.tink.streamingaead"><span class="typeNameLink">StreamingAeadKey</span></a> - Class in <a href="com/google/crypto/tink/streamingaead/package-summary.html">com.google.crypto.tink.streamingaead</a></dt>
+<dd>
+<div class="block">Represents functions to encrypt and decrypt data using a StreamingAead.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/StreamingAeadKey.html#StreamingAeadKey--">StreamingAeadKey()</a></span> - Constructor for class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/StreamingAeadKey.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadKey</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html" title="class in com.google.crypto.tink.streamingaead"><span class="typeNameLink">StreamingAeadKeyTemplates</span></a> - Class in <a href="com/google/crypto/tink/streamingaead/package-summary.html">com.google.crypto.tink.streamingaead</a></dt>
 <dd>
 <div class="block">Pre-generated <a href="com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> for <a href="com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink"><code>StreamingAead</code></a> keys.</div>
 </dd>
+<dt><a href="com/google/crypto/tink/streamingaead/StreamingAeadParameters.html" title="class in com.google.crypto.tink.streamingaead"><span class="typeNameLink">StreamingAeadParameters</span></a> - Class in <a href="com/google/crypto/tink/streamingaead/package-summary.html">com.google.crypto.tink.streamingaead</a></dt>
+<dd>
+<div class="block">Represents a description of a <a href="com/google/crypto/tink/streamingaead/StreamingAeadKey.html" title="class in com.google.crypto.tink.streamingaead"><code>StreamingAeadKey</code></a>.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/StreamingAeadParameters.html#StreamingAeadParameters--">StreamingAeadParameters()</a></span> - Constructor for class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/StreamingAeadParameters.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/streamingaead/StreamingAeadWrapper.html" title="class in com.google.crypto.tink.streamingaead"><span class="typeNameLink">StreamingAeadWrapper</span></a> - Class in <a href="com/google/crypto/tink/streamingaead/package-summary.html">com.google.crypto.tink.streamingaead</a></dt>
 <dd>
 <div class="block">StreamingAeadWrapper is the implementation of PrimitiveWrapper for the StreamingAead primitive.</div>
