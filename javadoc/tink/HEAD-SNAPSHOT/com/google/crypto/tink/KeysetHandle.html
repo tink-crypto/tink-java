@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":41,"i1":9,"i2":9,"i3":41,"i4":9,"i5":10,"i6":42,"i7":10,"i8":10,"i9":10,"i10":10,"i11":9,"i12":9,"i13":9,"i14":42,"i15":9,"i16":41,"i17":9,"i18":9,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10};
+var methods = {"i0":41,"i1":9,"i2":9,"i3":41,"i4":9,"i5":10,"i6":42,"i7":10,"i8":10,"i9":10,"i10":10,"i11":9,"i12":9,"i13":9,"i14":42,"i15":9,"i16":9,"i17":9,"i18":9,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -218,7 +218,10 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/google/crypto/tink/proto/KeysetInfo.html" title="class in com.google.crypto.tink.proto">KeysetInfo</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/KeysetHandle.html#getKeysetInfo--">getKeysetInfo</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/KeysetHandle.html#getKeysetInfo--">getKeysetInfo</a></span>()</code>
+<div class="block">Returns the <a href="../../../../com/google/crypto/tink/proto/KeysetInfo.html" title="class in com.google.crypto.tink.proto"><code>KeysetInfo</code></a> that doesn't contain actual key
+ material.</div>
+</td>
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/google/crypto/tink/KeysetHandle.Entry.html" title="class in com.google.crypto.tink">KeysetHandle.Entry</a></code></td>
@@ -275,9 +278,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <tr id="i16" class="altColor">
 <td class="colFirst"><code>static <a href="../../../../com/google/crypto/tink/KeysetHandle.html" title="class in com.google.crypto.tink">KeysetHandle</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/KeysetHandle.html#readNoSecret-byte:A-">readNoSecret</a></span>(byte[]&nbsp;serialized)</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Use <code>TinkProtoKeysetFormat.parseKeysetWithoutSecret(serialized)</code> instead.</span></div>
-</div>
+<div class="block">Tries to create a <a href="../../../../com/google/crypto/tink/KeysetHandle.html" title="class in com.google.crypto.tink"><code>KeysetHandle</code></a> from a serialized keyset which contains no secret key
+ material.</div>
 </td>
 </tr>
 <tr id="i17" class="rowColor">
@@ -476,11 +478,8 @@ public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.ht
 <li class="blockList">
 <h4>getKeysetInfo</h4>
 <pre>public&nbsp;<a href="../../../../com/google/crypto/tink/proto/KeysetInfo.html" title="class in com.google.crypto.tink.proto">KeysetInfo</a>&nbsp;getKeysetInfo()</pre>
-<dl>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the <a href="../../../../com/google/crypto/tink/proto/KeysetInfo.html" title="class in com.google.crypto.tink.proto"><code>KeysetInfo</code></a> that doesn't contain actual key
-     material.</dd>
-</dl>
+<div class="block">Returns the <a href="../../../../com/google/crypto/tink/proto/KeysetInfo.html" title="class in com.google.crypto.tink.proto"><code>KeysetInfo</code></a> that doesn't contain actual key
+ material.</div>
 </li>
 </ul>
 <a name="generateNew-com.google.crypto.tink.proto.KeyTemplate-">
@@ -615,15 +614,15 @@ public static final&nbsp;<a href="../../../../com/google/crypto/tink/KeysetHandl
 <ul class="blockList">
 <li class="blockList">
 <h4>readNoSecret</h4>
-<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
-public static final&nbsp;<a href="../../../../com/google/crypto/tink/KeysetHandle.html" title="class in com.google.crypto.tink">KeysetHandle</a>&nbsp;readNoSecret(byte[]&nbsp;serialized)
-                                                   throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">Use <code>TinkProtoKeysetFormat.parseKeysetWithoutSecret(serialized)</code> instead.</span></div>
+<pre>public static final&nbsp;<a href="../../../../com/google/crypto/tink/KeysetHandle.html" title="class in com.google.crypto.tink">KeysetHandle</a>&nbsp;readNoSecret(byte[]&nbsp;serialized)
+                                       throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
 <div class="block">Tries to create a <a href="../../../../com/google/crypto/tink/KeysetHandle.html" title="class in com.google.crypto.tink"><code>KeysetHandle</code></a> from a serialized keyset which contains no secret key
  material.
 
  <p>This can be used to load public keysets or envelope encryption keysets. Users that need to
- load cleartext keysets can use <a href="../../../../com/google/crypto/tink/CleartextKeysetHandle.html" title="class in com.google.crypto.tink"><code>CleartextKeysetHandle</code></a>.</div>
+ load cleartext keysets can use <a href="../../../../com/google/crypto/tink/CleartextKeysetHandle.html" title="class in com.google.crypto.tink"><code>CleartextKeysetHandle</code></a>.
+
+ <p>Note: new code should call <code>TinkProtoKeysetFormat(serialized)</code> instead.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a new <a href="../../../../com/google/crypto/tink/KeysetHandle.html" title="class in com.google.crypto.tink"><code>KeysetHandle</code></a> from <code>serialized</code> that is a serialized <a href="../../../../com/google/crypto/tink/proto/Keyset.html" title="class in com.google.crypto.tink.proto"><code>Keyset</code></a></dd>
@@ -701,9 +700,8 @@ public static final&nbsp;<a href="../../../../com/google/crypto/tink/KeysetHandl
 <div class="block">If the managed keyset contains private keys, returns a <a href="../../../../com/google/crypto/tink/KeysetHandle.html" title="class in com.google.crypto.tink"><code>KeysetHandle</code></a> of the public keys.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>GenernalSecurityException</code> - if the managed keyset is null or if it contains any
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code> - if the managed keyset is null or if it contains any
      non-private keys.</dd>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
 </dl>
 </li>
 </ul>
