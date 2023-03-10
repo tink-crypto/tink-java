@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":42,"i1":42};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
+var methods = {"i0":10,"i1":10};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -111,30 +111,27 @@ var activeTableTab = "activeTableTab";
 <dd><a href="../../../../../com/google/crypto/tink/KeyWrap.html" title="interface in com.google.crypto.tink">KeyWrap</a></dd>
 </dl>
 <hr>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Tink does not support KeyWrap anymore. This implementation was fallback code for old
-     providers that did not implement KWP. It implements the same functionality as <code>Cipher.getInstance("AESWRAPPAD");</code>. Some provider use a different algorithm name: <code>Cipher.getInstance("AES/KWP/NoPadding");</code>.</span></div>
-</div>
 <br>
-<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
-public class <span class="typeNameLabel">Kwp</span>
+<pre>public class <span class="typeNameLabel">Kwp</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
 implements <a href="../../../../../com/google/crypto/tink/KeyWrap.html" title="interface in com.google.crypto.tink">KeyWrap</a></pre>
-<div class="block">Implements the key wrapping primitive KWP defined in NIST SP 800 38f. The same encryption mode is
- also defined in RFC 5649. The NIST document is used here as a primary reference, since it
- contains a security analysis and further recommendations. In particular, Section 8 of NIST SP 800
- 38f suggests that the allowed key sizes may be restricted. The implementation in this class
+<div class="block">Implements the key wrapping primitive KWP defined in NIST SP 800 38f.
+ The same encryption mode is also defined in RFC 5649. The NIST document is used here
+ as a primary reference, since it contains a security analysis and further
+ recommendations. In particular, Section 8 of NIST SP 800 38f suggests that the
+ allowed key sizes may be restricted. The implementation in this class
  requires that the key sizes are in the range MIN_WRAP_KEY_SIZE and MAX_WRAP_KEY_SIZE.
 
- <p>The minimum of 16 bytes has been chosen, because 128 bit keys are the smallest key sizes used
- in tink. Additionally, wrapping short keys with KWP does not use the function W and hence
- prevents using security arguments based on the assumption that W is strong pseudorandom. (I.e.
- one consequence of using a strong pseudorandom permutation as an underlying function is that
- leaking partial information about decrypted bytes is not useful for an attack.)
+ <p>The minimum of 16 bytes has been chosen, because 128 bit keys are the smallest
+ key sizes used in tink. Additionally, wrapping short keys with KWP does not use
+ the function W and hence prevents using security arguments based on the assumption
+ that W is strong pseudorandom. (I.e. one consequence of using a strong pseudorandom
+ permutation as an underlying function is that leaking partial information about
+ decrypted bytes is not useful for an attack.)
 
- <p>The upper bound for the key size is somewhat arbitrary. Setting an upper bound is motivated by
- the analysis in section A.4 of NIST SP 800 38f: forgeries of long messages is simpler than
- forgeries of short message.</div>
+ <p>The upper bound for the key size is somewhat arbitrary. Setting an upper bound is
+ motivated by the analysis in section A.4 of NIST SP 800 38f: forgeries of long
+ messages is simpler than forgeries of short message.</div>
 <dl>
 <dt><span class="simpleTagLabel">Since:</span></dt>
 <dd>1.?.?</dd>
@@ -158,7 +155,6 @@ implements <a href="../../../../../com/google/crypto/tink/KeyWrap.html" title="i
 </tr>
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/Kwp.html#Kwp-byte:A-">Kwp</a></span>(byte[]&nbsp;key)</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">Construct a new Instance for KWP.</div>
 </td>
 </tr>
@@ -172,7 +168,7 @@ implements <a href="../../../../../com/google/crypto/tink/KeyWrap.html" title="i
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t6" class="tableTab"><span><a href="javascript:show(32);">Deprecated Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
@@ -180,14 +176,12 @@ implements <a href="../../../../../com/google/crypto/tink/KeyWrap.html" title="i
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>byte[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/Kwp.html#unwrap-byte:A-">unwrap</a></span>(byte[]&nbsp;data)</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">Unwraps a wrapped key.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>byte[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/Kwp.html#wrap-byte:A-">wrap</a></span>(byte[]&nbsp;data)</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">Wraps some key material <code>data</code>.</div>
 </td>
 </tr>
@@ -221,7 +215,6 @@ implements <a href="../../../../../com/google/crypto/tink/KeyWrap.html" title="i
 <h4>Kwp</h4>
 <pre>public&nbsp;Kwp(byte[]&nbsp;key)
     throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">Construct a new Instance for KWP.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -248,7 +241,6 @@ implements <a href="../../../../../com/google/crypto/tink/KeyWrap.html" title="i
 <h4>wrap</h4>
 <pre>public&nbsp;byte[]&nbsp;wrap(byte[]&nbsp;data)
             throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">Wraps some key material <code>data</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
@@ -270,7 +262,6 @@ implements <a href="../../../../../com/google/crypto/tink/KeyWrap.html" title="i
 <h4>unwrap</h4>
 <pre>public&nbsp;byte[]&nbsp;unwrap(byte[]&nbsp;data)
               throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">Unwraps a wrapped key.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
