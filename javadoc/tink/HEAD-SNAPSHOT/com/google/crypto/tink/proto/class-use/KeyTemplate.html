@@ -140,21 +140,14 @@
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/KeysetManager.html" title="class in com.google.crypto.tink">KeysetManager</a></code></td>
 <td class="colLast"><span class="typeNameLabel">KeysetManager.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/KeysetManager.html#add-com.google.crypto.tink.proto.KeyTemplate-">add</a></span>(<a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;keyTemplate)</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">This method takes a KeyTemplate proto, which is an internal implementation detail.
-     Please use the add method that takes a <a href="../../../../../../com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink"><code>KeyTemplate</code></a> POJO.</span></div>
-</div>
+<div class="block">Generates and adds a fresh key generated using <code>keyTemplate</code>.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><span class="typeNameLabel">KeysetManager.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/KeysetManager.html#addNewKey-com.google.crypto.tink.proto.KeyTemplate-boolean-">addNewKey</a></span>(<a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;keyTemplate,
          boolean&nbsp;asPrimary)</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Please use <a href="../../../../../../com/google/crypto/tink/KeysetManager.html#add-com.google.crypto.tink.proto.KeyTemplate-"><code>KeysetManager.add(com.google.crypto.tink.proto.KeyTemplate)</code></a>. This method adds a new key and when <code>asPrimary</code> is
-     true immediately promotes it to primary. However, when you do keyset rotation, you almost
-     never want to make the new key primary, because old binaries don't know the new key yet.</span></div>
-</div>
+<div class="block">Generates a fresh key using <code>keyTemplate</code> and returns the <code>keyId</code> of it.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -189,11 +182,8 @@
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/KeysetManager.html" title="class in com.google.crypto.tink">KeysetManager</a></code></td>
 <td class="colLast"><span class="typeNameLabel">KeysetManager.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/KeysetManager.html#rotate-com.google.crypto.tink.proto.KeyTemplate-">rotate</a></span>(<a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;keyTemplate)</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Please use <a href="../../../../../../com/google/crypto/tink/KeysetManager.html#add-com.google.crypto.tink.proto.KeyTemplate-"><code>KeysetManager.add(com.google.crypto.tink.proto.KeyTemplate)</code></a>. This method adds a new key and immediately promotes it to
-     primary. However, when you do keyset rotation, you almost never want to make the new key
-     primary, because old binaries don't know the new key yet.</span></div>
-</div>
+<div class="block">Generates and adds a fresh key generated using <code>keyTemplate</code>, and sets the new key as the
+ primary key.</div>
 </td>
 </tr>
 </tbody>
