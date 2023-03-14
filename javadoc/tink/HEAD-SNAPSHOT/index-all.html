@@ -863,6 +863,10 @@
 </dd>
 <dt><a href="com/google/crypto/tink/proto/AesCmacPrfKeyOrBuilder.html" title="interface in com.google.crypto.tink.proto"><span class="typeNameLink">AesCmacPrfKeyOrBuilder</span></a> - Interface in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/prf/AesCmacPrfParameters.html" title="class in com.google.crypto.tink.prf"><span class="typeNameLink">AesCmacPrfParameters</span></a> - Class in <a href="com/google/crypto/tink/prf/package-summary.html">com.google.crypto.tink.prf</a></dt>
+<dd>
+<div class="block">Describes the parameters of an <code>AesCmacPrfKey</code>.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/proto/AesCtr.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">AesCtr</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/proto/AesCtrHmacAead.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">AesCtrHmacAead</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
@@ -4121,6 +4125,8 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/KeyTemplate.html#create-java.lang.String-byte:A-com.google.crypto.tink.KeyTemplate.OutputPrefixType-">create(String, byte[], KeyTemplate.OutputPrefixType)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink">KeyTemplate</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/AesCmacPrfParameters.html#create-int-">create(int)</a></span> - Static method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/AesCmacPrfParameters.html" title="class in com.google.crypto.tink.prf">AesCmacPrfParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/AesCtrHmacStreamingKey.html#create-com.google.crypto.tink.streamingaead.AesCtrHmacStreamingParameters-com.google.crypto.tink.util.SecretBytes-">create(AesCtrHmacStreamingParameters, SecretBytes)</a></span> - Static method in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/AesCtrHmacStreamingKey.html" title="class in com.google.crypto.tink.streamingaead">AesCtrHmacStreamingKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingKey.html#create-com.google.crypto.tink.streamingaead.AesGcmHkdfStreamingParameters-com.google.crypto.tink.util.SecretBytes-">create(AesGcmHkdfStreamingParameters, SecretBytes)</a></span> - Static method in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingKey.html" title="class in com.google.crypto.tink.streamingaead">AesGcmHkdfStreamingKey</a></dt>
@@ -5178,6 +5184,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/monitoring/MonitoringKeysetInfo.Entry.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class com.google.crypto.tink.monitoring.<a href="com/google/crypto/tink/monitoring/MonitoringKeysetInfo.Entry.html" title="class in com.google.crypto.tink.monitoring">MonitoringKeysetInfo.Entry</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/monitoring/MonitoringKeysetInfo.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class com.google.crypto.tink.monitoring.<a href="com/google/crypto/tink/monitoring/MonitoringKeysetInfo.html" title="class in com.google.crypto.tink.monitoring">MonitoringKeysetInfo</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/AesCmacPrfParameters.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/AesCmacPrfParameters.html" title="class in com.google.crypto.tink.prf">AesCmacPrfParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/HkdfPrfParameters.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/HkdfPrfParameters.html" title="class in com.google.crypto.tink.prf">HkdfPrfParameters</a></dt>
 <dd>&nbsp;</dd>
@@ -9385,6 +9393,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/AesCmacParameters.html#getKeySizeBytes--">getKeySizeBytes()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/AesCmacParameters.html" title="class in com.google.crypto.tink.mac">AesCmacParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacParameters.html#getKeySizeBytes--">getKeySizeBytes()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacParameters.html" title="class in com.google.crypto.tink.mac">HmacParameters</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/AesCmacPrfParameters.html#getKeySizeBytes--">getKeySizeBytes()</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/AesCmacPrfParameters.html" title="class in com.google.crypto.tink.prf">AesCmacPrfParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/HkdfPrfParameters.html#getKeySizeBytes--">getKeySizeBytes()</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/HkdfPrfParameters.html" title="class in com.google.crypto.tink.prf">HkdfPrfParameters</a></dt>
 <dd>&nbsp;</dd>
@@ -13991,6 +14001,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/monitoring/MonitoringKeysetInfo.html#hashCode--">hashCode()</a></span> - Method in class com.google.crypto.tink.monitoring.<a href="com/google/crypto/tink/monitoring/MonitoringKeysetInfo.html" title="class in com.google.crypto.tink.monitoring">MonitoringKeysetInfo</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/AesCmacPrfParameters.html#hashCode--">hashCode()</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/AesCmacPrfParameters.html" title="class in com.google.crypto.tink.prf">AesCmacPrfParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/HkdfPrfParameters.html#hashCode--">hashCode()</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/HkdfPrfParameters.html" title="class in com.google.crypto.tink.prf">HkdfPrfParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/HmacPrfParameters.html#hashCode--">hashCode()</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/HmacPrfParameters.html" title="class in com.google.crypto.tink.prf">HmacPrfParameters</a></dt>
@@ -14255,6 +14267,8 @@
 <div class="block">Returns true if a key created with the parameters in this object has to have a certain ID when
  it is in a keyset.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/AesCmacPrfParameters.html#hasIdRequirement--">hasIdRequirement()</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/AesCmacPrfParameters.html" title="class in com.google.crypto.tink.prf">AesCmacPrfParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/HkdfPrfParameters.html#hasIdRequirement--">hasIdRequirement()</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/HkdfPrfParameters.html" title="class in com.google.crypto.tink.prf">HkdfPrfParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/HmacPrfParameters.html#hasIdRequirement--">hasIdRequirement()</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/HmacPrfParameters.html" title="class in com.google.crypto.tink.prf">HmacPrfParameters</a></dt>
@@ -26528,6 +26542,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/monitoring/MonitoringKeysetInfo.Entry.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.monitoring.<a href="com/google/crypto/tink/monitoring/MonitoringKeysetInfo.Entry.html" title="class in com.google.crypto.tink.monitoring">MonitoringKeysetInfo.Entry</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/monitoring/MonitoringKeysetInfo.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.monitoring.<a href="com/google/crypto/tink/monitoring/MonitoringKeysetInfo.html" title="class in com.google.crypto.tink.monitoring">MonitoringKeysetInfo</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/AesCmacPrfParameters.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/AesCmacPrfParameters.html" title="class in com.google.crypto.tink.prf">AesCmacPrfParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/HkdfPrfParameters.HashType.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/HkdfPrfParameters.HashType.html" title="class in com.google.crypto.tink.prf">HkdfPrfParameters.HashType</a></dt>
 <dd>&nbsp;</dd>
