@@ -837,6 +837,10 @@
 <dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/proto/AesCmacPrf.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">AesCmacPrf</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/prf/AesCmacPrfKey.html" title="class in com.google.crypto.tink.prf"><span class="typeNameLink">AesCmacPrfKey</span></a> - Class in <a href="com/google/crypto/tink/prf/package-summary.html">com.google.crypto.tink.prf</a></dt>
+<dd>
+<div class="block">Represents a key computing AES CMAC PRF.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/proto/AesCmacPrfKey.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">AesCmacPrfKey</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>
 <div class="block">
@@ -865,7 +869,7 @@
 <dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/prf/AesCmacPrfParameters.html" title="class in com.google.crypto.tink.prf"><span class="typeNameLink">AesCmacPrfParameters</span></a> - Class in <a href="com/google/crypto/tink/prf/package-summary.html">com.google.crypto.tink.prf</a></dt>
 <dd>
-<div class="block">Describes the parameters of an <code>AesCmacPrfKey</code>.</div>
+<div class="block">Describes the parameters of an <a href="com/google/crypto/tink/prf/AesCmacPrfKey.html" title="class in com.google.crypto.tink.prf"><code>AesCmacPrfKey</code></a>.</div>
 </dd>
 <dt><a href="com/google/crypto/tink/proto/AesCtr.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">AesCtr</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>&nbsp;</dd>
@@ -4129,6 +4133,8 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/KeyTemplate.html#create-java.lang.String-byte:A-com.google.crypto.tink.KeyTemplate.OutputPrefixType-">create(String, byte[], KeyTemplate.OutputPrefixType)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink">KeyTemplate</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/AesCmacPrfKey.html#create-com.google.crypto.tink.prf.AesCmacPrfParameters-com.google.crypto.tink.util.SecretBytes-">create(AesCmacPrfParameters, SecretBytes)</a></span> - Static method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/AesCmacPrfKey.html" title="class in com.google.crypto.tink.prf">AesCmacPrfKey</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/AesCmacPrfParameters.html#create-int-">create(int)</a></span> - Static method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/AesCmacPrfParameters.html" title="class in com.google.crypto.tink.prf">AesCmacPrfParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/AesCtrHmacStreamingKey.html#create-com.google.crypto.tink.streamingaead.AesCtrHmacStreamingParameters-com.google.crypto.tink.util.SecretBytes-">create(AesCtrHmacStreamingParameters, SecretBytes)</a></span> - Static method in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/AesCtrHmacStreamingKey.html" title="class in com.google.crypto.tink.streamingaead">AesCtrHmacStreamingKey</a></dt>
@@ -5412,6 +5418,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/AesCmacKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey(Key)</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/AesCmacKey.html" title="class in com.google.crypto.tink.mac">AesCmacKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey(Key)</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacKey.html" title="class in com.google.crypto.tink.mac">HmacKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/AesCmacPrfKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey(Key)</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/AesCmacPrfKey.html" title="class in com.google.crypto.tink.prf">AesCmacPrfKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/HkdfPrfKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey(Key)</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/HkdfPrfKey.html" title="class in com.google.crypto.tink.prf">HkdfPrfKey</a></dt>
 <dd>&nbsp;</dd>
@@ -8592,6 +8600,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacKey.html#getIdRequirementOrNull--">getIdRequirementOrNull()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacKey.html" title="class in com.google.crypto.tink.mac">HmacKey</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/AesCmacPrfKey.html#getIdRequirementOrNull--">getIdRequirementOrNull()</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/AesCmacPrfKey.html" title="class in com.google.crypto.tink.prf">AesCmacPrfKey</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/HkdfPrfKey.html#getIdRequirementOrNull--">getIdRequirementOrNull()</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/HkdfPrfKey.html" title="class in com.google.crypto.tink.prf">HkdfPrfKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/HmacPrfKey.html#getIdRequirementOrNull--">getIdRequirementOrNull()</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/HmacPrfKey.html" title="class in com.google.crypto.tink.prf">HmacPrfKey</a></dt>
@@ -8878,6 +8888,8 @@
 <dd>
 <div class="block">Returns the underlying key bytes.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/AesCmacPrfKey.html#getKeyBytes--">getKeyBytes()</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/AesCmacPrfKey.html" title="class in com.google.crypto.tink.prf">AesCmacPrfKey</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/HkdfPrfKey.html#getKeyBytes--">getKeyBytes()</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/HkdfPrfKey.html" title="class in com.google.crypto.tink.prf">HkdfPrfKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/HmacPrfKey.html#getKeyBytes--">getKeyBytes()</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/HmacPrfKey.html" title="class in com.google.crypto.tink.prf">HmacPrfKey</a></dt>
@@ -10280,6 +10292,8 @@
 <dd>
 <div class="block">Returns the parameters of this key.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/AesCmacPrfKey.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/AesCmacPrfKey.html" title="class in com.google.crypto.tink.prf">AesCmacPrfKey</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/HkdfPrfKey.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/HkdfPrfKey.html" title="class in com.google.crypto.tink.prf">HkdfPrfKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/HmacPrfKey.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/HmacPrfKey.html" title="class in com.google.crypto.tink.prf">HmacPrfKey</a></dt>
