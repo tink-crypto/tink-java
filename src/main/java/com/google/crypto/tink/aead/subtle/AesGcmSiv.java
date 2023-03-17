@@ -57,18 +57,7 @@ public final class AesGcmSiv implements Aead {
   // All instances of this class use a 12 byte IV and a 16 byte tag.
   private static final int IV_SIZE_IN_BYTES = 12;
   private static final int TAG_SIZE_IN_BYTES = 16;
-
-  private static final boolean HAS_GCM_PARAMETER_SPEC_CLASS;
-
-  static {
-    boolean hasGcmParameterSpecClass = true;
-    try {
-      Class.forName("javax.crypto.spec.GCMParameterSpec");
-    } catch (ClassNotFoundException e) {
-      hasGcmParameterSpecClass = false;
-    }
-    HAS_GCM_PARAMETER_SPEC_CLASS = hasGcmParameterSpecClass;
-  }
+  private static final boolean HAS_GCM_PARAMETER_SPEC_CLASS = hasGCMParameterSpecClass();
 
   private final SecretKey keySpec;
 
@@ -152,5 +141,14 @@ public final class AesGcmSiv implements Aead {
     }
     throw new GeneralSecurityException(
         "cannot use AES-GCM: javax.crypto.spec.GCMParameterSpec not found");
+  }
+
+  private static boolean hasGCMParameterSpecClass() {
+    try {
+      Class.forName("javax.crypto.spec.GCMParameterSpec");
+    } catch (ClassNotFoundException e) {
+      return false;
+    }
+    return true;
   }
 }
