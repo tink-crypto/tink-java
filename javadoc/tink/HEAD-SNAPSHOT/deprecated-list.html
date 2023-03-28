@@ -371,124 +371,114 @@
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><a href="com/google/crypto/tink/KeysetHandle.html#getKeys--">com.google.crypto.tink.KeysetHandle.getKeys()</a>
-<div class="block"><span class="deprecationComment">Use <a href="com/google/crypto/tink/KeysetHandle.html#size--"><code>KeysetHandle.size()</code></a> and <a href="com/google/crypto/tink/KeysetHandle.html#getAt-int-"><code>KeysetHandle.getAt(int)</code></a> instead.</span></div>
-</td>
-</tr>
-<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/Registry.html#getPrimitive-com.google.crypto.tink.proto.KeyData-">com.google.crypto.tink.Registry.getPrimitive(KeyData)</a>
 <div class="block"><span class="deprecationComment">Use <code>getPrimitive(keyData, Primitive.class)</code> instead.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/mac/MacFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">com.google.crypto.tink.mac.MacFactory.getPrimitive(KeysetHandle)</a>
 <div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(Mac.class)</code> after registering the <code>MacWrapper</code> instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/daead/DeterministicAeadFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">com.google.crypto.tink.daead.DeterministicAeadFactory.getPrimitive(KeysetHandle)</a>
 <div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(DeterministicAead.class)</code> after registering
      the <code>DeterministicAeadWrapper</code> instead.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/hybrid/HybridEncryptFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">com.google.crypto.tink.hybrid.HybridEncryptFactory.getPrimitive(KeysetHandle)</a>
 <div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(HybridEncrypt.class)</code> after registering the
      <code>HybridEncryptWrapper</code> instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/hybrid/HybridDecryptFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">com.google.crypto.tink.hybrid.HybridDecryptFactory.getPrimitive(KeysetHandle)</a>
 <div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(HybridDecrypt.class)</code> after registering the
      <code>HybridDecryptWrapper</code> instead.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/signature/PublicKeyVerifyFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">com.google.crypto.tink.signature.PublicKeyVerifyFactory.getPrimitive(KeysetHandle)</a>
 <div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(PublicKeyVerify.class)</code> after registering the
      <code>PublicKeyVerifyWrapper</code> instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/signature/PublicKeySignFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">com.google.crypto.tink.signature.PublicKeySignFactory.getPrimitive(KeysetHandle)</a>
 <div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(PublicKeySign.class)</code> after registering the
      <code>PublicKeySignWrapper</code> instead.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/aead/AeadFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">com.google.crypto.tink.aead.AeadFactory.getPrimitive(KeysetHandle)</a>
 <div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(Aead.class)</code> after registering the <code>AeadWrapper</code> instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/Registry.html#getPrimitive-java.lang.String-byte:A-">com.google.crypto.tink.Registry.getPrimitive(String, byte[])</a>
 <div class="block"><span class="deprecationComment">Use <code>getPrimitive(typeUrl, serializedKey, Primitive.class)</code> instead.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/Registry.html#getPrimitive-java.lang.String-com.google.protobuf.ByteString-">com.google.crypto.tink.Registry.getPrimitive(String, ByteString)</a>
 <div class="block"><span class="deprecationComment">Use <code>getPrimitive(typeUrl, serializedKey, Primitive.class</code> instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/Registry.html#getPrimitive-java.lang.String-com.google.protobuf.MessageLite-">com.google.crypto.tink.Registry.getPrimitive(String, MessageLite)</a>
 <div class="block"><span class="deprecationComment">Use <code>getPrimitive(typeUrl, key, P.class)</code> instead.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/config/TinkConfig.html#init--">com.google.crypto.tink.config.TinkConfig.init()</a>
 <div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/config/TinkConfig.html#register--"><code>TinkConfig.register()</code></a></span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/streamingaead/StreamingAeadConfig.html#init--">com.google.crypto.tink.streamingaead.StreamingAeadConfig.init()</a>
 <div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/streamingaead/StreamingAeadConfig.html#register--"><code>StreamingAeadConfig.register()</code></a></span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/mac/MacConfig.html#init--">com.google.crypto.tink.mac.MacConfig.init()</a>
 <div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/mac/MacConfig.html#register--"><code>MacConfig.register()</code></a></span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/daead/DeterministicAeadConfig.html#init--">com.google.crypto.tink.daead.DeterministicAeadConfig.init()</a>
 <div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/daead/DeterministicAeadConfig.html#register--"><code>DeterministicAeadConfig.register()</code></a></span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/hybrid/HybridConfig.html#init--">com.google.crypto.tink.hybrid.HybridConfig.init()</a>
 <div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/hybrid/HybridConfig.html#register--"><code>HybridConfig.register()</code></a></span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/signature/SignatureConfig.html#init--">com.google.crypto.tink.signature.SignatureConfig.init()</a>
 <div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/signature/SignatureConfig.html#register--"><code>SignatureConfig.register()</code></a></span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/aead/AeadConfig.html#init--">com.google.crypto.tink.aead.AeadConfig.init()</a>
 <div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/aead/AeadConfig.html#register--"><code>AeadConfig.register()</code></a></span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/PrimitiveSet.html#newPrimitiveSet-java.lang.Class-">com.google.crypto.tink.PrimitiveSet.newPrimitiveSet(Class&lt;P&gt;)</a>
 <div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/PrimitiveSet.Builder.html" title="class in com.google.crypto.tink"><code>PrimitiveSet.Builder</code></a> instead.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/NoSecretKeysetHandle.html#parseFrom-byte:A-">com.google.crypto.tink.NoSecretKeysetHandle.parseFrom(byte[])</a>
 <div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/NoSecretKeysetHandle.html#read-com.google.crypto.tink.KeysetReader-"><code>NoSecretKeysetHandle.read(com.google.crypto.tink.KeysetReader)</code></a> instead</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/CleartextKeysetHandle.html#parseFrom-byte:A-">com.google.crypto.tink.CleartextKeysetHandle.parseFrom(byte[])</a>
 <div class="block"><span class="deprecationComment">Call <code>TinkProtoKeysetFormat.parseKeyset(serialized,
      InsecureSecretKeyAccess.get())</code> which has the same semantics.</span></div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colOne"><a href="com/google/crypto/tink/KeysetHandle.html#primaryKey--">com.google.crypto.tink.KeysetHandle.primaryKey()</a>
-<div class="block"><span class="deprecationComment">Use <a href="com/google/crypto/tink/KeysetHandle.html#getPrimary--"><code>KeysetHandle.getPrimary()</code></a> instead.</span></div>
 </td>
 </tr>
 <tr class="altColor">

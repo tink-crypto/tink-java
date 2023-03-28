@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":41,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":10,"i7":42,"i8":10,"i9":10,"i10":10,"i11":10,"i12":9,"i13":9,"i14":9,"i15":42,"i16":9,"i17":9,"i18":9,"i19":9,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10};
+var methods = {"i0":41,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":9,"i13":9,"i14":9,"i15":10,"i16":9,"i17":9,"i18":9,"i19":9,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -216,9 +216,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../../../com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey">KeyHandle</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/KeysetHandle.html#getKeys--">getKeys</a></span>()</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Use <a href="../../../../com/google/crypto/tink/KeysetHandle.html#size--"><code>size()</code></a> and <a href="../../../../com/google/crypto/tink/KeysetHandle.html#getAt-int-"><code>getAt(int)</code></a> instead.</span></div>
-</div>
+<div class="block">Returns the keyset data as a list of <a href="../../../../com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey"><code>KeyHandle</code></a>s.</div>
 </td>
 </tr>
 <tr id="i8" class="altColor">
@@ -268,9 +266,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <tr id="i15" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey">KeyHandle</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/KeysetHandle.html#primaryKey--">primaryKey</a></span>()</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Use <a href="../../../../com/google/crypto/tink/KeysetHandle.html#getPrimary--"><code>getPrimary()</code></a> instead.</span></div>
-</div>
+<div class="block">Searches the keyset to find the primary key of this <code>KeysetHandle</code>, and returns the key
+ wrapped in a <code>KeyHandle</code>.</div>
 </td>
 </tr>
 <tr id="i16" class="altColor">
@@ -470,10 +467,10 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <ul class="blockList">
 <li class="blockList">
 <h4>getKeys</h4>
-<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
-public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../../../com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey">KeyHandle</a>&gt;&nbsp;getKeys()</pre>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">Use <a href="../../../../com/google/crypto/tink/KeysetHandle.html#size--"><code>size()</code></a> and <a href="../../../../com/google/crypto/tink/KeysetHandle.html#getAt-int-"><code>getAt(int)</code></a> instead.</span></div>
-<div class="block">Returns the keyset data as a list of <a href="../../../../com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey"><code>KeyHandle</code></a>s.</div>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../../../com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey">KeyHandle</a>&gt;&nbsp;getKeys()</pre>
+<div class="block">Returns the keyset data as a list of <a href="../../../../com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey"><code>KeyHandle</code></a>s.
+
+ Please do not use this function in new code. Instead, use <a href="../../../../com/google/crypto/tink/KeysetHandle.html#getAt-int-"><code>getAt(int)</code></a>.</div>
 </li>
 </ul>
 <a name="getKeysetInfo--">
@@ -760,12 +757,12 @@ public static final&nbsp;<a href="../../../../com/google/crypto/tink/KeysetHandl
 <ul class="blockListLast">
 <li class="blockList">
 <h4>primaryKey</h4>
-<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
-public&nbsp;<a href="../../../../com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey">KeyHandle</a>&nbsp;primaryKey()
-                                 throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">Use <a href="../../../../com/google/crypto/tink/KeysetHandle.html#getPrimary--"><code>getPrimary()</code></a> instead.</span></div>
+<pre>public&nbsp;<a href="../../../../com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey">KeyHandle</a>&nbsp;primaryKey()
+                     throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
 <div class="block">Searches the keyset to find the primary key of this <code>KeysetHandle</code>, and returns the key
- wrapped in a <code>KeyHandle</code>.</div>
+ wrapped in a <code>KeyHandle</code>.
+
+ Please do not use this function in new code. Instead, use <a href="../../../../com/google/crypto/tink/KeysetHandle.html#getPrimary--"><code>getPrimary()</code></a>.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
