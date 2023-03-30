@@ -4474,10 +4474,22 @@
      <code>DeterministicAeadWrapper</code> instead.</span></div>
 </div>
 </dd>
+<dt><a href="com/google/crypto/tink/daead/DeterministicAeadKey.html" title="class in com.google.crypto.tink.daead"><span class="typeNameLink">DeterministicAeadKey</span></a> - Class in <a href="com/google/crypto/tink/daead/package-summary.html">com.google.crypto.tink.daead</a></dt>
+<dd>
+<div class="block">Represents functions to encrypt and decrypt data deterministically using AEAD.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/DeterministicAeadKey.html#DeterministicAeadKey--">DeterministicAeadKey()</a></span> - Constructor for class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/DeterministicAeadKey.html" title="class in com.google.crypto.tink.daead">DeterministicAeadKey</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/daead/DeterministicAeadKeyTemplates.html" title="class in com.google.crypto.tink.daead"><span class="typeNameLink">DeterministicAeadKeyTemplates</span></a> - Class in <a href="com/google/crypto/tink/daead/package-summary.html">com.google.crypto.tink.daead</a></dt>
 <dd>
 <div class="block">Pre-generated <code>KeyTemplate</code> for <code>DeterministicAead</code> keys.</div>
 </dd>
+<dt><a href="com/google/crypto/tink/daead/DeterministicAeadParameters.html" title="class in com.google.crypto.tink.daead"><span class="typeNameLink">DeterministicAeadParameters</span></a> - Class in <a href="com/google/crypto/tink/daead/package-summary.html">com.google.crypto.tink.daead</a></dt>
+<dd>
+<div class="block">Represents a description of a <a href="com/google/crypto/tink/daead/DeterministicAeadKey.html" title="class in com.google.crypto.tink.daead"><code>DeterministicAeadKey</code></a></div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/DeterministicAeadParameters.html#DeterministicAeadParameters--">DeterministicAeadParameters()</a></span> - Constructor for class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/DeterministicAeadParameters.html" title="class in com.google.crypto.tink.daead">DeterministicAeadParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/daead/DeterministicAeadWrapper.html" title="class in com.google.crypto.tink.daead"><span class="typeNameLink">DeterministicAeadWrapper</span></a> - Class in <a href="com/google/crypto/tink/daead/package-summary.html">com.google.crypto.tink.daead</a></dt>
 <dd>
 <div class="block">The implementation of <code>PrimitiveWrapper&lt;DeterministicAead&gt;</code>.</div>
@@ -10133,6 +10145,10 @@
 <div class="block">Generates the prefix of all cryptographic outputs (ciphertexts, signatures, MACs, ...) produced
  by the specified <code>key</code>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/DeterministicAeadKey.html#getOutputPrefix--">getOutputPrefix()</a></span> - Method in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/DeterministicAeadKey.html" title="class in com.google.crypto.tink.daead">DeterministicAeadKey</a></dt>
+<dd>
+<div class="block">Returns a <a href="com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util"><code>Bytes</code></a> instance which is prefixed to the ciphertext.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/AesCmacKey.html#getOutputPrefix--">getOutputPrefix()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/AesCmacKey.html" title="class in com.google.crypto.tink.mac">AesCmacKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacKey.html#getOutputPrefix--">getOutputPrefix()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacKey.html" title="class in com.google.crypto.tink.mac">HmacKey</a></dt>
@@ -10330,6 +10346,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XChaCha20Poly1305Key.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XChaCha20Poly1305Key.html" title="class in com.google.crypto.tink.aead">XChaCha20Poly1305Key</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/DeterministicAeadKey.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/DeterministicAeadKey.html" title="class in com.google.crypto.tink.daead">DeterministicAeadKey</a></dt>
+<dd>
+<div class="block">Returns the parameters of this key.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/LegacyProtoKey.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/LegacyProtoKey.html" title="class in com.google.crypto.tink.internal">LegacyProtoKey</a></dt>
 <dd>
 <div class="block">Returns a LegacyParametersNotForCreation object.</div>
