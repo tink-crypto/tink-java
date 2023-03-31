@@ -4083,6 +4083,11 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/PrimitiveConstructor.PrimitiveConstructionFunction.html#constructPrimitive-KeyT-">constructPrimitive(KeyT)</a></span> - Method in interface com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/PrimitiveConstructor.PrimitiveConstructionFunction.html" title="interface in com.google.crypto.tink.internal">PrimitiveConstructor.PrimitiveConstructionFunction</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/Field25519.html#contract-long:A-">contract(long[])</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/Field25519.html" title="class in com.google.crypto.tink.internal">Field25519</a></dt>
+<dd>
+<div class="block">Takes a fully reduced mixed radix form number and contract it into a little-endian, 32-byte
+ array.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/util/Bytes.html#copyFrom-byte:A-">copyFrom(byte[])</a></span> - Static method in class com.google.crypto.tink.util.<a href="com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/util/Bytes.html#copyFrom-byte:A-int-int-">copyFrom(byte[], int, int)</a></span> - Static method in class com.google.crypto.tink.util.<a href="com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></dt>
@@ -4291,6 +4296,11 @@
 <dd>
 <div class="block">Constants and convenience methods that deal with crypto format.</div>
 </dd>
+<dt><a href="com/google/crypto/tink/internal/Curve25519.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">Curve25519</span></a> - Class in <a href="com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></dt>
+<dd>
+<div class="block">This class implements point arithmetic on the elliptic curve <a
+ href="https://cr.yp.to/ecdh/curve25519-20060209.pdf">Curve25519</a>.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/EllipticCurveType.html#CURVE25519_VALUE">CURVE25519_VALUE</a></span> - Static variable in enum com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/EllipticCurveType.html" title="enum in com.google.crypto.tink.proto">EllipticCurveType</a></dt>
 <dd>
 <div class="block"><code>CURVE25519 = 5;</code></div>
@@ -4299,6 +4309,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/EciesHkdfKemParams.html#CURVE_TYPE_FIELD_NUMBER">CURVE_TYPE_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/EciesHkdfKemParams.html" title="class in com.google.crypto.tink.proto">EciesHkdfKemParams</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/Curve25519.html#curveMult-long:A-byte:A-byte:A-">curveMult(long[], byte[], byte[])</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/Curve25519.html" title="class in com.google.crypto.tink.internal">Curve25519</a></dt>
+<dd>
+<div class="block">Calculates nQ where Q is the x-coordinate of a point on the curve.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/JwtEcdsaPublicKey.html#CUSTOM_KID_FIELD_NUMBER">CUSTOM_KID_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/JwtEcdsaPublicKey.html" title="class in com.google.crypto.tink.proto">JwtEcdsaPublicKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/JwtHmacKey.html#CUSTOM_KID_FIELD_NUMBER">CUSTOM_KID_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/JwtHmacKey.html" title="class in com.google.crypto.tink.proto">JwtHmacKey</a></dt>
@@ -4923,6 +4937,10 @@
 <dt><a href="com/google/crypto/tink/proto/EcPointFormat.html" title="enum in com.google.crypto.tink.proto"><span class="typeNameLink">EcPointFormat</span></a> - Enum in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>
 <div class="block">Protobuf enum <code>google.crypto.tink.EcPointFormat</code></div>
+</dd>
+<dt><a href="com/google/crypto/tink/internal/Ed25519.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">Ed25519</span></a> - Class in <a href="com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></dt>
+<dd>
+<div class="block">This implementation is based on the ed25519/ref10 implementation in NaCl.</div>
 </dd>
 <dt><a href="com/google/crypto/tink/proto/Ed25519.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">Ed25519</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>&nbsp;</dd>
@@ -5549,6 +5567,19 @@
 <dl>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPkcs1Parameters.html#F4">F4</a></span> - Static variable in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPkcs1Parameters.html" title="class in com.google.crypto.tink.signature">RsaSsaPkcs1Parameters</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/internal/Field25519.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">Field25519</span></a> - Class in <a href="com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></dt>
+<dd>
+<div class="block">Defines field 25519 function based on <a
+ href="https://github.com/agl/curve25519-donna/blob/master/curve25519-donna.c">curve25519-donna C
+ implementation</a> (mostly identical).</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/Field25519.html#FIELD_LEN">FIELD_LEN</a></span> - Static variable in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/Field25519.html" title="class in com.google.crypto.tink.internal">Field25519</a></dt>
+<dd>
+<div class="block">During Field25519 computation, the mixed radix representation may be in different forms:
+
+ 
+   Reduced-size form: the array has size at most 10.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/EllipticCurves.html#fieldSizeInBits-java.security.spec.EllipticCurve-">fieldSizeInBits(EllipticCurve)</a></span> - Static method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/EllipticCurves.html" title="class in com.google.crypto.tink.subtle">EllipticCurves</a></dt>
 <dd>
 <div class="block">Returns the size of an element of the field over which the curve is defined.</div>
@@ -8289,6 +8320,8 @@
 <div class="block">
  HashType is an enum.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/Ed25519.html#getHashedScalar-byte:A-">getHashedScalar(byte[])</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/Ed25519.html" title="class in com.google.crypto.tink.internal">Ed25519</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrHmacAeadParameters.html#getHashType--">getHashType()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrHmacAeadParameters.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadParameters</a></dt>
 <dd>
 <div class="block">Returns a hash type object.</div>
@@ -17440,6 +17473,8 @@
 <dd>
 <div class="block">Creates a new LegacyProtoParameters object.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/Field25519.html#LIMB_CNT">LIMB_CNT</a></span> - Static variable in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/Field25519.html" title="class in com.google.crypto.tink.internal">Field25519</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/monitoring/MonitoringClient.Logger.html#log-int-long-">log(int, long)</a></span> - Method in interface com.google.crypto.tink.monitoring.<a href="com/google/crypto/tink/monitoring/MonitoringClient.Logger.html" title="interface in com.google.crypto.tink.monitoring">MonitoringClient.Logger</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/monitoring/MonitoringClient.Logger.html#logFailure--">logFailure()</a></span> - Method in interface com.google.crypto.tink.monitoring.<a href="com/google/crypto/tink/monitoring/MonitoringClient.Logger.html" title="interface in com.google.crypto.tink.monitoring">MonitoringClient.Logger</a></dt>
@@ -22573,6 +22608,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/RsaSsaPssPrivateKey.html#PUBLIC_KEY_FIELD_NUMBER">PUBLIC_KEY_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/RsaSsaPssPrivateKey.html" title="class in com.google.crypto.tink.proto">RsaSsaPssPrivateKey</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/Ed25519.html#PUBLIC_KEY_LEN">PUBLIC_KEY_LEN</a></span> - Static variable in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/Ed25519.html" title="class in com.google.crypto.tink.internal">Ed25519</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/Ed25519Verify.html#PUBLIC_KEY_LEN">PUBLIC_KEY_LEN</a></span> - Static variable in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/Ed25519Verify.html" title="class in com.google.crypto.tink.subtle">Ed25519Verify</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/tinkkey/KeyAccess.html#publicAccess--">publicAccess()</a></span> - Static method in class com.google.crypto.tink.tinkkey.<a href="com/google/crypto/tink/tinkkey/KeyAccess.html" title="class in com.google.crypto.tink.tinkkey">KeyAccess</a></dt>
@@ -23512,6 +23549,14 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/HkdfPrfParams.html#SALT_FIELD_NUMBER">SALT_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/HkdfPrfParams.html" title="class in com.google.crypto.tink.proto">HkdfPrfParams</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/RsaSsaPssParams.html#SALT_LENGTH_FIELD_NUMBER">SALT_LENGTH_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/RsaSsaPssParams.html" title="class in com.google.crypto.tink.proto">RsaSsaPssParams</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/Ed25519.html#scalarMultWithBaseToBytes-byte:A-">scalarMultWithBaseToBytes(byte[])</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/Ed25519.html" title="class in com.google.crypto.tink.internal">Ed25519</a></dt>
+<dd>
+<div class="block">Computes <code>a</code>*B
+ where a = a[0]+256*a[1]+...+256^31 a[31] and
+ B is the Ed25519 base point (x,4/5) with x positive.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/Ed25519.html#SECRET_KEY_LEN">SECRET_KEY_LEN</a></span> - Static variable in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/Ed25519.html" title="class in com.google.crypto.tink.internal">Ed25519</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/Ed25519Sign.html#SECRET_KEY_LEN">SECRET_KEY_LEN</a></span> - Static variable in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/Ed25519Sign.html" title="class in com.google.crypto.tink.subtle">Ed25519Sign</a></dt>
 <dd>&nbsp;</dd>
@@ -26114,6 +26159,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/RsaSsaPssParams.html#SIG_HASH_FIELD_NUMBER">SIG_HASH_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/RsaSsaPssParams.html" title="class in com.google.crypto.tink.proto">RsaSsaPssParams</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/Ed25519.html#sign-byte:A-byte:A-byte:A-">sign(byte[], byte[], byte[])</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/Ed25519.html" title="class in com.google.crypto.tink.internal">Ed25519</a></dt>
+<dd>
+<div class="block">Returns the EdDSA signature for the <code>message</code> based on the <code>hashedPrivateKey</code>.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/PublicKeySign.html#sign-byte:A-">sign(byte[])</a></span> - Method in interface com.google.crypto.tink.<a href="com/google/crypto/tink/PublicKeySign.html" title="interface in com.google.crypto.tink">PublicKeySign</a></dt>
 <dd>
 <div class="block">Computes the signature for <code>data</code>.</div>
@@ -26137,6 +26186,8 @@
  format.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/EngineFactory.html#SIGNATURE">SIGNATURE</a></span> - Static variable in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/EngineFactory.html" title="class in com.google.crypto.tink.subtle">EngineFactory</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/Ed25519.html#SIGNATURE_LEN">SIGNATURE_LEN</a></span> - Static variable in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/Ed25519.html" title="class in com.google.crypto.tink.internal">Ed25519</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/Ed25519Verify.html#SIGNATURE_LEN">SIGNATURE_LEN</a></span> - Static variable in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/Ed25519Verify.html" title="class in com.google.crypto.tink.subtle">Ed25519Verify</a></dt>
 <dd>&nbsp;</dd>
@@ -27367,6 +27418,10 @@ the order they are declared.</div>
 <dt><a href="com/google/crypto/tink/jwt/VerifiedJwt.html" title="class in com.google.crypto.tink.jwt"><span class="typeNameLink">VerifiedJwt</span></a> - Class in <a href="com/google/crypto/tink/jwt/package-summary.html">com.google.crypto.tink.jwt</a></dt>
 <dd>
 <div class="block">A decoded and verified <a href="https://tools.ietf.org/html/rfc7519">JSON Web Token</a> (JWT).</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/Ed25519.html#verify-byte:A-byte:A-byte:A-">verify(byte[], byte[], byte[])</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/Ed25519.html" title="class in com.google.crypto.tink.internal">Ed25519</a></dt>
+<dd>
+<div class="block">Returns true if the EdDSA <code>signature</code> with <code>message</code>, can be verified with <code>publicKey</code>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/PublicKeyVerify.html#verify-byte:A-byte:A-">verify(byte[], byte[])</a></span> - Method in interface com.google.crypto.tink.<a href="com/google/crypto/tink/PublicKeyVerify.html" title="interface in com.google.crypto.tink">PublicKeyVerify</a></dt>
 <dd>
