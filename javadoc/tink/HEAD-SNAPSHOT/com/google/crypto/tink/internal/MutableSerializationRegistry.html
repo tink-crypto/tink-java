@@ -502,17 +502,12 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <ul class="blockList">
 <li class="blockList">
 <h4>parseParametersWithLegacyFallback</h4>
-<pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a>&nbsp;parseParametersWithLegacyFallback(<a href="../../../../../com/google/crypto/tink/internal/ProtoParametersSerialization.html" title="class in com.google.crypto.tink.internal">ProtoParametersSerialization</a>&nbsp;protoParametersSerialization)
-                                             throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a>&nbsp;parseParametersWithLegacyFallback(<a href="../../../../../com/google/crypto/tink/internal/ProtoParametersSerialization.html" title="class in com.google.crypto.tink.internal">ProtoParametersSerialization</a>&nbsp;protoParametersSerialization)</pre>
 <div class="block">Returns a Parameters object from a protoKeySerialization, even if no parser has been
  registered.
 
  <p>Falling back is useful because we need to have a parameters object even if no parser is
  registered (e.g. for when we create a Key from a key template/parameters name object).</div>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
-</dl>
 </li>
 </ul>
 <a name="hasSerializerForParameters-com.google.crypto.tink.Parameters-java.lang.Class-">
