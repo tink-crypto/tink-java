@@ -8733,6 +8733,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivKey.html#getIdRequirementOrNull--">getIdRequirementOrNull()</a></span> - Method in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivKey.html" title="class in com.google.crypto.tink.daead">AesSivKey</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HybridPrivateKey.html#getIdRequirementOrNull--">getIdRequirementOrNull()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HybridPrivateKey.html" title="class in com.google.crypto.tink.hybrid">HybridPrivateKey</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/LegacyProtoKey.html#getIdRequirementOrNull--">getIdRequirementOrNull()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/LegacyProtoKey.html" title="class in com.google.crypto.tink.internal">LegacyProtoKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/ProtoKeySerialization.html#getIdRequirementOrNull--">getIdRequirementOrNull()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/ProtoKeySerialization.html" title="class in com.google.crypto.tink.internal">ProtoKeySerialization</a></dt>
@@ -10247,6 +10249,14 @@
 <dd>
 <div class="block">Returns a <a href="com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util"><code>Bytes</code></a> instance which is prefixed to the ciphertext.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HybridPrivateKey.html#getOutputPrefix--">getOutputPrefix()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HybridPrivateKey.html" title="class in com.google.crypto.tink.hybrid">HybridPrivateKey</a></dt>
+<dd>
+<div class="block">Returns a <a href="com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util"><code>Bytes</code></a> instance, which is prefixed to every ciphertext.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HybridPublicKey.html#getOutputPrefix--">getOutputPrefix()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HybridPublicKey.html" title="class in com.google.crypto.tink.hybrid">HybridPublicKey</a></dt>
+<dd>
+<div class="block">Returns a <a href="com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util"><code>Bytes</code></a> instance, which is prefixed to every ciphertext.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/AesCmacKey.html#getOutputPrefix--">getOutputPrefix()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/AesCmacKey.html" title="class in com.google.crypto.tink.mac">AesCmacKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacKey.html#getOutputPrefix--">getOutputPrefix()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacKey.html" title="class in com.google.crypto.tink.mac">HmacKey</a></dt>
@@ -10452,6 +10462,10 @@
 <dd>
 <div class="block">Returns the parameters of this key.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HybridPrivateKey.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HybridPrivateKey.html" title="class in com.google.crypto.tink.hybrid">HybridPrivateKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HybridPublicKey.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HybridPublicKey.html" title="class in com.google.crypto.tink.hybrid">HybridPublicKey</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/LegacyProtoKey.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/LegacyProtoKey.html" title="class in com.google.crypto.tink.internal">LegacyProtoKey</a></dt>
 <dd>
 <div class="block">Returns a LegacyParametersNotForCreation object.</div>
@@ -11882,6 +11896,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPkcs1Parameters.html#getPublicExponent--">getPublicExponent()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPkcs1Parameters.html" title="class in com.google.crypto.tink.signature">RsaSsaPkcs1Parameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesAeadHkdfPrivateKeyManager.html#getPublicKey-com.google.crypto.tink.proto.EciesAeadHkdfPrivateKey-">getPublicKey(EciesAeadHkdfPrivateKey)</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesAeadHkdfPrivateKeyManager.html" title="class in com.google.crypto.tink.hybrid">EciesAeadHkdfPrivateKeyManager</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HybridPrivateKey.html#getPublicKey--">getPublicKey()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HybridPrivateKey.html" title="class in com.google.crypto.tink.hybrid">HybridPrivateKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/HpkePrivateKeyManager.html#getPublicKey-com.google.crypto.tink.proto.HpkePrivateKey-">getPublicKey(HpkePrivateKey)</a></span> - Method in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/HpkePrivateKeyManager.html" title="class in com.google.crypto.tink.hybrid.internal">HpkePrivateKeyManager</a></dt>
 <dd>&nbsp;</dd>
@@ -15606,6 +15622,24 @@
 <dd>
 <div class="block">Pre-generated <a href="com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> for <code>HybridDecrypt</code> and <code>HybridEncrypt</code> primitives.</div>
 </dd>
+<dt><a href="com/google/crypto/tink/hybrid/HybridParameters.html" title="class in com.google.crypto.tink.hybrid"><span class="typeNameLink">HybridParameters</span></a> - Class in <a href="com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a></dt>
+<dd>
+<div class="block">Represents a description of a <a href="com/google/crypto/tink/hybrid/HybridPrivateKey.html" title="class in com.google.crypto.tink.hybrid"><code>HybridPrivateKey</code></a> and the corresponding <a href="com/google/crypto/tink/hybrid/HybridPublicKey.html" title="class in com.google.crypto.tink.hybrid"><code>HybridPublicKey</code></a> excluding the randomly chosen key material.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HybridParameters.html#HybridParameters--">HybridParameters()</a></span> - Constructor for class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HybridParameters.html" title="class in com.google.crypto.tink.hybrid">HybridParameters</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/hybrid/HybridPrivateKey.html" title="class in com.google.crypto.tink.hybrid"><span class="typeNameLink">HybridPrivateKey</span></a> - Class in <a href="com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a></dt>
+<dd>
+<div class="block">Representation of the decryption function for a hybrid encryption primitive.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HybridPrivateKey.html#HybridPrivateKey--">HybridPrivateKey()</a></span> - Constructor for class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HybridPrivateKey.html" title="class in com.google.crypto.tink.hybrid">HybridPrivateKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/hybrid/HybridPublicKey.html" title="class in com.google.crypto.tink.hybrid"><span class="typeNameLink">HybridPublicKey</span></a> - Class in <a href="com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a></dt>
+<dd>
+<div class="block">Representation of the encryption function for a hybrid encryption primitive.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HybridPublicKey.html#HybridPublicKey--">HybridPublicKey()</a></span> - Constructor for class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HybridPublicKey.html" title="class in com.google.crypto.tink.hybrid">HybridPublicKey</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <a name="I:I">
 <!--   -->
