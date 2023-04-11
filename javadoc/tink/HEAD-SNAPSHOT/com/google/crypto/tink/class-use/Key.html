@@ -90,6 +90,14 @@
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><a href="#com.google.crypto.tink.daead">com.google.crypto.tink.daead</a></td>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="#com.google.crypto.tink.hybrid">com.google.crypto.tink.hybrid</a></td>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><a href="#com.google.crypto.tink.internal">com.google.crypto.tink.internal</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
@@ -103,6 +111,10 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="#com.google.crypto.tink.signature">com.google.crypto.tink.signature</a></td>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="#com.google.crypto.tink.streamingaead">com.google.crypto.tink.streamingaead</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
 </tbody>
@@ -179,29 +191,35 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/AesCtrHmacAeadKey.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadKey</a></span></code>
+<div class="block">Represents an AES-CTR-HMAC key used for computing AEAD.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/AesEaxKey.html" title="class in com.google.crypto.tink.aead">AesEaxKey</a></span></code>
 <div class="block">Represents an AES-EAX key used for computing AEAD.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/AesGcmKey.html" title="class in com.google.crypto.tink.aead">AesGcmKey</a></span></code>
 <div class="block">Represents an AES-GCM key used for computing AEAD.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/AesGcmSivKey.html" title="class in com.google.crypto.tink.aead">AesGcmSivKey</a></span></code>
 <div class="block">Represents an AES-GCM-SIV key used for computing AEAD.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/ChaCha20Poly1305Key.html" title="class in com.google.crypto.tink.aead">ChaCha20Poly1305Key</a></span></code>
 <div class="block">Represents the Aead ChaCha20-Poly1305 specified in RFC 8439.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/XChaCha20Poly1305Key.html" title="class in com.google.crypto.tink.aead">XChaCha20Poly1305Key</a></span></code>
 <div class="block">Represents the Aead XChaCha20-Poly1305 proposed in the RFC draft at
@@ -236,6 +254,76 @@
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><span class="typeNameLabel">AesEaxKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/AesEaxKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><span class="typeNameLabel">AesCtrHmacAeadKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/AesCtrHmacAeadKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li class="blockList"><a name="com.google.crypto.tink.daead">
+<!--   -->
+</a>
+<h3>Uses of <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a> in <a href="../../../../../com/google/crypto/tink/daead/package-summary.html">com.google.crypto.tink.daead</a></h3>
+<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing subclasses, and an explanation">
+<caption><span>Subclasses of <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a> in <a href="../../../../../com/google/crypto/tink/daead/package-summary.html">com.google.crypto.tink.daead</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Class and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/daead/AesSivKey.html" title="class in com.google.crypto.tink.daead">AesSivKey</a></span></code>
+<div class="block">Represents an AES--SIV key used for computing deterministic AEAD, as described in
+ https://www.rfc-editor.org/rfc/rfc5297.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/daead/DeterministicAeadKey.html" title="class in com.google.crypto.tink.daead">DeterministicAeadKey</a></span></code>
+<div class="block">Represents functions to encrypt and decrypt data deterministically using AEAD.</div>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Methods in <a href="../../../../../com/google/crypto/tink/daead/package-summary.html">com.google.crypto.tink.daead</a> with parameters of type <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><span class="typeNameLabel">AesSivKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/daead/AesSivKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li class="blockList"><a name="com.google.crypto.tink.hybrid">
+<!--   -->
+</a>
+<h3>Uses of <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a> in <a href="../../../../../com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a></h3>
+<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing subclasses, and an explanation">
+<caption><span>Subclasses of <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a> in <a href="../../../../../com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Class and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/HybridPrivateKey.html" title="class in com.google.crypto.tink.hybrid">HybridPrivateKey</a></span></code>
+<div class="block">Representation of the decryption function for a hybrid encryption primitive.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/HybridPublicKey.html" title="class in com.google.crypto.tink.hybrid">HybridPublicKey</a></span></code>
+<div class="block">Representation of the encryption function for a hybrid encryption primitive.</div>
+</td>
 </tr>
 </tbody>
 </table>
@@ -505,8 +593,20 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/prf/AesCmacPrfKey.html" title="class in com.google.crypto.tink.prf">AesCmacPrfKey</a></span></code>
+<div class="block">Represents a key computing AES CMAC PRF.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/prf/HkdfPrfKey.html" title="class in com.google.crypto.tink.prf">HkdfPrfKey</a></span></code>
 <div class="block">Represents a key computing HKDF PRF.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/prf/HmacPrfKey.html" title="class in com.google.crypto.tink.prf">HmacPrfKey</a></span></code>
+<div class="block">Represents a key computing HMAC PRF.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -526,7 +626,15 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><span class="typeNameLabel">HmacPrfKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/prf/HmacPrfKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><span class="typeNameLabel">HkdfPrfKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/prf/HkdfPrfKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><span class="typeNameLabel">AesCmacPrfKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/prf/AesCmacPrfKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
@@ -556,12 +664,30 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/signature/Ed25519PrivateKey.html" title="class in com.google.crypto.tink.signature">Ed25519PrivateKey</a></span></code>
+<div class="block">The key for computing Ed25519 signatures.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/signature/Ed25519PublicKey.html" title="class in com.google.crypto.tink.signature">Ed25519PublicKey</a></span></code>
+<div class="block">Ed25519PublicKey represents the public portion of the Ed25519 signature primitive.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/signature/RsaSsaPkcs1PublicKey.html" title="class in com.google.crypto.tink.signature">RsaSsaPkcs1PublicKey</a></span></code>
+<div class="block">Represents a public key for the RSA SSA PKCS1 signature primitive.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/signature/SignaturePrivateKey.html" title="class in com.google.crypto.tink.signature">SignaturePrivateKey</a></span></code>
 <div class="block">A <a href="../../../../../com/google/crypto/tink/signature/SignaturePrivateKey.html" title="class in com.google.crypto.tink.signature"><code>SignaturePrivateKey</code></a> represents a digital signature primitive, which consists of a sign
  and a verify function.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/signature/SignaturePublicKey.html" title="class in com.google.crypto.tink.signature">SignaturePublicKey</a></span></code>
 <div class="block">A SignaturePublicKey represents the verification portion of a digital signature primitive.</div>
@@ -578,11 +704,72 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><span class="typeNameLabel">EcdsaPublicKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/signature/EcdsaPublicKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
+<td class="colLast"><span class="typeNameLabel">RsaSsaPkcs1PublicKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/signature/RsaSsaPkcs1PublicKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><span class="typeNameLabel">Ed25519PublicKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/signature/Ed25519PublicKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><span class="typeNameLabel">Ed25519PrivateKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/signature/Ed25519PrivateKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><span class="typeNameLabel">EcdsaPublicKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/signature/EcdsaPublicKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><span class="typeNameLabel">EcdsaPrivateKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/signature/EcdsaPrivateKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li class="blockList"><a name="com.google.crypto.tink.streamingaead">
+<!--   -->
+</a>
+<h3>Uses of <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a> in <a href="../../../../../com/google/crypto/tink/streamingaead/package-summary.html">com.google.crypto.tink.streamingaead</a></h3>
+<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing subclasses, and an explanation">
+<caption><span>Subclasses of <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a> in <a href="../../../../../com/google/crypto/tink/streamingaead/package-summary.html">com.google.crypto.tink.streamingaead</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Class and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/streamingaead/AesCtrHmacStreamingKey.html" title="class in com.google.crypto.tink.streamingaead">AesCtrHmacStreamingKey</a></span></code>
+<div class="block">Represents a StreamingAead functions.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingKey.html" title="class in com.google.crypto.tink.streamingaead">AesGcmHkdfStreamingKey</a></span></code>
+<div class="block">Represents a StreamingAead functions.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/streamingaead/StreamingAeadKey.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadKey</a></span></code>
+<div class="block">Represents functions to encrypt and decrypt data using a StreamingAead.</div>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Methods in <a href="../../../../../com/google/crypto/tink/streamingaead/package-summary.html">com.google.crypto.tink.streamingaead</a> with parameters of type <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><span class="typeNameLabel">AesGcmHkdfStreamingKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><span class="typeNameLabel">AesCtrHmacStreamingKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/streamingaead/AesCtrHmacStreamingKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
