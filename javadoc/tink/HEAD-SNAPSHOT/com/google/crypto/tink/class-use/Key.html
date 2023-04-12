@@ -102,18 +102,22 @@
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><a href="#com.google.crypto.tink.jwt">com.google.crypto.tink.jwt</a></td>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><a href="#com.google.crypto.tink.mac">com.google.crypto.tink.mac</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="#com.google.crypto.tink.prf">com.google.crypto.tink.prf</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="#com.google.crypto.tink.signature">com.google.crypto.tink.signature</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="#com.google.crypto.tink.streamingaead">com.google.crypto.tink.streamingaead</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
@@ -527,6 +531,46 @@
 <td class="colLast"><span class="typeNameLabel">LegacyProtoKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/LegacyProtoKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;key)</code>
 <div class="block">Returns true if we are sure that the other key is the same.</div>
 </td>
+</tr>
+</tbody>
+</table>
+</li>
+<li class="blockList"><a name="com.google.crypto.tink.jwt">
+<!--   -->
+</a>
+<h3>Uses of <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a> in <a href="../../../../../com/google/crypto/tink/jwt/package-summary.html">com.google.crypto.tink.jwt</a></h3>
+<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing subclasses, and an explanation">
+<caption><span>Subclasses of <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a> in <a href="../../../../../com/google/crypto/tink/jwt/package-summary.html">com.google.crypto.tink.jwt</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Class and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/jwt/JwtHmacKey.html" title="class in com.google.crypto.tink.jwt">JwtHmacKey</a></span></code>
+<div class="block">Represents a JWT HMAC key to create and verify JWT using HMAC.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/jwt/JwtMacKey.html" title="class in com.google.crypto.tink.jwt">JwtMacKey</a></span></code>
+<div class="block">Represents a key to compute JWT using symmetric cryptography (i.e., using the <a href="../../../../../com/google/crypto/tink/jwt/JwtMac.html" title="interface in com.google.crypto.tink.jwt"><code>JwtMac</code></a>
+ interface).</div>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Methods in <a href="../../../../../com/google/crypto/tink/jwt/package-summary.html">com.google.crypto.tink.jwt</a> with parameters of type <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><span class="typeNameLabel">JwtHmacKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/jwt/JwtHmacKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
