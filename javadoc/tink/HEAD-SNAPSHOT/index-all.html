@@ -5611,6 +5611,14 @@
 <dd>
 <div class="block"><code>ES_UNKNOWN = 0;</code></div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/TinkBugException.html#exceptionIsBug-com.google.crypto.tink.internal.TinkBugException.ThrowingSupplier-">exceptionIsBug(TinkBugException.ThrowingSupplier&lt;T&gt;)</a></span> - Static method in exception com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/TinkBugException.html" title="class in com.google.crypto.tink.internal">TinkBugException</a></dt>
+<dd>
+<div class="block">Swallows an exception and translates it into a TinkBugException.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/TinkBugException.html#exceptionIsBug-com.google.crypto.tink.internal.TinkBugException.ThrowingRunnable-">exceptionIsBug(TinkBugException.ThrowingRunnable)</a></span> - Static method in exception com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/TinkBugException.html" title="class in com.google.crypto.tink.internal">TinkBugException</a></dt>
+<dd>
+<div class="block">Swallows an exception and translates it into a TinkBugException.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtValidator.Builder.html#expectAudience-java.lang.String-">expectAudience(String)</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtValidator.Builder.html" title="class in com.google.crypto.tink.jwt">JwtValidator.Builder</a></dt>
 <dd>
 <div class="block">Sets the expected audience.</div>
@@ -5832,6 +5840,8 @@
 <dd>
 <div class="block">Returns a <a href="com/google/crypto/tink/SecretKeyAccess.html" title="class in com.google.crypto.tink"><code>SecretKeyAccess</code></a> token.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/TinkBugException.ThrowingSupplier.html#get--">get()</a></span> - Method in interface com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/TinkBugException.ThrowingSupplier.html" title="interface in com.google.crypto.tink.internal">TinkBugException.ThrowingSupplier</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/KeyTemplates.html#get-java.lang.String-">get(String)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/KeyTemplates.html" title="class in com.google.crypto.tink">KeyTemplates</a></dt>
 <dd>
 <div class="block">Returns a key template that was registered with the <a href="com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink"><code>Registry</code></a> as <code>name</code>.</div>
@@ -23793,6 +23803,8 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/RsaSsaPssVerifyJce.html#RsaSsaPssVerifyJce-java.security.interfaces.RSAPublicKey-com.google.crypto.tink.subtle.Enums.HashType-com.google.crypto.tink.subtle.Enums.HashType-int-">RsaSsaPssVerifyJce(RSAPublicKey, Enums.HashType, Enums.HashType, int)</a></span> - Constructor for class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/RsaSsaPssVerifyJce.html" title="class in com.google.crypto.tink.subtle">RsaSsaPssVerifyJce</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/TinkBugException.ThrowingRunnable.html#run--">run()</a></span> - Method in interface com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/TinkBugException.ThrowingRunnable.html" title="interface in com.google.crypto.tink.internal">TinkBugException.ThrowingRunnable</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <a name="I:S">
 <!--   -->
@@ -26749,6 +26761,14 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/TinkBugException.html#TinkBugException-java.lang.Throwable-">TinkBugException(Throwable)</a></span> - Constructor for exception com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/TinkBugException.html" title="class in com.google.crypto.tink.internal">TinkBugException</a></dt>
 <dd>
 <div class="block">Constructs a new TinkBugException as a wrapper on a root cause</div>
+</dd>
+<dt><a href="com/google/crypto/tink/internal/TinkBugException.ThrowingRunnable.html" title="interface in com.google.crypto.tink.internal"><span class="typeNameLink">TinkBugException.ThrowingRunnable</span></a> - Interface in <a href="com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></dt>
+<dd>
+<div class="block">A function which returns void and may throw an Exception.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/internal/TinkBugException.ThrowingSupplier.html" title="interface in com.google.crypto.tink.internal"><span class="typeNameLink">TinkBugException.ThrowingSupplier</span></a>&lt;<a href="com/google/crypto/tink/internal/TinkBugException.ThrowingSupplier.html" title="type parameter in TinkBugException.ThrowingSupplier">T</a>&gt; - Interface in <a href="com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></dt>
+<dd>
+<div class="block">A function which produces a T and may throw an Exception.</div>
 </dd>
 <dt><a href="com/google/crypto/tink/config/TinkConfig.html" title="class in com.google.crypto.tink.config"><span class="typeNameLink">TinkConfig</span></a> - Class in <a href="com/google/crypto/tink/config/package-summary.html">com.google.crypto.tink.config</a></dt>
 <dd>
