@@ -18,7 +18,7 @@ set -euo pipefail
 
 # Fail if RELEASE_VERSION is not set.
 if [[ -z "${RELEASE_VERSION:-}" ]]; then
-  echo "RELEASE_VERSION must be set" >2&
+  echo "RELEASE_VERSION must be set" >&2
   exit 1
 fi
 
@@ -36,7 +36,7 @@ readonly IS_KOKORO
 : "${DO_MAKE_RELEASE:="false"}"
 
 if [[ ! "${DO_MAKE_RELEASE}" =~ ^(false|true)$ ]]; then
-  echo "DO_MAKE_RELEASE must be either \"true\" or \"false\"" >2&
+  echo "DO_MAKE_RELEASE must be either \"true\" or \"false\"" >&2
   exit 1
 fi
 
