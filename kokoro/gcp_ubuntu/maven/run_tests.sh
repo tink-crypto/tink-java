@@ -52,4 +52,6 @@ if [[ "${IS_KOKORO}" == "true" \
   readonly GITHUB_URL="https://${GIT_CREDENTIALS}@github.com/tink-crypto/tink-java.git"
   ./maven/maven_deploy_library.sh -u "${GITHUB_URL}" snapshot tink \
     maven/tink-java.pom.xml HEAD
+  ./maven/maven_deploy_library.sh -u "${GITHUB_URL}" snapshot tink-android \
+    maven/tink-java-android.pom.xml HEAD
 fi
