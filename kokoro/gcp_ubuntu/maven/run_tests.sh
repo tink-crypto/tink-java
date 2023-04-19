@@ -30,8 +30,17 @@ if [[ "${IS_KOKORO}" == "true" ]] ; then
   cd "${TINK_BASE_DIR}/tink_java"
 fi
 
+# Compare the dependencies of the ":tink" target with the declared dependencies.
+# These should match the dependencies declared in tink-java.pom.xml, since
+# since these are the dependencies which are declared on maven.
 ./kokoro/testutils/check_maven_bazel_deps_consistency.sh "//:tink" \
   "maven/tink-java.pom.xml"
+
+# For Android, we compare the unshaded version -- trial and error revealed that
+# this is the target that has the correct dependencies.
+./kokoro/testutils/check_maven_bazel_deps_consistency.sh \
+  -e com.google.protobuf:protobuf-javalite \
+  "//:tink-android-unshaded" "maven/tink-java-android.pom.xml"
 
 # Install the latest snapshot for tink-java and tink-android locally.
 ./maven/maven_deploy_library.sh install tink maven/tink-java.pom.xml HEAD

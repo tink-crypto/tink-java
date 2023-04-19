@@ -25,7 +25,7 @@ usage() {
   echo
   echo " <bazel target>: The Bazel target that generate the JAR."
   echo " <pom file>: The POM file path."
-  echo " -e: Comma-separated list of excluded group ids (optional)."
+  echo " -e: Maven artifact to be ignored (of the form package:artifact, e.g. com.google.protobuf:protobuf-java"
   echo " -h: Show this help message."
   exit 1
 }
@@ -39,17 +39,16 @@ readonly BAZEL_CMD
 
 BAZEL_TARGET=
 POM_FILE=
-EXCLUDED_GROUP_IDS=""
-
+IGNORED_MAVEN_PACKAGE=
 process_params() {
   while getopts "he:" opt; do
     case "${opt}" in
-      e) EXCLUDED_GROUP_IDS="${OPTARG}" ;;
+      e) IGNORED_MAVEN_PACKAGE="${OPTARG}" ;;
       *) usage ;;
     esac
   done
   shift $((OPTIND - 1))
-  readonly EXCLUDED_GROUP_IDS
+  readonly IGNORED_MAVEN_PACKAGE
 
   BAZEL_TARGET="$1"
   POM_FILE="$2"
@@ -60,19 +59,30 @@ process_params() {
 
 process_params "$@"
 
+echo " === Obtaining Maven dependencies"
+
 readonly MAVEN_DIRECT_DEPS="$(mktemp)"
 mvn dependency:list -DoutputFile="${MAVEN_DIRECT_DEPS}" \
-  -DexcludeGroupIds="${EXCLUDED_GROUP_IDS}" -DexcludeTransitive=true -f \
-  "${POM_FILE}" -q
+  -DexcludeTransitive=true -f "${POM_FILE}" -q
 
 # Get the sorted list of deps and get them in the form:
 #    <groupId>:<artifactId>:<version>
-readonly POM_FILE_DEPS="$(cat "${MAVEN_DIRECT_DEPS}" \
+POM_FILE_DEPS="$(cat "${MAVEN_DIRECT_DEPS}" \
   | grep compile | cut -d: -f1,2,4 | sed -E 's/^\s+//' | sort)"
 
-readonly BAZEL_MAVEN_DEPS="$("${BAZEL_CMD}" query --output=build \
+echo " === Obtaining Bazel dependencies"
+
+BAZEL_MAVEN_DEPS="$("${BAZEL_CMD}" query --output=build \
   'attr(tags, .*,filter(@maven, deps('"${BAZEL_TARGET}"', 2)))' \
     | grep maven_coordinates | cut -d'"' -f2 | cut -d'=' -f2 | sort)"
+
+if [[ ! -z "${IGNORED_MAVEN_PACKAGE}" ]]; then
+  BAZEL_MAVEN_DEPS=$(echo "${BAZEL_MAVEN_DEPS}" | grep -v -F "${IGNORED_MAVEN_PACKAGE}":)
+  POM_FILE_DEPS=$(echo "${POM_FILE_DEPS}" | grep -v -F "${IGNORED_MAVEN_PACKAGE}":)
+fi
+
+readonly BAZEL_MAVEN_DEPS
+readonly POM_FILE_DEPS
 
 if ! cmp -s <(echo "${BAZEL_MAVEN_DEPS}" ) <(echo "${POM_FILE_DEPS}"); then
   echo "ERROR: There are the following mismatches between the dependencies in \
