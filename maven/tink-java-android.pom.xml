@@ -114,4 +114,15 @@
       <version>${error_prone_annotations.version}</version>
     </dependency>
   </dependencies>
+
+  <repositories>
+    <repository>
+      <id>google-maven-repository</id>
+      <url>https://maven.google.com</url>
+    </repository>
+    <repository>
+      <id>maven-central-repository</id>
+      <url>https://repo1.maven.org/maven2</url>
+    </repository>
+  </repositories>
 </project>
