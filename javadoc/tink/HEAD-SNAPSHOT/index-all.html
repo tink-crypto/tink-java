@@ -940,6 +940,15 @@
    OutputPrefixType: TINK
  </div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/PredefinedPrfParameters.html#AES_CMAC_PRF">AES_CMAC_PRF</a></span> - Static variable in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/PredefinedPrfParameters.html" title="class in com.google.crypto.tink.prf">PredefinedPrfParameters</a></dt>
+<dd>
+<div class="block">A <code>Parameters</code> object for generating new instances of <code>AesCmacKey</code> with the
+ following parameters:
+
+ 
+   HMAC key size: 32 bytes
+ </div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/PrfKeyTemplates.html#AES_CMAC_PRF">AES_CMAC_PRF</a></span> - Static variable in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/PrfKeyTemplates.html" title="class in com.google.crypto.tink.prf">PrfKeyTemplates</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AeadConfig.html#AES_CTR_HMAC_AEAD_TYPE_URL">AES_CTR_HMAC_AEAD_TYPE_URL</a></span> - Static variable in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AeadConfig.html" title="class in com.google.crypto.tink.aead">AeadConfig</a></dt>
@@ -15459,6 +15468,17 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/EciesHkdfKemParams.html#HKDF_SALT_FIELD_NUMBER">HKDF_SALT_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/EciesHkdfKemParams.html" title="class in com.google.crypto.tink.proto">EciesHkdfKemParams</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/PredefinedPrfParameters.html#HKDF_SHA256">HKDF_SHA256</a></span> - Static variable in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/PredefinedPrfParameters.html" title="class in com.google.crypto.tink.prf">PredefinedPrfParameters</a></dt>
+<dd>
+<div class="block">A <code>Parameters</code> object for generating new instances of <a href="com/google/crypto/tink/prf/HkdfPrfKey.html" title="class in com.google.crypto.tink.prf"><code>HkdfPrfKey</code></a> with the
+ following parameters:
+
+ 
+   Hash function: SHA256
+   HMAC key size: 32 bytes
+   Salt: empty
+ </div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/PrfKeyTemplates.html#HKDF_SHA256">HKDF_SHA256</a></span> - Static variable in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/PrfKeyTemplates.html" title="class in com.google.crypto.tink.prf">PrfKeyTemplates</a></dt>
 <dd>
 <div class="block">Generates a <a href="com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> for a <a href="com/google/crypto/tink/proto/HkdfPrfKey.html" title="class in com.google.crypto.tink.proto"><code>HkdfPrfKey</code></a> key with
@@ -15604,6 +15624,16 @@
    OutputPrefixType: TINK
  </div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/PredefinedPrfParameters.html#HMAC_SHA256_PRF">HMAC_SHA256_PRF</a></span> - Static variable in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/PredefinedPrfParameters.html" title="class in com.google.crypto.tink.prf">PredefinedPrfParameters</a></dt>
+<dd>
+<div class="block">A <code>Parameters</code> object for generating new instances of <a href="com/google/crypto/tink/prf/HmacPrfKey.html" title="class in com.google.crypto.tink.prf"><code>HmacPrfKey</code></a> with the
+ following parameters:
+
+ 
+   Hash function: SHA256
+   HMAC key size: 32 bytes
+ </div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/PrfKeyTemplates.html#HMAC_SHA256_PRF">HMAC_SHA256_PRF</a></span> - Static variable in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/PrfKeyTemplates.html" title="class in com.google.crypto.tink.prf">PrfKeyTemplates</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/MacKeyTemplates.html#HMAC_SHA512_256BITTAG">HMAC_SHA512_256BITTAG</a></span> - Static variable in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/MacKeyTemplates.html" title="class in com.google.crypto.tink.mac">MacKeyTemplates</a></dt>
@@ -15650,6 +15680,16 @@
    Tag size: 64 bytes
    Hash function: SHA512
    OutputPrefixType: TINK
+ </div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/PredefinedPrfParameters.html#HMAC_SHA512_PRF">HMAC_SHA512_PRF</a></span> - Static variable in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/PredefinedPrfParameters.html" title="class in com.google.crypto.tink.prf">PredefinedPrfParameters</a></dt>
+<dd>
+<div class="block">A <code>Parameters</code> object for generating new instances of <a href="com/google/crypto/tink/prf/HmacPrfKey.html" title="class in com.google.crypto.tink.prf"><code>HmacPrfKey</code></a> with the
+ following parameters:
+
+ 
+   Hash function: SHA512
+   HMAC key size: 64 bytes
  </div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/PrfKeyTemplates.html#HMAC_SHA512_PRF">HMAC_SHA512_PRF</a></span> - Static variable in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/PrfKeyTemplates.html" title="class in com.google.crypto.tink.prf">PrfKeyTemplates</a></dt>
@@ -22901,6 +22941,10 @@
 <dt><a href="com/google/crypto/tink/mac/PredefinedMacParameters.html" title="class in com.google.crypto.tink.mac"><span class="typeNameLink">PredefinedMacParameters</span></a> - Class in <a href="com/google/crypto/tink/mac/package-summary.html">com.google.crypto.tink.mac</a></dt>
 <dd>
 <div class="block">Pre-defined <code>Parameter</code> objects for <a href="com/google/crypto/tink/Mac.html" title="interface in com.google.crypto.tink"><code>Mac</code></a>.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/prf/PredefinedPrfParameters.html" title="class in com.google.crypto.tink.prf"><span class="typeNameLink">PredefinedPrfParameters</span></a> - Class in <a href="com/google/crypto/tink/prf/package-summary.html">com.google.crypto.tink.prf</a></dt>
+<dd>
+<div class="block">Predefined <code>Parameters</code> for PRF-Keys.</div>
 </dd>
 <dt><a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html" title="class in com.google.crypto.tink.streamingaead"><span class="typeNameLink">PredefinedStreamingAeadParameters</span></a> - Class in <a href="com/google/crypto/tink/streamingaead/package-summary.html">com.google.crypto.tink.streamingaead</a></dt>
 <dd>
