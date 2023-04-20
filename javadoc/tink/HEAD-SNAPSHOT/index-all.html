@@ -540,6 +540,20 @@
    HMAC hash function: SHA256
  </div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html#AES128_CTR_HMAC_SHA256_1MB">AES128_CTR_HMAC_SHA256_1MB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html" title="class in com.google.crypto.tink.streamingaead">PredefinedStreamingAeadParameters</a></dt>
+<dd>
+<div class="block">A <code>Parameters</code> object for generating new instances of <a href="com/google/crypto/tink/streamingaead/AesCtrHmacStreamingKey.html" title="class in com.google.crypto.tink.streamingaead"><code>AesCtrHmacStreamingKey</code></a> with
+ the following parameters:
+
+ 
+   Size of the main key: 16 bytes
+   HKDF algo: HMAC-SHA256
+   Size of AES-CTR derived keys: 16 bytes
+   Tag algo: HMAC-SHA256
+   Tag size: 32 bytes
+   Ciphertext segment size: 1048576 bytes (1 MB)
+ </div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html#AES128_CTR_HMAC_SHA256_1MB">AES128_CTR_HMAC_SHA256_1MB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadKeyTemplates</a></dt>
 <dd>
 <div class="block">A <a href="com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> that generates new instances of <a href="com/google/crypto/tink/proto/AesCtrHmacStreamingKey.html" title="class in com.google.crypto.tink.proto"><code>AesCtrHmacStreamingKey</code></a> with the following parameters:
@@ -551,6 +565,20 @@
    Tag algo: HMAC-SHA256
    Tag size: 32 bytes
    Ciphertext segment size: 1048576 bytes (1 MB)
+ </div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html#AES128_CTR_HMAC_SHA256_4KB">AES128_CTR_HMAC_SHA256_4KB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html" title="class in com.google.crypto.tink.streamingaead">PredefinedStreamingAeadParameters</a></dt>
+<dd>
+<div class="block">A <code>Parameters</code> object for generating new instances of <a href="com/google/crypto/tink/streamingaead/AesCtrHmacStreamingKey.html" title="class in com.google.crypto.tink.streamingaead"><code>AesCtrHmacStreamingKey</code></a> with
+ the following parameters:
+
+ 
+   Size of the main key: 16 bytes
+   HKDF algo: HMAC-SHA256
+   Size of AES-CTR derived keys: 16 bytes
+   Tag algo: HMAC-SHA256
+   Tag size: 32 bytes
+   Ciphertext segment size: 4096
  </div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html#AES128_CTR_HMAC_SHA256_4KB">AES128_CTR_HMAC_SHA256_4KB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadKeyTemplates</a></dt>
@@ -602,6 +630,18 @@
    Key size: 16 bytes
  </div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html#AES128_GCM_HKDF_1MB">AES128_GCM_HKDF_1MB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html" title="class in com.google.crypto.tink.streamingaead">PredefinedStreamingAeadParameters</a></dt>
+<dd>
+<div class="block">A <code>Parameters</code> object for generating new instances of <a href="com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingKey.html" title="class in com.google.crypto.tink.streamingaead"><code>AesGcmHkdfStreamingKey</code></a> with
+ the following parameters:
+
+ 
+   Size of the main key: 16 bytes
+   HKDF algo: HMAC-SHA256
+   Size of AES-GCM derived keys: 16 bytes
+   Ciphertext segment size: 1048576 bytes (1 MB)
+ </div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html#AES128_GCM_HKDF_1MB">AES128_GCM_HKDF_1MB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadKeyTemplates</a></dt>
 <dd>
 <div class="block">A <a href="com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> that generates new instances of <a href="com/google/crypto/tink/proto/AesGcmHkdfStreamingKey.html" title="class in com.google.crypto.tink.proto"><code>AesGcmHkdfStreamingKey</code></a> with the following parameters:
@@ -611,6 +651,18 @@
    HKDF algo: HMAC-SHA256
    Size of AES-GCM derived keys: 16 bytes
    Ciphertext segment size: 1048576 bytes (1 MB)
+ </div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html#AES128_GCM_HKDF_4KB">AES128_GCM_HKDF_4KB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html" title="class in com.google.crypto.tink.streamingaead">PredefinedStreamingAeadParameters</a></dt>
+<dd>
+<div class="block">A <code>Parameters</code> object for generating new instances of <a href="com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingKey.html" title="class in com.google.crypto.tink.streamingaead"><code>AesGcmHkdfStreamingKey</code></a> with
+ the following parameters:
+
+ 
+   Size of the main key: 16 bytes
+   HKDF algo: HMAC-SHA256
+   Size of AES-GCM derived keys: 16 bytes
+   Ciphertext segment size: 4096 bytes
  </div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html#AES128_GCM_HKDF_4KB">AES128_GCM_HKDF_4KB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadKeyTemplates</a></dt>
@@ -673,6 +725,20 @@
    HMAC hash function: SHA256
  </div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html#AES256_CTR_HMAC_SHA256_1MB">AES256_CTR_HMAC_SHA256_1MB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html" title="class in com.google.crypto.tink.streamingaead">PredefinedStreamingAeadParameters</a></dt>
+<dd>
+<div class="block">A <code>Parameters</code> object for generating new instances of <a href="com/google/crypto/tink/streamingaead/AesCtrHmacStreamingKey.html" title="class in com.google.crypto.tink.streamingaead"><code>AesCtrHmacStreamingKey</code></a> with
+ the following parameters:
+
+ 
+   Size of the main key: 32 bytes
+   HKDF algo: HMAC-SHA256
+   Size of AES-CTR derived keys: 32 bytes
+   Tag algo: HMAC-SHA256
+   Tag size: 32 bytes
+   Ciphertext segment size: 1048576 bytes (1 MB)
+ </div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html#AES256_CTR_HMAC_SHA256_1MB">AES256_CTR_HMAC_SHA256_1MB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadKeyTemplates</a></dt>
 <dd>
 <div class="block">A <a href="com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> that generates new instances of <a href="com/google/crypto/tink/proto/AesCtrHmacStreamingKey.html" title="class in com.google.crypto.tink.proto"><code>AesCtrHmacStreamingKey</code></a> with the following parameters:
@@ -684,6 +750,20 @@
    Tag algo: HMAC-SHA256
    Tag size: 32 bytes
    Ciphertext segment size: 1048576 bytes (1 MB)
+ </div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html#AES256_CTR_HMAC_SHA256_4KB">AES256_CTR_HMAC_SHA256_4KB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html" title="class in com.google.crypto.tink.streamingaead">PredefinedStreamingAeadParameters</a></dt>
+<dd>
+<div class="block">A <code>Parameters</code> object for generating new instances of <a href="com/google/crypto/tink/streamingaead/AesCtrHmacStreamingKey.html" title="class in com.google.crypto.tink.streamingaead"><code>AesCtrHmacStreamingKey</code></a> with
+ the following parameters:
+
+ 
+   Size of the main key: 32 bytes
+   HKDF algo: HMAC-SHA256
+   Size of AES-CTR derived keys: 32 bytes
+   Tag algo: HMAC-SHA256
+   Tag size: 32 bytes
+   Ciphertext segment size: 4096
  </div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html#AES256_CTR_HMAC_SHA256_4KB">AES256_CTR_HMAC_SHA256_4KB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadKeyTemplates</a></dt>
@@ -735,6 +815,18 @@
    Key size: 32 bytes
  </div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html#AES256_GCM_HKDF_1MB">AES256_GCM_HKDF_1MB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html" title="class in com.google.crypto.tink.streamingaead">PredefinedStreamingAeadParameters</a></dt>
+<dd>
+<div class="block">A <code>Parameters</code> object for generating new instances of <a href="com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingKey.html" title="class in com.google.crypto.tink.streamingaead"><code>AesGcmHkdfStreamingKey</code></a> with
+ the following parameters:
+
+ 
+   Size of the main key: 32 bytes
+   HKDF algo: HMAC-SHA256
+   Size of AES-GCM derived keys: 32 bytes
+   Ciphertext segment size: 1048576 bytes (1 MB)
+ </div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html#AES256_GCM_HKDF_1MB">AES256_GCM_HKDF_1MB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadKeyTemplates</a></dt>
 <dd>
 <div class="block">A <a href="com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> that generates new instances of <a href="com/google/crypto/tink/proto/AesGcmHkdfStreamingKey.html" title="class in com.google.crypto.tink.proto"><code>AesGcmHkdfStreamingKey</code></a> with the following parameters:
@@ -744,6 +836,18 @@
    HKDF algo: HMAC-SHA256
    Size of AES-GCM derived keys: 32 bytes
    Ciphertext segment size: 1048576 bytes (1 MB)
+ </div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html#AES256_GCM_HKDF_4KB">AES256_GCM_HKDF_4KB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html" title="class in com.google.crypto.tink.streamingaead">PredefinedStreamingAeadParameters</a></dt>
+<dd>
+<div class="block">A <code>Parameters</code> object for generating new instances of <a href="com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingKey.html" title="class in com.google.crypto.tink.streamingaead"><code>AesGcmHkdfStreamingKey</code></a> with
+ the following parameters:
+
+ 
+   Size of the main key: 32 bytes
+   HKDF algo: HMAC-SHA256
+   Size of AES-GCM derived keys: 32 bytes
+   Ciphertext segment size: 4096 bytes (4 KB)
  </div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html#AES256_GCM_HKDF_4KB">AES256_GCM_HKDF_4KB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadKeyTemplates</a></dt>
@@ -22797,6 +22901,11 @@
 <dt><a href="com/google/crypto/tink/mac/PredefinedMacParameters.html" title="class in com.google.crypto.tink.mac"><span class="typeNameLink">PredefinedMacParameters</span></a> - Class in <a href="com/google/crypto/tink/mac/package-summary.html">com.google.crypto.tink.mac</a></dt>
 <dd>
 <div class="block">Pre-defined <code>Parameter</code> objects for <a href="com/google/crypto/tink/Mac.html" title="interface in com.google.crypto.tink"><code>Mac</code></a>.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html" title="class in com.google.crypto.tink.streamingaead"><span class="typeNameLink">PredefinedStreamingAeadParameters</span></a> - Class in <a href="com/google/crypto/tink/streamingaead/package-summary.html">com.google.crypto.tink.streamingaead</a></dt>
+<dd>
+<div class="block">Pre-generated <code>Parameter</code> objects for <a href="com/google/crypto/tink/DeterministicAead.html" title="interface in com.google.crypto.tink"><code>DeterministicAead</code></a>
+ keys.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/KeyTemplateProtoConverter.html#prefixFromProto-com.google.crypto.tink.proto.OutputPrefixType-">prefixFromProto(OutputPrefixType)</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/KeyTemplateProtoConverter.html" title="class in com.google.crypto.tink.internal">KeyTemplateProtoConverter</a></dt>
 <dd>&nbsp;</dd>
