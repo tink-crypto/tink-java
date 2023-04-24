@@ -234,9 +234,9 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <pre>public static final&nbsp;<a href="../../../../../com/google/crypto/tink/jwt/JwtHmacParameters.KidStrategy.html" title="class in com.google.crypto.tink.jwt">JwtHmacParameters.KidStrategy</a> CUSTOM</pre>
 <div class="block">The "kid" is fixed. It can be obtained from <code>parameters.getCustomKid()</code>.
 
- <p>In <code>computeMacAndEncode</code> If the kid is present, it needs to match <code>parameters.getCustomKid()</code>. If the kid is absent, it will be accepted.
+ <p>In <code>computeMacAndEncode</code> Tink writes the "kid" header to the value given by <code>parameters.getCustomKid()</code>.
 
- <p>In <code>verifyMacAndDecode</code> Tink writes the "kid" header to the value given by <code>parameters.getCustomKid()</code>.
+ <p>In <code>verifyMacAndDecode</code> If the kid is present, it needs to match <code>parameters.getCustomKid()</code>. If the kid is absent, it will be accepted.
 
  <p>Note: Tink does not allow to randomly generate new <a href="../../../../../com/google/crypto/tink/jwt/JwtHmacKey.html" title="class in com.google.crypto.tink.jwt"><code>JwtHmacKey</code></a> objects from
  parameters objects with <code>KidStrategy</code> equals to <code>CUSTOM</code>.</div>
