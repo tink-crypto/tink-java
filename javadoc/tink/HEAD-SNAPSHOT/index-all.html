@@ -540,6 +540,20 @@
    HMAC hash function: SHA256
  </div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html#AES128_CTR_HMAC_SHA256_1MB">AES128_CTR_HMAC_SHA256_1MB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html" title="class in com.google.crypto.tink.streamingaead">PredefinedStreamingAeadParameters</a></dt>
+<dd>
+<div class="block">A <code>Parameters</code> object for generating new instances of <a href="com/google/crypto/tink/streamingaead/AesCtrHmacStreamingKey.html" title="class in com.google.crypto.tink.streamingaead"><code>AesCtrHmacStreamingKey</code></a> with
+ the following parameters:
+
+ 
+   Size of the main key: 16 bytes
+   HKDF algo: HMAC-SHA256
+   Size of AES-CTR derived keys: 16 bytes
+   Tag algo: HMAC-SHA256
+   Tag size: 32 bytes
+   Ciphertext segment size: 1048576 bytes (1 MB)
+ </div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html#AES128_CTR_HMAC_SHA256_1MB">AES128_CTR_HMAC_SHA256_1MB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadKeyTemplates</a></dt>
 <dd>
 <div class="block">A <a href="com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> that generates new instances of <a href="com/google/crypto/tink/proto/AesCtrHmacStreamingKey.html" title="class in com.google.crypto.tink.proto"><code>AesCtrHmacStreamingKey</code></a> with the following parameters:
@@ -551,6 +565,20 @@
    Tag algo: HMAC-SHA256
    Tag size: 32 bytes
    Ciphertext segment size: 1048576 bytes (1 MB)
+ </div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html#AES128_CTR_HMAC_SHA256_4KB">AES128_CTR_HMAC_SHA256_4KB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html" title="class in com.google.crypto.tink.streamingaead">PredefinedStreamingAeadParameters</a></dt>
+<dd>
+<div class="block">A <code>Parameters</code> object for generating new instances of <a href="com/google/crypto/tink/streamingaead/AesCtrHmacStreamingKey.html" title="class in com.google.crypto.tink.streamingaead"><code>AesCtrHmacStreamingKey</code></a> with
+ the following parameters:
+
+ 
+   Size of the main key: 16 bytes
+   HKDF algo: HMAC-SHA256
+   Size of AES-CTR derived keys: 16 bytes
+   Tag algo: HMAC-SHA256
+   Tag size: 32 bytes
+   Ciphertext segment size: 4096
  </div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html#AES128_CTR_HMAC_SHA256_4KB">AES128_CTR_HMAC_SHA256_4KB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadKeyTemplates</a></dt>
@@ -602,6 +630,18 @@
    Key size: 16 bytes
  </div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html#AES128_GCM_HKDF_1MB">AES128_GCM_HKDF_1MB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html" title="class in com.google.crypto.tink.streamingaead">PredefinedStreamingAeadParameters</a></dt>
+<dd>
+<div class="block">A <code>Parameters</code> object for generating new instances of <a href="com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingKey.html" title="class in com.google.crypto.tink.streamingaead"><code>AesGcmHkdfStreamingKey</code></a> with
+ the following parameters:
+
+ 
+   Size of the main key: 16 bytes
+   HKDF algo: HMAC-SHA256
+   Size of AES-GCM derived keys: 16 bytes
+   Ciphertext segment size: 1048576 bytes (1 MB)
+ </div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html#AES128_GCM_HKDF_1MB">AES128_GCM_HKDF_1MB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadKeyTemplates</a></dt>
 <dd>
 <div class="block">A <a href="com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> that generates new instances of <a href="com/google/crypto/tink/proto/AesGcmHkdfStreamingKey.html" title="class in com.google.crypto.tink.proto"><code>AesGcmHkdfStreamingKey</code></a> with the following parameters:
@@ -611,6 +651,18 @@
    HKDF algo: HMAC-SHA256
    Size of AES-GCM derived keys: 16 bytes
    Ciphertext segment size: 1048576 bytes (1 MB)
+ </div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html#AES128_GCM_HKDF_4KB">AES128_GCM_HKDF_4KB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html" title="class in com.google.crypto.tink.streamingaead">PredefinedStreamingAeadParameters</a></dt>
+<dd>
+<div class="block">A <code>Parameters</code> object for generating new instances of <a href="com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingKey.html" title="class in com.google.crypto.tink.streamingaead"><code>AesGcmHkdfStreamingKey</code></a> with
+ the following parameters:
+
+ 
+   Size of the main key: 16 bytes
+   HKDF algo: HMAC-SHA256
+   Size of AES-GCM derived keys: 16 bytes
+   Ciphertext segment size: 4096 bytes
  </div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html#AES128_GCM_HKDF_4KB">AES128_GCM_HKDF_4KB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadKeyTemplates</a></dt>
@@ -673,6 +725,20 @@
    HMAC hash function: SHA256
  </div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html#AES256_CTR_HMAC_SHA256_1MB">AES256_CTR_HMAC_SHA256_1MB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html" title="class in com.google.crypto.tink.streamingaead">PredefinedStreamingAeadParameters</a></dt>
+<dd>
+<div class="block">A <code>Parameters</code> object for generating new instances of <a href="com/google/crypto/tink/streamingaead/AesCtrHmacStreamingKey.html" title="class in com.google.crypto.tink.streamingaead"><code>AesCtrHmacStreamingKey</code></a> with
+ the following parameters:
+
+ 
+   Size of the main key: 32 bytes
+   HKDF algo: HMAC-SHA256
+   Size of AES-CTR derived keys: 32 bytes
+   Tag algo: HMAC-SHA256
+   Tag size: 32 bytes
+   Ciphertext segment size: 1048576 bytes (1 MB)
+ </div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html#AES256_CTR_HMAC_SHA256_1MB">AES256_CTR_HMAC_SHA256_1MB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadKeyTemplates</a></dt>
 <dd>
 <div class="block">A <a href="com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> that generates new instances of <a href="com/google/crypto/tink/proto/AesCtrHmacStreamingKey.html" title="class in com.google.crypto.tink.proto"><code>AesCtrHmacStreamingKey</code></a> with the following parameters:
@@ -684,6 +750,20 @@
    Tag algo: HMAC-SHA256
    Tag size: 32 bytes
    Ciphertext segment size: 1048576 bytes (1 MB)
+ </div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html#AES256_CTR_HMAC_SHA256_4KB">AES256_CTR_HMAC_SHA256_4KB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html" title="class in com.google.crypto.tink.streamingaead">PredefinedStreamingAeadParameters</a></dt>
+<dd>
+<div class="block">A <code>Parameters</code> object for generating new instances of <a href="com/google/crypto/tink/streamingaead/AesCtrHmacStreamingKey.html" title="class in com.google.crypto.tink.streamingaead"><code>AesCtrHmacStreamingKey</code></a> with
+ the following parameters:
+
+ 
+   Size of the main key: 32 bytes
+   HKDF algo: HMAC-SHA256
+   Size of AES-CTR derived keys: 32 bytes
+   Tag algo: HMAC-SHA256
+   Tag size: 32 bytes
+   Ciphertext segment size: 4096
  </div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html#AES256_CTR_HMAC_SHA256_4KB">AES256_CTR_HMAC_SHA256_4KB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadKeyTemplates</a></dt>
@@ -735,6 +815,18 @@
    Key size: 32 bytes
  </div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html#AES256_GCM_HKDF_1MB">AES256_GCM_HKDF_1MB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html" title="class in com.google.crypto.tink.streamingaead">PredefinedStreamingAeadParameters</a></dt>
+<dd>
+<div class="block">A <code>Parameters</code> object for generating new instances of <a href="com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingKey.html" title="class in com.google.crypto.tink.streamingaead"><code>AesGcmHkdfStreamingKey</code></a> with
+ the following parameters:
+
+ 
+   Size of the main key: 32 bytes
+   HKDF algo: HMAC-SHA256
+   Size of AES-GCM derived keys: 32 bytes
+   Ciphertext segment size: 1048576 bytes (1 MB)
+ </div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html#AES256_GCM_HKDF_1MB">AES256_GCM_HKDF_1MB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadKeyTemplates</a></dt>
 <dd>
 <div class="block">A <a href="com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> that generates new instances of <a href="com/google/crypto/tink/proto/AesGcmHkdfStreamingKey.html" title="class in com.google.crypto.tink.proto"><code>AesGcmHkdfStreamingKey</code></a> with the following parameters:
@@ -744,6 +836,18 @@
    HKDF algo: HMAC-SHA256
    Size of AES-GCM derived keys: 32 bytes
    Ciphertext segment size: 1048576 bytes (1 MB)
+ </div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html#AES256_GCM_HKDF_4KB">AES256_GCM_HKDF_4KB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html" title="class in com.google.crypto.tink.streamingaead">PredefinedStreamingAeadParameters</a></dt>
+<dd>
+<div class="block">A <code>Parameters</code> object for generating new instances of <a href="com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingKey.html" title="class in com.google.crypto.tink.streamingaead"><code>AesGcmHkdfStreamingKey</code></a> with
+ the following parameters:
+
+ 
+   Size of the main key: 32 bytes
+   HKDF algo: HMAC-SHA256
+   Size of AES-GCM derived keys: 32 bytes
+   Ciphertext segment size: 4096 bytes (4 KB)
  </div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html#AES256_GCM_HKDF_4KB">AES256_GCM_HKDF_4KB</a></span> - Static variable in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadKeyTemplates</a></dt>
@@ -803,12 +907,16 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivKeyManager.html#aes256SivTemplate--">aes256SivTemplate()</a></span> - Static method in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivKeyManager.html" title="class in com.google.crypto.tink.daead">AesSivKeyManager</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.AeadId.html#AES_128_GCM">AES_128_GCM</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.AeadId.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters.AeadId</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/HpkeUtil.html#AES_128_GCM_AEAD_ID">AES_128_GCM_AEAD_ID</a></span> - Static variable in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/HpkeUtil.html" title="class in com.google.crypto.tink.hybrid.internal">HpkeUtil</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/HpkeAead.html#AES_128_GCM_VALUE">AES_128_GCM_VALUE</a></span> - Static variable in enum com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/HpkeAead.html" title="enum in com.google.crypto.tink.proto">HpkeAead</a></dt>
 <dd>
 <div class="block"><code>AES_128_GCM = 1;</code></div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.AeadId.html#AES_256_GCM">AES_256_GCM</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.AeadId.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters.AeadId</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/HpkeUtil.html#AES_256_GCM_AEAD_ID">AES_256_GCM_AEAD_ID</a></span> - Static variable in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/HpkeUtil.html" title="class in com.google.crypto.tink.hybrid.internal">HpkeUtil</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/HpkeAead.html#AES_256_GCM_VALUE">AES_256_GCM_VALUE</a></span> - Static variable in enum com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/HpkeAead.html" title="enum in com.google.crypto.tink.proto">HpkeAead</a></dt>
@@ -834,6 +942,15 @@
    Key size: 32 bytes
    Tag size: 16 bytes
    OutputPrefixType: TINK
+ </div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/PredefinedPrfParameters.html#AES_CMAC_PRF">AES_CMAC_PRF</a></span> - Static variable in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/PredefinedPrfParameters.html" title="class in com.google.crypto.tink.prf">PredefinedPrfParameters</a></dt>
+<dd>
+<div class="block">A <code>Parameters</code> object for generating new instances of <code>AesCmacKey</code> with the
+ following parameters:
+
+ 
+   HMAC key size: 32 bytes
  </div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/PrfKeyTemplates.html#AES_CMAC_PRF">AES_CMAC_PRF</a></span> - Static variable in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/PrfKeyTemplates.html" title="class in com.google.crypto.tink.prf">PrfKeyTemplates</a></dt>
@@ -1518,6 +1635,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivParameters.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivParameters.Builder.html" title="class in com.google.crypto.tink.daead">AesSivParameters.Builder</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.Builder.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters.Builder</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtHmacKey.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtHmacKey.Builder.html" title="class in com.google.crypto.tink.jwt">JwtHmacKey.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtHmacParameters.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtHmacParameters.Builder.html" title="class in com.google.crypto.tink.jwt">JwtHmacParameters.Builder</a></dt>
@@ -1785,6 +1904,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivKey.html#builder--">builder()</a></span> - Static method in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivKey.html" title="class in com.google.crypto.tink.daead">AesSivKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivParameters.html#builder--">builder()</a></span> - Static method in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivParameters.html" title="class in com.google.crypto.tink.daead">AesSivParameters</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.html#builder--">builder()</a></span> - Static method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/PrimitiveRegistry.Builder.html#Builder--">Builder()</a></span> - Constructor for class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/PrimitiveRegistry.Builder.html" title="class in com.google.crypto.tink.internal">PrimitiveRegistry.Builder</a></dt>
 <dd>&nbsp;</dd>
@@ -2081,6 +2202,8 @@
 <dd>
 <div class="block">A <code>KeyTemplate</code> that generates new instances of <a href="com/google/crypto/tink/proto/ChaCha20Poly1305Key.html" title="class in com.google.crypto.tink.proto"><code>ChaCha20Poly1305Key</code></a>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.AeadId.html#CHACHA20_POLY1305">CHACHA20_POLY1305</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.AeadId.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters.AeadId</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/HpkeUtil.html#CHACHA20_POLY1305_AEAD_ID">CHACHA20_POLY1305_AEAD_ID</a></span> - Static variable in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/HpkeUtil.html" title="class in com.google.crypto.tink.hybrid.internal">HpkeUtil</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AeadConfig.html#CHACHA20_POLY1305_TYPE_URL">CHACHA20_POLY1305_TYPE_URL</a></span> - Static variable in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AeadConfig.html" title="class in com.google.crypto.tink.aead">AeadConfig</a></dt>
@@ -4417,6 +4540,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivParameters.Variant.html#CRUNCHY">CRUNCHY</a></span> - Static variable in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivParameters.Variant.html" title="class in com.google.crypto.tink.daead">AesSivParameters.Variant</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.Variant.html#CRUNCHY">CRUNCHY</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.Variant.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters.Variant</a></dt>
+<dd>
+<div class="block"><code>CRUNCHY</code>: Leading 0x00-byte followed by 4-byte key id (big endian format).</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/AesCmacParameters.Variant.html#CRUNCHY">CRUNCHY</a></span> - Static variable in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/AesCmacParameters.Variant.html" title="class in com.google.crypto.tink.mac">AesCmacParameters.Variant</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacParameters.Variant.html#CRUNCHY">CRUNCHY</a></span> - Static variable in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacParameters.Variant.html" title="class in com.google.crypto.tink.mac">HmacParameters.Variant</a></dt>
@@ -4655,18 +4782,26 @@
 <dd>
 <div class="block">The implementation of <code>PrimitiveWrapper&lt;DeterministicAead&gt;</code>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.KemId.html#DHKEM_P256_HKDF_SHA256">DHKEM_P256_HKDF_SHA256</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.KemId.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters.KemId</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/HpkeKem.html#DHKEM_P256_HKDF_SHA256_VALUE">DHKEM_P256_HKDF_SHA256_VALUE</a></span> - Static variable in enum com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/HpkeKem.html" title="enum in com.google.crypto.tink.proto">HpkeKem</a></dt>
 <dd>
 <div class="block"><code>DHKEM_P256_HKDF_SHA256 = 2;</code></div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.KemId.html#DHKEM_P384_HKDF_SHA384">DHKEM_P384_HKDF_SHA384</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.KemId.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters.KemId</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/HpkeKem.html#DHKEM_P384_HKDF_SHA384_VALUE">DHKEM_P384_HKDF_SHA384_VALUE</a></span> - Static variable in enum com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/HpkeKem.html" title="enum in com.google.crypto.tink.proto">HpkeKem</a></dt>
 <dd>
 <div class="block"><code>DHKEM_P384_HKDF_SHA384 = 3;</code></div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.KemId.html#DHKEM_P521_HKDF_SHA512">DHKEM_P521_HKDF_SHA512</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.KemId.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters.KemId</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/HpkeKem.html#DHKEM_P521_HKDF_SHA512_VALUE">DHKEM_P521_HKDF_SHA512_VALUE</a></span> - Static variable in enum com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/HpkeKem.html" title="enum in com.google.crypto.tink.proto">HpkeKem</a></dt>
 <dd>
 <div class="block"><code>DHKEM_P521_HKDF_SHA512 = 4;</code></div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.KemId.html#DHKEM_X25519_HKDF_SHA256">DHKEM_X25519_HKDF_SHA256</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.KemId.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters.KemId</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/HpkeKem.html#DHKEM_X25519_HKDF_SHA256_VALUE">DHKEM_X25519_HKDF_SHA256_VALUE</a></span> - Static variable in enum com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/HpkeKem.html" title="enum in com.google.crypto.tink.proto">HpkeKem</a></dt>
 <dd>
 <div class="block"><code>DHKEM_X25519_HKDF_SHA256 = 1;</code></div>
@@ -5398,6 +5533,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivParameters.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivParameters.html" title="class in com.google.crypto.tink.daead">AesSivParameters</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/LegacyProtoParameters.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/LegacyProtoParameters.html" title="class in com.google.crypto.tink.internal">LegacyProtoParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtHmacParameters.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtHmacParameters.html" title="class in com.google.crypto.tink.jwt">JwtHmacParameters</a></dt>
@@ -5984,6 +6121,8 @@
 <div class="block">
  Required.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.html#getAeadId--">getAeadId()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/EciesAeadHkdfDemHelper.html#getAeadOrDaead-byte:A-">getAeadOrDaead(byte[])</a></span> - Method in interface com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/EciesAeadHkdfDemHelper.html" title="interface in com.google.crypto.tink.subtle">EciesAeadHkdfDemHelper</a></dt>
 <dd>
 <div class="block">Creates a new <code>AeadOrDaead</code>-primitive that uses the key material given in
@@ -9015,6 +9154,8 @@
 <dd>
 <div class="block"><code>.google.crypto.tink.HpkeKdf kdf = 2;</code></div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.html#getKdfId--">getKdfId()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/HpkeParams.Builder.html#getKdfValue--">getKdfValue()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/HpkeParams.Builder.html" title="class in com.google.crypto.tink.proto">HpkeParams.Builder</a></dt>
 <dd>
 <div class="block"><code>.google.crypto.tink.HpkeKdf kdf = 2;</code></div>
@@ -9070,6 +9211,8 @@
 <div class="block"><code>.google.crypto.tink.HpkeKem kem = 1;</code></div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/EciesHkdfSenderKem.KemKey.html#getKemBytes--">getKemBytes()</a></span> - Method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/EciesHkdfSenderKem.KemKey.html" title="class in com.google.crypto.tink.subtle">EciesHkdfSenderKem.KemKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.html#getKemId--">getKemId()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/EciesAeadHkdfParams.Builder.html#getKemParams--">getKemParams()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/EciesAeadHkdfParams.Builder.html" title="class in com.google.crypto.tink.proto">EciesAeadHkdfParams.Builder</a></dt>
 <dd>
@@ -13424,6 +13567,8 @@
 <dd>
 <div class="block">Returns a variant object.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.html#getVariant--">getVariant()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/AesCmacParameters.html#getVariant--">getVariant()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/AesCmacParameters.html" title="class in com.google.crypto.tink.mac">AesCmacParameters</a></dt>
 <dd>
 <div class="block">Returns a variant object.</div>
@@ -14420,6 +14565,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivParameters.html#hashCode--">hashCode()</a></span> - Method in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivParameters.html" title="class in com.google.crypto.tink.daead">AesSivParameters</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.html#hashCode--">hashCode()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/LegacyProtoParameters.html#hashCode--">hashCode()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/LegacyProtoParameters.html" title="class in com.google.crypto.tink.internal">LegacyProtoParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtHmacParameters.html#hashCode--">hashCode()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtHmacParameters.html" title="class in com.google.crypto.tink.jwt">JwtHmacParameters</a></dt>
@@ -14694,6 +14841,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.html#hasIdRequirement--">hasIdRequirement()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.html" title="class in com.google.crypto.tink.aead">XChaCha20Poly1305Parameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivParameters.html#hasIdRequirement--">hasIdRequirement()</a></span> - Method in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivParameters.html" title="class in com.google.crypto.tink.daead">AesSivParameters</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.html#hasIdRequirement--">hasIdRequirement()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/LegacyProtoParameters.html#hasIdRequirement--">hasIdRequirement()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/LegacyProtoParameters.html" title="class in com.google.crypto.tink.internal">LegacyProtoParameters</a></dt>
 <dd>&nbsp;</dd>
@@ -15355,6 +15504,19 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/EciesHkdfKemParams.html#HKDF_SALT_FIELD_NUMBER">HKDF_SALT_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/EciesHkdfKemParams.html" title="class in com.google.crypto.tink.proto">EciesHkdfKemParams</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.KdfId.html#HKDF_SHA256">HKDF_SHA256</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.KdfId.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters.KdfId</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/PredefinedPrfParameters.html#HKDF_SHA256">HKDF_SHA256</a></span> - Static variable in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/PredefinedPrfParameters.html" title="class in com.google.crypto.tink.prf">PredefinedPrfParameters</a></dt>
+<dd>
+<div class="block">A <code>Parameters</code> object for generating new instances of <a href="com/google/crypto/tink/prf/HkdfPrfKey.html" title="class in com.google.crypto.tink.prf"><code>HkdfPrfKey</code></a> with the
+ following parameters:
+
+ 
+   Hash function: SHA256
+   HMAC key size: 32 bytes
+   Salt: empty
+ </div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/PrfKeyTemplates.html#HKDF_SHA256">HKDF_SHA256</a></span> - Static variable in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/PrfKeyTemplates.html" title="class in com.google.crypto.tink.prf">PrfKeyTemplates</a></dt>
 <dd>
 <div class="block">Generates a <a href="com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> for a <a href="com/google/crypto/tink/proto/HkdfPrfKey.html" title="class in com.google.crypto.tink.proto"><code>HkdfPrfKey</code></a> key with
@@ -15366,12 +15528,16 @@
 <dd>
 <div class="block"><code>HKDF_SHA256 = 1;</code></div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.KdfId.html#HKDF_SHA384">HKDF_SHA384</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.KdfId.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters.KdfId</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/HpkeUtil.html#HKDF_SHA384_KDF_ID">HKDF_SHA384_KDF_ID</a></span> - Static variable in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/HpkeUtil.html" title="class in com.google.crypto.tink.hybrid.internal">HpkeUtil</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/HpkeKdf.html#HKDF_SHA384_VALUE">HKDF_SHA384_VALUE</a></span> - Static variable in enum com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/HpkeKdf.html" title="enum in com.google.crypto.tink.proto">HpkeKdf</a></dt>
 <dd>
 <div class="block"><code>HKDF_SHA384 = 2;</code></div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.KdfId.html#HKDF_SHA512">HKDF_SHA512</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.KdfId.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters.KdfId</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/HpkeUtil.html#HKDF_SHA512_KDF_ID">HKDF_SHA512_KDF_ID</a></span> - Static variable in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/HpkeUtil.html" title="class in com.google.crypto.tink.hybrid.internal">HpkeUtil</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/HpkeKdf.html#HKDF_SHA512_VALUE">HKDF_SHA512_VALUE</a></span> - Static variable in enum com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/HpkeKdf.html" title="enum in com.google.crypto.tink.proto">HpkeKdf</a></dt>
@@ -15500,6 +15666,16 @@
    OutputPrefixType: TINK
  </div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/PredefinedPrfParameters.html#HMAC_SHA256_PRF">HMAC_SHA256_PRF</a></span> - Static variable in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/PredefinedPrfParameters.html" title="class in com.google.crypto.tink.prf">PredefinedPrfParameters</a></dt>
+<dd>
+<div class="block">A <code>Parameters</code> object for generating new instances of <a href="com/google/crypto/tink/prf/HmacPrfKey.html" title="class in com.google.crypto.tink.prf"><code>HmacPrfKey</code></a> with the
+ following parameters:
+
+ 
+   Hash function: SHA256
+   HMAC key size: 32 bytes
+ </div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/PrfKeyTemplates.html#HMAC_SHA256_PRF">HMAC_SHA256_PRF</a></span> - Static variable in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/PrfKeyTemplates.html" title="class in com.google.crypto.tink.prf">PrfKeyTemplates</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/MacKeyTemplates.html#HMAC_SHA512_256BITTAG">HMAC_SHA512_256BITTAG</a></span> - Static variable in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/MacKeyTemplates.html" title="class in com.google.crypto.tink.mac">MacKeyTemplates</a></dt>
@@ -15546,6 +15722,16 @@
    Tag size: 64 bytes
    Hash function: SHA512
    OutputPrefixType: TINK
+ </div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/PredefinedPrfParameters.html#HMAC_SHA512_PRF">HMAC_SHA512_PRF</a></span> - Static variable in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/PredefinedPrfParameters.html" title="class in com.google.crypto.tink.prf">PredefinedPrfParameters</a></dt>
+<dd>
+<div class="block">A <code>Parameters</code> object for generating new instances of <a href="com/google/crypto/tink/prf/HmacPrfKey.html" title="class in com.google.crypto.tink.prf"><code>HmacPrfKey</code></a> with the
+ following parameters:
+
+ 
+   Hash function: SHA512
+   HMAC key size: 64 bytes
  </div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/PrfKeyTemplates.html#HMAC_SHA512_PRF">HMAC_SHA512_PRF</a></span> - Static variable in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/PrfKeyTemplates.html" title="class in com.google.crypto.tink.prf">PrfKeyTemplates</a></dt>
@@ -15728,6 +15914,30 @@
 </dd>
 <dt><a href="com/google/crypto/tink/proto/HpkeKeyFormatOrBuilder.html" title="interface in com.google.crypto.tink.proto"><span class="typeNameLink">HpkeKeyFormatOrBuilder</span></a> - Interface in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/hybrid/HpkeParameters.html" title="class in com.google.crypto.tink.hybrid"><span class="typeNameLink">HpkeParameters</span></a> - Class in <a href="com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a></dt>
+<dd>
+<div class="block">Description of the parameters for an <code>HpkePublicKey</code> or <code>HpkePrivateKey</code>.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/hybrid/HpkeParameters.AeadId.html" title="class in com.google.crypto.tink.hybrid"><span class="typeNameLink">HpkeParameters.AeadId</span></a> - Class in <a href="com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a></dt>
+<dd>
+<div class="block">HPKE AEAD identifiers.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/hybrid/HpkeParameters.Builder.html" title="class in com.google.crypto.tink.hybrid"><span class="typeNameLink">HpkeParameters.Builder</span></a> - Class in <a href="com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a></dt>
+<dd>
+<div class="block">Builds a new <a href="com/google/crypto/tink/hybrid/HpkeParameters.html" title="class in com.google.crypto.tink.hybrid"><code>HpkeParameters</code></a> instance.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/hybrid/HpkeParameters.KdfId.html" title="class in com.google.crypto.tink.hybrid"><span class="typeNameLink">HpkeParameters.KdfId</span></a> - Class in <a href="com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a></dt>
+<dd>
+<div class="block">HPKE KDF identifiers.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/hybrid/HpkeParameters.KemId.html" title="class in com.google.crypto.tink.hybrid"><span class="typeNameLink">HpkeParameters.KemId</span></a> - Class in <a href="com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a></dt>
+<dd>
+<div class="block">HPKE KEM identifiers.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/hybrid/HpkeParameters.Variant.html" title="class in com.google.crypto.tink.hybrid"><span class="typeNameLink">HpkeParameters.Variant</span></a> - Class in <a href="com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a></dt>
+<dd>
+<div class="block">Description of the output prefix prepended to the ciphertext.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/proto/HpkeParams.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">HpkeParams</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>
 <div class="block">Protobuf type <code>google.crypto.tink.HpkeParams</code></div>
@@ -20056,6 +20266,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivParameters.Variant.html#NO_PREFIX">NO_PREFIX</a></span> - Static variable in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivParameters.Variant.html" title="class in com.google.crypto.tink.daead">AesSivParameters.Variant</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.Variant.html#NO_PREFIX">NO_PREFIX</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.Variant.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters.Variant</a></dt>
+<dd>
+<div class="block"><code>NO_PREFIX</code>: Empty prefix.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/AesCmacParameters.Variant.html#NO_PREFIX">NO_PREFIX</a></span> - Static variable in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/AesCmacParameters.Variant.html" title="class in com.google.crypto.tink.mac">AesCmacParameters.Variant</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacParameters.Variant.html#NO_PREFIX">NO_PREFIX</a></span> - Static variable in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacParameters.Variant.html" title="class in com.google.crypto.tink.mac">HmacParameters.Variant</a></dt>
@@ -22798,6 +23012,15 @@
 <dd>
 <div class="block">Pre-defined <code>Parameter</code> objects for <a href="com/google/crypto/tink/Mac.html" title="interface in com.google.crypto.tink"><code>Mac</code></a>.</div>
 </dd>
+<dt><a href="com/google/crypto/tink/prf/PredefinedPrfParameters.html" title="class in com.google.crypto.tink.prf"><span class="typeNameLink">PredefinedPrfParameters</span></a> - Class in <a href="com/google/crypto/tink/prf/package-summary.html">com.google.crypto.tink.prf</a></dt>
+<dd>
+<div class="block">Predefined <code>Parameters</code> for PRF-Keys.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html" title="class in com.google.crypto.tink.streamingaead"><span class="typeNameLink">PredefinedStreamingAeadParameters</span></a> - Class in <a href="com/google/crypto/tink/streamingaead/package-summary.html">com.google.crypto.tink.streamingaead</a></dt>
+<dd>
+<div class="block">Pre-generated <code>Parameter</code> objects for <a href="com/google/crypto/tink/DeterministicAead.html" title="interface in com.google.crypto.tink"><code>DeterministicAead</code></a>
+ keys.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/KeyTemplateProtoConverter.html#prefixFromProto-com.google.crypto.tink.proto.OutputPrefixType-">prefixFromProto(OutputPrefixType)</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/KeyTemplateProtoConverter.html" title="class in com.google.crypto.tink.internal">KeyTemplateProtoConverter</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/prf/Prf.html" title="interface in com.google.crypto.tink.prf"><span class="typeNameLink">Prf</span></a> - Interface in <a href="com/google/crypto/tink/prf/package-summary.html">com.google.crypto.tink.prf</a></dt>
@@ -24055,6 +24278,8 @@
 <div class="block">
  Required.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.Builder.html#setAeadId-com.google.crypto.tink.hybrid.HpkeParameters.AeadId-">setAeadId(HpkeParameters.AeadId)</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.Builder.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters.Builder</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/HpkeParams.Builder.html#setAeadValue-int-">setAeadValue(int)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/HpkeParams.Builder.html" title="class in com.google.crypto.tink.proto">HpkeParams.Builder</a></dt>
 <dd>
 <div class="block"><code>.google.crypto.tink.HpkeAead aead = 3;</code></div>
@@ -24838,6 +25063,8 @@
 <dd>
 <div class="block"><code>.google.crypto.tink.HpkeKdf kdf = 2;</code></div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.Builder.html#setKdfId-com.google.crypto.tink.hybrid.HpkeParameters.KdfId-">setKdfId(HpkeParameters.KdfId)</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.Builder.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters.Builder</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/HpkeParams.Builder.html#setKdfValue-int-">setKdfValue(int)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/HpkeParams.Builder.html" title="class in com.google.crypto.tink.proto">HpkeParams.Builder</a></dt>
 <dd>
 <div class="block"><code>.google.crypto.tink.HpkeKdf kdf = 2;</code></div>
@@ -24856,6 +25083,8 @@
 <dd>
 <div class="block"><code>.google.crypto.tink.HpkeKem kem = 1;</code></div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.Builder.html#setKemId-com.google.crypto.tink.hybrid.HpkeParameters.KemId-">setKemId(HpkeParameters.KemId)</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.Builder.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters.Builder</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/EciesAeadHkdfParams.Builder.html#setKemParams-com.google.crypto.tink.proto.EciesHkdfKemParams-">setKemParams(EciesHkdfKemParams)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/EciesAeadHkdfParams.Builder.html" title="class in com.google.crypto.tink.proto">EciesAeadHkdfParams.Builder</a></dt>
 <dd>
 <div class="block">
@@ -26270,6 +26499,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivParameters.Builder.html#setVariant-com.google.crypto.tink.daead.AesSivParameters.Variant-">setVariant(AesSivParameters.Variant)</a></span> - Method in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivParameters.Builder.html" title="class in com.google.crypto.tink.daead">AesSivParameters.Builder</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.Builder.html#setVariant-com.google.crypto.tink.hybrid.HpkeParameters.Variant-">setVariant(HpkeParameters.Variant)</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.Builder.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters.Builder</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/AesCmacParameters.Builder.html#setVariant-com.google.crypto.tink.mac.AesCmacParameters.Variant-">setVariant(AesCmacParameters.Variant)</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/AesCmacParameters.Builder.html" title="class in com.google.crypto.tink.mac">AesCmacParameters.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacParameters.Builder.html#setVariant-com.google.crypto.tink.mac.HmacParameters.Variant-">setVariant(HmacParameters.Variant)</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacParameters.Builder.html" title="class in com.google.crypto.tink.mac">HmacParameters.Builder</a></dt>
@@ -26795,6 +27026,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivParameters.Variant.html#TINK">TINK</a></span> - Static variable in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivParameters.Variant.html" title="class in com.google.crypto.tink.daead">AesSivParameters.Variant</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.Variant.html#TINK">TINK</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.Variant.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters.Variant</a></dt>
+<dd>
+<div class="block"><code>TINK</code>: Leading 0x01-byte followed by 4-byte key id (big endian format).</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/AesCmacParameters.Variant.html#TINK">TINK</a></span> - Static variable in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/AesCmacParameters.Variant.html" title="class in com.google.crypto.tink.mac">AesCmacParameters.Variant</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacParameters.Variant.html#TINK">TINK</a></span> - Static variable in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacParameters.Variant.html" title="class in com.google.crypto.tink.mac">HmacParameters.Variant</a></dt>
@@ -27246,6 +27481,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivParameters.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivParameters.html" title="class in com.google.crypto.tink.daead">AesSivParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivParameters.Variant.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivParameters.Variant.html" title="class in com.google.crypto.tink.daead">AesSivParameters.Variant</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.Variant.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.Variant.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters.Variant</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/LegacyProtoParameters.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/LegacyProtoParameters.html" title="class in com.google.crypto.tink.internal">LegacyProtoParameters</a></dt>
 <dd>&nbsp;</dd>
