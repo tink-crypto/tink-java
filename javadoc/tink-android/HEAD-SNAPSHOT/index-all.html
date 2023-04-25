@@ -1350,6 +1350,10 @@
 <dd>
 <div class="block">If true, tokens without <code>"kid"</code> header are allowed when verifying a token.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtSignatureParameters.html#allowKidAbsent--">allowKidAbsent()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtSignatureParameters.html" title="class in com.google.crypto.tink.jwt">JwtSignatureParameters</a></dt>
+<dd>
+<div class="block">If true, tokens without <code>"kid"</code> header are allowed when verifying a token.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtValidator.Builder.html#allowMissingExpiration--">allowMissingExpiration()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtValidator.Builder.html" title="class in com.google.crypto.tink.jwt">JwtValidator.Builder</a></dt>
 <dd>
 <div class="block">When set, the validator accepts tokens that do not have an expiration set.</div>
@@ -6481,6 +6485,8 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtHmacKey.html#getIdRequirementOrNull--">getIdRequirementOrNull()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtHmacKey.html" title="class in com.google.crypto.tink.jwt">JwtHmacKey</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtSignaturePrivateKey.html#getIdRequirementOrNull--">getIdRequirementOrNull()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtSignaturePrivateKey.html" title="class in com.google.crypto.tink.jwt">JwtSignaturePrivateKey</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/Key.html#getIdRequirementOrNull--">getIdRequirementOrNull()</a></span> - Method in class com.google.crypto.tink.<a href="com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a></dt>
 <dd>
 <div class="block">Returns null if this key has no id requirement, otherwise the required id.</div>
@@ -7609,6 +7615,14 @@
 <dd>
 <div class="block">Returns the "kid" to be used for this key (https://www.rfc-editor.org/rfc/rfc7517#section-4.5).</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtSignaturePrivateKey.html#getKid--">getKid()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtSignaturePrivateKey.html" title="class in com.google.crypto.tink.jwt">JwtSignaturePrivateKey</a></dt>
+<dd>
+<div class="block">Returns the "kid" to be used for this key (https://www.rfc-editor.org/rfc/rfc7517#section-4.5).</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtSignaturePublicKey.html#getKid--">getKid()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtSignaturePublicKey.html" title="class in com.google.crypto.tink.jwt">JwtSignaturePublicKey</a></dt>
+<dd>
+<div class="block">Returns the "kid" to be used for this key (https://www.rfc-editor.org/rfc/rfc7517#section-4.5).</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtHmacParameters.html#getKidStrategy--">getKidStrategy()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtHmacParameters.html" title="class in com.google.crypto.tink.jwt">JwtHmacParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/PrfHmacJce.html#getMaxOutputLength--">getMaxOutputLength()</a></span> - Method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/PrfHmacJce.html" title="class in com.google.crypto.tink.subtle">PrfHmacJce</a></dt>
@@ -8120,6 +8134,12 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtMacKey.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtMacKey.html" title="class in com.google.crypto.tink.jwt">JwtMacKey</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtSignaturePrivateKey.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtSignaturePrivateKey.html" title="class in com.google.crypto.tink.jwt">JwtSignaturePrivateKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtSignaturePublicKey.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtSignaturePublicKey.html" title="class in com.google.crypto.tink.jwt">JwtSignaturePublicKey</a></dt>
+<dd>
+<div class="block">Returns the parameters of this key.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/Key.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.<a href="com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a></dt>
 <dd>
 <div class="block">Returns a <a href="com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink"><code>Parameters</code></a> object containing all the information about the key which is not
@@ -8910,6 +8930,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1SignKeyManager.html#getPublicKey-com.google.crypto.tink.proto.JwtRsaSsaPkcs1PrivateKey-">getPublicKey(JwtRsaSsaPkcs1PrivateKey)</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1SignKeyManager.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPkcs1SignKeyManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssSignKeyManager.html#getPublicKey-com.google.crypto.tink.proto.JwtRsaSsaPssPrivateKey-">getPublicKey(JwtRsaSsaPssPrivateKey)</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssSignKeyManager.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssSignKeyManager</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtSignaturePrivateKey.html#getPublicKey--">getPublicKey()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtSignaturePrivateKey.html" title="class in com.google.crypto.tink.jwt">JwtSignaturePrivateKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/PrivateKey.html#getPublicKey--">getPublicKey()</a></span> - Method in interface com.google.crypto.tink.<a href="com/google/crypto/tink/PrivateKey.html" title="interface in com.google.crypto.tink">PrivateKey</a></dt>
 <dd>&nbsp;</dd>
@@ -12612,6 +12634,24 @@
 <div class="block">Static methods and constants for registering with the <a href="com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink"><code>Registry</code></a> all
  instances of <code>com.google.crypto.tink.JwtPublicKeySign</code> and <a href="com/google/crypto/tink/PublicKeyVerify.html" title="interface in com.google.crypto.tink"><code>PublicKeyVerify</code></a> key types supported in a particular release of Tink.</div>
 </dd>
+<dt><a href="com/google/crypto/tink/jwt/JwtSignatureParameters.html" title="class in com.google.crypto.tink.jwt"><span class="typeNameLink">JwtSignatureParameters</span></a> - Class in <a href="com/google/crypto/tink/jwt/package-summary.html">com.google.crypto.tink.jwt</a></dt>
+<dd>
+<div class="block">Represents a description of a <code>JwtSignatureKey</code> excluding the randomly chosen key material.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtSignatureParameters.html#JwtSignatureParameters--">JwtSignatureParameters()</a></span> - Constructor for class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtSignatureParameters.html" title="class in com.google.crypto.tink.jwt">JwtSignatureParameters</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/jwt/JwtSignaturePrivateKey.html" title="class in com.google.crypto.tink.jwt"><span class="typeNameLink">JwtSignaturePrivateKey</span></a> - Class in <a href="com/google/crypto/tink/jwt/package-summary.html">com.google.crypto.tink.jwt</a></dt>
+<dd>
+<div class="block">Represents a key to compute JWT using asymmetric cryptography (i.e., using the <a href="com/google/crypto/tink/jwt/JwtPublicKeySign.html" title="interface in com.google.crypto.tink.jwt"><code>JwtPublicKeySign</code></a> interface).</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtSignaturePrivateKey.html#JwtSignaturePrivateKey--">JwtSignaturePrivateKey()</a></span> - Constructor for class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtSignaturePrivateKey.html" title="class in com.google.crypto.tink.jwt">JwtSignaturePrivateKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/jwt/JwtSignaturePublicKey.html" title="class in com.google.crypto.tink.jwt"><span class="typeNameLink">JwtSignaturePublicKey</span></a> - Class in <a href="com/google/crypto/tink/jwt/package-summary.html">com.google.crypto.tink.jwt</a></dt>
+<dd>
+<div class="block">Represents a key to verify JWT using asymmetric cryptography (i.e., using the <a href="com/google/crypto/tink/jwt/JwtPublicKeyVerify.html" title="interface in com.google.crypto.tink.jwt"><code>JwtPublicKeyVerify</code></a> interface).</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtSignaturePublicKey.html#JwtSignaturePublicKey--">JwtSignaturePublicKey()</a></span> - Constructor for class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtSignaturePublicKey.html" title="class in com.google.crypto.tink.jwt">JwtSignaturePublicKey</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/jwt/JwtValidator.html" title="class in com.google.crypto.tink.jwt"><span class="typeNameLink">JwtValidator</span></a> - Class in <a href="com/google/crypto/tink/jwt/package-summary.html">com.google.crypto.tink.jwt</a></dt>
 <dd>
 <div class="block">Defines how the headers and claims of a JWT should be validated.</div>
