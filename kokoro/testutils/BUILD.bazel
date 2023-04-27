@@ -20,12 +20,12 @@ sh_test(
         "$(rlocationpath :github_release_util.sh)",
         "$(rlocationpath :test_utils)",
     ],
-    target_compatible_with = select({
-        "@platforms//os:windows": ["@platforms//:incompatible"],
-        "//conditions:default": [],
-    }),
     data = [
         ":github_release_util.sh",
         ":test_utils",
     ],
+    target_compatible_with = select({
+        "@platforms//os:windows": ["@platforms//:incompatible"],
+        "//conditions:default": [],
+    }),
 )
