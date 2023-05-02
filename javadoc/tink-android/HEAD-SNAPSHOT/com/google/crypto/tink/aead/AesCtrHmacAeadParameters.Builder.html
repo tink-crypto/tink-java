@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -155,9 +155,15 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/aead/AesCtrHmacAeadParameters.Builder.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadParameters.Builder</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/AesCtrHmacAeadParameters.Builder.html#setTagSizeBytes-int-">setTagSizeBytes</a></span>(int&nbsp;tagSizeBytes)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/AesCtrHmacAeadParameters.Builder.html#setIvSizeBytes-int-">setIvSizeBytes</a></span>(int&nbsp;ivSizeBytes)</code>
+<div class="block">IV size must be between 12 and 16 bytes.</div>
+</td>
 </tr>
 <tr id="i5" class="rowColor">
+<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/aead/AesCtrHmacAeadParameters.Builder.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadParameters.Builder</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/AesCtrHmacAeadParameters.Builder.html#setTagSizeBytes-int-">setTagSizeBytes</a></span>(int&nbsp;tagSizeBytes)</code>&nbsp;</td>
+</tr>
+<tr id="i6" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/aead/AesCtrHmacAeadParameters.Builder.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadParameters.Builder</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/AesCtrHmacAeadParameters.Builder.html#setVariant-com.google.crypto.tink.aead.AesCtrHmacAeadParameters.Variant-">setVariant</a></span>(<a href="../../../../../com/google/crypto/tink/aead/AesCtrHmacAeadParameters.Variant.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadParameters.Variant</a>&nbsp;variant)</code>&nbsp;</td>
 </tr>
@@ -209,6 +215,22 @@ public&nbsp;<a href="../../../../../com/google/crypto/tink/aead/AesCtrHmacAeadPa
 public&nbsp;<a href="../../../../../com/google/crypto/tink/aead/AesCtrHmacAeadParameters.Builder.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadParameters.Builder</a>&nbsp;setHmacKeySizeBytes(int&nbsp;hmacKeySizeBytes)
                                                                            throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
 <div class="block">Accepts key sizes of at least 16 bytes.</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="setIvSizeBytes-int-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setIvSizeBytes</h4>
+<pre>@CanIgnoreReturnValue
+public&nbsp;<a href="../../../../../com/google/crypto/tink/aead/AesCtrHmacAeadParameters.Builder.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadParameters.Builder</a>&nbsp;setIvSizeBytes(int&nbsp;ivSizeBytes)
+                                                                      throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<div class="block">IV size must be between 12 and 16 bytes.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
