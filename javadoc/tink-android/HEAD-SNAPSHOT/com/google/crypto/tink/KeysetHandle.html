@@ -510,7 +510,16 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <pre>public static final&nbsp;<a href="../../../../com/google/crypto/tink/KeysetHandle.html" title="class in com.google.crypto.tink">KeysetHandle</a>&nbsp;generateNew(<a href="../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;keyTemplate)
                                       throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
 <div class="block">Generates a new <a href="../../../../com/google/crypto/tink/KeysetHandle.html" title="class in com.google.crypto.tink"><code>KeysetHandle</code></a> that contains a single fresh key generated according to
- <code>keyTemplate</code>.</div>
+ <code>keyTemplate</code>.
+
+ <p>Please do not use this function. Instead, use <a href="../../../../com/google/crypto/tink/KeysetHandle.html#generateNew-com.google.crypto.tink.Parameters-"><code>generateNew(Parameters)</code></a>.
+
+ <p>For existing usage, try to use refaster
+ https://github.com/tink-crypto/tink-java/tree/main/tools/refaster to replace usage
+ automatically. This will replaces calls <code>KeysetHandle.generateNew(XYZKeyTemplates.ABC);</code>
+ with <code>KeysetHandle.generateNew(PredefinedXYZParameters.ABC);</code> which is a NO-OP.
+
+ <p>If this is not possible, please inline the function in your code.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code> - if the key template is invalid.</dd>
