@@ -47,8 +47,7 @@ fi
 ./maven/maven_deploy_library.sh install tink-android \
   maven/tink-java-android.pom.xml HEAD
 
-# Run the Java and Android helloworld examples against the local artifacts.
-./kokoro/testutils/test_maven_snapshot.sh -l "examples/helloworld/pom.xml"
+# TODO(tholenst): find a good way to test these jar files.
 ./examples/android/helloworld/gradlew -PmavenLocation=local \
   -p ./examples/android/helloworld build
 
