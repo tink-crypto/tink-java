@@ -496,6 +496,8 @@
 <li><a href="com/google/crypto/tink/proto/KeyData.Builder.html" title="class in com.google.crypto.tink.proto">KeyData.Builder</a></li>
 <li><a href="com/google/crypto/tink/proto/KeyData.KeyMaterialType.html" title="enum in com.google.crypto.tink.proto">KeyData.KeyMaterialType</a></li>
 <li><a href="com/google/crypto/tink/proto/KeyDataOrBuilder.html" title="interface in com.google.crypto.tink.proto"><span class="interfaceName">KeyDataOrBuilder</span></a></li>
+<li><a href="com/google/crypto/tink/keyderivation/KeyDerivationConfig.html" title="class in com.google.crypto.tink.keyderivation">KeyDerivationConfig</a></li>
+<li><a href="com/google/crypto/tink/keyderivation/KeyDerivationKeyTemplates.html" title="class in com.google.crypto.tink.keyderivation">KeyDerivationKeyTemplates</a></li>
 <li><a href="com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey">KeyHandle</a></li>
 <li><a href="com/google/crypto/tink/tinkkey/KeyHandle.KeyStatusType.html" title="enum in com.google.crypto.tink.tinkkey">KeyHandle.KeyStatusType</a></li>
 <li><a href="com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink"><span class="interfaceName">KeyManager</span></a></li>
@@ -510,6 +512,8 @@
 <li><a href="com/google/crypto/tink/proto/Keyset.Key.html" title="class in com.google.crypto.tink.proto">Keyset.Key</a></li>
 <li><a href="com/google/crypto/tink/proto/Keyset.Key.Builder.html" title="class in com.google.crypto.tink.proto">Keyset.Key.Builder</a></li>
 <li><a href="com/google/crypto/tink/proto/Keyset.KeyOrBuilder.html" title="interface in com.google.crypto.tink.proto"><span class="interfaceName">Keyset.KeyOrBuilder</span></a></li>
+<li><a href="com/google/crypto/tink/keyderivation/KeysetDeriver.html" title="interface in com.google.crypto.tink.keyderivation"><span class="interfaceName">KeysetDeriver</span></a></li>
+<li><a href="com/google/crypto/tink/keyderivation/KeysetDeriverWrapper.html" title="class in com.google.crypto.tink.keyderivation">KeysetDeriverWrapper</a></li>
 <li><a href="com/google/crypto/tink/KeysetHandle.html" title="class in com.google.crypto.tink">KeysetHandle</a></li>
 <li><a href="com/google/crypto/tink/KeysetHandle.Builder.html" title="class in com.google.crypto.tink">KeysetHandle.Builder</a></li>
 <li><a href="com/google/crypto/tink/KeysetHandle.Builder.Entry.html" title="class in com.google.crypto.tink">KeysetHandle.Builder.Entry</a></li>
@@ -597,6 +601,18 @@
 <li><a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html" title="class in com.google.crypto.tink.streamingaead">PredefinedStreamingAeadParameters</a></li>
 <li><a href="com/google/crypto/tink/prf/Prf.html" title="interface in com.google.crypto.tink.prf"><span class="interfaceName">Prf</span></a></li>
 <li><a href="com/google/crypto/tink/subtle/PrfAesCmac.html" title="class in com.google.crypto.tink.subtle">PrfAesCmac</a></li>
+<li><a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriver.html" title="class in com.google.crypto.tink.keyderivation.internal">PrfBasedDeriver</a></li>
+<li><a href="com/google/crypto/tink/proto/PrfBasedDeriver.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriver</a></li>
+<li><a href="com/google/crypto/tink/proto/PrfBasedDeriverKey.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKey</a></li>
+<li><a href="com/google/crypto/tink/proto/PrfBasedDeriverKey.Builder.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKey.Builder</a></li>
+<li><a href="com/google/crypto/tink/proto/PrfBasedDeriverKeyFormat.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKeyFormat</a></li>
+<li><a href="com/google/crypto/tink/proto/PrfBasedDeriverKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKeyFormat.Builder</a></li>
+<li><a href="com/google/crypto/tink/proto/PrfBasedDeriverKeyFormatOrBuilder.html" title="interface in com.google.crypto.tink.proto"><span class="interfaceName">PrfBasedDeriverKeyFormatOrBuilder</span></a></li>
+<li><a href="com/google/crypto/tink/keyderivation/PrfBasedDeriverKeyManager.html" title="class in com.google.crypto.tink.keyderivation">PrfBasedDeriverKeyManager</a></li>
+<li><a href="com/google/crypto/tink/proto/PrfBasedDeriverKeyOrBuilder.html" title="interface in com.google.crypto.tink.proto"><span class="interfaceName">PrfBasedDeriverKeyOrBuilder</span></a></li>
+<li><a href="com/google/crypto/tink/proto/PrfBasedDeriverParams.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverParams</a></li>
+<li><a href="com/google/crypto/tink/proto/PrfBasedDeriverParams.Builder.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverParams.Builder</a></li>
+<li><a href="com/google/crypto/tink/proto/PrfBasedDeriverParamsOrBuilder.html" title="interface in com.google.crypto.tink.proto"><span class="interfaceName">PrfBasedDeriverParamsOrBuilder</span></a></li>
 <li><a href="com/google/crypto/tink/prf/PrfConfig.html" title="class in com.google.crypto.tink.prf">PrfConfig</a></li>
 <li><a href="com/google/crypto/tink/subtle/PrfHmacJce.html" title="class in com.google.crypto.tink.subtle">PrfHmacJce</a></li>
 <li><a href="com/google/crypto/tink/subtle/prf/PrfImpl.html" title="class in com.google.crypto.tink.subtle.prf">PrfImpl</a></li>
