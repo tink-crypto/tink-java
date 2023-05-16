@@ -154,6 +154,10 @@
 <div class="block">Parses a byte[] into a parameters object into a byte[] according to Tink's binary format.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a></code></td>
+<td class="colLast"><span class="typeNameLabel">KeyTemplate.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/KeyTemplate.html#toParameters--">toParameters</a></span>()</code>&nbsp;</td>
+</tr>
 </tbody>
 </table>
 <table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
@@ -205,7 +209,7 @@
 <tr class="rowColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/AesCtrHmacAeadParameters.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadParameters</a></span></code>
-<div class="block">Describes the parameters of an <code>AesCtrHmacAeadƒKey</code>.</div>
+<div class="block">Describes the parameters of an <a href="../../../../../com/google/crypto/tink/aead/AesCtrHmacAeadKey.html" title="class in com.google.crypto.tink.aead"><code>AesCtrHmacAeadKey</code></a>.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -279,6 +283,12 @@
 </tr>
 <tbody>
 <tr class="altColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/HpkeParameters.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters</a></span></code>
+<div class="block">Description of the parameters for an <a href="../../../../../com/google/crypto/tink/hybrid/HpkePublicKey.html" title="class in com.google.crypto.tink.hybrid"><code>HpkePublicKey</code></a> or <a href="../../../../../com/google/crypto/tink/hybrid/HpkePrivateKey.html" title="class in com.google.crypto.tink.hybrid"><code>HpkePrivateKey</code></a>.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/HybridParameters.html" title="class in com.google.crypto.tink.hybrid">HybridParameters</a></span></code>
 <div class="block">Represents a description of a <a href="../../../../../com/google/crypto/tink/hybrid/HybridPrivateKey.html" title="class in com.google.crypto.tink.hybrid"><code>HybridPrivateKey</code></a> and the corresponding <a href="../../../../../com/google/crypto/tink/hybrid/HybridPublicKey.html" title="class in com.google.crypto.tink.hybrid"><code>HybridPublicKey</code></a> excluding the randomly chosen key material.</div>
@@ -442,14 +452,26 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/jwt/JwtHmacParameters.html" title="class in com.google.crypto.tink.jwt">JwtHmacParameters</a></span></code>
-<div class="block">Describes the parameters of a <code>JwtHmacKey</code>.</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/jwt/JwtEcdsaParameters.html" title="class in com.google.crypto.tink.jwt">JwtEcdsaParameters</a></span></code>
+<div class="block">Describes the parameters of a <code>JwtEcdsaPrivateKey</code> or a <code>JwtEcdsaPublicKey</code>.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/jwt/JwtHmacParameters.html" title="class in com.google.crypto.tink.jwt">JwtHmacParameters</a></span></code>
+<div class="block">Describes the parameters of a <code>JwtHmacKey</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/jwt/JwtMacParameters.html" title="class in com.google.crypto.tink.jwt">JwtMacParameters</a></span></code>
 <div class="block">Represents a description of a <a href="../../../../../com/google/crypto/tink/jwt/JwtMacKey.html" title="class in com.google.crypto.tink.jwt"><code>JwtMacKey</code></a> excluding the randomly chosen key material.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/jwt/JwtSignatureParameters.html" title="class in com.google.crypto.tink.jwt">JwtSignatureParameters</a></span></code>
+<div class="block">Represents a description of a <code>JwtSignatureKey</code> excluding the randomly chosen key material.</div>
 </td>
 </tr>
 </tbody>
