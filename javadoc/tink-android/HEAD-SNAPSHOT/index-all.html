@@ -3283,6 +3283,8 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/InternalConfiguration.html#createFromPrimitiveRegistry-com.google.crypto.tink.internal.PrimitiveRegistry-">createFromPrimitiveRegistry(PrimitiveRegistry)</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/InternalConfiguration.html" title="class in com.google.crypto.tink.internal">InternalConfiguration</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/RegistryConfiguration.html#createFromPrimitiveRegistry-com.google.crypto.tink.internal.PrimitiveRegistry-">createFromPrimitiveRegistry(PrimitiveRegistry)</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/RegistryConfiguration.html" title="class in com.google.crypto.tink.internal">RegistryConfiguration</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/MacKeyTemplates.html#createHmacKeyTemplate-int-int-com.google.crypto.tink.proto.HashType-">createHmacKeyTemplate(int, int, HashType)</a></span> - Static method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/MacKeyTemplates.html" title="class in com.google.crypto.tink.mac">MacKeyTemplates</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/InsecureNonceChaCha20.html#createInitialState-int:A-int-">createInitialState(int[], int)</a></span> - Method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/InsecureNonceChaCha20.html" title="class in com.google.crypto.tink.aead.internal">InsecureNonceChaCha20</a></dt>
@@ -4955,6 +4957,8 @@
 <dd>
 <div class="block">Returns a <a href="com/google/crypto/tink/SecretKeyAccess.html" title="class in com.google.crypto.tink"><code>SecretKeyAccess</code></a> token.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/RegistryConfiguration.html#get--">get()</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/RegistryConfiguration.html" title="class in com.google.crypto.tink.internal">RegistryConfiguration</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/TinkBugException.ThrowingSupplier.html#get--">get()</a></span> - Method in interface com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/TinkBugException.ThrowingSupplier.html" title="interface in com.google.crypto.tink.internal">TinkBugException.ThrowingSupplier</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/KeyTemplates.html#get-java.lang.String-">get(String)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/KeyTemplates.html" title="class in com.google.crypto.tink">KeyTemplates</a></dt>
@@ -6702,6 +6706,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/PrimitiveRegistry.html#getInputPrimitiveClass-java.lang.Class-">getInputPrimitiveClass(Class&lt;?&gt;)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/PrimitiveRegistry.html" title="class in com.google.crypto.tink.internal">PrimitiveRegistry</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/RegistryConfiguration.html#getInputPrimitiveClass-java.lang.Class-">getInputPrimitiveClass(Class&lt;?&gt;)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/RegistryConfiguration.html" title="class in com.google.crypto.tink.internal">RegistryConfiguration</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/KeysetDeriverWrapper.html#getInputPrimitiveClass--">getInputPrimitiveClass()</a></span> - Method in class com.google.crypto.tink.keyderivation.<a href="com/google/crypto/tink/keyderivation/KeysetDeriverWrapper.html" title="class in com.google.crypto.tink.keyderivation">KeysetDeriverWrapper</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/ChunkedMacWrapper.html#getInputPrimitiveClass--">getInputPrimitiveClass()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/ChunkedMacWrapper.html" title="class in com.google.crypto.tink.mac">ChunkedMacWrapper</a></dt>
@@ -7812,6 +7818,8 @@
 <dd>
 <div class="block">Creates a primitive from a key in the old (proto) format.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/RegistryConfiguration.html#getLegacyPrimitive-com.google.crypto.tink.proto.KeyData-java.lang.Class-">getLegacyPrimitive(KeyData, Class&lt;P&gt;)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/RegistryConfiguration.html" title="class in com.google.crypto.tink.internal">RegistryConfiguration</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/PrfHmacJce.html#getMaxOutputLength--">getMaxOutputLength()</a></span> - Method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/PrfHmacJce.html" title="class in com.google.crypto.tink.subtle">PrfHmacJce</a></dt>
 <dd>
 <div class="block">Returns the maximum supported tag length.</div>
@@ -8923,6 +8931,8 @@
 <dd>
 <div class="block">Creates a primitive from a given key.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/RegistryConfiguration.html#getPrimitive-com.google.crypto.tink.Key-java.lang.Class-">getPrimitive(Key, Class&lt;P&gt;)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/RegistryConfiguration.html" title="class in com.google.crypto.tink.internal">RegistryConfiguration</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/KeyManager.html#getPrimitive-com.google.protobuf.ByteString-">getPrimitive(ByteString)</a></span> - Method in interface com.google.crypto.tink.<a href="com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a></dt>
 <dd>
 <div class="block">Constructs an instance of P for the key given in <code>serializedKey</code>, which must be a
@@ -18360,6 +18370,10 @@
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 </dd>
+<dt><a href="com/google/crypto/tink/internal/RegistryConfiguration.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">RegistryConfiguration</span></a> - Class in <a href="com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></dt>
+<dd>
+<div class="block">Represents the configuration as currently specified by the registry.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/KeyData.KeyMaterialType.html#REMOTE_VALUE">REMOTE_VALUE</a></span> - Static variable in enum com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/KeyData.KeyMaterialType.html" title="enum in com.google.crypto.tink.proto">KeyData.KeyMaterialType</a></dt>
 <dd>
 <div class="block">
@@ -22258,6 +22272,8 @@ the order they are declared.</div>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/MutablePrimitiveRegistry.html#wrap-com.google.crypto.tink.PrimitiveSet-java.lang.Class-">wrap(PrimitiveSet&lt;InputPrimitiveT&gt;, Class&lt;WrapperPrimitiveT&gt;)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/MutablePrimitiveRegistry.html" title="class in com.google.crypto.tink.internal">MutablePrimitiveRegistry</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/PrimitiveRegistry.html#wrap-com.google.crypto.tink.PrimitiveSet-java.lang.Class-">wrap(PrimitiveSet&lt;InputPrimitiveT&gt;, Class&lt;WrapperPrimitiveT&gt;)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/PrimitiveRegistry.html" title="class in com.google.crypto.tink.internal">PrimitiveRegistry</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/RegistryConfiguration.html#wrap-com.google.crypto.tink.PrimitiveSet-java.lang.Class-">wrap(PrimitiveSet&lt;B&gt;, Class&lt;P&gt;)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/RegistryConfiguration.html" title="class in com.google.crypto.tink.internal">RegistryConfiguration</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/KeysetDeriverWrapper.html#wrap-com.google.crypto.tink.PrimitiveSet-">wrap(PrimitiveSet&lt;KeysetDeriver&gt;)</a></span> - Method in class com.google.crypto.tink.keyderivation.<a href="com/google/crypto/tink/keyderivation/KeysetDeriverWrapper.html" title="class in com.google.crypto.tink.keyderivation">KeysetDeriverWrapper</a></dt>
 <dd>&nbsp;</dd>
