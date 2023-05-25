@@ -32,6 +32,7 @@ usage() {
 Usage:  $0 [-c <container image>] [-k <service key file path>] <command>
   -c: [Optional] Container image to run the command on.
   -k: [Optional] Service key file path for pulling the image from the Google Artifact Registry (https://cloud.google.com/artifact-registry).
+  -e: [Optional] File containing a list of environment variables to pass to Docker using --env-file (see https://docs.docker.com/engine/reference/commandline/run/#env).
   -h: Help. Print this usage information.
 EOF
   exit 1
@@ -43,22 +44,25 @@ COMMAND=
 # Options.
 CONTAINER_IMAGE_NAME=
 GCR_SERVICE_KEY_PATH=
+DOCKER_ENV_FILE=
 
 #######################################
 # Process command line arguments.
 #######################################
 process_args() {
   # Parse options.
-  while getopts "hc:k:" opt; do
+  while getopts "hc:k:e:" opt; do
     case "${opt}" in
       c) CONTAINER_IMAGE_NAME="${OPTARG}" ;;
       k) GCR_SERVICE_KEY_PATH="${OPTARG}" ;;
+      e) DOCKER_ENV_FILE="${OPTARG}" ;;
       *) usage ;;
     esac
   done
   shift $((OPTIND - 1))
   readonly CONTAINER_IMAGE_NAME
   readonly GCR_SERVICE_KEY_PATH
+  readonly DOCKER_ENV_FILE
   readonly COMMAND=("$@")
 }
 
@@ -79,11 +83,17 @@ main() {
     local -r path_to_mount="$(dirname "$(pwd)")"
     local -r library_to_test="$(basename "$(pwd)")"
     time docker pull "${CONTAINER_IMAGE_NAME}"
-    time docker run \
-      --mount type=bind,src="${path_to_mount}",dst=/deps \
-      --workdir=/deps/"${library_to_test}" \
-      --rm \
-      "${CONTAINER_IMAGE_NAME}" \
+
+    local docker_opts=(
+      --mount type=bind,src="${path_to_mount}",dst=/deps
+      --workdir=/deps/"${library_to_test}"
+      --rm
+    )
+    if [[ -n "${DOCKER_ENV_FILE}" ]]; then
+      docker_opts+=( --env-file="${DOCKER_ENV_FILE}" )
+    fi
+    readonly docker_opts
+    time docker run "${docker_opts[@]}" "${CONTAINER_IMAGE_NAME}" \
       bash -c "$(echo "${COMMAND[@]}")"
   fi
 }
