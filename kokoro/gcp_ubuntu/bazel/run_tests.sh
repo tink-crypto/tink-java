@@ -14,9 +14,30 @@
 # limitations under the License.
 ################################################################################
 
+# By default when run locally this script runs the command below directly on the
+# host. The CONTAINER_IMAGE variable can be set to run on a custom container
+# image for local testing. E.g.:
+#
+# CONTAINER_IMAGE="us-docker.pkg.dev/tink-test-infrastructure/tink-ci-images/linux-tink-cc-cmake:latest" \
+#  sh ./kokoro/gcp_ubuntu/bazel_fips/run_tests.sh
+#
+# The user may specify TINK_BASE_DIR as the folder where to look for
+# tink-java. That is:
+#   ${TINK_BASE_DIR}/tink_java
+set -eEuo pipefail
+
+readonly C_PREFIX="us-docker.pkg.dev/tink-test-infrastructure/tink-ci-images"
+
+_create_test_command() {
+  cat <<'EOF' > _do_run_test.sh
 set -euo pipefail
 
 BAZEL_CMD="bazel"
+# Prefer using Bazelisk if available.
+if command -v "bazelisk" &> /dev/null; then
+  BAZEL_CMD="bazelisk"
+fi
+readonly BAZEL_CMD
 
 #######################################
 # Prints and error message with the missing deps for the given target diff-ing
@@ -124,19 +145,46 @@ kind(android_library,deps(//:tink-android,2)))" >> "${actual_android_targets}"
 }
 
 main() {
-  if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]] ; then
-    TINK_BASE_DIR="$(echo "${KOKORO_ARTIFACTS_DIR}"/git*)"
-    cd "${TINK_BASE_DIR}/tink_java"
-  fi
-
-  # Prefer using Bazelisk if available.
-  if command -v "bazelisk" &> /dev/null; then
-    BAZEL_CMD="bazelisk"
-  fi
-  readonly BAZEL_CMD
-
   test_build_bazel_file
   ./kokoro/testutils/run_bazel_tests.sh .
+}
+
+main "$@"
+EOF
+
+  chmod +x _do_run_test.sh
+}
+
+main() {
+  local run_command_args=()
+  if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]] ; then
+    TINK_BASE_DIR="$(echo "${KOKORO_ARTIFACTS_DIR}"/git*)"
+    local -r c_name="linux-tink-java-base"
+    local -r c_hash="f9c43b8158b304fb38f5ee0ef49151d10f641ec95ec72ee7ca5243f2d4b14de6"
+    CONTAINER_IMAGE="${C_PREFIX}/${c_name}@sha256:${c_hash}"
+    run_command_args+=( -k "${TINK_GCR_SERVICE_KEY}" )
+  fi
+  : "${TINK_BASE_DIR:=$(cd .. && pwd)}"
+  readonly TINK_BASE_DIR
+  readonly CONTAINER_IMAGE
+
+  if [[ -n "${CONTAINER_IMAGE}" ]]; then
+    run_command_args+=( -c "${CONTAINER_IMAGE}" )
+  fi
+  readonly run_command_args
+
+  cd "${TINK_BASE_DIR}/tink_java"
+
+  _create_test_command
+
+  # Run cleanup on EXIT.
+  trap cleanup EXIT
+
+  cleanup() {
+    rm -rf _do_run_test.sh
+  }
+
+  ./kokoro/testutils/run_command.sh "${run_command_args[@]}" ./_do_run_test.sh
 }
 
 main "$@"

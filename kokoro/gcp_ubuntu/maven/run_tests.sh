@@ -14,10 +14,17 @@
 # limitations under the License.
 ################################################################################
 
-set -eu
-
-# Version of Android build-tools required for gradle.
-readonly ANDROID_BUILD_TOOLS_VERSION="28.0.3"
+# By default when run locally this script runs the command below directly on the
+# host. The CONTAINER_IMAGE variable can be set to run on a custom container
+# image for local testing. E.g.:
+#
+# CONTAINER_IMAGE="gcr.io/tink-test-infrastructure/linux-tink-go-base:latest" \
+#  sh ./kokoro/gcp_ubuntu/gomod/run_tests.sh
+#
+# The user may specify TINK_BASE_DIR as the folder where to look for
+# tink-java. That is:
+#   ${TINK_BASE_DIR}/tink_java
+set -eEuo pipefail
 
 IS_KOKORO="false"
 if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]] ; then
@@ -25,10 +32,29 @@ if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]] ; then
 fi
 readonly IS_KOKORO
 
+RUN_COMMAND_ARGS=()
 if [[ "${IS_KOKORO}" == "true" ]] ; then
   TINK_BASE_DIR="$(echo "${KOKORO_ARTIFACTS_DIR}"/git*)"
-  cd "${TINK_BASE_DIR}/tink_java"
+  readonly C_PREFIX="us-docker.pkg.dev/tink-test-infrastructure/tink-ci-images"
+  readonly C_NAME="linux-tink-java-base"
+  readonly C_HASH="f9c43b8158b304fb38f5ee0ef49151d10f641ec95ec72ee7ca5243f2d4b14de6"
+  CONTAINER_IMAGE="${C_PREFIX}/${C_NAME}@sha256:${C_HASH}"
+  RUN_COMMAND_ARGS+=( -k "${TINK_GCR_SERVICE_KEY}" )
 fi
+
+: "${TINK_BASE_DIR:=$(cd .. && pwd)}"
+readonly TINK_BASE_DIR
+readonly CONTAINER_IMAGE
+
+# If running from the tink_java folder this has no effect.
+cd "${TINK_BASE_DIR}/tink_java"
+
+if [[ -n "${CONTAINER_IMAGE:-}" ]]; then
+  RUN_COMMAND_ARGS+=( -c "${CONTAINER_IMAGE}" )
+fi
+
+cat <<EOF > _do_run_test.sh
+set -euo pipefail
 
 # Compare the dependencies of the ":tink" target with the declared dependencies.
 # These should match the dependencies declared in tink-java.pom.xml, since
@@ -50,6 +76,17 @@ fi
 # TODO(tholenst): find a good way to test these jar files.
 ./examples/android/helloworld/gradlew -PmavenLocation=local \
   -p ./examples/android/helloworld build
+EOF
+chmod +x _do_run_test.sh
+
+# Run cleanup on EXIT.
+trap cleanup EXIT
+
+cleanup() {
+  rm -rf _do_run_test.sh
+}
+
+./kokoro/testutils/run_command.sh "${RUN_COMMAND_ARGS[@]}" ./_do_run_test.sh
 
 readonly GITHUB_JOB_NAME="tink/github/java/gcp_ubuntu/maven/continuous"
 
@@ -58,8 +95,10 @@ if [[ "${IS_KOKORO}" == "true" \
   # GITHUB_ACCESS_TOKEN is populated by Kokoro.
   readonly GIT_CREDENTIALS="ise-crypto:${GITHUB_ACCESS_TOKEN}"
   readonly GITHUB_URL="https://${GIT_CREDENTIALS}@github.com/tink-crypto/tink-java.git"
-  ./maven/maven_deploy_library.sh -u "${GITHUB_URL}" snapshot tink \
+  ./kokoro/testutils/run_command.sh "${RUN_COMMAND_ARGS[@]}" \
+    ./maven/maven_deploy_library.sh -u "${GITHUB_URL}" snapshot tink \
     maven/tink-java.pom.xml HEAD
-  ./maven/maven_deploy_library.sh -u "${GITHUB_URL}" snapshot tink-android \
+  ./kokoro/testutils/run_command.sh "${RUN_COMMAND_ARGS[@]}" \
+    ./maven/maven_deploy_library.sh -u "${GITHUB_URL}" snapshot tink-android \
     maven/tink-java-android.pom.xml HEAD
 fi

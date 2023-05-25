@@ -14,21 +14,55 @@
 # limitations under the License.
 ################################################################################
 
-set -euo pipefail
+# By default when run locally this script runs the command below directly on the
+# host. The CONTAINER_IMAGE variable can be set to run on a custom container
+# image for local testing. E.g.:
+#
+# CONTAINER_IMAGE="gcr.io/tink-test-infrastructure/linux-tink-go-base:latest" \
+#  sh ./kokoro/gcp_ubuntu/gomod/run_tests.sh
+#
+# The user may specify TINK_BASE_DIR as the folder where to look for
+# tink-java. That is:
+#   ${TINK_BASE_DIR}/tink_java
+set -eEuo pipefail
 
-# If we are running on Kokoro cd into the repository.
-if [[ -n "${KOKORO_ROOT:-}" ]]; then
+IS_KOKORO="false"
+if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]] ; then
+  IS_KOKORO="true"
+fi
+readonly IS_KOKORO
+
+RUN_COMMAND_ARGS=()
+if [[ "${IS_KOKORO}" == "true" ]] ; then
   TINK_BASE_DIR="$(echo "${KOKORO_ARTIFACTS_DIR}"/git*)"
-  cd "${TINK_BASE_DIR}/tink_java"
+  readonly C_PREFIX="us-docker.pkg.dev/tink-test-infrastructure/tink-ci-images"
+  readonly C_NAME="linux-tink-java-base"
+  readonly C_HASH="f9c43b8158b304fb38f5ee0ef49151d10f641ec95ec72ee7ca5243f2d4b14de6"
+  CONTAINER_IMAGE="${C_PREFIX}/${C_NAME}@sha256:${C_HASH}"
+  RUN_COMMAND_ARGS+=( -k "${TINK_GCR_SERVICE_KEY}" )
 fi
 
-: "${TINK_BASE_DIR:="$(cd .. && pwd)"}"
+: "${TINK_BASE_DIR:=$(cd .. && pwd)}"
+readonly TINK_BASE_DIR
+readonly CONTAINER_IMAGE
 
-cp "examples/WORKSPACE" "examples/WORKSPACE.bak"
+# If running from the tink_java folder this has no effect.
+cd "${TINK_BASE_DIR}/tink_java"
+
+if [[ -n "${CONTAINER_IMAGE:-}" ]]; then
+  RUN_COMMAND_ARGS+=( -c "${CONTAINER_IMAGE}" )
+fi
+
+cp examples/WORKSPACE examples/WORKSPACE.bak
+
+# Run cleanup on EXIT.
+trap cleanup EXIT
+
+cleanup() {
+  mv examples/WORKSPACE.bak examples/WORKSPACE
+}
 
 ./kokoro/testutils/replace_http_archive_with_local_repository.py \
-  -f "examples/WORKSPACE" -t "${TINK_BASE_DIR}"
-
-./kokoro/testutils/run_bazel_tests.sh "examples"
-
-mv "examples/WORKSPACE.bak" "examples/WORKSPACE"
+  -f examples/WORKSPACE -t ../..
+./kokoro/testutils/run_command.sh "${RUN_COMMAND_ARGS[@]}" \
+  ./kokoro/testutils/run_bazel_tests.sh examples
