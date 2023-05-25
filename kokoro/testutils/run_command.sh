@@ -67,7 +67,6 @@ main() {
 
   if [[ -z "${CONTAINER_IMAGE_NAME:-}" ]]; then
     echo "Running command on the host"
-    set -x
     time "${COMMAND[@]}"
   else
     echo "Running command on a new container from image ${CONTAINER_IMAGE_NAME}"
@@ -77,7 +76,6 @@ main() {
       gcloud config set project tink-test-infrastructure
       gcloud auth configure-docker us-docker.pkg.dev --quiet
     fi
-    set -x
     local -r path_to_mount="$(dirname "$(pwd)")"
     local -r library_to_test="$(basename "$(pwd)")"
     time docker pull "${CONTAINER_IMAGE_NAME}"
