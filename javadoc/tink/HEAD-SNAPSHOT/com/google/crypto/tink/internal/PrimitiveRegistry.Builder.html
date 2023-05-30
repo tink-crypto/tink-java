@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10};
+var methods = {"i0":10,"i1":10,"i2":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -134,12 +134,16 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/internal/PrimitiveRegistry.html" title="class in com.google.crypto.tink.internal">PrimitiveRegistry</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveRegistry.Builder.html#build--">build</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>&lt;KeyT extends <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>,PrimitiveT&gt;<br><a href="../../../../../com/google/crypto/tink/internal/PrimitiveRegistry.Builder.html" title="class in com.google.crypto.tink.internal">PrimitiveRegistry.Builder</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveRegistry.Builder.html#registerPrimitiveConstructor-com.google.crypto.tink.internal.PrimitiveConstructor-">registerPrimitiveConstructor</a></span>(<a href="../../../../../com/google/crypto/tink/internal/PrimitiveConstructor.html" title="class in com.google.crypto.tink.internal">PrimitiveConstructor</a>&lt;KeyT,PrimitiveT&gt;&nbsp;primitiveConstructor)</code>
 <div class="block">Registers a primitive constructor for later use in <a href="../../../../../com/google/crypto/tink/internal/PrimitiveRegistry.html#getPrimitive-KeyT-java.lang.Class-"><code>PrimitiveRegistry.getPrimitive(KeyT, java.lang.Class&lt;PrimitiveT&gt;)</code></a>.</div>
 </td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>&lt;InputPrimitiveT,WrapperPrimitiveT&gt;<br><a href="../../../../../com/google/crypto/tink/internal/PrimitiveRegistry.Builder.html" title="class in com.google.crypto.tink.internal">PrimitiveRegistry.Builder</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveRegistry.Builder.html#registerPrimitiveWrapper-com.google.crypto.tink.PrimitiveWrapper-">registerPrimitiveWrapper</a></span>(<a href="../../../../../com/google/crypto/tink/PrimitiveWrapper.html" title="interface in com.google.crypto.tink">PrimitiveWrapper</a>&lt;InputPrimitiveT,WrapperPrimitiveT&gt;&nbsp;wrapper)</code>&nbsp;</td>
 </tr>
@@ -189,7 +193,7 @@ public&nbsp;&lt;KeyT extends <a href="../../../../../com/google/crypto/tink/Key.
 <a name="registerPrimitiveWrapper-com.google.crypto.tink.PrimitiveWrapper-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>registerPrimitiveWrapper</h4>
 <pre>@CanIgnoreReturnValue
@@ -199,6 +203,15 @@ public&nbsp;&lt;InputPrimitiveT,WrapperPrimitiveT&gt;&nbsp;<a href="../../../../
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
 </dl>
+</li>
+</ul>
+<a name="build--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>build</h4>
+<pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/internal/PrimitiveRegistry.html" title="class in com.google.crypto.tink.internal">PrimitiveRegistry</a>&nbsp;build()</pre>
 </li>
 </ul>
 </li>
