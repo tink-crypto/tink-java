@@ -319,6 +319,18 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/HpkePrivateKey.html" title="class in com.google.crypto.tink.hybrid">HpkePrivateKey</a></span></code>
+<div class="block">Representation of the decryption function for an HPKE hybrid encryption primitive.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/HpkePublicKey.html" title="class in com.google.crypto.tink.hybrid">HpkePublicKey</a></span></code>
+<div class="block">Representation of the encryption function for an HPKE hybrid encryption primitive.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/HybridPrivateKey.html" title="class in com.google.crypto.tink.hybrid">HybridPrivateKey</a></span></code>
 <div class="block">Representation of the decryption function for a hybrid encryption primitive.</div>
 </td>
@@ -328,6 +340,23 @@
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/HybridPublicKey.html" title="class in com.google.crypto.tink.hybrid">HybridPublicKey</a></span></code>
 <div class="block">Representation of the encryption function for a hybrid encryption primitive.</div>
 </td>
+</tr>
+</tbody>
+</table>
+<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Methods in <a href="../../../../../com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a> with parameters of type <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><span class="typeNameLabel">HpkePublicKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/HpkePublicKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><span class="typeNameLabel">HpkePrivateKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/HpkePrivateKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
@@ -532,6 +561,18 @@
 <div class="block">Returns true if we are sure that the other key is the same.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code>&lt;P&gt;&nbsp;P</code></td>
+<td class="colLast"><span class="typeNameLabel">RegistryConfiguration.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/RegistryConfiguration.html#getPrimitive-com.google.crypto.tink.Key-java.lang.Class-">getPrimitive</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;key,
+            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;primitiveClass)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>abstract &lt;P&gt;&nbsp;P</code></td>
+<td class="colLast"><span class="typeNameLabel">InternalConfiguration.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/InternalConfiguration.html#getPrimitive-com.google.crypto.tink.Key-java.lang.Class-">getPrimitive</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;key,
+            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;primitiveClass)</code>
+<div class="block">Given a key and a desired primitive class, creates the required primitive.</div>
+</td>
+</tr>
 </tbody>
 </table>
 </li>
@@ -548,6 +589,18 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/jwt/JwtEcdsaPrivateKey.html" title="class in com.google.crypto.tink.jwt">JwtEcdsaPrivateKey</a></span></code>
+<div class="block">Represents a key for computing JWT ECDSA signatures (ES256, ES384, ES512).</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/jwt/JwtEcdsaPublicKey.html" title="class in com.google.crypto.tink.jwt">JwtEcdsaPublicKey</a></span></code>
+<div class="block">JwtEcdsaPublicKey represents the public portion of JWT ECDSA keys.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/jwt/JwtHmacKey.html" title="class in com.google.crypto.tink.jwt">JwtHmacKey</a></span></code>
 <div class="block">Represents a JWT HMAC key to create and verify JWT using HMAC.</div>
 </td>
@@ -557,6 +610,18 @@
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/jwt/JwtMacKey.html" title="class in com.google.crypto.tink.jwt">JwtMacKey</a></span></code>
 <div class="block">Represents a key to compute JWT using symmetric cryptography (i.e., using the <a href="../../../../../com/google/crypto/tink/jwt/JwtMac.html" title="interface in com.google.crypto.tink.jwt"><code>JwtMac</code></a>
  interface).</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/jwt/JwtSignaturePrivateKey.html" title="class in com.google.crypto.tink.jwt">JwtSignaturePrivateKey</a></span></code>
+<div class="block">Represents a key to compute JWT using asymmetric cryptography (i.e., using the <a href="../../../../../com/google/crypto/tink/jwt/JwtPublicKeySign.html" title="interface in com.google.crypto.tink.jwt"><code>JwtPublicKeySign</code></a> interface).</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/jwt/JwtSignaturePublicKey.html" title="class in com.google.crypto.tink.jwt">JwtSignaturePublicKey</a></span></code>
+<div class="block">Represents a key to verify JWT using asymmetric cryptography (i.e., using the <a href="../../../../../com/google/crypto/tink/jwt/JwtPublicKeyVerify.html" title="interface in com.google.crypto.tink.jwt"><code>JwtPublicKeyVerify</code></a> interface).</div>
 </td>
 </tr>
 </tbody>
@@ -571,6 +636,14 @@
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><span class="typeNameLabel">JwtHmacKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/jwt/JwtHmacKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><span class="typeNameLabel">JwtEcdsaPublicKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/jwt/JwtEcdsaPublicKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><span class="typeNameLabel">JwtEcdsaPrivateKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/jwt/JwtEcdsaPrivateKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
