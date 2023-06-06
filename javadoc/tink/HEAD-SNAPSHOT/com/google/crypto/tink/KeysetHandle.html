@@ -462,7 +462,12 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
  entries were inserted when the KeysetHandle was built.
 
  <p>Currently, this may throw "IllegalStateException" in case the status entry of the Key in the
- keyset was wrongly set. In the future, Tink will throw at parsing time in this case.</div>
+ keyset was wrongly set. In this case, we call this KeysetHandle invalid. In the future, Tink
+ will throw at parsing time in this case, and we will not have invalid KeysetHandles.
+
+ <p>If you want to ensure that this does not throw an IllegalStateException, please first
+ re-parse the KeysetHandle: <code>KeysetHandle guaranteedValid =
+ KeysetHandle.newBuilder(maybeInvalidHandle).build();</code> (This would throw a <code>GeneralSecurityException</code> if the <code>maybeInvalidHandle</code> handle is invalid).</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/IndexOutOfBoundsException.html?is-external=true" title="class or interface in java.lang">IndexOutOfBoundsException</a></code> - if i < 0 or i >= size();</dd>
