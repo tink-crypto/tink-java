@@ -89,7 +89,6 @@
     <error_prone_annotations.version>2.18.0</error_prone_annotations.version>
     <google-http-client.version>1.43.1</google-http-client.version>
     <protobuf-java.version>3.19.6</protobuf-java.version>
-    <joda-time.version>2.12.5</joda-time.version>
   </properties>
 
   <dependencies>
@@ -117,11 +116,6 @@
       <groupId>com.google.protobuf</groupId>
       <artifactId>protobuf-java</artifactId>
       <version>${protobuf-java.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>joda-time</groupId>
-      <artifactId>joda-time</artifactId>
-      <version>${joda-time.version}</version>
     </dependency>
   </dependencies>
   <repositories>

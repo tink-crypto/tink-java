@@ -21,7 +21,6 @@ TINK_MAVEN_ARTIFACTS = [
     # Placeholder for com.google.http-client:google-http-client-gson:1.43.1. Please ignore.
     # Placeholder for com.google.oauth-client:google-oauth-client:1.34.1. Please ignore.
     "com.google.truth:truth:0.44",
-    "joda-time:joda-time:2.12.5",
     "junit:junit:4.13.2",
     "org.conscrypt:conscrypt-openjdk-uber:2.5.2",
     "org.ow2.asm:asm:7.0",
