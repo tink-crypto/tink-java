@@ -51,7 +51,7 @@ set -euo pipefail
 
 ./tools/create_maven_build_file.sh -o BUILD.bazel.temp
 if ! cmp -s BUILD.bazel BUILD.bazel.temp; then
-  echo "ERROR: Update yuor BUILD.bazel file using ./tools/create_maven_build_file.sh" >&2
+  echo "ERROR: Update your BUILD.bazel file using ./tools/create_maven_build_file.sh" >&2
   diff -u BUILD.bazel BUILD.bazel.temp
   exit 1
 fi
