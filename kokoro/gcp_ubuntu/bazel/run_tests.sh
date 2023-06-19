@@ -26,165 +26,45 @@
 #   ${TINK_BASE_DIR}/tink_java
 set -eEuo pipefail
 
-readonly C_PREFIX="us-docker.pkg.dev/tink-test-infrastructure/tink-ci-images"
+RUN_COMMAND_ARGS=()
+if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]] ; then
+  TINK_BASE_DIR="$(echo "${KOKORO_ARTIFACTS_DIR}"/git*)"
+  readonly C_PREFIX="us-docker.pkg.dev/tink-test-infrastructure/tink-ci-images"
+  readonly C_NAME="linux-tink-java-base"
+  readonly C_HASH="f9c43b8158b304fb38f5ee0ef49151d10f641ec95ec72ee7ca5243f2d4b14de6"
+  CONTAINER_IMAGE="${C_PREFIX}/${C_NAME}@sha256:${C_HASH}"
+  RUN_COMMAND_ARGS+=( -k "${TINK_GCR_SERVICE_KEY}" )
+fi
+: "${TINK_BASE_DIR:=$(cd .. && pwd)}"
+readonly TINK_BASE_DIR
+readonly CONTAINER_IMAGE
 
-_create_test_command() {
-  cat <<'EOF' > _do_run_test.sh
+if [[ -n "${CONTAINER_IMAGE}" ]]; then
+  RUN_COMMAND_ARGS+=( -c "${CONTAINER_IMAGE}" )
+fi
+readonly RUN_COMMAND_ARGS
+
+cd "${TINK_BASE_DIR}/tink_java"
+
+cat <<'EOF' > _do_run_test.sh
 set -euo pipefail
 
-BAZEL_CMD="bazel"
-# Prefer using Bazelisk if available.
-if command -v "bazelisk" &> /dev/null; then
-  BAZEL_CMD="bazelisk"
+./tools/create_maven_build_file.sh -o BUILD.bazel.temp
+if ! cmp -s BUILD.bazel BUILD.bazel.temp; then
+  echo "ERROR: Update yuor BUILD.bazel file using ./tools/create_maven_build_file.sh" >&2
+  diff -u BUILD.bazel BUILD.bazel.temp
+  exit 1
 fi
-readonly BAZEL_CMD
-
-#######################################
-# Prints and error message with the missing deps for the given target diff-ing
-# the expected and actual list of targets.
-#
-# Globals:
-#   None
-# Arguments:
-#   target: Bazel target.
-#   expected_deps: Expected list of dependencies.
-#   actual_deps: Actual list of dependencies.
-# Outputs:
-#   Writes to stdout
-#######################################
-print_missing_deps() {
-  local -r target="$1"
-  local -r expected_deps="$2"
-  local -r actual_deps="$3"
-
-  echo "#========= ERROR ${target} target:"
-  local -r deps_to_add="$(diff --changed-group-format='%>' \
-    --unchanged-group-format='' "${actual_deps}" "${expected_deps}")"
-  echo "The following dependencies are missing from the ${target} target:"
-  echo "${deps_to_add}"
-  echo "#==============================="
-}
-
-#######################################
-# Checks if the //:tink and //:tink-android Maven targets in BUILD.bazel have
-# all the required dependencies.
-#
-#  * ":tink" should have all java_libraries except integration as dependencies.
-#  * ":tink-android" should have all android_libraries except integration as
-#    dependencies.
-#
-# Globals:
-#   None
-# Arguments:
-#   None
-# Outputs:
-#   Writes to stdout
-#######################################
-test_build_bazel_file() {
-  local -r tink_java_prefix="//src/main/java/com/google/crypto/tink"
-  # src_android contains android_library targets where the source file differes
-  # for java and android.
-  local -r tink_java_android_prefix="//src_android/main/java/com/google/crypto/tink"
-  local -r tink_java_integration_prefix="${tink_java_prefix}/integration"
-
-  # Targets in tink_java_prefix of type java_library, excluding:
-  #  * testonly targets,
-  #  * targets in tink_java_integration_prefix.
-  local -r expected_tink_deps="$(mktemp)"
-  "${BAZEL_CMD}" query "kind(java_library,${tink_java_prefix}/...) \
-except attr(testonly,1,${tink_java_prefix}/...) \
-except kind(java_library,${tink_java_integration_prefix}/...)" \
-    > "${expected_tink_deps}"
-
-  # Targets in tink_java_prefix and tink_java_android_prefix of type
-  # android_library, excluding testonly targets.
-  local -r expected_android_deps="$(mktemp)"
-  "${BAZEL_CMD}" query "kind(android_library,${tink_java_prefix}/...) \
-except attr(testonly,1,${tink_java_prefix}/...)" \
-    > "${expected_android_deps}"
-  "${BAZEL_CMD}" query "kind(android_library,${tink_java_android_prefix}/...) \
-except attr(testonly,1,${tink_java_prefix}/...)" \
-    >> "${expected_android_deps}"
-
-  # Dependencies of //:tink of type java_library that are in tink_java_prefix.
-  # Note: Considering only direct dependencies of the target.
-  local -r actual_java_targets="$(mktemp)"
-  "${BAZEL_CMD}" query \
-    "filter(${tink_java_prefix},kind(java_library,deps(//:tink,1)))" \
-    > "${actual_java_targets}"
-
-  local error_in_tink="false"
-  if ! cmp -s "${actual_java_targets}" "${expected_tink_deps}"; then
-    error_in_tink="true"
-    print_missing_deps "//:tink" "${expected_tink_deps}" \
-      "${actual_java_targets}"
-  fi
-  readonly error_in_tink
-
-  # Dependencies of //:tink-android of type android_library that are in
-  # tink_java_prefix and tink_java_android_prefix.
-  # Note: Considering only direct dependencies of the target.
-  local -r actual_android_targets="$(mktemp)"
-  "${BAZEL_CMD}" query "filter(${tink_java_prefix}, \
-kind(android_library,deps(//:tink-android,2)))" > "${actual_android_targets}"
-  "${BAZEL_CMD}" query "filter(${tink_java_android_prefix}, \
-kind(android_library,deps(//:tink-android,2)))" >> "${actual_android_targets}"
-
-  local error_in_tink_android="false"
-  if ! cmp -s "${actual_java_targets}" "${expected_tink_deps}"; then
-    error_in_tink_android="true"
-    print_missing_deps "//:tink-android" "${expected_android_deps}" \
-      "${actual_android_targets}"
-  fi
-  readonly error_in_tink_android
-
-  if [[ "${error_in_tink}" == "true" \
-        || "${error_in_tink_android}" == "true" ]]; then
-    exit 1
-  fi
-}
-
-main() {
-  test_build_bazel_file
-  ./kokoro/testutils/run_bazel_tests.sh .
-}
-
-main "$@"
+./kokoro/testutils/run_bazel_tests.sh .
 EOF
+chmod +x _do_run_test.sh
 
-  chmod +x _do_run_test.sh
+# Run cleanup on EXIT.
+trap cleanup EXIT
+
+cleanup() {
+  rm -rf _do_run_test.sh
+  rm -rf BUILD.bazel.temp
 }
 
-main() {
-  local run_command_args=()
-  if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]] ; then
-    TINK_BASE_DIR="$(echo "${KOKORO_ARTIFACTS_DIR}"/git*)"
-    local -r c_name="linux-tink-java-base"
-    local -r c_hash="f9c43b8158b304fb38f5ee0ef49151d10f641ec95ec72ee7ca5243f2d4b14de6"
-    CONTAINER_IMAGE="${C_PREFIX}/${c_name}@sha256:${c_hash}"
-    run_command_args+=( -k "${TINK_GCR_SERVICE_KEY}" )
-  fi
-  : "${TINK_BASE_DIR:=$(cd .. && pwd)}"
-  readonly TINK_BASE_DIR
-  readonly CONTAINER_IMAGE
-
-  if [[ -n "${CONTAINER_IMAGE}" ]]; then
-    run_command_args+=( -c "${CONTAINER_IMAGE}" )
-  fi
-  readonly run_command_args
-
-  cd "${TINK_BASE_DIR}/tink_java"
-
-  _create_test_command
-
-  # Run cleanup on EXIT.
-  trap cleanup EXIT
-
-  cleanup() {
-    rm -rf _do_run_test.sh
-  }
-
-  ./kokoro/testutils/run_command.sh "${run_command_args[@]}" ./_do_run_test.sh
-}
-
-main "$@"
+./kokoro/testutils/run_command.sh "${RUN_COMMAND_ARGS[@]}" ./_do_run_test.sh
