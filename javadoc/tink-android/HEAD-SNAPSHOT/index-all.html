@@ -1558,6 +1558,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssParameters.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssParameters.Builder.html" title="class in com.google.crypto.tink.signature">RsaSsaPssParameters.Builder</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.Builder.html" title="class in com.google.crypto.tink.signature">RsaSsaPssPrivateKey.Builder</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssPublicKey.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssPublicKey.Builder.html" title="class in com.google.crypto.tink.signature">RsaSsaPssPublicKey.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/SignaturePemKeysetReader.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/SignaturePemKeysetReader.Builder.html" title="class in com.google.crypto.tink.signature">SignaturePemKeysetReader.Builder</a></dt>
@@ -1649,6 +1651,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPkcs1PublicKey.html#builder--">builder()</a></span> - Static method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPkcs1PublicKey.html" title="class in com.google.crypto.tink.signature">RsaSsaPkcs1PublicKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssParameters.html#builder--">builder()</a></span> - Static method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssParameters.html" title="class in com.google.crypto.tink.signature">RsaSsaPssParameters</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.html#builder--">builder()</a></span> - Static method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.html" title="class in com.google.crypto.tink.signature">RsaSsaPssPrivateKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssPublicKey.html#builder--">builder()</a></span> - Static method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssPublicKey.html" title="class in com.google.crypto.tink.signature">RsaSsaPssPublicKey</a></dt>
 <dd>&nbsp;</dd>
@@ -4704,6 +4708,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPkcs1PublicKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey(Key)</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPkcs1PublicKey.html" title="class in com.google.crypto.tink.signature">RsaSsaPkcs1PublicKey</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey(Key)</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.html" title="class in com.google.crypto.tink.signature">RsaSsaPssPrivateKey</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssPublicKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey(Key)</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssPublicKey.html" title="class in com.google.crypto.tink.signature">RsaSsaPssPublicKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/AesCtrHmacStreamingKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey(Key)</a></span> - Method in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/AesCtrHmacStreamingKey.html" title="class in com.google.crypto.tink.streamingaead">AesCtrHmacStreamingKey</a></dt>
@@ -5507,6 +5513,10 @@
  Chinese Remainder Theorem coefficient q^(-1) mod p.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPkcs1PrivateKey.html#getCrtCoefficient--">getCrtCoefficient()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPkcs1PrivateKey.html" title="class in com.google.crypto.tink.signature">RsaSsaPkcs1PrivateKey</a></dt>
+<dd>
+<div class="block">Returns the CRT coefficient qInv.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.html#getCrtCoefficient--">getCrtCoefficient()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.html" title="class in com.google.crypto.tink.signature">RsaSsaPssPrivateKey</a></dt>
 <dd>
 <div class="block">Returns the CRT coefficient qInv.</div>
 </dd>
@@ -8428,6 +8438,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPkcs1PublicKey.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPkcs1PublicKey.html" title="class in com.google.crypto.tink.signature">RsaSsaPkcs1PublicKey</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.html" title="class in com.google.crypto.tink.signature">RsaSsaPssPrivateKey</a></dt>
+<dd>
+<div class="block">Returns the key parameters.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssPublicKey.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssPublicKey.html" title="class in com.google.crypto.tink.signature">RsaSsaPssPublicKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/SignaturePrivateKey.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/SignaturePrivateKey.html" title="class in com.google.crypto.tink.signature">SignaturePrivateKey</a></dt>
@@ -8918,7 +8932,15 @@
 <dd>
 <div class="block">Returns the prime exponent dP.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.html#getPrimeExponentP--">getPrimeExponentP()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.html" title="class in com.google.crypto.tink.signature">RsaSsaPssPrivateKey</a></dt>
+<dd>
+<div class="block">Returns the prime exponent dP.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPkcs1PrivateKey.html#getPrimeExponentQ--">getPrimeExponentQ()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPkcs1PrivateKey.html" title="class in com.google.crypto.tink.signature">RsaSsaPkcs1PrivateKey</a></dt>
+<dd>
+<div class="block">Returns the prime exponent dQ.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.html#getPrimeExponentQ--">getPrimeExponentQ()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.html" title="class in com.google.crypto.tink.signature">RsaSsaPssPrivateKey</a></dt>
 <dd>
 <div class="block">Returns the prime exponent dQ.</div>
 </dd>
@@ -8926,7 +8948,15 @@
 <dd>
 <div class="block">Returns the prime factor p.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.html#getPrimeP--">getPrimeP()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.html" title="class in com.google.crypto.tink.signature">RsaSsaPssPrivateKey</a></dt>
+<dd>
+<div class="block">Returns the prime factor p.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPkcs1PrivateKey.html#getPrimeQ--">getPrimeQ()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPkcs1PrivateKey.html" title="class in com.google.crypto.tink.signature">RsaSsaPkcs1PrivateKey</a></dt>
+<dd>
+<div class="block">Returns the prime factor q.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.html#getPrimeQ--">getPrimeQ()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.html" title="class in com.google.crypto.tink.signature">RsaSsaPssPrivateKey</a></dt>
 <dd>
 <div class="block">Returns the prime factor q.</div>
 </dd>
@@ -9142,6 +9172,10 @@
 <div class="block">Returns a new primitive wrapper for this primitive.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPkcs1PrivateKey.html#getPrivateExponent--">getPrivateExponent()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPkcs1PrivateKey.html" title="class in com.google.crypto.tink.signature">RsaSsaPkcs1PrivateKey</a></dt>
+<dd>
+<div class="block">Returns the private exponent d.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.html#getPrivateExponent--">getPrivateExponent()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.html" title="class in com.google.crypto.tink.signature">RsaSsaPssPrivateKey</a></dt>
 <dd>
 <div class="block">Returns the private exponent d.</div>
 </dd>
@@ -9412,6 +9446,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPkcs1SignKeyManager.html#getPublicKey-com.google.crypto.tink.proto.RsaSsaPkcs1PrivateKey-">getPublicKey(RsaSsaPkcs1PrivateKey)</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPkcs1SignKeyManager.html" title="class in com.google.crypto.tink.signature">RsaSsaPkcs1SignKeyManager</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.html#getPublicKey--">getPublicKey()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.html" title="class in com.google.crypto.tink.signature">RsaSsaPssPrivateKey</a></dt>
+<dd>
+<div class="block">Returns the public key.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssSignKeyManager.html#getPublicKey-com.google.crypto.tink.proto.RsaSsaPssPrivateKey-">getPublicKey(RsaSsaPssPrivateKey)</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssSignKeyManager.html" title="class in com.google.crypto.tink.signature">RsaSsaPssSignKeyManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/SignaturePrivateKey.html#getPublicKey--">getPublicKey()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/SignaturePrivateKey.html" title="class in com.google.crypto.tink.signature">SignaturePrivateKey</a></dt>
@@ -18714,7 +18752,7 @@
 <dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/signature/RsaSsaPssParameters.html" title="class in com.google.crypto.tink.signature"><span class="typeNameLink">RsaSsaPssParameters</span></a> - Class in <a href="com/google/crypto/tink/signature/package-summary.html">com.google.crypto.tink.signature</a></dt>
 <dd>
-<div class="block">Describes the parameters of a <a href="com/google/crypto/tink/signature/RsaSsaPssPublicKey.html" title="class in com.google.crypto.tink.signature"><code>RsaSsaPssPublicKey</code></a> and <code>RsaSsaPssPrivateKey</code>.</div>
+<div class="block">Describes the parameters of a <a href="com/google/crypto/tink/signature/RsaSsaPssPublicKey.html" title="class in com.google.crypto.tink.signature"><code>RsaSsaPssPublicKey</code></a> and <a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.html" title="class in com.google.crypto.tink.signature"><code>RsaSsaPssPrivateKey</code></a>.</div>
 </dd>
 <dt><a href="com/google/crypto/tink/signature/RsaSsaPssParameters.Builder.html" title="class in com.google.crypto.tink.signature"><span class="typeNameLink">RsaSsaPssParameters.Builder</span></a> - Class in <a href="com/google/crypto/tink/signature/package-summary.html">com.google.crypto.tink.signature</a></dt>
 <dd>
@@ -18743,10 +18781,18 @@
 <div class="block">
  key_type: type.googleapis.com/google.crypto.tink.RsaSsaPssPrivateKey</div>
 </dd>
+<dt><a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.html" title="class in com.google.crypto.tink.signature"><span class="typeNameLink">RsaSsaPssPrivateKey</span></a> - Class in <a href="com/google/crypto/tink/signature/package-summary.html">com.google.crypto.tink.signature</a></dt>
+<dd>
+<div class="block">Represents a private key for RSA SSA PSS signatures.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/proto/RsaSsaPssPrivateKey.Builder.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">RsaSsaPssPrivateKey.Builder</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>
 <div class="block">
  key_type: type.googleapis.com/google.crypto.tink.RsaSsaPssPrivateKey</div>
+</dd>
+<dt><a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.Builder.html" title="class in com.google.crypto.tink.signature"><span class="typeNameLink">RsaSsaPssPrivateKey.Builder</span></a> - Class in <a href="com/google/crypto/tink/signature/package-summary.html">com.google.crypto.tink.signature</a></dt>
+<dd>
+<div class="block">Builder for RsaSsaPssPrivateKey.</div>
 </dd>
 <dt><a href="com/google/crypto/tink/proto/RsaSsaPssPrivateKeyOrBuilder.html" title="interface in com.google.crypto.tink.proto"><span class="typeNameLink">RsaSsaPssPrivateKeyOrBuilder</span></a> - Interface in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>&nbsp;</dd>
@@ -19074,6 +19120,10 @@
  Chinese Remainder Theorem coefficient q^(-1) mod p.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPkcs1PrivateKey.Builder.html#setCrtCoefficient-com.google.crypto.tink.util.SecretBigInteger-">setCrtCoefficient(SecretBigInteger)</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPkcs1PrivateKey.Builder.html" title="class in com.google.crypto.tink.signature">RsaSsaPkcs1PrivateKey.Builder</a></dt>
+<dd>
+<div class="block">Sets the CRT coefficient qInv.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.Builder.html#setCrtCoefficient-com.google.crypto.tink.util.SecretBigInteger-">setCrtCoefficient(SecretBigInteger)</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.Builder.html" title="class in com.google.crypto.tink.signature">RsaSsaPssPrivateKey.Builder</a></dt>
 <dd>
 <div class="block">Sets the CRT coefficient qInv.</div>
 </dd>
@@ -20282,7 +20332,15 @@
 <dd>
 <div class="block">Sets the prime exponents dP and dQ.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.Builder.html#setPrimeExponents-com.google.crypto.tink.util.SecretBigInteger-com.google.crypto.tink.util.SecretBigInteger-">setPrimeExponents(SecretBigInteger, SecretBigInteger)</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.Builder.html" title="class in com.google.crypto.tink.signature">RsaSsaPssPrivateKey.Builder</a></dt>
+<dd>
+<div class="block">Sets the prime exponents dP and dQ.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPkcs1PrivateKey.Builder.html#setPrimes-com.google.crypto.tink.util.SecretBigInteger-com.google.crypto.tink.util.SecretBigInteger-">setPrimes(SecretBigInteger, SecretBigInteger)</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPkcs1PrivateKey.Builder.html" title="class in com.google.crypto.tink.signature">RsaSsaPkcs1PrivateKey.Builder</a></dt>
+<dd>
+<div class="block">Sets the prime factors p and q.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.Builder.html#setPrimes-com.google.crypto.tink.util.SecretBigInteger-com.google.crypto.tink.util.SecretBigInteger-">setPrimes(SecretBigInteger, SecretBigInteger)</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.Builder.html" title="class in com.google.crypto.tink.signature">RsaSsaPssPrivateKey.Builder</a></dt>
 <dd>
 <div class="block">Sets the prime factors p and q.</div>
 </dd>
@@ -20299,6 +20357,10 @@
  E.g.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPkcs1PrivateKey.Builder.html#setPrivateExponent-com.google.crypto.tink.util.SecretBigInteger-">setPrivateExponent(SecretBigInteger)</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPkcs1PrivateKey.Builder.html" title="class in com.google.crypto.tink.signature">RsaSsaPkcs1PrivateKey.Builder</a></dt>
+<dd>
+<div class="block">Sets the private exponent d.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.Builder.html#setPrivateExponent-com.google.crypto.tink.util.SecretBigInteger-">setPrivateExponent(SecretBigInteger)</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.Builder.html" title="class in com.google.crypto.tink.signature">RsaSsaPssPrivateKey.Builder</a></dt>
 <dd>
 <div class="block">Sets the private exponent d.</div>
 </dd>
@@ -20423,6 +20485,10 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/EcdsaPrivateKey.Builder.html#setPublicKey-com.google.crypto.tink.signature.EcdsaPublicKey-">setPublicKey(EcdsaPublicKey)</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/EcdsaPrivateKey.Builder.html" title="class in com.google.crypto.tink.signature">EcdsaPrivateKey.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPkcs1PrivateKey.Builder.html#setPublicKey-com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey-">setPublicKey(RsaSsaPkcs1PublicKey)</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPkcs1PrivateKey.Builder.html" title="class in com.google.crypto.tink.signature">RsaSsaPkcs1PrivateKey.Builder</a></dt>
+<dd>
+<div class="block">Sets the public key, which includes the parameters.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.Builder.html#setPublicKey-com.google.crypto.tink.signature.RsaSsaPssPublicKey-">setPublicKey(RsaSsaPssPublicKey)</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.Builder.html" title="class in com.google.crypto.tink.signature">RsaSsaPssPrivateKey.Builder</a></dt>
 <dd>
 <div class="block">Sets the public key, which includes the parameters.</div>
 </dd>
