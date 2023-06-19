@@ -1,25 +1,19 @@
-"""Dependencies of Java Tink."""
+"""Dependencies for Tink Java."""
 
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 TINK_MAVEN_ARTIFACTS = [
     "com.google.protobuf:protobuf-java:3.19.6",
     "com.google.protobuf:protobuf-javalite:3.19.6",
-    # Placeholder for com.amazonaws:aws-java-sdk-core:1.12.182. Please ignore.
-    # Placeholder for com.amazonaws:aws-java-sdk-kms:1.12.182. Please ignore.
     "androidx.annotation:annotation:1.5.0",
     "com.google.auto:auto-common:1.2.1",
     "com.google.auto.service:auto-service:1.0.1",
     "com.google.auto.service:auto-service-annotations:1.0.1",
     "com.google.api-client:google-api-client:2.2.0",
-    # Placeholder for com.google.apis:google-api-services-cloudkms:v1-rev20221107-2.0.0. Please ignore.
-    # Placeholder for com.google.auth:google-auth-library-oauth2-http:1.5.3. Please ignore.
     "com.google.code.findbugs:jsr305:3.0.2",
     "com.google.code.gson:gson:2.10.1",
     "com.google.errorprone:error_prone_annotations:2.18.0",
     "com.google.http-client:google-http-client:1.43.1",
-    # Placeholder for com.google.http-client:google-http-client-gson:1.43.1. Please ignore.
-    # Placeholder for com.google.oauth-client:google-oauth-client:1.34.1. Please ignore.
     "com.google.truth:truth:0.44",
     "junit:junit:4.13.2",
     "org.conscrypt:conscrypt-openjdk-uber:2.5.2",
@@ -30,15 +24,6 @@ TINK_MAVEN_ARTIFACTS = [
 
 def tink_java_deps():
     """Loads dependencies of Java Tink."""
-
-    # Google PKI certs for connecting to GCP KMS
-    if not native.existing_rule("google_root_pem"):
-        http_file(
-            name = "google_root_pem",
-            executable = 0,
-            urls = ["https://pki.goog/roots.pem"],
-            sha256 = "9c9b9685ad319b9747c3fe69b46a61c11a0efabdfa09ca6a8b0c3da421036d27",
-        )
 
     # Basic rules we need to add to bazel.
     if not native.existing_rule("bazel_skylib"):
