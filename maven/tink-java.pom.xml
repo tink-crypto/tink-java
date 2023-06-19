@@ -111,6 +111,8 @@
       <groupId>com.google.http-client</groupId>
       <artifactId>google-http-client</artifactId>
       <version>${google-http-client.version}</version>
+      <!-- Only required if the class "KeysDownloader" is used -->
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>com.google.protobuf</groupId>
