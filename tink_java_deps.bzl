@@ -27,14 +27,14 @@ def tink_java_deps():
 
     # Basic rules we need to add to bazel.
     if not native.existing_rule("bazel_skylib"):
-        # Release from 2021-09-27.
+        # Release from 2023-05-31.
         http_archive(
             name = "bazel_skylib",
             urls = [
-                "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.1.1/bazel-skylib-1.1.1.tar.gz",
-                "https://github.com/bazelbuild/bazel-skylib/releases/download/1.1.1/bazel-skylib-1.1.1.tar.gz",
+                "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.4.2/bazel-skylib-1.4.2.tar.gz",
+                "https://github.com/bazelbuild/bazel-skylib/releases/download/1.4.2/bazel-skylib-1.4.2.tar.gz",
             ],
-            sha256 = "c6966ec828da198c5d9adbaa94c05e3a1c7f21bd012a0b29ba8ddbccb2c93b0d",
+            sha256 = "66ffd9315665bfaafc96b52278f57c7e2dd09f5ede279ea6d39b2be471e7e3aa",
         )
 
     # -------------------------------------------------------------------------
@@ -62,9 +62,9 @@ def tink_java_deps():
         # Release from 2021-11-24
         http_archive(
             name = "rules_jvm_external",
-            strip_prefix = "rules_jvm_external-4.2",
-            sha256 = "cd1a77b7b02e8e008439ca76fd34f5b07aecb8c752961f9640dea15e9e5ba1ca",
-            url = "https://github.com/bazelbuild/rules_jvm_external/archive/4.2.zip",
+            strip_prefix = "rules_jvm_external-5.2",
+            url = "https://github.com/bazelbuild/rules_jvm_external/archive/5.2.zip",
+            sha256 = "3824ac95d9edf8465c7a42b7fcb88a5c6b85d2bac0e98b941ba13f235216f313",
         )
 
     # -------------------------------------------------------------------------
