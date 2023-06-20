@@ -37,7 +37,7 @@ if [[ "${IS_KOKORO}" == "true" ]] ; then
   TINK_BASE_DIR="$(echo "${KOKORO_ARTIFACTS_DIR}"/git*)"
   readonly C_PREFIX="us-docker.pkg.dev/tink-test-infrastructure/tink-ci-images"
   readonly C_NAME="linux-tink-java-base"
-  readonly C_HASH="f9c43b8158b304fb38f5ee0ef49151d10f641ec95ec72ee7ca5243f2d4b14de6"
+  readonly C_HASH="78760bd248a1045096e91cac1841e677dc1ba5b0881090d1fe29df62e4c3f83b"
   CONTAINER_IMAGE="${C_PREFIX}/${C_NAME}@sha256:${C_HASH}"
   RUN_COMMAND_ARGS+=( -k "${TINK_GCR_SERVICE_KEY}" )
 fi
