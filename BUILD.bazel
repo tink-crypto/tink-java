@@ -16,7 +16,7 @@ gen_maven_jar_rules(
         "Automatic-Module-Name: com.google.crypto.tink",
     ],
     root_packages = [
-        "com.google.crypto.tink"
+        "com.google.crypto.tink",
     ],
     deps = [
         "//src/main/java/com/google/crypto/tink:accesses_partial_key",
@@ -403,8 +403,8 @@ gen_maven_jar_rules(
         "//src/main/java/com/google/crypto/tink/subtle:x25519",
         "//src/main/java/com/google/crypto/tink/subtle:x_cha_cha20",
         "//src/main/java/com/google/crypto/tink/subtle:x_cha_cha20_poly1305",
+        "//src/main/java/com/google/crypto/tink/subtle/prf",
         "//src/main/java/com/google/crypto/tink/subtle/prf:hkdf_streaming_prf",
-        "//src/main/java/com/google/crypto/tink/subtle/prf:prf",
         "//src/main/java/com/google/crypto/tink/subtle/prf:prf_impl",
         "//src/main/java/com/google/crypto/tink/subtle/prf:streaming_prf",
         "//src/main/java/com/google/crypto/tink/tinkkey:key_access",
