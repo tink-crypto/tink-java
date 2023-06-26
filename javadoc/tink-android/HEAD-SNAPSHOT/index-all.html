@@ -3727,7 +3727,9 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/integration/android/AndroidKeystoreKmsClient.html#doesSupport-java.lang.String-">doesSupport(String)</a></span> - Method in class com.google.crypto.tink.integration.android.<a href="com/google/crypto/tink/integration/android/AndroidKeystoreKmsClient.html" title="class in com.google.crypto.tink.integration.android">AndroidKeystoreKmsClient</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/KeyManager.html#doesSupport-java.lang.String-">doesSupport(String)</a></span> - Method in interface com.google.crypto.tink.<a href="com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Returns true iff this KeyManager supports key type identified by <code>typeUrl</code>.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/KmsClient.html#doesSupport-java.lang.String-">doesSupport(String)</a></span> - Method in interface com.google.crypto.tink.<a href="com/google/crypto/tink/KmsClient.html" title="interface in com.google.crypto.tink">KmsClient</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/integration/android/AndroidKeysetManager.Builder.html#doNotUseKeystore--">doNotUseKeystore()</a></span> - Method in class com.google.crypto.tink.integration.android.<a href="com/google/crypto/tink/integration/android/AndroidKeysetManager.Builder.html" title="class in com.google.crypto.tink.integration.android">AndroidKeysetManager.Builder</a></dt>
@@ -7625,7 +7627,9 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#getKeyType--">getKeyType()</a></span> - Method in class com.google.crypto.tink.keyderivation.internal.<a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html" title="class in com.google.crypto.tink.keyderivation.internal">PrfBasedDeriverKeyManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/KeyManager.html#getKeyType--">getKeyType()</a></span> - Method in interface com.google.crypto.tink.<a href="com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Returns the type URL that identifies the key type of keys managed by this KeyManager.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/AesCmacKeyManager.html#getKeyType--">getKeyType()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/AesCmacKeyManager.html" title="class in com.google.crypto.tink.mac">AesCmacKeyManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacKeyManager.html#getKeyType--">getKeyType()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacKeyManager.html" title="class in com.google.crypto.tink.mac">HmacKeyManager</a></dt>
@@ -10251,7 +10255,9 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#getVersion--">getVersion()</a></span> - Method in class com.google.crypto.tink.keyderivation.internal.<a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html" title="class in com.google.crypto.tink.keyderivation.internal">PrfBasedDeriverKeyManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/KeyManager.html#getVersion--">getVersion()</a></span> - Method in interface com.google.crypto.tink.<a href="com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Returns the version number of this KeyManager.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/AesCmacKeyManager.html#getVersion--">getVersion()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/AesCmacKeyManager.html" title="class in com.google.crypto.tink.mac">AesCmacKeyManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacKeyManager.html#getVersion--">getVersion()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacKeyManager.html" title="class in com.google.crypto.tink.mac">HmacKeyManager</a></dt>
@@ -14826,7 +14832,9 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/Registry.html#newKey-com.google.crypto.tink.proto.KeyTemplate-">newKey(KeyTemplate)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink">Registry</a></dt>
 <dd>
-<div class="block">Convenience method for generating a new key for the specified <code>keyTemplate</code>.</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>
+<div class="block"><span class="deprecationComment">Use <code>newKeyData</code> instead.</span></div>
+</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/Registry.html#newKey-java.lang.String-com.google.protobuf.MessageLite-">newKey(String, MessageLite)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink">Registry</a></dt>
 <dd>
@@ -14836,7 +14844,7 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/KeyManager.html#newKeyData-com.google.protobuf.ByteString-">newKeyData(ByteString)</a></span> - Method in interface com.google.crypto.tink.<a href="com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a></dt>
 <dd>
-<div class="block">Generates a new <code>KeyData</code> according to specification in <code>serializedkeyFormat</code>.</div>
+<div class="block">Generates a new <code>KeyData</code> according to specification in <code>serializedKeyFormat</code>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/Registry.html#newKeyData-com.google.crypto.tink.proto.KeyTemplate-">newKeyData(KeyTemplate)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink">Registry</a></dt>
 <dd>
