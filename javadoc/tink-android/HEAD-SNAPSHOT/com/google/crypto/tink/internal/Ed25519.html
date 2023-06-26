@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":9,"i3":9};
+var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -174,6 +174,12 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/Ed25519.html#getHashedScalar-byte:A-">getHashedScalar</a></span>(byte[]&nbsp;privateKey)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/Ed25519.html#init--">init</a></span>()</code>
+<div class="block">Initializes Ed25519 if not yet initialized.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>static byte[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/Ed25519.html#scalarMultWithBaseToBytes-byte:A-">scalarMultWithBaseToBytes</a></span>(byte[]&nbsp;a)</code>
 <div class="block">Computes <code>a</code>*B
@@ -181,7 +187,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
  B is the Ed25519 base point (x,4/5) with x positive.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>static byte[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/Ed25519.html#sign-byte:A-byte:A-byte:A-">sign</a></span>(byte[]&nbsp;message,
     byte[]&nbsp;publicKey,
@@ -189,7 +195,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="block">Returns the EdDSA signature for the <code>message</code> based on the <code>hashedPrivateKey</code>.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/Ed25519.html#verify-byte:A-byte:A-byte:A-">verify</a></span>(byte[]&nbsp;message,
       byte[]&nbsp;signature,
@@ -309,7 +315,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>message</code> - to sign</dd>
-<dd><code>publicKey</code> - <code>Ed25519#scalarMultToBytes(byte[])</code> of <code>hashedPrivateKey</code></dd>
+<dd><code>publicKey</code> - <a href="../../../../../com/google/crypto/tink/internal/Ed25519.html#scalarMultWithBaseToBytes-byte:A-"><code>scalarMultWithBaseToBytes(byte[])</code></a> of <code>hashedPrivateKey</code></dd>
 <dd><code>hashedPrivateKey</code> - <a href="../../../../../com/google/crypto/tink/internal/Ed25519.html#getHashedScalar-byte:A-"><code>getHashedScalar(byte[])</code></a> of the private key</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>signature for the <code>message</code>.</dd>
@@ -321,7 +327,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <a name="verify-byte:A-byte:A-byte:A-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>verify</h4>
 <pre>public static&nbsp;boolean&nbsp;verify(byte[]&nbsp;message,
@@ -333,6 +339,16 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code> - if there is no SHA-512 algorithm defined in <a href="../../../../../com/google/crypto/tink/subtle/EngineFactory.html" title="class in com.google.crypto.tink.subtle"><code>EngineFactory</code></a>.MESSAGE_DIGEST.</dd>
 </dl>
+</li>
+</ul>
+<a name="init--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>init</h4>
+<pre>public static&nbsp;void&nbsp;init()</pre>
+<div class="block">Initializes Ed25519 if not yet initialized.</div>
 </li>
 </ul>
 </li>
