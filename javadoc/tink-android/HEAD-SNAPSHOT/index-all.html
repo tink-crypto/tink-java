@@ -7273,7 +7273,9 @@
 </div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/Registry.html#getKeyManager-java.lang.String-java.lang.Class-">getKeyManager(String, Class&lt;P&gt;)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink">Registry</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Returns a <a href="com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink"><code>KeyManager</code></a> for the given <code>typeUrl</code> (if found).</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/KeyTypeEntry.Builder.html#getKeyManagerVersion--">getKeyManagerVersion()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/KeyTypeEntry.Builder.html" title="class in com.google.crypto.tink.proto">KeyTypeEntry.Builder</a></dt>
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
@@ -9165,12 +9167,14 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/Registry.html#getPrimitive-java.lang.String-com.google.protobuf.MessageLite-">getPrimitive(String, MessageLite)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink">Registry</a></dt>
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="block"><span class="deprecationComment">Use <code>getPrimitive(typeUrl, key, P.class)</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">Use <code>getPrimitive(typeUrl, serializedKey, P.class)</code> instead.</span></div>
 </div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/Registry.html#getPrimitive-java.lang.String-com.google.protobuf.MessageLite-java.lang.Class-">getPrimitive(String, MessageLite, Class&lt;P&gt;)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink">Registry</a></dt>
 <dd>
-<div class="block">Convenience method for creating a new primitive for the key given in <code>key</code>.</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>
+<div class="block"><span class="deprecationComment">Use <code>getPrimitive(typeUrl, serializedKey, Primitive.class</code> instead.</span></div>
+</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/Registry.html#getPrimitive-java.lang.String-com.google.protobuf.ByteString-">getPrimitive(String, ByteString)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink">Registry</a></dt>
 <dd>
@@ -10033,7 +10037,9 @@
  Name of the key type.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/Registry.html#getUntypedKeyManager-java.lang.String-">getUntypedKeyManager(String)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink">Registry</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Returns a <a href="com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink"><code>KeyManager</code></a> for the given <code>typeUrl</code> (if found).</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/ProtoKeySerialization.html#getValue--">getValue()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/ProtoKeySerialization.html" title="class in com.google.crypto.tink.internal">ProtoKeySerialization</a></dt>
 <dd>
 <div class="block">The contents of the field value in the message com.google.crypto.tink.proto.KeyData.</div>
