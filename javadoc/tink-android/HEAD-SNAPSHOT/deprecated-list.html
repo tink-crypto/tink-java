@@ -210,12 +210,18 @@
 <td class="colOne"><a href="com/google/crypto/tink/proto/RegistryConfig.html" title="class in com.google.crypto.tink.proto">com.google.crypto.tink.proto.RegistryConfig</a></td>
 </tr>
 <tr class="altColor">
+<td class="colOne"><a href="com/google/crypto/tink/integration/android/SharedPrefKeysetWriter.html" title="class in com.google.crypto.tink.integration.android">com.google.crypto.tink.integration.android.SharedPrefKeysetWriter</a>
+<div class="block"><span class="deprecationComment">We do not expect anyone to use this class. Please file an issue on
+     github.com/tink-crypto/tink-java/ if you need to replace this.</span></div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/streamingaead/StreamingAeadFactory.html" title="class in com.google.crypto.tink.streamingaead">com.google.crypto.tink.streamingaead.StreamingAeadFactory</a>
 <div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(StreamingAead.class)</code> after registering the
      <code>StreamingAeadWrapper</code> instead.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html" title="class in com.google.crypto.tink.streamingaead">com.google.crypto.tink.streamingaead.StreamingAeadKeyTemplates</a>
 <div class="block"><span class="deprecationComment">Try using our refaster templates to replace them (see
      https://github.com/tink-crypto/tink-java/tree/main/tools/refaster). If migration is unclear,
