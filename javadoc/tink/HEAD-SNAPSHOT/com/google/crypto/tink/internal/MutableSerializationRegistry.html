@@ -414,18 +414,18 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>parseKeyWithLegacyFallback</h4>
 <pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;parseKeyWithLegacyFallback(<a href="../../../../../com/google/crypto/tink/internal/ProtoKeySerialization.html" title="class in com.google.crypto.tink.internal">ProtoKeySerialization</a>&nbsp;protoKeySerialization,
+                                      <a href="https://docs.oracle.com/javase/8/docs/api/javax/annotation/Nullable.html?is-external=true" title="class or interface in javax.annotation">@Nullable</a>
                                       <a href="../../../../../com/google/crypto/tink/SecretKeyAccess.html" title="class in com.google.crypto.tink">SecretKeyAccess</a>&nbsp;access)
                                throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
 <div class="block">Returns a Key object from a protoKeySerialization, even if no parser has been registered.
 
  <p>Falling back is useful because we want users to be able to call <code>#getAt</code> even for key
  types for which we did not yet register a parser; in this case we simply fall back to return a
- LegacyProtoKey.
-
- <p>This always requires SecretKeyAccess.</div>
+ LegacyProtoKey.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code> - if a parser is registered but parsing fails.</dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code> - if a parser is registered but parsing fails or required
+     SecretKeyAccess is missing</dd>
 </dl>
 </li>
 </ul>
