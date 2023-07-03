@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
+var methods = {"i0":50,"i1":6,"i2":6,"i3":50,"i4":6,"i5":50,"i6":50,"i7":50,"i8":6};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],16:["t5","Default Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -131,18 +131,24 @@ var activeTableTab = "activeTableTab";
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t5" class="tableTab"><span><a href="javascript:show(16);">Default Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t6" class="tableTab"><span><a href="javascript:show(32);">Deprecated Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/KeyManager.html#doesSupport-java.lang.String-">doesSupport</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl)</code>&nbsp;</td>
+<td class="colFirst"><code>default boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/KeyManager.html#doesSupport-java.lang.String-">doesSupport</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
+<div class="block"><span class="deprecationComment">Use <code>getKeyType()</code> instead.</span></div>
+</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/KeyManager.html#getKeyType--">getKeyType</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/KeyManager.html#getKeyType--">getKeyType</a></span>()</code>
+<div class="block">Returns the type URL that identifies the key type of keys managed by this KeyManager.</div>
+</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/google/crypto/tink/KeyManager.html" title="type parameter in KeyManager">P</a></code></td>
@@ -152,9 +158,11 @@ var activeTableTab = "activeTableTab";
 </td>
 </tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code><a href="../../../../com/google/crypto/tink/KeyManager.html" title="type parameter in KeyManager">P</a></code></td>
+<td class="colFirst"><code>default <a href="../../../../com/google/crypto/tink/KeyManager.html" title="type parameter in KeyManager">P</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/KeyManager.html#getPrimitive-com.google.protobuf.MessageLite-">getPrimitive</a></span>(com.google.protobuf.MessageLite&nbsp;key)</code>
-<div class="block">Constructs an instance of P for the key given in <code>key</code>.</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
+<div class="block"><span class="deprecationComment">Use <code>getPrimitive(serializedKey)</code> instead.</span></div>
+</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
@@ -164,26 +172,33 @@ var activeTableTab = "activeTableTab";
 </td>
 </tr>
 <tr id="i5" class="rowColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/KeyManager.html#getVersion--">getVersion</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>default int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/KeyManager.html#getVersion--">getVersion</a></span>()</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
+<div class="block"><span class="deprecationComment">Do not use it.</span></div>
+</div>
+</td>
 </tr>
 <tr id="i6" class="altColor">
-<td class="colFirst"><code>com.google.protobuf.MessageLite</code></td>
+<td class="colFirst"><code>default com.google.protobuf.MessageLite</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/KeyManager.html#newKey-com.google.protobuf.ByteString-">newKey</a></span>(com.google.protobuf.ByteString&nbsp;serializedKeyFormat)</code>
-<div class="block">Generates a new key according to specification in <code>serializedKeyFormat</code>, which must be a
- serialized key format protocol buffer handled by this manager.</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
+<div class="block"><span class="deprecationComment">Use <code>newKeyData(serializedKeyFormat)</code> instead.</span></div>
+</div>
 </td>
 </tr>
 <tr id="i7" class="rowColor">
-<td class="colFirst"><code>com.google.protobuf.MessageLite</code></td>
+<td class="colFirst"><code>default com.google.protobuf.MessageLite</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/KeyManager.html#newKey-com.google.protobuf.MessageLite-">newKey</a></span>(com.google.protobuf.MessageLite&nbsp;keyFormat)</code>
-<div class="block">Generates a new key according to specification in <code>keyFormat</code>.</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
+<div class="block"><span class="deprecationComment">Use <code>newKeyData(serializedKeyFormat)</code> instead.</span></div>
+</div>
 </td>
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto">KeyData</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/KeyManager.html#newKeyData-com.google.protobuf.ByteString-">newKeyData</a></span>(com.google.protobuf.ByteString&nbsp;serializedKeyFormat)</code>
-<div class="block">Generates a new <code>KeyData</code> according to specification in <code>serializedkeyFormat</code>.</div>
+<div class="block">Generates a new <code>KeyData</code> according to specification in <code>serializedKeyFormat</code>.</div>
 </td>
 </tr>
 </table>
@@ -229,12 +244,16 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <h4>getPrimitive</h4>
-<pre><a href="../../../../com/google/crypto/tink/KeyManager.html" title="type parameter in KeyManager">P</a>&nbsp;getPrimitive(com.google.protobuf.MessageLite&nbsp;key)
-        throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
+default&nbsp;<a href="../../../../com/google/crypto/tink/KeyManager.html" title="type parameter in KeyManager">P</a>&nbsp;getPrimitive(com.google.protobuf.MessageLite&nbsp;key)
+                            throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">Use <code>getPrimitive(serializedKey)</code> instead.</span></div>
 <div class="block">Constructs an instance of P for the key given in <code>key</code>.
 
  <p>For primitives of type <code>Mac</code>, <code>Aead</code>, <code>PublicKeySign</code>, <code>PublicKeyVerify</code>, <code>DeterministicAead</code>, <code>HybridEncrypt</code>, and <code>HybridDecrypt</code>
- this should be a primitive which <b>ignores</b> the output prefix and assumes "RAW".</div>
+ this should be a primitive which <b>ignores</b> the output prefix and assumes "RAW".
+
+ <p>This method is not used by Tink. It does not need to be implemented.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the new constructed P</dd>
@@ -249,10 +268,14 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <h4>newKey</h4>
-<pre>com.google.protobuf.MessageLite&nbsp;newKey(com.google.protobuf.ByteString&nbsp;serializedKeyFormat)
-                                throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
+default&nbsp;com.google.protobuf.MessageLite&nbsp;newKey(com.google.protobuf.ByteString&nbsp;serializedKeyFormat)
+                                                    throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">Use <code>newKeyData(serializedKeyFormat)</code> instead.</span></div>
 <div class="block">Generates a new key according to specification in <code>serializedKeyFormat</code>, which must be a
- serialized key format protocol buffer handled by this manager.</div>
+ serialized key format protocol buffer handled by this manager.
+
+ <p>This method is not used by Tink anymore. It does not need to be implemented.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the new generated key</dd>
@@ -267,9 +290,14 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <h4>newKey</h4>
-<pre>com.google.protobuf.MessageLite&nbsp;newKey(com.google.protobuf.MessageLite&nbsp;keyFormat)
-                                throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block">Generates a new key according to specification in <code>keyFormat</code>.</div>
+<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
+default&nbsp;com.google.protobuf.MessageLite&nbsp;newKey(com.google.protobuf.MessageLite&nbsp;keyFormat)
+                                                    throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">Use <code>newKeyData(serializedKeyFormat)</code> instead.</span></div>
+<div class="block">Generates a new key according to specification in <code>keyFormat</code>.
+
+ <p>This method is only used by <code>Registry.newKey</code> which is deprecated and not used by Tink
+ anymore. This method does not need to be implemented.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the new generated key</dd>
@@ -284,11 +312,12 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <h4>doesSupport</h4>
-<pre>boolean&nbsp;doesSupport(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl)</pre>
-<dl>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>true iff this KeyManager supports key type identified by <code>typeUrl</code>.</dd>
-</dl>
+<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
+default&nbsp;boolean&nbsp;doesSupport(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl)</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">Use <code>getKeyType()</code> instead.</span></div>
+<div class="block">Returns true iff this KeyManager supports key type identified by <code>typeUrl</code>.
+
+ <p>This method is not used by Tink anymore. It does not need to be implemented.</div>
 </li>
 </ul>
 <a name="getKeyType--">
@@ -298,10 +327,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>getKeyType</h4>
 <pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getKeyType()</pre>
-<dl>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the type URL that identifies the key type of keys managed by this KeyManager.</dd>
-</dl>
+<div class="block">Returns the type URL that identifies the key type of keys managed by this KeyManager.</div>
 </li>
 </ul>
 <a name="getVersion--">
@@ -310,11 +336,12 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <h4>getVersion</h4>
-<pre>int&nbsp;getVersion()</pre>
-<dl>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the version number of this KeyManager.</dd>
-</dl>
+<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
+default&nbsp;int&nbsp;getVersion()</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">Do not use it.</span></div>
+<div class="block">Returns the version number of this KeyManager.
+
+ <p>This method is not used by Tink anymore. It does not need to be implemented.</div>
 </li>
 </ul>
 <a name="getPrimitiveClass--">
@@ -340,9 +367,7 @@ var activeTableTab = "activeTableTab";
 <h4>newKeyData</h4>
 <pre><a href="../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto">KeyData</a>&nbsp;newKeyData(com.google.protobuf.ByteString&nbsp;serializedKeyFormat)
             throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block">Generates a new <code>KeyData</code> according to specification in <code>serializedkeyFormat</code>.
-
- <p>This should be used solely by <a href="../../../../com/google/crypto/tink/KeysetManager.html" title="class in com.google.crypto.tink"><code>KeysetManager</code></a>.</div>
+<div class="block">Generates a new <code>KeyData</code> according to specification in <code>serializedKeyFormat</code>.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the new generated key</dd>
