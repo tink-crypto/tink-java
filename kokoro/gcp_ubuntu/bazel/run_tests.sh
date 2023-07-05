@@ -29,10 +29,9 @@ set -eEuo pipefail
 RUN_COMMAND_ARGS=()
 if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]] ; then
   TINK_BASE_DIR="$(echo "${KOKORO_ARTIFACTS_DIR}"/git*)"
-  readonly C_PREFIX="us-docker.pkg.dev/tink-test-infrastructure/tink-ci-images"
-  readonly C_NAME="linux-tink-java-base"
-  readonly C_HASH="78760bd248a1045096e91cac1841e677dc1ba5b0881090d1fe29df62e4c3f83b"
-  CONTAINER_IMAGE="${C_PREFIX}/${C_NAME}@sha256:${C_HASH}"
+  source \
+    "${TINK_BASE_DIR}/tink_java/kokoro/testutils/tink_test_container_images.sh"
+  CONTAINER_IMAGE="${TINK_JAVA_BASE_IMAGE}"
   RUN_COMMAND_ARGS+=( -k "${TINK_GCR_SERVICE_KEY}" )
 fi
 : "${TINK_BASE_DIR:=$(cd .. && pwd)}"
