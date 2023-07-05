@@ -1676,6 +1676,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivParameters.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivParameters.Builder.html" title="class in com.google.crypto.tink.daead">AesSivParameters.Builder</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.Builder.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.Builder</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.Builder.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/EnumTypeProtoConverter.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/EnumTypeProtoConverter.Builder.html" title="class in com.google.crypto.tink.internal">EnumTypeProtoConverter.Builder</a></dt>
@@ -1969,6 +1971,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivKey.html#builder--">builder()</a></span> - Static method in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivKey.html" title="class in com.google.crypto.tink.daead">AesSivKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivParameters.html#builder--">builder()</a></span> - Static method in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivParameters.html" title="class in com.google.crypto.tink.daead">AesSivParameters</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.html#builder--">builder()</a></span> - Static method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.html" title="class in com.google.crypto.tink.hybrid">EciesParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.html#builder--">builder()</a></span> - Static method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters</a></dt>
 <dd>&nbsp;</dd>
@@ -4410,6 +4414,8 @@
 <dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/proto/Common.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">Common</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.PointFormat.html#COMPRESSED">COMPRESSED</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.PointFormat.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.PointFormat</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/EcPointFormat.html#COMPRESSED_VALUE">COMPRESSED_VALUE</a></span> - Static variable in enum com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/EcPointFormat.html" title="enum in com.google.crypto.tink.proto">EcPointFormat</a></dt>
 <dd>
 <div class="block"><code>COMPRESSED = 2;</code></div>
@@ -4754,6 +4760,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivParameters.Variant.html#CRUNCHY">CRUNCHY</a></span> - Static variable in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivParameters.Variant.html" title="class in com.google.crypto.tink.daead">AesSivParameters.Variant</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.Variant.html#CRUNCHY">CRUNCHY</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.Variant.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.Variant</a></dt>
+<dd>
+<div class="block">Leading 0x00-byte followed by 4-byte key id (big endian format).</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.Variant.html#CRUNCHY">CRUNCHY</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.Variant.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters.Variant</a></dt>
 <dd>
 <div class="block"><code>CRUNCHY</code>: Leading 0x00-byte followed by 4-byte key id (big endian format).</div>
@@ -5511,6 +5521,30 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesAeadHkdfPrivateKeyManager.html#eciesP256HkdfHmacSha256Aes128GcmTemplate--">eciesP256HkdfHmacSha256Aes128GcmTemplate()</a></span> - Static method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesAeadHkdfPrivateKeyManager.html" title="class in com.google.crypto.tink.hybrid">EciesAeadHkdfPrivateKeyManager</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/hybrid/EciesParameters.html" title="class in com.google.crypto.tink.hybrid"><span class="typeNameLink">EciesParameters</span></a> - Class in <a href="com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a></dt>
+<dd>
+<div class="block">Parameters for an ECIES primitive with HKDF and AEAD encryption.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/hybrid/EciesParameters.Builder.html" title="class in com.google.crypto.tink.hybrid"><span class="typeNameLink">EciesParameters.Builder</span></a> - Class in <a href="com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a></dt>
+<dd>
+<div class="block">Builds a new <a href="com/google/crypto/tink/hybrid/EciesParameters.html" title="class in com.google.crypto.tink.hybrid"><code>EciesParameters</code></a> instance.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/hybrid/EciesParameters.CurveType.html" title="class in com.google.crypto.tink.hybrid"><span class="typeNameLink">EciesParameters.CurveType</span></a> - Class in <a href="com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a></dt>
+<dd>
+<div class="block">The elliptic curve type used for the KEM.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/hybrid/EciesParameters.HashType.html" title="class in com.google.crypto.tink.hybrid"><span class="typeNameLink">EciesParameters.HashType</span></a> - Class in <a href="com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a></dt>
+<dd>
+<div class="block">The Hash algorithm used for the KEM.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/hybrid/EciesParameters.PointFormat.html" title="class in com.google.crypto.tink.hybrid"><span class="typeNameLink">EciesParameters.PointFormat</span></a> - Class in <a href="com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a></dt>
+<dd>
+<div class="block">The Elliptic Curve Point Format.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/hybrid/EciesParameters.Variant.html" title="class in com.google.crypto.tink.hybrid"><span class="typeNameLink">EciesParameters.Variant</span></a> - Class in <a href="com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a></dt>
+<dd>
+<div class="block">Description of the output prefix prepended to the ciphertext.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/EllipticCurves.html#ecPointDecode-java.security.spec.EllipticCurve-com.google.crypto.tink.subtle.EllipticCurves.PointFormatType-byte:A-">ecPointDecode(EllipticCurve, EllipticCurves.PointFormatType, byte[])</a></span> - Static method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/EllipticCurves.html" title="class in com.google.crypto.tink.subtle">EllipticCurves</a></dt>
 <dd>
 <div class="block">Decodes an encoded point on an elliptic curve.</div>
@@ -5851,6 +5885,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.html" title="class in com.google.crypto.tink.aead">XChaCha20Poly1305Parameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivParameters.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivParameters.html" title="class in com.google.crypto.tink.daead">AesSivParameters</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.html" title="class in com.google.crypto.tink.hybrid">EciesParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters</a></dt>
 <dd>&nbsp;</dd>
@@ -7023,6 +7059,8 @@
 <dd>
 <div class="block">Returns the ECParameterSpec for a named curve.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.html#getCurveType--">getCurveType()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.html" title="class in com.google.crypto.tink.hybrid">EciesParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/EciesHkdfKemParams.Builder.html#getCurveType--">getCurveType()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/EciesHkdfKemParams.Builder.html" title="class in com.google.crypto.tink.proto">EciesHkdfKemParams.Builder</a></dt>
 <dd>
 <div class="block">
@@ -7853,6 +7891,8 @@
 <div class="block">
  Key template of the Data Encryption Key, e.g., AesCtrHmacAeadKeyFormat.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.html#getDemParameters--">getDemParameters()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.html" title="class in com.google.crypto.tink.hybrid">EciesParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/EciesAeadHkdfParams.Builder.html#getDemParams--">getDemParams()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/EciesAeadHkdfParams.Builder.html" title="class in com.google.crypto.tink.proto">EciesAeadHkdfParams.Builder</a></dt>
 <dd>
 <div class="block">
@@ -9083,6 +9123,8 @@
 <dd>
 <div class="block">Returns a hash type object.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.html#getHashType--">getHashType()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.html" title="class in com.google.crypto.tink.hybrid">EciesParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacParameters.html#getHashType--">getHashType()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacParameters.html" title="class in com.google.crypto.tink.mac">HmacParameters</a></dt>
 <dd>
 <div class="block">Returns a hash type object.</div>
@@ -12458,6 +12500,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/AesGcmHkdfStreaming.html#getPlaintextSegmentSize--">getPlaintextSegmentSize()</a></span> - Method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/AesGcmHkdfStreaming.html" title="class in com.google.crypto.tink.subtle">AesGcmHkdfStreaming</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.html#getPointFormat--">getPointFormat()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.html" title="class in com.google.crypto.tink.hybrid">EciesParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/PrfBasedKeyDerivationKey.html#getPrfKey--">getPrfKey()</a></span> - Method in class com.google.crypto.tink.keyderivation.<a href="com/google/crypto/tink/keyderivation/PrfBasedKeyDerivationKey.html" title="class in com.google.crypto.tink.keyderivation">PrfBasedKeyDerivationKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/PrfBasedDeriverKey.Builder.html#getPrfKey--">getPrfKey()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/PrfBasedDeriverKey.Builder.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKey.Builder</a></dt>
@@ -13354,6 +13398,10 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/PrimitiveSet.html#getRawPrimitives--">getRawPrimitives()</a></span> - Method in class com.google.crypto.tink.<a href="com/google/crypto/tink/PrimitiveSet.html" title="class in com.google.crypto.tink">PrimitiveSet</a></dt>
 <dd>
 <div class="block">Returns all primitives using RAW prefix.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.html#getSalt--">getSalt()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.html" title="class in com.google.crypto.tink.hybrid">EciesParameters</a></dt>
+<dd>
+<div class="block">Gets the salt value, which defaults to null if not set.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/HkdfPrfParameters.html#getSalt--">getSalt()</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/HkdfPrfParameters.html" title="class in com.google.crypto.tink.prf">HkdfPrfParameters</a></dt>
 <dd>
@@ -14300,6 +14348,8 @@
 <dd>
 <div class="block">Returns a variant object.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.html#getVariant--">getVariant()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.html" title="class in com.google.crypto.tink.hybrid">EciesParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.html#getVariant--">getVariant()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/AesCmacParameters.html#getVariant--">getVariant()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/AesCmacParameters.html" title="class in com.google.crypto.tink.mac">AesCmacParameters</a></dt>
@@ -15330,6 +15380,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivParameters.html#hashCode--">hashCode()</a></span> - Method in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivParameters.html" title="class in com.google.crypto.tink.daead">AesSivParameters</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.html#hashCode--">hashCode()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.html" title="class in com.google.crypto.tink.hybrid">EciesParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.html#hashCode--">hashCode()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/LegacyProtoParameters.html#hashCode--">hashCode()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/LegacyProtoParameters.html" title="class in com.google.crypto.tink.internal">LegacyProtoParameters</a></dt>
@@ -15618,6 +15670,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.html#hasIdRequirement--">hasIdRequirement()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.html" title="class in com.google.crypto.tink.aead">XChaCha20Poly1305Parameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivParameters.html#hasIdRequirement--">hasIdRequirement()</a></span> - Method in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivParameters.html" title="class in com.google.crypto.tink.daead">AesSivParameters</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.html#hasIdRequirement--">hasIdRequirement()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.html" title="class in com.google.crypto.tink.hybrid">EciesParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.html#hasIdRequirement--">hasIdRequirement()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters</a></dt>
 <dd>&nbsp;</dd>
@@ -19024,6 +19078,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/CryptoFormat.html#LEGACY_START_BYTE">LEGACY_START_BYTE</a></span> - Static variable in class com.google.crypto.tink.<a href="com/google/crypto/tink/CryptoFormat.html" title="class in com.google.crypto.tink">CryptoFormat</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.PointFormat.html#LEGACY_UNCOMPRESSED">LEGACY_UNCOMPRESSED</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.PointFormat.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.PointFormat</a></dt>
+<dd>
+<div class="block">Like <code>UNCOMPRESSED</code>, but without the \x04 prefix.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/OutputPrefixType.html#LEGACY_VALUE">LEGACY_VALUE</a></span> - Static variable in enum com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/OutputPrefixType.html" title="enum in com.google.crypto.tink.proto">OutputPrefixType</a></dt>
 <dd>
 <div class="block"><code>LEGACY = 2;</code></div>
@@ -21279,6 +21337,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/AesGcmHkdfStreaming.html#newStreamSegmentEncrypter-byte:A-">newStreamSegmentEncrypter(byte[])</a></span> - Method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/AesGcmHkdfStreaming.html" title="class in com.google.crypto.tink.subtle">AesGcmHkdfStreaming</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.CurveType.html#NIST_P256">NIST_P256</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.CurveType.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.CurveType</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/EcdsaParameters.CurveType.html#NIST_P256">NIST_P256</a></span> - Static variable in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/EcdsaParameters.CurveType.html" title="class in com.google.crypto.tink.signature">EcdsaParameters.CurveType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/EllipticCurvesUtil.html#NIST_P256_PARAMS">NIST_P256_PARAMS</a></span> - Static variable in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/EllipticCurvesUtil.html" title="class in com.google.crypto.tink.internal">EllipticCurvesUtil</a></dt>
@@ -21287,6 +21347,8 @@
 <dd>
 <div class="block"><code>NIST_P256 = 2;</code></div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.CurveType.html#NIST_P384">NIST_P384</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.CurveType.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.CurveType</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/EcdsaParameters.CurveType.html#NIST_P384">NIST_P384</a></span> - Static variable in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/EcdsaParameters.CurveType.html" title="class in com.google.crypto.tink.signature">EcdsaParameters.CurveType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/EllipticCurvesUtil.html#NIST_P384_PARAMS">NIST_P384_PARAMS</a></span> - Static variable in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/EllipticCurvesUtil.html" title="class in com.google.crypto.tink.internal">EllipticCurvesUtil</a></dt>
@@ -21295,6 +21357,8 @@
 <dd>
 <div class="block"><code>NIST_P384 = 3;</code></div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.CurveType.html#NIST_P521">NIST_P521</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.CurveType.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.CurveType</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/EcdsaParameters.CurveType.html#NIST_P521">NIST_P521</a></span> - Static variable in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/EcdsaParameters.CurveType.html" title="class in com.google.crypto.tink.signature">EcdsaParameters.CurveType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/EllipticCurvesUtil.html#NIST_P521_PARAMS">NIST_P521_PARAMS</a></span> - Static variable in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/EllipticCurvesUtil.html" title="class in com.google.crypto.tink.internal">EllipticCurvesUtil</a></dt>
@@ -21326,6 +21390,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivParameters.Variant.html#NO_PREFIX">NO_PREFIX</a></span> - Static variable in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivParameters.Variant.html" title="class in com.google.crypto.tink.daead">AesSivParameters.Variant</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.Variant.html#NO_PREFIX">NO_PREFIX</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.Variant.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.Variant</a></dt>
+<dd>
+<div class="block">Empty prefix.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.Variant.html#NO_PREFIX">NO_PREFIX</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.Variant.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters.Variant</a></dt>
 <dd>
 <div class="block"><code>NO_PREFIX</code>: Empty prefix.</div>
@@ -25791,6 +25859,8 @@
 <div class="block">
  Required.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.Builder.html#setCurveType-com.google.crypto.tink.hybrid.EciesParameters.CurveType-">setCurveType(EciesParameters.CurveType)</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.Builder.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.Builder</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/EciesHkdfKemParams.Builder.html#setCurveType-com.google.crypto.tink.proto.EllipticCurveType-">setCurveType(EllipticCurveType)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/EciesHkdfKemParams.Builder.html" title="class in com.google.crypto.tink.proto">EciesHkdfKemParams.Builder</a></dt>
 <dd>
 <div class="block">
@@ -25873,6 +25943,11 @@
 <dd>
 <div class="block">
  Key template of the Data Encryption Key, e.g., AesCtrHmacAeadKeyFormat.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.Builder.html#setDemParameters-com.google.crypto.tink.Parameters-">setDemParameters(Parameters)</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.Builder.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.Builder</a></dt>
+<dd>
+<div class="block">Current implementation only accepts NO_PREFIX instances of an AesGcmParameters,
+ AesCtrHmacAeadParameters, XChaCha20Poly1305Parameters or AesSivParameters.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/EciesAeadHkdfParams.Builder.html#setDemParams-com.google.crypto.tink.proto.EciesAeadDemParams-">setDemParams(EciesAeadDemParams)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/EciesAeadHkdfParams.Builder.html" title="class in com.google.crypto.tink.proto">EciesAeadHkdfParams.Builder</a></dt>
 <dd>
@@ -26228,6 +26303,8 @@
  HashType is an enum.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrHmacAeadParameters.Builder.html#setHashType-com.google.crypto.tink.aead.AesCtrHmacAeadParameters.HashType-">setHashType(AesCtrHmacAeadParameters.HashType)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrHmacAeadParameters.Builder.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadParameters.Builder</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.Builder.html#setHashType-com.google.crypto.tink.hybrid.EciesParameters.HashType-">setHashType(EciesParameters.HashType)</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.Builder.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacParameters.Builder.html#setHashType-com.google.crypto.tink.mac.HmacParameters.HashType-">setHashType(HmacParameters.HashType)</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacParameters.Builder.html" title="class in com.google.crypto.tink.mac">HmacParameters.Builder</a></dt>
 <dd>&nbsp;</dd>
@@ -27145,6 +27222,8 @@
 <div class="block">
  Required.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.Builder.html#setPointFormat-com.google.crypto.tink.hybrid.EciesParameters.PointFormat-">setPointFormat(EciesParameters.PointFormat)</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.Builder.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.Builder</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/PrfBasedDeriverKey.Builder.html#setPrfKey-com.google.crypto.tink.proto.KeyData-">setPrfKey(KeyData)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/PrfBasedDeriverKey.Builder.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKey.Builder</a></dt>
 <dd>
 <div class="block"><code>.google.crypto.tink.KeyData prf_key = 2;</code></div>
@@ -27567,6 +27646,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XChaCha20Poly1305KeyFormat.Builder.html#setRepeatedField-com.google.protobuf.Descriptors.FieldDescriptor-int-java.lang.Object-">setRepeatedField(Descriptors.FieldDescriptor, int, Object)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XChaCha20Poly1305KeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">XChaCha20Poly1305KeyFormat.Builder</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.Builder.html#setSalt-com.google.crypto.tink.util.Bytes-">setSalt(Bytes)</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.Builder.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.Builder</a></dt>
+<dd>
+<div class="block">Defaults to null if not set.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/HkdfPrfParameters.Builder.html#setSalt-com.google.crypto.tink.util.Bytes-">setSalt(Bytes)</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/HkdfPrfParameters.Builder.html" title="class in com.google.crypto.tink.prf">HkdfPrfParameters.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/HkdfPrfParams.Builder.html#setSalt-com.google.protobuf.ByteString-">setSalt(ByteString)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/HkdfPrfParams.Builder.html" title="class in com.google.crypto.tink.proto">HkdfPrfParams.Builder</a></dt>
@@ -27943,6 +28026,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivParameters.Builder.html#setVariant-com.google.crypto.tink.daead.AesSivParameters.Variant-">setVariant(AesSivParameters.Variant)</a></span> - Method in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivParameters.Builder.html" title="class in com.google.crypto.tink.daead">AesSivParameters.Builder</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.Builder.html#setVariant-com.google.crypto.tink.hybrid.EciesParameters.Variant-">setVariant(EciesParameters.Variant)</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.Builder.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.Builder</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.Builder.html#setVariant-com.google.crypto.tink.hybrid.HpkeParameters.Variant-">setVariant(HpkeParameters.Variant)</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.Builder.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/AesCmacParameters.Builder.html#setVariant-com.google.crypto.tink.mac.AesCmacParameters.Variant-">setVariant(AesCmacParameters.Variant)</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/AesCmacParameters.Builder.html" title="class in com.google.crypto.tink.mac">AesCmacParameters.Builder</a></dt>
@@ -28208,6 +28293,8 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrHmacAeadParameters.HashType.html#SHA1">SHA1</a></span> - Static variable in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrHmacAeadParameters.HashType.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadParameters.HashType</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.HashType.html#SHA1">SHA1</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.HashType.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.HashType</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacParameters.HashType.html#SHA1">SHA1</a></span> - Static variable in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacParameters.HashType.html" title="class in com.google.crypto.tink.mac">HmacParameters.HashType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/HkdfPrfParameters.HashType.html#SHA1">SHA1</a></span> - Static variable in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/HkdfPrfParameters.HashType.html" title="class in com.google.crypto.tink.prf">HkdfPrfParameters.HashType</a></dt>
@@ -28225,6 +28312,8 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrHmacAeadParameters.HashType.html#SHA224">SHA224</a></span> - Static variable in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrHmacAeadParameters.HashType.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadParameters.HashType</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.HashType.html#SHA224">SHA224</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.HashType.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.HashType</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacParameters.HashType.html#SHA224">SHA224</a></span> - Static variable in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacParameters.HashType.html" title="class in com.google.crypto.tink.mac">HmacParameters.HashType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/HkdfPrfParameters.HashType.html#SHA224">SHA224</a></span> - Static variable in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/HkdfPrfParameters.HashType.html" title="class in com.google.crypto.tink.prf">HkdfPrfParameters.HashType</a></dt>
@@ -28236,6 +28325,8 @@
 <div class="block"><code>SHA224 = 5;</code></div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrHmacAeadParameters.HashType.html#SHA256">SHA256</a></span> - Static variable in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrHmacAeadParameters.HashType.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadParameters.HashType</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.HashType.html#SHA256">SHA256</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.HashType.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.HashType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacParameters.HashType.html#SHA256">SHA256</a></span> - Static variable in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacParameters.HashType.html" title="class in com.google.crypto.tink.mac">HmacParameters.HashType</a></dt>
 <dd>&nbsp;</dd>
@@ -28259,6 +28350,8 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrHmacAeadParameters.HashType.html#SHA384">SHA384</a></span> - Static variable in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrHmacAeadParameters.HashType.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadParameters.HashType</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.HashType.html#SHA384">SHA384</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.HashType.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.HashType</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacParameters.HashType.html#SHA384">SHA384</a></span> - Static variable in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacParameters.HashType.html" title="class in com.google.crypto.tink.mac">HmacParameters.HashType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/HkdfPrfParameters.HashType.html#SHA384">SHA384</a></span> - Static variable in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/HkdfPrfParameters.HashType.html" title="class in com.google.crypto.tink.prf">HkdfPrfParameters.HashType</a></dt>
@@ -28277,6 +28370,8 @@
  fine.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrHmacAeadParameters.HashType.html#SHA512">SHA512</a></span> - Static variable in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrHmacAeadParameters.HashType.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadParameters.HashType</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.HashType.html#SHA512">SHA512</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.HashType.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.HashType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacParameters.HashType.html#SHA512">SHA512</a></span> - Static variable in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacParameters.HashType.html" title="class in com.google.crypto.tink.mac">HmacParameters.HashType</a></dt>
 <dd>&nbsp;</dd>
@@ -28486,6 +28581,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivParameters.Variant.html#TINK">TINK</a></span> - Static variable in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivParameters.Variant.html" title="class in com.google.crypto.tink.daead">AesSivParameters.Variant</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.Variant.html#TINK">TINK</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.Variant.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.Variant</a></dt>
+<dd>
+<div class="block">Leading 0x01-byte followed by 4-byte key id (big endian format).</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.Variant.html#TINK">TINK</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.Variant.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters.Variant</a></dt>
 <dd>
 <div class="block"><code>TINK</code>: Leading 0x01-byte followed by 4-byte key id (big endian format).</div>
@@ -28956,6 +29055,14 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivParameters.Variant.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivParameters.Variant.html" title="class in com.google.crypto.tink.daead">AesSivParameters.Variant</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.CurveType.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.CurveType.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.CurveType</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.HashType.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.HashType.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.HashType</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.PointFormat.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.PointFormat.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.PointFormat</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.Variant.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.Variant.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.Variant</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeParameters.Variant.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeParameters.Variant.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters.Variant</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/LegacyProtoParameters.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/LegacyProtoParameters.html" title="class in com.google.crypto.tink.internal">LegacyProtoParameters</a></dt>
@@ -29076,6 +29183,8 @@
 </a>
 <h2 class="title">U</h2>
 <dl>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.PointFormat.html#UNCOMPRESSED">UNCOMPRESSED</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.PointFormat.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.PointFormat</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/EcPointFormat.html#UNCOMPRESSED_VALUE">UNCOMPRESSED_VALUE</a></span> - Static variable in enum com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/EcPointFormat.html" title="enum in com.google.crypto.tink.proto">EcPointFormat</a></dt>
 <dd>
 <div class="block"><code>UNCOMPRESSED = 1;</code></div>
@@ -30175,6 +30284,8 @@ the order they are declared.</div>
 </a>
 <h2 class="title">X</h2>
 <dl>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.CurveType.html#X25519">X25519</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.CurveType.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.CurveType</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/subtle/X25519.html" title="class in com.google.crypto.tink.subtle"><span class="typeNameLink">X25519</span></a> - Class in <a href="com/google/crypto/tink/subtle/package-summary.html">com.google.crypto.tink.subtle</a></dt>
 <dd>
 <div class="block">Defines <a href="https://cr.yp.to/ecdh/curve25519-20060209.pdf">the ECDH Curve25519 function</a>,
