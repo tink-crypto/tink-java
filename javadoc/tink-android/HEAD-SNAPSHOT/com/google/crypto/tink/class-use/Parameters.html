@@ -288,14 +288,49 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/HpkeParameters.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters</a></span></code>
-<div class="block">Description of the parameters for an <a href="../../../../../com/google/crypto/tink/hybrid/HpkePublicKey.html" title="class in com.google.crypto.tink.hybrid"><code>HpkePublicKey</code></a> or <a href="../../../../../com/google/crypto/tink/hybrid/HpkePrivateKey.html" title="class in com.google.crypto.tink.hybrid"><code>HpkePrivateKey</code></a>.</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/EciesParameters.html" title="class in com.google.crypto.tink.hybrid">EciesParameters</a></span></code>
+<div class="block">Parameters for an ECIES primitive with HKDF and AEAD encryption.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/HpkeParameters.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters</a></span></code>
+<div class="block">Description of the parameters for an <a href="../../../../../com/google/crypto/tink/hybrid/HpkePublicKey.html" title="class in com.google.crypto.tink.hybrid"><code>HpkePublicKey</code></a> or <a href="../../../../../com/google/crypto/tink/hybrid/HpkePrivateKey.html" title="class in com.google.crypto.tink.hybrid"><code>HpkePrivateKey</code></a>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/HybridParameters.html" title="class in com.google.crypto.tink.hybrid">HybridParameters</a></span></code>
 <div class="block">Represents a description of a <a href="../../../../../com/google/crypto/tink/hybrid/HybridPrivateKey.html" title="class in com.google.crypto.tink.hybrid"><code>HybridPrivateKey</code></a> and the corresponding <a href="../../../../../com/google/crypto/tink/hybrid/HybridPublicKey.html" title="class in com.google.crypto.tink.hybrid"><code>HybridPublicKey</code></a> excluding the randomly chosen key material.</div>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Methods in <a href="../../../../../com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a> that return <a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a></code></td>
+<td class="colLast"><span class="typeNameLabel">EciesParameters.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/EciesParameters.html#getDemParameters--">getDemParameters</a></span>()</code>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Methods in <a href="../../../../../com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a> with parameters of type <a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/hybrid/EciesParameters.Builder.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.Builder</a></code></td>
+<td class="colLast"><span class="typeNameLabel">EciesParameters.Builder.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/EciesParameters.Builder.html#setDemParameters-com.google.crypto.tink.Parameters-">setDemParameters</a></span>(<a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a>&nbsp;demParameters)</code>
+<div class="block">Current implementation only accepts NO_PREFIX instances of an AesGcmParameters,
+ AesCtrHmacAeadParameters, XChaCha20Poly1305Parameters or AesSivParameters.</div>
 </td>
 </tr>
 </tbody>
