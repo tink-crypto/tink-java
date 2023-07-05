@@ -18174,19 +18174,37 @@
 </a>
 <h2 class="title">R</h2>
 <dl>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/Random.html#randBytes-int-">randBytes(int)</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/Random.html" title="class in com.google.crypto.tink.internal">Random</a></dt>
+<dd>
+<div class="block">Returns a random byte array of size <code>size</code>.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/Random.html#randBytes-int-">randBytes(int)</a></span> - Static method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/Random.html" title="class in com.google.crypto.tink.subtle">Random</a></dt>
+<dd>
+<div class="block">Returns a random byte array of size <code>size</code>.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/Random.html#randInt-int-">randInt(int)</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/Random.html" title="class in com.google.crypto.tink.internal">Random</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/Random.html#randInt--">randInt()</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/Random.html" title="class in com.google.crypto.tink.internal">Random</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/Random.html#randInt-int-">randInt(int)</a></span> - Static method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/Random.html" title="class in com.google.crypto.tink.subtle">Random</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Returns a random int between 0 and max-1.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/Random.html#randInt--">randInt()</a></span> - Static method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/Random.html" title="class in com.google.crypto.tink.subtle">Random</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Returns a random int.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/Util.html#randKeyId--">randKeyId()</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/Util.html" title="class in com.google.crypto.tink.internal">Util</a></dt>
 <dd>
 <div class="block">Returns a positive random int which can be used as a key ID in a keyset.</div>
 </dd>
+<dt><a href="com/google/crypto/tink/internal/Random.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">Random</span></a> - Class in <a href="com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></dt>
+<dd>
+<div class="block">Provides secure randomness using <a href="https://docs.oracle.com/javase/8/docs/api/java/security/SecureRandom.html?is-external=true" title="class or interface in java.security"><code>SecureRandom</code></a>.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/subtle/Random.html" title="class in com.google.crypto.tink.subtle"><span class="typeNameLink">Random</span></a> - Class in <a href="com/google/crypto/tink/subtle/package-summary.html">com.google.crypto.tink.subtle</a></dt>
 <dd>
-<div class="block">A simple wrapper of <a href="https://docs.oracle.com/javase/8/docs/api/java/security/SecureRandom.html?is-external=true" title="class or interface in java.security"><code>SecureRandom</code></a>.</div>
+<div class="block">Provides secure randomness using <code>SecureRandom</code>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/util/SecretBytes.html#randomBytes-int-">randomBytes(int)</a></span> - Static method in class com.google.crypto.tink.util.<a href="com/google/crypto/tink/util/SecretBytes.html" title="class in com.google.crypto.tink.util">SecretBytes</a></dt>
 <dd>
@@ -22109,6 +22127,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/Validators.html#validateTypeUrl-java.lang.String-">validateTypeUrl(String)</a></span> - Static method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/Validators.html" title="class in com.google.crypto.tink.subtle">Validators</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/Random.html#validateUsesConscrypt--">validateUsesConscrypt()</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/Random.html" title="class in com.google.crypto.tink.internal">Random</a></dt>
+<dd>
+<div class="block">Throws a GeneralSecurityException if the provider is not Conscrypt.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/Validators.html#validateVersion-int-int-">validateVersion(int, int)</a></span> - Static method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/Validators.html" title="class in com.google.crypto.tink.subtle">Validators</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/subtle/Validators.html" title="class in com.google.crypto.tink.subtle"><span class="typeNameLink">Validators</span></a> - Class in <a href="com/google/crypto/tink/subtle/package-summary.html">com.google.crypto.tink.subtle</a></dt>

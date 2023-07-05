@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":9};
+var methods = {"i0":9,"i1":9,"i2":9,"i3":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -48,11 +48,11 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../com/google/crypto/tink/subtle/PrfMac.html" title="class in com.google.crypto.tink.subtle"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../../com/google/crypto/tink/subtle/RewindableReadableByteChannel.html" title="class in com.google.crypto.tink.subtle"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/google/crypto/tink/internal/ProtoParametersSerialization.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/google/crypto/tink/internal/RegistryConfiguration.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
-<li><a href="../../../../../index.html?com/google/crypto/tink/subtle/Random.html" target="_top">Frames</a></li>
+<li><a href="../../../../../index.html?com/google/crypto/tink/internal/Random.html" target="_top">Frames</a></li>
 <li><a href="Random.html" target="_top">No&nbsp;Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_top">
@@ -91,7 +91,7 @@ var activeTableTab = "activeTableTab";
 <!-- ========= END OF TOP NAVBAR ========= -->
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
-<div class="subTitle">com.google.crypto.tink.subtle</div>
+<div class="subTitle">com.google.crypto.tink.internal</div>
 <h2 title="Class Random" class="title">Class Random</h2>
 </div>
 <div class="contentContainer">
@@ -99,7 +99,7 @@ var activeTableTab = "activeTableTab";
 <li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
-<li>com.google.crypto.tink.subtle.Random</li>
+<li>com.google.crypto.tink.internal.Random</li>
 </ul>
 </li>
 </ul>
@@ -110,11 +110,7 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public final class <span class="typeNameLabel">Random</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
-<div class="block">Provides secure randomness using <code>SecureRandom</code>.</div>
-<dl>
-<dt><span class="simpleTagLabel">Since:</span></dt>
-<dd>1.0.0</dd>
-</dl>
+<div class="block">Provides secure randomness using <a href="https://docs.oracle.com/javase/8/docs/api/java/security/SecureRandom.html?is-external=true" title="class or interface in java.security"><code>SecureRandom</code></a>.</div>
 </li>
 </ul>
 </div>
@@ -135,20 +131,22 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>static byte[]</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/Random.html#randBytes-int-">randBytes</a></span>(int&nbsp;size)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/Random.html#randBytes-int-">randBytes</a></span>(int&nbsp;size)</code>
 <div class="block">Returns a random byte array of size <code>size</code>.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>static int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/Random.html#randInt--">randInt</a></span>()</code>
-<div class="block">Returns a random int.</div>
-</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/Random.html#randInt--">randInt</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>static int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/Random.html#randInt-int-">randInt</a></span>(int&nbsp;max)</code>
-<div class="block">Returns a random int between 0 and max-1.</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/Random.html#randInt-int-">randInt</a></span>(int&nbsp;max)</code>&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/Random.html#validateUsesConscrypt--">validateUsesConscrypt</a></span>()</code>
+<div class="block">Throws a GeneralSecurityException if the provider is not Conscrypt.</div>
 </td>
 </tr>
 </table>
@@ -190,17 +188,30 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>randInt</h4>
 <pre>public static final&nbsp;int&nbsp;randInt(int&nbsp;max)</pre>
-<div class="block">Returns a random int between 0 and max-1.</div>
 </li>
 </ul>
 <a name="randInt--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>randInt</h4>
 <pre>public static final&nbsp;int&nbsp;randInt()</pre>
-<div class="block">Returns a random int.</div>
+</li>
+</ul>
+<a name="validateUsesConscrypt--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>validateUsesConscrypt</h4>
+<pre>public static final&nbsp;void&nbsp;validateUsesConscrypt()
+                                        throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<div class="block">Throws a GeneralSecurityException if the provider is not Conscrypt.</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -231,11 +242,11 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../com/google/crypto/tink/subtle/PrfMac.html" title="class in com.google.crypto.tink.subtle"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../../com/google/crypto/tink/subtle/RewindableReadableByteChannel.html" title="class in com.google.crypto.tink.subtle"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/google/crypto/tink/internal/ProtoParametersSerialization.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/google/crypto/tink/internal/RegistryConfiguration.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
-<li><a href="../../../../../index.html?com/google/crypto/tink/subtle/Random.html" target="_top">Frames</a></li>
+<li><a href="../../../../../index.html?com/google/crypto/tink/internal/Random.html" target="_top">Frames</a></li>
 <li><a href="Random.html" target="_top">No&nbsp;Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_bottom">
