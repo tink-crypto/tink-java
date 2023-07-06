@@ -50,6 +50,9 @@ _TINK_REPO_NAME = (
     ('com_github_tink_crypto_tink_go', 'tink-go'),
     ('com_github_tink_crypto_tink_go_gcpkms', 'tink-go-gcpkms'),
     ('com_github_tink_crypto_tink_go_awskms', 'tink-go-awskms'),
+    ('com_github_tink_crypto_tink_go_v2', 'tink-go'),
+    ('com_github_tink_crypto_tink_go_gcpkms_v2', 'tink-go-gcpkms'),
+    ('com_github_tink_crypto_tink_go_awskms_v2', 'tink-go-awskms'),
 )
 
 
