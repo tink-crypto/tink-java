@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9};
+var methods = {"i0":9,"i1":9,"i2":9,"i3":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -151,30 +151,24 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/Util.html#checkedToBytesFromPrintableAscii-java.lang.String-">checkedToBytesFromPrintableAscii</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;s)</code>
-<div class="block">Converts a string <code>s</code> to a corresponding <a href="../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util"><code>Bytes</code></a> object.</div>
-</td>
-</tr>
-<tr id="i1" class="rowColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/Util.html#getAndroidApiLevel--">getAndroidApiLevel</a></span>()</code>
 <div class="block">Returns the current Android API level as integer or null if we do not run on Android.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/Util.html#isAndroid--">isAndroid</a></span>()</code>
 <div class="block">Best-effort checks that this is Android.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/Util.html#randKeyId--">randKeyId</a></span>()</code>
 <div class="block">Returns a positive random int which can be used as a key ID in a keyset.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/Util.html#toBytesFromPrintableAscii-java.lang.String-">toBytesFromPrintableAscii</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;s)</code>
 <div class="block">Converts a string <code>s</code> to a corresponding <a href="../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util"><code>Bytes</code></a> object.</div>
@@ -243,24 +237,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
  considered a bug in Tink. Spaces are not allowed.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../com/google/crypto/tink/internal/TinkBugException.html" title="class in com.google.crypto.tink.internal">TinkBugException</a></code> - if s contains a character which is not a printable ASCII character or
-     a space.</dd>
-</dl>
-</li>
-</ul>
-<a name="checkedToBytesFromPrintableAscii-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>checkedToBytesFromPrintableAscii</h4>
-<pre>public static final&nbsp;<a href="../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a>&nbsp;checkedToBytesFromPrintableAscii(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;s)
-                                                    throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block">Converts a string <code>s</code> to a corresponding <a href="../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util"><code>Bytes</code></a> object.</div>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code> - if s contains a character which is not a printable ASCII
-     character or a space.</dd>
+<dd><code><a href="../../../../../com/google/crypto/tink/internal/TinkBugException.html" title="class in com.google.crypto.tink.internal">TinkBugException</a></code> - if s contains a character which is not a printable ASCII character.</dd>
 </dl>
 </li>
 </ul>
