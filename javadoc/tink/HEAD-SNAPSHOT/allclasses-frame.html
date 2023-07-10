@@ -196,6 +196,7 @@
 <li><a href="com/google/crypto/tink/proto/Common.html" title="class in com.google.crypto.tink.proto" target="classFrame">Common</a></li>
 <li><a href="com/google/crypto/tink/Config.html" title="class in com.google.crypto.tink" target="classFrame">Config</a></li>
 <li><a href="com/google/crypto/tink/proto/Config.html" title="class in com.google.crypto.tink.proto" target="classFrame">Config</a></li>
+<li><a href="com/google/crypto/tink/Configuration.html" title="class in com.google.crypto.tink" target="classFrame">Configuration</a></li>
 <li><a href="com/google/crypto/tink/CryptoFormat.html" title="class in com.google.crypto.tink" target="classFrame">CryptoFormat</a></li>
 <li><a href="com/google/crypto/tink/internal/Curve25519.html" title="class in com.google.crypto.tink.internal" target="classFrame">Curve25519</a></li>
 <li><a href="com/google/crypto/tink/DeterministicAead.html" title="interface in com.google.crypto.tink" target="classFrame"><span class="interfaceName">DeterministicAead</span></a></li>
@@ -258,6 +259,12 @@
 <li><a href="com/google/crypto/tink/subtle/EciesHkdfRecipientKem.html" title="class in com.google.crypto.tink.subtle" target="classFrame">EciesHkdfRecipientKem</a></li>
 <li><a href="com/google/crypto/tink/subtle/EciesHkdfSenderKem.html" title="class in com.google.crypto.tink.subtle" target="classFrame">EciesHkdfSenderKem</a></li>
 <li><a href="com/google/crypto/tink/subtle/EciesHkdfSenderKem.KemKey.html" title="class in com.google.crypto.tink.subtle" target="classFrame">EciesHkdfSenderKem.KemKey</a></li>
+<li><a href="com/google/crypto/tink/hybrid/EciesParameters.html" title="class in com.google.crypto.tink.hybrid" target="classFrame">EciesParameters</a></li>
+<li><a href="com/google/crypto/tink/hybrid/EciesParameters.Builder.html" title="class in com.google.crypto.tink.hybrid" target="classFrame">EciesParameters.Builder</a></li>
+<li><a href="com/google/crypto/tink/hybrid/EciesParameters.CurveType.html" title="class in com.google.crypto.tink.hybrid" target="classFrame">EciesParameters.CurveType</a></li>
+<li><a href="com/google/crypto/tink/hybrid/EciesParameters.HashType.html" title="class in com.google.crypto.tink.hybrid" target="classFrame">EciesParameters.HashType</a></li>
+<li><a href="com/google/crypto/tink/hybrid/EciesParameters.PointFormat.html" title="class in com.google.crypto.tink.hybrid" target="classFrame">EciesParameters.PointFormat</a></li>
+<li><a href="com/google/crypto/tink/hybrid/EciesParameters.Variant.html" title="class in com.google.crypto.tink.hybrid" target="classFrame">EciesParameters.Variant</a></li>
 <li><a href="com/google/crypto/tink/proto/EcPointFormat.html" title="enum in com.google.crypto.tink.proto" target="classFrame">EcPointFormat</a></li>
 <li><a href="com/google/crypto/tink/internal/Ed25519.html" title="class in com.google.crypto.tink.internal" target="classFrame">Ed25519</a></li>
 <li><a href="com/google/crypto/tink/proto/Ed25519.html" title="class in com.google.crypto.tink.proto" target="classFrame">Ed25519</a></li>
@@ -299,6 +306,8 @@
 <li><a href="com/google/crypto/tink/subtle/EngineWrapper.TSignature.html" title="class in com.google.crypto.tink.subtle" target="classFrame">EngineWrapper.TSignature</a></li>
 <li><a href="com/google/crypto/tink/subtle/Enums.html" title="class in com.google.crypto.tink.subtle" target="classFrame">Enums</a></li>
 <li><a href="com/google/crypto/tink/subtle/Enums.HashType.html" title="enum in com.google.crypto.tink.subtle" target="classFrame">Enums.HashType</a></li>
+<li><a href="com/google/crypto/tink/internal/EnumTypeProtoConverter.html" title="class in com.google.crypto.tink.internal" target="classFrame">EnumTypeProtoConverter</a></li>
+<li><a href="com/google/crypto/tink/internal/EnumTypeProtoConverter.Builder.html" title="class in com.google.crypto.tink.internal" target="classFrame">EnumTypeProtoConverter.Builder</a></li>
 <li><a href="com/google/crypto/tink/internal/Field25519.html" title="class in com.google.crypto.tink.internal" target="classFrame">Field25519</a></li>
 <li><a href="com/google/crypto/tink/proto/HashType.html" title="enum in com.google.crypto.tink.proto" target="classFrame">HashType</a></li>
 <li><a href="com/google/crypto/tink/subtle/Hex.html" title="class in com.google.crypto.tink.subtle" target="classFrame">Hex</a></li>
@@ -360,13 +369,21 @@
 <li><a href="com/google/crypto/tink/proto/HpkeKeyFormat.html" title="class in com.google.crypto.tink.proto" target="classFrame">HpkeKeyFormat</a></li>
 <li><a href="com/google/crypto/tink/proto/HpkeKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto" target="classFrame">HpkeKeyFormat.Builder</a></li>
 <li><a href="com/google/crypto/tink/proto/HpkeKeyFormatOrBuilder.html" title="interface in com.google.crypto.tink.proto" target="classFrame"><span class="interfaceName">HpkeKeyFormatOrBuilder</span></a></li>
+<li><a href="com/google/crypto/tink/hybrid/HpkeParameters.html" title="class in com.google.crypto.tink.hybrid" target="classFrame">HpkeParameters</a></li>
+<li><a href="com/google/crypto/tink/hybrid/HpkeParameters.AeadId.html" title="class in com.google.crypto.tink.hybrid" target="classFrame">HpkeParameters.AeadId</a></li>
+<li><a href="com/google/crypto/tink/hybrid/HpkeParameters.Builder.html" title="class in com.google.crypto.tink.hybrid" target="classFrame">HpkeParameters.Builder</a></li>
+<li><a href="com/google/crypto/tink/hybrid/HpkeParameters.KdfId.html" title="class in com.google.crypto.tink.hybrid" target="classFrame">HpkeParameters.KdfId</a></li>
+<li><a href="com/google/crypto/tink/hybrid/HpkeParameters.KemId.html" title="class in com.google.crypto.tink.hybrid" target="classFrame">HpkeParameters.KemId</a></li>
+<li><a href="com/google/crypto/tink/hybrid/HpkeParameters.Variant.html" title="class in com.google.crypto.tink.hybrid" target="classFrame">HpkeParameters.Variant</a></li>
 <li><a href="com/google/crypto/tink/proto/HpkeParams.html" title="class in com.google.crypto.tink.proto" target="classFrame">HpkeParams</a></li>
 <li><a href="com/google/crypto/tink/proto/HpkeParams.Builder.html" title="class in com.google.crypto.tink.proto" target="classFrame">HpkeParams.Builder</a></li>
 <li><a href="com/google/crypto/tink/proto/HpkeParamsOrBuilder.html" title="interface in com.google.crypto.tink.proto" target="classFrame"><span class="interfaceName">HpkeParamsOrBuilder</span></a></li>
+<li><a href="com/google/crypto/tink/hybrid/HpkePrivateKey.html" title="class in com.google.crypto.tink.hybrid" target="classFrame">HpkePrivateKey</a></li>
 <li><a href="com/google/crypto/tink/proto/HpkePrivateKey.html" title="class in com.google.crypto.tink.proto" target="classFrame">HpkePrivateKey</a></li>
 <li><a href="com/google/crypto/tink/proto/HpkePrivateKey.Builder.html" title="class in com.google.crypto.tink.proto" target="classFrame">HpkePrivateKey.Builder</a></li>
 <li><a href="com/google/crypto/tink/hybrid/internal/HpkePrivateKeyManager.html" title="class in com.google.crypto.tink.hybrid.internal" target="classFrame">HpkePrivateKeyManager</a></li>
 <li><a href="com/google/crypto/tink/proto/HpkePrivateKeyOrBuilder.html" title="interface in com.google.crypto.tink.proto" target="classFrame"><span class="interfaceName">HpkePrivateKeyOrBuilder</span></a></li>
+<li><a href="com/google/crypto/tink/hybrid/HpkePublicKey.html" title="class in com.google.crypto.tink.hybrid" target="classFrame">HpkePublicKey</a></li>
 <li><a href="com/google/crypto/tink/proto/HpkePublicKey.html" title="class in com.google.crypto.tink.proto" target="classFrame">HpkePublicKey</a></li>
 <li><a href="com/google/crypto/tink/proto/HpkePublicKey.Builder.html" title="class in com.google.crypto.tink.proto" target="classFrame">HpkePublicKey.Builder</a></li>
 <li><a href="com/google/crypto/tink/hybrid/internal/HpkePublicKeyManager.html" title="class in com.google.crypto.tink.hybrid.internal" target="classFrame">HpkePublicKeyManager</a></li>
@@ -392,6 +409,7 @@
 <li><a href="com/google/crypto/tink/aead/internal/InsecureNonceXChaCha20.html" title="class in com.google.crypto.tink.aead.internal" target="classFrame">InsecureNonceXChaCha20</a></li>
 <li><a href="com/google/crypto/tink/aead/internal/InsecureNonceXChaCha20Poly1305.html" title="class in com.google.crypto.tink.aead.internal" target="classFrame">InsecureNonceXChaCha20Poly1305</a></li>
 <li><a href="com/google/crypto/tink/InsecureSecretKeyAccess.html" title="class in com.google.crypto.tink" target="classFrame">InsecureSecretKeyAccess</a></li>
+<li><a href="com/google/crypto/tink/internal/InternalConfiguration.html" title="class in com.google.crypto.tink.internal" target="classFrame">InternalConfiguration</a></li>
 <li><a href="com/google/crypto/tink/tinkkey/internal/InternalKeyHandle.html" title="class in com.google.crypto.tink.tinkkey.internal" target="classFrame">InternalKeyHandle</a></li>
 <li><a href="com/google/crypto/tink/JsonKeysetReader.html" title="class in com.google.crypto.tink" target="classFrame">JsonKeysetReader</a></li>
 <li><a href="com/google/crypto/tink/JsonKeysetWriter.html" title="class in com.google.crypto.tink" target="classFrame">JsonKeysetWriter</a></li>
@@ -402,10 +420,17 @@
 <li><a href="com/google/crypto/tink/proto/JwtEcdsaKeyFormat.html" title="class in com.google.crypto.tink.proto" target="classFrame">JwtEcdsaKeyFormat</a></li>
 <li><a href="com/google/crypto/tink/proto/JwtEcdsaKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto" target="classFrame">JwtEcdsaKeyFormat.Builder</a></li>
 <li><a href="com/google/crypto/tink/proto/JwtEcdsaKeyFormatOrBuilder.html" title="interface in com.google.crypto.tink.proto" target="classFrame"><span class="interfaceName">JwtEcdsaKeyFormatOrBuilder</span></a></li>
+<li><a href="com/google/crypto/tink/jwt/JwtEcdsaParameters.html" title="class in com.google.crypto.tink.jwt" target="classFrame">JwtEcdsaParameters</a></li>
+<li><a href="com/google/crypto/tink/jwt/JwtEcdsaParameters.Algorithm.html" title="class in com.google.crypto.tink.jwt" target="classFrame">JwtEcdsaParameters.Algorithm</a></li>
+<li><a href="com/google/crypto/tink/jwt/JwtEcdsaParameters.Builder.html" title="class in com.google.crypto.tink.jwt" target="classFrame">JwtEcdsaParameters.Builder</a></li>
+<li><a href="com/google/crypto/tink/jwt/JwtEcdsaParameters.KidStrategy.html" title="class in com.google.crypto.tink.jwt" target="classFrame">JwtEcdsaParameters.KidStrategy</a></li>
+<li><a href="com/google/crypto/tink/jwt/JwtEcdsaPrivateKey.html" title="class in com.google.crypto.tink.jwt" target="classFrame">JwtEcdsaPrivateKey</a></li>
 <li><a href="com/google/crypto/tink/proto/JwtEcdsaPrivateKey.html" title="class in com.google.crypto.tink.proto" target="classFrame">JwtEcdsaPrivateKey</a></li>
 <li><a href="com/google/crypto/tink/proto/JwtEcdsaPrivateKey.Builder.html" title="class in com.google.crypto.tink.proto" target="classFrame">JwtEcdsaPrivateKey.Builder</a></li>
 <li><a href="com/google/crypto/tink/proto/JwtEcdsaPrivateKeyOrBuilder.html" title="interface in com.google.crypto.tink.proto" target="classFrame"><span class="interfaceName">JwtEcdsaPrivateKeyOrBuilder</span></a></li>
+<li><a href="com/google/crypto/tink/jwt/JwtEcdsaPublicKey.html" title="class in com.google.crypto.tink.jwt" target="classFrame">JwtEcdsaPublicKey</a></li>
 <li><a href="com/google/crypto/tink/proto/JwtEcdsaPublicKey.html" title="class in com.google.crypto.tink.proto" target="classFrame">JwtEcdsaPublicKey</a></li>
+<li><a href="com/google/crypto/tink/jwt/JwtEcdsaPublicKey.Builder.html" title="class in com.google.crypto.tink.jwt" target="classFrame">JwtEcdsaPublicKey.Builder</a></li>
 <li><a href="com/google/crypto/tink/proto/JwtEcdsaPublicKey.Builder.html" title="class in com.google.crypto.tink.proto" target="classFrame">JwtEcdsaPublicKey.Builder</a></li>
 <li><a href="com/google/crypto/tink/proto/JwtEcdsaPublicKey.CustomKid.html" title="class in com.google.crypto.tink.proto" target="classFrame">JwtEcdsaPublicKey.CustomKid</a></li>
 <li><a href="com/google/crypto/tink/proto/JwtEcdsaPublicKey.CustomKid.Builder.html" title="class in com.google.crypto.tink.proto" target="classFrame">JwtEcdsaPublicKey.CustomKid.Builder</a></li>
@@ -470,6 +495,9 @@
 <li><a href="com/google/crypto/tink/proto/JwtRsaSsaPssPublicKeyOrBuilder.html" title="interface in com.google.crypto.tink.proto" target="classFrame"><span class="interfaceName">JwtRsaSsaPssPublicKeyOrBuilder</span></a></li>
 <li><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssSignKeyManager.html" title="class in com.google.crypto.tink.jwt" target="classFrame">JwtRsaSsaPssSignKeyManager</a></li>
 <li><a href="com/google/crypto/tink/jwt/JwtSignatureConfig.html" title="class in com.google.crypto.tink.jwt" target="classFrame">JwtSignatureConfig</a></li>
+<li><a href="com/google/crypto/tink/jwt/JwtSignatureParameters.html" title="class in com.google.crypto.tink.jwt" target="classFrame">JwtSignatureParameters</a></li>
+<li><a href="com/google/crypto/tink/jwt/JwtSignaturePrivateKey.html" title="class in com.google.crypto.tink.jwt" target="classFrame">JwtSignaturePrivateKey</a></li>
+<li><a href="com/google/crypto/tink/jwt/JwtSignaturePublicKey.html" title="class in com.google.crypto.tink.jwt" target="classFrame">JwtSignaturePublicKey</a></li>
 <li><a href="com/google/crypto/tink/jwt/JwtValidator.html" title="class in com.google.crypto.tink.jwt" target="classFrame">JwtValidator</a></li>
 <li><a href="com/google/crypto/tink/jwt/JwtValidator.Builder.html" title="class in com.google.crypto.tink.jwt" target="classFrame">JwtValidator.Builder</a></li>
 <li><a href="com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink" target="classFrame">Key</a></li>
@@ -478,6 +506,10 @@
 <li><a href="com/google/crypto/tink/proto/KeyData.Builder.html" title="class in com.google.crypto.tink.proto" target="classFrame">KeyData.Builder</a></li>
 <li><a href="com/google/crypto/tink/proto/KeyData.KeyMaterialType.html" title="enum in com.google.crypto.tink.proto" target="classFrame">KeyData.KeyMaterialType</a></li>
 <li><a href="com/google/crypto/tink/proto/KeyDataOrBuilder.html" title="interface in com.google.crypto.tink.proto" target="classFrame"><span class="interfaceName">KeyDataOrBuilder</span></a></li>
+<li><a href="com/google/crypto/tink/keyderivation/KeyDerivationConfig.html" title="class in com.google.crypto.tink.keyderivation" target="classFrame">KeyDerivationConfig</a></li>
+<li><a href="com/google/crypto/tink/keyderivation/KeyDerivationKey.html" title="class in com.google.crypto.tink.keyderivation" target="classFrame">KeyDerivationKey</a></li>
+<li><a href="com/google/crypto/tink/keyderivation/KeyDerivationKeyTemplates.html" title="class in com.google.crypto.tink.keyderivation" target="classFrame">KeyDerivationKeyTemplates</a></li>
+<li><a href="com/google/crypto/tink/keyderivation/KeyDerivationParameters.html" title="class in com.google.crypto.tink.keyderivation" target="classFrame">KeyDerivationParameters</a></li>
 <li><a href="com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey" target="classFrame">KeyHandle</a></li>
 <li><a href="com/google/crypto/tink/tinkkey/KeyHandle.KeyStatusType.html" title="enum in com.google.crypto.tink.tinkkey" target="classFrame">KeyHandle.KeyStatusType</a></li>
 <li><a href="com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink" target="classFrame"><span class="interfaceName">KeyManager</span></a></li>
@@ -492,6 +524,8 @@
 <li><a href="com/google/crypto/tink/proto/Keyset.Key.html" title="class in com.google.crypto.tink.proto" target="classFrame">Keyset.Key</a></li>
 <li><a href="com/google/crypto/tink/proto/Keyset.Key.Builder.html" title="class in com.google.crypto.tink.proto" target="classFrame">Keyset.Key.Builder</a></li>
 <li><a href="com/google/crypto/tink/proto/Keyset.KeyOrBuilder.html" title="interface in com.google.crypto.tink.proto" target="classFrame"><span class="interfaceName">Keyset.KeyOrBuilder</span></a></li>
+<li><a href="com/google/crypto/tink/keyderivation/KeysetDeriver.html" title="interface in com.google.crypto.tink.keyderivation" target="classFrame"><span class="interfaceName">KeysetDeriver</span></a></li>
+<li><a href="com/google/crypto/tink/keyderivation/KeysetDeriverWrapper.html" title="class in com.google.crypto.tink.keyderivation" target="classFrame">KeysetDeriverWrapper</a></li>
 <li><a href="com/google/crypto/tink/KeysetHandle.html" title="class in com.google.crypto.tink" target="classFrame">KeysetHandle</a></li>
 <li><a href="com/google/crypto/tink/KeysetHandle.Builder.html" title="class in com.google.crypto.tink" target="classFrame">KeysetHandle.Builder</a></li>
 <li><a href="com/google/crypto/tink/KeysetHandle.Builder.Entry.html" title="class in com.google.crypto.tink" target="classFrame">KeysetHandle.Builder.Entry</a></li>
@@ -575,8 +609,26 @@
 <li><a href="com/google/crypto/tink/aead/PredefinedAeadParameters.html" title="class in com.google.crypto.tink.aead" target="classFrame">PredefinedAeadParameters</a></li>
 <li><a href="com/google/crypto/tink/daead/PredefinedDeterministicAeadParameters.html" title="class in com.google.crypto.tink.daead" target="classFrame">PredefinedDeterministicAeadParameters</a></li>
 <li><a href="com/google/crypto/tink/mac/PredefinedMacParameters.html" title="class in com.google.crypto.tink.mac" target="classFrame">PredefinedMacParameters</a></li>
+<li><a href="com/google/crypto/tink/prf/PredefinedPrfParameters.html" title="class in com.google.crypto.tink.prf" target="classFrame">PredefinedPrfParameters</a></li>
+<li><a href="com/google/crypto/tink/signature/PredefinedSignatureParameters.html" title="class in com.google.crypto.tink.signature" target="classFrame">PredefinedSignatureParameters</a></li>
+<li><a href="com/google/crypto/tink/streamingaead/PredefinedStreamingAeadParameters.html" title="class in com.google.crypto.tink.streamingaead" target="classFrame">PredefinedStreamingAeadParameters</a></li>
 <li><a href="com/google/crypto/tink/prf/Prf.html" title="interface in com.google.crypto.tink.prf" target="classFrame"><span class="interfaceName">Prf</span></a></li>
 <li><a href="com/google/crypto/tink/subtle/PrfAesCmac.html" title="class in com.google.crypto.tink.subtle" target="classFrame">PrfAesCmac</a></li>
+<li><a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriver.html" title="class in com.google.crypto.tink.keyderivation.internal" target="classFrame">PrfBasedDeriver</a></li>
+<li><a href="com/google/crypto/tink/proto/PrfBasedDeriver.html" title="class in com.google.crypto.tink.proto" target="classFrame">PrfBasedDeriver</a></li>
+<li><a href="com/google/crypto/tink/proto/PrfBasedDeriverKey.html" title="class in com.google.crypto.tink.proto" target="classFrame">PrfBasedDeriverKey</a></li>
+<li><a href="com/google/crypto/tink/proto/PrfBasedDeriverKey.Builder.html" title="class in com.google.crypto.tink.proto" target="classFrame">PrfBasedDeriverKey.Builder</a></li>
+<li><a href="com/google/crypto/tink/proto/PrfBasedDeriverKeyFormat.html" title="class in com.google.crypto.tink.proto" target="classFrame">PrfBasedDeriverKeyFormat</a></li>
+<li><a href="com/google/crypto/tink/proto/PrfBasedDeriverKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto" target="classFrame">PrfBasedDeriverKeyFormat.Builder</a></li>
+<li><a href="com/google/crypto/tink/proto/PrfBasedDeriverKeyFormatOrBuilder.html" title="interface in com.google.crypto.tink.proto" target="classFrame"><span class="interfaceName">PrfBasedDeriverKeyFormatOrBuilder</span></a></li>
+<li><a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html" title="class in com.google.crypto.tink.keyderivation.internal" target="classFrame">PrfBasedDeriverKeyManager</a></li>
+<li><a href="com/google/crypto/tink/proto/PrfBasedDeriverKeyOrBuilder.html" title="interface in com.google.crypto.tink.proto" target="classFrame"><span class="interfaceName">PrfBasedDeriverKeyOrBuilder</span></a></li>
+<li><a href="com/google/crypto/tink/proto/PrfBasedDeriverParams.html" title="class in com.google.crypto.tink.proto" target="classFrame">PrfBasedDeriverParams</a></li>
+<li><a href="com/google/crypto/tink/proto/PrfBasedDeriverParams.Builder.html" title="class in com.google.crypto.tink.proto" target="classFrame">PrfBasedDeriverParams.Builder</a></li>
+<li><a href="com/google/crypto/tink/proto/PrfBasedDeriverParamsOrBuilder.html" title="interface in com.google.crypto.tink.proto" target="classFrame"><span class="interfaceName">PrfBasedDeriverParamsOrBuilder</span></a></li>
+<li><a href="com/google/crypto/tink/keyderivation/PrfBasedKeyDerivationKey.html" title="class in com.google.crypto.tink.keyderivation" target="classFrame">PrfBasedKeyDerivationKey</a></li>
+<li><a href="com/google/crypto/tink/keyderivation/PrfBasedKeyDerivationParameters.html" title="class in com.google.crypto.tink.keyderivation" target="classFrame">PrfBasedKeyDerivationParameters</a></li>
+<li><a href="com/google/crypto/tink/keyderivation/PrfBasedKeyDerivationParameters.Builder.html" title="class in com.google.crypto.tink.keyderivation" target="classFrame">PrfBasedKeyDerivationParameters.Builder</a></li>
 <li><a href="com/google/crypto/tink/prf/PrfConfig.html" title="class in com.google.crypto.tink.prf" target="classFrame">PrfConfig</a></li>
 <li><a href="com/google/crypto/tink/subtle/PrfHmacJce.html" title="class in com.google.crypto.tink.subtle" target="classFrame">PrfHmacJce</a></li>
 <li><a href="com/google/crypto/tink/subtle/prf/PrfImpl.html" title="class in com.google.crypto.tink.subtle.prf" target="classFrame">PrfImpl</a></li>
@@ -609,6 +661,7 @@
 <li><a href="com/google/crypto/tink/PublicKeyVerify.html" title="interface in com.google.crypto.tink" target="classFrame"><span class="interfaceName">PublicKeyVerify</span></a></li>
 <li><a href="com/google/crypto/tink/signature/PublicKeyVerifyConfig.html" title="class in com.google.crypto.tink.signature" target="classFrame">PublicKeyVerifyConfig</a></li>
 <li><a href="com/google/crypto/tink/signature/PublicKeyVerifyFactory.html" title="class in com.google.crypto.tink.signature" target="classFrame">PublicKeyVerifyFactory</a></li>
+<li><a href="com/google/crypto/tink/internal/Random.html" title="class in com.google.crypto.tink.internal" target="classFrame">Random</a></li>
 <li><a href="com/google/crypto/tink/subtle/Random.html" title="class in com.google.crypto.tink.subtle" target="classFrame">Random</a></li>
 <li><a href="com/google/crypto/tink/jwt/RawJwt.html" title="class in com.google.crypto.tink.jwt" target="classFrame">RawJwt</a></li>
 <li><a href="com/google/crypto/tink/jwt/RawJwt.Builder.html" title="class in com.google.crypto.tink.jwt" target="classFrame">RawJwt.Builder</a></li>
@@ -616,6 +669,7 @@
 <li><a href="com/google/crypto/tink/proto/RegistryConfig.html" title="class in com.google.crypto.tink.proto" target="classFrame">RegistryConfig</a></li>
 <li><a href="com/google/crypto/tink/proto/RegistryConfig.Builder.html" title="class in com.google.crypto.tink.proto" target="classFrame">RegistryConfig.Builder</a></li>
 <li><a href="com/google/crypto/tink/proto/RegistryConfigOrBuilder.html" title="interface in com.google.crypto.tink.proto" target="classFrame"><span class="interfaceName">RegistryConfigOrBuilder</span></a></li>
+<li><a href="com/google/crypto/tink/internal/RegistryConfiguration.html" title="class in com.google.crypto.tink.internal" target="classFrame">RegistryConfiguration</a></li>
 <li><a href="com/google/crypto/tink/subtle/RewindableReadableByteChannel.html" title="class in com.google.crypto.tink.subtle" target="classFrame">RewindableReadableByteChannel</a></li>
 <li><a href="com/google/crypto/tink/hybrid/subtle/RsaKemHybridDecrypt.html" title="class in com.google.crypto.tink.hybrid.subtle" target="classFrame">RsaKemHybridDecrypt</a></li>
 <li><a href="com/google/crypto/tink/hybrid/subtle/RsaKemHybridEncrypt.html" title="class in com.google.crypto.tink.hybrid.subtle" target="classFrame">RsaKemHybridEncrypt</a></li>
@@ -647,14 +701,22 @@
 <li><a href="com/google/crypto/tink/proto/RsaSsaPssKeyFormat.html" title="class in com.google.crypto.tink.proto" target="classFrame">RsaSsaPssKeyFormat</a></li>
 <li><a href="com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto" target="classFrame">RsaSsaPssKeyFormat.Builder</a></li>
 <li><a href="com/google/crypto/tink/proto/RsaSsaPssKeyFormatOrBuilder.html" title="interface in com.google.crypto.tink.proto" target="classFrame"><span class="interfaceName">RsaSsaPssKeyFormatOrBuilder</span></a></li>
+<li><a href="com/google/crypto/tink/signature/RsaSsaPssParameters.html" title="class in com.google.crypto.tink.signature" target="classFrame">RsaSsaPssParameters</a></li>
+<li><a href="com/google/crypto/tink/signature/RsaSsaPssParameters.Builder.html" title="class in com.google.crypto.tink.signature" target="classFrame">RsaSsaPssParameters.Builder</a></li>
+<li><a href="com/google/crypto/tink/signature/RsaSsaPssParameters.HashType.html" title="class in com.google.crypto.tink.signature" target="classFrame">RsaSsaPssParameters.HashType</a></li>
+<li><a href="com/google/crypto/tink/signature/RsaSsaPssParameters.Variant.html" title="class in com.google.crypto.tink.signature" target="classFrame">RsaSsaPssParameters.Variant</a></li>
 <li><a href="com/google/crypto/tink/proto/RsaSsaPssParams.html" title="class in com.google.crypto.tink.proto" target="classFrame">RsaSsaPssParams</a></li>
 <li><a href="com/google/crypto/tink/proto/RsaSsaPssParams.Builder.html" title="class in com.google.crypto.tink.proto" target="classFrame">RsaSsaPssParams.Builder</a></li>
 <li><a href="com/google/crypto/tink/proto/RsaSsaPssParamsOrBuilder.html" title="interface in com.google.crypto.tink.proto" target="classFrame"><span class="interfaceName">RsaSsaPssParamsOrBuilder</span></a></li>
 <li><a href="com/google/crypto/tink/proto/RsaSsaPssPrivateKey.html" title="class in com.google.crypto.tink.proto" target="classFrame">RsaSsaPssPrivateKey</a></li>
+<li><a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.html" title="class in com.google.crypto.tink.signature" target="classFrame">RsaSsaPssPrivateKey</a></li>
 <li><a href="com/google/crypto/tink/proto/RsaSsaPssPrivateKey.Builder.html" title="class in com.google.crypto.tink.proto" target="classFrame">RsaSsaPssPrivateKey.Builder</a></li>
+<li><a href="com/google/crypto/tink/signature/RsaSsaPssPrivateKey.Builder.html" title="class in com.google.crypto.tink.signature" target="classFrame">RsaSsaPssPrivateKey.Builder</a></li>
 <li><a href="com/google/crypto/tink/proto/RsaSsaPssPrivateKeyOrBuilder.html" title="interface in com.google.crypto.tink.proto" target="classFrame"><span class="interfaceName">RsaSsaPssPrivateKeyOrBuilder</span></a></li>
 <li><a href="com/google/crypto/tink/proto/RsaSsaPssPublicKey.html" title="class in com.google.crypto.tink.proto" target="classFrame">RsaSsaPssPublicKey</a></li>
+<li><a href="com/google/crypto/tink/signature/RsaSsaPssPublicKey.html" title="class in com.google.crypto.tink.signature" target="classFrame">RsaSsaPssPublicKey</a></li>
 <li><a href="com/google/crypto/tink/proto/RsaSsaPssPublicKey.Builder.html" title="class in com.google.crypto.tink.proto" target="classFrame">RsaSsaPssPublicKey.Builder</a></li>
+<li><a href="com/google/crypto/tink/signature/RsaSsaPssPublicKey.Builder.html" title="class in com.google.crypto.tink.signature" target="classFrame">RsaSsaPssPublicKey.Builder</a></li>
 <li><a href="com/google/crypto/tink/proto/RsaSsaPssPublicKeyOrBuilder.html" title="interface in com.google.crypto.tink.proto" target="classFrame"><span class="interfaceName">RsaSsaPssPublicKeyOrBuilder</span></a></li>
 <li><a href="com/google/crypto/tink/subtle/RsaSsaPssSignJce.html" title="class in com.google.crypto.tink.subtle" target="classFrame">RsaSsaPssSignJce</a></li>
 <li><a href="com/google/crypto/tink/signature/RsaSsaPssSignKeyManager.html" title="class in com.google.crypto.tink.signature" target="classFrame">RsaSsaPssSignKeyManager</a></li>
