@@ -173,7 +173,7 @@ extends <a href="../../../../../com/google/crypto/tink/daead/DeterministicAeadKe
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/daead/AesSivKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>
-<div class="block">Returns true if the key is equal to the passed in key.</div>
+<div class="block">Returns true if the key is guaranteed to be equal to <code>other</code>.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
@@ -300,9 +300,14 @@ public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer
 <h4>equalsKey</h4>
 <pre>public&nbsp;boolean&nbsp;equalsKey(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../com/google/crypto/tink/Key.html#equalsKey-com.google.crypto.tink.Key-">Key</a></code></span></div>
-<div class="block">Returns true if the key is equal to the passed in key.
+<div class="block">Returns true if the key is guaranteed to be equal to <code>other</code>.
 
  <p>Implementations are required to do this in constant time.
+
+ <p>Note: this is allowed to return false even if two keys are guaranteed to represent the same
+ function, but are represented differently. For example, a key is allowed to internally store
+ the number of zero-bytes used as padding when a large number is represented as a byte array,
+ and use this in the comparison.
 
  <p>Note: Tink <code>Key</code> objects should typically not override <code>hashCode</code> (because it
  could risk leaking key material). Hence, they typically also should not override <code>equals</code>.</div>
