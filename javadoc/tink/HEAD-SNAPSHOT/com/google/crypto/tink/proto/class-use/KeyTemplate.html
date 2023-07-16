@@ -102,26 +102,22 @@
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><a href="#com.google.crypto.tink.keyderivation.internal">com.google.crypto.tink.keyderivation.internal</a></td>
-<td class="colLast">&nbsp;</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><a href="#com.google.crypto.tink.mac">com.google.crypto.tink.mac</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="#com.google.crypto.tink.prf">com.google.crypto.tink.prf</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="#com.google.crypto.tink.proto">com.google.crypto.tink.proto</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="#com.google.crypto.tink.signature">com.google.crypto.tink.signature</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="#com.google.crypto.tink.streamingaead">com.google.crypto.tink.streamingaead</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
@@ -158,8 +154,8 @@
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto">KeyData</a></code></td>
 <td class="colLast"><span class="typeNameLabel">PrivilegedRegistry.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/PrivilegedRegistry.html#deriveKey-com.google.crypto.tink.proto.KeyTemplate-java.io.InputStream-">deriveKey</a></span>(<a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;keyTemplate,
          <a href="https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io">InputStream</a>&nbsp;randomStream)</code>
-<div class="block">Method to derive a key, using the given <code>keyTemplate</code>, with the randomness as provided by
- the second argument.</div>
+<div class="block">Method to derive a key, using the given , with the randomness as provided
+ by the second argument.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -172,9 +168,7 @@
 <tr class="altColor">
 <td class="colFirst"><code>static com.google.protobuf.MessageLite</code></td>
 <td class="colLast"><span class="typeNameLabel">Registry.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/Registry.html#newKey-com.google.crypto.tink.proto.KeyTemplate-">newKey</a></span>(<a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;keyTemplate)</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Use <code>newKeyData</code> instead.</span></div>
-</div>
+<div class="block">Convenience method for generating a new key for the specified <code>keyTemplate</code>.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -364,7 +358,6 @@
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
 <td class="colLast"><span class="typeNameLabel">DeterministicAeadKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/daead/DeterministicAeadKeyTemplates.html#AES256_SIV">AES256_SIV</a></span></code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">A <code>KeyTemplate</code> that generates new instances of <code>AesSivKey</code> with a 64-byte key.</div>
 </td>
 </tr>
@@ -379,9 +372,7 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
-<td class="colLast"><span class="typeNameLabel">DeterministicAeadKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/daead/DeterministicAeadKeyTemplates.html#createAesSivKeyTemplate-int-">createAesSivKeyTemplate</a></span>(int&nbsp;keySize)</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
-&nbsp;</td>
+<td class="colLast"><span class="typeNameLabel">DeterministicAeadKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/daead/DeterministicAeadKeyTemplates.html#createAesSivKeyTemplate-int-">createAesSivKeyTemplate</a></span>(int&nbsp;keySize)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
@@ -457,11 +448,7 @@
                               <a href="../../../../../../com/google/crypto/tink/proto/EcPointFormat.html" title="enum in com.google.crypto.tink.proto">EcPointFormat</a>&nbsp;ecPointFormat,
                               <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;demKeyTemplate,
                               <a href="../../../../../../com/google/crypto/tink/proto/OutputPrefixType.html" title="enum in com.google.crypto.tink.proto">OutputPrefixType</a>&nbsp;outputPrefixType,
-                              byte[]&nbsp;salt)</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Use EciesParameters instead.</span></div>
-</div>
-</td>
+                              byte[]&nbsp;salt)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
@@ -479,11 +466,7 @@
                               <a href="../../../../../../com/google/crypto/tink/proto/EcPointFormat.html" title="enum in com.google.crypto.tink.proto">EcPointFormat</a>&nbsp;ecPointFormat,
                               <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;demKeyTemplate,
                               <a href="../../../../../../com/google/crypto/tink/proto/OutputPrefixType.html" title="enum in com.google.crypto.tink.proto">OutputPrefixType</a>&nbsp;outputPrefixType,
-                              byte[]&nbsp;salt)</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Use EciesParameters instead.</span></div>
-</div>
-</td>
+                              byte[]&nbsp;salt)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/EciesAeadHkdfParams.html" title="class in com.google.crypto.tink.proto">EciesAeadHkdfParams</a></code></td>
@@ -491,11 +474,7 @@
                          <a href="../../../../../../com/google/crypto/tink/proto/HashType.html" title="enum in com.google.crypto.tink.proto">HashType</a>&nbsp;hashType,
                          <a href="../../../../../../com/google/crypto/tink/proto/EcPointFormat.html" title="enum in com.google.crypto.tink.proto">EcPointFormat</a>&nbsp;ecPointFormat,
                          <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;demKeyTemplate,
-                         byte[]&nbsp;salt)</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Use EciesParameters instead.</span></div>
-</div>
-</td>
+                         byte[]&nbsp;salt)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
@@ -532,38 +511,13 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/internal/ProtoParametersSerialization.html" title="class in com.google.crypto.tink.internal">ProtoParametersSerialization</a></code></td>
-<td class="colLast"><span class="typeNameLabel">ProtoParametersSerialization.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/ProtoParametersSerialization.html#checkedCreate-com.google.crypto.tink.proto.KeyTemplate-">checkedCreate</a></span>(<a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;keyTemplate)</code>
-<div class="block">Creates a new <code>ProtoParametersSerialization</code> object.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/internal/ProtoParametersSerialization.html" title="class in com.google.crypto.tink.internal">ProtoParametersSerialization</a></code></td>
 <td class="colLast"><span class="typeNameLabel">ProtoParametersSerialization.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/ProtoParametersSerialization.html#create-com.google.crypto.tink.proto.KeyTemplate-">create</a></span>(<a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;keyTemplate)</code>
 <div class="block">Creates a new <code>ProtoParametersSerialization</code> object.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink">KeyTemplate</a></code></td>
 <td class="colLast"><span class="typeNameLabel">KeyTemplateProtoConverter.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/KeyTemplateProtoConverter.html#fromProto-com.google.crypto.tink.proto.KeyTemplate-">fromProto</a></span>(<a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;proto)</code>&nbsp;</td>
-</tr>
-</tbody>
-</table>
-</li>
-<li class="blockList"><a name="com.google.crypto.tink.keyderivation.internal">
-<!--   -->
-</a>
-<h3>Uses of <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a> in <a href="../../../../../../com/google/crypto/tink/keyderivation/internal/package-summary.html">com.google.crypto.tink.keyderivation.internal</a></h3>
-<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
-<caption><span>Methods in <a href="../../../../../../com/google/crypto/tink/keyderivation/internal/package-summary.html">com.google.crypto.tink.keyderivation.internal</a> with parameters of type <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Method and Description</th>
-</tr>
-<tbody>
-<tr class="altColor">
-<td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/keyderivation/internal/PrfBasedDeriver.html" title="class in com.google.crypto.tink.keyderivation.internal">PrfBasedDeriver</a></code></td>
-<td class="colLast"><span class="typeNameLabel">PrfBasedDeriver.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/PrfBasedDeriver.html#create-com.google.crypto.tink.proto.KeyData-com.google.crypto.tink.proto.KeyTemplate-">create</a></span>(<a href="../../../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto">KeyData</a>&nbsp;streamingPrfKey,
-      <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;derivedKeyTemplate)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
@@ -582,7 +536,6 @@
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
 <td class="colLast"><span class="typeNameLabel">MacKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/mac/MacKeyTemplates.html#AES_CMAC">AES_CMAC</a></span></code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">A <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> that generates new instances of <code>com.google.crypto.tink.proto.CmacKey</code> with the following parameters:
 
  
@@ -595,7 +548,6 @@
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
 <td class="colLast"><span class="typeNameLabel">MacKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/mac/MacKeyTemplates.html#HMAC_SHA256_128BITTAG">HMAC_SHA256_128BITTAG</a></span></code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">A <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> that generates new instances of <a href="../../../../../../com/google/crypto/tink/proto/HmacKey.html" title="class in com.google.crypto.tink.proto"><code>HmacKey</code></a> with the following parameters:
 
  
@@ -609,7 +561,6 @@
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
 <td class="colLast"><span class="typeNameLabel">MacKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/mac/MacKeyTemplates.html#HMAC_SHA256_256BITTAG">HMAC_SHA256_256BITTAG</a></span></code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">A <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> that generates new instances of <a href="../../../../../../com/google/crypto/tink/proto/HmacKey.html" title="class in com.google.crypto.tink.proto"><code>HmacKey</code></a> with the following parameters:
 
  
@@ -623,7 +574,6 @@
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
 <td class="colLast"><span class="typeNameLabel">MacKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/mac/MacKeyTemplates.html#HMAC_SHA512_256BITTAG">HMAC_SHA512_256BITTAG</a></span></code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">A <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> that generates new instances of <a href="../../../../../../com/google/crypto/tink/proto/HmacKey.html" title="class in com.google.crypto.tink.proto"><code>HmacKey</code></a> with the following parameters:
 
  
@@ -637,7 +587,6 @@
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
 <td class="colLast"><span class="typeNameLabel">MacKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/mac/MacKeyTemplates.html#HMAC_SHA512_512BITTAG">HMAC_SHA512_512BITTAG</a></span></code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">A <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> that generates new instances of <a href="../../../../../../com/google/crypto/tink/proto/HmacKey.html" title="class in com.google.crypto.tink.proto"><code>HmacKey</code></a> with the following parameters:
 
  
@@ -661,9 +610,7 @@
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
 <td class="colLast"><span class="typeNameLabel">MacKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/mac/MacKeyTemplates.html#createHmacKeyTemplate-int-int-com.google.crypto.tink.proto.HashType-">createHmacKeyTemplate</a></span>(int&nbsp;keySize,
                      int&nbsp;tagSize,
-                     <a href="../../../../../../com/google/crypto/tink/proto/HashType.html" title="enum in com.google.crypto.tink.proto">HashType</a>&nbsp;hashType)</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
-&nbsp;</td>
+                     <a href="../../../../../../com/google/crypto/tink/proto/HashType.html" title="enum in com.google.crypto.tink.proto">HashType</a>&nbsp;hashType)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
@@ -681,29 +628,22 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
-<td class="colLast"><span class="typeNameLabel">PrfKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/prf/PrfKeyTemplates.html#AES_CMAC_PRF">AES_CMAC_PRF</a></span></code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
-&nbsp;</td>
+<td class="colLast"><span class="typeNameLabel">PrfKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/prf/PrfKeyTemplates.html#AES_CMAC_PRF">AES_CMAC_PRF</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
 <td class="colLast"><span class="typeNameLabel">PrfKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/prf/PrfKeyTemplates.html#HKDF_SHA256">HKDF_SHA256</a></span></code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">Generates a <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> for a <a href="../../../../../../com/google/crypto/tink/proto/HkdfPrfKey.html" title="class in com.google.crypto.tink.proto"><code>HkdfPrfKey</code></a> key with
  the following parameters.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
-<td class="colLast"><span class="typeNameLabel">PrfKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/prf/PrfKeyTemplates.html#HMAC_SHA256_PRF">HMAC_SHA256_PRF</a></span></code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
-&nbsp;</td>
+<td class="colLast"><span class="typeNameLabel">PrfKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/prf/PrfKeyTemplates.html#HMAC_SHA256_PRF">HMAC_SHA256_PRF</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
-<td class="colLast"><span class="typeNameLabel">PrfKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/prf/PrfKeyTemplates.html#HMAC_SHA512_PRF">HMAC_SHA512_PRF</a></span></code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
-&nbsp;</td>
+<td class="colLast"><span class="typeNameLabel">PrfKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/prf/PrfKeyTemplates.html#HMAC_SHA512_PRF">HMAC_SHA512_PRF</a></span></code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
@@ -779,42 +719,6 @@
 <td class="colLast"><span class="typeNameLabel">KmsEnvelopeAeadKeyFormat.Builder.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/proto/KmsEnvelopeAeadKeyFormat.Builder.html#getDekTemplate--">getDekTemplate</a></span>()</code>
 <div class="block">
  Key template of the Data Encryption Key, e.g., AesCtrHmacAeadKeyFormat.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
-<td class="colLast"><span class="typeNameLabel">PrfBasedDeriverParamsOrBuilder.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverParamsOrBuilder.html#getDerivedKeyTemplate--">getDerivedKeyTemplate</a></span>()</code>
-<div class="block"><code>.google.crypto.tink.KeyTemplate derived_key_template = 1;</code></div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
-<td class="colLast"><span class="typeNameLabel">PrfBasedDeriverParams.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverParams.html#getDerivedKeyTemplate--">getDerivedKeyTemplate</a></span>()</code>
-<div class="block"><code>.google.crypto.tink.KeyTemplate derived_key_template = 1;</code></div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
-<td class="colLast"><span class="typeNameLabel">PrfBasedDeriverParams.Builder.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverParams.Builder.html#getDerivedKeyTemplate--">getDerivedKeyTemplate</a></span>()</code>
-<div class="block"><code>.google.crypto.tink.KeyTemplate derived_key_template = 1;</code></div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
-<td class="colLast"><span class="typeNameLabel">PrfBasedDeriverKeyFormatOrBuilder.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverKeyFormatOrBuilder.html#getPrfKeyTemplate--">getPrfKeyTemplate</a></span>()</code>
-<div class="block"><code>.google.crypto.tink.KeyTemplate prf_key_template = 1;</code></div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
-<td class="colLast"><span class="typeNameLabel">PrfBasedDeriverKeyFormat.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverKeyFormat.html#getPrfKeyTemplate--">getPrfKeyTemplate</a></span>()</code>
-<div class="block"><code>.google.crypto.tink.KeyTemplate prf_key_template = 1;</code></div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
-<td class="colLast"><span class="typeNameLabel">PrfBasedDeriverKeyFormat.Builder.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverKeyFormat.Builder.html#getPrfKeyTemplate--">getPrfKeyTemplate</a></span>()</code>
-<div class="block"><code>.google.crypto.tink.KeyTemplate prf_key_template = 1;</code></div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -912,20 +816,8 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverParams.Builder.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverParams.Builder</a></code></td>
-<td class="colLast"><span class="typeNameLabel">PrfBasedDeriverParams.Builder.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverParams.Builder.html#mergeDerivedKeyTemplate-com.google.crypto.tink.proto.KeyTemplate-">mergeDerivedKeyTemplate</a></span>(<a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;value)</code>
-<div class="block"><code>.google.crypto.tink.KeyTemplate derived_key_template = 1;</code></div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.Builder.html" title="class in com.google.crypto.tink.proto">KeyTemplate.Builder</a></code></td>
 <td class="colLast"><span class="typeNameLabel">KeyTemplate.Builder.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.Builder.html#mergeFrom-com.google.crypto.tink.proto.KeyTemplate-">mergeFrom</a></span>(<a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;other)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKeyFormat.Builder</a></code></td>
-<td class="colLast"><span class="typeNameLabel">PrfBasedDeriverKeyFormat.Builder.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverKeyFormat.Builder.html#mergePrfKeyTemplate-com.google.crypto.tink.proto.KeyTemplate-">mergePrfKeyTemplate</a></span>(<a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;value)</code>
-<div class="block"><code>.google.crypto.tink.KeyTemplate prf_key_template = 1;</code></div>
-</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.Builder.html" title="class in com.google.crypto.tink.proto">KeyTemplate.Builder</a></code></td>
@@ -943,18 +835,6 @@
 <td class="colLast"><span class="typeNameLabel">KmsEnvelopeAeadKeyFormat.Builder.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/proto/KmsEnvelopeAeadKeyFormat.Builder.html#setDekTemplate-com.google.crypto.tink.proto.KeyTemplate-">setDekTemplate</a></span>(<a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;value)</code>
 <div class="block">
  Key template of the Data Encryption Key, e.g., AesCtrHmacAeadKeyFormat.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverParams.Builder.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverParams.Builder</a></code></td>
-<td class="colLast"><span class="typeNameLabel">PrfBasedDeriverParams.Builder.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverParams.Builder.html#setDerivedKeyTemplate-com.google.crypto.tink.proto.KeyTemplate-">setDerivedKeyTemplate</a></span>(<a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;value)</code>
-<div class="block"><code>.google.crypto.tink.KeyTemplate derived_key_template = 1;</code></div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKeyFormat.Builder</a></code></td>
-<td class="colLast"><span class="typeNameLabel">PrfBasedDeriverKeyFormat.Builder.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverKeyFormat.Builder.html#setPrfKeyTemplate-com.google.crypto.tink.proto.KeyTemplate-">setPrfKeyTemplate</a></span>(<a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;value)</code>
-<div class="block"><code>.google.crypto.tink.KeyTemplate prf_key_template = 1;</code></div>
 </td>
 </tr>
 </tbody>
@@ -1119,22 +999,14 @@
 <td class="colLast"><span class="typeNameLabel">SignatureKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/signature/SignatureKeyTemplates.html#createEcdsaKeyTemplate-com.google.crypto.tink.proto.HashType-com.google.crypto.tink.proto.EllipticCurveType-com.google.crypto.tink.proto.EcdsaSignatureEncoding-com.google.crypto.tink.proto.OutputPrefixType-">createEcdsaKeyTemplate</a></span>(<a href="../../../../../../com/google/crypto/tink/proto/HashType.html" title="enum in com.google.crypto.tink.proto">HashType</a>&nbsp;hashType,
                       <a href="../../../../../../com/google/crypto/tink/proto/EllipticCurveType.html" title="enum in com.google.crypto.tink.proto">EllipticCurveType</a>&nbsp;curve,
                       <a href="../../../../../../com/google/crypto/tink/proto/EcdsaSignatureEncoding.html" title="enum in com.google.crypto.tink.proto">EcdsaSignatureEncoding</a>&nbsp;encoding,
-                      <a href="../../../../../../com/google/crypto/tink/proto/OutputPrefixType.html" title="enum in com.google.crypto.tink.proto">OutputPrefixType</a>&nbsp;prefixType)</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Use a corresponding <a href="../../../../../../com/google/crypto/tink/signature/EcdsaParameters.html" title="class in com.google.crypto.tink.signature"><code>EcdsaParameters</code></a> object instead.</span></div>
-</div>
-</td>
+                      <a href="../../../../../../com/google/crypto/tink/proto/OutputPrefixType.html" title="enum in com.google.crypto.tink.proto">OutputPrefixType</a>&nbsp;prefixType)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
 <td class="colLast"><span class="typeNameLabel">SignatureKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/signature/SignatureKeyTemplates.html#createRsaSsaPkcs1KeyTemplate-com.google.crypto.tink.proto.HashType-int-java.math.BigInteger-com.google.crypto.tink.proto.OutputPrefixType-">createRsaSsaPkcs1KeyTemplate</a></span>(<a href="../../../../../../com/google/crypto/tink/proto/HashType.html" title="enum in com.google.crypto.tink.proto">HashType</a>&nbsp;hashType,
                             int&nbsp;modulusSize,
                             <a href="https://docs.oracle.com/javase/8/docs/api/java/math/BigInteger.html?is-external=true" title="class or interface in java.math">BigInteger</a>&nbsp;publicExponent,
-                            <a href="../../../../../../com/google/crypto/tink/proto/OutputPrefixType.html" title="enum in com.google.crypto.tink.proto">OutputPrefixType</a>&nbsp;prefixType)</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Use a corresponding <a href="../../../../../../com/google/crypto/tink/signature/RsaSsaPkcs1Parameters.html" title="class in com.google.crypto.tink.signature"><code>RsaSsaPkcs1Parameters</code></a> object instead</span></div>
-</div>
-</td>
+                            <a href="../../../../../../com/google/crypto/tink/proto/OutputPrefixType.html" title="enum in com.google.crypto.tink.proto">OutputPrefixType</a>&nbsp;prefixType)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
@@ -1142,11 +1014,7 @@
                           <a href="../../../../../../com/google/crypto/tink/proto/HashType.html" title="enum in com.google.crypto.tink.proto">HashType</a>&nbsp;mgf1Hash,
                           int&nbsp;saltLength,
                           int&nbsp;modulusSize,
-                          <a href="https://docs.oracle.com/javase/8/docs/api/java/math/BigInteger.html?is-external=true" title="class or interface in java.math">BigInteger</a>&nbsp;publicExponent)</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Use a corresponding <a href="../../../../../../com/google/crypto/tink/signature/RsaSsaPssParameters.html" title="class in com.google.crypto.tink.signature"><code>RsaSsaPssParameters</code></a> object instead.</span></div>
-</div>
-</td>
+                          <a href="https://docs.oracle.com/javase/8/docs/api/java/math/BigInteger.html?is-external=true" title="class or interface in java.math">BigInteger</a>&nbsp;publicExponent)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
@@ -1165,7 +1033,6 @@
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
 <td class="colLast"><span class="typeNameLabel">StreamingAeadKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html#AES128_CTR_HMAC_SHA256_1MB">AES128_CTR_HMAC_SHA256_1MB</a></span></code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">A <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> that generates new instances of <a href="../../../../../../com/google/crypto/tink/proto/AesCtrHmacStreamingKey.html" title="class in com.google.crypto.tink.proto"><code>AesCtrHmacStreamingKey</code></a> with the following parameters:
 
  
@@ -1181,7 +1048,6 @@
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
 <td class="colLast"><span class="typeNameLabel">StreamingAeadKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html#AES128_CTR_HMAC_SHA256_4KB">AES128_CTR_HMAC_SHA256_4KB</a></span></code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">A <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> that generates new instances of <a href="../../../../../../com/google/crypto/tink/proto/AesCtrHmacStreamingKey.html" title="class in com.google.crypto.tink.proto"><code>AesCtrHmacStreamingKey</code></a> with the following parameters:
 
  
@@ -1197,7 +1063,6 @@
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
 <td class="colLast"><span class="typeNameLabel">StreamingAeadKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html#AES128_GCM_HKDF_1MB">AES128_GCM_HKDF_1MB</a></span></code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">A <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> that generates new instances of <a href="../../../../../../com/google/crypto/tink/proto/AesGcmHkdfStreamingKey.html" title="class in com.google.crypto.tink.proto"><code>AesGcmHkdfStreamingKey</code></a> with the following parameters:
 
  
@@ -1211,7 +1076,6 @@
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
 <td class="colLast"><span class="typeNameLabel">StreamingAeadKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html#AES128_GCM_HKDF_4KB">AES128_GCM_HKDF_4KB</a></span></code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">A <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> that generates new instances of <a href="../../../../../../com/google/crypto/tink/proto/AesGcmHkdfStreamingKey.html" title="class in com.google.crypto.tink.proto"><code>AesGcmHkdfStreamingKey</code></a> with the following parameters:
 
  
@@ -1225,7 +1089,6 @@
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
 <td class="colLast"><span class="typeNameLabel">StreamingAeadKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html#AES256_CTR_HMAC_SHA256_1MB">AES256_CTR_HMAC_SHA256_1MB</a></span></code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">A <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> that generates new instances of <a href="../../../../../../com/google/crypto/tink/proto/AesCtrHmacStreamingKey.html" title="class in com.google.crypto.tink.proto"><code>AesCtrHmacStreamingKey</code></a> with the following parameters:
 
  
@@ -1241,7 +1104,6 @@
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
 <td class="colLast"><span class="typeNameLabel">StreamingAeadKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html#AES256_CTR_HMAC_SHA256_4KB">AES256_CTR_HMAC_SHA256_4KB</a></span></code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">A <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> that generates new instances of <a href="../../../../../../com/google/crypto/tink/proto/AesCtrHmacStreamingKey.html" title="class in com.google.crypto.tink.proto"><code>AesCtrHmacStreamingKey</code></a> with the following parameters:
 
  
@@ -1257,7 +1119,6 @@
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
 <td class="colLast"><span class="typeNameLabel">StreamingAeadKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html#AES256_GCM_HKDF_1MB">AES256_GCM_HKDF_1MB</a></span></code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">A <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> that generates new instances of <a href="../../../../../../com/google/crypto/tink/proto/AesGcmHkdfStreamingKey.html" title="class in com.google.crypto.tink.proto"><code>AesGcmHkdfStreamingKey</code></a> with the following parameters:
 
  
@@ -1271,7 +1132,6 @@
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
 <td class="colLast"><span class="typeNameLabel">StreamingAeadKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html#AES256_GCM_HKDF_4KB">AES256_GCM_HKDF_4KB</a></span></code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">A <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> that generates new instances of <a href="../../../../../../com/google/crypto/tink/proto/AesGcmHkdfStreamingKey.html" title="class in com.google.crypto.tink.proto"><code>AesGcmHkdfStreamingKey</code></a> with the following parameters:
 
  
@@ -1298,18 +1158,14 @@
                                     int&nbsp;derivedKeySize,
                                     <a href="../../../../../../com/google/crypto/tink/proto/HashType.html" title="enum in com.google.crypto.tink.proto">HashType</a>&nbsp;macHashType,
                                     int&nbsp;tagSize,
-                                    int&nbsp;ciphertextSegmentSize)</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
-&nbsp;</td>
+                                    int&nbsp;ciphertextSegmentSize)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a></code></td>
 <td class="colLast"><span class="typeNameLabel">StreamingAeadKeyTemplates.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html#createAesGcmHkdfStreamingKeyTemplate-int-com.google.crypto.tink.proto.HashType-int-int-">createAesGcmHkdfStreamingKeyTemplate</a></span>(int&nbsp;mainKeySize,
                                     <a href="../../../../../../com/google/crypto/tink/proto/HashType.html" title="enum in com.google.crypto.tink.proto">HashType</a>&nbsp;hkdfHashType,
                                     int&nbsp;derivedKeySize,
-                                    int&nbsp;ciphertextSegmentSize)</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
-&nbsp;</td>
+                                    int&nbsp;ciphertextSegmentSize)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
