@@ -108,7 +108,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><a href="../../../../com/google/crypto/tink/aead/AeadKey.html" title="class in com.google.crypto.tink.aead">AeadKey</a>, <a href="../../../../com/google/crypto/tink/daead/DeterministicAeadKey.html" title="class in com.google.crypto.tink.daead">DeterministicAeadKey</a>, <a href="../../../../com/google/crypto/tink/hybrid/HybridPrivateKey.html" title="class in com.google.crypto.tink.hybrid">HybridPrivateKey</a>, <a href="../../../../com/google/crypto/tink/hybrid/HybridPublicKey.html" title="class in com.google.crypto.tink.hybrid">HybridPublicKey</a>, <a href="../../../../com/google/crypto/tink/jwt/JwtMacKey.html" title="class in com.google.crypto.tink.jwt">JwtMacKey</a>, <a href="../../../../com/google/crypto/tink/internal/LegacyProtoKey.html" title="class in com.google.crypto.tink.internal">LegacyProtoKey</a>, <a href="../../../../com/google/crypto/tink/mac/MacKey.html" title="class in com.google.crypto.tink.mac">MacKey</a>, <a href="../../../../com/google/crypto/tink/prf/PrfKey.html" title="class in com.google.crypto.tink.prf">PrfKey</a>, <a href="../../../../com/google/crypto/tink/signature/SignaturePrivateKey.html" title="class in com.google.crypto.tink.signature">SignaturePrivateKey</a>, <a href="../../../../com/google/crypto/tink/signature/SignaturePublicKey.html" title="class in com.google.crypto.tink.signature">SignaturePublicKey</a>, <a href="../../../../com/google/crypto/tink/streamingaead/StreamingAeadKey.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadKey</a></dd>
+<dd><a href="../../../../com/google/crypto/tink/aead/AeadKey.html" title="class in com.google.crypto.tink.aead">AeadKey</a>, <a href="../../../../com/google/crypto/tink/daead/DeterministicAeadKey.html" title="class in com.google.crypto.tink.daead">DeterministicAeadKey</a>, <a href="../../../../com/google/crypto/tink/hybrid/HybridPrivateKey.html" title="class in com.google.crypto.tink.hybrid">HybridPrivateKey</a>, <a href="../../../../com/google/crypto/tink/hybrid/HybridPublicKey.html" title="class in com.google.crypto.tink.hybrid">HybridPublicKey</a>, <a href="../../../../com/google/crypto/tink/jwt/JwtMacKey.html" title="class in com.google.crypto.tink.jwt">JwtMacKey</a>, <a href="../../../../com/google/crypto/tink/jwt/JwtSignaturePrivateKey.html" title="class in com.google.crypto.tink.jwt">JwtSignaturePrivateKey</a>, <a href="../../../../com/google/crypto/tink/jwt/JwtSignaturePublicKey.html" title="class in com.google.crypto.tink.jwt">JwtSignaturePublicKey</a>, <a href="../../../../com/google/crypto/tink/keyderivation/KeyDerivationKey.html" title="class in com.google.crypto.tink.keyderivation">KeyDerivationKey</a>, <a href="../../../../com/google/crypto/tink/internal/LegacyProtoKey.html" title="class in com.google.crypto.tink.internal">LegacyProtoKey</a>, <a href="../../../../com/google/crypto/tink/mac/MacKey.html" title="class in com.google.crypto.tink.mac">MacKey</a>, <a href="../../../../com/google/crypto/tink/prf/PrfKey.html" title="class in com.google.crypto.tink.prf">PrfKey</a>, <a href="../../../../com/google/crypto/tink/signature/SignaturePrivateKey.html" title="class in com.google.crypto.tink.signature">SignaturePrivateKey</a>, <a href="../../../../com/google/crypto/tink/signature/SignaturePublicKey.html" title="class in com.google.crypto.tink.signature">SignaturePublicKey</a>, <a href="../../../../com/google/crypto/tink/streamingaead/StreamingAeadKey.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadKey</a></dd>
 </dl>
 <hr>
 <br>
@@ -166,7 +166,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>abstract boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Key.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;other)</code>
-<div class="block">Returns true if the key is equal to the passed in key.</div>
+<div class="block">Returns true if the key is guaranteed to be equal to <code>other</code>.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
@@ -258,9 +258,14 @@ public abstract&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lan
 <li class="blockList">
 <h4>equalsKey</h4>
 <pre>public abstract&nbsp;boolean&nbsp;equalsKey(<a href="../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;other)</pre>
-<div class="block">Returns true if the key is equal to the passed in key.
+<div class="block">Returns true if the key is guaranteed to be equal to <code>other</code>.
 
  <p>Implementations are required to do this in constant time.
+
+ <p>Note: this is allowed to return false even if two keys are guaranteed to represent the same
+ function, but are represented differently. For example, a key is allowed to internally store
+ the number of zero-bytes used as padding when a large number is represented as a byte array,
+ and use this in the comparison.
 
  <p>Note: Tink <code>Key</code> objects should typically not override <code>hashCode</code> (because it
  could risk leaking key material). Hence, they typically also should not override <code>equals</code>.</div>

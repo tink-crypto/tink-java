@@ -198,6 +198,16 @@
 </tr>
 <tbody>
 <tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
+<td class="colLast"><span class="typeNameLabel">HybridPrivateKey.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/hybrid/HybridPrivateKey.html#getOutputPrefix--">getOutputPrefix</a></span>()</code>
+<div class="block">Returns a <a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util"><code>Bytes</code></a> instance, which is prefixed to every ciphertext.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
+<td class="colLast"><span class="typeNameLabel">HpkePublicKey.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/hybrid/HpkePublicKey.html#getOutputPrefix--">getOutputPrefix</a></span>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>abstract <a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
 <td class="colLast"><span class="typeNameLabel">HybridPublicKey.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/hybrid/HybridPublicKey.html#getOutputPrefix--">getOutputPrefix</a></span>()</code>
 <div class="block">Returns a <a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util"><code>Bytes</code></a> instance, which is prefixed to every ciphertext.</div>
@@ -205,8 +215,55 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
-<td class="colLast"><span class="typeNameLabel">HybridPrivateKey.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/hybrid/HybridPrivateKey.html#getOutputPrefix--">getOutputPrefix</a></span>()</code>
-<div class="block">Returns a <a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util"><code>Bytes</code></a> instance, which is prefixed to every ciphertext.</div>
+<td class="colLast"><span class="typeNameLabel">EciesPublicKey.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/hybrid/EciesPublicKey.html#getOutputPrefix--">getOutputPrefix</a></span>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
+<td class="colLast"><span class="typeNameLabel">HpkePublicKey.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/hybrid/HpkePublicKey.html#getPublicKeyBytes--">getPublicKeyBytes</a></span>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
+<td class="colLast"><span class="typeNameLabel">EciesPublicKey.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/hybrid/EciesPublicKey.html#getPublicPointBytes--">getPublicPointBytes</a></span>()</code>
+<div class="block">Returns the underlying public point coordinates as <code>Bytes</code>, using the
+ Octet-String-to-Elliptic-Curve-Point conversion according to https://secg.org/sec1-v2.pdf (for
+ the NIST curves).</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
+<td class="colLast"><span class="typeNameLabel">EciesParameters.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/hybrid/EciesParameters.html#getSalt--">getSalt</a></span>()</code>
+<div class="block">Gets the salt value, which defaults to null if not set.</div>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Methods in <a href="../../../../../../com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a> with parameters of type <a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/hybrid/EciesPublicKey.html" title="class in com.google.crypto.tink.hybrid">EciesPublicKey</a></code></td>
+<td class="colLast"><span class="typeNameLabel">EciesPublicKey.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/hybrid/EciesPublicKey.html#create-com.google.crypto.tink.hybrid.EciesParameters-com.google.crypto.tink.util.Bytes-java.lang.Integer-">create</a></span>(<a href="../../../../../../com/google/crypto/tink/hybrid/EciesParameters.html" title="class in com.google.crypto.tink.hybrid">EciesParameters</a>&nbsp;parameters,
+      <a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a>&nbsp;publicPointBytes,
+      <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&nbsp;idRequirement)</code>
+<div class="block">Creates a new ECIES public key.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/hybrid/HpkePublicKey.html" title="class in com.google.crypto.tink.hybrid">HpkePublicKey</a></code></td>
+<td class="colLast"><span class="typeNameLabel">HpkePublicKey.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/hybrid/HpkePublicKey.html#create-com.google.crypto.tink.hybrid.HpkeParameters-com.google.crypto.tink.util.Bytes-java.lang.Integer-">create</a></span>(<a href="../../../../../../com/google/crypto/tink/hybrid/HpkeParameters.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters</a>&nbsp;parameters,
+      <a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a>&nbsp;publicKeyBytes,
+      <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&nbsp;idRequirement)</code>
+<div class="block">Creates a new HPKE public key.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/hybrid/EciesParameters.Builder.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.Builder</a></code></td>
+<td class="colLast"><span class="typeNameLabel">EciesParameters.Builder.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/hybrid/EciesParameters.Builder.html#setSalt-com.google.crypto.tink.util.Bytes-">setSalt</a></span>(<a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a>&nbsp;salt)</code>
+<div class="block">Defaults to null if not set.</div>
 </td>
 </tr>
 </tbody>
@@ -224,36 +281,42 @@
 </tr>
 <tbody>
 <tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
+<td class="colLast"><span class="typeNameLabel">Util.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/Util.html#checkedToBytesFromPrintableAscii-java.lang.String-">checkedToBytesFromPrintableAscii</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;s)</code>
+<div class="block">Converts a string <code>s</code> to a corresponding <a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util"><code>Bytes</code></a> object.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
 <td class="colLast"><span class="typeNameLabel">ParametersParser.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/ParametersParser.html#getObjectIdentifier--">getObjectIdentifier</a></span>()</code>
 <div class="block">Returns the <code>objectIdentifier</code> for this serialization.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
 <td class="colLast"><span class="typeNameLabel">ProtoParametersSerialization.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/ProtoParametersSerialization.html#getObjectIdentifier--">getObjectIdentifier</a></span>()</code>
 <div class="block">The typeUrl.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
 <td class="colLast"><span class="typeNameLabel">ProtoKeySerialization.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/ProtoKeySerialization.html#getObjectIdentifier--">getObjectIdentifier</a></span>()</code>
 <div class="block">The object identifier.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
 <td class="colLast"><span class="typeNameLabel">Serialization.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/Serialization.html#getObjectIdentifier--">getObjectIdentifier</a></span>()</code>
 <div class="block">Identifies which parsing method to use in the registry.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
 <td class="colLast"><span class="typeNameLabel">KeyParser.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/KeyParser.html#getObjectIdentifier--">getObjectIdentifier</a></span>()</code>
 <div class="block">Returns the <code>objectIdentifier</code> for this serialization.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
 <td class="colLast"><span class="typeNameLabel">Util.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/Util.html#toBytesFromPrintableAscii-java.lang.String-">toBytesFromPrintableAscii</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;s)</code>
 <div class="block">Converts a string <code>s</code> to a corresponding <a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util"><code>Bytes</code></a> object.</div>
@@ -361,29 +424,33 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
-<td class="colLast"><span class="typeNameLabel">RsaSsaPkcs1PublicKey.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/signature/RsaSsaPkcs1PublicKey.html#getOutputPrefix--">getOutputPrefix</a></span>()</code>&nbsp;</td>
+<td class="colLast"><span class="typeNameLabel">RsaSsaPssPublicKey.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/signature/RsaSsaPssPublicKey.html#getOutputPrefix--">getOutputPrefix</a></span>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
-<td class="colLast"><span class="typeNameLabel">Ed25519PublicKey.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/signature/Ed25519PublicKey.html#getOutputPrefix--">getOutputPrefix</a></span>()</code>&nbsp;</td>
+<td class="colLast"><span class="typeNameLabel">RsaSsaPkcs1PublicKey.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/signature/RsaSsaPkcs1PublicKey.html#getOutputPrefix--">getOutputPrefix</a></span>()</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
+<td class="colLast"><span class="typeNameLabel">Ed25519PublicKey.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/signature/Ed25519PublicKey.html#getOutputPrefix--">getOutputPrefix</a></span>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
 <td class="colLast"><span class="typeNameLabel">SignaturePrivateKey.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/signature/SignaturePrivateKey.html#getOutputPrefix--">getOutputPrefix</a></span>()</code>
 <div class="block">Returns a <a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util"><code>Bytes</code></a> instance which is prefixed to every signature.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>abstract <a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
 <td class="colLast"><span class="typeNameLabel">SignaturePublicKey.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/signature/SignaturePublicKey.html#getOutputPrefix--">getOutputPrefix</a></span>()</code>
 <div class="block">Returns a <a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util"><code>Bytes</code></a> instance which is prefixed to every signature.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
 <td class="colLast"><span class="typeNameLabel">EcdsaPublicKey.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/signature/EcdsaPublicKey.html#getOutputPrefix--">getOutputPrefix</a></span>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
 <td class="colLast"><span class="typeNameLabel">Ed25519PublicKey.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/signature/Ed25519PublicKey.html#getPublicKeyBytes--">getPublicKeyBytes</a></span>()</code>&nbsp;</td>
 </tr>
