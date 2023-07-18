@@ -119,7 +119,13 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/KeyTemplate.OutputPrefixType.html" title="enum in com.google.crypto.tink">KeyTemplate.OutputPrefixType</a></code></td>
-<td class="colLast"><span class="typeNameLabel">KeyTemplate.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/KeyTemplate.html#getOutputPrefixType--">getOutputPrefixType</a></span>()</code>&nbsp;</td>
+<td class="colLast"><span class="typeNameLabel">KeyTemplate.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/KeyTemplate.html#getOutputPrefixType--">getOutputPrefixType</a></span>()</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
+<div class="block"><span class="deprecationComment">Instead, operate on the <a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink"><code>Parameters</code></a> object obtained with <a href="../../../../../com/google/crypto/tink/KeyTemplate.html#toParameters--"><code>KeyTemplate.toParameters()</code></a>. If you really need this value, you need to first use
+     TinkProtoParametersFormat to serialize this parameters object, then parse the result with
+     the Tink-internal proto class "KeyTemplate".</span></div>
+</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/KeyTemplate.OutputPrefixType.html" title="enum in com.google.crypto.tink">KeyTemplate.OutputPrefixType</a></code></td>
@@ -177,6 +183,10 @@ the order they are declared.</div>
 </tr>
 <tbody>
 <tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/KeyTemplate.OutputPrefixType.html" title="enum in com.google.crypto.tink">KeyTemplate.OutputPrefixType</a></code></td>
+<td class="colLast"><span class="typeNameLabel">KeyTemplateProtoConverter.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/KeyTemplateProtoConverter.html#getOutputPrefixType-com.google.crypto.tink.KeyTemplate-">getOutputPrefixType</a></span>(<a href="../../../../../com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink">KeyTemplate</a>&nbsp;t)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/KeyTemplate.OutputPrefixType.html" title="enum in com.google.crypto.tink">KeyTemplate.OutputPrefixType</a></code></td>
 <td class="colLast"><span class="typeNameLabel">KeyTemplateProtoConverter.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/KeyTemplateProtoConverter.html#prefixFromProto-com.google.crypto.tink.proto.OutputPrefixType-">prefixFromProto</a></span>(<a href="../../../../../com/google/crypto/tink/proto/OutputPrefixType.html" title="enum in com.google.crypto.tink.proto">OutputPrefixType</a>&nbsp;outputPrefixType)</code>&nbsp;</td>
 </tr>
