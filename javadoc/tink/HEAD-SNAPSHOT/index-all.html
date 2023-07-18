@@ -4660,9 +4660,17 @@
 </div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HybridKeyTemplates.html#createEciesAeadHkdfKeyTemplate-com.google.crypto.tink.proto.EllipticCurveType-com.google.crypto.tink.proto.HashType-com.google.crypto.tink.proto.EcPointFormat-com.google.crypto.tink.proto.KeyTemplate-com.google.crypto.tink.proto.OutputPrefixType-byte:A-">createEciesAeadHkdfKeyTemplate(EllipticCurveType, HashType, EcPointFormat, KeyTemplate, OutputPrefixType, byte[])</a></span> - Static method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HybridKeyTemplates.html" title="class in com.google.crypto.tink.hybrid">HybridKeyTemplates</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>
+<div class="block"><span class="deprecationComment">Use EciesParameters instead.</span></div>
+</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HybridKeyTemplates.html#createEciesAeadHkdfParams-com.google.crypto.tink.proto.EllipticCurveType-com.google.crypto.tink.proto.HashType-com.google.crypto.tink.proto.EcPointFormat-com.google.crypto.tink.proto.KeyTemplate-byte:A-">createEciesAeadHkdfParams(EllipticCurveType, HashType, EcPointFormat, KeyTemplate, byte[])</a></span> - Static method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HybridKeyTemplates.html" title="class in com.google.crypto.tink.hybrid">HybridKeyTemplates</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>
+<div class="block"><span class="deprecationComment">Use EciesParameters instead.</span></div>
+</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/KeyTemplate.html#createFrom-com.google.crypto.tink.Parameters-">createFrom(Parameters)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink">KeyTemplate</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/KeysetHandle.html#createFromKey-com.google.crypto.tink.tinkkey.KeyHandle-com.google.crypto.tink.tinkkey.KeyAccess-">createFromKey(KeyHandle, KeyAccess)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/KeysetHandle.html" title="class in com.google.crypto.tink">KeysetHandle</a></dt>
@@ -11134,13 +11142,21 @@
 <dd>
 <div class="block">Returns a <a href="com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util"><code>Bytes</code></a> instance which is prefixed to every signature.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/KeyTemplateProtoConverter.html#getOutputPrefixType-com.google.crypto.tink.KeyTemplate-">getOutputPrefixType(KeyTemplate)</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/KeyTemplateProtoConverter.html" title="class in com.google.crypto.tink.internal">KeyTemplateProtoConverter</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/ProtoKeySerialization.html#getOutputPrefixType--">getOutputPrefixType()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/ProtoKeySerialization.html" title="class in com.google.crypto.tink.internal">ProtoKeySerialization</a></dt>
 <dd>
 <div class="block">The contents of the field output_prefix_type in the message
  com.google.crypto.tink.proto.Keyset.Key.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/KeyTemplate.html#getOutputPrefixType--">getOutputPrefixType()</a></span> - Method in class com.google.crypto.tink.<a href="com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink">KeyTemplate</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>
+<div class="block"><span class="deprecationComment">Instead, operate on the <a href="com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink"><code>Parameters</code></a> object obtained with <a href="com/google/crypto/tink/KeyTemplate.html#toParameters--"><code>KeyTemplate.toParameters()</code></a>. If you really need this value, you need to first use
+     TinkProtoParametersFormat to serialize this parameters object, then parse the result with
+     the Tink-internal proto class "KeyTemplate".</span></div>
+</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/PrimitiveSet.Entry.html#getOutputPrefixType--">getOutputPrefixType()</a></span> - Method in class com.google.crypto.tink.<a href="com/google/crypto/tink/PrimitiveSet.Entry.html" title="class in com.google.crypto.tink">PrimitiveSet.Entry</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/Keyset.Key.Builder.html#getOutputPrefixType--">getOutputPrefixType()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/Keyset.Key.Builder.html" title="class in com.google.crypto.tink.proto">Keyset.Key.Builder</a></dt>
@@ -16792,6 +16808,10 @@
 </dd>
 <dt><a href="com/google/crypto/tink/proto/HmacPrfParamsOrBuilder.html" title="interface in com.google.crypto.tink.proto"><span class="typeNameLink">HmacPrfParamsOrBuilder</span></a> - Interface in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/mac/internal/HmacProtoSerialization.html" title="class in com.google.crypto.tink.mac.internal"><span class="typeNameLink">HmacProtoSerialization</span></a> - Class in <a href="com/google/crypto/tink/mac/internal/package-summary.html">com.google.crypto.tink.mac.internal</a></dt>
+<dd>
+<div class="block">Methods to serialize and parse <a href="com/google/crypto/tink/mac/HmacKey.html" title="class in com.google.crypto.tink.mac"><code>HmacKey</code></a> objects and <a href="com/google/crypto/tink/mac/HmacParameters.html" title="class in com.google.crypto.tink.mac"><code>HmacParameters</code></a> objects.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacKeyManager.html#hmacSha256HalfDigestTemplate--">hmacSha256HalfDigestTemplate()</a></span> - Static method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacKeyManager.html" title="class in com.google.crypto.tink.mac">HmacKeyManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacKeyManager.html#hmacSha256Template--">hmacSha256Template()</a></span> - Static method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacKeyManager.html" title="class in com.google.crypto.tink.mac">HmacKeyManager</a></dt>
@@ -24876,6 +24896,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/HmacKeyManager.html#register-boolean-">register(boolean)</a></span> - Static method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/HmacKeyManager.html" title="class in com.google.crypto.tink.mac">HmacKeyManager</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/internal/HmacProtoSerialization.html#register--">register()</a></span> - Static method in class com.google.crypto.tink.mac.internal.<a href="com/google/crypto/tink/mac/internal/HmacProtoSerialization.html" title="class in com.google.crypto.tink.mac.internal">HmacProtoSerialization</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/internal/HmacProtoSerialization.html#register-com.google.crypto.tink.internal.MutableSerializationRegistry-">register(MutableSerializationRegistry)</a></span> - Static method in class com.google.crypto.tink.mac.internal.<a href="com/google/crypto/tink/mac/internal/HmacProtoSerialization.html" title="class in com.google.crypto.tink.mac.internal">HmacProtoSerialization</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/MacConfig.html#register--">register()</a></span> - Static method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/MacConfig.html" title="class in com.google.crypto.tink.mac">MacConfig</a></dt>
 <dd>
 <div class="block">Tries to register with the <a href="com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink"><code>Registry</code></a> all instances of <a href="com/google/crypto/tink/Catalogue.html" title="interface in com.google.crypto.tink"><code>Catalogue</code></a> and <a href="com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink"><code>KeyManager</code></a> needed to
@@ -29093,6 +29117,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.HashType.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.HashType.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.HashType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.PointFormat.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.PointFormat.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.PointFormat</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.html" title="class in com.google.crypto.tink.hybrid">EciesParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.Variant.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.Variant.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.Variant</a></dt>
 <dd>&nbsp;</dd>
