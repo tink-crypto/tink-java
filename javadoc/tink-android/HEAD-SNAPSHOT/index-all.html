@@ -3121,6 +3121,8 @@
 <dd>
 <div class="block">Computes message authentication code (MAC) for <code>data</code>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/internal/LegacyFullMac.html#computeMac-byte:A-">computeMac(byte[])</a></span> - Method in class com.google.crypto.tink.mac.internal.<a href="com/google/crypto/tink/mac/internal/LegacyFullMac.html" title="class in com.google.crypto.tink.mac.internal">LegacyFullMac</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/PrfMac.html#computeMac-byte:A-">computeMac(byte[])</a></span> - Method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/PrfMac.html" title="class in com.google.crypto.tink.subtle">PrfMac</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtMac.html#computeMacAndEncode-com.google.crypto.tink.jwt.RawJwt-">computeMacAndEncode(RawJwt)</a></span> - Method in interface com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtMac.html" title="interface in com.google.crypto.tink.jwt">JwtMac</a></dt>
@@ -3254,6 +3256,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/KeyTemplate.html#create-java.lang.String-byte:A-com.google.crypto.tink.KeyTemplate.OutputPrefixType-">create(String, byte[], KeyTemplate.OutputPrefixType)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink">KeyTemplate</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/internal/LegacyFullMac.html#create-com.google.crypto.tink.internal.LegacyProtoKey-">create(LegacyProtoKey)</a></span> - Static method in class com.google.crypto.tink.mac.internal.<a href="com/google/crypto/tink/mac/internal/LegacyFullMac.html" title="class in com.google.crypto.tink.mac.internal">LegacyFullMac</a></dt>
+<dd>
+<div class="block">This method covers the cases where users created their own mac/key classes.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/AesCmacPrfKey.html#create-com.google.crypto.tink.prf.AesCmacPrfParameters-com.google.crypto.tink.util.SecretBytes-">create(AesCmacPrfParameters, SecretBytes)</a></span> - Static method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/AesCmacPrfKey.html" title="class in com.google.crypto.tink.prf">AesCmacPrfKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/AesCmacPrfParameters.html#create-int-">create(int)</a></span> - Static method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/AesCmacPrfParameters.html" title="class in com.google.crypto.tink.prf">AesCmacPrfParameters</a></dt>
@@ -14128,6 +14134,10 @@
 <dd>
 <div class="block"><code>LEGACY = 2;</code></div>
 </dd>
+<dt><a href="com/google/crypto/tink/mac/internal/LegacyFullMac.html" title="class in com.google.crypto.tink.mac.internal"><span class="typeNameLink">LegacyFullMac</span></a> - Class in <a href="com/google/crypto/tink/mac/internal/package-summary.html">com.google.crypto.tink.mac.internal</a></dt>
+<dd>
+<div class="block">Takes an arbitrary raw Mac and makes it a full primitive.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/internal/LegacyProtoKey.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">LegacyProtoKey</span></a> - Class in <a href="com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></dt>
 <dd>
 <div class="block">Implements a Key for legacy types where no actual parser is present.</div>
@@ -22646,6 +22656,8 @@ the order they are declared.</div>
 <dd>
 <div class="block">Verifies that the provided data matches the tag.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/internal/LegacyFullMac.html#verifyMac-byte:A-byte:A-">verifyMac(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.mac.internal.<a href="com/google/crypto/tink/mac/internal/LegacyFullMac.html" title="class in com.google.crypto.tink.mac.internal">LegacyFullMac</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/Mac.html#verifyMac-byte:A-byte:A-">verifyMac(byte[], byte[])</a></span> - Method in interface com.google.crypto.tink.<a href="com/google/crypto/tink/Mac.html" title="interface in com.google.crypto.tink">Mac</a></dt>
 <dd>
 <div class="block">Verifies whether <code>mac</code> is a correct authentication code (MAC) for <code>data</code>.</div>
