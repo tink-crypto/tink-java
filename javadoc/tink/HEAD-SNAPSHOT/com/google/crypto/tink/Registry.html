@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":41,"i1":41,"i2":9,"i3":41,"i4":9,"i5":41,"i6":9,"i7":41,"i8":9,"i9":41,"i10":9,"i11":41,"i12":41,"i13":9,"i14":9,"i15":9,"i16":41,"i17":41,"i18":9,"i19":9,"i20":9,"i21":9,"i22":9,"i23":9,"i24":41,"i25":41,"i26":9,"i27":9,"i28":9,"i29":9};
+var methods = {"i0":41,"i1":41,"i2":9,"i3":41,"i4":41,"i5":41,"i6":9,"i7":41,"i8":9,"i9":41,"i10":9,"i11":41,"i12":41,"i13":9,"i14":41,"i15":9,"i16":41,"i17":41,"i18":9,"i19":9,"i20":9,"i21":9,"i22":9,"i23":9,"i24":41,"i25":41,"i26":9,"i27":9,"i28":9,"i29":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -194,8 +194,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <td class="colFirst"><code>static &lt;P&gt;&nbsp;<a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a>&lt;P&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#getKeyManager-java.lang.String-">getKeyManager</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl)</code>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Use <code>getKeyManager(typeUrl, Primitive.class)</code> or <code>getUntypedKeyManager
-     typeUrl</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">KeyManagers should not be used directly. Use <code>newKeyData</code> or <code>getPrimitive</code> instead.</span></div>
 </div>
 </td>
 </tr>
@@ -203,7 +202,9 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <td class="colFirst"><code>static &lt;P&gt;&nbsp;<a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a>&lt;P&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#getKeyManager-java.lang.String-java.lang.Class-">getKeyManager</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl,
              <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;primitiveClass)</code>
-<div class="block">Returns a <a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink"><code>KeyManager</code></a> for the given <code>typeUrl</code> (if found).</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
+<div class="block"><span class="deprecationComment">KeyManagers should not be used directly. Use <code>newKeyData</code> or <code>getPrimitive</code> instead.</span></div>
+</div>
 </td>
 </tr>
 <tr id="i5" class="rowColor">
@@ -284,7 +285,9 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <tr id="i14" class="altColor">
 <td class="colFirst"><code>static <a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a>&lt;?&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#getUntypedKeyManager-java.lang.String-">getUntypedKeyManager</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl)</code>
-<div class="block">Returns a <a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink"><code>KeyManager</code></a> for the given <code>typeUrl</code> (if found).</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
+<div class="block"><span class="deprecationComment">KeyManagers should not be used directly. Use <code>newKeyData</code> or <code>getPrimitive</code> instead.</span></div>
+</div>
 </td>
 </tr>
 <tr id="i15" class="rowColor">
@@ -635,11 +638,9 @@ public static&nbsp;&lt;P&gt;&nbsp;void&nbsp;registerKeyManager(<a href="https://
 <pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
 public static&nbsp;&lt;P&gt;&nbsp;<a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a>&lt;P&gt;&nbsp;getKeyManager(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl)
                                                    throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">Use <code>getKeyManager(typeUrl, Primitive.class)</code> or <code>getUntypedKeyManager
-     typeUrl</code> instead.</span></div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">KeyManagers should not be used directly. Use <code>newKeyData</code> or <code>getPrimitive</code> instead.</span></div>
+<div class="block">Returns a <a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink"><code>KeyManager</code></a> for the given <code>typeUrl</code> (if found).</div>
 <dl>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>a <a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink"><code>KeyManager</code></a> for the given <code>typeUrl</code> (if found).</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
 </dl>
@@ -651,9 +652,11 @@ public static&nbsp;&lt;P&gt;&nbsp;<a href="../../../../com/google/crypto/tink/Ke
 <ul class="blockList">
 <li class="blockList">
 <h4>getKeyManager</h4>
-<pre>public static&nbsp;&lt;P&gt;&nbsp;<a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a>&lt;P&gt;&nbsp;getKeyManager(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl,
-                                              <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;primitiveClass)
-                                       throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
+public static&nbsp;&lt;P&gt;&nbsp;<a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a>&lt;P&gt;&nbsp;getKeyManager(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl,
+                                                          <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;primitiveClass)
+                                                   throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">KeyManagers should not be used directly. Use <code>newKeyData</code> or <code>getPrimitive</code> instead.</span></div>
 <div class="block">Returns a <a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink"><code>KeyManager</code></a> for the given <code>typeUrl</code> (if found).</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -667,8 +670,10 @@ public static&nbsp;&lt;P&gt;&nbsp;<a href="../../../../com/google/crypto/tink/Ke
 <ul class="blockList">
 <li class="blockList">
 <h4>getUntypedKeyManager</h4>
-<pre>public static&nbsp;<a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a>&lt;?&gt;&nbsp;getUntypedKeyManager(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl)
-                                          throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
+public static&nbsp;<a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a>&lt;?&gt;&nbsp;getUntypedKeyManager(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl)
+                                                      throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">KeyManagers should not be used directly. Use <code>newKeyData</code> or <code>getPrimitive</code> instead.</span></div>
 <div class="block">Returns a <a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink"><code>KeyManager</code></a> for the given <code>typeUrl</code> (if found).</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>

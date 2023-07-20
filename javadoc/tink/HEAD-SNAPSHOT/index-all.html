@@ -10095,13 +10095,14 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/Registry.html#getKeyManager-java.lang.String-">getKeyManager(String)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink">Registry</a></dt>
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="block"><span class="deprecationComment">Use <code>getKeyManager(typeUrl, Primitive.class)</code> or <code>getUntypedKeyManager
-     typeUrl</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">KeyManagers should not be used directly. Use <code>newKeyData</code> or <code>getPrimitive</code> instead.</span></div>
 </div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/Registry.html#getKeyManager-java.lang.String-java.lang.Class-">getKeyManager(String, Class&lt;P&gt;)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink">Registry</a></dt>
 <dd>
-<div class="block">Returns a <a href="com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink"><code>KeyManager</code></a> for the given <code>typeUrl</code> (if found).</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>
+<div class="block"><span class="deprecationComment">KeyManagers should not be used directly. Use <code>newKeyData</code> or <code>getPrimitive</code> instead.</span></div>
+</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/KeyTypeEntry.Builder.html#getKeyManagerVersion--">getKeyManagerVersion()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/KeyTypeEntry.Builder.html" title="class in com.google.crypto.tink.proto">KeyTypeEntry.Builder</a></dt>
 <dd>
@@ -14235,7 +14236,9 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/Registry.html#getUntypedKeyManager-java.lang.String-">getUntypedKeyManager(String)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink">Registry</a></dt>
 <dd>
-<div class="block">Returns a <a href="com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink"><code>KeyManager</code></a> for the given <code>typeUrl</code> (if found).</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>
+<div class="block"><span class="deprecationComment">KeyManagers should not be used directly. Use <code>newKeyData</code> or <code>getPrimitive</code> instead.</span></div>
+</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/util/KeysDownloader.html#getUrl--">getUrl()</a></span> - Method in class com.google.crypto.tink.util.<a href="com/google/crypto/tink/util/KeysDownloader.html" title="class in com.google.crypto.tink.util">KeysDownloader</a></dt>
 <dd>
