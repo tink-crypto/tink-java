@@ -85,6 +85,7 @@ main() {
     time docker pull "${CONTAINER_IMAGE_NAME}"
 
     local docker_opts=(
+      --network="host"
       --mount type=bind,src="${path_to_mount}",dst=/deps
       --workdir=/deps/"${library_to_test}"
       --rm
