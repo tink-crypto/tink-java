@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10};
+var methods = {"i0":9,"i1":9,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -142,43 +142,55 @@ extends <a href="../../../../../com/google/crypto/tink/hybrid/HybridPublicKey.ht
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/hybrid/EciesPublicKey.html" title="class in com.google.crypto.tink.hybrid">EciesPublicKey</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/EciesPublicKey.html#create-com.google.crypto.tink.hybrid.EciesParameters-com.google.crypto.tink.util.Bytes-java.lang.Integer-">create</a></span>(<a href="../../../../../com/google/crypto/tink/hybrid/EciesParameters.html" title="class in com.google.crypto.tink.hybrid">EciesParameters</a>&nbsp;parameters,
-      <a href="../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a>&nbsp;publicPointBytes,
-      <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&nbsp;idRequirement)</code>
-<div class="block">Creates a new ECIES public key.</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/EciesPublicKey.html#createForCurveX25519-com.google.crypto.tink.hybrid.EciesParameters-com.google.crypto.tink.util.Bytes-java.lang.Integer-">createForCurveX25519</a></span>(<a href="../../../../../com/google/crypto/tink/hybrid/EciesParameters.html" title="class in com.google.crypto.tink.hybrid">EciesParameters</a>&nbsp;parameters,
+                    <a href="../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a>&nbsp;publicPointBytes,
+                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&nbsp;idRequirement)</code>
+<div class="block">Creates a new ECIES public key using Curve25519.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/hybrid/EciesPublicKey.html" title="class in com.google.crypto.tink.hybrid">EciesPublicKey</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/EciesPublicKey.html#createForNistCurve-com.google.crypto.tink.hybrid.EciesParameters-java.security.spec.ECPoint-java.lang.Integer-">createForNistCurve</a></span>(<a href="../../../../../com/google/crypto/tink/hybrid/EciesParameters.html" title="class in com.google.crypto.tink.hybrid">EciesParameters</a>&nbsp;parameters,
+                  <a href="https://docs.oracle.com/javase/8/docs/api/java/security/spec/ECPoint.html?is-external=true" title="class or interface in java.security.spec">ECPoint</a>&nbsp;publicPoint,
+                  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&nbsp;idRequirement)</code>
+<div class="block">Creates a new ECIES public key using a NIST Curve.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/EciesPublicKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>
 <div class="block">Returns true if the key is guaranteed to be equal to <code>other</code>.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/EciesPublicKey.html#getIdRequirementOrNull--">getIdRequirementOrNull</a></span>()</code>
 <div class="block">Returns null if this key has no id requirement, otherwise the required id.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/spec/ECPoint.html?is-external=true" title="class or interface in java.security.spec">ECPoint</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/EciesPublicKey.html#getNistCurvePoint--">getNistCurvePoint</a></span>()</code>
+<div class="block">Returns the underlying public point as byte array in case the curve is X25519.</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/EciesPublicKey.html#getOutputPrefix--">getOutputPrefix</a></span>()</code>
 <div class="block">Returns a <a href="../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util"><code>Bytes</code></a> instance, which is prefixed to every ciphertext.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/hybrid/EciesParameters.html" title="class in com.google.crypto.tink.hybrid">EciesParameters</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/EciesPublicKey.html#getParameters--">getParameters</a></span>()</code>
 <div class="block">Returns a <a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink"><code>Parameters</code></a> object containing all the information about the key which is not
  randomly chosen.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/EciesPublicKey.html#getPublicPointBytes--">getPublicPointBytes</a></span>()</code>
-<div class="block">Returns the underlying public point coordinates as <code>Bytes</code>, using the
- Octet-String-to-Elliptic-Curve-Point conversion according to https://secg.org/sec1-v2.pdf (for
- the NIST curves).</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/EciesPublicKey.html#getX25519CurvePointBytes--">getX25519CurvePointBytes</a></span>()</code>
+<div class="block">Returns the underlying public point as EC Point in case the curve is a NIST curve.</div>
 </td>
 </tr>
 </table>
@@ -203,25 +215,22 @@ extends <a href="../../../../../com/google/crypto/tink/hybrid/HybridPublicKey.ht
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="create-com.google.crypto.tink.hybrid.EciesParameters-com.google.crypto.tink.util.Bytes-java.lang.Integer-">
+<a name="createForCurveX25519-com.google.crypto.tink.hybrid.EciesParameters-com.google.crypto.tink.util.Bytes-java.lang.Integer-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>create</h4>
-<pre>public static&nbsp;<a href="../../../../../com/google/crypto/tink/hybrid/EciesPublicKey.html" title="class in com.google.crypto.tink.hybrid">EciesPublicKey</a>&nbsp;create(<a href="../../../../../com/google/crypto/tink/hybrid/EciesParameters.html" title="class in com.google.crypto.tink.hybrid">EciesParameters</a>&nbsp;parameters,
-                                    <a href="../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a>&nbsp;publicPointBytes,
-                                    <a href="https://docs.oracle.com/javase/8/docs/api/javax/annotation/Nullable.html?is-external=true" title="class or interface in javax.annotation">@Nullable</a>
-                                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&nbsp;idRequirement)
-                             throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block">Creates a new ECIES public key.</div>
+<h4>createForCurveX25519</h4>
+<pre>public static&nbsp;<a href="../../../../../com/google/crypto/tink/hybrid/EciesPublicKey.html" title="class in com.google.crypto.tink.hybrid">EciesPublicKey</a>&nbsp;createForCurveX25519(<a href="../../../../../com/google/crypto/tink/hybrid/EciesParameters.html" title="class in com.google.crypto.tink.hybrid">EciesParameters</a>&nbsp;parameters,
+                                                  <a href="../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a>&nbsp;publicPointBytes,
+                                                  <a href="https://docs.oracle.com/javase/8/docs/api/javax/annotation/Nullable.html?is-external=true" title="class or interface in javax.annotation">@Nullable</a>
+                                                  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&nbsp;idRequirement)
+                                           throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<div class="block">Creates a new ECIES public key using Curve25519.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>parameters</code> - ECIES parameters for the public key</dd>
-<dd><code>publicPointBytes</code> - public point coordinates in bytes. For the NIST curves, the public
-     point is encoded using the Elliptic-Curve-Point-to-Octet-String conversion according to
-     https://secg.org/sec1-v2.pdf. For X25519, the encoding is just the identity function, since
-     these curves already use fixed-length byte strings for public keys.</dd>
+<dd><code>publicPointBytes</code> - public point coordinates in bytes.</dd>
 <dd><code>idRequirement</code> - key id requirement, which must be null for <code>NO_PREFIX</code> variant and
      non-null for all other variants</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -229,16 +238,53 @@ extends <a href="../../../../../com/google/crypto/tink/hybrid/HybridPublicKey.ht
 </dl>
 </li>
 </ul>
-<a name="getPublicPointBytes--">
+<a name="createForNistCurve-com.google.crypto.tink.hybrid.EciesParameters-java.security.spec.ECPoint-java.lang.Integer-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getPublicPointBytes</h4>
-<pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a>&nbsp;getPublicPointBytes()</pre>
-<div class="block">Returns the underlying public point coordinates as <code>Bytes</code>, using the
- Octet-String-to-Elliptic-Curve-Point conversion according to https://secg.org/sec1-v2.pdf (for
- the NIST curves). For X25519, the decoding is just the identity function.</div>
+<h4>createForNistCurve</h4>
+<pre>public static&nbsp;<a href="../../../../../com/google/crypto/tink/hybrid/EciesPublicKey.html" title="class in com.google.crypto.tink.hybrid">EciesPublicKey</a>&nbsp;createForNistCurve(<a href="../../../../../com/google/crypto/tink/hybrid/EciesParameters.html" title="class in com.google.crypto.tink.hybrid">EciesParameters</a>&nbsp;parameters,
+                                                <a href="https://docs.oracle.com/javase/8/docs/api/java/security/spec/ECPoint.html?is-external=true" title="class or interface in java.security.spec">ECPoint</a>&nbsp;publicPoint,
+                                                <a href="https://docs.oracle.com/javase/8/docs/api/javax/annotation/Nullable.html?is-external=true" title="class or interface in javax.annotation">@Nullable</a>
+                                                <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&nbsp;idRequirement)
+                                         throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<div class="block">Creates a new ECIES public key using a NIST Curve.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>parameters</code> - ECIES parameters for the public key</dd>
+<dd><code>publicPoint</code> - public point as a <code>ECPoint</code>.</dd>
+<dd><code>idRequirement</code> - key id requirement, which must be null for <code>NO_PREFIX</code> variant and
+     non-null for all other variants</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getNistCurvePoint--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getNistCurvePoint</h4>
+<pre><a href="https://docs.oracle.com/javase/8/docs/api/javax/annotation/Nullable.html?is-external=true" title="class or interface in javax.annotation">@Nullable</a>
+public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/security/spec/ECPoint.html?is-external=true" title="class or interface in java.security.spec">ECPoint</a>&nbsp;getNistCurvePoint()</pre>
+<div class="block">Returns the underlying public point as byte array in case the curve is X25519.
+
+ <p>Returns null For NIST curves.</div>
+</li>
+</ul>
+<a name="getX25519CurvePointBytes--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getX25519CurvePointBytes</h4>
+<pre><a href="https://docs.oracle.com/javase/8/docs/api/javax/annotation/Nullable.html?is-external=true" title="class or interface in javax.annotation">@Nullable</a>
+public&nbsp;<a href="../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a>&nbsp;getX25519CurvePointBytes()</pre>
+<div class="block">Returns the underlying public point as EC Point in case the curve is a NIST curve.
+
+ <p>Returns null for X25519 curves.</div>
 </li>
 </ul>
 <a name="getOutputPrefix--">
