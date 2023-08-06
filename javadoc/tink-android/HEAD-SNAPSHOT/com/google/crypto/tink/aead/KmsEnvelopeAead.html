@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":10,"i2":10,"i3":9};
+var methods = {"i0":10,"i1":10,"i2":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -168,27 +168,20 @@ implements <a href="../../../../../com/google/crypto/tink/Aead.html" title="inte
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/KmsEnvelopeAead.html#create-com.google.crypto.tink.aead.AeadParameters-com.google.crypto.tink.Aead-">create</a></span>(<a href="../../../../../com/google/crypto/tink/aead/AeadParameters.html" title="class in com.google.crypto.tink.aead">AeadParameters</a>&nbsp;dekParameters,
-      <a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a>&nbsp;remote)</code>
-<div class="block">Creates a new instance of Tink's KMS Envelope AEAD.</div>
-</td>
-</tr>
-<tr id="i1" class="rowColor">
 <td class="colFirst"><code>byte[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/KmsEnvelopeAead.html#decrypt-byte:A-byte:A-">decrypt</a></span>(byte[]&nbsp;ciphertext,
        byte[]&nbsp;associatedData)</code>
 <div class="block">Decrypts <code>ciphertext</code> with <code>associatedData</code> as associated authenticated data.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>byte[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/KmsEnvelopeAead.html#encrypt-byte:A-byte:A-">encrypt</a></span>(byte[]&nbsp;plaintext,
        byte[]&nbsp;associatedData)</code>
 <div class="block">Encrypts <code>plaintext</code> with <code>associatedData</code> as associated authenticated data.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/KmsEnvelopeAead.html#isSupportedDekKeyType-java.lang.String-">isSupportedDekKeyType</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;dekKeyTypeUrl)</code>&nbsp;</td>
 </tr>
@@ -239,26 +232,6 @@ implements <a href="../../../../../com/google/crypto/tink/Aead.html" title="inte
 <li class="blockList">
 <h4>isSupportedDekKeyType</h4>
 <pre>public static&nbsp;boolean&nbsp;isSupportedDekKeyType(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;dekKeyTypeUrl)</pre>
-</li>
-</ul>
-<a name="create-com.google.crypto.tink.aead.AeadParameters-com.google.crypto.tink.Aead-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>create</h4>
-<pre>public static&nbsp;<a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a>&nbsp;create(<a href="../../../../../com/google/crypto/tink/aead/AeadParameters.html" title="class in com.google.crypto.tink.aead">AeadParameters</a>&nbsp;dekParameters,
-                          <a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a>&nbsp;remote)
-                   throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block">Creates a new instance of Tink's KMS Envelope AEAD.
-
- <p><code>dekParameters</code> must be any of these Tink AEAD parameters (any other will be
- rejected): <a href="../../../../../com/google/crypto/tink/aead/AesGcmParameters.html" title="class in com.google.crypto.tink.aead"><code>AesGcmParameters</code></a>, <a href="../../../../../com/google/crypto/tink/aead/ChaCha20Poly1305Parameters.html" title="class in com.google.crypto.tink.aead"><code>ChaCha20Poly1305Parameters</code></a>, <a href="../../../../../com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.html" title="class in com.google.crypto.tink.aead"><code>XChaCha20Poly1305Parameters</code></a>, <a href="../../../../../com/google/crypto/tink/aead/AesCtrHmacAeadParameters.html" title="class in com.google.crypto.tink.aead"><code>AesCtrHmacAeadParameters</code></a>, <a href="../../../../../com/google/crypto/tink/aead/AesGcmSivParameters.html" title="class in com.google.crypto.tink.aead"><code>AesGcmSivParameters</code></a>, or
- <a href="../../../../../com/google/crypto/tink/aead/AesEaxParameters.html" title="class in com.google.crypto.tink.aead"><code>AesEaxParameters</code></a>.</div>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
-</dl>
 </li>
 </ul>
 <a name="encrypt-byte:A-byte:A-">
