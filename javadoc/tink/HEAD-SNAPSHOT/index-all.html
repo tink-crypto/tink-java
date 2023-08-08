@@ -1592,6 +1592,8 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.html#allowKidAbsent--">allowKidAbsent()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPkcs1Parameters</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.html#allowKidAbsent--">allowKidAbsent()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtSignatureParameters.html#allowKidAbsent--">allowKidAbsent()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtSignatureParameters.html" title="class in com.google.crypto.tink.jwt">JwtSignatureParameters</a></dt>
 <dd>
 <div class="block">If true, tokens without <code>"kid"</code> header are allowed when verifying a token.</div>
@@ -1642,6 +1644,11 @@
  keyset.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.KidStrategy.html#BASE64_ENCODED_KEY_ID">BASE64_ENCODED_KEY_ID</a></span> - Static variable in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.KidStrategy.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPkcs1Parameters.KidStrategy</a></dt>
+<dd>
+<div class="block">The "kid" is the URL safe (RFC 4648 Section 5) base64-encoded big-endian key_id in the
+ keyset.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.KidStrategy.html#BASE64_ENCODED_KEY_ID">BASE64_ENCODED_KEY_ID</a></span> - Static variable in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.KidStrategy.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters.KidStrategy</a></dt>
 <dd>
 <div class="block">The "kid" is the URL safe (RFC 4648 Section 5) base64-encoded big-endian key_id in the
  keyset.</div>
@@ -1706,6 +1713,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1PrivateKey.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1PrivateKey.Builder.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPkcs1PrivateKey.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1PublicKey.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1PublicKey.Builder.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPkcs1PublicKey.Builder</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.Builder.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtValidator.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtValidator.Builder.html" title="class in com.google.crypto.tink.jwt">JwtValidator.Builder</a></dt>
 <dd>&nbsp;</dd>
@@ -2014,6 +2023,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1PrivateKey.html#builder--">builder()</a></span> - Static method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1PrivateKey.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPkcs1PrivateKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1PublicKey.html#builder--">builder()</a></span> - Static method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1PublicKey.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPkcs1PublicKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.html#builder--">builder()</a></span> - Static method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/PrfBasedKeyDerivationParameters.html#builder--">builder()</a></span> - Static method in class com.google.crypto.tink.keyderivation.<a href="com/google/crypto/tink/keyderivation/PrfBasedKeyDerivationParameters.html" title="class in com.google.crypto.tink.keyderivation">PrfBasedKeyDerivationParameters</a></dt>
 <dd>&nbsp;</dd>
@@ -4870,6 +4881,10 @@
 <dd>
 <div class="block">The "kid" is fixed.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.KidStrategy.html#CUSTOM">CUSTOM</a></span> - Static variable in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.KidStrategy.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters.KidStrategy</a></dt>
+<dd>
+<div class="block">The "kid" is fixed.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/JwtEcdsaPublicKey.html#CUSTOM_KID_FIELD_NUMBER">CUSTOM_KID_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/JwtEcdsaPublicKey.html" title="class in com.google.crypto.tink.proto">JwtEcdsaPublicKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/JwtHmacKey.html#CUSTOM_KID_FIELD_NUMBER">CUSTOM_KID_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/JwtHmacKey.html" title="class in com.google.crypto.tink.proto">JwtHmacKey</a></dt>
@@ -5963,6 +5978,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPkcs1Parameters</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/PrfBasedKeyDerivationParameters.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class com.google.crypto.tink.keyderivation.<a href="com/google/crypto/tink/keyderivation/PrfBasedKeyDerivationParameters.html" title="class in com.google.crypto.tink.keyderivation">PrfBasedKeyDerivationParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/AesCmacParameters.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/AesCmacParameters.html" title="class in com.google.crypto.tink.mac">AesCmacParameters</a></dt>
@@ -6343,6 +6360,8 @@
 <dl>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.html#F4">F4</a></span> - Static variable in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPkcs1Parameters</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.html#F4">F4</a></span> - Static variable in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPkcs1Parameters.html#F4">F4</a></span> - Static variable in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPkcs1Parameters.html" title="class in com.google.crypto.tink.signature">RsaSsaPkcs1Parameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssParameters.html#F4">F4</a></span> - Static variable in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssParameters.html" title="class in com.google.crypto.tink.signature">RsaSsaPssParameters</a></dt>
@@ -6693,6 +6712,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtHmacParameters.html#getAlgorithm--">getAlgorithm()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtHmacParameters.html" title="class in com.google.crypto.tink.jwt">JwtHmacParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.html#getAlgorithm--">getAlgorithm()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPkcs1Parameters</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.html#getAlgorithm--">getAlgorithm()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/JwtEcdsaKeyFormat.Builder.html#getAlgorithm--">getAlgorithm()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/JwtEcdsaKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">JwtEcdsaKeyFormat.Builder</a></dt>
 <dd>
@@ -10888,6 +10909,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.html#getKidStrategy--">getKidStrategy()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPkcs1Parameters</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.html#getKidStrategy--">getKidStrategy()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/InternalConfiguration.html#getLegacyPrimitive-com.google.crypto.tink.proto.KeyData-java.lang.Class-">getLegacyPrimitive(KeyData, Class&lt;P&gt;)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/InternalConfiguration.html" title="class in com.google.crypto.tink.internal">InternalConfiguration</a></dt>
 <dd>
 <div class="block">Creates a primitive from a key in the old (proto) format.</div>
@@ -10957,6 +10980,8 @@
 <div class="block">Returns the modulus of the field used by the curve specified in ecParams.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.html#getModulusSizeBits--">getModulusSizeBits()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPkcs1Parameters</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.html#getModulusSizeBits--">getModulusSizeBits()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPkcs1Parameters.html#getModulusSizeBits--">getModulusSizeBits()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPkcs1Parameters.html" title="class in com.google.crypto.tink.signature">RsaSsaPkcs1Parameters</a></dt>
 <dd>&nbsp;</dd>
@@ -13049,6 +13074,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.html#getPublicExponent--">getPublicExponent()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPkcs1Parameters</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.html#getPublicExponent--">getPublicExponent()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/JwtRsaSsaPkcs1KeyFormat.Builder.html#getPublicExponent--">getPublicExponent()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/JwtRsaSsaPkcs1KeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">JwtRsaSsaPkcs1KeyFormat.Builder</a></dt>
 <dd>
 <div class="block"><code>bytes public_exponent = 4;</code></div>
@@ -13853,6 +13880,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtHmacParameters.Algorithm.html#getStandardName--">getStandardName()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtHmacParameters.Algorithm.html" title="class in com.google.crypto.tink.jwt">JwtHmacParameters.Algorithm</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.Algorithm.html#getStandardName--">getStandardName()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.Algorithm.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPkcs1Parameters.Algorithm</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.Algorithm.html#getStandardName--">getStandardName()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.Algorithm.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters.Algorithm</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/KeysetHandle.Builder.Entry.html#getStatus--">getStatus()</a></span> - Method in class com.google.crypto.tink.<a href="com/google/crypto/tink/KeysetHandle.Builder.Entry.html" title="class in com.google.crypto.tink">KeysetHandle.Builder.Entry</a></dt>
 <dd>
@@ -15572,6 +15601,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.html#hashCode--">hashCode()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPkcs1Parameters</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.html#hashCode--">hashCode()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/PrfBasedKeyDerivationParameters.html#hashCode--">hashCode()</a></span> - Method in class com.google.crypto.tink.keyderivation.<a href="com/google/crypto/tink/keyderivation/PrfBasedKeyDerivationParameters.html" title="class in com.google.crypto.tink.keyderivation">PrfBasedKeyDerivationParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/AesCmacParameters.html#hashCode--">hashCode()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/AesCmacParameters.html" title="class in com.google.crypto.tink.mac">AesCmacParameters</a></dt>
@@ -15864,6 +15895,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtHmacParameters.html#hasIdRequirement--">hasIdRequirement()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtHmacParameters.html" title="class in com.google.crypto.tink.jwt">JwtHmacParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.html#hasIdRequirement--">hasIdRequirement()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPkcs1Parameters</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.html#hasIdRequirement--">hasIdRequirement()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/KeyDerivationParameters.html#hasIdRequirement--">hasIdRequirement()</a></span> - Method in class com.google.crypto.tink.keyderivation.<a href="com/google/crypto/tink/keyderivation/KeyDerivationParameters.html" title="class in com.google.crypto.tink.keyderivation">KeyDerivationParameters</a></dt>
 <dd>
@@ -17212,6 +17245,10 @@
 <dd>
 <div class="block">The "kid" header is ignored.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.KidStrategy.html#IGNORED">IGNORED</a></span> - Static variable in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.KidStrategy.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters.KidStrategy</a></dt>
+<dd>
+<div class="block">The "kid" header is ignored.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtValidator.Builder.html#ignoreIssuer--">ignoreIssuer()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtValidator.Builder.html" title="class in com.google.crypto.tink.jwt">JwtValidator.Builder</a></dt>
 <dd>
 <div class="block">Lets the validator ignore the <code>iss</code> claim.</div>
@@ -18545,6 +18582,22 @@
 </dd>
 <dt><a href="com/google/crypto/tink/proto/JwtRsaSsaPssKeyFormatOrBuilder.html" title="interface in com.google.crypto.tink.proto"><span class="typeNameLink">JwtRsaSsaPssKeyFormatOrBuilder</span></a> - Interface in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.html" title="class in com.google.crypto.tink.jwt"><span class="typeNameLink">JwtRsaSsaPssParameters</span></a> - Class in <a href="com/google/crypto/tink/jwt/package-summary.html">com.google.crypto.tink.jwt</a></dt>
+<dd>
+<div class="block">Describes the parameters of a <code>JwtRsaSsaPssPublicKey</code> and <code>JwtRsaSsaPssPrivateKey</code>.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.Algorithm.html" title="class in com.google.crypto.tink.jwt"><span class="typeNameLink">JwtRsaSsaPssParameters.Algorithm</span></a> - Class in <a href="com/google/crypto/tink/jwt/package-summary.html">com.google.crypto.tink.jwt</a></dt>
+<dd>
+<div class="block">The algorithm to be used for the signature computation.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.Builder.html" title="class in com.google.crypto.tink.jwt"><span class="typeNameLink">JwtRsaSsaPssParameters.Builder</span></a> - Class in <a href="com/google/crypto/tink/jwt/package-summary.html">com.google.crypto.tink.jwt</a></dt>
+<dd>
+<div class="block">Builds a new JwtRsaSsaPssParameters instance.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.KidStrategy.html" title="class in com.google.crypto.tink.jwt"><span class="typeNameLink">JwtRsaSsaPssParameters.KidStrategy</span></a> - Class in <a href="com/google/crypto/tink/jwt/package-summary.html">com.google.crypto.tink.jwt</a></dt>
+<dd>
+<div class="block">Specifies how the "kid" header is handled.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/proto/JwtRsaSsaPssPrivateKey.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">JwtRsaSsaPssPrivateKey</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>
 <div class="block">
@@ -24687,15 +24740,27 @@
 <dd>
 <div class="block">Represents a <code>Parameters</code> object serialized with binary protobuf Serialization.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.Algorithm.html#PS256">PS256</a></span> - Static variable in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.Algorithm.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters.Algorithm</a></dt>
+<dd>
+<div class="block">RSASSA-PSS using SHA-256 and MGF1 with SHA-256</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/JwtRsaSsaPssAlgorithm.html#PS256_VALUE">PS256_VALUE</a></span> - Static variable in enum com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/JwtRsaSsaPssAlgorithm.html" title="enum in com.google.crypto.tink.proto">JwtRsaSsaPssAlgorithm</a></dt>
 <dd>
 <div class="block">
  RSASSA-PSS using SHA-256 and MGF1 with SHA-256</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.Algorithm.html#PS384">PS384</a></span> - Static variable in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.Algorithm.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters.Algorithm</a></dt>
+<dd>
+<div class="block">RSASSA-PSS using SHA-384 and MGF1 with SHA-384</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/JwtRsaSsaPssAlgorithm.html#PS384_VALUE">PS384_VALUE</a></span> - Static variable in enum com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/JwtRsaSsaPssAlgorithm.html" title="enum in com.google.crypto.tink.proto">JwtRsaSsaPssAlgorithm</a></dt>
 <dd>
 <div class="block">
  RSASSA-PSS using SHA-384 and MGF1 with SHA-384</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.Algorithm.html#PS512">PS512</a></span> - Static variable in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.Algorithm.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters.Algorithm</a></dt>
+<dd>
+<div class="block">RSASSA-PSS using SHA-512 and MGF1 with SHA-512</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/JwtRsaSsaPssAlgorithm.html#PS512_VALUE">PS512_VALUE</a></span> - Static variable in enum com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/JwtRsaSsaPssAlgorithm.html" title="enum in com.google.crypto.tink.proto">JwtRsaSsaPssAlgorithm</a></dt>
 <dd>
@@ -25946,6 +26011,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.Builder.html#setAlgorithm-com.google.crypto.tink.jwt.JwtRsaSsaPkcs1Parameters.Algorithm-">setAlgorithm(JwtRsaSsaPkcs1Parameters.Algorithm)</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.Builder.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPkcs1Parameters.Builder</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.Builder.html#setAlgorithm-com.google.crypto.tink.jwt.JwtRsaSsaPssParameters.Algorithm-">setAlgorithm(JwtRsaSsaPssParameters.Algorithm)</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.Builder.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters.Builder</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/JwtEcdsaKeyFormat.Builder.html#setAlgorithm-com.google.crypto.tink.proto.JwtEcdsaAlgorithm-">setAlgorithm(JwtEcdsaAlgorithm)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/JwtEcdsaKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">JwtEcdsaKeyFormat.Builder</a></dt>
 <dd>
 <div class="block"><code>.google.crypto.tink.JwtEcdsaAlgorithm algorithm = 2;</code></div>
@@ -27062,6 +27129,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.Builder.html#setKidStrategy-com.google.crypto.tink.jwt.JwtRsaSsaPkcs1Parameters.KidStrategy-">setKidStrategy(JwtRsaSsaPkcs1Parameters.KidStrategy)</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.Builder.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPkcs1Parameters.Builder</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.Builder.html#setKidStrategy-com.google.crypto.tink.jwt.JwtRsaSsaPssParameters.KidStrategy-">setKidStrategy(JwtRsaSsaPssParameters.KidStrategy)</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.Builder.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters.Builder</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/RsaSsaPssParams.Builder.html#setMgf1Hash-com.google.crypto.tink.proto.HashType-">setMgf1Hash(HashType)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/RsaSsaPssParams.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssParams.Builder</a></dt>
 <dd>
 <div class="block">
@@ -27083,6 +27152,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssPublicKey.Builder.html#setModulus-java.math.BigInteger-">setModulus(BigInteger)</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssPublicKey.Builder.html" title="class in com.google.crypto.tink.signature">RsaSsaPssPublicKey.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.Builder.html#setModulusSizeBits-int-">setModulusSizeBits(int)</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.Builder.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPkcs1Parameters.Builder</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.Builder.html#setModulusSizeBits-int-">setModulusSizeBits(int)</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.Builder.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPkcs1Parameters.Builder.html#setModulusSizeBits-int-">setModulusSizeBits(int)</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPkcs1Parameters.Builder.html" title="class in com.google.crypto.tink.signature">RsaSsaPkcs1Parameters.Builder</a></dt>
 <dd>&nbsp;</dd>
@@ -27582,6 +27653,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/EcdsaPrivateKey.Builder.html#setPrivateValue-com.google.crypto.tink.util.SecretBigInteger-">setPrivateValue(SecretBigInteger)</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/EcdsaPrivateKey.Builder.html" title="class in com.google.crypto.tink.signature">EcdsaPrivateKey.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.Builder.html#setPublicExponent-java.math.BigInteger-">setPublicExponent(BigInteger)</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.Builder.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPkcs1Parameters.Builder</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.Builder.html#setPublicExponent-java.math.BigInteger-">setPublicExponent(BigInteger)</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.Builder.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/JwtRsaSsaPkcs1KeyFormat.Builder.html#setPublicExponent-com.google.protobuf.ByteString-">setPublicExponent(ByteString)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/JwtRsaSsaPkcs1KeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">JwtRsaSsaPkcs1KeyFormat.Builder</a></dt>
 <dd>
@@ -29363,6 +29436,12 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.KidStrategy.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.KidStrategy.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPkcs1Parameters.KidStrategy</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1Parameters.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPkcs1Parameters</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.Algorithm.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.Algorithm.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters.Algorithm</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.KidStrategy.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.KidStrategy.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters.KidStrategy</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtValidator.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtValidator.html" title="class in com.google.crypto.tink.jwt">JwtValidator</a></dt>
 <dd>
