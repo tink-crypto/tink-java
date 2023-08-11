@@ -179,75 +179,81 @@
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><a href="../../../../../com/google/crypto/tink/hybrid/HpkeProtoSerialization.html" title="class in com.google.crypto.tink.hybrid">HpkeProtoSerialization</a></td>
+<td class="colLast">
+<div class="block">Methods to serialize and parse <a href="../../../../../com/google/crypto/tink/hybrid/HpkePrivateKey.html" title="class in com.google.crypto.tink.hybrid"><code>HpkePrivateKey</code></a>, <a href="../../../../../com/google/crypto/tink/hybrid/HpkePublicKey.html" title="class in com.google.crypto.tink.hybrid"><code>HpkePublicKey</code></a>, and <a href="../../../../../com/google/crypto/tink/hybrid/HpkeParameters.html" title="class in com.google.crypto.tink.hybrid"><code>HpkeParameters</code></a> objects.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../../com/google/crypto/tink/hybrid/HpkePublicKey.html" title="class in com.google.crypto.tink.hybrid">HpkePublicKey</a></td>
 <td class="colLast">
 <div class="block">Representation of the encryption function for an HPKE hybrid encryption primitive.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../../com/google/crypto/tink/hybrid/HybridConfig.html" title="class in com.google.crypto.tink.hybrid">HybridConfig</a></td>
 <td class="colLast">
 <div class="block">Static methods and constants for registering with the <a href="../../../../../com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink"><code>Registry</code></a> all
  instances of <a href="../../../../../com/google/crypto/tink/HybridEncrypt.html" title="interface in com.google.crypto.tink"><code>HybridEncrypt</code></a> and <a href="../../../../../com/google/crypto/tink/HybridDecrypt.html" title="interface in com.google.crypto.tink"><code>HybridDecrypt</code></a> key types supported in a particular release of Tink.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../../com/google/crypto/tink/hybrid/HybridDecryptConfig.html" title="class in com.google.crypto.tink.hybrid">HybridDecryptConfig</a></td>
 <td class="colLast">Deprecated
 <div class="block"><span class="deprecationComment">use <a href="../../../../../com/google/crypto/tink/Config.html" title="class in com.google.crypto.tink"><code>Config</code></a> and <a href="../../../../../com/google/crypto/tink/hybrid/HybridConfig.html" title="class in com.google.crypto.tink.hybrid"><code>HybridConfig</code></a></span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../../com/google/crypto/tink/hybrid/HybridDecryptFactory.html" title="class in com.google.crypto.tink.hybrid">HybridDecryptFactory</a></td>
 <td class="colLast">Deprecated
 <div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(HybridDecrypt.class)</code> after registering the
      <code>HybridDecryptWrapper</code> instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../../com/google/crypto/tink/hybrid/HybridDecryptWrapper.html" title="class in com.google.crypto.tink.hybrid">HybridDecryptWrapper</a></td>
 <td class="colLast">
 <div class="block">The implementation of <code>PrimitiveWrapper&lt;HybridDecrypt&gt;</code>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../../com/google/crypto/tink/hybrid/HybridEncryptConfig.html" title="class in com.google.crypto.tink.hybrid">HybridEncryptConfig</a></td>
 <td class="colLast">Deprecated
 <div class="block"><span class="deprecationComment">use <a href="../../../../../com/google/crypto/tink/Config.html" title="class in com.google.crypto.tink"><code>Config</code></a> and <a href="../../../../../com/google/crypto/tink/hybrid/HybridConfig.html" title="class in com.google.crypto.tink.hybrid"><code>HybridConfig</code></a></span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../../com/google/crypto/tink/hybrid/HybridEncryptFactory.html" title="class in com.google.crypto.tink.hybrid">HybridEncryptFactory</a></td>
 <td class="colLast">Deprecated
 <div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(HybridEncrypt.class)</code> after registering the
      <code>HybridEncryptWrapper</code> instead.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../../com/google/crypto/tink/hybrid/HybridEncryptWrapper.html" title="class in com.google.crypto.tink.hybrid">HybridEncryptWrapper</a></td>
 <td class="colLast">
 <div class="block">The implementation of <code>PrimitiveWrapper&lt;HybridEncrypt&gt;</code>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../../com/google/crypto/tink/hybrid/HybridKeyTemplates.html" title="class in com.google.crypto.tink.hybrid">HybridKeyTemplates</a></td>
 <td class="colLast">
 <div class="block">Pre-generated <a href="../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> for <code>HybridDecrypt</code> and <code>HybridEncrypt</code> primitives.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../../com/google/crypto/tink/hybrid/HybridParameters.html" title="class in com.google.crypto.tink.hybrid">HybridParameters</a></td>
 <td class="colLast">
 <div class="block">Represents a description of a <a href="../../../../../com/google/crypto/tink/hybrid/HybridPrivateKey.html" title="class in com.google.crypto.tink.hybrid"><code>HybridPrivateKey</code></a> and the corresponding <a href="../../../../../com/google/crypto/tink/hybrid/HybridPublicKey.html" title="class in com.google.crypto.tink.hybrid"><code>HybridPublicKey</code></a> excluding the randomly chosen key material.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../../com/google/crypto/tink/hybrid/HybridPrivateKey.html" title="class in com.google.crypto.tink.hybrid">HybridPrivateKey</a></td>
 <td class="colLast">
 <div class="block">Representation of the decryption function for a hybrid encryption primitive.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../../com/google/crypto/tink/hybrid/HybridPublicKey.html" title="class in com.google.crypto.tink.hybrid">HybridPublicKey</a></td>
 <td class="colLast">
 <div class="block">Representation of the encryption function for a hybrid encryption primitive.</div>
