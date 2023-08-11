@@ -12891,6 +12891,10 @@
 <dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/proto/HpkePrivateKeyOrBuilder.html" title="interface in com.google.crypto.tink.proto"><span class="typeNameLink">HpkePrivateKeyOrBuilder</span></a> - Interface in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/hybrid/HpkeProtoSerialization.html" title="class in com.google.crypto.tink.hybrid"><span class="typeNameLink">HpkeProtoSerialization</span></a> - Class in <a href="com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a></dt>
+<dd>
+<div class="block">Methods to serialize and parse <a href="com/google/crypto/tink/hybrid/HpkePrivateKey.html" title="class in com.google.crypto.tink.hybrid"><code>HpkePrivateKey</code></a>, <a href="com/google/crypto/tink/hybrid/HpkePublicKey.html" title="class in com.google.crypto.tink.hybrid"><code>HpkePublicKey</code></a>, and <a href="com/google/crypto/tink/hybrid/HpkeParameters.html" title="class in com.google.crypto.tink.hybrid"><code>HpkeParameters</code></a> objects.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/hybrid/HpkePublicKey.html" title="class in com.google.crypto.tink.hybrid"><span class="typeNameLink">HpkePublicKey</span></a> - Class in <a href="com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a></dt>
 <dd>
 <div class="block">Representation of the encryption function for an HPKE hybrid encryption primitive.</div>
@@ -18830,6 +18834,14 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/DeterministicAeadWrapper.html#register--">register()</a></span> - Static method in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/DeterministicAeadWrapper.html" title="class in com.google.crypto.tink.daead">DeterministicAeadWrapper</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeProtoSerialization.html#register--">register()</a></span> - Static method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeProtoSerialization.html" title="class in com.google.crypto.tink.hybrid">HpkeProtoSerialization</a></dt>
+<dd>
+<div class="block">Registers previously defined parser/serializer objects into a global, mutable registry.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkeProtoSerialization.html#register-com.google.crypto.tink.internal.MutableSerializationRegistry-">register(MutableSerializationRegistry)</a></span> - Static method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkeProtoSerialization.html" title="class in com.google.crypto.tink.hybrid">HpkeProtoSerialization</a></dt>
+<dd>
+<div class="block">Registers previously defined parser/serializer objects into a given registry.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HybridConfig.html#register--">register()</a></span> - Static method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HybridConfig.html" title="class in com.google.crypto.tink.hybrid">HybridConfig</a></dt>
 <dd>
 <div class="block">Tries to register with the <a href="com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink"><code>Registry</code></a> all instances of <a href="com/google/crypto/tink/Catalogue.html" title="interface in com.google.crypto.tink"><code>Catalogue</code></a> needed to handle HybridDecrypt and HybridEncrypt key types
