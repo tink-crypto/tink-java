@@ -144,7 +144,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <tr id="i2" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/hybrid/EciesParameters.Builder.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.Builder</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/EciesParameters.Builder.html#setDemParameters-com.google.crypto.tink.Parameters-">setDemParameters</a></span>(<a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a>&nbsp;demParameters)</code>
-<div class="block">Current implementation only accepts NO_PREFIX instances of an AesGcmParameters,
+<div class="block">Current implementation only accepts certain NO_PREFIX instances of AesGcmParameters,
  AesCtrHmacAeadParameters, XChaCha20Poly1305Parameters or AesSivParameters.</div>
 </td>
 </tr>
@@ -226,12 +226,12 @@ public&nbsp;<a href="../../../../../com/google/crypto/tink/hybrid/EciesParameter
 <h4>setDemParameters</h4>
 <pre>@CanIgnoreReturnValue
 public&nbsp;<a href="../../../../../com/google/crypto/tink/hybrid/EciesParameters.Builder.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.Builder</a>&nbsp;setDemParameters(<a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a>&nbsp;demParameters)
-                                                               throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/InvalidAlgorithmParameterException.html?is-external=true" title="class or interface in java.security">InvalidAlgorithmParameterException</a></pre>
-<div class="block">Current implementation only accepts NO_PREFIX instances of an AesGcmParameters,
+                                                               throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<div class="block">Current implementation only accepts certain NO_PREFIX instances of AesGcmParameters,
  AesCtrHmacAeadParameters, XChaCha20Poly1305Parameters or AesSivParameters.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/InvalidAlgorithmParameterException.html?is-external=true" title="class or interface in java.security">InvalidAlgorithmParameterException</a></code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
 </dl>
 </li>
 </ul>
