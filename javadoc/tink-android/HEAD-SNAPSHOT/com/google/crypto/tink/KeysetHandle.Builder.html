@@ -374,9 +374,9 @@ public&nbsp;<a href="../../../../com/google/crypto/tink/KeysetHandle.Builder.htm
    <li>There is a <code>withRandomId</code>-entry which is followed by a non <code>withRandomId</code>-entry
    <li>There are two entries with the same <code>withFixedId</code> (including pre-existing keys
        and imported keys which have an id requirement).
-   <li><code>build()</code> was previously called for <code>withRandomId</code> entries, and hence
-       calling <code>build()</code> twice would result in a keyset with different key IDs.
-   <li>The primary key is not enabled
+   <li><code>build()</code> was previously called for <code>withRandomId</code> entries,
+       and hence calling <code>build()</code> twice would result in a keyset with different
+       key IDs.
  </ul></div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
