@@ -18,12 +18,11 @@
 # host. The CONTAINER_IMAGE variable can be set to run on a custom container
 # image for local testing. E.g.:
 #
-# CONTAINER_IMAGE="gcr.io/tink-test-infrastructure/linux-tink-go-base:latest" \
-#  sh ./kokoro/gcp_ubuntu/gomod/run_tests.sh
+# CONTAINER_IMAGE="gcr.io/tink-test-infrastructure/linux-tink-java-base:latest" \
+#  sh ./kokoro/gcp_ubuntu/examples/bazel/run_tests.sh
 #
 # The user may specify TINK_BASE_DIR as the folder where to look for
-# tink-java. That is:
-#   ${TINK_BASE_DIR}/tink_java
+# tink-java. That is ${TINK_BASE_DIR}/tink_java.
 set -eEuo pipefail
 
 IS_KOKORO="false"
@@ -52,16 +51,5 @@ if [[ -n "${CONTAINER_IMAGE:-}" ]]; then
   RUN_COMMAND_ARGS+=( -c "${CONTAINER_IMAGE}" )
 fi
 
-cp examples/WORKSPACE examples/WORKSPACE.bak
-
-# Run cleanup on EXIT.
-trap cleanup EXIT
-
-cleanup() {
-  mv examples/WORKSPACE.bak examples/WORKSPACE
-}
-
-./kokoro/testutils/replace_http_archive_with_local_repository.py \
-  -f examples/WORKSPACE -t ../..
 ./kokoro/testutils/run_command.sh "${RUN_COMMAND_ARGS[@]}" \
   ./kokoro/testutils/run_bazel_tests.sh examples
