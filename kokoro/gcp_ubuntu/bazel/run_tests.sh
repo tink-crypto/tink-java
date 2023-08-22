@@ -18,12 +18,11 @@
 # host. The CONTAINER_IMAGE variable can be set to run on a custom container
 # image for local testing. E.g.:
 #
-# CONTAINER_IMAGE="us-docker.pkg.dev/tink-test-infrastructure/tink-ci-images/linux-tink-cc-cmake:latest" \
-#  sh ./kokoro/gcp_ubuntu/bazel_fips/run_tests.sh
+# CONTAINER_IMAGE="us-docker.pkg.dev/tink-test-infrastructure/tink-ci-images/linux-tink-java-base:latest" \
+#  sh ./kokoro/gcp_ubuntu/bazel/run_tests.sh
 #
 # The user may specify TINK_BASE_DIR as the folder where to look for
-# tink-java. That is:
-#   ${TINK_BASE_DIR}/tink_java
+# tink-java. That is ${TINK_BASE_DIR}/tink_java.
 set -eEuo pipefail
 
 RUN_COMMAND_ARGS=()
@@ -54,7 +53,9 @@ if ! cmp -s BUILD.bazel BUILD.bazel.temp; then
   diff -u BUILD.bazel BUILD.bazel.temp
   exit 1
 fi
+
 ./kokoro/testutils/run_bazel_tests.sh .
+./kokoro/testutils/run_bazel_tests.sh examples
 EOF
 chmod +x _do_run_test.sh
 
