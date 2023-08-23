@@ -3,17 +3,16 @@
 <!-- GCP Ubuntu --->
 
 [tink_java_bazel_badge_gcp_ubuntu]: https://storage.googleapis.com/tink-kokoro-build-badges/tink-java-bazel-gcp-ubuntu.svg
-[tink_java_examples_bazel_badge_gcp_ubuntu]: https://storage.googleapis.com/tink-kokoro-build-badges/tink-java-examples-bazel-gcp-ubuntu.svg
+[tink_java_maven_badge_gcp_ubuntu]: https://storage.googleapis.com/tink-kokoro-build-badges/tink-java-maven-gcp-ubuntu.svg
 
 <!-- MacOS --->
 
 [tink_java_bazel_badge_macos]: https://storage.googleapis.com/tink-kokoro-build-badges/tink-java-bazel-macos-external.svg
-[tink_java_examples_bazel_badge_macos]: https://storage.googleapis.com/tink-kokoro-build-badges/tink-java-examples-bazel-macos-external.svg
 
-**Test**      | **GCP Ubuntu**                                                              | **MacOS**
-------------- | --------------------------------------------------------------------------- | ---------
-Tink (Bazel)  | [![Bazel_GcpUbuntu][tink_java_bazel_badge_gcp_ubuntu]](#)                   | [![Bazel_MacOs][tink_java_bazel_badge_macos]](#)
-Tink Examples | [![Examples_Bazel_GcpUbuntu][tink_java_examples_bazel_badge_gcp_ubuntu]](#) | [![Examples_Bazel_MacOs][tink_java_examples_bazel_badge_macos]](#)
+**Test**      | **GCP Ubuntu**                                            | **MacOS**
+------------- | --------------------------------------------------------- | ------------------------------------------------
+Bazel         | [![Bazel_GcpUbuntu][tink_java_bazel_badge_gcp_ubuntu]](#) | [![Bazel_MacOs][tink_java_bazel_badge_macos]](#)
+Maven         | [![Maven_GcpUbuntu][tink_java_maven_badge_gcp_ubuntu]](#) | N/A
 
 
 Using crypto in your application [shouldn't have to][devs_are_users_too_slides]
