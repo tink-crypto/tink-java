@@ -171,7 +171,7 @@ extends <a href="../../../../../com/google/crypto/tink/hybrid/HybridPublicKey.ht
 <tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/spec/ECPoint.html?is-external=true" title="class or interface in java.security.spec">ECPoint</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/EciesPublicKey.html#getNistCurvePoint--">getNistCurvePoint</a></span>()</code>
-<div class="block">Returns the underlying public point as byte array in case the curve is X25519.</div>
+<div class="block">Returns the underlying public point if the curve is a NIST curve.</div>
 </td>
 </tr>
 <tr id="i5" class="rowColor">
@@ -269,9 +269,9 @@ extends <a href="../../../../../com/google/crypto/tink/hybrid/HybridPublicKey.ht
 <h4>getNistCurvePoint</h4>
 <pre><a href="https://docs.oracle.com/javase/8/docs/api/javax/annotation/Nullable.html?is-external=true" title="class or interface in javax.annotation">@Nullable</a>
 public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/security/spec/ECPoint.html?is-external=true" title="class or interface in java.security.spec">ECPoint</a>&nbsp;getNistCurvePoint()</pre>
-<div class="block">Returns the underlying public point as byte array in case the curve is X25519.
+<div class="block">Returns the underlying public point if the curve is a NIST curve.
 
- <p>Returns null For NIST curves.</div>
+ <p>Returns null if the curve used for this key is not a NIST curve.</div>
 </li>
 </ul>
 <a name="getX25519CurvePointBytes--">
