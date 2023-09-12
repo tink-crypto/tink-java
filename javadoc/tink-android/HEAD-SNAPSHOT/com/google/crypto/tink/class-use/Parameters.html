@@ -458,33 +458,37 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a></code></td>
+<td class="colLast"><span class="typeNameLabel">MutableParametersRegistry.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/MutableParametersRegistry.html#get-java.lang.String-">get</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a></code></td>
 <td class="colLast"><span class="typeNameLabel">LegacyProtoKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/LegacyProtoKey.html#getParameters--">getParameters</a></span>()</code>
 <div class="block">Returns a LegacyParametersNotForCreation object.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>abstract <a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a></code></td>
 <td class="colLast"><span class="typeNameLabel">ParametersParser.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/ParametersParser.html#parseParameters-SerializationT-">parseParameters</a></span>(<a href="../../../../../com/google/crypto/tink/internal/ParametersParser.html" title="type parameter in ParametersParser">SerializationT</a>&nbsp;serialization)</code>
 <div class="block">Parses a serialization into a <a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink"><code>Parameters</code></a> object.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a></code></td>
 <td class="colLast"><span class="typeNameLabel">ParametersParser.ParametersParsingFunction.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/ParametersParser.ParametersParsingFunction.html#parseParameters-SerializationT-">parseParameters</a></span>(<a href="../../../../../com/google/crypto/tink/internal/ParametersParser.ParametersParsingFunction.html" title="type parameter in ParametersParser.ParametersParsingFunction">SerializationT</a>&nbsp;serialization)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>&lt;SerializationT extends <a href="../../../../../com/google/crypto/tink/internal/Serialization.html" title="interface in com.google.crypto.tink.internal">Serialization</a>&gt;<br><a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a></code></td>
 <td class="colLast"><span class="typeNameLabel">SerializationRegistry.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/SerializationRegistry.html#parseParameters-SerializationT-">parseParameters</a></span>(SerializationT&nbsp;serializedParameters)</code>
 <div class="block">Parses the given serialization into a Parameters.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>&lt;SerializationT extends <a href="../../../../../com/google/crypto/tink/internal/Serialization.html" title="interface in com.google.crypto.tink.internal">Serialization</a>&gt;<br><a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a></code></td>
 <td class="colLast"><span class="typeNameLabel">MutableSerializationRegistry.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/MutableSerializationRegistry.html#parseParameters-SerializationT-">parseParameters</a></span>(SerializationT&nbsp;serializedParameters)</code>
 <div class="block">Parses the given serialization into a Parameters object.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a></code></td>
 <td class="colLast"><span class="typeNameLabel">MutableSerializationRegistry.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/MutableSerializationRegistry.html#parseParametersWithLegacyFallback-com.google.crypto.tink.internal.ProtoParametersSerialization-">parseParametersWithLegacyFallback</a></span>(<a href="../../../../../com/google/crypto/tink/internal/ProtoParametersSerialization.html" title="class in com.google.crypto.tink.internal">ProtoParametersSerialization</a>&nbsp;protoParametersSerialization)</code>
 <div class="block">Returns a Parameters object from a protoKeySerialization, even if no parser has been
@@ -505,6 +509,20 @@
 <td class="colLast"><span class="typeNameLabel">KeyTypeManager.KeyFactory.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/KeyTypeManager.KeyFactory.html#namedParameters--">namedParameters</a></span>()</code>
 <div class="block">Returns supported parameters and their names.</div>
 </td>
+</tr>
+</tbody>
+</table>
+<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Methods in <a href="../../../../../com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a> with parameters of type <a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><span class="typeNameLabel">MutableParametersRegistry.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/MutableParametersRegistry.html#put-java.lang.String-com.google.crypto.tink.Parameters-">put</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+   <a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a>&nbsp;value)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
