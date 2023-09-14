@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":10,"i2":10,"i3":10,"i4":6,"i5":9,"i6":6};
+var methods = {"i0":6,"i1":10,"i2":10,"i3":6,"i4":9,"i5":6};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -174,18 +174,12 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </td>
 </tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/KeyTypeManager.KeyFactory.html#namedParameters--">namedParameters</a></span>()</code>
-<div class="block">Returns supported parameters and their names.</div>
-</td>
-</tr>
-<tr id="i4" class="altColor">
 <td class="colFirst"><code>abstract <a href="../../../../../com/google/crypto/tink/internal/KeyTypeManager.KeyFactory.html" title="type parameter in KeyTypeManager.KeyFactory">KeyFormatProtoT</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/KeyTypeManager.KeyFactory.html#parseKeyFormat-com.google.protobuf.ByteString-">parseKeyFormat</a></span>(com.google.protobuf.ByteString&nbsp;byteString)</code>
 <div class="block">Parses a serialized key proto.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>protected static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/KeyTypeManager.KeyFactory.html#readFully-java.io.InputStream-byte:A-">readFully</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io">InputStream</a>&nbsp;input,
          byte[]&nbsp;output)</code>
@@ -193,7 +187,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
  stream into the provided <code>output</code> buffer.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/KeyTypeManager.KeyFactory.html#validateKeyFormat-KeyFormatProtoT-">validateKeyFormat</a></span>(<a href="../../../../../com/google/crypto/tink/internal/KeyTypeManager.KeyFactory.html" title="type parameter in KeyTypeManager.KeyFactory">KeyFormatProtoT</a>&nbsp;keyFormatProto)</code>
 <div class="block">Checks if the given <code>keyFormatProto</code> is a valid key.</div>
@@ -324,23 +318,6 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
-</dl>
-</li>
-</ul>
-<a name="namedParameters--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>namedParameters</h4>
-<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a>&gt;&nbsp;namedParameters()
-                                       throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block">Returns supported parameters and their names. This should not be used. Instead, subclasses
- should manually call MutablePrimitiveRegistry.globalInstance().put().</div>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code> - Key type managers can throw GeneralSecurityException when
-     their key formats depend on other key formats that were not registered.</dd>
 </dl>
 </li>
 </ul>
