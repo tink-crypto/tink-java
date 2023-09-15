@@ -150,7 +150,11 @@ implements <a href="../../../../../com/google/crypto/tink/Aead.html" title="inte
 </tr>
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/KmsEnvelopeAead.html#KmsEnvelopeAead-com.google.crypto.tink.proto.KeyTemplate-com.google.crypto.tink.Aead-">KmsEnvelopeAead</a></span>(<a href="../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;dekTemplate,
-               <a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a>&nbsp;remote)</code>&nbsp;</td>
+               <a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a>&nbsp;remote)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
+<div class="block"><span class="deprecationComment">Instead, call <code>KmsEnvelopeAead.create</code> as explained above.</span></div>
+</div>
+</td>
 </tr>
 </table>
 </li>
@@ -220,8 +224,21 @@ implements <a href="../../../../../com/google/crypto/tink/Aead.html" title="inte
 <ul class="blockListLast">
 <li class="blockList">
 <h4>KmsEnvelopeAead</h4>
-<pre>public&nbsp;KmsEnvelopeAead(<a href="../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;dekTemplate,
-                       <a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a>&nbsp;remote)</pre>
+<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
+public&nbsp;KmsEnvelopeAead(<a href="../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;dekTemplate,
+                                   <a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a>&nbsp;remote)</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">Instead, call <code>KmsEnvelopeAead.create</code> as explained above.</span></div>
+<div class="block">Creates a new KmsEnvelopeAead.
+
+ <p>This function should be avoided. Instead, if you use this with one of the predefined key
+ templates, call create with the corresponding parameters object.
+
+ <p>For example, if you use:
+
+ <p><code>Aead aead = new KmsEnvelopeAead(AeadKeyTemplates.AES128_GCM, remote)</code> you should
+ replace this with:
+
+ <p><code>Aead aead = KmsEnvelopeAead.create(PredefinedAeadParameters.AES128_GCM, remote)</code></div>
 </li>
 </ul>
 </li>
