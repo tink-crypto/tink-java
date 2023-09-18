@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9};
+var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -182,6 +182,14 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </td>
 </tr>
 <tr id="i5" class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/util/SecretBytes.html" title="class in com.google.crypto.tink.util">SecretBytes</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/Util.html#readIntoSecretBytes-java.io.InputStream-int-com.google.crypto.tink.SecretKeyAccess-">readIntoSecretBytes</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io">InputStream</a>&nbsp;input,
+                   int&nbsp;length,
+                   <a href="../../../../../com/google/crypto/tink/SecretKeyAccess.html" title="class in com.google.crypto.tink">SecretKeyAccess</a>&nbsp;access)</code>
+<div class="block">Reads <code>length</code> number of bytes from the <code>input</code> stream and returns it in a <code>SecretBytes</code> object.</div>
+</td>
+</tr>
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/Util.html#toBytesFromPrintableAscii-java.lang.String-">toBytesFromPrintableAscii</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;s)</code>
 <div class="block">Converts a string <code>s</code> to a corresponding <a href="../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util"><code>Bytes</code></a> object.</div>
@@ -304,12 +312,32 @@ public static&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/
 <a name="isPrefix-byte:A-byte:A-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>isPrefix</h4>
 <pre>public static&nbsp;boolean&nbsp;isPrefix(byte[]&nbsp;prefix,
                                byte[]&nbsp;complete)</pre>
 <div class="block">Returns true if the first argument is a prefix of the second argument. Not constant time.</div>
+</li>
+</ul>
+<a name="readIntoSecretBytes-java.io.InputStream-int-com.google.crypto.tink.SecretKeyAccess-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>readIntoSecretBytes</h4>
+<pre>public static&nbsp;<a href="../../../../../com/google/crypto/tink/util/SecretBytes.html" title="class in com.google.crypto.tink.util">SecretBytes</a>&nbsp;readIntoSecretBytes(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io">InputStream</a>&nbsp;input,
+                                              int&nbsp;length,
+                                              <a href="../../../../../com/google/crypto/tink/SecretKeyAccess.html" title="class in com.google.crypto.tink">SecretKeyAccess</a>&nbsp;access)
+                                       throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<div class="block">Reads <code>length</code> number of bytes from the <code>input</code> stream and returns it in a <code>SecretBytes</code> object.
+
+ <p>Note that this method will not close the <code>input</code> stream.</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code> - when not enough randomness was provided in the <code>input</code>
+     stream.</dd>
+</dl>
 </li>
 </ul>
 </li>
