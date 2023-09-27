@@ -74,6 +74,23 @@
 <div class="contentContainer">
 <ul class="blockList">
 <li class="blockList">
+<table class="typeSummary" border="0" cellpadding="3" cellspacing="0" summary="Interface Summary table, listing interfaces, and an explanation">
+<caption><span>Interface Summary</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Interface</th>
+<th class="colLast" scope="col">Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/KeyDeriver.html" title="interface in com.google.crypto.tink.keyderivation.internal">KeyDeriver</a></td>
+<td class="colLast">
+<div class="block">Derives a single key from a given salt.</div>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li class="blockList">
 <table class="typeSummary" border="0" cellpadding="3" cellspacing="0" summary="Class Summary table, listing classes, and an explanation">
 <caption><span>Class Summary</span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
@@ -92,6 +109,13 @@
 <td class="colFirst"><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html" title="class in com.google.crypto.tink.keyderivation.internal">PrfBasedDeriverKeyManager</a></td>
 <td class="colLast">
 <div class="block"><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal"><code>KeyTypeManager</code></a> for <a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverKey.html" title="class in com.google.crypto.tink.proto"><code>PrfBasedDeriverKey</code></a>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/PrfBasedKeyDeriver.html" title="class in com.google.crypto.tink.keyderivation.internal">PrfBasedKeyDeriver</a></td>
+<td class="colLast">
+<div class="block">Implements the KeyDeriver interface by first applying a Prf and then using the global registry to
+ create the correct key.</div>
 </td>
 </tr>
 </tbody>

@@ -3345,6 +3345,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriver.html#create-com.google.crypto.tink.proto.KeyData-com.google.crypto.tink.proto.KeyTemplate-">create(KeyData, KeyTemplate)</a></span> - Static method in class com.google.crypto.tink.keyderivation.internal.<a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriver.html" title="class in com.google.crypto.tink.keyderivation.internal">PrfBasedDeriver</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/internal/PrfBasedKeyDeriver.html#create-com.google.crypto.tink.keyderivation.PrfBasedKeyDerivationKey-">create(PrfBasedKeyDerivationKey)</a></span> - Static method in class com.google.crypto.tink.keyderivation.internal.<a href="com/google/crypto/tink/keyderivation/internal/PrfBasedKeyDeriver.html" title="class in com.google.crypto.tink.keyderivation.internal">PrfBasedKeyDeriver</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/PrfBasedKeyDerivationKey.html#create-com.google.crypto.tink.keyderivation.PrfBasedKeyDerivationParameters-com.google.crypto.tink.prf.PrfKey-java.lang.Integer-">create(PrfBasedKeyDerivationParameters, PrfKey, Integer)</a></span> - Static method in class com.google.crypto.tink.keyderivation.<a href="com/google/crypto/tink/keyderivation/PrfBasedKeyDerivationKey.html" title="class in com.google.crypto.tink.keyderivation">PrfBasedKeyDerivationKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/KeyTemplate.html#create-java.lang.String-byte:A-com.google.crypto.tink.KeyTemplate.OutputPrefixType-">create(String, byte[], KeyTemplate.OutputPrefixType)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink">KeyTemplate</a></dt>
@@ -3834,6 +3836,10 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/AesGcmHkdfStreamingParams.html#DERIVED_KEY_SIZE_FIELD_NUMBER">DERIVED_KEY_SIZE_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/AesGcmHkdfStreamingParams.html" title="class in com.google.crypto.tink.proto">AesGcmHkdfStreamingParams</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/PrfBasedDeriverParams.html#DERIVED_KEY_TEMPLATE_FIELD_NUMBER">DERIVED_KEY_TEMPLATE_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/PrfBasedDeriverParams.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverParams</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/internal/KeyDeriver.html#deriveKey-byte:A-">deriveKey(byte[])</a></span> - Method in interface com.google.crypto.tink.keyderivation.internal.<a href="com/google/crypto/tink/keyderivation/internal/KeyDeriver.html" title="interface in com.google.crypto.tink.keyderivation.internal">KeyDeriver</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/internal/PrfBasedKeyDeriver.html#deriveKey-byte:A-">deriveKey(byte[])</a></span> - Method in class com.google.crypto.tink.keyderivation.internal.<a href="com/google/crypto/tink/keyderivation/internal/PrfBasedKeyDeriver.html" title="class in com.google.crypto.tink.keyderivation.internal">PrfBasedKeyDeriver</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriver.html#deriveKeyset-byte:A-">deriveKeyset(byte[])</a></span> - Method in class com.google.crypto.tink.keyderivation.internal.<a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriver.html" title="class in com.google.crypto.tink.keyderivation.internal">PrfBasedDeriver</a></dt>
 <dd>&nbsp;</dd>
@@ -14201,6 +14207,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/KeyDerivationParameters.html#KeyDerivationParameters--">KeyDerivationParameters()</a></span> - Constructor for class com.google.crypto.tink.keyderivation.<a href="com/google/crypto/tink/keyderivation/KeyDerivationParameters.html" title="class in com.google.crypto.tink.keyderivation">KeyDerivationParameters</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/keyderivation/internal/KeyDeriver.html" title="interface in com.google.crypto.tink.keyderivation.internal"><span class="typeNameLink">KeyDeriver</span></a> - Interface in <a href="com/google/crypto/tink/keyderivation/internal/package-summary.html">com.google.crypto.tink.keyderivation.internal</a></dt>
+<dd>
+<div class="block">Derives a single key from a given salt.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrHmacAeadKeyManager.html#keyFactory--">keyFactory()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrHmacAeadKeyManager.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadKeyManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrKeyManager.html#keyFactory--">keyFactory()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrKeyManager.html" title="class in com.google.crypto.tink.aead">AesCtrKeyManager</a></dt>
@@ -18663,6 +18673,11 @@
 <dt><a href="com/google/crypto/tink/keyderivation/PrfBasedKeyDerivationParameters.Builder.html" title="class in com.google.crypto.tink.keyderivation"><span class="typeNameLink">PrfBasedKeyDerivationParameters.Builder</span></a> - Class in <a href="com/google/crypto/tink/keyderivation/package-summary.html">com.google.crypto.tink.keyderivation</a></dt>
 <dd>
 <div class="block">Builds a new PrfBasedKeyDerivationParameters instance.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/keyderivation/internal/PrfBasedKeyDeriver.html" title="class in com.google.crypto.tink.keyderivation.internal"><span class="typeNameLink">PrfBasedKeyDeriver</span></a> - Class in <a href="com/google/crypto/tink/keyderivation/internal/package-summary.html">com.google.crypto.tink.keyderivation.internal</a></dt>
+<dd>
+<div class="block">Implements the KeyDeriver interface by first applying a Prf and then using the global registry to
+ create the correct key.</div>
 </dd>
 <dt><a href="com/google/crypto/tink/prf/PrfConfig.html" title="class in com.google.crypto.tink.prf"><span class="typeNameLink">PrfConfig</span></a> - Class in <a href="com/google/crypto/tink/prf/package-summary.html">com.google.crypto.tink.prf</a></dt>
 <dd>
