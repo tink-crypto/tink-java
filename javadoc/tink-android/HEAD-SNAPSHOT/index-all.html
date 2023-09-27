@@ -89,6 +89,10 @@
 <dd>
 <div class="block">Adds bidirectional conversion mapping between <code>protoEnum</code> and <code>objectEnum</code>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/MutableKeyCreationRegistry.html#add-com.google.crypto.tink.internal.MutableKeyCreationRegistry.KeyCreator-java.lang.Class-">add(MutableKeyCreationRegistry.KeyCreator&lt;ParametersT&gt;, Class&lt;ParametersT&gt;)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/MutableKeyCreationRegistry.html" title="class in com.google.crypto.tink.internal">MutableKeyCreationRegistry</a></dt>
+<dd>
+<div class="block">Adds a new "InsecureKeyCreator" to the instance.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/MutableKeyDerivationRegistry.html#add-com.google.crypto.tink.internal.MutableKeyDerivationRegistry.InsecureKeyCreator-java.lang.Class-">add(MutableKeyDerivationRegistry.InsecureKeyCreator&lt;ParametersT&gt;, Class&lt;ParametersT&gt;)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/MutableKeyDerivationRegistry.html" title="class in com.google.crypto.tink.internal">MutableKeyDerivationRegistry</a></dt>
 <dd>
 <div class="block">Adds a new "InsecureKeyCreator" to the instance.</div>
@@ -3540,6 +3544,12 @@
 <dd>
 <div class="block">Creates a new key from a given format.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/MutableKeyCreationRegistry.html#createKey-com.google.crypto.tink.Parameters-java.lang.Integer-">createKey(Parameters, Integer)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/MutableKeyCreationRegistry.html" title="class in com.google.crypto.tink.internal">MutableKeyCreationRegistry</a></dt>
+<dd>
+<div class="block">Creates a <a href="com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink"><code>Key</code></a> from a given <a href="com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink"><code>Parameters</code></a> object.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/MutableKeyCreationRegistry.KeyCreator.html#createKey-ParametersT-java.lang.Integer-">createKey(ParametersT, Integer)</a></span> - Method in interface com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/MutableKeyCreationRegistry.KeyCreator.html" title="interface in com.google.crypto.tink.internal">MutableKeyCreationRegistry.KeyCreator</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/MutableKeyDerivationRegistry.html#createKeyFromRandomness-com.google.crypto.tink.Parameters-java.io.InputStream-java.lang.Integer-com.google.crypto.tink.SecretKeyAccess-">createKeyFromRandomness(Parameters, InputStream, Integer, SecretKeyAccess)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/MutableKeyDerivationRegistry.html" title="class in com.google.crypto.tink.internal">MutableKeyDerivationRegistry</a></dt>
 <dd>
 <div class="block">Creates a <a href="com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink"><code>Key</code></a> from a given <a href="com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink"><code>Parameters</code></a> object and additional data.</div>
@@ -11637,6 +11647,8 @@
 <dd>
 <div class="block">Computes the y coordinate of a point on an elliptic curve.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/MutableKeyCreationRegistry.html#globalInstance--">globalInstance()</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/MutableKeyCreationRegistry.html" title="class in com.google.crypto.tink.internal">MutableKeyCreationRegistry</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/MutableKeyDerivationRegistry.html#globalInstance--">globalInstance()</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/MutableKeyDerivationRegistry.html" title="class in com.google.crypto.tink.internal">MutableKeyDerivationRegistry</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/MutableMonitoringRegistry.html#globalInstance--">globalInstance()</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/MutableMonitoringRegistry.html" title="class in com.google.crypto.tink.internal">MutableMonitoringRegistry</a></dt>
@@ -15140,6 +15152,16 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/EllipticCurvesUtil.html#multiplyByGenerator-java.math.BigInteger-java.security.spec.ECParameterSpec-">multiplyByGenerator(BigInteger, ECParameterSpec)</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/EllipticCurvesUtil.html" title="class in com.google.crypto.tink.internal">EllipticCurvesUtil</a></dt>
 <dd>
 <div class="block">Calculates x times the generator of the give elliptic curve spec using the Montgomery ladder.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/internal/MutableKeyCreationRegistry.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">MutableKeyCreationRegistry</span></a> - Class in <a href="com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></dt>
+<dd>
+<div class="block">Stores methods to create <a href="com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink"><code>Key</code></a> objects from <a href="com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink"><code>Parameters</code></a> with new randomness.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/MutableKeyCreationRegistry.html#MutableKeyCreationRegistry--">MutableKeyCreationRegistry()</a></span> - Constructor for class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/MutableKeyCreationRegistry.html" title="class in com.google.crypto.tink.internal">MutableKeyCreationRegistry</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/internal/MutableKeyCreationRegistry.KeyCreator.html" title="interface in com.google.crypto.tink.internal"><span class="typeNameLink">MutableKeyCreationRegistry.KeyCreator</span></a>&lt;<a href="com/google/crypto/tink/internal/MutableKeyCreationRegistry.KeyCreator.html" title="type parameter in MutableKeyCreationRegistry.KeyCreator">ParametersT</a> extends <a href="com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a>&gt; - Interface in <a href="com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></dt>
+<dd>
+<div class="block">A class to create key objects from parameters with given randomness.</div>
 </dd>
 <dt><a href="com/google/crypto/tink/internal/MutableKeyDerivationRegistry.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">MutableKeyDerivationRegistry</span></a> - Class in <a href="com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></dt>
 <dd>
