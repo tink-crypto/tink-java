@@ -88,7 +88,7 @@
     <gson.version>2.10.1</gson.version>
     <error_prone_annotations.version>2.18.0</error_prone_annotations.version>
     <google-http-client.version>1.43.1</google-http-client.version>
-    <protobuf-java.version>3.19.6</protobuf-java.version>
+    <protobuf-java.version>3.24.3</protobuf-java.version>
   </properties>
 
   <dependencies>
