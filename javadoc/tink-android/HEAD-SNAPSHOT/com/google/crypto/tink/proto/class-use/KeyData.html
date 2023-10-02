@@ -122,39 +122,31 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto">KeyData</a></code></td>
-<td class="colLast"><span class="typeNameLabel">PrivilegedRegistry.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/PrivilegedRegistry.html#deriveKey-com.google.crypto.tink.proto.KeyTemplate-java.io.InputStream-">deriveKey</a></span>(<a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;keyTemplate,
-         <a href="https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io">InputStream</a>&nbsp;randomStream)</code>
-<div class="block">Method to derive a key, using the given <code>keyTemplate</code>, with the randomness as provided by
- the second argument.</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto">KeyData</a></code></td>
 <td class="colLast"><span class="typeNameLabel">PrivateKeyManager.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/PrivateKeyManager.html#getPublicKeyData-com.google.protobuf.ByteString-">getPublicKeyData</a></span>(com.google.protobuf.ByteString&nbsp;serializedKey)</code>
 <div class="block">Extracts the public key data from the private key data.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto">KeyData</a></code></td>
 <td class="colLast"><span class="typeNameLabel">Registry.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/Registry.html#getPublicKeyData-java.lang.String-com.google.protobuf.ByteString-">getPublicKeyData</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl,
                 com.google.protobuf.ByteString&nbsp;serializedPrivateKey)</code>
 <div class="block">Extracts the public key data from the private key given in <code>serializedPrivateKey</code>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto">KeyData</a></code></td>
 <td class="colLast"><span class="typeNameLabel">KeyManager.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/KeyManager.html#newKeyData-com.google.protobuf.ByteString-">newKeyData</a></span>(com.google.protobuf.ByteString&nbsp;serializedKeyFormat)</code>
 <div class="block">Generates a new <code>KeyData</code> according to specification in <code>serializedKeyFormat</code>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto">KeyData</a></code></td>
 <td class="colLast"><span class="typeNameLabel">Registry.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/Registry.html#newKeyData-com.google.crypto.tink.proto.KeyTemplate-">newKeyData</a></span>(<a href="../../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;keyTemplate)</code>
 <div class="block">Generates a new <a href="../../../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto"><code>KeyData</code></a> for the specified <code>template</code>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto">KeyData</a></code></td>
 <td class="colLast"><span class="typeNameLabel">Registry.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/Registry.html#newKeyData-com.google.crypto.tink.KeyTemplate-">newKeyData</a></span>(<a href="../../../../../../com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink">KeyTemplate</a>&nbsp;keyTemplate)</code>
 <div class="block">Generates a new <a href="../../../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto"><code>KeyData</code></a> for the specified <code>template</code>.</div>
@@ -191,6 +183,19 @@
 <!--   -->
 </a>
 <h3>Uses of <a href="../../../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto">KeyData</a> in <a href="../../../../../../com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></h3>
+<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Methods in <a href="../../../../../../com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a> that return <a href="../../../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto">KeyData</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto">KeyData</a></code></td>
+<td class="colLast"><span class="typeNameLabel">LegacyKeyManagerImpl.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/LegacyKeyManagerImpl.html#newKeyData-com.google.protobuf.ByteString-">newKeyData</a></span>(com.google.protobuf.ByteString&nbsp;serializedKeyFormat)</code>&nbsp;</td>
+</tr>
+</tbody>
+</table>
 <table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
 <caption><span>Methods in <a href="../../../../../../com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a> with parameters of type <a href="../../../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto">KeyData</a></span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
