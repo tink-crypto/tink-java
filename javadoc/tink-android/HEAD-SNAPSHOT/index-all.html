@@ -13670,9 +13670,10 @@
 </dd>
 <dt><a href="com/google/crypto/tink/JsonKeysetWriter.html" title="class in com.google.crypto.tink"><span class="typeNameLink">JsonKeysetWriter</span></a> - Class in <a href="com/google/crypto/tink/package-summary.html">com.google.crypto.tink</a></dt>
 <dd>
-<div class="block">A <a href="com/google/crypto/tink/KeysetWriter.html" title="interface in com.google.crypto.tink"><code>KeysetWriter</code></a> that can write to some source cleartext or encrypted keysets in <a
- href="https://developers.google.com/protocol-buffers/docs/reference/java/com/google/protobuf/util/JsonFormat">proto
- JSON format</a>.</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>
+<div class="block"><span class="deprecationComment">Serialize the Keyset using <code>TinkJsonProtoKeysetFormat.serializeKeyset()</code>
+     instead.</span></div>
+</div>
 </dd>
 <dt><a href="com/google/crypto/tink/internal/JsonParser.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">JsonParser</span></a> - Class in <a href="com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></dt>
 <dd>
@@ -23786,6 +23787,7 @@ the order they are declared.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/JsonKeysetWriter.html#withOutputStream-java.io.OutputStream-">withOutputStream(OutputStream)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/JsonKeysetWriter.html" title="class in com.google.crypto.tink">JsonKeysetWriter</a></dt>
 <dd>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 <div class="block">Static method to create a JsonKeysetWriter that writes to an <a href="https://docs.oracle.com/javase/8/docs/api/java/io/OutputStream.html?is-external=true" title="class or interface in java.io"><code>OutputStream</code></a>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/JsonKeysetReader.html#withPath-java.lang.String-">withPath(String)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/JsonKeysetReader.html" title="class in com.google.crypto.tink">JsonKeysetReader</a></dt>
@@ -23895,9 +23897,13 @@ the order they are declared.</div>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 &nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/JsonKeysetWriter.html#write-com.google.crypto.tink.proto.Keyset-">write(Keyset)</a></span> - Method in class com.google.crypto.tink.<a href="com/google/crypto/tink/JsonKeysetWriter.html" title="class in com.google.crypto.tink">JsonKeysetWriter</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
+&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/JsonKeysetWriter.html#write-com.google.crypto.tink.proto.EncryptedKeyset-">write(EncryptedKeyset)</a></span> - Method in class com.google.crypto.tink.<a href="com/google/crypto/tink/JsonKeysetWriter.html" title="class in com.google.crypto.tink">JsonKeysetWriter</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
+&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/KeysetHandle.html#write-com.google.crypto.tink.KeysetWriter-com.google.crypto.tink.Aead-">write(KeysetWriter, Aead)</a></span> - Method in class com.google.crypto.tink.<a href="com/google/crypto/tink/KeysetHandle.html" title="class in com.google.crypto.tink">KeysetHandle</a></dt>
 <dd>
 <div class="block">Serializes, encrypts with <code>masterKey</code> and writes the keyset to <code>outputStream</code>.</div>
