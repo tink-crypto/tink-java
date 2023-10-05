@@ -7736,6 +7736,8 @@
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 &nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/KeyManagerRegistry.html#getKeyManager-java.lang.String-java.lang.Class-">getKeyManager(String, Class&lt;P&gt;)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/KeyManagerRegistry.html" title="class in com.google.crypto.tink.internal">KeyManagerRegistry</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/Registry.html#getKeyManager-java.lang.String-">getKeyManager(String)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink">Registry</a></dt>
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
@@ -10672,6 +10674,8 @@
 <div class="block">
  Name of the key type.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/KeyManagerRegistry.html#getUntypedKeyManager-java.lang.String-">getUntypedKeyManager(String)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/KeyManagerRegistry.html" title="class in com.google.crypto.tink.internal">KeyManagerRegistry</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/Registry.html#getUntypedKeyManager-java.lang.String-">getUntypedKeyManager(String)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink">Registry</a></dt>
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
@@ -13604,6 +13608,8 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/config/internal/TinkFipsUtil.AlgorithmFipsCompatibility.html#isCompatible--">isCompatible()</a></span> - Method in enum com.google.crypto.tink.config.internal.<a href="com/google/crypto/tink/config/internal/TinkFipsUtil.AlgorithmFipsCompatibility.html" title="enum in com.google.crypto.tink.config.internal">TinkFipsUtil.AlgorithmFipsCompatibility</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/KeyManagerRegistry.html#isEmpty--">isEmpty()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/KeyManagerRegistry.html" title="class in com.google.crypto.tink.internal">KeyManagerRegistry</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/EllipticCurvesUtil.html#isNistEcParameterSpec-java.security.spec.ECParameterSpec-">isNistEcParameterSpec(ECParameterSpec)</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/EllipticCurvesUtil.html" title="class in com.google.crypto.tink.internal">EllipticCurvesUtil</a></dt>
 <dd>
 <div class="block">Returns whether <code>spec</code> is a <a href="https://docs.oracle.com/javase/8/docs/api/java/security/spec/ECParameterSpec.html?is-external=true" title="class or interface in java.security.spec"><code>ECParameterSpec</code></a> of one of the NIST curves.</div>
@@ -14357,6 +14363,14 @@
 <div class="block">A KeyManager "understands" keys of a specific key type: it can generate keys of the supported
  type and create primitives for supported keys.</div>
 </dd>
+<dt><a href="com/google/crypto/tink/internal/KeyManagerRegistry.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">KeyManagerRegistry</span></a> - Class in <a href="com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></dt>
+<dd>
+<div class="block">An internal API to register KeyManagers and KeyTypeManagers.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/KeyManagerRegistry.html#KeyManagerRegistry-com.google.crypto.tink.internal.KeyManagerRegistry-">KeyManagerRegistry(KeyManagerRegistry)</a></span> - Constructor for class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/KeyManagerRegistry.html" title="class in com.google.crypto.tink.internal">KeyManagerRegistry</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/KeyManagerRegistry.html#KeyManagerRegistry--">KeyManagerRegistry()</a></span> - Constructor for class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/KeyManagerRegistry.html" title="class in com.google.crypto.tink.internal">KeyManagerRegistry</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrHmacAeadKeyManager.html#keyMaterialType--">keyMaterialType()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrHmacAeadKeyManager.html" title="class in com.google.crypto.tink.aead">AesCtrHmacAeadKeyManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesCtrKeyManager.html#keyMaterialType--">keyMaterialType()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesCtrKeyManager.html" title="class in com.google.crypto.tink.aead">AesCtrKeyManager</a></dt>
@@ -19441,10 +19455,20 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/Xchacha20Poly1305.html#registerAllExtensions-com.google.protobuf.ExtensionRegistryLite-">registerAllExtensions(ExtensionRegistryLite)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/Xchacha20Poly1305.html" title="class in com.google.crypto.tink.proto">Xchacha20Poly1305</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/KeyManagerRegistry.html#registerAsymmetricKeyManagers-com.google.crypto.tink.internal.PrivateKeyTypeManager-com.google.crypto.tink.internal.KeyTypeManager-">registerAsymmetricKeyManagers(PrivateKeyTypeManager&lt;KeyProtoT, PublicKeyProtoT&gt;, KeyTypeManager&lt;PublicKeyProtoT&gt;)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/KeyManagerRegistry.html" title="class in com.google.crypto.tink.internal">KeyManagerRegistry</a></dt>
+<dd>
+<div class="block">Registers a private KeyTypeManager and a corresponding public KeyTypeManager.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/Registry.html#registerAsymmetricKeyManagers-com.google.crypto.tink.internal.PrivateKeyTypeManager-com.google.crypto.tink.internal.KeyTypeManager-boolean-">registerAsymmetricKeyManagers(PrivateKeyTypeManager&lt;KeyProtoT, PublicKeyProtoT&gt;, KeyTypeManager&lt;PublicKeyProtoT&gt;, boolean)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink">Registry</a></dt>
 <dd>
 <div class="block">Tries to register <code>manager</code> for <code>manager.getKeyType()</code>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/KeyManagerRegistry.html#registerKeyManager-com.google.crypto.tink.KeyManager-">registerKeyManager(KeyManager&lt;P&gt;)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/KeyManagerRegistry.html" title="class in com.google.crypto.tink.internal">KeyManagerRegistry</a></dt>
+<dd>
+<div class="block">Attempts to insert the given KeyManager into the object.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/KeyManagerRegistry.html#registerKeyManager-com.google.crypto.tink.internal.KeyTypeManager-">registerKeyManager(KeyTypeManager&lt;KeyProtoT&gt;)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/KeyManagerRegistry.html" title="class in com.google.crypto.tink.internal">KeyManagerRegistry</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/Registry.html#registerKeyManager-com.google.crypto.tink.KeyManager-">registerKeyManager(KeyManager&lt;P&gt;)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink">Registry</a></dt>
 <dd>
 <div class="block">Tries to register <code>manager</code> for <code>manager.getKeyType()</code>.</div>
@@ -22995,6 +23019,8 @@
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 &nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/KeyManagerRegistry.html#typeUrlExists-java.lang.String-">typeUrlExists(String)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/KeyManagerRegistry.html" title="class in com.google.crypto.tink.internal">KeyManagerRegistry</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <a name="I:U">
 <!--   -->
