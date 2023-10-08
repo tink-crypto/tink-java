@@ -303,54 +303,34 @@
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><a href="../../../../../com/google/crypto/tink/internal/class-use/KeyManagerRegistry.html#com.google.crypto.tink.internal">KeyManagerRegistry</a>
-<div class="block">An internal API to register KeyManagers and KeyTypeManagers.</div>
-</td>
-</tr>
-<tr class="altColor">
 <td class="colOne"><a href="../../../../../com/google/crypto/tink/internal/class-use/KeyParser.html#com.google.crypto.tink.internal">KeyParser</a>
 <div class="block">Parses <code>Serialization</code> objects into <code>Key</code> objects of a certain kind.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="../../../../../com/google/crypto/tink/internal/class-use/KeyParser.KeyParsingFunction.html#com.google.crypto.tink.internal">KeyParser.KeyParsingFunction</a>
 <div class="block">A function which parses a key.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="../../../../../com/google/crypto/tink/internal/class-use/KeySerializer.html#com.google.crypto.tink.internal">KeySerializer</a>
 <div class="block">Serializes <code>Key</code> objects into <code>Serialization</code> objects of a certain kind.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="../../../../../com/google/crypto/tink/internal/class-use/KeySerializer.KeySerializationFunction.html#com.google.crypto.tink.internal">KeySerializer.KeySerializationFunction</a>
 <div class="block">A function which serializes a key.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="../../../../../com/google/crypto/tink/internal/class-use/KeyTypeManager.html#com.google.crypto.tink.internal">KeyTypeManager</a>
 <div class="block">An object which collects all the operations which one can do on for a single key type, identified
  by a single KeyProto.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="../../../../../com/google/crypto/tink/internal/class-use/KeyTypeManager.KeyFactory.html#com.google.crypto.tink.internal">KeyTypeManager.KeyFactory</a>
 <div class="block">A <code>KeyFactory</code> creates new keys from a given KeyFormat.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colOne"><a href="../../../../../com/google/crypto/tink/internal/class-use/LegacyKeyManagerImpl.html#com.google.crypto.tink.internal">LegacyKeyManagerImpl</a>
-<div class="block">A composed KeyManager implements a KeyManager by accessing the internal specific registries.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colOne"><a href="../../../../../com/google/crypto/tink/internal/class-use/MutableKeyCreationRegistry.html#com.google.crypto.tink.internal">MutableKeyCreationRegistry</a>
-<div class="block">Stores methods to create <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink"><code>Key</code></a> objects from <a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink"><code>Parameters</code></a> with new randomness.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colOne"><a href="../../../../../com/google/crypto/tink/internal/class-use/MutableKeyCreationRegistry.KeyCreator.html#com.google.crypto.tink.internal">MutableKeyCreationRegistry.KeyCreator</a>
-<div class="block">A class to create key objects from parameters with given randomness.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -430,48 +410,42 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><a href="../../../../../com/google/crypto/tink/internal/class-use/PrivateKeyTypeManager.html#com.google.crypto.tink.internal">PrivateKeyTypeManager</a>
-<div class="block">A PrivateKeyManager is like an <a href="../../../../../com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal"><code>KeyTypeManager</code></a>, but additionally has a method to create a
- public key.</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colOne"><a href="../../../../../com/google/crypto/tink/internal/class-use/ProtoKeySerialization.html#com.google.crypto.tink.internal">ProtoKeySerialization</a>
 <div class="block">* Represents a <code>Key</code> object serialized with binary protobuf Serialization.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="../../../../../com/google/crypto/tink/internal/class-use/ProtoParametersSerialization.html#com.google.crypto.tink.internal">ProtoParametersSerialization</a>
 <div class="block">Represents a <code>Parameters</code> object serialized with binary protobuf Serialization.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="../../../../../com/google/crypto/tink/internal/class-use/RegistryConfiguration.html#com.google.crypto.tink.internal">RegistryConfiguration</a>
 <div class="block">Represents the configuration as currently specified by the registry.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="../../../../../com/google/crypto/tink/internal/class-use/Serialization.html#com.google.crypto.tink.internal">Serialization</a>
 <div class="block">Represents either a serialized <code>Key</code> or a serialized <code>Parameters</code> object.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="../../../../../com/google/crypto/tink/internal/class-use/SerializationRegistry.html#com.google.crypto.tink.internal">SerializationRegistry</a>
 <div class="block">Allows registering <code>KeySerializer</code>, <code>KeyParser</code>, <code>ParametersSerializer</code>, and
  <a href="../../../../../com/google/crypto/tink/internal/ParametersParser.html" title="class in com.google.crypto.tink.internal"><code>ParametersParser</code></a> objects, and parsing/serializing keys and key formats with such objects.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="../../../../../com/google/crypto/tink/internal/class-use/SerializationRegistry.Builder.html#com.google.crypto.tink.internal">SerializationRegistry.Builder</a>
 <div class="block">Allows building SerializationRegistry objects.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="../../../../../com/google/crypto/tink/internal/class-use/TinkBugException.ThrowingRunnable.html#com.google.crypto.tink.internal">TinkBugException.ThrowingRunnable</a>
 <div class="block">A function which returns void and may throw an Exception.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="../../../../../com/google/crypto/tink/internal/class-use/TinkBugException.ThrowingSupplier.html#com.google.crypto.tink.internal">TinkBugException.ThrowingSupplier</a>
 <div class="block">A function which produces a T and may throw an Exception.</div>
 </td>
