@@ -332,14 +332,16 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>&lt;KeyProtoT extends com.google.protobuf.MessageLite,PublicKeyProtoT extends com.google.protobuf.MessageLite&gt;<br>void</code></td>
-<td class="colLast"><span class="typeNameLabel">KeyManagerRegistry.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/KeyManagerRegistry.html#registerAsymmetricKeyManagers-com.google.crypto.tink.internal.PrivateKeyTypeManager-com.google.crypto.tink.internal.KeyTypeManager-">registerAsymmetricKeyManagers</a></span>(<a href="../../../../../../com/google/crypto/tink/internal/PrivateKeyTypeManager.html" title="class in com.google.crypto.tink.internal">PrivateKeyTypeManager</a>&lt;KeyProtoT,PublicKeyProtoT&gt;&nbsp;privateKeyTypeManager,
-                             <a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal">KeyTypeManager</a>&lt;PublicKeyProtoT&gt;&nbsp;publicKeyTypeManager)</code>
+<td class="colLast"><span class="typeNameLabel">KeyManagerRegistry.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/KeyManagerRegistry.html#registerAsymmetricKeyManagers-com.google.crypto.tink.internal.PrivateKeyTypeManager-com.google.crypto.tink.internal.KeyTypeManager-boolean-">registerAsymmetricKeyManagers</a></span>(<a href="../../../../../../com/google/crypto/tink/internal/PrivateKeyTypeManager.html" title="class in com.google.crypto.tink.internal">PrivateKeyTypeManager</a>&lt;KeyProtoT,PublicKeyProtoT&gt;&nbsp;privateKeyTypeManager,
+                             <a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal">KeyTypeManager</a>&lt;PublicKeyProtoT&gt;&nbsp;publicKeyTypeManager,
+                             boolean&nbsp;newKeyAllowed)</code>
 <div class="block">Registers a private KeyTypeManager and a corresponding public KeyTypeManager.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>&lt;KeyProtoT extends com.google.protobuf.MessageLite&gt;<br>void</code></td>
-<td class="colLast"><span class="typeNameLabel">KeyManagerRegistry.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/KeyManagerRegistry.html#registerKeyManager-com.google.crypto.tink.internal.KeyTypeManager-">registerKeyManager</a></span>(<a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal">KeyTypeManager</a>&lt;KeyProtoT&gt;&nbsp;manager)</code>&nbsp;</td>
+<td class="colLast"><span class="typeNameLabel">KeyManagerRegistry.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/KeyManagerRegistry.html#registerKeyManager-com.google.crypto.tink.internal.KeyTypeManager-boolean-">registerKeyManager</a></span>(<a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal">KeyTypeManager</a>&lt;KeyProtoT&gt;&nbsp;manager,
+                  boolean&nbsp;newKeyAllowed)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
