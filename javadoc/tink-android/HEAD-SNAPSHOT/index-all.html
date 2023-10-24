@@ -3397,6 +3397,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingKey.html#create-com.google.crypto.tink.streamingaead.AesGcmHkdfStreamingParameters-com.google.crypto.tink.util.SecretBytes-">create(AesGcmHkdfStreamingParameters, SecretBytes)</a></span> - Static method in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingKey.html" title="class in com.google.crypto.tink.streamingaead">AesGcmHkdfStreamingKey</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/internal/LegacyFullStreamingAead.html#create-com.google.crypto.tink.internal.LegacyProtoKey-">create(LegacyProtoKey)</a></span> - Static method in class com.google.crypto.tink.streamingaead.internal.<a href="com/google/crypto/tink/streamingaead/internal/LegacyFullStreamingAead.html" title="class in com.google.crypto.tink.streamingaead.internal">LegacyFullStreamingAead</a></dt>
+<dd>
+<div class="block">Covers the cases where users created their own streaming AEAD / key classes.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/AesCtrHmacStreaming.html#create-com.google.crypto.tink.streamingaead.AesCtrHmacStreamingKey-">create(AesCtrHmacStreamingKey)</a></span> - Static method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/AesCtrHmacStreaming.html" title="class in com.google.crypto.tink.subtle">AesCtrHmacStreaming</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/AesEaxJce.html#create-com.google.crypto.tink.aead.AesEaxKey-">create(AesEaxKey)</a></span> - Static method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/AesEaxJce.html" title="class in com.google.crypto.tink.subtle">AesEaxJce</a></dt>
@@ -14837,6 +14841,10 @@
 <dd>
 <div class="block">Takes an arbitrary raw Prf and makes it a full primitive.</div>
 </dd>
+<dt><a href="com/google/crypto/tink/streamingaead/internal/LegacyFullStreamingAead.html" title="class in com.google.crypto.tink.streamingaead.internal"><span class="typeNameLink">LegacyFullStreamingAead</span></a> - Class in <a href="com/google/crypto/tink/streamingaead/internal/package-summary.html">com.google.crypto.tink.streamingaead.internal</a></dt>
+<dd>
+<div class="block">Takes an arbitrary raw StreamingAead and makes it a full primitive.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/internal/LegacyKeyManagerImpl.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">LegacyKeyManagerImpl</span></a>&lt;<a href="com/google/crypto/tink/internal/LegacyKeyManagerImpl.html" title="type parameter in LegacyKeyManagerImpl">P</a>&gt; - Class in <a href="com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></dt>
 <dd>
 <div class="block">A composed KeyManager implements a KeyManager by accessing the internal specific registries.</div>
@@ -15721,7 +15729,11 @@
 <dd>
 <div class="block">Returns a <a href="com/google/crypto/tink/signature/SignaturePemKeysetReader.Builder.html" title="class in com.google.crypto.tink.signature"><code>SignaturePemKeysetReader.Builder</code></a> for <a href="com/google/crypto/tink/signature/SignaturePemKeysetReader.html" title="class in com.google.crypto.tink.signature"><code>SignaturePemKeysetReader</code></a>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/internal/LegacyFullStreamingAead.html#newDecryptingChannel-java.nio.channels.ReadableByteChannel-byte:A-">newDecryptingChannel(ReadableByteChannel, byte[])</a></span> - Method in class com.google.crypto.tink.streamingaead.internal.<a href="com/google/crypto/tink/streamingaead/internal/LegacyFullStreamingAead.html" title="class in com.google.crypto.tink.streamingaead.internal">LegacyFullStreamingAead</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/StreamingAead.html#newDecryptingChannel-java.nio.channels.ReadableByteChannel-byte:A-">newDecryptingChannel(ReadableByteChannel, byte[])</a></span> - Method in interface com.google.crypto.tink.<a href="com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/internal/LegacyFullStreamingAead.html#newDecryptingStream-java.io.InputStream-byte:A-">newDecryptingStream(InputStream, byte[])</a></span> - Method in class com.google.crypto.tink.streamingaead.internal.<a href="com/google/crypto/tink/streamingaead/internal/LegacyFullStreamingAead.html" title="class in com.google.crypto.tink.streamingaead.internal">LegacyFullStreamingAead</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/StreamingAead.html#newDecryptingStream-java.io.InputStream-byte:A-">newDecryptingStream(InputStream, byte[])</a></span> - Method in interface com.google.crypto.tink.<a href="com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a></dt>
 <dd>
@@ -15729,10 +15741,14 @@
  via the wrapper results in AEAD-decryption of the underlying ciphertext,
  using <code>associatedData</code> as associated authenticated data.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/internal/LegacyFullStreamingAead.html#newEncryptingChannel-java.nio.channels.WritableByteChannel-byte:A-">newEncryptingChannel(WritableByteChannel, byte[])</a></span> - Method in class com.google.crypto.tink.streamingaead.internal.<a href="com/google/crypto/tink/streamingaead/internal/LegacyFullStreamingAead.html" title="class in com.google.crypto.tink.streamingaead.internal">LegacyFullStreamingAead</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/StreamingAead.html#newEncryptingChannel-java.nio.channels.WritableByteChannel-byte:A-">newEncryptingChannel(WritableByteChannel, byte[])</a></span> - Method in interface com.google.crypto.tink.<a href="com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a></dt>
 <dd>
 <div class="block">Returns a WritableByteChannel for plaintext.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/internal/LegacyFullStreamingAead.html#newEncryptingStream-java.io.OutputStream-byte:A-">newEncryptingStream(OutputStream, byte[])</a></span> - Method in class com.google.crypto.tink.streamingaead.internal.<a href="com/google/crypto/tink/streamingaead/internal/LegacyFullStreamingAead.html" title="class in com.google.crypto.tink.streamingaead.internal">LegacyFullStreamingAead</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/StreamingAead.html#newEncryptingStream-java.io.OutputStream-byte:A-">newEncryptingStream(OutputStream, byte[])</a></span> - Method in interface com.google.crypto.tink.<a href="com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a></dt>
 <dd>
 <div class="block">Returns a wrapper around <code>ciphertextDestination</code>, such that any write-operation via
@@ -15795,6 +15811,8 @@
 <div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/PrimitiveSet.Builder.html" title="class in com.google.crypto.tink"><code>PrimitiveSet.Builder</code></a> instead.</span></div>
 </div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/internal/LegacyFullStreamingAead.html#newSeekableDecryptingChannel-java.nio.channels.SeekableByteChannel-byte:A-">newSeekableDecryptingChannel(SeekableByteChannel, byte[])</a></span> - Method in class com.google.crypto.tink.streamingaead.internal.<a href="com/google/crypto/tink/streamingaead/internal/LegacyFullStreamingAead.html" title="class in com.google.crypto.tink.streamingaead.internal">LegacyFullStreamingAead</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/StreamingAead.html#newSeekableDecryptingChannel-java.nio.channels.SeekableByteChannel-byte:A-">newSeekableDecryptingChannel(SeekableByteChannel, byte[])</a></span> - Method in interface com.google.crypto.tink.<a href="com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a></dt>
 <dd>
 <div class="block">Returns a SeekableByteChannel that allows to access the plaintext.</div>
