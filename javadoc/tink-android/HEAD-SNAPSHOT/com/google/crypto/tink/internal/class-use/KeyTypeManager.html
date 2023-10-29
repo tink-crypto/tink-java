@@ -331,17 +331,12 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><code>&lt;KeyProtoT extends com.google.protobuf.MessageLite,PublicKeyProtoT extends com.google.protobuf.MessageLite&gt;<br>void</code></td>
-<td class="colLast"><span class="typeNameLabel">KeyManagerRegistry.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/KeyManagerRegistry.html#registerAsymmetricKeyManagers-com.google.crypto.tink.internal.PrivateKeyTypeManager-com.google.crypto.tink.internal.KeyTypeManager-boolean-">registerAsymmetricKeyManagers</a></span>(<a href="../../../../../../com/google/crypto/tink/internal/PrivateKeyTypeManager.html" title="class in com.google.crypto.tink.internal">PrivateKeyTypeManager</a>&lt;KeyProtoT,PublicKeyProtoT&gt;&nbsp;privateKeyTypeManager,
-                             <a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal">KeyTypeManager</a>&lt;PublicKeyProtoT&gt;&nbsp;publicKeyTypeManager,
-                             boolean&nbsp;newKeyAllowed)</code>
-<div class="block">Registers a private KeyTypeManager and a corresponding public KeyTypeManager.</div>
+<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.KeyFactory.html" title="type parameter in KeyTypeManager.KeyFactory">KeyProtoT</a></code></td>
+<td class="colLast"><span class="typeNameLabel">KeyTypeManager.KeyFactory.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.KeyFactory.html#deriveKey-com.google.crypto.tink.internal.KeyTypeManager-KeyFormatProtoT-java.io.InputStream-">deriveKey</a></span>(<a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal">KeyTypeManager</a>&lt;<a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.KeyFactory.html" title="type parameter in KeyTypeManager.KeyFactory">KeyProtoT</a>&gt;&nbsp;manager,
+         <a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.KeyFactory.html" title="type parameter in KeyTypeManager.KeyFactory">KeyFormatProtoT</a>&nbsp;keyFormat,
+         <a href="https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io">InputStream</a>&nbsp;pseudoRandomness)</code>
+<div class="block">Legacy method: subclasses should implement <code>createKeyWithFixedRandomness</code> instead.</div>
 </td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>&lt;KeyProtoT extends com.google.protobuf.MessageLite&gt;<br>void</code></td>
-<td class="colLast"><span class="typeNameLabel">KeyManagerRegistry.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/KeyManagerRegistry.html#registerKeyManager-com.google.crypto.tink.internal.KeyTypeManager-boolean-">registerKeyManager</a></span>(<a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal">KeyTypeManager</a>&lt;KeyProtoT&gt;&nbsp;manager,
-                  boolean&nbsp;newKeyAllowed)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
