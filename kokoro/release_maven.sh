@@ -32,6 +32,8 @@ readonly IS_KOKORO
 # WARNING: Setting this environment varialble to "true" will cause this script
 # to actually perform a release.
 : "${DO_MAKE_RELEASE:="false"}"
+# By default, release both tink and tink-android.
+: "${TINK_JAVA_ARTIFACT:="all"}"
 
 if [[ ! "${DO_MAKE_RELEASE}" =~ ^(false|true)$ ]]; then
   echo "DO_MAKE_RELEASE must be either \"true\" or \"false\"" >&2
@@ -73,10 +75,16 @@ create_maven_release() {
       "${KOKORO_KEYSTORE_DIR}/70968_tink_dev_maven_pgp_passphrase")"
   fi
 
-  ./maven/maven_deploy_library.sh "${maven_deploy_library_options[@]}" release \
-    tink maven/tink-java.pom.xml "${RELEASE_VERSION}"
-  ./maven/maven_deploy_library.sh "${maven_deploy_library_options[@]}" release \
-    tink-android maven/tink-java-android.pom.xml "${RELEASE_VERSION}"
+  if [[ "${TINK_JAVA_ARTIFACT}" == "tink" \
+        || "${TINK_JAVA_ARTIFACT}" == "all" ]]; then
+    ./maven/maven_deploy_library.sh "${maven_deploy_library_options[@]}" \
+      release tink maven/tink-java.pom.xml "${RELEASE_VERSION}"
+  fi
+  if [[ "${TINK_JAVA_ARTIFACT}" == "tink-android" \
+        || "${TINK_JAVA_ARTIFACT}" == "all" ]]; then
+    ./maven/maven_deploy_library.sh "${maven_deploy_library_options[@]}" \
+      release tink-android maven/tink-java-android.pom.xml "${RELEASE_VERSION}"
+  fi
 }
 
 main() {
