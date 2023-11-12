@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":41,"i1":41,"i2":9,"i3":41,"i4":41,"i5":9,"i6":9,"i7":9,"i8":41,"i9":9,"i10":41,"i11":9,"i12":41,"i13":41,"i14":9,"i15":9,"i16":9,"i17":9,"i18":9,"i19":9,"i20":41,"i21":41,"i22":9,"i23":9,"i24":9,"i25":9};
+var methods = {"i0":41,"i1":41,"i2":9,"i3":41,"i4":41,"i5":41,"i6":9,"i7":41,"i8":9,"i9":41,"i10":9,"i11":41,"i12":41,"i13":9,"i14":41,"i15":9,"i16":41,"i17":41,"i18":9,"i19":9,"i20":9,"i21":9,"i22":9,"i23":9,"i24":41,"i25":41,"i26":9,"i27":9,"i28":9,"i29":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -209,12 +209,29 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>static &lt;P&gt;&nbsp;P</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#getPrimitive-com.google.crypto.tink.proto.KeyData-">getPrimitive</a></span>(<a href="../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto">KeyData</a>&nbsp;keyData)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
+<div class="block"><span class="deprecationComment">Use <code>getPrimitive(keyData, Primitive.class)</code> instead.</span></div>
+</div>
+</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>static &lt;P&gt;&nbsp;P</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#getPrimitive-com.google.crypto.tink.proto.KeyData-java.lang.Class-">getPrimitive</a></span>(<a href="../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto">KeyData</a>&nbsp;keyData,
             <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;primitiveClass)</code>
 <div class="block">Creates a new primitive for the key given in <code>keyData</code>.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code>static &lt;P&gt;&nbsp;P</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#getPrimitive-java.lang.String-byte:A-">getPrimitive</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl,
+            byte[]&nbsp;serializedKey)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
+<div class="block"><span class="deprecationComment">Use <code>getPrimitive(typeUrl, serializedKey, Primitive.class)</code> instead.</span></div>
+</div>
+</td>
+</tr>
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>static &lt;P&gt;&nbsp;P</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#getPrimitive-java.lang.String-byte:A-java.lang.Class-">getPrimitive</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl,
             byte[]&nbsp;serializedKey,
@@ -222,7 +239,16 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="block">Creates a new primitive for the key given in <code>serializedKey</code>.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i9" class="rowColor">
+<td class="colFirst"><code>static &lt;P&gt;&nbsp;P</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#getPrimitive-java.lang.String-com.google.protobuf.ByteString-">getPrimitive</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl,
+            com.google.protobuf.ByteString&nbsp;serializedKey)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
+<div class="block"><span class="deprecationComment">Use <code>getPrimitive(typeUrl, serializedKey, Primitive.class</code> instead.</span></div>
+</div>
+</td>
+</tr>
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>static &lt;P&gt;&nbsp;P</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#getPrimitive-java.lang.String-com.google.protobuf.ByteString-java.lang.Class-">getPrimitive</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl,
             com.google.protobuf.ByteString&nbsp;serializedKey,
@@ -230,7 +256,16 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="block">Creates a new primitive for the key given in <code>serializedKey</code>.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i11" class="rowColor">
+<td class="colFirst"><code>static &lt;P&gt;&nbsp;P</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#getPrimitive-java.lang.String-com.google.protobuf.MessageLite-">getPrimitive</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl,
+            com.google.protobuf.MessageLite&nbsp;key)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
+<div class="block"><span class="deprecationComment">Use <code>getPrimitive(typeUrl, serializedKey, P.class)</code> instead.</span></div>
+</div>
+</td>
+</tr>
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>static &lt;P&gt;&nbsp;P</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#getPrimitive-java.lang.String-com.google.protobuf.MessageLite-java.lang.Class-">getPrimitive</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl,
             com.google.protobuf.MessageLite&nbsp;key,
@@ -240,14 +275,14 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto">KeyData</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#getPublicKeyData-java.lang.String-com.google.protobuf.ByteString-">getPublicKeyData</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl,
                 com.google.protobuf.ByteString&nbsp;serializedPrivateKey)</code>
 <div class="block">Extracts the public key data from the private key given in <code>serializedPrivateKey</code>.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>static <a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a>&lt;?&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#getUntypedKeyManager-java.lang.String-">getUntypedKeyManager</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl)</code>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
@@ -255,14 +290,14 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>static <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#keyTemplates--">keyTemplates</a></span>()</code>
 <div class="block">Returns an immutable list of key template names supported by registered key managers that are
  allowed to generate new keys.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>static com.google.protobuf.MessageLite</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#newKey-com.google.crypto.tink.proto.KeyTemplate-">newKey</a></span>(<a href="../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;keyTemplate)</code>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
@@ -270,7 +305,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>static com.google.protobuf.MessageLite</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#newKey-java.lang.String-com.google.protobuf.MessageLite-">newKey</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl,
       com.google.protobuf.MessageLite&nbsp;format)</code>
@@ -279,19 +314,19 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>static <a href="../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto">KeyData</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#newKeyData-com.google.crypto.tink.proto.KeyTemplate-">newKeyData</a></span>(<a href="../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;keyTemplate)</code>
 <div class="block">Generates a new <a href="../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto"><code>KeyData</code></a> for the specified <code>template</code>.</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto">KeyData</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#newKeyData-com.google.crypto.tink.KeyTemplate-">newKeyData</a></span>(<a href="../../../../com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink">KeyTemplate</a>&nbsp;keyTemplate)</code>
 <div class="block">Generates a new <a href="../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto"><code>KeyData</code></a> for the specified <code>template</code>.</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>static &lt;KeyProtoT extends com.google.protobuf.MessageLite,PublicKeyProtoT extends com.google.protobuf.MessageLite&gt;<br>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#registerAsymmetricKeyManagers-com.google.crypto.tink.internal.PrivateKeyTypeManager-com.google.crypto.tink.internal.KeyTypeManager-boolean-">registerAsymmetricKeyManagers</a></span>(<a href="../../../../com/google/crypto/tink/internal/PrivateKeyTypeManager.html" title="class in com.google.crypto.tink.internal">PrivateKeyTypeManager</a>&lt;KeyProtoT,PublicKeyProtoT&gt;&nbsp;privateKeyTypeManager,
                              <a href="../../../../com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal">KeyTypeManager</a>&lt;PublicKeyProtoT&gt;&nbsp;publicKeyTypeManager,
@@ -299,27 +334,27 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="block">Tries to register <code>manager</code> for <code>manager.getKeyType()</code>.</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>static &lt;P&gt;&nbsp;void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#registerKeyManager-com.google.crypto.tink.KeyManager-">registerKeyManager</a></span>(<a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a>&lt;P&gt;&nbsp;manager)</code>
 <div class="block">Tries to register <code>manager</code> for <code>manager.getKeyType()</code>.</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>static &lt;P&gt;&nbsp;void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#registerKeyManager-com.google.crypto.tink.KeyManager-boolean-">registerKeyManager</a></span>(<a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a>&lt;P&gt;&nbsp;manager,
                   boolean&nbsp;newKeyAllowed)</code>
 <div class="block">Tries to register <code>manager</code> for <code>manager.getKeyType()</code>.</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>static &lt;KeyProtoT extends com.google.protobuf.MessageLite&gt;<br>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#registerKeyManager-com.google.crypto.tink.internal.KeyTypeManager-boolean-">registerKeyManager</a></span>(<a href="../../../../com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal">KeyTypeManager</a>&lt;KeyProtoT&gt;&nbsp;manager,
                   boolean&nbsp;newKeyAllowed)</code>
 <div class="block">Tries to register <code>manager</code> for <code>manager.getKeyType()</code>.</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>static &lt;P&gt;&nbsp;void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#registerKeyManager-java.lang.String-com.google.crypto.tink.KeyManager-">registerKeyManager</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl,
                   <a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a>&lt;P&gt;&nbsp;manager)</code>
@@ -328,7 +363,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </div>
 </td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>static &lt;P&gt;&nbsp;void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#registerKeyManager-java.lang.String-com.google.crypto.tink.KeyManager-boolean-">registerKeyManager</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl,
                   <a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a>&lt;P&gt;&nbsp;manager,
@@ -338,19 +373,19 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </div>
 </td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>static &lt;B,P&gt;&nbsp;void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#registerPrimitiveWrapper-com.google.crypto.tink.PrimitiveWrapper-">registerPrimitiveWrapper</a></span>(<a href="../../../../com/google/crypto/tink/PrimitiveWrapper.html" title="interface in com.google.crypto.tink">PrimitiveWrapper</a>&lt;B,P&gt;&nbsp;wrapper)</code>
 <div class="block">Tries to register <code>wrapper</code> as a new SetWrapper for primitive <code>P</code>.</div>
 </td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#restrictToFipsIfEmpty--">restrictToFipsIfEmpty</a></span>()</code>
 <div class="block">Tries to enable the FIPS restrictions if the Registry is empty.</div>
 </td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>static &lt;B,P&gt;&nbsp;P</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#wrap-com.google.crypto.tink.PrimitiveSet-java.lang.Class-">wrap</a></span>(<a href="../../../../com/google/crypto/tink/PrimitiveSet.html" title="class in com.google.crypto.tink">PrimitiveSet</a>&lt;B&gt;&nbsp;primitiveSet,
     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;clazz)</code>
@@ -358,7 +393,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
  PrimitiveSet with it.</div>
 </td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>static &lt;P&gt;&nbsp;P</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/Registry.html#wrap-com.google.crypto.tink.PrimitiveSet-">wrap</a></span>(<a href="../../../../com/google/crypto/tink/PrimitiveSet.html" title="class in com.google.crypto.tink">PrimitiveSet</a>&lt;P&gt;&nbsp;primitiveSet)</code>&nbsp;</td>
 </tr>
@@ -755,6 +790,28 @@ public static&nbsp;com.google.protobuf.MessageLite&nbsp;newKey(<a href="https://
 </dl>
 </li>
 </ul>
+<a name="getPrimitive-java.lang.String-com.google.protobuf.MessageLite-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPrimitive</h4>
+<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
+public static&nbsp;&lt;P&gt;&nbsp;P&nbsp;getPrimitive(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl,
+                                             com.google.protobuf.MessageLite&nbsp;key)
+                                      throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">Use <code>getPrimitive(typeUrl, serializedKey, P.class)</code> instead.</span></div>
+<div class="block">Creates a new primitive for the key given in <code>proto</code>.
+
+ <p>It looks up a <a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink"><code>KeyManager</code></a> identified by <code>type_url</code>, and calls <a href="../../../../com/google/crypto/tink/KeyManager.html#getPrimitive-com.google.protobuf.ByteString-"><code>KeyManager.getPrimitive(com.google.protobuf.ByteString)</code></a> with <code>key</code> as the parameter.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a new primitive</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
+</dl>
+</li>
+</ul>
 <a name="getPrimitive-java.lang.String-com.google.protobuf.MessageLite-java.lang.Class-">
 <!--   -->
 </a>
@@ -770,6 +827,28 @@ public static&nbsp;&lt;P&gt;&nbsp;P&nbsp;getPrimitive(<a href="https://docs.orac
 <div class="block">Creates a new primitive for the key given in <code>key</code>.
 
  <p>It looks up a <a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink"><code>KeyManager</code></a> identified by <code>type_url</code>, and calls <a href="../../../../com/google/crypto/tink/KeyManager.html#getPrimitive-com.google.protobuf.ByteString-"><code>KeyManager.getPrimitive(com.google.protobuf.ByteString)</code></a> with <code>key</code> as the parameter.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a new primitive</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getPrimitive-java.lang.String-com.google.protobuf.ByteString-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPrimitive</h4>
+<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
+public static&nbsp;&lt;P&gt;&nbsp;P&nbsp;getPrimitive(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl,
+                                             com.google.protobuf.ByteString&nbsp;serializedKey)
+                                      throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">Use <code>getPrimitive(typeUrl, serializedKey, Primitive.class</code> instead.</span></div>
+<div class="block">Creates a new primitive for the key given in <code>proto</code>.
+
+ <p>It looks up a <a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink"><code>KeyManager</code></a> identified by <code>type_url</code>, and calls <a href="../../../../com/google/crypto/tink/KeyManager.html#getPrimitive-com.google.protobuf.ByteString-"><code>KeyManager.getPrimitive(com.google.protobuf.ByteString)</code></a> with <code>serializedKey</code> as the parameter.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a new primitive</dd>
@@ -799,6 +878,28 @@ public static&nbsp;&lt;P&gt;&nbsp;P&nbsp;getPrimitive(<a href="https://docs.orac
 </dl>
 </li>
 </ul>
+<a name="getPrimitive-java.lang.String-byte:A-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPrimitive</h4>
+<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
+public static&nbsp;&lt;P&gt;&nbsp;P&nbsp;getPrimitive(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl,
+                                             byte[]&nbsp;serializedKey)
+                                      throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">Use <code>getPrimitive(typeUrl, serializedKey, Primitive.class)</code> instead.</span></div>
+<div class="block">Creates a new primitive for the key given in <code>serializedKey</code>.
+
+ <p>It looks up a <a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink"><code>KeyManager</code></a> identified by <code>type_url</code>, and calls <a href="../../../../com/google/crypto/tink/KeyManager.html#getPrimitive-com.google.protobuf.ByteString-"><code>KeyManager.getPrimitive(com.google.protobuf.ByteString)</code></a> with <code>serialized</code> as the parameter.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a new primitive</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
+</dl>
+</li>
+</ul>
 <a name="getPrimitive-java.lang.String-byte:A-java.lang.Class-">
 <!--   -->
 </a>
@@ -812,6 +913,27 @@ public static&nbsp;&lt;P&gt;&nbsp;P&nbsp;getPrimitive(<a href="https://docs.orac
 <div class="block">Creates a new primitive for the key given in <code>serializedKey</code>.
 
  <p>It looks up a <a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink"><code>KeyManager</code></a> identified by <code>type_url</code>, and calls <a href="../../../../com/google/crypto/tink/KeyManager.html#getPrimitive-com.google.protobuf.ByteString-"><code>KeyManager.getPrimitive(com.google.protobuf.ByteString)</code></a> with <code>serialized</code> as the parameter.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a new primitive</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getPrimitive-com.google.crypto.tink.proto.KeyData-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPrimitive</h4>
+<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
+public static&nbsp;&lt;P&gt;&nbsp;P&nbsp;getPrimitive(<a href="../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto">KeyData</a>&nbsp;keyData)
+                                      throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">Use <code>getPrimitive(keyData, Primitive.class)</code> instead.</span></div>
+<div class="block">Creates a new primitive for the key given in <code>keyData</code>.
+
+ <p>It looks up a <a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink"><code>KeyManager</code></a> identified by <code>keyData.type_url</code>, and calls <a href="../../../../com/google/crypto/tink/KeyManager.html#getPrimitive-com.google.protobuf.ByteString-"><code>KeyManager.getPrimitive(com.google.protobuf.ByteString)</code></a> with <code>keyData.value</code> as the parameter.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a new primitive</dd>
