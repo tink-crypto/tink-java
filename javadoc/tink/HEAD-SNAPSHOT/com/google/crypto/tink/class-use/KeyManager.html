@@ -240,6 +240,15 @@
 <div class="block">Attempts to insert the given KeyManager into the object.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code>&lt;P&gt;&nbsp;void</code></td>
+<td class="colLast"><span class="typeNameLabel">KeyManagerRegistry.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/KeyManagerRegistry.html#registerKeyManagerWithFipsCompatibility-com.google.crypto.tink.KeyManager-com.google.crypto.tink.config.internal.TinkFipsUtil.AlgorithmFipsCompatibility-boolean-">registerKeyManagerWithFipsCompatibility</a></span>(<a href="../../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a>&lt;P&gt;&nbsp;manager,
+                                       <a href="../../../../../com/google/crypto/tink/config/internal/TinkFipsUtil.AlgorithmFipsCompatibility.html" title="enum in com.google.crypto.tink.config.internal">TinkFipsUtil.AlgorithmFipsCompatibility</a>&nbsp;compatibility,
+                                       boolean&nbsp;newKeyAllowed)</code>
+<div class="block">Attempts to insert the given KeyManager into the object; the caller guarantees that the given
+ key manager satisfies the given FIPS compatibility.</div>
+</td>
+</tr>
 </tbody>
 </table>
 </li>
