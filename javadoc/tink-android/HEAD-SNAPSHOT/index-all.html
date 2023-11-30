@@ -19511,6 +19511,11 @@
 <div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/Registry.html#registerKeyManager-com.google.crypto.tink.KeyManager-boolean-"><code>registerKeyManager(KeyManager&lt;P&gt;, boolean)</code></a></span></div>
 </div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/KeyManagerRegistry.html#registerKeyManagerWithFipsCompatibility-com.google.crypto.tink.KeyManager-com.google.crypto.tink.config.internal.TinkFipsUtil.AlgorithmFipsCompatibility-boolean-">registerKeyManagerWithFipsCompatibility(KeyManager&lt;P&gt;, TinkFipsUtil.AlgorithmFipsCompatibility, boolean)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/KeyManagerRegistry.html" title="class in com.google.crypto.tink.internal">KeyManagerRegistry</a></dt>
+<dd>
+<div class="block">Attempts to insert the given KeyManager into the object; the caller guarantees that the given
+ key manager satisfies the given FIPS compatibility.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/MutableSerializationRegistry.html#registerKeyParser-com.google.crypto.tink.internal.KeyParser-">registerKeyParser(KeyParser&lt;SerializationT&gt;)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/MutableSerializationRegistry.html" title="class in com.google.crypto.tink.internal">MutableSerializationRegistry</a></dt>
 <dd>
 <div class="block">Registers a key parser for later use in <a href="com/google/crypto/tink/internal/MutableSerializationRegistry.html#parseKey-SerializationT-com.google.crypto.tink.SecretKeyAccess-"><code>MutableSerializationRegistry.parseKey(SerializationT, com.google.crypto.tink.SecretKeyAccess)</code></a>.</div>
