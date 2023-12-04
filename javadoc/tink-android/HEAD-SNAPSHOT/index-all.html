@@ -119,7 +119,11 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/KmsClients.html#add-com.google.crypto.tink.KmsClient-">add(KmsClient)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/KmsClients.html" title="class in com.google.crypto.tink">KmsClients</a></dt>
 <dd>
-<div class="block">Adds a client to the list of known <a href="com/google/crypto/tink/KmsClient.html" title="interface in com.google.crypto.tink"><code>KmsClient</code></a>-objects.</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>
+<div class="block"><span class="deprecationComment">Registering KmsClient is discouraged. Instead call <a href="com/google/crypto/tink/KmsClient.html#getAead-java.lang.String-"><code>KmsClient.getAead(java.lang.String)</code></a> to get
+     a remote <a href="com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a>. Use this <a href="com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a> to encrypt a keyset with <a href="com/google/crypto/tink/TinkProtoKeysetFormat.html#serializeEncryptedKeyset-com.google.crypto.tink.KeysetHandle-com.google.crypto.tink.Aead-byte:A-"><code>TinkProtoKeysetFormat.serializeEncryptedKeyset(com.google.crypto.tink.KeysetHandle, com.google.crypto.tink.Aead, byte[])</code></a>, or to create an envelope <a href="com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a>
+     using <a href="com/google/crypto/tink/aead/KmsEnvelopeAead.html#create-com.google.crypto.tink.aead.AeadParameters-com.google.crypto.tink.Aead-"><code>KmsEnvelopeAead.create(com.google.crypto.tink.aead.AeadParameters, com.google.crypto.tink.Aead)</code></a>.</span></div>
+</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/monitoring/MonitoringAnnotations.Builder.html#add-java.lang.String-java.lang.String-">add(String, String)</a></span> - Method in class com.google.crypto.tink.monitoring.<a href="com/google/crypto/tink/monitoring/MonitoringAnnotations.Builder.html" title="class in com.google.crypto.tink.monitoring">MonitoringAnnotations.Builder</a></dt>
 <dd>&nbsp;</dd>
@@ -3600,13 +3604,22 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/KmsAeadKeyManager.html#createKeyTemplate-java.lang.String-">createKeyTemplate(String)</a></span> - Static method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/KmsAeadKeyManager.html" title="class in com.google.crypto.tink.aead">KmsAeadKeyManager</a></dt>
 <dd>
-<div class="block">Returns a new <a href="com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink"><code>KeyTemplate</code></a> that can generate a <a href="com/google/crypto/tink/proto/KmsAeadKey.html" title="class in com.google.crypto.tink.proto"><code>KmsAeadKey</code></a> whose key encrypting key (KEK) is pointing to <code>kekUri</code>.</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>
+<div class="block"><span class="deprecationComment">Instead of registring a <code>KmsClient</code>, and creating an <code>Aead</code> using
+     <code>KeysetHandle.generateNew(KmsAeadKeyManager.createKeyTemplate(kekUri)).getPrimitive(Aead.class)</code>,
+     create the <code>Aead</code> directly using <code>kmsClient.getAead(kekUri)</code>, without
+     registering any <code>KmsClient</code>.</span></div>
+</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/KmsEnvelopeAeadKeyManager.html#createKeyTemplate-java.lang.String-com.google.crypto.tink.KeyTemplate-">createKeyTemplate(String, KeyTemplate)</a></span> - Static method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/KmsEnvelopeAeadKeyManager.html" title="class in com.google.crypto.tink.aead">KmsEnvelopeAeadKeyManager</a></dt>
 <dd>
-<div class="block">Returns a new <a href="com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink"><code>KeyTemplate</code></a> that can generate a <a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadKey.html" title="class in com.google.crypto.tink.aead"><code>LegacyKmsEnvelopeAeadKey</code></a> whose
- key encrypting key (KEK) is pointing to <code>kekUri</code> and DEK template is <code>dekTemplate</code>
- (or a derived version of it).</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>
+<div class="block"><span class="deprecationComment">Instead of registring a <code>KmsClient</code>, and creating an <code>Aead</code> using
+     <code>KeysetHandle.generateNew(KmsEnvelopeAeadKeyManager.createKeyTemplate(keyUri,
+     KeyTemplates.get("AES128_GCM"))).getPrimitive(Aead.class)</code>, create the <code>Aead</code>
+     directly using <code>KmsEnvelopeAead.create(PredefinedAeadParameters.AES256_GCM,
+     kmsClient.getAead(keyUri))</code>, without registering any <code>KmsClient</code>.</span></div>
+</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AeadKeyTemplates.html#createKmsEnvelopeAeadKeyTemplate-java.lang.String-com.google.crypto.tink.proto.KeyTemplate-">createKmsEnvelopeAeadKeyTemplate(String, KeyTemplate)</a></span> - Static method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AeadKeyTemplates.html" title="class in com.google.crypto.tink.aead">AeadKeyTemplates</a></dt>
 <dd>
@@ -5549,7 +5562,9 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/KmsClients.html#get-java.lang.String-">get(String)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/KmsClients.html" title="class in com.google.crypto.tink">KmsClients</a></dt>
 <dd>
-<div class="block">Returns the first <a href="com/google/crypto/tink/KmsClient.html" title="interface in com.google.crypto.tink"><code>KmsClient</code></a> registered with <a href="com/google/crypto/tink/KmsClients.html#add-com.google.crypto.tink.KmsClient-"><code>KmsClients.add(com.google.crypto.tink.KmsClient)</code></a> that supports <code>keyUri</code>.</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>
+<div class="block"><span class="deprecationComment">Instead, keep your own instance or list of <a href="com/google/crypto/tink/KmsClient.html" title="interface in com.google.crypto.tink"><code>KmsClient</code></a>.</span></div>
+</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/integration/android/AndroidKeystoreKmsClient.html#getAead-java.lang.String-">getAead(String)</a></span> - Method in class com.google.crypto.tink.integration.android.<a href="com/google/crypto/tink/integration/android/AndroidKeystoreKmsClient.html" title="class in com.google.crypto.tink.integration.android">AndroidKeystoreKmsClient</a></dt>
 <dd>
@@ -14663,8 +14678,11 @@
 </dd>
 <dt><a href="com/google/crypto/tink/KmsClients.html" title="class in com.google.crypto.tink"><span class="typeNameLink">KmsClients</span></a> - Class in <a href="com/google/crypto/tink/package-summary.html">com.google.crypto.tink</a></dt>
 <dd>
-<div class="block">A container for <a href="com/google/crypto/tink/KmsClient.html" title="interface in com.google.crypto.tink"><code>KmsClient</code></a>-objects that are needed by <a href="com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink"><code>KeyManager</code></a>-objects for
- primitives that use KMS-managed keys.</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>
+<div class="block"><span class="deprecationComment">Registering KmsClient is discouraged. Instead call <a href="com/google/crypto/tink/KmsClient.html#getAead-java.lang.String-"><code>KmsClient.getAead(java.lang.String)</code></a> to get a
+     remote <a href="com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a>. Use this <a href="com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a> to encrypt a keyset with <a href="com/google/crypto/tink/TinkProtoKeysetFormat.html#serializeEncryptedKeyset-com.google.crypto.tink.KeysetHandle-com.google.crypto.tink.Aead-byte:A-"><code>TinkProtoKeysetFormat.serializeEncryptedKeyset(com.google.crypto.tink.KeysetHandle, com.google.crypto.tink.Aead, byte[])</code></a>, or to create an envelope <a href="com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a> using
+     <a href="com/google/crypto/tink/aead/KmsEnvelopeAead.html#create-com.google.crypto.tink.aead.AeadParameters-com.google.crypto.tink.Aead-"><code>KmsEnvelopeAead.create(com.google.crypto.tink.aead.AeadParameters, com.google.crypto.tink.Aead)</code></a>.</span></div>
+</div>
 </dd>
 <dt><a href="com/google/crypto/tink/proto/KmsEnvelope.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">KmsEnvelope</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>&nbsp;</dd>

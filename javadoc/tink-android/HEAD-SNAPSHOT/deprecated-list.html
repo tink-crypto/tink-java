@@ -165,69 +165,76 @@
 <td class="colOne"><a href="com/google/crypto/tink/proto/KeyTypeEntry.html" title="class in com.google.crypto.tink.proto">com.google.crypto.tink.proto.KeyTypeEntry</a></td>
 </tr>
 <tr class="rowColor">
+<td class="colOne"><a href="com/google/crypto/tink/KmsClients.html" title="class in com.google.crypto.tink">com.google.crypto.tink.KmsClients</a>
+<div class="block"><span class="deprecationComment">Registering KmsClient is discouraged. Instead call <a href="com/google/crypto/tink/KmsClient.html#getAead-java.lang.String-"><code>KmsClient.getAead(java.lang.String)</code></a> to get a
+     remote <a href="com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a>. Use this <a href="com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a> to encrypt a keyset with <a href="com/google/crypto/tink/TinkProtoKeysetFormat.html#serializeEncryptedKeyset-com.google.crypto.tink.KeysetHandle-com.google.crypto.tink.Aead-byte:A-"><code>TinkProtoKeysetFormat.serializeEncryptedKeyset(com.google.crypto.tink.KeysetHandle, com.google.crypto.tink.Aead, byte[])</code></a>, or to create an envelope <a href="com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a> using
+     <a href="com/google/crypto/tink/aead/KmsEnvelopeAead.html#create-com.google.crypto.tink.aead.AeadParameters-com.google.crypto.tink.Aead-"><code>KmsEnvelopeAead.create(com.google.crypto.tink.aead.AeadParameters, com.google.crypto.tink.Aead)</code></a>.</span></div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/subtle/Kwp.html" title="class in com.google.crypto.tink.subtle">com.google.crypto.tink.subtle.Kwp</a>
 <div class="block"><span class="deprecationComment">Tink does not support KeyWrap anymore. This implementation was fallback code for old
      providers that did not implement KWP. It implements the same functionality as <code>Cipher.getInstance("AESWRAPPAD");</code>. Some provider use a different algorithm name: <code>Cipher.getInstance("AES/KWP/NoPadding");</code>.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/mac/MacFactory.html" title="class in com.google.crypto.tink.mac">com.google.crypto.tink.mac.MacFactory</a>
 <div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(Mac.class)</code> after registering the <code>MacWrapper</code> instead.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/mac/MacKeyTemplates.html" title="class in com.google.crypto.tink.mac">com.google.crypto.tink.mac.MacKeyTemplates</a>
 <div class="block"><span class="deprecationComment">Use PredefinedMacParameters instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/NoSecretKeysetHandle.html" title="class in com.google.crypto.tink">com.google.crypto.tink.NoSecretKeysetHandle</a>
 <div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/KeysetHandle.html#readNoSecret-com.google.crypto.tink.KeysetReader-"><code>KeysetHandle.readNoSecret(com.google.crypto.tink.KeysetReader)</code></a> instead</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/prf/PrfKeyTemplates.html" title="class in com.google.crypto.tink.prf">com.google.crypto.tink.prf.PrfKeyTemplates</a>
 <div class="block"><span class="deprecationComment">Use PredefinedPrfParameters instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/signature/PublicKeySignConfig.html" title="class in com.google.crypto.tink.signature">com.google.crypto.tink.signature.PublicKeySignConfig</a>
 <div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/Config.html" title="class in com.google.crypto.tink"><code>Config</code></a> and <a href="com/google/crypto/tink/signature/SignatureConfig.html" title="class in com.google.crypto.tink.signature"><code>SignatureConfig</code></a></span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/signature/PublicKeySignFactory.html" title="class in com.google.crypto.tink.signature">com.google.crypto.tink.signature.PublicKeySignFactory</a>
 <div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(PublicKeySign.class)</code> after registering the
      <code>PublicKeySignWrapper</code> instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/signature/PublicKeyVerifyConfig.html" title="class in com.google.crypto.tink.signature">com.google.crypto.tink.signature.PublicKeyVerifyConfig</a>
 <div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/Config.html" title="class in com.google.crypto.tink"><code>Config</code></a> and <a href="com/google/crypto/tink/signature/SignatureConfig.html" title="class in com.google.crypto.tink.signature"><code>SignatureConfig</code></a></span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/signature/PublicKeyVerifyFactory.html" title="class in com.google.crypto.tink.signature">com.google.crypto.tink.signature.PublicKeyVerifyFactory</a>
 <div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(PublicKeyVerify.class)</code> after registering the
      <code>PublicKeyVerifyWrapper</code> instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/proto/RegistryConfig.html" title="class in com.google.crypto.tink.proto">com.google.crypto.tink.proto.RegistryConfig</a></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/integration/android/SharedPrefKeysetWriter.html" title="class in com.google.crypto.tink.integration.android">com.google.crypto.tink.integration.android.SharedPrefKeysetWriter</a>
 <div class="block"><span class="deprecationComment">We do not expect anyone to use this class. Please file an issue on
      github.com/tink-crypto/tink-java/ if you need to replace this.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/streamingaead/StreamingAeadFactory.html" title="class in com.google.crypto.tink.streamingaead">com.google.crypto.tink.streamingaead.StreamingAeadFactory</a>
 <div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(StreamingAead.class)</code> after registering the
      <code>StreamingAeadWrapper</code> instead.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html" title="class in com.google.crypto.tink.streamingaead">com.google.crypto.tink.streamingaead.StreamingAeadKeyTemplates</a>
 <div class="block"><span class="deprecationComment">Try using our refaster templates to replace them (see
      https://github.com/tink-crypto/tink-java/tree/main/tools/refaster). If migration is unclear,
@@ -380,79 +387,108 @@
 </td>
 </tr>
 <tr class="altColor">
+<td class="colOne"><a href="com/google/crypto/tink/KmsClients.html#add-com.google.crypto.tink.KmsClient-">com.google.crypto.tink.KmsClients.add(KmsClient)</a>
+<div class="block"><span class="deprecationComment">Registering KmsClient is discouraged. Instead call <a href="com/google/crypto/tink/KmsClient.html#getAead-java.lang.String-"><code>KmsClient.getAead(java.lang.String)</code></a> to get
+     a remote <a href="com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a>. Use this <a href="com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a> to encrypt a keyset with <a href="com/google/crypto/tink/TinkProtoKeysetFormat.html#serializeEncryptedKeyset-com.google.crypto.tink.KeysetHandle-com.google.crypto.tink.Aead-byte:A-"><code>TinkProtoKeysetFormat.serializeEncryptedKeyset(com.google.crypto.tink.KeysetHandle, com.google.crypto.tink.Aead, byte[])</code></a>, or to create an envelope <a href="com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a>
+     using <a href="com/google/crypto/tink/aead/KmsEnvelopeAead.html#create-com.google.crypto.tink.aead.AeadParameters-com.google.crypto.tink.Aead-"><code>KmsEnvelopeAead.create(com.google.crypto.tink.aead.AeadParameters, com.google.crypto.tink.Aead)</code></a>.</span></div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/Registry.html#addCatalogue-java.lang.String-com.google.crypto.tink.Catalogue-">com.google.crypto.tink.Registry.addCatalogue(String, Catalogue&lt;?&gt;)</a>
 <div class="block"><span class="deprecationComment">Catalogues are no longer supported.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/PrimitiveSet.html#addPrimitive-P-com.google.crypto.tink.proto.Keyset.Key-">com.google.crypto.tink.PrimitiveSet.addPrimitive(P, Keyset.Key)</a>
 <div class="block"><span class="deprecationComment">use <code>Builder.addPrimitive</code> or <code>Builder.addPrimaryPrimitive</code> instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/subtle/SubtleUtil.html#androidApiLevel--">com.google.crypto.tink.subtle.SubtleUtil.androidApiLevel()</a>
 <div class="block"><span class="deprecationComment">Please reimplement this method in your code instead. From within Tink, use <code>Util.getAndroidApiLevel</code> directly.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/KeyTemplate.html#create-java.lang.String-byte:A-com.google.crypto.tink.KeyTemplate.OutputPrefixType-">com.google.crypto.tink.KeyTemplate.create(String, byte[], KeyTemplate.OutputPrefixType)</a>
 <div class="block"><span class="deprecationComment">Use createFrom</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/signature/SignatureKeyTemplates.html#createEcdsaKeyTemplate-com.google.crypto.tink.proto.HashType-com.google.crypto.tink.proto.EllipticCurveType-com.google.crypto.tink.proto.EcdsaSignatureEncoding-com.google.crypto.tink.proto.OutputPrefixType-">com.google.crypto.tink.signature.SignatureKeyTemplates.createEcdsaKeyTemplate(HashType, EllipticCurveType, EcdsaSignatureEncoding, OutputPrefixType)</a>
 <div class="block"><span class="deprecationComment">Use a corresponding <a href="com/google/crypto/tink/signature/EcdsaParameters.html" title="class in com.google.crypto.tink.signature"><code>EcdsaParameters</code></a> object instead.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/hybrid/HybridKeyTemplates.html#createEciesAeadHkdfKeyTemplate-com.google.crypto.tink.proto.EllipticCurveType-com.google.crypto.tink.proto.HashType-com.google.crypto.tink.proto.EcPointFormat-com.google.crypto.tink.proto.KeyTemplate-com.google.crypto.tink.proto.OutputPrefixType-byte:A-">com.google.crypto.tink.hybrid.HybridKeyTemplates.createEciesAeadHkdfKeyTemplate(EllipticCurveType, HashType, EcPointFormat, KeyTemplate, OutputPrefixType, byte[])</a>
 <div class="block"><span class="deprecationComment">Use EciesParameters instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/hybrid/HybridKeyTemplates.html#createEciesAeadHkdfParams-com.google.crypto.tink.proto.EllipticCurveType-com.google.crypto.tink.proto.HashType-com.google.crypto.tink.proto.EcPointFormat-com.google.crypto.tink.proto.KeyTemplate-byte:A-">com.google.crypto.tink.hybrid.HybridKeyTemplates.createEciesAeadHkdfParams(EllipticCurveType, HashType, EcPointFormat, KeyTemplate, byte[])</a>
 <div class="block"><span class="deprecationComment">Use EciesParameters instead.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/KeysetHandle.html#createFromKey-com.google.crypto.tink.tinkkey.KeyHandle-com.google.crypto.tink.tinkkey.KeyAccess-">com.google.crypto.tink.KeysetHandle.createFromKey(KeyHandle, KeyAccess)</a>
 <div class="block"><span class="deprecationComment">Use <code>KeysetHandle.Builder.addEntry</code> instead.</span></div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colOne"><a href="com/google/crypto/tink/aead/KmsAeadKeyManager.html#createKeyTemplate-java.lang.String-">com.google.crypto.tink.aead.KmsAeadKeyManager.createKeyTemplate(String)</a>
+<div class="block"><span class="deprecationComment">Instead of registring a <code>KmsClient</code>, and creating an <code>Aead</code> using
+     <code>KeysetHandle.generateNew(KmsAeadKeyManager.createKeyTemplate(kekUri)).getPrimitive(Aead.class)</code>,
+     create the <code>Aead</code> directly using <code>kmsClient.getAead(kekUri)</code>, without
+     registering any <code>KmsClient</code>.</span></div>
+</td>
+</tr>
 <tr class="altColor">
+<td class="colOne"><a href="com/google/crypto/tink/aead/KmsEnvelopeAeadKeyManager.html#createKeyTemplate-java.lang.String-com.google.crypto.tink.KeyTemplate-">com.google.crypto.tink.aead.KmsEnvelopeAeadKeyManager.createKeyTemplate(String, KeyTemplate)</a>
+<div class="block"><span class="deprecationComment">Instead of registring a <code>KmsClient</code>, and creating an <code>Aead</code> using
+     <code>KeysetHandle.generateNew(KmsEnvelopeAeadKeyManager.createKeyTemplate(keyUri,
+     KeyTemplates.get("AES128_GCM"))).getPrimitive(Aead.class)</code>, create the <code>Aead</code>
+     directly using <code>KmsEnvelopeAead.create(PredefinedAeadParameters.AES256_GCM,
+     kmsClient.getAead(keyUri))</code>, without registering any <code>KmsClient</code>.</span></div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/signature/SignatureKeyTemplates.html#createRsaSsaPkcs1KeyTemplate-com.google.crypto.tink.proto.HashType-int-java.math.BigInteger-com.google.crypto.tink.proto.OutputPrefixType-">com.google.crypto.tink.signature.SignatureKeyTemplates.createRsaSsaPkcs1KeyTemplate(HashType, int, BigInteger, OutputPrefixType)</a>
 <div class="block"><span class="deprecationComment">Use a corresponding <a href="com/google/crypto/tink/signature/RsaSsaPkcs1Parameters.html" title="class in com.google.crypto.tink.signature"><code>RsaSsaPkcs1Parameters</code></a> object instead</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/signature/SignatureKeyTemplates.html#createRsaSsaPssKeyTemplate-com.google.crypto.tink.proto.HashType-com.google.crypto.tink.proto.HashType-int-int-java.math.BigInteger-">com.google.crypto.tink.signature.SignatureKeyTemplates.createRsaSsaPssKeyTemplate(HashType, HashType, int, int, BigInteger)</a>
 <div class="block"><span class="deprecationComment">Use a corresponding <a href="com/google/crypto/tink/signature/RsaSsaPssParameters.html" title="class in com.google.crypto.tink.signature"><code>RsaSsaPssParameters</code></a> object instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/KeyManager.html#doesSupport-java.lang.String-">com.google.crypto.tink.KeyManager.doesSupport(String)</a>
 <div class="block"><span class="deprecationComment">Use <code>getKeyType()</code> instead.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/integration/android/AndroidKeysetManager.Builder.html#doNotUseKeystore--">com.google.crypto.tink.integration.android.AndroidKeysetManager.Builder.doNotUseKeystore()</a>
 <div class="block"><span class="deprecationComment">Please do not use this function. Instead, do not call {#code withMasterKeyUri}
      which has the same effect.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/CleartextKeysetHandle.html#fromKeyset-com.google.crypto.tink.proto.Keyset-">com.google.crypto.tink.CleartextKeysetHandle.fromKeyset(Keyset)</a>
 <div class="block"><span class="deprecationComment">Instead, use a <a href="com/google/crypto/tink/KeysetHandle.Builder.html" title="class in com.google.crypto.tink"><code>KeysetHandle.Builder</code></a>.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/jwt/JwkSetConverter.html#fromKeysetHandle-com.google.crypto.tink.KeysetHandle-com.google.crypto.tink.tinkkey.KeyAccess-">com.google.crypto.tink.jwt.JwkSetConverter.fromKeysetHandle(KeysetHandle, KeyAccess)</a>
 <div class="block"><span class="deprecationComment">Use JwkSetConverter.fromPublicKeysetHandle(handle) instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/KeysetHandle.html#generateNew-com.google.crypto.tink.proto.KeyTemplate-">com.google.crypto.tink.KeysetHandle.generateNew(KeyTemplate)</a>
 <div class="block"><span class="deprecationComment">Use the overload taking a Parameters object instead.</span></div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="com/google/crypto/tink/KmsClients.html#get-java.lang.String-">com.google.crypto.tink.KmsClients.get(String)</a>
+<div class="block"><span class="deprecationComment">Instead, keep your own instance or list of <a href="com/google/crypto/tink/KmsClient.html" title="interface in com.google.crypto.tink"><code>KmsClient</code></a>.</span></div>
 </td>
 </tr>
 <tr class="rowColor">

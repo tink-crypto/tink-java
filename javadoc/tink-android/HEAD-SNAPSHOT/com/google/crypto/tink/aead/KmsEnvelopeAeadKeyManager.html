@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":9,"i8":10};
-var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var methods = {"i0":41,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":9,"i8":10};
+var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -145,7 +145,7 @@ extends <a href="../../../../../com/google/crypto/tink/internal/KeyTypeManager.h
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t6" class="tableTab"><span><a href="javascript:show(32);">Deprecated Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
@@ -154,9 +154,13 @@ extends <a href="../../../../../com/google/crypto/tink/internal/KeyTypeManager.h
 <td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink">KeyTemplate</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/KmsEnvelopeAeadKeyManager.html#createKeyTemplate-java.lang.String-com.google.crypto.tink.KeyTemplate-">createKeyTemplate</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;kekUri,
                  <a href="../../../../../com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink">KeyTemplate</a>&nbsp;dekTemplate)</code>
-<div class="block">Returns a new <a href="../../../../../com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink"><code>KeyTemplate</code></a> that can generate a <a href="../../../../../com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadKey.html" title="class in com.google.crypto.tink.aead"><code>LegacyKmsEnvelopeAeadKey</code></a> whose
- key encrypting key (KEK) is pointing to <code>kekUri</code> and DEK template is <code>dekTemplate</code>
- (or a derived version of it).</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
+<div class="block"><span class="deprecationComment">Instead of registring a <code>KmsClient</code>, and creating an <code>Aead</code> using
+     <code>KeysetHandle.generateNew(KmsEnvelopeAeadKeyManager.createKeyTemplate(keyUri,
+     KeyTemplates.get("AES128_GCM"))).getPrimitive(Aead.class)</code>, create the <code>Aead</code>
+     directly using <code>KmsEnvelopeAead.create(PredefinedAeadParameters.AES256_GCM,
+     kmsClient.getAead(keyUri))</code>, without registering any <code>KmsClient</code>.</span></div>
+</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
@@ -356,17 +360,26 @@ extends <a href="../../../../../com/google/crypto/tink/internal/KeyTypeManager.h
 <ul class="blockList">
 <li class="blockList">
 <h4>createKeyTemplate</h4>
-<pre>public static&nbsp;<a href="../../../../../com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink">KeyTemplate</a>&nbsp;createKeyTemplate(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;kekUri,
-                                            <a href="../../../../../com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink">KeyTemplate</a>&nbsp;dekTemplate)</pre>
+<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
+public static&nbsp;<a href="../../../../../com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink">KeyTemplate</a>&nbsp;createKeyTemplate(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;kekUri,
+                                                        <a href="../../../../../com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink">KeyTemplate</a>&nbsp;dekTemplate)</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">Instead of registring a <code>KmsClient</code>, and creating an <code>Aead</code> using
+     <code>KeysetHandle.generateNew(KmsEnvelopeAeadKeyManager.createKeyTemplate(keyUri,
+     KeyTemplates.get("AES128_GCM"))).getPrimitive(Aead.class)</code>, create the <code>Aead</code>
+     directly using <code>KmsEnvelopeAead.create(PredefinedAeadParameters.AES256_GCM,
+     kmsClient.getAead(keyUri))</code>, without registering any <code>KmsClient</code>.</span></div>
 <div class="block">Returns a new <a href="../../../../../com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink"><code>KeyTemplate</code></a> that can generate a <a href="../../../../../com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadKey.html" title="class in com.google.crypto.tink.aead"><code>LegacyKmsEnvelopeAeadKey</code></a> whose
  key encrypting key (KEK) is pointing to <code>kekUri</code> and DEK template is <code>dekTemplate</code>
  (or a derived version of it).
+
+ <p>It requires that a <code>KmsClient</code> that can handle <code>kekUri</code> is registered. Avoid
+ registering it more than once.
 
  <p><b>Note: </b> Unlike other templates, when you call <code>KeysetHandle#generateNew</code> with
  this template Tink does not generate new key material, but instead creates a reference to the
  remote KEK.
 
- <p>The second argument of the passed in template is used ignoring the Variant, and assuming
+ <p>The second argument of the passed in template is ignoring the Variant, and assuming
  NO_PREFIX instead.</div>
 </li>
 </ul>
