@@ -3307,6 +3307,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/ChaCha20Poly1305Parameters.html#create-com.google.crypto.tink.aead.ChaCha20Poly1305Parameters.Variant-">create(ChaCha20Poly1305Parameters.Variant)</a></span> - Static method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/ChaCha20Poly1305Parameters.html" title="class in com.google.crypto.tink.aead">ChaCha20Poly1305Parameters</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/LegacyFullAead.html#create-com.google.crypto.tink.internal.LegacyProtoKey-">create(LegacyProtoKey)</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/LegacyFullAead.html" title="class in com.google.crypto.tink.aead.internal">LegacyFullAead</a></dt>
+<dd>
+<div class="block">This method covers the cases where users created their own mac/key classes.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/KmsEnvelopeAead.html#create-com.google.crypto.tink.aead.AeadParameters-com.google.crypto.tink.Aead-">create(AeadParameters, Aead)</a></span> - Static method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/KmsEnvelopeAead.html" title="class in com.google.crypto.tink.aead">KmsEnvelopeAead</a></dt>
 <dd>
 <div class="block">Creates a new instance of Tink's KMS Envelope AEAD.</div>
@@ -3835,6 +3839,8 @@
 <dd>
 <div class="block">On Android KitKat (API level 19) this method does not support non null or non empty <code>associatedData</code>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/LegacyFullAead.html#decrypt-byte:A-byte:A-">decrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/LegacyFullAead.html" title="class in com.google.crypto.tink.aead.internal">LegacyFullAead</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/KmsEnvelopeAead.html#decrypt-byte:A-byte:A-">decrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/KmsEnvelopeAead.html" title="class in com.google.crypto.tink.aead">KmsEnvelopeAead</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/subtle/AesGcmSiv.html#decrypt-byte:A-byte:A-">decrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.aead.subtle.<a href="com/google/crypto/tink/aead/subtle/AesGcmSiv.html" title="class in com.google.crypto.tink.aead.subtle">AesGcmSiv</a></dt>
@@ -4970,6 +4976,8 @@
 <dd>
 <div class="block">On Android KitKat (API level 19) this method does not support non null or non empty <code>associatedData</code>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/LegacyFullAead.html#encrypt-byte:A-byte:A-">encrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/LegacyFullAead.html" title="class in com.google.crypto.tink.aead.internal">LegacyFullAead</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/KmsEnvelopeAead.html#encrypt-byte:A-byte:A-">encrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/KmsEnvelopeAead.html" title="class in com.google.crypto.tink.aead">KmsEnvelopeAead</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/subtle/AesGcmSiv.html#encrypt-byte:A-byte:A-">encrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.aead.subtle.<a href="com/google/crypto/tink/aead/subtle/AesGcmSiv.html" title="class in com.google.crypto.tink.aead.subtle">AesGcmSiv</a></dt>
@@ -14814,6 +14822,10 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/OutputPrefixType.html#LEGACY_VALUE">LEGACY_VALUE</a></span> - Static variable in enum com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/OutputPrefixType.html" title="enum in com.google.crypto.tink.proto">OutputPrefixType</a></dt>
 <dd>
 <div class="block"><code>LEGACY = 2;</code></div>
+</dd>
+<dt><a href="com/google/crypto/tink/aead/internal/LegacyFullAead.html" title="class in com.google.crypto.tink.aead.internal"><span class="typeNameLink">LegacyFullAead</span></a> - Class in <a href="com/google/crypto/tink/aead/internal/package-summary.html">com.google.crypto.tink.aead.internal</a></dt>
+<dd>
+<div class="block">Takes an arbitrary raw AEAD and makes it a full primitive.</div>
 </dd>
 <dt><a href="com/google/crypto/tink/mac/internal/LegacyFullMac.html" title="class in com.google.crypto.tink.mac.internal"><span class="typeNameLink">LegacyFullMac</span></a> - Class in <a href="com/google/crypto/tink/mac/internal/package-summary.html">com.google.crypto.tink.mac.internal</a></dt>
 <dd>
