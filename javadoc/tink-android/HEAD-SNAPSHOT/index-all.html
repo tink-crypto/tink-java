@@ -3504,12 +3504,12 @@
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 &nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/HpkeContext.html#createAuthRecipientContext-byte:A-com.google.crypto.tink.hybrid.internal.HpkeKemPrivateKey-com.google.crypto.tink.hybrid.internal.HpkeKem-com.google.crypto.tink.hybrid.internal.HpkeKdf-com.google.crypto.tink.hybrid.internal.HpkeAead-byte:A-com.google.crypto.tink.proto.HpkePublicKey-">createAuthRecipientContext(byte[], HpkeKemPrivateKey, HpkeKem, HpkeKdf, HpkeAead, byte[], HpkePublicKey)</a></span> - Static method in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/HpkeContext.html" title="class in com.google.crypto.tink.hybrid.internal">HpkeContext</a></dt>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/HpkeContext.html#createAuthRecipientContext-byte:A-com.google.crypto.tink.hybrid.internal.HpkeKemPrivateKey-com.google.crypto.tink.hybrid.internal.HpkeKem-com.google.crypto.tink.hybrid.internal.HpkeKdf-com.google.crypto.tink.hybrid.internal.HpkeAead-byte:A-com.google.crypto.tink.hybrid.HpkePublicKey-">createAuthRecipientContext(byte[], HpkeKemPrivateKey, HpkeKem, HpkeKdf, HpkeAead, byte[], HpkePublicKey)</a></span> - Static method in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/HpkeContext.html" title="class in com.google.crypto.tink.hybrid.internal">HpkeContext</a></dt>
 <dd>
 <div class="block">Creates HPKE recipient context with authentication according to KeySchedule() defined in
  https://www.rfc-editor.org/rfc/rfc9180.html#section-5.1.3.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/HpkeContext.html#createAuthSenderContext-com.google.crypto.tink.proto.HpkePublicKey-com.google.crypto.tink.hybrid.internal.HpkeKem-com.google.crypto.tink.hybrid.internal.HpkeKdf-com.google.crypto.tink.hybrid.internal.HpkeAead-byte:A-com.google.crypto.tink.hybrid.internal.HpkeKemPrivateKey-">createAuthSenderContext(HpkePublicKey, HpkeKem, HpkeKdf, HpkeAead, byte[], HpkeKemPrivateKey)</a></span> - Static method in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/HpkeContext.html" title="class in com.google.crypto.tink.hybrid.internal">HpkeContext</a></dt>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/HpkeContext.html#createAuthSenderContext-com.google.crypto.tink.hybrid.HpkePublicKey-com.google.crypto.tink.hybrid.internal.HpkeKem-com.google.crypto.tink.hybrid.internal.HpkeKdf-com.google.crypto.tink.hybrid.internal.HpkeAead-byte:A-com.google.crypto.tink.hybrid.internal.HpkeKemPrivateKey-">createAuthSenderContext(HpkePublicKey, HpkeKem, HpkeKdf, HpkeAead, byte[], HpkeKemPrivateKey)</a></span> - Static method in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/HpkeContext.html" title="class in com.google.crypto.tink.hybrid.internal">HpkeContext</a></dt>
 <dd>
 <div class="block">Creates HPKE sender context with authentication according to KeySchedule() defined in
  https://www.rfc-editor.org/rfc/rfc9180.html#section-5.1.3.</div>
@@ -4953,6 +4953,10 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/HpkeUtil.html#encodingSizeInBytes-com.google.crypto.tink.proto.HpkeKem-">encodingSizeInBytes(HpkeKem)</a></span> - Static method in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/HpkeUtil.html" title="class in com.google.crypto.tink.hybrid.internal">HpkeUtil</a></dt>
 <dd>
 <div class="block">Returns the encapsulated key length (in bytes) for the specified <code>kemProtoEnum</code>.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/HpkeUtil.html#encodingSizeInBytes-com.google.crypto.tink.hybrid.HpkeParameters.KemId-">encodingSizeInBytes(HpkeParameters.KemId)</a></span> - Static method in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/HpkeUtil.html" title="class in com.google.crypto.tink.hybrid.internal">HpkeUtil</a></dt>
+<dd>
+<div class="block">Returns the encapsulated key length (in bytes) for the specified <code>kemId</code>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/EllipticCurves.html#encodingSizeInBytes-java.security.spec.EllipticCurve-com.google.crypto.tink.subtle.EllipticCurves.PointFormatType-">encodingSizeInBytes(EllipticCurve, EllipticCurves.PointFormatType)</a></span> - Static method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/EllipticCurves.html" title="class in com.google.crypto.tink.subtle">EllipticCurves</a></dt>
 <dd>
