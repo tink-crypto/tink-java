@@ -3331,6 +3331,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.html#create-com.google.crypto.tink.aead.XChaCha20Poly1305Parameters.Variant-">create(XChaCha20Poly1305Parameters.Variant)</a></span> - Static method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.html" title="class in com.google.crypto.tink.aead">XChaCha20Poly1305Parameters</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/internal/LegacyFullDeterministicAead.html#create-com.google.crypto.tink.internal.LegacyProtoKey-">create(LegacyProtoKey)</a></span> - Static method in class com.google.crypto.tink.daead.internal.<a href="com/google/crypto/tink/daead/internal/LegacyFullDeterministicAead.html" title="class in com.google.crypto.tink.daead.internal">LegacyFullDeterministicAead</a></dt>
+<dd>
+<div class="block">Creates a DeterministicAead full primitive from user-defined deterministic aead / key classes.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HpkePrivateKey.html#create-com.google.crypto.tink.hybrid.HpkePublicKey-com.google.crypto.tink.util.SecretBytes-">create(HpkePublicKey, SecretBytes)</a></span> - Static method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HpkePrivateKey.html" title="class in com.google.crypto.tink.hybrid">HpkePrivateKey</a></dt>
 <dd>
 <div class="block">Creates a new HPKE private key.</div>
@@ -3882,6 +3886,8 @@
 <div class="block">Decrypts <code>ciphertext</code>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/XChaCha20Poly1305.html#decrypt-byte:A-byte:A-">decrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/XChaCha20Poly1305.html" title="class in com.google.crypto.tink.subtle">XChaCha20Poly1305</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/internal/LegacyFullDeterministicAead.html#decryptDeterministically-byte:A-byte:A-">decryptDeterministically(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.daead.internal.<a href="com/google/crypto/tink/daead/internal/LegacyFullDeterministicAead.html" title="class in com.google.crypto.tink.daead.internal">LegacyFullDeterministicAead</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/DeterministicAead.html#decryptDeterministically-byte:A-byte:A-">decryptDeterministically(byte[], byte[])</a></span> - Method in interface com.google.crypto.tink.<a href="com/google/crypto/tink/DeterministicAead.html" title="interface in com.google.crypto.tink">DeterministicAead</a></dt>
 <dd>
@@ -5023,6 +5029,8 @@
 <div class="block">Encrypts <code>plaintext</code>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/XChaCha20Poly1305.html#encrypt-byte:A-byte:A-">encrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/XChaCha20Poly1305.html" title="class in com.google.crypto.tink.subtle">XChaCha20Poly1305</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/internal/LegacyFullDeterministicAead.html#encryptDeterministically-byte:A-byte:A-">encryptDeterministically(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.daead.internal.<a href="com/google/crypto/tink/daead/internal/LegacyFullDeterministicAead.html" title="class in com.google.crypto.tink.daead.internal">LegacyFullDeterministicAead</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/DeterministicAead.html#encryptDeterministically-byte:A-byte:A-">encryptDeterministically(byte[], byte[])</a></span> - Method in interface com.google.crypto.tink.<a href="com/google/crypto/tink/DeterministicAead.html" title="interface in com.google.crypto.tink">DeterministicAead</a></dt>
 <dd>
@@ -14782,6 +14790,10 @@
 <dt><a href="com/google/crypto/tink/aead/internal/LegacyFullAead.html" title="class in com.google.crypto.tink.aead.internal"><span class="typeNameLink">LegacyFullAead</span></a> - Class in <a href="com/google/crypto/tink/aead/internal/package-summary.html">com.google.crypto.tink.aead.internal</a></dt>
 <dd>
 <div class="block">Takes an arbitrary raw AEAD and makes it a full primitive.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/daead/internal/LegacyFullDeterministicAead.html" title="class in com.google.crypto.tink.daead.internal"><span class="typeNameLink">LegacyFullDeterministicAead</span></a> - Class in <a href="com/google/crypto/tink/daead/internal/package-summary.html">com.google.crypto.tink.daead.internal</a></dt>
+<dd>
+<div class="block">Takes an arbitrary raw <a href="com/google/crypto/tink/DeterministicAead.html" title="interface in com.google.crypto.tink"><code>DeterministicAead</code></a> and makes it a full primitive.</div>
 </dd>
 <dt><a href="com/google/crypto/tink/mac/internal/LegacyFullMac.html" title="class in com.google.crypto.tink.mac.internal"><span class="typeNameLink">LegacyFullMac</span></a> - Class in <a href="com/google/crypto/tink/mac/internal/package-summary.html">com.google.crypto.tink.mac.internal</a></dt>
 <dd>
