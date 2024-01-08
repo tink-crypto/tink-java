@@ -155,7 +155,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/aead/AesGcmParameters.Builder.html" title="class in com.google.crypto.tink.aead">AesGcmParameters.Builder</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/AesGcmParameters.Builder.html#setTagSizeBytes-int-">setTagSizeBytes</a></span>(int&nbsp;tagSizeBytes)</code>
-<div class="block">Tag size must be one of the following five values: 128, 120, 112, 104 or 96 bytes</div>
+<div class="block">Tag size must be between 12 and 16 bytes.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
@@ -225,7 +225,7 @@ public&nbsp;<a href="../../../../../com/google/crypto/tink/aead/AesGcmParameters
 <pre>@CanIgnoreReturnValue
 public&nbsp;<a href="../../../../../com/google/crypto/tink/aead/AesGcmParameters.Builder.html" title="class in com.google.crypto.tink.aead">AesGcmParameters.Builder</a>&nbsp;setTagSizeBytes(int&nbsp;tagSizeBytes)
                                                                throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block">Tag size must be one of the following five values: 128, 120, 112, 104 or 96 bytes</div>
+<div class="block">Tag size must be between 12 and 16 bytes.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
