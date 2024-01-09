@@ -131,7 +131,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
  <code>EcdsaPrivateKey</code>, one can do:
 
  <pre><code>
- Config.register(SignatureConfig.TINK_1_1_0);
+ SignatureConfig.register();
  KeysetHandle handle = KeysetHandle.generateNew(SignatureKeyTemplates.ECDSA_P256);
  PublicKeySign signer = handle.getPrimitive(PublicKeySign.class);
  PublicKeyVerify verifier = handle.getPublicKeyset().getPrimitive(PublicKeyVerify.class);
