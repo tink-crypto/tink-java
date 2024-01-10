@@ -22,9 +22,9 @@ export ANDROID_HOME="/usr/local/share/android-sdk"
 export COURSIER_OPTS="-Djava.net.preferIPv6Addresses=true"
 
 if [[ -n "${KOKORO_ROOT:-}" ]] ; then
-  TINK_BASE_DIR="$(echo "${KOKORO_ARTIFACTS_DIR}"/git*)"
+  readonly TINK_BASE_DIR="$(echo "${KOKORO_ARTIFACTS_DIR}"/git*)"
   cd "${TINK_BASE_DIR}/tink_java"
-  export JAVA_HOME=$(/usr/libexec/java_home -v "1.8.0_292")
+  export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-8-latest/Contents/Home
 fi
 
 ./kokoro/testutils/update_android_sdk.sh
