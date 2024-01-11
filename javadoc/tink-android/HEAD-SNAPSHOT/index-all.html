@@ -4056,6 +4056,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/LegacyKeyManagerImpl.html#doesSupport-java.lang.String-">doesSupport(String)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/LegacyKeyManagerImpl.html" title="class in com.google.crypto.tink.internal">LegacyKeyManagerImpl</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#doesSupport-java.lang.String-">doesSupport(String)</a></span> - Method in class com.google.crypto.tink.keyderivation.internal.<a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html" title="class in com.google.crypto.tink.keyderivation.internal">PrfBasedDeriverKeyManager</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/KeyManager.html#doesSupport-java.lang.String-">doesSupport(String)</a></span> - Method in interface com.google.crypto.tink.<a href="com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a></dt>
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
@@ -5439,8 +5441,6 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1SignKeyManager.html#fipsStatus--">fipsStatus()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1SignKeyManager.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPkcs1SignKeyManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssSignKeyManager.html#fipsStatus--">fipsStatus()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssSignKeyManager.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssSignKeyManager</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#fipsStatus--">fipsStatus()</a></span> - Method in class com.google.crypto.tink.keyderivation.internal.<a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html" title="class in com.google.crypto.tink.keyderivation.internal">PrfBasedDeriverKeyManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/KeyTypeManager.html#firstSupportedPrimitiveClass--">firstSupportedPrimitiveClass()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal">KeyTypeManager</a></dt>
 <dd>
@@ -9744,6 +9744,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/RegistryConfiguration.html#getPrimitive-com.google.crypto.tink.Key-java.lang.Class-">getPrimitive(Key, Class&lt;P&gt;)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/RegistryConfiguration.html" title="class in com.google.crypto.tink.internal">RegistryConfiguration</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#getPrimitive-com.google.protobuf.ByteString-">getPrimitive(ByteString)</a></span> - Method in class com.google.crypto.tink.keyderivation.internal.<a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html" title="class in com.google.crypto.tink.keyderivation.internal">PrfBasedDeriverKeyManager</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#getPrimitive-com.google.protobuf.MessageLite-">getPrimitive(MessageLite)</a></span> - Method in class com.google.crypto.tink.keyderivation.internal.<a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html" title="class in com.google.crypto.tink.keyderivation.internal">PrfBasedDeriverKeyManager</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/KeyManager.html#getPrimitive-com.google.protobuf.ByteString-">getPrimitive(ByteString)</a></span> - Method in interface com.google.crypto.tink.<a href="com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a></dt>
 <dd>
 <div class="block">Constructs an instance of P for the key given in <code>serializedKey</code>, which must be a
@@ -9828,6 +9832,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/PrimitiveConstructor.html#getPrimitiveClass--">getPrimitiveClass()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/PrimitiveConstructor.html" title="class in com.google.crypto.tink.internal">PrimitiveConstructor</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/internal/KeysetDeriverWrapper.html#getPrimitiveClass--">getPrimitiveClass()</a></span> - Method in class com.google.crypto.tink.keyderivation.internal.<a href="com/google/crypto/tink/keyderivation/internal/KeysetDeriverWrapper.html" title="class in com.google.crypto.tink.keyderivation.internal">KeysetDeriverWrapper</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#getPrimitiveClass--">getPrimitiveClass()</a></span> - Method in class com.google.crypto.tink.keyderivation.internal.<a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html" title="class in com.google.crypto.tink.keyderivation.internal">PrfBasedDeriverKeyManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/KeyManager.html#getPrimitiveClass--">getPrimitiveClass()</a></span> - Method in interface com.google.crypto.tink.<a href="com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a></dt>
 <dd>
@@ -14246,8 +14252,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssSignKeyManager.html#keyFactory--">keyFactory()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssSignKeyManager.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssSignKeyManager</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#keyFactory--">keyFactory()</a></span> - Method in class com.google.crypto.tink.keyderivation.internal.<a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html" title="class in com.google.crypto.tink.keyderivation.internal">PrfBasedDeriverKeyManager</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/tinkkey/KeyHandle.html" title="class in com.google.crypto.tink.tinkkey"><span class="typeNameLink">KeyHandle</span></a> - Class in <a href="com/google/crypto/tink/tinkkey/package-summary.html">com.google.crypto.tink.tinkkey</a></dt>
 <dd>
 <div class="block">Wraps a <a href="com/google/crypto/tink/tinkkey/TinkKey.html" title="interface in com.google.crypto.tink.tinkkey"><code>TinkKey</code></a> and enforces access to the underlying <a href="com/google/crypto/tink/tinkkey/TinkKey.html" title="interface in com.google.crypto.tink.tinkkey"><code>TinkKey</code></a> with <a href="com/google/crypto/tink/tinkkey/KeyAccess.html" title="class in com.google.crypto.tink.tinkkey"><code>KeyAccess</code></a>.</div>
@@ -14290,8 +14294,6 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1SignKeyManager.html#keyMaterialType--">keyMaterialType()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1SignKeyManager.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPkcs1SignKeyManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssSignKeyManager.html#keyMaterialType--">keyMaterialType()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssSignKeyManager.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssSignKeyManager</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#keyMaterialType--">keyMaterialType()</a></span> - Method in class com.google.crypto.tink.keyderivation.internal.<a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html" title="class in com.google.crypto.tink.keyderivation.internal">PrfBasedDeriverKeyManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/internal/KeyParser.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">KeyParser</span></a>&lt;<a href="com/google/crypto/tink/internal/KeyParser.html" title="type parameter in KeyParser">SerializationT</a> extends <a href="com/google/crypto/tink/internal/Serialization.html" title="interface in com.google.crypto.tink.internal">Serialization</a>&gt; - Class in <a href="com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></dt>
 <dd>
@@ -15608,6 +15610,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/LegacyKeyManagerImpl.html#newKey-com.google.protobuf.MessageLite-">newKey(MessageLite)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/LegacyKeyManagerImpl.html" title="class in com.google.crypto.tink.internal">LegacyKeyManagerImpl</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#newKey-com.google.protobuf.ByteString-">newKey(ByteString)</a></span> - Method in class com.google.crypto.tink.keyderivation.internal.<a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html" title="class in com.google.crypto.tink.keyderivation.internal">PrfBasedDeriverKeyManager</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#newKey-com.google.protobuf.MessageLite-">newKey(MessageLite)</a></span> - Method in class com.google.crypto.tink.keyderivation.internal.<a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html" title="class in com.google.crypto.tink.keyderivation.internal">PrfBasedDeriverKeyManager</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/KeyManager.html#newKey-com.google.protobuf.ByteString-">newKey(ByteString)</a></span> - Method in interface com.google.crypto.tink.<a href="com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a></dt>
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
@@ -15633,6 +15639,8 @@
 </div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/LegacyKeyManagerImpl.html#newKeyData-com.google.protobuf.ByteString-">newKeyData(ByteString)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/LegacyKeyManagerImpl.html" title="class in com.google.crypto.tink.internal">LegacyKeyManagerImpl</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#newKeyData-com.google.protobuf.ByteString-">newKeyData(ByteString)</a></span> - Method in class com.google.crypto.tink.keyderivation.internal.<a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html" title="class in com.google.crypto.tink.keyderivation.internal">PrfBasedDeriverKeyManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/KeyManager.html#newKeyData-com.google.protobuf.ByteString-">newKeyData(ByteString)</a></span> - Method in interface com.google.crypto.tink.<a href="com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a></dt>
 <dd>
@@ -18257,8 +18265,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssSignKeyManager.html#parseKey-com.google.protobuf.ByteString-">parseKey(ByteString)</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssSignKeyManager.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssSignKeyManager</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#parseKey-com.google.protobuf.ByteString-">parseKey(ByteString)</a></span> - Method in class com.google.crypto.tink.keyderivation.internal.<a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html" title="class in com.google.crypto.tink.keyderivation.internal">PrfBasedDeriverKeyManager</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/KeyTypeManager.KeyFactory.html#parseKeyFormat-com.google.protobuf.ByteString-">parseKeyFormat(ByteString)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/KeyTypeManager.KeyFactory.html" title="class in com.google.crypto.tink.internal">KeyTypeManager.KeyFactory</a></dt>
 <dd>
 <div class="block">Parses a serialized key proto.</div>
@@ -18604,8 +18610,6 @@
 <dd>
 <div class="block"><a href="com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal"><code>KeyTypeManager</code></a> for <a href="com/google/crypto/tink/proto/PrfBasedDeriverKey.html" title="class in com.google.crypto.tink.proto"><code>PrfBasedDeriverKey</code></a>.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#PrfBasedDeriverKeyManager--">PrfBasedDeriverKeyManager()</a></span> - Constructor for class com.google.crypto.tink.keyderivation.internal.<a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html" title="class in com.google.crypto.tink.keyderivation.internal">PrfBasedDeriverKeyManager</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/proto/PrfBasedDeriverKeyOrBuilder.html" title="interface in com.google.crypto.tink.proto"><span class="typeNameLink">PrfBasedDeriverKeyOrBuilder</span></a> - Interface in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/proto/PrfBasedDeriverParams.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">PrfBasedDeriverParams</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
@@ -23049,8 +23053,6 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1SignKeyManager.html#validateKey-com.google.crypto.tink.proto.JwtRsaSsaPkcs1PrivateKey-">validateKey(JwtRsaSsaPkcs1PrivateKey)</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPkcs1SignKeyManager.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPkcs1SignKeyManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssSignKeyManager.html#validateKey-com.google.crypto.tink.proto.JwtRsaSsaPssPrivateKey-">validateKey(JwtRsaSsaPssPrivateKey)</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssSignKeyManager.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssSignKeyManager</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#validateKey-com.google.crypto.tink.proto.PrfBasedDeriverKey-">validateKey(PrfBasedDeriverKey)</a></span> - Method in class com.google.crypto.tink.keyderivation.internal.<a href="com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html" title="class in com.google.crypto.tink.keyderivation.internal">PrfBasedDeriverKeyManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/KeyTypeManager.KeyFactory.html#validateKeyFormat-KeyFormatProtoT-">validateKeyFormat(KeyFormatProtoT)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/KeyTypeManager.KeyFactory.html" title="class in com.google.crypto.tink.internal">KeyTypeManager.KeyFactory</a></dt>
 <dd>
