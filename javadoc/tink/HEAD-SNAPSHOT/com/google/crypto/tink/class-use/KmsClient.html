@@ -104,9 +104,7 @@
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/KmsClient.html" title="interface in com.google.crypto.tink">KmsClient</a></code></td>
 <td class="colLast"><span class="typeNameLabel">KmsClients.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/KmsClients.html#get-java.lang.String-">get</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;keyUri)</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Instead, keep your own instance or list of <a href="../../../../../com/google/crypto/tink/KmsClient.html" title="interface in com.google.crypto.tink"><code>KmsClient</code></a>.</span></div>
-</div>
+<div class="block">Returns the first <a href="../../../../../com/google/crypto/tink/KmsClient.html" title="interface in com.google.crypto.tink"><code>KmsClient</code></a> registered with <a href="../../../../../com/google/crypto/tink/KmsClients.html#add-com.google.crypto.tink.KmsClient-"><code>KmsClients.add(com.google.crypto.tink.KmsClient)</code></a> that supports <code>keyUri</code>.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -141,11 +139,7 @@
 <tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><span class="typeNameLabel">KmsClients.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/KmsClients.html#add-com.google.crypto.tink.KmsClient-">add</a></span>(<a href="../../../../../com/google/crypto/tink/KmsClient.html" title="interface in com.google.crypto.tink">KmsClient</a>&nbsp;client)</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Registering KmsClient is discouraged. Instead call <a href="../../../../../com/google/crypto/tink/KmsClient.html#getAead-java.lang.String-"><code>getAead(java.lang.String)</code></a> to get
-     a remote <a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a>. Use this <a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a> to encrypt a keyset with <a href="../../../../../com/google/crypto/tink/TinkProtoKeysetFormat.html#serializeEncryptedKeyset-com.google.crypto.tink.KeysetHandle-com.google.crypto.tink.Aead-byte:A-"><code>TinkProtoKeysetFormat.serializeEncryptedKeyset(com.google.crypto.tink.KeysetHandle, com.google.crypto.tink.Aead, byte[])</code></a>, or to create an envelope <a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a>
-     using <a href="../../../../../com/google/crypto/tink/aead/KmsEnvelopeAead.html#create-com.google.crypto.tink.aead.AeadParameters-com.google.crypto.tink.Aead-"><code>KmsEnvelopeAead.create(com.google.crypto.tink.aead.AeadParameters, com.google.crypto.tink.Aead)</code></a>.</span></div>
-</div>
+<div class="block">Adds a client to the list of known <a href="../../../../../com/google/crypto/tink/KmsClient.html" title="interface in com.google.crypto.tink"><code>KmsClient</code></a>-objects.</div>
 </td>
 </tr>
 </tbody>
