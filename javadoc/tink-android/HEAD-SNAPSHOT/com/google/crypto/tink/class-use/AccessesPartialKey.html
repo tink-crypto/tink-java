@@ -86,7 +86,23 @@
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><a href="#com.google.crypto.tink.aead.internal">com.google.crypto.tink.aead.internal</a></td>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="#com.google.crypto.tink.aead.subtle">com.google.crypto.tink.aead.subtle</a></td>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="#com.google.crypto.tink.daead.internal">com.google.crypto.tink.daead.internal</a></td>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><a href="#com.google.crypto.tink.hybrid">com.google.crypto.tink.hybrid</a></td>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="#com.google.crypto.tink.hybrid.internal">com.google.crypto.tink.hybrid.internal</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor">
@@ -94,22 +110,34 @@
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><a href="#com.google.crypto.tink.keyderivation.internal">com.google.crypto.tink.keyderivation.internal</a></td>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><a href="#com.google.crypto.tink.mac.internal">com.google.crypto.tink.mac.internal</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="#com.google.crypto.tink.prf.internal">com.google.crypto.tink.prf.internal</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="#com.google.crypto.tink.signature">com.google.crypto.tink.signature</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="#com.google.crypto.tink.signature.internal">com.google.crypto.tink.signature.internal</a></td>
+<td class="colLast">&nbsp;</td>
+</tr>
 <tr class="altColor">
-<td class="colFirst"><a href="#com.google.crypto.tink.subtle">com.google.crypto.tink.subtle</a></td>
+<td class="colFirst"><a href="#com.google.crypto.tink.streamingaead.internal">com.google.crypto.tink.streamingaead.internal</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><a href="#com.google.crypto.tink.subtle">com.google.crypto.tink.subtle</a></td>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><a href="#com.google.crypto.tink.subtle.prf">com.google.crypto.tink.subtle.prf</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
@@ -141,9 +169,77 @@
 <td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink">KeyTemplate</a></code></td>
 <td class="colLast"><span class="typeNameLabel">KmsEnvelopeAeadKeyManager.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/KmsEnvelopeAeadKeyManager.html#createKeyTemplate-java.lang.String-com.google.crypto.tink.KeyTemplate-">createKeyTemplate</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;kekUri,
                  <a href="../../../../../com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink">KeyTemplate</a>&nbsp;dekTemplate)</code>
-<div class="block">Returns a new <a href="../../../../../com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink"><code>KeyTemplate</code></a> that can generate a <a href="../../../../../com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadKey.html" title="class in com.google.crypto.tink.aead"><code>LegacyKmsEnvelopeAeadKey</code></a> whose
- key encrypting key (KEK) is pointing to <code>kekUri</code> and DEK template is <code>dekTemplate</code>
- (or a derived version of it).</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
+<div class="block"><span class="deprecationComment">Instead of registring a <code>KmsClient</code>, and creating an <code>Aead</code> using
+     <code>KeysetHandle.generateNew(KmsEnvelopeAeadKeyManager.createKeyTemplate(keyUri,
+     KeyTemplates.get("AES128_GCM"))).getPrimitive(Aead.class)</code>, create the <code>Aead</code>
+     directly using <code>KmsEnvelopeAead.create(PredefinedAeadParameters.AES256_GCM,
+     kmsClient.getAead(keyUri))</code>, without registering any <code>KmsClient</code>.</span></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li class="blockList"><a name="com.google.crypto.tink.aead.internal">
+<!--   -->
+</a>
+<h3>Uses of <a href="../../../../../com/google/crypto/tink/AccessesPartialKey.html" title="annotation in com.google.crypto.tink">AccessesPartialKey</a> in <a href="../../../../../com/google/crypto/tink/aead/internal/package-summary.html">com.google.crypto.tink.aead.internal</a></h3>
+<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing classes, and an explanation">
+<caption><span>Classes in <a href="../../../../../com/google/crypto/tink/aead/internal/package-summary.html">com.google.crypto.tink.aead.internal</a> with annotations of type <a href="../../../../../com/google/crypto/tink/AccessesPartialKey.html" title="annotation in com.google.crypto.tink">AccessesPartialKey</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Class and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/internal/AesGcmProtoSerialization.html" title="class in com.google.crypto.tink.aead.internal">AesGcmProtoSerialization</a></span></code>
+<div class="block">Methods to serialize and parse <a href="../../../../../com/google/crypto/tink/aead/AesGcmKey.html" title="class in com.google.crypto.tink.aead"><code>AesGcmKey</code></a> objects and <a href="../../../../../com/google/crypto/tink/aead/AesGcmParameters.html" title="class in com.google.crypto.tink.aead"><code>AesGcmParameters</code></a> objects</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/internal/XChaCha20Poly1305ProtoSerialization.html" title="class in com.google.crypto.tink.aead.internal">XChaCha20Poly1305ProtoSerialization</a></span></code>
+<div class="block">Methods to serialize and parse <a href="../../../../../com/google/crypto/tink/aead/XChaCha20Poly1305Key.html" title="class in com.google.crypto.tink.aead"><code>XChaCha20Poly1305Key</code></a> objects and <a href="../../../../../com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.html" title="class in com.google.crypto.tink.aead"><code>XChaCha20Poly1305Parameters</code></a> objects</div>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li class="blockList"><a name="com.google.crypto.tink.aead.subtle">
+<!--   -->
+</a>
+<h3>Uses of <a href="../../../../../com/google/crypto/tink/AccessesPartialKey.html" title="annotation in com.google.crypto.tink">AccessesPartialKey</a> in <a href="../../../../../com/google/crypto/tink/aead/subtle/package-summary.html">com.google.crypto.tink.aead.subtle</a></h3>
+<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Methods in <a href="../../../../../com/google/crypto/tink/aead/subtle/package-summary.html">com.google.crypto.tink.aead.subtle</a> with annotations of type <a href="../../../../../com/google/crypto/tink/AccessesPartialKey.html" title="annotation in com.google.crypto.tink">AccessesPartialKey</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a></code></td>
+<td class="colLast"><span class="typeNameLabel">AesGcmSiv.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/subtle/AesGcmSiv.html#create-com.google.crypto.tink.aead.AesGcmSivKey-">create</a></span>(<a href="../../../../../com/google/crypto/tink/aead/AesGcmSivKey.html" title="class in com.google.crypto.tink.aead">AesGcmSivKey</a>&nbsp;key)</code>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li class="blockList"><a name="com.google.crypto.tink.daead.internal">
+<!--   -->
+</a>
+<h3>Uses of <a href="../../../../../com/google/crypto/tink/AccessesPartialKey.html" title="annotation in com.google.crypto.tink">AccessesPartialKey</a> in <a href="../../../../../com/google/crypto/tink/daead/internal/package-summary.html">com.google.crypto.tink.daead.internal</a></h3>
+<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing classes, and an explanation">
+<caption><span>Classes in <a href="../../../../../com/google/crypto/tink/daead/internal/package-summary.html">com.google.crypto.tink.daead.internal</a> with annotations of type <a href="../../../../../com/google/crypto/tink/AccessesPartialKey.html" title="annotation in com.google.crypto.tink">AccessesPartialKey</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Class and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/daead/internal/AesSivProtoSerialization.html" title="class in com.google.crypto.tink.daead.internal">AesSivProtoSerialization</a></span></code>
+<div class="block">Methods to serialize and parse <a href="../../../../../com/google/crypto/tink/daead/AesSivKey.html" title="class in com.google.crypto.tink.daead"><code>AesSivKey</code></a> objects and <a href="../../../../../com/google/crypto/tink/daead/AesSivParameters.html" title="class in com.google.crypto.tink.daead"><code>AesSivParameters</code></a> objects</div>
 </td>
 </tr>
 </tbody>
@@ -199,6 +295,49 @@
 </tbody>
 </table>
 </li>
+<li class="blockList"><a name="com.google.crypto.tink.hybrid.internal">
+<!--   -->
+</a>
+<h3>Uses of <a href="../../../../../com/google/crypto/tink/AccessesPartialKey.html" title="annotation in com.google.crypto.tink">AccessesPartialKey</a> in <a href="../../../../../com/google/crypto/tink/hybrid/internal/package-summary.html">com.google.crypto.tink.hybrid.internal</a></h3>
+<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Methods in <a href="../../../../../com/google/crypto/tink/hybrid/internal/package-summary.html">com.google.crypto.tink.hybrid.internal</a> with annotations of type <a href="../../../../../com/google/crypto/tink/AccessesPartialKey.html" title="annotation in com.google.crypto.tink">AccessesPartialKey</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/hybrid/internal/HpkeContext.html" title="class in com.google.crypto.tink.hybrid.internal">HpkeContext</a></code></td>
+<td class="colLast"><span class="typeNameLabel">HpkeContext.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/internal/HpkeContext.html#createAuthRecipientContext-byte:A-com.google.crypto.tink.hybrid.internal.HpkeKemPrivateKey-com.google.crypto.tink.hybrid.internal.HpkeKem-com.google.crypto.tink.hybrid.internal.HpkeKdf-com.google.crypto.tink.hybrid.internal.HpkeAead-byte:A-com.google.crypto.tink.hybrid.HpkePublicKey-">createAuthRecipientContext</a></span>(byte[]&nbsp;encapsulatedKey,
+                          <a href="../../../../../com/google/crypto/tink/hybrid/internal/HpkeKemPrivateKey.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeKemPrivateKey</a>&nbsp;recipientPrivateKey,
+                          <a href="../../../../../com/google/crypto/tink/hybrid/internal/HpkeKem.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeKem</a>&nbsp;kem,
+                          <a href="../../../../../com/google/crypto/tink/hybrid/internal/HpkeKdf.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeKdf</a>&nbsp;kdf,
+                          <a href="../../../../../com/google/crypto/tink/hybrid/internal/HpkeAead.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeAead</a>&nbsp;aead,
+                          byte[]&nbsp;info,
+                          <a href="../../../../../com/google/crypto/tink/hybrid/HpkePublicKey.html" title="class in com.google.crypto.tink.hybrid">HpkePublicKey</a>&nbsp;senderPublicKey)</code>
+<div class="block">Creates HPKE recipient context with authentication according to KeySchedule() defined in
+ https://www.rfc-editor.org/rfc/rfc9180.html#section-5.1.3.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/hybrid/internal/HpkeContext.html" title="class in com.google.crypto.tink.hybrid.internal">HpkeContext</a></code></td>
+<td class="colLast"><span class="typeNameLabel">HpkeContext.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/internal/HpkeContext.html#createAuthSenderContext-com.google.crypto.tink.hybrid.HpkePublicKey-com.google.crypto.tink.hybrid.internal.HpkeKem-com.google.crypto.tink.hybrid.internal.HpkeKdf-com.google.crypto.tink.hybrid.internal.HpkeAead-byte:A-com.google.crypto.tink.hybrid.internal.HpkeKemPrivateKey-">createAuthSenderContext</a></span>(<a href="../../../../../com/google/crypto/tink/hybrid/HpkePublicKey.html" title="class in com.google.crypto.tink.hybrid">HpkePublicKey</a>&nbsp;recipientPublicKey,
+                       <a href="../../../../../com/google/crypto/tink/hybrid/internal/HpkeKem.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeKem</a>&nbsp;kem,
+                       <a href="../../../../../com/google/crypto/tink/hybrid/internal/HpkeKdf.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeKdf</a>&nbsp;kdf,
+                       <a href="../../../../../com/google/crypto/tink/hybrid/internal/HpkeAead.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeAead</a>&nbsp;aead,
+                       byte[]&nbsp;info,
+                       <a href="../../../../../com/google/crypto/tink/hybrid/internal/HpkeKemPrivateKey.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeKemPrivateKey</a>&nbsp;senderPrivateKey)</code>
+<div class="block">Creates HPKE sender context with authentication according to KeySchedule() defined in
+ https://www.rfc-editor.org/rfc/rfc9180.html#section-5.1.3.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/hybrid/internal/HpkeKemPrivateKey.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeKemPrivateKey</a></code></td>
+<td class="colLast"><span class="typeNameLabel">HpkeKemKeyFactory.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/internal/HpkeKemKeyFactory.html#createPrivate-com.google.crypto.tink.hybrid.HpkePrivateKey-">createPrivate</a></span>(<a href="../../../../../com/google/crypto/tink/hybrid/HpkePrivateKey.html" title="class in com.google.crypto.tink.hybrid">HpkePrivateKey</a>&nbsp;privateKey)</code>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</li>
 <li class="blockList"><a name="com.google.crypto.tink.jwt">
 <!--   -->
 </a>
@@ -222,6 +361,28 @@
 <td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/jwt/JwtEcdsaPrivateKey.html" title="class in com.google.crypto.tink.jwt">JwtEcdsaPrivateKey</a></code></td>
 <td class="colLast"><span class="typeNameLabel">JwtEcdsaPrivateKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/jwt/JwtEcdsaPrivateKey.html#create-com.google.crypto.tink.jwt.JwtEcdsaPublicKey-com.google.crypto.tink.util.SecretBigInteger-">create</a></span>(<a href="../../../../../com/google/crypto/tink/jwt/JwtEcdsaPublicKey.html" title="class in com.google.crypto.tink.jwt">JwtEcdsaPublicKey</a>&nbsp;publicKey,
       <a href="../../../../../com/google/crypto/tink/util/SecretBigInteger.html" title="class in com.google.crypto.tink.util">SecretBigInteger</a>&nbsp;privateValue)</code>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li class="blockList"><a name="com.google.crypto.tink.keyderivation.internal">
+<!--   -->
+</a>
+<h3>Uses of <a href="../../../../../com/google/crypto/tink/AccessesPartialKey.html" title="annotation in com.google.crypto.tink">AccessesPartialKey</a> in <a href="../../../../../com/google/crypto/tink/keyderivation/internal/package-summary.html">com.google.crypto.tink.keyderivation.internal</a></h3>
+<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Methods in <a href="../../../../../com/google/crypto/tink/keyderivation/internal/package-summary.html">com.google.crypto.tink.keyderivation.internal</a> with annotations of type <a href="../../../../../com/google/crypto/tink/AccessesPartialKey.html" title="annotation in com.google.crypto.tink">AccessesPartialKey</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/keyderivation/internal/KeyDeriver.html" title="interface in com.google.crypto.tink.keyderivation.internal">KeyDeriver</a></code></td>
+<td class="colLast"><span class="typeNameLabel">PrfBasedKeyDeriver.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/keyderivation/internal/PrfBasedKeyDeriver.html#create-com.google.crypto.tink.keyderivation.PrfBasedKeyDerivationKey-">create</a></span>(<a href="../../../../../com/google/crypto/tink/keyderivation/PrfBasedKeyDerivationKey.html" title="class in com.google.crypto.tink.keyderivation">PrfBasedKeyDerivationKey</a>&nbsp;key)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a></code></td>
+<td class="colLast"><span class="typeNameLabel">PrfBasedKeyDeriver.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/keyderivation/internal/PrfBasedKeyDeriver.html#deriveKey-byte:A-">deriveKey</a></span>(byte[]&nbsp;salt)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
@@ -301,6 +462,47 @@
 </tbody>
 </table>
 </li>
+<li class="blockList"><a name="com.google.crypto.tink.signature.internal">
+<!--   -->
+</a>
+<h3>Uses of <a href="../../../../../com/google/crypto/tink/AccessesPartialKey.html" title="annotation in com.google.crypto.tink">AccessesPartialKey</a> in <a href="../../../../../com/google/crypto/tink/signature/internal/package-summary.html">com.google.crypto.tink.signature.internal</a></h3>
+<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing classes, and an explanation">
+<caption><span>Classes in <a href="../../../../../com/google/crypto/tink/signature/internal/package-summary.html">com.google.crypto.tink.signature.internal</a> with annotations of type <a href="../../../../../com/google/crypto/tink/AccessesPartialKey.html" title="annotation in com.google.crypto.tink">AccessesPartialKey</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Class and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/signature/internal/EcdsaProtoSerialization.html" title="class in com.google.crypto.tink.signature.internal">EcdsaProtoSerialization</a></span></code>
+<div class="block">Methods to serialize and parse <a href="../../../../../com/google/crypto/tink/signature/EcdsaPrivateKey.html" title="class in com.google.crypto.tink.signature"><code>EcdsaPrivateKey</code></a> and <a href="../../../../../com/google/crypto/tink/signature/EcdsaPublicKey.html" title="class in com.google.crypto.tink.signature"><code>EcdsaPublicKey</code></a> objects and
+ <a href="../../../../../com/google/crypto/tink/signature/EcdsaParameters.html" title="class in com.google.crypto.tink.signature"><code>EcdsaParameters</code></a> objects.</div>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li class="blockList"><a name="com.google.crypto.tink.streamingaead.internal">
+<!--   -->
+</a>
+<h3>Uses of <a href="../../../../../com/google/crypto/tink/AccessesPartialKey.html" title="annotation in com.google.crypto.tink">AccessesPartialKey</a> in <a href="../../../../../com/google/crypto/tink/streamingaead/internal/package-summary.html">com.google.crypto.tink.streamingaead.internal</a></h3>
+<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing classes, and an explanation">
+<caption><span>Classes in <a href="../../../../../com/google/crypto/tink/streamingaead/internal/package-summary.html">com.google.crypto.tink.streamingaead.internal</a> with annotations of type <a href="../../../../../com/google/crypto/tink/AccessesPartialKey.html" title="annotation in com.google.crypto.tink">AccessesPartialKey</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Class and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/streamingaead/internal/AesGcmHkdfStreamingProtoSerialization.html" title="class in com.google.crypto.tink.streamingaead.internal">AesGcmHkdfStreamingProtoSerialization</a></span></code>
+<div class="block">Methods to serialize and parse <a href="../../../../../com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingKey.html" title="class in com.google.crypto.tink.streamingaead"><code>AesGcmHkdfStreamingKey</code></a> objects and <a href="../../../../../com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingParameters.html" title="class in com.google.crypto.tink.streamingaead"><code>AesGcmHkdfStreamingParameters</code></a> objects</div>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
 <li class="blockList"><a name="com.google.crypto.tink.subtle">
 <!--   -->
 </a>
@@ -314,17 +516,35 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/AesCtrHmacStreaming.html" title="class in com.google.crypto.tink.subtle">AesCtrHmacStreaming</a></span></code>
+<div class="block">Streaming encryption using AES-CTR and HMAC.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/AesGcmHkdfStreaming.html" title="class in com.google.crypto.tink.subtle">AesGcmHkdfStreaming</a></span></code>
+<div class="block">Streaming encryption using <code>AES-GCM</code> with <code>HKDF</code> as key derivation function.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/EncryptThenAuthenticate.html" title="class in com.google.crypto.tink.subtle">EncryptThenAuthenticate</a></span></code>
+<div class="block">This primitive performs an encrypt-then-Mac operation on plaintext and associated data (ad).</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/PrfAesCmac.html" title="class in com.google.crypto.tink.subtle">PrfAesCmac</a></span></code>
 <div class="block">An implementation of CMAC following <a href="https://tools.ietf.org/html/rfc4493">RFC 4493</a>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/PrfHmacJce.html" title="class in com.google.crypto.tink.subtle">PrfHmacJce</a></span></code>
 <div class="block"><a href="../../../../../com/google/crypto/tink/prf/Prf.html" title="interface in com.google.crypto.tink.prf"><code>Prf</code></a> implementation using JCE.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/PrfMac.html" title="class in com.google.crypto.tink.subtle">PrfMac</a></span></code>
 <div class="block">Class that provides the functionality expressed by the Mac primitive using a Prf implementation.</div>
@@ -341,7 +561,63 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a></code></td>
+<td class="colLast"><span class="typeNameLabel">AesEaxJce.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/AesEaxJce.html#create-com.google.crypto.tink.aead.AesEaxKey-">create</a></span>(<a href="../../../../../com/google/crypto/tink/aead/AesEaxKey.html" title="class in com.google.crypto.tink.aead">AesEaxKey</a>&nbsp;key)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a></code></td>
 <td class="colLast"><span class="typeNameLabel">AesGcmJce.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/AesGcmJce.html#create-com.google.crypto.tink.aead.AesGcmKey-">create</a></span>(<a href="../../../../../com/google/crypto/tink/aead/AesGcmKey.html" title="class in com.google.crypto.tink.aead">AesGcmKey</a>&nbsp;key)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/DeterministicAead.html" title="interface in com.google.crypto.tink">DeterministicAead</a></code></td>
+<td class="colLast"><span class="typeNameLabel">AesSiv.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/AesSiv.html#create-com.google.crypto.tink.daead.AesSivKey-">create</a></span>(<a href="../../../../../com/google/crypto/tink/daead/AesSivKey.html" title="class in com.google.crypto.tink.daead">AesSivKey</a>&nbsp;key)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a></code></td>
+<td class="colLast"><span class="typeNameLabel">ChaCha20Poly1305.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/ChaCha20Poly1305.html#create-com.google.crypto.tink.aead.ChaCha20Poly1305Key-">create</a></span>(<a href="../../../../../com/google/crypto/tink/aead/ChaCha20Poly1305Key.html" title="class in com.google.crypto.tink.aead">ChaCha20Poly1305Key</a>&nbsp;key)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/PublicKeySign.html" title="interface in com.google.crypto.tink">PublicKeySign</a></code></td>
+<td class="colLast"><span class="typeNameLabel">EcdsaSignJce.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/EcdsaSignJce.html#create-com.google.crypto.tink.signature.EcdsaPrivateKey-">create</a></span>(<a href="../../../../../com/google/crypto/tink/signature/EcdsaPrivateKey.html" title="class in com.google.crypto.tink.signature">EcdsaPrivateKey</a>&nbsp;key)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/PublicKeyVerify.html" title="interface in com.google.crypto.tink">PublicKeyVerify</a></code></td>
+<td class="colLast"><span class="typeNameLabel">EcdsaVerifyJce.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/EcdsaVerifyJce.html#create-com.google.crypto.tink.signature.EcdsaPublicKey-">create</a></span>(<a href="../../../../../com/google/crypto/tink/signature/EcdsaPublicKey.html" title="class in com.google.crypto.tink.signature">EcdsaPublicKey</a>&nbsp;key)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/HybridDecrypt.html" title="interface in com.google.crypto.tink">HybridDecrypt</a></code></td>
+<td class="colLast"><span class="typeNameLabel">EciesAeadHkdfHybridDecrypt.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/EciesAeadHkdfHybridDecrypt.html#create-com.google.crypto.tink.hybrid.EciesPrivateKey-">create</a></span>(<a href="../../../../../com/google/crypto/tink/hybrid/EciesPrivateKey.html" title="class in com.google.crypto.tink.hybrid">EciesPrivateKey</a>&nbsp;key)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/HybridEncrypt.html" title="interface in com.google.crypto.tink">HybridEncrypt</a></code></td>
+<td class="colLast"><span class="typeNameLabel">EciesAeadHkdfHybridEncrypt.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/EciesAeadHkdfHybridEncrypt.html#create-com.google.crypto.tink.hybrid.EciesPublicKey-">create</a></span>(<a href="../../../../../com/google/crypto/tink/hybrid/EciesPublicKey.html" title="class in com.google.crypto.tink.hybrid">EciesPublicKey</a>&nbsp;key)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/PublicKeySign.html" title="interface in com.google.crypto.tink">PublicKeySign</a></code></td>
+<td class="colLast"><span class="typeNameLabel">Ed25519Sign.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/Ed25519Sign.html#create-com.google.crypto.tink.signature.Ed25519PrivateKey-">create</a></span>(<a href="../../../../../com/google/crypto/tink/signature/Ed25519PrivateKey.html" title="class in com.google.crypto.tink.signature">Ed25519PrivateKey</a>&nbsp;key)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/PublicKeyVerify.html" title="interface in com.google.crypto.tink">PublicKeyVerify</a></code></td>
+<td class="colLast"><span class="typeNameLabel">Ed25519Verify.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/Ed25519Verify.html#create-com.google.crypto.tink.signature.Ed25519PublicKey-">create</a></span>(<a href="../../../../../com/google/crypto/tink/signature/Ed25519PublicKey.html" title="class in com.google.crypto.tink.signature">Ed25519PublicKey</a>&nbsp;key)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/PublicKeySign.html" title="interface in com.google.crypto.tink">PublicKeySign</a></code></td>
+<td class="colLast"><span class="typeNameLabel">RsaSsaPkcs1SignJce.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/RsaSsaPkcs1SignJce.html#create-com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey-">create</a></span>(<a href="../../../../../com/google/crypto/tink/signature/RsaSsaPkcs1PrivateKey.html" title="class in com.google.crypto.tink.signature">RsaSsaPkcs1PrivateKey</a>&nbsp;key)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/PublicKeyVerify.html" title="interface in com.google.crypto.tink">PublicKeyVerify</a></code></td>
+<td class="colLast"><span class="typeNameLabel">RsaSsaPkcs1VerifyJce.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/RsaSsaPkcs1VerifyJce.html#create-com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey-">create</a></span>(<a href="../../../../../com/google/crypto/tink/signature/RsaSsaPkcs1PublicKey.html" title="class in com.google.crypto.tink.signature">RsaSsaPkcs1PublicKey</a>&nbsp;key)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/PublicKeySign.html" title="interface in com.google.crypto.tink">PublicKeySign</a></code></td>
+<td class="colLast"><span class="typeNameLabel">RsaSsaPssSignJce.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/RsaSsaPssSignJce.html#create-com.google.crypto.tink.signature.RsaSsaPssPrivateKey-">create</a></span>(<a href="../../../../../com/google/crypto/tink/signature/RsaSsaPssPrivateKey.html" title="class in com.google.crypto.tink.signature">RsaSsaPssPrivateKey</a>&nbsp;key)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/PublicKeyVerify.html" title="interface in com.google.crypto.tink">PublicKeyVerify</a></code></td>
+<td class="colLast"><span class="typeNameLabel">RsaSsaPssVerifyJce.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/RsaSsaPssVerifyJce.html#create-com.google.crypto.tink.signature.RsaSsaPssPublicKey-">create</a></span>(<a href="../../../../../com/google/crypto/tink/signature/RsaSsaPssPublicKey.html" title="class in com.google.crypto.tink.signature">RsaSsaPssPublicKey</a>&nbsp;key)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a></code></td>
+<td class="colLast"><span class="typeNameLabel">XChaCha20Poly1305.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/XChaCha20Poly1305.html#create-com.google.crypto.tink.aead.XChaCha20Poly1305Key-">create</a></span>(<a href="../../../../../com/google/crypto/tink/aead/XChaCha20Poly1305Key.html" title="class in com.google.crypto.tink.aead">XChaCha20Poly1305Key</a>&nbsp;key)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
