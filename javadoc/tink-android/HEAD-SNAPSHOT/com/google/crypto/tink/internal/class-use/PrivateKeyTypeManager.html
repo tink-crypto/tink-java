@@ -90,11 +90,15 @@
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><a href="#com.google.crypto.tink.internal">com.google.crypto.tink.internal</a></td>
+<td class="colFirst"><a href="#com.google.crypto.tink.hybrid.internal">com.google.crypto.tink.hybrid.internal</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="#com.google.crypto.tink.jwt">com.google.crypto.tink.jwt</a></td>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="#com.google.crypto.tink.signature">com.google.crypto.tink.signature</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
 </tbody>
@@ -145,23 +149,21 @@
 </tbody>
 </table>
 </li>
-<li class="blockList"><a name="com.google.crypto.tink.internal">
+<li class="blockList"><a name="com.google.crypto.tink.hybrid.internal">
 <!--   -->
 </a>
-<h3>Uses of <a href="../../../../../../com/google/crypto/tink/internal/PrivateKeyTypeManager.html" title="class in com.google.crypto.tink.internal">PrivateKeyTypeManager</a> in <a href="../../../../../../com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></h3>
-<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
-<caption><span>Methods in <a href="../../../../../../com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a> with parameters of type <a href="../../../../../../com/google/crypto/tink/internal/PrivateKeyTypeManager.html" title="class in com.google.crypto.tink.internal">PrivateKeyTypeManager</a></span><span class="tabEnd">&nbsp;</span></caption>
+<h3>Uses of <a href="../../../../../../com/google/crypto/tink/internal/PrivateKeyTypeManager.html" title="class in com.google.crypto.tink.internal">PrivateKeyTypeManager</a> in <a href="../../../../../../com/google/crypto/tink/hybrid/internal/package-summary.html">com.google.crypto.tink.hybrid.internal</a></h3>
+<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing subclasses, and an explanation">
+<caption><span>Subclasses of <a href="../../../../../../com/google/crypto/tink/internal/PrivateKeyTypeManager.html" title="class in com.google.crypto.tink.internal">PrivateKeyTypeManager</a> in <a href="../../../../../../com/google/crypto/tink/hybrid/internal/package-summary.html">com.google.crypto.tink.hybrid.internal</a></span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Method and Description</th>
+<th class="colLast" scope="col">Class and Description</th>
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><code>&lt;KeyProtoT extends com.google.protobuf.MessageLite,PublicKeyProtoT extends com.google.protobuf.MessageLite&gt;<br>void</code></td>
-<td class="colLast"><span class="typeNameLabel">KeyManagerRegistry.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/KeyManagerRegistry.html#registerAsymmetricKeyManagers-com.google.crypto.tink.internal.PrivateKeyTypeManager-com.google.crypto.tink.internal.KeyTypeManager-boolean-">registerAsymmetricKeyManagers</a></span>(<a href="../../../../../../com/google/crypto/tink/internal/PrivateKeyTypeManager.html" title="class in com.google.crypto.tink.internal">PrivateKeyTypeManager</a>&lt;KeyProtoT,PublicKeyProtoT&gt;&nbsp;privateKeyTypeManager,
-                             <a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal">KeyTypeManager</a>&lt;PublicKeyProtoT&gt;&nbsp;publicKeyTypeManager,
-                             boolean&nbsp;newKeyAllowed)</code>
-<div class="block">Registers a private KeyTypeManager and a corresponding public KeyTypeManager.</div>
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/hybrid/internal/HpkePrivateKeyManager.html" title="class in com.google.crypto.tink.hybrid.internal">HpkePrivateKeyManager</a></span></code>
+<div class="block">Key manager that generates new <a href="../../../../../../com/google/crypto/tink/proto/HpkePrivateKey.html" title="class in com.google.crypto.tink.proto"><code>HpkePrivateKey</code></a> keys and produces new instances of <code>HpkeDecrypt</code> primitives.</div>
 </td>
 </tr>
 </tbody>
@@ -180,16 +182,63 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/jwt/JwtEcdsaSignKeyManager.html" title="class in com.google.crypto.tink.jwt">JwtEcdsaSignKeyManager</a></span></code>
+<div class="block">This key manager generates new <code>JwtEcdsaSignKey</code> keys and produces new instances of <code>JwtPublicKeySign</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/jwt/JwtRsaSsaPkcs1SignKeyManager.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPkcs1SignKeyManager</a></span></code>
 <div class="block">This key manager generates new <code>JwtRsaSsaPkcs1PrivateKey</code> keys and produces new instances
  of <code>JwtPublicKeySign</code>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/jwt/JwtRsaSsaPssSignKeyManager.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssSignKeyManager</a></span></code>
 <div class="block">This key manager generates new <code>JwtRsaSsaPssPrivateKey</code> keys and produces new instances of
  <code>JwtPublicKeySign</code>.</div>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li class="blockList"><a name="com.google.crypto.tink.signature">
+<!--   -->
+</a>
+<h3>Uses of <a href="../../../../../../com/google/crypto/tink/internal/PrivateKeyTypeManager.html" title="class in com.google.crypto.tink.internal">PrivateKeyTypeManager</a> in <a href="../../../../../../com/google/crypto/tink/signature/package-summary.html">com.google.crypto.tink.signature</a></h3>
+<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing subclasses, and an explanation">
+<caption><span>Subclasses of <a href="../../../../../../com/google/crypto/tink/internal/PrivateKeyTypeManager.html" title="class in com.google.crypto.tink.internal">PrivateKeyTypeManager</a> in <a href="../../../../../../com/google/crypto/tink/signature/package-summary.html">com.google.crypto.tink.signature</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Class and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/signature/EcdsaSignKeyManager.html" title="class in com.google.crypto.tink.signature">EcdsaSignKeyManager</a></span></code>
+<div class="block">This key manager generates new <code>EcdsaPrivateKey</code> keys and produces new instances of <code>EcdsaSignJce</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/signature/Ed25519PrivateKeyManager.html" title="class in com.google.crypto.tink.signature">Ed25519PrivateKeyManager</a></span></code>
+<div class="block">This instance of <code>KeyManager</code> generates new <code>Ed25519PrivateKey</code> keys and produces new
+ instances of <code>Ed25519Sign</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/signature/RsaSsaPkcs1SignKeyManager.html" title="class in com.google.crypto.tink.signature">RsaSsaPkcs1SignKeyManager</a></span></code>
+<div class="block">This key manager generates new <code>RsaSsaPkcs1PrivateKey</code> keys and produces new instances of
+ <code>RsaSsaPkcs1SignJce</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/signature/RsaSsaPssSignKeyManager.html" title="class in com.google.crypto.tink.signature">RsaSsaPssSignKeyManager</a></span></code>
+<div class="block">This key manager generates new <code>RsaSsaPssPrivateKey</code> keys and produces new instances of
+ <code>RsaSsaPssSignJce</code>.</div>
 </td>
 </tr>
 </tbody>
