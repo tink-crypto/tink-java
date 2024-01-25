@@ -3354,6 +3354,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/HpkeEncrypt.html#create-com.google.crypto.tink.hybrid.HpkePublicKey-">create(HpkePublicKey)</a></span> - Static method in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/HpkeEncrypt.html" title="class in com.google.crypto.tink.hybrid.internal">HpkeEncrypt</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/LegacyFullHybridEncrypt.html#create-com.google.crypto.tink.internal.LegacyProtoKey-">create(LegacyProtoKey)</a></span> - Static method in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/LegacyFullHybridEncrypt.html" title="class in com.google.crypto.tink.hybrid.internal">LegacyFullHybridEncrypt</a></dt>
+<dd>
+<div class="block">This method covers the cases where users created their own aead/key classes.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/KeyParser.html#create-com.google.crypto.tink.internal.KeyParser.KeyParsingFunction-com.google.crypto.tink.util.Bytes-java.lang.Class-">create(KeyParser.KeyParsingFunction&lt;SerializationT&gt;, Bytes, Class&lt;SerializationT&gt;)</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/KeyParser.html" title="class in com.google.crypto.tink.internal">KeyParser</a></dt>
 <dd>
 <div class="block">Creates a KeyParser object.</div>
@@ -5010,6 +5014,8 @@
 <div class="block">On Android KitKat (API level 19) this method does not support non null or non empty <code>associatedData</code>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/HpkeEncrypt.html#encrypt-byte:A-byte:A-">encrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/HpkeEncrypt.html" title="class in com.google.crypto.tink.hybrid.internal">HpkeEncrypt</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/LegacyFullHybridEncrypt.html#encrypt-byte:A-byte:A-">encrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/LegacyFullHybridEncrypt.html" title="class in com.google.crypto.tink.hybrid.internal">LegacyFullHybridEncrypt</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/subtle/AeadOrDaead.html#encrypt-byte:A-byte:A-">encrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.hybrid.subtle.<a href="com/google/crypto/tink/hybrid/subtle/AeadOrDaead.html" title="class in com.google.crypto.tink.hybrid.subtle">AeadOrDaead</a></dt>
 <dd>
@@ -14663,6 +14669,10 @@
 <dt><a href="com/google/crypto/tink/daead/internal/LegacyFullDeterministicAead.html" title="class in com.google.crypto.tink.daead.internal"><span class="typeNameLink">LegacyFullDeterministicAead</span></a> - Class in <a href="com/google/crypto/tink/daead/internal/package-summary.html">com.google.crypto.tink.daead.internal</a></dt>
 <dd>
 <div class="block">Takes an arbitrary raw <a href="com/google/crypto/tink/DeterministicAead.html" title="interface in com.google.crypto.tink"><code>DeterministicAead</code></a> and makes it a full primitive.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/hybrid/internal/LegacyFullHybridEncrypt.html" title="class in com.google.crypto.tink.hybrid.internal"><span class="typeNameLink">LegacyFullHybridEncrypt</span></a> - Class in <a href="com/google/crypto/tink/hybrid/internal/package-summary.html">com.google.crypto.tink.hybrid.internal</a></dt>
+<dd>
+<div class="block">Takes an arbitrary raw HybridEncrypt and makes it a full primitive.</div>
 </dd>
 <dt><a href="com/google/crypto/tink/mac/internal/LegacyFullMac.html" title="class in com.google.crypto.tink.mac.internal"><span class="typeNameLink">LegacyFullMac</span></a> - Class in <a href="com/google/crypto/tink/mac/internal/package-summary.html">com.google.crypto.tink.mac.internal</a></dt>
 <dd>
