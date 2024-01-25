@@ -3314,6 +3314,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/ChaCha20Poly1305Jce.html#create-com.google.crypto.tink.aead.ChaCha20Poly1305Key-">create(ChaCha20Poly1305Key)</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/ChaCha20Poly1305Jce.html" title="class in com.google.crypto.tink.aead.internal">ChaCha20Poly1305Jce</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/InsecureNonceChaCha20Poly1305Jce.html#create-byte:A-">create(byte[])</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/InsecureNonceChaCha20Poly1305Jce.html" title="class in com.google.crypto.tink.aead.internal">InsecureNonceChaCha20Poly1305Jce</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/LegacyFullAead.html#create-com.google.crypto.tink.internal.LegacyProtoKey-">create(LegacyProtoKey)</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/LegacyFullAead.html" title="class in com.google.crypto.tink.aead.internal">LegacyFullAead</a></dt>
 <dd>
 <div class="block">This method covers the cases where users created their own aead/key classes.</div>
@@ -3860,6 +3862,8 @@
 <dd>
 <div class="block">On Android KitKat (API level 19) this method does not support non null or non empty <code>associatedData</code>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/InsecureNonceChaCha20Poly1305Jce.html#decrypt-byte:A-byte:A-byte:A-">decrypt(byte[], byte[], byte[])</a></span> - Method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/InsecureNonceChaCha20Poly1305Jce.html" title="class in com.google.crypto.tink.aead.internal">InsecureNonceChaCha20Poly1305Jce</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/LegacyFullAead.html#decrypt-byte:A-byte:A-">decrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/LegacyFullAead.html" title="class in com.google.crypto.tink.aead.internal">LegacyFullAead</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/KmsEnvelopeAead.html#decrypt-byte:A-byte:A-">decrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/KmsEnvelopeAead.html" title="class in com.google.crypto.tink.aead">KmsEnvelopeAead</a></dt>
@@ -5005,6 +5009,8 @@
 <dd>
 <div class="block">On Android KitKat (API level 19) this method does not support non null or non empty <code>associatedData</code>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/InsecureNonceChaCha20Poly1305Jce.html#encrypt-byte:A-byte:A-byte:A-">encrypt(byte[], byte[], byte[])</a></span> - Method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/InsecureNonceChaCha20Poly1305Jce.html" title="class in com.google.crypto.tink.aead.internal">InsecureNonceChaCha20Poly1305Jce</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/LegacyFullAead.html#encrypt-byte:A-byte:A-">encrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/LegacyFullAead.html" title="class in com.google.crypto.tink.aead.internal">LegacyFullAead</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/KmsEnvelopeAead.html#encrypt-byte:A-byte:A-">encrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/KmsEnvelopeAead.html" title="class in com.google.crypto.tink.aead">KmsEnvelopeAead</a></dt>
@@ -13448,6 +13454,11 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/InsecureNonceChaCha20Poly1305.html#InsecureNonceChaCha20Poly1305-byte:A-">InsecureNonceChaCha20Poly1305(byte[])</a></span> - Constructor for class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/InsecureNonceChaCha20Poly1305.html" title="class in com.google.crypto.tink.aead.internal">InsecureNonceChaCha20Poly1305</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/aead/internal/InsecureNonceChaCha20Poly1305Jce.html" title="class in com.google.crypto.tink.aead.internal"><span class="typeNameLink">InsecureNonceChaCha20Poly1305Jce</span></a> - Class in <a href="com/google/crypto/tink/aead/internal/package-summary.html">com.google.crypto.tink.aead.internal</a></dt>
+<dd>
+<div class="block">Implements ChaCha20Poly1305, as described in <a
+ href="https://tools.ietf.org/html/rfc8439#section-2.8">RFC 8439, section 2.8</a>.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/aead/internal/InsecureNonceXChaCha20.html" title="class in com.google.crypto.tink.aead.internal"><span class="typeNameLink">InsecureNonceXChaCha20</span></a> - Class in <a href="com/google/crypto/tink/aead/internal/package-summary.html">com.google.crypto.tink.aead.internal</a></dt>
 <dd>
 <div class="block"><a href="com/google/crypto/tink/aead/internal/InsecureNonceXChaCha20.html" title="class in com.google.crypto.tink.aead.internal"><code>InsecureNonceXChaCha20</code></a> stream cipher based on
@@ -13603,6 +13614,8 @@
 <div class="block">Returns whether <code>one</code> is the same <a href="https://docs.oracle.com/javase/8/docs/api/java/security/spec/ECParameterSpec.html?is-external=true" title="class or interface in java.security.spec"><code>ECParameterSpec</code></a> as <code>two</code>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/ChaCha20Poly1305Jce.html#isSupported--">isSupported()</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/ChaCha20Poly1305Jce.html" title="class in com.google.crypto.tink.aead.internal">ChaCha20Poly1305Jce</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/InsecureNonceChaCha20Poly1305Jce.html#isSupported--">isSupported()</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/InsecureNonceChaCha20Poly1305Jce.html" title="class in com.google.crypto.tink.aead.internal">InsecureNonceChaCha20Poly1305Jce</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/KmsEnvelopeAead.html#isSupportedDekKeyType-java.lang.String-">isSupportedDekKeyType(String)</a></span> - Static method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/KmsEnvelopeAead.html" title="class in com.google.crypto.tink.aead">KmsEnvelopeAead</a></dt>
 <dd>&nbsp;</dd>
