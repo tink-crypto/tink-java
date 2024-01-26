@@ -3430,6 +3430,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/Ed25519PublicKey.html#create-com.google.crypto.tink.signature.Ed25519Parameters.Variant-com.google.crypto.tink.util.Bytes-java.lang.Integer-">create(Ed25519Parameters.Variant, Bytes, Integer)</a></span> - Static method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/Ed25519PublicKey.html" title="class in com.google.crypto.tink.signature">Ed25519PublicKey</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/LegacyFullSign.html#create-com.google.crypto.tink.internal.LegacyProtoKey-">create(LegacyProtoKey)</a></span> - Static method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/LegacyFullSign.html" title="class in com.google.crypto.tink.signature.internal">LegacyFullSign</a></dt>
+<dd>
+<div class="block">Creates the full primitive corresponding to the key.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/AesCtrHmacStreamingKey.html#create-com.google.crypto.tink.streamingaead.AesCtrHmacStreamingParameters-com.google.crypto.tink.util.SecretBytes-">create(AesCtrHmacStreamingParameters, SecretBytes)</a></span> - Static method in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/AesCtrHmacStreamingKey.html" title="class in com.google.crypto.tink.streamingaead">AesCtrHmacStreamingKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingKey.html#create-com.google.crypto.tink.streamingaead.AesGcmHkdfStreamingParameters-com.google.crypto.tink.util.SecretBytes-">create(AesGcmHkdfStreamingParameters, SecretBytes)</a></span> - Static method in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingKey.html" title="class in com.google.crypto.tink.streamingaead">AesGcmHkdfStreamingKey</a></dt>
@@ -14695,6 +14699,11 @@
 <dd>
 <div class="block">Takes an arbitrary raw Prf and makes it a full primitive.</div>
 </dd>
+<dt><a href="com/google/crypto/tink/signature/internal/LegacyFullSign.html" title="class in com.google.crypto.tink.signature.internal"><span class="typeNameLink">LegacyFullSign</span></a> - Class in <a href="com/google/crypto/tink/signature/internal/package-summary.html">com.google.crypto.tink.signature.internal</a></dt>
+<dd>
+<div class="block">Takes an arbitrary raw PublicKeySign from the registry and creates a full PublicKeySign out of
+ it.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/streamingaead/internal/LegacyFullStreamingAead.html" title="class in com.google.crypto.tink.streamingaead.internal"><span class="typeNameLink">LegacyFullStreamingAead</span></a> - Class in <a href="com/google/crypto/tink/streamingaead/internal/package-summary.html">com.google.crypto.tink.streamingaead.internal</a></dt>
 <dd>
 <div class="block">Takes an arbitrary raw StreamingAead and makes it a full primitive.</div>
@@ -22324,6 +22333,8 @@
 <dd>
 <div class="block">Computes the signature for <code>data</code>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/LegacyFullSign.html#sign-byte:A-">sign(byte[])</a></span> - Method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/LegacyFullSign.html" title="class in com.google.crypto.tink.signature.internal">LegacyFullSign</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/EcdsaSignJce.html#sign-byte:A-">sign(byte[])</a></span> - Method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/EcdsaSignJce.html" title="class in com.google.crypto.tink.subtle">EcdsaSignJce</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/Ed25519Sign.html#sign-byte:A-">sign(byte[])</a></span> - Method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/Ed25519Sign.html" title="class in com.google.crypto.tink.subtle">Ed25519Sign</a></dt>
