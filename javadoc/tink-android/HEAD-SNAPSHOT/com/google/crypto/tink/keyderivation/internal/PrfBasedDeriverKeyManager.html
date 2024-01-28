@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":9};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":9,"i6":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -48,8 +48,8 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/KeysetDeriverWrapper.html" title="class in com.google.crypto.tink.keyderivation.internal"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/PrfBasedKeyDeriver.html" title="class in com.google.crypto.tink.keyderivation.internal"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/PrfBasedDeriver.html" title="class in com.google.crypto.tink.keyderivation.internal"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li>Next&nbsp;Class</li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../index.html?com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html" target="_top">Frames</a></li>
@@ -73,15 +73,15 @@ var activeTableTab = "activeTableTab";
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.classes.inherited.from.class.com.google.crypto.tink.internal.KeyTypeManager">Nested</a>&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
 </div>
@@ -99,53 +99,61 @@ var activeTableTab = "activeTableTab";
 <li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
+<li><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal">com.google.crypto.tink.internal.KeyTypeManager</a>&lt;<a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverKey.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKey</a>&gt;</li>
+<li>
+<ul class="inheritance">
 <li>com.google.crypto.tink.keyderivation.internal.PrfBasedDeriverKeyManager</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
-<dl>
-<dt>All Implemented Interfaces:</dt>
-<dd><a href="../../../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Void.html?is-external=true" title="class or interface in java.lang">Void</a>&gt;</dd>
-</dl>
 <hr>
 <br>
 <pre>public final class <span class="typeNameLabel">PrfBasedDeriverKeyManager</span>
-extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
-implements <a href="../../../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Void.html?is-external=true" title="class or interface in java.lang">Void</a>&gt;</pre>
-<div class="block"><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal"><code>KeyTypeManager</code></a> for <a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverKey.html" title="class in com.google.crypto.tink.proto"><code>PrfBasedDeriverKey</code></a>.
-
- <p>This is implemented directly as a KeyManager. Usually, we use <code>LegacyKeyManagerImpl</code> to
- provide an implementation of a KeyManager based on the individual registries based on the key
- objects. However, at the moment for key derivation this does not work.
-
- <p>The reason is that the KeysetHandle still generates new keys by going through the KeyManagers
- (instead of going directly to the key creation registry). I don't want to change this right now
- -- it would require some fallback code which is always brittle.
-
- <p>Unfortunately, implement the required behavior of the KeyManager based on the KeyCreation
- registry is not generic.
-
- <p>Usually, the behavior of the key manager is simply this: assume that the input to
- generateNewKey() is a serialization with OutputPrefixType = RAW, and build the corresponding
- parameter serialization. Then, parse this, and give this to the key creation registry.
-
- <p>For key creation, the behavior is slightly different: the serialization of key derivation
- parameters has been defined to always satisfy that the outer OutputPrefixType is equal to the one
- given in the proto PrfBasedDeriverKeyFormat, field prf_key_template. Hence we cannot assume raw
- -- instead, we have to parse it and use this one.
-
- <p>Similar things hold for the creating a primitive from a Key -- but here Tink already uses the
- PrimitiveCreationRegistry fully, so we don't need to worry about it here. Instead, we just throw
- when these functions are called.</div>
+extends <a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal">KeyTypeManager</a>&lt;<a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverKey.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKey</a>&gt;</pre>
+<div class="block"><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal"><code>KeyTypeManager</code></a> for <a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverKey.html" title="class in com.google.crypto.tink.proto"><code>PrfBasedDeriverKey</code></a>.</div>
 </li>
 </ul>
 </div>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested.class.summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<ul class="blockList">
+<li class="blockList"><a name="nested.classes.inherited.from.class.com.google.crypto.tink.internal.KeyTypeManager">
+<!--   -->
+</a>
+<h3>Nested classes/interfaces inherited from class&nbsp;com.google.crypto.tink.internal.<a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal">KeyTypeManager</a></h3>
+<code><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.KeyFactory.html" title="class in com.google.crypto.tink.internal">KeyTypeManager.KeyFactory</a>&lt;<a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.KeyFactory.html" title="type parameter in KeyTypeManager.KeyFactory">KeyFormatProtoT</a> extends com.google.protobuf.MessageLite,<a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.KeyFactory.html" title="type parameter in KeyTypeManager.KeyFactory">KeyProtoT</a> extends com.google.protobuf.MessageLite&gt;</code></li>
+</ul>
+</li>
+</ul>
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor.summary">
+<!--   -->
+</a>
+<h3>Constructor Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
+<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colOne" scope="col">Constructor and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#PrfBasedDeriverKeyManager--">PrfBasedDeriverKeyManager</a></span>()</code>&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
 <!-- ========== METHOD SUMMARY =========== -->
 <ul class="blockList">
 <li class="blockList"><a name="method.summary">
@@ -159,66 +167,53 @@ implements <a href="../../../../../../com/google/crypto/tink/KeyManager.html" ti
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#doesSupport-java.lang.String-">doesSupport</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl)</code>
-<div class="block">Returns true iff this KeyManager supports key type identified by <code>typeUrl</code>.</div>
-</td>
-</tr>
-<tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#getKeyType--">getKeyType</a></span>()</code>
 <div class="block">Returns the type URL that identifies the key type of keys managed by this KeyManager.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
-<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Void.html?is-external=true" title="class or interface in java.lang">Void</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#getPrimitive-com.google.protobuf.ByteString-">getPrimitive</a></span>(com.google.protobuf.ByteString&nbsp;serializedKey)</code>
-<div class="block">Constructs an instance of P for the key given in <code>serializedKey</code>, which must be a
- serialized key protocol buffer handled by this manager.</div>
-</td>
-</tr>
-<tr id="i3" class="rowColor">
-<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Void.html?is-external=true" title="class or interface in java.lang">Void</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#getPrimitive-com.google.protobuf.MessageLite-">getPrimitive</a></span>(com.google.protobuf.MessageLite&nbsp;key)</code>
-<div class="block">Constructs an instance of P for the key given in <code>key</code>.</div>
-</td>
-</tr>
-<tr id="i4" class="altColor">
-<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Void.html?is-external=true" title="class or interface in java.lang">Void</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#getPrimitiveClass--">getPrimitiveClass</a></span>()</code>
-<div class="block">Returns the primitive class object of the P.</div>
-</td>
-</tr>
-<tr id="i5" class="rowColor">
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#getVersion--">getVersion</a></span>()</code>
 <div class="block">Returns the version number of this KeyManager.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code>com.google.protobuf.MessageLite</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#newKey-com.google.protobuf.ByteString-">newKey</a></span>(com.google.protobuf.ByteString&nbsp;serializedKeyFormat)</code>
-<div class="block">Generates a new key according to specification in <code>serializedKeyFormat</code>, which must be a
- serialized key format protocol buffer handled by this manager.</div>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.KeyFactory.html" title="class in com.google.crypto.tink.internal">KeyTypeManager.KeyFactory</a>&lt;<a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverKeyFormat.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKeyFormat</a>,<a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverKey.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKey</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#keyFactory--">keyFactory</a></span>()</code>
+<div class="block">Returns the <a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.KeyFactory.html" title="class in com.google.crypto.tink.internal"><code>KeyTypeManager.KeyFactory</code></a> for this key type.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
-<td class="colFirst"><code>com.google.protobuf.MessageLite</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#newKey-com.google.protobuf.MessageLite-">newKey</a></span>(com.google.protobuf.MessageLite&nbsp;keyFormat)</code>
-<div class="block">Generates a new key according to specification in <code>keyFormat</code>.</div>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/proto/KeyData.KeyMaterialType.html" title="enum in com.google.crypto.tink.proto">KeyData.KeyMaterialType</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#keyMaterialType--">keyMaterialType</a></span>()</code>
+<div class="block">Returns the <a href="../../../../../../com/google/crypto/tink/proto/KeyData.KeyMaterialType.html" title="enum in com.google.crypto.tink.proto"><code>KeyData.KeyMaterialType</code></a> for this proto.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
-<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto">KeyData</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#newKeyData-com.google.protobuf.ByteString-">newKeyData</a></span>(com.google.protobuf.ByteString&nbsp;serializedKeyFormat)</code>
-<div class="block">Generates a new <code>KeyData</code> according to specification in <code>serializedKeyFormat</code>.</div>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverKey.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKey</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#parseKey-com.google.protobuf.ByteString-">parseKey</a></span>(com.google.protobuf.ByteString&nbsp;byteString)</code>
+<div class="block">Parses a serialized key proto.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#register-boolean-">register</a></span>(boolean&nbsp;newKeyAllowed)</code>&nbsp;</td>
 </tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html#validateKey-com.google.crypto.tink.proto.PrfBasedDeriverKey-">validateKey</a></span>(<a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverKey.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKey</a>&nbsp;key)</code>
+<div class="block">Checks if the given <code>keyProto</code> is a valid key.</div>
+</td>
+</tr>
 </table>
+<ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.com.google.crypto.tink.internal.KeyTypeManager">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;com.google.crypto.tink.internal.<a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal">KeyTypeManager</a></h3>
+<code><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html#fipsStatus--">fipsStatus</a>, <a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html#firstSupportedPrimitiveClass--">firstSupportedPrimitiveClass</a>, <a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html#getKeyClass--">getKeyClass</a>, <a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html#getPrimitive-KeyProtoT-java.lang.Class-">getPrimitive</a>, <a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html#supportedPrimitives--">supportedPrimitives</a></code></li>
+</ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
@@ -234,137 +229,41 @@ implements <a href="../../../../../../com/google/crypto/tink/KeyManager.html" ti
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor.detail">
+<!--   -->
+</a>
+<h3>Constructor Detail</h3>
+<a name="PrfBasedDeriverKeyManager--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>PrfBasedDeriverKeyManager</h4>
+<pre>public&nbsp;PrfBasedDeriverKeyManager()</pre>
+</li>
+</ul>
+</li>
+</ul>
 <!-- ============ METHOD DETAIL ========== -->
 <ul class="blockList">
 <li class="blockList"><a name="method.detail">
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="getPrimitive-com.google.protobuf.ByteString-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getPrimitive</h4>
-<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Void.html?is-external=true" title="class or interface in java.lang">Void</a>&nbsp;getPrimitive(com.google.protobuf.ByteString&nbsp;serializedKey)
-                  throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/google/crypto/tink/KeyManager.html#getPrimitive-com.google.protobuf.ByteString-">KeyManager</a></code></span></div>
-<div class="block">Constructs an instance of P for the key given in <code>serializedKey</code>, which must be a
- serialized key protocol buffer handled by this manager.
-
- <p>For primitives of type <code>Mac</code>, <code>Aead</code>, <code>PublicKeySign</code>, <code>PublicKeyVerify</code>, <code>DeterministicAead</code>, <code>HybridEncrypt</code>, and <code>HybridDecrypt</code>
- this should be a primitive which <b>ignores</b> the output prefix and assumes "RAW".</div>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/google/crypto/tink/KeyManager.html#getPrimitive-com.google.protobuf.ByteString-">getPrimitive</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Void.html?is-external=true" title="class or interface in java.lang">Void</a>&gt;</code></dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the new constructed P</dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code> - if the key given in <code>serializedKey</code> is corrupted or not
-     supported</dd>
-</dl>
-</li>
-</ul>
-<a name="getPrimitive-com.google.protobuf.MessageLite-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getPrimitive</h4>
-<pre>public final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Void.html?is-external=true" title="class or interface in java.lang">Void</a>&nbsp;getPrimitive(com.google.protobuf.MessageLite&nbsp;key)
-                        throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/google/crypto/tink/KeyManager.html#getPrimitive-com.google.protobuf.MessageLite-">KeyManager</a></code></span></div>
-<div class="block">Constructs an instance of P for the key given in <code>key</code>.
-
- <p>For primitives of type <code>Mac</code>, <code>Aead</code>, <code>PublicKeySign</code>, <code>PublicKeyVerify</code>, <code>DeterministicAead</code>, <code>HybridEncrypt</code>, and <code>HybridDecrypt</code>
- this should be a primitive which <b>ignores</b> the output prefix and assumes "RAW".
-
- <p>This method is not used by Tink. It does not need to be implemented.</div>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/google/crypto/tink/KeyManager.html#getPrimitive-com.google.protobuf.MessageLite-">getPrimitive</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Void.html?is-external=true" title="class or interface in java.lang">Void</a>&gt;</code></dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the new constructed P</dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code> - if the key given in <code>key</code> is corrupted or not supported</dd>
-</dl>
-</li>
-</ul>
-<a name="newKey-com.google.protobuf.ByteString-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>newKey</h4>
-<pre>public final&nbsp;com.google.protobuf.MessageLite&nbsp;newKey(com.google.protobuf.ByteString&nbsp;serializedKeyFormat)
-                                             throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/google/crypto/tink/KeyManager.html#newKey-com.google.protobuf.ByteString-">KeyManager</a></code></span></div>
-<div class="block">Generates a new key according to specification in <code>serializedKeyFormat</code>, which must be a
- serialized key format protocol buffer handled by this manager.
-
- <p>This method is not used by Tink anymore. It does not need to be implemented.</div>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/google/crypto/tink/KeyManager.html#newKey-com.google.protobuf.ByteString-">newKey</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Void.html?is-external=true" title="class or interface in java.lang">Void</a>&gt;</code></dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the new generated key</dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code> - if the specified format is wrong or not supported</dd>
-</dl>
-</li>
-</ul>
-<a name="newKey-com.google.protobuf.MessageLite-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>newKey</h4>
-<pre>public final&nbsp;com.google.protobuf.MessageLite&nbsp;newKey(com.google.protobuf.MessageLite&nbsp;keyFormat)
-                                             throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/google/crypto/tink/KeyManager.html#newKey-com.google.protobuf.MessageLite-">KeyManager</a></code></span></div>
-<div class="block">Generates a new key according to specification in <code>keyFormat</code>.
-
- <p>This method is only used by <code>Registry.newKey</code> which is deprecated and not used by Tink
- anymore. This method does not need to be implemented.</div>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/google/crypto/tink/KeyManager.html#newKey-com.google.protobuf.MessageLite-">newKey</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Void.html?is-external=true" title="class or interface in java.lang">Void</a>&gt;</code></dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the new generated key</dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code> - if the specified format is wrong or not supported</dd>
-</dl>
-</li>
-</ul>
-<a name="doesSupport-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>doesSupport</h4>
-<pre>public final&nbsp;boolean&nbsp;doesSupport(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;typeUrl)</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/google/crypto/tink/KeyManager.html#doesSupport-java.lang.String-">KeyManager</a></code></span></div>
-<div class="block">Returns true iff this KeyManager supports key type identified by <code>typeUrl</code>.
-
- <p>This method is not used by Tink anymore. It does not need to be implemented.</div>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/google/crypto/tink/KeyManager.html#doesSupport-java.lang.String-">doesSupport</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Void.html?is-external=true" title="class or interface in java.lang">Void</a>&gt;</code></dd>
-</dl>
-</li>
-</ul>
 <a name="getKeyType--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getKeyType</h4>
-<pre>public final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getKeyType()</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/google/crypto/tink/KeyManager.html#getKeyType--">KeyManager</a></code></span></div>
+<pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getKeyType()</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html#getKeyType--">KeyTypeManager</a></code></span></div>
 <div class="block">Returns the type URL that identifies the key type of keys managed by this KeyManager.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/google/crypto/tink/KeyManager.html#getKeyType--">getKeyType</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Void.html?is-external=true" title="class or interface in java.lang">Void</a>&gt;</code></dd>
+<dd><code><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html#getKeyType--">getKeyType</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal">KeyTypeManager</a>&lt;<a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverKey.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKey</a>&gt;</code></dd>
 </dl>
 </li>
 </ul>
@@ -375,51 +274,82 @@ implements <a href="../../../../../../com/google/crypto/tink/KeyManager.html" ti
 <li class="blockList">
 <h4>getVersion</h4>
 <pre>public&nbsp;int&nbsp;getVersion()</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/google/crypto/tink/KeyManager.html#getVersion--">KeyManager</a></code></span></div>
-<div class="block">Returns the version number of this KeyManager.
-
- <p>This method is not used by Tink anymore. It does not need to be implemented.</div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html#getVersion--">KeyTypeManager</a></code></span></div>
+<div class="block">Returns the version number of this KeyManager.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/google/crypto/tink/KeyManager.html#getVersion--">getVersion</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Void.html?is-external=true" title="class or interface in java.lang">Void</a>&gt;</code></dd>
+<dd><code><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html#getVersion--">getVersion</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal">KeyTypeManager</a>&lt;<a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverKey.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKey</a>&gt;</code></dd>
 </dl>
 </li>
 </ul>
-<a name="newKeyData-com.google.protobuf.ByteString-">
+<a name="keyMaterialType--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>newKeyData</h4>
-<pre>public final&nbsp;<a href="../../../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto">KeyData</a>&nbsp;newKeyData(com.google.protobuf.ByteString&nbsp;serializedKeyFormat)
-                         throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/google/crypto/tink/KeyManager.html#newKeyData-com.google.protobuf.ByteString-">KeyManager</a></code></span></div>
-<div class="block">Generates a new <code>KeyData</code> according to specification in <code>serializedKeyFormat</code>.</div>
+<h4>keyMaterialType</h4>
+<pre>public&nbsp;<a href="../../../../../../com/google/crypto/tink/proto/KeyData.KeyMaterialType.html" title="enum in com.google.crypto.tink.proto">KeyData.KeyMaterialType</a>&nbsp;keyMaterialType()</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html#keyMaterialType--">KeyTypeManager</a></code></span></div>
+<div class="block">Returns the <a href="../../../../../../com/google/crypto/tink/proto/KeyData.KeyMaterialType.html" title="enum in com.google.crypto.tink.proto"><code>KeyData.KeyMaterialType</code></a> for this proto.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/google/crypto/tink/KeyManager.html#newKeyData-com.google.protobuf.ByteString-">newKeyData</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Void.html?is-external=true" title="class or interface in java.lang">Void</a>&gt;</code></dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the new generated key</dd>
+<dd><code><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html#keyMaterialType--">keyMaterialType</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal">KeyTypeManager</a>&lt;<a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverKey.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKey</a>&gt;</code></dd>
+</dl>
+</li>
+</ul>
+<a name="validateKey-com.google.crypto.tink.proto.PrfBasedDeriverKey-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>validateKey</h4>
+<pre>public&nbsp;void&nbsp;validateKey(<a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverKey.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKey</a>&nbsp;key)
+                 throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html#validateKey-KeyProtoT-">KeyTypeManager</a></code></span></div>
+<div class="block">Checks if the given <code>keyProto</code> is a valid key.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html#validateKey-KeyProtoT-">validateKey</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal">KeyTypeManager</a>&lt;<a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverKey.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKey</a>&gt;</code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code> - if the specified format is wrong or not supported</dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code> - if the passed <code>keyProto</code> is not valid in any way.</dd>
 </dl>
 </li>
 </ul>
-<a name="getPrimitiveClass--">
+<a name="parseKey-com.google.protobuf.ByteString-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getPrimitiveClass</h4>
-<pre>public final&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Void.html?is-external=true" title="class or interface in java.lang">Void</a>&gt;&nbsp;getPrimitiveClass()</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/google/crypto/tink/KeyManager.html#getPrimitiveClass--">KeyManager</a></code></span></div>
-<div class="block">Returns the primitive class object of the P. Should be implemented as <code>return P.class;</code>
- when implementing a key manager for primitive {$code P}.</div>
+<h4>parseKey</h4>
+<pre>public&nbsp;<a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverKey.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKey</a>&nbsp;parseKey(com.google.protobuf.ByteString&nbsp;byteString)
+                            throws com.google.protobuf.InvalidProtocolBufferException</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html#parseKey-com.google.protobuf.ByteString-">KeyTypeManager</a></code></span></div>
+<div class="block">Parses a serialized key proto.
+
+ <p>Implement as <code>return KeyProtoT.parseFrom(byteString);</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/google/crypto/tink/KeyManager.html#getPrimitiveClass--">getPrimitiveClass</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink">KeyManager</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Void.html?is-external=true" title="class or interface in java.lang">Void</a>&gt;</code></dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd><code>P.class</code></dd>
+<dd><code><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html#parseKey-com.google.protobuf.ByteString-">parseKey</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal">KeyTypeManager</a>&lt;<a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverKey.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKey</a>&gt;</code></dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>com.google.protobuf.InvalidProtocolBufferException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="keyFactory--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>keyFactory</h4>
+<pre>public&nbsp;<a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.KeyFactory.html" title="class in com.google.crypto.tink.internal">KeyTypeManager.KeyFactory</a>&lt;<a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverKeyFormat.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKeyFormat</a>,<a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverKey.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKey</a>&gt;&nbsp;keyFactory()</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html#keyFactory--">KeyTypeManager</a></code></span></div>
+<div class="block">Returns the <a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.KeyFactory.html" title="class in com.google.crypto.tink.internal"><code>KeyTypeManager.KeyFactory</code></a> for this key type.
+
+ <p>By default, this throws an UnsupportedOperationException. Hence, if an implementation does
+ not support creating primitives, no implementation is required.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html#keyFactory--">keyFactory</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal">KeyTypeManager</a>&lt;<a href="../../../../../../com/google/crypto/tink/proto/PrfBasedDeriverKey.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKey</a>&gt;</code></dd>
 </dl>
 </li>
 </ul>
@@ -465,8 +395,8 @@ implements <a href="../../../../../../com/google/crypto/tink/KeyManager.html" ti
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/KeysetDeriverWrapper.html" title="class in com.google.crypto.tink.keyderivation.internal"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/PrfBasedKeyDeriver.html" title="class in com.google.crypto.tink.keyderivation.internal"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/PrfBasedDeriver.html" title="class in com.google.crypto.tink.keyderivation.internal"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li>Next&nbsp;Class</li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../index.html?com/google/crypto/tink/keyderivation/internal/PrfBasedDeriverKeyManager.html" target="_top">Frames</a></li>
@@ -490,15 +420,15 @@ implements <a href="../../../../../../com/google/crypto/tink/KeyManager.html" ti
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.classes.inherited.from.class.com.google.crypto.tink.internal.KeyTypeManager">Nested</a>&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
 </div>
