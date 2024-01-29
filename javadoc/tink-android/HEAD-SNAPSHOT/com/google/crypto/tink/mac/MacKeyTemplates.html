@@ -135,7 +135,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
  <a href="../../../../../com/google/crypto/tink/proto/HmacKey.html" title="class in com.google.crypto.tink.proto"><code>HmacKey</code></a>, one can do:
 
  <pre><code>
- Config.register(Mac.TINK_1_0_0);
+ MacConfig.register();
  KeysetHandle handle = KeysetHandle.generateNew(MacKeyTemplates.HMAC_SHA256_128BITTAG);
  Mac mac = handle.getPrimitive(Mac.class);
  </code></pre></div>
