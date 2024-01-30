@@ -3436,6 +3436,10 @@
 <dd>
 <div class="block">Creates the full primitive corresponding to the key.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/LegacyFullVerify.html#create-com.google.crypto.tink.internal.LegacyProtoKey-">create(LegacyProtoKey)</a></span> - Static method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/LegacyFullVerify.html" title="class in com.google.crypto.tink.signature.internal">LegacyFullVerify</a></dt>
+<dd>
+<div class="block">Creates the full primitive corresponding to the key.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/AesCtrHmacStreamingKey.html#create-com.google.crypto.tink.streamingaead.AesCtrHmacStreamingParameters-com.google.crypto.tink.util.SecretBytes-">create(AesCtrHmacStreamingParameters, SecretBytes)</a></span> - Static method in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/AesCtrHmacStreamingKey.html" title="class in com.google.crypto.tink.streamingaead">AesCtrHmacStreamingKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingKey.html#create-com.google.crypto.tink.streamingaead.AesGcmHkdfStreamingParameters-com.google.crypto.tink.util.SecretBytes-">create(AesGcmHkdfStreamingParameters, SecretBytes)</a></span> - Static method in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingKey.html" title="class in com.google.crypto.tink.streamingaead">AesGcmHkdfStreamingKey</a></dt>
@@ -14716,6 +14720,11 @@
 <dd>
 <div class="block">Takes an arbitrary raw StreamingAead and makes it a full primitive.</div>
 </dd>
+<dt><a href="com/google/crypto/tink/signature/internal/LegacyFullVerify.html" title="class in com.google.crypto.tink.signature.internal"><span class="typeNameLink">LegacyFullVerify</span></a> - Class in <a href="com/google/crypto/tink/signature/internal/package-summary.html">com.google.crypto.tink.signature.internal</a></dt>
+<dd>
+<div class="block">Takes an arbitrary raw PublicKeyVerify from the registry and creates a full PublicKeyVerify out
+ of it.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/internal/LegacyKeyManagerImpl.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">LegacyKeyManagerImpl</span></a>&lt;<a href="com/google/crypto/tink/internal/LegacyKeyManagerImpl.html" title="type parameter in LegacyKeyManagerImpl">P</a>&gt; - Class in <a href="com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></dt>
 <dd>
 <div class="block">A composed KeyManager implements a KeyManager by accessing the internal specific registries.</div>
@@ -23425,6 +23434,8 @@ the order they are declared.</div>
 <dd>
 <div class="block">Verifies whether <code>signature</code> is a valid signature for <code>data</code>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/LegacyFullVerify.html#verify-byte:A-byte:A-">verify(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/LegacyFullVerify.html" title="class in com.google.crypto.tink.signature.internal">LegacyFullVerify</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/EcdsaVerifyJce.html#verify-byte:A-byte:A-">verify(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/EcdsaVerifyJce.html" title="class in com.google.crypto.tink.subtle">EcdsaVerifyJce</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/Ed25519Verify.html#verify-byte:A-byte:A-">verify(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/Ed25519Verify.html" title="class in com.google.crypto.tink.subtle">Ed25519Verify</a></dt>
