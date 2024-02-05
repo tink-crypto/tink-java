@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":41,"i1":9,"i2":41,"i3":41,"i4":10,"i5":10};
+var methods = {"i0":41,"i1":41,"i2":41,"i3":41,"i4":42,"i5":42};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -111,8 +111,13 @@ var activeTableTab = "activeTableTab";
 <dd><a href="../../../../com/google/crypto/tink/KeysetWriter.html" title="interface in com.google.crypto.tink">KeysetWriter</a></dd>
 </dl>
 <hr>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
+<div class="block"><span class="deprecationComment">Serialize the Keyset using <code>TinkJsonProtoKeysetFormat.serializeKeyset()</code>
+     instead.</span></div>
+</div>
 <br>
-<pre>public final class <span class="typeNameLabel">JsonKeysetWriter</span>
+<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
+public final class <span class="typeNameLabel">JsonKeysetWriter</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
 implements <a href="../../../../com/google/crypto/tink/KeysetWriter.html" title="interface in com.google.crypto.tink">KeysetWriter</a></pre>
 <div class="block">A <a href="../../../../com/google/crypto/tink/KeysetWriter.html" title="interface in com.google.crypto.tink"><code>KeysetWriter</code></a> that can write to some source cleartext or encrypted keysets in <a
@@ -151,6 +156,7 @@ implements <a href="../../../../com/google/crypto/tink/KeysetWriter.html" title=
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../com/google/crypto/tink/KeysetWriter.html" title="interface in com.google.crypto.tink">KeysetWriter</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/JsonKeysetWriter.html#withOutputStream-java.io.OutputStream-">withOutputStream</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/OutputStream.html?is-external=true" title="class or interface in java.io">OutputStream</a>&nbsp;stream)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">Static method to create a JsonKeysetWriter that writes to an <a href="https://docs.oracle.com/javase/8/docs/api/java/io/OutputStream.html?is-external=true" title="class or interface in java.io"><code>OutputStream</code></a>.</div>
 </td>
 </tr>
@@ -173,12 +179,14 @@ implements <a href="../../../../com/google/crypto/tink/KeysetWriter.html" title=
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/JsonKeysetWriter.html#write-com.google.crypto.tink.proto.EncryptedKeyset-">write</a></span>(<a href="../../../../com/google/crypto/tink/proto/EncryptedKeyset.html" title="class in com.google.crypto.tink.proto">EncryptedKeyset</a>&nbsp;keyset)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">Tries to write an <a href="../../../../com/google/crypto/tink/proto/EncryptedKeyset.html" title="class in com.google.crypto.tink.proto"><code>EncryptedKeyset</code></a> to some storage system.</div>
 </td>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/google/crypto/tink/JsonKeysetWriter.html#write-com.google.crypto.tink.proto.Keyset-">write</a></span>(<a href="../../../../com/google/crypto/tink/proto/Keyset.html" title="class in com.google.crypto.tink.proto">Keyset</a>&nbsp;keyset)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">Tries to write a <a href="../../../../com/google/crypto/tink/proto/Keyset.html" title="class in com.google.crypto.tink.proto"><code>Keyset</code></a> to some storage system.</div>
 </td>
 </tr>
@@ -211,6 +219,7 @@ implements <a href="../../../../com/google/crypto/tink/KeysetWriter.html" title=
 <li class="blockList">
 <h4>withOutputStream</h4>
 <pre>public static&nbsp;<a href="../../../../com/google/crypto/tink/KeysetWriter.html" title="interface in com.google.crypto.tink">KeysetWriter</a>&nbsp;withOutputStream(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/OutputStream.html?is-external=true" title="class or interface in java.io">OutputStream</a>&nbsp;stream)</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">Static method to create a JsonKeysetWriter that writes to an <a href="https://docs.oracle.com/javase/8/docs/api/java/io/OutputStream.html?is-external=true" title="class or interface in java.io"><code>OutputStream</code></a>.
 
  <p><code>stream</code> will be closed after the keyset is written.</div>
@@ -283,6 +292,7 @@ public static&nbsp;<a href="../../../../com/google/crypto/tink/KeysetWriter.html
 <h4>write</h4>
 <pre>public&nbsp;void&nbsp;write(<a href="../../../../com/google/crypto/tink/proto/Keyset.html" title="class in com.google.crypto.tink.proto">Keyset</a>&nbsp;keyset)
            throws <a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../com/google/crypto/tink/KeysetWriter.html#write-com.google.crypto.tink.proto.Keyset-">KeysetWriter</a></code></span></div>
 <div class="block">Tries to write a <a href="../../../../com/google/crypto/tink/proto/Keyset.html" title="class in com.google.crypto.tink.proto"><code>Keyset</code></a> to some storage system.</div>
 <dl>
@@ -301,6 +311,7 @@ public static&nbsp;<a href="../../../../com/google/crypto/tink/KeysetWriter.html
 <h4>write</h4>
 <pre>public&nbsp;void&nbsp;write(<a href="../../../../com/google/crypto/tink/proto/EncryptedKeyset.html" title="class in com.google.crypto.tink.proto">EncryptedKeyset</a>&nbsp;keyset)
            throws <a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../com/google/crypto/tink/KeysetWriter.html#write-com.google.crypto.tink.proto.EncryptedKeyset-">KeysetWriter</a></code></span></div>
 <div class="block">Tries to write an <a href="../../../../com/google/crypto/tink/proto/EncryptedKeyset.html" title="class in com.google.crypto.tink.proto"><code>EncryptedKeyset</code></a> to some storage system.</div>
 <dl>
