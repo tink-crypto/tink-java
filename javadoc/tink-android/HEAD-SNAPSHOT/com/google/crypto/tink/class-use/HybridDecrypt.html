@@ -86,14 +86,10 @@
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><a href="#com.google.crypto.tink.hybrid.internal">com.google.crypto.tink.hybrid.internal</a></td>
-<td class="colLast">&nbsp;</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><a href="#com.google.crypto.tink.hybrid.subtle">com.google.crypto.tink.hybrid.subtle</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="#com.google.crypto.tink.subtle">com.google.crypto.tink.subtle</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
@@ -159,49 +155,6 @@
 </tbody>
 </table>
 </li>
-<li class="blockList"><a name="com.google.crypto.tink.hybrid.internal">
-<!--   -->
-</a>
-<h3>Uses of <a href="../../../../../com/google/crypto/tink/HybridDecrypt.html" title="interface in com.google.crypto.tink">HybridDecrypt</a> in <a href="../../../../../com/google/crypto/tink/hybrid/internal/package-summary.html">com.google.crypto.tink.hybrid.internal</a></h3>
-<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing classes, and an explanation">
-<caption><span>Classes in <a href="../../../../../com/google/crypto/tink/hybrid/internal/package-summary.html">com.google.crypto.tink.hybrid.internal</a> that implement <a href="../../../../../com/google/crypto/tink/HybridDecrypt.html" title="interface in com.google.crypto.tink">HybridDecrypt</a></span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Class and Description</th>
-</tr>
-<tbody>
-<tr class="altColor">
-<td class="colFirst"><code>class&nbsp;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/internal/HpkeDecrypt.html" title="class in com.google.crypto.tink.hybrid.internal">HpkeDecrypt</a></span></code>
-<div class="block">Hybrid Public Key Encryption (HPKE) decryption.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>class&nbsp;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/internal/LegacyFullHybridDecrypt.html" title="class in com.google.crypto.tink.hybrid.internal">LegacyFullHybridDecrypt</a></span></code>
-<div class="block">Takes an arbitrary raw HybridDecrypt and makes it a full primitive.</div>
-</td>
-</tr>
-</tbody>
-</table>
-<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
-<caption><span>Methods in <a href="../../../../../com/google/crypto/tink/hybrid/internal/package-summary.html">com.google.crypto.tink.hybrid.internal</a> that return <a href="../../../../../com/google/crypto/tink/HybridDecrypt.html" title="interface in com.google.crypto.tink">HybridDecrypt</a></span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Method and Description</th>
-</tr>
-<tbody>
-<tr class="altColor">
-<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/HybridDecrypt.html" title="interface in com.google.crypto.tink">HybridDecrypt</a></code></td>
-<td class="colLast"><span class="typeNameLabel">HpkeDecrypt.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/internal/HpkeDecrypt.html#create-com.google.crypto.tink.hybrid.HpkePrivateKey-">create</a></span>(<a href="../../../../../com/google/crypto/tink/hybrid/HpkePrivateKey.html" title="class in com.google.crypto.tink.hybrid">HpkePrivateKey</a>&nbsp;privateKey)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/HybridDecrypt.html" title="interface in com.google.crypto.tink">HybridDecrypt</a></code></td>
-<td class="colLast"><span class="typeNameLabel">LegacyFullHybridDecrypt.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/internal/LegacyFullHybridDecrypt.html#create-com.google.crypto.tink.internal.LegacyProtoKey-">create</a></span>(<a href="../../../../../com/google/crypto/tink/internal/LegacyProtoKey.html" title="class in com.google.crypto.tink.internal">LegacyProtoKey</a>&nbsp;key)</code>&nbsp;</td>
-</tr>
-</tbody>
-</table>
-</li>
 <li class="blockList"><a name="com.google.crypto.tink.hybrid.subtle">
 <!--   -->
 </a>
@@ -240,19 +193,6 @@
 <div class="block">ECIES encryption with HKDF-KEM (key encapsulation mechanism) and AEAD-DEM (data encapsulation
  mechanism).</div>
 </td>
-</tr>
-</tbody>
-</table>
-<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
-<caption><span>Methods in <a href="../../../../../com/google/crypto/tink/subtle/package-summary.html">com.google.crypto.tink.subtle</a> that return <a href="../../../../../com/google/crypto/tink/HybridDecrypt.html" title="interface in com.google.crypto.tink">HybridDecrypt</a></span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Method and Description</th>
-</tr>
-<tbody>
-<tr class="altColor">
-<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/HybridDecrypt.html" title="interface in com.google.crypto.tink">HybridDecrypt</a></code></td>
-<td class="colLast"><span class="typeNameLabel">EciesAeadHkdfHybridDecrypt.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/EciesAeadHkdfHybridDecrypt.html#create-com.google.crypto.tink.hybrid.EciesPrivateKey-">create</a></span>(<a href="../../../../../com/google/crypto/tink/hybrid/EciesPrivateKey.html" title="class in com.google.crypto.tink.hybrid">EciesPrivateKey</a>&nbsp;key)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
