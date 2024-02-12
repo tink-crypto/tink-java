@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var methods = {"i0":9,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10};
+var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -119,11 +119,11 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
  <p>Each ciphertext uses a new AES-GCM key that is derived from the key derivation key, a randomly
  chosen salt of the same size as the key and a nonce prefix.
 
- <p>The format of a ciphertext is header || segment_0 || segment_1 || ... || segment_k. The
- header has size this.getHeaderLength(). Its format is headerLength || salt || prefix. where
- headerLength is 1 byte determining the size of the header, salt is a salt used in the key
- derivation and prefix is the prefix of the nonce. In principle headerLength is redundant
- information, since the length of the header can be determined from the key size.
+ <p>The format of a ciphertext is header || segment_0 || segment_1 || ... || segment_k. The header
+ has size this.getHeaderLength(). Its format is headerLength || salt || prefix. where headerLength
+ is 1 byte determining the size of the header, salt is a salt used in the key derivation and
+ prefix is the prefix of the nonce. In principle headerLength is redundant information, since the
+ length of the header can be determined from the key size.
 
  <p>segment_i is the i-th segment of the ciphertext. The size of segment_1 .. segment_{k-1} is
  ciphertextSegmentSize. segment_0 is shorter, so that segment_0, the header and other information
@@ -170,47 +170,51 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/AesGcmHkdfStreaming.html#create-com.google.crypto.tink.streamingaead.AesGcmHkdfStreamingKey-">create</a></span>(<a href="../../../../../com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingKey.html" title="class in com.google.crypto.tink.streamingaead">AesGcmHkdfStreamingKey</a>&nbsp;key)</code>&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/AesGcmHkdfStreaming.html#expectedCiphertextSize-long-">expectedCiphertextSize</a></span>(long&nbsp;plaintextSize)</code>
 <div class="block">Returns the expected size of the ciphertext for a given plaintext.</div>
 </td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/AesGcmHkdfStreaming.html#getCiphertextOffset--">getCiphertextOffset</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/AesGcmHkdfStreaming.html#getCiphertextOverhead--">getCiphertextOverhead</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/AesGcmHkdfStreaming.html#getCiphertextSegmentSize--">getCiphertextSegmentSize</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/AesGcmHkdfStreaming.html#getFirstSegmentOffset--">getFirstSegmentOffset</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/AesGcmHkdfStreaming.html#getHeaderLength--">getHeaderLength</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/AesGcmHkdfStreaming.html#getPlaintextSegmentSize--">getPlaintextSegmentSize</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/nio/channels/ReadableByteChannel.html?is-external=true" title="class or interface in java.nio.channels">ReadableByteChannel</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/AesGcmHkdfStreaming.html#newDecryptingChannel-java.nio.channels.ReadableByteChannel-byte:A-">newDecryptingChannel</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/channels/ReadableByteChannel.html?is-external=true" title="class or interface in java.nio.channels">ReadableByteChannel</a>&nbsp;ciphertextChannel,
                     byte[]&nbsp;associatedData)</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io">InputStream</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/AesGcmHkdfStreaming.html#newDecryptingStream-java.io.InputStream-byte:A-">newDecryptingStream</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io">InputStream</a>&nbsp;ciphertextStream,
                    byte[]&nbsp;associatedData)</code>
@@ -219,14 +223,14 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
  using <code>associatedData</code> as associated authenticated data.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/nio/channels/WritableByteChannel.html?is-external=true" title="class or interface in java.nio.channels">WritableByteChannel</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/AesGcmHkdfStreaming.html#newEncryptingChannel-java.nio.channels.WritableByteChannel-byte:A-">newEncryptingChannel</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/channels/WritableByteChannel.html?is-external=true" title="class or interface in java.nio.channels">WritableByteChannel</a>&nbsp;ciphertextChannel,
                     byte[]&nbsp;associatedData)</code>
 <div class="block">Returns a WritableByteChannel for plaintext.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/OutputStream.html?is-external=true" title="class or interface in java.io">OutputStream</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/AesGcmHkdfStreaming.html#newEncryptingStream-java.io.OutputStream-byte:A-">newEncryptingStream</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/io/OutputStream.html?is-external=true" title="class or interface in java.io">OutputStream</a>&nbsp;ciphertext,
                    byte[]&nbsp;associatedData)</code>
@@ -235,18 +239,18 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
  as associated authenticated data.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/nio/channels/SeekableByteChannel.html?is-external=true" title="class or interface in java.nio.channels">SeekableByteChannel</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/AesGcmHkdfStreaming.html#newSeekableDecryptingChannel-java.nio.channels.SeekableByteChannel-byte:A-">newSeekableDecryptingChannel</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/nio/channels/SeekableByteChannel.html?is-external=true" title="class or interface in java.nio.channels">SeekableByteChannel</a>&nbsp;ciphertextSource,
                             byte[]&nbsp;associatedData)</code>
 <div class="block">Returns a SeekableByteChannel that allows to access the plaintext.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>com.google.crypto.tink.subtle.AesGcmHkdfStreaming.AesGcmHkdfStreamDecrypter</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/AesGcmHkdfStreaming.html#newStreamSegmentDecrypter--">newStreamSegmentDecrypter</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>com.google.crypto.tink.subtle.AesGcmHkdfStreaming.AesGcmHkdfStreamEncrypter</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/AesGcmHkdfStreaming.html#newStreamSegmentEncrypter-byte:A-">newStreamSegmentEncrypter</a></span>(byte[]&nbsp;aad)</code>&nbsp;</td>
 </tr>
@@ -307,6 +311,20 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="create-com.google.crypto.tink.streamingaead.AesGcmHkdfStreamingKey-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>create</h4>
+<pre>public static&nbsp;<a href="../../../../../com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a>&nbsp;create(<a href="../../../../../com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingKey.html" title="class in com.google.crypto.tink.streamingaead">AesGcmHkdfStreamingKey</a>&nbsp;key)
+                            throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
+</dl>
+</li>
+</ul>
 <a name="newStreamSegmentEncrypter-byte:A-">
 <!--   -->
 </a>
