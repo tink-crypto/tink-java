@@ -111,17 +111,15 @@ var activeTableTab = "activeTableTab";
 <pre>public final class <span class="typeNameLabel">JwtSignatureConfig</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
 <div class="block">Static methods and constants for registering with the <a href="../../../../../com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink"><code>Registry</code></a> all
- instances of <code>com.google.crypto.tink.JwtPublicKeySign</code> and <a href="../../../../../com/google/crypto/tink/PublicKeyVerify.html" title="interface in com.google.crypto.tink"><code>PublicKeyVerify</code></a> key types supported in a particular release of Tink.
+ instances of <a href="../../../../../com/google/crypto/tink/jwt/JwtPublicKeySign.html" title="interface in com.google.crypto.tink.jwt"><code>JwtPublicKeySign</code></a> and <a href="../../../../../com/google/crypto/tink/jwt/JwtPublicKeyVerify.html" title="interface in com.google.crypto.tink.jwt"><code>JwtPublicKeyVerify</code></a> key types supported in a particular release of
+ Tink.
 
- <p>To register all JwtPublicKeySign and PublicKeyVerify key types provided in the latest Tink
+ <p>To register all JwtPublicKeySign and JwtPublicKeyVerify key types provided in the latest Tink
  version one can do:
 
  <pre><code>
- JwtSignatureConfig.init();
- </code></pre>
-
- <p>For more information on how to obtain and use instances of JwtPublicKeySign or
- PublicKeyVerify, see <code>JwtPublicKeySignFactory</code> or <code>PublicKeyVerifyFactory</code>.</div>
+ JwtSignatureConfig.register();
+ </code></pre></div>
 </li>
 </ul>
 </div>
