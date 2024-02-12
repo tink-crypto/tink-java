@@ -183,7 +183,7 @@ implements <a href="../../../../../com/google/crypto/tink/Aead.html" title="inte
 <td class="colFirst"><code>byte[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/subtle/AesGcmJce.html#decrypt-byte:A-byte:A-">decrypt</a></span>(byte[]&nbsp;ciphertext,
        byte[]&nbsp;associatedData)</code>
-<div class="block">On Android KitKat (API level 19) this method does not support non null or non empty <code>associatedData</code>.</div>
+<div class="block">Decrypts <code>ciphertext</code> with <code>associatedData</code> as associated authenticated data.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
@@ -305,7 +305,10 @@ implements <a href="../../../../../com/google/crypto/tink/Aead.html" title="inte
 <pre>public&nbsp;byte[]&nbsp;decrypt(byte[]&nbsp;ciphertext,
                       byte[]&nbsp;associatedData)
                throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block">On Android KitKat (API level 19) this method does not support non null or non empty <code>associatedData</code>. It might not work at all in older versions.</div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../com/google/crypto/tink/Aead.html#decrypt-byte:A-byte:A-">Aead</a></code></span></div>
+<div class="block">Decrypts <code>ciphertext</code> with <code>associatedData</code> as associated authenticated data. The
+ decryption verifies the authenticity and integrity of the associated data, but there are no
+ guarantees wrt. secrecy of that data.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../com/google/crypto/tink/Aead.html#decrypt-byte:A-byte:A-">decrypt</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a></code></dd>
