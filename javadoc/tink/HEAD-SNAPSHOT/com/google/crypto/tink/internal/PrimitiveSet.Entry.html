@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -165,12 +165,6 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Entry.html#getParameters--">getParameters</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i7" class="rowColor">
-<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Entry.html" title="type parameter in PrimitiveSet.Entry">P</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Entry.html#getPrimitive--">getPrimitive</a></span>()</code>
-<div class="block">Returns the primitive for this entry.</div>
-</td>
-</tr>
-<tr id="i8" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/KeyStatusType.html" title="enum in com.google.crypto.tink.proto">KeyStatusType</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Entry.html#getStatus--">getStatus</a></span>()</code>&nbsp;</td>
 </tr>
@@ -210,20 +204,6 @@ public&nbsp;<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet
  self-sufficient by itself, meaning that all the necessary information to process the
  primitive is contained in the primitive (most likely through the new Key interface), as
  opposed to the <code>primitive</code> field (see <a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Entry.html#getPrimitive--"><code>getPrimitive()</code></a> for details).</div>
-</li>
-</ul>
-<a name="getPrimitive--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getPrimitive</h4>
-<pre><a href="https://docs.oracle.com/javase/8/docs/api/javax/annotation/Nullable.html?is-external=true" title="class or interface in javax.annotation">@Nullable</a>
-public&nbsp;<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Entry.html" title="type parameter in PrimitiveSet.Entry">P</a>&nbsp;getPrimitive()</pre>
-<div class="block">Returns the primitive for this entry.
-
- <p>For primitives of type <code>Mac</code>, <code>Aead</code>, <code>PublicKeySign</code>, <code>PublicKeyVerify</code>, <code>DeterministicAead</code>, <code>HybridEncrypt</code>, and <code>HybridDecrypt</code>
- this is a primitive which <b>ignores</b> the output prefix and assumes "RAW".</div>
 </li>
 </ul>
 <a name="getStatus--">
