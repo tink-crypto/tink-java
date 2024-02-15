@@ -137,14 +137,16 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html" title="class in com.google.crypto.tink.internal">PrimitiveSet.Builder</a>&lt;<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html" title="type parameter in PrimitiveSet.Builder">P</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html#addFullPrimitive-P-com.google.crypto.tink.Key-com.google.crypto.tink.proto.Keyset.Key-">addFullPrimitive</a></span>(<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html" title="type parameter in PrimitiveSet.Builder">P</a>&nbsp;fullPrimitive,
                 <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;key,
-                <a href="../../../../../com/google/crypto/tink/proto/Keyset.Key.html" title="class in com.google.crypto.tink.proto">Keyset.Key</a>&nbsp;protoKey)</code>&nbsp;</td>
+                <a href="../../../../../com/google/crypto/tink/proto/Keyset.Key.html" title="class in com.google.crypto.tink.proto">Keyset.Key</a>&nbsp;protoKey)</code>
+<div class="block">Adds a non-primary primitive.</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html" title="class in com.google.crypto.tink.internal">PrimitiveSet.Builder</a>&lt;<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html" title="type parameter in PrimitiveSet.Builder">P</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html#addPrimaryFullPrimitive-P-com.google.crypto.tink.Key-com.google.crypto.tink.proto.Keyset.Key-">addPrimaryFullPrimitive</a></span>(<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html" title="type parameter in PrimitiveSet.Builder">P</a>&nbsp;fullPrimitive,
                        <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;key,
                        <a href="../../../../../com/google/crypto/tink/proto/Keyset.Key.html" title="class in com.google.crypto.tink.proto">Keyset.Key</a>&nbsp;protoKey)</code>
-<div class="block">Adds the primary primitive and full primitive.</div>
+<div class="block">Adds the primary primitive.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
@@ -190,6 +192,10 @@ public&nbsp;<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet
                                                                       <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;key,
                                                                       <a href="../../../../../com/google/crypto/tink/proto/Keyset.Key.html" title="class in com.google.crypto.tink.proto">Keyset.Key</a>&nbsp;protoKey)
                                                                throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<div class="block">Adds a non-primary primitive.
+
+ <p>The caller must make sure that the <code>fullPrimitive</code> is a full primitive constructed
+ from key, and that <code>protoKey</code> contains the same key as <code>fullPrimitive</code>.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
@@ -209,8 +215,10 @@ public&nbsp;<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet
                                                                              <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;key,
                                                                              <a href="../../../../../com/google/crypto/tink/proto/Keyset.Key.html" title="class in com.google.crypto.tink.proto">Keyset.Key</a>&nbsp;protoKey)
                                                                       throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block">Adds the primary primitive and full primitive. This or addPrimaryPrimitive should be called
- exactly once per PrimitiveSet.</div>
+<div class="block">Adds the primary primitive. This should be called exactly once per PrimitiveSet.
+
+ <p>The caller must make sure that the <code>fullPrimitive</code> is a full primitive constructed
+ from key, and that <code>protoKey</code> contains the same key as <code>fullPrimitive</code>.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
