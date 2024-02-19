@@ -156,7 +156,20 @@
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colOne"><a href="com/google/crypto/tink/JsonKeysetWriter.html" title="class in com.google.crypto.tink">com.google.crypto.tink.JsonKeysetWriter</a>
+<div class="block"><span class="deprecationComment">Serialize the Keyset using <code>TinkJsonProtoKeysetFormat.serializeKeyset()</code>
+     instead.</span></div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/proto/KeyTypeEntry.html" title="class in com.google.crypto.tink.proto">com.google.crypto.tink.proto.KeyTypeEntry</a></td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><a href="com/google/crypto/tink/KmsClients.html" title="class in com.google.crypto.tink">com.google.crypto.tink.KmsClients</a>
+<div class="block"><span class="deprecationComment">Registering KmsClient is discouraged. Instead call <a href="com/google/crypto/tink/KmsClient.html#getAead-java.lang.String-"><code>KmsClient.getAead(java.lang.String)</code></a> to get a
+     remote <a href="com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a>. Use this <a href="com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a> to encrypt a keyset with <a href="com/google/crypto/tink/TinkProtoKeysetFormat.html#serializeEncryptedKeyset-com.google.crypto.tink.KeysetHandle-com.google.crypto.tink.Aead-byte:A-"><code>TinkProtoKeysetFormat.serializeEncryptedKeyset(com.google.crypto.tink.KeysetHandle, com.google.crypto.tink.Aead, byte[])</code></a>, or to create an envelope <a href="com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a> using
+     <a href="com/google/crypto/tink/aead/KmsEnvelopeAead.html#create-com.google.crypto.tink.aead.AeadParameters-com.google.crypto.tink.Aead-"><code>KmsEnvelopeAead.create(com.google.crypto.tink.aead.AeadParameters, com.google.crypto.tink.Aead)</code></a>.</span></div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/subtle/Kwp.html" title="class in com.google.crypto.tink.subtle">com.google.crypto.tink.subtle.Kwp</a>
@@ -210,18 +223,12 @@
 <td class="colOne"><a href="com/google/crypto/tink/proto/RegistryConfig.html" title="class in com.google.crypto.tink.proto">com.google.crypto.tink.proto.RegistryConfig</a></td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><a href="com/google/crypto/tink/integration/android/SharedPrefKeysetWriter.html" title="class in com.google.crypto.tink.integration.android">com.google.crypto.tink.integration.android.SharedPrefKeysetWriter</a>
-<div class="block"><span class="deprecationComment">We do not expect anyone to use this class. Please file an issue on
-     github.com/tink-crypto/tink-java/ if you need to replace this.</span></div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/streamingaead/StreamingAeadFactory.html" title="class in com.google.crypto.tink.streamingaead">com.google.crypto.tink.streamingaead.StreamingAeadFactory</a>
 <div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(StreamingAead.class)</code> after registering the
      <code>StreamingAeadWrapper</code> instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/streamingaead/StreamingAeadKeyTemplates.html" title="class in com.google.crypto.tink.streamingaead">com.google.crypto.tink.streamingaead.StreamingAeadKeyTemplates</a>
 <div class="block"><span class="deprecationComment">Try using our refaster templates to replace them (see
      https://github.com/tink-crypto/tink-java/tree/main/tools/refaster). If migration is unclear,
@@ -374,13 +381,15 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><a href="com/google/crypto/tink/Registry.html#addCatalogue-java.lang.String-com.google.crypto.tink.Catalogue-">com.google.crypto.tink.Registry.addCatalogue(String, Catalogue&lt;?&gt;)</a>
-<div class="block"><span class="deprecationComment">Catalogues are no longer supported.</span></div>
+<td class="colOne"><a href="com/google/crypto/tink/KmsClients.html#add-com.google.crypto.tink.KmsClient-">com.google.crypto.tink.KmsClients.add(KmsClient)</a>
+<div class="block"><span class="deprecationComment">Registering KmsClient is discouraged. Instead call <a href="com/google/crypto/tink/KmsClient.html#getAead-java.lang.String-"><code>KmsClient.getAead(java.lang.String)</code></a> to get
+     a remote <a href="com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a>. Use this <a href="com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a> to encrypt a keyset with <a href="com/google/crypto/tink/TinkProtoKeysetFormat.html#serializeEncryptedKeyset-com.google.crypto.tink.KeysetHandle-com.google.crypto.tink.Aead-byte:A-"><code>TinkProtoKeysetFormat.serializeEncryptedKeyset(com.google.crypto.tink.KeysetHandle, com.google.crypto.tink.Aead, byte[])</code></a>, or to create an envelope <a href="com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a>
+     using <a href="com/google/crypto/tink/aead/KmsEnvelopeAead.html#create-com.google.crypto.tink.aead.AeadParameters-com.google.crypto.tink.Aead-"><code>KmsEnvelopeAead.create(com.google.crypto.tink.aead.AeadParameters, com.google.crypto.tink.Aead)</code></a>.</span></div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><a href="com/google/crypto/tink/PrimitiveSet.html#addPrimitive-P-com.google.crypto.tink.proto.Keyset.Key-">com.google.crypto.tink.PrimitiveSet.addPrimitive(P, Keyset.Key)</a>
-<div class="block"><span class="deprecationComment">use <code>Builder.addPrimitive</code> or <code>Builder.addPrimaryPrimitive</code> instead.</span></div>
+<td class="colOne"><a href="com/google/crypto/tink/Registry.html#addCatalogue-java.lang.String-com.google.crypto.tink.Catalogue-">com.google.crypto.tink.Registry.addCatalogue(String, Catalogue&lt;?&gt;)</a>
+<div class="block"><span class="deprecationComment">Catalogues are no longer supported.</span></div>
 </td>
 </tr>
 <tr class="altColor">
@@ -414,6 +423,23 @@
 </td>
 </tr>
 <tr class="altColor">
+<td class="colOne"><a href="com/google/crypto/tink/aead/KmsAeadKeyManager.html#createKeyTemplate-java.lang.String-">com.google.crypto.tink.aead.KmsAeadKeyManager.createKeyTemplate(String)</a>
+<div class="block"><span class="deprecationComment">Instead of registring a <code>KmsClient</code>, and creating an <code>Aead</code> using
+     <code>KeysetHandle.generateNew(KmsAeadKeyManager.createKeyTemplate(kekUri)).getPrimitive(Aead.class)</code>,
+     create the <code>Aead</code> directly using <code>kmsClient.getAead(kekUri)</code>, without
+     registering any <code>KmsClient</code>.</span></div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><a href="com/google/crypto/tink/aead/KmsEnvelopeAeadKeyManager.html#createKeyTemplate-java.lang.String-com.google.crypto.tink.KeyTemplate-">com.google.crypto.tink.aead.KmsEnvelopeAeadKeyManager.createKeyTemplate(String, KeyTemplate)</a>
+<div class="block"><span class="deprecationComment">Instead of registring a <code>KmsClient</code>, and creating an <code>Aead</code> using
+     <code>KeysetHandle.generateNew(KmsEnvelopeAeadKeyManager.createKeyTemplate(keyUri,
+     KeyTemplates.get("AES128_GCM"))).getPrimitive(Aead.class)</code>, create the <code>Aead</code>
+     directly using <code>KmsEnvelopeAead.create(PredefinedAeadParameters.AES256_GCM,
+     kmsClient.getAead(keyUri))</code>, without registering any <code>KmsClient</code>.</span></div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/signature/SignatureKeyTemplates.html#createRsaSsaPkcs1KeyTemplate-com.google.crypto.tink.proto.HashType-int-java.math.BigInteger-com.google.crypto.tink.proto.OutputPrefixType-">com.google.crypto.tink.signature.SignatureKeyTemplates.createRsaSsaPkcs1KeyTemplate(HashType, int, BigInteger, OutputPrefixType)</a>
 <div class="block"><span class="deprecationComment">Use a corresponding <a href="com/google/crypto/tink/signature/RsaSsaPkcs1Parameters.html" title="class in com.google.crypto.tink.signature"><code>RsaSsaPkcs1Parameters</code></a> object instead</span></div>
 </td>
@@ -435,13 +461,23 @@
 </td>
 </tr>
 <tr class="altColor">
+<td class="colOne"><a href="com/google/crypto/tink/CleartextKeysetHandle.html#fromKeyset-com.google.crypto.tink.proto.Keyset-">com.google.crypto.tink.CleartextKeysetHandle.fromKeyset(Keyset)</a>
+<div class="block"><span class="deprecationComment">Instead, use a <a href="com/google/crypto/tink/KeysetHandle.Builder.html" title="class in com.google.crypto.tink"><code>KeysetHandle.Builder</code></a>.</span></div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/jwt/JwkSetConverter.html#fromKeysetHandle-com.google.crypto.tink.KeysetHandle-com.google.crypto.tink.tinkkey.KeyAccess-">com.google.crypto.tink.jwt.JwkSetConverter.fromKeysetHandle(KeysetHandle, KeyAccess)</a>
 <div class="block"><span class="deprecationComment">Use JwkSetConverter.fromPublicKeysetHandle(handle) instead.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/KeysetHandle.html#generateNew-com.google.crypto.tink.proto.KeyTemplate-">com.google.crypto.tink.KeysetHandle.generateNew(KeyTemplate)</a>
 <div class="block"><span class="deprecationComment">Use the overload taking a Parameters object instead.</span></div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><a href="com/google/crypto/tink/KmsClients.html#get-java.lang.String-">com.google.crypto.tink.KmsClients.get(String)</a>
+<div class="block"><span class="deprecationComment">Instead, keep your own instance or list of <a href="com/google/crypto/tink/KmsClient.html" title="interface in com.google.crypto.tink"><code>KmsClient</code></a>.</span></div>
 </td>
 </tr>
 <tr class="altColor">
@@ -455,18 +491,19 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><a href="com/google/crypto/tink/Registry.html#getKeyManager-java.lang.String-">com.google.crypto.tink.Registry.getKeyManager(String)</a>
-<div class="block"><span class="deprecationComment">KeyManagers should not be used directly. Use <code>newKeyData</code> or <code>getPrimitive</code> instead.</span></div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/Registry.html#getKeyManager-java.lang.String-java.lang.Class-">com.google.crypto.tink.Registry.getKeyManager(String, Class&lt;P&gt;)</a>
 <div class="block"><span class="deprecationComment">KeyManagers should not be used directly. Use <code>newKeyData</code> or <code>getPrimitive</code> instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/KeysetHandle.html#getKeys--">com.google.crypto.tink.KeysetHandle.getKeys()</a>
 <div class="block"><span class="deprecationComment">Use "getAt" instead.</span></div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="com/google/crypto/tink/CleartextKeysetHandle.html#getKeyset-com.google.crypto.tink.KeysetHandle-">com.google.crypto.tink.CleartextKeysetHandle.getKeyset(KeysetHandle)</a>
+<div class="block"><span class="deprecationComment">Instead, call "KeysetHandle.getAt()" to get information about individual keys or
+     TinkProtoKeysetFormat if you need a serialized keyset.</span></div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -477,68 +514,48 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><a href="com/google/crypto/tink/Registry.html#getPrimitive-com.google.crypto.tink.proto.KeyData-">com.google.crypto.tink.Registry.getPrimitive(KeyData)</a>
-<div class="block"><span class="deprecationComment">Use <code>getPrimitive(keyData, Primitive.class)</code> instead.</span></div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/mac/MacFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">com.google.crypto.tink.mac.MacFactory.getPrimitive(KeysetHandle)</a>
 <div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(Mac.class)</code> after registering the <code>MacWrapper</code> instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/signature/PublicKeyVerifyFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">com.google.crypto.tink.signature.PublicKeyVerifyFactory.getPrimitive(KeysetHandle)</a>
 <div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(PublicKeyVerify.class)</code> after registering the
      <code>PublicKeyVerifyWrapper</code> instead.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/signature/PublicKeySignFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">com.google.crypto.tink.signature.PublicKeySignFactory.getPrimitive(KeysetHandle)</a>
 <div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(PublicKeySign.class)</code> after registering the
      <code>PublicKeySignWrapper</code> instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/hybrid/HybridEncryptFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">com.google.crypto.tink.hybrid.HybridEncryptFactory.getPrimitive(KeysetHandle)</a>
 <div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(HybridEncrypt.class)</code> after registering the
      <code>HybridEncryptWrapper</code> instead.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/hybrid/HybridDecryptFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">com.google.crypto.tink.hybrid.HybridDecryptFactory.getPrimitive(KeysetHandle)</a>
 <div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(HybridDecrypt.class)</code> after registering the
      <code>HybridDecryptWrapper</code> instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/daead/DeterministicAeadFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">com.google.crypto.tink.daead.DeterministicAeadFactory.getPrimitive(KeysetHandle)</a>
 <div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(DeterministicAead.class)</code> after registering
      the <code>DeterministicAeadWrapper</code> instead.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/aead/AeadFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">com.google.crypto.tink.aead.AeadFactory.getPrimitive(KeysetHandle)</a>
 <div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(Aead.class)</code> after registering the <code>AeadWrapper</code> instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/KeyManager.html#getPrimitive-com.google.protobuf.MessageLite-">com.google.crypto.tink.KeyManager.getPrimitive(MessageLite)</a>
 <div class="block"><span class="deprecationComment">Use <code>getPrimitive(serializedKey)</code> instead.</span></div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colOne"><a href="com/google/crypto/tink/Registry.html#getPrimitive-java.lang.String-byte:A-">com.google.crypto.tink.Registry.getPrimitive(String, byte[])</a>
-<div class="block"><span class="deprecationComment">Use <code>getPrimitive(typeUrl, serializedKey, Primitive.class)</code> instead.</span></div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colOne"><a href="com/google/crypto/tink/Registry.html#getPrimitive-java.lang.String-com.google.protobuf.ByteString-">com.google.crypto.tink.Registry.getPrimitive(String, ByteString)</a>
-<div class="block"><span class="deprecationComment">Use <code>getPrimitive(typeUrl, serializedKey, Primitive.class</code> instead.</span></div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colOne"><a href="com/google/crypto/tink/Registry.html#getPrimitive-java.lang.String-com.google.protobuf.MessageLite-">com.google.crypto.tink.Registry.getPrimitive(String, MessageLite)</a>
-<div class="block"><span class="deprecationComment">Use <code>getPrimitive(typeUrl, serializedKey, P.class)</code> instead.</span></div>
 </td>
 </tr>
 <tr class="altColor">
@@ -626,39 +643,39 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><a href="com/google/crypto/tink/PrimitiveSet.html#newPrimitiveSet-java.lang.Class-">com.google.crypto.tink.PrimitiveSet.newPrimitiveSet(Class&lt;P&gt;)</a>
-<div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/PrimitiveSet.Builder.html" title="class in com.google.crypto.tink"><code>PrimitiveSet.Builder</code></a> instead.</span></div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/NoSecretKeysetHandle.html#parseFrom-byte:A-">com.google.crypto.tink.NoSecretKeysetHandle.parseFrom(byte[])</a>
 <div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/NoSecretKeysetHandle.html#read-com.google.crypto.tink.KeysetReader-"><code>NoSecretKeysetHandle.read(com.google.crypto.tink.KeysetReader)</code></a> instead</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/CleartextKeysetHandle.html#parseFrom-byte:A-">com.google.crypto.tink.CleartextKeysetHandle.parseFrom(byte[])</a>
 <div class="block"><span class="deprecationComment">Call <code>TinkProtoKeysetFormat.parseKeyset(serialized,
      InsecureSecretKeyAccess.get())</code> which has the same semantics.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/KeysetHandle.html#primaryKey--">com.google.crypto.tink.KeysetHandle.primaryKey()</a>
 <div class="block"><span class="deprecationComment">Use <a href="com/google/crypto/tink/KeysetHandle.html#getPrimary--"><code>KeysetHandle.getPrimary()</code></a> instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/integration/android/AndroidKeysetManager.html#promote-int-">com.google.crypto.tink.integration.android.AndroidKeysetManager.promote(int)</a>
 <div class="block"><span class="deprecationComment">use <code>setPrimary</code></span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/CleartextKeysetHandle.html#read-com.google.crypto.tink.KeysetReader-java.util.Map-">com.google.crypto.tink.CleartextKeysetHandle.read(KeysetReader, Map&lt;String, String&gt;)</a>
 <div class="block"><span class="deprecationComment">Instead, use a <a href="com/google/crypto/tink/KeysetHandle.Builder.html" title="class in com.google.crypto.tink"><code>KeysetHandle.Builder</code></a>.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/KeysetHandle.html#readNoSecret-byte:A-">com.google.crypto.tink.KeysetHandle.readNoSecret(byte[])</a>
 <div class="block"><span class="deprecationComment">Call {TinkProtoKeysetFormat.parseKeysetWithoutSecret} instead.</span></div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="com/google/crypto/tink/keyderivation/KeysetDeriverWrapper.html#register--">com.google.crypto.tink.keyderivation.KeysetDeriverWrapper.register()</a>
+<div class="block"><span class="deprecationComment">Call KeyDerivationConfig.register() instead.</span></div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -714,18 +731,8 @@
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><a href="com/google/crypto/tink/PrimitiveSet.html#setPrimary-com.google.crypto.tink.PrimitiveSet.Entry-">com.google.crypto.tink.PrimitiveSet.setPrimary(PrimitiveSet.Entry&lt;P&gt;)</a>
-<div class="block"><span class="deprecationComment">use <code>Builder.addPrimaryPrimitive</code> instead.</span></div>
-</td>
-</tr>
-<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/jwt/JwkSetConverter.html#toKeysetHandle-java.lang.String-com.google.crypto.tink.tinkkey.KeyAccess-">com.google.crypto.tink.jwt.JwkSetConverter.toKeysetHandle(String, KeyAccess)</a>
 <div class="block"><span class="deprecationComment">Use JwkSetConverter.toPublicKeysetHandle(jwkSet) instead.</span></div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colOne"><a href="com/google/crypto/tink/proto/JwtHmacAlgorithm.html#valueOf-int-">com.google.crypto.tink.proto.JwtHmacAlgorithm.valueOf(int)</a>
-<div class="block"><span class="deprecationComment">Use <a href="com/google/crypto/tink/proto/JwtHmacAlgorithm.html#forNumber-int-"><code>JwtHmacAlgorithm.forNumber(int)</code></a> instead.</span></div>
 </td>
 </tr>
 <tr class="altColor">
@@ -739,106 +746,111 @@
 </td>
 </tr>
 <tr class="altColor">
+<td class="colOne"><a href="com/google/crypto/tink/proto/JwtHmacAlgorithm.html#valueOf-int-">com.google.crypto.tink.proto.JwtHmacAlgorithm.valueOf(int)</a>
+<div class="block"><span class="deprecationComment">Use <a href="com/google/crypto/tink/proto/JwtHmacAlgorithm.html#forNumber-int-"><code>JwtHmacAlgorithm.forNumber(int)</code></a> instead.</span></div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/proto/JwtEcdsaAlgorithm.html#valueOf-int-">com.google.crypto.tink.proto.JwtEcdsaAlgorithm.valueOf(int)</a>
 <div class="block"><span class="deprecationComment">Use <a href="com/google/crypto/tink/proto/JwtEcdsaAlgorithm.html#forNumber-int-"><code>JwtEcdsaAlgorithm.forNumber(int)</code></a> instead.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/proto/EcdsaSignatureEncoding.html#valueOf-int-">com.google.crypto.tink.proto.EcdsaSignatureEncoding.valueOf(int)</a>
 <div class="block"><span class="deprecationComment">Use <a href="com/google/crypto/tink/proto/EcdsaSignatureEncoding.html#forNumber-int-"><code>EcdsaSignatureEncoding.forNumber(int)</code></a> instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/proto/HpkeKem.html#valueOf-int-">com.google.crypto.tink.proto.HpkeKem.valueOf(int)</a>
 <div class="block"><span class="deprecationComment">Use <a href="com/google/crypto/tink/proto/HpkeKem.html#forNumber-int-"><code>HpkeKem.forNumber(int)</code></a> instead.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/proto/HpkeKdf.html#valueOf-int-">com.google.crypto.tink.proto.HpkeKdf.valueOf(int)</a>
 <div class="block"><span class="deprecationComment">Use <a href="com/google/crypto/tink/proto/HpkeKdf.html#forNumber-int-"><code>HpkeKdf.forNumber(int)</code></a> instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/proto/HpkeAead.html#valueOf-int-">com.google.crypto.tink.proto.HpkeAead.valueOf(int)</a>
 <div class="block"><span class="deprecationComment">Use <a href="com/google/crypto/tink/proto/HpkeAead.html#forNumber-int-"><code>HpkeAead.forNumber(int)</code></a> instead.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/proto/HashType.html#valueOf-int-">com.google.crypto.tink.proto.HashType.valueOf(int)</a>
 <div class="block"><span class="deprecationComment">Use <a href="com/google/crypto/tink/proto/HashType.html#forNumber-int-"><code>HashType.forNumber(int)</code></a> instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/proto/EllipticCurveType.html#valueOf-int-">com.google.crypto.tink.proto.EllipticCurveType.valueOf(int)</a>
 <div class="block"><span class="deprecationComment">Use <a href="com/google/crypto/tink/proto/EllipticCurveType.html#forNumber-int-"><code>EllipticCurveType.forNumber(int)</code></a> instead.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/proto/EcPointFormat.html#valueOf-int-">com.google.crypto.tink.proto.EcPointFormat.valueOf(int)</a>
 <div class="block"><span class="deprecationComment">Use <a href="com/google/crypto/tink/proto/EcPointFormat.html#forNumber-int-"><code>EcPointFormat.forNumber(int)</code></a> instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/proto/OutputPrefixType.html#valueOf-int-">com.google.crypto.tink.proto.OutputPrefixType.valueOf(int)</a>
 <div class="block"><span class="deprecationComment">Use <a href="com/google/crypto/tink/proto/OutputPrefixType.html#forNumber-int-"><code>OutputPrefixType.forNumber(int)</code></a> instead.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/proto/KeyStatusType.html#valueOf-int-">com.google.crypto.tink.proto.KeyStatusType.valueOf(int)</a>
 <div class="block"><span class="deprecationComment">Use <a href="com/google/crypto/tink/proto/KeyStatusType.html#forNumber-int-"><code>KeyStatusType.forNumber(int)</code></a> instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/proto/KeyData.KeyMaterialType.html#valueOf-int-">com.google.crypto.tink.proto.KeyData.KeyMaterialType.valueOf(int)</a>
 <div class="block"><span class="deprecationComment">Use <a href="com/google/crypto/tink/proto/KeyData.KeyMaterialType.html#forNumber-int-"><code>KeyData.KeyMaterialType.forNumber(int)</code></a> instead.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/JsonKeysetReader.html#withBytes-byte:A-">com.google.crypto.tink.JsonKeysetReader.withBytes(byte[])</a>
 <div class="block"><span class="deprecationComment">Use TinkJsonProtoKeysetFormat.parseKeyset() instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/JsonKeysetWriter.html#withFile-java.io.File-">com.google.crypto.tink.JsonKeysetWriter.withFile(File)</a>
 <div class="block"><span class="deprecationComment">Method should be inlined.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/JsonKeysetReader.html#withFile-java.io.File-">com.google.crypto.tink.JsonKeysetReader.withFile(File)</a>
 <div class="block"><span class="deprecationComment">Method should be inlined.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/BinaryKeysetWriter.html#withFile-java.io.File-">com.google.crypto.tink.BinaryKeysetWriter.withFile(File)</a>
 <div class="block"><span class="deprecationComment">Inline the function.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/BinaryKeysetReader.html#withFile-java.io.File-">com.google.crypto.tink.BinaryKeysetReader.withFile(File)</a>
 <div class="block"><span class="deprecationComment">Inline the function.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/JsonKeysetReader.html#withJsonObject-java.lang.Object-">com.google.crypto.tink.JsonKeysetReader.withJsonObject(Object)</a>
 <div class="block"><span class="deprecationComment">Use <code>#withString</code></span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/JsonKeysetWriter.html#withPath-java.nio.file.Path-">com.google.crypto.tink.JsonKeysetWriter.withPath(Path)</a>
 <div class="block"><span class="deprecationComment">Method should be inlined.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/JsonKeysetReader.html#withPath-java.nio.file.Path-">com.google.crypto.tink.JsonKeysetReader.withPath(Path)</a>
 <div class="block"><span class="deprecationComment">Method should be inlined.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/JsonKeysetWriter.html#withPath-java.lang.String-">com.google.crypto.tink.JsonKeysetWriter.withPath(String)</a>
 <div class="block"><span class="deprecationComment">Method should be inlined.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/JsonKeysetReader.html#withPath-java.lang.String-">com.google.crypto.tink.JsonKeysetReader.withPath(String)</a>
 <div class="block"><span class="deprecationComment">Method should be inlined.</span></div>
 </td>
