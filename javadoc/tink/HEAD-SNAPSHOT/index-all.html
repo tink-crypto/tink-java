@@ -10011,6 +10011,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/ChunkedMacWrapper.html#getInputPrimitiveClass--">getInputPrimitiveClass()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/ChunkedMacWrapper.html" title="class in com.google.crypto.tink.mac">ChunkedMacWrapper</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/MacWrapper.html#getInputPrimitiveClass--">getInputPrimitiveClass()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/MacWrapper.html" title="class in com.google.crypto.tink.mac">MacWrapper</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/PrfSetWrapper.html#getInputPrimitiveClass--">getInputPrimitiveClass()</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/PrfSetWrapper.html" title="class in com.google.crypto.tink.prf">PrfSetWrapper</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/PrimitiveWrapper.html#getInputPrimitiveClass--">getInputPrimitiveClass()</a></span> - Method in interface com.google.crypto.tink.<a href="com/google/crypto/tink/PrimitiveWrapper.html" title="interface in com.google.crypto.tink">PrimitiveWrapper</a></dt>
@@ -13288,6 +13290,8 @@
 <div class="block">Returns the primitive class object of the P.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/ChunkedMacWrapper.html#getPrimitiveClass--">getPrimitiveClass()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/ChunkedMacWrapper.html" title="class in com.google.crypto.tink.mac">ChunkedMacWrapper</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/MacWrapper.html#getPrimitiveClass--">getPrimitiveClass()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/MacWrapper.html" title="class in com.google.crypto.tink.mac">MacWrapper</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/PrfSetWrapper.html#getPrimitiveClass--">getPrimitiveClass()</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/PrfSetWrapper.html" title="class in com.google.crypto.tink.prf">PrfSetWrapper</a></dt>
 <dd>&nbsp;</dd>
@@ -19536,6 +19540,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/MacParameters.html#MacParameters--">MacParameters()</a></span> - Constructor for class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/MacParameters.html" title="class in com.google.crypto.tink.mac">MacParameters</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/mac/MacWrapper.html" title="class in com.google.crypto.tink.mac"><span class="typeNameLink">MacWrapper</span></a> - Class in <a href="com/google/crypto/tink/mac/package-summary.html">com.google.crypto.tink.mac</a></dt>
+<dd>
+<div class="block">MacWrapper is the implementation of PrimitiveWrapper for the Mac primitive.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/KeysetHandle.Builder.Entry.html#makePrimary--">makePrimary()</a></span> - Method in class com.google.crypto.tink.<a href="com/google/crypto/tink/KeysetHandle.Builder.Entry.html" title="class in com.google.crypto.tink">KeysetHandle.Builder.Entry</a></dt>
 <dd>
 <div class="block">Marks that this entry is the primary key.</div>
@@ -25599,6 +25607,11 @@
 <div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/Config.html#register-com.google.crypto.tink.proto.RegistryConfig-"><code>Config.register(com.google.crypto.tink.proto.RegistryConfig)</code></a></span></div>
 </div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/MacWrapper.html#registerToInternalPrimitiveRegistry-com.google.crypto.tink.internal.PrimitiveRegistry.Builder-">registerToInternalPrimitiveRegistry(PrimitiveRegistry.Builder)</a></span> - Static method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/MacWrapper.html" title="class in com.google.crypto.tink.mac">MacWrapper</a></dt>
+<dd>
+<div class="block">registerToInternalPrimitiveRegistry is a non-public method (it takes an argument of an
+ internal-only type) registering an instance of <code>MacWrapper</code> to the provided <code>PrimitiveRegistry.Builder</code>.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink"><span class="typeNameLink">Registry</span></a> - Class in <a href="com/google/crypto/tink/package-summary.html">com.google.crypto.tink</a></dt>
 <dd>
 <div class="block">A global container of key managers and catalogues.</div>
@@ -30525,6 +30538,8 @@ the order they are declared.</div>
 <div class="block">Wraps some key material <code>data</code>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/ChunkedMacWrapper.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-">wrap(PrimitiveSet&lt;ChunkedMac&gt;)</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/ChunkedMacWrapper.html" title="class in com.google.crypto.tink.mac">ChunkedMacWrapper</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/MacWrapper.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-">wrap(PrimitiveSet&lt;Mac&gt;)</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/MacWrapper.html" title="class in com.google.crypto.tink.mac">MacWrapper</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/PrfSetWrapper.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-">wrap(PrimitiveSet&lt;Prf&gt;)</a></span> - Method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/PrfSetWrapper.html" title="class in com.google.crypto.tink.prf">PrfSetWrapper</a></dt>
 <dd>&nbsp;</dd>
