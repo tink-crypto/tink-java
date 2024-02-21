@@ -7391,6 +7391,8 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/PublicKeySignWrapper.html#getInputPrimitiveClass--">getInputPrimitiveClass()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/PublicKeySignWrapper.html" title="class in com.google.crypto.tink.signature">PublicKeySignWrapper</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/PublicKeyVerifyWrapper.html#getInputPrimitiveClass--">getInputPrimitiveClass()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/PublicKeyVerifyWrapper.html" title="class in com.google.crypto.tink.signature">PublicKeyVerifyWrapper</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/StreamingAeadWrapper.html#getInputPrimitiveClass--">getInputPrimitiveClass()</a></span> - Method in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/StreamingAeadWrapper.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadWrapper</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/EngineFactory.html#getInstance-java.lang.String-">getInstance(String)</a></span> - Method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/EngineFactory.html" title="class in com.google.crypto.tink.subtle">EngineFactory</a></dt>
@@ -9814,6 +9816,8 @@
 <div class="block">Returns the primitive class object of the primitive managed.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/PublicKeySignWrapper.html#getPrimitiveClass--">getPrimitiveClass()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/PublicKeySignWrapper.html" title="class in com.google.crypto.tink.signature">PublicKeySignWrapper</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/PublicKeyVerifyWrapper.html#getPrimitiveClass--">getPrimitiveClass()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/PublicKeyVerifyWrapper.html" title="class in com.google.crypto.tink.signature">PublicKeyVerifyWrapper</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/StreamingAeadWrapper.html#getPrimitiveClass--">getPrimitiveClass()</a></span> - Method in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/StreamingAeadWrapper.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadWrapper</a></dt>
 <dd>&nbsp;</dd>
@@ -18800,6 +18804,12 @@
      <code>PublicKeyVerifyWrapper</code> instead.</span></div>
 </div>
 </dd>
+<dt><a href="com/google/crypto/tink/signature/PublicKeyVerifyWrapper.html" title="class in com.google.crypto.tink.signature"><span class="typeNameLink">PublicKeyVerifyWrapper</span></a> - Class in <a href="com/google/crypto/tink/signature/package-summary.html">com.google.crypto.tink.signature</a></dt>
+<dd>
+<div class="block">The implementation of <code>PrimitiveWrapper&lt;DeterministicAead&gt;</code>.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/PublicKeyVerifyWrapper.html#PublicKeyVerifyWrapper--">PublicKeyVerifyWrapper()</a></span> - Constructor for class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/PublicKeyVerifyWrapper.html" title="class in com.google.crypto.tink.signature">PublicKeyVerifyWrapper</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/MutableParametersRegistry.html#put-java.lang.String-com.google.crypto.tink.Parameters-">put(String, Parameters)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/MutableParametersRegistry.html" title="class in com.google.crypto.tink.internal">MutableParametersRegistry</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/MutableParametersRegistry.html#putAll-java.util.Map-">putAll(Map&lt;String, Parameters&gt;)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/MutableParametersRegistry.html" title="class in com.google.crypto.tink.internal">MutableParametersRegistry</a></dt>
@@ -19411,6 +19421,18 @@
 <dd>
 <div class="block">registerToInternalPrimitiveRegistry is a non-public method (it takes an argument of an
  internal-only type) registering an instance of <code>PrfSetWrapper</code> to the provided <code>PrimitiveRegistry.Builder</code>.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/PublicKeySignWrapper.html#registerToInternalPrimitiveRegistry-com.google.crypto.tink.internal.PrimitiveRegistry.Builder-">registerToInternalPrimitiveRegistry(PrimitiveRegistry.Builder)</a></span> - Static method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/PublicKeySignWrapper.html" title="class in com.google.crypto.tink.signature">PublicKeySignWrapper</a></dt>
+<dd>
+<div class="block">registerToInternalPrimitiveRegistry is a non-public method (it takes an argument of an
+ internal-only type) registering an instance of <code>PublicKeySignWrapper</code> to the provided
+ <code>PrimitiveRegistry#Builder</code>.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/PublicKeyVerifyWrapper.html#registerToInternalPrimitiveRegistry-com.google.crypto.tink.internal.PrimitiveRegistry.Builder-">registerToInternalPrimitiveRegistry(PrimitiveRegistry.Builder)</a></span> - Static method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/PublicKeyVerifyWrapper.html" title="class in com.google.crypto.tink.signature">PublicKeyVerifyWrapper</a></dt>
+<dd>
+<div class="block">registerToInternalPrimitiveRegistry is a non-public method (it takes an argument of an
+ internal-only type) registering an instance of <code>PublicKeyVerifyWrapper</code> to the provided
+ <code>PrimitiveRegistry#Builder</code>.</div>
 </dd>
 <dt><a href="com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink"><span class="typeNameLink">Registry</span></a> - Class in <a href="com/google/crypto/tink/package-summary.html">com.google.crypto.tink</a></dt>
 <dd>
@@ -23605,6 +23627,8 @@ the order they are declared.</div>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/Registry.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-">wrap(PrimitiveSet&lt;P&gt;)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink">Registry</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/PublicKeySignWrapper.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-">wrap(PrimitiveSet&lt;PublicKeySign&gt;)</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/PublicKeySignWrapper.html" title="class in com.google.crypto.tink.signature">PublicKeySignWrapper</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/PublicKeyVerifyWrapper.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-">wrap(PrimitiveSet&lt;PublicKeyVerify&gt;)</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/PublicKeyVerifyWrapper.html" title="class in com.google.crypto.tink.signature">PublicKeyVerifyWrapper</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/StreamingAeadWrapper.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-">wrap(PrimitiveSet&lt;StreamingAead&gt;)</a></span> - Method in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/StreamingAeadWrapper.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadWrapper</a></dt>
 <dd>&nbsp;</dd>
