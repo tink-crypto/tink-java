@@ -648,6 +648,18 @@
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colOne"><a href="com/google/crypto/tink/Registry.html#newKeyData-com.google.crypto.tink.proto.KeyTemplate-">com.google.crypto.tink.Registry.newKeyData(KeyTemplate)</a>
+<div class="block"><span class="deprecationComment">Use <code>KeysetHandle.generateNew</code> with a Parameters object instead. To convert a
+     proto KeyTemplate to a parameters one can use <code>TinkProtoParametersFormat.parse(t.toByteArray());</code></span></div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="com/google/crypto/tink/Registry.html#newKeyData-com.google.crypto.tink.KeyTemplate-">com.google.crypto.tink.Registry.newKeyData(KeyTemplate)</a>
+<div class="block"><span class="deprecationComment">Use <code>KeysetHandle.generateNew(keyTemplate.toParameters())</code> instead and use
+     the Keyset Handle API.</span></div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/NoSecretKeysetHandle.html#parseFrom-byte:A-">com.google.crypto.tink.NoSecretKeysetHandle.parseFrom(byte[])</a>
 <div class="block"><span class="deprecationComment">use <a href="com/google/crypto/tink/NoSecretKeysetHandle.html#read-com.google.crypto.tink.KeysetReader-"><code>NoSecretKeysetHandle.read(com.google.crypto.tink.KeysetReader)</code></a> instead</span></div>
 </td>
