@@ -110,22 +110,18 @@
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><a href="#com.google.crypto.tink.keyderivation.internal">com.google.crypto.tink.keyderivation.internal</a></td>
-<td class="colLast">&nbsp;</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><a href="#com.google.crypto.tink.mac">com.google.crypto.tink.mac</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="#com.google.crypto.tink.prf">com.google.crypto.tink.prf</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="#com.google.crypto.tink.signature">com.google.crypto.tink.signature</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="#com.google.crypto.tink.streamingaead">com.google.crypto.tink.streamingaead</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
@@ -153,6 +149,10 @@
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a></code></td>
+<td class="colLast"><span class="typeNameLabel">PrimitiveSet.Entry.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/PrimitiveSet.Entry.html#getKey--">getKey</a></span>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a></code></td>
 <td class="colLast"><span class="typeNameLabel">PrivateKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/PrivateKey.html#getPublicKey--">getPublicKey</a></span>()</code>&nbsp;</td>
 </tr>
@@ -277,11 +277,11 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><span class="typeNameLabel">AesEaxKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/AesEaxKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
+<td class="colLast"><span class="typeNameLabel">AesGcmKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/AesGcmKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><span class="typeNameLabel">AesGcmKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/AesGcmKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
+<td class="colLast"><span class="typeNameLabel">AesEaxKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/AesEaxKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
@@ -388,11 +388,11 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><span class="typeNameLabel">HpkePrivateKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/HpkePrivateKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
+<td class="colLast"><span class="typeNameLabel">HpkePublicKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/HpkePublicKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><span class="typeNameLabel">HpkePublicKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/HpkePublicKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
+<td class="colLast"><span class="typeNameLabel">HpkePrivateKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/HpkePrivateKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
@@ -559,18 +559,6 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a></code></td>
-<td class="colLast"><span class="typeNameLabel">MutableKeyCreationRegistry.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/MutableKeyCreationRegistry.html#createKey-com.google.crypto.tink.Parameters-java.lang.Integer-">createKey</a></span>(<a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a>&nbsp;parameters,
-         <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&nbsp;idRequirement)</code>
-<div class="block">Creates a <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink"><code>Key</code></a> from a given <a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink"><code>Parameters</code></a> object.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a></code></td>
-<td class="colLast"><span class="typeNameLabel">MutableKeyCreationRegistry.KeyCreator.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/MutableKeyCreationRegistry.KeyCreator.html#createKey-ParametersT-java.lang.Integer-">createKey</a></span>(<a href="../../../../../com/google/crypto/tink/internal/MutableKeyCreationRegistry.KeyCreator.html" title="type parameter in MutableKeyCreationRegistry.KeyCreator">ParametersT</a>&nbsp;parameters,
-         <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&nbsp;idRequirement)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a></code></td>
 <td class="colLast"><span class="typeNameLabel">MutableKeyDerivationRegistry.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/MutableKeyDerivationRegistry.html#createKeyFromRandomness-com.google.crypto.tink.Parameters-java.io.InputStream-java.lang.Integer-com.google.crypto.tink.SecretKeyAccess-">createKeyFromRandomness</a></span>(<a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a>&nbsp;parameters,
                        <a href="https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io">InputStream</a>&nbsp;inputStream,
                        <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&nbsp;idRequirement,
@@ -580,14 +568,17 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a></code></td>
-<td class="colLast"><span class="typeNameLabel">MutableKeyDerivationRegistry.InsecureKeyCreator.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/MutableKeyDerivationRegistry.InsecureKeyCreator.html#createKeyFromRandomness-ParametersT-java.io.InputStream-java.lang.Integer-com.google.crypto.tink.SecretKeyAccess-">createKeyFromRandomness</a></span>(<a href="../../../../../com/google/crypto/tink/internal/MutableKeyDerivationRegistry.InsecureKeyCreator.html" title="type parameter in MutableKeyDerivationRegistry.InsecureKeyCreator">ParametersT</a>&nbsp;parameters,
+<td class="colLast"><span class="typeNameLabel">KeyTypeManager.KeyFactory.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/KeyTypeManager.KeyFactory.html#createKeyFromRandomness-com.google.crypto.tink.Parameters-java.io.InputStream-java.lang.Integer-com.google.crypto.tink.SecretKeyAccess-">createKeyFromRandomness</a></span>(<a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a>&nbsp;parameters,
                        <a href="https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io">InputStream</a>&nbsp;inputStream,
                        <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&nbsp;idRequirement,
                        <a href="../../../../../com/google/crypto/tink/SecretKeyAccess.html" title="class in com.google.crypto.tink">SecretKeyAccess</a>&nbsp;access)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a></code></td>
-<td class="colLast"><span class="typeNameLabel">PrimitiveSet.Entry.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Entry.html#getKey--">getKey</a></span>()</code>&nbsp;</td>
+<td class="colLast"><span class="typeNameLabel">MutableKeyDerivationRegistry.InsecureKeyCreator.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/MutableKeyDerivationRegistry.InsecureKeyCreator.html#createKeyFromRandomness-ParametersT-java.io.InputStream-java.lang.Integer-com.google.crypto.tink.SecretKeyAccess-">createKeyFromRandomness</a></span>(<a href="../../../../../com/google/crypto/tink/internal/MutableKeyDerivationRegistry.InsecureKeyCreator.html" title="type parameter in MutableKeyDerivationRegistry.InsecureKeyCreator">ParametersT</a>&nbsp;parameters,
+                       <a href="https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io">InputStream</a>&nbsp;inputStream,
+                       <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&nbsp;idRequirement,
+                       <a href="../../../../../com/google/crypto/tink/SecretKeyAccess.html" title="class in com.google.crypto.tink">SecretKeyAccess</a>&nbsp;access)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>abstract <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a></code></td>
@@ -632,38 +623,22 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html" title="class in com.google.crypto.tink.internal">PrimitiveSet.Builder</a>&lt;<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html" title="type parameter in PrimitiveSet.Builder">P</a>&gt;</code></td>
-<td class="colLast"><span class="typeNameLabel">PrimitiveSet.Builder.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html#addFullPrimitive-P-com.google.crypto.tink.Key-com.google.crypto.tink.proto.Keyset.Key-">addFullPrimitive</a></span>(<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html" title="type parameter in PrimitiveSet.Builder">P</a>&nbsp;fullPrimitive,
-                <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;key,
-                <a href="../../../../../com/google/crypto/tink/proto/Keyset.Key.html" title="class in com.google.crypto.tink.proto">Keyset.Key</a>&nbsp;protoKey)</code>
-<div class="block">Adds a non-primary primitive.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html" title="class in com.google.crypto.tink.internal">PrimitiveSet.Builder</a>&lt;<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html" title="type parameter in PrimitiveSet.Builder">P</a>&gt;</code></td>
-<td class="colLast"><span class="typeNameLabel">PrimitiveSet.Builder.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html#addPrimaryFullPrimitive-P-com.google.crypto.tink.Key-com.google.crypto.tink.proto.Keyset.Key-">addPrimaryFullPrimitive</a></span>(<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html" title="type parameter in PrimitiveSet.Builder">P</a>&nbsp;fullPrimitive,
-                       <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;key,
-                       <a href="../../../../../com/google/crypto/tink/proto/Keyset.Key.html" title="class in com.google.crypto.tink.proto">Keyset.Key</a>&nbsp;protoKey)</code>
-<div class="block">Adds the primary primitive.</div>
-</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><span class="typeNameLabel">LegacyProtoKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/LegacyProtoKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;key)</code>
 <div class="block">Returns true if we are sure that the other key is the same.</div>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>&lt;P&gt;&nbsp;P</code></td>
+<td class="colLast"><span class="typeNameLabel">RegistryConfiguration.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/RegistryConfiguration.html#getPrimitive-com.google.crypto.tink.Key-java.lang.Class-">getPrimitive</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;key,
+            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;primitiveClass)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>abstract &lt;P&gt;&nbsp;P</code></td>
 <td class="colLast"><span class="typeNameLabel">InternalConfiguration.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/InternalConfiguration.html#getPrimitive-com.google.crypto.tink.Key-java.lang.Class-">getPrimitive</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;key,
             <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;primitiveClass)</code>
 <div class="block">Given a key and a desired primitive class, creates the required primitive.</div>
 </td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>&lt;P&gt;&nbsp;P</code></td>
-<td class="colLast"><span class="typeNameLabel">RegistryConfiguration.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/RegistryConfiguration.html#getPrimitive-com.google.crypto.tink.Key-java.lang.Class-">getPrimitive</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;key,
-            <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;primitiveClass)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
@@ -751,7 +726,15 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><span class="typeNameLabel">JwtRsaSsaPssPublicKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/jwt/JwtRsaSsaPssPublicKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><span class="typeNameLabel">JwtRsaSsaPssPrivateKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/jwt/JwtRsaSsaPssPrivateKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><span class="typeNameLabel">JwtRsaSsaPkcs1PublicKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/jwt/JwtRsaSsaPkcs1PublicKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
@@ -763,19 +746,11 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><span class="typeNameLabel">JwtEcdsaPrivateKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/jwt/JwtEcdsaPrivateKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><span class="typeNameLabel">JwtRsaSsaPssPublicKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/jwt/JwtRsaSsaPssPublicKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><span class="typeNameLabel">JwtRsaSsaPkcs1PublicKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/jwt/JwtRsaSsaPkcs1PublicKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><span class="typeNameLabel">JwtEcdsaPublicKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/jwt/JwtEcdsaPublicKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><span class="typeNameLabel">JwtEcdsaPrivateKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/jwt/JwtEcdsaPrivateKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
@@ -815,28 +790,6 @@
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><span class="typeNameLabel">PrfBasedKeyDerivationKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/keyderivation/PrfBasedKeyDerivationKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;other)</code>&nbsp;</td>
-</tr>
-</tbody>
-</table>
-</li>
-<li class="blockList"><a name="com.google.crypto.tink.keyderivation.internal">
-<!--   -->
-</a>
-<h3>Uses of <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a> in <a href="../../../../../com/google/crypto/tink/keyderivation/internal/package-summary.html">com.google.crypto.tink.keyderivation.internal</a></h3>
-<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
-<caption><span>Methods in <a href="../../../../../com/google/crypto/tink/keyderivation/internal/package-summary.html">com.google.crypto.tink.keyderivation.internal</a> that return <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a></span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Method and Description</th>
-</tr>
-<tbody>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a></code></td>
-<td class="colLast"><span class="typeNameLabel">PrfBasedKeyDeriver.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/keyderivation/internal/PrfBasedKeyDeriver.html#deriveKey-byte:A-">deriveKey</a></span>(byte[]&nbsp;salt)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a></code></td>
-<td class="colLast"><span class="typeNameLabel">KeyDeriver.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/keyderivation/internal/KeyDeriver.html#deriveKey-byte:A-">deriveKey</a></span>(byte[]&nbsp;salt)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
@@ -1040,19 +993,19 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><span class="typeNameLabel">Ed25519PublicKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/signature/Ed25519PublicKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><span class="typeNameLabel">Ed25519PrivateKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/signature/Ed25519PrivateKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><span class="typeNameLabel">RsaSsaPkcs1PublicKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/signature/RsaSsaPkcs1PublicKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><span class="typeNameLabel">RsaSsaPkcs1PrivateKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/signature/RsaSsaPkcs1PrivateKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><span class="typeNameLabel">Ed25519PublicKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/signature/Ed25519PublicKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><span class="typeNameLabel">Ed25519PrivateKey.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/signature/Ed25519PrivateKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;o)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
