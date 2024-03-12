@@ -885,6 +885,11 @@
 <dd>
 <div class="block">Describes the parameters of an <a href="com/google/crypto/tink/prf/AesCmacPrfKey.html" title="class in com.google.crypto.tink.prf"><code>AesCmacPrfKey</code></a>.</div>
 </dd>
+<dt><a href="com/google/crypto/tink/prf/internal/AesCmacPrfProtoSerialization.html" title="class in com.google.crypto.tink.prf.internal"><span class="typeNameLink">AesCmacPrfProtoSerialization</span></a> - Class in <a href="com/google/crypto/tink/prf/internal/package-summary.html">com.google.crypto.tink.prf.internal</a></dt>
+<dd>
+<div class="block">Methods to serialize and parse <a href="com/google/crypto/tink/prf/AesCmacPrfKey.html" title="class in com.google.crypto.tink.prf"><code>AesCmacPrfKey</code></a> objects and <a href="com/google/crypto/tink/prf/AesCmacPrfParameters.html" title="class in com.google.crypto.tink.prf"><code>AesCmacPrfParameters</code></a>
+ objects.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/mac/internal/AesCmacProtoSerialization.html" title="class in com.google.crypto.tink.mac.internal"><span class="typeNameLink">AesCmacProtoSerialization</span></a> - Class in <a href="com/google/crypto/tink/mac/internal/package-summary.html">com.google.crypto.tink.mac.internal</a></dt>
 <dd>
 <div class="block">Methods to serialize and parse <a href="com/google/crypto/tink/mac/AesCmacKey.html" title="class in com.google.crypto.tink.mac"><code>AesCmacKey</code></a> objects and <a href="com/google/crypto/tink/mac/AesCmacParameters.html" title="class in com.google.crypto.tink.mac"><code>AesCmacParameters</code></a> objects.</div>
@@ -4804,6 +4809,10 @@
 <dt><a href="com/google/crypto/tink/hybrid/EciesPrivateKey.html" title="class in com.google.crypto.tink.hybrid"><span class="typeNameLink">EciesPrivateKey</span></a> - Class in <a href="com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a></dt>
 <dd>
 <div class="block">Representation of the decryption function for an ECIES hybrid encryption primitive.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/hybrid/internal/EciesProtoSerialization.html" title="class in com.google.crypto.tink.hybrid.internal"><span class="typeNameLink">EciesProtoSerialization</span></a> - Class in <a href="com/google/crypto/tink/hybrid/internal/package-summary.html">com.google.crypto.tink.hybrid.internal</a></dt>
+<dd>
+<div class="block">Methods to serialize and parse <a href="com/google/crypto/tink/hybrid/EciesParameters.html" title="class in com.google.crypto.tink.hybrid"><code>EciesParameters</code></a> objects.</div>
 </dd>
 <dt><a href="com/google/crypto/tink/hybrid/EciesPublicKey.html" title="class in com.google.crypto.tink.hybrid"><span class="typeNameLink">EciesPublicKey</span></a> - Class in <a href="com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a></dt>
 <dd>
@@ -12751,6 +12760,10 @@
 </dd>
 <dt><a href="com/google/crypto/tink/proto/HkdfPrfParamsOrBuilder.html" title="interface in com.google.crypto.tink.proto"><span class="typeNameLink">HkdfPrfParamsOrBuilder</span></a> - Interface in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/prf/internal/HkdfPrfProtoSerialization.html" title="class in com.google.crypto.tink.prf.internal"><span class="typeNameLink">HkdfPrfProtoSerialization</span></a> - Class in <a href="com/google/crypto/tink/prf/internal/package-summary.html">com.google.crypto.tink.prf.internal</a></dt>
+<dd>
+<div class="block">Methods to serialize and parse <a href="com/google/crypto/tink/prf/HkdfPrfKey.html" title="class in com.google.crypto.tink.prf"><code>HkdfPrfKey</code></a> objects and <a href="com/google/crypto/tink/prf/HkdfPrfParameters.html" title="class in com.google.crypto.tink.prf"><code>HkdfPrfParameters</code></a> objects.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/HkdfPrfKeyManager.html#hkdfSha256Template--">hkdfSha256Template()</a></span> - Static method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/HkdfPrfKeyManager.html" title="class in com.google.crypto.tink.prf">HkdfPrfKeyManager</a></dt>
 <dd>
 <div class="block">Generates a <a href="com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink"><code>KeyTemplate</code></a> for HKDF-PRF keys with the following parameters.</div>
@@ -19143,6 +19156,14 @@
 <dd>
 <div class="block">Register the wrapper within the registry.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/EciesProtoSerialization.html#register--">register()</a></span> - Static method in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/EciesProtoSerialization.html" title="class in com.google.crypto.tink.hybrid.internal">EciesProtoSerialization</a></dt>
+<dd>
+<div class="block">Registers previously defined parser/serializer objects into a global, mutable registry.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/EciesProtoSerialization.html#register-com.google.crypto.tink.internal.MutableSerializationRegistry-">register(MutableSerializationRegistry)</a></span> - Static method in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/EciesProtoSerialization.html" title="class in com.google.crypto.tink.hybrid.internal">EciesProtoSerialization</a></dt>
+<dd>
+<div class="block">Registers previously defined parser/serializer objects into a given registry.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtHmacKeyManager.html#register-boolean-">register(boolean)</a></span> - Static method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtHmacKeyManager.html" title="class in com.google.crypto.tink.jwt">JwtHmacKeyManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtMacConfig.html#register--">register()</a></span> - Static method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtMacConfig.html" title="class in com.google.crypto.tink.jwt">JwtMacConfig</a></dt>
@@ -19192,6 +19213,18 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/HkdfPrfKeyManager.html#register-boolean-">register(boolean)</a></span> - Static method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/HkdfPrfKeyManager.html" title="class in com.google.crypto.tink.prf">HkdfPrfKeyManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/HmacPrfKeyManager.html#register-boolean-">register(boolean)</a></span> - Static method in class com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/HmacPrfKeyManager.html" title="class in com.google.crypto.tink.prf">HmacPrfKeyManager</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/internal/AesCmacPrfProtoSerialization.html#register--">register()</a></span> - Static method in class com.google.crypto.tink.prf.internal.<a href="com/google/crypto/tink/prf/internal/AesCmacPrfProtoSerialization.html" title="class in com.google.crypto.tink.prf.internal">AesCmacPrfProtoSerialization</a></dt>
+<dd>
+<div class="block">Registers previously defined parser/serializer objects into a global, mutable registry.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/internal/AesCmacPrfProtoSerialization.html#register-com.google.crypto.tink.internal.MutableSerializationRegistry-">register(MutableSerializationRegistry)</a></span> - Static method in class com.google.crypto.tink.prf.internal.<a href="com/google/crypto/tink/prf/internal/AesCmacPrfProtoSerialization.html" title="class in com.google.crypto.tink.prf.internal">AesCmacPrfProtoSerialization</a></dt>
+<dd>
+<div class="block">Registers previously defined parser/serializer objects into a given registry.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/internal/HkdfPrfProtoSerialization.html#register--">register()</a></span> - Static method in class com.google.crypto.tink.prf.internal.<a href="com/google/crypto/tink/prf/internal/HkdfPrfProtoSerialization.html" title="class in com.google.crypto.tink.prf.internal">HkdfPrfProtoSerialization</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/internal/HkdfPrfProtoSerialization.html#register-com.google.crypto.tink.internal.MutableSerializationRegistry-">register(MutableSerializationRegistry)</a></span> - Static method in class com.google.crypto.tink.prf.internal.<a href="com/google/crypto/tink/prf/internal/HkdfPrfProtoSerialization.html" title="class in com.google.crypto.tink.prf.internal">HkdfPrfProtoSerialization</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/internal/HmacPrfProtoSerialization.html#register--">register()</a></span> - Static method in class com.google.crypto.tink.prf.internal.<a href="com/google/crypto/tink/prf/internal/HmacPrfProtoSerialization.html" title="class in com.google.crypto.tink.prf.internal">HmacPrfProtoSerialization</a></dt>
 <dd>&nbsp;</dd>
