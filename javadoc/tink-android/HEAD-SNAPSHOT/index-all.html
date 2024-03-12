@@ -1016,6 +1016,10 @@
 </dd>
 <dt><a href="com/google/crypto/tink/proto/AesCtrHmacStreamingParamsOrBuilder.html" title="interface in com.google.crypto.tink.proto"><span class="typeNameLink">AesCtrHmacStreamingParamsOrBuilder</span></a> - Interface in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/streamingaead/internal/AesCtrHmacStreamingProtoSerialization.html" title="class in com.google.crypto.tink.streamingaead.internal"><span class="typeNameLink">AesCtrHmacStreamingProtoSerialization</span></a> - Class in <a href="com/google/crypto/tink/streamingaead/internal/package-summary.html">com.google.crypto.tink.streamingaead.internal</a></dt>
+<dd>
+<div class="block">Methods to serialize and parse <a href="com/google/crypto/tink/streamingaead/AesCtrHmacStreamingKey.html" title="class in com.google.crypto.tink.streamingaead"><code>AesCtrHmacStreamingKey</code></a> objects and <a href="com/google/crypto/tink/streamingaead/AesCtrHmacStreamingParameters.html" title="class in com.google.crypto.tink.streamingaead"><code>AesCtrHmacStreamingParameters</code></a> objects</div>
+</dd>
 <dt><a href="com/google/crypto/tink/subtle/AesCtrJceCipher.html" title="class in com.google.crypto.tink.subtle"><span class="typeNameLink">AesCtrJceCipher</span></a> - Class in <a href="com/google/crypto/tink/subtle/package-summary.html">com.google.crypto.tink.subtle</a></dt>
 <dd>
 <div class="block">The primitive implements AES counter mode with random IVs, using JCE.</div>
@@ -4883,6 +4887,11 @@
 </dd>
 <dt><a href="com/google/crypto/tink/proto/Ed25519PrivateKeyOrBuilder.html" title="interface in com.google.crypto.tink.proto"><span class="typeNameLink">Ed25519PrivateKeyOrBuilder</span></a> - Interface in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/signature/internal/Ed25519ProtoSerialization.html" title="class in com.google.crypto.tink.signature.internal"><span class="typeNameLink">Ed25519ProtoSerialization</span></a> - Class in <a href="com/google/crypto/tink/signature/internal/package-summary.html">com.google.crypto.tink.signature.internal</a></dt>
+<dd>
+<div class="block">Methods to serialize and parse <a href="com/google/crypto/tink/signature/Ed25519PrivateKey.html" title="class in com.google.crypto.tink.signature"><code>Ed25519PrivateKey</code></a> and <a href="com/google/crypto/tink/signature/Ed25519PublicKey.html" title="class in com.google.crypto.tink.signature"><code>Ed25519PublicKey</code></a> objects and
+ <a href="com/google/crypto/tink/signature/Ed25519Parameters.html" title="class in com.google.crypto.tink.signature"><code>Ed25519Parameters</code></a> objects.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/proto/Ed25519PublicKey.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">Ed25519PublicKey</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>
 <div class="block">
@@ -19240,6 +19249,14 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/EcdsaProtoSerialization.html#register-com.google.crypto.tink.internal.MutableSerializationRegistry-">register(MutableSerializationRegistry)</a></span> - Static method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/EcdsaProtoSerialization.html" title="class in com.google.crypto.tink.signature.internal">EcdsaProtoSerialization</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/Ed25519ProtoSerialization.html#register--">register()</a></span> - Static method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/Ed25519ProtoSerialization.html" title="class in com.google.crypto.tink.signature.internal">Ed25519ProtoSerialization</a></dt>
+<dd>
+<div class="block">Registers previously defined parser/serializer objects into a global, mutable registry.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/Ed25519ProtoSerialization.html#register-com.google.crypto.tink.internal.MutableSerializationRegistry-">register(MutableSerializationRegistry)</a></span> - Static method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/Ed25519ProtoSerialization.html" title="class in com.google.crypto.tink.signature.internal">Ed25519ProtoSerialization</a></dt>
+<dd>
+<div class="block">Registers previously defined parser/serializer objects into a given registry.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/RsaSsaPkcs1ProtoSerialization.html#register--">register()</a></span> - Static method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/RsaSsaPkcs1ProtoSerialization.html" title="class in com.google.crypto.tink.signature.internal">RsaSsaPkcs1ProtoSerialization</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/RsaSsaPkcs1ProtoSerialization.html#register-com.google.crypto.tink.internal.MutableSerializationRegistry-">register(MutableSerializationRegistry)</a></span> - Static method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/RsaSsaPkcs1ProtoSerialization.html" title="class in com.google.crypto.tink.signature.internal">RsaSsaPkcs1ProtoSerialization</a></dt>
@@ -19260,6 +19277,10 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/AesCtrHmacStreamingKeyManager.html#register-boolean-">register(boolean)</a></span> - Static method in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/AesCtrHmacStreamingKeyManager.html" title="class in com.google.crypto.tink.streamingaead">AesCtrHmacStreamingKeyManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingKeyManager.html#register-boolean-">register(boolean)</a></span> - Static method in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingKeyManager.html" title="class in com.google.crypto.tink.streamingaead">AesGcmHkdfStreamingKeyManager</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/internal/AesCtrHmacStreamingProtoSerialization.html#register--">register()</a></span> - Static method in class com.google.crypto.tink.streamingaead.internal.<a href="com/google/crypto/tink/streamingaead/internal/AesCtrHmacStreamingProtoSerialization.html" title="class in com.google.crypto.tink.streamingaead.internal">AesCtrHmacStreamingProtoSerialization</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/internal/AesCtrHmacStreamingProtoSerialization.html#register-com.google.crypto.tink.internal.MutableSerializationRegistry-">register(MutableSerializationRegistry)</a></span> - Static method in class com.google.crypto.tink.streamingaead.internal.<a href="com/google/crypto/tink/streamingaead/internal/AesCtrHmacStreamingProtoSerialization.html" title="class in com.google.crypto.tink.streamingaead.internal">AesCtrHmacStreamingProtoSerialization</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/internal/AesGcmHkdfStreamingProtoSerialization.html#register--">register()</a></span> - Static method in class com.google.crypto.tink.streamingaead.internal.<a href="com/google/crypto/tink/streamingaead/internal/AesGcmHkdfStreamingProtoSerialization.html" title="class in com.google.crypto.tink.streamingaead.internal">AesGcmHkdfStreamingProtoSerialization</a></dt>
 <dd>&nbsp;</dd>
