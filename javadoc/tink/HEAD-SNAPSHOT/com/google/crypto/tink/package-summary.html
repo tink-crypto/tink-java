@@ -230,25 +230,18 @@
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><a href="../../../../com/google/crypto/tink/ConfigurationFips140v2.html" title="class in com.google.crypto.tink">ConfigurationFips140v2</a></td>
-<td class="colLast">
-<div class="block">ConfigurationFips140v2 contains Tink primitives that are compliant with <a
- href="https://csrc.nist.gov/pubs/fips/140-2/upd2/final">FIPS 140-2</a>.</div>
-</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><a href="../../../../com/google/crypto/tink/CryptoFormat.html" title="class in com.google.crypto.tink">CryptoFormat</a></td>
 <td class="colLast">
 <div class="block">Constants and convenience methods that deal with crypto format.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../com/google/crypto/tink/InsecureSecretKeyAccess.html" title="class in com.google.crypto.tink">InsecureSecretKeyAccess</a></td>
 <td class="colLast">
 <div class="block">A helper class to create <a href="../../../../com/google/crypto/tink/SecretKeyAccess.html" title="class in com.google.crypto.tink"><code>SecretKeyAccess</code></a> tokens.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../com/google/crypto/tink/JsonKeysetReader.html" title="class in com.google.crypto.tink">JsonKeysetReader</a></td>
 <td class="colLast">
 <div class="block">A <a href="../../../../com/google/crypto/tink/KeysetReader.html" title="interface in com.google.crypto.tink"><code>KeysetReader</code></a> that can read from source source cleartext or encrypted keysets in <a
@@ -256,80 +249,75 @@
  JSON format</a>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../com/google/crypto/tink/JsonKeysetWriter.html" title="class in com.google.crypto.tink">JsonKeysetWriter</a></td>
-<td class="colLast">Deprecated
-<div class="block"><span class="deprecationComment">Serialize the Keyset using <code>TinkJsonProtoKeysetFormat.serializeKeyset()</code>
-     instead.</span></div>
+<td class="colLast">
+<div class="block">A <a href="../../../../com/google/crypto/tink/KeysetWriter.html" title="interface in com.google.crypto.tink"><code>KeysetWriter</code></a> that can write to some source cleartext or encrypted keysets in <a
+ href="https://developers.google.com/protocol-buffers/docs/reference/java/com/google/protobuf/util/JsonFormat">proto
+ JSON format</a>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a></td>
 <td class="colLast">
 <div class="block">Represents a cryptographic object.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../com/google/crypto/tink/KeysetHandle.html" title="class in com.google.crypto.tink">KeysetHandle</a></td>
 <td class="colLast">
 <div class="block">A KeysetHandle provides abstracted access to <a href="../../../../com/google/crypto/tink/proto/Keyset.html" title="class in com.google.crypto.tink.proto"><code>Keyset</code></a>, to limit the exposure of actual
  protocol buffers that hold sensitive key material.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../com/google/crypto/tink/KeysetHandle.Builder.html" title="class in com.google.crypto.tink">KeysetHandle.Builder</a></td>
 <td class="colLast">
 <div class="block">Used to create new <code>KeysetHandle</code> objects.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../com/google/crypto/tink/KeysetHandle.Builder.Entry.html" title="class in com.google.crypto.tink">KeysetHandle.Builder.Entry</a></td>
 <td class="colLast">
 <div class="block">One entry, representing a single key, in a Keyset.Builder.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../com/google/crypto/tink/KeysetHandle.Entry.html" title="class in com.google.crypto.tink">KeysetHandle.Entry</a></td>
 <td class="colLast">
 <div class="block">Represents a single entry in a keyset.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../com/google/crypto/tink/KeysetManager.html" title="class in com.google.crypto.tink">KeysetManager</a></td>
 <td class="colLast">
 <div class="block">Manages a <a href="../../../../com/google/crypto/tink/proto/Keyset.html" title="class in com.google.crypto.tink.proto"><code>Keyset</code></a> proto, with convenience methods that rotate, disable, enable or destroy
  keys.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../com/google/crypto/tink/KeyStatus.html" title="class in com.google.crypto.tink">KeyStatus</a></td>
 <td class="colLast">
 <div class="block">Represents the status of a key in a keyset.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink">KeyTemplate</a></td>
 <td class="colLast">
 <div class="block">A KeyTemplate specifies how to generate keys of a particular type.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../com/google/crypto/tink/KeyTemplates.html" title="class in com.google.crypto.tink">KeyTemplates</a></td>
 <td class="colLast">
 <div class="block">This class consists exclusively of static methods that load <a href="../../../../com/google/crypto/tink/KeyTemplate.html" title="class in com.google.crypto.tink"><code>KeyTemplate</code></a> objects.</div>
 </td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><a href="../../../../com/google/crypto/tink/KmsClients.html" title="class in com.google.crypto.tink">KmsClients</a></td>
-<td class="colLast">Deprecated
-<div class="block"><span class="deprecationComment">Registering KmsClient is discouraged.</span></div>
-</td>
-</tr>
 <tr class="altColor">
-<td class="colFirst"><a href="../../../../com/google/crypto/tink/LegacyKeysetSerialization.html" title="class in com.google.crypto.tink">LegacyKeysetSerialization</a></td>
+<td class="colFirst"><a href="../../../../com/google/crypto/tink/KmsClients.html" title="class in com.google.crypto.tink">KmsClients</a></td>
 <td class="colLast">
-<div class="block">Parsing and Serialization methods for use with <a href="../../../../com/google/crypto/tink/KeysetReader.html" title="interface in com.google.crypto.tink"><code>KeysetReader</code></a> and <a href="../../../../com/google/crypto/tink/KeysetWriter.html" title="interface in com.google.crypto.tink"><code>KeysetWriter</code></a>
- classes.</div>
+<div class="block">A container for <a href="../../../../com/google/crypto/tink/KmsClient.html" title="interface in com.google.crypto.tink"><code>KmsClient</code></a>-objects that are needed by <a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink"><code>KeyManager</code></a>-objects for
+ primitives that use KMS-managed keys.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -345,42 +333,61 @@
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><a href="../../../../com/google/crypto/tink/PrimitiveSet.html" title="class in com.google.crypto.tink">PrimitiveSet</a>&lt;P&gt;</td>
+<td class="colLast">
+<div class="block">A container class for a set of primitives -- implementations of cryptographic primitives offered
+ by Tink.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../../../com/google/crypto/tink/PrimitiveSet.Builder.html" title="class in com.google.crypto.tink">PrimitiveSet.Builder</a>&lt;P&gt;</td>
+<td class="colLast">
+<div class="block">Builds an immutable PrimitiveSet.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="../../../../com/google/crypto/tink/PrimitiveSet.Entry.html" title="class in com.google.crypto.tink">PrimitiveSet.Entry</a>&lt;P&gt;</td>
+<td class="colLast">
+<div class="block">A single entry in the set.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../../../com/google/crypto/tink/PrivilegedRegistry.html" title="class in com.google.crypto.tink">PrivilegedRegistry</a></td>
+<td class="colLast">
+<div class="block">Privileged access to the Registry.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink">Registry</a></td>
 <td class="colLast">
 <div class="block">A global container of key managers and catalogues.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><a href="../../../../com/google/crypto/tink/RegistryConfiguration.html" title="class in com.google.crypto.tink">RegistryConfiguration</a></td>
-<td class="colLast">
-<div class="block">RegistryConfiguration is a proxy Configuration that forwards all calls to the global Registry.</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><a href="../../../../com/google/crypto/tink/SecretKeyAccess.html" title="class in com.google.crypto.tink">SecretKeyAccess</a></td>
 <td class="colLast">
 <div class="block">Represents access to secret key material.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../com/google/crypto/tink/TinkJsonProtoKeysetFormat.html" title="class in com.google.crypto.tink">TinkJsonProtoKeysetFormat</a></td>
 <td class="colLast">
 <div class="block">Functions to parse and serialize Keyset in Tink's JSON format based on Protobufs.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../com/google/crypto/tink/TinkProtoKeysetFormat.html" title="class in com.google.crypto.tink">TinkProtoKeysetFormat</a></td>
 <td class="colLast">
 <div class="block">Functions to parse and serialize Keyset in Tink's binary format based on Protobufs.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../com/google/crypto/tink/TinkProtoParametersFormat.html" title="class in com.google.crypto.tink">TinkProtoParametersFormat</a></td>
 <td class="colLast">
 <div class="block">Functions to parse and serialize Parameters in Tink's binary format based on Protobufs.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../com/google/crypto/tink/Version.html" title="class in com.google.crypto.tink">Version</a></td>
 <td class="colLast">
 <div class="block">Version of the Tink library.</div>
