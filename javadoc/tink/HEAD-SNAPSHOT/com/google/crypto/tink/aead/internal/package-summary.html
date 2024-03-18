@@ -82,22 +82,61 @@
 </tr>
 <tbody>
 <tr class="altColor">
+<td class="colFirst"><a href="../../../../../../com/google/crypto/tink/aead/internal/AesCtrHmacAeadProtoSerialization.html" title="class in com.google.crypto.tink.aead.internal">AesCtrHmacAeadProtoSerialization</a></td>
+<td class="colLast">
+<div class="block">Methods to serialize and parse <a href="../../../../../../com/google/crypto/tink/aead/AesCtrHmacAeadKey.html" title="class in com.google.crypto.tink.aead"><code>AesCtrHmacAeadKey</code></a> objects and <a href="../../../../../../com/google/crypto/tink/aead/AesCtrHmacAeadParameters.html" title="class in com.google.crypto.tink.aead"><code>AesCtrHmacAeadParameters</code></a> objects.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="../../../../../../com/google/crypto/tink/aead/internal/AesEaxProtoSerialization.html" title="class in com.google.crypto.tink.aead.internal">AesEaxProtoSerialization</a></td>
+<td class="colLast">
+<div class="block">Methods to serialize and parse <a href="../../../../../../com/google/crypto/tink/aead/AesEaxKey.html" title="class in com.google.crypto.tink.aead"><code>AesEaxKey</code></a> objects and <a href="../../../../../../com/google/crypto/tink/aead/AesEaxParameters.html" title="class in com.google.crypto.tink.aead"><code>AesEaxParameters</code></a> objects</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../../../../../com/google/crypto/tink/aead/internal/AesGcmProtoSerialization.html" title="class in com.google.crypto.tink.aead.internal">AesGcmProtoSerialization</a></td>
+<td class="colLast">
+<div class="block">Methods to serialize and parse <a href="../../../../../../com/google/crypto/tink/aead/AesGcmKey.html" title="class in com.google.crypto.tink.aead"><code>AesGcmKey</code></a> objects and <a href="../../../../../../com/google/crypto/tink/aead/AesGcmParameters.html" title="class in com.google.crypto.tink.aead"><code>AesGcmParameters</code></a> objects</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="../../../../../../com/google/crypto/tink/aead/internal/AesGcmSivProtoSerialization.html" title="class in com.google.crypto.tink.aead.internal">AesGcmSivProtoSerialization</a></td>
+<td class="colLast">
+<div class="block">Methods to serialize and parse <a href="../../../../../../com/google/crypto/tink/aead/AesGcmSivKey.html" title="class in com.google.crypto.tink.aead"><code>AesGcmSivKey</code></a> objects and <a href="../../../../../../com/google/crypto/tink/aead/AesGcmSivParameters.html" title="class in com.google.crypto.tink.aead"><code>AesGcmSivParameters</code></a>
+ objects</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../../../../../com/google/crypto/tink/aead/internal/ChaCha20Poly1305Jce.html" title="class in com.google.crypto.tink.aead.internal">ChaCha20Poly1305Jce</a></td>
+<td class="colLast">
+<div class="block">ChaCha20Poly1305Jce implements an AEAD for ChaCha20Poly1305, as described in <a
+ href="https://tools.ietf.org/html/rfc8439#section-2.8">RFC 8439, section 2.8</a>.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../../../com/google/crypto/tink/aead/internal/InsecureNonceAesGcmJce.html" title="class in com.google.crypto.tink.aead.internal">InsecureNonceAesGcmJce</a></td>
 <td class="colLast">
 <div class="block">Insecure version of <a href="../../../../../../com/google/crypto/tink/subtle/AesGcmJce.html" title="class in com.google.crypto.tink.subtle"><code>AesGcmJce</code></a> that allows the caller to set
  the IV.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../../../com/google/crypto/tink/aead/internal/InsecureNonceChaCha20.html" title="class in com.google.crypto.tink.aead.internal">InsecureNonceChaCha20</a></td>
 <td class="colLast">
 <div class="block">A stream cipher, as described in RFC 8439 https://tools.ietf.org/html/rfc8439, section 2.4.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../../../com/google/crypto/tink/aead/internal/InsecureNonceChaCha20Poly1305.html" title="class in com.google.crypto.tink.aead.internal">InsecureNonceChaCha20Poly1305</a></td>
 <td class="colLast">
 <div class="block">ChaCha20Poly1305 AEAD construction, as described in <a
+ href="https://tools.ietf.org/html/rfc8439#section-2.8">RFC 8439, section 2.8</a>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../../../../../com/google/crypto/tink/aead/internal/InsecureNonceChaCha20Poly1305Jce.html" title="class in com.google.crypto.tink.aead.internal">InsecureNonceChaCha20Poly1305Jce</a></td>
+<td class="colLast">
+<div class="block">Implements ChaCha20Poly1305, as described in <a
  href="https://tools.ietf.org/html/rfc8439#section-2.8">RFC 8439, section 2.8</a>.</div>
 </td>
 </tr>
@@ -117,9 +156,28 @@
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><a href="../../../../../../com/google/crypto/tink/aead/internal/LegacyFullAead.html" title="class in com.google.crypto.tink.aead.internal">LegacyFullAead</a></td>
+<td class="colLast">
+<div class="block">Takes an arbitrary raw AEAD and makes it a full primitive.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../../../com/google/crypto/tink/aead/internal/Poly1305.html" title="class in com.google.crypto.tink.aead.internal">Poly1305</a></td>
 <td class="colLast">
 <div class="block">Poly1305 one-time MAC based on RFC 7539.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="../../../../../../com/google/crypto/tink/aead/internal/XChaCha20Poly1305Jce.html" title="class in com.google.crypto.tink.aead.internal">XChaCha20Poly1305Jce</a></td>
+<td class="colLast">
+<div class="block">ChaCha20Poly1305Jce implements an AEAD for ChaCha20Poly1305, as described in <a
+ href="https://tools.ietf.org/html/rfc8439#section-2.8">RFC 8439, section 2.8</a>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../../../../../com/google/crypto/tink/aead/internal/XChaCha20Poly1305ProtoSerialization.html" title="class in com.google.crypto.tink.aead.internal">XChaCha20Poly1305ProtoSerialization</a></td>
+<td class="colLast">
+<div class="block">Methods to serialize and parse <a href="../../../../../../com/google/crypto/tink/aead/XChaCha20Poly1305Key.html" title="class in com.google.crypto.tink.aead"><code>XChaCha20Poly1305Key</code></a> objects and <a href="../../../../../../com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.html" title="class in com.google.crypto.tink.aead"><code>XChaCha20Poly1305Parameters</code></a> objects</div>
 </td>
 </tr>
 </tbody>
