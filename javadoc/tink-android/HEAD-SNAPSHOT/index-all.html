@@ -4959,6 +4959,8 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/monitoring/MonitoringAnnotations.html#EMPTY">EMPTY</a></span> - Static variable in class com.google.crypto.tink.monitoring.<a href="com/google/crypto/tink/monitoring/MonitoringAnnotations.html" title="class in com.google.crypto.tink.monitoring">MonitoringAnnotations</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/OutputPrefixUtil.html#EMPTY_PREFIX">EMPTY_PREFIX</a></span> - Static variable in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/OutputPrefixUtil.html" title="class in com.google.crypto.tink.internal">OutputPrefixUtil</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/HpkeUtil.html#EMPTY_SALT">EMPTY_SALT</a></span> - Static variable in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/HpkeUtil.html" title="class in com.google.crypto.tink.hybrid.internal">HpkeUtil</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/integration/android/AndroidKeysetManager.html#enable-int-">enable(int)</a></span> - Method in class com.google.crypto.tink.integration.android.<a href="com/google/crypto/tink/integration/android/AndroidKeysetManager.html" title="class in com.google.crypto.tink.integration.android">AndroidKeysetManager</a></dt>
@@ -8500,6 +8502,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.html#getKidStrategy--">getKidStrategy()</a></span> - Method in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/OutputPrefixUtil.html#getLegacyOutputPrefix-int-">getLegacyOutputPrefix(int)</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/OutputPrefixUtil.html" title="class in com.google.crypto.tink.internal">OutputPrefixUtil</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/InternalConfiguration.html#getLegacyPrimitive-com.google.crypto.tink.proto.KeyData-java.lang.Class-">getLegacyPrimitive(KeyData, Class&lt;P&gt;)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/InternalConfiguration.html" title="class in com.google.crypto.tink.internal">InternalConfiguration</a></dt>
 <dd>
 <div class="block">Creates a primitive from a key in the old (proto) format.</div>
@@ -10512,6 +10516,8 @@
 <dd>
 <div class="block">Returns a <a href="com/google/crypto/tink/proto/KeyTypeEntry.html" title="class in com.google.crypto.tink.proto"><code>KeyTypeEntry</code></a> for Tink key types with the specified properties.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/OutputPrefixUtil.html#getTinkOutputPrefix-int-">getTinkOutputPrefix(int)</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/OutputPrefixUtil.html" title="class in com.google.crypto.tink.internal">OutputPrefixUtil</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/AesCmacParameters.html#getTotalTagSizeBytes--">getTotalTagSizeBytes()</a></span> - Method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/AesCmacParameters.html" title="class in com.google.crypto.tink.mac">AesCmacParameters</a></dt>
 <dd>
 <div class="block">Returns the size of the security relevant tag plus the size of the prefix with which this key
@@ -14618,6 +14624,8 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/CryptoFormat.html#LEGACY_START_BYTE">LEGACY_START_BYTE</a></span> - Static variable in class com.google.crypto.tink.<a href="com/google/crypto/tink/CryptoFormat.html" title="class in com.google.crypto.tink">CryptoFormat</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/OutputPrefixUtil.html#LEGACY_START_BYTE">LEGACY_START_BYTE</a></span> - Static variable in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/OutputPrefixUtil.html" title="class in com.google.crypto.tink.internal">OutputPrefixUtil</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.PointFormat.html#LEGACY_UNCOMPRESSED">LEGACY_UNCOMPRESSED</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.PointFormat.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.PointFormat</a></dt>
 <dd>
 <div class="block">Like <code>UNCOMPRESSED</code>, but without the \x04 prefix.</div>
@@ -15736,6 +15744,10 @@
 <dd>
 <div class="block">Encoder flag bit to omit all line terminators (i.e., the output will be on one long line).</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/OutputPrefixUtil.html#NON_EMPTY_PREFIX_SIZE">NON_EMPTY_PREFIX_SIZE</a></span> - Static variable in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/OutputPrefixUtil.html" title="class in com.google.crypto.tink.internal">OutputPrefixUtil</a></dt>
+<dd>
+<div class="block">All non-empty prefixes must have the same size of 5 bytes.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/CryptoFormat.html#NON_RAW_PREFIX_SIZE">NON_RAW_PREFIX_SIZE</a></span> - Static variable in class com.google.crypto.tink.<a href="com/google/crypto/tink/CryptoFormat.html" title="class in com.google.crypto.tink">CryptoFormat</a></dt>
 <dd>
 <div class="block">Prefix size of Tink, Legacy and Crunchy output prefix types.</div>
@@ -15778,6 +15790,10 @@
 <div class="block">
  Tink produces and accepts ciphertexts or signatures that consist
  of a prefix and a payload.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/internal/OutputPrefixUtil.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">OutputPrefixUtil</span></a> - Class in <a href="com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></dt>
+<dd>
+<div class="block">Convenience functions that deal with output prefix.</div>
 </dd>
 </dl>
 <a name="I:P">
@@ -22648,6 +22664,8 @@
 <div class="block">Tink prefix starts with \x01 and followed by a 4-byte key id.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/CryptoFormat.html#TINK_START_BYTE">TINK_START_BYTE</a></span> - Static variable in class com.google.crypto.tink.<a href="com/google/crypto/tink/CryptoFormat.html" title="class in com.google.crypto.tink">CryptoFormat</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/OutputPrefixUtil.html#TINK_START_BYTE">TINK_START_BYTE</a></span> - Static variable in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/OutputPrefixUtil.html" title="class in com.google.crypto.tink.internal">OutputPrefixUtil</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/OutputPrefixType.html#TINK_VALUE">TINK_VALUE</a></span> - Static variable in enum com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/OutputPrefixType.html" title="enum in com.google.crypto.tink.proto">OutputPrefixType</a></dt>
 <dd>
