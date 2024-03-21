@@ -61,7 +61,7 @@ public final class AesSivKeyManager {
           PrimitiveConstructor.create(
               AesSivKeyManager::createDeterministicAead, AesSivKey.class, DeterministicAead.class);
 
-  private static final int KEY_SIZE_IN_BYTES = 64;
+  private static final int AES256_KEY_SIZE_IN_BYTES = 64;
 
   static String getKeyType() {
     return "type.googleapis.com/google.crypto.tink.AesSivKey";
@@ -76,13 +76,12 @@ public final class AesSivKeyManager {
 
   private static void validateParameters(AesSivParameters parameters)
       throws GeneralSecurityException {
-    if (parameters.getKeySizeBytes() != KEY_SIZE_IN_BYTES) {
+    int keySizeBytes = parameters.getKeySizeBytes();
+    if (keySizeBytes != 32 && keySizeBytes != 48 && keySizeBytes != 64) {
       throw new InvalidAlgorithmParameterException(
-          "invalid key size: "
-              + parameters.getKeySizeBytes()
-              + ". Valid keys must have "
-              + KEY_SIZE_IN_BYTES
-              + " bytes.");
+          String.format(
+              "Invalid key size %d; only 32-byte, 48-byte and 64-byte AES-SIV keys are supported",
+              keySizeBytes));
     }
   }
 
@@ -153,7 +152,7 @@ public final class AesSivKeyManager {
         () ->
             KeyTemplate.createFrom(
                 AesSivParameters.builder()
-                    .setKeySizeBytes(KEY_SIZE_IN_BYTES)
+                    .setKeySizeBytes(AES256_KEY_SIZE_IN_BYTES)
                     .setVariant(AesSivParameters.Variant.TINK)
                     .build()));
   }
@@ -167,7 +166,7 @@ public final class AesSivKeyManager {
         () ->
             KeyTemplate.createFrom(
                 AesSivParameters.builder()
-                    .setKeySizeBytes(KEY_SIZE_IN_BYTES)
+                    .setKeySizeBytes(AES256_KEY_SIZE_IN_BYTES)
                     .setVariant(AesSivParameters.Variant.NO_PREFIX)
                     .build()));
   }
