@@ -109,8 +109,8 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../../../com/google/crypto/tink/hybrid/internal/HpkeKdf.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeKdf</a></code></td>
-<td class="colLast"><span class="typeNameLabel">HpkePrimitiveFactory.</span><code><span class="memberNameLink"><a href="../../../../../../../com/google/crypto/tink/hybrid/internal/HpkePrimitiveFactory.html#createKdf-com.google.crypto.tink.hybrid.HpkeParameters.KdfId-">createKdf</a></span>(<a href="../../../../../../../com/google/crypto/tink/hybrid/HpkeParameters.KdfId.html" title="class in com.google.crypto.tink.hybrid">HpkeParameters.KdfId</a>&nbsp;kdfId)</code>
-<div class="block">Returns an <a href="../../../../../../../com/google/crypto/tink/hybrid/internal/HpkeKdf.html" title="interface in com.google.crypto.tink.hybrid.internal"><code>HpkeKdf</code></a> primitive corresponding to <code>kdfId</code>.</div>
+<td class="colLast"><span class="typeNameLabel">HpkePrimitiveFactory.</span><code><span class="memberNameLink"><a href="../../../../../../../com/google/crypto/tink/hybrid/internal/HpkePrimitiveFactory.html#createKdf-com.google.crypto.tink.proto.HpkeParams-">createKdf</a></span>(<a href="../../../../../../../com/google/crypto/tink/proto/HpkeParams.html" title="class in com.google.crypto.tink.proto">HpkeParams</a>&nbsp;params)</code>
+<div class="block">Returns an <a href="../../../../../../../com/google/crypto/tink/hybrid/internal/HpkeKdf.html" title="interface in com.google.crypto.tink.hybrid.internal"><code>HpkeKdf</code></a> primitive corresponding to <a href="../../../../../../../com/google/crypto/tink/proto/HpkeParams.html#getKdf--"><code>HpkeParams.getKdf()</code></a>.</div>
 </td>
 </tr>
 </tbody>
@@ -124,20 +124,20 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../../../com/google/crypto/tink/hybrid/internal/HpkeContext.html" title="class in com.google.crypto.tink.hybrid.internal">HpkeContext</a></code></td>
-<td class="colLast"><span class="typeNameLabel">HpkeContext.</span><code><span class="memberNameLink"><a href="../../../../../../../com/google/crypto/tink/hybrid/internal/HpkeContext.html#createAuthRecipientContext-byte:A-com.google.crypto.tink.hybrid.internal.HpkeKemPrivateKey-com.google.crypto.tink.hybrid.internal.HpkeKem-com.google.crypto.tink.hybrid.internal.HpkeKdf-com.google.crypto.tink.hybrid.internal.HpkeAead-byte:A-com.google.crypto.tink.hybrid.HpkePublicKey-">createAuthRecipientContext</a></span>(byte[]&nbsp;encapsulatedKey,
+<td class="colLast"><span class="typeNameLabel">HpkeContext.</span><code><span class="memberNameLink"><a href="../../../../../../../com/google/crypto/tink/hybrid/internal/HpkeContext.html#createAuthRecipientContext-byte:A-com.google.crypto.tink.hybrid.internal.HpkeKemPrivateKey-com.google.crypto.tink.hybrid.internal.HpkeKem-com.google.crypto.tink.hybrid.internal.HpkeKdf-com.google.crypto.tink.hybrid.internal.HpkeAead-byte:A-com.google.crypto.tink.proto.HpkePublicKey-">createAuthRecipientContext</a></span>(byte[]&nbsp;encapsulatedKey,
                           <a href="../../../../../../../com/google/crypto/tink/hybrid/internal/HpkeKemPrivateKey.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeKemPrivateKey</a>&nbsp;recipientPrivateKey,
                           <a href="../../../../../../../com/google/crypto/tink/hybrid/internal/HpkeKem.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeKem</a>&nbsp;kem,
                           <a href="../../../../../../../com/google/crypto/tink/hybrid/internal/HpkeKdf.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeKdf</a>&nbsp;kdf,
                           <a href="../../../../../../../com/google/crypto/tink/hybrid/internal/HpkeAead.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeAead</a>&nbsp;aead,
                           byte[]&nbsp;info,
-                          <a href="../../../../../../../com/google/crypto/tink/hybrid/HpkePublicKey.html" title="class in com.google.crypto.tink.hybrid">HpkePublicKey</a>&nbsp;senderPublicKey)</code>
+                          <a href="../../../../../../../com/google/crypto/tink/proto/HpkePublicKey.html" title="class in com.google.crypto.tink.proto">HpkePublicKey</a>&nbsp;senderPublicKey)</code>
 <div class="block">Creates HPKE recipient context with authentication according to KeySchedule() defined in
  https://www.rfc-editor.org/rfc/rfc9180.html#section-5.1.3.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../../../com/google/crypto/tink/hybrid/internal/HpkeContext.html" title="class in com.google.crypto.tink.hybrid.internal">HpkeContext</a></code></td>
-<td class="colLast"><span class="typeNameLabel">HpkeContext.</span><code><span class="memberNameLink"><a href="../../../../../../../com/google/crypto/tink/hybrid/internal/HpkeContext.html#createAuthSenderContext-com.google.crypto.tink.hybrid.HpkePublicKey-com.google.crypto.tink.hybrid.internal.HpkeKem-com.google.crypto.tink.hybrid.internal.HpkeKdf-com.google.crypto.tink.hybrid.internal.HpkeAead-byte:A-com.google.crypto.tink.hybrid.internal.HpkeKemPrivateKey-">createAuthSenderContext</a></span>(<a href="../../../../../../../com/google/crypto/tink/hybrid/HpkePublicKey.html" title="class in com.google.crypto.tink.hybrid">HpkePublicKey</a>&nbsp;recipientPublicKey,
+<td class="colLast"><span class="typeNameLabel">HpkeContext.</span><code><span class="memberNameLink"><a href="../../../../../../../com/google/crypto/tink/hybrid/internal/HpkeContext.html#createAuthSenderContext-com.google.crypto.tink.proto.HpkePublicKey-com.google.crypto.tink.hybrid.internal.HpkeKem-com.google.crypto.tink.hybrid.internal.HpkeKdf-com.google.crypto.tink.hybrid.internal.HpkeAead-byte:A-com.google.crypto.tink.hybrid.internal.HpkeKemPrivateKey-">createAuthSenderContext</a></span>(<a href="../../../../../../../com/google/crypto/tink/proto/HpkePublicKey.html" title="class in com.google.crypto.tink.proto">HpkePublicKey</a>&nbsp;recipientPublicKey,
                        <a href="../../../../../../../com/google/crypto/tink/hybrid/internal/HpkeKem.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeKem</a>&nbsp;kem,
                        <a href="../../../../../../../com/google/crypto/tink/hybrid/internal/HpkeKdf.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeKdf</a>&nbsp;kdf,
                        <a href="../../../../../../../com/google/crypto/tink/hybrid/internal/HpkeAead.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeAead</a>&nbsp;aead,

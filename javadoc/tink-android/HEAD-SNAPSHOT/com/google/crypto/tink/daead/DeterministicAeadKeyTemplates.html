@@ -134,7 +134,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
  generate a new keyset that contains a single <code>AesSivKey</code>, one can do:
 
  <pre>
-   DeterministicAeadConfig.register();
+   Config.register(DeterministicAeadConfig.TINK_1_1_0);
    KeysetHandle handle = KeysetHandle.generateNew(DeterministicAeadKeyTemplates.AES256_SIV);
    DeterministicAead daead = handle.getPrimitive(DeterministicAead.class);
  </pre></div>
