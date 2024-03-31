@@ -85,10 +85,6 @@
 <td class="colFirst"><a href="#com.google.crypto.tink.hybrid">com.google.crypto.tink.hybrid</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><a href="#com.google.crypto.tink.hybrid.internal">com.google.crypto.tink.hybrid.internal</a></td>
-<td class="colLast">&nbsp;</td>
-</tr>
 </tbody>
 </table>
 </li>
@@ -131,49 +127,6 @@
 <td class="colLast"><span class="typeNameLabel">HpkePrivateKey.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/hybrid/HpkePrivateKey.html#create-com.google.crypto.tink.hybrid.HpkePublicKey-com.google.crypto.tink.util.SecretBytes-">create</a></span>(<a href="../../../../../../com/google/crypto/tink/hybrid/HpkePublicKey.html" title="class in com.google.crypto.tink.hybrid">HpkePublicKey</a>&nbsp;publicKey,
       <a href="../../../../../../com/google/crypto/tink/util/SecretBytes.html" title="class in com.google.crypto.tink.util">SecretBytes</a>&nbsp;privateKeyBytes)</code>
 <div class="block">Creates a new HPKE private key.</div>
-</td>
-</tr>
-</tbody>
-</table>
-</li>
-<li class="blockList"><a name="com.google.crypto.tink.hybrid.internal">
-<!--   -->
-</a>
-<h3>Uses of <a href="../../../../../../com/google/crypto/tink/hybrid/HpkePublicKey.html" title="class in com.google.crypto.tink.hybrid">HpkePublicKey</a> in <a href="../../../../../../com/google/crypto/tink/hybrid/internal/package-summary.html">com.google.crypto.tink.hybrid.internal</a></h3>
-<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
-<caption><span>Methods in <a href="../../../../../../com/google/crypto/tink/hybrid/internal/package-summary.html">com.google.crypto.tink.hybrid.internal</a> with parameters of type <a href="../../../../../../com/google/crypto/tink/hybrid/HpkePublicKey.html" title="class in com.google.crypto.tink.hybrid">HpkePublicKey</a></span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Method and Description</th>
-</tr>
-<tbody>
-<tr class="altColor">
-<td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/HybridEncrypt.html" title="interface in com.google.crypto.tink">HybridEncrypt</a></code></td>
-<td class="colLast"><span class="typeNameLabel">HpkeEncrypt.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/hybrid/internal/HpkeEncrypt.html#create-com.google.crypto.tink.hybrid.HpkePublicKey-">create</a></span>(<a href="../../../../../../com/google/crypto/tink/hybrid/HpkePublicKey.html" title="class in com.google.crypto.tink.hybrid">HpkePublicKey</a>&nbsp;key)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/hybrid/internal/HpkeContext.html" title="class in com.google.crypto.tink.hybrid.internal">HpkeContext</a></code></td>
-<td class="colLast"><span class="typeNameLabel">HpkeContext.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/hybrid/internal/HpkeContext.html#createAuthRecipientContext-byte:A-com.google.crypto.tink.hybrid.internal.HpkeKemPrivateKey-com.google.crypto.tink.hybrid.internal.HpkeKem-com.google.crypto.tink.hybrid.internal.HpkeKdf-com.google.crypto.tink.hybrid.internal.HpkeAead-byte:A-com.google.crypto.tink.hybrid.HpkePublicKey-">createAuthRecipientContext</a></span>(byte[]&nbsp;encapsulatedKey,
-                          <a href="../../../../../../com/google/crypto/tink/hybrid/internal/HpkeKemPrivateKey.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeKemPrivateKey</a>&nbsp;recipientPrivateKey,
-                          <a href="../../../../../../com/google/crypto/tink/hybrid/internal/HpkeKem.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeKem</a>&nbsp;kem,
-                          <a href="../../../../../../com/google/crypto/tink/hybrid/internal/HpkeKdf.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeKdf</a>&nbsp;kdf,
-                          <a href="../../../../../../com/google/crypto/tink/hybrid/internal/HpkeAead.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeAead</a>&nbsp;aead,
-                          byte[]&nbsp;info,
-                          <a href="../../../../../../com/google/crypto/tink/hybrid/HpkePublicKey.html" title="class in com.google.crypto.tink.hybrid">HpkePublicKey</a>&nbsp;senderPublicKey)</code>
-<div class="block">Creates HPKE recipient context with authentication according to KeySchedule() defined in
- https://www.rfc-editor.org/rfc/rfc9180.html#section-5.1.3.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/hybrid/internal/HpkeContext.html" title="class in com.google.crypto.tink.hybrid.internal">HpkeContext</a></code></td>
-<td class="colLast"><span class="typeNameLabel">HpkeContext.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/hybrid/internal/HpkeContext.html#createAuthSenderContext-com.google.crypto.tink.hybrid.HpkePublicKey-com.google.crypto.tink.hybrid.internal.HpkeKem-com.google.crypto.tink.hybrid.internal.HpkeKdf-com.google.crypto.tink.hybrid.internal.HpkeAead-byte:A-com.google.crypto.tink.hybrid.internal.HpkeKemPrivateKey-">createAuthSenderContext</a></span>(<a href="../../../../../../com/google/crypto/tink/hybrid/HpkePublicKey.html" title="class in com.google.crypto.tink.hybrid">HpkePublicKey</a>&nbsp;recipientPublicKey,
-                       <a href="../../../../../../com/google/crypto/tink/hybrid/internal/HpkeKem.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeKem</a>&nbsp;kem,
-                       <a href="../../../../../../com/google/crypto/tink/hybrid/internal/HpkeKdf.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeKdf</a>&nbsp;kdf,
-                       <a href="../../../../../../com/google/crypto/tink/hybrid/internal/HpkeAead.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeAead</a>&nbsp;aead,
-                       byte[]&nbsp;info,
-                       <a href="../../../../../../com/google/crypto/tink/hybrid/internal/HpkeKemPrivateKey.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeKemPrivateKey</a>&nbsp;senderPrivateKey)</code>
-<div class="block">Creates HPKE sender context with authentication according to KeySchedule() defined in
- https://www.rfc-editor.org/rfc/rfc9180.html#section-5.1.3.</div>
 </td>
 </tr>
 </tbody>
