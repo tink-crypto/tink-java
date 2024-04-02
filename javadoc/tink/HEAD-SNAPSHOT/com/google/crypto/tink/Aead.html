@@ -100,7 +100,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Known Implementing Classes:</dt>
-<dd><a href="../../../../com/google/crypto/tink/subtle/AesEaxJce.html" title="class in com.google.crypto.tink.subtle">AesEaxJce</a>, <a href="../../../../com/google/crypto/tink/subtle/AesGcmJce.html" title="class in com.google.crypto.tink.subtle">AesGcmJce</a>, <a href="../../../../com/google/crypto/tink/aead/subtle/AesGcmSiv.html" title="class in com.google.crypto.tink.aead.subtle">AesGcmSiv</a>, <a href="../../../../com/google/crypto/tink/subtle/ChaCha20Poly1305.html" title="class in com.google.crypto.tink.subtle">ChaCha20Poly1305</a>, <a href="../../../../com/google/crypto/tink/subtle/EncryptThenAuthenticate.html" title="class in com.google.crypto.tink.subtle">EncryptThenAuthenticate</a>, <a href="../../../../com/google/crypto/tink/aead/KmsEnvelopeAead.html" title="class in com.google.crypto.tink.aead">KmsEnvelopeAead</a>, <a href="../../../../com/google/crypto/tink/subtle/XChaCha20Poly1305.html" title="class in com.google.crypto.tink.subtle">XChaCha20Poly1305</a></dd>
+<dd><a href="../../../../com/google/crypto/tink/subtle/AesEaxJce.html" title="class in com.google.crypto.tink.subtle">AesEaxJce</a>, <a href="../../../../com/google/crypto/tink/subtle/AesGcmJce.html" title="class in com.google.crypto.tink.subtle">AesGcmJce</a>, <a href="../../../../com/google/crypto/tink/aead/subtle/AesGcmSiv.html" title="class in com.google.crypto.tink.aead.subtle">AesGcmSiv</a>, <a href="../../../../com/google/crypto/tink/subtle/ChaCha20Poly1305.html" title="class in com.google.crypto.tink.subtle">ChaCha20Poly1305</a>, <a href="../../../../com/google/crypto/tink/aead/internal/ChaCha20Poly1305Jce.html" title="class in com.google.crypto.tink.aead.internal">ChaCha20Poly1305Jce</a>, <a href="../../../../com/google/crypto/tink/subtle/EncryptThenAuthenticate.html" title="class in com.google.crypto.tink.subtle">EncryptThenAuthenticate</a>, <a href="../../../../com/google/crypto/tink/aead/KmsEnvelopeAead.html" title="class in com.google.crypto.tink.aead">KmsEnvelopeAead</a>, <a href="../../../../com/google/crypto/tink/aead/internal/LegacyFullAead.html" title="class in com.google.crypto.tink.aead.internal">LegacyFullAead</a>, <a href="../../../../com/google/crypto/tink/subtle/XChaCha20Poly1305.html" title="class in com.google.crypto.tink.subtle">XChaCha20Poly1305</a>, <a href="../../../../com/google/crypto/tink/aead/internal/XChaCha20Poly1305Jce.html" title="class in com.google.crypto.tink.aead.internal">XChaCha20Poly1305Jce</a></dd>
 </dl>
 <hr>
 <br>
@@ -201,19 +201,19 @@ var activeTableTab = "activeTableTab";
 <pre>byte[]&nbsp;decrypt(byte[]&nbsp;ciphertext,
                byte[]&nbsp;associatedData)
         throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block">Decrypts <code>ciphertext</code> with <code>associatedData</code> as associated authenticated data.
- The decryption verifies the authenticity and integrity of the associated data, but there are
- no guarantees wrt. secrecy of that data.</div>
+<div class="block">Decrypts <code>ciphertext</code> with <code>associatedData</code> as associated authenticated data. The
+ decryption verifies the authenticity and integrity of the associated data, but there are no
+ guarantees wrt. secrecy of that data.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>ciphertext</code> - the plaintext to be decrypted. It must be non-null.</dd>
-<dd><code>associatedData</code> - associated data to be authenticated.  For successful decryption
-                        it must be the same as associatedData used during encryption.
-                        Can be null, which is equivalent to an empty (zero-length) byte array.</dd>
+<dd><code>associatedData</code> - associated data to be authenticated. For successful decryption it must be
+     the same as associatedData used during encryption. Can be null, which is equivalent to an
+     empty (zero-length) byte array.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>resulting plaintext</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code> - if decryption fails. Decryption must fail if <code>ciphertext</code> is not correctly authenticated for the given <code>associatedData</code>.</dd>
 </dl>
 </li>
 </ul>
