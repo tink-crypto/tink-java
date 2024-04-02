@@ -226,7 +226,8 @@ implements <a href="../../../../../com/google/crypto/tink/Aead.html" title="inte
 <h4>KmsEnvelopeAead</h4>
 <pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
 public&nbsp;KmsEnvelopeAead(<a href="../../../../../com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto">KeyTemplate</a>&nbsp;dekTemplate,
-                                   <a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a>&nbsp;remote)</pre>
+                                   <a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a>&nbsp;remote)
+                            throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">Instead, call <code>KmsEnvelopeAead.create</code> as explained above.</span></div>
 <div class="block">Creates a new KmsEnvelopeAead.
 
@@ -239,6 +240,10 @@ public&nbsp;KmsEnvelopeAead(<a href="../../../../../com/google/crypto/tink/proto
  replace this with:
 
  <p><code>Aead aead = KmsEnvelopeAead.create(PredefinedAeadParameters.AES128_GCM, remote)</code></div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -319,21 +324,21 @@ public&nbsp;KmsEnvelopeAead(<a href="../../../../../com/google/crypto/tink/proto
                       byte[]&nbsp;associatedData)
                throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../com/google/crypto/tink/Aead.html#decrypt-byte:A-byte:A-">Aead</a></code></span></div>
-<div class="block">Decrypts <code>ciphertext</code> with <code>associatedData</code> as associated authenticated data.
- The decryption verifies the authenticity and integrity of the associated data, but there are
- no guarantees wrt. secrecy of that data.</div>
+<div class="block">Decrypts <code>ciphertext</code> with <code>associatedData</code> as associated authenticated data. The
+ decryption verifies the authenticity and integrity of the associated data, but there are no
+ guarantees wrt. secrecy of that data.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../com/google/crypto/tink/Aead.html#decrypt-byte:A-byte:A-">decrypt</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>ciphertext</code> - the plaintext to be decrypted. It must be non-null.</dd>
-<dd><code>associatedData</code> - associated data to be authenticated.  For successful decryption
-                        it must be the same as associatedData used during encryption.
-                        Can be null, which is equivalent to an empty (zero-length) byte array.</dd>
+<dd><code>associatedData</code> - associated data to be authenticated. For successful decryption it must be
+     the same as associatedData used during encryption. Can be null, which is equivalent to an
+     empty (zero-length) byte array.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>resulting plaintext</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code> - if decryption fails. Decryption must fail if <code>ciphertext</code> is not correctly authenticated for the given <code>associatedData</code>.</dd>
 </dl>
 </li>
 </ul>
