@@ -1,2 +1,2 @@
 """Version of the current release of Tink Java."""
-TINK_JAVA_VERSION_LABEL = "1.13.0"
+TINK_VERSION_LABEL = "1.13.0"
