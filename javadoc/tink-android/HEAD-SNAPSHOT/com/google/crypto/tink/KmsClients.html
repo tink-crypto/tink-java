@@ -49,7 +49,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../com/google/crypto/tink/KmsClient.html" title="interface in com.google.crypto.tink"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../com/google/crypto/tink/Mac.html" title="interface in com.google.crypto.tink"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../com/google/crypto/tink/LegacyKeysetSerialization.html" title="class in com.google.crypto.tink"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?com/google/crypto/tink/KmsClients.html" target="_top">Frames</a></li>
@@ -185,7 +185,14 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>add</h4>
 <pre>public static&nbsp;void&nbsp;add(<a href="../../../../com/google/crypto/tink/KmsClient.html" title="interface in com.google.crypto.tink">KmsClient</a>&nbsp;client)</pre>
-<div class="block">Adds a client to the list of known <a href="../../../../com/google/crypto/tink/KmsClient.html" title="interface in com.google.crypto.tink"><code>KmsClient</code></a>-objects.</div>
+<div class="block">Adds a client to the list of known <a href="../../../../com/google/crypto/tink/KmsClient.html" title="interface in com.google.crypto.tink"><code>KmsClient</code></a>-objects.
+
+ <p>This function will always add the <code>client</code> to a global list. So this function should
+ only be called on startup and not on every operation.
+
+ <p>It is often not necessary to use this function. For example, you can call <a href="../../../../com/google/crypto/tink/KmsClient.html#getAead-java.lang.String-"><code>KmsClient.getAead(java.lang.String)</code></a> to get a remote <a href="../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a>. Use this <a href="../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a> to encrypt a keyset with
+ <a href="../../../../com/google/crypto/tink/TinkProtoKeysetFormat.html#serializeEncryptedKeyset-com.google.crypto.tink.KeysetHandle-com.google.crypto.tink.Aead-byte:A-"><code>TinkProtoKeysetFormat.serializeEncryptedKeyset(com.google.crypto.tink.KeysetHandle, com.google.crypto.tink.Aead, byte[])</code></a>, or to create an envelope <a href="../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a>
+ using <a href="../../../../com/google/crypto/tink/aead/KmsEnvelopeAead.html#create-com.google.crypto.tink.aead.AeadParameters-com.google.crypto.tink.Aead-"><code>KmsEnvelopeAead.create(com.google.crypto.tink.aead.AeadParameters, com.google.crypto.tink.Aead)</code></a>.</div>
 </li>
 </ul>
 <a name="get-java.lang.String-">
@@ -199,7 +206,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="block">Returns the first <a href="../../../../com/google/crypto/tink/KmsClient.html" title="interface in com.google.crypto.tink"><code>KmsClient</code></a> registered with <a href="../../../../com/google/crypto/tink/KmsClients.html#add-com.google.crypto.tink.KmsClient-"><code>add(com.google.crypto.tink.KmsClient)</code></a> that supports <code>keyUri</code>.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code> - if cannot found any KMS clients that support <code>keyUri</code></dd>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code> - if no KMS clients can be found that support <code>keyUri</code></dd>
 </dl>
 </li>
 </ul>
@@ -254,7 +261,7 @@ public static&nbsp;<a href="../../../../com/google/crypto/tink/KmsClient.html" t
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../com/google/crypto/tink/KmsClient.html" title="interface in com.google.crypto.tink"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../com/google/crypto/tink/Mac.html" title="interface in com.google.crypto.tink"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../com/google/crypto/tink/LegacyKeysetSerialization.html" title="class in com.google.crypto.tink"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?com/google/crypto/tink/KmsClients.html" target="_top">Frames</a></li>
