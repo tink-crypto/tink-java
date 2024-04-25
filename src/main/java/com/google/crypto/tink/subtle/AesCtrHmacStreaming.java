@@ -179,6 +179,9 @@ public final class AesCtrHmacStreaming extends NonceBasedStreamingAead {
       throw new InvalidAlgorithmParameterException(
           "ikm too short, must be >= " + Math.max(16, keySizeInBytes));
     }
+    if (firstSegmentOffset < 0) {
+      throw new InvalidAlgorithmParameterException("firstSegmentOffset must not be negative");
+    }
     Validators.validateAesKeySize(keySizeInBytes);
     if (tagSizeInBytes < 10) {
       throw new InvalidAlgorithmParameterException("tag size too small " + tagSizeInBytes);

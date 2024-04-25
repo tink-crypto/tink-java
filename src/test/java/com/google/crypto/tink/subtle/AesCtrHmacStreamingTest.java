@@ -256,6 +256,22 @@ public class AesCtrHmacStreamingTest {
     testEncryptDecryptRandomAccess(16, 12, 256, 16, 440);
   }
 
+  @Test
+  public void testNegativeFirstSegmentOffset_throws() throws Exception {
+    byte[] ikm = Hex.decode("000102030405060708090a0b0c0d0e0f00112233445566778899aabbccddeeff");
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            new AesCtrHmacStreaming(
+                ikm,
+                "HmacSha256",
+                /* keySizeInBytes= */ 16,
+                "HmacSha256",
+                /* tagSizeInBytes= */ 12,
+                /* ciphertextSegmentSize= */ 4096,
+                /* firstSegmentOffset= */ -1));
+  }
+
   /**
    * One case that is sometimes problematic is writing single bytes to a stream. This test
    * constructs an OutputStream from a WritableByteChannel and tests whether encryption works on
