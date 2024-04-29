@@ -69,6 +69,18 @@ public final class AesSiv implements DeterministicAead {
         key.getKeyBytes().toByteArray(InsecureSecretKeyAccess.get()), key.getOutputPrefix());
   }
 
+  private static final ThreadLocal<Cipher> localAesCtrCipher =
+      new ThreadLocal<Cipher>() {
+        @Override
+        protected Cipher initialValue() {
+          try {
+            return EngineFactory.CIPHER.getInstance("AES/CTR/NoPadding");
+          } catch (GeneralSecurityException ex) {
+            throw new IllegalStateException(ex);
+          }
+        }
+      };
+
   private AesSiv(final byte[] key, Bytes outputPrefix) throws GeneralSecurityException {
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException(
@@ -132,7 +144,7 @@ public final class AesSiv implements DeterministicAead {
       throw new GeneralSecurityException("plaintext too long");
     }
 
-    Cipher aesCtr = EngineFactory.CIPHER.getInstance("AES/CTR/NoPadding");
+    Cipher aesCtr = localAesCtrCipher.get();
     byte[] computedIv = s2v(associatedData, plaintext);
     byte[] ivForJavaCrypto = computedIv.clone();
     ivForJavaCrypto[8] &= (byte) 0x7F; // 63th bit from the right
@@ -158,7 +170,7 @@ public final class AesSiv implements DeterministicAead {
       throw new GeneralSecurityException("Decryption failed (OutputPrefix mismatch).");
     }
 
-    Cipher aesCtr = EngineFactory.CIPHER.getInstance("AES/CTR/NoPadding");
+    Cipher aesCtr = localAesCtrCipher.get();
 
     byte[] expectedIv =
         Arrays.copyOfRange(

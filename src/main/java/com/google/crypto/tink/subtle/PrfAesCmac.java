@@ -48,11 +48,23 @@ public final class PrfAesCmac implements Prf {
   @SuppressWarnings("Immutable")
   private byte[] subKey2;
 
+  private static final ThreadLocal<Cipher> localAesCipher =
+      new ThreadLocal<Cipher>() {
+        @Override
+        protected Cipher initialValue() {
+          try {
+            return EngineFactory.CIPHER.getInstance("AES/ECB/NoPadding");
+          } catch (GeneralSecurityException ex) {
+            throw new IllegalStateException(ex);
+          }
+        }
+      };
+
   private static Cipher instance() throws GeneralSecurityException {
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException("Can not use AES-CMAC in FIPS-mode.");
     }
-    return EngineFactory.CIPHER.getInstance("AES/ECB/NoPadding");
+    return localAesCipher.get();
   }
 
   public PrfAesCmac(final byte[] key) throws GeneralSecurityException {
