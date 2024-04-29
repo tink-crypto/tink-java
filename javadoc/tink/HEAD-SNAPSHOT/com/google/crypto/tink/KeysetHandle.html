@@ -799,8 +799,10 @@ public static final&nbsp;<a href="../../../../com/google/crypto/tink/KeysetHandl
 <ul class="blockList">
 <li class="blockList">
 <h4>getPrimitive</h4>
-<pre>public&nbsp;&lt;P&gt;&nbsp;P&nbsp;getPrimitive(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;targetClassObject)
-                   throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<pre>@InlineMe(replacement="this.getPrimitive(RegistryConfiguration.get(), targetClassObject)",
+          imports="com.google.crypto.tink.RegistryConfiguration")
+public&nbsp;&lt;P&gt;&nbsp;P&nbsp;getPrimitive(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;targetClassObject)
+                                                                                                                                                                                throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
 <div class="block">Returns a primitive from this keyset, using the global registry to create resources creating
  the primitive.</div>
 <dl>
