@@ -18,7 +18,6 @@ java_library(
     srcs = ["HybridEncryptWrapper.java"],
     deps = [
         "//src/main/java/com/google/crypto/tink:hybrid_encrypt",
-        "//src/main/java/com/google/crypto/tink:primitive_wrapper",
         "//src/main/java/com/google/crypto/tink/hybrid/internal:legacy_full_hybrid_encrypt",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_util",
@@ -27,6 +26,7 @@ java_library(
         "//src/main/java/com/google/crypto/tink/internal:primitive_constructor",
         "//src/main/java/com/google/crypto/tink/internal:primitive_registry",
         "//src/main/java/com/google/crypto/tink/internal:primitive_set",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper",
         "//src/main/java/com/google/crypto/tink/monitoring:monitoring_client",
         "//src/main/java/com/google/crypto/tink/monitoring:monitoring_keyset_info",
     ],
@@ -38,7 +38,6 @@ java_library(
     deps = [
         "//src/main/java/com/google/crypto/tink:crypto_format",
         "//src/main/java/com/google/crypto/tink:hybrid_decrypt",
-        "//src/main/java/com/google/crypto/tink:primitive_wrapper",
         "//src/main/java/com/google/crypto/tink/hybrid/internal:legacy_full_hybrid_decrypt",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_util",
@@ -47,6 +46,7 @@ java_library(
         "//src/main/java/com/google/crypto/tink/internal:primitive_constructor",
         "//src/main/java/com/google/crypto/tink/internal:primitive_registry",
         "//src/main/java/com/google/crypto/tink/internal:primitive_set",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper",
         "//src/main/java/com/google/crypto/tink/monitoring:monitoring_client",
         "//src/main/java/com/google/crypto/tink/monitoring:monitoring_keyset_info",
     ],
@@ -336,7 +336,6 @@ android_library(
     srcs = ["HybridEncryptWrapper.java"],
     deps = [
         "//src/main/java/com/google/crypto/tink:hybrid_encrypt-android",
-        "//src/main/java/com/google/crypto/tink:primitive_wrapper-android",
         "//src/main/java/com/google/crypto/tink/hybrid/internal:legacy_full_hybrid_encrypt-android",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key-android",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_util-android",
@@ -345,6 +344,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink/internal:primitive_constructor-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_set-android",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper-android",
         "//src/main/java/com/google/crypto/tink/monitoring:monitoring_client-android",
         "//src/main/java/com/google/crypto/tink/monitoring:monitoring_keyset_info-android",
     ],
@@ -356,7 +356,6 @@ android_library(
     deps = [
         "//src/main/java/com/google/crypto/tink:crypto_format-android",
         "//src/main/java/com/google/crypto/tink:hybrid_decrypt-android",
-        "//src/main/java/com/google/crypto/tink:primitive_wrapper-android",
         "//src/main/java/com/google/crypto/tink/hybrid/internal:legacy_full_hybrid_decrypt-android",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key-android",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_util-android",
@@ -365,6 +364,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink/internal:primitive_constructor-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_set-android",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper-android",
         "//src/main/java/com/google/crypto/tink/monitoring:monitoring_client-android",
         "//src/main/java/com/google/crypto/tink/monitoring:monitoring_keyset_info-android",
     ],

@@ -32,6 +32,7 @@ import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveSet;
+import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.jwt.JwtMac;
 import com.google.crypto.tink.mac.MacConfig;
 import com.google.crypto.tink.mac.PredefinedMacParameters;

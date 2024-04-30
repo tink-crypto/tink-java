@@ -77,7 +77,6 @@ java_library(
     visibility = ["//visibility:public"],
     deps = [
         ":prf_set",
-        "//src/main/java/com/google/crypto/tink:primitive_wrapper",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_util",
         "//src/main/java/com/google/crypto/tink/internal:mutable_monitoring_registry",
@@ -85,6 +84,7 @@ java_library(
         "//src/main/java/com/google/crypto/tink/internal:primitive_constructor",
         "//src/main/java/com/google/crypto/tink/internal:primitive_registry",
         "//src/main/java/com/google/crypto/tink/internal:primitive_set",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper",
         "//src/main/java/com/google/crypto/tink/monitoring:monitoring_client",
         "//src/main/java/com/google/crypto/tink/monitoring:monitoring_keyset_info",
         "//src/main/java/com/google/crypto/tink/prf/internal:legacy_full_prf",
@@ -303,7 +303,6 @@ android_library(
     srcs = ["PrfSetWrapper.java"],
     deps = [
         ":prf_set-android",
-        "//src/main/java/com/google/crypto/tink:primitive_wrapper-android",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key-android",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_util-android",
         "//src/main/java/com/google/crypto/tink/internal:mutable_monitoring_registry-android",
@@ -311,6 +310,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink/internal:primitive_constructor-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_set-android",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper-android",
         "//src/main/java/com/google/crypto/tink/monitoring:monitoring_client-android",
         "//src/main/java/com/google/crypto/tink/monitoring:monitoring_keyset_info-android",
         "//src/main/java/com/google/crypto/tink/prf/internal:legacy_full_prf-android",

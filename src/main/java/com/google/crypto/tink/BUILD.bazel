@@ -74,18 +74,6 @@ android_library(
 )
 
 java_library(
-    name = "primitive_wrapper",
-    srcs = ["PrimitiveWrapper.java"],
-    deps = ["//src/main/java/com/google/crypto/tink/internal:primitive_set"],
-)
-
-android_library(
-    name = "primitive_wrapper-android",
-    srcs = ["PrimitiveWrapper.java"],
-    deps = ["//src/main/java/com/google/crypto/tink/internal:primitive_set-android"],
-)
-
-java_library(
     name = "kms_client",
     srcs = ["KmsClient.java"],
     deps = [":aead"],
@@ -387,7 +375,7 @@ java_library(
     srcs = ["Catalogue.java"],
     deps = [
         ":key_manager",
-        ":primitive_wrapper",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper",
     ],
 )
 
@@ -396,7 +384,7 @@ android_library(
     srcs = ["Catalogue.java"],
     deps = [
         ":key_manager-android",
-        ":primitive_wrapper-android",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper-android",
     ],
 )
 

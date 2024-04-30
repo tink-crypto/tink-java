@@ -27,6 +27,7 @@ import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveSet.Entry;
+import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.mac.AesCmacKey;
 import com.google.crypto.tink.mac.AesCmacParameters;

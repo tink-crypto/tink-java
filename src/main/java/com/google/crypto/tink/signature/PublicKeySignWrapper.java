@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink.signature;
 
-import com.google.crypto.tink.PrimitiveWrapper;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringUtil;
@@ -25,6 +24,7 @@ import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveSet;
+import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.monitoring.MonitoringClient;
 import com.google.crypto.tink.monitoring.MonitoringKeysetInfo;
 import com.google.crypto.tink.signature.internal.LegacyFullSign;

@@ -16,13 +16,13 @@
 
 package com.google.crypto.tink.streamingaead;
 
-import com.google.crypto.tink.PrimitiveWrapper;
 import com.google.crypto.tink.StreamingAead;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveSet;
+import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.streamingaead.internal.LegacyFullStreamingAead;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;

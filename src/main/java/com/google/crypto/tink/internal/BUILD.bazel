@@ -484,8 +484,8 @@ java_library(
     deps = [
         ":primitive_constructor",
         ":primitive_set",
+        ":primitive_wrapper",
         "//src/main/java/com/google/crypto/tink:key",
-        "//src/main/java/com/google/crypto/tink:primitive_wrapper",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
@@ -496,8 +496,8 @@ android_library(
     deps = [
         ":primitive_constructor-android",
         ":primitive_set-android",
+        ":primitive_wrapper-android",
         "//src/main/java/com/google/crypto/tink:key-android",
-        "//src/main/java/com/google/crypto/tink:primitive_wrapper-android",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
@@ -521,8 +521,8 @@ android_library(
         ":primitive_constructor-android",
         ":primitive_registry-android",
         ":primitive_set-android",
+        ":primitive_wrapper-android",
         "//src/main/java/com/google/crypto/tink:key-android",
-        "//src/main/java/com/google/crypto/tink:primitive_wrapper-android",
     ],
 )
 
@@ -533,8 +533,8 @@ java_library(
         ":primitive_constructor",
         ":primitive_registry",
         ":primitive_set",
+        ":primitive_wrapper",
         "//src/main/java/com/google/crypto/tink:key",
-        "//src/main/java/com/google/crypto/tink:primitive_wrapper",
     ],
 )
 
@@ -884,4 +884,16 @@ java_library(
     name = "output_prefix_util",
     srcs = ["OutputPrefixUtil.java"],
     deps = ["//src/main/java/com/google/crypto/tink/util:bytes"],
+)
+
+android_library(
+    name = "primitive_wrapper-android",
+    srcs = ["PrimitiveWrapper.java"],
+    deps = [":primitive_set-android"],
+)
+
+java_library(
+    name = "primitive_wrapper",
+    srcs = ["PrimitiveWrapper.java"],
+    deps = [":primitive_set"],
 )

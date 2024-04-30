@@ -14,9 +14,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package com.google.crypto.tink;
+package com.google.crypto.tink.internal;
 
-import com.google.crypto.tink.internal.PrimitiveSet;
 import java.security.GeneralSecurityException;
 
 /**
