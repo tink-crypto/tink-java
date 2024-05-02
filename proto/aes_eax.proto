@@ -37,5 +37,5 @@ message AesEaxKeyFormat {
 message AesEaxKey {
   uint32 version = 1;
   AesEaxParams params = 2;
-  bytes key_value = 3;
+  bytes key_value = 3 [ctype = STRING_PIECE];
 }
