@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var methods = {"i0":42,"i1":42};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -111,58 +111,20 @@ var activeTableTab = "activeTableTab";
 <dd><a href="../../../../../../com/google/crypto/tink/KeysetWriter.html" title="interface in com.google.crypto.tink">KeysetWriter</a></dd>
 </dl>
 <hr>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
+<div class="block"><span class="deprecationComment">We do not expect anyone to use this class. Please file an issue on
+     github.com/tink-crypto/tink-java/ if you need to replace this.</span></div>
+</div>
 <br>
-<pre>public final class <span class="typeNameLabel">SharedPrefKeysetWriter</span>
+<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
+public final class <span class="typeNameLabel">SharedPrefKeysetWriter</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
 implements <a href="../../../../../../com/google/crypto/tink/KeysetWriter.html" title="interface in com.google.crypto.tink">KeysetWriter</a></pre>
-<div class="block">A <a href="../../../../../../com/google/crypto/tink/KeysetWriter.html" title="interface in com.google.crypto.tink"><code>KeysetWriter</code></a> that can write keysets to private shared preferences on Android.
-
- <p>We do not recommend new uses of this class. Instead, if you want to store a Tink keyset in
- shared preferences, serialize the keyset using TinkProtoKeysetFormat, and write it hex-encoded
- into your SharedPreferences manually.
-
- <p>For example, to write an encrypted keyset to the shared preferences, you can replace this:
-
- <pre><code>
- keysetHandle.write(
-     new SharedPrefKeysetWriter(
-         ApplicationProvider.getApplicationContext(), keysetName, null),
-     keysetEncryptionAead);
- </code></pre>
-
- <p>with this:
-
- <pre><code>
- byte[] encryptedKeyset =
-     TinkProtoKeysetFormat.serializeEncryptedKeyset(
-         handle, keysetEncryptionAead, new byte[0]);
- SharedPreferences.Editor editor =
-     PreferenceManager.getDefaultSharedPreferences(
-             ApplicationProvider.getApplicationContext().getApplicationContext())
-         .edit();
- boolean success = editor.putString(keysetName, Hex.encode(encryptedKeyset)).commit();
- </code></pre>
-
- <p>and to write an unencrypted keyset to the shared preferences, you can replace this:
-
- <pre><code>
- CleartextKeysetHandle.write(
-     handle,
-     new SharedPrefKeysetWriter(
-         ApplicationProvider.getApplicationContext(), keysetName, null));
- </code></pre>
-
- <p>with this:
-
- <pre><code>
- byte[] serializedKeyset =
-     TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
- SharedPreferences.Editor editor =
-     PreferenceManager.getDefaultSharedPreferences(
-         ApplicationProvider.getApplicationContext().getApplicationContext())
-     .edit();
- boolean success = editor.putString(keysetName, Hex.encode(serializedKeyset)).commit();
- </code></pre></div>
+<div class="block">A <a href="../../../../../../com/google/crypto/tink/KeysetWriter.html" title="interface in com.google.crypto.tink"><code>KeysetWriter</code></a> that can write keysets to private shared preferences on Android.</div>
+<dl>
+<dt><span class="simpleTagLabel">Since:</span></dt>
+<dd>1.0.0</dd>
+</dl>
 </li>
 </ul>
 </div>
@@ -184,6 +146,7 @@ implements <a href="../../../../../../com/google/crypto/tink/KeysetWriter.html" 
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/integration/android/SharedPrefKeysetWriter.html#SharedPrefKeysetWriter-android.content.Context-java.lang.String-java.lang.String-">SharedPrefKeysetWriter</a></span>(<a href="https://developer.android.com/reference/android/content/Context.html?is-external=true" title="class or interface in android.content">Context</a>&nbsp;context,
                       <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;keysetName,
                       <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;prefFileName)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">Creates a <code>KeysetReader</code> that hex-encodes and writes keysets to the preference
  name <code>keysetName</code> in the private shared preferences file <code>prefFileName</code>.</div>
 </td>
@@ -198,7 +161,7 @@ implements <a href="../../../../../../com/google/crypto/tink/KeysetWriter.html" 
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t6" class="tableTab"><span><a href="javascript:show(32);">Deprecated Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
@@ -206,12 +169,14 @@ implements <a href="../../../../../../com/google/crypto/tink/KeysetWriter.html" 
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/integration/android/SharedPrefKeysetWriter.html#write-com.google.crypto.tink.proto.EncryptedKeyset-">write</a></span>(<a href="../../../../../../com/google/crypto/tink/proto/EncryptedKeyset.html" title="class in com.google.crypto.tink.proto">EncryptedKeyset</a>&nbsp;keyset)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">Tries to write an <a href="../../../../../../com/google/crypto/tink/proto/EncryptedKeyset.html" title="class in com.google.crypto.tink.proto"><code>EncryptedKeyset</code></a> to some storage system.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/integration/android/SharedPrefKeysetWriter.html#write-com.google.crypto.tink.proto.Keyset-">write</a></span>(<a href="../../../../../../com/google/crypto/tink/proto/Keyset.html" title="class in com.google.crypto.tink.proto">Keyset</a>&nbsp;keyset)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">Tries to write a <a href="../../../../../../com/google/crypto/tink/proto/Keyset.html" title="class in com.google.crypto.tink.proto"><code>Keyset</code></a> to some storage system.</div>
 </td>
 </tr>
@@ -246,6 +211,7 @@ implements <a href="../../../../../../com/google/crypto/tink/KeysetWriter.html" 
 <pre>public&nbsp;SharedPrefKeysetWriter(<a href="https://developer.android.com/reference/android/content/Context.html?is-external=true" title="class or interface in android.content">Context</a>&nbsp;context,
                               <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;keysetName,
                               <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;prefFileName)</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">Creates a <code>KeysetReader</code> that hex-encodes and writes keysets to the preference
  name <code>keysetName</code> in the private shared preferences file <code>prefFileName</code>.
 
@@ -273,6 +239,7 @@ implements <a href="../../../../../../com/google/crypto/tink/KeysetWriter.html" 
 <h4>write</h4>
 <pre>public&nbsp;void&nbsp;write(<a href="../../../../../../com/google/crypto/tink/proto/Keyset.html" title="class in com.google.crypto.tink.proto">Keyset</a>&nbsp;keyset)
            throws <a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/google/crypto/tink/KeysetWriter.html#write-com.google.crypto.tink.proto.Keyset-">KeysetWriter</a></code></span></div>
 <div class="block">Tries to write a <a href="../../../../../../com/google/crypto/tink/proto/Keyset.html" title="class in com.google.crypto.tink.proto"><code>Keyset</code></a> to some storage system.</div>
 <dl>
@@ -291,6 +258,7 @@ implements <a href="../../../../../../com/google/crypto/tink/KeysetWriter.html" 
 <h4>write</h4>
 <pre>public&nbsp;void&nbsp;write(<a href="../../../../../../com/google/crypto/tink/proto/EncryptedKeyset.html" title="class in com.google.crypto.tink.proto">EncryptedKeyset</a>&nbsp;keyset)
            throws <a href="https://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/google/crypto/tink/KeysetWriter.html#write-com.google.crypto.tink.proto.EncryptedKeyset-">KeysetWriter</a></code></span></div>
 <div class="block">Tries to write an <a href="../../../../../../com/google/crypto/tink/proto/EncryptedKeyset.html" title="class in com.google.crypto.tink.proto"><code>EncryptedKeyset</code></a> to some storage system.</div>
 <dl>
