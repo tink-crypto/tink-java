@@ -477,3 +477,45 @@ java_library(
         "//src/main/java/com/google/crypto/tink/internal:tink_bug_exception",
     ],
 )
+
+android_library(
+    name = "mac_configuration_v0-android",
+    srcs = ["MacConfigurationV0.java"],
+    deps = [
+        ":aes_cmac_key-android",
+        ":chunked_mac-android",
+        ":chunked_mac_wrapper-android",
+        ":hmac_key-android",
+        ":mac_wrapper-android",
+        "//src/main/java/com/google/crypto/tink:configuration-android",
+        "//src/main/java/com/google/crypto/tink:mac-android",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util-android",
+        "//src/main/java/com/google/crypto/tink/internal:internal_configuration-android",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_constructor-android",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_registry-android",
+        "//src/main/java/com/google/crypto/tink/mac/internal:chunked_aes_cmac_impl-android",
+        "//src/main/java/com/google/crypto/tink/mac/internal:chunked_hmac_impl-android",
+        "//src/main/java/com/google/crypto/tink/subtle:prf_mac-android",
+    ],
+)
+
+java_library(
+    name = "mac_configuration_v0",
+    srcs = ["MacConfigurationV0.java"],
+    deps = [
+        ":aes_cmac_key",
+        ":chunked_mac",
+        ":chunked_mac_wrapper",
+        ":hmac_key",
+        ":mac_wrapper",
+        "//src/main/java/com/google/crypto/tink:configuration",
+        "//src/main/java/com/google/crypto/tink:mac",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
+        "//src/main/java/com/google/crypto/tink/internal:internal_configuration",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_constructor",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_registry",
+        "//src/main/java/com/google/crypto/tink/mac/internal:chunked_aes_cmac_impl",
+        "//src/main/java/com/google/crypto/tink/mac/internal:chunked_hmac_impl",
+        "//src/main/java/com/google/crypto/tink/subtle:prf_mac",
+    ],
+)
