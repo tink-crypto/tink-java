@@ -94,39 +94,27 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><a href="../../../../../com/google/crypto/tink/internal/MutableKeyCreationRegistry.KeyCreator.html" title="interface in com.google.crypto.tink.internal">MutableKeyCreationRegistry.KeyCreator</a>&lt;ParametersT extends <a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a>&gt;</td>
-<td class="colLast">
-<div class="block">A class to create key objects from parameters with given randomness.</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><a href="../../../../../com/google/crypto/tink/internal/MutableKeyDerivationRegistry.InsecureKeyCreator.html" title="interface in com.google.crypto.tink.internal">MutableKeyDerivationRegistry.InsecureKeyCreator</a>&lt;ParametersT extends <a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a>&gt;</td>
 <td class="colLast">
 <div class="block">A class to create key objects from parameters with given randomness.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../../com/google/crypto/tink/internal/ParametersParser.ParametersParsingFunction.html" title="interface in com.google.crypto.tink.internal">ParametersParser.ParametersParsingFunction</a>&lt;SerializationT extends <a href="../../../../../com/google/crypto/tink/internal/Serialization.html" title="interface in com.google.crypto.tink.internal">Serialization</a>&gt;</td>
 <td class="colLast">
 <div class="block">A function which parses a Parameters object.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../../com/google/crypto/tink/internal/ParametersSerializer.ParametersSerializationFunction.html" title="interface in com.google.crypto.tink.internal">ParametersSerializer.ParametersSerializationFunction</a>&lt;ParametersT extends <a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a>,SerializationT extends <a href="../../../../../com/google/crypto/tink/internal/Serialization.html" title="interface in com.google.crypto.tink.internal">Serialization</a>&gt;</td>
 <td class="colLast">
 <div class="block">A function which serializes a Parameters object.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveConstructor.PrimitiveConstructionFunction.html" title="interface in com.google.crypto.tink.internal">PrimitiveConstructor.PrimitiveConstructionFunction</a>&lt;KeyT extends <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>,PrimitiveT&gt;</td>
 <td class="colLast">
 <div class="block">A function which creates a Primitive object.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="interface in com.google.crypto.tink.internal">PrimitiveWrapper</a>&lt;B,P&gt;</td>
-<td class="colLast">
-<div class="block">Basic interface for wrapping a primitive.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -217,40 +205,41 @@
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><a href="../../../../../com/google/crypto/tink/internal/KeyManagerRegistry.html" title="class in com.google.crypto.tink.internal">KeyManagerRegistry</a></td>
-<td class="colLast">
-<div class="block">An internal API to register KeyManagers.</div>
-</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><a href="../../../../../com/google/crypto/tink/internal/KeyParser.html" title="class in com.google.crypto.tink.internal">KeyParser</a>&lt;SerializationT extends <a href="../../../../../com/google/crypto/tink/internal/Serialization.html" title="interface in com.google.crypto.tink.internal">Serialization</a>&gt;</td>
 <td class="colLast">
 <div class="block">Parses <code>Serialization</code> objects into <code>Key</code> objects of a certain kind.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../../com/google/crypto/tink/internal/KeySerializer.html" title="class in com.google.crypto.tink.internal">KeySerializer</a>&lt;KeyT extends <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>,SerializationT extends <a href="../../../../../com/google/crypto/tink/internal/Serialization.html" title="interface in com.google.crypto.tink.internal">Serialization</a>&gt;</td>
 <td class="colLast">
 <div class="block">Serializes <code>Key</code> objects into <code>Serialization</code> objects of a certain kind.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../../com/google/crypto/tink/internal/KeyStatusTypeProtoConverter.html" title="class in com.google.crypto.tink.internal">KeyStatusTypeProtoConverter</a></td>
 <td class="colLast">
 <div class="block">Util functions to facilitate conversion between the <code>KeyHandle.KeyStatusType</code> enum and
  <a href="../../../../../com/google/crypto/tink/tinkkey/KeyHandle.KeyStatusType.html" title="enum in com.google.crypto.tink.tinkkey"><code>KeyHandle.KeyStatusType</code></a> proto.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../../com/google/crypto/tink/internal/KeyTemplateProtoConverter.html" title="class in com.google.crypto.tink.internal">KeyTemplateProtoConverter</a></td>
 <td class="colLast">
 <div class="block">KeyTemplateProtoConverter converts KeyTemplate to and from the binary proto format.</div>
 </td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><a href="../../../../../com/google/crypto/tink/internal/LegacyKeyManagerImpl.html" title="class in com.google.crypto.tink.internal">LegacyKeyManagerImpl</a>&lt;P&gt;</td>
+<tr class="rowColor">
+<td class="colFirst"><a href="../../../../../com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal">KeyTypeManager</a>&lt;KeyProtoT extends com.google.protobuf.MessageLite&gt;</td>
 <td class="colLast">
-<div class="block">A composed KeyManager implements a KeyManager by accessing the internal specific registries.</div>
+<div class="block">An object which collects all the operations which one can do on for a single key type, identified
+ by a single KeyProto.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../../../../com/google/crypto/tink/internal/KeyTypeManager.KeyFactory.html" title="class in com.google.crypto.tink.internal">KeyTypeManager.KeyFactory</a>&lt;KeyFormatProtoT extends com.google.protobuf.MessageLite,KeyProtoT extends com.google.protobuf.MessageLite&gt;</td>
+<td class="colLast">
+<div class="block">A <code>KeyFactory</code> creates new keys from a given KeyFormat.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -272,45 +261,33 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><a href="../../../../../com/google/crypto/tink/internal/MutableKeyCreationRegistry.html" title="class in com.google.crypto.tink.internal">MutableKeyCreationRegistry</a></td>
-<td class="colLast">
-<div class="block">Stores methods to create <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink"><code>Key</code></a> objects from <a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink"><code>Parameters</code></a> with new randomness.</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><a href="../../../../../com/google/crypto/tink/internal/MutableKeyDerivationRegistry.html" title="class in com.google.crypto.tink.internal">MutableKeyDerivationRegistry</a></td>
 <td class="colLast">
 <div class="block">Stores methods to create <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink"><code>Key</code></a> objects from <a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink"><code>Parameters</code></a> with fixed randomness.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../../com/google/crypto/tink/internal/MutableMonitoringRegistry.html" title="class in com.google.crypto.tink.internal">MutableMonitoringRegistry</a></td>
 <td class="colLast">
 <div class="block">A Registry for MonitoringClient.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../../com/google/crypto/tink/internal/MutableParametersRegistry.html" title="class in com.google.crypto.tink.internal">MutableParametersRegistry</a></td>
 <td class="colLast">
 <div class="block">A container for the global parameters values.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../../com/google/crypto/tink/internal/MutablePrimitiveRegistry.html" title="class in com.google.crypto.tink.internal">MutablePrimitiveRegistry</a></td>
 <td class="colLast">
 <div class="block">A Mutable version of the <a href="../../../../../com/google/crypto/tink/internal/PrimitiveRegistry.html" title="class in com.google.crypto.tink.internal"><code>PrimitiveRegistry</code></a>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../../com/google/crypto/tink/internal/MutableSerializationRegistry.html" title="class in com.google.crypto.tink.internal">MutableSerializationRegistry</a></td>
 <td class="colLast">
 <div class="block">A Mutable version of the <a href="../../../../../com/google/crypto/tink/internal/SerializationRegistry.html" title="class in com.google.crypto.tink.internal"><code>SerializationRegistry</code></a>.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><a href="../../../../../com/google/crypto/tink/internal/OutputPrefixUtil.html" title="class in com.google.crypto.tink.internal">OutputPrefixUtil</a></td>
-<td class="colLast">
-<div class="block">Convenience functions that deal with output prefix.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -351,22 +328,10 @@
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.html" title="class in com.google.crypto.tink.internal">PrimitiveSet</a>&lt;P&gt;</td>
+<td class="colFirst"><a href="../../../../../com/google/crypto/tink/internal/PrivateKeyTypeManager.html" title="class in com.google.crypto.tink.internal">PrivateKeyTypeManager</a>&lt;KeyProtoT extends com.google.protobuf.MessageLite,PublicKeyProtoT extends com.google.protobuf.MessageLite&gt;</td>
 <td class="colLast">
-<div class="block">A container class for a set of primitives -- implementations of cryptographic primitives offered
- by Tink.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html" title="class in com.google.crypto.tink.internal">PrimitiveSet.Builder</a>&lt;P&gt;</td>
-<td class="colLast">
-<div class="block">Builds an immutable PrimitiveSet.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Entry.html" title="class in com.google.crypto.tink.internal">PrimitiveSet.Entry</a>&lt;P&gt;</td>
-<td class="colLast">
-<div class="block">A single entry in the set.</div>
+<div class="block">A PrivateKeyManager is like an <a href="../../../../../com/google/crypto/tink/internal/KeyTypeManager.html" title="class in com.google.crypto.tink.internal"><code>KeyTypeManager</code></a>, but additionally has a method to create a
+ public key.</div>
 </td>
 </tr>
 <tr class="altColor">
