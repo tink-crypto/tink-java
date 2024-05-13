@@ -351,12 +351,10 @@ public final class AndroidKeysetManager {
         throw new GeneralSecurityException("cannot read or generate keyset");
       }
 
-      KeysetManager manager = KeysetManager.withEmptyKeyset().add(keyTemplate);
-      int keyId = manager.getKeysetHandle().getKeysetInfo().getKeyInfo(0).getKeyId();
-      manager = manager.setPrimary(keyId);
+      KeysetHandle keysetHandle = KeysetHandle.generateNew(keyTemplate);
       KeysetWriter writer = new SharedPrefKeysetWriter(context, keysetName, prefFileName);
-      write(manager.getKeysetHandle(), writer, masterAead);
-      return manager;
+      write(keysetHandle, writer, masterAead);
+      return KeysetManager.withKeysetHandle(keysetHandle);
     }
 
     @SuppressWarnings("UnusedException")
