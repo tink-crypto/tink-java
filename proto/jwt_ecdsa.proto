@@ -52,7 +52,7 @@ message JwtEcdsaPrivateKey {
   uint32 version = 1;
   JwtEcdsaPublicKey public_key = 2;
   // Unsigned big integer in bigendian representation.
-  bytes key_value = 3;
+  bytes key_value = 3 [ctype = STRING_PIECE];
 }
 
 message JwtEcdsaKeyFormat {
