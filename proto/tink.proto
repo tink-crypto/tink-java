@@ -32,10 +32,10 @@ option objc_class_prefix = "TINKPB";
 //
 //   type.googleapis.com/packagename.messagename
 //
-// For example, for an HMAC key defined in proto google.cloud.tink.HmacKey
+// For example, for an HMAC key defined in proto google.crypto.tink.HmacKey
 // the value of type_url is:
 //
-//   type.googleapis.com/google.cloud.tink.HmacKey
+//   type.googleapis.com/google.crypto.tink.HmacKey
 //
 // For each type_url, in addition to the *Key proto, there exist two
 // related structures:
