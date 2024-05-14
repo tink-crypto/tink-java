@@ -20,9 +20,9 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.KeyStatus;
-import com.google.crypto.tink.monitoring.MonitoringAnnotations;
-import com.google.crypto.tink.monitoring.MonitoringClient;
-import com.google.crypto.tink.monitoring.MonitoringKeysetInfo;
+import com.google.crypto.tink.internal.MonitoringAnnotations;
+import com.google.crypto.tink.internal.MonitoringClient;
+import com.google.crypto.tink.internal.MonitoringKeysetInfo;
 import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;

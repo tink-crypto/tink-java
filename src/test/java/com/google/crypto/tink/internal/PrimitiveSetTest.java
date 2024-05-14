@@ -29,7 +29,6 @@ import com.google.crypto.tink.aead.AesGcmKey;
 import com.google.crypto.tink.aead.PredefinedAeadParameters;
 import com.google.crypto.tink.mac.HmacKey;
 import com.google.crypto.tink.mac.HmacKeyManager;
-import com.google.crypto.tink.monitoring.MonitoringAnnotations;
 import com.google.crypto.tink.proto.HashType;
 import com.google.crypto.tink.proto.HmacParams;
 import com.google.crypto.tink.proto.KeyData;

@@ -16,8 +16,6 @@
 
 package com.google.crypto.tink.internal;
 
-import com.google.crypto.tink.monitoring.MonitoringClient;
-import com.google.crypto.tink.monitoring.MonitoringKeysetInfo;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**

@@ -24,9 +24,9 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import com.google.crypto.tink.config.TinkConfig;
+import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
-import com.google.crypto.tink.monitoring.MonitoringAnnotations;
 import com.google.crypto.tink.proto.Keyset;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

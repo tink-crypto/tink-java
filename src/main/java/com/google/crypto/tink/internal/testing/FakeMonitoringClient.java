@@ -16,8 +16,8 @@
 
 package com.google.crypto.tink.internal.testing;
 
-import com.google.crypto.tink.monitoring.MonitoringClient;
-import com.google.crypto.tink.monitoring.MonitoringKeysetInfo;
+import com.google.crypto.tink.internal.MonitoringClient;
+import com.google.crypto.tink.internal.MonitoringKeysetInfo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;

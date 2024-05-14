@@ -76,6 +76,8 @@ java_library(
         "//src/main/java/com/google/crypto/tink:deterministic_aead",
         "//src/main/java/com/google/crypto/tink/daead/internal:legacy_full_deterministic_aead",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_client",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_keyset_info",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_util",
         "//src/main/java/com/google/crypto/tink/internal:mutable_monitoring_registry",
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry",
@@ -83,8 +85,6 @@ java_library(
         "//src/main/java/com/google/crypto/tink/internal:primitive_registry",
         "//src/main/java/com/google/crypto/tink/internal:primitive_set",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper",
-        "//src/main/java/com/google/crypto/tink/monitoring:monitoring_client",
-        "//src/main/java/com/google/crypto/tink/monitoring:monitoring_keyset_info",
     ],
 )
 
@@ -96,6 +96,8 @@ android_library(
         "//src/main/java/com/google/crypto/tink:deterministic_aead-android",
         "//src/main/java/com/google/crypto/tink/daead/internal:legacy_full_deterministic_aead-android",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key-android",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_client-android",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_keyset_info-android",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_util-android",
         "//src/main/java/com/google/crypto/tink/internal:mutable_monitoring_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry-android",
@@ -103,8 +105,6 @@ android_library(
         "//src/main/java/com/google/crypto/tink/internal:primitive_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_set-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper-android",
-        "//src/main/java/com/google/crypto/tink/monitoring:monitoring_client-android",
-        "//src/main/java/com/google/crypto/tink/monitoring:monitoring_keyset_info-android",
     ],
 )
 

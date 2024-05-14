@@ -18,6 +18,8 @@ package com.google.crypto.tink.hybrid;
 import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.hybrid.internal.LegacyFullHybridEncrypt;
 import com.google.crypto.tink.internal.LegacyProtoKey;
+import com.google.crypto.tink.internal.MonitoringClient;
+import com.google.crypto.tink.internal.MonitoringKeysetInfo;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
@@ -25,8 +27,6 @@ import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
-import com.google.crypto.tink.monitoring.MonitoringClient;
-import com.google.crypto.tink.monitoring.MonitoringKeysetInfo;
 import java.security.GeneralSecurityException;
 
 /**

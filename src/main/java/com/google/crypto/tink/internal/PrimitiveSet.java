@@ -19,7 +19,6 @@ package com.google.crypto.tink.internal;
 import com.google.crypto.tink.CryptoFormat;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
-import com.google.crypto.tink.monitoring.MonitoringAnnotations;
 import com.google.crypto.tink.proto.KeyStatusType;
 import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.proto.OutputPrefixType;

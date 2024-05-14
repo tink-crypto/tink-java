@@ -20,10 +20,10 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.crypto.tink.aead.AesGcmKey;
 import com.google.crypto.tink.aead.PredefinedAeadParameters;
+import com.google.crypto.tink.internal.MonitoringAnnotations;
+import com.google.crypto.tink.internal.MonitoringKeysetInfo;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.PrimitiveSet;
-import com.google.crypto.tink.monitoring.MonitoringAnnotations;
-import com.google.crypto.tink.monitoring.MonitoringKeysetInfo;
 import com.google.crypto.tink.proto.KeyStatusType;
 import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.proto.OutputPrefixType;

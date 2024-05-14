@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package com.google.crypto.tink.monitoring;
+package com.google.crypto.tink.internal;
 
 import com.google.crypto.tink.annotations.Alpha;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
