@@ -38,7 +38,7 @@ public final class MutableKeyCreationRegistry {
         throws GeneralSecurityException;
   }
 
-  private static LegacyProtoKey createProtoKeyFromProtoParmaeters(
+  private static LegacyProtoKey createProtoKeyFromProtoParameters(
       LegacyProtoParameters parameters, @Nullable Integer idRequirement)
       throws GeneralSecurityException {
     KeyTemplate keyTemplate = parameters.getSerialization().getKeyTemplate();
@@ -60,7 +60,7 @@ public final class MutableKeyCreationRegistry {
 
   @SuppressWarnings("InlineLambdaConstant") // We need a correct Object#equals in registration.
   private static final MutableKeyCreationRegistry.KeyCreator<LegacyProtoParameters>
-      LEGACY_PROTO_KEY_CREATOR = MutableKeyCreationRegistry::createProtoKeyFromProtoParmaeters;
+      LEGACY_PROTO_KEY_CREATOR = MutableKeyCreationRegistry::createProtoKeyFromProtoParameters;
 
   private static MutableKeyCreationRegistry newRegistryWithLegacyFallback() {
     MutableKeyCreationRegistry registry = new MutableKeyCreationRegistry();
