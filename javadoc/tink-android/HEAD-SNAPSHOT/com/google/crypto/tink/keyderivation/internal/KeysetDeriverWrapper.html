@@ -108,13 +108,13 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd><a href="../../../../../../com/google/crypto/tink/PrimitiveWrapper.html" title="interface in com.google.crypto.tink">PrimitiveWrapper</a>&lt;<a href="../../../../../../com/google/crypto/tink/keyderivation/internal/KeyDeriver.html" title="interface in com.google.crypto.tink.keyderivation.internal">KeyDeriver</a>,<a href="../../../../../../com/google/crypto/tink/keyderivation/KeysetDeriver.html" title="interface in com.google.crypto.tink.keyderivation">KeysetDeriver</a>&gt;</dd>
+<dd><a href="../../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="interface in com.google.crypto.tink.internal">PrimitiveWrapper</a>&lt;<a href="../../../../../../com/google/crypto/tink/keyderivation/internal/KeyDeriver.html" title="interface in com.google.crypto.tink.keyderivation.internal">KeyDeriver</a>,<a href="../../../../../../com/google/crypto/tink/keyderivation/KeysetDeriver.html" title="interface in com.google.crypto.tink.keyderivation">KeysetDeriver</a>&gt;</dd>
 </dl>
 <hr>
 <br>
 <pre>public final class <span class="typeNameLabel">KeysetDeriverWrapper</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
-implements <a href="../../../../../../com/google/crypto/tink/PrimitiveWrapper.html" title="interface in com.google.crypto.tink">PrimitiveWrapper</a>&lt;<a href="../../../../../../com/google/crypto/tink/keyderivation/internal/KeyDeriver.html" title="interface in com.google.crypto.tink.keyderivation.internal">KeyDeriver</a>,<a href="../../../../../../com/google/crypto/tink/keyderivation/KeysetDeriver.html" title="interface in com.google.crypto.tink.keyderivation">KeysetDeriver</a>&gt;</pre>
+implements <a href="../../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="interface in com.google.crypto.tink.internal">PrimitiveWrapper</a>&lt;<a href="../../../../../../com/google/crypto/tink/keyderivation/internal/KeyDeriver.html" title="interface in com.google.crypto.tink.keyderivation.internal">KeyDeriver</a>,<a href="../../../../../../com/google/crypto/tink/keyderivation/KeysetDeriver.html" title="interface in com.google.crypto.tink.keyderivation">KeysetDeriver</a>&gt;</pre>
 </li>
 </ul>
 </div>
@@ -187,7 +187,7 @@ implements <a href="../../../../../../com/google/crypto/tink/PrimitiveWrapper.ht
 <h4>wrap</h4>
 <pre>public&nbsp;<a href="../../../../../../com/google/crypto/tink/keyderivation/KeysetDeriver.html" title="interface in com.google.crypto.tink.keyderivation">KeysetDeriver</a>&nbsp;wrap(<a href="../../../../../../com/google/crypto/tink/internal/PrimitiveSet.html" title="class in com.google.crypto.tink.internal">PrimitiveSet</a>&lt;<a href="../../../../../../com/google/crypto/tink/keyderivation/internal/KeyDeriver.html" title="interface in com.google.crypto.tink.keyderivation.internal">KeyDeriver</a>&gt;&nbsp;primitiveSet)
                    throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/google/crypto/tink/PrimitiveWrapper.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-">PrimitiveWrapper</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-">PrimitiveWrapper</a></code></span></div>
 <div class="block">Wraps a <code>PrimitiveSet</code> and returns a single instance.
 
  <p> This method gets called when a new primitive is created. <code>primitiveSet</code> is immutable.
@@ -195,7 +195,7 @@ implements <a href="../../../../../../com/google/crypto/tink/PrimitiveWrapper.ht
  This has to be implemented when a new primitive type is added.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/google/crypto/tink/PrimitiveWrapper.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-">wrap</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/google/crypto/tink/PrimitiveWrapper.html" title="interface in com.google.crypto.tink">PrimitiveWrapper</a>&lt;<a href="../../../../../../com/google/crypto/tink/keyderivation/internal/KeyDeriver.html" title="interface in com.google.crypto.tink.keyderivation.internal">KeyDeriver</a>,<a href="../../../../../../com/google/crypto/tink/keyderivation/KeysetDeriver.html" title="interface in com.google.crypto.tink.keyderivation">KeysetDeriver</a>&gt;</code></dd>
+<dd><code><a href="../../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-">wrap</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="interface in com.google.crypto.tink.internal">PrimitiveWrapper</a>&lt;<a href="../../../../../../com/google/crypto/tink/keyderivation/internal/KeyDeriver.html" title="interface in com.google.crypto.tink.keyderivation.internal">KeyDeriver</a>,<a href="../../../../../../com/google/crypto/tink/keyderivation/KeysetDeriver.html" title="interface in com.google.crypto.tink.keyderivation">KeysetDeriver</a>&gt;</code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
 </dl>
@@ -208,13 +208,13 @@ implements <a href="../../../../../../com/google/crypto/tink/PrimitiveWrapper.ht
 <li class="blockList">
 <h4>getPrimitiveClass</h4>
 <pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;<a href="../../../../../../com/google/crypto/tink/keyderivation/KeysetDeriver.html" title="interface in com.google.crypto.tink.keyderivation">KeysetDeriver</a>&gt;&nbsp;getPrimitiveClass()</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/google/crypto/tink/PrimitiveWrapper.html#getPrimitiveClass--">PrimitiveWrapper</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html#getPrimitiveClass--">PrimitiveWrapper</a></code></span></div>
 <div class="block">Returns the primitive class object of the primitive managed. Used for internal management.
  Should be implemented as <code>return P.class;</code> when implementing a wrapper creating objects
  of type <code>P</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/google/crypto/tink/PrimitiveWrapper.html#getPrimitiveClass--">getPrimitiveClass</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/google/crypto/tink/PrimitiveWrapper.html" title="interface in com.google.crypto.tink">PrimitiveWrapper</a>&lt;<a href="../../../../../../com/google/crypto/tink/keyderivation/internal/KeyDeriver.html" title="interface in com.google.crypto.tink.keyderivation.internal">KeyDeriver</a>,<a href="../../../../../../com/google/crypto/tink/keyderivation/KeysetDeriver.html" title="interface in com.google.crypto.tink.keyderivation">KeysetDeriver</a>&gt;</code></dd>
+<dd><code><a href="../../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html#getPrimitiveClass--">getPrimitiveClass</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="interface in com.google.crypto.tink.internal">PrimitiveWrapper</a>&lt;<a href="../../../../../../com/google/crypto/tink/keyderivation/internal/KeyDeriver.html" title="interface in com.google.crypto.tink.keyderivation.internal">KeyDeriver</a>,<a href="../../../../../../com/google/crypto/tink/keyderivation/KeysetDeriver.html" title="interface in com.google.crypto.tink.keyderivation">KeysetDeriver</a>&gt;</code></dd>
 </dl>
 </li>
 </ul>
@@ -225,12 +225,12 @@ implements <a href="../../../../../../com/google/crypto/tink/PrimitiveWrapper.ht
 <li class="blockList">
 <h4>getInputPrimitiveClass</h4>
 <pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;<a href="../../../../../../com/google/crypto/tink/keyderivation/internal/KeyDeriver.html" title="interface in com.google.crypto.tink.keyderivation.internal">KeyDeriver</a>&gt;&nbsp;getInputPrimitiveClass()</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/google/crypto/tink/PrimitiveWrapper.html#getInputPrimitiveClass--">PrimitiveWrapper</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html#getInputPrimitiveClass--">PrimitiveWrapper</a></code></span></div>
 <div class="block">Returns the primitive class object of the primitive used to create B. Used for internal
  management. Should be implemented as <code>return B.class;</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/google/crypto/tink/PrimitiveWrapper.html#getInputPrimitiveClass--">getInputPrimitiveClass</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/google/crypto/tink/PrimitiveWrapper.html" title="interface in com.google.crypto.tink">PrimitiveWrapper</a>&lt;<a href="../../../../../../com/google/crypto/tink/keyderivation/internal/KeyDeriver.html" title="interface in com.google.crypto.tink.keyderivation.internal">KeyDeriver</a>,<a href="../../../../../../com/google/crypto/tink/keyderivation/KeysetDeriver.html" title="interface in com.google.crypto.tink.keyderivation">KeysetDeriver</a>&gt;</code></dd>
+<dd><code><a href="../../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html#getInputPrimitiveClass--">getInputPrimitiveClass</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="interface in com.google.crypto.tink.internal">PrimitiveWrapper</a>&lt;<a href="../../../../../../com/google/crypto/tink/keyderivation/internal/KeyDeriver.html" title="interface in com.google.crypto.tink.keyderivation.internal">KeyDeriver</a>,<a href="../../../../../../com/google/crypto/tink/keyderivation/KeysetDeriver.html" title="interface in com.google.crypto.tink.keyderivation">KeysetDeriver</a>&gt;</code></dd>
 </dl>
 </li>
 </ul>
