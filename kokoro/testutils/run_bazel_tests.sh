@@ -27,13 +27,16 @@ set -eEo pipefail
 trap print_debug_output ERR
 
 usage() {
-  echo "Usage: $0 [-mh] [-b <build parameter> ...] [-t <test parameter> ...] \\"
-  echo "         <workspace directory> [<manual target> <manual target> ...]"
+  echo "Usage: $0 [-mh] [-c bazel_cache_name] [-b <build parameter> ...] \\"
+  echo "         [-t <test parameter> ...] <workspace directory> \\"
+  echo "         [<manual target> <manual target> ...]"
   echo "  -m: Runs only the manual targets. If set, manual targets must be"
   echo "      provided."
   echo "  -b: Comma separated list of flags to pass to `bazel build`."
   echo "  -t: Comma separated list of flags to pass to `bazel test`."
   echo "  -h: Help. Print this usage information."
+  echo "  -c: Bazel cache to use; creadentials are expected to be in a"
+  echo "      cache_key file."
   exit 1
 }
 
@@ -44,6 +47,7 @@ MANUAL_TARGETS=
 BAZEL_CMD="bazel"
 BUILD_FLAGS=()
 TEST_FLAGS=()
+CACHE_FLAGS=()
 
 #######################################
 # Process command line arguments.
@@ -54,11 +58,15 @@ TEST_FLAGS=()
 #######################################
 process_args() {
   # Parse options.
-  while getopts "mhb:t:" opt; do
+  while getopts "mb:t:c:" opt; do
     case "${opt}" in
       m) MANUAL_ONLY="true" ;;
       b) BUILD_FLAGS=($(echo "${OPTARG}" | tr ',' '\n')) ;;
       t) TEST_FLAGS=($(echo "${OPTARG}" | tr ',' '\n')) ;;
+      c) CACHE_FLAGS=(
+           "--remote_cache=https://storage.googleapis.com/${OPTARG}"
+           "--google_credentials=cache_key"
+         );;
       *) usage ;;
     esac
   done
@@ -85,6 +93,8 @@ process_args() {
   fi
   readonly BAZEL_CMD
   echo "Using: $(which ${BAZEL_CMD})"
+
+  readonly CACHE_FLAGS
 }
 
 #######################################
@@ -118,19 +128,22 @@ main() {
     set -x
     cd "${workspace_dir}"
     if [[ "${MANUAL_ONLY}" == "false" ]]; then
-      time "${BAZEL_CMD}" build "${BUILD_FLAGS[@]}" -- ...
+      time "${BAZEL_CMD}" build "${CACHE_FLAGS[@]}" "${BUILD_FLAGS[@]}" -- ...
       # Exit code 4 means targets build correctly but no tests were found. See
       # https://bazel.build/docs/scripts#exit-codes.
       bazel_test_return=0
-      time "${BAZEL_CMD}" test "${TEST_FLAGS[@]}" -- ... || bazel_test_return="$?"
+      time "${BAZEL_CMD}" test "${CACHE_FLAGS[@]}" "${TEST_FLAGS[@]}" -- ... \
+        || bazel_test_return="$?"
       if (( $bazel_test_return != 0 && $bazel_test_return != 4 )); then
         return "${bazel_test_return}"
       fi
     fi
     # Run specific manual targets.
     if (( ${#MANUAL_TARGETS[@]} > 0 )); then
-      time "${BAZEL_CMD}" build "${BUILD_FLAGS[@]}" -- "${MANUAL_TARGETS[@]}"
-      time "${BAZEL_CMD}" test "${TEST_FLAGS[@]}"  -- "${MANUAL_TARGETS[@]}"
+      time "${BAZEL_CMD}" build "${CACHE_FLAGS[@]}" "${BUILD_FLAGS[@]}" -- \
+        "${MANUAL_TARGETS[@]}"
+      time "${BAZEL_CMD}" test "${CACHE_FLAGS[@]}" "${TEST_FLAGS[@]}"  -- \
+        "${MANUAL_TARGETS[@]}"
     fi
   )
 }
