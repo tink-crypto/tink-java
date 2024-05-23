@@ -138,12 +138,6 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/PrimitiveWrapper.html" title="type parameter in PrimitiveWrapper">P</a></code></td>
-<td class="colLast"><span class="typeNameLabel">PrimitiveWrapper.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/PrimitiveWrapper.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-">wrap</a></span>(<a href="../../../../../../com/google/crypto/tink/internal/PrimitiveSet.html" title="class in com.google.crypto.tink.internal">PrimitiveSet</a>&lt;<a href="../../../../../../com/google/crypto/tink/PrimitiveWrapper.html" title="type parameter in PrimitiveWrapper">B</a>&gt;&nbsp;primitiveSet)</code>
-<div class="block">Wraps a <code>PrimitiveSet</code> and returns a single instance.</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>static &lt;B,P&gt;&nbsp;P</code></td>
 <td class="colLast"><span class="typeNameLabel">Registry.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/Registry.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-java.lang.Class-">wrap</a></span>(<a href="../../../../../../com/google/crypto/tink/internal/PrimitiveSet.html" title="class in com.google.crypto.tink.internal">PrimitiveSet</a>&lt;B&gt;&nbsp;primitiveSet,
     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;clazz)</code>
@@ -151,7 +145,7 @@
  PrimitiveSet with it.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static &lt;P&gt;&nbsp;P</code></td>
 <td class="colLast"><span class="typeNameLabel">Registry.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/Registry.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-">wrap</a></span>(<a href="../../../../../../com/google/crypto/tink/internal/PrimitiveSet.html" title="class in com.google.crypto.tink.internal">PrimitiveSet</a>&lt;P&gt;&nbsp;primitiveSet)</code>&nbsp;</td>
 </tr>
@@ -241,27 +235,33 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><code>static &lt;P&gt;&nbsp;<a href="../../../../../../com/google/crypto/tink/monitoring/MonitoringKeysetInfo.html" title="class in com.google.crypto.tink.monitoring">MonitoringKeysetInfo</a></code></td>
+<td class="colFirst"><code>static &lt;P&gt;&nbsp;<a href="../../../../../../com/google/crypto/tink/internal/MonitoringKeysetInfo.html" title="class in com.google.crypto.tink.internal">MonitoringKeysetInfo</a></code></td>
 <td class="colLast"><span class="typeNameLabel">MonitoringUtil.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/MonitoringUtil.html#getMonitoringKeysetInfo-com.google.crypto.tink.internal.PrimitiveSet-">getMonitoringKeysetInfo</a></span>(<a href="../../../../../../com/google/crypto/tink/internal/PrimitiveSet.html" title="class in com.google.crypto.tink.internal">PrimitiveSet</a>&lt;P&gt;&nbsp;primitiveSet)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="type parameter in PrimitiveWrapper">P</a></code></td>
+<td class="colLast"><span class="typeNameLabel">PrimitiveWrapper.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-">wrap</a></span>(<a href="../../../../../../com/google/crypto/tink/internal/PrimitiveSet.html" title="class in com.google.crypto.tink.internal">PrimitiveSet</a>&lt;<a href="../../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="type parameter in PrimitiveWrapper">B</a>&gt;&nbsp;primitiveSet)</code>
+<div class="block">Wraps a <code>PrimitiveSet</code> and returns a single instance.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>abstract &lt;B,P&gt;&nbsp;P</code></td>
 <td class="colLast"><span class="typeNameLabel">InternalConfiguration.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/InternalConfiguration.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-java.lang.Class-">wrap</a></span>(<a href="../../../../../../com/google/crypto/tink/internal/PrimitiveSet.html" title="class in com.google.crypto.tink.internal">PrimitiveSet</a>&lt;B&gt;&nbsp;primitiveSet,
     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;clazz)</code>
 <div class="block">Wraps the primitives in the primitive set into the provided class.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>&lt;B,P&gt;&nbsp;P</code></td>
 <td class="colLast"><span class="typeNameLabel">RegistryConfiguration.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/RegistryConfiguration.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-java.lang.Class-">wrap</a></span>(<a href="../../../../../../com/google/crypto/tink/internal/PrimitiveSet.html" title="class in com.google.crypto.tink.internal">PrimitiveSet</a>&lt;B&gt;&nbsp;primitiveSet,
     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;clazz)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>&lt;InputPrimitiveT,WrapperPrimitiveT&gt;<br>WrapperPrimitiveT</code></td>
 <td class="colLast"><span class="typeNameLabel">PrimitiveRegistry.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/PrimitiveRegistry.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-java.lang.Class-">wrap</a></span>(<a href="../../../../../../com/google/crypto/tink/internal/PrimitiveSet.html" title="class in com.google.crypto.tink.internal">PrimitiveSet</a>&lt;InputPrimitiveT&gt;&nbsp;primitives,
     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;WrapperPrimitiveT&gt;&nbsp;wrapperClassObject)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>&lt;InputPrimitiveT,WrapperPrimitiveT&gt;<br>WrapperPrimitiveT</code></td>
 <td class="colLast"><span class="typeNameLabel">MutablePrimitiveRegistry.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/MutablePrimitiveRegistry.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-java.lang.Class-">wrap</a></span>(<a href="../../../../../../com/google/crypto/tink/internal/PrimitiveSet.html" title="class in com.google.crypto.tink.internal">PrimitiveSet</a>&lt;InputPrimitiveT&gt;&nbsp;primitives,
     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;WrapperPrimitiveT&gt;&nbsp;wrapperClassObject)</code>&nbsp;</td>
