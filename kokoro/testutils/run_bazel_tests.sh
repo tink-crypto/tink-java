@@ -65,7 +65,7 @@ process_args() {
       t) TEST_FLAGS=($(echo "${OPTARG}" | tr ',' '\n')) ;;
       c) CACHE_FLAGS=(
            "--remote_cache=https://storage.googleapis.com/${OPTARG}"
-           "--google_credentials=cache_key"
+           "--google_credentials=$(realpath ./cache_key)"
          );;
       *) usage ;;
     esac
