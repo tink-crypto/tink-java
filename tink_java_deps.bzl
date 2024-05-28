@@ -1,10 +1,11 @@
 """Dependencies for Tink Java."""
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
 
 TINK_MAVEN_ARTIFACTS = [
-    "com.google.protobuf:protobuf-java:3.25.1",
-    "com.google.protobuf:protobuf-javalite:3.25.1",
+    "com.google.protobuf:protobuf-java:4.27.0",
+    "com.google.protobuf:protobuf-javalite:4.27.0",
     "androidx.annotation:annotation:1.5.0",
     "com.google.api-client:google-api-client:2.2.0",
     "com.google.code.findbugs:jsr305:3.0.2",
@@ -23,16 +24,16 @@ def tink_java_deps():
     """Loads dependencies of Java Tink."""
 
     # Basic rules we need to add to bazel.
-    if not native.existing_rule("bazel_skylib"):
-        # Release from 2023-05-31.
-        http_archive(
-            name = "bazel_skylib",
-            urls = [
-                "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.4.2/bazel-skylib-1.4.2.tar.gz",
-                "https://github.com/bazelbuild/bazel-skylib/releases/download/1.4.2/bazel-skylib-1.4.2.tar.gz",
-            ],
-            sha256 = "66ffd9315665bfaafc96b52278f57c7e2dd09f5ede279ea6d39b2be471e7e3aa",
-        )
+    # Release from 2023-05-31.
+    maybe(
+        http_archive,
+        name = "bazel_skylib",
+        urls = [
+            "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.4.2/bazel-skylib-1.4.2.tar.gz",
+            "https://github.com/bazelbuild/bazel-skylib/releases/download/1.4.2/bazel-skylib-1.4.2.tar.gz",
+        ],
+        sha256 = "66ffd9315665bfaafc96b52278f57c7e2dd09f5ede279ea6d39b2be471e7e3aa",
+    )
 
     # -------------------------------------------------------------------------
     # Protobuf.
@@ -43,47 +44,60 @@ def tink_java_deps():
     #   * @com_google_protobuf//:cc_toolchain
     #   * @com_google_protobuf//:java_toolchain
     # This statement defines the @com_google_protobuf repo.
-    if not native.existing_rule("com_google_protobuf"):
-        # Release X.24.3 from 2023-09-07.
-        http_archive(
-            name = "com_google_protobuf",
-            strip_prefix = "protobuf-24.3",
-            urls = ["https://github.com/protocolbuffers/protobuf/archive/refs/tags/v24.3.zip"],
-            sha256 = "ace0abf35274ee0f08d5564635505ed55a0bc346a6534413d3c5b040fc926332",
-        )
+    # Release May 23rd, 2024.
+    maybe(
+        http_archive,
+        name = "com_google_protobuf",
+        strip_prefix = "protobuf-27.0",
+        urls = ["https://github.com/protocolbuffers/protobuf/archive/refs/tags/v27.0.zip"],
+        sha256 = "a7e735f510520b41962d07459f6f5b99dd594c7ed4690bf1191b9924bec094a2",
+    )
 
     # -------------------------------------------------------------------------
     # Transitive Maven artifact resolution and publishing rules for Bazel.
     # -------------------------------------------------------------------------
-    if not native.existing_rule("rules_jvm_external"):
-        # Release from 2023-06-23
-        http_archive(
-            name = "rules_jvm_external",
-            strip_prefix = "rules_jvm_external-5.3",
-            url = "https://github.com/bazelbuild/rules_jvm_external/archive/5.3.zip",
-            sha256 = "6cc8444b20307113a62b676846c29ff018402fd4c7097fcd6d0a0fd5f2e86429",
-        )
+    # Release from 2023-06-23
+    maybe(
+        http_archive,
+        name = "rules_jvm_external",
+        strip_prefix = "rules_jvm_external-5.3",
+        url = "https://github.com/bazelbuild/rules_jvm_external/archive/5.3.zip",
+        sha256 = "6cc8444b20307113a62b676846c29ff018402fd4c7097fcd6d0a0fd5f2e86429",
+    )
 
     # -------------------------------------------------------------------------
     # Android rules for Bazel.
     # -------------------------------------------------------------------------
-    if not native.existing_rule("build_bazel_rules_android"):
-        # Last release from 2018-08-07.
-        http_archive(
-            name = "build_bazel_rules_android",
-            urls = ["https://github.com/bazelbuild/rules_android/archive/refs/tags/v0.1.1.zip"],
-            sha256 = "cd06d15dd8bb59926e4d65f9003bfc20f9da4b2519985c27e190cddc8b7a7806",
-            strip_prefix = "rules_android-0.1.1",
-        )
+    # Last release from 2018-08-07.
+    maybe(
+        http_archive,
+        name = "build_bazel_rules_android",
+        urls = ["https://github.com/bazelbuild/rules_android/archive/refs/tags/v0.1.1.zip"],
+        sha256 = "cd06d15dd8bb59926e4d65f9003bfc20f9da4b2519985c27e190cddc8b7a7806",
+        strip_prefix = "rules_android-0.1.1",
+    )
 
     # -------------------------------------------------------------------------
     # Wycheproof.
     # -------------------------------------------------------------------------
-    if not native.existing_rule("wycheproof"):
-        # Commit from 2019-12-17
-        http_archive(
-            name = "wycheproof",
-            strip_prefix = "wycheproof-d8ed1ba95ac4c551db67f410c06131c3bc00a97c",
-            url = "https://github.com/google/wycheproof/archive/d8ed1ba95ac4c551db67f410c06131c3bc00a97c.zip",
-            sha256 = "eb1d558071acf1aa6d677d7f1cabec2328d1cf8381496c17185bd92b52ce7545",
-        )
+    # Commit from 2019-12-17
+    maybe(
+        http_archive,
+        name = "wycheproof",
+        strip_prefix = "wycheproof-d8ed1ba95ac4c551db67f410c06131c3bc00a97c",
+        url = "https://github.com/google/wycheproof/archive/d8ed1ba95ac4c551db67f410c06131c3bc00a97c.zip",
+        sha256 = "eb1d558071acf1aa6d677d7f1cabec2328d1cf8381496c17185bd92b52ce7545",
+    )
+
+    # -------------------------------------------------------------------------
+    # Rules Python.
+    # -------------------------------------------------------------------------
+    # Required by protobuf.
+    # Release from Aug 22, 2023
+    maybe(
+        http_archive,
+        name = "rules_python",
+        sha256 = "5868e73107a8e85d8f323806e60cad7283f34b32163ea6ff1020cf27abef6036",
+        strip_prefix = "rules_python-0.25.0",
+        url = "https://github.com/bazelbuild/rules_python/releases/download/0.25.0/rules_python-0.25.0.tar.gz",
+    )
