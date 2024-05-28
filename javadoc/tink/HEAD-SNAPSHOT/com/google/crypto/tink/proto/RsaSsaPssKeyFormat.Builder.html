@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":9,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":9,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -105,7 +105,7 @@ var activeTableTab = "activeTableTab";
 <li>com.google.protobuf.AbstractMessage.Builder&lt;BuilderT&gt;</li>
 <li>
 <ul class="inheritance">
-<li>com.google.protobuf.GeneratedMessageV3.Builder&lt;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&gt;</li>
+<li>com.google.protobuf.GeneratedMessage.Builder&lt;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&gt;</li>
 <li>
 <ul class="inheritance">
 <li>com.google.crypto.tink.proto.RsaSsaPssKeyFormat.Builder</li>
@@ -132,7 +132,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public static final class <span class="typeNameLabel">RsaSsaPssKeyFormat.Builder</span>
-extends com.google.protobuf.GeneratedMessageV3.Builder&lt;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&gt;
+extends com.google.protobuf.GeneratedMessage.Builder&lt;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&gt;
 implements <a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormatOrBuilder.html" title="interface in com.google.crypto.tink.proto">RsaSsaPssKeyFormatOrBuilder</a></pre>
 <div class="block">Protobuf type <code>google.crypto.tink.RsaSsaPssKeyFormat</code></div>
 </li>
@@ -154,191 +154,155 @@ implements <a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyForm
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#addRepeatedField-com.google.protobuf.Descriptors.FieldDescriptor-java.lang.Object-">addRepeatedField</a></span>(com.google.protobuf.Descriptors.FieldDescriptor&nbsp;field,
-                <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;value)</code>&nbsp;</td>
-</tr>
-<tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#build--">build</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#buildPartial--">buildPartial</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#clear--">clear</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
-<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#clearField-com.google.protobuf.Descriptors.FieldDescriptor-">clearField</a></span>(com.google.protobuf.Descriptors.FieldDescriptor&nbsp;field)</code>&nbsp;</td>
-</tr>
-<tr id="i5" class="rowColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#clearModulusSizeInBits--">clearModulusSizeInBits</a></span>()</code>
 <div class="block">
  Required.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#clearOneof-com.google.protobuf.Descriptors.OneofDescriptor-">clearOneof</a></span>(com.google.protobuf.Descriptors.OneofDescriptor&nbsp;oneof)</code>&nbsp;</td>
-</tr>
-<tr id="i7" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#clearParams--">clearParams</a></span>()</code>
 <div class="block">
  Required.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#clearPublicExponent--">clearPublicExponent</a></span>()</code>
 <div class="block">
  Required.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
-<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#clone--">clone</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i10" class="altColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#getDefaultInstanceForType--">getDefaultInstanceForType</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>static com.google.protobuf.Descriptors.Descriptor</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#getDescriptor--">getDescriptor</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>com.google.protobuf.Descriptors.Descriptor</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#getDescriptorForType--">getDescriptorForType</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#getModulusSizeInBits--">getModulusSizeInBits</a></span>()</code>
 <div class="block">
  Required.</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssParams.html" title="class in com.google.crypto.tink.proto">RsaSsaPssParams</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#getParams--">getParams</a></span>()</code>
 <div class="block">
  Required.</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssParams.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssParams.Builder</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#getParamsBuilder--">getParamsBuilder</a></span>()</code>
 <div class="block">
  Required.</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssParamsOrBuilder.html" title="interface in com.google.crypto.tink.proto">RsaSsaPssParamsOrBuilder</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#getParamsOrBuilder--">getParamsOrBuilder</a></span>()</code>
 <div class="block">
  Required.</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>com.google.protobuf.ByteString</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#getPublicExponent--">getPublicExponent</a></span>()</code>
 <div class="block">
  Required.</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#hasParams--">hasParams</a></span>()</code>
 <div class="block">
  Required.</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
-<td class="colFirst"><code>protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable</code></td>
+<tr id="i15" class="rowColor">
+<td class="colFirst"><code>protected com.google.protobuf.GeneratedMessage.FieldAccessorTable</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#internalGetFieldAccessorTable--">internalGetFieldAccessorTable</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#isInitialized--">isInitialized</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#mergeFrom-com.google.protobuf.CodedInputStream-com.google.protobuf.ExtensionRegistryLite-">mergeFrom</a></span>(com.google.protobuf.CodedInputStream&nbsp;input,
          com.google.protobuf.ExtensionRegistryLite&nbsp;extensionRegistry)</code>&nbsp;</td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#mergeFrom-com.google.protobuf.Message-">mergeFrom</a></span>(com.google.protobuf.Message&nbsp;other)</code>&nbsp;</td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#mergeFrom-com.google.crypto.tink.proto.RsaSsaPssKeyFormat-">mergeFrom</a></span>(<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat</a>&nbsp;other)</code>&nbsp;</td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#mergeParams-com.google.crypto.tink.proto.RsaSsaPssParams-">mergeParams</a></span>(<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssParams.html" title="class in com.google.crypto.tink.proto">RsaSsaPssParams</a>&nbsp;value)</code>
 <div class="block">
  Required.</div>
 </td>
 </tr>
-<tr id="i25" class="rowColor">
-<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#mergeUnknownFields-com.google.protobuf.UnknownFieldSet-">mergeUnknownFields</a></span>(com.google.protobuf.UnknownFieldSet&nbsp;unknownFields)</code>&nbsp;</td>
-</tr>
-<tr id="i26" class="altColor">
-<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#setField-com.google.protobuf.Descriptors.FieldDescriptor-java.lang.Object-">setField</a></span>(com.google.protobuf.Descriptors.FieldDescriptor&nbsp;field,
-        <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;value)</code>&nbsp;</td>
-</tr>
-<tr id="i27" class="rowColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#setModulusSizeInBits-int-">setModulusSizeInBits</a></span>(int&nbsp;value)</code>
 <div class="block">
  Required.</div>
 </td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#setParams-com.google.crypto.tink.proto.RsaSsaPssParams.Builder-">setParams</a></span>(<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssParams.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssParams.Builder</a>&nbsp;builderForValue)</code>
 <div class="block">
  Required.</div>
 </td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#setParams-com.google.crypto.tink.proto.RsaSsaPssParams-">setParams</a></span>(<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssParams.html" title="class in com.google.crypto.tink.proto">RsaSsaPssParams</a>&nbsp;value)</code>
 <div class="block">
  Required.</div>
 </td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#setPublicExponent-com.google.protobuf.ByteString-">setPublicExponent</a></span>(com.google.protobuf.ByteString&nbsp;value)</code>
 <div class="block">
  Required.</div>
 </td>
 </tr>
-<tr id="i31" class="rowColor">
-<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#setRepeatedField-com.google.protobuf.Descriptors.FieldDescriptor-int-java.lang.Object-">setRepeatedField</a></span>(com.google.protobuf.Descriptors.FieldDescriptor&nbsp;field,
-                int&nbsp;index,
-                <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;value)</code>&nbsp;</td>
-</tr>
-<tr id="i32" class="altColor">
-<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html#setUnknownFields-com.google.protobuf.UnknownFieldSet-">setUnknownFields</a></span>(com.google.protobuf.UnknownFieldSet&nbsp;unknownFields)</code>&nbsp;</td>
-</tr>
 </table>
 <ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.com.google.protobuf.GeneratedMessageV3.Builder">
+<li class="blockList"><a name="methods.inherited.from.class.com.google.protobuf.GeneratedMessage.Builder">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;com.google.protobuf.GeneratedMessageV3.Builder</h3>
-<code>getAllFields, getField, getFieldBuilder, getOneofFieldDescriptor, getParentForChildren, getRepeatedField, getRepeatedFieldBuilder, getRepeatedFieldCount, getUnknownFields, getUnknownFieldSetBuilder, hasField, hasOneof, internalGetMapField, internalGetMutableMapField, isClean, markClean, mergeUnknownLengthDelimitedField, mergeUnknownVarintField, newBuilderForField, onBuilt, onChanged, parseUnknownField, setUnknownFieldSetBuilder, setUnknownFieldsProto3</code></li>
+<h3>Methods inherited from class&nbsp;com.google.protobuf.GeneratedMessage.Builder</h3>
+<code>addRepeatedField, clearField, clearOneof, clone, getAllFields, getField, getFieldBuilder, getOneofFieldDescriptor, getParentForChildren, getRepeatedField, getRepeatedFieldBuilder, getRepeatedFieldCount, getUnknownFields, getUnknownFieldSetBuilder, hasField, hasOneof, internalGetMapField, internalGetMapFieldReflection, internalGetMutableMapField, internalGetMutableMapFieldReflection, isClean, markClean, mergeUnknownFields, mergeUnknownLengthDelimitedField, mergeUnknownVarintField, newBuilderForField, onBuilt, onChanged, parseUnknownField, setField, setRepeatedField, setUnknownFields, setUnknownFieldSetBuilder, setUnknownFieldsProto3</code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.com.google.protobuf.AbstractMessage.Builder">
@@ -411,10 +375,10 @@ implements <a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyForm
 <ul class="blockList">
 <li class="blockList">
 <h4>internalGetFieldAccessorTable</h4>
-<pre>protected&nbsp;com.google.protobuf.GeneratedMessageV3.FieldAccessorTable&nbsp;internalGetFieldAccessorTable()</pre>
+<pre>protected&nbsp;com.google.protobuf.GeneratedMessage.FieldAccessorTable&nbsp;internalGetFieldAccessorTable()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>internalGetFieldAccessorTable</code>&nbsp;in class&nbsp;<code>com.google.protobuf.GeneratedMessageV3.Builder&lt;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&gt;</code></dd>
+<dd><code>internalGetFieldAccessorTable</code>&nbsp;in class&nbsp;<code>com.google.protobuf.GeneratedMessage.Builder&lt;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&gt;</code></dd>
 </dl>
 </li>
 </ul>
@@ -431,7 +395,7 @@ implements <a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyForm
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>clear</code>&nbsp;in interface&nbsp;<code>com.google.protobuf.MessageLite.Builder</code></dd>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>clear</code>&nbsp;in class&nbsp;<code>com.google.protobuf.GeneratedMessageV3.Builder&lt;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&gt;</code></dd>
+<dd><code>clear</code>&nbsp;in class&nbsp;<code>com.google.protobuf.GeneratedMessage.Builder&lt;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&gt;</code></dd>
 </dl>
 </li>
 </ul>
@@ -448,7 +412,7 @@ implements <a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyForm
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>getDescriptorForType</code>&nbsp;in interface&nbsp;<code>com.google.protobuf.MessageOrBuilder</code></dd>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>getDescriptorForType</code>&nbsp;in class&nbsp;<code>com.google.protobuf.GeneratedMessageV3.Builder&lt;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&gt;</code></dd>
+<dd><code>getDescriptorForType</code>&nbsp;in class&nbsp;<code>com.google.protobuf.GeneratedMessage.Builder&lt;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&gt;</code></dd>
 </dl>
 </li>
 </ul>
@@ -497,102 +461,6 @@ implements <a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyForm
 </dl>
 </li>
 </ul>
-<a name="clone--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>clone</h4>
-<pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&nbsp;clone()</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>clone</code>&nbsp;in interface&nbsp;<code>com.google.protobuf.Message.Builder</code></dd>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>clone</code>&nbsp;in interface&nbsp;<code>com.google.protobuf.MessageLite.Builder</code></dd>
-<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>clone</code>&nbsp;in class&nbsp;<code>com.google.protobuf.GeneratedMessageV3.Builder&lt;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&gt;</code></dd>
-</dl>
-</li>
-</ul>
-<a name="setField-com.google.protobuf.Descriptors.FieldDescriptor-java.lang.Object-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setField</h4>
-<pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&nbsp;setField(com.google.protobuf.Descriptors.FieldDescriptor&nbsp;field,
-                                           <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;value)</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>setField</code>&nbsp;in interface&nbsp;<code>com.google.protobuf.Message.Builder</code></dd>
-<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>setField</code>&nbsp;in class&nbsp;<code>com.google.protobuf.GeneratedMessageV3.Builder&lt;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&gt;</code></dd>
-</dl>
-</li>
-</ul>
-<a name="clearField-com.google.protobuf.Descriptors.FieldDescriptor-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>clearField</h4>
-<pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&nbsp;clearField(com.google.protobuf.Descriptors.FieldDescriptor&nbsp;field)</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>clearField</code>&nbsp;in interface&nbsp;<code>com.google.protobuf.Message.Builder</code></dd>
-<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>clearField</code>&nbsp;in class&nbsp;<code>com.google.protobuf.GeneratedMessageV3.Builder&lt;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&gt;</code></dd>
-</dl>
-</li>
-</ul>
-<a name="clearOneof-com.google.protobuf.Descriptors.OneofDescriptor-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>clearOneof</h4>
-<pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&nbsp;clearOneof(com.google.protobuf.Descriptors.OneofDescriptor&nbsp;oneof)</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>clearOneof</code>&nbsp;in interface&nbsp;<code>com.google.protobuf.Message.Builder</code></dd>
-<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>clearOneof</code>&nbsp;in class&nbsp;<code>com.google.protobuf.GeneratedMessageV3.Builder&lt;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&gt;</code></dd>
-</dl>
-</li>
-</ul>
-<a name="setRepeatedField-com.google.protobuf.Descriptors.FieldDescriptor-int-java.lang.Object-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setRepeatedField</h4>
-<pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&nbsp;setRepeatedField(com.google.protobuf.Descriptors.FieldDescriptor&nbsp;field,
-                                                   int&nbsp;index,
-                                                   <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;value)</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>setRepeatedField</code>&nbsp;in interface&nbsp;<code>com.google.protobuf.Message.Builder</code></dd>
-<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>setRepeatedField</code>&nbsp;in class&nbsp;<code>com.google.protobuf.GeneratedMessageV3.Builder&lt;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&gt;</code></dd>
-</dl>
-</li>
-</ul>
-<a name="addRepeatedField-com.google.protobuf.Descriptors.FieldDescriptor-java.lang.Object-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>addRepeatedField</h4>
-<pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&nbsp;addRepeatedField(com.google.protobuf.Descriptors.FieldDescriptor&nbsp;field,
-                                                   <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;value)</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>addRepeatedField</code>&nbsp;in interface&nbsp;<code>com.google.protobuf.Message.Builder</code></dd>
-<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>addRepeatedField</code>&nbsp;in class&nbsp;<code>com.google.protobuf.GeneratedMessageV3.Builder&lt;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&gt;</code></dd>
-</dl>
-</li>
-</ul>
 <a name="mergeFrom-com.google.protobuf.Message-">
 <!--   -->
 </a>
@@ -628,7 +496,7 @@ implements <a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyForm
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>isInitialized</code>&nbsp;in interface&nbsp;<code>com.google.protobuf.MessageLiteOrBuilder</code></dd>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>isInitialized</code>&nbsp;in class&nbsp;<code>com.google.protobuf.GeneratedMessageV3.Builder&lt;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&gt;</code></dd>
+<dd><code>isInitialized</code>&nbsp;in class&nbsp;<code>com.google.protobuf.GeneratedMessage.Builder&lt;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&gt;</code></dd>
 </dl>
 </li>
 </ul>
@@ -882,7 +750,7 @@ implements <a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyForm
 <a name="clearPublicExponent--">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>clearPublicExponent</h4>
 <pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&nbsp;clearPublicExponent()</pre>
@@ -894,36 +762,6 @@ implements <a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyForm
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>This builder for chaining.</dd>
-</dl>
-</li>
-</ul>
-<a name="setUnknownFields-com.google.protobuf.UnknownFieldSet-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setUnknownFields</h4>
-<pre>public final&nbsp;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&nbsp;setUnknownFields(com.google.protobuf.UnknownFieldSet&nbsp;unknownFields)</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>setUnknownFields</code>&nbsp;in interface&nbsp;<code>com.google.protobuf.Message.Builder</code></dd>
-<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>setUnknownFields</code>&nbsp;in class&nbsp;<code>com.google.protobuf.GeneratedMessageV3.Builder&lt;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&gt;</code></dd>
-</dl>
-</li>
-</ul>
-<a name="mergeUnknownFields-com.google.protobuf.UnknownFieldSet-">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>mergeUnknownFields</h4>
-<pre>public final&nbsp;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&nbsp;mergeUnknownFields(com.google.protobuf.UnknownFieldSet&nbsp;unknownFields)</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>mergeUnknownFields</code>&nbsp;in interface&nbsp;<code>com.google.protobuf.Message.Builder</code></dd>
-<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>mergeUnknownFields</code>&nbsp;in class&nbsp;<code>com.google.protobuf.GeneratedMessageV3.Builder&lt;<a href="../../../../../com/google/crypto/tink/proto/RsaSsaPssKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat.Builder</a>&gt;</code></dd>
 </dl>
 </li>
 </ul>
