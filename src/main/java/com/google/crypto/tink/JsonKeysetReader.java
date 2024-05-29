@@ -190,6 +190,12 @@ public final class JsonKeysetReader implements KeysetReader {
   }
 
   private static int getKeyId(JsonElement element) throws IOException {
+    if (!element.isJsonPrimitive()) {
+      throw new IOException("invalid key id: not a JSON primitive");
+    }
+    if (!element.getAsJsonPrimitive().isNumber()) {
+      throw new IOException("invalid key id: not a JSON number");
+    }
     long id;
     try {
       id = JsonParser.getParsedNumberAsLongOrThrow(element);
@@ -204,12 +210,21 @@ public final class JsonKeysetReader implements KeysetReader {
   }
 
   private Keyset keysetFromJson(JsonObject json) throws IOException {
-    validateKeyset(json);
+    if (!json.has("key")) {
+      throw new JsonParseException("invalid keyset: no key");
+    }
+    JsonElement key = json.get("key");
+    if (!key.isJsonArray()) {
+      throw new JsonParseException("invalid keyset: key must be an array");
+    }
+    JsonArray keys = key.getAsJsonArray();
+    if (keys.size() == 0) {
+      throw new JsonParseException("invalid keyset: key is empty");
+    }
     Keyset.Builder builder = Keyset.newBuilder();
     if (json.has("primaryKeyId")) {
       builder.setPrimaryKeyId(getKeyId(json.get("primaryKeyId")));
     }
-    JsonArray keys = json.getAsJsonArray("key");
     for (int i = 0; i < keys.size(); i++) {
       builder.addKey(keyFromJson(keys.get(i).getAsJsonObject()));
     }
@@ -237,12 +252,21 @@ public final class JsonKeysetReader implements KeysetReader {
   }
 
   private Keyset.Key keyFromJson(JsonObject json) throws IOException {
-    validateKey(json);
+    if (!json.has("keyData")
+        || !json.has("status")
+        || !json.has("keyId")
+        || !json.has("outputPrefixType")) {
+      throw new JsonParseException("invalid key");
+    }
+    JsonElement keyData = json.get("keyData");
+    if (!keyData.isJsonObject()) {
+      throw new JsonParseException("invalid key: keyData must be an object");
+    }
     return Keyset.Key.newBuilder()
         .setStatus(getStatus(json.get("status").getAsString()))
         .setKeyId(getKeyId(json.get("keyId")))
         .setOutputPrefixType(getOutputPrefixType(json.get("outputPrefixType").getAsString()))
-        .setKeyData(keyDataFromJson(json.getAsJsonObject("keyData")))
+        .setKeyData(keyDataFromJson(keyData.getAsJsonObject()))
         .build();
   }
 
@@ -270,7 +294,9 @@ public final class JsonKeysetReader implements KeysetReader {
   }
 
   private KeyData keyDataFromJson(JsonObject json) {
-    validateKeyData(json);
+    if (!json.has("typeUrl") || !json.has("value") || !json.has("keyMaterialType")) {
+      throw new JsonParseException("invalid keyData");
+    }
     byte[] value;
     if (urlSafeBase64) {
       value = Base64.urlSafeDecode(json.get("value").getAsString());
@@ -327,30 +353,10 @@ public final class JsonKeysetReader implements KeysetReader {
     }
   }
 
-  private static void validateKeyset(JsonObject json) {
-    if (!json.has("key") || json.getAsJsonArray("key").size() == 0) {
-      throw new JsonParseException("invalid keyset");
-    }
-  }
-
   private static void validateEncryptedKeyset(JsonObject json) {
     if (!json.has("encryptedKeyset")) {
       throw new JsonParseException("invalid encrypted keyset");
     }
   }
 
-  private static void validateKey(JsonObject json) {
-    if (!json.has("keyData")
-        || !json.has("status")
-        || !json.has("keyId")
-        || !json.has("outputPrefixType")) {
-      throw new JsonParseException("invalid key");
-    }
-  }
-
-  private static void validateKeyData(JsonObject json) {
-    if (!json.has("typeUrl") || !json.has("value") || !json.has("keyMaterialType")) {
-      throw new JsonParseException("invalid keyData");
-    }
-  }
 }

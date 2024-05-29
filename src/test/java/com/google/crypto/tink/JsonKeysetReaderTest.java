@@ -186,7 +186,7 @@ public class JsonKeysetReaderTest {
     assertThat(e.toString()).contains("invalid keyset");
   }
 
-  private void testRead_invalidKey_shouldThrowException(String name) throws Exception {
+  private void testReadInvalidKeyShouldThrowException(String name) throws Exception {
     JsonObject json = JsonParser.parseString(JSON_KEYSET).getAsJsonObject();
     JsonArray keys = json.get("key").getAsJsonArray();
     JsonObject key = keys.get(0).getAsJsonObject();
@@ -204,10 +204,10 @@ public class JsonKeysetReaderTest {
 
   @Test
   public void testRead_invalidKey_shouldThrowException() throws Exception {
-    testRead_invalidKey_shouldThrowException("keyData");
-    testRead_invalidKey_shouldThrowException("status");
-    testRead_invalidKey_shouldThrowException("keyId");
-    testRead_invalidKey_shouldThrowException("outputPrefixType");
+    testReadInvalidKeyShouldThrowException("keyData");
+    testReadInvalidKeyShouldThrowException("status");
+    testReadInvalidKeyShouldThrowException("keyId");
+    testReadInvalidKeyShouldThrowException("outputPrefixType");
   }
 
   private void testRead_invalidKeyData_shouldThrowException(String name) throws Exception {
@@ -513,5 +513,272 @@ public class JsonKeysetReaderTest {
         + "status:ENABLED"
         + "}]}";
     assertThrows(IOException.class, () -> JsonKeysetReader.withString(jsonKeysetString).read());
+  }
+
+  @Test
+  public void testRead_validJsonKeyset_doesNotThrow() throws Exception {
+    String jsonKeyset =
+        "{"
+            + "  \"primaryKeyId\": 42818733,"
+            + "  \"key\": ["
+            + "    {"
+            + "      \"keyData\": {"
+            + "        \"typeUrl\": \"type.googleapis.com/google.crypto.tink.AesGcmKey\","
+            + "        \"keyMaterialType\": \"SYMMETRIC\","
+            + "        \"value\": \"GhCC74uJ+2f4qlpaHwR4ylNQ\""
+            + "      },"
+            + "      \"outputPrefixType\": \"TINK\","
+            + "      \"keyId\": 42818733,"
+            + "      \"status\": \"ENABLED\""
+            + "    }]"
+            + "}";
+    assertThat(JsonKeysetReader.withString(jsonKeyset).read()).isNotNull();
+  }
+
+  @Test
+  public void testRead_primaryKeyIdIsAString_throws() throws Exception {
+    String jsonKeyset =
+        "{"
+            + "  \"primaryKeyId\": \"42818733\","
+            + "  \"key\": ["
+            + "    {"
+            + "      \"keyData\": {"
+            + "        \"typeUrl\": \"type.googleapis.com/google.crypto.tink.AesGcmKey\","
+            + "        \"keyMaterialType\": \"SYMMETRIC\","
+            + "        \"value\": \"GhCC74uJ+2f4qlpaHwR4ylNQ\""
+            + "      },"
+            + "      \"outputPrefixType\": \"TINK\","
+            + "      \"keyId\": 42818733,"
+            + "      \"status\": \"ENABLED\""
+            + "    }]"
+            + "}";
+    IOException e =
+        assertThrows(IOException.class, () -> JsonKeysetReader.withString(jsonKeyset).read());
+    assertThat(e).hasMessageThat().contains("invalid key id");
+  }
+
+  @Test
+  public void testRead_primaryKeyIdIsNotAnIntegerOrAString_throws() throws Exception {
+    String jsonKeyset =
+        "{"
+            + "  \"primaryKeyId\": true,"
+            + "  \"key\": ["
+            + "    {"
+            + "      \"keyData\": {"
+            + "        \"typeUrl\": \"type.googleapis.com/google.crypto.tink.AesGcmKey\","
+            + "        \"keyMaterialType\": \"SYMMETRIC\","
+            + "        \"value\": \"GhCC74uJ+2f4qlpaHwR4ylNQ\""
+            + "      },"
+            + "      \"outputPrefixType\": \"TINK\","
+            + "      \"keyId\": 42818733,"
+            + "      \"status\": \"ENABLED\""
+            + "    }]"
+            + "}";
+    IOException e =
+        assertThrows(IOException.class, () -> JsonKeysetReader.withString(jsonKeyset).read());
+    assertThat(e).hasMessageThat().contains("invalid key id");
+  }
+
+  @Test
+  public void testRead_keyIsNotAnArray_throws() throws Exception {
+    String jsonKeyset =
+        "{"
+            + "  \"primaryKeyId\": 42818733,"
+            + "  \"key\": "
+            + "    {"
+            + "      \"keyData\": {"
+            + "        \"typeUrl\": \"type.googleapis.com/google.crypto.tink.AesGcmKey\","
+            + "        \"keyMaterialType\": \"SYMMETRIC\","
+            + "        \"value\": \"GhCC74uJ+2f4qlpaHwR4ylNQ\""
+            + "      },"
+            + "      \"outputPrefixType\": \"TINK\","
+            + "      \"keyId\": 42818733,"
+            + "      \"status\": \"ENABLED\""
+            + "    }"
+            + "}";
+    IOException e =
+        assertThrows(IOException.class, () -> JsonKeysetReader.withString(jsonKeyset).read());
+    assertThat(e).hasMessageThat().contains("key must be an array");
+  }
+
+  @Test
+  public void testRead_keyEntryIsNotAnObject_throws() throws Exception {
+    String jsonKeyset = "{\"primaryKeyId\":42818733,\"key\":[true]}";
+    IOException e =
+        assertThrows(IOException.class, () -> JsonKeysetReader.withString(jsonKeyset).read());
+    assertThat(e)
+        .hasMessageThat()
+        .contains("java.lang.IllegalStateException: Not a JSON Object: true");
+  }
+
+  @Test
+  public void testRead_keyDataIsNotAnObject_throws() throws Exception {
+    String jsonKeyset =
+        "{"
+            + "  \"primaryKeyId\": 42818733,"
+            + "  \"key\": ["
+            + "    {"
+            + "      \"keyData\": \"GhCC74uJ+2f4qlpaHwR4ylNQ\","
+            + "      \"outputPrefixType\": \"TINK\","
+            + "      \"keyId\": 42818733,"
+            + "      \"status\": \"ENABLED\""
+            + "    }]"
+            + "}";
+    IOException e =
+        assertThrows(IOException.class, () -> JsonKeysetReader.withString(jsonKeyset).read());
+    assertThat(e).hasMessageThat().contains("keyData must be an object");
+  }
+
+  @Test
+  public void testRead_outputPrefixTypeIsNotAString_throws() throws Exception {
+    String jsonKeyset =
+        "{"
+            + "  \"primaryKeyId\": 42818733,"
+            + "  \"key\": ["
+            + "    {"
+            + "      \"keyData\": {"
+            + "        \"typeUrl\": \"type.googleapis.com/google.crypto.tink.AesGcmKey\","
+            + "        \"keyMaterialType\": \"SYMMETRIC\","
+            + "        \"value\": \"GhCC74uJ+2f4qlpaHwR4ylNQ\""
+            + "      },"
+            + "      \"outputPrefixType\": 1,"
+            + "      \"keyId\": 42818733,"
+            + "      \"status\": \"ENABLED\""
+            + "    }]"
+            + "}";
+    IOException e =
+        assertThrows(IOException.class, () -> JsonKeysetReader.withString(jsonKeyset).read());
+    assertThat(e).hasMessageThat().contains("unknown output prefix type: 1");
+  }
+
+  @Test
+  public void testRead_keyIdIsAString_throws() throws Exception {
+    String jsonKeyset =
+        "{"
+            + "  \"primaryKeyId\": 42818733,"
+            + "  \"key\": ["
+            + "    {"
+            + "      \"keyData\": {"
+            + "        \"typeUrl\": \"type.googleapis.com/google.crypto.tink.AesGcmKey\","
+            + "        \"keyMaterialType\": \"SYMMETRIC\","
+            + "        \"value\": \"GhCC74uJ+2f4qlpaHwR4ylNQ\""
+            + "      },"
+            + "      \"outputPrefixType\": \"TINK\","
+            + "      \"keyId\": \"42818733\","
+            + "      \"status\": \"ENABLED\""
+            + "    }]"
+            + "}";
+    IOException e =
+        assertThrows(IOException.class, () -> JsonKeysetReader.withString(jsonKeyset).read());
+    assertThat(e).hasMessageThat().contains("invalid key id");
+  }
+
+  @Test
+  public void testRead_keyIdIsNotAnIntegerOrAString_throws() throws Exception {
+    String jsonKeyset =
+        "{"
+            + "  \"primaryKeyId\": 42818733,"
+            + "  \"key\": ["
+            + "    {"
+            + "      \"keyData\": {"
+            + "        \"typeUrl\": \"type.googleapis.com/google.crypto.tink.AesGcmKey\","
+            + "        \"keyMaterialType\": \"SYMMETRIC\","
+            + "        \"value\": \"GhCC74uJ+2f4qlpaHwR4ylNQ\""
+            + "      },"
+            + "      \"outputPrefixType\": \"TINK\","
+            + "      \"keyId\": true,"
+            + "      \"status\": \"ENABLED\""
+            + "    }]"
+            + "}";
+    IOException e =
+        assertThrows(IOException.class, () -> JsonKeysetReader.withString(jsonKeyset).read());
+    assertThat(e).hasMessageThat().contains("invalid key id");
+  }
+
+  @Test
+  public void testRead_statusIsNotAString_throws() throws Exception {
+    String jsonKeyset =
+        "{"
+            + "  \"primaryKeyId\": 42818733,"
+            + "  \"key\": ["
+            + "    {"
+            + "      \"keyData\": {"
+            + "        \"typeUrl\": \"type.googleapis.com/google.crypto.tink.AesGcmKey\","
+            + "        \"keyMaterialType\": \"SYMMETRIC\","
+            + "        \"value\": \"GhCC74uJ+2f4qlpaHwR4ylNQ\""
+            + "      },"
+            + "      \"outputPrefixType\": \"TINK\","
+            + "      \"keyId\": 42818733,"
+            + "      \"status\": true"
+            + "    }]"
+            + "}";
+
+    IOException e =
+        assertThrows(IOException.class, () -> JsonKeysetReader.withString(jsonKeyset).read());
+    assertThat(e).hasMessageThat().contains("unknown status: true");
+  }
+
+  @Test
+  public void testRead_typeUrlIsNotAString_works() throws Exception {
+    String jsonKeyset =
+        "{"
+            + "  \"primaryKeyId\": 42818733,"
+            + "  \"key\": ["
+            + "    {"
+            + "      \"keyData\": {"
+            + "        \"typeUrl\": 123,"
+            + "        \"keyMaterialType\": \"SYMMETRIC\","
+            + "        \"value\": \"GhCC74uJ+2f4qlpaHwR4ylNQ\""
+            + "      },"
+            + "      \"outputPrefixType\": \"TINK\","
+            + "      \"keyId\": 42818733,"
+            + "      \"status\": \"ENABLED\""
+            + "    }]"
+            + "}";
+    Keyset keyset = JsonKeysetReader.withString(jsonKeyset).read();
+    assertThat(keyset.getKey(0).getKeyData().getTypeUrl()).isEqualTo("123");
+  }
+
+  @Test
+  public void testRead_valueIsNotAString_throws() throws Exception {
+    String jsonKeyset =
+        "{"
+            + "  \"primaryKeyId\": 42818733,"
+            + "  \"key\": ["
+            + "    {"
+            + "      \"keyData\": {"
+            + "        \"typeUrl\": \"type.googleapis.com/google.crypto.tink.AesGcmKey\","
+            + "        \"keyMaterialType\": \"SYMMETRIC\","
+            + "        \"value\": 123"
+            + "      },"
+            + "      \"outputPrefixType\": \"TINK\","
+            + "      \"keyId\": 42818733,"
+            + "      \"status\": \"ENABLED\""
+            + "    }]"
+            + "}";
+    Keyset keyset = JsonKeysetReader.withString(jsonKeyset).read();
+    assertThat(keyset.getKey(0).getKeyData().getValue().size()).isEqualTo(2);
+  }
+
+  @Test
+  public void testRead_keyMaterialTypeIsNotAString_throws() throws Exception {
+    String jsonKeyset =
+        "{"
+            + "  \"primaryKeyId\": 42818733,"
+            + "  \"key\": ["
+            + "    {"
+            + "      \"keyData\": {"
+            + "        \"typeUrl\": \"type.googleapis.com/google.crypto.tink.AesGcmKey\","
+            + "        \"keyMaterialType\": 123,"
+            + "        \"value\": \"GhCC74uJ+2f4qlpaHwR4ylNQ\""
+            + "      },"
+            + "      \"outputPrefixType\": \"TINK\","
+            + "      \"keyId\": 42818733,"
+            + "      \"status\": \"ENABLED\""
+            + "    }]"
+            + "}";
+    IOException e =
+        assertThrows(IOException.class, () -> JsonKeysetReader.withString(jsonKeyset).read());
+    assertThat(e).hasMessageThat().contains("unknown key material type: 123");
   }
 }
