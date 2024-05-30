@@ -50,9 +50,6 @@ import java.nio.file.Path;
 public final class JsonKeysetReader implements KeysetReader {
   private static final Charset UTF_8 = Charset.forName("UTF-8");
 
-  private static final long MAX_KEY_ID = 4294967295L;  // = 2^32 - 1
-  private static final long MIN_KEY_ID = Integer.MIN_VALUE;  // = - 2^31
-
   private final InputStream inputStream;
   private boolean urlSafeBase64 = false;
 
@@ -189,6 +186,14 @@ public final class JsonKeysetReader implements KeysetReader {
     }
   }
 
+  private static final long MAX_KEY_ID = 4294967295L; // = 2^32 - 1
+  private static final long MIN_KEY_ID = Integer.MIN_VALUE; // = - 2^31
+
+  /**
+   * getKeyId parses an element into a 32-bit integer. If the element does not contain a number or
+   * the number is not in the range of either a signed or an unsigned 32-bit integer, it throws an
+   * IOException. If the number is in the range [2^31, 2^32-1], it is cast into a negative integer.
+   */
   private static int getKeyId(JsonElement element) throws IOException {
     if (!element.isJsonPrimitive()) {
       throw new IOException("invalid key id: not a JSON primitive");
@@ -206,7 +211,7 @@ public final class JsonKeysetReader implements KeysetReader {
       throw new IOException("invalid key id");
     }
     // casts large unsigned int32 numbers to negative int32 numbers
-    return (int) element.getAsLong();
+    return (int) id;
   }
 
   private Keyset keysetFromJson(JsonObject json) throws IOException {
