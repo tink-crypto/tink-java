@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.subtle;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
@@ -29,7 +30,10 @@ import com.google.crypto.tink.streamingaead.AesCtrHmacStreamingParameters.HashTy
 import com.google.crypto.tink.testing.StreamingTestUtil;
 import com.google.crypto.tink.testing.StreamingTestUtil.SeekableByteBufferChannel;
 import com.google.crypto.tink.util.SecretBytes;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.channels.SeekableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
@@ -737,5 +741,64 @@ public class AesCtrHmacStreamingTest {
 
     StreamingTestUtil.testEncryptDecryptDifferentInstances(
         constructorAead, createMethodAead, 0, 2049, 1000);
+  }
+
+  /**
+   * Currently tests that b/289805133 is present. If we decrypt to the end of a file using a
+   * newSeekableDecryptingChannel, then jump to a different place and read into an empty buffer,
+   * Tink mistakenly returns -1 instead of 0 in the second read, indicating that we are still at the
+   * end of the file.
+   */
+  @Test
+  public void testB289805133() throws Exception {
+    Assume.assumeFalse(TinkFips.useOnlyFips());
+    // The initial key material is irrelevant (but needs to be of the correct size)
+    byte[] ikm =
+        Hex.decode(
+            "000102030405060708090a0b0c0d0e0f00112233445566778899aabbccddeeff"
+                + "000102030405060708090a0b0c0d0e0f00112233445566778899aabbccddeeff");
+    AesCtrHmacStreamingParameters params =
+        AesCtrHmacStreamingParameters.builder()
+            .setKeySizeBytes(ikm.length)
+            .setHkdfHashType(HashType.SHA512)
+            .setDerivedKeySizeBytes(16)
+            .setHmacHashType(HashType.SHA1)
+            .setHmacTagSizeBytes(12)
+            .setCiphertextSegmentSizeBytes(256)
+            .build();
+    AesCtrHmacStreamingKey key =
+        AesCtrHmacStreamingKey.create(
+            params, SecretBytes.copyFrom(ikm, InsecureSecretKeyAccess.get()));
+    StreamingAead streamingAead = AesCtrHmacStreaming.create(key);
+    // The associated data is irrelevant.
+    byte[] associatedData = Random.randBytes(15);
+    // Somewhat long plaintext -- the exact value is irrelevant.
+    byte[] plaintext = Random.randBytes(1100);
+    // Get ciphertext
+    byte[] ciphertext;
+    {
+      ByteArrayOutputStream bos = new ByteArrayOutputStream();
+      try (OutputStream encChannel = streamingAead.newEncryptingStream(bos, associatedData)) {
+        encChannel.write(plaintext);
+      }
+      ciphertext = bos.toByteArray();
+    }
+    StreamingTestUtil.SeekableByteBufferChannel ctChannel =
+        new StreamingTestUtil.SeekableByteBufferChannel(ciphertext);
+    SeekableByteChannel ptChannel =
+        streamingAead.newSeekableDecryptingChannel(ctChannel, associatedData);
+
+    // First make a read which reads to the end.
+    ByteBuffer decrypted = ByteBuffer.allocate(100);
+    ptChannel.position(1000);
+    assertThat(ptChannel.read(decrypted)).isEqualTo(100);
+
+    // Now allocate an empty buffer and try to read from within the stream.
+    ByteBuffer empty = ByteBuffer.allocate(0);
+    ptChannel.position(500);
+    // TODO(b/289805133): This should return 0. I think because the buffer is empty, internal
+    // data structures are not updated in the call. Then, when Tink decides whether the stream is
+    // at the end, the now obsolete internal data structures are used.
+    assertThat(ptChannel.read(empty)).isEqualTo(-1);
   }
 }
