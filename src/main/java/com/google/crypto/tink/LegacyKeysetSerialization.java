@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink;
 
+import com.google.crypto.tink.proto.KeysetInfo;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
@@ -91,6 +92,16 @@ public final class LegacyKeysetSerialization {
       KeysetHandle keysetHandle, KeysetWriter writer, Aead aead, byte[] associatedData)
       throws GeneralSecurityException, IOException {
     keysetHandle.writeWithAssociatedData(writer, aead, associatedData);
+  }
+
+  /**
+   * Returns the {@link KeysetInfo} proto of the given {@link KeysetHandle}.
+   *
+   * <p>Note: in most cases you can get more information by calling {@code handle.getAt(i).getKey()}
+   * and casting the result to the appropriate key type.
+   */
+  public static KeysetInfo getKeysetInfo(KeysetHandle handle) {
+    return handle.getKeysetInfo();
   }
 
   private LegacyKeysetSerialization() {}

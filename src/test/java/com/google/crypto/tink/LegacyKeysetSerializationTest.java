@@ -16,11 +16,16 @@
 
 package com.google.crypto.tink;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import com.google.crypto.tink.aead.AeadConfig;
 import com.google.crypto.tink.mac.MacConfig;
+import com.google.crypto.tink.proto.KeyStatusType;
+import com.google.crypto.tink.proto.KeysetInfo;
+import com.google.crypto.tink.proto.KeysetInfo.KeyInfo;
+import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.signature.SignatureConfig;
 import java.io.ByteArrayOutputStream;
 import java.security.GeneralSecurityException;
@@ -252,5 +257,69 @@ public final class LegacyKeysetSerializationTest {
         () ->
             TinkProtoKeysetFormat.parseEncryptedKeyset(
                 serializedKeyset, aead, new byte[] {4, 5, 6}));
+  }
+
+  @Test
+  public void getKeysetInfo_works() throws Exception {
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.generateEntryFromParametersName("HMAC_SHA256_128BITTAG")
+                    .withFixedId(101))
+            .addEntry(
+                KeysetHandle.generateEntryFromParametersName("HMAC_SHA256_128BITTAG_RAW")
+                    .withFixedId(301)
+                    .makePrimary())
+            .addEntry(
+                KeysetHandle.generateEntryFromParametersName("HMAC_SHA256_256BITTAG")
+                    .withFixedId(201)
+                    .setStatus(KeyStatus.DESTROYED))
+            .addEntry(
+                KeysetHandle.generateEntryFromParametersName("HMAC_SHA256_256BITTAG_RAW")
+                    .withFixedId(-101)
+                    .setStatus(KeyStatus.DISABLED))
+            .addEntry(KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withFixedId(-201))
+            .build();
+
+    assertThat(LegacyKeysetSerialization.getKeysetInfo(handle))
+        .isEqualTo(
+            KeysetInfo.newBuilder()
+                .setPrimaryKeyId(301)
+                .addKeyInfo(
+                    KeyInfo.newBuilder()
+                        .setTypeUrl("type.googleapis.com/google.crypto.tink.HmacKey")
+                        .setStatus(KeyStatusType.ENABLED)
+                        .setOutputPrefixType(OutputPrefixType.TINK)
+                        .setKeyId(101)
+                        .build())
+                .addKeyInfo(
+                    KeyInfo.newBuilder()
+                        .setTypeUrl("type.googleapis.com/google.crypto.tink.HmacKey")
+                        .setStatus(KeyStatusType.ENABLED)
+                        .setOutputPrefixType(OutputPrefixType.RAW)
+                        .setKeyId(301)
+                        .build())
+                .addKeyInfo(
+                    KeyInfo.newBuilder()
+                        .setTypeUrl("type.googleapis.com/google.crypto.tink.HmacKey")
+                        .setStatus(KeyStatusType.DESTROYED)
+                        .setOutputPrefixType(OutputPrefixType.TINK)
+                        .setKeyId(201)
+                        .build())
+                .addKeyInfo(
+                    KeyInfo.newBuilder()
+                        .setTypeUrl("type.googleapis.com/google.crypto.tink.HmacKey")
+                        .setStatus(KeyStatusType.DISABLED)
+                        .setOutputPrefixType(OutputPrefixType.RAW)
+                        .setKeyId(-101)
+                        .build())
+                .addKeyInfo(
+                    KeyInfo.newBuilder()
+                        .setTypeUrl("type.googleapis.com/google.crypto.tink.AesCmacKey")
+                        .setStatus(KeyStatusType.ENABLED)
+                        .setOutputPrefixType(OutputPrefixType.TINK)
+                        .setKeyId(-201)
+                        .build())
+                .build());
   }
 }

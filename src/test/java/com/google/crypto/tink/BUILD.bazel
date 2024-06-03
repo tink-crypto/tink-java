@@ -594,6 +594,7 @@ java_test(
     size = "small",
     srcs = ["LegacyKeysetSerializationTest.java"],
     deps = [
+        "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:aead",
         "//src/main/java/com/google/crypto/tink:binary_keyset_reader",
         "//src/main/java/com/google/crypto/tink:binary_keyset_writer",
@@ -606,6 +607,7 @@ java_test(
         "//src/main/java/com/google/crypto/tink/aead:aead_config",
         "//src/main/java/com/google/crypto/tink/mac:mac_config",
         "//src/main/java/com/google/crypto/tink/signature:signature_config",
+        "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
     ],
 )
