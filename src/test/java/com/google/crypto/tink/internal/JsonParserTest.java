@@ -343,15 +343,22 @@ public final class JsonParserTest {
   @Theory
   public void getParsedNumberAsLongOrThrow_validLong_sameAsParseLong(
       @FromDataPoints("longs") String numString) throws Exception {
-    JsonElement parsed = JsonParser.parse(numString);
+    Number parsed = JsonParser.parse(numString).getAsNumber();
     assertThat(JsonParser.getParsedNumberAsLongOrThrow(parsed))
         .isEqualTo(Long.parseLong(numString));
   }
 
   @Theory
+  public void getParsedNumberAsLongOrThrow_validLong_sameAsLongValue(
+      @FromDataPoints("longs") String numString) throws Exception {
+    Number parsed = JsonParser.parse(numString).getAsNumber();
+    assertThat(JsonParser.getParsedNumberAsLongOrThrow(parsed)).isEqualTo(parsed.longValue());
+  }
+
+  @Theory
   public void getParsedNumberAsLongOrThrow_biggerThanLong_throws(
       @FromDataPoints("biggerThanLongs") String numString) throws Exception {
-    JsonElement parsed = JsonParser.parse(numString);
+    Number parsed = JsonParser.parse(numString).getAsNumber();
     assertThrows(
         NumberFormatException.class, () -> JsonParser.getParsedNumberAsLongOrThrow(parsed));
   }
@@ -359,14 +366,15 @@ public final class JsonParserTest {
   @Theory
   public void getParsedNumberAsLongOrThrow_nestedValue_success() throws Exception {
     JsonElement parsed = JsonParser.parse("{\"a\":{\"b\":9223372036854775807}}");
-    JsonElement parsedNumber = parsed.getAsJsonObject().get("a").getAsJsonObject().get("b");
+    Number parsedNumber =
+        parsed.getAsJsonObject().get("a").getAsJsonObject().get("b").getAsNumber();
     long output = JsonParser.getParsedNumberAsLongOrThrow(parsedNumber);
     assertThat(output).isEqualTo(9223372036854775807L);
   }
 
   @Theory
   public void getParsedNumberAsLongOrThrow_notParsed_throws() throws Exception {
-    JsonElement notParsedJsonElementWithNumber = new JsonPrimitive(42);
+    Number notParsedJsonElementWithNumber = new JsonPrimitive(42).getAsNumber();
     assertThrows(
         IllegalArgumentException.class,
         () -> JsonParser.getParsedNumberAsLongOrThrow(notParsedJsonElementWithNumber));

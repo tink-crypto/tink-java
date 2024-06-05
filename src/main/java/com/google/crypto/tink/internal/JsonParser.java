@@ -265,23 +265,24 @@ public final class JsonParser {
     }
   }
 
-  /*
-   * Converts a parsed {@link JsonElement} into a long if it contains a valid long value.
+  /**
+   * Converts a parsed {@link Number} into a long if it contains a valid long value.
    *
-   * <p>Requires that {@code element} is part of a output produced by {@link #parse}.
+   * <p>Requires that {@code number} is part of a output produced by {@link #parse}.
    *
-   * @throws NumberFormatException if {@code element} does not contain a valid long value.
+   * @throws NumberFormatException if {@code number} does not contain a valid long value.
    *
    */
-  public static long getParsedNumberAsLongOrThrow(JsonElement element) {
-    Number num = element.getAsNumber();
-    if (!(num instanceof LazilyParsedNumber)) {
+  public static long getParsedNumberAsLongOrThrow(Number number) {
+    if (!(number instanceof LazilyParsedNumber)) {
       // We restrict this function to LazilyParsedNumber because then we know that "toString" will
       // return the unparsed number. For other implementations of Number interface, it is not
       // clearly defined what toString will return.
       throw new IllegalArgumentException("does not contain a parsed number.");
     }
-    return Long.parseLong(element.getAsNumber().toString());
+    // Note that we cannot use number.longValue() here, because longValue() does not throw an
+    // exception if number is not a valid long.
+    return Long.parseLong(number.toString());
   }
 
   private JsonParser() {}

@@ -201,9 +201,10 @@ public final class JsonKeysetReader implements KeysetReader {
     if (!element.getAsJsonPrimitive().isNumber()) {
       throw new IOException("invalid key id: not a JSON number");
     }
+    Number number = element.getAsJsonPrimitive().getAsNumber();
     long id;
     try {
-      id = JsonParser.getParsedNumberAsLongOrThrow(element);
+      id = JsonParser.getParsedNumberAsLongOrThrow(number);
     } catch (NumberFormatException e) {
       throw new IOException(e);
     }
