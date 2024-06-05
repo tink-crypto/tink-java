@@ -500,6 +500,10 @@ java_library(
         ":jwt_public_key_verify",
         ":jwt_validator",
         ":verified_jwt",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_client",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_keyset_info",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_util",
+        "//src/main/java/com/google/crypto/tink/internal:mutable_monitoring_registry",
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry",
         "//src/main/java/com/google/crypto/tink/internal:primitive_set",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper",
@@ -515,6 +519,10 @@ android_library(
         ":jwt_public_key_verify-android",
         ":jwt_validator-android",
         ":verified_jwt-android",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_client-android",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_keyset_info-android",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_util-android",
+        "//src/main/java/com/google/crypto/tink/internal:mutable_monitoring_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_set-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper-android",
@@ -527,9 +535,15 @@ java_library(
     srcs = ["JwtPublicKeySignWrapper.java"],
     deps = [
         ":jwt_public_key_sign",
+        ":raw_jwt",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_client",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_keyset_info",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_util",
+        "//src/main/java/com/google/crypto/tink/internal:mutable_monitoring_registry",
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry",
         "//src/main/java/com/google/crypto/tink/internal:primitive_set",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper",
+        "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
 
@@ -558,9 +572,15 @@ android_library(
     srcs = ["JwtPublicKeySignWrapper.java"],
     deps = [
         ":jwt_public_key_sign-android",
+        ":raw_jwt-android",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_client-android",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_keyset_info-android",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_util-android",
+        "//src/main/java/com/google/crypto/tink/internal:mutable_monitoring_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_set-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
 

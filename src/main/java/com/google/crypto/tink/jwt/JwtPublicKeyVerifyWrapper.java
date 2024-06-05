@@ -16,6 +16,10 @@
 
 package com.google.crypto.tink.jwt;
 
+import com.google.crypto.tink.internal.MonitoringClient;
+import com.google.crypto.tink.internal.MonitoringKeysetInfo;
+import com.google.crypto.tink.internal.MonitoringUtil;
+import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
@@ -35,8 +39,18 @@ class JwtPublicKeyVerifyWrapper
     @SuppressWarnings("Immutable")
     private final PrimitiveSet<JwtPublicKeyVerify> primitives;
 
+    @SuppressWarnings("Immutable")
+    private final MonitoringClient.Logger logger;
+
     public WrappedJwtPublicKeyVerify(PrimitiveSet<JwtPublicKeyVerify> primitives) {
       this.primitives = primitives;
+      if (primitives.hasAnnotations()) {
+        MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
+        MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
+        this.logger = client.createLogger(keysetInfo, "jwtverify", "verify");
+      } else {
+        this.logger = MonitoringUtil.DO_NOTHING_LOGGER;
+      }
     }
 
     @Override
@@ -46,7 +60,9 @@ class JwtPublicKeyVerifyWrapper
       for (List<PrimitiveSet.Entry<JwtPublicKeyVerify>> entries : primitives.getAll()) {
         for (PrimitiveSet.Entry<JwtPublicKeyVerify> entry : entries) {
           try {
-            return entry.getFullPrimitive().verifyAndDecode(compact, validator);
+            VerifiedJwt result = entry.getFullPrimitive().verifyAndDecode(compact, validator);
+            logger.log(entry.getKeyId(), 1);
+            return result;
           } catch (GeneralSecurityException e) {
             if (e instanceof JwtInvalidException) {
               // Keep this exception so that we are able to throw a meaningful message in the end
@@ -56,6 +72,7 @@ class JwtPublicKeyVerifyWrapper
           }
         }
       }
+      logger.logFailure();
       if (interestingException != null) {
         throw interestingException;
       }

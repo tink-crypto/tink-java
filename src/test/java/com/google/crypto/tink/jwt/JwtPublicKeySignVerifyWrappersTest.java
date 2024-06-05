@@ -25,7 +25,11 @@ import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.KeysetManager;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
+import com.google.crypto.tink.internal.MonitoringAnnotations;
+import com.google.crypto.tink.internal.MutableMonitoringRegistry;
+import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
 import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.testing.TestUtil;
@@ -34,6 +38,7 @@ import java.security.GeneralSecurityException;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -78,7 +83,8 @@ public class JwtPublicKeySignVerifyWrappersTest {
     KeysetManager manager = KeysetManager.withEmptyKeyset().add(template);
     KeysetHandle handle = manager.getKeysetHandle();
     assertThrows(
-        GeneralSecurityException.class, () -> handle.getPrimitive(JwtPublicKeySign.class));
+        GeneralSecurityException.class,
+        () -> handle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class));
   }
 
   @Test
@@ -91,7 +97,8 @@ public class JwtPublicKeySignVerifyWrappersTest {
                     .makePrimary())
             .build();
     KeysetHandle publicHandle = privateKeysetHandle.getPublicKeysetHandle();
-    Object unused = publicHandle.getPrimitive(JwtPublicKeyVerify.class);
+    Object unused =
+        publicHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
   }
 
   @Test
@@ -108,11 +115,13 @@ public class JwtPublicKeySignVerifyWrappersTest {
         TinkProtoKeysetFormat.parseKeyset(
             legacyKeysetBuilder.build().toByteArray(), InsecureSecretKeyAccess.get());
     assertThrows(
-        GeneralSecurityException.class, () -> legacyHandle.getPrimitive(JwtPublicKeySign.class));
+        GeneralSecurityException.class,
+        () -> legacyHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class));
 
     KeysetHandle publicHandle = legacyHandle.getPublicKeysetHandle();
     assertThrows(
-        GeneralSecurityException.class, () -> publicHandle.getPrimitive(JwtPublicKeyVerify.class));
+        GeneralSecurityException.class,
+        () -> publicHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class));
   }
 
   @Test
@@ -121,9 +130,12 @@ public class JwtPublicKeySignVerifyWrappersTest {
 
     KeysetHandle handle = KeysetHandle.generateNew(tinkTemplate);
 
-    JwtPublicKeySign signer = handle.getPrimitive(JwtPublicKeySign.class);
+    JwtPublicKeySign signer =
+        handle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     JwtPublicKeyVerify verifier =
-        handle.getPublicKeysetHandle().getPrimitive(JwtPublicKeyVerify.class);
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
     RawJwt rawToken = RawJwt.newBuilder().setJwtId("blah").withoutExpiration().build();
     String signedCompact = signer.signAndEncode(rawToken);
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
@@ -136,9 +148,12 @@ public class JwtPublicKeySignVerifyWrappersTest {
     KeyTemplate template = KeyTemplates.get("JWT_ES256_RAW");
     KeysetHandle handle = KeysetHandle.generateNew(template);
 
-    JwtPublicKeySign signer = handle.getPrimitive(JwtPublicKeySign.class);
+    JwtPublicKeySign signer =
+        handle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     JwtPublicKeyVerify verifier =
-        handle.getPublicKeysetHandle().getPrimitive(JwtPublicKeyVerify.class);
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
     RawJwt rawToken = RawJwt.newBuilder().setJwtId("blah").withoutExpiration().build();
     String signedCompact = signer.signAndEncode(rawToken);
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
@@ -163,13 +178,19 @@ public class JwtPublicKeySignVerifyWrappersTest {
                     .makePrimary())
             .build();
 
-    JwtPublicKeySign oldSigner = oldHandle.getPrimitive(JwtPublicKeySign.class);
-    JwtPublicKeySign newSigner = newHandle.getPrimitive(JwtPublicKeySign.class);
+    JwtPublicKeySign oldSigner =
+        oldHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
+    JwtPublicKeySign newSigner =
+        newHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
 
     JwtPublicKeyVerify oldVerifier =
-        oldHandle.getPublicKeysetHandle().getPrimitive(JwtPublicKeyVerify.class);
+        oldHandle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
     JwtPublicKeyVerify newVerifier =
-        newHandle.getPublicKeysetHandle().getPrimitive(JwtPublicKeyVerify.class);
+        newHandle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
 
     RawJwt rawToken = RawJwt.newBuilder().setJwtId("jwtId").withoutExpiration().build();
     String oldSignedCompact = oldSigner.signAndEncode(rawToken);
@@ -204,13 +225,19 @@ public class JwtPublicKeySignVerifyWrappersTest {
                     .makePrimary())
             .build();
 
-    JwtPublicKeySign oldSigner = oldHandle.getPrimitive(JwtPublicKeySign.class);
-    JwtPublicKeySign newSigner = newHandle.getPrimitive(JwtPublicKeySign.class);
+    JwtPublicKeySign oldSigner =
+        oldHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
+    JwtPublicKeySign newSigner =
+        newHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
 
     JwtPublicKeyVerify oldVerifier =
-        oldHandle.getPublicKeysetHandle().getPrimitive(JwtPublicKeyVerify.class);
+        oldHandle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
     JwtPublicKeyVerify newVerifier =
-        newHandle.getPublicKeysetHandle().getPrimitive(JwtPublicKeyVerify.class);
+        newHandle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
 
     RawJwt rawToken = RawJwt.newBuilder().setJwtId("jwtId").withoutExpiration().build();
     String oldSignedCompact = oldSigner.signAndEncode(rawToken);
@@ -239,7 +266,8 @@ public class JwtPublicKeySignVerifyWrappersTest {
     }
     KeyTemplate template = KeyTemplates.get(templateName);
     KeysetHandle keysetHandle = KeysetHandle.generateNew(template);
-    JwtPublicKeySign jwtSign = keysetHandle.getPrimitive(JwtPublicKeySign.class);
+    JwtPublicKeySign jwtSign =
+        keysetHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     RawJwt rawJwt = RawJwt.newBuilder().withoutExpiration().build();
     String compact = jwtSign.signAndEncode(rawJwt);
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
@@ -248,7 +276,7 @@ public class JwtPublicKeySignVerifyWrappersTest {
     KeysetHandle wrongPublicKeysetHandle = wrongKeysetHandle.getPublicKeysetHandle();
 
     JwtPublicKeyVerify wrongJwtVerify =
-        wrongPublicKeysetHandle.getPrimitive(JwtPublicKeyVerify.class);
+        wrongPublicKeysetHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
     assertThrows(
         GeneralSecurityException.class, () -> wrongJwtVerify.verifyAndDecode(compact, validator));
   }
@@ -257,9 +285,11 @@ public class JwtPublicKeySignVerifyWrappersTest {
   public void wrongIssuer_throwsInvalidException() throws Exception {
     KeyTemplate template = KeyTemplates.get("JWT_ES256");
     KeysetHandle keysetHandle = KeysetHandle.generateNew(template);
-    JwtPublicKeySign jwtSigner = keysetHandle.getPrimitive(JwtPublicKeySign.class);
+    JwtPublicKeySign jwtSigner =
+        keysetHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     KeysetHandle publicHandle = keysetHandle.getPublicKeysetHandle();
-    JwtPublicKeyVerify jwtVerifier = publicHandle.getPrimitive(JwtPublicKeyVerify.class);
+    JwtPublicKeyVerify jwtVerifier =
+        publicHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
     RawJwt rawJwt = RawJwt.newBuilder().setIssuer("Justus").withoutExpiration().build();
     String compact = jwtSigner.signAndEncode(rawJwt);
     JwtValidator validator =
@@ -271,9 +301,11 @@ public class JwtPublicKeySignVerifyWrappersTest {
   public void expiredCompact_throwsInvalidException() throws Exception {
     KeyTemplate template = KeyTemplates.get("JWT_ES256");
     KeysetHandle keysetHandle = KeysetHandle.generateNew(template);
-    JwtPublicKeySign jwtSigner = keysetHandle.getPrimitive(JwtPublicKeySign.class);
+    JwtPublicKeySign jwtSigner =
+        keysetHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     KeysetHandle publicHandle = keysetHandle.getPublicKeysetHandle();
-    JwtPublicKeyVerify jwtVerifier = publicHandle.getPrimitive(JwtPublicKeyVerify.class);
+    JwtPublicKeyVerify jwtVerifier =
+        publicHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
 
     Instant now = Clock.systemUTC().instant().truncatedTo(ChronoUnit.SECONDS);
     RawJwt rawJwt =
@@ -290,9 +322,11 @@ public class JwtPublicKeySignVerifyWrappersTest {
   public void notYetValidCompact_throwsInvalidException() throws Exception {
     KeyTemplate template = KeyTemplates.get("JWT_ES256");
     KeysetHandle keysetHandle = KeysetHandle.generateNew(template);
-    JwtPublicKeySign jwtSigner = keysetHandle.getPrimitive(JwtPublicKeySign.class);
+    JwtPublicKeySign jwtSigner =
+        keysetHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     KeysetHandle publicHandle = keysetHandle.getPublicKeysetHandle();
-    JwtPublicKeyVerify jwtVerifier = publicHandle.getPrimitive(JwtPublicKeyVerify.class);
+    JwtPublicKeyVerify jwtVerifier =
+        publicHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
 
     Instant now = Clock.systemUTC().instant().truncatedTo(ChronoUnit.SECONDS);
     RawJwt rawJwt =
@@ -318,19 +352,113 @@ public class JwtPublicKeySignVerifyWrappersTest {
             .build();
     KeysetHandle publicHandle = handle.getPublicKeysetHandle();
     Keyset publicKeyset =
-        Keyset.parseFrom(TinkProtoKeysetFormat.serializeKeysetWithoutSecret(publicHandle));
+        Keyset.parseFrom(
+            TinkProtoKeysetFormat.serializeKeysetWithoutSecret(publicHandle),
+            ExtensionRegistryLite.getEmptyRegistry());
     Keyset publicKeysetWithoutPrimary = publicKeyset.toBuilder().setPrimaryKeyId(0).build();
     // TODO(b/252792776): Optimally, this would throw.
     KeysetHandle publicHandleWithoutPrimary =
         TinkProtoKeysetFormat.parseKeysetWithoutSecret(publicKeysetWithoutPrimary.toByteArray());
 
-    JwtPublicKeySign signer = handle.getPrimitive(JwtPublicKeySign.class);
+    JwtPublicKeySign signer =
+        handle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     // TODO(b/252792776): At least this should throw.
-    JwtPublicKeyVerify verifier = publicHandleWithoutPrimary.getPrimitive(JwtPublicKeyVerify.class);
+    JwtPublicKeyVerify verifier =
+        publicHandleWithoutPrimary.getPrimitive(
+            RegistryConfiguration.get(), JwtPublicKeyVerify.class);
     RawJwt rawToken = RawJwt.newBuilder().setJwtId("blah").withoutExpiration().build();
     String signedCompact = signer.signAndEncode(rawToken);
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
     VerifiedJwt verifiedToken = verifier.verifyAndDecode(signedCompact, validator);
     assertThat(verifiedToken.getJwtId()).isEqualTo("blah");
+  }
+
+  @Test
+  public void testWithoutAnnotations_hasNoMonitoring() throws Exception {
+    FakeMonitoringClient fakeMonitoringClient = new FakeMonitoringClient();
+    MutableMonitoringRegistry.globalInstance().clear();
+    MutableMonitoringRegistry.globalInstance().registerMonitoringClient(fakeMonitoringClient);
+
+    KeysetHandle privateKeysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.generateEntryFromParametersName("JWT_ES256")
+                    .makePrimary()
+                    .withFixedId(42))
+            .build();
+    KeysetHandle publicKeysetHandle = privateKeysetHandle.getPublicKeysetHandle();
+    JwtPublicKeySign signer =
+        privateKeysetHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
+    RawJwt rawJwt = RawJwt.newBuilder().setJwtId("id123").withoutExpiration().build();
+    String signedCompact = signer.signAndEncode(rawJwt);
+
+    JwtPublicKeyVerify verifier =
+        publicKeysetHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
+
+    JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
+    VerifiedJwt verifiedToken = verifier.verifyAndDecode(signedCompact, validator);
+    assertThat(verifiedToken.getJwtId()).isEqualTo("id123");
+    assertThrows(
+        GeneralSecurityException.class, () -> verifier.verifyAndDecode("invalid", validator));
+
+    assertThat(fakeMonitoringClient.getLogEntries()).isEmpty();
+    assertThat(fakeMonitoringClient.getLogFailureEntries()).isEmpty();
+  }
+
+  @Test
+  public void testWithAnnotations_hasMonitoring() throws Exception {
+    FakeMonitoringClient fakeMonitoringClient = new FakeMonitoringClient();
+    MutableMonitoringRegistry.globalInstance().clear();
+    MutableMonitoringRegistry.globalInstance().registerMonitoringClient(fakeMonitoringClient);
+
+    MonitoringAnnotations annotations =
+        MonitoringAnnotations.newBuilder().add("annotation_name", "annotation_value").build();
+    KeysetHandle privateKeysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.generateEntryFromParametersName("JWT_ES256")
+                    .makePrimary()
+                    .withFixedId(42))
+            .setMonitoringAnnotations(annotations)
+            .build();
+    KeysetHandle publicKeysetHandle = privateKeysetHandle.getPublicKeysetHandle();
+    JwtPublicKeySign signer =
+        privateKeysetHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
+    RawJwt rawJwt = RawJwt.newBuilder().setJwtId("id123").withoutExpiration().build();
+    String signedCompact = signer.signAndEncode(rawJwt);
+
+    JwtPublicKeyVerify verifier =
+        publicKeysetHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
+
+    JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
+    VerifiedJwt verifiedToken = verifier.verifyAndDecode(signedCompact, validator);
+    assertThat(verifiedToken.getJwtId()).isEqualTo("id123");
+    assertThrows(
+        GeneralSecurityException.class, () -> verifier.verifyAndDecode("invalid", validator));
+
+    List<FakeMonitoringClient.LogEntry> logEntries = fakeMonitoringClient.getLogEntries();
+    assertThat(logEntries).hasSize(2);
+    FakeMonitoringClient.LogEntry signEntry = logEntries.get(0);
+    assertThat(signEntry.getKeyId()).isEqualTo(42);
+    assertThat(signEntry.getPrimitive()).isEqualTo("jwtsign");
+    assertThat(signEntry.getApi()).isEqualTo("sign");
+    assertThat(signEntry.getNumBytesAsInput()).isEqualTo(1);
+    assertThat(signEntry.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+
+    FakeMonitoringClient.LogEntry verifyEntry = logEntries.get(1);
+    assertThat(verifyEntry.getKeyId()).isEqualTo(42);
+    assertThat(verifyEntry.getPrimitive()).isEqualTo("jwtverify");
+    assertThat(verifyEntry.getApi()).isEqualTo("verify");
+    assertThat(verifyEntry.getNumBytesAsInput()).isEqualTo(1);
+    assertThat(verifyEntry.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+
+    List<FakeMonitoringClient.LogFailureEntry> failures =
+        fakeMonitoringClient.getLogFailureEntries();
+    assertThat(failures).hasSize(1);
+    FakeMonitoringClient.LogFailureEntry verifyFailure = failures.get(0);
+    assertThat(verifyFailure.getPrimitive()).isEqualTo("jwtverify");
+    assertThat(verifyFailure.getApi()).isEqualTo("verify");
+    assertThat(verifyFailure.getKeysetInfo().getPrimaryKeyId()).isEqualTo(42);
+    assertThat(verifyFailure.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
   }
 }

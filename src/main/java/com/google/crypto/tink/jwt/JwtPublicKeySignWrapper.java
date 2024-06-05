@@ -16,9 +16,14 @@
 
 package com.google.crypto.tink.jwt;
 
+import com.google.crypto.tink.internal.MonitoringClient;
+import com.google.crypto.tink.internal.MonitoringKeysetInfo;
+import com.google.crypto.tink.internal.MonitoringUtil;
+import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
+import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 
 /**
@@ -34,10 +39,43 @@ class JwtPublicKeySignWrapper implements PrimitiveWrapper<JwtPublicKeySign, JwtP
 
   JwtPublicKeySignWrapper() {}
 
+  @Immutable
+  private static class WrappedJwtPublicKeySign implements JwtPublicKeySign {
+    private final JwtPublicKeySign primary;
+    private final int primaryKeyId;
+
+    @SuppressWarnings("Immutable")
+    private final MonitoringClient.Logger logger;
+
+    public WrappedJwtPublicKeySign(final PrimitiveSet<JwtPublicKeySign> primitives) {
+      this.primary = primitives.getPrimary().getFullPrimitive();
+      this.primaryKeyId = primitives.getPrimary().getKeyId();
+      if (primitives.hasAnnotations()) {
+        MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
+        MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
+        this.logger = client.createLogger(keysetInfo, "jwtsign", "sign");
+      } else {
+        this.logger = MonitoringUtil.DO_NOTHING_LOGGER;
+      }
+    }
+
+    @Override
+    public String signAndEncode(RawJwt token) throws GeneralSecurityException {
+      try {
+        String output = primary.signAndEncode(token);
+        logger.log(primaryKeyId, 1);
+        return output;
+      } catch (GeneralSecurityException e) {
+        logger.logFailure();
+        throw e;
+      }
+    }
+  }
+
   @Override
   public JwtPublicKeySign wrap(final PrimitiveSet<JwtPublicKeySign> primitives)
       throws GeneralSecurityException {
-    return primitives.getPrimary().getFullPrimitive();
+    return new WrappedJwtPublicKeySign(primitives);
   }
 
   @Override
