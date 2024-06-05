@@ -24,7 +24,11 @@ import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.KeysetManager;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
+import com.google.crypto.tink.internal.MonitoringAnnotations;
+import com.google.crypto.tink.internal.MutableMonitoringRegistry;
+import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
 import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.protobuf.ExtensionRegistryLite;
@@ -32,6 +36,7 @@ import java.security.GeneralSecurityException;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -226,5 +231,83 @@ public class JwtMacWrapperTest {
     String compact = jwtMac.computeMacAndEncode(rawJwt);
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
     assertThrows(JwtInvalidException.class, () -> jwtMac.verifyMacAndDecode(compact, validator));
+  }
+
+  @Test
+  public void testWithoutAnnotations_hasNoMonitoring() throws Exception {
+    FakeMonitoringClient fakeMonitoringClient = new FakeMonitoringClient();
+    MutableMonitoringRegistry.globalInstance().clear();
+    MutableMonitoringRegistry.globalInstance().registerMonitoringClient(fakeMonitoringClient);
+
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.generateEntryFromParametersName("JWT_HS256")
+                    .makePrimary()
+                    .withFixedId(42))
+            .build();
+    JwtMac jwtMac = keysetHandle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
+    RawJwt rawJwt = RawJwt.newBuilder().setJwtId("id123").withoutExpiration().build();
+    String signedCompact = jwtMac.computeMacAndEncode(rawJwt);
+    JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
+    VerifiedJwt verifiedToken = jwtMac.verifyMacAndDecode(signedCompact, validator);
+    assertThat(verifiedToken.getJwtId()).isEqualTo("id123");
+    assertThrows(
+        GeneralSecurityException.class, () -> jwtMac.verifyMacAndDecode("invalid", validator));
+
+    assertThat(fakeMonitoringClient.getLogEntries()).isEmpty();
+    assertThat(fakeMonitoringClient.getLogFailureEntries()).isEmpty();
+  }
+
+  @Test
+  public void testWithAnnotations_hasMonitoring() throws Exception {
+    FakeMonitoringClient fakeMonitoringClient = new FakeMonitoringClient();
+    MutableMonitoringRegistry.globalInstance().clear();
+    MutableMonitoringRegistry.globalInstance().registerMonitoringClient(fakeMonitoringClient);
+
+    MonitoringAnnotations annotations =
+        MonitoringAnnotations.newBuilder().add("annotation_name", "annotation_value").build();
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.generateEntryFromParametersName("JWT_HS256")
+                    .makePrimary()
+                    .withFixedId(42))
+            .setMonitoringAnnotations(annotations)
+            .build();
+
+    JwtMac jwtMac = keysetHandle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
+    RawJwt rawJwt = RawJwt.newBuilder().setJwtId("id123").withoutExpiration().build();
+    String signedCompact = jwtMac.computeMacAndEncode(rawJwt);
+    JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
+    VerifiedJwt verifiedToken = jwtMac.verifyMacAndDecode(signedCompact, validator);
+    assertThat(verifiedToken.getJwtId()).isEqualTo("id123");
+    assertThrows(
+        GeneralSecurityException.class, () -> jwtMac.verifyMacAndDecode("invalid", validator));
+
+    List<FakeMonitoringClient.LogEntry> logEntries = fakeMonitoringClient.getLogEntries();
+    assertThat(logEntries).hasSize(2);
+    FakeMonitoringClient.LogEntry computeEntry = logEntries.get(0);
+    assertThat(computeEntry.getKeyId()).isEqualTo(42);
+    assertThat(computeEntry.getPrimitive()).isEqualTo("jwtmac");
+    assertThat(computeEntry.getApi()).isEqualTo("compute");
+    assertThat(computeEntry.getNumBytesAsInput()).isEqualTo(1);
+    assertThat(computeEntry.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+
+    FakeMonitoringClient.LogEntry verifyEntry = logEntries.get(1);
+    assertThat(verifyEntry.getKeyId()).isEqualTo(42);
+    assertThat(verifyEntry.getPrimitive()).isEqualTo("jwtmac");
+    assertThat(verifyEntry.getApi()).isEqualTo("verify");
+    assertThat(verifyEntry.getNumBytesAsInput()).isEqualTo(1);
+    assertThat(verifyEntry.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+
+    List<FakeMonitoringClient.LogFailureEntry> failures =
+        fakeMonitoringClient.getLogFailureEntries();
+    assertThat(failures).hasSize(1);
+    FakeMonitoringClient.LogFailureEntry verifyFailure = failures.get(0);
+    assertThat(verifyFailure.getPrimitive()).isEqualTo("jwtmac");
+    assertThat(verifyFailure.getApi()).isEqualTo("verify");
+    assertThat(verifyFailure.getKeysetInfo().getPrimaryKeyId()).isEqualTo(42);
+    assertThat(verifyFailure.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
   }
 }

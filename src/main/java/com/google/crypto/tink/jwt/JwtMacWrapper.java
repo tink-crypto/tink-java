@@ -16,6 +16,10 @@
 
 package com.google.crypto.tink.jwt;
 
+import com.google.crypto.tink.internal.MonitoringClient;
+import com.google.crypto.tink.internal.MonitoringKeysetInfo;
+import com.google.crypto.tink.internal.MonitoringUtil;
+import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
@@ -41,13 +45,35 @@ class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
     @SuppressWarnings("Immutable") // We do not mutate the primitive set.
     private final PrimitiveSet<JwtMac> primitives;
 
+    @SuppressWarnings("Immutable")
+    private final MonitoringClient.Logger computeLogger;
+
+    @SuppressWarnings("Immutable")
+    private final MonitoringClient.Logger verifyLogger;
+
     private WrappedJwtMac(PrimitiveSet<JwtMac> primitives) {
       this.primitives = primitives;
+      if (primitives.hasAnnotations()) {
+        MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
+        MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
+        this.computeLogger = client.createLogger(keysetInfo, "jwtmac", "compute");
+        this.verifyLogger = client.createLogger(keysetInfo, "jwtmac", "verify");
+      } else {
+        this.computeLogger = MonitoringUtil.DO_NOTHING_LOGGER;
+        this.verifyLogger = MonitoringUtil.DO_NOTHING_LOGGER;
+      }
     }
 
     @Override
     public String computeMacAndEncode(RawJwt token) throws GeneralSecurityException {
-      return primitives.getPrimary().getFullPrimitive().computeMacAndEncode(token);
+      try {
+        String result = primitives.getPrimary().getFullPrimitive().computeMacAndEncode(token);
+        computeLogger.log(primitives.getPrimary().getKeyId(), 1);
+        return result;
+      } catch (GeneralSecurityException e) {
+        computeLogger.logFailure();
+        throw e;
+      }
     }
 
     @Override
@@ -57,7 +83,9 @@ class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
       for (List<PrimitiveSet.Entry<JwtMac>> entries : primitives.getAll()) {
         for (PrimitiveSet.Entry<JwtMac> entry : entries) {
           try {
-            return entry.getFullPrimitive().verifyMacAndDecode(compact, validator);
+            VerifiedJwt result = entry.getFullPrimitive().verifyMacAndDecode(compact, validator);
+            verifyLogger.log(entry.getKeyId(), 1);
+            return result;
           } catch (GeneralSecurityException e) {
             if (e instanceof JwtInvalidException) {
               // Keep this exception so that we are able to throw a meaningful message in the end
@@ -67,6 +95,7 @@ class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
           }
         }
       }
+      verifyLogger.logFailure();
       if (interestingException != null) {
         throw interestingException;
       }
