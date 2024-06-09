@@ -114,7 +114,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 
  <p>Registry maps each supported key type to a corresponding <a href="../../../../com/google/crypto/tink/KeyManager.html" title="interface in com.google.crypto.tink"><code>KeyManager</code></a> object, which
  "understands" the key type (i.e., the KeyManager can instantiate the primitive corresponding to
- given key, or can generate new keys of the supported key type). It holds also a <code>PrimitiveWrapper</code> for each supported primitive, so that it can wrap a set of primitives
+ given key, or can generate new keys of the supported key type). It holds also a <a href="../../../../com/google/crypto/tink/PrimitiveWrapper.html" title="interface in com.google.crypto.tink"><code>PrimitiveWrapper</code></a> for each supported primitive, so that it can wrap a set of primitives
  (corresponding to a keyset) into a single primitive.
 
  <p>Keeping KeyManagers for all primitives in a single Registry (rather than having a separate
