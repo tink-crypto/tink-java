@@ -17,7 +17,6 @@ com.google.crypto.tink.keyderivation
 com.google.crypto.tink.keyderivation.internal
 com.google.crypto.tink.mac
 com.google.crypto.tink.mac.internal
-com.google.crypto.tink.monitoring
 com.google.crypto.tink.prf
 com.google.crypto.tink.prf.internal
 com.google.crypto.tink.proto

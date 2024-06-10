@@ -137,7 +137,9 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>static long</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/JsonParser.html#getParsedNumberAsLongOrThrow-com.google.gson.JsonElement-">getParsedNumberAsLongOrThrow</a></span>(com.google.gson.JsonElement&nbsp;element)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/JsonParser.html#getParsedNumberAsLongOrThrow-java.lang.Number-">getParsedNumberAsLongOrThrow</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Number.html?is-external=true" title="class or interface in java.lang">Number</a>&nbsp;number)</code>
+<div class="block">Converts a parsed <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Number.html?is-external=true" title="class or interface in java.lang"><code>Number</code></a> into a long if it contains a valid long value.</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
@@ -192,13 +194,20 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </dl>
 </li>
 </ul>
-<a name="getParsedNumberAsLongOrThrow-com.google.gson.JsonElement-">
+<a name="getParsedNumberAsLongOrThrow-java.lang.Number-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>getParsedNumberAsLongOrThrow</h4>
-<pre>public static&nbsp;long&nbsp;getParsedNumberAsLongOrThrow(com.google.gson.JsonElement&nbsp;element)</pre>
+<pre>public static&nbsp;long&nbsp;getParsedNumberAsLongOrThrow(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Number.html?is-external=true" title="class or interface in java.lang">Number</a>&nbsp;number)</pre>
+<div class="block">Converts a parsed <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Number.html?is-external=true" title="class or interface in java.lang"><code>Number</code></a> into a long if it contains a valid long value.
+
+ <p>Requires that <code>number</code> is part of a output produced by <a href="../../../../../com/google/crypto/tink/internal/JsonParser.html#parse-java.lang.String-"><code>parse(java.lang.String)</code></a>.</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/NumberFormatException.html?is-external=true" title="class or interface in java.lang">NumberFormatException</a></code> - if <code>number</code> does not contain a valid long value.</dd>
+</dl>
 </li>
 </ul>
 </li>
