@@ -251,9 +251,10 @@ class StreamingAeadSeekableDecryptingChannel implements SeekableByteChannel {
    * and this has been verified, by decrypting the last segment.
    */
   private boolean reachedEnd() {
-    return (isCurrentSegmentDecrypted
-            && currentSegmentNr == numberOfSegments - 1
-            && plaintextSegment.remaining() == 0);
+    return (plaintextPosition == plaintextSize
+        && isCurrentSegmentDecrypted
+        && currentSegmentNr == numberOfSegments - 1
+        && plaintextSegment.remaining() == 0);
   }
 
   /**

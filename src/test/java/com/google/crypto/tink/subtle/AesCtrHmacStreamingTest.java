@@ -743,12 +743,6 @@ public class AesCtrHmacStreamingTest {
         constructorAead, createMethodAead, 0, 2049, 1000);
   }
 
-  /**
-   * Currently tests that b/289805133 is present. If we decrypt to the end of a file using a
-   * newSeekableDecryptingChannel, then jump to a different place and read into an empty buffer,
-   * Tink mistakenly returns -1 instead of 0 in the second read, indicating that we are still at the
-   * end of the file.
-   */
   @Test
   public void testB289805133() throws Exception {
     Assume.assumeFalse(TinkFips.useOnlyFips());
@@ -796,9 +790,6 @@ public class AesCtrHmacStreamingTest {
     // Now allocate an empty buffer and try to read from within the stream.
     ByteBuffer empty = ByteBuffer.allocate(0);
     ptChannel.position(500);
-    // TODO(b/289805133): This should return 0. I think because the buffer is empty, internal
-    // data structures are not updated in the call. Then, when Tink decides whether the stream is
-    // at the end, the now obsolete internal data structures are used.
-    assertThat(ptChannel.read(empty)).isEqualTo(-1);
+    assertThat(ptChannel.read(empty)).isEqualTo(0);
   }
 }
