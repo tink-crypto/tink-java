@@ -101,14 +101,14 @@ public class RegistryConfigurationTest {
                               rawKey.getKeyBytes().toByteArray(InsecureSecretKeyAccess.get())))
                       .build()
                       .toByteString())
-              .setTypeUrl(keysetHandle.getKeysetInfo().getKeyInfo(0).getTypeUrl())
+              .setTypeUrl("type.googleapis.com/google.crypto.tink.HmacKey")
               .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
               .build();
       rawKeysetKey =
           Keyset.Key.newBuilder()
               .setKeyData(rawKeyData)
               .setStatus(KeyStatusType.ENABLED)
-              .setKeyId(keysetHandle.getKeysetInfo().getPrimaryKeyId())
+              .setKeyId(keysetHandle.getPrimary().getId())
               .setOutputPrefixType(OutputPrefixType.RAW)
               .build();
       legacyProtoRawKey =
