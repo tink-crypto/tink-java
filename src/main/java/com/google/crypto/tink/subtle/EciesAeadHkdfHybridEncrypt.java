@@ -32,7 +32,6 @@ import com.google.crypto.tink.hybrid.subtle.AeadOrDaead;
 import com.google.crypto.tink.internal.EnumTypeProtoConverter;
 import com.google.crypto.tink.subtle.EllipticCurves.PointFormatType;
 import com.google.crypto.tink.util.SecretBytes;
-import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.security.interfaces.ECPublicKey;
 import java.util.Arrays;
@@ -219,7 +218,14 @@ public final class EciesAeadHkdfHybridEncrypt implements HybridEncrypt {
         key.getOutputPrefix().toByteArray());
   }
 
-  public byte[] noPrefixEncrypt(final byte[] plaintext, final byte[] contextInfo)
+  /**
+   * Encrypts {@code plaintext} using {@code contextInfo} as <b>info</b>-parameter of the underlying
+   * HKDF.
+   *
+   * @return resulting ciphertext.
+   */
+  @Override
+  public byte[] encrypt(final byte[] plaintext, final byte[] contextInfo)
       throws GeneralSecurityException {
     EciesHkdfSenderKem.KemKey kemKey =
         senderKem.generateKey(
@@ -231,25 +237,6 @@ public final class EciesAeadHkdfHybridEncrypt implements HybridEncrypt {
     AeadOrDaead aead = demHelper.getAeadOrDaead(kemKey.getSymmetricKey());
     byte[] ciphertext = aead.encrypt(plaintext, EMPTY_AAD);
     byte[] header = kemKey.getKemBytes();
-    return ByteBuffer.allocate(header.length + ciphertext.length)
-        .put(header)
-        .put(ciphertext)
-        .array();
-  }
-
-  /**
-   * Encrypts {@code plaintext} using {@code contextInfo} as <b>info</b>-parameter of the underlying
-   * HKDF.
-   *
-   * @return resulting ciphertext.
-   */
-  @Override
-  public byte[] encrypt(final byte[] plaintext, final byte[] contextInfo)
-      throws GeneralSecurityException {
-    byte[] ciphertext = noPrefixEncrypt(plaintext, contextInfo);
-    if (outputPrefix.length == 0) {
-      return ciphertext;
-    }
-    return Bytes.concat(outputPrefix, ciphertext);
+    return Bytes.concat(outputPrefix, header, ciphertext);
   }
 }
