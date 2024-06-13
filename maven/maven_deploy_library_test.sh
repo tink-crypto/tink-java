@@ -108,6 +108,46 @@ EOF
   ASSERT_FILE_EQUALS actual_commands.txt expected_commands.txt
 }
 
+test_MavenDeployLibraryTest_RemoteCachingIsUsedWhenSet() {
+  cd "${TEST_CASE_TMPDIR}"
+  create_maven_folder_and_pom_file
+
+  local -r remote_caching_name="some_cache_path"
+  local -r cache_key_file="$(pwd)/cache_key"
+  touch "${cache_key_file}"
+
+  cat << EOF > expected_commands.txt
+bazel build \
+--remote_cache=https://storage.googleapis.com/${remote_caching_name} \
+--google_credentials=${cache_key_file} tink.jar tink-src.jar tink-javadoc.jar
+mvn install:install-file -Dfile=${TEST_CASE_TMPDIR}/bazel-bin/tink.jar \
+-Dsources=${TEST_CASE_TMPDIR}/bazel-bin/tink-src.jar \
+-Djavadoc=${TEST_CASE_TMPDIR}/bazel-bin/tink-javadoc.jar \
+-DpomFile=${RELATIVE_MVN_DIR_PATH}/tink.pom.xml
+EOF
+
+  bazel() {
+    echo "bazel $@" >> actual_commands.txt
+    mock_bazel "$@"
+  }
+
+  bazelisk() {
+    bazel "$@"
+  }
+
+  mvn() {
+    echo "mvn $@" >> actual_commands.txt
+  }
+
+  (
+    source "${CLI}" -c ${remote_caching_name} install tink \
+      "${RELATIVE_MVN_DIR_PATH}/tink.pom.xml" HEAD > /dev/null
+  )
+  rm -rf "${cache_key_file}"
+  ASSERT_CMD_SUCCEEDED
+  ASSERT_FILE_EQUALS actual_commands.txt expected_commands.txt
+}
+
 test_MavenDeployLibraryTest_ReleaseFailsIfNoUrl() {
   cd "${TEST_CASE_TMPDIR}"
   create_maven_folder_and_pom_file
@@ -196,9 +236,12 @@ EOF
     export SONATYPE_PASSWORD="some_password"
     export TINK_DEV_MAVEN_PGP_PASSPHRASE="This-is-a-passphrase"
 
-    create_test_gpg_key || return 1
-    "${ACTUAL_MVN_CMD}" "${params[@]}" || return 1
-    delete_gpg_test_key || return 1
+    # If the actual mvn command is set, we run it.
+    if [[ -n "${ACTUAL_MVN_CMD}" ]]; then
+      create_test_gpg_key || return 1
+      "${ACTUAL_MVN_CMD}" "${params[@]}" || return 1
+      delete_gpg_test_key || return 1
+    fi
   }
 
   (

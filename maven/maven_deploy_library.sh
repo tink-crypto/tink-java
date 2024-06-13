@@ -21,15 +21,18 @@
 #   - This must be run from the root of the library workspace.
 
 usage() {
-  echo "Usage: $0 [-dh] [-n jars_name_prefix] [-u github_url] \\"
-  echo "          <action (install|snapshot|release)> <library name> \\"
-  echo "          <pom file> <version>"
-  echo "  -d: Dry run. Only execute idempotent commands (default: false)."
-  echo "  -h: Help. Print this usage information."
-  echo "  -n: JARs name prefix. Prefix to apply to JAR names (default: "
-  echo "      <library name>)."
-  echo "  -u: GitHub URL. GitHub URL for Javadoc publishing; it is mandatory"
-  echo "      when <action> is \"snaphot\" or \"release\"."
+  cat <<EOF
+Usage: $0 [-dh] [-n jars_name_prefix] [-u github_url] [-c bazel_cache_name]
+          <action (install|snapshot|release)> <library name>
+          <pom file> <version>"
+  -d: Dry run. Only execute idempotent commands (default: false).
+  -n: JARs name prefix. Prefix to apply to JAR names (default: <library name>).
+  -u: GitHub URL. GitHub URL for Javadoc publishing; it is mandatory when
+      <action> is "snaphot" or "release".
+  -c: Bazel cache to use; credentials are expected to be in the file
+      ./cache_key.
+  -h: Help. Print this usage information.
+EOF
   exit 1
 }
 
@@ -38,6 +41,11 @@ readonly GIT_ARGS=(
   -c user.email=noreply@google.com
   -c user.name="Tink Team"
 )
+
+to_absolute_path() {
+  local -r path="$1"
+  echo "$(cd "$(dirname "${path}")" && pwd)/$(basename "${path}")"
+}
 
 # Options.
 DRY_RUN="false"
@@ -52,14 +60,19 @@ ARTIFACT_VERSION=
 # Other.
 BAZEL_CMD="bazel"
 MAVEN_ARGS=()
+CACHE_FLAGS=()
 
 parse_args() {
   # Parse options.
-  while getopts "dhn::u::" opt; do
+  while getopts "dhn::u::c:" opt; do
     case "${opt}" in
       d) DRY_RUN="true" ;;
       n) JAR_NAME_PREFIX="${OPTARG}" ;;
       u) GIT_URL="${OPTARG}" ;;
+      c) CACHE_FLAGS=(
+           "--remote_cache=https://storage.googleapis.com/${OPTARG}"
+           "--google_credentials=$(to_absolute_path ./cache_key)"
+         ) ;;
       *) usage ;;
     esac
   done
@@ -68,6 +81,7 @@ parse_args() {
   readonly DRY_RUN
   readonly JAR_NAME_PREFIX
   readonly GIT_URL
+  readonly CACHE_FLAGS
 
   # Parse args.
   if (( $# < 4 )); then
@@ -256,7 +270,8 @@ main() {
 
   local -r workspace_dir="$(pwd)"
 
-  print_and_do "${BAZEL_CMD}" build "${library}" "${src_jar}" "${javadoc}"
+  print_and_do "${BAZEL_CMD}" build "${CACHE_FLAGS[@]}" "${library}" \
+    "${src_jar}" "${javadoc}"
 
   local -r library_file="$(echo_output_file "${workspace_dir}" "${library}")"
   local -r src_jar_file="$(echo_output_file "${workspace_dir}" "${src_jar}")"
