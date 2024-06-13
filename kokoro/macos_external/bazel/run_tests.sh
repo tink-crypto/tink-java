@@ -27,6 +27,13 @@ if [[ -n "${KOKORO_ROOT:-}" ]] ; then
   export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-8-latest/Contents/Home
 fi
 
+CACHE_FLAGS=""
+if [[ -n "${TINK_REMOTE_BAZEL_CACHE_GCS_BUCKET:-}" ]]; then
+  cp "${TINK_REMOTE_BAZEL_CACHE_SERVICE_KEY}" ./cache_key
+  CACHE_FLAGS="-c ${TINK_REMOTE_BAZEL_CACHE_GCS_BUCKET}/bazel/java-macos"
+fi
+readonly CACHE_FLAGS
+
 ./kokoro/testutils/update_android_sdk.sh
-./kokoro/testutils/run_bazel_tests.sh .
-./kokoro/testutils/run_bazel_tests.sh "examples"
+./kokoro/testutils/run_bazel_tests.sh ${CACHE_FLAGS} .
+./kokoro/testutils/run_bazel_tests.sh ${CACHE_FLAGS} "examples"
