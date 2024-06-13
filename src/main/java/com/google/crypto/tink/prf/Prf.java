@@ -26,7 +26,7 @@ import java.security.GeneralSecurityException;
  * <p>It has the following properties:
  *
  * <ul>
- *   <li>It is deterministic: {@link #compute(input, outputLength)} will always return the same
+ *   <li>It is deterministic: {@link #compute(byte[], int)} will always return the same
  *       output if the same key is used. {@code compute(input, length1)} will be a prefix of {@code
  *       compute(input, length2)} if {@code length1 < length2} and the same key is used.
  *   <li>It is indistinguishable from a random function: Given the evaluation of n different inputs,
