@@ -30,7 +30,6 @@ import com.google.crypto.tink.proto.KeyData;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.KeyStatusType;
 import com.google.crypto.tink.proto.Keyset;
-import com.google.crypto.tink.proto.KeysetInfo;
 import com.google.crypto.tink.subtle.Base64;
 import com.google.crypto.tink.testing.TestUtil;
 import com.google.crypto.tink.tinkkey.KeyAccess;
@@ -39,7 +38,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
-import java.util.HashSet;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -581,14 +579,9 @@ public final class JwkSetConverterTest {
   @Test
   public void toPublicKeysetHandleSetsKeyIdsAndPrimaryKeyId() throws Exception {
     KeysetHandle handle = JwkSetConverter.toPublicKeysetHandle(JWK_SET_WITH_TWO_KEYS);
-    KeysetInfo ketsetInfo = handle.getKeysetInfo();
-    assertThat(ketsetInfo.getKeyInfoCount()).isEqualTo(2);
-    HashSet<Integer> keyIdSet = new HashSet<>();
-    for (KeysetInfo.KeyInfo keyInfo : ketsetInfo.getKeyInfoList()) {
-      keyIdSet.add(keyInfo.getKeyId());
-    }
-    assertThat(keyIdSet).hasSize(2);
-    assertThat(ketsetInfo.getPrimaryKeyId()).isIn(keyIdSet);
+    assertThat(handle.size()).isEqualTo(2);
+    assertThat(handle.getAt(0).getKey()).isInstanceOf(JwtEcdsaPublicKey.class);
+    assertThat(handle.getAt(1).getKey()).isInstanceOf(JwtRsaSsaPkcs1PublicKey.class);
   }
 
   @DataPoints("templatesNames")
