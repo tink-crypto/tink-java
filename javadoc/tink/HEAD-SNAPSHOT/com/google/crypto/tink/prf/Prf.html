@@ -112,7 +112,7 @@ public interface <span class="typeNameLabel">Prf</span></pre>
  <p>It has the following properties:
 
  <ul>
-   <li>It is deterministic: <code>#compute(input, outputLength)</code> will always return the same
+   <li>It is deterministic: <a href="../../../../../com/google/crypto/tink/prf/Prf.html#compute-byte:A-int-"><code>compute(byte[], int)</code></a> will always return the same
        output if the same key is used. <code>compute(input, length1)</code> will be a prefix of <code>compute(input, length2)</code> if <code>length1 &lt; length2</code> and the same key is used.
    <li>It is indistinguishable from a random function: Given the evaluation of n different inputs,
        an attacker cannot distinguish between the PRF and random bytes on an input different from
