@@ -23,18 +23,6 @@ java_test(
 )
 
 java_test(
-    name = "StreamingAeadUtilTest",
-    size = "small",
-    srcs = ["StreamingAeadUtilTest.java"],
-    deps = [
-        "//proto:common_java_proto",
-        "//src/main/java/com/google/crypto/tink/streamingaead:streaming_aead_util",
-        "//src/main/java/com/google/crypto/tink/testing:test_util",
-        "@maven//:junit_junit",
-    ],
-)
-
-java_test(
     name = "StreamingAeadFactoryTest",
     size = "small",
     srcs = ["StreamingAeadFactoryTest.java"],
