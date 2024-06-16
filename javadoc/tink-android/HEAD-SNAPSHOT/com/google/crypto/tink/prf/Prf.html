@@ -106,18 +106,14 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>@Immutable
 public interface <span class="typeNameLabel">Prf</span></pre>
-<div class="block">The Prf interface is an abstraction for an element of a pseudo random function family, selected
- by a key.
+<div class="block">The PRF interface is an abstraction for an element of a pseudo random function family, selected
+ by a key. It has the following properties:
 
- <p>It has the following properties:
-
- <ul>
-   <li>It is deterministic: <a href="../../../../../com/google/crypto/tink/prf/Prf.html#compute-byte:A-int-"><code>compute(byte[], int)</code></a> will always return the same
-       output if the same key is used. <code>compute(input, length1)</code> will be a prefix of <code>compute(input, length2)</code> if <code>length1 &lt; length2</code> and the same key is used.
-   <li>It is indistinguishable from a random function: Given the evaluation of n different inputs,
-       an attacker cannot distinguish between the PRF and random bytes on an input different from
-       the n that are known.
- </ul>
+ <p>- It is deterministic: PRF.compute(input, length) will always return the same output if the
+ same key is used. PRF.compute(input, length1) will be a prefix of PRF.compute(input, length2) if
+ length1 < length2 and the same key is used. - It is indistinguishable from a random function:
+ Given the evaluation of n different inputs, an attacker cannot distinguish between the PRF and
+ random bytes on an input different from the n that are known.
 
  <p>Use cases for PRF are deterministic redaction of PII, keyed hash functions, creating sub IDs
  that do not allow joining with the original dataset without knowing the key. While PRFs can be

@@ -108,13 +108,13 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd><a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="interface in com.google.crypto.tink.internal">PrimitiveWrapper</a>&lt;<a href="../../../../../com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a>,<a href="../../../../../com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a>&gt;</dd>
+<dd><a href="../../../../../com/google/crypto/tink/PrimitiveWrapper.html" title="interface in com.google.crypto.tink">PrimitiveWrapper</a>&lt;<a href="../../../../../com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a>,<a href="../../../../../com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a>&gt;</dd>
 </dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">StreamingAeadWrapper</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
-implements <a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="interface in com.google.crypto.tink.internal">PrimitiveWrapper</a>&lt;<a href="../../../../../com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a>,<a href="../../../../../com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a>&gt;</pre>
+implements <a href="../../../../../com/google/crypto/tink/PrimitiveWrapper.html" title="interface in com.google.crypto.tink">PrimitiveWrapper</a>&lt;<a href="../../../../../com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a>,<a href="../../../../../com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a>&gt;</pre>
 <div class="block">StreamingAeadWrapper is the implementation of PrimitiveWrapper for the StreamingAead primitive.
 
  <p>The returned primitive works with a keyset (rather than a single key). To encrypt a plaintext,
@@ -199,7 +199,7 @@ implements <a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrap
 <h4>wrap</h4>
 <pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a>&nbsp;wrap(<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.html" title="class in com.google.crypto.tink.internal">PrimitiveSet</a>&lt;<a href="../../../../../com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a>&gt;&nbsp;primitives)
                    throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-">PrimitiveWrapper</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../com/google/crypto/tink/PrimitiveWrapper.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-">PrimitiveWrapper</a></code></span></div>
 <div class="block">Wraps a <code>PrimitiveSet</code> and returns a single instance.
 
  <p> This method gets called when a new primitive is created. <code>primitiveSet</code> is immutable.
@@ -207,7 +207,7 @@ implements <a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrap
  This has to be implemented when a new primitive type is added.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-">wrap</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="interface in com.google.crypto.tink.internal">PrimitiveWrapper</a>&lt;<a href="../../../../../com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a>,<a href="../../../../../com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a>&gt;</code></dd>
+<dd><code><a href="../../../../../com/google/crypto/tink/PrimitiveWrapper.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-">wrap</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/google/crypto/tink/PrimitiveWrapper.html" title="interface in com.google.crypto.tink">PrimitiveWrapper</a>&lt;<a href="../../../../../com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a>,<a href="../../../../../com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a>&gt;</code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a StreamingAead primitive from a <code>keysetHandle</code>.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -222,13 +222,13 @@ implements <a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrap
 <li class="blockList">
 <h4>getPrimitiveClass</h4>
 <pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;<a href="../../../../../com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a>&gt;&nbsp;getPrimitiveClass()</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html#getPrimitiveClass--">PrimitiveWrapper</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../com/google/crypto/tink/PrimitiveWrapper.html#getPrimitiveClass--">PrimitiveWrapper</a></code></span></div>
 <div class="block">Returns the primitive class object of the primitive managed. Used for internal management.
  Should be implemented as <code>return P.class;</code> when implementing a wrapper creating objects
  of type <code>P</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html#getPrimitiveClass--">getPrimitiveClass</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="interface in com.google.crypto.tink.internal">PrimitiveWrapper</a>&lt;<a href="../../../../../com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a>,<a href="../../../../../com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a>&gt;</code></dd>
+<dd><code><a href="../../../../../com/google/crypto/tink/PrimitiveWrapper.html#getPrimitiveClass--">getPrimitiveClass</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/google/crypto/tink/PrimitiveWrapper.html" title="interface in com.google.crypto.tink">PrimitiveWrapper</a>&lt;<a href="../../../../../com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a>,<a href="../../../../../com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a>&gt;</code></dd>
 </dl>
 </li>
 </ul>
@@ -239,12 +239,12 @@ implements <a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrap
 <li class="blockList">
 <h4>getInputPrimitiveClass</h4>
 <pre>public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;<a href="../../../../../com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a>&gt;&nbsp;getInputPrimitiveClass()</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html#getInputPrimitiveClass--">PrimitiveWrapper</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../com/google/crypto/tink/PrimitiveWrapper.html#getInputPrimitiveClass--">PrimitiveWrapper</a></code></span></div>
 <div class="block">Returns the primitive class object of the primitive used to create B. Used for internal
  management. Should be implemented as <code>return B.class;</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html#getInputPrimitiveClass--">getInputPrimitiveClass</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="interface in com.google.crypto.tink.internal">PrimitiveWrapper</a>&lt;<a href="../../../../../com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a>,<a href="../../../../../com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a>&gt;</code></dd>
+<dd><code><a href="../../../../../com/google/crypto/tink/PrimitiveWrapper.html#getInputPrimitiveClass--">getInputPrimitiveClass</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/google/crypto/tink/PrimitiveWrapper.html" title="interface in com.google.crypto.tink">PrimitiveWrapper</a>&lt;<a href="../../../../../com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a>,<a href="../../../../../com/google/crypto/tink/StreamingAead.html" title="interface in com.google.crypto.tink">StreamingAead</a>&gt;</code></dd>
 </dl>
 </li>
 </ul>
