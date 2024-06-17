@@ -86,14 +86,19 @@ public final class EciesAeadHkdfHybridDecrypt implements HybridDecrypt {
         key.getOutputPrefix().toByteArray());
   }
 
-  private byte[] decryptNoPrefix(final byte[] ciphertext, final byte[] contextInfo)
+  @Override
+  public byte[] decrypt(final byte[] ciphertext, final byte[] contextInfo)
       throws GeneralSecurityException {
+    if (!isPrefix(outputPrefix, ciphertext)) {
+      throw new GeneralSecurityException("Invalid ciphertext (output prefix mismatch)");
+    }
+    int prefixSize = outputPrefix.length;
     EllipticCurve curve = recipientPrivateKey.getParams().getCurve();
     int headerSize = EllipticCurves.encodingSizeInBytes(curve, ecPointFormat);
-    if (ciphertext.length < headerSize) {
+    if (ciphertext.length < prefixSize + headerSize) {
       throw new GeneralSecurityException("ciphertext too short");
     }
-    byte[] kemBytes = Arrays.copyOfRange(ciphertext, 0, headerSize);
+    byte[] kemBytes = Arrays.copyOfRange(ciphertext, prefixSize, prefixSize + headerSize);
     byte[] symmetricKey =
         recipientKem.generateKey(
             kemBytes,
@@ -103,20 +108,8 @@ public final class EciesAeadHkdfHybridDecrypt implements HybridDecrypt {
             demHelper.getSymmetricKeySizeInBytes(),
             ecPointFormat);
     AeadOrDaead aead = demHelper.getAeadOrDaead(symmetricKey);
-    return aead.decrypt(Arrays.copyOfRange(ciphertext, headerSize, ciphertext.length), EMPTY_AAD);
-  }
-
-  @Override
-  public byte[] decrypt(final byte[] ciphertext, final byte[] contextInfo)
-      throws GeneralSecurityException {
-    if (outputPrefix.length == 0) {
-      return decryptNoPrefix(ciphertext, contextInfo);
-    }
-    if (!isPrefix(outputPrefix, ciphertext)) {
-      throw new GeneralSecurityException("Invalid ciphertext (output prefix mismatch)");
-    }
-    byte[] ciphertextNoPrefix =
-        Arrays.copyOfRange(ciphertext, outputPrefix.length, ciphertext.length);
-    return decryptNoPrefix(ciphertextNoPrefix, contextInfo);
+    byte[] aeadCiphertext =
+        Arrays.copyOfRange(ciphertext, prefixSize + headerSize, ciphertext.length);
+    return aead.decrypt(aeadCiphertext, EMPTY_AAD);
   }
 }
