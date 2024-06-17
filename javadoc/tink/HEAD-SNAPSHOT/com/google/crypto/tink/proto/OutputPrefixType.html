@@ -125,16 +125,16 @@ implements com.google.protobuf.ProtocolMessageEnum</pre>
  of a prefix and a payload. The payload and its format is determined
  entirely by the primitive, but the prefix has to be one of the following
  4 types:
-   - Legacy: prefix is 5 bytes, starts with &#92;x00 and followed by a 4-byte
-             key id that is computed from the key material. In addition to
-             that, signature schemes and MACs will add a &#92;x00 byte to the
-             end of the data being signed / MACed when operating on keys
-             with this OutputPrefixType.
-   - Crunchy: prefix is 5 bytes, starts with &#92;x00 and followed by a 4-byte
-             key id that is generated randomly.
-   - Tink  : prefix is 5 bytes, starts with &#92;x01 and followed by 4-byte
-             key id that is generated randomly.
-   - Raw   : prefix is 0 byte, i.e., empty.
+ - Legacy: prefix is 5 bytes, starts with &#92;x00 and followed by a 4-byte
+ key id that is computed from the key material. In addition to
+ that, signature schemes and MACs will add a &#92;x00 byte to the
+ end of the data being signed / MACed when operating on keys
+ with this OutputPrefixType.
+ - Crunchy: prefix is 5 bytes, starts with &#92;x00 and followed by a 4-byte
+ key id that is generated randomly.
+ - Tink  : prefix is 5 bytes, starts with &#92;x01 and followed by 4-byte
+ key id that is generated randomly.
+ - Raw   : prefix is 0 byte, i.e., empty.
  </pre>
 
  Protobuf enum <code>google.crypto.tink.OutputPrefixType</code></div>
