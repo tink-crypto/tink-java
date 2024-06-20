@@ -3890,6 +3890,8 @@
 <dd>
 <div class="block">On Android KitKat (API level 19) this method does not support non null or non empty <code>associatedData</code>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/EciesDemHelper.Dem.html#decrypt-byte:A-byte:A-int-">decrypt(byte[], byte[], int)</a></span> - Method in interface com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/EciesDemHelper.Dem.html" title="interface in com.google.crypto.tink.hybrid.internal">EciesDemHelper.Dem</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/HpkeDecrypt.html#decrypt-byte:A-byte:A-">decrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/HpkeDecrypt.html" title="class in com.google.crypto.tink.hybrid.internal">HpkeDecrypt</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/LegacyFullHybridDecrypt.html#decrypt-byte:A-byte:A-">decrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/LegacyFullHybridDecrypt.html" title="class in com.google.crypto.tink.hybrid.internal">LegacyFullHybridDecrypt</a></dt>
@@ -4703,8 +4705,8 @@
 </dd>
 <dt><a href="com/google/crypto/tink/subtle/EciesAeadHkdfHybridEncrypt.html" title="class in com.google.crypto.tink.subtle"><span class="typeNameLink">EciesAeadHkdfHybridEncrypt</span></a> - Class in <a href="com/google/crypto/tink/subtle/package-summary.html">com.google.crypto.tink.subtle</a></dt>
 <dd>
-<div class="block">ECIES encryption with HKDF-KEM (key encapsulation mechanism) and AEAD-DEM (data
- encapsulation mechanism).</div>
+<div class="block">ECIES encryption with HKDF-KEM (key encapsulation mechanism) and AEAD-DEM (data encapsulation
+ mechanism).</div>
 </dd>
 <dt><a href="com/google/crypto/tink/proto/EciesAeadHkdfKeyFormat.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">EciesAeadHkdfKeyFormat</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>
@@ -4755,6 +4757,14 @@
 </dd>
 <dt><a href="com/google/crypto/tink/proto/EciesAeadHkdfPublicKeyOrBuilder.html" title="interface in com.google.crypto.tink.proto"><span class="typeNameLink">EciesAeadHkdfPublicKeyOrBuilder</span></a> - Interface in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/hybrid/internal/EciesDemHelper.html" title="class in com.google.crypto.tink.hybrid.internal"><span class="typeNameLink">EciesDemHelper</span></a> - Class in <a href="com/google/crypto/tink/hybrid/internal/package-summary.html">com.google.crypto.tink.hybrid.internal</a></dt>
+<dd>
+<div class="block">Helper functions for ECIES Data Encryption Mechanism (DEM).</div>
+</dd>
+<dt><a href="com/google/crypto/tink/hybrid/internal/EciesDemHelper.Dem.html" title="interface in com.google.crypto.tink.hybrid.internal"><span class="typeNameLink">EciesDemHelper.Dem</span></a> - Interface in <a href="com/google/crypto/tink/hybrid/internal/package-summary.html">com.google.crypto.tink.hybrid.internal</a></dt>
+<dd>
+<div class="block">Interface for a DEM.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/proto/EciesHkdfKemParams.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">EciesHkdfKemParams</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>
 <div class="block">
@@ -5042,6 +5052,8 @@
 <dd>
 <div class="block">On Android KitKat (API level 19) this method does not support non null or non empty <code>associatedData</code>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/EciesDemHelper.Dem.html#encrypt-byte:A-byte:A-byte:A-byte:A-">encrypt(byte[], byte[], byte[], byte[])</a></span> - Method in interface com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/EciesDemHelper.Dem.html" title="interface in com.google.crypto.tink.hybrid.internal">EciesDemHelper.Dem</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/HpkeEncrypt.html#encrypt-byte:A-byte:A-">encrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/HpkeEncrypt.html" title="class in com.google.crypto.tink.hybrid.internal">HpkeEncrypt</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/LegacyFullHybridEncrypt.html#encrypt-byte:A-byte:A-">encrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/LegacyFullHybridEncrypt.html" title="class in com.google.crypto.tink.hybrid.internal">LegacyFullHybridEncrypt</a></dt>
@@ -6552,6 +6564,10 @@
 <dd>
 <div class="block">
  Key template of the Data Encryption Key, e.g., AesCtrHmacAeadKeyFormat.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/EciesDemHelper.html#getDem-com.google.crypto.tink.hybrid.EciesParameters-">getDem(EciesParameters)</a></span> - Static method in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/EciesDemHelper.html" title="class in com.google.crypto.tink.hybrid.internal">EciesDemHelper</a></dt>
+<dd>
+<div class="block">Returns a DEM based on the given parameters.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.html#getDemParameters--">getDemParameters()</a></span> - Method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.html" title="class in com.google.crypto.tink.hybrid">EciesParameters</a></dt>
 <dd>&nbsp;</dd>
@@ -10485,6 +10501,8 @@
 <div class="block">Returns the <code>sub</code> claim identifying the principal that is the subject of the JWT.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/EciesHkdfSenderKem.KemKey.html#getSymmetricKey--">getSymmetricKey()</a></span> - Method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/EciesHkdfSenderKem.KemKey.html" title="class in com.google.crypto.tink.subtle">EciesHkdfSenderKem.KemKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/EciesDemHelper.Dem.html#getSymmetricKeySizeInBytes--">getSymmetricKeySizeInBytes()</a></span> - Method in interface com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/EciesDemHelper.Dem.html" title="interface in com.google.crypto.tink.hybrid.internal">EciesDemHelper.Dem</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/EciesAeadHkdfDemHelper.html#getSymmetricKeySizeInBytes--">getSymmetricKeySizeInBytes()</a></span> - Method in interface com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/EciesAeadHkdfDemHelper.html" title="interface in com.google.crypto.tink.subtle">EciesAeadHkdfDemHelper</a></dt>
 <dd>&nbsp;</dd>
