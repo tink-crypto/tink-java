@@ -131,15 +131,9 @@ public final class AesGcmJce implements Aead {
     if (!isPrefix(outputPrefix, ciphertext)) {
       throw new GeneralSecurityException("Decryption failed (OutputPrefix mismatch).");
     }
-    byte[] nonce = new byte[IV_SIZE_IN_BYTES];
-    System.arraycopy(
-        /* src= */ ciphertext,
-        /* srcPos= */ outputPrefix.length,
-        /* dest= */ nonce,
-        /* destPos= */ 0,
-        /* length= */ IV_SIZE_IN_BYTES);
-    AlgorithmParameterSpec params = InsecureNonceAesGcmJce.getParams(nonce);
-
+    // IV is at position outputPrefix.length in ciphertext.
+    AlgorithmParameterSpec params =
+        InsecureNonceAesGcmJce.getParams(ciphertext, outputPrefix.length, IV_SIZE_IN_BYTES);
     Cipher cipher = InsecureNonceAesGcmJce.getThreadLocalCipher();
     cipher.init(Cipher.DECRYPT_MODE, keySpec, params);
     if (associatedData != null && associatedData.length != 0) {

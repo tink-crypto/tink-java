@@ -112,12 +112,11 @@ public final class InsecureNonceAesGcmJce {
     return localCipher.get().doFinal(ciphertext);
   }
 
-  public static AlgorithmParameterSpec getParams(final byte[] iv) throws GeneralSecurityException {
+  public static AlgorithmParameterSpec getParams(final byte[] iv) {
     return getParams(iv, 0, iv.length);
   }
 
-  private static AlgorithmParameterSpec getParams(final byte[] buf, int offset, int len)
-      throws GeneralSecurityException {
+  public static AlgorithmParameterSpec getParams(final byte[] buf, int offset, int len) {
     @Nullable Integer apiLevel = Util.getAndroidApiLevel();
     if (apiLevel != null && apiLevel <= 19) {
       // GCMParameterSpec should always be present in Java 7 or newer, but it's unsupported on
