@@ -106,24 +106,16 @@ public final class HpkeEncrypt implements HybridEncrypt {
     throw new GeneralSecurityException("Unrecognized HPKE AEAD identifier");
   }
 
-  private byte[] noPrefixEncrypt(final byte[] plaintext, final byte[] contextInfo)
+  @Override
+  public byte[] encrypt(final byte[] plaintext, final byte[] contextInfo)
       throws GeneralSecurityException {
     byte[] info = contextInfo;
     if (info == null) {
       info = new byte[0];
     }
     HpkeContext context = HpkeContext.createSenderContext(recipientPublicKey, kem, kdf, aead, info);
-    byte[] ciphertext = context.seal(plaintext, EMPTY_ASSOCIATED_DATA);
-    return com.google.crypto.tink.subtle.Bytes.concat(context.getEncapsulatedKey(), ciphertext);
-  }
-
-  @Override
-  public byte[] encrypt(final byte[] plaintext, final byte[] contextInfo)
-      throws GeneralSecurityException {
-    byte[] ciphertext = noPrefixEncrypt(plaintext, contextInfo);
-    if (outputPrefix.length == 0) {
-      return ciphertext;
-    }
-    return com.google.crypto.tink.subtle.Bytes.concat(outputPrefix, ciphertext);
+    byte[] aeadCiphertext = context.seal(plaintext, EMPTY_ASSOCIATED_DATA);
+    return com.google.crypto.tink.subtle.Bytes.concat(
+        outputPrefix, context.getEncapsulatedKey(), aeadCiphertext);
   }
 }

@@ -128,35 +128,27 @@ public final class HpkeDecrypt implements HybridDecrypt {
         privateKey.getOutputPrefix());
   }
 
-  private byte[] decryptNoPrefix(final byte[] ciphertext, final byte[] contextInfo)
+  @Override
+  public byte[] decrypt(final byte[] ciphertext, final byte[] contextInfo)
       throws GeneralSecurityException {
-    if (ciphertext.length < encapsulatedKeyLength) {
+    int prefixAndHeaderLength = outputPrefix.length + encapsulatedKeyLength;
+    if (ciphertext.length < prefixAndHeaderLength) {
       throw new GeneralSecurityException("Ciphertext is too short.");
+    }
+    if (!isPrefix(outputPrefix, ciphertext)) {
+      throw new GeneralSecurityException("Invalid ciphertext (output prefix mismatch)");
     }
     byte[] info = contextInfo;
     if (info == null) {
       info = new byte[0];
     }
-    byte[] encapsulatedKey = Arrays.copyOf(ciphertext, encapsulatedKeyLength);
+    byte[] encapsulatedKey =
+        Arrays.copyOfRange(ciphertext, outputPrefix.length, prefixAndHeaderLength);
     byte[] aeadCiphertext =
-        Arrays.copyOfRange(ciphertext, encapsulatedKeyLength, ciphertext.length);
+        Arrays.copyOfRange(ciphertext, prefixAndHeaderLength, ciphertext.length);
     HpkeContext context =
         HpkeContext.createRecipientContext(
             encapsulatedKey, recipientPrivateKey, kem, kdf, aead, info);
     return context.open(aeadCiphertext, EMPTY_ASSOCIATED_DATA);
-  }
-
-  @Override
-  public byte[] decrypt(final byte[] ciphertext, final byte[] contextInfo)
-      throws GeneralSecurityException {
-    if (outputPrefix.length == 0) {
-      return decryptNoPrefix(ciphertext, contextInfo);
-    }
-    if (!isPrefix(outputPrefix, ciphertext)) {
-      throw new GeneralSecurityException("Invalid ciphertext (output prefix mismatch)");
-    }
-    byte[] ciphertextNoPrefix =
-        Arrays.copyOfRange(ciphertext, outputPrefix.length, ciphertext.length);
-    return decryptNoPrefix(ciphertextNoPrefix, contextInfo);
   }
 }
