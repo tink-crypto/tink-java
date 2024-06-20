@@ -98,7 +98,10 @@ public final class EciesAeadHkdfTestUtil {
         Hex.decode(
             "04207f1c9bd3bce6864bdbb611bdb9852dea7e12dbe5894c642bd5cc8cde79de9e8ae3199875eba161d413"
                 + "ce3a29cfa0b27c6717d7d4cfbace5706ae4bbf8f7d1eb769657992f5e7f5450091cc61c7b3a7b811"
-                + "fe5578e82e5123cb38855c"));
+                + "fe5578e82e5123cb38855c"),
+        Hex.decode("0ff2c74b36f4154deee11e167d23200c"),
+        65,
+        0);
   }
 
   /** Compressed point */
@@ -128,7 +131,10 @@ public final class EciesAeadHkdfTestUtil {
         new byte[] {0x02},
         Hex.decode(
             "02f1885dcb9240136f3305a18ac3857dd5de948cb0c4c78dbb087d37815800936340e2c351380bb615b26f"
-                + "d7d78c9c864f4a0e31863e864140f1f7e1205b"));
+                + "d7d78c9c864f4a0e31863e864140f1f7e1205b"),
+        Hex.decode("14e9e4fc4dd601a95a0f7bf85a1b10f9"),
+        33,
+        0);
   }
 
   /** 32 byte AES GCM KEY */
@@ -158,7 +164,10 @@ public final class EciesAeadHkdfTestUtil {
         new byte[] {0x02},
         Hex.decode(
             "029f1ad546b1b60a0cff3cc356977ab608f5c4c17b693d2778d1e3354ec43500ea65bb5cce0fdc55e1fd0b"
-                + "9b07ee1ac642f7dcb5abd94b6b42691cd8e206"));
+                + "9b07ee1ac642f7dcb5abd94b6b42691cd8e206"),
+        Hex.decode("e4465a524db54903542c427df79d196f92a8f514c4c7dcea703f0f049ba9ae28"),
+        33,
+        0);
   }
 
   /** AES128_CTR_HMAC_SHA256_RAW */
@@ -190,7 +199,11 @@ public final class EciesAeadHkdfTestUtil {
         new byte[] {0x02},
         Hex.decode(
             "029f86d6f944e163d1b787a261caa65e47f7c59368170b5e8da0e7a14a4ce1bfab8e6c2e283562a2bc52fb"
-                + "5145ec0a4737ecfe52f725e1c70df17a02dfdda7e6188b"));
+                + "5145ec0a4737ecfe52f725e1c70df17a02dfdda7e6188b"),
+        Hex.decode(
+            "bf7808c6df336dc7d8df0c87bb87aa9dff7d471d839bcf6fd52bf03d2bf4bf41a45edc67442481e68ed58d7bda4ffbba"),
+        33,
+        0);
   }
 
   // AES256_CTR_HMAC_SHA256_RAW
@@ -223,7 +236,11 @@ public final class EciesAeadHkdfTestUtil {
         Hex.decode(
             "043e59fd951974bfe1b2c7a33d4bf89aa3b461e3aedcf44928eda6744f9880fb893b66899217736dd6db73"
                 + "763ba540469ff0d240a95bbd05b7716932082983883db5cba086eebbcc6fe0757644fb0c612fff2c"
-                + "a86dc9077e7089ddf107492251413d99a679b86d4d07c0a70d1a6329f6da6f"));
+                + "a86dc9077e7089ddf107492251413d99a679b86d4d07c0a70d1a6329f6da6f"),
+        Hex.decode(
+            "a3b651c837dd5d3700996dfdef7c91af93abbfddb13af6be755000500958255b6e78a3f5429ebe0c9219ab8a036ba7da870e055efc9e00da0a52f5370fdb2bfe"),
+        65,
+        0);
   }
 
   // AES256_SIV_RAW
@@ -251,7 +268,11 @@ public final class EciesAeadHkdfTestUtil {
         new byte[] {0x02},
         Hex.decode(
             "0425975e19677c2110915beb293e3833cd40c9beeff376b83b8cf01aa8282a1416b3b8deffd34b7c330448"
-                + "48a3ba8a722d60946757ae29ee317ceefae84890325ca1a246d24696a3f5acd351690763212961"));
+                + "48a3ba8a722d60946757ae29ee317ceefae84890325ca1a246d24696a3f5acd351690763212961"),
+        Hex.decode(
+            "0650f3fb8337176225479c534391f33bc810fd823b9af3875adceee99b3325f0d71e83fc462899d8c865dfb6c606aa551360f7407a92d3d8b34a4706cf97adfd"),
+        65,
+        0);
   }
 
   // Variant: TINK
@@ -284,7 +305,10 @@ public final class EciesAeadHkdfTestUtil {
             "0188668866"
                 + "04207f1c9bd3bce6864bdbb611bdb9852dea7e12dbe5894c642bd5cc8cde79de9e8ae3199875eba1"
                 + "61d413ce3a29cfa0b27c6717d7d4cfbace5706ae4bbf8f7d1eb769657992f5e7f5450091cc61c7b3"
-                + "a7b811fe5578e82e5123cb38855c"));
+                + "a7b811fe5578e82e5123cb38855c"),
+        Hex.decode("0ff2c74b36f4154deee11e167d23200c"),
+        65,
+        5);
   }
 
   // Variant: CRUNCHY
@@ -317,7 +341,10 @@ public final class EciesAeadHkdfTestUtil {
             "0088668866"
                 + "04207f1c9bd3bce6864bdbb611bdb9852dea7e12dbe5894c642bd5cc8cde79de9e8ae3199875eba1"
                 + "61d413ce3a29cfa0b27c6717d7d4cfbace5706ae4bbf8f7d1eb769657992f5e7f5450091cc61c7b3"
-                + "a7b811fe5578e82e5123cb38855c"));
+                + "a7b811fe5578e82e5123cb38855c"),
+        Hex.decode("0ff2c74b36f4154deee11e167d23200c"),
+        65,
+        5);
   }
 
   // HashType: SHA384
@@ -348,7 +375,10 @@ public final class EciesAeadHkdfTestUtil {
         Hex.decode(
             "0484b996da02ef1e0169f220cfec0c1f0bb259d245b0131e2826619ffc19886d920876e7444976ca8ec6fa"
                 + "3bd0301680e7d91ecc09196b2b2079db8f00f1775ca2d2f63341cd6eadffd4332af8f4c2c91acb88"
-                + "72a7f22342a8e6dff119d0"));
+                + "72a7f22342a8e6dff119d0"),
+        Hex.decode("ac5f7046d918c9108872710fc7bf46f9"),
+        65,
+        0);
   }
 
   // HashType: SHA512
@@ -379,7 +409,10 @@ public final class EciesAeadHkdfTestUtil {
         Hex.decode(
             "044668af1e50e4a24bb30fb763788f2c7151c33aa30542843b8699519ff3b9cf78a8421466249330ee9552"
                 + "20591444f0eb2f910cf530f9cea17e277c393c0796de08184b6d90cc229efc70f6748c4ff26abc57"
-                + "2b08ddffabab04a307e194"));
+                + "2b08ddffabab04a307e194"),
+        Hex.decode("3957fec45e7a4a7d43bc01177656267a"),
+        65,
+        0);
   }
 
   // Empty message
@@ -410,7 +443,10 @@ public final class EciesAeadHkdfTestUtil {
         Hex.decode(
             "0471855fecd89b62ae67a4d62be5fe31f5368e271b3b1775362161eab5701ab6fb21048c406a31ffa2dde4"
                 + "2bd68b88a20daf9cf3873a2fde4e745d404dd1dcab21ee0e05a32e919c1bcbecd7fb18c6b8fe7f91"
-                + "ea9c7e0abba5855dd0a2"));
+                + "ea9c7e0abba5855dd0a2"),
+        Hex.decode("e055ea3b114decbbfe55485a08783628"),
+        65,
+        0);
   }
 
   // Empty context info
@@ -441,7 +477,10 @@ public final class EciesAeadHkdfTestUtil {
         Hex.decode(
             "045c1ef99f7c3a2c9ea0022bcd8c87e9b90d3dec4687a3e94a006c01136d7b50c0db443b67ed69d432bc94"
                 + "9b7ba76859343577fe702437ebb105e18abdaf6d3f88fb1b12ed80d0182e1f6ac5da5cb08cec330c"
-                + "861c897e34603a6b83de71"));
+                + "861c897e34603a6b83de71"),
+        Hex.decode("2f3779ac1b2e1445e272954d05ca77d8"),
+        65,
+        0);
   }
 
   // NIST_P384
@@ -473,7 +512,10 @@ public final class EciesAeadHkdfTestUtil {
             "04ff21e8d24773b1deaeb120aba62c2f19d0eb6112c3296d25be9302e0f31788db202e87ef1341f9fa05a2"
                 + "ac9b21ced6b0ef19407618ae6e2d86764f6a5ea582aec7cd6907bebb9261b55eb4ba588dede42ec6"
                 + "13992bd143c703b6af20cd927a501536191ec52e13326252968c3fcb2af021f25fcfd7d5993c180d"
-                + "fd916d"));
+                + "fd916d"),
+        Hex.decode("5a9db2e873fbbfd289d3321ee2a0141a"),
+        97,
+        0);
   }
 
   // NIST_P521
@@ -526,7 +568,10 @@ public final class EciesAeadHkdfTestUtil {
             "0401a1051bd9ceedf066f31edea3465cf5170c72102c325b85e30ae2f80155ca7af0abb8c8367b63dea022"
                 + "ebdf4d87f923bd02f9dc0d39b6e2facbef079b4737c392ad0032b7beb0ccb56e160682b722c54b4b"
                 + "d7f288d66b3f25f856304c35cbf2368610d8fbe3f83890c007c6ca5d2f5f32d1ef4445372751b1bc"
-                + "0e7104879b8c2e1e60f1c8862c566d2b0718aed41bb763cb29e3e2ca1df63e46f859fa98478ea9"));
+                + "0e7104879b8c2e1e60f1c8862c566d2b0718aed41bb763cb29e3e2ca1df63e46f859fa98478ea9"),
+        Hex.decode("51b2b232bac37787fb2f778b631f70c6"),
+        133,
+        0);
   }
 
   public static HybridTestVector[] createEciesTestVectors() {

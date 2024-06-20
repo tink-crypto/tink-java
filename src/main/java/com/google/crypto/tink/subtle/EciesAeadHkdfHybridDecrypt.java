@@ -22,7 +22,7 @@ import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.hybrid.EciesPrivateKey;
-import com.google.crypto.tink.hybrid.subtle.AeadOrDaead;
+import com.google.crypto.tink.hybrid.internal.EciesDemHelper;
 import com.google.crypto.tink.internal.BigIntegerEncoding;
 import java.security.GeneralSecurityException;
 import java.security.interfaces.ECPrivateKey;
@@ -36,13 +36,12 @@ import java.util.Arrays;
  * @since 1.0.0
  */
 public final class EciesAeadHkdfHybridDecrypt implements HybridDecrypt {
-  private static final byte[] EMPTY_AAD = new byte[0];
   private final ECPrivateKey recipientPrivateKey;
   private final EciesHkdfRecipientKem recipientKem;
   private final String hkdfHmacAlgo;
   private final byte[] hkdfSalt;
   private final EllipticCurves.PointFormatType ecPointFormat;
-  private final EciesAeadHkdfDemHelper demHelper;
+  private final EciesDemHelper.Dem dem;
   private final byte[] outputPrefix;
 
   private EciesAeadHkdfHybridDecrypt(
@@ -50,15 +49,14 @@ public final class EciesAeadHkdfHybridDecrypt implements HybridDecrypt {
       final byte[] hkdfSalt,
       String hkdfHmacAlgo,
       EllipticCurves.PointFormatType ecPointFormat,
-      EciesAeadHkdfDemHelper demHelper,
-      byte[] outputPrefix)
-      throws GeneralSecurityException {
+      EciesDemHelper.Dem dem,
+      byte[] outputPrefix) {
     this.recipientPrivateKey = recipientPrivateKey;
     this.recipientKem = new EciesHkdfRecipientKem(recipientPrivateKey);
     this.hkdfSalt = hkdfSalt;
     this.hkdfHmacAlgo = hkdfHmacAlgo;
     this.ecPointFormat = ecPointFormat;
-    this.demHelper = demHelper;
+    this.dem = dem;
     this.outputPrefix = outputPrefix;
   }
 
@@ -82,7 +80,7 @@ public final class EciesAeadHkdfHybridDecrypt implements HybridDecrypt {
         EciesAeadHkdfHybridEncrypt.toHmacAlgo(key.getParameters().getHashType()),
         EciesAeadHkdfHybridEncrypt.POINT_FORMAT_TYPE_CONVERTER.toProtoEnum(
             key.getParameters().getNistCurvePointFormat()),
-        EciesAeadHkdfHybridEncrypt.createHelper(key.getParameters().getDemParameters()),
+        EciesDemHelper.getDem(key.getParameters()),
         key.getOutputPrefix().toByteArray());
   }
 
@@ -105,11 +103,8 @@ public final class EciesAeadHkdfHybridDecrypt implements HybridDecrypt {
             hkdfHmacAlgo,
             hkdfSalt,
             contextInfo,
-            demHelper.getSymmetricKeySizeInBytes(),
+            dem.getSymmetricKeySizeInBytes(),
             ecPointFormat);
-    AeadOrDaead aead = demHelper.getAeadOrDaead(symmetricKey);
-    byte[] aeadCiphertext =
-        Arrays.copyOfRange(ciphertext, prefixSize + headerSize, ciphertext.length);
-    return aead.decrypt(aeadCiphertext, EMPTY_AAD);
+    return dem.decrypt(symmetricKey, ciphertext, prefixSize + headerSize);
   }
 }

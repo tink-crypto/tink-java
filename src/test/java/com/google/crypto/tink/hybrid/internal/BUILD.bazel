@@ -333,3 +333,25 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "EciesDemHelperTest",
+    size = "small",
+    srcs = ["EciesDemHelperTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:parameters",
+        "//src/main/java/com/google/crypto/tink/aead:aead_config",
+        "//src/main/java/com/google/crypto/tink/aead:aes_ctr_hmac_aead_parameters",
+        "//src/main/java/com/google/crypto/tink/aead:aes_gcm_parameters",
+        "//src/main/java/com/google/crypto/tink/daead:aes_siv_parameters",
+        "//src/main/java/com/google/crypto/tink/hybrid:ecies_parameters",
+        "//src/main/java/com/google/crypto/tink/hybrid/internal:ecies_dem_helper",
+        "//src/main/java/com/google/crypto/tink/hybrid/internal/testing:ecies_aead_hkdf_test_util",
+        "//src/main/java/com/google/crypto/tink/hybrid/internal/testing:hybrid_test_vector",
+        "//src/main/java/com/google/crypto/tink/internal:tink_bug_exception",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "//src/main/java/com/google/crypto/tink/subtle:random",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
