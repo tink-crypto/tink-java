@@ -13,11 +13,8 @@ java_library(
     name = "insecure_nonce_aes_gcm_jce",
     srcs = ["InsecureNonceAesGcmJce.java"],
     deps = [
+        ":aes_gcm_jce_util",
         "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
-        "//src/main/java/com/google/crypto/tink/internal:util",
-        "//src/main/java/com/google/crypto/tink/subtle:subtle_util_cluster",
-        "//src/main/java/com/google/crypto/tink/subtle:validators",
-        "@maven//:com_google_code_findbugs_jsr305",
     ],
 )
 
@@ -84,6 +81,17 @@ java_library(
     deps = ["//src/main/java/com/google/crypto/tink/subtle:bytes"],
 )
 
+java_library(
+    name = "aes_gcm_jce_util",
+    srcs = ["AesGcmJceUtil.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/internal:util",
+        "//src/main/java/com/google/crypto/tink/subtle:subtle_util_cluster",
+        "//src/main/java/com/google/crypto/tink/subtle:validators",
+        "@maven//:com_google_code_findbugs_jsr305",
+    ],
+)
+
 # Android libraries
 
 android_library(
@@ -95,11 +103,8 @@ android_library(
     name = "insecure_nonce_aes_gcm_jce-android",
     srcs = ["InsecureNonceAesGcmJce.java"],
     deps = [
+        ":aes_gcm_jce_util-android",
         "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util-android",
-        "//src/main/java/com/google/crypto/tink/internal:util-android",
-        "//src/main/java/com/google/crypto/tink/subtle:subtle_util_cluster-android",
-        "//src/main/java/com/google/crypto/tink/subtle:validators-android",
-        "@maven//:com_google_code_findbugs_jsr305",
     ],
 )
 
@@ -649,5 +654,16 @@ android_library(
         "//src/main/java/com/google/crypto/tink/util:secret_bytes-android",
         "@maven//:com_google_code_findbugs_jsr305",
         "@maven//:com_google_protobuf_protobuf_javalite",
+    ],
+)
+
+android_library(
+    name = "aes_gcm_jce_util-android",
+    srcs = ["AesGcmJceUtil.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/internal:util-android",
+        "//src/main/java/com/google/crypto/tink/subtle:subtle_util_cluster-android",
+        "//src/main/java/com/google/crypto/tink/subtle:validators-android",
+        "@maven//:com_google_code_findbugs_jsr305",
     ],
 )

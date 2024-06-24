@@ -22,7 +22,7 @@ import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.aead.AesGcmKey;
-import com.google.crypto.tink.aead.internal.InsecureNonceAesGcmJce;
+import com.google.crypto.tink.aead.internal.AesGcmJceUtil;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
@@ -31,7 +31,6 @@ import java.security.spec.AlgorithmParameterSpec;
 import java.util.Arrays;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 
 /**
  * This primitive implements AesGcm using JCE.
@@ -43,8 +42,8 @@ public final class AesGcmJce implements Aead {
   public static final TinkFipsUtil.AlgorithmFipsCompatibility FIPS =
       TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_REQUIRES_BORINGCRYPTO;
 
-  private static final int IV_SIZE_IN_BYTES = InsecureNonceAesGcmJce.IV_SIZE_IN_BYTES;
-  private static final int TAG_SIZE_IN_BYTES = InsecureNonceAesGcmJce.TAG_SIZE_IN_BYTES;
+  private static final int IV_SIZE_IN_BYTES = AesGcmJceUtil.IV_SIZE_IN_BYTES;
+  private static final int TAG_SIZE_IN_BYTES = AesGcmJceUtil.TAG_SIZE_IN_BYTES;
 
   @SuppressWarnings("Immutable")
   private final SecretKey keySpec;
@@ -57,8 +56,7 @@ public final class AesGcmJce implements Aead {
       throw new GeneralSecurityException(
           "Can not use AES-GCM in FIPS-mode, as BoringCrypto module is not available.");
     }
-    Validators.validateAesKeySize(key.length);
-    this.keySpec = new SecretKeySpec(key, "AES");
+    this.keySpec = AesGcmJceUtil.getSecretKey(key);
     this.outputPrefix = outputPrefix.toByteArray();
   }
 
@@ -92,8 +90,8 @@ public final class AesGcmJce implements Aead {
       throw new NullPointerException("plaintext is null");
     }
     byte[] nonce = Random.randBytes(IV_SIZE_IN_BYTES);
-    AlgorithmParameterSpec params = InsecureNonceAesGcmJce.getParams(nonce);
-    Cipher cipher = InsecureNonceAesGcmJce.getThreadLocalCipher();
+    AlgorithmParameterSpec params = AesGcmJceUtil.getParams(nonce);
+    Cipher cipher = AesGcmJceUtil.getThreadLocalCipher();
     cipher.init(Cipher.ENCRYPT_MODE, keySpec, params);
     if (associatedData != null && associatedData.length != 0) {
       cipher.updateAAD(associatedData);
@@ -133,8 +131,8 @@ public final class AesGcmJce implements Aead {
     }
     // IV is at position outputPrefix.length in ciphertext.
     AlgorithmParameterSpec params =
-        InsecureNonceAesGcmJce.getParams(ciphertext, outputPrefix.length, IV_SIZE_IN_BYTES);
-    Cipher cipher = InsecureNonceAesGcmJce.getThreadLocalCipher();
+        AesGcmJceUtil.getParams(ciphertext, outputPrefix.length, IV_SIZE_IN_BYTES);
+    Cipher cipher = AesGcmJceUtil.getThreadLocalCipher();
     cipher.init(Cipher.DECRYPT_MODE, keySpec, params);
     if (associatedData != null && associatedData.length != 0) {
       cipher.updateAAD(associatedData);

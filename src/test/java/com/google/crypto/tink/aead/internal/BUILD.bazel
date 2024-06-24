@@ -409,3 +409,16 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "AesGcmJceUtilTest",
+    size = "small",
+    srcs = ["AesGcmJceUtilTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/aead/internal:aes_gcm_jce_util",
+        "//src/main/java/com/google/crypto/tink/subtle:bytes",
+        "//src/main/java/com/google/crypto/tink/subtle:random",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
