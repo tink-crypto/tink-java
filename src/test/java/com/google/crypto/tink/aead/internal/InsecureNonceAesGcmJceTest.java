@@ -89,21 +89,6 @@ public class InsecureNonceAesGcmJceTest {
   }
 
   @Test
-  public void testEncryptWithAad_shouldFailOnAndroid19OrOlder() throws Exception {
-    Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
-    @Nullable Integer apiLevel = Util.getAndroidApiLevel();
-    Assume.assumeNotNull(apiLevel);
-    Assume.assumeTrue(apiLevel <= 19);
-
-    InsecureNonceAesGcmJce gcm = new InsecureNonceAesGcmJce(Random.randBytes(16));
-    byte[] message = Random.randBytes(20);
-    byte[] aad = Random.randBytes(20);
-    byte[] iv = Random.randBytes(InsecureNonceAesGcmJce.IV_SIZE_IN_BYTES);
-
-    assertThrows(UnsupportedOperationException.class, () -> gcm.encrypt(iv, message, aad));
-  }
-
-  @Test
   /** BC had a bug, where GCM failed for messages of size > 8192 */
   public void testLongMessages() throws Exception {
     Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());

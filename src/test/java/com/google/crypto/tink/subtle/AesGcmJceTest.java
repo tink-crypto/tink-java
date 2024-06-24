@@ -80,7 +80,7 @@ public class AesGcmJceTest {
   public void testEncryptDecrypt() throws Exception {
     Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
 
-    byte[] aad = generateAad();
+    byte[] aad = generateAssociatedData();
     for (int keySize : keySizeInBytes) {
       byte[] key = Random.randBytes(keySize);
       AesGcmJce gcm = new AesGcmJce(key);
@@ -91,20 +91,6 @@ public class AesGcmJceTest {
         assertArrayEquals(message, decrypted);
       }
     }
-  }
-
-  @Test
-  public void testEncryptWithAad_shouldFailOnAndroid19OrOlder() throws Exception {
-    Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
-    @Nullable Integer apiLevel = Util.getAndroidApiLevel();
-    Assume.assumeNotNull(apiLevel);
-    Assume.assumeTrue(apiLevel <= 19);
-
-    AesGcmJce gcm = new AesGcmJce(Random.randBytes(16));
-    byte[] message = Random.randBytes(20);
-    byte[] aad = Random.randBytes(20);
-
-    assertThrows(UnsupportedOperationException.class, () -> gcm.encrypt(message, aad));
   }
 
   @Test
@@ -132,7 +118,7 @@ public class AesGcmJceTest {
   public void testModifyCiphertext() throws Exception {
     Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
 
-    byte[] aad = generateAad();
+    byte[] aad = generateAssociatedData();
     byte[] key = Random.randBytes(16);
     byte[] message = Random.randBytes(32);
     AesGcmJce gcm = new AesGcmJce(key);
@@ -339,7 +325,7 @@ public class AesGcmJceTest {
 
     for (int keySize : keySizeInBytes) {
       AesGcmJce gcm = new AesGcmJce(Random.randBytes(keySize));
-      byte[] aad = generateAad();
+      byte[] aad = generateAssociatedData();
       assertThrows(
           NullPointerException.class,
           () -> {
@@ -388,8 +374,6 @@ public class AesGcmJceTest {
             // This could be a AeadBadTagException when the tag verification
             // fails or some not yet specified Exception when the ciphertext is too short.
             // In all cases a GeneralSecurityException or a subclass of it must be thrown.
-          } catch (UnsupportedOperationException ex) {
-            // Android API level <= 19 would throw this exception, as expected.
           }
         }
         {  // encrypting with aad equal to null
@@ -407,8 +391,6 @@ public class AesGcmJceTest {
             // This could be a AeadBadTagException when the tag verification
             // fails or some not yet specified Exception when the ciphertext is too short.
             // In all cases a GeneralSecurityException or a subclass of it must be thrown.
-          } catch (UnsupportedOperationException ex) {
-            // Android API level <= 19 would throw this exception, as expected.
           }
         }
       }
@@ -426,7 +408,7 @@ public class AesGcmJceTest {
     final int samples = 1 << 17;
     byte[] key = Random.randBytes(16);
     byte[] message = new byte[0];
-    byte[] aad = generateAad();
+    byte[] aad = generateAssociatedData();
     AesGcmJce gcm = new AesGcmJce(key);
     HashSet<String> ciphertexts = new HashSet<>();
     for (int i = 0; i < samples; i++) {
@@ -437,15 +419,8 @@ public class AesGcmJceTest {
     }
   }
 
-  private static byte[] generateAad() {
-    byte[] aad = Random.randBytes(20);
-    // AES-GCM on Android <= 19 doesn't support AAD. See last bullet point in
-    // https://github.com/google/tink/blob/master/docs/KNOWN-ISSUES.md#android.
-    @Nullable Integer apiLevel = Util.getAndroidApiLevel();
-    if (apiLevel != null && apiLevel <= 19) {
-      aad = new byte[0];
-    }
-    return aad;
+  private static byte[] generateAssociatedData() {
+    return Random.randBytes(20);
   }
 
   @Test
@@ -500,7 +475,7 @@ public class AesGcmJceTest {
   }
 
   @DataPoints("validParameters")
-  public static AesGcmParameters[] parameters = createValidAesGcmParameters();
+  public static final AesGcmParameters[] parameters = createValidAesGcmParameters();
 
   private static AesGcmKey createRandomKey(AesGcmParameters parameters) throws Exception {
     AesGcmKey.Builder builder =
@@ -522,7 +497,7 @@ public class AesGcmJceTest {
     AesGcmKey key = createRandomKey(parameters);
     Aead aead = AesGcmJce.create(key);
 
-    byte[] ciphertext = aead.encrypt(Random.randBytes(10), generateAad());
+    byte[] ciphertext = aead.encrypt(Random.randBytes(10), generateAssociatedData());
 
     assertThat(
             com.google.crypto.tink.util.Bytes.copyFrom(ciphertext, 0, key.getOutputPrefix().size()))
@@ -539,7 +514,7 @@ public class AesGcmJceTest {
     Aead aead = AesGcmJce.create(key);
 
     byte[] plaintext = Random.randBytes(100);
-    byte[] associatedData = generateAad();
+    byte[] associatedData = generateAssociatedData();
 
     byte[] ciphertext = aead.encrypt(plaintext, associatedData);
 
@@ -556,7 +531,7 @@ public class AesGcmJceTest {
     Aead aead = AesGcmJce.create(key);
 
     byte[] plaintext = Random.randBytes(100);
-    byte[] associatedData = generateAad();
+    byte[] associatedData = generateAssociatedData();
 
     byte[] ciphertext = aead.encrypt(plaintext, associatedData);
 
