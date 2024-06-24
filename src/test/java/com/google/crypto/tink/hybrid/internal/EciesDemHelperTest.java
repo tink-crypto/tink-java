@@ -25,6 +25,7 @@ import com.google.crypto.tink.aead.AeadConfig;
 import com.google.crypto.tink.aead.AesCtrHmacAeadParameters;
 import com.google.crypto.tink.aead.AesGcmParameters;
 import com.google.crypto.tink.daead.AesSivParameters;
+import com.google.crypto.tink.daead.DeterministicAeadConfig;
 import com.google.crypto.tink.hybrid.EciesParameters;
 import com.google.crypto.tink.hybrid.internal.testing.EciesAeadHkdfTestUtil;
 import com.google.crypto.tink.hybrid.internal.testing.HybridTestVector;
@@ -46,6 +47,7 @@ public final class EciesDemHelperTest {
   @Before
   public void doBeforeEachTest() throws Exception {
     AeadConfig.register();
+    DeterministicAeadConfig.register();
   }
 
   private static Parameters[] validDemParameters() throws GeneralSecurityException {
@@ -142,6 +144,82 @@ public final class EciesDemHelperTest {
     assertThrows(
         GeneralSecurityException.class,
         () -> dem.decrypt(demKeyValue, new byte[0], prefix.length + header.length));
+  }
+
+  @Theory
+  public void encryptIsRandomizedOrDeterministic(
+      @FromDataPoints("dem_parameters") Parameters demParameters) throws GeneralSecurityException {
+    EciesParameters parameters =
+        EciesParameters.builder()
+            .setHashType(EciesParameters.HashType.SHA256)
+            .setCurveType(EciesParameters.CurveType.NIST_P256)
+            .setNistCurvePointFormat(EciesParameters.PointFormat.UNCOMPRESSED)
+            .setVariant(EciesParameters.Variant.NO_PREFIX)
+            .setDemParameters(demParameters)
+            .build();
+    EciesDemHelper.Dem dem = EciesDemHelper.getDem(parameters);
+
+    byte[] demKeyValue = Random.randBytes(dem.getSymmetricKeySizeInBytes());
+    byte[] plaintext = new byte[0];
+    byte[] prefix = new byte[0];
+    byte[] header = new byte[0];
+    byte[] ciphertext = dem.encrypt(demKeyValue, prefix, header, plaintext);
+    byte[] ciphertext2 = dem.encrypt(demKeyValue, prefix, header, plaintext);
+    if (demParameters instanceof AesSivParameters) {
+      // AES-SIV is deterministic.
+      assertThat(ciphertext2).isEqualTo(ciphertext);
+    } else {
+      // All other DEMs are AEADs and should be randomized.
+      assertThat(ciphertext2).isNotEqualTo(ciphertext);
+    }
+  }
+
+  @Theory
+  public void aesGcmDem_rejectsDemOfWrongSize() throws Exception {
+    EciesParameters parameters16 =
+        EciesParameters.builder()
+            .setHashType(EciesParameters.HashType.SHA256)
+            .setCurveType(EciesParameters.CurveType.NIST_P256)
+            .setNistCurvePointFormat(EciesParameters.PointFormat.UNCOMPRESSED)
+            .setVariant(EciesParameters.Variant.NO_PREFIX)
+            .setDemParameters(
+                AesGcmParameters.builder()
+                    .setIvSizeBytes(12)
+                    .setKeySizeBytes(16)
+                    .setTagSizeBytes(16)
+                    .setVariant(AesGcmParameters.Variant.NO_PREFIX)
+                    .build())
+            .build();
+    EciesDemHelper.Dem dem16 = EciesDemHelper.getDem(parameters16);
+    assertThat(dem16.getSymmetricKeySizeInBytes()).isEqualTo(16);
+    byte[] demKeyValue16 = Random.randBytes(16);
+    byte[] plaintext = new byte[0];
+    byte[] prefix = new byte[0];
+    byte[] header = new byte[0];
+    byte[] ciphertext = dem16.encrypt(demKeyValue16, prefix, header, plaintext);
+    assertThat(dem16.decrypt(demKeyValue16, ciphertext, 0)).isEqualTo(plaintext);
+
+    EciesParameters parameters32 =
+        EciesParameters.builder()
+            .setHashType(EciesParameters.HashType.SHA256)
+            .setCurveType(EciesParameters.CurveType.NIST_P256)
+            .setNistCurvePointFormat(EciesParameters.PointFormat.UNCOMPRESSED)
+            .setVariant(EciesParameters.Variant.NO_PREFIX)
+            .setDemParameters(
+                AesGcmParameters.builder()
+                    .setIvSizeBytes(12)
+                    .setKeySizeBytes(32)
+                    .setTagSizeBytes(16)
+                    .setVariant(AesGcmParameters.Variant.NO_PREFIX)
+                    .build())
+            .build();
+    EciesDemHelper.Dem dem32 = EciesDemHelper.getDem(parameters32);
+    assertThat(dem32.getSymmetricKeySizeInBytes()).isEqualTo(32);
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> dem32.encrypt(demKeyValue16, prefix, header, plaintext));
+    assertThrows(GeneralSecurityException.class, () -> dem32.decrypt(demKeyValue16, ciphertext, 0));
   }
 
   @DataPoints("testVectors")
