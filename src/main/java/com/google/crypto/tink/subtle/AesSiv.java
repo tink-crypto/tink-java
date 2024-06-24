@@ -140,7 +140,7 @@ public final class AesSiv implements DeterministicAead {
   @Override
   public byte[] encryptDeterministically(final byte[] plaintext, final byte[] associatedData)
       throws GeneralSecurityException {
-    if (plaintext.length > Integer.MAX_VALUE - AesUtil.BLOCK_SIZE) {
+    if (plaintext.length > Integer.MAX_VALUE - outputPrefix.length - AesUtil.BLOCK_SIZE) {
       throw new GeneralSecurityException("plaintext too long");
     }
 
@@ -155,9 +155,21 @@ public final class AesSiv implements DeterministicAead {
         new SecretKeySpec(this.aesCtrKey, "AES"),
         new IvParameterSpec(ivForJavaCrypto));
 
-    byte[] ctrCiphertext = aesCtr.doFinal(plaintext);
-
-    return com.google.crypto.tink.subtle.Bytes.concat(outputPrefix, computedIv, ctrCiphertext);
+    int outputSize = outputPrefix.length + computedIv.length + plaintext.length;
+    byte[] output = Arrays.copyOf(outputPrefix, outputSize);
+    System.arraycopy(
+        /* src= */ computedIv,
+        /* srcPos= */ 0,
+        /* dest= */ output,
+        /* destPos= */ outputPrefix.length,
+        /* length= */ computedIv.length);
+    int written =
+        aesCtr.doFinal(
+            plaintext, 0, plaintext.length, output, outputPrefix.length + computedIv.length);
+    if (written != plaintext.length) {
+      throw new GeneralSecurityException("not enough data written");
+    }
+    return output;
   }
 
   @Override
@@ -185,10 +197,10 @@ public final class AesSiv implements DeterministicAead {
         new SecretKeySpec(this.aesCtrKey, "AES"),
         new IvParameterSpec(ivForJavaCrypto));
 
-    byte[] ctrCiphertext =
-        Arrays.copyOfRange(ciphertext, AesUtil.BLOCK_SIZE + outputPrefix.length, ciphertext.length);
-    byte[] decryptedPt = aesCtr.doFinal(ctrCiphertext);
-    if (ctrCiphertext.length == 0 && decryptedPt == null && SubtleUtil.isAndroid()) {
+    int offset = AesUtil.BLOCK_SIZE + outputPrefix.length;
+    int ctrCiphertextLen = ciphertext.length - offset;
+    byte[] decryptedPt = aesCtr.doFinal(ciphertext, offset, ctrCiphertextLen);
+    if (ctrCiphertextLen == 0 && decryptedPt == null && SubtleUtil.isAndroid()) {
       // On Android KitKat (19) and Lollipop (21), Cipher.doFinal returns a null pointer when the
       // ciphertext is empty, instead of an empty plaintext. Here we attempt to fix this bug. This
       // is safe because if the plaintext is not empty, the next integrity check would reject it.
