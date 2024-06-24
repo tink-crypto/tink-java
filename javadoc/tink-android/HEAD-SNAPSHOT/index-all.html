@@ -1205,6 +1205,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/AesGcmJce.html#AesGcmJce-byte:A-">AesGcmJce(byte[])</a></span> - Constructor for class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/AesGcmJce.html" title="class in com.google.crypto.tink.subtle">AesGcmJce</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/aead/internal/AesGcmJceUtil.html" title="class in com.google.crypto.tink.aead.internal"><span class="typeNameLink">AesGcmJceUtil</span></a> - Class in <a href="com/google/crypto/tink/aead/internal/package-summary.html">com.google.crypto.tink.aead.internal</a></dt>
+<dd>
+<div class="block">Helper functions for AES-GCM using JCE.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/aead/AesGcmKey.html" title="class in com.google.crypto.tink.aead"><span class="typeNameLink">AesGcmKey</span></a> - Class in <a href="com/google/crypto/tink/aead/package-summary.html">com.google.crypto.tink.aead</a></dt>
 <dd>
 <div class="block">Represents an AES-GCM key used for computing AEAD.</div>
@@ -9194,9 +9198,9 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/ParametersSerializer.html#getParametersClass--">getParametersClass()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/ParametersSerializer.html" title="class in com.google.crypto.tink.internal">ParametersSerializer</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/InsecureNonceAesGcmJce.html#getParams-byte:A-">getParams(byte[])</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/InsecureNonceAesGcmJce.html" title="class in com.google.crypto.tink.aead.internal">InsecureNonceAesGcmJce</a></dt>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/AesGcmJceUtil.html#getParams-byte:A-">getParams(byte[])</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/AesGcmJceUtil.html" title="class in com.google.crypto.tink.aead.internal">AesGcmJceUtil</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/InsecureNonceAesGcmJce.html#getParams-byte:A-int-int-">getParams(byte[], int, int)</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/InsecureNonceAesGcmJce.html" title="class in com.google.crypto.tink.aead.internal">InsecureNonceAesGcmJce</a></dt>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/AesGcmJceUtil.html#getParams-byte:A-int-int-">getParams(byte[], int, int)</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/AesGcmJceUtil.html" title="class in com.google.crypto.tink.aead.internal">AesGcmJceUtil</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/AesCmacKey.Builder.html#getParams--">getParams()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/AesCmacKey.Builder.html" title="class in com.google.crypto.tink.proto">AesCmacKey.Builder</a></dt>
 <dd>
@@ -10354,6 +10358,8 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssParameters.html#getSaltLengthBytes--">getSaltLengthBytes()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssParameters.html" title="class in com.google.crypto.tink.signature">RsaSsaPssParameters</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/AesGcmJceUtil.html#getSecretKey-byte:A-">getSecretKey(byte[])</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/AesGcmJceUtil.html" title="class in com.google.crypto.tink.aead.internal">AesGcmJceUtil</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/LegacyProtoKey.html#getSerialization-com.google.crypto.tink.SecretKeyAccess-">getSerialization(SecretKeyAccess)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/LegacyProtoKey.html" title="class in com.google.crypto.tink.internal">LegacyProtoKey</a></dt>
 <dd>
 <div class="block">Returns the protokeyserialization with which this object was created.</div>
@@ -10538,7 +10544,7 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AesGcmParameters.html#getTagSizeBytes--">getTagSizeBytes()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AesGcmParameters.html" title="class in com.google.crypto.tink.aead">AesGcmParameters</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/InsecureNonceAesGcmJce.html#getThreadLocalCipher--">getThreadLocalCipher()</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/InsecureNonceAesGcmJce.html" title="class in com.google.crypto.tink.aead.internal">InsecureNonceAesGcmJce</a></dt>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/AesGcmJceUtil.html#getThreadLocalCipher--">getThreadLocalCipher()</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/AesGcmJceUtil.html" title="class in com.google.crypto.tink.aead.internal">AesGcmJceUtil</a></dt>
 <dd>
 <div class="block">Returns a thread-local instance of the AES-GCM cipher.</div>
 </dd>
@@ -13653,6 +13659,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/AesCtrParams.html#IV_SIZE_FIELD_NUMBER">IV_SIZE_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/AesCtrParams.html" title="class in com.google.crypto.tink.proto">AesCtrParams</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/AesEaxParams.html#IV_SIZE_FIELD_NUMBER">IV_SIZE_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/AesEaxParams.html" title="class in com.google.crypto.tink.proto">AesEaxParams</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/AesGcmJceUtil.html#IV_SIZE_IN_BYTES">IV_SIZE_IN_BYTES</a></span> - Static variable in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/AesGcmJceUtil.html" title="class in com.google.crypto.tink.aead.internal">AesGcmJceUtil</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/InsecureNonceAesGcmJce.html#IV_SIZE_IN_BYTES">IV_SIZE_IN_BYTES</a></span> - Static variable in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/InsecureNonceAesGcmJce.html" title="class in com.google.crypto.tink.aead.internal">InsecureNonceAesGcmJce</a></dt>
 <dd>&nbsp;</dd>
@@ -22594,6 +22602,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/AesCmacParams.html#TAG_SIZE_FIELD_NUMBER">TAG_SIZE_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/AesCmacParams.html" title="class in com.google.crypto.tink.proto">AesCmacParams</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/HmacParams.html#TAG_SIZE_FIELD_NUMBER">TAG_SIZE_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/HmacParams.html" title="class in com.google.crypto.tink.proto">HmacParams</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/AesGcmJceUtil.html#TAG_SIZE_IN_BYTES">TAG_SIZE_IN_BYTES</a></span> - Static variable in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/AesGcmJceUtil.html" title="class in com.google.crypto.tink.aead.internal">AesGcmJceUtil</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/InsecureNonceAesGcmJce.html#TAG_SIZE_IN_BYTES">TAG_SIZE_IN_BYTES</a></span> - Static variable in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/InsecureNonceAesGcmJce.html" title="class in com.google.crypto.tink.aead.internal">InsecureNonceAesGcmJce</a></dt>
 <dd>&nbsp;</dd>
