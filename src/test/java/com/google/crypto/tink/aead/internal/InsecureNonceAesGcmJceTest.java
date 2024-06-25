@@ -74,15 +74,15 @@ public class InsecureNonceAesGcmJceTest {
   public void testEncryptDecrypt() throws Exception {
     Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
 
-    byte[] aad = generateAad();
+    byte[] associatedData = Random.randBytes(20);
     for (int keySize : keySizeInBytes) {
       byte[] key = Random.randBytes(keySize);
       InsecureNonceAesGcmJce gcm = new InsecureNonceAesGcmJce(key);
       for (int messageSize = 0; messageSize < 75; messageSize++) {
         byte[] message = Random.randBytes(messageSize);
         byte[] iv = Random.randBytes(InsecureNonceAesGcmJce.IV_SIZE_IN_BYTES);
-        byte[] ciphertext = gcm.encrypt(iv, message, aad);
-        byte[] decrypted = gcm.decrypt(iv, ciphertext, aad);
+        byte[] ciphertext = gcm.encrypt(iv, message, associatedData);
+        byte[] decrypted = gcm.decrypt(iv, ciphertext, associatedData);
         assertArrayEquals(message, decrypted);
       }
     }
@@ -95,9 +95,9 @@ public class InsecureNonceAesGcmJceTest {
     InsecureNonceAesGcmJce gcm = new InsecureNonceAesGcmJce(key);
 
     byte[] message = Random.randBytes(42);
-    byte[] aad = Random.randBytes(13);
+    byte[] associatedData = Random.randBytes(13);
     byte[] iv = Random.randBytes(InsecureNonceAesGcmJce.IV_SIZE_IN_BYTES);
-    byte[] ciphertext = gcm.encrypt(iv, message, aad);
+    byte[] ciphertext = gcm.encrypt(iv, message, associatedData);
     assertThat(ciphertext).hasLength(message.length + InsecureNonceAesGcmJce.TAG_SIZE_IN_BYTES);
   }
 
@@ -110,13 +110,13 @@ public class InsecureNonceAesGcmJceTest {
     int dataSize = 16;
     while (dataSize <= (1 << 24)) {
       byte[] plaintext = Random.randBytes(dataSize);
-      byte[] aad = Random.randBytes(dataSize / 3);
+      byte[] associatedData = Random.randBytes(dataSize / 3);
       for (int keySize : keySizeInBytes) {
         byte[] key = Random.randBytes(keySize);
         InsecureNonceAesGcmJce gcm = new InsecureNonceAesGcmJce(key);
         byte[] iv = Random.randBytes(InsecureNonceAesGcmJce.IV_SIZE_IN_BYTES);
-        byte[] ciphertext = gcm.encrypt(iv, plaintext, aad);
-        byte[] decrypted = gcm.decrypt(iv, ciphertext, aad);
+        byte[] ciphertext = gcm.encrypt(iv, plaintext, associatedData);
+        byte[] decrypted = gcm.decrypt(iv, ciphertext, associatedData);
         assertArrayEquals(plaintext, decrypted);
       }
       dataSize += 5 * dataSize / 11;
@@ -127,32 +127,32 @@ public class InsecureNonceAesGcmJceTest {
   public void testModifyCiphertext() throws Exception {
     Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
 
-    byte[] aad = generateAad();
+    byte[] associatedData = Random.randBytes(20);
     byte[] key = Random.randBytes(16);
     byte[] message = Random.randBytes(32);
     InsecureNonceAesGcmJce gcm = new InsecureNonceAesGcmJce(key);
     byte[] iv = Random.randBytes(InsecureNonceAesGcmJce.IV_SIZE_IN_BYTES);
-    byte[] ciphertext = gcm.encrypt(iv, message, aad);
+    byte[] ciphertext = gcm.encrypt(iv, message, associatedData);
 
     for (BytesMutation mutation : TestUtil.generateMutations(ciphertext)) {
       assertThrows(
           String.format(
-              "Decrypting modified ciphertext should fail : ciphertext = %s, aad = %s,"
+              "Decrypting modified ciphertext should fail : ciphertext = %s, associatedData = %s,"
                   + " description = %s",
-              Hex.encode(mutation.value), Hex.encode(aad), mutation.description),
+              Hex.encode(mutation.value), Hex.encode(associatedData), mutation.description),
           GeneralSecurityException.class,
           () -> {
-            byte[] unused = gcm.decrypt(iv, mutation.value, aad);
+            byte[] unused = gcm.decrypt(iv, mutation.value, associatedData);
           });
     }
 
     // Modify AAD
-    if (aad != null && aad.length != 0) {
-      for (BytesMutation mutation : TestUtil.generateMutations(aad)) {
+    if (associatedData != null && associatedData.length != 0) {
+      for (BytesMutation mutation : TestUtil.generateMutations(associatedData)) {
         assertThrows(
             String.format(
-                "Decrypting with modified aad should fail: ciphertext = %s, aad = %s,"
-                    + " description = %s",
+                "Decrypting with modified associatedData should fail: ciphertext = %s,"
+                    + " associatedData = %s, description = %s",
                 Arrays.toString(ciphertext), Arrays.toString(mutation.value), mutation.description),
             GeneralSecurityException.class,
             () -> {
@@ -166,16 +166,17 @@ public class InsecureNonceAesGcmJceTest {
   public void testTruncatedCiphertext() throws Exception {
     Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
 
-    byte[] aad = generateAad();
+    byte[] associatedData = Random.randBytes(20);
     byte[] key = Random.randBytes(16);
     byte[] message = new byte[0];
     InsecureNonceAesGcmJce gcm = new InsecureNonceAesGcmJce(key);
     byte[] iv = Random.randBytes(InsecureNonceAesGcmJce.IV_SIZE_IN_BYTES);
 
-    byte[] ciphertext = gcm.encrypt(iv, message, aad);
+    byte[] ciphertext = gcm.encrypt(iv, message, associatedData);
     byte[] truncatedCiphertext = Arrays.copyOf(ciphertext, ciphertext.length - 1);
 
-    assertThrows(GeneralSecurityException.class, () -> gcm.decrypt(iv, truncatedCiphertext, aad));
+    assertThrows(
+        GeneralSecurityException.class, () -> gcm.decrypt(iv, truncatedCiphertext, associatedData));
   }
 
   @Test
@@ -203,9 +204,9 @@ public class InsecureNonceAesGcmJceTest {
         byte[] iv = Hex.decode(testcase.get("iv").getAsString());
         byte[] key = Hex.decode(testcase.get("key").getAsString());
         byte[] msg = Hex.decode(testcase.get("msg").getAsString());
-        byte[] aad = Hex.decode(testcase.get("aad").getAsString());
+        byte[] associatedData = Hex.decode(testcase.get("aad").getAsString());
         @Nullable Integer androidApiLevel = Util.getAndroidApiLevel();
-        if (androidApiLevel != null && androidApiLevel <= 19 && aad.length != 0) {
+        if (androidApiLevel != null && androidApiLevel <= 19 && associatedData.length != 0) {
           cntSkippedTests++;
           continue;
         }
@@ -225,7 +226,7 @@ public class InsecureNonceAesGcmJceTest {
         try {
           InsecureNonceAesGcmJce gcm = new InsecureNonceAesGcmJce(key);
           // Encryption.
-          byte[] encrypted = gcm.encrypt(iv, msg, aad);
+          byte[] encrypted = gcm.encrypt(iv, msg, associatedData);
           boolean ciphertextMatches = TestUtil.arrayEquals(encrypted, ciphertext);
           if (result.equals("valid") && !ciphertextMatches) {
             System.out.printf(
@@ -234,7 +235,7 @@ public class InsecureNonceAesGcmJceTest {
             errors++;
           }
           // Decryption.
-          byte[] decrypted = gcm.decrypt(iv, ciphertext, aad);
+          byte[] decrypted = gcm.decrypt(iv, ciphertext, associatedData);
           boolean plaintextMatches = TestUtil.arrayEquals(decrypted, msg);
           if (result.equals("invalid")) {
             System.out.printf(
@@ -267,12 +268,12 @@ public class InsecureNonceAesGcmJceTest {
 
     for (int keySize : keySizeInBytes) {
       InsecureNonceAesGcmJce gcm = new InsecureNonceAesGcmJce(Random.randBytes(keySize));
-      byte[] aad = generateAad();
+      byte[] associatedData = Random.randBytes(20);
       byte[] iv = Random.randBytes(InsecureNonceAesGcmJce.IV_SIZE_IN_BYTES);
       assertThrows(
           NullPointerException.class,
           () -> {
-            byte[] unused = gcm.encrypt(iv, null, aad);
+            byte[] unused = gcm.encrypt(iv, null, associatedData);
           });
       assertThrows(
           NullPointerException.class,
@@ -282,7 +283,7 @@ public class InsecureNonceAesGcmJceTest {
       assertThrows(
           NullPointerException.class,
           () -> {
-            byte[] unused = gcm.decrypt(iv, null, aad);
+            byte[] unused = gcm.decrypt(iv, null, associatedData);
           });
       assertThrows(
           NullPointerException.class,
@@ -296,50 +297,46 @@ public class InsecureNonceAesGcmJceTest {
   public void testEmptyAssociatedData() throws Exception {
     Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
 
-    byte[] aad = new byte[0];
+    byte[] associatedData = new byte[0];
     for (int keySize : keySizeInBytes) {
       byte[] key = Random.randBytes(keySize);
       InsecureNonceAesGcmJce gcm = new InsecureNonceAesGcmJce(key);
       for (int messageSize = 0; messageSize < 75; messageSize++) {
         byte[] message = Random.randBytes(messageSize);
-        {  // encrypting with aad as a 0-length array
+        { // encrypting with associatedData as a 0-length array
           byte[] iv = Random.randBytes(InsecureNonceAesGcmJce.IV_SIZE_IN_BYTES);
-          byte[] ciphertext = gcm.encrypt(iv, message, aad);
-          byte[] decrypted = gcm.decrypt(iv, ciphertext, aad);
+          byte[] ciphertext = gcm.encrypt(iv, message, associatedData);
+          byte[] decrypted = gcm.decrypt(iv, ciphertext, associatedData);
           assertArrayEquals(message, decrypted);
           byte[] decrypted2 = gcm.decrypt(iv, ciphertext, null);
           assertArrayEquals(message, decrypted2);
           try {
             byte[] badAad = new byte[] {1, 2, 3};
             byte[] unused = gcm.decrypt(iv, ciphertext, badAad);
-            fail("Decrypting with modified aad should fail");
+            fail("Decrypting with modified associatedData should fail");
           } catch (GeneralSecurityException ex) {
             // This is expected.
             // This could be a AeadBadTagException when the tag verification
             // fails or some not yet specified Exception when the ciphertext is too short.
             // In all cases a GeneralSecurityException or a subclass of it must be thrown.
-          } catch (UnsupportedOperationException ex) {
-            // Android API level <= 19 would throw this exception, as expected.
           }
         }
-        {  // encrypting with aad equal to null
+        { // encrypting with associatedData equal to null
           byte[] iv = Random.randBytes(InsecureNonceAesGcmJce.IV_SIZE_IN_BYTES);
           byte[] ciphertext = gcm.encrypt(iv, message, null);
-          byte[] decrypted = gcm.decrypt(iv, ciphertext, aad);
+          byte[] decrypted = gcm.decrypt(iv, ciphertext, associatedData);
           assertArrayEquals(message, decrypted);
           byte[] decrypted2 = gcm.decrypt(iv, ciphertext, null);
           assertArrayEquals(message, decrypted2);
           try {
             byte[] badAad = new byte[] {1, 2, 3};
             byte[] unused = gcm.decrypt(iv, ciphertext, badAad);
-            fail("Decrypting with modified aad should fail");
+            fail("Decrypting with modified associatedData should fail");
           } catch (GeneralSecurityException ex) {
             // This is expected.
             // This could be a AeadBadTagException when the tag verification
             // fails or some not yet specified Exception when the ciphertext is too short.
             // In all cases a GeneralSecurityException or a subclass of it must be thrown.
-          } catch (UnsupportedOperationException ex) {
-            // Android API level <= 19 would throw this exception, as expected.
           }
         }
       }
@@ -357,27 +354,16 @@ public class InsecureNonceAesGcmJceTest {
     final int samples = 1 << 17;
     byte[] key = Random.randBytes(16);
     byte[] message = new byte[0];
-    byte[] aad = generateAad();
+    byte[] associatedData = Random.randBytes(20);
     InsecureNonceAesGcmJce gcm = new InsecureNonceAesGcmJce(key);
     HashSet<String> ciphertexts = new HashSet<>();
     for (int i = 0; i < samples; i++) {
       byte[] iv = Random.randBytes(InsecureNonceAesGcmJce.IV_SIZE_IN_BYTES);
-      byte[] ct = gcm.encrypt(iv, message, aad);
+      byte[] ct = gcm.encrypt(iv, message, associatedData);
       String ctHex = Hex.encode(ct);
       assertThat(ciphertexts).doesNotContain(ctHex);
       ciphertexts.add(ctHex);
     }
-  }
-
-  private static byte[] generateAad() {
-    byte[] aad = Random.randBytes(20);
-    // AES-GCM on Android <= 19 doesn't support AAD. See last bullet point in
-    // https://github.com/google/tink/blob/master/docs/KNOWN-ISSUES.md#android.
-    @Nullable Integer apiLevel = Util.getAndroidApiLevel();
-    if (apiLevel != null && apiLevel <= 19) {
-      aad = new byte[0];
-    }
-    return aad;
   }
 
   @Test
