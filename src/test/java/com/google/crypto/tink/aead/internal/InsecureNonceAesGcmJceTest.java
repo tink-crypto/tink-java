@@ -89,7 +89,20 @@ public class InsecureNonceAesGcmJceTest {
   }
 
   @Test
+  public void ciphertext_lengthIsMessageSizePlusTagSize() throws Exception {
+    Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
+    byte[] key = Random.randBytes(32);
+    InsecureNonceAesGcmJce gcm = new InsecureNonceAesGcmJce(key);
+
+    byte[] message = Random.randBytes(42);
+    byte[] aad = Random.randBytes(13);
+    byte[] iv = Random.randBytes(InsecureNonceAesGcmJce.IV_SIZE_IN_BYTES);
+    byte[] ciphertext = gcm.encrypt(iv, message, aad);
+    assertThat(ciphertext).hasLength(message.length + InsecureNonceAesGcmJce.TAG_SIZE_IN_BYTES);
+  }
+
   /** BC had a bug, where GCM failed for messages of size > 8192 */
+  @Test
   public void testLongMessages() throws Exception {
     Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
     Assume.assumeFalse(TestUtil.isAndroid()); // doesn't work on Android
@@ -333,11 +346,11 @@ public class InsecureNonceAesGcmJceTest {
     }
   }
 
-  @Test
   /**
    * This is a very simple test for the randomness of the nonce. The test simply checks that the
    * multiple ciphertexts of the same message are distinct.
    */
+  @Test
   public void testRandomNonce() throws Exception {
     Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
 

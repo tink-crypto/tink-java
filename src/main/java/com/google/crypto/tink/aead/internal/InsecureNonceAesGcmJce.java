@@ -54,7 +54,7 @@ public final class InsecureNonceAesGcmJce {
       throw new GeneralSecurityException("iv is wrong size");
     }
     // Check that ciphertext is not longer than the max. size of a Java array.
-    if (plaintext.length > Integer.MAX_VALUE - IV_SIZE_IN_BYTES - TAG_SIZE_IN_BYTES) {
+    if (plaintext.length > Integer.MAX_VALUE - TAG_SIZE_IN_BYTES) {
       throw new GeneralSecurityException("plaintext too long");
     }
     AlgorithmParameterSpec params = AesGcmJceUtil.getParams(iv);
