@@ -78,6 +78,14 @@ public final class PrfAesCmac implements Prf {
     return new PrfAesCmac(key.getKeyBytes().toByteArray(InsecureSecretKeyAccess.get()));
   }
 
+  // Only visible for testing.
+  static int calcN(int dataLength) {
+    if (dataLength == 0) {
+      return 1;
+    }
+    return (dataLength - 1) / AesUtil.BLOCK_SIZE + 1;
+  }
+
   // https://tools.ietf.org/html/rfc4493#section-2.4
   @Override
   public byte[] compute(final byte[] data, int outputLength) throws GeneralSecurityException {
@@ -92,7 +100,7 @@ public final class PrfAesCmac implements Prf {
     // is divided. Empty data is divided into 1 empty block.
     // Step 2: n = ceil(length / blocksize)
     // TODO(b/68969256): Adding a test that computes a CMAC of length 2**31-1.
-    int n = Math.max(1, (int) Math.ceil((double) data.length / AesUtil.BLOCK_SIZE));
+    int n = calcN(data.length);
 
     // Step 3
     boolean flag = (n * AesUtil.BLOCK_SIZE == data.length);

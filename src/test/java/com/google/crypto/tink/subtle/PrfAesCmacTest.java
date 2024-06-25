@@ -84,6 +84,22 @@ public class PrfAesCmacTest {
   }
 
   @Test
+  public void calcN() throws Exception {
+    // AesUtil.BLOCK_SIZE == 16
+    assertThat(PrfAesCmac.calcN(0)).isEqualTo(1);
+    assertThat(PrfAesCmac.calcN(1)).isEqualTo(1);
+    assertThat(PrfAesCmac.calcN(16)).isEqualTo(1);
+    assertThat(PrfAesCmac.calcN(17)).isEqualTo(2);
+    assertThat(PrfAesCmac.calcN(32)).isEqualTo(2);
+    assertThat(PrfAesCmac.calcN(33)).isEqualTo(3);
+    assertThat(PrfAesCmac.calcN(48)).isEqualTo(3);
+    assertThat(PrfAesCmac.calcN(49)).isEqualTo(4);
+    assertThat(PrfAesCmac.calcN(0x7FFFFFF0)).isEqualTo(0x07FFFFFF);
+    assertThat(PrfAesCmac.calcN(0x7FFFFFF1)).isEqualTo(0x08000000);
+    assertThat(PrfAesCmac.calcN(Integer.MAX_VALUE)).isEqualTo(0x08000000);
+  }
+
+  @Test
   public void testMacTestVectors() throws Exception {
     Assume.assumeFalse(TinkFips.useOnlyFips());
     for (MacTestVector t : CMAC_TEST_VECTORS) {
