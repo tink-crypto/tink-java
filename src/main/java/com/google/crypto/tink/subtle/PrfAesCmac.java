@@ -86,6 +86,12 @@ public final class PrfAesCmac implements Prf {
     return (dataLength - 1) / AesUtil.BLOCK_SIZE + 1;
   }
 
+  private static void xorBlock(final byte[] x, final byte[] y, int offsetY, byte[] output) {
+    for (int i = 0; i < AesUtil.BLOCK_SIZE; i++) {
+      output[i] = (byte) (x[i] ^ y[i + offsetY]);
+    }
+  }
+
   // https://tools.ietf.org/html/rfc4493#section-2.4
   @Override
   public byte[] compute(final byte[] data, int outputLength) throws GeneralSecurityException {
@@ -120,15 +126,25 @@ public final class PrfAesCmac implements Prf {
     byte[] x = new byte[AesUtil.BLOCK_SIZE];
 
     // Step 6
-    byte[] y;
+    byte[] y = new byte[AesUtil.BLOCK_SIZE];
     for (int i = 0; i < n - 1; i++) {
-      y = Bytes.xor(x, 0, data, i * AesUtil.BLOCK_SIZE, AesUtil.BLOCK_SIZE);
-      x = aes.doFinal(y);
+      xorBlock(x, data, i * AesUtil.BLOCK_SIZE, /* output= */ y);
+      int written = aes.doFinal(y, 0, AesUtil.BLOCK_SIZE, /* output= */ x);
+      if (written != AesUtil.BLOCK_SIZE) {
+        throw new IllegalStateException("Cipher didn't write full block");
+      }
     }
-    y = Bytes.xor(mLast, x);
+    xorBlock(x, mLast, 0, /* output= */ y);
 
     // Step 7
-    return Arrays.copyOf(aes.doFinal(y), outputLength);
+    int written = aes.doFinal(y, 0, AesUtil.BLOCK_SIZE, /* output= */ x);
+    if (written != AesUtil.BLOCK_SIZE) {
+      throw new IllegalStateException("Cipher didn't write full block");
+    }
+    if (x.length == outputLength) {
+      return x;
+    }
+    return Arrays.copyOf(x, outputLength);
   }
 
   // https://tools.ietf.org/html/rfc4493#section-2.3
