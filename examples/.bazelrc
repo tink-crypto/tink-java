@@ -4,3 +4,10 @@
 build --cxxopt='-std=c++14' --host_cxxopt='-std=c++14'
 build --java_language_version=8
 build --java_runtime_version=local_jdk
+
+# Silence all C/C++ warnings in external code.
+#
+# Note that this will not silence warnings from external headers included
+# in project code.
+build --per_file_copt=external/.*@-w
+build --host_per_file_copt=external/.*@-w
