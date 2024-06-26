@@ -218,16 +218,25 @@ public final class AesEaxJce implements Aead {
   }
 
   @SuppressWarnings("InsecureCryptoUsage")
-  private byte[] rawEncrypt(final byte[] plaintext, final byte[] associatedData)
+  @Override
+  public byte[] encrypt(final byte[] plaintext, final byte[] associatedData)
       throws GeneralSecurityException {
     // Check that ciphertext is not longer than the max. size of a Java array.
-    if (plaintext.length > Integer.MAX_VALUE - ivSizeInBytes - TAG_SIZE_IN_BYTES) {
+    if (plaintext.length
+        > Integer.MAX_VALUE - outputPrefix.length - ivSizeInBytes - TAG_SIZE_IN_BYTES) {
       throw new GeneralSecurityException("plaintext too long");
     }
-    byte[] ciphertext = new byte[ivSizeInBytes + plaintext.length + TAG_SIZE_IN_BYTES];
+    byte[] ciphertext =
+        Arrays.copyOf(
+            outputPrefix,
+            outputPrefix.length + ivSizeInBytes + plaintext.length + TAG_SIZE_IN_BYTES);
     byte[] iv = Random.randBytes(ivSizeInBytes);
-    System.arraycopy(iv, 0, ciphertext, 0, ivSizeInBytes);
-
+    System.arraycopy(
+        /* src= */ iv,
+        /* srcPos= */ 0,
+        /* dest= */ ciphertext,
+        /* destPos= */ outputPrefix.length,
+        /* length= */ ivSizeInBytes);
     Cipher ecb = localEcbCipher.get();
     ecb.init(Cipher.ENCRYPT_MODE, keySpec);
     byte[] n = omac(ecb, 0, iv, 0, iv.length);
@@ -238,42 +247,36 @@ public final class AesEaxJce implements Aead {
     byte[] h = omac(ecb, 1, aad, 0, aad.length);
     Cipher ctr = localCtrCipher.get();
     ctr.init(Cipher.ENCRYPT_MODE, keySpec, new IvParameterSpec(n));
-    ctr.doFinal(plaintext, 0, plaintext.length, ciphertext, ivSizeInBytes);
-    byte[] t = omac(ecb, 2, ciphertext, ivSizeInBytes, plaintext.length);
-    int offset = plaintext.length + ivSizeInBytes;
+    ctr.doFinal(plaintext, 0, plaintext.length, ciphertext, outputPrefix.length + ivSizeInBytes);
+    byte[] t = omac(ecb, 2, ciphertext, outputPrefix.length + ivSizeInBytes, plaintext.length);
+    int offset = outputPrefix.length + plaintext.length + ivSizeInBytes;
     for (int i = 0; i < TAG_SIZE_IN_BYTES; i++) {
       ciphertext[offset + i] = (byte) (h[i] ^ n[i] ^ t[i]);
     }
     return ciphertext;
   }
 
-  @Override
-  public byte[] encrypt(final byte[] plaintext, final byte[] associatedData)
-      throws GeneralSecurityException {
-    // Check that ciphertext is not longer than the max. size of a Java array.
-    byte[] ciphertext = rawEncrypt(plaintext, associatedData);
-    if (outputPrefix.length == 0) {
-      return ciphertext;
-    }
-    return Bytes.concat(outputPrefix, ciphertext);
-  }
-
   @SuppressWarnings("InsecureCryptoUsage")
-  private byte[] rawDecrypt(final byte[] ciphertext, final byte[] associatedData)
+  @Override
+  public byte[] decrypt(final byte[] ciphertext, final byte[] associatedData)
       throws GeneralSecurityException {
-    int plaintextLength = ciphertext.length - ivSizeInBytes - TAG_SIZE_IN_BYTES;
+    int plaintextLength =
+        ciphertext.length - outputPrefix.length - ivSizeInBytes - TAG_SIZE_IN_BYTES;
     if (plaintextLength < 0) {
       throw new GeneralSecurityException("ciphertext too short");
     }
+    if (!isPrefix(outputPrefix, ciphertext)) {
+      throw new GeneralSecurityException("Decryption failed (OutputPrefix mismatch).");
+    }
     Cipher ecb = localEcbCipher.get();
     ecb.init(Cipher.ENCRYPT_MODE, keySpec);
-    byte[] n = omac(ecb, 0, ciphertext, 0, ivSizeInBytes);
+    byte[] n = omac(ecb, 0, ciphertext, outputPrefix.length, ivSizeInBytes);
     byte[] aad = associatedData;
     if (aad == null) {
       aad = new byte[0];
     }
     byte[] h = omac(ecb, 1, aad, 0, aad.length);
-    byte[] t = omac(ecb, 2, ciphertext, ivSizeInBytes, plaintextLength);
+    byte[] t = omac(ecb, 2, ciphertext, outputPrefix.length + ivSizeInBytes, plaintextLength);
     byte res = 0;
     int offset = ciphertext.length - TAG_SIZE_IN_BYTES;
     for (int i = 0; i < TAG_SIZE_IN_BYTES; i++) {
@@ -284,20 +287,8 @@ public final class AesEaxJce implements Aead {
     }
     Cipher ctr = localCtrCipher.get();
     ctr.init(Cipher.ENCRYPT_MODE, keySpec, new IvParameterSpec(n));
-    return ctr.doFinal(ciphertext, ivSizeInBytes, plaintextLength);
+    return ctr.doFinal(ciphertext, outputPrefix.length + ivSizeInBytes, plaintextLength);
   }
 
-  @Override
-  public byte[] decrypt(final byte[] ciphertext, final byte[] associatedData)
-      throws GeneralSecurityException {
-    if (outputPrefix.length == 0) {
-      return rawDecrypt(ciphertext, associatedData);
-    }
-    if (!isPrefix(outputPrefix, ciphertext)) {
-      throw new GeneralSecurityException("Decryption failed (OutputPrefix mismatch).");
-    }
-    byte[] copiedCiphertext =
-        Arrays.copyOfRange(ciphertext, outputPrefix.length, ciphertext.length);
-    return rawDecrypt(copiedCiphertext, associatedData);
-  }
+
 }
