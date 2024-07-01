@@ -141,7 +141,8 @@ public final class RsaSsaPssVerifyJce implements PublicKeyVerify {
   }
 
   // https://tools.ietf.org/html/rfc8017#section-9.1.2.
-  private void emsaPssVerify(byte[] m, byte[] em, int emBits) throws GeneralSecurityException {
+  private void emsaPssVerify(byte[] message, byte[] em, int emBits)
+      throws GeneralSecurityException {
     // Step 1. Length checking.
     // This step is unnecessary because Java's byte[] only supports up to 2^31 -1 bytes while the
     // input limitation for the hash function is far larger (2^61 - 1 for SHA-1).
@@ -150,7 +151,12 @@ public final class RsaSsaPssVerifyJce implements PublicKeyVerify {
     Validators.validateSignatureHash(sigHash);
     MessageDigest digest =
         EngineFactory.MESSAGE_DIGEST.getInstance(SubtleUtil.toDigestAlgo(this.sigHash));
-    byte[] mHash = digest.digest(m);
+    // M = concat(message, messageSuffix)
+    digest.update(message);
+    if (messageSuffix.length != 0) {
+      digest.update(messageSuffix);
+    }
+    byte[] mHash = digest.digest();
     int hLen = digest.getDigestLength();
 
     int emLen = em.length;
@@ -222,18 +228,14 @@ public final class RsaSsaPssVerifyJce implements PublicKeyVerify {
 
   @Override
   public void verify(final byte[] signature, final byte[] data) throws GeneralSecurityException {
-    if (outputPrefix.length == 0 && messageSuffix.length == 0) {
+    if (outputPrefix.length == 0) {
       noPrefixVerify(signature, data);
       return;
     }
     if (!isPrefix(outputPrefix, signature)) {
       throw new GeneralSecurityException("Invalid signature (output prefix mismatch)");
     }
-    byte[] dataCopy = data;
-    if (messageSuffix.length != 0) {
-      dataCopy = Bytes.concat(data, messageSuffix);
-    }
     byte[] signatureNoPrefix = Arrays.copyOfRange(signature, outputPrefix.length, signature.length);
-    noPrefixVerify(signatureNoPrefix, dataCopy);
+    noPrefixVerify(signatureNoPrefix, data);
   }
 }

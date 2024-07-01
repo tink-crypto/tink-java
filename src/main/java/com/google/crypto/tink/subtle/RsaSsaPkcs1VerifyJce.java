@@ -43,6 +43,9 @@ public final class RsaSsaPkcs1VerifyJce implements PublicKeyVerify {
   public static final TinkFipsUtil.AlgorithmFipsCompatibility FIPS =
       TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_REQUIRES_BORINGCRYPTO;
 
+  private static final byte[] EMPTY = new byte[0];
+  private static final byte[] LEGACY_MESSAGE_SUFFIX = new byte[] {0};
+
   // See definitions in https://tools.ietf.org/html/rfc3447#page-43
   private static final String ASN_PREFIX_SHA256 = "3031300d060960864801650304020105000420";
   private static final String ASN_PREFIX_SHA384 = "3041300d060960864801650304020205000430";
@@ -81,8 +84,8 @@ public final class RsaSsaPkcs1VerifyJce implements PublicKeyVerify {
         HASH_TYPE_CONVERTER.toProtoEnum(key.getParameters().getHashType()),
         key.getOutputPrefix().toByteArray(),
         key.getParameters().getVariant().equals(RsaSsaPkcs1Parameters.Variant.LEGACY)
-            ? new byte[] {0}
-            : new byte[0]);
+            ? LEGACY_MESSAGE_SUFFIX
+            : EMPTY);
   }
 
   private RsaSsaPkcs1VerifyJce(
@@ -104,7 +107,7 @@ public final class RsaSsaPkcs1VerifyJce implements PublicKeyVerify {
 
   public RsaSsaPkcs1VerifyJce(final RSAPublicKey pubKey, HashType hash)
       throws GeneralSecurityException {
-    this(pubKey, hash, new byte[0], new byte[0]);
+    this(pubKey, hash, EMPTY, EMPTY);
   }
 
   private void noPrefixVerify(final byte[] signature, final byte[] data)
@@ -144,6 +147,9 @@ public final class RsaSsaPkcs1VerifyJce implements PublicKeyVerify {
     MessageDigest digest =
         EngineFactory.MESSAGE_DIGEST.getInstance(SubtleUtil.toDigestAlgo(this.hash));
     digest.update(m);
+    if (messageSuffix.length != 0) {
+      digest.update(messageSuffix);
+    }
     byte[] h = digest.digest();
     byte[] asnPrefix = toAsnPrefix(hash);
     int tLen = asnPrefix.length + h.length;
@@ -179,18 +185,14 @@ public final class RsaSsaPkcs1VerifyJce implements PublicKeyVerify {
 
   @Override
   public void verify(final byte[] signature, final byte[] data) throws GeneralSecurityException {
-    if (outputPrefix.length == 0 && messageSuffix.length == 0) {
+    if (outputPrefix.length == 0) {
       noPrefixVerify(signature, data);
       return;
     }
     if (!isPrefix(outputPrefix, signature)) {
       throw new GeneralSecurityException("Invalid signature (output prefix mismatch)");
     }
-    byte[] dataCopy = data;
-    if (messageSuffix.length != 0) {
-      dataCopy = Bytes.concat(data, messageSuffix);
-    }
     byte[] signatureNoPrefix = Arrays.copyOfRange(signature, outputPrefix.length, signature.length);
-    noPrefixVerify(signatureNoPrefix, dataCopy);
+    noPrefixVerify(signatureNoPrefix, data);
   }
 }
