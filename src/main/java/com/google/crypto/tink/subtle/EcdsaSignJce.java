@@ -44,6 +44,10 @@ public final class EcdsaSignJce implements PublicKeySign {
   public static final TinkFipsUtil.AlgorithmFipsCompatibility FIPS =
       TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_REQUIRES_BORINGCRYPTO;
 
+  private static final byte[] EMPTY = new byte[0];
+  private static final byte[] LEGACY_MESSAGE_SUFFIX = new byte[] {0};
+  private static final byte[] TEST_DATA = new byte[] {1, 2, 3};
+
   @SuppressWarnings("Immutable")
   private final ECPrivateKey privateKey;
 
@@ -77,7 +81,7 @@ public final class EcdsaSignJce implements PublicKeySign {
 
   public EcdsaSignJce(final ECPrivateKey priv, HashType hash, EcdsaEncoding encoding)
       throws GeneralSecurityException {
-    this(priv, hash, encoding, new byte[0], new byte[0]);
+    this(priv, hash, encoding, EMPTY, EMPTY);
   }
 
   @AccessesPartialKey
@@ -101,11 +105,11 @@ public final class EcdsaSignJce implements PublicKeySign {
             ecdsaEncoding,
             key.getOutputPrefix().toByteArray(),
             key.getParameters().getVariant().equals(EcdsaParameters.Variant.LEGACY)
-                ? new byte[] {0}
-                : new byte[0]);
+                ? LEGACY_MESSAGE_SUFFIX
+                : EMPTY);
     PublicKeyVerify verify = EcdsaVerifyJce.create(key.getPublicKey());
     try {
-      verify.verify(signer.sign(new byte[] {1, 2, 3}), new byte[] {1, 2, 3});
+      verify.verify(signer.sign(TEST_DATA), TEST_DATA);
     } catch (GeneralSecurityException e) {
       throw new GeneralSecurityException(
           "ECDSA signing with private key followed by verifying with public key failed."
@@ -115,29 +119,22 @@ public final class EcdsaSignJce implements PublicKeySign {
     return signer;
   }
 
-  private byte[] noPrefixSign(final byte[] data) throws GeneralSecurityException {
+  @Override
+  public byte[] sign(final byte[] data) throws GeneralSecurityException {
     // Prefer Conscrypt over other providers if available.
     List<Provider> preferredProviders =
         EngineFactory.toProviderList("GmsCore_OpenSSL", "AndroidOpenSSL", "Conscrypt");
     Signature signer = EngineFactory.SIGNATURE.getInstance(signatureAlgorithm, preferredProviders);
     signer.initSign(privateKey);
     signer.update(data);
+    if (messageSuffix.length > 0) {
+      signer.update(messageSuffix);
+    }
     byte[] signature = signer.sign();
     if (encoding == EcdsaEncoding.IEEE_P1363) {
       EllipticCurve curve = privateKey.getParams().getCurve();
       signature =
           EllipticCurves.ecdsaDer2Ieee(signature, 2 * EllipticCurves.fieldSizeInBytes(curve));
-    }
-    return signature;
-  }
-
-  @Override
-  public byte[] sign(final byte[] data) throws GeneralSecurityException {
-    byte[] signature;
-    if (messageSuffix.length == 0) {
-      signature = noPrefixSign(data);
-    } else {
-      signature = noPrefixSign(Bytes.concat(data, messageSuffix));
     }
     if (outputPrefix.length == 0) {
       return signature;
