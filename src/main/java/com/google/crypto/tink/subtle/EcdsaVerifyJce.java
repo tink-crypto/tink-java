@@ -46,6 +46,9 @@ public final class EcdsaVerifyJce implements PublicKeyVerify {
   public static final TinkFipsUtil.AlgorithmFipsCompatibility FIPS =
       TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_REQUIRES_BORINGCRYPTO;
 
+  private static final byte[] EMPTY = new byte[0];
+  private static final byte[] LEGACY_MESSAGE_SUFFIX = new byte[] {0};
+
   @SuppressWarnings("Immutable")
   private final ECPublicKey publicKey;
 
@@ -92,8 +95,8 @@ public final class EcdsaVerifyJce implements PublicKeyVerify {
         ENCODING_CONVERTER.toProtoEnum(key.getParameters().getSignatureEncoding()),
         key.getOutputPrefix().toByteArray(),
         key.getParameters().getVariant().equals(EcdsaParameters.Variant.LEGACY)
-            ? new byte[] {0}
-            : new byte[0]);
+            ? LEGACY_MESSAGE_SUFFIX
+            : EMPTY);
   }
 
   private EcdsaVerifyJce(
@@ -118,7 +121,7 @@ public final class EcdsaVerifyJce implements PublicKeyVerify {
 
   public EcdsaVerifyJce(final ECPublicKey pubKey, HashType hash, EcdsaEncoding encoding)
       throws GeneralSecurityException {
-    this(pubKey, hash, encoding, new byte[0], new byte[0]);
+    this(pubKey, hash, encoding, EMPTY, EMPTY);
   }
 
   private void noPrefixVerify(final byte[] signature, final byte[] data)
@@ -140,6 +143,9 @@ public final class EcdsaVerifyJce implements PublicKeyVerify {
         EngineFactory.SIGNATURE.getInstance(signatureAlgorithm, preferredProviders);
     verifier.initVerify(publicKey);
     verifier.update(data);
+    if (messageSuffix.length > 0) {
+      verifier.update(messageSuffix);
+    }
     boolean verified = false;
     try {
       verified = verifier.verify(derSignature);
@@ -153,18 +159,14 @@ public final class EcdsaVerifyJce implements PublicKeyVerify {
 
   @Override
   public void verify(final byte[] signature, final byte[] data) throws GeneralSecurityException {
-    if (outputPrefix.length == 0 && messageSuffix.length == 0) {
+    if (outputPrefix.length == 0) {
       noPrefixVerify(signature, data);
       return;
     }
     if (!isPrefix(outputPrefix, signature)) {
       throw new GeneralSecurityException("Invalid signature (output prefix mismatch)");
     }
-    byte[] dataCopy = data;
-    if (messageSuffix.length != 0) {
-      dataCopy = Bytes.concat(data, messageSuffix);
-    }
     byte[] signatureNoPrefix = Arrays.copyOfRange(signature, outputPrefix.length, signature.length);
-    noPrefixVerify(signatureNoPrefix, dataCopy);
+    noPrefixVerify(signatureNoPrefix, data);
   }
 }
