@@ -42,6 +42,9 @@ public final class RsaSsaPssSignJce implements PublicKeySign {
   public static final TinkFipsUtil.AlgorithmFipsCompatibility FIPS =
       TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_REQUIRES_BORINGCRYPTO;
 
+  private static final byte[] EMPTY = new byte[0];
+  private static final byte[] LEGACY_MESSAGE_SUFFIX = new byte[] {0};
+
   @SuppressWarnings("Immutable")
   private final RSAPrivateCrtKey privateKey;
 
@@ -63,7 +66,7 @@ public final class RsaSsaPssSignJce implements PublicKeySign {
   public RsaSsaPssSignJce(
       final RSAPrivateCrtKey priv, HashType sigHash, HashType mgf1Hash, int saltLength)
       throws GeneralSecurityException {
-    this(priv, sigHash, mgf1Hash, saltLength, new byte[0], new byte[0]);
+    this(priv, sigHash, mgf1Hash, saltLength, EMPTY, EMPTY);
   }
 
   private RsaSsaPssSignJce(
@@ -117,8 +120,8 @@ public final class RsaSsaPssSignJce implements PublicKeySign {
         params.getSaltLengthBytes(),
         key.getOutputPrefix().toByteArray(),
         key.getParameters().getVariant().equals(RsaSsaPssParameters.Variant.LEGACY)
-            ? new byte[] {0}
-            : new byte[0]);
+            ? LEGACY_MESSAGE_SUFFIX
+            : EMPTY);
   }
 
   private byte[] noPrefixSign(final byte[] data)
@@ -131,12 +134,7 @@ public final class RsaSsaPssSignJce implements PublicKeySign {
 
   @Override
   public byte[] sign(final byte[] data) throws GeneralSecurityException {
-    byte[] signature;
-    if (messageSuffix.length == 0) {
-      signature = noPrefixSign(data);
-    } else {
-      signature = noPrefixSign(Bytes.concat(data, messageSuffix));
-    }
+    byte[] signature = noPrefixSign(data);
     if (outputPrefix.length == 0) {
       return signature;
     } else {
@@ -160,7 +158,7 @@ public final class RsaSsaPssSignJce implements PublicKeySign {
   }
 
   // https://tools.ietf.org/html/rfc8017#section-9.1.1.
-  private byte[] emsaPssEncode(byte[] m, int emBits) throws GeneralSecurityException {
+  private byte[] emsaPssEncode(byte[] message, int emBits) throws GeneralSecurityException {
     // Step 1. Length checking.
     // This step is unnecessary because Java's byte[] only supports up to 2^31 -1 bytes while the
     // input limitation for the hash function is far larger (2^61 - 1 for SHA-1).
@@ -169,7 +167,12 @@ public final class RsaSsaPssSignJce implements PublicKeySign {
     Validators.validateSignatureHash(sigHash);
     MessageDigest digest =
         EngineFactory.MESSAGE_DIGEST.getInstance(SubtleUtil.toDigestAlgo(this.sigHash));
-    byte[] mHash = digest.digest(m);
+    // M = concat(message, messageSuffix)
+    digest.update(message);
+    if (messageSuffix.length != 0) {
+      digest.update(messageSuffix);
+    }
+    byte[] mHash = digest.digest();
 
     // Step 3. Check emLen.
     int hLen = digest.getDigestLength();
