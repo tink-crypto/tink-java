@@ -42,6 +42,10 @@ public final class RsaSsaPkcs1SignJce implements PublicKeySign {
   public static final TinkFipsUtil.AlgorithmFipsCompatibility FIPS =
       TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_REQUIRES_BORINGCRYPTO;
 
+  private static final byte[] EMPTY = new byte[0];
+  private static final byte[] LEGACY_MESSAGE_SUFFIX = new byte[] {0};
+  private static final byte[] TEST_DATA = new byte[] {1, 2, 3};
+
   @SuppressWarnings("Immutable")
   private final RSAPrivateCrtKey privateKey;
 
@@ -79,7 +83,7 @@ public final class RsaSsaPkcs1SignJce implements PublicKeySign {
 
   public RsaSsaPkcs1SignJce(final RSAPrivateCrtKey priv, HashType hash)
       throws GeneralSecurityException {
-    this(priv, hash, new byte[0], new byte[0]);
+    this(priv, hash, EMPTY, EMPTY);
   }
 
   @AccessesPartialKey
@@ -103,11 +107,11 @@ public final class RsaSsaPkcs1SignJce implements PublicKeySign {
             RsaSsaPkcs1VerifyJce.HASH_TYPE_CONVERTER.toProtoEnum(key.getParameters().getHashType()),
             key.getOutputPrefix().toByteArray(),
             key.getParameters().getVariant().equals(RsaSsaPkcs1Parameters.Variant.LEGACY)
-                ? new byte[] {0}
-                : new byte[0]);
+                ? LEGACY_MESSAGE_SUFFIX
+                : EMPTY);
     PublicKeyVerify verify = RsaSsaPkcs1VerifyJce.create(key.getPublicKey());
     try {
-      verify.verify(signer.sign(new byte[] {1, 2, 3}), new byte[] {1, 2, 3});
+      verify.verify(signer.sign(TEST_DATA), TEST_DATA);
     } catch (GeneralSecurityException e) {
       throw new GeneralSecurityException(
           "RsaSsaPkcs1 signing with private key followed by verifying with public key failed."
@@ -121,11 +125,17 @@ public final class RsaSsaPkcs1SignJce implements PublicKeySign {
     Signature signer = EngineFactory.SIGNATURE.getInstance(signatureAlgorithm);
     signer.initSign(privateKey);
     signer.update(data);
+    if (messageSuffix.length > 0) {
+      signer.update(messageSuffix);
+    }
     byte[] signature = signer.sign();
     // Verify the signature to prevent against faulty signature computation.
     Signature verifier = EngineFactory.SIGNATURE.getInstance(signatureAlgorithm);
     verifier.initVerify(publicKey);
     verifier.update(data);
+    if (messageSuffix.length > 0) {
+      verifier.update(messageSuffix);
+    }
     if (!verifier.verify(signature)) {
       throw new java.lang.RuntimeException("Security bug: RSA signature computation error");
     }
@@ -134,12 +144,7 @@ public final class RsaSsaPkcs1SignJce implements PublicKeySign {
 
   @Override
   public byte[] sign(final byte[] data) throws GeneralSecurityException {
-    byte[] signature;
-    if (messageSuffix.length == 0) {
-      signature = noPrefixSign(data);
-    } else {
-      signature = noPrefixSign(Bytes.concat(data, messageSuffix));
-    }
+    byte[] signature = noPrefixSign(data);
     if (outputPrefix.length == 0) {
       return signature;
     } else {
