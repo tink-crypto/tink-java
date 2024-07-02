@@ -29,6 +29,7 @@ import javax.crypto.AEADBadTagException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.ShortBufferException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -195,7 +196,7 @@ public final class AesEaxJce implements Aead {
    * @throws IllegalBlockSizeException, BadPaddingException This should not happen.
    */
   private byte[] omac(Cipher ecb, int tag, final byte[] data, int offset, int length)
-      throws IllegalBlockSizeException, BadPaddingException {
+      throws IllegalBlockSizeException, BadPaddingException, ShortBufferException {
     assert length >= 0;
     assert 0 <= tag && tag <= 3;
     byte[] block = new byte[BLOCK_SIZE_IN_BYTES];
@@ -203,18 +204,32 @@ public final class AesEaxJce implements Aead {
     if (length == 0) {
       return ecb.doFinal(xor(block, b));
     }
-    block = ecb.doFinal(block);
+    byte[] buffer = new byte[BLOCK_SIZE_IN_BYTES];
+
+    // Note that
+    // {@code ecb.doFinal(block, 0, BLOCK_SIZE_IN_BYTES, /* output= */ block);} also works,
+    // but the performance of doing this is bad. It seems that it detects that input and output
+    // are the same, and then allocate some temporary memory, and copies the result back.
+    ecb.doFinal(block, 0, BLOCK_SIZE_IN_BYTES, /* output= */ buffer);
+    byte[] temp = block; // re-use unused block as buffer.
+    block = buffer;
+    buffer = temp;
+
     int position = 0;
     while (length - position > BLOCK_SIZE_IN_BYTES) {
       for (int i = 0; i < BLOCK_SIZE_IN_BYTES; i++) {
         block[i] ^= data[offset + position + i];
       }
-      block = ecb.doFinal(block);
+      ecb.doFinal(block, 0, BLOCK_SIZE_IN_BYTES, /* output= */ buffer);
+      temp = block; // block is not needed anymore, we re-use it as buffer.
+      block = buffer;
+      buffer = temp;
       position += BLOCK_SIZE_IN_BYTES;
     }
     byte[] padded = pad(Arrays.copyOfRange(data, offset + position, offset + length));
     block = xor(block, padded);
-    return ecb.doFinal(block);
+    ecb.doFinal(block, 0, BLOCK_SIZE_IN_BYTES, /* output= */ buffer);
+    return buffer;
   }
 
   @SuppressWarnings("InsecureCryptoUsage")
