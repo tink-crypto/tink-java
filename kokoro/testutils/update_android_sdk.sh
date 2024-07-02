@@ -15,27 +15,33 @@
 # limitations under the License.
 ################################################################################
 
+# Installs the Android SDK and tools and sets the ANDROID_HOME environment
+# variable if running on Kokoro.
 set -x
 
 if [[ -z "${KOKORO_ROOT}" ]] ; then
   exit 0
 fi
 
+readonly ANDROID_COMMANDLINETOOLS_URL="https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip"
+readonly ANDROID_COMMANDLINETOOLS_SHA256="2ccbda4302db862a28ada25aa7425d99dce9462046003c1714b059b5c47970d8"
 readonly PLATFORM="$(uname | tr '[:upper:]' '[:lower:]')"
+
+export ANDROID_HOME="/tmp/android-sdk"
 
 if [[ "${PLATFORM}" == 'darwin' ]]; then
   export JAVA_OPTS="-Djava.net.preferIPv6Addresses=true"
 fi
 
-# Install build-tools and other SDK dependencies.
-#
+mkdir -p "${ANDROID_HOME}"
+time curl -LsS "${ANDROID_COMMANDLINETOOLS_URL}" -o cmdline-tools.zip
+echo "${ANDROID_COMMANDLINETOOLS_SHA256} cmdline-tools.zip" | sha256sum -c
+unzip cmdline-tools.zip -d "${ANDROID_HOME}"
 # Discard STDOUT due to noisy progress bar which can't be silenced.
-(yes || true) | "${ANDROID_HOME}/tools/bin/sdkmanager" \
+(yes || true) | "${ANDROID_HOME}/cmdline-tools/bin/sdkmanager" \
+  "--sdk_root=${ANDROID_HOME}" \
   "build-tools;30.0.3" \
-  "platform-tools" \
   "platforms;android-23" \
   "platforms;android-26" \
-  "platforms;android-29" \
-  "platforms;android-30" \
-  "platforms;android-31" \
   > /dev/null
+rm -rf cmdline-tools.zip
