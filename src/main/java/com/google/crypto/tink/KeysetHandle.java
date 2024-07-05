@@ -719,7 +719,12 @@ public final class KeysetHandle {
   /**
    * Returns the {@link com.google.crypto.tink.proto.KeysetInfo} that doesn't contain actual key
    * material.
+   *
+   * @deprecated Most information can be obtained by calling {@link #getPrimary} or {@link #getAt}
+   *     and inspecting the result. For legacy code, {@code LegacyKeysetSerialization.getKeysetInfo}
+   *     gives the exact same output.
    */
+  @Deprecated
   public KeysetInfo getKeysetInfo() {
     return Util.getKeysetInfo(keyset);
   }
