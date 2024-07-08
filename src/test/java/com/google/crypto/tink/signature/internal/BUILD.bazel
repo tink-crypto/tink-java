@@ -206,3 +206,22 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "RsaSsaPkcs1VerifyConscryptFipsTest",
+    size = "small",
+    srcs = ["RsaSsaPkcs1VerifyConscryptFipsTest.java"],
+    tags = ["fips"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/config:tink_fips",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_public_key",
+        "//src/main/java/com/google/crypto/tink/signature/internal:rsa_ssa_pkcs1_proto_serialization",
+        "//src/main/java/com/google/crypto/tink/signature/internal:rsa_ssa_pkcs1_verify_conscrypt",
+        "//src/main/java/com/google/crypto/tink/subtle:base64",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+        "@maven//:org_conscrypt_conscrypt_openjdk_uber",
+    ],
+)
