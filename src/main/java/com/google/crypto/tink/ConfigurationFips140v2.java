@@ -38,6 +38,7 @@ import com.google.crypto.tink.signature.PublicKeySignWrapper;
 import com.google.crypto.tink.signature.PublicKeyVerifyWrapper;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
+import com.google.crypto.tink.signature.internal.RsaSsaPkcs1VerifyConscrypt;
 import com.google.crypto.tink.subtle.AesGcmJce;
 import com.google.crypto.tink.subtle.EcdsaSignJce;
 import com.google.crypto.tink.subtle.EcdsaVerifyJce;
@@ -45,7 +46,6 @@ import com.google.crypto.tink.subtle.EncryptThenAuthenticate;
 import com.google.crypto.tink.subtle.PrfHmacJce;
 import com.google.crypto.tink.subtle.PrfMac;
 import com.google.crypto.tink.subtle.RsaSsaPkcs1SignJce;
-import com.google.crypto.tink.subtle.RsaSsaPkcs1VerifyJce;
 import java.security.GeneralSecurityException;
 
 /**
@@ -132,6 +132,6 @@ public class ConfigurationFips140v2 {
       throw new GeneralSecurityException(
           "Cannot create FIPS-compliant PublicKeyVerify: wrong RsaSsaPkcs1 key modulus size");
     }
-    return RsaSsaPkcs1VerifyJce.create(key);
+    return RsaSsaPkcs1VerifyConscrypt.create(key);
   }
 }
