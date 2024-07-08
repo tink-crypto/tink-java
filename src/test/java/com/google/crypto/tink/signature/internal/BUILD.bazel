@@ -178,7 +178,6 @@ java_test(
     size = "small",
     srcs = ["RsaSsaPkcs1VerifyConscryptTest.java"],
     data = ["@wycheproof//testvectors:all"],
-    tags = ["fips"],
     deps = [
         "//src/main/java/com/google/crypto/tink:public_key_verify",
         "//src/main/java/com/google/crypto/tink/internal:util",
