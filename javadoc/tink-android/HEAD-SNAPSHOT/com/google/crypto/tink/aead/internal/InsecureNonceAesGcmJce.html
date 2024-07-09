@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -179,15 +179,33 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/aead/internal/InsecureNonceAesGcmJce.html#decrypt-byte:A-byte:A-byte:A-">decrypt</a></span>(byte[]&nbsp;iv,
        byte[]&nbsp;ciphertext,
        byte[]&nbsp;associatedData)</code>
-<div class="block">On Android KitKat (API level 19) this method does not support non null or non empty <code>associatedData</code>.</div>
+<div class="block">Decrypts <code>ciphertext</code> with <code>iv</code> and <code>associatedData</code>.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>byte[]</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/aead/internal/InsecureNonceAesGcmJce.html#decrypt-byte:A-byte:A-int-byte:A-">decrypt</a></span>(byte[]&nbsp;iv,
+       byte[]&nbsp;ciphertextWithPrefix,
+       int&nbsp;ciphertextOffset,
+       byte[]&nbsp;associatedData)</code>
+<div class="block">Decrypts <code>ciphertextWithPrefix</code> with <code>iv</code> and <code>associatedData</code>.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>byte[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/aead/internal/InsecureNonceAesGcmJce.html#encrypt-byte:A-byte:A-byte:A-">encrypt</a></span>(byte[]&nbsp;iv,
        byte[]&nbsp;plaintext,
        byte[]&nbsp;associatedData)</code>
-<div class="block">On Android KitKat (API level 19) this method does not support non null or non empty <code>associatedData</code>.</div>
+<div class="block">Encrypts <code>plaintext</code> with <code>iv</code> and <code>associatedData</code>.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>byte[]</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/aead/internal/InsecureNonceAesGcmJce.html#encrypt-byte:A-byte:A-int-byte:A-">encrypt</a></span>(byte[]&nbsp;iv,
+       byte[]&nbsp;plaintext,
+       int&nbsp;ciphertextOffset,
+       byte[]&nbsp;associatedData)</code>
+<div class="block">Encrypts <code>plaintext</code> with <code>iv</code> and <code>associatedData</code>.</div>
 </td>
 </tr>
 </table>
@@ -287,7 +305,28 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                       byte[]&nbsp;plaintext,
                       byte[]&nbsp;associatedData)
                throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block">On Android KitKat (API level 19) this method does not support non null or non empty <code>associatedData</code>. It might not work at all in older versions.</div>
+<div class="block">Encrypts <code>plaintext</code> with <code>iv</code> and <code>associatedData</code>.</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="encrypt-byte:A-byte:A-int-byte:A-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>encrypt</h4>
+<pre>public&nbsp;byte[]&nbsp;encrypt(byte[]&nbsp;iv,
+                      byte[]&nbsp;plaintext,
+                      int&nbsp;ciphertextOffset,
+                      byte[]&nbsp;associatedData)
+               throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<div class="block">Encrypts <code>plaintext</code> with <code>iv</code> and <code>associatedData</code>.
+
+ <p>The <code>ciphertextOffset</code> is the offset at which the ciphertext should start in the
+ returned byte array.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
@@ -297,14 +336,34 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <a name="decrypt-byte:A-byte:A-byte:A-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>decrypt</h4>
 <pre>public&nbsp;byte[]&nbsp;decrypt(byte[]&nbsp;iv,
                       byte[]&nbsp;ciphertext,
                       byte[]&nbsp;associatedData)
                throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block">On Android KitKat (API level 19) this method does not support non null or non empty <code>associatedData</code>. It might not work at all in older versions.</div>
+<div class="block">Decrypts <code>ciphertext</code> with <code>iv</code> and <code>associatedData</code>.</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="decrypt-byte:A-byte:A-int-byte:A-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>decrypt</h4>
+<pre>public&nbsp;byte[]&nbsp;decrypt(byte[]&nbsp;iv,
+                      byte[]&nbsp;ciphertextWithPrefix,
+                      int&nbsp;ciphertextOffset,
+                      byte[]&nbsp;associatedData)
+               throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<div class="block">Decrypts <code>ciphertextWithPrefix</code> with <code>iv</code> and <code>associatedData</code>.
+
+ <p>The <code>ciphertextOffset</code> is the offset at which the ciphertext starts within <code>ciphertextWithPrefix</code>.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
