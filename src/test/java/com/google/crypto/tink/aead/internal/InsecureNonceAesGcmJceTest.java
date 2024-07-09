@@ -89,6 +89,30 @@ public class InsecureNonceAesGcmJceTest {
   }
 
   @Test
+  public void encryptDecryptWithCiphertextOffsets() throws Exception {
+    Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
+
+    byte[] key = Random.randBytes(32);
+    InsecureNonceAesGcmJce gcm = new InsecureNonceAesGcmJce(key);
+    byte[] iv = Random.randBytes(InsecureNonceAesGcmJce.IV_SIZE_IN_BYTES);
+    byte[] message = Random.randBytes(42);
+    byte[] associatedData = Random.randBytes(20);
+
+    int ciphertextOffset = 17;
+
+    byte[] ciphertextWithOffset = gcm.encrypt(iv, message, ciphertextOffset, associatedData);
+
+    // ciphertext should start at offset ciphertextSize=17 in ciphertextWithOffset.
+    byte[] ciphertext =
+        Arrays.copyOfRange(ciphertextWithOffset, ciphertextOffset, ciphertextWithOffset.length);
+    byte[] decrypted = gcm.decrypt(iv, ciphertext, associatedData);
+    assertThat(decrypted).isEqualTo(message);
+
+    byte[] decrypted2 = gcm.decrypt(iv, ciphertextWithOffset, ciphertextOffset, associatedData);
+    assertThat(decrypted2).isEqualTo(message);
+  }
+
+  @Test
   public void ciphertext_lengthIsMessageSizePlusTagSize() throws Exception {
     Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
     byte[] key = Random.randBytes(32);
@@ -275,10 +299,11 @@ public class InsecureNonceAesGcmJceTest {
           () -> {
             byte[] unused = gcm.encrypt(iv, null, associatedData);
           });
+      byte[] iv2 = Random.randBytes(InsecureNonceAesGcmJce.IV_SIZE_IN_BYTES);
       assertThrows(
           NullPointerException.class,
           () -> {
-            byte[] unused = gcm.encrypt(iv, null, null);
+            byte[] unused = gcm.encrypt(iv2, null, null);
           });
       assertThrows(
           NullPointerException.class,

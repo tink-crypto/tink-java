@@ -75,7 +75,20 @@ public final class InsecureNonceChaCha20Poly1305Jce {
     return ChaCha20Poly1305Jce.getThreadLocalCipherOrNull() != null;
   }
 
+  /** Encrypts {@code plaintext} with {@code nonce} and {@code associatedData}. */
   public byte[] encrypt(final byte[] nonce, final byte[] plaintext, final byte[] associatedData)
+      throws GeneralSecurityException {
+    return encrypt(nonce, plaintext, /* ciphertextOffset = */ 0, associatedData);
+  }
+
+  /**
+   * Encrypts {@code plaintext} with {@code nonce} and {@code associatedData}.
+   *
+   * <p>The {@code ciphertextOffset} is the offset at which the ciphertext will start in the
+   * returned byte array.
+   */
+  public byte[] encrypt(
+      final byte[] nonce, final byte[] plaintext, int ciphertextOffset, final byte[] associatedData)
       throws GeneralSecurityException {
     if (plaintext == null) {
       throw new NullPointerException("plaintext is null");
@@ -89,18 +102,44 @@ public final class InsecureNonceChaCha20Poly1305Jce {
     if (associatedData != null && associatedData.length != 0) {
       cipher.updateAAD(associatedData);
     }
-    return cipher.doFinal(plaintext);
+    int ciphertextSize = cipher.getOutputSize(plaintext.length);
+    if (ciphertextSize > Integer.MAX_VALUE - ciphertextOffset) {
+      throw new GeneralSecurityException("plaintext too long");
+    }
+    int outputSize = ciphertextOffset + ciphertextSize;
+    byte[] output = new byte[outputSize];
+    int written = cipher.doFinal(plaintext, 0, plaintext.length, output, ciphertextOffset);
+    if (written != ciphertextSize) {
+      throw new GeneralSecurityException("not enough data written");
+    }
+    return output;
   }
 
+  /** Decrypts {@code ciphertext} with {@code nonce} and {@code associatedData}. */
   public byte[] decrypt(final byte[] nonce, final byte[] ciphertext, final byte[] associatedData)
       throws GeneralSecurityException {
-    if (ciphertext == null) {
+    return decrypt(nonce, ciphertext, /* ciphertextOffset = */ 0, associatedData);
+  }
+
+  /**
+   * Decrypts {@code ciphertextWithPrefix} with {@code nonce} and {@code associatedData}.
+   *
+   * <p>The {@code ciphertextOffset} is the offset at which the ciphertext starts in the {@code
+   * ciphertextWithPrefix}.
+   */
+  public byte[] decrypt(
+      final byte[] nonce,
+      final byte[] ciphertextWithPrefix,
+      int ciphertextOffset,
+      final byte[] associatedData)
+      throws GeneralSecurityException {
+    if (ciphertextWithPrefix == null) {
       throw new NullPointerException("ciphertext is null");
     }
     if (nonce.length != NONCE_SIZE_IN_BYTES) {
       throw new GeneralSecurityException("nonce length must be " + NONCE_SIZE_IN_BYTES + " bytes.");
     }
-    if (ciphertext.length < TAG_SIZE_IN_BYTES) {
+    if (ciphertextWithPrefix.length < ciphertextOffset + TAG_SIZE_IN_BYTES) {
       throw new GeneralSecurityException("ciphertext too short");
     }
     AlgorithmParameterSpec params = new IvParameterSpec(nonce);
@@ -110,6 +149,7 @@ public final class InsecureNonceChaCha20Poly1305Jce {
     if (associatedData != null && associatedData.length != 0) {
       cipher.updateAAD(associatedData);
     }
-    return cipher.doFinal(ciphertext);
+    return cipher.doFinal(
+        ciphertextWithPrefix, ciphertextOffset, ciphertextWithPrefix.length - ciphertextOffset);
   }
 }

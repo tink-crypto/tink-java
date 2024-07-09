@@ -44,18 +44,23 @@ public final class InsecureNonceAesGcmJce {
     this.keySpec = AesGcmJceUtil.getSecretKey(key);
   }
 
-  /**
-   * On Android KitKat (API level 19) this method does not support non null or non empty {@code
-   * associatedData}. It might not work at all in older versions.
-   */
+  /** Encrypts {@code plaintext} with {@code iv} and {@code associatedData}. */
   public byte[] encrypt(final byte[] iv, final byte[] plaintext, final byte[] associatedData)
+      throws GeneralSecurityException {
+    return encrypt(iv, plaintext, /* ciphertextOffset= */ 0, associatedData);
+  }
+
+  /**
+   * Encrypts {@code plaintext} with {@code iv} and {@code associatedData}.
+   *
+   * <p>The {@code ciphertextOffset} is the offset at which the ciphertext should start in the
+   * returned byte array.
+   */
+  public byte[] encrypt(
+      final byte[] iv, final byte[] plaintext, int ciphertextOffset, final byte[] associatedData)
       throws GeneralSecurityException {
     if (iv.length != IV_SIZE_IN_BYTES) {
       throw new GeneralSecurityException("iv is wrong size");
-    }
-    // Check that ciphertext is not longer than the max. size of a Java array.
-    if (plaintext.length > Integer.MAX_VALUE - TAG_SIZE_IN_BYTES) {
-      throw new GeneralSecurityException("plaintext too long");
     }
     AlgorithmParameterSpec params = AesGcmJceUtil.getParams(iv);
     Cipher localCipher = AesGcmJceUtil.getThreadLocalCipher();
@@ -63,19 +68,42 @@ public final class InsecureNonceAesGcmJce {
     if (associatedData != null && associatedData.length != 0) {
       localCipher.updateAAD(associatedData);
     }
-    return localCipher.doFinal(plaintext);
+    int ciphertextSize = localCipher.getOutputSize(plaintext.length);
+    // Check that outputSize is not longer than the max. size of a Java array.
+    if (ciphertextSize > Integer.MAX_VALUE - ciphertextOffset) {
+      throw new GeneralSecurityException("plaintext too long");
+    }
+    int outputSize = ciphertextOffset + ciphertextSize;
+    byte[] output = new byte[outputSize];
+    int written = localCipher.doFinal(plaintext, 0, plaintext.length, output, ciphertextOffset);
+    if (written != ciphertextSize) {
+      throw new GeneralSecurityException("not enough data written");
+    }
+    return output;
+  }
+
+  /** Decrypts {@code ciphertext} with {@code iv} and {@code associatedData}. */
+  public byte[] decrypt(final byte[] iv, final byte[] ciphertext, final byte[] associatedData)
+      throws GeneralSecurityException {
+    return decrypt(iv, ciphertext, /* ciphertextOffset= */ 0, associatedData);
   }
 
   /**
-   * On Android KitKat (API level 19) this method does not support non null or non empty {@code
-   * associatedData}. It might not work at all in older versions.
+   * Decrypts {@code ciphertextWithPrefix} with {@code iv} and {@code associatedData}.
+   *
+   * <p>The {@code ciphertextOffset} is the offset at which the ciphertext starts within {@code
+   * ciphertextWithPrefix}.
    */
-  public byte[] decrypt(final byte[] iv, final byte[] ciphertext, final byte[] associatedData)
+  public byte[] decrypt(
+      final byte[] iv,
+      final byte[] ciphertextWithPrefix,
+      int ciphertextOffset,
+      final byte[] associatedData)
       throws GeneralSecurityException {
     if (iv.length != IV_SIZE_IN_BYTES) {
       throw new GeneralSecurityException("iv is wrong size");
     }
-    if (ciphertext.length < TAG_SIZE_IN_BYTES) {
+    if (ciphertextWithPrefix.length < TAG_SIZE_IN_BYTES + ciphertextOffset) {
       throw new GeneralSecurityException("ciphertext too short");
     }
     AlgorithmParameterSpec params = AesGcmJceUtil.getParams(iv);
@@ -84,6 +112,7 @@ public final class InsecureNonceAesGcmJce {
     if (associatedData != null && associatedData.length != 0) {
       localCipher.updateAAD(associatedData);
     }
-    return localCipher.doFinal(ciphertext);
+    return localCipher.doFinal(
+        ciphertextWithPrefix, ciphertextOffset, ciphertextWithPrefix.length - ciphertextOffset);
   }
 }

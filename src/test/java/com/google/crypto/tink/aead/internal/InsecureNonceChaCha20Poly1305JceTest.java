@@ -110,6 +110,32 @@ public class InsecureNonceChaCha20Poly1305JceTest {
     }
   }
 
+  @Test
+  public void encryptDecryptWithCiphertextOffsets() throws Exception {
+    Assume.assumeFalse(TinkFips.useOnlyFips());
+    Assume.assumeTrue(InsecureNonceChaCha20Poly1305Jce.isSupported());
+
+    byte[] key = Random.randBytes(32);
+    InsecureNonceChaCha20Poly1305Jce cipher = createInstance(key);
+    byte[] nonce = Random.randBytes(NONCE_SIZE_IN_BYTES);
+    byte[] message = Random.randBytes(42);
+    byte[] associatedData = Random.randBytes(20);
+
+    int ciphertextOffset = 17;
+
+    byte[] ciphertextWithOffset = cipher.encrypt(nonce, message, ciphertextOffset, associatedData);
+    // ciphertext should start at offset 17 in ciphertextWithOffset.
+
+    byte[] ciphertext =
+        Arrays.copyOfRange(ciphertextWithOffset, ciphertextOffset, ciphertextWithOffset.length);
+    byte[] decrypted = cipher.decrypt(nonce, ciphertext, associatedData);
+    assertThat(decrypted).isEqualTo(message);
+
+    byte[] decrypted2 =
+        cipher.decrypt(nonce, ciphertextWithOffset, ciphertextOffset, associatedData);
+    assertThat(decrypted2).isEqualTo(message);
+  }
+
   /** BC had a bug, where GCM failed for messages of size > 8192 */
   @Test
   public void testLongMessages() throws Exception {
