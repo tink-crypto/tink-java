@@ -134,15 +134,16 @@ public final class AesEaxJce implements Aead {
     this(key, ivSizeInBytes, new byte[0]);
   }
 
-  /** Computes the xor of two byte arrays of equal size. */
-  private static byte[] xor(final byte[] x, final byte[] y) {
-    assert x.length == y.length;
+  /**
+   * Computes the xor of two byte arrays of equal size.
+   *
+   * <p>The output is stored in the first array.
+   */
+  private static void xor(final byte[] x, final byte[] y) {
     int len = x.length;
-    byte[] res = new byte[len];
     for (int i = 0; i < len; i++) {
-      res[i] = (byte) (x[i] ^ y[i]);
+      x[i] = (byte) (x[i] ^ y[i]);
     }
-    return res;
   }
 
   /**
@@ -166,19 +167,18 @@ public final class AesEaxJce implements Aead {
    * Pads the last block for OMAC. If the last block is smaller than 16 bytes then a bitstring
    * starting with 1 and followed by 0's is appended and the result is XORed with p. If the last
    * block is 16 bytes long then the last block is XORed with b.
-   *
-   * @param data A block or partial block of size 1 .. 16 bytes.
-   * @return The padded block.
    */
-  private byte[] pad(final byte[] data) {
-    if (data.length == BLOCK_SIZE_IN_BYTES) {
-      return xor(data, b);
+  private byte[] pad(final byte[] data, int lastBlockFrom, int lastBlockTo) {
+    byte[] lastBlock = Arrays.copyOfRange(data, lastBlockFrom, lastBlockTo);
+    if (lastBlock.length == BLOCK_SIZE_IN_BYTES) {
+      xor(lastBlock, b);
+      return lastBlock;
     } else {
       byte[] res = Arrays.copyOf(p, BLOCK_SIZE_IN_BYTES);
-      for (int i = 0; i < data.length; i++) {
-        res[i] ^= data[i];
+      for (int i = 0; i < lastBlock.length; i++) {
+        res[i] ^= lastBlock[i];
       }
-      res[data.length] = (byte) (res[data.length] ^ 0x80);
+      res[lastBlock.length] = (byte) (res[lastBlock.length] ^ 0x80);
       return res;
     }
   }
@@ -202,7 +202,8 @@ public final class AesEaxJce implements Aead {
     byte[] block = new byte[BLOCK_SIZE_IN_BYTES];
     block[BLOCK_SIZE_IN_BYTES - 1] = (byte) tag;
     if (length == 0) {
-      return ecb.doFinal(xor(block, b));
+      xor(block, b);
+      return ecb.doFinal(block);
     }
     byte[] buffer = new byte[BLOCK_SIZE_IN_BYTES];
 
@@ -226,8 +227,8 @@ public final class AesEaxJce implements Aead {
       buffer = temp;
       position += BLOCK_SIZE_IN_BYTES;
     }
-    byte[] padded = pad(Arrays.copyOfRange(data, offset + position, offset + length));
-    block = xor(block, padded);
+    byte[] padded = pad(data, offset + position, offset + length);
+    xor(block, padded);
     ecb.doFinal(block, 0, BLOCK_SIZE_IN_BYTES, /* output= */ buffer);
     return buffer;
   }
@@ -304,6 +305,4 @@ public final class AesEaxJce implements Aead {
     ctr.init(Cipher.ENCRYPT_MODE, keySpec, new IvParameterSpec(n));
     return ctr.doFinal(ciphertext, outputPrefix.length + ivSizeInBytes, plaintextLength);
   }
-
-
 }
