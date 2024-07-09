@@ -105,8 +105,13 @@ public final class RsaSsaPkcs1VerifyJceFipsTest {
     RSAPublicKey publicKey =
         (RSAPublicKey) keyFactory.generatePublic(new RSAPublicKeySpec(MODULUS_2048, EXPONENT));
 
-    assertThrows(
-        GeneralSecurityException.class, () -> new RsaSsaPkcs1VerifyJce(publicKey, HashType.SHA256));
+    if (TinkFipsUtil.fipsModuleAvailable()) {
+      assertThat(new RsaSsaPkcs1VerifyJce(publicKey, HashType.SHA256)).isNotNull();
+    } else {
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> new RsaSsaPkcs1VerifyJce(publicKey, HashType.SHA256));
+    }
   }
 
   @Test
