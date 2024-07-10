@@ -181,6 +181,7 @@ java_library(
         "//src/main/java/com/google/crypto/tink/internal:util",
         "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_parameters",
         "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_public_key",
+        "//src/main/java/com/google/crypto/tink/signature/internal:rsa_ssa_pkcs1_verify_conscrypt",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
@@ -1070,6 +1071,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink/internal:util-android",
         "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_parameters-android",
         "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_public_key-android",
+        "//src/main/java/com/google/crypto/tink/signature/internal:rsa_ssa_pkcs1_verify_conscrypt-android",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )

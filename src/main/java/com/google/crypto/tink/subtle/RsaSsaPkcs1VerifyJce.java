@@ -24,6 +24,7 @@ import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.EnumTypeProtoConverter;
 import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
+import com.google.crypto.tink.signature.internal.RsaSsaPkcs1VerifyConscrypt;
 import com.google.crypto.tink.subtle.Enums.HashType;
 import com.google.errorprone.annotations.Immutable;
 import java.math.BigInteger;
@@ -77,9 +78,10 @@ public final class RsaSsaPkcs1VerifyJce implements PublicKeyVerify {
     private InternalJavaImpl(
         final RSAPublicKey pubKey, HashType hash, byte[] outputPrefix, byte[] messageSuffix)
         throws GeneralSecurityException {
-      if (!FIPS.isCompatible()) {
+      if (TinkFipsUtil.useOnlyFips()) {
         throw new GeneralSecurityException(
-            "Can not use RSA-PKCS1.5 in FIPS-mode, as BoringCrypto module is not available.");
+            "Conscrypt is not available, and we cannot use Java Implementation of RSA-PKCS1.5 in"
+                + " FIPS-mode.");
       }
 
       Validators.validateSignatureHash(hash);
@@ -184,6 +186,9 @@ public final class RsaSsaPkcs1VerifyJce implements PublicKeyVerify {
 
   @AccessesPartialKey
   public static PublicKeyVerify create(RsaSsaPkcs1PublicKey key) throws GeneralSecurityException {
+    if (RsaSsaPkcs1VerifyConscrypt.isSupported()) {
+      return RsaSsaPkcs1VerifyConscrypt.create(key);
+    }
     KeyFactory keyFactory = EngineFactory.KEY_FACTORY.getInstance("RSA");
     RSAPublicKey publicKey =
         (RSAPublicKey)
@@ -199,9 +204,41 @@ public final class RsaSsaPkcs1VerifyJce implements PublicKeyVerify {
             : EMPTY);
   }
 
+  private static RsaSsaPkcs1Parameters.HashType getHashType(HashType hash)
+      throws GeneralSecurityException {
+    switch (hash) {
+      case SHA256:
+        return RsaSsaPkcs1Parameters.HashType.SHA256;
+      case SHA384:
+        return RsaSsaPkcs1Parameters.HashType.SHA384;
+      case SHA512:
+        return RsaSsaPkcs1Parameters.HashType.SHA512;
+      default:
+        throw new GeneralSecurityException("Unsupported hash: " + hash);
+    }
+  }
+
+  @AccessesPartialKey
+  private RsaSsaPkcs1PublicKey convertKey(final RSAPublicKey pubKey, HashType hash)
+      throws GeneralSecurityException {
+    RsaSsaPkcs1Parameters parameters =
+        RsaSsaPkcs1Parameters.builder()
+            .setModulusSizeBits(pubKey.getModulus().bitLength())
+            .setPublicExponent(pubKey.getPublicExponent())
+            .setHashType(getHashType(hash))
+            .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
+            .build();
+    return RsaSsaPkcs1PublicKey.builder()
+        .setParameters(parameters)
+        .setModulus(pubKey.getModulus())
+        .build();
+  }
+
+  // Consider using RsaSsaPkcs1VerifyJce.create instead.
   public RsaSsaPkcs1VerifyJce(final RSAPublicKey pubKey, HashType hash)
       throws GeneralSecurityException {
-    this.verify = new InternalJavaImpl(pubKey, hash, EMPTY, EMPTY);
+
+    this.verify = create(convertKey(pubKey, hash));
   }
 
   @Override
