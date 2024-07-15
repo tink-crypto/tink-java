@@ -33,6 +33,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPublicKeySpec;
+import java.util.Arrays;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -54,9 +55,12 @@ public class RsaSsaPssVerifyJceTest {
     PublicKeyVerify verifier =
         RsaSsaPssVerifyJce.create((RsaSsaPssPublicKey) testVector.getPrivateKey().getPublicKey());
     verifier.verify(testVector.getSignature(), testVector.getMessage());
+
+    // Test that verify fails when message is modified.
+    byte[] modifiedMessage = Bytes.concat(testVector.getMessage(), new byte[] {1});
     assertThrows(
         GeneralSecurityException.class,
-        () -> verifier.verify(testVector.getSignature(), new byte[] {1, 2, 3}));
+        () -> verifier.verify(testVector.getSignature(), modifiedMessage));
   }
 
   @Test
@@ -82,14 +86,36 @@ public class RsaSsaPssVerifyJceTest {
             HashType.SHA256,
             testPublicKey.getParameters().getSaltLengthBytes());
     verify.verify(testVector.getSignature(), testVector.getMessage());
+
+    // Test that verify fails when message is modified.
+    byte[] modifiedMessage = Bytes.concat(testVector.getMessage(), new byte[] {1});
     assertThrows(
         GeneralSecurityException.class,
-        () -> verify.verify(testVector.getSignature(), new byte[] {1, 2, 3}));
+        () -> verify.verify(testVector.getSignature(), modifiedMessage));
 
     // Test that the constructor fails when SHA1 is used.
     assertThrows(
         GeneralSecurityException.class,
         () -> new RsaSsaPssVerifyJce(rsaPublicKey, HashType.SHA1, HashType.SHA1, 20));
+  }
+
+  @Theory
+  public void modifiedOutputPrefix_throws(
+      @FromDataPoints("testVectors") SignatureTestVector testVector) throws Exception {
+    RsaSsaPssPublicKey testPublicKey =
+        (RsaSsaPssPublicKey) testVector.getPrivateKey().getPublicKey();
+    if (testPublicKey.getOutputPrefix().size() == 0) {
+      return;
+    }
+    byte[] modifiedSignature = testVector.getSignature();
+    modifiedSignature[1] ^= 0x01;
+    PublicKeyVerify verifier = RsaSsaPssVerifyJce.create(testPublicKey);
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            verifier.verify(
+                Arrays.copyOf(modifiedSignature, modifiedSignature.length),
+                testVector.getMessage()));
   }
 
   private static RsaSsaPssParameters.HashType getHashType(String sha) {

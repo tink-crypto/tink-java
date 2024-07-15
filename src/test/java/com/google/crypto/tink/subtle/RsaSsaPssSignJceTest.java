@@ -33,7 +33,6 @@ import java.security.KeyPairGenerator;
 import java.security.Security;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPublicKey;
-import java.util.Arrays;
 import org.conscrypt.Conscrypt;
 import org.junit.Assume;
 import org.junit.Before;
@@ -175,17 +174,6 @@ public class RsaSsaPssSignJceTest {
   }
 
   /**
-   * Tests that the verifier can verify a the signature for the message and key in the test vector.
-   */
-  @Theory
-  public void test_validateSignatureInTestVector(
-      @FromDataPoints("testVectors") SignatureTestVector testVector) throws Exception {
-    RsaSsaPssPrivateKey key = (RsaSsaPssPrivateKey) testVector.getPrivateKey();
-    PublicKeyVerify verifier = RsaSsaPssVerifyJce.create(key.getPublicKey());
-    verifier.verify(testVector.getSignature(), testVector.getMessage());
-  }
-
-  /**
    * Tests that the verifier can verify a newly generated signature for the message and key in the
    * test vector.
    */
@@ -197,37 +185,6 @@ public class RsaSsaPssSignJceTest {
     byte[] signature = signer.sign(testVector.getMessage());
     PublicKeyVerify verifier = RsaSsaPssVerifyJce.create(key.getPublicKey());
     verifier.verify(signature, testVector.getMessage());
-  }
-
-  /** Tests that the verification fails for a different message. */
-  @Theory
-  public void test_computeAndValidate_modifiedMessage_throws(
-      @FromDataPoints("testVectors") SignatureTestVector testVector) throws Exception {
-    RsaSsaPssPrivateKey key = (RsaSsaPssPrivateKey) testVector.getPrivateKey();
-    byte[] modifiedMessage = Bytes.concat(testVector.getMessage(), new byte[] {1});
-    PublicKeyVerify verifier = RsaSsaPssVerifyJce.create(key.getPublicKey());
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> verifier.verify(testVector.getSignature(), modifiedMessage));
-  }
-
-  /** Tests that the verification fails if we modify the output prefix. */
-  @Theory
-  public void test_computeAndValidate_modifiedOutputPrefix_throws(
-      @FromDataPoints("testVectors") SignatureTestVector testVector) throws Exception {
-    RsaSsaPssPrivateKey key = (RsaSsaPssPrivateKey) testVector.getPrivateKey();
-    if (key.getOutputPrefix().size() == 0) {
-      return;
-    }
-    byte[] modifiedSignature = testVector.getSignature();
-    modifiedSignature[1] ^= 0x01;
-    PublicKeyVerify verifier = RsaSsaPssVerifyJce.create(key.getPublicKey());
-    assertThrows(
-        GeneralSecurityException.class,
-        () ->
-            verifier.verify(
-                Arrays.copyOf(modifiedSignature, modifiedSignature.length),
-                testVector.getMessage()));
   }
 
   @DataPoints("testVectors")
