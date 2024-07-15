@@ -33,7 +33,7 @@ import javax.annotation.Nullable;
 /** Test utilities for RsaSsaPss */
 @AccessesPartialKey
 public final class RsaSsaPssTestUtil {
-  private static RsaSsaPssPrivateKey privateKeyFor2048BitParameters(
+  public static RsaSsaPssPrivateKey privateKeyFor2048BitParameters(
       RsaSsaPssParameters parameters, @Nullable Integer idRequirement)
       throws GeneralSecurityException {
     // Some parameters are from https://www.rfc-editor.org/rfc/rfc7517#appendix-C,
@@ -112,6 +112,97 @@ public final class RsaSsaPssTestUtil {
             SecretBigInteger.fromBigInteger(primeExponentP, InsecureSecretKeyAccess.get()),
             SecretBigInteger.fromBigInteger(primeExponentQ, InsecureSecretKeyAccess.get()))
         .setCrtCoefficient(SecretBigInteger.fromBigInteger(qInverse, InsecureSecretKeyAccess.get()))
+        .build();
+  }
+
+  public static RsaSsaPssPrivateKey privateKeyFor4096BitParameters(
+      RsaSsaPssParameters parameters, @Nullable Integer idRequirement)
+      throws GeneralSecurityException {
+    BigInteger privateExponent =
+        new BigInteger(
+            1,
+            Base64.urlSafeDecode(
+                "QfFSeY4zl5LKG1MstcHg6IfBjyQ36inrbjSBMmk7_nPSnWo61B2LqOHr90EWgBlj03Q7IDrDymiLb-l9Gv"
+                    + "bMsRGmM4eDCKlPf5_6vtpTfN6dcrR2-KD9shaQgMVlHdgaX9a4RelBmq3dqaKVob0-sfsEBkyrbC"
+                    + "apIENUp8ECrERzJUP_vTtUKlYR3WnWRXlWmo-bYN5FPZrh2I0ZWLSF8EK9__ssfBxVO9DZgZwFd-"
+                    + "k7vSkgbisjUN6LBiVDEEF2kY1AeBIzMtvrDlkskEXPUim2qnTS6f15h7ErZfvwJYqTPR3dQL-yqz"
+                    + "RdYTBSNiGDrKdhCINL5FLI8NYQqifPF4hjPPlUVBCBoblOeSUnokh7l5VyTYShfS-Y24HjjUiZWk"
+                    + "XnNWsS0rubRYV69rq79GC45EwAvwQRPhGjYEQpS3BAzfdodjSVe_1_scCVVi7GpmhrEqz-ZJE3BY"
+                    + "i39ioGRddlGIMmMt_ddYpHNgt16qfLBGjJU2rveyxXm2zPZz-W-lJC8AjH8RqzFYikec2LNZ49xM"
+                    + "KiBAijpghSCoVCO_kTaesc6crJ125AL5T5df_C65JeXoCQsbbvQRdqQs4TG9uObkY8OWZ1VHjhUF"
+                    + "b1frplDQvc4bUqYFgQxGhrDFAbwKBECyUwqh0hJnDtQpFFcvhJj6AILVoLlVqNeWIK3iE"));
+    BigInteger publicModulus =
+        new BigInteger(
+            1,
+            Base64.urlSafeDecode(
+                "AK9mcI3PaEhMPR2ICXxCsK0lek917W01OVK24Q6_eMKVJkzVKhf2muYn2B1Pkx_yvdWr7g0B1tjNSN66-A"
+                    + "PH7osa9F1x6WnzY16d2WY3xvidHxHMFol1sPa-xGKu94uFBp4rHqrj7nYBJX4QmHzLG95QANhJPz"
+                    + "C4P9M-lrVSyCVlHr2732NZpjoFN8dZtvNvNI_ndUb4fTgozmxbaRKGKawTjocP1DAtOzwwuOKPZM"
+                    + "WwI3nFEEDJqkhFh2uiINPWYtcs-onHXeKLpCJUwCXC4bEmgPErChOO3kvlZF6K2o8uoNBPkhnBog"
+                    + "q7tl8gxjnJWK5AdN2vZflmIwKuQaWB-12d341-5omqm-V9roqf7WpObLpkX1VeLeK9V96dnUl864"
+                    + "bap8RXvJlrQ-OMCBNax3YmtqMHWjafXe1tNavvEA8zi8dOchwyyUQ5xaPM_taf29AJA6F8xbeHFR"
+                    + "sAMX8piBOZYNZUm7SHu8tJOrAXmyDldCIeob2O4MRzMwfRgvQS_NAQNwPMuOBrpRr3b4slV6CfXs"
+                    + "k4cWTb3gs7ZXeSQFbJVmhaMDSjOFUzXxs75J4Ud639loa8jF0j7f5kInzR1t-UYj7YajigirKPaX"
+                    + "nI1OXxn0ZkBIRln0pVIbQFX5YJ96K9-YOpJnBNgYY_PNcvfl5SD87vYNOQxsbeIQIE-EkF"));
+    BigInteger primeP =
+        new BigInteger(
+            1,
+            Base64.urlSafeDecode(
+                "AOQA7Ky1XEGqZcc7uSXwFbKjSNCmVBhCGqsDRdKJ1ErSmW98gnJ7pBIHTmiyFdJqU20SzY-YB05Xj3bfSY"
+                    + "ptJRPLO2cGiwrwjRB_EsG8OqexX_5le9_8x-8i6MhY3xGX5LABYs8dB0aLl3ysOtRgIvCeyeoJ0I"
+                    + "7nRYjwDlexxjl9z7OI28cW7Tdvljbk-LAgBmygsMluP2-n7T58Dl-SD-8BT5eiGFDFu76h_vmyTX"
+                    + "B1_zToAqBK2C5oM7OF_7Z7zuLjx7vz40xH6KD7Rkkvcwm95wfhYEZtHYFwqUhajE1vD5nCcGcCNh"
+                    + "quTLzPlW5RN2Asxm-_Dk-p7pIkH9aAP0k"));
+    BigInteger primeQ =
+        new BigInteger(
+            1,
+            Base64.urlSafeDecode(
+                "AMTv-c5IRTRvbx7Vyf06df2Rm2AwdaRlwy1QG3YAdojQ_PhICNH0-mTHqYaeNZRja6KniFKqaYimgdccW2"
+                    + "UhGGKZXQhHhyucZ-AE0NtPLFkd7RhegcrH5sbHOcDtWCSGwcne9Wzs54VyhIhGmOS5HYuLUD-sB0"
+                    + "NgMzm8vNsnF_qIt458x6L4GE97HnRnLdSJBFaNkEdLJGXN1fbtJIGgdKN1aOc5KafTi-q2DAHEe3"
+                    + "SmTzFPWD6NJ-jo0aJE9fXRQ06BUwUJtZXwaC4FCpcZKne2PSglc8AlqQOulcFLrsJ8fnG_vc7trS"
+                    + "_pw9zCxaaJQduYPyTbM9_szBj206lJb90"));
+    BigInteger primeExponentP =
+        new BigInteger(
+            1,
+            Base64.urlSafeDecode(
+                "WQVTYwtcffb9zhAvdfSLRDgkkfKfGumUZ_jbJhzSWnRnm_PNKs3DfZaEsrP1eTYyZH_W6p29HIVrako7-G"
+                    + "Qs-dF72_neB-Nr8Gjs9d98N0U16anN9-JGXcQPh0nLrp7TlzSzU5JN6OlPuEm2nnz6p2AYDdzPJT"
+                    + "x_FbxEnVC3yHKqybpBtTXqYJ6c08oKnxmh6H_FBqCY_AtgwejF4-Kvfe3RGa8cN008xG2TlAJd4e"
+                    + "7wOcPsYpFWXqgop4tGEAW-_S9aKLRMptfcqB3zj1eLXt5aeeUxJc4smwFV1v4jkYgvWyVjpZRjc3"
+                    + "9iTsXt3iivqklRIQhDmi8LCtw34hQooQ"));
+    BigInteger primeExponentQ =
+        new BigInteger(
+            1,
+            Base64.urlSafeDecode(
+                "AI3R7wghPU0Mbm47MPGeFvga0lSLsTxJWCuag5wPq0zNi07UuR1RmLvYmPlrl1Qb4JhKoz48oDEbD2e0cR"
+                    + "C7q47duIRM1keOo7NMZId6VYp7pZEmBbvdBxDgyXNouE_dh1JzsDPXysZr-IsWo-YadO9XzNt9a-"
+                    + "GWNm1-wFXlqjvuFpmSvEVc-kzKcd0LrJJgdXJLEbp1n2l8uHfQwLhkr3pDA993Z8sG6byFitH_B5"
+                    + "Sya1csN3UcO8BbYRPFK4bxQtIXCY0YN98ZODzjvoOfSNjasOHnTprxw-v13rxLXzeJZZlOpkaNHG"
+                    + "njovuoe6N5NqcH1XkaLho0sanMnhJL4zU"));
+    BigInteger crtCoefficient =
+        new BigInteger(
+            1,
+            Base64.urlSafeDecode(
+                "AL6gykI07B_tLc5MEUbwAZec8frBkcIvwdlnbchmov9q5sBnI7xJt07BJlyrm8p_XWuOblmx6Qg4ccKwE1"
+                    + "jt3Cd36J7X92D9IJwfagytmeT4wmruM7Qbuzg7iGeX4RJ4CLkvsJZRSh8Fvum-qMwEynypVJMB5-"
+                    + "Uw8Y_6Cd_nMZeSK7pJs8ewrS7LDY7ODnrzxkJ1xRCXpVbvsB0mKcOmhM9fD6Q1qkjwmBn4MYBE2D"
+                    + "1im_S2Ybt2AiSjAxMX6M8u8N8hXcEu0ozeTfsZy1HOF9HuTRdOdEh4P-ZvzQqawSLF5HTk82_-F-"
+                    + "yiTPhtlcqCNFbCs0pKGeZIFZQ9ZfK5kn8"));
+    RsaSsaPssPublicKey publicKey =
+        RsaSsaPssPublicKey.builder().setParameters(parameters).setModulus(publicModulus).build();
+    return RsaSsaPssPrivateKey.builder()
+        .setPublicKey(publicKey)
+        .setPrimes(
+            SecretBigInteger.fromBigInteger(primeP, InsecureSecretKeyAccess.get()),
+            SecretBigInteger.fromBigInteger(primeQ, InsecureSecretKeyAccess.get()))
+        .setPrivateExponent(
+            SecretBigInteger.fromBigInteger(privateExponent, InsecureSecretKeyAccess.get()))
+        .setPrimeExponents(
+            SecretBigInteger.fromBigInteger(primeExponentP, InsecureSecretKeyAccess.get()),
+            SecretBigInteger.fromBigInteger(primeExponentQ, InsecureSecretKeyAccess.get()))
+        .setCrtCoefficient(
+            SecretBigInteger.fromBigInteger(crtCoefficient, InsecureSecretKeyAccess.get()))
         .build();
   }
 
@@ -265,93 +356,7 @@ public final class RsaSsaPssTestUtil {
             .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
             .setSaltLengthBytes(32)
             .build();
-    BigInteger privateExponent =
-        new BigInteger(
-            1,
-            Base64.urlSafeDecode(
-                "QfFSeY4zl5LKG1MstcHg6IfBjyQ36inrbjSBMmk7_nPSnWo61B2LqOHr90EWgBlj03Q7IDrDymiLb-l9Gv"
-                    + "bMsRGmM4eDCKlPf5_6vtpTfN6dcrR2-KD9shaQgMVlHdgaX9a4RelBmq3dqaKVob0-sfsEBkyrbC"
-                    + "apIENUp8ECrERzJUP_vTtUKlYR3WnWRXlWmo-bYN5FPZrh2I0ZWLSF8EK9__ssfBxVO9DZgZwFd-"
-                    + "k7vSkgbisjUN6LBiVDEEF2kY1AeBIzMtvrDlkskEXPUim2qnTS6f15h7ErZfvwJYqTPR3dQL-yqz"
-                    + "RdYTBSNiGDrKdhCINL5FLI8NYQqifPF4hjPPlUVBCBoblOeSUnokh7l5VyTYShfS-Y24HjjUiZWk"
-                    + "XnNWsS0rubRYV69rq79GC45EwAvwQRPhGjYEQpS3BAzfdodjSVe_1_scCVVi7GpmhrEqz-ZJE3BY"
-                    + "i39ioGRddlGIMmMt_ddYpHNgt16qfLBGjJU2rveyxXm2zPZz-W-lJC8AjH8RqzFYikec2LNZ49xM"
-                    + "KiBAijpghSCoVCO_kTaesc6crJ125AL5T5df_C65JeXoCQsbbvQRdqQs4TG9uObkY8OWZ1VHjhUF"
-                    + "b1frplDQvc4bUqYFgQxGhrDFAbwKBECyUwqh0hJnDtQpFFcvhJj6AILVoLlVqNeWIK3iE"));
-    BigInteger publicModulus =
-        new BigInteger(
-            1,
-            Base64.urlSafeDecode(
-                "AK9mcI3PaEhMPR2ICXxCsK0lek917W01OVK24Q6_eMKVJkzVKhf2muYn2B1Pkx_yvdWr7g0B1tjNSN66-A"
-                    + "PH7osa9F1x6WnzY16d2WY3xvidHxHMFol1sPa-xGKu94uFBp4rHqrj7nYBJX4QmHzLG95QANhJPz"
-                    + "C4P9M-lrVSyCVlHr2732NZpjoFN8dZtvNvNI_ndUb4fTgozmxbaRKGKawTjocP1DAtOzwwuOKPZM"
-                    + "WwI3nFEEDJqkhFh2uiINPWYtcs-onHXeKLpCJUwCXC4bEmgPErChOO3kvlZF6K2o8uoNBPkhnBog"
-                    + "q7tl8gxjnJWK5AdN2vZflmIwKuQaWB-12d341-5omqm-V9roqf7WpObLpkX1VeLeK9V96dnUl864"
-                    + "bap8RXvJlrQ-OMCBNax3YmtqMHWjafXe1tNavvEA8zi8dOchwyyUQ5xaPM_taf29AJA6F8xbeHFR"
-                    + "sAMX8piBOZYNZUm7SHu8tJOrAXmyDldCIeob2O4MRzMwfRgvQS_NAQNwPMuOBrpRr3b4slV6CfXs"
-                    + "k4cWTb3gs7ZXeSQFbJVmhaMDSjOFUzXxs75J4Ud639loa8jF0j7f5kInzR1t-UYj7YajigirKPaX"
-                    + "nI1OXxn0ZkBIRln0pVIbQFX5YJ96K9-YOpJnBNgYY_PNcvfl5SD87vYNOQxsbeIQIE-EkF"));
-    BigInteger primeP =
-        new BigInteger(
-            1,
-            Base64.urlSafeDecode(
-                "AOQA7Ky1XEGqZcc7uSXwFbKjSNCmVBhCGqsDRdKJ1ErSmW98gnJ7pBIHTmiyFdJqU20SzY-YB05Xj3bfSY"
-                    + "ptJRPLO2cGiwrwjRB_EsG8OqexX_5le9_8x-8i6MhY3xGX5LABYs8dB0aLl3ysOtRgIvCeyeoJ0I"
-                    + "7nRYjwDlexxjl9z7OI28cW7Tdvljbk-LAgBmygsMluP2-n7T58Dl-SD-8BT5eiGFDFu76h_vmyTX"
-                    + "B1_zToAqBK2C5oM7OF_7Z7zuLjx7vz40xH6KD7Rkkvcwm95wfhYEZtHYFwqUhajE1vD5nCcGcCNh"
-                    + "quTLzPlW5RN2Asxm-_Dk-p7pIkH9aAP0k"));
-    BigInteger primeQ =
-        new BigInteger(
-            1,
-            Base64.urlSafeDecode(
-                "AMTv-c5IRTRvbx7Vyf06df2Rm2AwdaRlwy1QG3YAdojQ_PhICNH0-mTHqYaeNZRja6KniFKqaYimgdccW2"
-                    + "UhGGKZXQhHhyucZ-AE0NtPLFkd7RhegcrH5sbHOcDtWCSGwcne9Wzs54VyhIhGmOS5HYuLUD-sB0"
-                    + "NgMzm8vNsnF_qIt458x6L4GE97HnRnLdSJBFaNkEdLJGXN1fbtJIGgdKN1aOc5KafTi-q2DAHEe3"
-                    + "SmTzFPWD6NJ-jo0aJE9fXRQ06BUwUJtZXwaC4FCpcZKne2PSglc8AlqQOulcFLrsJ8fnG_vc7trS"
-                    + "_pw9zCxaaJQduYPyTbM9_szBj206lJb90"));
-    BigInteger primeExponentP =
-        new BigInteger(
-            1,
-            Base64.urlSafeDecode(
-                "WQVTYwtcffb9zhAvdfSLRDgkkfKfGumUZ_jbJhzSWnRnm_PNKs3DfZaEsrP1eTYyZH_W6p29HIVrako7-G"
-                    + "Qs-dF72_neB-Nr8Gjs9d98N0U16anN9-JGXcQPh0nLrp7TlzSzU5JN6OlPuEm2nnz6p2AYDdzPJT"
-                    + "x_FbxEnVC3yHKqybpBtTXqYJ6c08oKnxmh6H_FBqCY_AtgwejF4-Kvfe3RGa8cN008xG2TlAJd4e"
-                    + "7wOcPsYpFWXqgop4tGEAW-_S9aKLRMptfcqB3zj1eLXt5aeeUxJc4smwFV1v4jkYgvWyVjpZRjc3"
-                    + "9iTsXt3iivqklRIQhDmi8LCtw34hQooQ"));
-    BigInteger primeExponentQ =
-        new BigInteger(
-            1,
-            Base64.urlSafeDecode(
-                "AI3R7wghPU0Mbm47MPGeFvga0lSLsTxJWCuag5wPq0zNi07UuR1RmLvYmPlrl1Qb4JhKoz48oDEbD2e0cR"
-                    + "C7q47duIRM1keOo7NMZId6VYp7pZEmBbvdBxDgyXNouE_dh1JzsDPXysZr-IsWo-YadO9XzNt9a-"
-                    + "GWNm1-wFXlqjvuFpmSvEVc-kzKcd0LrJJgdXJLEbp1n2l8uHfQwLhkr3pDA993Z8sG6byFitH_B5"
-                    + "Sya1csN3UcO8BbYRPFK4bxQtIXCY0YN98ZODzjvoOfSNjasOHnTprxw-v13rxLXzeJZZlOpkaNHG"
-                    + "njovuoe6N5NqcH1XkaLho0sanMnhJL4zU"));
-    BigInteger crtCoefficient =
-        new BigInteger(
-            1,
-            Base64.urlSafeDecode(
-                "AL6gykI07B_tLc5MEUbwAZec8frBkcIvwdlnbchmov9q5sBnI7xJt07BJlyrm8p_XWuOblmx6Qg4ccKwE1"
-                    + "jt3Cd36J7X92D9IJwfagytmeT4wmruM7Qbuzg7iGeX4RJ4CLkvsJZRSh8Fvum-qMwEynypVJMB5-"
-                    + "Uw8Y_6Cd_nMZeSK7pJs8ewrS7LDY7ODnrzxkJ1xRCXpVbvsB0mKcOmhM9fD6Q1qkjwmBn4MYBE2D"
-                    + "1im_S2Ybt2AiSjAxMX6M8u8N8hXcEu0ozeTfsZy1HOF9HuTRdOdEh4P-ZvzQqawSLF5HTk82_-F-"
-                    + "yiTPhtlcqCNFbCs0pKGeZIFZQ9ZfK5kn8"));
-    RsaSsaPssPublicKey publicKey =
-        RsaSsaPssPublicKey.builder().setParameters(parameters).setModulus(publicModulus).build();
-    RsaSsaPssPrivateKey privateKey =
-        RsaSsaPssPrivateKey.builder()
-            .setPublicKey(publicKey)
-            .setPrimes(
-                SecretBigInteger.fromBigInteger(primeP, InsecureSecretKeyAccess.get()),
-                SecretBigInteger.fromBigInteger(primeQ, InsecureSecretKeyAccess.get()))
-            .setPrivateExponent(
-                SecretBigInteger.fromBigInteger(privateExponent, InsecureSecretKeyAccess.get()))
-            .setPrimeExponents(
-                SecretBigInteger.fromBigInteger(primeExponentP, InsecureSecretKeyAccess.get()),
-                SecretBigInteger.fromBigInteger(primeExponentQ, InsecureSecretKeyAccess.get()))
-            .setCrtCoefficient(
-                SecretBigInteger.fromBigInteger(crtCoefficient, InsecureSecretKeyAccess.get()))
-            .build();
+    RsaSsaPssPrivateKey privateKey = privateKeyFor4096BitParameters(parameters, null);
 
     return new SignatureTestVector(
         privateKey,
