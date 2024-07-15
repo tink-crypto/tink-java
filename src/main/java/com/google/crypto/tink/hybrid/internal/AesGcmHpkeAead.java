@@ -34,23 +34,25 @@ final class AesGcmHpkeAead implements HpkeAead {
   }
 
   @Override
-  public byte[] seal(byte[] key, byte[] nonce, byte[] plaintext, byte[] associatedData)
+  public byte[] seal(
+      byte[] key, byte[] nonce, byte[] plaintext, int ciphertextOffset, byte[] associatedData)
       throws GeneralSecurityException {
     if (key.length != keyLength) {
       throw new InvalidAlgorithmParameterException("Unexpected key length: " + key.length);
     }
     InsecureNonceAesGcmJce aead = new InsecureNonceAesGcmJce(key);
-    return aead.encrypt(nonce, plaintext, associatedData);
+    return aead.encrypt(nonce, plaintext, ciphertextOffset, associatedData);
   }
 
   @Override
-  public byte[] open(byte[] key, byte[] nonce, byte[] ciphertext, byte[] associatedData)
+  public byte[] open(
+      byte[] key, byte[] nonce, byte[] ciphertext, int ciphertextOffset, byte[] associatedData)
       throws GeneralSecurityException {
     if (key.length != keyLength) {
       throw new InvalidAlgorithmParameterException("Unexpected key length: " + key.length);
     }
     InsecureNonceAesGcmJce aead = new InsecureNonceAesGcmJce(key);
-    return aead.decrypt(nonce, ciphertext, associatedData);
+    return aead.decrypt(nonce, ciphertext, ciphertextOffset, associatedData);
   }
 
   @Override

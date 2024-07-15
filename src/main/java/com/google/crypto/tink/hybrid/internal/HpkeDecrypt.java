@@ -144,11 +144,9 @@ public final class HpkeDecrypt implements HybridDecrypt {
     }
     byte[] encapsulatedKey =
         Arrays.copyOfRange(ciphertext, outputPrefix.length, prefixAndHeaderLength);
-    byte[] aeadCiphertext =
-        Arrays.copyOfRange(ciphertext, prefixAndHeaderLength, ciphertext.length);
     HpkeContext context =
         HpkeContext.createRecipientContext(
             encapsulatedKey, recipientPrivateKey, kem, kdf, aead, info);
-    return context.open(aeadCiphertext, EMPTY_ASSOCIATED_DATA);
+    return context.open(ciphertext, prefixAndHeaderLength, EMPTY_ASSOCIATED_DATA);
   }
 }

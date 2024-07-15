@@ -21,36 +21,51 @@ import com.google.crypto.tink.aead.internal.InsecureNonceChaCha20Poly1305Jce;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
+import java.util.Arrays;
 
 /** ChaCha20-Poly1305 HPKE AEAD variant. */
 @Immutable
 final class ChaCha20Poly1305HpkeAead implements HpkeAead {
   @Override
-  public byte[] seal(byte[] key, byte[] nonce, byte[] plaintext, byte[] associatedData)
+  public byte[] seal(
+      byte[] key, byte[] nonce, byte[] plaintext, int ciphertextOffset, byte[] associatedData)
       throws GeneralSecurityException {
     if (key.length != getKeyLength()) {
       throw new InvalidAlgorithmParameterException("Unexpected key length: " + getKeyLength());
     }
     if (InsecureNonceChaCha20Poly1305Jce.isSupported()) {
       InsecureNonceChaCha20Poly1305Jce aead = InsecureNonceChaCha20Poly1305Jce.create(key);
-      return aead.encrypt(nonce, plaintext, associatedData);
+      return aead.encrypt(nonce, plaintext, ciphertextOffset, associatedData);
     }
     InsecureNonceChaCha20Poly1305 aead = new InsecureNonceChaCha20Poly1305(key);
-    return aead.encrypt(nonce, plaintext, associatedData);
+    byte[] aeadCiphertext = aead.encrypt(nonce, plaintext, associatedData);
+    if (aeadCiphertext.length > Integer.MAX_VALUE - ciphertextOffset) {
+      throw new InvalidAlgorithmParameterException("Plaintext too long");
+    }
+    byte[] ciphertext = new byte[ciphertextOffset + aeadCiphertext.length];
+    System.arraycopy(
+        /* src= */ aeadCiphertext,
+        /* srcPos= */ 0,
+        /* dest= */ ciphertext,
+        /* destPos= */ ciphertextOffset,
+        /* length= */ aeadCiphertext.length);
+    return ciphertext;
   }
 
   @Override
-  public byte[] open(byte[] key, byte[] nonce, byte[] ciphertext, byte[] associatedData)
+  public byte[] open(
+      byte[] key, byte[] nonce, byte[] ciphertext, int ciphertextOffset, byte[] associatedData)
       throws GeneralSecurityException {
     if (key.length != getKeyLength()) {
       throw new InvalidAlgorithmParameterException("Unexpected key length: " + getKeyLength());
     }
     if (InsecureNonceChaCha20Poly1305Jce.isSupported()) {
       InsecureNonceChaCha20Poly1305Jce aead = InsecureNonceChaCha20Poly1305Jce.create(key);
-      return aead.decrypt(nonce, ciphertext, associatedData);
+      return aead.decrypt(nonce, ciphertext, ciphertextOffset, associatedData);
     }
+    byte[] aeadCiphertext = Arrays.copyOfRange(ciphertext, ciphertextOffset, ciphertext.length);
     InsecureNonceChaCha20Poly1305 aead = new InsecureNonceChaCha20Poly1305(key);
-    return aead.decrypt(nonce, ciphertext, associatedData);
+    return aead.decrypt(nonce, aeadCiphertext, associatedData);
   }
 
   @Override

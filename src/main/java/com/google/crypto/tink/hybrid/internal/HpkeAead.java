@@ -34,7 +34,13 @@ public interface HpkeAead {
    * <p>More details available at
    * https://www.rfc-editor.org/rfc/rfc9180.html#name-encryption-and-decryption.
    */
-  byte[] seal(byte[] key, byte[] nonce, byte[] plaintext, byte[] associatedData)
+  default byte[] seal(byte[] key, byte[] nonce, byte[] plaintext, byte[] associatedData)
+      throws GeneralSecurityException {
+    return seal(key, nonce, plaintext, /* ciphertextOffset = */ 0, associatedData);
+  }
+
+  byte[] seal(
+      byte[] key, byte[] nonce, byte[] plaintext, int ciphertextOffset, byte[] associatedData)
       throws GeneralSecurityException;
 
   /**
@@ -44,7 +50,13 @@ public interface HpkeAead {
    * <p>More details available at
    * https://www.rfc-editor.org/rfc/rfc9180.html#name-encryption-and-decryption.
    */
-  byte[] open(byte[] key, byte[] nonce, byte[] ciphertext, byte[] associatedData)
+  default byte[] open(byte[] key, byte[] nonce, byte[] ciphertext, byte[] associatedData)
+      throws GeneralSecurityException {
+    return open(key, nonce, ciphertext, /* ciphertextOffset = */ 0, associatedData);
+  }
+
+  byte[] open(
+      byte[] key, byte[] nonce, byte[] ciphertext, int ciphertextOffset, byte[] associatedData)
       throws GeneralSecurityException;
 
   /**

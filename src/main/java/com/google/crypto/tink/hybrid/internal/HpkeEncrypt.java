@@ -114,8 +114,23 @@ public final class HpkeEncrypt implements HybridEncrypt {
       info = new byte[0];
     }
     HpkeContext context = HpkeContext.createSenderContext(recipientPublicKey, kem, kdf, aead, info);
-    byte[] aeadCiphertext = context.seal(plaintext, EMPTY_ASSOCIATED_DATA);
-    return com.google.crypto.tink.subtle.Bytes.concat(
-        outputPrefix, context.getEncapsulatedKey(), aeadCiphertext);
+    byte[] encapsulatedKey = context.getEncapsulatedKey();
+    int ciphertextOffset = outputPrefix.length + encapsulatedKey.length;
+    byte[] ciphertextWithPrefix = context.seal(plaintext, ciphertextOffset, EMPTY_ASSOCIATED_DATA);
+    // In ciphertextWithPrefix, the ciphertext starts at ciphertextOffset.
+    // Copy the outputPrefix and encapsulatedKey to the beginning of ciphertextWithPrefix.
+    System.arraycopy(
+        /* src= */ outputPrefix,
+        /* srcPos= */ 0,
+        /* dest= */ ciphertextWithPrefix,
+        /* destPos= */ 0,
+        /* length= */ outputPrefix.length);
+    System.arraycopy(
+        /* src= */ encapsulatedKey,
+        /* srcPos= */ 0,
+        /* dest= */ ciphertextWithPrefix,
+        /* destPos= */ outputPrefix.length,
+        /* length= */ encapsulatedKey.length);
+    return ciphertextWithPrefix;
   }
 }

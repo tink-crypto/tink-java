@@ -231,6 +231,12 @@ public final class HpkeContext {
     return aead.seal(key, nonce, plaintext, associatedData);
   }
 
+  byte[] seal(byte[] plaintext, int ciphertextOffset, byte[] associatedData)
+      throws GeneralSecurityException {
+    byte[] nonce = computeNonceAndIncrementSequenceNumber();
+    return aead.seal(key, nonce, plaintext, ciphertextOffset, associatedData);
+  }
+
   /**
    * Performs AEAD decryption of {@code ciphertext} with {@code associatedData} according to
    * ContextR.Open() defined in https://www.rfc-editor.org/rfc/rfc9180.html#section-5.2-10.
@@ -238,7 +244,12 @@ public final class HpkeContext {
    * @return plaintext
    */
   public byte[] open(byte[] ciphertext, byte[] associatedData) throws GeneralSecurityException {
+    return open(ciphertext, /* ciphertextOffset = */ 0, associatedData);
+  }
+
+  byte[] open(byte[] ciphertext, int ciphertextOffset, byte[] associatedData)
+      throws GeneralSecurityException {
     byte[] nonce = computeNonceAndIncrementSequenceNumber();
-    return aead.open(key, nonce, ciphertext, associatedData);
+    return aead.open(key, nonce, ciphertext, ciphertextOffset, associatedData);
   }
 }
