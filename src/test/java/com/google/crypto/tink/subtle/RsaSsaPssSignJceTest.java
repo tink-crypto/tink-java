@@ -79,6 +79,9 @@ public class RsaSsaPssSignJceTest {
             GeneralSecurityException.class,
             () -> new RsaSsaPssSignJce(priv, HashType.SHA1, HashType.SHA1, 20));
     TestUtil.assertExceptionContains(e, "Unsupported hash: SHA1");
+
+    // TODO(b/182987934): This should fail.
+    RsaSsaPssSignJce unused = new RsaSsaPssSignJce(priv, HashType.SHA256, HashType.SHA1, 32);
   }
 
   @Test

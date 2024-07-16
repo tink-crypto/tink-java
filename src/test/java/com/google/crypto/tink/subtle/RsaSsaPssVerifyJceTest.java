@@ -92,11 +92,32 @@ public class RsaSsaPssVerifyJceTest {
     assertThrows(
         GeneralSecurityException.class,
         () -> verify.verify(testVector.getSignature(), modifiedMessage));
+  }
 
-    // Test that the constructor fails when SHA1 is used.
+  @Test
+  public void constructorValidatesHashType() throws Exception {
+    SignatureTestVector testVector = TEST_VECTORS[0];
+    RsaSsaPssPublicKey testPublicKey =
+        (RsaSsaPssPublicKey) testVector.getPrivateKey().getPublicKey();
+    KeyFactory keyFactory = EngineFactory.KEY_FACTORY.getInstance("RSA");
+    RSAPublicKey rsaPublicKey =
+        (RSAPublicKey)
+            keyFactory.generatePublic(
+                new RSAPublicKeySpec(
+                    testPublicKey.getModulus(), testPublicKey.getParameters().getPublicExponent()));
+
     assertThrows(
         GeneralSecurityException.class,
         () -> new RsaSsaPssVerifyJce(rsaPublicKey, HashType.SHA1, HashType.SHA1, 20));
+
+    // TODO(b/182987934): This should fail.
+    RsaSsaPssVerifyJce unused =
+        new RsaSsaPssVerifyJce(rsaPublicKey, HashType.SHA256, HashType.SHA1, 20);
+    // TODO(b/182987934): Let constructor and key object behave the same way.
+    // Currently, the constructor accepts two different hash types, but the key object does not.
+    // We should make this consistent.
+    RsaSsaPssVerifyJce unused2 =
+        new RsaSsaPssVerifyJce(rsaPublicKey, HashType.SHA256, HashType.SHA512, 20);
   }
 
   @Theory
