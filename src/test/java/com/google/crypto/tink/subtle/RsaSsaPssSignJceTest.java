@@ -16,26 +16,24 @@
 
 package com.google.crypto.tink.subtle;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
+import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
-import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
+import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
 import com.google.crypto.tink.signature.internal.testing.RsaSsaPssTestUtil;
 import com.google.crypto.tink.signature.internal.testing.SignatureTestVector;
 import com.google.crypto.tink.subtle.Enums.HashType;
 import com.google.crypto.tink.testing.TestUtil;
-import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.Security;
+import java.security.KeyFactory;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPublicKey;
-import org.conscrypt.Conscrypt;
-import org.junit.Assume;
-import org.junit.Before;
+import java.security.spec.RSAPrivateCrtKeySpec;
+import java.security.spec.RSAPublicKeySpec;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -46,35 +44,36 @@ import org.junit.runner.RunWith;
 /** Unit tests for RsaSsaPssSignJce. */
 @RunWith(Theories.class)
 public class RsaSsaPssSignJceTest {
-  private static final Charset UTF_8 = Charset.forName("UTF-8");
 
-  @Before
-  public void useConscrypt() throws Exception {
-    // If Tink is build in FIPS-only mode, then we register Conscrypt for the tests.
-    if (TinkFips.useOnlyFips()) {
-      try {
-        Conscrypt.checkAvailability();
-        Security.addProvider(Conscrypt.newProvider());
-      } catch (Throwable cause) {
-        throw new IllegalStateException(
-            "Cannot test RSA SSA sign in FIPS-mode without Conscrypt Provider", cause);
-      }
-    }
+  private final RSAPrivateCrtKey getTestPrivateKey() throws Exception {
+    SignatureTestVector testVector = SIGNATURE_TEST_VECTORS[0];
+    RsaSsaPssPrivateKey key = (RsaSsaPssPrivateKey) testVector.getPrivateKey();
+    KeyFactory keyFactory = EngineFactory.KEY_FACTORY.getInstance("RSA");
+    return (RSAPrivateCrtKey)
+        keyFactory.generatePrivate(
+            new RSAPrivateCrtKeySpec(
+                key.getPublicKey().getModulus(),
+                key.getParameters().getPublicExponent(),
+                key.getPrivateExponent().getBigInteger(InsecureSecretKeyAccess.get()),
+                key.getPrimeP().getBigInteger(InsecureSecretKeyAccess.get()),
+                key.getPrimeQ().getBigInteger(InsecureSecretKeyAccess.get()),
+                key.getPrimeExponentP().getBigInteger(InsecureSecretKeyAccess.get()),
+                key.getPrimeExponentQ().getBigInteger(InsecureSecretKeyAccess.get()),
+                key.getCrtCoefficient().getBigInteger(InsecureSecretKeyAccess.get())));
+  }
+
+  private final RSAPublicKey getTestPublicKey() throws Exception {
+    SignatureTestVector testVector = SIGNATURE_TEST_VECTORS[0];
+    RsaSsaPssPublicKey key = (RsaSsaPssPublicKey) testVector.getPrivateKey().getPublicKey();
+    KeyFactory keyFactory = EngineFactory.KEY_FACTORY.getInstance("RSA");
+    return (RSAPublicKey)
+        keyFactory.generatePublic(
+            new RSAPublicKeySpec(key.getModulus(), key.getParameters().getPublicExponent()));
   }
 
   @Test
-  public void testConstructorExceptions() throws Exception {
-    Assume.assumeTrue(!TinkFips.useOnlyFips()); // Only 3072-bit modulus is supported in FIPS.
-
-    if (TestUtil.isTsan()) {
-      // This test times out when running under thread sanitizer, so we just skip.
-      return;
-    }
-    int keySize = 2048;
-    KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-    keyGen.initialize(keySize);
-
-    RSAPrivateCrtKey priv = (RSAPrivateCrtKey) keyGen.generateKeyPair().getPrivate();
+  public void constructorDoesNotSupportHashTypeSha1() throws Exception {
+    RSAPrivateCrtKey priv = getTestPrivateKey();
     GeneralSecurityException e =
         assertThrows(
             GeneralSecurityException.class,
@@ -83,19 +82,9 @@ public class RsaSsaPssSignJceTest {
   }
 
   @Test
-  public void testBasicAgainstVerifier() throws Exception {
-    Assume.assumeTrue(!TinkFips.useOnlyFips()); // Only 3072-bit modulus is supported in FIPS.
-
-    if (TestUtil.isTsan()) {
-      // This test times out when running under thread sanitizer, so we just skip.
-      return;
-    }
-    int keySize = 2048;
-    KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-    keyGen.initialize(keySize);
-    KeyPair keyPair = keyGen.generateKeyPair();
-    RSAPublicKey pub = (RSAPublicKey) keyPair.getPublic();
-    RSAPrivateCrtKey priv = (RSAPrivateCrtKey) keyPair.getPrivate();
+  public void signVerifyWithSha256() throws Exception {
+    RSAPublicKey pub = getTestPublicKey();
+    RSAPrivateCrtKey priv = getTestPrivateKey();
 
     // Sign with RsaSsaPssSignJce.
     byte[] message = "Hello".getBytes(UTF_8);
@@ -106,71 +95,50 @@ public class RsaSsaPssSignJceTest {
       // Verify with JCE's Signature.
       RsaSsaPssVerifyJce verifier =
           new RsaSsaPssVerifyJce(pub, HashType.SHA256, HashType.SHA256, 32);
-      try {
-        verifier.verify(signature, message);
-      } catch (GeneralSecurityException e) {
-        throw new AssertionError("Valid signature, shouldn't throw exception", e);
-      }
+      verifier.verify(signature, message);
     }
   }
 
   @Test
-  public void testBasicAgainstVerifierLargerKey() throws Exception {
-    if (TestUtil.isTsan()) {
-      // This test times out when running under thread sanitizer, so we just skip.
-      return;
-    }
-    int keySize = 3072;
-    KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-    keyGen.initialize(keySize);
-    KeyPair keyPair = keyGen.generateKeyPair();
-    RSAPublicKey pub = (RSAPublicKey) keyPair.getPublic();
-    RSAPrivateCrtKey priv = (RSAPrivateCrtKey) keyPair.getPrivate();
+  public void signVerifyWithZeroSalt() throws Exception {
+    RSAPublicKey pub = getTestPublicKey();
+    RSAPrivateCrtKey priv = getTestPrivateKey();
 
-    // Sign with RsaSsaPssSignJce.
-    byte[] message = "Hello".getBytes(UTF_8);
-    RsaSsaPssSignJce signer = new RsaSsaPssSignJce(priv, HashType.SHA256, HashType.SHA256, 32);
-
-    for (int i = 0; i < 1024; i++) {
-      byte[] signature = signer.sign(message);
-      // Verify with JCE's Signature.
-      RsaSsaPssVerifyJce verifier =
-          new RsaSsaPssVerifyJce(pub, HashType.SHA256, HashType.SHA256, 32);
-      try {
-        verifier.verify(signature, message);
-      } catch (GeneralSecurityException e) {
-        throw new AssertionError("Valid signature, shouldn't throw exception", e);
-      }
-    }
-  }
-
-  @Test
-  public void testZeroSaltLength() throws Exception {
-    Assume.assumeTrue(!TinkFips.useOnlyFips()); // Only 3072-bit modulus is supported in FIPS.
-
-    if (TestUtil.isTsan()) {
-      // This test times out when running under thread sanitizer, so we just skip.
-      return;
-    }
-    int keySize = 2048;
-    KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-    keyGen.initialize(keySize);
-    KeyPair keyPair = keyGen.generateKeyPair();
-    RSAPublicKey pub = (RSAPublicKey) keyPair.getPublic();
-    RSAPrivateCrtKey priv = (RSAPrivateCrtKey) keyPair.getPrivate();
-
-    // Sign with RsaSsaPssSignJce.
     byte[] message = "Hello".getBytes(UTF_8);
     RsaSsaPssSignJce signer = new RsaSsaPssSignJce(priv, HashType.SHA256, HashType.SHA256, 0);
-
     byte[] signature = signer.sign(message);
-    // Verify with JCE's Signature.
+
     RsaSsaPssVerifyJce verifier = new RsaSsaPssVerifyJce(pub, HashType.SHA256, HashType.SHA256, 0);
-    try {
-      verifier.verify(signature, message);
-    } catch (GeneralSecurityException e) {
-      throw new AssertionError("Valid signature, shouldn't throw exception", e);
-    }
+    verifier.verify(signature, message);
+  }
+
+  @Test
+  public void signVerifyWithSha384() throws Exception {
+    RSAPublicKey pub = getTestPublicKey();
+    RSAPrivateCrtKey priv = getTestPrivateKey();
+
+    byte[] message = "Hello".getBytes(UTF_8);
+    RsaSsaPssSignJce signer = new RsaSsaPssSignJce(priv, HashType.SHA384, HashType.SHA384, 32);
+    byte[] signature = signer.sign(message);
+
+    RsaSsaPssVerifyJce verifier = new RsaSsaPssVerifyJce(pub, HashType.SHA384, HashType.SHA384, 32);
+    verifier.verify(signature, message);
+  }
+
+  // TODO(b/182987934): Let constructor and key object behave the same way.
+  // Currently, the constructor accepts two different hash types, but the key object does not.
+  // We should make this consistent.
+  @Test
+  public void signVerifyUsingConstructorWithTwoDifferentHashTypes() throws Exception {
+    RSAPublicKey pub = getTestPublicKey();
+    RSAPrivateCrtKey priv = getTestPrivateKey();
+
+    byte[] message = "Hello".getBytes(UTF_8);
+    RsaSsaPssSignJce signer = new RsaSsaPssSignJce(priv, HashType.SHA256, HashType.SHA384, 32);
+    byte[] signature = signer.sign(message);
+
+    RsaSsaPssVerifyJce verifier = new RsaSsaPssVerifyJce(pub, HashType.SHA256, HashType.SHA384, 32);
+    verifier.verify(signature, message);
   }
 
   /**
