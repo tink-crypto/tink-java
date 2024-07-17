@@ -80,6 +80,9 @@ public final class RsaSsaPssVerifyJce implements PublicKeyVerify {
       }
 
       Validators.validateSignatureHash(sigHash);
+      if (!sigHash.equals(mgf1Hash)) {
+        throw new GeneralSecurityException("sigHash and mgf1Hash must be the same");
+      }
       Validators.validateRsaModulusSize(pubKey.getModulus().bitLength());
       Validators.validateRsaPublicExponent(pubKey.getPublicExponent());
       this.publicKey = pubKey;

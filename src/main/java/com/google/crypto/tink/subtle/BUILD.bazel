@@ -380,7 +380,6 @@ java_library(
     name = "aes_eax_jce",
     srcs = ["AesEaxJce.java"],
     deps = [
-        ":bytes",
         ":random",
         ":subtle_util_cluster",
         ":validators",
@@ -851,7 +850,6 @@ android_library(
     name = "aes_eax_jce-android",
     srcs = ["AesEaxJce.java"],
     deps = [
-        ":bytes-android",
         ":random-android",
         ":subtle_util_cluster-android",
         ":validators-android",

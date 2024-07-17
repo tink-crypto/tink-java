@@ -527,10 +527,6 @@ public class SelfKeyTestValidatorsTest {
         new PssParams(Enums.HashType.SHA512, Enums.HashType.SHA512, 2048, 64),
         new PssParams(Enums.HashType.SHA512, Enums.HashType.SHA512, 3072, 64),
         new PssParams(Enums.HashType.SHA512, Enums.HashType.SHA512, 4096, 64),
-        // Different hash functions are not supported by Tink, but the test currently happens in
-        // SigUtil.validateRsaSsaPssParams which is called by the key manager, not in the self test
-        // validation.
-        new PssParams(Enums.HashType.SHA256, Enums.HashType.SHA512, 2048, 32),
       };
 
   @DataPoints("pss_invalid")
@@ -545,6 +541,8 @@ public class SelfKeyTestValidatorsTest {
         new PssParams(Enums.HashType.SHA256, Enums.HashType.SHA256, 2047, 32),
         new PssParams(Enums.HashType.SHA384, Enums.HashType.SHA384, 2047, 48),
         new PssParams(Enums.HashType.SHA512, Enums.HashType.SHA512, 2047, 64),
+        // Different hash functions are not supported by Tink.
+        new PssParams(Enums.HashType.SHA256, Enums.HashType.SHA512, 2048, 32),
       };
 
   /** Pkcs Parameters */
@@ -673,7 +671,7 @@ public class SelfKeyTestValidatorsTest {
   }
 
   @DataPoints("ecdsa_valid")
-  public static EcdsaParams[] parametersEcdsaValid =
+  public static final EcdsaParams[] parametersEcdsaValid =
       new EcdsaParams[] {
         new EcdsaParams(Enums.HashType.SHA256, EllipticCurves.CurveType.NIST_P256),
         new EcdsaParams(Enums.HashType.SHA384, EllipticCurves.CurveType.NIST_P384),

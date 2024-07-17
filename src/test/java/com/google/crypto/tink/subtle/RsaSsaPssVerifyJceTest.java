@@ -109,15 +109,12 @@ public class RsaSsaPssVerifyJceTest {
     assertThrows(
         GeneralSecurityException.class,
         () -> new RsaSsaPssVerifyJce(rsaPublicKey, HashType.SHA1, HashType.SHA1, 20));
-
-    // TODO(b/182987934): This should fail.
-    RsaSsaPssVerifyJce unused =
-        new RsaSsaPssVerifyJce(rsaPublicKey, HashType.SHA256, HashType.SHA1, 20);
-    // TODO(b/182987934): Let constructor and key object behave the same way.
-    // Currently, the constructor accepts two different hash types, but the key object does not.
-    // We should make this consistent.
-    RsaSsaPssVerifyJce unused2 =
-        new RsaSsaPssVerifyJce(rsaPublicKey, HashType.SHA256, HashType.SHA512, 20);
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> new RsaSsaPssVerifyJce(rsaPublicKey, HashType.SHA256, HashType.SHA1, 32));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> new RsaSsaPssVerifyJce(rsaPublicKey, HashType.SHA256, HashType.SHA384, 32));
   }
 
   @Theory

@@ -83,6 +83,9 @@ public final class RsaSsaPssSignJce implements PublicKeySign {
     }
 
     Validators.validateSignatureHash(sigHash);
+    if (!sigHash.equals(mgf1Hash)) {
+      throw new GeneralSecurityException("sigHash and mgf1Hash must be the same");
+    }
     Validators.validateRsaModulusSize(priv.getModulus().bitLength());
     Validators.validateRsaPublicExponent(priv.getPublicExponent());
     this.privateKey = priv;

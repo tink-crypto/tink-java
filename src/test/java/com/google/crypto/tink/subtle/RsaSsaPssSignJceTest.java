@@ -27,7 +27,6 @@ import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
 import com.google.crypto.tink.signature.internal.testing.RsaSsaPssTestUtil;
 import com.google.crypto.tink.signature.internal.testing.SignatureTestVector;
 import com.google.crypto.tink.subtle.Enums.HashType;
-import com.google.crypto.tink.testing.TestUtil;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.interfaces.RSAPrivateCrtKey;
@@ -72,16 +71,17 @@ public class RsaSsaPssSignJceTest {
   }
 
   @Test
-  public void constructorDoesNotSupportHashTypeSha1() throws Exception {
+  public void constructorValidatesHashType() throws Exception {
     RSAPrivateCrtKey priv = getTestPrivateKey();
-    GeneralSecurityException e =
-        assertThrows(
-            GeneralSecurityException.class,
-            () -> new RsaSsaPssSignJce(priv, HashType.SHA1, HashType.SHA1, 20));
-    TestUtil.assertExceptionContains(e, "Unsupported hash: SHA1");
-
-    // TODO(b/182987934): This should fail.
-    RsaSsaPssSignJce unused = new RsaSsaPssSignJce(priv, HashType.SHA256, HashType.SHA1, 32);
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> new RsaSsaPssSignJce(priv, HashType.SHA1, HashType.SHA1, 20));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> new RsaSsaPssSignJce(priv, HashType.SHA256, HashType.SHA1, 32));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> new RsaSsaPssSignJce(priv, HashType.SHA256, HashType.SHA384, 32));
   }
 
   @Test
@@ -125,22 +125,6 @@ public class RsaSsaPssSignJceTest {
     byte[] signature = signer.sign(message);
 
     RsaSsaPssVerifyJce verifier = new RsaSsaPssVerifyJce(pub, HashType.SHA384, HashType.SHA384, 32);
-    verifier.verify(signature, message);
-  }
-
-  // TODO(b/182987934): Let constructor and key object behave the same way.
-  // Currently, the constructor accepts two different hash types, but the key object does not.
-  // We should make this consistent.
-  @Test
-  public void signVerifyUsingConstructorWithTwoDifferentHashTypes() throws Exception {
-    RSAPublicKey pub = getTestPublicKey();
-    RSAPrivateCrtKey priv = getTestPrivateKey();
-
-    byte[] message = "Hello".getBytes(UTF_8);
-    RsaSsaPssSignJce signer = new RsaSsaPssSignJce(priv, HashType.SHA256, HashType.SHA384, 32);
-    byte[] signature = signer.sign(message);
-
-    RsaSsaPssVerifyJce verifier = new RsaSsaPssVerifyJce(pub, HashType.SHA256, HashType.SHA384, 32);
     verifier.verify(signature, message);
   }
 
