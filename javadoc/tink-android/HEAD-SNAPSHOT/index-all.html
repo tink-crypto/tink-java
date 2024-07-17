@@ -3481,6 +3481,8 @@
 <dd>
 <div class="block">Returns a new instance of PublicKeyVerify for RsaSsaPkcs1 that uses Conscrypt.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/RsaSsaPssVerifyConscrypt.html#create-com.google.crypto.tink.signature.RsaSsaPssPublicKey-">create(RsaSsaPssPublicKey)</a></span> - Static method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/RsaSsaPssVerifyConscrypt.html" title="class in com.google.crypto.tink.signature.internal">RsaSsaPssVerifyConscrypt</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/AesCtrHmacStreamingKey.html#create-com.google.crypto.tink.streamingaead.AesCtrHmacStreamingParameters-com.google.crypto.tink.util.SecretBytes-">create(AesCtrHmacStreamingParameters, SecretBytes)</a></span> - Static method in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/AesCtrHmacStreamingKey.html" title="class in com.google.crypto.tink.streamingaead">AesCtrHmacStreamingKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingKey.html#create-com.google.crypto.tink.streamingaead.AesGcmHkdfStreamingParameters-com.google.crypto.tink.util.SecretBytes-">create(AesGcmHkdfStreamingParameters, SecretBytes)</a></span> - Static method in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingKey.html" title="class in com.google.crypto.tink.streamingaead">AesGcmHkdfStreamingKey</a></dt>
@@ -5487,6 +5489,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/InsecureNonceAesGcmJce.html#FIPS">FIPS</a></span> - Static variable in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/InsecureNonceAesGcmJce.html" title="class in com.google.crypto.tink.aead.internal">InsecureNonceAesGcmJce</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/RsaSsaPkcs1VerifyConscrypt.html#FIPS">FIPS</a></span> - Static variable in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/RsaSsaPkcs1VerifyConscrypt.html" title="class in com.google.crypto.tink.signature.internal">RsaSsaPkcs1VerifyConscrypt</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/RsaSsaPssVerifyConscrypt.html#FIPS">FIPS</a></span> - Static variable in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/RsaSsaPssVerifyConscrypt.html" title="class in com.google.crypto.tink.signature.internal">RsaSsaPssVerifyConscrypt</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/AesCtrHmacStreaming.html#FIPS">FIPS</a></span> - Static variable in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/AesCtrHmacStreaming.html" title="class in com.google.crypto.tink.subtle">AesCtrHmacStreaming</a></dt>
 <dd>&nbsp;</dd>
@@ -13679,6 +13683,10 @@
 <dd>
 <div class="block">Returns true if the RsaSsaPkcs1 signature verification using Conscrypt works.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/RsaSsaPssVerifyConscrypt.html#isSupported--">isSupported()</a></span> - Static method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/RsaSsaPssVerifyConscrypt.html" title="class in com.google.crypto.tink.signature.internal">RsaSsaPssVerifyConscrypt</a></dt>
+<dd>
+<div class="block">Returns true if Conscrypt is available and supports RSA SSA PSS.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/KmsEnvelopeAead.html#isSupportedDekKeyType-java.lang.String-">isSupportedDekKeyType(String)</a></span> - Static method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/KmsEnvelopeAead.html" title="class in com.google.crypto.tink.aead">KmsEnvelopeAead</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/integration/android/AndroidKeysetManager.html#isUsingKeystore--">isUsingKeystore()</a></span> - Method in class com.google.crypto.tink.integration.android.<a href="com/google/crypto/tink/integration/android/AndroidKeysetManager.html" title="class in com.google.crypto.tink.integration.android">AndroidKeysetManager</a></dt>
@@ -20103,6 +20111,10 @@
 <div class="block">This key manager generates new <code>RsaSsaPssPrivateKey</code> keys and produces new instances of
  <code>RsaSsaPssSignJce</code>.</div>
 </dd>
+<dt><a href="com/google/crypto/tink/signature/internal/RsaSsaPssVerifyConscrypt.html" title="class in com.google.crypto.tink.signature.internal"><span class="typeNameLink">RsaSsaPssVerifyConscrypt</span></a> - Class in <a href="com/google/crypto/tink/signature/internal/package-summary.html">com.google.crypto.tink.signature.internal</a></dt>
+<dd>
+<div class="block">RSA SSA PSS verification with Conscrypt.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/subtle/RsaSsaPssVerifyJce.html" title="class in com.google.crypto.tink.subtle"><span class="typeNameLink">RsaSsaPssVerifyJce</span></a> - Class in <a href="com/google/crypto/tink/subtle/package-summary.html">com.google.crypto.tink.subtle</a></dt>
 <dd>
 <div class="block">RsaSsaPss (i.e.</div>
@@ -23570,6 +23582,8 @@ the order they are declared.</div>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/LegacyFullVerify.html#verify-byte:A-byte:A-">verify(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/LegacyFullVerify.html" title="class in com.google.crypto.tink.signature.internal">LegacyFullVerify</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/RsaSsaPkcs1VerifyConscrypt.html#verify-byte:A-byte:A-">verify(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/RsaSsaPkcs1VerifyConscrypt.html" title="class in com.google.crypto.tink.signature.internal">RsaSsaPkcs1VerifyConscrypt</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/RsaSsaPssVerifyConscrypt.html#verify-byte:A-byte:A-">verify(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/RsaSsaPssVerifyConscrypt.html" title="class in com.google.crypto.tink.signature.internal">RsaSsaPssVerifyConscrypt</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/EcdsaVerifyJce.html#verify-byte:A-byte:A-">verify(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/EcdsaVerifyJce.html" title="class in com.google.crypto.tink.subtle">EcdsaVerifyJce</a></dt>
 <dd>&nbsp;</dd>
