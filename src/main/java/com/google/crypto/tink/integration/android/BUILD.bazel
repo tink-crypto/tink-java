@@ -58,6 +58,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink:cleartext_keyset_handle-android",
         "//src/main/java/com/google/crypto/tink:key_template-android",
         "//src/main/java/com/google/crypto/tink:keyset_writer-android",
+        "//src/main/java/com/google/crypto/tink:legacy_keyset_serialization-android",
         "//src/main/java/com/google/crypto/tink:registry_cluster-android",
         "//src/main/java/com/google/crypto/tink:tink_proto_parameters_format-android",
         "//src/main/java/com/google/crypto/tink/subtle:hex-android",

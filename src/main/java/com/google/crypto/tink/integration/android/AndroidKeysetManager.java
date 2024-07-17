@@ -30,6 +30,7 @@ import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.KeysetManager;
 import com.google.crypto.tink.KeysetWriter;
+import com.google.crypto.tink.LegacyKeysetSerialization;
 import com.google.crypto.tink.TinkProtoParametersFormat;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -377,8 +378,10 @@ public final class AndroidKeysetManager {
       // Got masterAead successfully.
       try {
         // Decrypt and parse the keyset using masterAead.
+        byte[] emptyAssociatedData = new byte[0];
         return KeysetManager.withKeysetHandle(
-            KeysetHandle.read(BinaryKeysetReader.withBytes(serializedKeyset), masterAead));
+            LegacyKeysetSerialization.parseEncryptedKeyset(
+                BinaryKeysetReader.withBytes(serializedKeyset), masterAead, emptyAssociatedData));
       } catch (IOException | GeneralSecurityException ex) {
         // Attempt to read the keyset in cleartext.
         // This edge case may happen when either
