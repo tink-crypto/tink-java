@@ -377,6 +377,52 @@ public final class RsaSsaPssTestUtil {
         Hex.decode("aa"));
   }
 
+  // Sha384
+  private static SignatureTestVector createTestVector7() throws GeneralSecurityException {
+    RsaSsaPssParameters parameters =
+        RsaSsaPssParameters.builder()
+            .setModulusSizeBits(2048)
+            .setSigHashType(RsaSsaPssParameters.HashType.SHA384)
+            .setMgf1HashType(RsaSsaPssParameters.HashType.SHA384)
+            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+            .setSaltLengthBytes(32)
+            .build();
+    return new SignatureTestVector(
+        privateKeyFor2048BitParameters(parameters, /* idRequirement= */ null),
+        Hex.decode(
+            "8c87ec23317b97c5d5e3692da3aa7037c183d757d0aa79ed1a2ccc46cde8397e2a8b231057034b24358135"
+                + "87314335bf308f9c930682e7575ec54968fdf15d9a689230ee2822338a97f08af3ce85b81f1c4826"
+                + "17a2f3316b78b59ec3243541eb4e32bc3a33e20729f4019085dda89f7a6c4584ab9f4288755e6511"
+                + "7f3f1dca298ef9605804ee69a88bc7d7addb99b9dbee9f858d1f7df01f0b12fa9a9534bdeaf7f197"
+                + "c1cafcb0853f32bfed7cb9495f073fcaa2d73eab5f9398b07300dbc9b80dbff248106e6c8a52e564"
+                + "fd9de73e0122f576e5fa3c4bdb477663b616372568492b4f00b6261800b132a04a3dc735e44fc4ce"
+                + "9a72e3afaca5a0d50ea77388c9"),
+        Hex.decode("aa"));
+  }
+
+  // SaltLengthBytes: 0
+  private static SignatureTestVector createTestVector8() throws GeneralSecurityException {
+    RsaSsaPssParameters parameters =
+        RsaSsaPssParameters.builder()
+            .setModulusSizeBits(2048)
+            .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
+            .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
+            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+            .setSaltLengthBytes(0)
+            .build();
+    return new SignatureTestVector(
+        privateKeyFor2048BitParameters(parameters, /* idRequirement= */ null),
+        Hex.decode(
+            "5bfef53336a5148a2f880e28c92c71fa0523707390d075d7608a8eeab44cff5166946850f5818b00e48769"
+                + "22bf7cc0fedfdc1f8e265200c4c10e41686f62f8a621b8ca2771106deb28fa9b0ec2b2687f106b8f"
+                + "68695dddc0b80dc15bec32e7ad2de73edb2789a8222866521230f2795b6c74de777050f02a031577"
+                + "6855f4bb1e063c93ef8d1c4a91abe393017b0cfa09548f6f5bfd565d02bdce2116ffca232ede6f4e"
+                + "869aac226f703ae0ef739fe926f0f15f916a7fa17b407118d9a54353794835c224fa8c7b92137715"
+                + "26a7acb7575ddbd4ea3aaad6c827a5d1378773a4556763ed1442fddc76e29585c9d1992d42a8b730"
+                + "e744e44f3bfe5ddddc47b5d728"),
+        Hex.decode("aa"));
+  }
+
   public static SignatureTestVector[] createRsaPssTestVectors() {
     return exceptionIsBug(
         () ->
@@ -388,6 +434,8 @@ public final class RsaSsaPssTestUtil {
               createTestVector4(),
               createTestVector5(),
               createTestVector6(),
+              createTestVector7(),
+              createTestVector8()
             });
   }
 
