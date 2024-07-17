@@ -63,15 +63,27 @@ public class RsaSsaPssVerifyJceTest {
         () -> verifier.verify(testVector.getSignature(), modifiedMessage));
   }
 
-  @Test
-  public void constructorWorks() throws Exception {
-    SignatureTestVector testVector = TEST_VECTORS[0];
+  private static HashType toEnumHashType(RsaSsaPssParameters.HashType hash) {
+    if (hash == RsaSsaPssParameters.HashType.SHA256) {
+      return HashType.SHA256;
+    } else if (hash == RsaSsaPssParameters.HashType.SHA384) {
+      return HashType.SHA384;
+    } else if (hash == RsaSsaPssParameters.HashType.SHA512) {
+      return HashType.SHA512;
+    } else {
+      throw new IllegalArgumentException("Unsupported hash: " + hash);
+    }
+  }
+
+  @Theory
+  public void constructor_verifySignatureInTestVector_works(
+      @FromDataPoints("testVectors") SignatureTestVector testVector) throws Exception {
     RsaSsaPssPublicKey testPublicKey =
         (RsaSsaPssPublicKey) testVector.getPrivateKey().getPublicKey();
-    assertThat(testPublicKey.getParameters().getSigHashType())
-        .isEqualTo(RsaSsaPssParameters.HashType.SHA256);
-    assertThat(testPublicKey.getParameters().getMgf1HashType())
-        .isEqualTo(RsaSsaPssParameters.HashType.SHA256);
+    if (!testPublicKey.getParameters().getVariant().equals(RsaSsaPssParameters.Variant.NO_PREFIX)) {
+      // Constructor doesn't support output prefix.
+      return;
+    }
     KeyFactory keyFactory = EngineFactory.KEY_FACTORY.getInstance("RSA");
     RSAPublicKey rsaPublicKey =
         (RSAPublicKey)
@@ -82,8 +94,8 @@ public class RsaSsaPssVerifyJceTest {
     RsaSsaPssVerifyJce verify =
         new RsaSsaPssVerifyJce(
             rsaPublicKey,
-            HashType.SHA256,
-            HashType.SHA256,
+            toEnumHashType(testPublicKey.getParameters().getSigHashType()),
+            toEnumHashType(testPublicKey.getParameters().getMgf1HashType()),
             testPublicKey.getParameters().getSaltLengthBytes());
     verify.verify(testVector.getSignature(), testVector.getMessage());
 
