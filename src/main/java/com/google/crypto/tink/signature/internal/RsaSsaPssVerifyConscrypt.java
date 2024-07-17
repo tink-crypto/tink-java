@@ -46,6 +46,7 @@ public final class RsaSsaPssVerifyConscrypt implements PublicKeyVerify {
   private static final byte[] EMPTY = new byte[0];
   private static final byte[] LEGACY_MESSAGE_SUFFIX = new byte[] {0};
 
+  // TODO(b/182987934) Move into a ConscryptUtil class.
   private static final String[] CONSCRYPT_PROVIDER_NAMES =
       new String[] {"GmsCore_OpenSSL", "AndroidOpenSSL", "Conscrypt"};
 
@@ -68,11 +69,12 @@ public final class RsaSsaPssVerifyConscrypt implements PublicKeyVerify {
     return null;
   }
 
-  private static final Provider PROVIDER = conscryptProviderOrNull();
+  // TODO(b/182987934) Move into a ConscryptUtil class.
+  static final Provider CONSCRYPT = conscryptProviderOrNull();
 
   /** Returns true if Conscrypt is available and supports RSA SSA PSS. */
   public static boolean isSupported() {
-    return PROVIDER != null;
+    return CONSCRYPT != null;
   }
 
   @SuppressWarnings("Immutable")
@@ -93,7 +95,7 @@ public final class RsaSsaPssVerifyConscrypt implements PublicKeyVerify {
   // https://github.com/google/conscrypt/blob/master/CAPABILITIES.md#signature
   // Conscrypt does not support "RSASSA-PSS" used by OpenJDK,
   // see: https://github.com/C2SP/wycheproof/blob/master/doc/rsa.md
-  private static String toConscryptRsaSsaPssAlgo(RsaSsaPssParameters.HashType hash) {
+  static String getConscryptRsaSsaPssAlgo(RsaSsaPssParameters.HashType hash) {
     if (hash == RsaSsaPssParameters.HashType.SHA256) {
       return "SHA256withRSA/PSS";
     } else if (hash == RsaSsaPssParameters.HashType.SHA384) {
@@ -127,6 +129,12 @@ public final class RsaSsaPssVerifyConscrypt implements PublicKeyVerify {
     throw new IllegalArgumentException("Unsupported MGF1 hash: " + mgf1Hash);
   }
 
+  static PSSParameterSpec getPssParameterSpec(
+      RsaSsaPssParameters.HashType sigHash, RsaSsaPssParameters.HashType mgf1Hash, int saltLength) {
+    return new PSSParameterSpec(
+        getMdName(sigHash), MGF_1, getMgf1Hash(mgf1Hash), saltLength, TRAILER_FIELD_BC);
+  }
+
   private RsaSsaPssVerifyConscrypt(
       final RSAPublicKey pubKey,
       RsaSsaPssParameters.HashType sigHash,
@@ -145,10 +153,8 @@ public final class RsaSsaPssVerifyConscrypt implements PublicKeyVerify {
     Validators.validateRsaModulusSize(pubKey.getModulus().bitLength());
     Validators.validateRsaPublicExponent(pubKey.getPublicExponent());
     this.publicKey = pubKey;
-    this.signatureAlgorithm = toConscryptRsaSsaPssAlgo(sigHash);
-    this.parameterSpec =
-        new PSSParameterSpec(
-            getMdName(sigHash), MGF_1, getMgf1Hash(mgf1Hash), saltLength, TRAILER_FIELD_BC);
+    this.signatureAlgorithm = getConscryptRsaSsaPssAlgo(sigHash);
+    this.parameterSpec = getPssParameterSpec(sigHash, mgf1Hash, saltLength);
     this.outputPrefix = outputPrefix;
     this.messageSuffix = messageSuffix;
   }
@@ -158,7 +164,7 @@ public final class RsaSsaPssVerifyConscrypt implements PublicKeyVerify {
     if (!isSupported()) {
       throw new GeneralSecurityException("RSA SSA PSS using Conscrypt is not supported.");
     }
-    KeyFactory keyFactory = KeyFactory.getInstance("RSA", PROVIDER);
+    KeyFactory keyFactory = KeyFactory.getInstance("RSA", CONSCRYPT);
     RSAPublicKey publicKey =
         (RSAPublicKey)
             keyFactory.generatePublic(
@@ -180,7 +186,7 @@ public final class RsaSsaPssVerifyConscrypt implements PublicKeyVerify {
     if (!isPrefix(outputPrefix, signature)) {
       throw new GeneralSecurityException("Invalid signature (output prefix mismatch)");
     }
-    Signature verifier = Signature.getInstance(signatureAlgorithm, PROVIDER);
+    Signature verifier = Signature.getInstance(signatureAlgorithm, CONSCRYPT);
     verifier.initVerify(publicKey);
     verifier.setParameter(parameterSpec);
     verifier.update(data);
