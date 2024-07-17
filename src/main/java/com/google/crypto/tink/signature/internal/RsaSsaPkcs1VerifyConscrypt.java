@@ -24,7 +24,6 @@ import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
-import com.google.crypto.tink.subtle.EngineFactory;
 import com.google.crypto.tink.subtle.Validators;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
@@ -69,18 +68,18 @@ public final class RsaSsaPkcs1VerifyConscrypt implements PublicKeyVerify {
     return null;
   }
 
-  private static final Provider provider = conscryptProviderOrNull();
+  private static final Provider PROVIDER = conscryptProviderOrNull();
 
   /** Returns true if the RsaSsaPkcs1 signature verification using Conscrypt works. */
   public static boolean isSupported() {
-    return provider != null;
+    return PROVIDER != null;
   }
 
   private static Signature getSignature(String algorithm) throws GeneralSecurityException {
-    if (provider == null) {
+    if (PROVIDER == null) {
       throw new GeneralSecurityException("Conscrypt Provider not found");
     }
-    return Signature.getInstance(algorithm, provider);
+    return Signature.getInstance(algorithm, PROVIDER);
   }
 
   @SuppressWarnings("Immutable")
@@ -118,7 +117,10 @@ public final class RsaSsaPkcs1VerifyConscrypt implements PublicKeyVerify {
    */
   @AccessesPartialKey
   public static PublicKeyVerify create(RsaSsaPkcs1PublicKey key) throws GeneralSecurityException {
-    KeyFactory keyFactory = EngineFactory.KEY_FACTORY.getInstance("RSA");
+    if (!isSupported()) {
+      throw new GeneralSecurityException("RSA-PKCS1.5 using Conscrypt is not supported.");
+    }
+    KeyFactory keyFactory = KeyFactory.getInstance("RSA", PROVIDER);
     RSAPublicKey publicKey =
         (RSAPublicKey)
             keyFactory.generatePublic(
@@ -139,9 +141,6 @@ public final class RsaSsaPkcs1VerifyConscrypt implements PublicKeyVerify {
       byte[] outputPrefix,
       byte[] messageSuffix)
       throws GeneralSecurityException {
-    if (!isSupported()) {
-      throw new GeneralSecurityException("RSA-PKCS1.5 using Conscrypt is not supported.");
-    }
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException(
           "Can not use RSA-PKCS1.5 in FIPS-mode, as BoringCrypto module is not available.");
