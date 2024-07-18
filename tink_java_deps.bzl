@@ -4,8 +4,8 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
 
 TINK_MAVEN_ARTIFACTS = [
-    "com.google.protobuf:protobuf-java:4.27.0",
-    "com.google.protobuf:protobuf-javalite:4.27.0",
+    "com.google.protobuf:protobuf-java:3.25.3",
+    "com.google.protobuf:protobuf-javalite:3.25.3",
     "androidx.annotation:annotation:1.5.0",
     "com.google.api-client:google-api-client:2.2.0",
     "com.google.code.findbugs:jsr305:3.0.2",
@@ -38,19 +38,13 @@ def tink_java_deps():
     # -------------------------------------------------------------------------
     # Protobuf.
     # -------------------------------------------------------------------------
-    # proto_library, cc_proto_library and java_proto_library rules implicitly
-    # depend respectively on:
-    #   * @com_google_protobuf//:proto
-    #   * @com_google_protobuf//:cc_toolchain
-    #   * @com_google_protobuf//:java_toolchain
-    # This statement defines the @com_google_protobuf repo.
-    # Release May 23rd, 2024.
+    # Release from 2024-02-16.
     maybe(
         http_archive,
         name = "com_google_protobuf",
-        strip_prefix = "protobuf-27.0",
-        urls = ["https://github.com/protocolbuffers/protobuf/archive/refs/tags/v27.0.zip"],
-        sha256 = "a7e735f510520b41962d07459f6f5b99dd594c7ed4690bf1191b9924bec094a2",
+        strip_prefix = "protobuf-25.3",
+        urls = ["https://github.com/protocolbuffers/protobuf/archive/refs/tags/v25.3.zip"],
+        sha256 = "5156b22536feaa88cf95503153a6b2cd67cc80f20f1218f154b84a12c288a220",
     )
 
     # -------------------------------------------------------------------------
@@ -93,7 +87,7 @@ def tink_java_deps():
     # Rules Python.
     # -------------------------------------------------------------------------
     # Required by protobuf.
-    # Release from Aug 22, 2023
+    # Release from 2023-08-22.
     maybe(
         http_archive,
         name = "rules_python",
