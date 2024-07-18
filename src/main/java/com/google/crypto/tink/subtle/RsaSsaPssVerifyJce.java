@@ -24,6 +24,7 @@ import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.EnumTypeProtoConverter;
 import com.google.crypto.tink.signature.RsaSsaPssParameters;
 import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
+import com.google.crypto.tink.signature.internal.RsaSsaPssVerifyConscrypt;
 import com.google.crypto.tink.subtle.Enums.HashType;
 import com.google.errorprone.annotations.Immutable;
 import java.math.BigInteger;
@@ -81,7 +82,7 @@ public final class RsaSsaPssVerifyJce implements PublicKeyVerify {
         byte[] outputPrefix,
         byte[] messageSuffix)
         throws GeneralSecurityException {
-      if (!FIPS.isCompatible()) {
+      if (TinkFipsUtil.useOnlyFips()) {
         throw new GeneralSecurityException(
             "Can not use RSA PSS in FIPS-mode, as BoringCrypto module is not available.");
       }
@@ -235,11 +236,13 @@ public final class RsaSsaPssVerifyJce implements PublicKeyVerify {
 
   @AccessesPartialKey
   public static PublicKeyVerify create(RsaSsaPssPublicKey key) throws GeneralSecurityException {
-
-    KeyFactory kf = EngineFactory.KEY_FACTORY.getInstance("RSA");
+    if (RsaSsaPssVerifyConscrypt.isSupported()) {
+      return RsaSsaPssVerifyConscrypt.create(key);
+    }
+    KeyFactory keyFactory = EngineFactory.KEY_FACTORY.getInstance("RSA");
     RSAPublicKey publicKey =
         (RSAPublicKey)
-            kf.generatePublic(
+            keyFactory.generatePublic(
                 new RSAPublicKeySpec(key.getModulus(), key.getParameters().getPublicExponent()));
     RsaSsaPssParameters params = key.getParameters();
     return new InternalImpl(

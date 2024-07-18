@@ -23,6 +23,7 @@ import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.signature.RsaSsaPssParameters;
 import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
+import com.google.crypto.tink.signature.internal.RsaSsaPssSignConscrypt;
 import com.google.crypto.tink.subtle.Enums.HashType;
 import com.google.crypto.tink.util.SecretBigInteger;
 import com.google.errorprone.annotations.Immutable;
@@ -80,9 +81,7 @@ public final class RsaSsaPssSignJce implements PublicKeySign {
         byte[] outputPrefix,
         byte[] messageSuffix)
         throws GeneralSecurityException {
-      // TODO(b/182987934): This check is incorrect.
-      // We will change this once support for RSA PSS in FIPS mode is added.
-      if (!FIPS.isCompatible()) {
+      if (TinkFipsUtil.useOnlyFips()) {
         throw new GeneralSecurityException(
             "Can not use RSA PSS in FIPS-mode, as BoringCrypto module is not available.");
       }
@@ -209,6 +208,9 @@ public final class RsaSsaPssSignJce implements PublicKeySign {
 
   @AccessesPartialKey
   public static PublicKeySign create(RsaSsaPssPrivateKey key) throws GeneralSecurityException {
+    if (RsaSsaPssSignConscrypt.isSupported()) {
+      return RsaSsaPssSignConscrypt.create(key);
+    }
     KeyFactory kf = EngineFactory.KEY_FACTORY.getInstance("RSA");
     RSAPrivateCrtKey privateKey =
         (RSAPrivateCrtKey)

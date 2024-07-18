@@ -38,7 +38,11 @@ import com.google.crypto.tink.signature.PublicKeySignWrapper;
 import com.google.crypto.tink.signature.PublicKeyVerifyWrapper;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
+import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
+import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
 import com.google.crypto.tink.signature.internal.RsaSsaPkcs1VerifyConscrypt;
+import com.google.crypto.tink.signature.internal.RsaSsaPssSignConscrypt;
+import com.google.crypto.tink.signature.internal.RsaSsaPssVerifyConscrypt;
 import com.google.crypto.tink.subtle.AesGcmJce;
 import com.google.crypto.tink.subtle.EcdsaSignJce;
 import com.google.crypto.tink.subtle.EcdsaVerifyJce;
@@ -107,6 +111,16 @@ public class ConfigurationFips140v2 {
             ConfigurationFips140v2::rsaSsaPkcs1VerifyCreate,
             RsaSsaPkcs1PublicKey.class,
             PublicKeyVerify.class));
+    builder.registerPrimitiveConstructor(
+        PrimitiveConstructor.create(
+            ConfigurationFips140v2::rsaSsaPssSignCreate,
+            RsaSsaPssPrivateKey.class,
+            PublicKeySign.class));
+    builder.registerPrimitiveConstructor(
+        PrimitiveConstructor.create(
+            ConfigurationFips140v2::rsaSsaPssVerifyCreate,
+            RsaSsaPssPublicKey.class,
+            PublicKeyVerify.class));
 
     return InternalConfiguration.createFromPrimitiveRegistry(builder.build());
   }
@@ -133,5 +147,25 @@ public class ConfigurationFips140v2 {
           "Cannot create FIPS-compliant PublicKeyVerify: wrong RsaSsaPkcs1 key modulus size");
     }
     return RsaSsaPkcs1VerifyConscrypt.create(key);
+  }
+
+  private static PublicKeySign rsaSsaPssSignCreate(RsaSsaPssPrivateKey key)
+      throws GeneralSecurityException {
+    if (key.getParameters().getModulusSizeBits() != 2048
+        && key.getParameters().getModulusSizeBits() != 3072) {
+      throw new GeneralSecurityException(
+          "Cannot create FIPS-compliant PublicKeySign: wrong RsaSsaPss key modulus size");
+    }
+    return RsaSsaPssSignConscrypt.create(key);
+  }
+
+  private static PublicKeyVerify rsaSsaPssVerifyCreate(RsaSsaPssPublicKey key)
+      throws GeneralSecurityException {
+    if (key.getParameters().getModulusSizeBits() != 2048
+        && key.getParameters().getModulusSizeBits() != 3072) {
+      throw new GeneralSecurityException(
+          "Cannot create FIPS-compliant PublicKeyVerify: wrong RsaSsaPss key modulus size");
+    }
+    return RsaSsaPssVerifyConscrypt.create(key);
   }
 }

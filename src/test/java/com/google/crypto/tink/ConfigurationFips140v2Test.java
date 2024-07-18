@@ -351,7 +351,7 @@ public class ConfigurationFips140v2Test {
                   + "Yu_neotgQ0hzbI5gry7ajdYy9-2lNx_76aBZoOUu9HCJ-UsfSOI8"));
 
   @Test
-  public void config_disallowsRsaSsaPssSignForPublicKeySign() throws Exception {
+  public void config_containsRsaSsaPssSignForPublicKeySign() throws Exception {
     RsaSsaPssProtoSerialization.register();
     RsaSsaPssParameters parameters =
         RsaSsaPssParameters.builder()
@@ -382,13 +382,12 @@ public class ConfigurationFips140v2Test {
             .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
             .build();
 
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> keysetHandle.getPrimitive(ConfigurationFips140v2.get(), PublicKeySign.class));
+    assertThat(keysetHandle.getPrimitive(ConfigurationFips140v2.get(), PublicKeySign.class))
+        .isNotNull();
   }
 
   @Test
-  public void config_disallowsRsaSsaPssVerifyForPublicKeyVerify() throws Exception {
+  public void config_containsRsaSsaPssVerifyForPublicKeyVerify() throws Exception {
     RsaSsaPssProtoSerialization.register();
     RsaSsaPssParameters parameters =
         RsaSsaPssParameters.builder()
@@ -406,9 +405,8 @@ public class ConfigurationFips140v2Test {
             .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
             .build();
 
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> keysetHandle.getPrimitive(ConfigurationFips140v2.get(), PublicKeyVerify.class));
+    assertThat(keysetHandle.getPrimitive(ConfigurationFips140v2.get(), PublicKeyVerify.class))
+        .isNotNull();
   }
 
   @Test
