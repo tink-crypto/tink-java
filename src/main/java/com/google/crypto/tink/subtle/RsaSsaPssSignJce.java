@@ -22,7 +22,9 @@ import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.signature.RsaSsaPssParameters;
 import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
+import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
 import com.google.crypto.tink.subtle.Enums.HashType;
+import com.google.crypto.tink.util.SecretBigInteger;
 import com.google.errorprone.annotations.Immutable;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
@@ -232,10 +234,57 @@ public final class RsaSsaPssSignJce implements PublicKeySign {
             : EMPTY);
   }
 
+  private static RsaSsaPssParameters.HashType getHashType(HashType hash)
+      throws GeneralSecurityException {
+    switch (hash) {
+      case SHA256:
+        return RsaSsaPssParameters.HashType.SHA256;
+      case SHA384:
+        return RsaSsaPssParameters.HashType.SHA384;
+      case SHA512:
+        return RsaSsaPssParameters.HashType.SHA512;
+      default:
+        throw new GeneralSecurityException("Unsupported hash: " + hash);
+    }
+  }
+
+  @AccessesPartialKey
+  private RsaSsaPssPrivateKey convertKey(
+      final RSAPrivateCrtKey key, HashType sigHash, HashType mgf1Hash, int saltLength)
+      throws GeneralSecurityException {
+    RsaSsaPssParameters parameters =
+        RsaSsaPssParameters.builder()
+            .setModulusSizeBits(key.getModulus().bitLength())
+            .setPublicExponent(key.getPublicExponent())
+            .setSigHashType(getHashType(sigHash))
+            .setMgf1HashType(getHashType(mgf1Hash))
+            .setSaltLengthBytes(saltLength)
+            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+            .build();
+    return RsaSsaPssPrivateKey.builder()
+        .setPublicKey(
+            RsaSsaPssPublicKey.builder()
+                .setParameters(parameters)
+                .setModulus(key.getModulus())
+                .build())
+        .setPrimes(
+            SecretBigInteger.fromBigInteger(key.getPrimeP(), InsecureSecretKeyAccess.get()),
+            SecretBigInteger.fromBigInteger(key.getPrimeQ(), InsecureSecretKeyAccess.get()))
+        .setPrivateExponent(
+            SecretBigInteger.fromBigInteger(
+                key.getPrivateExponent(), InsecureSecretKeyAccess.get()))
+        .setPrimeExponents(
+            SecretBigInteger.fromBigInteger(key.getPrimeExponentP(), InsecureSecretKeyAccess.get()),
+            SecretBigInteger.fromBigInteger(key.getPrimeExponentQ(), InsecureSecretKeyAccess.get()))
+        .setCrtCoefficient(
+            SecretBigInteger.fromBigInteger(key.getCrtCoefficient(), InsecureSecretKeyAccess.get()))
+        .build();
+  }
+
   public RsaSsaPssSignJce(
       final RSAPrivateCrtKey priv, HashType sigHash, HashType mgf1Hash, int saltLength)
       throws GeneralSecurityException {
-    this.sign = new InternalImpl(priv, sigHash, mgf1Hash, saltLength, EMPTY, EMPTY);
+    this.sign = create(convertKey(priv, sigHash, mgf1Hash, saltLength));
   }
 
   @Override
