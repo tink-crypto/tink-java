@@ -50,8 +50,15 @@ public final class RsaSsaPssVerifyJce implements PublicKeyVerify {
           .add(HashType.SHA512, RsaSsaPssParameters.HashType.SHA512)
           .build();
 
-  /** InternalJavaImpl is a Java implementation of the RSA SSA PSS signature verification */
-  private static final class InternalJavaImpl implements PublicKeyVerify {
+  private static final byte[] EMPTY = new byte[0];
+  private static final byte[] LEGACY_MESSAGE_SUFFIX = new byte[] {0};
+
+  /**
+   * InternalImpl is an implementation of the RSA SSA PSS signature signing that only uses the JCE
+   * for raw RSA operations. The rest of the algorithm is implemented in Java. This allows it to be
+   * used on most Java platforms.
+   */
+  private static final class InternalImpl implements PublicKeyVerify {
 
     @SuppressWarnings("Immutable")
     private final RSAPublicKey publicKey;
@@ -66,7 +73,7 @@ public final class RsaSsaPssVerifyJce implements PublicKeyVerify {
     @SuppressWarnings("Immutable")
     private final byte[] messageSuffix;
 
-    private InternalJavaImpl(
+    private InternalImpl(
         final RSAPublicKey pubKey,
         HashType sigHash,
         HashType mgf1Hash,
@@ -235,22 +242,54 @@ public final class RsaSsaPssVerifyJce implements PublicKeyVerify {
             kf.generatePublic(
                 new RSAPublicKeySpec(key.getModulus(), key.getParameters().getPublicExponent()));
     RsaSsaPssParameters params = key.getParameters();
-    return new InternalJavaImpl(
+    return new InternalImpl(
         publicKey,
         HASH_TYPE_CONVERTER.toProtoEnum(params.getSigHashType()),
         HASH_TYPE_CONVERTER.toProtoEnum(params.getMgf1HashType()),
         params.getSaltLengthBytes(),
         key.getOutputPrefix().toByteArray(),
         key.getParameters().getVariant().equals(RsaSsaPssParameters.Variant.LEGACY)
-            ? new byte[] {0}
-            : new byte[0]);
+            ? LEGACY_MESSAGE_SUFFIX
+            : EMPTY);
+  }
+
+  private static RsaSsaPssParameters.HashType getHashType(HashType hash)
+      throws GeneralSecurityException {
+    switch (hash) {
+      case SHA256:
+        return RsaSsaPssParameters.HashType.SHA256;
+      case SHA384:
+        return RsaSsaPssParameters.HashType.SHA384;
+      case SHA512:
+        return RsaSsaPssParameters.HashType.SHA512;
+      default:
+        throw new GeneralSecurityException("Unsupported hash: " + hash);
+    }
+  }
+
+  @AccessesPartialKey
+  private RsaSsaPssPublicKey convertKey(
+      final RSAPublicKey pubKey, HashType sigHash, HashType mgf1Hash, int saltLength)
+      throws GeneralSecurityException {
+    RsaSsaPssParameters parameters =
+        RsaSsaPssParameters.builder()
+            .setModulusSizeBits(pubKey.getModulus().bitLength())
+            .setPublicExponent(pubKey.getPublicExponent())
+            .setSigHashType(getHashType(sigHash))
+            .setMgf1HashType(getHashType(mgf1Hash))
+            .setSaltLengthBytes(saltLength)
+            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+            .build();
+    return RsaSsaPssPublicKey.builder()
+        .setParameters(parameters)
+        .setModulus(pubKey.getModulus())
+        .build();
   }
 
   public RsaSsaPssVerifyJce(
       final RSAPublicKey pubKey, HashType sigHash, HashType mgf1Hash, int saltLength)
       throws GeneralSecurityException {
-    this.verify =
-        new InternalJavaImpl(pubKey, sigHash, mgf1Hash, saltLength, new byte[0], new byte[0]);
+    this.verify = create(convertKey(pubKey, sigHash, mgf1Hash, saltLength));
   }
 
   @Override
