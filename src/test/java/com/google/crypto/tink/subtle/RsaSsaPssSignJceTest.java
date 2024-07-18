@@ -16,12 +16,12 @@
 
 package com.google.crypto.tink.subtle;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
+import com.google.crypto.tink.signature.RsaSsaPssParameters;
 import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
 import com.google.crypto.tink.signature.internal.testing.RsaSsaPssTestUtil;
@@ -30,9 +30,7 @@ import com.google.crypto.tink.subtle.Enums.HashType;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.interfaces.RSAPrivateCrtKey;
-import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPrivateCrtKeySpec;
-import java.security.spec.RSAPublicKeySpec;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -44,9 +42,7 @@ import org.junit.runner.RunWith;
 @RunWith(Theories.class)
 public class RsaSsaPssSignJceTest {
 
-  private final RSAPrivateCrtKey getTestPrivateKey() throws Exception {
-    SignatureTestVector testVector = SIGNATURE_TEST_VECTORS[0];
-    RsaSsaPssPrivateKey key = (RsaSsaPssPrivateKey) testVector.getPrivateKey();
+  private final RSAPrivateCrtKey toRsaPrivateCrtKey(RsaSsaPssPrivateKey key) throws Exception {
     KeyFactory keyFactory = EngineFactory.KEY_FACTORY.getInstance("RSA");
     return (RSAPrivateCrtKey)
         keyFactory.generatePrivate(
@@ -61,18 +57,24 @@ public class RsaSsaPssSignJceTest {
                 key.getCrtCoefficient().getBigInteger(InsecureSecretKeyAccess.get())));
   }
 
-  private final RSAPublicKey getTestPublicKey() throws Exception {
-    SignatureTestVector testVector = SIGNATURE_TEST_VECTORS[0];
-    RsaSsaPssPublicKey key = (RsaSsaPssPublicKey) testVector.getPrivateKey().getPublicKey();
-    KeyFactory keyFactory = EngineFactory.KEY_FACTORY.getInstance("RSA");
-    return (RSAPublicKey)
-        keyFactory.generatePublic(
-            new RSAPublicKeySpec(key.getModulus(), key.getParameters().getPublicExponent()));
+  private static HashType toEnumHashType(RsaSsaPssParameters.HashType hash) {
+    if (hash == RsaSsaPssParameters.HashType.SHA256) {
+      return HashType.SHA256;
+    } else if (hash == RsaSsaPssParameters.HashType.SHA384) {
+      return HashType.SHA384;
+    } else if (hash == RsaSsaPssParameters.HashType.SHA512) {
+      return HashType.SHA512;
+    } else {
+      throw new IllegalArgumentException("Unsupported hash: " + hash);
+    }
   }
 
   @Test
   public void constructorValidatesHashType() throws Exception {
-    RSAPrivateCrtKey priv = getTestPrivateKey();
+    SignatureTestVector testVector = SIGNATURE_TEST_VECTORS[0];
+    RsaSsaPssPrivateKey key = (RsaSsaPssPrivateKey) testVector.getPrivateKey();
+    RSAPrivateCrtKey priv = toRsaPrivateCrtKey(key);
+
     assertThrows(
         GeneralSecurityException.class,
         () -> new RsaSsaPssSignJce(priv, HashType.SHA1, HashType.SHA1, 20));
@@ -84,61 +86,42 @@ public class RsaSsaPssSignJceTest {
         () -> new RsaSsaPssSignJce(priv, HashType.SHA256, HashType.SHA384, 32));
   }
 
-  @Test
-  public void signVerifyWithSha256() throws Exception {
-    RSAPublicKey pub = getTestPublicKey();
-    RSAPrivateCrtKey priv = getTestPrivateKey();
-
-    // Sign with RsaSsaPssSignJce.
-    byte[] message = "Hello".getBytes(UTF_8);
-    RsaSsaPssSignJce signer = new RsaSsaPssSignJce(priv, HashType.SHA256, HashType.SHA256, 32);
-
-    for (int i = 0; i < 1024; i++) {
-      byte[] signature = signer.sign(message);
-      // Verify with JCE's Signature.
-      RsaSsaPssVerifyJce verifier =
-          new RsaSsaPssVerifyJce(pub, HashType.SHA256, HashType.SHA256, 32);
-      verifier.verify(signature, message);
-    }
-  }
-
-  @Test
-  public void signVerifyWithZeroSalt() throws Exception {
-    RSAPublicKey pub = getTestPublicKey();
-    RSAPrivateCrtKey priv = getTestPrivateKey();
-
-    byte[] message = "Hello".getBytes(UTF_8);
-    RsaSsaPssSignJce signer = new RsaSsaPssSignJce(priv, HashType.SHA256, HashType.SHA256, 0);
-    byte[] signature = signer.sign(message);
-
-    RsaSsaPssVerifyJce verifier = new RsaSsaPssVerifyJce(pub, HashType.SHA256, HashType.SHA256, 0);
-    verifier.verify(signature, message);
-  }
-
-  @Test
-  public void signVerifyWithSha384() throws Exception {
-    RSAPublicKey pub = getTestPublicKey();
-    RSAPrivateCrtKey priv = getTestPrivateKey();
-
-    byte[] message = "Hello".getBytes(UTF_8);
-    RsaSsaPssSignJce signer = new RsaSsaPssSignJce(priv, HashType.SHA384, HashType.SHA384, 32);
-    byte[] signature = signer.sign(message);
-
-    RsaSsaPssVerifyJce verifier = new RsaSsaPssVerifyJce(pub, HashType.SHA384, HashType.SHA384, 32);
-    verifier.verify(signature, message);
-  }
-
   /**
    * Tests that the verifier can verify a newly generated signature for the message and key in the
    * test vector.
    */
   @Theory
-  public void test_computeAndValidateFreshSignatureWithTestVector(
-      @FromDataPoints("testVectors") SignatureTestVector testVector) throws Exception {
+  public void createAndSign_works(@FromDataPoints("testVectors") SignatureTestVector testVector)
+      throws Exception {
     RsaSsaPssPrivateKey key = (RsaSsaPssPrivateKey) testVector.getPrivateKey();
     PublicKeySign signer = RsaSsaPssSignJce.create(key);
     byte[] signature = signer.sign(testVector.getMessage());
+
+    // Test that the verifier can verify the signature.
     PublicKeyVerify verifier = RsaSsaPssVerifyJce.create(key.getPublicKey());
+    verifier.verify(signature, testVector.getMessage());
+  }
+
+  @Theory
+  public void constructorAndSign_works(
+      @FromDataPoints("testVectors") SignatureTestVector testVector) throws Exception {
+    RsaSsaPssPrivateKey testPrivateKey = (RsaSsaPssPrivateKey) testVector.getPrivateKey();
+    RsaSsaPssPublicKey testPublicKey = testPrivateKey.getPublicKey();
+    RsaSsaPssParameters testParameters = testPublicKey.getParameters();
+    if (!testParameters.getVariant().equals(RsaSsaPssParameters.Variant.NO_PREFIX)) {
+      // Constructor doesn't support output prefix.
+      return;
+    }
+    RsaSsaPssSignJce signer =
+        new RsaSsaPssSignJce(
+            toRsaPrivateCrtKey(testPrivateKey),
+            toEnumHashType(testParameters.getSigHashType()),
+            toEnumHashType(testParameters.getMgf1HashType()),
+            testParameters.getSaltLengthBytes());
+    byte[] signature = signer.sign(testVector.getMessage());
+
+    // Test that the verifier can verify the signature.
+    PublicKeyVerify verifier = RsaSsaPssVerifyJce.create(testPublicKey);
     verifier.verify(signature, testVector.getMessage());
   }
 
