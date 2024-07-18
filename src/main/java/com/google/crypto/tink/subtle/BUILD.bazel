@@ -160,12 +160,6 @@ java_library(
 )
 
 java_library(
-    name = "ecies_aead_hkdf_dem_helper",
-    srcs = ["EciesAeadHkdfDemHelper.java"],
-    deps = ["//src/main/java/com/google/crypto/tink/hybrid/subtle:aead_or_daead"],
-)
-
-java_library(
     name = "rsa_ssa_pkcs1_verify_jce",
     srcs = ["RsaSsaPkcs1VerifyJce.java"],
     deps = [
@@ -770,12 +764,6 @@ android_library(
         "//src/main/java/com/google/crypto/tink/signature:ecdsa_public_key-android",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
-)
-
-android_library(
-    name = "ecies_aead_hkdf_dem_helper-android",
-    srcs = ["EciesAeadHkdfDemHelper.java"],
-    deps = ["//src/main/java/com/google/crypto/tink/hybrid/subtle:aead_or_daead-android"],
 )
 
 android_library(

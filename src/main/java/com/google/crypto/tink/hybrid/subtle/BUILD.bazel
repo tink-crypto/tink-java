@@ -31,24 +31,6 @@ java_library(
     ],
 )
 
-java_library(
-    name = "aead_or_daead",
-    srcs = ["AeadOrDaead.java"],
-    deps = [
-        "//src/main/java/com/google/crypto/tink:aead",
-        "//src/main/java/com/google/crypto/tink:deterministic_aead",
-    ],
-)
-
-android_library(
-    name = "aead_or_daead-android",
-    srcs = ["AeadOrDaead.java"],
-    deps = [
-        "//src/main/java/com/google/crypto/tink:aead-android",
-        "//src/main/java/com/google/crypto/tink:deterministic_aead-android",
-    ],
-)
-
 android_library(
     name = "rsa_kem-android",
     srcs = ["RsaKem.java"],
