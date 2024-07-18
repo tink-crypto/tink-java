@@ -225,15 +225,17 @@ public final class JwtRsaSsaPssSignKeyManager {
         return Collections.unmodifiableMap(result);
   }
 
+  private static final TinkFipsUtil.AlgorithmFipsCompatibility FIPS =
+      TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_REQUIRES_BORINGCRYPTO;
+
   /**
    * Registers the {@link RsaSsaPssSignKeyManager} and the {@link RsaSsaPssVerifyKeyManager} with
    * the registry, so that the the RsaSsaPss-Keys can be used with Tink.
    */
   public static void registerPair(boolean newKeyAllowed) throws GeneralSecurityException {
-    // Tink's RSA SSA PSS algorithm in Java is currently not FIPS compatible, because it doesn't
-    // use BoringSSL.
-    if (!TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS.isCompatible()) {
-      throw new GeneralSecurityException("Registering RSA SSA PSS is not supported in FIPS mode");
+    if (!FIPS.isCompatible()) {
+      throw new GeneralSecurityException(
+          "Can not use RSA SSA PSS in FIPS-mode, as BoringCrypto module is not available.");
     }
     JwtRsaSsaPssProtoSerialization.register();
     MutablePrimitiveRegistry.globalInstance()
@@ -241,8 +243,10 @@ public final class JwtRsaSsaPssSignKeyManager {
     MutablePrimitiveRegistry.globalInstance().registerPrimitiveConstructor(PRIMITIVE_CONSTRUCTOR);
     MutableParametersRegistry.globalInstance().putAll(namedParameters());
     MutableKeyCreationRegistry.globalInstance().add(KEY_CREATOR, JwtRsaSsaPssParameters.class);
-    KeyManagerRegistry.globalInstance().registerKeyManager(legacyPrivateKeyManager, newKeyAllowed);
-    KeyManagerRegistry.globalInstance().registerKeyManager(legacyPublicKeyManager, false);
+    KeyManagerRegistry.globalInstance()
+        .registerKeyManagerWithFipsCompatibility(legacyPrivateKeyManager, FIPS, newKeyAllowed);
+    KeyManagerRegistry.globalInstance()
+        .registerKeyManagerWithFipsCompatibility(legacyPublicKeyManager, FIPS, false);
   }
 
   private JwtRsaSsaPssSignKeyManager() {}

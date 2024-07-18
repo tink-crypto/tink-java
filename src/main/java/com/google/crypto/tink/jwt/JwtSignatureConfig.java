@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink.jwt;
 
-import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.proto.RegistryConfig;
 import java.security.GeneralSecurityException;
 
@@ -60,12 +59,6 @@ public final class JwtSignatureConfig {
 
     JwtEcdsaSignKeyManager.registerPair(/*newKeyAllowed=*/ true);
     JwtRsaSsaPkcs1SignKeyManager.registerPair(/* newKeyAllowed= */ true);
-
-    if (TinkFips.useOnlyFips()) {
-      // If Tink is built in FIPS-mode do not register algorithms which are not compatible.
-      return;
-    }
-
     JwtRsaSsaPssSignKeyManager.registerPair(/* newKeyAllowed= */ true);
   }
 
