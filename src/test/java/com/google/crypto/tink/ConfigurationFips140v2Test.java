@@ -609,6 +609,68 @@ public class ConfigurationFips140v2Test {
   }
 
   @Test
+  public void config_refusesNon2048Non3072ModulusForRsaSsaPssVerify() throws Exception {
+    RsaSsaPkcs1ProtoSerialization.register();
+    RsaSsaPssParameters parameters =
+        RsaSsaPssParameters.builder()
+            .setModulusSizeBits(4096)
+            .setPublicExponent(EXPONENT)
+            .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
+            .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
+            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+            .setSaltLengthBytes(32)
+            .build();
+    RsaSsaPssPublicKey key =
+        RsaSsaPssPublicKey.builder().setParameters(parameters).setModulus(MODULUS_4096).build();
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
+            .build();
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> keysetHandle.getPrimitive(ConfigurationFips140v2.get(), PublicKeyVerify.class));
+  }
+
+  @Test
+  public void config_refusesNon2048Non3072ModulusForRsaSsaPssSign() throws Exception {
+    RsaSsaPssProtoSerialization.register();
+    RsaSsaPssParameters parameters =
+        RsaSsaPssParameters.builder()
+            .setModulusSizeBits(4096)
+            .setPublicExponent(EXPONENT)
+            .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
+            .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
+            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+            .setSaltLengthBytes(32)
+            .build();
+    RsaSsaPssPublicKey publicKey =
+        RsaSsaPssPublicKey.builder().setParameters(parameters).setModulus(MODULUS_4096).build();
+    RsaSsaPssPrivateKey key =
+        RsaSsaPssPrivateKey.builder()
+            .setPublicKey(publicKey)
+            .setPrimes(
+                SecretBigInteger.fromBigInteger(P_4096, InsecureSecretKeyAccess.get()),
+                SecretBigInteger.fromBigInteger(Q_4096, InsecureSecretKeyAccess.get()))
+            .setPrivateExponent(
+                SecretBigInteger.fromBigInteger(D_4096, InsecureSecretKeyAccess.get()))
+            .setPrimeExponents(
+                SecretBigInteger.fromBigInteger(DP_4096, InsecureSecretKeyAccess.get()),
+                SecretBigInteger.fromBigInteger(DQ_4096, InsecureSecretKeyAccess.get()))
+            .setCrtCoefficient(
+                SecretBigInteger.fromBigInteger(Q_INV_4096, InsecureSecretKeyAccess.get()))
+            .build();
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
+            .build();
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> keysetHandle.getPrimitive(ConfigurationFips140v2.get(), PublicKeySign.class));
+  }
+
+  @Test
   public void noConfig_throws() throws Exception {
     HmacProtoSerialization.register();
     HmacParameters parameters =
