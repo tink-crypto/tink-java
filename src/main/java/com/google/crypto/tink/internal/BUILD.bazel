@@ -695,11 +695,13 @@ java_library(
 java_library(
     name = "random",
     srcs = ["Random.java"],
+    deps = [":conscrypt_util"],
 )
 
 android_library(
     name = "random-android",
     srcs = ["Random.java"],
+    deps = [":conscrypt_util-android"],
 )
 
 android_library(
@@ -957,4 +959,16 @@ java_library(
         "@maven//:com_google_code_findbugs_jsr305",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
+)
+
+android_library(
+    name = "conscrypt_util-android",
+    srcs = ["ConscryptUtil.java"],
+    deps = ["@maven//:com_google_code_findbugs_jsr305"],
+)
+
+java_library(
+    name = "conscrypt_util",
+    srcs = ["ConscryptUtil.java"],
+    deps = ["@maven//:com_google_code_findbugs_jsr305"],
 )

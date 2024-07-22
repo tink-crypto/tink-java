@@ -21,6 +21,7 @@ import static com.google.crypto.tink.internal.Util.isPrefix;
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
@@ -29,7 +30,6 @@ import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.Provider;
-import java.security.Security;
 import java.security.Signature;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPublicKeySpec;
@@ -48,10 +48,7 @@ public final class RsaSsaPkcs1VerifyConscrypt implements PublicKeyVerify {
   private static final byte[] EMPTY = new byte[0];
   private static final byte[] LEGACY_MESSAGE_SUFFIX = new byte[] {0};
 
-  private static final String[] CONSCRYPT_PROVIDER_NAMES =
-      new String[] {"GmsCore_OpenSSL", "AndroidOpenSSL", "Conscrypt"};
-
-  // TODO(b/350630614) Make the dependance on Conscrypt static.
+  // TODO(b/182987934) Make the dependance on Conscrypt static.
   @Nullable
   private static Provider conscryptProviderOrNull() {
     if (Util.isAndroid() && Util.getAndroidApiLevel() <= 21) {
@@ -59,13 +56,7 @@ public final class RsaSsaPkcs1VerifyConscrypt implements PublicKeyVerify {
       // want to use that version.
       return null;
     }
-    for (String providerName : CONSCRYPT_PROVIDER_NAMES) {
-      Provider provider = Security.getProvider(providerName);
-      if (provider != null) {
-        return provider;
-      }
-    }
-    return null;
+    return ConscryptUtil.providerOrNull();
   }
 
   private static final Provider PROVIDER = conscryptProviderOrNull();

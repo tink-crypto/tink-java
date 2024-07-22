@@ -719,3 +719,41 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "ConscryptUtilTest",
+    size = "small",
+    srcs = ["ConscryptUtilTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/internal:conscrypt_util",
+        "//src/main/java/com/google/crypto/tink/testing:test_util",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+        "@maven//:org_conscrypt_conscrypt_openjdk_uber",
+    ],
+)
+
+java_test(
+    name = "ConscryptUtilWithoutConscryptTest",
+    size = "small",
+    srcs = ["ConscryptUtilWithoutConscryptTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/internal:conscrypt_util",
+        "//src/main/java/com/google/crypto/tink/testing:test_util",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
+    name = "ConscryptUtilWithoutInstallingConscryptTest",
+    size = "small",
+    srcs = ["ConscryptUtilWithoutInstallingConscryptTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/internal:conscrypt_util",
+        "//src/main/java/com/google/crypto/tink/testing:test_util",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+        "@maven//:org_conscrypt_conscrypt_openjdk_uber",
+    ],
+)

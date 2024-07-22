@@ -16,8 +16,6 @@
 
 package com.google.crypto.tink.internal;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.security.GeneralSecurityException;
 import java.security.Provider;
 import java.security.SecureRandom;
@@ -32,50 +30,25 @@ public final class Random {
         }
       };
 
-  /**
-   * Tries to get the Conscrypt provider using reflection.
-   *
-   * <p>Note that this will typically fail on Android, because after ProGuard renames all class and
-   * method names. However, on Android Conscrypt is installed by default and so this code is not
-   * executed.
-   */
-  private static Provider getConscryptProviderWithReflection() throws GeneralSecurityException {
-    try {
-      Class<?> conscrypt = Class.forName("org.conscrypt.Conscrypt");
-      Method getProvider = conscrypt.getMethod("newProvider");
-      return (Provider) getProvider.invoke(null);
-    } catch (ClassNotFoundException
-        | NoSuchMethodException
-        | IllegalArgumentException
-        | InvocationTargetException
-        | IllegalAccessException e) {
-      throw new GeneralSecurityException("Failed to get Conscrypt provider", e);
-    }
-  }
-
   private static SecureRandom create() {
-    // Use Conscrypt if possible. Conscrypt may have three different provider names.
+    // Use Conscrypt if possible.
     // For legacy compatibility reasons it uses the algorithm name "SHA1PRNG".
-    try {
-      return SecureRandom.getInstance("SHA1PRNG", "GmsCore_OpenSSL");
-    } catch (GeneralSecurityException e) {
-      // ignore
-    }
-    try {
-      return SecureRandom.getInstance("SHA1PRNG", "AndroidOpenSSL");
-    } catch (GeneralSecurityException e) {
-      // ignore
-    }
-    try {
-      return SecureRandom.getInstance("SHA1PRNG", "Conscrypt");
-    } catch (GeneralSecurityException e) {
-      // ignore
+    Provider conscryptProvider = ConscryptUtil.providerOrNull();
+    if (conscryptProvider != null) {
+      try {
+        return SecureRandom.getInstance("SHA1PRNG", conscryptProvider);
+      } catch (GeneralSecurityException e) {
+        // ignore
+      }
     }
     // Conscrypt might be present in the binary, but not (yet) installed.
-    try {
-      return SecureRandom.getInstance("SHA1PRNG", getConscryptProviderWithReflection());
-    } catch (GeneralSecurityException e) {
-      // ignore
+    Provider conscryptProviderWithReflection = ConscryptUtil.providerWithReflectionOrNull();
+    if (conscryptProviderWithReflection != null) {
+      try {
+        return SecureRandom.getInstance("SHA1PRNG", conscryptProviderWithReflection);
+      } catch (GeneralSecurityException e) {
+        // ignore
+      }
     }
     return new SecureRandom();
   }
@@ -103,13 +76,10 @@ public final class Random {
 
   /** Throws a GeneralSecurityException if the provider is not Conscrypt. */
   public static final void validateUsesConscrypt() throws GeneralSecurityException {
-    String providerName = localRandom.get().getProvider().getName();
-    if (!providerName.equals("GmsCore_OpenSSL")
-        && !providerName.equals("AndroidOpenSSL")
-        && !providerName.equals("Conscrypt")) {
+    if (!ConscryptUtil.isConscryptProvider(localRandom.get().getProvider())) {
       throw new GeneralSecurityException(
           "Requires GmsCore_OpenSSL, AndroidOpenSSL or Conscrypt to generate randomness, but got "
-              + providerName);
+              + localRandom.get().getProvider().getName());
     }
   }
 

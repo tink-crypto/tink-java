@@ -21,6 +21,7 @@ import static com.google.crypto.tink.internal.Util.isPrefix;
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.signature.RsaSsaPssParameters;
 import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
@@ -29,7 +30,6 @@ import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.Provider;
-import java.security.Security;
 import java.security.Signature;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.MGF1ParameterSpec;
@@ -46,10 +46,6 @@ public final class RsaSsaPssVerifyConscrypt implements PublicKeyVerify {
   private static final byte[] EMPTY = new byte[0];
   private static final byte[] LEGACY_MESSAGE_SUFFIX = new byte[] {0};
 
-  // TODO(b/182987934) Move into a ConscryptUtil class.
-  private static final String[] CONSCRYPT_PROVIDER_NAMES =
-      new String[] {"GmsCore_OpenSSL", "AndroidOpenSSL", "Conscrypt"};
-
   private static final String MGF_1 = "MGF1";
 
   private static final int TRAILER_FIELD_BC = 1;
@@ -60,13 +56,7 @@ public final class RsaSsaPssVerifyConscrypt implements PublicKeyVerify {
       // On Android API level 23 or lower, RSA SSA PSS is not supported.
       return null;
     }
-    for (String providerName : CONSCRYPT_PROVIDER_NAMES) {
-      Provider provider = Security.getProvider(providerName);
-      if (provider != null) {
-        return provider;
-      }
-    }
-    return null;
+    return ConscryptUtil.providerOrNull();
   }
 
   // TODO(b/182987934) Move into a ConscryptUtil class.
