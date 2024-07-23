@@ -298,15 +298,6 @@
 <dd>
 <div class="block">Pre-generated <a href="com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> for <a href="com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a> keys.</div>
 </dd>
-<dt><a href="com/google/crypto/tink/hybrid/subtle/AeadOrDaead.html" title="class in com.google.crypto.tink.hybrid.subtle"><span class="typeNameLink">AeadOrDaead</span></a> - Class in <a href="com/google/crypto/tink/hybrid/subtle/package-summary.html">com.google.crypto.tink.hybrid.subtle</a></dt>
-<dd>
-<div class="block">A wrapper class that provides the functionality of an underlying Aead or Deterministic Aead
- primitive.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/subtle/AeadOrDaead.html#AeadOrDaead-com.google.crypto.tink.Aead-">AeadOrDaead(Aead)</a></span> - Constructor for class com.google.crypto.tink.hybrid.subtle.<a href="com/google/crypto/tink/hybrid/subtle/AeadOrDaead.html" title="class in com.google.crypto.tink.hybrid.subtle">AeadOrDaead</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/subtle/AeadOrDaead.html#AeadOrDaead-com.google.crypto.tink.DeterministicAead-">AeadOrDaead(DeterministicAead)</a></span> - Constructor for class com.google.crypto.tink.hybrid.subtle.<a href="com/google/crypto/tink/hybrid/subtle/AeadOrDaead.html" title="class in com.google.crypto.tink.hybrid.subtle">AeadOrDaead</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/aead/AeadParameters.html" title="class in com.google.crypto.tink.aead"><span class="typeNameLink">AeadParameters</span></a> - Class in <a href="com/google/crypto/tink/aead/package-summary.html">com.google.crypto.tink.aead</a></dt>
 <dd>
 <div class="block">Represents a description of a <a href="com/google/crypto/tink/aead/AeadKey.html" title="class in com.google.crypto.tink.aead"><code>AeadKey</code></a></div>
@@ -3312,6 +3303,10 @@
 <dd>
 <div class="block">ConfigurationV0 contains the following primitives and algorithms:</div>
 </dd>
+<dt><a href="com/google/crypto/tink/internal/ConscryptUtil.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">ConscryptUtil</span></a> - Class in <a href="com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></dt>
+<dd>
+<div class="block">Utility functions for Conscrypt.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/PrimitiveConstructor.html#constructPrimitive-KeyT-">constructPrimitive(KeyT)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/PrimitiveConstructor.html" title="class in com.google.crypto.tink.internal">PrimitiveConstructor</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/PrimitiveConstructor.PrimitiveConstructionFunction.html#constructPrimitive-KeyT-">constructPrimitive(KeyT)</a></span> - Method in interface com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/PrimitiveConstructor.PrimitiveConstructionFunction.html" title="interface in com.google.crypto.tink.internal">PrimitiveConstructor.PrimitiveConstructionFunction</a></dt>
@@ -3918,10 +3913,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/LegacyFullHybridDecrypt.html#decrypt-byte:A-byte:A-">decrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/LegacyFullHybridDecrypt.html" title="class in com.google.crypto.tink.hybrid.internal">LegacyFullHybridDecrypt</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/subtle/AeadOrDaead.html#decrypt-byte:A-byte:A-">decrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.hybrid.subtle.<a href="com/google/crypto/tink/hybrid/subtle/AeadOrDaead.html" title="class in com.google.crypto.tink.hybrid.subtle">AeadOrDaead</a></dt>
-<dd>
-<div class="block">Decrypts <code>ciphertext</code> with <code>associatedData</code> as associated authenticated data.</div>
-</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/subtle/RsaKemHybridDecrypt.html#decrypt-byte:A-byte:A-">decrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.hybrid.subtle.<a href="com/google/crypto/tink/hybrid/subtle/RsaKemHybridDecrypt.html" title="class in com.google.crypto.tink.hybrid.subtle">RsaKemHybridDecrypt</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/HybridDecrypt.html#decrypt-byte:A-byte:A-">decrypt(byte[], byte[])</a></span> - Method in interface com.google.crypto.tink.<a href="com/google/crypto/tink/HybridDecrypt.html" title="interface in com.google.crypto.tink">HybridDecrypt</a></dt>
@@ -3997,8 +3988,8 @@
  The signature is encoded using ASN.1
  (https://tools.ietf.org/html/rfc5480#appendix-A):
  ECDSA-Sig-Value :: = SEQUENCE {
- r INTEGER,
- s INTEGER
+  r INTEGER,
+  s INTEGER
  }</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/AesCtrHmacStreamingParams.html#DERIVED_KEY_SIZE_FIELD_NUMBER">DERIVED_KEY_SIZE_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/AesCtrHmacStreamingParams.html" title="class in com.google.crypto.tink.proto">AesCtrHmacStreamingParams</a></dt>
@@ -4716,10 +4707,6 @@
 <dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/proto/EciesAeadHkdf.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">EciesAeadHkdf</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/google/crypto/tink/subtle/EciesAeadHkdfDemHelper.html" title="interface in com.google.crypto.tink.subtle"><span class="typeNameLink">EciesAeadHkdfDemHelper</span></a> - Interface in <a href="com/google/crypto/tink/subtle/package-summary.html">com.google.crypto.tink.subtle</a></dt>
-<dd>
-<div class="block">A helper for DEM (data encapsulation mechanism) of ECIES-AEAD-HKDF.</div>
-</dd>
 <dt><a href="com/google/crypto/tink/subtle/EciesAeadHkdfHybridDecrypt.html" title="class in com.google.crypto.tink.subtle"><span class="typeNameLink">EciesAeadHkdfHybridDecrypt</span></a> - Class in <a href="com/google/crypto/tink/subtle/package-summary.html">com.google.crypto.tink.subtle</a></dt>
 <dd>
 <div class="block">ECIES encryption with HKDF-KEM (key encapsulation mechanism) and AEAD-DEM (data encapsulation
@@ -5090,10 +5077,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/LegacyFullHybridEncrypt.html#encrypt-byte:A-byte:A-">encrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/LegacyFullHybridEncrypt.html" title="class in com.google.crypto.tink.hybrid.internal">LegacyFullHybridEncrypt</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/subtle/AeadOrDaead.html#encrypt-byte:A-byte:A-">encrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.hybrid.subtle.<a href="com/google/crypto/tink/hybrid/subtle/AeadOrDaead.html" title="class in com.google.crypto.tink.hybrid.subtle">AeadOrDaead</a></dt>
-<dd>
-<div class="block">Encrypts <code>plaintext</code> with <code>associatedData</code> as associated authenticated data.</div>
-</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/subtle/RsaKemHybridEncrypt.html#encrypt-byte:A-byte:A-">encrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.hybrid.subtle.<a href="com/google/crypto/tink/hybrid/subtle/RsaKemHybridEncrypt.html" title="class in com.google.crypto.tink.hybrid.subtle">RsaKemHybridEncrypt</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/HybridEncrypt.html#encrypt-byte:A-byte:A-">encrypt(byte[], byte[])</a></span> - Method in interface com.google.crypto.tink.<a href="com/google/crypto/tink/HybridEncrypt.html" title="interface in com.google.crypto.tink">HybridEncrypt</a></dt>
@@ -5714,11 +5697,6 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/HpkeAead.html#getAeadId--">getAeadId()</a></span> - Method in interface com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/HpkeAead.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeAead</a></dt>
 <dd>
 <div class="block">Returns the HPKE AEAD algorithm identifier for the underlying AEAD implementation.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/EciesAeadHkdfDemHelper.html#getAeadOrDaead-byte:A-">getAeadOrDaead(byte[])</a></span> - Method in interface com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/EciesAeadHkdfDemHelper.html" title="interface in com.google.crypto.tink.subtle">EciesAeadHkdfDemHelper</a></dt>
-<dd>
-<div class="block">Creates a new <code>AeadOrDaead</code>-primitive that uses the key material given in
- 'symmetric_key', which must be of length dem_key_size_in_bytes().</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/HpkeParams.Builder.html#getAeadValue--">getAeadValue()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/HpkeParams.Builder.html" title="class in com.google.crypto.tink.proto">HpkeParams.Builder</a></dt>
 <dd>
@@ -10549,8 +10527,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/EciesDemHelper.Dem.html#getSymmetricKeySizeInBytes--">getSymmetricKeySizeInBytes()</a></span> - Method in interface com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/EciesDemHelper.Dem.html" title="interface in com.google.crypto.tink.hybrid.internal">EciesDemHelper.Dem</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/EciesAeadHkdfDemHelper.html#getSymmetricKeySizeInBytes--">getSymmetricKeySizeInBytes()</a></span> - Method in interface com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/EciesAeadHkdfDemHelper.html" title="interface in com.google.crypto.tink.subtle">EciesAeadHkdfDemHelper</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/AesCmacParams.Builder.html#getTagSize--">getTagSize()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/AesCmacParams.Builder.html" title="class in com.google.crypto.tink.proto">AesCmacParams.Builder</a></dt>
 <dd>
 <div class="block"><code>uint32 tag_size = 1;</code></div>
@@ -13638,6 +13614,8 @@
 <div class="block">Best-effort checks that this is Android.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/config/internal/TinkFipsUtil.AlgorithmFipsCompatibility.html#isCompatible--">isCompatible()</a></span> - Method in enum com.google.crypto.tink.config.internal.<a href="com/google/crypto/tink/config/internal/TinkFipsUtil.AlgorithmFipsCompatibility.html" title="enum in com.google.crypto.tink.config.internal">TinkFipsUtil.AlgorithmFipsCompatibility</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/ConscryptUtil.html#isConscryptProvider-java.security.Provider-">isConscryptProvider(Provider)</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/ConscryptUtil.html" title="class in com.google.crypto.tink.internal">ConscryptUtil</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/KeyManagerRegistry.html#isEmpty--">isEmpty()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/KeyManagerRegistry.html" title="class in com.google.crypto.tink.internal">KeyManagerRegistry</a></dt>
 <dd>&nbsp;</dd>
@@ -18858,6 +18836,12 @@
 <dt><a href="com/google/crypto/tink/internal/ProtoParametersSerialization.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">ProtoParametersSerialization</span></a> - Class in <a href="com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></dt>
 <dd>
 <div class="block">Represents a <code>Parameters</code> object serialized with binary protobuf Serialization.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/ConscryptUtil.html#providerOrNull--">providerOrNull()</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/ConscryptUtil.html" title="class in com.google.crypto.tink.internal">ConscryptUtil</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/ConscryptUtil.html#providerWithReflectionOrNull--">providerWithReflectionOrNull()</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/ConscryptUtil.html" title="class in com.google.crypto.tink.internal">ConscryptUtil</a></dt>
+<dd>
+<div class="block">Tries to get the Conscrypt provider using reflection.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.Algorithm.html#PS256">PS256</a></span> - Static variable in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtRsaSsaPssParameters.Algorithm.html" title="class in com.google.crypto.tink.jwt">JwtRsaSsaPssParameters.Algorithm</a></dt>
 <dd>
