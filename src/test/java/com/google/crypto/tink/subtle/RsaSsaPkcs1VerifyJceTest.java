@@ -49,8 +49,6 @@ import org.junit.runner.RunWith;
 @RunWith(Theories.class)
 public class RsaSsaPkcs1VerifyJceTest {
 
-  private RsaSsaPkcs1PublicKey testPublicKey;
-
   @DataPoints("allTests")
   public static final SignatureTestVector[] ALL_TEST_VECTORS =
       RsaSsaPkcs1TestUtil.createRsaSsaPkcs1TestVectors();
@@ -74,9 +72,6 @@ public class RsaSsaPkcs1VerifyJceTest {
       Conscrypt.checkAvailability();
       Security.addProvider(Conscrypt.newProvider());
     }
-
-    SignatureTestVector testVector = ALL_TEST_VECTORS[0];
-    testPublicKey = (RsaSsaPkcs1PublicKey) testVector.getPrivateKey().getPublicKey();
   }
 
   @Theory
@@ -118,6 +113,8 @@ public class RsaSsaPkcs1VerifyJceTest {
 
   @Test
   public void sha1IsNotSupported() throws Exception {
+    RsaSsaPkcs1PublicKey testPublicKey =
+        (RsaSsaPkcs1PublicKey) ALL_TEST_VECTORS[0].getPrivateKey().getPublicKey();
     KeyFactory keyFactory = EngineFactory.KEY_FACTORY.getInstance("RSA");
     RSAPublicKey publicKey =
         (RSAPublicKey)
@@ -130,6 +127,8 @@ public class RsaSsaPkcs1VerifyJceTest {
 
   @Test
   public void constructorWithSmallExponent_throws() throws Exception {
+    RsaSsaPkcs1PublicKey testPublicKey =
+        (RsaSsaPkcs1PublicKey) ALL_TEST_VECTORS[0].getPrivateKey().getPublicKey();
     KeyFactory keyFactory = EngineFactory.KEY_FACTORY.getInstance("RSA");
     RSAPublicKey publicKey =
         (RSAPublicKey)
