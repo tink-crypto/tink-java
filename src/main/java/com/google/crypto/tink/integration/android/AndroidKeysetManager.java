@@ -26,6 +26,7 @@ import androidx.annotation.Nullable;
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.BinaryKeysetReader;
 import com.google.crypto.tink.CleartextKeysetHandle;
+import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.KeysetManager;
@@ -540,9 +541,10 @@ public final class AndroidKeysetManager {
       throws GeneralSecurityException {
     try {
       if (masterAead != null) {
-        handle.write(writer, masterAead);
+        LegacyKeysetSerialization.serializeEncryptedKeyset(
+            handle, writer, masterAead, /* associatedData= */ new byte[0]);
       } else {
-        CleartextKeysetHandle.write(handle, writer);
+        LegacyKeysetSerialization.serializeKeyset(handle, writer, InsecureSecretKeyAccess.get());
       }
     } catch (IOException e) {
       throw new GeneralSecurityException(e);
