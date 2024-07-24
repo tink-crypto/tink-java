@@ -21,6 +21,7 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.signature.EcdsaParameters;
 import com.google.crypto.tink.signature.EcdsaPrivateKey;
 import com.google.crypto.tink.subtle.EllipticCurves.CurveType;
@@ -32,7 +33,6 @@ import java.security.Provider;
 import java.security.Signature;
 import java.security.interfaces.ECPrivateKey;
 import java.security.spec.EllipticCurve;
-import java.util.List;
 
 /**
  * ECDSA signing with JCE.
@@ -60,6 +60,9 @@ public final class EcdsaSignJce implements PublicKeySign {
   @SuppressWarnings("Immutable")
   private final byte[] messageSuffix;
 
+  @SuppressWarnings("Immutable")
+  private final Provider provider;
+
   private EcdsaSignJce(
       final ECPrivateKey priv,
       HashType hash,
@@ -77,6 +80,7 @@ public final class EcdsaSignJce implements PublicKeySign {
     this.encoding = encoding;
     this.outputPrefix = outputPrefix;
     this.messageSuffix = messageSuffix;
+    this.provider = ConscryptUtil.providerOrNull();
   }
 
   public EcdsaSignJce(final ECPrivateKey priv, HashType hash, EcdsaEncoding encoding)
@@ -119,12 +123,16 @@ public final class EcdsaSignJce implements PublicKeySign {
     return signer;
   }
 
+  private Signature getInstance(String signatureAlgorithm) throws GeneralSecurityException {
+    if (provider != null) {
+      return Signature.getInstance(signatureAlgorithm, provider);
+    }
+    return EngineFactory.SIGNATURE.getInstance(signatureAlgorithm);
+  }
+
   @Override
   public byte[] sign(final byte[] data) throws GeneralSecurityException {
-    // Prefer Conscrypt over other providers if available.
-    List<Provider> preferredProviders =
-        EngineFactory.toProviderList("GmsCore_OpenSSL", "AndroidOpenSSL", "Conscrypt");
-    Signature signer = EngineFactory.SIGNATURE.getInstance(signatureAlgorithm, preferredProviders);
+    Signature signer = getInstance(signatureAlgorithm);
     signer.initSign(privateKey);
     signer.update(data);
     if (messageSuffix.length > 0) {

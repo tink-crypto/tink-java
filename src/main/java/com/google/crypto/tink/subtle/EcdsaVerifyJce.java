@@ -21,6 +21,7 @@ import static com.google.crypto.tink.internal.Util.isPrefix;
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.internal.EnumTypeProtoConverter;
 import com.google.crypto.tink.signature.EcdsaParameters;
 import com.google.crypto.tink.signature.EcdsaPublicKey;
@@ -34,7 +35,6 @@ import java.security.Signature;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.EllipticCurve;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * ECDSA verifying with JCE.
@@ -60,6 +60,9 @@ public final class EcdsaVerifyJce implements PublicKeyVerify {
 
   @SuppressWarnings("Immutable")
   private final byte[] messageSuffix;
+
+  @SuppressWarnings("Immutable")
+  private final Provider provider;
 
   // This converter is not used with a proto but rather with an ordinary enum type.
   static final EnumTypeProtoConverter<HashType, EcdsaParameters.HashType> HASH_TYPE_CONVERTER =
@@ -117,11 +120,19 @@ public final class EcdsaVerifyJce implements PublicKeyVerify {
     this.encoding = encoding;
     this.outputPrefix = outputPrefix;
     this.messageSuffix = messageSuffix;
+    this.provider = ConscryptUtil.providerOrNull();
   }
 
   public EcdsaVerifyJce(final ECPublicKey pubKey, HashType hash, EcdsaEncoding encoding)
       throws GeneralSecurityException {
     this(pubKey, hash, encoding, EMPTY, EMPTY);
+  }
+
+  private Signature getInstance(String signatureAlgorithm) throws GeneralSecurityException {
+    if (provider != null) {
+      return Signature.getInstance(signatureAlgorithm, provider);
+    }
+    return EngineFactory.SIGNATURE.getInstance(signatureAlgorithm);
   }
 
   private void noPrefixVerify(final byte[] signature, final byte[] data)
@@ -137,10 +148,7 @@ public final class EcdsaVerifyJce implements PublicKeyVerify {
     if (!EllipticCurves.isValidDerEncoding(derSignature)) {
       throw new GeneralSecurityException("Invalid signature");
     }
-    List<Provider> preferredProviders =
-        EngineFactory.toProviderList("GmsCore_OpenSSL", "AndroidOpenSSL", "Conscrypt");
-    Signature verifier =
-        EngineFactory.SIGNATURE.getInstance(signatureAlgorithm, preferredProviders);
+    Signature verifier = getInstance(signatureAlgorithm);
     verifier.initVerify(publicKey);
     verifier.update(data);
     if (messageSuffix.length > 0) {
@@ -149,7 +157,7 @@ public final class EcdsaVerifyJce implements PublicKeyVerify {
     boolean verified = false;
     try {
       verified = verifier.verify(derSignature);
-    } catch (java.lang.RuntimeException ex) {
+    } catch (RuntimeException ex) {
       verified = false;
     }
     if (!verified) {
