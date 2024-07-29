@@ -144,7 +144,7 @@ import java.security.GeneralSecurityException;
  *
  * <ul>
  *   <li>Ed25519
- *   <li>Esdsa
+ *   <li>Ecdsa
  *   <li>RsaSsaPkcs1
  *   <li>RsaSsaPss
  * </ul>
