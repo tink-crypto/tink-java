@@ -1166,3 +1166,13 @@ java_library(
         "//src/main/java/com/google/crypto/tink/subtle/prf:prf_impl",
     ],
 )
+
+android_library(
+    name = "key_gen_configuration-android",
+    srcs = ["KeyGenConfiguration.java"],
+)
+
+java_library(
+    name = "key_gen_configuration",
+    srcs = ["KeyGenConfiguration.java"],
+)
