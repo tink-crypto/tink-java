@@ -124,9 +124,8 @@ parse_args() {
       if [[ -z "${GIT_URL}" ]]; then
         usage
       fi
-      # TODO(b/329143784): Move to 3.2.0 when possible.
       MAVEN_ARGS+=(
-        "org.apache.maven.plugins:maven-gpg-plugin:3.1.0:sign-and-deploy-file"
+        "gpg:sign-and-deploy-file"
         "-DrepositoryId=ossrh"
         "-Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/"
         "-Dgpg.keyname=tink-dev@google.com"

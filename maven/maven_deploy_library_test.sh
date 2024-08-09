@@ -196,8 +196,7 @@ test_MavenDeployLibraryTest_ReleaseSucceeds() {
 
   cat << EOF > expected_commands.txt
 bazel build tink.jar tink-src.jar tink-javadoc.jar
-mvn org.apache.maven.plugins:maven-gpg-plugin:3.1.0:sign-and-deploy-file \
--DrepositoryId=ossrh \
+mvn gpg:sign-and-deploy-file -DrepositoryId=ossrh \
 -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ \
 -Dgpg.keyname=tink-dev@google.com \
 --settings=${TEST_CASE_TMPDIR}/${RELATIVE_MVN_DIR_PATH}/settings.xml \
