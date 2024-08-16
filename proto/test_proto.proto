@@ -22,14 +22,14 @@ option java_multiple_files = true;
 
 message TestProto {
   uint64 num = 1;
-  bytes str = 2 [ctype = STRING_PIECE];
+  bytes str = 2;  // Placeholder for ctype.
 }
 
 message NestedTestProto {
   TestProto a = 1;
   TestProto b = 2;
   uint64 num = 3;
-  bytes str = 4 [ctype = STRING_PIECE];
+  bytes str = 4;  // Placeholder for ctype.
 }
 
 message TestProtoWithoutCtype {

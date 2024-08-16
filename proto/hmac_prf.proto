@@ -32,7 +32,7 @@ message HmacPrfParams {
 message HmacPrfKey {
   uint32 version = 1;
   HmacPrfParams params = 2;
-  bytes key_value = 3 [ctype = STRING_PIECE];
+  bytes key_value = 3;  // Placeholder for ctype.
 }
 
 message HmacPrfKeyFormat {

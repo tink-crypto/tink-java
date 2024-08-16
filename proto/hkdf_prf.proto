@@ -38,7 +38,7 @@ message HkdfPrfParams {
 message HkdfPrfKey {
   uint32 version = 1;
   HkdfPrfParams params = 2;
-  bytes key_value = 3 [ctype = STRING_PIECE];
+  bytes key_value = 3;  // Placeholder for ctype.
 }
 
 message HkdfPrfKeyFormat {
