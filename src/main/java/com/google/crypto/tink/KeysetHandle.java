@@ -907,23 +907,9 @@ public final class KeysetHandle {
   }
 
   /** Encrypts the keyset with the {@link Aead} master key. */
-  @SuppressWarnings("UnusedException")
   private static EncryptedKeyset encrypt(Keyset keyset, Aead masterKey, byte[] associatedData)
       throws GeneralSecurityException {
     byte[] encryptedKeyset = masterKey.encrypt(keyset.toByteArray(), associatedData);
-    // Check if we can decrypt, to detect errors
-    try {
-      final Keyset keyset2 =
-          Keyset.parseFrom(
-              masterKey.decrypt(encryptedKeyset, associatedData),
-              ExtensionRegistryLite.getEmptyRegistry());
-      if (!keyset2.equals(keyset)) {
-        throw new GeneralSecurityException("cannot encrypt keyset");
-      }
-    } catch (InvalidProtocolBufferException e) {
-      // Do not propagate InvalidProtocolBufferException to guarantee no key material is leaked
-      throw new GeneralSecurityException("invalid keyset, corrupted key material");
-    }
     return EncryptedKeyset.newBuilder()
         .setEncryptedKeyset(ByteString.copyFrom(encryptedKeyset))
         .setKeysetInfo(Util.getKeysetInfo(keyset))
