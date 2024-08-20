@@ -38,29 +38,38 @@ import java.security.GeneralSecurityException;
 /* Placeholder for internally public; DO NOT CHANGE. */ class MacConfigurationV0 {
   private MacConfigurationV0() {}
 
+  private static final InternalConfiguration INTERNAL_CONFIGURATION = create();
+
+  private static InternalConfiguration create() {
+    try {
+      PrimitiveRegistry.Builder builder = PrimitiveRegistry.builder();
+
+      // Register Mac wrappers and concrete primitives.
+      MacWrapper.registerToInternalPrimitiveRegistry(builder);
+      ChunkedMacWrapper.registerToInternalPrimitiveRegistry(builder);
+      builder.registerPrimitiveConstructor(
+          PrimitiveConstructor.create(
+              MacConfigurationV0::createAesCmac, AesCmacKey.class, Mac.class));
+      builder.registerPrimitiveConstructor(
+          PrimitiveConstructor.create(PrfMac::create, HmacKey.class, Mac.class));
+      builder.registerPrimitiveConstructor(
+          PrimitiveConstructor.create(
+              MacConfigurationV0::createChunkedAesCmac, AesCmacKey.class, ChunkedMac.class));
+      builder.registerPrimitiveConstructor(
+          PrimitiveConstructor.create(ChunkedHmacImpl::new, HmacKey.class, ChunkedMac.class));
+
+      return InternalConfiguration.createFromPrimitiveRegistry(builder.build());
+    } catch (GeneralSecurityException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
   public static Configuration get() throws GeneralSecurityException {
     if (TinkFipsUtil.useOnlyFips()) {
       throw new GeneralSecurityException(
           "Cannot use non-FIPS-compliant MacConfigurationV0 in FIPS mode");
     }
-
-    PrimitiveRegistry.Builder builder = PrimitiveRegistry.builder();
-
-    // Register Mac wrappers and concrete primitives.
-    MacWrapper.registerToInternalPrimitiveRegistry(builder);
-    ChunkedMacWrapper.registerToInternalPrimitiveRegistry(builder);
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            MacConfigurationV0::createAesCmac, AesCmacKey.class, Mac.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(PrfMac::create, HmacKey.class, Mac.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            MacConfigurationV0::createChunkedAesCmac, AesCmacKey.class, ChunkedMac.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(ChunkedHmacImpl::new, HmacKey.class, ChunkedMac.class));
-
-    return InternalConfiguration.createFromPrimitiveRegistry(builder.build());
+    return INTERNAL_CONFIGURATION;
   }
 
   // We only allow 32-byte AesCmac keys.
