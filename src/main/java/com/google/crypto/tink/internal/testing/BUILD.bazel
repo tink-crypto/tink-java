@@ -92,3 +92,15 @@ java_library(
     name = "big_integer_test_util",
     srcs = ["BigIntegerTestUtil.java"],
 )
+
+java_library(
+    name = "test_files",
+    srcs = ["TestFiles.java"],
+    deps = ["//src/main/java/com/google/crypto/tink/testing:test_util"],
+)
+
+android_library(
+    name = "test_files-android",
+    srcs = ["TestFiles.java"],
+    deps = ["//src/main/java/com/google/crypto/tink/testing:test_util-android"],
+)

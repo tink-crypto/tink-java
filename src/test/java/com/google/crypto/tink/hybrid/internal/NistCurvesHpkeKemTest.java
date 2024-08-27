@@ -19,23 +19,22 @@ package com.google.crypto.tink.hybrid.internal;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
-import com.google.common.io.Files;
 import com.google.common.truth.Expect;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.hybrid.HpkeParameters;
 import com.google.crypto.tink.hybrid.HpkePrivateKey;
 import com.google.crypto.tink.hybrid.HpkePublicKey;
+import com.google.crypto.tink.internal.testing.TestFiles;
 import com.google.crypto.tink.subtle.EllipticCurves;
 import com.google.crypto.tink.subtle.EllipticCurves.PointFormatType;
 import com.google.crypto.tink.testing.HpkeTestId;
 import com.google.crypto.tink.testing.HpkeTestSetup;
 import com.google.crypto.tink.testing.HpkeTestUtil;
 import com.google.crypto.tink.testing.HpkeTestVector;
-import com.google.crypto.tink.testing.TestUtil;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.interfaces.ECPrivateKey;
@@ -59,10 +58,8 @@ public final class NistCurvesHpkeKemTest {
   @BeforeClass
   public static void setUpTestVectors() throws IOException {
     String path = "testdata/testvectors/hpke_boringssl.json";
-    if (TestUtil.isAndroid()) {
-      path = "/sdcard/googletest/test_runfiles/google3/" + path; // Special prefix for Android.
-    }
-    testVectors = HpkeTestUtil.parseTestVectors(Files.newReader(new File(path), UTF_8));
+    testVectors =
+        HpkeTestUtil.parseTestVectors(new InputStreamReader(TestFiles.openInputFile(path), UTF_8));
   }
 
   private static final class HpkeKemParams {

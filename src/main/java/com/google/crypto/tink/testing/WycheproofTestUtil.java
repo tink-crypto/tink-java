@@ -16,14 +16,13 @@
 
 package com.google.crypto.tink.testing;
 
+import com.google.crypto.tink.internal.testing.TestFiles;
 import com.google.crypto.tink.subtle.EllipticCurves;
 import com.google.crypto.tink.subtle.Enums.HashType;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -91,15 +90,9 @@ public final class WycheproofTestUtil {
 
   /** Gets JsonObject from file. */
   public static JsonObject readJson(String path) throws Exception {
-    String filePath = path;
-    if (TestUtil.isAndroid()) {
-      // TODO(b/67385998): make this work outside google3.
-      filePath = "/sdcard/googletest/test_runfiles/google3/" + path;
-    }
     JsonObject result;
-    try (FileInputStream fileInputStream = new FileInputStream(new File(filePath))) {
-      result =
-          JsonParser.parseString(new String(readAll(fileInputStream), UTF_8)).getAsJsonObject();
+    try (InputStream inputStream = TestFiles.openInputFile(path)) {
+      result = JsonParser.parseString(new String(readAll(inputStream), UTF_8)).getAsJsonObject();
     }
     String algorithm = result.get("algorithm").getAsString();
     String generatorVersion = result.get("generatorVersion").getAsString();
