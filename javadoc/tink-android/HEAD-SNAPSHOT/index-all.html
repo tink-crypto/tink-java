@@ -2476,6 +2476,10 @@
 <div class="block">
  Placeholder for ctype.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.Builder.html#clearKeyValue--">clearKeyValue()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.Builder.html" title="class in com.google.crypto.tink.proto">XAesGcmKey.Builder</a></dt>
+<dd>
+<div class="block"><code>bytes key_value = 3;</code></div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.Builder.html#clearKeyValue--">clearKeyValue()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.Builder.html" title="class in com.google.crypto.tink.proto">XChaCha20Poly1305Key.Builder</a></dt>
 <dd>
 <div class="block">
@@ -2696,6 +2700,14 @@
 <div class="block">
  Required.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.Builder.html#clearParams--">clearParams()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.Builder.html" title="class in com.google.crypto.tink.proto">XAesGcmKey.Builder</a></dt>
+<dd>
+<div class="block"><code>.google.crypto.tink.XAesGcmParams params = 2;</code></div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.Builder.html#clearParams--">clearParams()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat.Builder</a></dt>
+<dd>
+<div class="block"><code>.google.crypto.tink.XAesGcmParams params = 3;</code></div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/PrfBasedDeriverKey.Builder.html#clearPrfKey--">clearPrfKey()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/PrfBasedDeriverKey.Builder.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKey.Builder</a></dt>
 <dd>
 <div class="block"><code>.google.crypto.tink.KeyData prf_key = 2;</code></div>
@@ -2821,6 +2833,11 @@
 <div class="block">
  Salt length (see https://tools.ietf.org/html/rfc8017#section-9.1.1)
  Required.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmParams.Builder.html#clearSaltSize--">clearSaltSize()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmParams.Builder.html" title="class in com.google.crypto.tink.proto">XAesGcmParams.Builder</a></dt>
+<dd>
+<div class="block">
+ Must be at least 8 bytes and at most 12 bytes.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/RsaSsaPssParams.Builder.html#clearSigHash--">clearSigHash()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/RsaSsaPssParams.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssParams.Builder</a></dt>
 <dd>
@@ -3111,6 +3128,14 @@
 <div class="block">
  Required.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.Builder.html#clearVersion--">clearVersion()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.Builder.html" title="class in com.google.crypto.tink.proto">XAesGcmKey.Builder</a></dt>
+<dd>
+<div class="block"><code>uint32 version = 1;</code></div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.Builder.html#clearVersion--">clearVersion()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat.Builder</a></dt>
+<dd>
+<div class="block"><code>uint32 version = 1;</code></div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.Builder.html#clearVersion--">clearVersion()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.Builder.html" title="class in com.google.crypto.tink.proto">XChaCha20Poly1305Key.Builder</a></dt>
 <dd>
 <div class="block"><code>uint32 version = 1;</code></div>
@@ -3357,6 +3382,8 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/LegacyFullAead.html#create-com.google.crypto.tink.Aead-com.google.crypto.tink.util.Bytes-">create(Aead, Bytes)</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/LegacyFullAead.html" title="class in com.google.crypto.tink.aead.internal">LegacyFullAead</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/XAesGcm.html#create-com.google.crypto.tink.aead.XAesGcmKey-">create(XAesGcmKey)</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/XAesGcm.html" title="class in com.google.crypto.tink.aead.internal">XAesGcm</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/XChaCha20Poly1305Jce.html#create-com.google.crypto.tink.aead.XChaCha20Poly1305Key-">create(XChaCha20Poly1305Key)</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/XChaCha20Poly1305Jce.html" title="class in com.google.crypto.tink.aead.internal">XChaCha20Poly1305Jce</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/KmsEnvelopeAead.html#create-com.google.crypto.tink.aead.AeadParameters-com.google.crypto.tink.Aead-">create(AeadParameters, Aead)</a></span> - Static method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/KmsEnvelopeAead.html" title="class in com.google.crypto.tink.aead">KmsEnvelopeAead</a></dt>
@@ -3376,6 +3403,10 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadKey.html#create-com.google.crypto.tink.aead.LegacyKmsEnvelopeAeadParameters-">create(LegacyKmsEnvelopeAeadParameters)</a></span> - Static method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadKey.html" title="class in com.google.crypto.tink.aead">LegacyKmsEnvelopeAeadKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/subtle/AesGcmSiv.html#create-com.google.crypto.tink.aead.AesGcmSivKey-">create(AesGcmSivKey)</a></span> - Static method in class com.google.crypto.tink.aead.subtle.<a href="com/google/crypto/tink/aead/subtle/AesGcmSiv.html" title="class in com.google.crypto.tink.aead.subtle">AesGcmSiv</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XAesGcmKey.html#create-com.google.crypto.tink.aead.XAesGcmParameters-com.google.crypto.tink.util.SecretBytes-java.lang.Integer-">create(XAesGcmParameters, SecretBytes, Integer)</a></span> - Static method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XAesGcmKey.html" title="class in com.google.crypto.tink.aead">XAesGcmKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XAesGcmParameters.html#create-com.google.crypto.tink.aead.XAesGcmParameters.Variant-int-">create(XAesGcmParameters.Variant, int)</a></span> - Static method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XAesGcmParameters.html" title="class in com.google.crypto.tink.aead">XAesGcmParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XChaCha20Poly1305Key.html#create-com.google.crypto.tink.util.SecretBytes-">create(SecretBytes)</a></span> - Static method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XChaCha20Poly1305Key.html" title="class in com.google.crypto.tink.aead">XChaCha20Poly1305Key</a></dt>
 <dd>&nbsp;</dd>
@@ -3768,6 +3799,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/ChaCha20Poly1305Parameters.Variant.html#CRUNCHY">CRUNCHY</a></span> - Static variable in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/ChaCha20Poly1305Parameters.Variant.html" title="class in com.google.crypto.tink.aead">ChaCha20Poly1305Parameters.Variant</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XAesGcmParameters.Variant.html#CRUNCHY">CRUNCHY</a></span> - Static variable in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XAesGcmParameters.Variant.html" title="class in com.google.crypto.tink.aead">XAesGcmParameters.Variant</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.Variant.html#CRUNCHY">CRUNCHY</a></span> - Static variable in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.Variant.html" title="class in com.google.crypto.tink.aead">XChaCha20Poly1305Parameters.Variant</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivParameters.Variant.html#CRUNCHY">CRUNCHY</a></span> - Static variable in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivParameters.Variant.html" title="class in com.google.crypto.tink.daead">AesSivParameters.Variant</a></dt>
@@ -3911,6 +3944,8 @@
 <div class="block">Decrypts <code>ciphertextWithPrefix</code> with <code>nonce</code> and <code>associatedData</code>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/LegacyFullAead.html#decrypt-byte:A-byte:A-">decrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/LegacyFullAead.html" title="class in com.google.crypto.tink.aead.internal">LegacyFullAead</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/XAesGcm.html#decrypt-byte:A-byte:A-">decrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/XAesGcm.html" title="class in com.google.crypto.tink.aead.internal">XAesGcm</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/XChaCha20Poly1305Jce.html#decrypt-byte:A-byte:A-">decrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/XChaCha20Poly1305Jce.html" title="class in com.google.crypto.tink.aead.internal">XChaCha20Poly1305Jce</a></dt>
 <dd>&nbsp;</dd>
@@ -4345,6 +4380,12 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/RsaSsaPssPrivateKey.html#dynamicMethod-com.google.protobuf.GeneratedMessageLite.MethodToInvoke-java.lang.Object-java.lang.Object-">dynamicMethod(GeneratedMessageLite.MethodToInvoke, Object, Object)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/RsaSsaPssPrivateKey.html" title="class in com.google.crypto.tink.proto">RsaSsaPssPrivateKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/RsaSsaPssPublicKey.html#dynamicMethod-com.google.protobuf.GeneratedMessageLite.MethodToInvoke-java.lang.Object-java.lang.Object-">dynamicMethod(GeneratedMessageLite.MethodToInvoke, Object, Object)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/RsaSsaPssPublicKey.html" title="class in com.google.crypto.tink.proto">RsaSsaPssPublicKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.html#dynamicMethod-com.google.protobuf.GeneratedMessageLite.MethodToInvoke-java.lang.Object-java.lang.Object-">dynamicMethod(GeneratedMessageLite.MethodToInvoke, Object, Object)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.html" title="class in com.google.crypto.tink.proto">XAesGcmKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html#dynamicMethod-com.google.protobuf.GeneratedMessageLite.MethodToInvoke-java.lang.Object-java.lang.Object-">dynamicMethod(GeneratedMessageLite.MethodToInvoke, Object, Object)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmParams.html#dynamicMethod-com.google.protobuf.GeneratedMessageLite.MethodToInvoke-java.lang.Object-java.lang.Object-">dynamicMethod(GeneratedMessageLite.MethodToInvoke, Object, Object)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmParams.html" title="class in com.google.crypto.tink.proto">XAesGcmParams</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.html#dynamicMethod-com.google.protobuf.GeneratedMessageLite.MethodToInvoke-java.lang.Object-java.lang.Object-">dynamicMethod(GeneratedMessageLite.MethodToInvoke, Object, Object)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.html" title="class in com.google.crypto.tink.proto">XChaCha20Poly1305Key</a></dt>
 <dd>&nbsp;</dd>
@@ -5076,6 +5117,8 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/LegacyFullAead.html#encrypt-byte:A-byte:A-">encrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/LegacyFullAead.html" title="class in com.google.crypto.tink.aead.internal">LegacyFullAead</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/XAesGcm.html#encrypt-byte:A-byte:A-">encrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/XAesGcm.html" title="class in com.google.crypto.tink.aead.internal">XAesGcm</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/XChaCha20Poly1305Jce.html#encrypt-byte:A-byte:A-">encrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/XChaCha20Poly1305Jce.html" title="class in com.google.crypto.tink.aead.internal">XChaCha20Poly1305Jce</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/KmsEnvelopeAead.html#encrypt-byte:A-byte:A-">encrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/KmsEnvelopeAead.html" title="class in com.google.crypto.tink.aead">KmsEnvelopeAead</a></dt>
@@ -5239,6 +5282,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadParameters.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadParameters.html" title="class in com.google.crypto.tink.aead">LegacyKmsEnvelopeAeadParameters</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XAesGcmParameters.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XAesGcmParameters.html" title="class in com.google.crypto.tink.aead">XAesGcmParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.html" title="class in com.google.crypto.tink.aead">XChaCha20Poly1305Parameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivParameters.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivParameters.html" title="class in com.google.crypto.tink.daead">AesSivParameters</a></dt>
@@ -5302,6 +5347,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/LegacyKmsAeadKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey(Key)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/LegacyKmsAeadKey.html" title="class in com.google.crypto.tink.aead">LegacyKmsAeadKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey(Key)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadKey.html" title="class in com.google.crypto.tink.aead">LegacyKmsEnvelopeAeadKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XAesGcmKey.html#equalsKey-com.google.crypto.tink.Key-">equalsKey(Key)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XAesGcmKey.html" title="class in com.google.crypto.tink.aead">XAesGcmKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XChaCha20Poly1305Key.html#equalsKey-com.google.crypto.tink.Key-">equalsKey(Key)</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XChaCha20Poly1305Key.html" title="class in com.google.crypto.tink.aead">XChaCha20Poly1305Key</a></dt>
 <dd>&nbsp;</dd>
@@ -6567,6 +6614,12 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/RsaSsaPssPublicKey.html#getDefaultInstance--">getDefaultInstance()</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/RsaSsaPssPublicKey.html" title="class in com.google.crypto.tink.proto">RsaSsaPssPublicKey</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.html#getDefaultInstance--">getDefaultInstance()</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.html" title="class in com.google.crypto.tink.proto">XAesGcmKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html#getDefaultInstance--">getDefaultInstance()</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmParams.html#getDefaultInstance--">getDefaultInstance()</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmParams.html" title="class in com.google.crypto.tink.proto">XAesGcmParams</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.html#getDefaultInstance--">getDefaultInstance()</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.html" title="class in com.google.crypto.tink.proto">XChaCha20Poly1305Key</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XChaCha20Poly1305KeyFormat.html#getDefaultInstance--">getDefaultInstance()</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XChaCha20Poly1305KeyFormat.html" title="class in com.google.crypto.tink.proto">XChaCha20Poly1305KeyFormat</a></dt>
@@ -7390,6 +7443,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadKey.html#getIdRequirementOrNull--">getIdRequirementOrNull()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadKey.html" title="class in com.google.crypto.tink.aead">LegacyKmsEnvelopeAeadKey</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XAesGcmKey.html#getIdRequirementOrNull--">getIdRequirementOrNull()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XAesGcmKey.html" title="class in com.google.crypto.tink.aead">XAesGcmKey</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XChaCha20Poly1305Key.html#getIdRequirementOrNull--">getIdRequirementOrNull()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XChaCha20Poly1305Key.html" title="class in com.google.crypto.tink.aead">XChaCha20Poly1305Key</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivKey.html#getIdRequirementOrNull--">getIdRequirementOrNull()</a></span> - Method in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivKey.html" title="class in com.google.crypto.tink.daead">AesSivKey</a></dt>
@@ -7716,6 +7771,8 @@
 <div class="block">Returns the underlying key bytes.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/ChaCha20Poly1305Key.html#getKeyBytes--">getKeyBytes()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/ChaCha20Poly1305Key.html" title="class in com.google.crypto.tink.aead">ChaCha20Poly1305Key</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XAesGcmKey.html#getKeyBytes--">getKeyBytes()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XAesGcmKey.html" title="class in com.google.crypto.tink.aead">XAesGcmKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XChaCha20Poly1305Key.html#getKeyBytes--">getKeyBytes()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XChaCha20Poly1305Key.html" title="class in com.google.crypto.tink.aead">XChaCha20Poly1305Key</a></dt>
 <dd>&nbsp;</dd>
@@ -8548,6 +8605,18 @@
 <div class="block">
  Placeholder for ctype.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.Builder.html#getKeyValue--">getKeyValue()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.Builder.html" title="class in com.google.crypto.tink.proto">XAesGcmKey.Builder</a></dt>
+<dd>
+<div class="block"><code>bytes key_value = 3;</code></div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.html#getKeyValue--">getKeyValue()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.html" title="class in com.google.crypto.tink.proto">XAesGcmKey</a></dt>
+<dd>
+<div class="block"><code>bytes key_value = 3;</code></div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyOrBuilder.html#getKeyValue--">getKeyValue()</a></span> - Method in interface com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyOrBuilder.html" title="interface in com.google.crypto.tink.proto">XAesGcmKeyOrBuilder</a></dt>
+<dd>
+<div class="block"><code>bytes key_value = 3;</code></div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.Builder.html#getKeyValue--">getKeyValue()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.Builder.html" title="class in com.google.crypto.tink.proto">XChaCha20Poly1305Key.Builder</a></dt>
 <dd>
 <div class="block">
@@ -8914,6 +8983,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadKey.html#getOutputPrefix--">getOutputPrefix()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadKey.html" title="class in com.google.crypto.tink.aead">LegacyKmsEnvelopeAeadKey</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XAesGcmKey.html#getOutputPrefix--">getOutputPrefix()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XAesGcmKey.html" title="class in com.google.crypto.tink.aead">XAesGcmKey</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XChaCha20Poly1305Key.html#getOutputPrefix--">getOutputPrefix()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XChaCha20Poly1305Key.html" title="class in com.google.crypto.tink.aead">XChaCha20Poly1305Key</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/CryptoFormat.html#getOutputPrefix-com.google.crypto.tink.proto.Keyset.Key-">getOutputPrefix(Keyset.Key)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/CryptoFormat.html" title="class in com.google.crypto.tink">CryptoFormat</a></dt>
@@ -9149,6 +9220,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/LegacyKmsAeadKey.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/LegacyKmsAeadKey.html" title="class in com.google.crypto.tink.aead">LegacyKmsAeadKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadKey.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadKey.html" title="class in com.google.crypto.tink.aead">LegacyKmsEnvelopeAeadKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XAesGcmKey.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XAesGcmKey.html" title="class in com.google.crypto.tink.aead">XAesGcmKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XChaCha20Poly1305Key.html#getParameters--">getParameters()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XChaCha20Poly1305Key.html" title="class in com.google.crypto.tink.aead">XChaCha20Poly1305Key</a></dt>
 <dd>&nbsp;</dd>
@@ -9658,6 +9731,30 @@
 <dd>
 <div class="block">
  Required.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.Builder.html#getParams--">getParams()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.Builder.html" title="class in com.google.crypto.tink.proto">XAesGcmKey.Builder</a></dt>
+<dd>
+<div class="block"><code>.google.crypto.tink.XAesGcmParams params = 2;</code></div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.html#getParams--">getParams()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.html" title="class in com.google.crypto.tink.proto">XAesGcmKey</a></dt>
+<dd>
+<div class="block"><code>.google.crypto.tink.XAesGcmParams params = 2;</code></div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.Builder.html#getParams--">getParams()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat.Builder</a></dt>
+<dd>
+<div class="block"><code>.google.crypto.tink.XAesGcmParams params = 3;</code></div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html#getParams--">getParams()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat</a></dt>
+<dd>
+<div class="block"><code>.google.crypto.tink.XAesGcmParams params = 3;</code></div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormatOrBuilder.html#getParams--">getParams()</a></span> - Method in interface com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormatOrBuilder.html" title="interface in com.google.crypto.tink.proto">XAesGcmKeyFormatOrBuilder</a></dt>
+<dd>
+<div class="block"><code>.google.crypto.tink.XAesGcmParams params = 3;</code></div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyOrBuilder.html#getParams--">getParams()</a></span> - Method in interface com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyOrBuilder.html" title="interface in com.google.crypto.tink.proto">XAesGcmKeyOrBuilder</a></dt>
+<dd>
+<div class="block"><code>.google.crypto.tink.XAesGcmParams params = 2;</code></div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/JsonParser.html#getParsedNumberAsLongOrThrow-java.lang.Number-">getParsedNumberAsLongOrThrow(Number)</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/JsonParser.html" title="class in com.google.crypto.tink.internal">JsonParser</a></dt>
 <dd>
@@ -10425,6 +10522,23 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssParameters.html#getSaltLengthBytes--">getSaltLengthBytes()</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssParameters.html" title="class in com.google.crypto.tink.signature">RsaSsaPssParameters</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmParams.Builder.html#getSaltSize--">getSaltSize()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmParams.Builder.html" title="class in com.google.crypto.tink.proto">XAesGcmParams.Builder</a></dt>
+<dd>
+<div class="block">
+ Must be at least 8 bytes and at most 12 bytes.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmParams.html#getSaltSize--">getSaltSize()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmParams.html" title="class in com.google.crypto.tink.proto">XAesGcmParams</a></dt>
+<dd>
+<div class="block">
+ Must be at least 8 bytes and at most 12 bytes.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmParamsOrBuilder.html#getSaltSize--">getSaltSize()</a></span> - Method in interface com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmParamsOrBuilder.html" title="interface in com.google.crypto.tink.proto">XAesGcmParamsOrBuilder</a></dt>
+<dd>
+<div class="block">
+ Must be at least 8 bytes and at most 12 bytes.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XAesGcmParameters.html#getSaltSizeBytes--">getSaltSizeBytes()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XAesGcmParameters.html" title="class in com.google.crypto.tink.aead">XAesGcmParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/AesGcmJceUtil.html#getSecretKey-byte:A-">getSecretKey(byte[])</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/AesGcmJceUtil.html" title="class in com.google.crypto.tink.aead.internal">AesGcmJceUtil</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/LegacyProtoKey.html#getSerialization-com.google.crypto.tink.SecretKeyAccess-">getSerialization(SecretKeyAccess)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/LegacyProtoKey.html" title="class in com.google.crypto.tink.internal">LegacyProtoKey</a></dt>
@@ -10945,6 +11059,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadParameters.html#getVariant--">getVariant()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadParameters.html" title="class in com.google.crypto.tink.aead">LegacyKmsEnvelopeAeadParameters</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XAesGcmParameters.html#getVariant--">getVariant()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XAesGcmParameters.html" title="class in com.google.crypto.tink.aead">XAesGcmParameters</a></dt>
+<dd>
+<div class="block">Returns a variant object.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.html#getVariant--">getVariant()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.html" title="class in com.google.crypto.tink.aead">XChaCha20Poly1305Parameters</a></dt>
 <dd>
 <div class="block">Returns a variant object.</div>
@@ -11627,6 +11745,30 @@
 <div class="block">
  Required.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.Builder.html#getVersion--">getVersion()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.Builder.html" title="class in com.google.crypto.tink.proto">XAesGcmKey.Builder</a></dt>
+<dd>
+<div class="block"><code>uint32 version = 1;</code></div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.html#getVersion--">getVersion()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.html" title="class in com.google.crypto.tink.proto">XAesGcmKey</a></dt>
+<dd>
+<div class="block"><code>uint32 version = 1;</code></div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.Builder.html#getVersion--">getVersion()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat.Builder</a></dt>
+<dd>
+<div class="block"><code>uint32 version = 1;</code></div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html#getVersion--">getVersion()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat</a></dt>
+<dd>
+<div class="block"><code>uint32 version = 1;</code></div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormatOrBuilder.html#getVersion--">getVersion()</a></span> - Method in interface com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormatOrBuilder.html" title="interface in com.google.crypto.tink.proto">XAesGcmKeyFormatOrBuilder</a></dt>
+<dd>
+<div class="block"><code>uint32 version = 1;</code></div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyOrBuilder.html#getVersion--">getVersion()</a></span> - Method in interface com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyOrBuilder.html" title="interface in com.google.crypto.tink.proto">XAesGcmKeyOrBuilder</a></dt>
+<dd>
+<div class="block"><code>uint32 version = 1;</code></div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.Builder.html#getVersion--">getVersion()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.Builder.html" title="class in com.google.crypto.tink.proto">XChaCha20Poly1305Key.Builder</a></dt>
 <dd>
 <div class="block"><code>uint32 version = 1;</code></div>
@@ -11943,6 +12085,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadParameters.html#hashCode--">hashCode()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadParameters.html" title="class in com.google.crypto.tink.aead">LegacyKmsEnvelopeAeadParameters</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XAesGcmParameters.html#hashCode--">hashCode()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XAesGcmParameters.html" title="class in com.google.crypto.tink.aead">XAesGcmParameters</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.html#hashCode--">hashCode()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.html" title="class in com.google.crypto.tink.aead">XChaCha20Poly1305Parameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivParameters.html#hashCode--">hashCode()</a></span> - Method in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivParameters.html" title="class in com.google.crypto.tink.daead">AesSivParameters</a></dt>
@@ -12049,6 +12193,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/LegacyKmsAeadParameters.html#hasIdRequirement--">hasIdRequirement()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/LegacyKmsAeadParameters.html" title="class in com.google.crypto.tink.aead">LegacyKmsAeadParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadParameters.html#hasIdRequirement--">hasIdRequirement()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadParameters.html" title="class in com.google.crypto.tink.aead">LegacyKmsEnvelopeAeadParameters</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XAesGcmParameters.html#hasIdRequirement--">hasIdRequirement()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XAesGcmParameters.html" title="class in com.google.crypto.tink.aead">XAesGcmParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.html#hasIdRequirement--">hasIdRequirement()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.html" title="class in com.google.crypto.tink.aead">XChaCha20Poly1305Parameters</a></dt>
 <dd>&nbsp;</dd>
@@ -12559,6 +12705,30 @@
 <dd>
 <div class="block">
  Required.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.Builder.html#hasParams--">hasParams()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.Builder.html" title="class in com.google.crypto.tink.proto">XAesGcmKey.Builder</a></dt>
+<dd>
+<div class="block"><code>.google.crypto.tink.XAesGcmParams params = 2;</code></div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.html#hasParams--">hasParams()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.html" title="class in com.google.crypto.tink.proto">XAesGcmKey</a></dt>
+<dd>
+<div class="block"><code>.google.crypto.tink.XAesGcmParams params = 2;</code></div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.Builder.html#hasParams--">hasParams()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat.Builder</a></dt>
+<dd>
+<div class="block"><code>.google.crypto.tink.XAesGcmParams params = 3;</code></div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html#hasParams--">hasParams()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat</a></dt>
+<dd>
+<div class="block"><code>.google.crypto.tink.XAesGcmParams params = 3;</code></div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormatOrBuilder.html#hasParams--">hasParams()</a></span> - Method in interface com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormatOrBuilder.html" title="interface in com.google.crypto.tink.proto">XAesGcmKeyFormatOrBuilder</a></dt>
+<dd>
+<div class="block"><code>.google.crypto.tink.XAesGcmParams params = 3;</code></div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyOrBuilder.html#hasParams--">hasParams()</a></span> - Method in interface com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyOrBuilder.html" title="interface in com.google.crypto.tink.proto">XAesGcmKeyOrBuilder</a></dt>
+<dd>
+<div class="block"><code>.google.crypto.tink.XAesGcmParams params = 2;</code></div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/MutableSerializationRegistry.html#hasParserForKey-SerializationT-">hasParserForKey(SerializationT)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/MutableSerializationRegistry.html" title="class in com.google.crypto.tink.internal">MutableSerializationRegistry</a></dt>
 <dd>
@@ -14315,6 +14485,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/JwtHmacKey.html#KEY_VALUE_FIELD_NUMBER">KEY_VALUE_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/JwtHmacKey.html" title="class in com.google.crypto.tink.proto">JwtHmacKey</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.html#KEY_VALUE_FIELD_NUMBER">KEY_VALUE_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.html" title="class in com.google.crypto.tink.proto">XAesGcmKey</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.html#KEY_VALUE_FIELD_NUMBER">KEY_VALUE_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.html" title="class in com.google.crypto.tink.proto">XChaCha20Poly1305Key</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/tinkkey/KeyAccess.html" title="class in com.google.crypto.tink.tinkkey"><span class="typeNameLink">KeyAccess</span></a> - Class in <a href="com/google/crypto/tink/tinkkey/package-summary.html">com.google.crypto.tink.tinkkey</a></dt>
@@ -15121,6 +15293,14 @@
 <div class="block">
  Required.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.Builder.html#mergeParams-com.google.crypto.tink.proto.XAesGcmParams-">mergeParams(XAesGcmParams)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.Builder.html" title="class in com.google.crypto.tink.proto">XAesGcmKey.Builder</a></dt>
+<dd>
+<div class="block"><code>.google.crypto.tink.XAesGcmParams params = 2;</code></div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.Builder.html#mergeParams-com.google.crypto.tink.proto.XAesGcmParams-">mergeParams(XAesGcmParams)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat.Builder</a></dt>
+<dd>
+<div class="block"><code>.google.crypto.tink.XAesGcmParams params = 3;</code></div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/PrfBasedDeriverKey.Builder.html#mergePrfKey-com.google.crypto.tink.proto.KeyData-">mergePrfKey(KeyData)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/PrfBasedDeriverKey.Builder.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKey.Builder</a></dt>
 <dd>
 <div class="block"><code>.google.crypto.tink.KeyData prf_key = 2;</code></div>
@@ -15687,6 +15867,18 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/RsaSsaPssPublicKey.html#newBuilder-com.google.crypto.tink.proto.RsaSsaPssPublicKey-">newBuilder(RsaSsaPssPublicKey)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/RsaSsaPssPublicKey.html" title="class in com.google.crypto.tink.proto">RsaSsaPssPublicKey</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.html#newBuilder--">newBuilder()</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.html" title="class in com.google.crypto.tink.proto">XAesGcmKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.html#newBuilder-com.google.crypto.tink.proto.XAesGcmKey-">newBuilder(XAesGcmKey)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.html" title="class in com.google.crypto.tink.proto">XAesGcmKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html#newBuilder--">newBuilder()</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html#newBuilder-com.google.crypto.tink.proto.XAesGcmKeyFormat-">newBuilder(XAesGcmKeyFormat)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmParams.html#newBuilder--">newBuilder()</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmParams.html" title="class in com.google.crypto.tink.proto">XAesGcmParams</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmParams.html#newBuilder-com.google.crypto.tink.proto.XAesGcmParams-">newBuilder(XAesGcmParams)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmParams.html" title="class in com.google.crypto.tink.proto">XAesGcmParams</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.html#newBuilder--">newBuilder()</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.html" title="class in com.google.crypto.tink.proto">XChaCha20Poly1305Key</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.html#newBuilder-com.google.crypto.tink.proto.XChaCha20Poly1305Key-">newBuilder(XChaCha20Poly1305Key)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.html" title="class in com.google.crypto.tink.proto">XChaCha20Poly1305Key</a></dt>
@@ -15853,6 +16045,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/LegacyKmsAeadParameters.Variant.html#NO_PREFIX">NO_PREFIX</a></span> - Static variable in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/LegacyKmsAeadParameters.Variant.html" title="class in com.google.crypto.tink.aead">LegacyKmsAeadParameters.Variant</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadParameters.Variant.html#NO_PREFIX">NO_PREFIX</a></span> - Static variable in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadParameters.Variant.html" title="class in com.google.crypto.tink.aead">LegacyKmsEnvelopeAeadParameters.Variant</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XAesGcmParameters.Variant.html#NO_PREFIX">NO_PREFIX</a></span> - Static variable in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XAesGcmParameters.Variant.html" title="class in com.google.crypto.tink.aead">XAesGcmParameters.Variant</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.Variant.html#NO_PREFIX">NO_PREFIX</a></span> - Static variable in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.Variant.html" title="class in com.google.crypto.tink.aead">XChaCha20Poly1305Parameters.Variant</a></dt>
 <dd>&nbsp;</dd>
@@ -16034,6 +16228,10 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/RsaSsaPssKeyFormat.html#PARAMS_FIELD_NUMBER">PARAMS_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/RsaSsaPssKeyFormat.html" title="class in com.google.crypto.tink.proto">RsaSsaPssKeyFormat</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/RsaSsaPssPublicKey.html#PARAMS_FIELD_NUMBER">PARAMS_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/RsaSsaPssPublicKey.html" title="class in com.google.crypto.tink.proto">RsaSsaPssPublicKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.html#PARAMS_FIELD_NUMBER">PARAMS_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.html" title="class in com.google.crypto.tink.proto">XAesGcmKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html#PARAMS_FIELD_NUMBER">PARAMS_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/JsonParser.html#parse-java.lang.String-">parse(String)</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/JsonParser.html" title="class in com.google.crypto.tink.internal">JsonParser</a></dt>
 <dd>&nbsp;</dd>
@@ -16416,6 +16614,18 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/RsaSsaPssPublicKey.html#parseDelimitedFrom-java.io.InputStream-">parseDelimitedFrom(InputStream)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/RsaSsaPssPublicKey.html" title="class in com.google.crypto.tink.proto">RsaSsaPssPublicKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/RsaSsaPssPublicKey.html#parseDelimitedFrom-java.io.InputStream-com.google.protobuf.ExtensionRegistryLite-">parseDelimitedFrom(InputStream, ExtensionRegistryLite)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/RsaSsaPssPublicKey.html" title="class in com.google.crypto.tink.proto">RsaSsaPssPublicKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.html#parseDelimitedFrom-java.io.InputStream-">parseDelimitedFrom(InputStream)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.html" title="class in com.google.crypto.tink.proto">XAesGcmKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.html#parseDelimitedFrom-java.io.InputStream-com.google.protobuf.ExtensionRegistryLite-">parseDelimitedFrom(InputStream, ExtensionRegistryLite)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.html" title="class in com.google.crypto.tink.proto">XAesGcmKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html#parseDelimitedFrom-java.io.InputStream-">parseDelimitedFrom(InputStream)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html#parseDelimitedFrom-java.io.InputStream-com.google.protobuf.ExtensionRegistryLite-">parseDelimitedFrom(InputStream, ExtensionRegistryLite)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmParams.html#parseDelimitedFrom-java.io.InputStream-">parseDelimitedFrom(InputStream)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmParams.html" title="class in com.google.crypto.tink.proto">XAesGcmParams</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmParams.html#parseDelimitedFrom-java.io.InputStream-com.google.protobuf.ExtensionRegistryLite-">parseDelimitedFrom(InputStream, ExtensionRegistryLite)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmParams.html" title="class in com.google.crypto.tink.proto">XAesGcmParams</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.html#parseDelimitedFrom-java.io.InputStream-">parseDelimitedFrom(InputStream)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.html" title="class in com.google.crypto.tink.proto">XChaCha20Poly1305Key</a></dt>
 <dd>&nbsp;</dd>
@@ -18326,6 +18536,66 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/RsaSsaPssPublicKey.html#parseFrom-com.google.protobuf.CodedInputStream-com.google.protobuf.ExtensionRegistryLite-">parseFrom(CodedInputStream, ExtensionRegistryLite)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/RsaSsaPssPublicKey.html" title="class in com.google.crypto.tink.proto">RsaSsaPssPublicKey</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.html#parseFrom-java.nio.ByteBuffer-">parseFrom(ByteBuffer)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.html" title="class in com.google.crypto.tink.proto">XAesGcmKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.html#parseFrom-java.nio.ByteBuffer-com.google.protobuf.ExtensionRegistryLite-">parseFrom(ByteBuffer, ExtensionRegistryLite)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.html" title="class in com.google.crypto.tink.proto">XAesGcmKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.html#parseFrom-com.google.protobuf.ByteString-">parseFrom(ByteString)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.html" title="class in com.google.crypto.tink.proto">XAesGcmKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.html#parseFrom-com.google.protobuf.ByteString-com.google.protobuf.ExtensionRegistryLite-">parseFrom(ByteString, ExtensionRegistryLite)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.html" title="class in com.google.crypto.tink.proto">XAesGcmKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.html#parseFrom-byte:A-">parseFrom(byte[])</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.html" title="class in com.google.crypto.tink.proto">XAesGcmKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.html#parseFrom-byte:A-com.google.protobuf.ExtensionRegistryLite-">parseFrom(byte[], ExtensionRegistryLite)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.html" title="class in com.google.crypto.tink.proto">XAesGcmKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.html#parseFrom-java.io.InputStream-">parseFrom(InputStream)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.html" title="class in com.google.crypto.tink.proto">XAesGcmKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.html#parseFrom-java.io.InputStream-com.google.protobuf.ExtensionRegistryLite-">parseFrom(InputStream, ExtensionRegistryLite)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.html" title="class in com.google.crypto.tink.proto">XAesGcmKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.html#parseFrom-com.google.protobuf.CodedInputStream-">parseFrom(CodedInputStream)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.html" title="class in com.google.crypto.tink.proto">XAesGcmKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.html#parseFrom-com.google.protobuf.CodedInputStream-com.google.protobuf.ExtensionRegistryLite-">parseFrom(CodedInputStream, ExtensionRegistryLite)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.html" title="class in com.google.crypto.tink.proto">XAesGcmKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html#parseFrom-java.nio.ByteBuffer-">parseFrom(ByteBuffer)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html#parseFrom-java.nio.ByteBuffer-com.google.protobuf.ExtensionRegistryLite-">parseFrom(ByteBuffer, ExtensionRegistryLite)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html#parseFrom-com.google.protobuf.ByteString-">parseFrom(ByteString)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html#parseFrom-com.google.protobuf.ByteString-com.google.protobuf.ExtensionRegistryLite-">parseFrom(ByteString, ExtensionRegistryLite)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html#parseFrom-byte:A-">parseFrom(byte[])</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html#parseFrom-byte:A-com.google.protobuf.ExtensionRegistryLite-">parseFrom(byte[], ExtensionRegistryLite)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html#parseFrom-java.io.InputStream-">parseFrom(InputStream)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html#parseFrom-java.io.InputStream-com.google.protobuf.ExtensionRegistryLite-">parseFrom(InputStream, ExtensionRegistryLite)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html#parseFrom-com.google.protobuf.CodedInputStream-">parseFrom(CodedInputStream)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html#parseFrom-com.google.protobuf.CodedInputStream-com.google.protobuf.ExtensionRegistryLite-">parseFrom(CodedInputStream, ExtensionRegistryLite)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmParams.html#parseFrom-java.nio.ByteBuffer-">parseFrom(ByteBuffer)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmParams.html" title="class in com.google.crypto.tink.proto">XAesGcmParams</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmParams.html#parseFrom-java.nio.ByteBuffer-com.google.protobuf.ExtensionRegistryLite-">parseFrom(ByteBuffer, ExtensionRegistryLite)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmParams.html" title="class in com.google.crypto.tink.proto">XAesGcmParams</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmParams.html#parseFrom-com.google.protobuf.ByteString-">parseFrom(ByteString)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmParams.html" title="class in com.google.crypto.tink.proto">XAesGcmParams</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmParams.html#parseFrom-com.google.protobuf.ByteString-com.google.protobuf.ExtensionRegistryLite-">parseFrom(ByteString, ExtensionRegistryLite)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmParams.html" title="class in com.google.crypto.tink.proto">XAesGcmParams</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmParams.html#parseFrom-byte:A-">parseFrom(byte[])</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmParams.html" title="class in com.google.crypto.tink.proto">XAesGcmParams</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmParams.html#parseFrom-byte:A-com.google.protobuf.ExtensionRegistryLite-">parseFrom(byte[], ExtensionRegistryLite)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmParams.html" title="class in com.google.crypto.tink.proto">XAesGcmParams</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmParams.html#parseFrom-java.io.InputStream-">parseFrom(InputStream)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmParams.html" title="class in com.google.crypto.tink.proto">XAesGcmParams</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmParams.html#parseFrom-java.io.InputStream-com.google.protobuf.ExtensionRegistryLite-">parseFrom(InputStream, ExtensionRegistryLite)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmParams.html" title="class in com.google.crypto.tink.proto">XAesGcmParams</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmParams.html#parseFrom-com.google.protobuf.CodedInputStream-">parseFrom(CodedInputStream)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmParams.html" title="class in com.google.crypto.tink.proto">XAesGcmParams</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmParams.html#parseFrom-com.google.protobuf.CodedInputStream-com.google.protobuf.ExtensionRegistryLite-">parseFrom(CodedInputStream, ExtensionRegistryLite)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmParams.html" title="class in com.google.crypto.tink.proto">XAesGcmParams</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.html#parseFrom-java.nio.ByteBuffer-">parseFrom(ByteBuffer)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.html" title="class in com.google.crypto.tink.proto">XChaCha20Poly1305Key</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.html#parseFrom-java.nio.ByteBuffer-com.google.protobuf.ExtensionRegistryLite-">parseFrom(ByteBuffer, ExtensionRegistryLite)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.html" title="class in com.google.crypto.tink.proto">XChaCha20Poly1305Key</a></dt>
@@ -18606,6 +18876,12 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/RsaSsaPssPrivateKey.html#parser--">parser()</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/RsaSsaPssPrivateKey.html" title="class in com.google.crypto.tink.proto">RsaSsaPssPrivateKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/RsaSsaPssPublicKey.html#parser--">parser()</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/RsaSsaPssPublicKey.html" title="class in com.google.crypto.tink.proto">RsaSsaPssPublicKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.html#parser--">parser()</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.html" title="class in com.google.crypto.tink.proto">XAesGcmKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html#parser--">parser()</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmParams.html#parser--">parser()</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmParams.html" title="class in com.google.crypto.tink.proto">XAesGcmParams</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.html#parser--">parser()</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.html" title="class in com.google.crypto.tink.proto">XChaCha20Poly1305Key</a></dt>
 <dd>&nbsp;</dd>
@@ -19264,6 +19540,12 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/ChaCha20Poly1305ProtoSerialization.html#register-com.google.crypto.tink.internal.MutableSerializationRegistry-">register(MutableSerializationRegistry)</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/ChaCha20Poly1305ProtoSerialization.html" title="class in com.google.crypto.tink.aead.internal">ChaCha20Poly1305ProtoSerialization</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/XAesGcmProtoSerialization.html#register--">register()</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/XAesGcmProtoSerialization.html" title="class in com.google.crypto.tink.aead.internal">XAesGcmProtoSerialization</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/XAesGcmProtoSerialization.html#register-com.google.crypto.tink.internal.MutableSerializationRegistry-">register(MutableSerializationRegistry)</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/XAesGcmProtoSerialization.html" title="class in com.google.crypto.tink.aead.internal">XAesGcmProtoSerialization</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/XAesGcmProtoSerialization.html#register-com.google.crypto.tink.internal.SerializationRegistry.Builder-">register(SerializationRegistry.Builder)</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/XAesGcmProtoSerialization.html" title="class in com.google.crypto.tink.aead.internal">XAesGcmProtoSerialization</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/XChaCha20Poly1305ProtoSerialization.html#register--">register()</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/XChaCha20Poly1305ProtoSerialization.html" title="class in com.google.crypto.tink.aead.internal">XChaCha20Poly1305ProtoSerialization</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/XChaCha20Poly1305ProtoSerialization.html#register-com.google.crypto.tink.internal.MutableSerializationRegistry-">register(MutableSerializationRegistry)</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/XChaCha20Poly1305ProtoSerialization.html" title="class in com.google.crypto.tink.aead.internal">XChaCha20Poly1305ProtoSerialization</a></dt>
@@ -19277,6 +19559,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadProtoSerialization.html#register--">register()</a></span> - Static method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadProtoSerialization.html" title="class in com.google.crypto.tink.aead">LegacyKmsEnvelopeAeadProtoSerialization</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadProtoSerialization.html#register-com.google.crypto.tink.internal.MutableSerializationRegistry-">register(MutableSerializationRegistry)</a></span> - Static method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadProtoSerialization.html" title="class in com.google.crypto.tink.aead">LegacyKmsEnvelopeAeadProtoSerialization</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XAesGcmKeyManager.html#register-boolean-">register(boolean)</a></span> - Static method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XAesGcmKeyManager.html" title="class in com.google.crypto.tink.aead">XAesGcmKeyManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XChaCha20Poly1305KeyManager.html#register-boolean-">register(boolean)</a></span> - Static method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XChaCha20Poly1305KeyManager.html" title="class in com.google.crypto.tink.aead">XChaCha20Poly1305KeyManager</a></dt>
 <dd>&nbsp;</dd>
@@ -19509,6 +19793,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/RsaSsaPss.html#registerAllExtensions-com.google.protobuf.ExtensionRegistryLite-">registerAllExtensions(ExtensionRegistryLite)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/RsaSsaPss.html" title="class in com.google.crypto.tink.proto">RsaSsaPss</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/Tink.html#registerAllExtensions-com.google.protobuf.ExtensionRegistryLite-">registerAllExtensions(ExtensionRegistryLite)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/Tink.html" title="class in com.google.crypto.tink.proto">Tink</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcm.html#registerAllExtensions-com.google.protobuf.ExtensionRegistryLite-">registerAllExtensions(ExtensionRegistryLite)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcm.html" title="class in com.google.crypto.tink.proto">XAesGcm</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/Xchacha20Poly1305.html#registerAllExtensions-com.google.protobuf.ExtensionRegistryLite-">registerAllExtensions(ExtensionRegistryLite)</a></span> - Static method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/Xchacha20Poly1305.html" title="class in com.google.crypto.tink.proto">Xchacha20Poly1305</a></dt>
 <dd>&nbsp;</dd>
@@ -20187,6 +20473,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/HkdfPrfParams.html#SALT_FIELD_NUMBER">SALT_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/HkdfPrfParams.html" title="class in com.google.crypto.tink.proto">HkdfPrfParams</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/RsaSsaPssParams.html#SALT_LENGTH_FIELD_NUMBER">SALT_LENGTH_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/RsaSsaPssParams.html" title="class in com.google.crypto.tink.proto">RsaSsaPssParams</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmParams.html#SALT_SIZE_FIELD_NUMBER">SALT_SIZE_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmParams.html" title="class in com.google.crypto.tink.proto">XAesGcmParams</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/Ed25519.html#scalarMultWithBaseToBytes-byte:A-">scalarMultWithBaseToBytes(byte[])</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/Ed25519.html" title="class in com.google.crypto.tink.internal">Ed25519</a></dt>
 <dd>
@@ -21282,6 +21570,10 @@
 <div class="block">
  Placeholder for ctype.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.Builder.html#setKeyValue-com.google.protobuf.ByteString-">setKeyValue(ByteString)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.Builder.html" title="class in com.google.crypto.tink.proto">XAesGcmKey.Builder</a></dt>
+<dd>
+<div class="block"><code>bytes key_value = 3;</code></div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.Builder.html#setKeyValue-com.google.protobuf.ByteString-">setKeyValue(ByteString)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.Builder.html" title="class in com.google.crypto.tink.proto">XChaCha20Poly1305Key.Builder</a></dt>
 <dd>
 <div class="block">
@@ -21722,6 +22014,22 @@
 <div class="block">
  Required.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.Builder.html#setParams-com.google.crypto.tink.proto.XAesGcmParams-">setParams(XAesGcmParams)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.Builder.html" title="class in com.google.crypto.tink.proto">XAesGcmKey.Builder</a></dt>
+<dd>
+<div class="block"><code>.google.crypto.tink.XAesGcmParams params = 2;</code></div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.Builder.html#setParams-com.google.crypto.tink.proto.XAesGcmParams.Builder-">setParams(XAesGcmParams.Builder)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.Builder.html" title="class in com.google.crypto.tink.proto">XAesGcmKey.Builder</a></dt>
+<dd>
+<div class="block"><code>.google.crypto.tink.XAesGcmParams params = 2;</code></div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.Builder.html#setParams-com.google.crypto.tink.proto.XAesGcmParams-">setParams(XAesGcmParams)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat.Builder</a></dt>
+<dd>
+<div class="block"><code>.google.crypto.tink.XAesGcmParams params = 3;</code></div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.Builder.html#setParams-com.google.crypto.tink.proto.XAesGcmParams.Builder-">setParams(XAesGcmParams.Builder)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat.Builder</a></dt>
+<dd>
+<div class="block"><code>.google.crypto.tink.XAesGcmParams params = 3;</code></div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/PrfBasedDeriverKey.Builder.html#setPrfKey-com.google.crypto.tink.proto.KeyData-">setPrfKey(KeyData)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/PrfBasedDeriverKey.Builder.html" title="class in com.google.crypto.tink.proto">PrfBasedDeriverKey.Builder</a></dt>
 <dd>
 <div class="block"><code>.google.crypto.tink.KeyData prf_key = 2;</code></div>
@@ -22005,6 +22313,11 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/RsaSsaPssParameters.Builder.html#setSaltLengthBytes-int-">setSaltLengthBytes(int)</a></span> - Method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/RsaSsaPssParameters.Builder.html" title="class in com.google.crypto.tink.signature">RsaSsaPssParameters.Builder</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmParams.Builder.html#setSaltSize-int-">setSaltSize(int)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmParams.Builder.html" title="class in com.google.crypto.tink.proto">XAesGcmParams.Builder</a></dt>
+<dd>
+<div class="block">
+ Must be at least 8 bytes and at most 12 bytes.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/RsaSsaPssParams.Builder.html#setSigHash-com.google.crypto.tink.proto.HashType-">setSigHash(HashType)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/RsaSsaPssParams.Builder.html" title="class in com.google.crypto.tink.proto">RsaSsaPssParams.Builder</a></dt>
 <dd>
 <div class="block">
@@ -22399,6 +22712,14 @@
 <div class="block">
  Required.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.Builder.html#setVersion-int-">setVersion(int)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.Builder.html" title="class in com.google.crypto.tink.proto">XAesGcmKey.Builder</a></dt>
+<dd>
+<div class="block"><code>uint32 version = 1;</code></div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.Builder.html#setVersion-int-">setVersion(int)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat.Builder</a></dt>
+<dd>
+<div class="block"><code>uint32 version = 1;</code></div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.Builder.html#setVersion-int-">setVersion(int)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.Builder.html" title="class in com.google.crypto.tink.proto">XChaCha20Poly1305Key.Builder</a></dt>
 <dd>
 <div class="block"><code>uint32 version = 1;</code></div>
@@ -22746,6 +23067,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadParameters.Variant.html#TINK">TINK</a></span> - Static variable in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadParameters.Variant.html" title="class in com.google.crypto.tink.aead">LegacyKmsEnvelopeAeadParameters.Variant</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XAesGcmParameters.Variant.html#TINK">TINK</a></span> - Static variable in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XAesGcmParameters.Variant.html" title="class in com.google.crypto.tink.aead">XAesGcmParameters.Variant</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.Variant.html#TINK">TINK</a></span> - Static variable in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.Variant.html" title="class in com.google.crypto.tink.aead">XChaCha20Poly1305Parameters.Variant</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/AesSivParameters.Variant.html#TINK">TINK</a></span> - Static variable in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/AesSivParameters.Variant.html" title="class in com.google.crypto.tink.daead">AesSivParameters.Variant</a></dt>
@@ -23037,6 +23360,10 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadParameters.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadParameters.html" title="class in com.google.crypto.tink.aead">LegacyKmsEnvelopeAeadParameters</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadParameters.Variant.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/LegacyKmsEnvelopeAeadParameters.Variant.html" title="class in com.google.crypto.tink.aead">LegacyKmsEnvelopeAeadParameters.Variant</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XAesGcmParameters.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XAesGcmParameters.html" title="class in com.google.crypto.tink.aead">XAesGcmParameters</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XAesGcmParameters.Variant.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XAesGcmParameters.Variant.html" title="class in com.google.crypto.tink.aead">XAesGcmParameters.Variant</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.html#toString--">toString()</a></span> - Method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/XChaCha20Poly1305Parameters.html" title="class in com.google.crypto.tink.aead">XChaCha20Poly1305Parameters</a></dt>
 <dd>&nbsp;</dd>
@@ -23799,6 +24126,10 @@ the order they are declared.</div>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/RsaSsaPssPublicKey.html#VERSION_FIELD_NUMBER">VERSION_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/RsaSsaPssPublicKey.html" title="class in com.google.crypto.tink.proto">RsaSsaPssPublicKey</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKey.html#VERSION_FIELD_NUMBER">VERSION_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKey.html" title="class in com.google.crypto.tink.proto">XAesGcmKey</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html#VERSION_FIELD_NUMBER">VERSION_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html" title="class in com.google.crypto.tink.proto">XAesGcmKeyFormat</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.html#VERSION_FIELD_NUMBER">VERSION_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.html" title="class in com.google.crypto.tink.proto">XChaCha20Poly1305Key</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/XChaCha20Poly1305KeyFormat.html#VERSION_FIELD_NUMBER">VERSION_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/XChaCha20Poly1305KeyFormat.html" title="class in com.google.crypto.tink.proto">XChaCha20Poly1305KeyFormat</a></dt>
@@ -24057,12 +24388,80 @@ the order they are declared.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/HpkeUtil.html#X25519_HKDF_SHA256_KEM_ID">X25519_HKDF_SHA256_KEM_ID</a></span> - Static variable in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/HpkeUtil.html" title="class in com.google.crypto.tink.hybrid.internal">HpkeUtil</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/PredefinedAeadParameters.html#X_AES_GCM_8_BYTE_SALT_NO_PREFIX">X_AES_GCM_8_BYTE_SALT_NO_PREFIX</a></span> - Static variable in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/PredefinedAeadParameters.html" title="class in com.google.crypto.tink.aead">PredefinedAeadParameters</a></dt>
+<dd>
+<div class="block">A <a href="com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink"><code>Parameters</code></a> object for generating new instances of
+ <a href="com/google/crypto/tink/aead/XAesGcmKey.html" title="class in com.google.crypto.tink.aead"><code>XAesGcmKey</code></a> with the following parameters:
+
+ 
+   Salt size: 8 bytes
+   Output prefix type: NO_PREFIX
+ </div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/EcdsaPublicKey.html#X_FIELD_NUMBER">X_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/EcdsaPublicKey.html" title="class in com.google.crypto.tink.proto">EcdsaPublicKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/EciesAeadHkdfPublicKey.html#X_FIELD_NUMBER">X_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/EciesAeadHkdfPublicKey.html" title="class in com.google.crypto.tink.proto">EciesAeadHkdfPublicKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/JwtEcdsaPublicKey.html#X_FIELD_NUMBER">X_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/JwtEcdsaPublicKey.html" title="class in com.google.crypto.tink.proto">JwtEcdsaPublicKey</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/aead/internal/XAesGcm.html" title="class in com.google.crypto.tink.aead.internal"><span class="typeNameLink">XAesGcm</span></a> - Class in <a href="com/google/crypto/tink/aead/internal/package-summary.html">com.google.crypto.tink.aead.internal</a></dt>
+<dd>
+<div class="block">This primitive implements XAesGcm.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/proto/XAesGcm.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">XAesGcm</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/aead/XAesGcmKey.html" title="class in com.google.crypto.tink.aead"><span class="typeNameLink">XAesGcmKey</span></a> - Class in <a href="com/google/crypto/tink/aead/package-summary.html">com.google.crypto.tink.aead</a></dt>
+<dd>
+<div class="block">Represents an X-AES-GCM key used for computing AEAD.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/proto/XAesGcmKey.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">XAesGcmKey</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
+<dd>
+<div class="block">
+ key_type: type.googleapis.com/google.crypto.tink.XAesGcmKey</div>
+</dd>
+<dt><a href="com/google/crypto/tink/proto/XAesGcmKey.Builder.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">XAesGcmKey.Builder</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
+<dd>
+<div class="block">
+ key_type: type.googleapis.com/google.crypto.tink.XAesGcmKey</div>
+</dd>
+<dt><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">XAesGcmKeyFormat</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
+<dd>
+<div class="block">Protobuf type <code>google.crypto.tink.XAesGcmKeyFormat</code></div>
+</dd>
+<dt><a href="com/google/crypto/tink/proto/XAesGcmKeyFormat.Builder.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">XAesGcmKeyFormat.Builder</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
+<dd>
+<div class="block">Protobuf type <code>google.crypto.tink.XAesGcmKeyFormat</code></div>
+</dd>
+<dt><a href="com/google/crypto/tink/proto/XAesGcmKeyFormatOrBuilder.html" title="interface in com.google.crypto.tink.proto"><span class="typeNameLink">XAesGcmKeyFormatOrBuilder</span></a> - Interface in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/aead/XAesGcmKeyManager.html" title="class in com.google.crypto.tink.aead"><span class="typeNameLink">XAesGcmKeyManager</span></a> - Class in <a href="com/google/crypto/tink/aead/package-summary.html">com.google.crypto.tink.aead</a></dt>
+<dd>
+<div class="block">This key manager generates new <code>XAesGcmKey</code> keys.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/proto/XAesGcmKeyOrBuilder.html" title="interface in com.google.crypto.tink.proto"><span class="typeNameLink">XAesGcmKeyOrBuilder</span></a> - Interface in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/aead/XAesGcmParameters.html" title="class in com.google.crypto.tink.aead"><span class="typeNameLink">XAesGcmParameters</span></a> - Class in <a href="com/google/crypto/tink/aead/package-summary.html">com.google.crypto.tink.aead</a></dt>
+<dd>
+<div class="block">Describes the parameters of an <a href="com/google/crypto/tink/aead/XAesGcmKey.html" title="class in com.google.crypto.tink.aead"><code>XAesGcmKey</code></a></div>
+</dd>
+<dt><a href="com/google/crypto/tink/aead/XAesGcmParameters.Variant.html" title="class in com.google.crypto.tink.aead"><span class="typeNameLink">XAesGcmParameters.Variant</span></a> - Class in <a href="com/google/crypto/tink/aead/package-summary.html">com.google.crypto.tink.aead</a></dt>
+<dd>
+<div class="block">Describes how the prefix is computed.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/proto/XAesGcmParams.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">XAesGcmParams</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
+<dd>
+<div class="block">Protobuf type <code>google.crypto.tink.XAesGcmParams</code></div>
+</dd>
+<dt><a href="com/google/crypto/tink/proto/XAesGcmParams.Builder.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">XAesGcmParams.Builder</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
+<dd>
+<div class="block">Protobuf type <code>google.crypto.tink.XAesGcmParams</code></div>
+</dd>
+<dt><a href="com/google/crypto/tink/proto/XAesGcmParamsOrBuilder.html" title="interface in com.google.crypto.tink.proto"><span class="typeNameLink">XAesGcmParamsOrBuilder</span></a> - Interface in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/aead/internal/XAesGcmProtoSerialization.html" title="class in com.google.crypto.tink.aead.internal"><span class="typeNameLink">XAesGcmProtoSerialization</span></a> - Class in <a href="com/google/crypto/tink/aead/internal/package-summary.html">com.google.crypto.tink.aead.internal</a></dt>
+<dd>
+<div class="block">Methods to serialize and parse <a href="com/google/crypto/tink/aead/XAesGcmKey.html" title="class in com.google.crypto.tink.aead"><code>XAesGcmKey</code></a> objects and <a href="com/google/crypto/tink/aead/XAesGcmParameters.html" title="class in com.google.crypto.tink.aead"><code>XAesGcmParameters</code></a> objects</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AeadKeyTemplates.html#XCHACHA20_POLY1305">XCHACHA20_POLY1305</a></span> - Static variable in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AeadKeyTemplates.html" title="class in com.google.crypto.tink.aead">AeadKeyTemplates</a></dt>
 <dd>
 <div class="block">A <a href="com/google/crypto/tink/proto/KeyTemplate.html" title="class in com.google.crypto.tink.proto"><code>KeyTemplate</code></a> that generates new instances of <a href="com/google/crypto/tink/proto/XChaCha20Poly1305Key.html" title="class in com.google.crypto.tink.proto"><code>XChaCha20Poly1305Key</code></a>.</div>
