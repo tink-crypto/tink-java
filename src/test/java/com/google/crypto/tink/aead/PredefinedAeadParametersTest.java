@@ -65,5 +65,6 @@ public final class PredefinedAeadParametersTest {
     assertThat(PredefinedAeadParameters.AES256_CTR_HMAC_SHA256).isNotNull();
     assertThat(PredefinedAeadParameters.CHACHA20_POLY1305).isNotNull();
     assertThat(PredefinedAeadParameters.XCHACHA20_POLY1305).isNotNull();
+    assertThat(PredefinedAeadParameters.X_AES_GCM_8_BYTE_SALT_NO_PREFIX).isNotNull();
   }
 }

@@ -665,3 +665,47 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "XAesGcmKeyManagerTest",
+    size = "small",
+    srcs = ["XAesGcmKeyManagerTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:binary_keyset_writer",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink:keyset_writer",
+        "//src/main/java/com/google/crypto/tink:legacy_keyset_serialization",
+        "//src/main/java/com/google/crypto/tink:registry_cluster",
+        "//src/main/java/com/google/crypto/tink/aead:predefined_aead_parameters",
+        "//src/main/java/com/google/crypto/tink/aead:x_aes_gcm_key",
+        "//src/main/java/com/google/crypto/tink/aead:x_aes_gcm_key_manager",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
+    name = "XAesGcmKeyTest",
+    size = "small",
+    srcs = ["XAesGcmKeyTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink/aead:x_aes_gcm_key",
+        "//src/main/java/com/google/crypto/tink/aead:x_aes_gcm_parameters",
+        "//src/main/java/com/google/crypto/tink/internal:key_tester",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
+    name = "XAesGcmParametersTest",
+    size = "small",
+    srcs = ["XAesGcmParametersTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/aead:x_aes_gcm_parameters",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)

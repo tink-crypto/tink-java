@@ -168,5 +168,17 @@ public final class PredefinedAeadParameters {
   public static final XChaCha20Poly1305Parameters XCHACHA20_POLY1305 =
       XChaCha20Poly1305Parameters.create(XChaCha20Poly1305Parameters.Variant.TINK);
 
+  /**
+   * A {@link com.google.crypto.tink.Parameters} object for generating new instances of
+   * {@link XAesGcmKey} with the following parameters:
+   *
+   * <ul>
+   *   <li>Salt size: 8 bytes
+   *   <li>Output prefix type: NO_PREFIX
+   * </ul>
+   */
+  public static final XAesGcmParameters X_AES_GCM_8_BYTE_SALT_NO_PREFIX =
+      exceptionIsBug(() -> XAesGcmParameters.create(XAesGcmParameters.Variant.NO_PREFIX, 8));
+
   private PredefinedAeadParameters() {}
 }
