@@ -94,13 +94,18 @@ java_library(
 )
 
 java_library(
+    name = "build_dispatched_test_code",
+    srcs = ["BuildDispatchedTestCode.java"],
+)
+
+java_library(
     name = "test_files",
     srcs = ["TestFiles.java"],
-    deps = ["//src/main/java/com/google/crypto/tink/testing:test_util"],
+    deps = [":build_dispatched_test_code"],
 )
 
 android_library(
     name = "test_files-android",
     srcs = ["TestFiles.java"],
-    deps = ["//src/main/java/com/google/crypto/tink/testing:test_util-android"],
+    deps = ["//src_android/main/java/com/google/crypto/tink/internal/testing:build_dispatched_test_code-android"],
 )

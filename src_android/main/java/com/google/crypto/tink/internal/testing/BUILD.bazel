@@ -1,0 +1,15 @@
+load("@build_bazel_rules_android//android:rules.bzl", "android_library")
+
+licenses(["notice"])
+
+package(
+    default_testonly = 1,
+    default_visibility = ["//visibility:public"],
+)
+
+android_library(
+    name = "build_dispatched_test_code-android",
+    testonly = 1,
+    srcs = ["BuildDispatchedTestCode.java"],
+    deps = ["@maven//:androidx_test_monitor"],
+)

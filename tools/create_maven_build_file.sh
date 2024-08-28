@@ -123,7 +123,7 @@ except kind(java_library,${TINK_JAVA_INTEGRATION_PREFIX}/...)" \
 except attr(testonly,1,${TINK_JAVA_PREFIX}/...)" > "${expected_android_deps}"
 
   "${BAZEL_CMD}" query "kind(android_library,${TINK_JAVA_ANDROID_PREFIX}/...) \
-except attr(testonly,1,${TINK_JAVA_PREFIX}/...)" >> "${expected_android_deps}"
+except attr(testonly,1,${TINK_JAVA_ANDROID_PREFIX}/...)" >> "${expected_android_deps}"
 
   create_build_file "${expected_tink_deps}" "${expected_android_deps}"
 }

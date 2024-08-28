@@ -16,16 +16,23 @@
 
 package com.google.crypto.tink.internal.testing;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-/** Helper functions for reading test files. */
-public final class TestFiles {
+/**
+ * Static testonly utility functions which need to be compiled with different code in Android and
+ * Java.
+ *
+ * <p>This is the Java version. The android code can be found in
+ * third_party/tink/java_src/src_android/main/java/com/google/crypto/tink/internal/testing/BuildDispatchedTestCode.java
+ */
+final class BuildDispatchedTestCode {
 
-  /** Provides an InputStream to a test file dependency. */
+  private BuildDispatchedTestCode() {}
+
   public static InputStream openInputFile(String pathname) throws FileNotFoundException {
-    return BuildDispatchedTestCode.openInputFile(pathname);
+    return new FileInputStream(new File(pathname));
   }
-
-  private TestFiles() {}
 }

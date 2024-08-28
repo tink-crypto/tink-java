@@ -7,6 +7,7 @@ TINK_MAVEN_ARTIFACTS = [
     "com.google.protobuf:protobuf-java:3.25.3",
     "com.google.protobuf:protobuf-javalite:3.25.3",
     "androidx.annotation:annotation:1.8.2",
+    "androidx.test:monitor:1.7.2",
     "com.google.api-client:google-api-client:2.2.0",
     "com.google.code.findbugs:jsr305:3.0.2",
     "com.google.code.gson:gson:2.10.1",

@@ -16,16 +16,22 @@
 
 package com.google.crypto.tink.internal.testing;
 
+import androidx.test.platform.io.PlatformTestStorageRegistry;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-/** Helper functions for reading test files. */
-public final class TestFiles {
+/**
+ * Static testonly utility functions which need to be compiled with different code in Android and
+ * Java.
+ *
+ * <p>This is the Android version. The Java code can be found in
+ * third_party/tink/java_src/src/main/java/com/google/crypto/tink/internal/testing/BuildDispatchedTestCode.java
+ */
+final class BuildDispatchedTestCode {
 
-  /** Provides an InputStream to a test file dependency. */
+  private BuildDispatchedTestCode() {}
+
   public static InputStream openInputFile(String pathname) throws FileNotFoundException {
-    return BuildDispatchedTestCode.openInputFile(pathname);
+    return PlatformTestStorageRegistry.getInstance().openInputFile("google3/" + pathname);
   }
-
-  private TestFiles() {}
 }
