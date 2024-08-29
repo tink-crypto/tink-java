@@ -115,10 +115,9 @@ var activeTableTab = "activeTableTab";
 <pre>@Immutable
 public static final class <span class="typeNameLabel">XAesGcmParameters.Variant</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
-<div class="block">Describes how the prefix is computed. For AEAD there are three main possibilities: NO_PREFIX
- (empty prefix), TINK (prefix the ciphertext with 0x01 followed by a 4-byte key id in big endian
- format) or CRUNCHY (prefix the ciphertext with 0x00 followed by a 4-byte key id in big endian
- format).</div>
+<div class="block">Describes how the prefix is computed. For AEAD, there are two possibilities: either NO_PREFIX
+ (empty prefix) or TINK (prefix the ciphertext with 0x01 followed by a 4-byte key id in big
+ endian format).</div>
 </li>
 </ul>
 </div>
@@ -139,13 +138,9 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/aead/XAesGcmParameters.Variant.html" title="class in com.google.crypto.tink.aead">XAesGcmParameters.Variant</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/XAesGcmParameters.Variant.html#CRUNCHY">CRUNCHY</a></span></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/aead/XAesGcmParameters.Variant.html" title="class in com.google.crypto.tink.aead">XAesGcmParameters.Variant</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/XAesGcmParameters.Variant.html#NO_PREFIX">NO_PREFIX</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/aead/XAesGcmParameters.Variant.html" title="class in com.google.crypto.tink.aead">XAesGcmParameters.Variant</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/XAesGcmParameters.Variant.html#TINK">TINK</a></span></code>&nbsp;</td>
 </tr>
@@ -197,15 +192,6 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>TINK</h4>
 <pre>public static final&nbsp;<a href="../../../../../com/google/crypto/tink/aead/XAesGcmParameters.Variant.html" title="class in com.google.crypto.tink.aead">XAesGcmParameters.Variant</a> TINK</pre>
-</li>
-</ul>
-<a name="CRUNCHY">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>CRUNCHY</h4>
-<pre>public static final&nbsp;<a href="../../../../../com/google/crypto/tink/aead/XAesGcmParameters.Variant.html" title="class in com.google.crypto.tink.aead">XAesGcmParameters.Variant</a> CRUNCHY</pre>
 </li>
 </ul>
 <a name="NO_PREFIX">
