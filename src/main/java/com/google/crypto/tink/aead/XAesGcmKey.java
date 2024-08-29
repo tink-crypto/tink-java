@@ -51,9 +51,6 @@ public final class XAesGcmKey extends AeadKey {
     if (parameters.getVariant() == XAesGcmParameters.Variant.NO_PREFIX) {
       return OutputPrefixUtil.EMPTY_PREFIX;
     }
-    if (parameters.getVariant() == XAesGcmParameters.Variant.CRUNCHY) {
-      return OutputPrefixUtil.getLegacyOutputPrefix(idRequirement);
-    }
     if (parameters.getVariant() == XAesGcmParameters.Variant.TINK) {
       return OutputPrefixUtil.getTinkOutputPrefix(idRequirement);
     }

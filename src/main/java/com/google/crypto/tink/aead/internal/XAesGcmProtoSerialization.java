@@ -78,9 +78,6 @@ public final class XAesGcmProtoSerialization {
     if (Objects.equals(variant, XAesGcmParameters.Variant.TINK)) {
       return OutputPrefixType.TINK;
     }
-    if (Objects.equals(variant, XAesGcmParameters.Variant.CRUNCHY)) {
-      return OutputPrefixType.CRUNCHY;
-    }
     if (Objects.equals(variant, XAesGcmParameters.Variant.NO_PREFIX)) {
       return OutputPrefixType.RAW;
     }
@@ -92,10 +89,6 @@ public final class XAesGcmProtoSerialization {
     switch (outputPrefixType) {
       case TINK:
         return XAesGcmParameters.Variant.TINK;
-      /* Parse LEGACY prefix to CRUNCHY, since they act the same for this type of key */
-      case CRUNCHY:
-      case LEGACY:
-        return XAesGcmParameters.Variant.CRUNCHY;
       case RAW:
         return XAesGcmParameters.Variant.NO_PREFIX;
       default:

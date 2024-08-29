@@ -23,15 +23,13 @@ import java.util.Objects;
 /** Describes the parameters of an {@link XAesGcmKey} */
 public final class XAesGcmParameters extends AeadParameters {
   /**
-   * Describes how the prefix is computed. For AEAD there are three main possibilities: NO_PREFIX
-   * (empty prefix), TINK (prefix the ciphertext with 0x01 followed by a 4-byte key id in big endian
-   * format) or CRUNCHY (prefix the ciphertext with 0x00 followed by a 4-byte key id in big endian
-   * format).
+   * Describes how the prefix is computed. For AEAD, there are two possibilities: either NO_PREFIX
+   * (empty prefix) or TINK (prefix the ciphertext with 0x01 followed by a 4-byte key id in big
+   * endian format).
    */
   @Immutable
   public static final class Variant {
     public static final Variant TINK = new Variant("TINK");
-    public static final Variant CRUNCHY = new Variant("CRUNCHY");
     public static final Variant NO_PREFIX = new Variant("NO_PREFIX");
 
     private final String name;

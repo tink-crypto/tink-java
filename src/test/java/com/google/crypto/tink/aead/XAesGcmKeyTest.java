@@ -55,18 +55,6 @@ public final class XAesGcmKeyTest {
   }
 
   @Test
-  public void buildCrunchyVariantAndGetProperties() throws Exception {
-    SecretBytes keyBytes = SecretBytes.randomBytes(32);
-    XAesGcmParameters parameters = XAesGcmParameters.create(XAesGcmParameters.Variant.CRUNCHY, 8);
-    XAesGcmKey key = XAesGcmKey.create(parameters, keyBytes, 0x0708090a);
-    assertThat(key.getParameters()).isEqualTo(parameters);
-    assertThat(key.getKeyBytes()).isEqualTo(keyBytes);
-    assertThat(key.getOutputPrefix())
-        .isEqualTo(Bytes.copyFrom(new byte[] {0x00, 0x07, 0x08, 0x09, 0x0a}));
-    assertThat(key.getIdRequirementOrNull()).isEqualTo(0x708090a);
-  }
-
-  @Test
   public void wrongIdRequirement_throws() throws Exception {
     SecretBytes keyBytes = SecretBytes.randomBytes(32);
     assertThrows(
@@ -74,11 +62,6 @@ public final class XAesGcmKeyTest {
         () ->
             XAesGcmKey.create(
                 XAesGcmParameters.create(XAesGcmParameters.Variant.NO_PREFIX, 8), keyBytes, 1115));
-    assertThrows(
-        GeneralSecurityException.class,
-        () ->
-            XAesGcmKey.create(
-                XAesGcmParameters.create(XAesGcmParameters.Variant.CRUNCHY, 8), keyBytes, null));
     assertThrows(
         GeneralSecurityException.class,
         () ->
@@ -96,8 +79,6 @@ public final class XAesGcmKeyTest {
     XAesGcmParameters parametersNoPrefix =
         XAesGcmParameters.create(XAesGcmParameters.Variant.NO_PREFIX, 12);
     XAesGcmParameters parametersTink = XAesGcmParameters.create(XAesGcmParameters.Variant.TINK, 12);
-    XAesGcmParameters parametersCrunchy =
-        XAesGcmParameters.create(XAesGcmParameters.Variant.CRUNCHY, 12);
     new KeyTester()
         .addEqualityGroup(
             "No prefix, keyBytes",
@@ -113,9 +94,6 @@ public final class XAesGcmKeyTest {
             XAesGcmKey.create(parametersTink, keyBytesCopy, 1907))
         .addEqualityGroup(
             "Tink with key id 1908, keyBytes32", XAesGcmKey.create(parametersTink, keyBytes, 1908))
-        .addEqualityGroup(
-            "Crunchy with key id 1907, keyBytes32",
-            XAesGcmKey.create(parametersCrunchy, keyBytes, 1907))
         .doTests();
   }
 }

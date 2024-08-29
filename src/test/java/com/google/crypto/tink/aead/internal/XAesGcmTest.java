@@ -119,37 +119,6 @@ public final class XAesGcmTest {
   }
 
   @Test
-  public void encryptDecrypt_withCrunchyVariant() throws Exception {
-    byte[] outputPrefix = OutputPrefixUtil.getLegacyOutputPrefix(KEY_ID).toByteArray();
-    Aead xAesGcm =
-        XAesGcm.create(
-            XAesGcmKey.create(
-                XAesGcmParameters.create(XAesGcmParameters.Variant.CRUNCHY, SALT_SIZE_IN_BYTES),
-                SECRET_BYTES,
-                KEY_ID));
-
-    byte[] ciphertext = xAesGcm.encrypt(plaintext, associatedData);
-
-    assertThat(Arrays.copyOfRange(ciphertext, 0, outputPrefix.length)).isEqualTo(outputPrefix);
-  }
-
-  @Test
-  public void encryptDecrypt_withCrunchyVariant_differentOutputPrefix_fails() throws Exception {
-    Aead xAesGcm =
-        XAesGcm.create(
-            XAesGcmKey.create(
-                XAesGcmParameters.create(XAesGcmParameters.Variant.CRUNCHY, SALT_SIZE_IN_BYTES),
-                SECRET_BYTES,
-                KEY_ID));
-
-    byte[] ciphertext = xAesGcm.encrypt(plaintext, associatedData);
-    byte[] outputPrefix = OutputPrefixUtil.getLegacyOutputPrefix(11111).toByteArray();
-    System.arraycopy(outputPrefix, 0, ciphertext, 0, outputPrefix.length);
-
-    assertThrows(GeneralSecurityException.class, () -> xAesGcm.decrypt(ciphertext, associatedData));
-  }
-
-  @Test
   public void encryptDecrypt_withoutAadFails() throws Exception {
     Aead xAesGcm =
         XAesGcm.create(createKey(XAesGcmParameters.Variant.NO_PREFIX, SALT_SIZE_IN_BYTES));

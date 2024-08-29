@@ -114,30 +114,6 @@ public final class XAesGcmProtoSerializationTest {
   }
 
   @Test
-  public void serializeParseParameters_crunchy() throws Exception {
-    XAesGcmParameters parameters = XAesGcmParameters.create(XAesGcmParameters.Variant.CRUNCHY, 8);
-
-    ProtoParametersSerialization serialization =
-        ProtoParametersSerialization.create(
-            "type.googleapis.com/google.crypto.tink.XAesGcmKey",
-            OutputPrefixType.CRUNCHY,
-            com.google.crypto.tink.proto.XAesGcmKeyFormat.newBuilder()
-                .setParams(
-                    com.google.crypto.tink.proto.XAesGcmParams.newBuilder()
-                        .setSaltSize(parameters.getSaltSizeBytes())
-                        .build())
-                .build());
-
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
-    assertEqualWhenValueParsed(
-        com.google.crypto.tink.proto.XAesGcmKeyFormat.parser(), serialized, serialization);
-
-    Parameters parsed = registry.parseParameters(serialization);
-    assertThat(parsed).isEqualTo(parameters);
-  }
-
-  @Test
   public void serializeParseKey_noPrefix() throws Exception {
     XAesGcmKey key =
         XAesGcmKey.create(
@@ -208,41 +184,6 @@ public final class XAesGcmProtoSerializationTest {
   }
 
   @Test
-  public void serializeParseKey_crunchy() throws Exception {
-    XAesGcmKey key =
-        XAesGcmKey.create(
-            XAesGcmParameters.create(XAesGcmParameters.Variant.CRUNCHY, 8),
-            KEY_BYTES_32,
-            /* idRequirement= */ 123);
-
-    com.google.crypto.tink.proto.XAesGcmKey protoXAesGcmKey =
-        com.google.crypto.tink.proto.XAesGcmKey.newBuilder()
-            .setVersion(0)
-            .setKeyValue(KEY_BYTES_32_AS_BYTE_STRING)
-            .setParams(
-                com.google.crypto.tink.proto.XAesGcmParams.newBuilder()
-                    .setSaltSize(key.getParameters().getSaltSizeBytes())
-                    .build())
-            .build();
-
-    ProtoKeySerialization serialization =
-        ProtoKeySerialization.create(
-            "type.googleapis.com/google.crypto.tink.XAesGcmKey",
-            protoXAesGcmKey.toByteString(),
-            KeyMaterialType.SYMMETRIC,
-            OutputPrefixType.CRUNCHY,
-            /* idRequirement= */ 123);
-
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
-    assertEqualWhenValueParsed(
-        com.google.crypto.tink.proto.XAesGcmKey.parser(), serialized, serialization);
-
-    Key parsed = registry.parseKey(serialization, InsecureSecretKeyAccess.get());
-    assertThat(parsed.equalsKey(key)).isTrue();
-  }
-
-  @Test
   public void testParseKeys_noAccess_throws() throws Exception {
     com.google.crypto.tink.proto.XAesGcmKey protoXAesGcmKey =
         com.google.crypto.tink.proto.XAesGcmKey.newBuilder()
@@ -262,7 +203,7 @@ public final class XAesGcmProtoSerializationTest {
   }
 
   @Test
-  public void parseKey_legacy() throws Exception {
+  public void parseKey_legacy_fails() throws Exception {
     ProtoKeySerialization serialization =
         ProtoKeySerialization.create(
             TYPE_URL,
@@ -276,10 +217,31 @@ public final class XAesGcmProtoSerializationTest {
             KeyMaterialType.SYMMETRIC,
             OutputPrefixType.LEGACY,
             1479);
-    // Legacy keys are parsed to crunchy
-    Key parsed = registry.parseKey(serialization, InsecureSecretKeyAccess.get());
-    assertThat(((XAesGcmParameters) parsed.getParameters()).getVariant())
-        .isEqualTo(XAesGcmParameters.Variant.CRUNCHY);
+    // Legacy keys aren't supported
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> registry.parseKey(serialization, InsecureSecretKeyAccess.get()));
+  }
+
+  @Test
+  public void parseKey_crunchy_fails() throws Exception {
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            TYPE_URL,
+            com.google.crypto.tink.proto.XAesGcmKey.newBuilder()
+                .setVersion(0)
+                .setKeyValue(KEY_BYTES_32_AS_BYTE_STRING)
+                .setParams(
+                    com.google.crypto.tink.proto.XAesGcmParams.newBuilder().setSaltSize(8).build())
+                .build()
+                .toByteString(),
+            KeyMaterialType.SYMMETRIC,
+            OutputPrefixType.CRUNCHY,
+            1479);
+    // Crunchy keys aren't supported
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> registry.parseKey(serialization, InsecureSecretKeyAccess.get()));
   }
 
   @Test
