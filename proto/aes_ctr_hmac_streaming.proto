@@ -42,5 +42,5 @@ message AesCtrHmacStreamingKeyFormat {
 message AesCtrHmacStreamingKey {
   uint32 version = 1;
   AesCtrHmacStreamingParams params = 2;
-  bytes key_value = 3;  // Placeholder for ctype.  // the main key, aka. "ikm", input key material
+  bytes key_value = 3 ;  // Placeholder for multi-line ctype and debug_redact.  // the main key, aka. "ikm", input key material
 }

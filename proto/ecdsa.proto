@@ -74,7 +74,7 @@ message EcdsaPrivateKey {
   EcdsaPublicKey public_key = 2;
   // Unsigned big integer in bigendian representation.
   // Required.
-  bytes key_value = 3;  // Placeholder for ctype.
+  bytes key_value = 3;  // Placeholder for ctype and debug_redact.
 }
 
 message EcdsaKeyFormat {

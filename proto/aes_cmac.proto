@@ -29,7 +29,7 @@ message AesCmacParams {
 // key_type: type.googleapis.com/google.crypto.tink.AesCmacKey
 message AesCmacKey {
   uint32 version = 1;
-  bytes key_value = 2;  // Placeholder for ctype.
+  bytes key_value = 2;  // Placeholder for ctype and debug_redact.
   AesCmacParams params = 3;
 }
 

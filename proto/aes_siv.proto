@@ -40,5 +40,5 @@ message AesSivKeyFormat {
 message AesSivKey {
   uint32 version = 1;
   // First half is AES-CTR key, second is AES-SIV.
-  bytes key_value = 2;  // Placeholder for ctype.
+  bytes key_value = 2;  // Placeholder for ctype and debug_redact.
 }

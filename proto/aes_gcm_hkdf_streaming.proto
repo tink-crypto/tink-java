@@ -42,5 +42,5 @@ message AesGcmHkdfStreamingKeyFormat {
 message AesGcmHkdfStreamingKey {
   uint32 version = 1;
   AesGcmHkdfStreamingParams params = 2;
-  bytes key_value = 3;  // Placeholder for ctype.
+  bytes key_value = 3;  // Placeholder for ctype and debug_redact.
 }

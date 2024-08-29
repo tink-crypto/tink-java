@@ -29,5 +29,5 @@ message XChaCha20Poly1305KeyFormat {
 // key_type: type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key
 message XChaCha20Poly1305Key {
   uint32 version = 1;
-  bytes key_value = 3;  // Placeholder for ctype.
+  bytes key_value = 3;  // Placeholder for ctype and debug_redact.
 }

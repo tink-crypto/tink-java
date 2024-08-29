@@ -25,7 +25,7 @@ option go_package = "github.com/tink-crypto/tink-go/v2/proto/aes_cmac_prf_go_pro
 // key_type: type.googleapis.com/google.crypto.tink.AesCmacPrfKey
 message AesCmacPrfKey {
   uint32 version = 1;
-  bytes key_value = 2;  // Placeholder for ctype.
+  bytes key_value = 2;  // Placeholder for ctype and debug_redact.
 }
 
 message AesCmacPrfKeyFormat {

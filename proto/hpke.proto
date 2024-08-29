@@ -63,7 +63,7 @@ message HpkePrivateKey {
   HpkePublicKey public_key = 2;
   // KEM-encoding of private key (i.e., SerializePrivateKey() ) as described in
   // https://www.rfc-editor.org/rfc/rfc9180.html#name-cryptographic-dependencies.
-  bytes private_key = 3;
+  bytes private_key = 3;  // Placeholder for debug_redact.
 }
 
 message HpkeKeyFormat {

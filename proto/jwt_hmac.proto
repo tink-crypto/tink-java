@@ -34,7 +34,7 @@ enum JwtHmacAlgorithm {
 message JwtHmacKey {
   uint32 version = 1;
   JwtHmacAlgorithm algorithm = 2;
-  bytes key_value = 3;  // Placeholder for ctype.
+  bytes key_value = 3;  // Placeholder for ctype and debug_redact.
 
   // Optional, custom kid header value to be used with "RAW" keys.
   // "TINK" keys with this value set will be rejected.

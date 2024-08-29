@@ -32,5 +32,5 @@ message AesGcmSivKeyFormat {
 // key_type: type.googleapis.com/google.crypto.tink.AesGcmSivKey
 message AesGcmSivKey {
   uint32 version = 1;
-  bytes key_value = 3;  // Placeholder for ctype.
+  bytes key_value = 3;  // Placeholder for ctype and debug_redact.
 }

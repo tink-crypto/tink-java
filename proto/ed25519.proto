@@ -46,7 +46,7 @@ message Ed25519PrivateKey {
   // The private key is 32 bytes of cryptographically secure random data.
   // See https://tools.ietf.org/html/rfc8032#section-5.1.5.
   // Required.
-  bytes key_value = 2;  // Placeholder for ctype.
+  bytes key_value = 2;  // Placeholder for ctype and debug_redact.
   // The corresponding public key.
   Ed25519PublicKey public_key = 3;
 }

@@ -29,5 +29,5 @@ message ChaCha20Poly1305KeyFormat {}
 // at https://tools.ietf.org/html/rfc7539#section-2.8.
 message ChaCha20Poly1305Key {
   uint32 version = 1;
-  bytes key_value = 2;  // Placeholder for ctype.
+  bytes key_value = 2;  // Placeholder for ctype and debug_redact.
 }

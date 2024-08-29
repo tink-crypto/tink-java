@@ -105,7 +105,7 @@ message EciesAeadHkdfPrivateKey {
   EciesAeadHkdfPublicKey public_key = 2;
 
   // Required.
-  bytes key_value = 3;  // Placeholder for ctype.  // Big integer in bigendian representation.
+  bytes key_value = 3 ;  // Placeholder for multi-line ctype and debug_redact.  // Big integer in bigendian representation.
 }
 
 message EciesAeadHkdfKeyFormat {

@@ -33,7 +33,7 @@ message HmacParams {
 message HmacKey {
   uint32 version = 1;
   HmacParams params = 2;
-  bytes key_value = 3;  // Placeholder for ctype.
+  bytes key_value = 3;  // Placeholder for ctype and debug_redact.
 }
 
 message HmacKeyFormat {
