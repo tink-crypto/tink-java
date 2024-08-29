@@ -16,14 +16,18 @@
 
 package com.google.crypto.tink.aead;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
+import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.BinaryKeysetWriter;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.KeysetWriter;
 import com.google.crypto.tink.LegacyKeysetSerialization;
+import com.google.crypto.tink.RegistryConfiguration;
 import java.io.ByteArrayOutputStream;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -78,5 +82,18 @@ public final class XAesGcmKeyManagerTest {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     KeysetWriter keysetWriter = BinaryKeysetWriter.withOutputStream(outputStream);
     LegacyKeysetSerialization.serializeKeyset(handle, keysetWriter, InsecureSecretKeyAccess.get());
+  }
+
+  @Test
+  public void xAesGcmPrimitiveCreation() throws Exception {
+    AeadConfig.register();
+    KeysetHandle handle =
+        KeysetHandle.generateNew(PredefinedAeadParameters.X_AES_GCM_8_BYTE_SALT_NO_PREFIX);
+    Aead xAesGcm = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
+    String plaintext = "plaintext";
+    String associatedData = "associatedData";
+    byte[] ciphertext = xAesGcm.encrypt(plaintext.getBytes(UTF_8), associatedData.getBytes(UTF_8));
+    assertArrayEquals(
+        xAesGcm.decrypt(ciphertext, associatedData.getBytes(UTF_8)), plaintext.getBytes(UTF_8));
   }
 }
