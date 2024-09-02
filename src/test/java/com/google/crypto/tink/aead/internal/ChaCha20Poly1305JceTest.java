@@ -107,7 +107,7 @@ public class ChaCha20Poly1305JceTest {
   public void testLongMessages() throws Exception {
     Assume.assumeFalse(TinkFips.useOnlyFips());
     Assume.assumeTrue(ChaCha20Poly1305Jce.isSupported());
-
+    Assume.assumeFalse(TestUtil.isTsan());
     int dataSize = 16;
     while (dataSize <= (1 << 24)) {
       byte[] plaintext = Random.randBytes(dataSize);
