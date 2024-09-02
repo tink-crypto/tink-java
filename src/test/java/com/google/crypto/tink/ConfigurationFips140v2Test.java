@@ -608,7 +608,7 @@ public class ConfigurationFips140v2Test {
 
   @Test
   public void config_refusesNon2048Non3072ModulusForRsaSsaPssVerify() throws Exception {
-    RsaSsaPkcs1ProtoSerialization.register();
+    RsaSsaPssProtoSerialization.register();
     RsaSsaPssParameters parameters =
         RsaSsaPssParameters.builder()
             .setModulusSizeBits(4096)
