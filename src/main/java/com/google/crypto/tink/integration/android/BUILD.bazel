@@ -68,3 +68,12 @@ android_library(
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
+
+android_library(
+    name = "android_keystore",
+    srcs = ["AndroidKeystore.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:aead-android",
+        "@maven//:androidx_annotation_annotation_jvm",
+    ],
+)

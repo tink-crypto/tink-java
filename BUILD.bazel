@@ -660,6 +660,7 @@ gen_maven_jar_rules(
         "//src/main/java/com/google/crypto/tink/hybrid/subtle:rsa_kem_hybrid_decrypt-android",
         "//src/main/java/com/google/crypto/tink/hybrid/subtle:rsa_kem_hybrid_encrypt-android",
         "//src/main/java/com/google/crypto/tink/integration/android:android_keyset_manager",
+        "//src/main/java/com/google/crypto/tink/integration/android:android_keystore",
         "//src/main/java/com/google/crypto/tink/integration/android:android_keystore_aes_gcm",
         "//src/main/java/com/google/crypto/tink/integration/android:android_keystore_kms_client",
         "//src/main/java/com/google/crypto/tink/integration/android:shared_pref_keyset_reader",
