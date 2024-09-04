@@ -23,6 +23,7 @@ import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,9 +46,11 @@ public class HybridEncryptFactoryTest {
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
 
     HybridEncrypt factoryEncrypter = HybridEncryptFactory.getPrimitive(publicHandle);
-    HybridEncrypt handleEncrypter = publicHandle.getPrimitive(HybridEncrypt.class);
+    HybridEncrypt handleEncrypter =
+        publicHandle.getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class);
 
-    HybridDecrypt decrypter = privateHandle.getPrimitive(HybridDecrypt.class);
+    HybridDecrypt decrypter =
+        privateHandle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
 
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] contextInfo = "contextInfo".getBytes(UTF_8);

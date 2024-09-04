@@ -24,6 +24,7 @@ import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
 import com.google.crypto.tink.daead.DeterministicAeadConfig;
 import com.google.crypto.tink.testing.TestUtil;
@@ -61,7 +62,8 @@ public final class JwtSignatureTest {
       assumeTrue(templateName.equals("JWT_ES256"));
     }
     KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
-    JwtPublicKeySign jwtPublicKeySign = handle.getPrimitive(JwtPublicKeySign.class);
+    JwtPublicKeySign jwtPublicKeySign =
+        handle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     Instant now = Clock.systemUTC().instant();
     RawJwt rawJwt =
         RawJwt.newBuilder()
@@ -74,7 +76,9 @@ public final class JwtSignatureTest {
     String token = jwtPublicKeySign.signAndEncode(rawJwt);
 
     JwtPublicKeyVerify jwtPublicKeyVerify =
-        handle.getPublicKeysetHandle().getPrimitive(JwtPublicKeyVerify.class);
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
 
     JwtValidator validator =
         JwtValidator.newBuilder().expectIssuer("issuer").expectAudience("audience").build();
@@ -121,7 +125,9 @@ public final class JwtSignatureTest {
 
     KeysetHandle otherHandle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
     JwtPublicKeyVerify otherJwtPublicKeyVerify =
-        otherHandle.getPublicKeysetHandle().getPrimitive(JwtPublicKeyVerify.class);
+        otherHandle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
     assertThrows(
         GeneralSecurityException.class,
         () -> otherJwtPublicKeyVerify.verifyAndDecode(token, validator));
@@ -157,7 +163,8 @@ public final class JwtSignatureTest {
         TinkJsonProtoKeysetFormat.parseKeyset(
             JSON_JWT_PUBLIC_KEY_SIGN_KEYSET, InsecureSecretKeyAccess.get());
     Instant now = Clock.systemUTC().instant();
-    JwtPublicKeySign jwtPublicKeySign = privateHandle.getPrimitive(JwtPublicKeySign.class);
+    JwtPublicKeySign jwtPublicKeySign =
+        privateHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     RawJwt rawJwt =
         RawJwt.newBuilder()
             .setIssuer("issuer")
@@ -170,7 +177,8 @@ public final class JwtSignatureTest {
     KeysetHandle publicHandle =
         TinkJsonProtoKeysetFormat.parseKeyset(
             JSON_JWT_PUBLIC_KEY_VERIFY_KEYSET, InsecureSecretKeyAccess.get());
-    JwtPublicKeyVerify jwtPublicKeyVerify = publicHandle.getPrimitive(JwtPublicKeyVerify.class);
+    JwtPublicKeyVerify jwtPublicKeyVerify =
+        publicHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
     JwtValidator validator =
         JwtValidator.newBuilder().expectIssuer("issuer").expectAudience("audience").build();
     VerifiedJwt verifiedJwt = jwtPublicKeyVerify.verifyAndDecode(token, validator);
@@ -202,9 +210,12 @@ public final class JwtSignatureTest {
   public void getPrimitiveFromIncompatbileKeyset_throws() throws Exception {
     KeysetHandle handle =
         TinkJsonProtoKeysetFormat.parseKeyset(JSON_DAEAD_KEYSET, InsecureSecretKeyAccess.get());
-    Object unused = handle.getPrimitive(DeterministicAead.class);
-    assertThrows(GeneralSecurityException.class, () -> handle.getPrimitive(JwtPublicKeySign.class));
+    Object unused = handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
     assertThrows(
-        GeneralSecurityException.class, () -> handle.getPrimitive(JwtPublicKeyVerify.class));
+        GeneralSecurityException.class,
+        () -> handle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> handle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class));
   }
 }

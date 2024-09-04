@@ -26,6 +26,7 @@ import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
 import com.google.crypto.tink.daead.DeterministicAeadConfig;
 import com.google.crypto.tink.testing.TestUtil;
@@ -71,8 +72,10 @@ public final class HybridTest {
     KeysetHandle privateHandle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
 
-    HybridEncrypt encrypter = publicHandle.getPrimitive(HybridEncrypt.class);
-    HybridDecrypt decrypter = privateHandle.getPrimitive(HybridDecrypt.class);
+    HybridEncrypt encrypter =
+        publicHandle.getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class);
+    HybridDecrypt decrypter =
+        privateHandle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
 
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] contextInfo = "contextInfo".getBytes(UTF_8);
@@ -80,7 +83,8 @@ public final class HybridTest {
     assertThat(decrypter.decrypt(ciphertext, contextInfo)).isEqualTo(plaintext);
 
     KeysetHandle otherPrivateHandle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
-    HybridDecrypt otherDecrypter = otherPrivateHandle.getPrimitive(HybridDecrypt.class);
+    HybridDecrypt otherDecrypter =
+        otherPrivateHandle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
     assertThrows(
         GeneralSecurityException.class, () -> otherDecrypter.decrypt(ciphertext, contextInfo));
 
@@ -139,8 +143,10 @@ public final class HybridTest {
     KeysetHandle publicHandle =
         TinkJsonProtoKeysetFormat.parseKeyset(JSON_PUBLIC_KEYSET, InsecureSecretKeyAccess.get());
 
-    HybridEncrypt encrypter = publicHandle.getPrimitive(HybridEncrypt.class);
-    HybridDecrypt decrypter = privateHandle.getPrimitive(HybridDecrypt.class);
+    HybridEncrypt encrypter =
+        publicHandle.getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class);
+    HybridDecrypt decrypter =
+        privateHandle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
 
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] contextInfo = "contextInfo".getBytes(UTF_8);
@@ -246,8 +252,10 @@ public final class HybridTest {
         TinkJsonProtoKeysetFormat.parseKeyset(
             JSON_PUBLIC_KEYSET_WITH_MULTIPLE_KEYS, InsecureSecretKeyAccess.get());
 
-    HybridEncrypt encrypter = publicHandle.getPrimitive(HybridEncrypt.class);
-    HybridDecrypt decrypter = privateHandle.getPrimitive(HybridDecrypt.class);
+    HybridEncrypt encrypter =
+        publicHandle.getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class);
+    HybridDecrypt decrypter =
+        privateHandle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
 
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] contextInfo = "contextInfo".getBytes(UTF_8);
@@ -259,7 +267,8 @@ public final class HybridTest {
     KeysetHandle publicHandle1 =
         TinkJsonProtoKeysetFormat.parseKeyset(
             JSON_PUBLIC_KEYSET, InsecureSecretKeyAccess.get());
-    HybridEncrypt encrypter1 = publicHandle1.getPrimitive(HybridEncrypt.class);
+    HybridEncrypt encrypter1 =
+        publicHandle1.getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class);
     byte[] ciphertext1 = encrypter1.encrypt(plaintext, contextInfo);
     assertThat(decrypter.decrypt(ciphertext1, contextInfo)).isEqualTo(plaintext);
   }
@@ -292,8 +301,12 @@ public final class HybridTest {
         TinkJsonProtoKeysetFormat.parseKeyset(JSON_DAEAD_KEYSET, InsecureSecretKeyAccess.get());
     // Test that the keyset can create a DeterministicAead primitive, but neither HybridEncrypt
     // nor HybridDecrypt primitives.
-    Object unused = handle.getPrimitive(DeterministicAead.class);
-    assertThrows(GeneralSecurityException.class, () -> handle.getPrimitive(HybridEncrypt.class));
-    assertThrows(GeneralSecurityException.class, () -> handle.getPrimitive(HybridDecrypt.class));
+    Object unused = handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> handle.getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> handle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class));
   }
 }

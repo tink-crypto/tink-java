@@ -23,6 +23,7 @@ import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Registry;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.hybrid.internal.HpkeDecrypt;
 import com.google.crypto.tink.hybrid.internal.HpkeEncrypt;
@@ -215,7 +216,8 @@ public final class KeyManagerIntegrationTest {
             .build();
 
     KeysetHandle handle = TinkProtoKeysetFormat.parseKeysetWithoutSecret(keyset.toByteArray());
-    HybridEncrypt customEncrypter = handle.getPrimitive(HybridEncrypt.class);
+    HybridEncrypt customEncrypter =
+        handle.getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class);
 
     byte[] message = new byte[] {1, 2, 3};
     byte[] context = new byte[] {4};
@@ -272,7 +274,8 @@ public final class KeyManagerIntegrationTest {
 
     KeysetHandle handle =
         TinkProtoKeysetFormat.parseKeyset(keyset.toByteArray(), InsecureSecretKeyAccess.get());
-    HybridDecrypt customDecrypter = handle.getPrimitive(HybridDecrypt.class);
+    HybridDecrypt customDecrypter =
+        handle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
 
     byte[] message = new byte[] {1, 2, 3};
     byte[] context = new byte[] {4};

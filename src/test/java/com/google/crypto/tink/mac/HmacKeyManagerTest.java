@@ -26,6 +26,7 @@ import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.SlowInputStream;
@@ -241,7 +242,7 @@ public class HmacKeyManagerTest {
       entry.withFixedId(id);
     }
     KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
-    ChunkedMac chunkedMac = handle.getPrimitive(ChunkedMac.class);
+    ChunkedMac chunkedMac = handle.getPrimitive(RegistryConfiguration.get(), ChunkedMac.class);
 
     ChunkedMacComputation chunkedMacComputation = chunkedMac.createComputation();
     chunkedMacComputation.update(ByteBuffer.wrap(t.message).asReadOnlyBuffer());
@@ -263,7 +264,7 @@ public class HmacKeyManagerTest {
       entry.withFixedId(id);
     }
     KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
-    Mac mac = handle.getPrimitive(Mac.class);
+    Mac mac = handle.getPrimitive(RegistryConfiguration.get(), Mac.class);
 
     assertThat(t.tag).isEqualTo(mac.computeMac(t.message));
     mac.verifyMac(t.tag, t.message);

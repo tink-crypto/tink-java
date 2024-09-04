@@ -25,6 +25,7 @@ import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.aead.AesGcmParameters;
 import com.google.crypto.tink.hybrid.internal.HpkeEncrypt;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
@@ -63,7 +64,7 @@ public class HybridDecryptWrapperTest {
             .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
             .build();
     KeysetHandle handle = KeysetHandle.generateNew(parameters);
-    HybridDecrypt decrypter = handle.getPrimitive(HybridDecrypt.class);
+    HybridDecrypt decrypter = handle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
     HybridEncrypt encrypter =
         HpkeEncrypt.create((HpkePublicKey) handle.getPublicKeysetHandle().getPrimary().getKey());
 
@@ -82,7 +83,7 @@ public class HybridDecryptWrapperTest {
             .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
             .build();
     KeysetHandle handle = KeysetHandle.generateNew(parameters);
-    HybridDecrypt decrypter = handle.getPrimitive(HybridDecrypt.class);
+    HybridDecrypt decrypter = handle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
     HybridEncrypt encrypter =
         HpkeEncrypt.create((HpkePublicKey) handle.getPublicKeysetHandle().getPrimary().getKey());
 
@@ -101,7 +102,7 @@ public class HybridDecryptWrapperTest {
             .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
             .build();
     KeysetHandle handle = KeysetHandle.generateNew(parameters);
-    HybridDecrypt decrypter = handle.getPrimitive(HybridDecrypt.class);
+    HybridDecrypt decrypter = handle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
     HybridEncrypt encrypter =
         HpkeEncrypt.create((HpkePublicKey) handle.getPublicKeysetHandle().getPrimary().getKey());
 
@@ -126,7 +127,7 @@ public class HybridDecryptWrapperTest {
                 KeysetHandle.generateEntryFromParameters(parameters).withRandomId().makePrimary())
             .addEntry(KeysetHandle.generateEntryFromParameters(parameters).withRandomId())
             .build();
-    HybridDecrypt decrypter = handle.getPrimitive(HybridDecrypt.class);
+    HybridDecrypt decrypter = handle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
     HybridEncrypt encrypter0 =
         HpkeEncrypt.create((HpkePublicKey) handle.getPublicKeysetHandle().getAt(0).getKey());
     HybridEncrypt encrypter1 =
@@ -157,7 +158,7 @@ public class HybridDecryptWrapperTest {
                 KeysetHandle.generateEntryFromParameters(parameters).withRandomId().makePrimary())
             .addEntry(KeysetHandle.generateEntryFromParameters(parameters).withRandomId())
             .build();
-    HybridDecrypt decrypter = handle.getPrimitive(HybridDecrypt.class);
+    HybridDecrypt decrypter = handle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
     HybridEncrypt encrypter0 =
         HpkeEncrypt.create((HpkePublicKey) handle.getPublicKeysetHandle().getAt(0).getKey());
     HybridEncrypt encrypter1 =
@@ -241,10 +242,14 @@ public class HybridDecryptWrapperTest {
             .addEntry(KeysetHandle.importKey(privateKey).withRandomId())
             .build();
 
-    HybridDecrypt keysetHandleDecrypt = handle.getPrimitive(HybridDecrypt.class);
+    HybridDecrypt keysetHandleDecrypt =
+        handle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
     assertThat(keysetHandleDecrypt.decrypt(ciphertext, context)).isEqualTo(message);
 
-    HybridEncrypt encrypt = handle.getPublicKeysetHandle().getPrimitive(HybridEncrypt.class);
+    HybridEncrypt encrypt =
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class);
     byte[] primaryCiphertext = encrypt.encrypt(message, context);
     assertThat(keysetHandleDecrypt.decrypt(primaryCiphertext, context)).isEqualTo(message);
     assertThat(isPrefix(Hex.decode("01ae4755bd"), primaryCiphertext)).isTrue();
@@ -274,7 +279,7 @@ public class HybridDecryptWrapperTest {
             .setMonitoringAnnotations(annotations)
             .build();
 
-    HybridDecrypt decrypter = handle.getPrimitive(HybridDecrypt.class);
+    HybridDecrypt decrypter = handle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
     HybridEncrypt encrypter =
         HpkeEncrypt.create((HpkePublicKey) handle.getPublicKeysetHandle().getPrimary().getKey());
     byte[] data = "data".getBytes(UTF_8);
@@ -326,7 +331,7 @@ public class HybridDecryptWrapperTest {
             .setMonitoringAnnotations(annotations)
             .build();
 
-    HybridDecrypt decrypter = handle.getPrimitive(HybridDecrypt.class);
+    HybridDecrypt decrypter = handle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
     HybridEncrypt encrypter0 =
         HpkeEncrypt.create((HpkePublicKey) handle.getPublicKeysetHandle().getAt(0).getKey());
     HybridEncrypt encrypter1 =

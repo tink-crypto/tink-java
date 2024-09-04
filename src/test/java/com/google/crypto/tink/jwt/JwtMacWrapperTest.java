@@ -58,7 +58,9 @@ public class JwtMacWrapperTest {
     KeyTemplate template = KeyTemplates.get("JWT_HS256");
     KeysetManager manager = KeysetManager.withEmptyKeyset().add(template);
     KeysetHandle handle = manager.getKeysetHandle();
-    assertThrows(GeneralSecurityException.class, () -> handle.getPrimitive(JwtMac.class));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class));
   }
 
   @Test
@@ -76,7 +78,9 @@ public class JwtMacWrapperTest {
     KeysetHandle legacyHandle =
         TinkProtoKeysetFormat.parseKeyset(
             legacyKeysetBuilder.build().toByteArray(), InsecureSecretKeyAccess.get());
-    assertThrows(GeneralSecurityException.class, () -> legacyHandle.getPrimitive(JwtMac.class));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> legacyHandle.getPrimitive(RegistryConfiguration.get(), JwtMac.class));
   }
 
   @Test
@@ -84,7 +88,7 @@ public class JwtMacWrapperTest {
     KeyTemplate template = KeyTemplates.get("JWT_HS256_RAW");
     KeysetHandle handle = KeysetHandle.generateNew(template);
 
-    JwtMac jwtMac = handle.getPrimitive(JwtMac.class);
+    JwtMac jwtMac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
     RawJwt rawToken = RawJwt.newBuilder().setJwtId("id123").withoutExpiration().build();
     String signedCompact = jwtMac.computeMacAndEncode(rawToken);
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
@@ -96,7 +100,7 @@ public class JwtMacWrapperTest {
   public void test_wrapSingleTinkKey_works() throws Exception {
     KeyTemplate tinkTemplate = KeyTemplates.get("JWT_HS256");
     KeysetHandle handle = KeysetHandle.generateNew(tinkTemplate);
-    JwtMac jwtMac = handle.getPrimitive(JwtMac.class);
+    JwtMac jwtMac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
     RawJwt rawJwt = RawJwt.newBuilder().setJwtId("id123").withoutExpiration().build();
     String signedCompact = jwtMac.computeMacAndEncode(rawJwt);
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
@@ -121,8 +125,8 @@ public class JwtMacWrapperTest {
                     .makePrimary())
             .build();
 
-    JwtMac oldJwtMac = oldHandle.getPrimitive(JwtMac.class);
-    JwtMac newJwtMac = newHandle.getPrimitive(JwtMac.class);
+    JwtMac oldJwtMac = oldHandle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
+    JwtMac newJwtMac = newHandle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     RawJwt rawToken = RawJwt.newBuilder().setJwtId("jwtId").withoutExpiration().build();
     String oldSignedCompact = oldJwtMac.computeMacAndEncode(rawToken);
@@ -157,8 +161,8 @@ public class JwtMacWrapperTest {
                     .makePrimary())
             .build();
 
-    JwtMac oldJwtMac = oldHandle.getPrimitive(JwtMac.class);
-    JwtMac newJwtMac = newHandle.getPrimitive(JwtMac.class);
+    JwtMac oldJwtMac = oldHandle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
+    JwtMac newJwtMac = newHandle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     RawJwt rawToken = RawJwt.newBuilder().setJwtId("jwtId").withoutExpiration().build();
     String oldSignedCompact = oldJwtMac.computeMacAndEncode(rawToken);
@@ -179,13 +183,13 @@ public class JwtMacWrapperTest {
   @Test
   public void wrongKey_throwsInvalidSignatureException() throws Exception {
     KeysetHandle keysetHandle = KeysetHandle.generateNew(KeyTemplates.get("JWT_HS256"));
-    JwtMac jwtMac = keysetHandle.getPrimitive(JwtMac.class);
+    JwtMac jwtMac = keysetHandle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
     RawJwt rawJwt = RawJwt.newBuilder().withoutExpiration().build();
     String compact = jwtMac.computeMacAndEncode(rawJwt);
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
 
     KeysetHandle wrongKeysetHandle = KeysetHandle.generateNew(KeyTemplates.get("JWT_HS256"));
-    JwtMac wrongJwtMac = wrongKeysetHandle.getPrimitive(JwtMac.class);
+    JwtMac wrongJwtMac = wrongKeysetHandle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
     assertThrows(
         GeneralSecurityException.class, () -> wrongJwtMac.verifyMacAndDecode(compact, validator));
   }
@@ -193,7 +197,7 @@ public class JwtMacWrapperTest {
   @Test
   public void wrongIssuer_throwsInvalidException() throws Exception {
     KeysetHandle keysetHandle = KeysetHandle.generateNew(KeyTemplates.get("JWT_HS256"));
-    JwtMac jwtMac = keysetHandle.getPrimitive(JwtMac.class);
+    JwtMac jwtMac = keysetHandle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
     RawJwt rawJwt = RawJwt.newBuilder().setIssuer("Justus").withoutExpiration().build();
     String compact = jwtMac.computeMacAndEncode(rawJwt);
     JwtValidator validator =
@@ -204,7 +208,7 @@ public class JwtMacWrapperTest {
   @Test
   public void expiredCompact_throwsExpiredException() throws Exception {
     KeysetHandle keysetHandle = KeysetHandle.generateNew(KeyTemplates.get("JWT_HS256"));
-    JwtMac jwtMac = keysetHandle.getPrimitive(JwtMac.class);
+    JwtMac jwtMac = keysetHandle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
     Instant now = Clock.systemUTC().instant().truncatedTo(ChronoUnit.SECONDS);
     RawJwt rawJwt =
         RawJwt.newBuilder()
@@ -219,7 +223,7 @@ public class JwtMacWrapperTest {
   @Test
   public void notYetValidCompact_throwsNotBeforeException() throws Exception {
     KeysetHandle keysetHandle = KeysetHandle.generateNew(KeyTemplates.get("JWT_HS256"));
-    JwtMac jwtMac = keysetHandle.getPrimitive(JwtMac.class);
+    JwtMac jwtMac = keysetHandle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     Instant now = Clock.systemUTC().instant().truncatedTo(ChronoUnit.SECONDS);
     RawJwt rawJwt =

@@ -24,6 +24,7 @@ import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
@@ -91,7 +92,7 @@ public class AesCmacKeyManagerTest {
             .build();
     KeysetHandle keyset =
         KeysetHandle.newBuilder().addEntry(KeysetHandle.importKey(validKey).makePrimary()).build();
-    assertThat(keyset.getPrimitive(Mac.class)).isNotNull();
+    assertThat(keyset.getPrimitive(RegistryConfiguration.get(), Mac.class)).isNotNull();
   }
 
   @Test
@@ -111,7 +112,9 @@ public class AesCmacKeyManagerTest {
             .build();
     KeysetHandle keyset =
         KeysetHandle.newBuilder().addEntry(KeysetHandle.importKey(validKey).makePrimary()).build();
-    assertThrows(GeneralSecurityException.class, () -> keyset.getPrimitive(Mac.class));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> keyset.getPrimitive(RegistryConfiguration.get(), Mac.class));
   }
 
   @Test
@@ -131,7 +134,7 @@ public class AesCmacKeyManagerTest {
             .build();
     KeysetHandle keyset =
         KeysetHandle.newBuilder().addEntry(KeysetHandle.importKey(validKey).makePrimary()).build();
-    assertThat(keyset.getPrimitive(ChunkedMac.class)).isNotNull();
+    assertThat(keyset.getPrimitive(RegistryConfiguration.get(), ChunkedMac.class)).isNotNull();
   }
 
   @Test
@@ -151,7 +154,9 @@ public class AesCmacKeyManagerTest {
             .build();
     KeysetHandle keyset =
         KeysetHandle.newBuilder().addEntry(KeysetHandle.importKey(validKey).makePrimary()).build();
-    assertThrows(GeneralSecurityException.class, () -> keyset.getPrimitive(ChunkedMac.class));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> keyset.getPrimitive(RegistryConfiguration.get(), ChunkedMac.class));
   }
 
   @Test

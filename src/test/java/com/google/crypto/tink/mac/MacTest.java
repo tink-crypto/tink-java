@@ -25,6 +25,7 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
 import com.google.crypto.tink.daead.DeterministicAeadConfig;
 import com.google.crypto.tink.util.SecretBytes;
@@ -67,14 +68,14 @@ public final class MacTest {
   public void create_computeVerify(@FromDataPoints("templates") String templateName)
       throws Exception {
     KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
-    Mac mac = handle.getPrimitive(Mac.class);
+    Mac mac = handle.getPrimitive(RegistryConfiguration.get(), Mac.class);
 
     byte[] data = "data".getBytes(UTF_8);
     byte[] tag = mac.computeMac(data);
     mac.verifyMac(tag, data);
 
     KeysetHandle otherHandle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
-    Mac otherMac = otherHandle.getPrimitive(Mac.class);
+    Mac otherMac = otherHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
     assertThrows(GeneralSecurityException.class, () -> otherMac.verifyMac(tag, data));
 
     byte[] invalid = "invalid".getBytes(UTF_8);
@@ -106,7 +107,7 @@ public final class MacTest {
     SecretBytes secretBytes = aesCmacKey.getAesKey();
     assertThat(secretBytes.size()).isEqualTo(32);
 
-    Mac mac = handle.getPrimitive(Mac.class);
+    Mac mac = handle.getPrimitive(RegistryConfiguration.get(), Mac.class);
     byte[] data = "data".getBytes(UTF_8);
     byte[] tag = mac.computeMac(data);
     mac.verifyMac(tag, data);
@@ -133,7 +134,7 @@ public final class MacTest {
     SecretBytes secretBytes = hmacKey.getKeyBytes();
     assertThat(secretBytes.size()).isEqualTo(42);
 
-    Mac mac = handle.getPrimitive(Mac.class);
+    Mac mac = handle.getPrimitive(RegistryConfiguration.get(), Mac.class);
     byte[] data = "data".getBytes(UTF_8);
     byte[] tag = mac.computeMac(data);
     mac.verifyMac(tag, data);
@@ -164,7 +165,7 @@ public final class MacTest {
     KeysetHandle handle =
         TinkJsonProtoKeysetFormat.parseKeyset(JSON_MAC_KEYSET, InsecureSecretKeyAccess.get());
 
-    Mac mac = handle.getPrimitive(Mac.class);
+    Mac mac = handle.getPrimitive(RegistryConfiguration.get(), Mac.class);
 
     byte[] data = "data".getBytes(UTF_8);
     byte[] tag = mac.computeMac(data);
@@ -226,7 +227,7 @@ public final class MacTest {
         TinkJsonProtoKeysetFormat.parseKeyset(
             JSON_MAC_KEYSET_WITH_MULTIPLE_KEYS, InsecureSecretKeyAccess.get());
 
-    Mac mac = handle.getPrimitive(Mac.class);
+    Mac mac = handle.getPrimitive(RegistryConfiguration.get(), Mac.class);
 
     byte[] data = "data".getBytes(UTF_8);
     byte[] tag = mac.computeMac(data);
@@ -236,7 +237,7 @@ public final class MacTest {
     // JSON_MAC_KEYSET to compute a tag with the first key.
     KeysetHandle handle1 =
         TinkJsonProtoKeysetFormat.parseKeyset(JSON_MAC_KEYSET, InsecureSecretKeyAccess.get());
-    Mac mac1 = handle1.getPrimitive(Mac.class);
+    Mac mac1 = handle1.getPrimitive(RegistryConfiguration.get(), Mac.class);
     byte[] tag1 = mac1.computeMac(data);
     mac.verifyMac(tag1, data);
   }
@@ -266,7 +267,9 @@ public final class MacTest {
     KeysetHandle handle =
         TinkJsonProtoKeysetFormat.parseKeyset(JSON_DAEAD_KEYSET, InsecureSecretKeyAccess.get());
     // Test that the keyset can create a DeterministicAead primitive, but not a Mac.
-    Object unused = handle.getPrimitive(DeterministicAead.class);
-    assertThrows(GeneralSecurityException.class, () -> handle.getPrimitive(Mac.class));
+    Object unused = handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> handle.getPrimitive(RegistryConfiguration.get(), Mac.class));
   }
 }

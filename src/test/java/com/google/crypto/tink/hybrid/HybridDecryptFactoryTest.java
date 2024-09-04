@@ -24,6 +24,7 @@ import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import java.security.GeneralSecurityException;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -46,10 +47,12 @@ public class HybridDecryptFactoryTest {
         KeysetHandle.generateNew(KeyTemplates.get("ECIES_P256_HKDF_HMAC_SHA256_AES128_GCM"));
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
 
-    HybridEncrypt encrypter = publicHandle.getPrimitive(HybridEncrypt.class);
+    HybridEncrypt encrypter =
+        publicHandle.getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class);
 
     HybridDecrypt factoryDecrypter = HybridDecryptFactory.getPrimitive(privateHandle);
-    HybridDecrypt handleDecrypter = privateHandle.getPrimitive(HybridDecrypt.class);
+    HybridDecrypt handleDecrypter =
+        privateHandle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
 
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] contextInfo = "contextInfo".getBytes(UTF_8);

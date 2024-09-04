@@ -21,6 +21,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.mac.AesCmacParameters.Variant;
 import com.google.crypto.tink.mac.HmacParameters.HashType;
 import com.google.crypto.tink.mac.internal.AesCmacProtoSerialization;
@@ -160,9 +161,10 @@ public class ChunkedMacTest {
     }
     KeysetHandle keysetHandle = KeysetHandle.newBuilder().addEntry(entry.makePrimary()).build();
 
-    Mac mac = keysetHandle.getPrimitive(Mac.class);
+    Mac mac = keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
     byte[] tag = mac.computeMac(plaintext);
-    ChunkedMac chunkedMac = keysetHandle.getPrimitive(ChunkedMac.class);
+    ChunkedMac chunkedMac =
+        keysetHandle.getPrimitive(RegistryConfiguration.get(), ChunkedMac.class);
     ChunkedMacVerification chunkedMacVerification = chunkedMac.createVerification(tag);
     chunkedMacVerification.update(ByteBuffer.wrap(plaintext));
 
@@ -179,11 +181,12 @@ public class ChunkedMacTest {
     }
     KeysetHandle keysetHandle = KeysetHandle.newBuilder().addEntry(entry.makePrimary()).build();
 
-    ChunkedMac chunkedMac = keysetHandle.getPrimitive(ChunkedMac.class);
+    ChunkedMac chunkedMac =
+        keysetHandle.getPrimitive(RegistryConfiguration.get(), ChunkedMac.class);
     ChunkedMacComputation chunkedMacComputation = chunkedMac.createComputation();
     chunkedMacComputation.update(ByteBuffer.wrap(plaintext));
     byte[] tag = chunkedMacComputation.computeMac();
-    Mac mac = keysetHandle.getPrimitive(Mac.class);
+    Mac mac = keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
 
     mac.verifyMac(tag, plaintext);
   }

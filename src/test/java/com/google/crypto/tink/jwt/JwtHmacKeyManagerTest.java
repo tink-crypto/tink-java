@@ -27,6 +27,7 @@ import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.proto.JwtHmacKey;
@@ -253,7 +254,7 @@ public class JwtHmacKeyManagerTest {
   @Theory
   public void createSignVerify_success(String templateNames) throws Exception {
     KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateNames));
-    JwtMac primitive = handle.getPrimitive(JwtMac.class);
+    JwtMac primitive = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
     RawJwt rawToken = RawJwt.newBuilder().setJwtId("jwtId").withoutExpiration().build();
     String signedCompact = primitive.computeMacAndEncode(rawToken);
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
@@ -266,12 +267,12 @@ public class JwtHmacKeyManagerTest {
   public void createSignVerifyDifferentKey_throw(String templateNames) throws Exception {
     KeyTemplate template = KeyTemplates.get(templateNames);
     KeysetHandle handle = KeysetHandle.generateNew(template);
-    JwtMac primitive = handle.getPrimitive(JwtMac.class);
+    JwtMac primitive = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
     RawJwt rawToken = RawJwt.newBuilder().setJwtId("jwtId").withoutExpiration().build();
     String compact = primitive.computeMacAndEncode(rawToken);
 
     KeysetHandle otherHandle = KeysetHandle.generateNew(template);
-    JwtMac otherPrimitive = otherHandle.getPrimitive(JwtMac.class);
+    JwtMac otherPrimitive = otherHandle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
     assertThrows(
         GeneralSecurityException.class,
@@ -282,7 +283,7 @@ public class JwtHmacKeyManagerTest {
   @Theory
   public void createSignVerify_modifiedHeader_throw(String templateNames) throws Exception {
     KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateNames));
-    JwtMac mac = handle.getPrimitive(JwtMac.class);
+    JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     String jwtId = "user123";
     RawJwt unverified = RawJwt.newBuilder().setJwtId(jwtId).withoutExpiration().build();
@@ -305,7 +306,7 @@ public class JwtHmacKeyManagerTest {
   @Theory
   public void createSignVerify_modifiedPayload_throw(String templateNames) throws Exception {
     KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateNames));
-    JwtMac mac = handle.getPrimitive(JwtMac.class);
+    JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     String jwtId = "user123";
     RawJwt unverified = RawJwt.newBuilder().setJwtId(jwtId).withoutExpiration().build();
@@ -328,7 +329,7 @@ public class JwtHmacKeyManagerTest {
   @Theory
   public void verify_modifiedSignature_shouldThrow(String templateNames) throws Exception {
     KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateNames));
-    JwtMac mac = handle.getPrimitive(JwtMac.class);
+    JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     String jwtId = "user123";
     RawJwt unverified = RawJwt.newBuilder().setJwtId(jwtId).withoutExpiration().build();
@@ -351,7 +352,7 @@ public class JwtHmacKeyManagerTest {
   public void computeVerify_canGetData() throws Exception {
     KeyTemplate template = KeyTemplates.get("JWT_HS256");
     KeysetHandle handle = KeysetHandle.generateNew(template);
-    JwtMac mac = handle.getPrimitive(JwtMac.class);
+    JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     String issuer = "google";
     String audience = "mybank";
@@ -387,7 +388,7 @@ public class JwtHmacKeyManagerTest {
   public void verify_expired_shouldThrow() throws Exception {
     KeyTemplate template = KeyTemplates.get("JWT_HS256");
     KeysetHandle handle = KeysetHandle.generateNew(template);
-    JwtMac mac = handle.getPrimitive(JwtMac.class);
+    JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     Clock clock1 = Clock.systemUTC();
     // This token expires in 1 minute in the future.
@@ -408,7 +409,7 @@ public class JwtHmacKeyManagerTest {
   public void verify_notExpired_success() throws Exception {
     KeyTemplate template = KeyTemplates.get("JWT_HS256");
     KeysetHandle handle = KeysetHandle.generateNew(template);
-    JwtMac mac = handle.getPrimitive(JwtMac.class);
+    JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     Clock clock = Clock.systemUTC();
     // This token expires in 1 minute in the future.
@@ -426,7 +427,7 @@ public class JwtHmacKeyManagerTest {
   public void verify_notExpired_clockSkew_success() throws Exception {
     KeyTemplate template = KeyTemplates.get("JWT_HS256");
     KeysetHandle handle = KeysetHandle.generateNew(template);
-    JwtMac mac = handle.getPrimitive(JwtMac.class);
+    JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     Clock clock1 = Clock.systemUTC();
     // This token expires in 1 minutes in the future.
@@ -446,7 +447,7 @@ public class JwtHmacKeyManagerTest {
   public void verify_before_shouldThrow() throws Exception {
     KeyTemplate template = KeyTemplates.get("JWT_HS256");
     KeysetHandle handle = KeysetHandle.generateNew(template);
-    JwtMac mac = handle.getPrimitive(JwtMac.class);
+    JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     Clock clock = Clock.systemUTC();
     // This token cannot be used until 1 minute in the future.
@@ -464,7 +465,7 @@ public class JwtHmacKeyManagerTest {
   public void validate_notBefore_success() throws Exception {
     KeyTemplate template = KeyTemplates.get("JWT_HS256");
     KeysetHandle handle = KeysetHandle.generateNew(template);
-    JwtMac mac = handle.getPrimitive(JwtMac.class);
+    JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     Clock clock1 = Clock.systemUTC();
     // This token cannot be used until 1 minute in the future.
@@ -486,7 +487,7 @@ public class JwtHmacKeyManagerTest {
   public void validate_notBefore_clockSkew_success() throws Exception {
     KeyTemplate template = KeyTemplates.get("JWT_HS256");
     KeysetHandle handle = KeysetHandle.generateNew(template);
-    JwtMac mac = handle.getPrimitive(JwtMac.class);
+    JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     Clock clock1 = Clock.systemUTC();
     // This token cannot be used until 1 minute in the future.
@@ -510,7 +511,7 @@ public class JwtHmacKeyManagerTest {
   public void verify_noAudienceInJwt_shouldThrow() throws Exception {
     KeyTemplate template = KeyTemplates.get("JWT_HS256");
     KeysetHandle handle = KeysetHandle.generateNew(template);
-    JwtMac mac = handle.getPrimitive(JwtMac.class);
+    JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     RawJwt unverified = RawJwt.newBuilder().withoutExpiration().build();
     String compact = mac.computeMacAndEncode(unverified);
@@ -524,7 +525,7 @@ public class JwtHmacKeyManagerTest {
   public void verify_noAudienceInValidator_shouldThrow() throws Exception {
     KeyTemplate template = KeyTemplates.get("JWT_HS256");
     KeysetHandle handle = KeysetHandle.generateNew(template);
-    JwtMac mac = handle.getPrimitive(JwtMac.class);
+    JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     RawJwt unverified =
         RawJwt.newBuilder().addAudience("foo").withoutExpiration().build();
@@ -538,7 +539,7 @@ public class JwtHmacKeyManagerTest {
   public void verify_wrongAudience_shouldThrow() throws Exception {
     KeyTemplate template = KeyTemplates.get("JWT_HS256");
     KeysetHandle handle = KeysetHandle.generateNew(template);
-    JwtMac mac = handle.getPrimitive(JwtMac.class);
+    JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     RawJwt unverified =
         RawJwt.newBuilder().addAudience("foo").withoutExpiration().build();
@@ -553,7 +554,7 @@ public class JwtHmacKeyManagerTest {
   public void verify_audience_success() throws Exception {
     KeyTemplate template = KeyTemplates.get("JWT_HS256");
     KeysetHandle handle = KeysetHandle.generateNew(template);
-    JwtMac mac = handle.getPrimitive(JwtMac.class);
+    JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     RawJwt unverified =
         RawJwt.newBuilder().addAudience("foo").withoutExpiration().build();
@@ -569,7 +570,7 @@ public class JwtHmacKeyManagerTest {
   public void verify_multipleAudiences_success() throws Exception {
     KeyTemplate template = KeyTemplates.get("JWT_HS256");
     KeysetHandle handle = KeysetHandle.generateNew(template);
-    JwtMac mac = handle.getPrimitive(JwtMac.class);
+    JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     RawJwt unverified =
         RawJwt.newBuilder()
@@ -604,7 +605,7 @@ public class JwtHmacKeyManagerTest {
     SecretKeySpec keySpec = new SecretKeySpec(keyValue, "HMAC");
     PrfHmacJce prf = new PrfHmacJce("HMACSHA256", keySpec);
     PrfMac rawPrimitive = new PrfMac(prf, prf.getMaxOutputLength());
-    JwtMac primitive = handle.getPrimitive(JwtMac.class);
+    JwtMac primitive = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     JsonObject payload = new JsonObject();
     payload.addProperty("jti", "jwtId");
@@ -664,7 +665,7 @@ public class JwtHmacKeyManagerTest {
     SecretKeySpec keySpec = new SecretKeySpec(keyValue, "HMAC");
     PrfHmacJce prf = new PrfHmacJce("HMACSHA256", keySpec);
     PrfMac rawPrimitive = new PrfMac(prf, prf.getMaxOutputLength());
-    JwtMac primitive = handle.getPrimitive(JwtMac.class);
+    JwtMac primitive = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
     String kid = key.getKid().get();
 
     JsonObject payload = new JsonObject();
@@ -744,7 +745,7 @@ public class JwtHmacKeyManagerTest {
   @Test
   public void verify_rfc7515TestVector_shouldThrow() throws Exception {
     KeysetHandle handle = getRfc7515ExampleKeysetHandle();
-    JwtMac primitive = handle.getPrimitive(JwtMac.class);
+    JwtMac primitive = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     // The sample token has expired since 2011-03-22.
     String compact =
@@ -761,7 +762,7 @@ public class JwtHmacKeyManagerTest {
   @Test
   public void verify_rfc7515TestVector_fixedClock_success() throws Exception {
     KeysetHandle handle = getRfc7515ExampleKeysetHandle();
-    JwtMac primitive = handle.getPrimitive(JwtMac.class);
+    JwtMac primitive = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     // The sample token has expired since 2011-03-22T18:43:00Z.
     String compact =
@@ -816,8 +817,9 @@ public class JwtHmacKeyManagerTest {
     KeysetHandle handleWithoutKid = KeysetHandle.generateNew(template);
     KeysetHandle handleWithKid =
         withCustomKid(handleWithoutKid, "Lorem ipsum dolor sit amet, consectetur adipiscing elit");
-    JwtMac jwtMacWithoutKid = handleWithoutKid.getPrimitive(JwtMac.class);
-    JwtMac jwtMacWithKid = handleWithKid.getPrimitive(JwtMac.class);
+    JwtMac jwtMacWithoutKid =
+        handleWithoutKid.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
+    JwtMac jwtMacWithKid = handleWithKid.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
 
     RawJwt rawToken = RawJwt.newBuilder().setJwtId("jwtId").withoutExpiration().build();
@@ -849,8 +851,9 @@ public class JwtHmacKeyManagerTest {
     KeysetHandle handleWithoutKid = KeysetHandle.generateNew(template);
     KeysetHandle handleWithKid = withCustomKid(handleWithoutKid, "kid");
     KeysetHandle handleWithWrongKid = withCustomKid(handleWithoutKid, "wrong kid");
-    JwtMac jwtMacWithKid = handleWithKid.getPrimitive(JwtMac.class);
-    JwtMac jwtMacWithWrongKid = handleWithWrongKid.getPrimitive(JwtMac.class);
+    JwtMac jwtMacWithKid = handleWithKid.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
+    JwtMac jwtMacWithWrongKid =
+        handleWithWrongKid.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
 
     RawJwt rawToken = RawJwt.newBuilder().setJwtId("jwtId").withoutExpiration().build();
@@ -887,8 +890,10 @@ public class JwtHmacKeyManagerTest {
             .addEntry(KeysetHandle.importKey(newKey).withFixedId(0x22446688).makePrimary())
             .build();
 
-    JwtMac jwtMacWithKid = handleWithTinkKid.getPrimitive(JwtMac.class);
-    JwtMac jwtMacWithoutKid = handleWithoutKid.getPrimitive(JwtMac.class);
+    JwtMac jwtMacWithKid =
+        handleWithTinkKid.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
+    JwtMac jwtMacWithoutKid =
+        handleWithoutKid.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
 
     RawJwt rawToken = RawJwt.newBuilder().setJwtId("jwtId").withoutExpiration().build();
@@ -930,7 +935,7 @@ public class JwtHmacKeyManagerTest {
         GeneralSecurityException.class,
         () ->
             TinkProtoKeysetFormat.parseKeyset(serializeKeysetWithKid, InsecureSecretKeyAccess.get())
-                .getPrimitive(JwtMac.class));
+                .getPrimitive(RegistryConfiguration.get(), JwtMac.class));
   }
 
   @Test
@@ -961,7 +966,9 @@ public class JwtHmacKeyManagerTest {
             .build();
     KeysetHandle handle =
         KeysetHandle.newBuilder().addEntry(KeysetHandle.importKey(key).makePrimary()).build();
-    assertThrows(GeneralSecurityException.class, () -> handle.getPrimitive(JwtMac.class));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class));
   }
 
   private static JwtHmacParameters[] createRejectedParameters() {

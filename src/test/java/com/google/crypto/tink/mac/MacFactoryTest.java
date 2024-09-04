@@ -22,6 +22,7 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
+import com.google.crypto.tink.RegistryConfiguration;
 import java.security.GeneralSecurityException;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -42,7 +43,7 @@ public class MacFactoryTest {
   public void deprecatedMacFactoryGetPrimitive_sameAs_keysetHandleGetPrimitive() throws Exception {
     KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get("HMAC_SHA256_128BITTAG"));
 
-    Mac mac = handle.getPrimitive(Mac.class);
+    Mac mac = handle.getPrimitive(RegistryConfiguration.get(), Mac.class);
     Mac factoryMac = MacFactory.getPrimitive(handle);
 
     byte[] data = "data".getBytes(UTF_8);

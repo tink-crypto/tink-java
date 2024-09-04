@@ -22,6 +22,7 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.mac.AesCmacParameters.Variant;
 import com.google.crypto.tink.mac.HmacParameters.HashType;
@@ -181,7 +182,7 @@ public class ChunkedMacWrapperTest {
             .addEntry(KeysetHandle.importKey(tinkKey1))
             .build();
 
-    ChunkedMac mac = smallKeysetHandle.getPrimitive(ChunkedMac.class);
+    ChunkedMac mac = smallKeysetHandle.getPrimitive(RegistryConfiguration.get(), ChunkedMac.class);
     ChunkedMacComputation macComputation = mac.createComputation();
     macComputation.update(plaintext);
     byte[] tag = macComputation.computeMac();
@@ -205,13 +206,15 @@ public class ChunkedMacWrapperTest {
             .addEntry(KeysetHandle.importKey(rawKey1).withFixedId(1235).makePrimary())
             .build();
 
-    ChunkedMac mac0 = computeKeysetHandle.getPrimitive(ChunkedMac.class);
+    ChunkedMac mac0 =
+        computeKeysetHandle.getPrimitive(RegistryConfiguration.get(), ChunkedMac.class);
     ChunkedMacComputation macComputation = mac0.createComputation();
     macComputation.update(plaintext);
     byte[] tag = macComputation.computeMac();
 
     plaintext.rewind();
-    ChunkedMac mac1 = verifyKeysetHandle.getPrimitive(ChunkedMac.class);
+    ChunkedMac mac1 =
+        verifyKeysetHandle.getPrimitive(RegistryConfiguration.get(), ChunkedMac.class);
     ChunkedMacVerification macVerification = mac1.createVerification(tag);
     macVerification.update(plaintext);
 
@@ -234,12 +237,14 @@ public class ChunkedMacWrapperTest {
             .addEntry(KeysetHandle.importKey(rawKey3).withFixedId(1237))
             .build();
 
-    ChunkedMac mac = computeKeysetHandle.getPrimitive(ChunkedMac.class);
+    ChunkedMac mac =
+        computeKeysetHandle.getPrimitive(RegistryConfiguration.get(), ChunkedMac.class);
     ChunkedMacComputation macComputation = mac.createComputation();
     macComputation.update(computationPlaintext);
     byte[] tag = macComputation.computeMac();
 
-    ChunkedMac mac1 = verifyKeysetHandle.getPrimitive(ChunkedMac.class);
+    ChunkedMac mac1 =
+        verifyKeysetHandle.getPrimitive(RegistryConfiguration.get(), ChunkedMac.class);
     ChunkedMacVerification macVerification = mac1.createVerification(tag);
     macVerification.update(verificationPlaintext);
 
@@ -258,7 +263,7 @@ public class ChunkedMacWrapperTest {
             .build();
     byte[] tag = new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    ChunkedMac mac = verifyKeysetHandle.getPrimitive(ChunkedMac.class);
+    ChunkedMac mac = verifyKeysetHandle.getPrimitive(RegistryConfiguration.get(), ChunkedMac.class);
     ChunkedMacVerification macVerification = mac.createVerification(tag);
     macVerification.update(verificationPlaintext);
 
@@ -279,13 +284,15 @@ public class ChunkedMacWrapperTest {
             .addEntry(KeysetHandle.importKey(rawKey3).withFixedId(1237))
             .build();
 
-    ChunkedMac mac = computeKeysetHandle.getPrimitive(ChunkedMac.class);
+    ChunkedMac mac =
+        computeKeysetHandle.getPrimitive(RegistryConfiguration.get(), ChunkedMac.class);
     ChunkedMacComputation macComputation = mac.createComputation();
     macComputation.update(plaintext);
     byte[] tag = macComputation.computeMac();
 
     plaintext.rewind();
-    ChunkedMac mac1 = verifyKeysetHandle.getPrimitive(ChunkedMac.class);
+    ChunkedMac mac1 =
+        verifyKeysetHandle.getPrimitive(RegistryConfiguration.get(), ChunkedMac.class);
     ChunkedMacVerification macVerification = mac1.createVerification(tag);
     macVerification.update(plaintext);
 
@@ -307,7 +314,7 @@ public class ChunkedMacWrapperTest {
             .addEntry(KeysetHandle.importKey(tinkKey1).makePrimary())
             .build();
 
-    ChunkedMac mac = verifyKeysetHandle.getPrimitive(ChunkedMac.class);
+    ChunkedMac mac = verifyKeysetHandle.getPrimitive(RegistryConfiguration.get(), ChunkedMac.class);
     ChunkedMacVerification macVerification = mac.createVerification(fakeTag);
     macVerification.update(ByteBuffer.wrap("plaintext".getBytes(UTF_8)));
 
@@ -344,7 +351,7 @@ public class ChunkedMacWrapperTest {
             .addEntry(KeysetHandle.importKey(tinkKey2).makePrimary())
             .build();
 
-    ChunkedMac mac = verifyKeysetHandle.getPrimitive(ChunkedMac.class);
+    ChunkedMac mac = verifyKeysetHandle.getPrimitive(RegistryConfiguration.get(), ChunkedMac.class);
     ChunkedMacVerification macVerification = mac.createVerification(tag);
     macVerification.update(ByteBuffer.wrap("plaintext".getBytes(UTF_8)));
 
@@ -365,13 +372,14 @@ public class ChunkedMacWrapperTest {
             .addEntry(KeysetHandle.importKey(rawKey2).withFixedId(1236).makePrimary())
             .build();
 
-    ChunkedMac mac = keysetHandle.getPrimitive(ChunkedMac.class);
+    ChunkedMac mac = keysetHandle.getPrimitive(RegistryConfiguration.get(), ChunkedMac.class);
     ChunkedMacComputation macComputation = mac.createComputation();
     macComputation.update(plaintext);
     byte[] tag = macComputation.computeMac();
 
     plaintext.rewind();
-    ChunkedMac primaryMac = keysetHandlePrimary.getPrimitive(ChunkedMac.class);
+    ChunkedMac primaryMac =
+        keysetHandlePrimary.getPrimitive(RegistryConfiguration.get(), ChunkedMac.class);
     ChunkedMacVerification primaryMacVerification = primaryMac.createVerification(tag);
     primaryMacVerification.update(plaintext);
 
@@ -395,7 +403,8 @@ public class ChunkedMacWrapperTest {
             .addEntry(KeysetHandle.importKey(legacyKey1))
             .build();
 
-    ChunkedMac mac = assortedKeysetHandle.getPrimitive(ChunkedMac.class);
+    ChunkedMac mac =
+        assortedKeysetHandle.getPrimitive(RegistryConfiguration.get(), ChunkedMac.class);
     ChunkedMacComputation macComputation = mac.createComputation();
     macComputation.update(plaintext);
     byte[] tag = macComputation.computeMac();
@@ -427,13 +436,15 @@ public class ChunkedMacWrapperTest {
     assortedBuilder.getAt(4).makePrimary();
     KeysetHandle assortedKeysetHandle1 = assortedBuilder.build();
 
-    ChunkedMac mac0 = assortedKeysetHandle0.getPrimitive(ChunkedMac.class);
+    ChunkedMac mac0 =
+        assortedKeysetHandle0.getPrimitive(RegistryConfiguration.get(), ChunkedMac.class);
     ChunkedMacComputation macComputation = mac0.createComputation();
     macComputation.update(plaintext);
     byte[] tag = macComputation.computeMac();
 
     plaintext.rewind();
-    ChunkedMac mac1 = assortedKeysetHandle1.getPrimitive(ChunkedMac.class);
+    ChunkedMac mac1 =
+        assortedKeysetHandle1.getPrimitive(RegistryConfiguration.get(), ChunkedMac.class);
     ChunkedMacVerification macVerification = mac1.createVerification(tag);
     macVerification.update(plaintext);
 

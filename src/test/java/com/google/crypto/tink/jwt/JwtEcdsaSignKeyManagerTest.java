@@ -28,6 +28,7 @@ import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.PublicKeySign;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
@@ -231,9 +232,12 @@ public class JwtEcdsaSignKeyManagerTest {
       return;
     }
     KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
-    JwtPublicKeySign signer = handle.getPrimitive(JwtPublicKeySign.class);
+    JwtPublicKeySign signer =
+        handle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     JwtPublicKeyVerify verifier =
-        handle.getPublicKeysetHandle().getPrimitive(JwtPublicKeyVerify.class);
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
 
     RawJwt rawToken = RawJwt.newBuilder().setJwtId("jwtId").withoutExpiration().build();
@@ -265,13 +269,16 @@ public class JwtEcdsaSignKeyManagerTest {
       return;
     }
     KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
-    JwtPublicKeySign signer = handle.getPrimitive(JwtPublicKeySign.class);
+    JwtPublicKeySign signer =
+        handle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     RawJwt rawToken = RawJwt.newBuilder().setJwtId("id123").withoutExpiration().build();
     String signedCompact = signer.signAndEncode(rawToken);
 
     KeysetHandle otherHandle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
     JwtPublicKeyVerify otherVerifier =
-        otherHandle.getPublicKeysetHandle().getPrimitive(JwtPublicKeyVerify.class);
+        otherHandle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
     assertThrows(
         GeneralSecurityException.class,
@@ -288,9 +295,12 @@ public class JwtEcdsaSignKeyManagerTest {
       return;
     }
     KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
-    JwtPublicKeySign signer = handle.getPrimitive(JwtPublicKeySign.class);
+    JwtPublicKeySign signer =
+        handle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     JwtPublicKeyVerify verifier =
-        handle.getPublicKeysetHandle().getPrimitive(JwtPublicKeyVerify.class);
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
     RawJwt rawToken = RawJwt.newBuilder().setJwtId("issuer").withoutExpiration().build();
     String signedCompact = signer.signAndEncode(rawToken);
 
@@ -315,9 +325,12 @@ public class JwtEcdsaSignKeyManagerTest {
       return;
     }
     KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
-    JwtPublicKeySign signer = handle.getPrimitive(JwtPublicKeySign.class);
+    JwtPublicKeySign signer =
+        handle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     JwtPublicKeyVerify verifier =
-        handle.getPublicKeysetHandle().getPrimitive(JwtPublicKeyVerify.class);
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
     RawJwt rawToken = RawJwt.newBuilder().setJwtId("id123").withoutExpiration().build();
     String signedCompact = signer.signAndEncode(rawToken);
 
@@ -342,9 +355,12 @@ public class JwtEcdsaSignKeyManagerTest {
       return;
     }
     KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
-    JwtPublicKeySign signer = handle.getPrimitive(JwtPublicKeySign.class);
+    JwtPublicKeySign signer =
+        handle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     JwtPublicKeyVerify verifier =
-        handle.getPublicKeysetHandle().getPrimitive(JwtPublicKeyVerify.class);
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
     RawJwt rawToken = RawJwt.newBuilder().setJwtId("id123").withoutExpiration().build();
     String result = signer.signAndEncode(rawToken);
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
@@ -413,13 +429,15 @@ public class JwtEcdsaSignKeyManagerTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(nonJwtPrivateKey).makePrimary().withRandomId())
             .build()
-            .getPrimitive(PublicKeySign.class);
+            .getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
 
     JsonObject payload = new JsonObject();
     payload.addProperty("jid", "jwtId");
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
     JwtPublicKeyVerify verifier =
-        handle.getPublicKeysetHandle().getPrimitive(JwtPublicKeyVerify.class);
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
 
     // Normal, valid signed compact.
     JsonObject normalHeader = new JsonObject();
@@ -499,7 +517,7 @@ public class JwtEcdsaSignKeyManagerTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(nonJwtPrivateKey).makePrimary().withRandomId())
             .build()
-            .getPrimitive(PublicKeySign.class);
+            .getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
 
     String kid = key.getPublicKey().getKid().get();
 
@@ -507,7 +525,9 @@ public class JwtEcdsaSignKeyManagerTest {
     payload.addProperty("jti", "jwtId");
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
     JwtPublicKeyVerify verifier =
-        handle.getPublicKeysetHandle().getPrimitive(JwtPublicKeyVerify.class);
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
 
     // Normal, valid signed token.
     JsonObject normalHeader = new JsonObject();
@@ -580,8 +600,10 @@ public class JwtEcdsaSignKeyManagerTest {
     KeysetHandle handleWithKid =
         withCustomKid(handleWithoutKid, "Lorem ipsum dolor sit amet, consectetur adipiscing elit");
 
-    JwtPublicKeySign signerWithKid = handleWithKid.getPrimitive(JwtPublicKeySign.class);
-    JwtPublicKeySign signerWithoutKid = handleWithoutKid.getPrimitive(JwtPublicKeySign.class);
+    JwtPublicKeySign signerWithKid =
+        handleWithKid.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
+    JwtPublicKeySign signerWithoutKid =
+        handleWithoutKid.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     RawJwt rawToken = RawJwt.newBuilder().setJwtId("jwtId").withoutExpiration().build();
     String signedCompactWithKid = signerWithKid.signAndEncode(rawToken);
     String signedCompactWithoutKid = signerWithoutKid.signAndEncode(rawToken);
@@ -595,9 +617,13 @@ public class JwtEcdsaSignKeyManagerTest {
 
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
     JwtPublicKeyVerify verifierWithoutKid =
-        handleWithoutKid.getPublicKeysetHandle().getPrimitive(JwtPublicKeyVerify.class);
+        handleWithoutKid
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
     JwtPublicKeyVerify verifierWithKid =
-        handleWithKid.getPublicKeysetHandle().getPrimitive(JwtPublicKeyVerify.class);
+        handleWithKid
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
 
     // Even if custom_kid is set, we don't require a "kid" in the header.
     assertThat(verifierWithoutKid.verifyAndDecode(signedCompactWithKid, validator).getJwtId())
@@ -620,13 +646,16 @@ public class JwtEcdsaSignKeyManagerTest {
     KeysetHandle handleWithKid = withCustomKid(handleWithoutKid, "kid");
     KeysetHandle handleWithWrongKid = withCustomKid(handleWithoutKid, "wrong kid");
 
-    JwtPublicKeySign signerWithKid = handleWithKid.getPrimitive(JwtPublicKeySign.class);
+    JwtPublicKeySign signerWithKid =
+        handleWithKid.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     RawJwt rawToken = RawJwt.newBuilder().setJwtId("jwtId").withoutExpiration().build();
     String signedCompactWithKid = signerWithKid.signAndEncode(rawToken);
 
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
     JwtPublicKeyVerify verifierWithWrongKid =
-        handleWithWrongKid.getPublicKeysetHandle().getPrimitive(JwtPublicKeyVerify.class);
+        handleWithWrongKid
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
 
     assertThrows(
         JwtInvalidException.class,

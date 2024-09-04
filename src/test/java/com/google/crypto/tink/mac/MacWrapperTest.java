@@ -24,6 +24,7 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
 import com.google.crypto.tink.Registry;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.internal.LegacyKeyManagerImpl;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
@@ -192,7 +193,7 @@ public class MacWrapperTest {
             .addEntry(KeysetHandle.importKey(rawKey0).withFixedId(1234).makePrimary())
             .addEntry(KeysetHandle.importKey(tinkKey1))
             .build();
-    Mac mac = smallKeysetHandle.getPrimitive(Mac.class);
+    Mac mac = smallKeysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
 
     byte[] tag = mac.computeMac(plaintext);
 
@@ -213,8 +214,8 @@ public class MacWrapperTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(rawKey1).withFixedId(1235).makePrimary())
             .build();
-    Mac computingMac = computeKeysetHandle.getPrimitive(Mac.class);
-    Mac verifyingMac = verifyKeysetHandle.getPrimitive(Mac.class);
+    Mac computingMac = computeKeysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
+    Mac verifyingMac = verifyKeysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
 
     byte[] tag = computingMac.computeMac(plaintext);
 
@@ -236,8 +237,8 @@ public class MacWrapperTest {
             .addEntry(KeysetHandle.importKey(rawKey1).withFixedId(1235).makePrimary())
             .addEntry(KeysetHandle.importKey(rawKey3).withFixedId(1237))
             .build();
-    Mac computingMac = computeKeysetHandle.getPrimitive(Mac.class);
-    Mac verifyingMac = verifyKeysetHandle.getPrimitive(Mac.class);
+    Mac computingMac = computeKeysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
+    Mac verifyingMac = verifyKeysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
 
     byte[] tag = computingMac.computeMac(plaintext);
 
@@ -273,7 +274,7 @@ public class MacWrapperTest {
             .addEntry(KeysetHandle.importKey(tinkKey2).makePrimary())
             .build();
 
-    Mac mac = verifyKeysetHandle.getPrimitive(Mac.class);
+    Mac mac = verifyKeysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
 
     mac.verifyMac(tag, plaintext);
   }
@@ -294,8 +295,8 @@ public class MacWrapperTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(rawKey2).withFixedId(1236).makePrimary())
             .build();
-    Mac computingMac = keysetHandle.getPrimitive(Mac.class);
-    Mac verifyingMac = keysetHandlePrimary.getPrimitive(Mac.class);
+    Mac computingMac = keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
+    Mac verifyingMac = keysetHandlePrimary.getPrimitive(RegistryConfiguration.get(), Mac.class);
 
     byte[] tag = computingMac.computeMac(plaintext);
 
@@ -321,7 +322,7 @@ public class MacWrapperTest {
             .addEntry(KeysetHandle.importKey(legacyKey0))
             .addEntry(KeysetHandle.importKey(legacyKey1))
             .build();
-    Mac mac = assortedKeysetHandle.getPrimitive(Mac.class);
+    Mac mac = assortedKeysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
 
     byte[] tag = mac.computeMac(plaintext);
 
@@ -350,7 +351,7 @@ public class MacWrapperTest {
     KeysetHandle.Builder assortedBuilder = KeysetHandle.newBuilder(assortedKeysetHandle0);
     assortedBuilder.getAt(4).makePrimary();
     KeysetHandle assortedKeysetHandle1 = assortedBuilder.build();
-    Mac mac = assortedKeysetHandle1.getPrimitive(Mac.class);
+    Mac mac = assortedKeysetHandle1.getPrimitive(RegistryConfiguration.get(), Mac.class);
 
     byte[] tag = mac.computeMac(plaintext);
 
@@ -393,10 +394,10 @@ public class MacWrapperTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(legacyKey0).makePrimary())
             .build();
-    Mac mac = mainKeysetHandle.getPrimitive(Mac.class);
-    Mac noPrefixMac = noPrefixKeyKeyset.getPrimitive(Mac.class);
-    Mac prefixedMac = prefixedKeyKeyset.getPrimitive(Mac.class);
-    Mac missingMac = missingKeyKeyset.getPrimitive(Mac.class);
+    Mac mac = mainKeysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
+    Mac noPrefixMac = noPrefixKeyKeyset.getPrimitive(RegistryConfiguration.get(), Mac.class);
+    Mac prefixedMac = prefixedKeyKeyset.getPrimitive(RegistryConfiguration.get(), Mac.class);
+    Mac missingMac = missingKeyKeyset.getPrimitive(RegistryConfiguration.get(), Mac.class);
 
     // Busy work triggering different code paths.
     byte[] tag = noPrefixMac.computeMac(plaintext);
@@ -439,9 +440,9 @@ public class MacWrapperTest {
             .addEntry(KeysetHandle.importKey(legacyKey0))
             .setMonitoringAnnotations(annotations)
             .build();
-    Mac rawMac = rawKeysetHandle.getPrimitive(Mac.class);
-    Mac legacyMac = legacyKeysetHandle.getPrimitive(Mac.class);
-    Mac mac = mixedKeysetHandle.getPrimitive(Mac.class);
+    Mac rawMac = rawKeysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
+    Mac legacyMac = legacyKeysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
+    Mac mac = mixedKeysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
 
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] tinkTag = mac.computeMac(plaintext);
@@ -555,7 +556,7 @@ public class MacWrapperTest {
             .addEntry(KeysetHandle.importKey(tinkKey0).makePrimary())
             .setMonitoringAnnotations(annotations)
             .build();
-    Mac mac = keysetHandle.getPrimitive(Mac.class);
+    Mac mac = keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
 
     byte[] data = "some data".getBytes(UTF_8);
     byte[] invalidTag = "an invalid tag".getBytes(UTF_8);
