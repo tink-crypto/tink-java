@@ -89,6 +89,7 @@ android_library(
         ":mac_wrapper-android",
         "//src/main/java/com/google/crypto/tink:mac-android",
         "//src/main/java/com/google/crypto/tink:registry_cluster-android",
+        "//src/main/java/com/google/crypto/tink:registry_configuration-android",
     ],
 )
 

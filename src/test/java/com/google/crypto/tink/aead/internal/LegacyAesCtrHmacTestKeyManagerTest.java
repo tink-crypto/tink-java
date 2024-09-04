@@ -23,6 +23,7 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Registry;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoParametersFormat;
 import com.google.crypto.tink.aead.AeadWrapper;
 import com.google.crypto.tink.proto.AesCtrHmacAeadKey;
@@ -68,7 +69,7 @@ public class LegacyAesCtrHmacTestKeyManagerTest {
       @FromDataPoints("templates") KeyTemplate template) throws Exception {
     KeysetHandle handle =
         KeysetHandle.generateNew(TinkProtoParametersFormat.parse(template.toByteArray()));
-    Aead aead = handle.getPrimitive(Aead.class);
+    Aead aead = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "associatedData".getBytes(UTF_8);
@@ -91,8 +92,9 @@ public class LegacyAesCtrHmacTestKeyManagerTest {
         KeysetHandle.generateNew(
             TinkProtoParametersFormat.parse(
                 LegacyAesCtrHmacTestKeyManager.templateWithoutPrefix().toByteArray()));
-    Aead aeadWithPrefix = handleWithPrefix.getPrimitive(Aead.class);
-    Aead aeadWithoutPrefix = handleWithoutPrefix.getPrimitive(Aead.class);
+    Aead aeadWithPrefix = handleWithPrefix.getPrimitive(RegistryConfiguration.get(), Aead.class);
+    Aead aeadWithoutPrefix =
+        handleWithoutPrefix.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "associatedData".getBytes(UTF_8);

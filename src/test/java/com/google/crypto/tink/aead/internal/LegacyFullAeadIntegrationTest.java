@@ -24,6 +24,7 @@ import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.CryptoFormat;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.TinkProtoParametersFormat;
 import com.google.crypto.tink.aead.AeadConfig;
@@ -153,7 +154,7 @@ public class LegacyFullAeadIntegrationTest {
     KeyTemplate template = LegacyAesCtrHmacTestKeyManager.templateWithTinkPrefix();
     KeysetHandle handle =
         KeysetHandle.generateNew(TinkProtoParametersFormat.parse(template.toByteArray()));
-    Aead aead = handle.getPrimitive(Aead.class);
+    Aead aead = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "associatedData".getBytes(UTF_8);
@@ -169,7 +170,7 @@ public class LegacyFullAeadIntegrationTest {
 
   @Test
   public void endToEnd_works() throws Exception {
-    Aead aead = tinkKeysetHandle.getPrimitive(Aead.class);
+    Aead aead = tinkKeysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     assertThat(aead).isNotNull();
   }
@@ -185,7 +186,7 @@ public class LegacyFullAeadIntegrationTest {
                 + "5a44031302c81f3c9e");
     byte[] plaintext = "plaintext".getBytes(UTF_8);
 
-    Aead aead = rawKeysetHandle.getPrimitive(Aead.class);
+    Aead aead = rawKeysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     assertThat(aead.decrypt(ciphertext, associatedData)).isEqualTo(plaintext);
   }
@@ -195,7 +196,7 @@ public class LegacyFullAeadIntegrationTest {
     byte[] associatedData = Hex.decode("abcdef0123456789");
     byte[] plaintext = "plaintext".getBytes(UTF_8);
 
-    Aead aead = rawKeysetHandle.getPrimitive(Aead.class);
+    Aead aead = rawKeysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     assertThat(aead.decrypt(aead.encrypt(plaintext, associatedData), associatedData))
         .isEqualTo(plaintext);
@@ -211,7 +212,7 @@ public class LegacyFullAeadIntegrationTest {
                 + "badbadbadbadbadbadbadbadbadbadba"
                 + "badbadbadbadbadbad");
 
-    Aead aead = rawKeysetHandle.getPrimitive(Aead.class);
+    Aead aead = rawKeysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     assertThrows(GeneralSecurityException.class, () -> aead.decrypt(badCiphertext, associatedData));
   }
@@ -226,7 +227,7 @@ public class LegacyFullAeadIntegrationTest {
                 + "ddc54c64ce990e05b3898b96d8d1a8e0"
                 + "5a44031302c81f3c9e");
 
-    Aead aead = rawKeysetHandle.getPrimitive(Aead.class);
+    Aead aead = rawKeysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     assertThrows(GeneralSecurityException.class, () -> aead.decrypt(ciphertext, badAssociatedData));
   }
@@ -240,7 +241,7 @@ public class LegacyFullAeadIntegrationTest {
     byte[] associatedData = Hex.decode("abcdef0123456789");
     byte[] plaintext = "plaintext".getBytes(UTF_8);
 
-    Aead aead = tinkKeysetHandle.getPrimitive(Aead.class);
+    Aead aead = tinkKeysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     assertThat(
             Hex.encode(
@@ -254,7 +255,7 @@ public class LegacyFullAeadIntegrationTest {
     byte[] associatedData = Hex.decode("abcdef0123456789");
     byte[] plaintext = "plaintext".getBytes(UTF_8);
 
-    Aead aead = crunchyKeysetHandle.getPrimitive(Aead.class);
+    Aead aead = crunchyKeysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     assertThat(
         Hex.encode(
@@ -268,7 +269,7 @@ public class LegacyFullAeadIntegrationTest {
     byte[] associatedData = Hex.decode("abcdef0123456789");
     byte[] plaintext = "plaintext".getBytes(UTF_8);
 
-    Aead aead = legacyKeysetHandle.getPrimitive(Aead.class);
+    Aead aead = legacyKeysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     assertThat(
         Hex.encode(
@@ -288,7 +289,7 @@ public class LegacyFullAeadIntegrationTest {
                 + "96d8d1a8e05a44031302c81f3c9e");
     byte[] plaintext = "plaintext".getBytes(UTF_8);
 
-    Aead aead = tinkKeysetHandle.getPrimitive(Aead.class);
+    Aead aead = tinkKeysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     assertThat(aead.decrypt(ciphertext, associatedData)).isEqualTo(plaintext);
   }
@@ -304,7 +305,7 @@ public class LegacyFullAeadIntegrationTest {
                 + "96d8d1a8e05a44031302c81f3c9e");
     byte[] plaintext = "plaintext".getBytes(UTF_8);
 
-    Aead aead = crunchyKeysetHandle.getPrimitive(Aead.class);
+    Aead aead = crunchyKeysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     assertThat(aead.decrypt(ciphertext, associatedData)).isEqualTo(plaintext);
   }
@@ -320,7 +321,7 @@ public class LegacyFullAeadIntegrationTest {
                 + "96d8d1a8e05a44031302c81f3c9e");
     byte[] plaintext = "plaintext".getBytes(UTF_8);
 
-    Aead aead = legacyKeysetHandle.getPrimitive(Aead.class);
+    Aead aead = legacyKeysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     assertThat(aead.decrypt(ciphertext, associatedData)).isEqualTo(plaintext);
   }
@@ -335,7 +336,7 @@ public class LegacyFullAeadIntegrationTest {
                 + "96c017b312ddc54c64ce990e05b3898b"
                 + "96d8d1a8e05a44031302c81f3c9e");
 
-    Aead aead = tinkKeysetHandle.getPrimitive(Aead.class);
+    Aead aead = tinkKeysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     assertThrows(
         GeneralSecurityException.class, () -> aead.decrypt(ciphertextBadPrefix, associatedData));
@@ -351,7 +352,7 @@ public class LegacyFullAeadIntegrationTest {
                 + "96c017b312ddc54c64ce990e05b3898b"
                 + "96d8d1a8e05a44031302c81f3c9e");
 
-    Aead aead = crunchyKeysetHandle.getPrimitive(Aead.class);
+    Aead aead = crunchyKeysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     assertThrows(
         GeneralSecurityException.class, () -> aead.decrypt(ciphertextBadPrefix, associatedData));
@@ -367,7 +368,7 @@ public class LegacyFullAeadIntegrationTest {
                 + "96c017b312ddc54c64ce990e05b3898b"
                 + "96d8d1a8e05a44031302c81f3c9e");
 
-    Aead aead = legacyKeysetHandle.getPrimitive(Aead.class);
+    Aead aead = legacyKeysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     assertThrows(
         GeneralSecurityException.class, () -> aead.decrypt(ciphertextBadPrefix, associatedData));

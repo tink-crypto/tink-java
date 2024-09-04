@@ -41,6 +41,7 @@ android_library(
         ":deterministic_aead_wrapper-android",
         "//src/main/java/com/google/crypto/tink:deterministic_aead-android",
         "//src/main/java/com/google/crypto/tink:registry_cluster-android",
+        "//src/main/java/com/google/crypto/tink:registry_configuration-android",
     ],
 )
 

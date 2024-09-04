@@ -181,6 +181,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink:key_template-android",
         "//src/main/java/com/google/crypto/tink:kms_client-android",
         "//src/main/java/com/google/crypto/tink:registry_cluster-android",
+        "//src/main/java/com/google/crypto/tink:registry_configuration-android",
         "//src/main/java/com/google/crypto/tink:tink_proto_keyset_format-android",
         "//src/main/java/com/google/crypto/tink/aead:aes_ctr_hmac_aead_key_manager-android",
         "//src/main/java/com/google/crypto/tink/subtle:base64-android",
