@@ -19,6 +19,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
 import com.google.crypto.tink.aead.AeadConfig;
 import com.google.crypto.tink.aead.PredefinedAeadParameters;
@@ -87,7 +88,7 @@ public final class CleartextKeysetExample {
         TinkJsonProtoKeysetFormat.parseKeyset(serializedKeyset, InsecureSecretKeyAccess.get());
 
     // Get the primitive
-    Aead aead = handle.getPrimitive(Aead.class);
+    Aead aead = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     byte[] input = Files.readAllBytes(Paths.get(args[2]));
     Path outputFile = Paths.get(args[3]);

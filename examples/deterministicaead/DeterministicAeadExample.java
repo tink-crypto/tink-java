@@ -19,6 +19,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
 import com.google.crypto.tink.daead.DeterministicAeadConfig;
 import java.nio.file.Files;
@@ -69,7 +70,8 @@ public final class DeterministicAeadExample {
             new String(Files.readAllBytes(keyFile), UTF_8), InsecureSecretKeyAccess.get());
 
     // Get the primitive
-    DeterministicAead daead = handle.getPrimitive(DeterministicAead.class);
+    DeterministicAead daead =
+        handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
 
     // Use the primitive to encrypt/decrypt files.
     if (MODE_ENCRYPT.equals(mode)) {

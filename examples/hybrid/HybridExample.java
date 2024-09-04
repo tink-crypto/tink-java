@@ -20,6 +20,7 @@ import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
 import com.google.crypto.tink.hybrid.HybridConfig;
 import java.nio.file.Files;
@@ -73,13 +74,15 @@ public final class HybridExample {
 
     if (mode.equals("encrypt")) {
       // Get the primitive.
-      HybridEncrypt encryptor = handle.getPrimitive(HybridEncrypt.class);
+      HybridEncrypt encryptor =
+          handle.getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class);
 
       // Use the primitive to encrypt data.
       byte[] ciphertext = encryptor.encrypt(input, contextInfo);
       Files.write(outputFile, ciphertext);
     } else {
-      HybridDecrypt decryptor = handle.getPrimitive(HybridDecrypt.class);
+      HybridDecrypt decryptor =
+          handle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
 
       // Use the primitive to decrypt data.
       byte[] plaintext = decryptor.decrypt(input, contextInfo);
