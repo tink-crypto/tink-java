@@ -23,6 +23,7 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Registry;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.internal.LegacyKeyManagerImpl;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
@@ -100,7 +101,7 @@ public class PrfSetWrapperTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(hkdfPrfKeyFixed).withFixedId(42).makePrimary())
             .build();
-    PrfSet prfSet = keysetHandle.getPrimitive(PrfSet.class);
+    PrfSet prfSet = keysetHandle.getPrimitive(RegistryConfiguration.get(), PrfSet.class);
     byte[] plaintext = "blah".getBytes(UTF_8);
 
     byte[] prs = prfSet.computePrimary(plaintext, 12);
@@ -119,7 +120,7 @@ public class PrfSetWrapperTest {
             .addEntry(KeysetHandle.importKey(hkdfPrfKey0).withFixedId(42).makePrimary())
             .addEntry(KeysetHandle.importKey(hkdfPrfKey1).withFixedId(43))
             .build();
-    PrfSet prfSet = keysetHandle.getPrimitive(PrfSet.class);
+    PrfSet prfSet = keysetHandle.getPrimitive(RegistryConfiguration.get(), PrfSet.class);
     byte[] plaintext = "blah".getBytes(UTF_8);
 
     byte[] prs = prfSet.computePrimary(plaintext, 12);
@@ -143,8 +144,9 @@ public class PrfSetWrapperTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(hkdfPrfKey1).withFixedId(43).makePrimary())
             .build();
-    PrfSet prfSet = keysetHandle.getPrimitive(PrfSet.class);
-    PrfSet singleKeyPrfSet = singleKeyKeysetHandle.getPrimitive(PrfSet.class);
+    PrfSet prfSet = keysetHandle.getPrimitive(RegistryConfiguration.get(), PrfSet.class);
+    PrfSet singleKeyPrfSet =
+        singleKeyKeysetHandle.getPrimitive(RegistryConfiguration.get(), PrfSet.class);
     byte[] plaintext = "blah".getBytes(UTF_8);
 
     byte[] prs = prfSet.getPrfs().get(43).compute(plaintext, 12);
@@ -163,7 +165,7 @@ public class PrfSetWrapperTest {
             .addEntry(KeysetHandle.importKey(hkdfPrfKey0).withFixedId(42).makePrimary())
             .addEntry(KeysetHandle.importKey(hkdfPrfKey1).withFixedId(43))
             .build();
-    PrfSet prfSet = keysetHandle.getPrimitive(PrfSet.class);
+    PrfSet prfSet = keysetHandle.getPrimitive(RegistryConfiguration.get(), PrfSet.class);
 
     assertThat(prfSet.getPrfs().keySet()).containsExactly(42, 43);
   }
@@ -181,7 +183,7 @@ public class PrfSetWrapperTest {
             .addEntry(KeysetHandle.importKey(hkdfPrfKey0).withFixedId(42).makePrimary())
             .addEntry(KeysetHandle.importKey(hkdfPrfKey1).withFixedId(43))
             .build();
-    PrfSet prfSet = keysetHandle.getPrimitive(PrfSet.class);
+    PrfSet prfSet = keysetHandle.getPrimitive(RegistryConfiguration.get(), PrfSet.class);
     byte[] plaintext = "blah".getBytes(UTF_8);
 
     byte[] unused = prfSet.computePrimary(plaintext, 12);
@@ -212,7 +214,7 @@ public class PrfSetWrapperTest {
             .build();
     byte[] plaintext = "blah".getBytes(UTF_8);
 
-    PrfSet prfSet = hkdfKeysetHandle.getPrimitive(PrfSet.class);
+    PrfSet prfSet = hkdfKeysetHandle.getPrimitive(RegistryConfiguration.get(), PrfSet.class);
     byte[] prsPrimary = prfSet.computePrimary(plaintext, 12);
     byte[] prs5 = prfSet.getPrfs().get(5).compute(plaintext, 12);
     byte[] prs6 = prfSet.getPrfs().get(6).compute(plaintext, 12);
@@ -290,7 +292,7 @@ public class PrfSetWrapperTest {
             .addEntry(KeysetHandle.importKey(hkdfPrfKey0).withFixedId(5).makePrimary())
             .setMonitoringAnnotations(annotations)
             .build();
-    PrfSet prfSet = hkdfKeysetHandle.getPrimitive(PrfSet.class);
+    PrfSet prfSet = hkdfKeysetHandle.getPrimitive(RegistryConfiguration.get(), PrfSet.class);
     byte[] plaintext = "blah".getBytes(UTF_8);
 
     assertThrows(GeneralSecurityException.class, () -> prfSet.computePrimary(plaintext, 12));

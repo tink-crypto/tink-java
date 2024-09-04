@@ -25,6 +25,7 @@ import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
@@ -230,7 +231,7 @@ public class HmacPrfKeyManagerTest {
             .build();
     KeysetHandle handle = KeysetHandle.generateNew(params);
     assertThat(handle.size()).isEqualTo(1);
-    PrfSet prfSet = handle.getPrimitive(PrfSet.class);
+    PrfSet prfSet = handle.getPrimitive(RegistryConfiguration.get(), PrfSet.class);
     Prf directPrf =
         PrfHmacJce.create((com.google.crypto.tink.prf.HmacPrfKey) handle.getAt(0).getKey());
     assertThat(prfSet.computePrimary(new byte[0], 16))
@@ -280,7 +281,7 @@ public class HmacPrfKeyManagerTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(key).withFixedId(112233).makePrimary())
             .build();
-    KeysetDeriver deriver = keyset.getPrimitive(KeysetDeriver.class);
+    KeysetDeriver deriver = keyset.getPrimitive(RegistryConfiguration.get(), KeysetDeriver.class);
 
     KeysetHandle derivedKeyset = deriver.deriveKeyset(Hex.decode("000102"));
 

@@ -26,6 +26,7 @@ import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.aead.AeadConfig;
 import com.google.crypto.tink.aead.PredefinedAeadParameters;
@@ -199,7 +200,7 @@ public class HkdfPrfKeyManagerTest {
             .build();
     KeysetHandle handle = KeysetHandle.generateNew(params);
     assertThat(handle.size()).isEqualTo(1);
-    PrfSet prfSet = handle.getPrimitive(PrfSet.class);
+    PrfSet prfSet = handle.getPrimitive(RegistryConfiguration.get(), PrfSet.class);
     Prf directPrf =
         PrfImpl.wrap(
             HkdfStreamingPrf.create(
@@ -242,7 +243,9 @@ public class HkdfPrfKeyManagerTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(key).withFixedId(1).makePrimary())
             .build();
-    assertThrows(GeneralSecurityException.class, () -> handle.getPrimitive(PrfSet.class));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> handle.getPrimitive(RegistryConfiguration.get(), PrfSet.class));
   }
 
   /** We allow serialization and deserialization with parameters which are otherwise rejected */
@@ -286,7 +289,9 @@ public class HkdfPrfKeyManagerTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(key).withFixedId(112233).makePrimary())
             .build();
-    assertThrows(GeneralSecurityException.class, () -> keyset.getPrimitive(KeysetDeriver.class));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> keyset.getPrimitive(RegistryConfiguration.get(), KeysetDeriver.class));
   }
 
   private static HkdfPrfParameters[] createRejectedParameters() {

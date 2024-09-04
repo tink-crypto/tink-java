@@ -25,6 +25,7 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
 import com.google.crypto.tink.daead.DeterministicAeadConfig;
 import java.security.GeneralSecurityException;
@@ -59,7 +60,7 @@ public final class PrfTest {
       throws Exception {
     KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
     int primaryId = handle.getPrimary().getId();
-    PrfSet prfSet = handle.getPrimitive(PrfSet.class);
+    PrfSet prfSet = handle.getPrimitive(RegistryConfiguration.get(), PrfSet.class);
 
     byte[] data = "data".getBytes(UTF_8);
     byte[] outputPrimary = prfSet.computePrimary(data, 12);
@@ -95,7 +96,7 @@ public final class PrfTest {
       throws Exception {
     KeysetHandle handle =
         TinkJsonProtoKeysetFormat.parseKeyset(JSON_PRF_KEYSET, InsecureSecretKeyAccess.get());
-    PrfSet prfSet = handle.getPrimitive(PrfSet.class);
+    PrfSet prfSet = handle.getPrimitive(RegistryConfiguration.get(), PrfSet.class);
 
     byte[] data = "data".getBytes(UTF_8);
     byte[] output1 = prfSet.computePrimary(data, 12);
@@ -150,7 +151,7 @@ public final class PrfTest {
         TinkJsonProtoKeysetFormat.parseKeyset(
             JSON_PRF_KEYSET_WITH_MULTIPLE_KEYS, InsecureSecretKeyAccess.get());
 
-    PrfSet prfSet = handle.getPrimitive(PrfSet.class);
+    PrfSet prfSet = handle.getPrimitive(RegistryConfiguration.get(), PrfSet.class);
 
     byte[] data = "data".getBytes(UTF_8);
     byte[] outputPrimary = prfSet.computePrimary(data, 12);
@@ -189,7 +190,9 @@ public final class PrfTest {
     KeysetHandle handle =
         TinkJsonProtoKeysetFormat.parseKeyset(JSON_DAEAD_KEYSET, InsecureSecretKeyAccess.get());
     // Test that the keyset can create a DeterministicAead primitive, but not a Mac.
-    Object unused = handle.getPrimitive(DeterministicAead.class);
-    assertThrows(GeneralSecurityException.class, () -> handle.getPrimitive(Mac.class));
+    Object unused = handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> handle.getPrimitive(RegistryConfiguration.get(), Mac.class));
   }
 }

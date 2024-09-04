@@ -25,6 +25,7 @@ import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.subtle.Hex;
@@ -113,7 +114,7 @@ public class AesCmacPrfKeyManagerTest {
     AesCmacPrfParameters params = AesCmacPrfParameters.create(32);
     KeysetHandle handle = KeysetHandle.generateNew(params);
     assertThat(handle.size()).isEqualTo(1);
-    PrfSet prfSet = handle.getPrimitive(PrfSet.class);
+    PrfSet prfSet = handle.getPrimitive(RegistryConfiguration.get(), PrfSet.class);
     Prf directPrf = PrfAesCmac.create((AesCmacPrfKey) handle.getAt(0).getKey());
     assertThat(prfSet.computePrimary(new byte[0], 16))
         .isEqualTo(directPrf.compute(new byte[0], 16));
@@ -145,7 +146,9 @@ public class AesCmacPrfKeyManagerTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(key).withFixedId(1).makePrimary())
             .build();
-    assertThrows(GeneralSecurityException.class, () -> handle.getPrimitive(PrfSet.class));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> handle.getPrimitive(RegistryConfiguration.get(), PrfSet.class));
   }
 
   @Test
