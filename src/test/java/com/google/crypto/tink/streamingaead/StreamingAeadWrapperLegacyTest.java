@@ -21,6 +21,7 @@ import static com.google.common.truth.Truth.assertThat;
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.StreamingAead;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
@@ -91,7 +92,8 @@ public class StreamingAeadWrapperLegacyTest {
             Keyset.newBuilder().addKey(rawKeysetKey).setPrimaryKeyId(42).build().toByteArray(),
             InsecureSecretKeyAccess.get());
 
-    StreamingAead streamingAead = keysetHandle.getPrimitive(StreamingAead.class);
+    StreamingAead streamingAead =
+        keysetHandle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
 
     // Ensure that the legacy API will be used for AesGcmHkdfStreaming.
     assertThat(
@@ -159,7 +161,8 @@ public class StreamingAeadWrapperLegacyTest {
             .addEntry(KeysetHandle.importKey(programmaticKey).withFixedId(43))
             .build();
 
-    StreamingAead streamingAead = keysetHandle.getPrimitive(StreamingAead.class);
+    StreamingAead streamingAead =
+        keysetHandle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
 
     // Ensure that the legacy API will be used for AesGcmHkdfStreaming.
     assertThat(

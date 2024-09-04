@@ -25,6 +25,7 @@ import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.StreamingAead;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
@@ -75,7 +76,8 @@ public class AesGcmHkdfStreamingKeyManagerTest {
   public void getPrimitive_works() throws Exception {
     Parameters parameters = AesGcmHkdfStreamingKeyManager.aes128GcmHkdf4KBTemplate().toParameters();
     KeysetHandle handle = KeysetHandle.generateNew(parameters);
-    StreamingAead streamingAead = handle.getPrimitive(StreamingAead.class);
+    StreamingAead streamingAead =
+        handle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
     StreamingAead directAead =
         AesGcmHkdfStreaming.create(
             (com.google.crypto.tink.streamingaead.AesGcmHkdfStreamingKey) handle.getAt(0).getKey());
@@ -89,7 +91,8 @@ public class AesGcmHkdfStreamingKeyManagerTest {
     KeysetHandle handle =
         KeysetHandle.generateNew(
             AesGcmHkdfStreamingKeyManager.aes128GcmHkdf4KBTemplate().toParameters());
-    StreamingAead streamingAead = handle.getPrimitive(StreamingAead.class);
+    StreamingAead streamingAead =
+        handle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
     int offset = 0;
     int plaintextSize = 1 << 16;
     // Runs the test with different sizes for the chunks to skip.
@@ -253,7 +256,7 @@ public class AesGcmHkdfStreamingKeyManagerTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(keyDerivationKey).withFixedId(789789).makePrimary())
             .build();
-    KeysetDeriver deriver = keyset.getPrimitive(KeysetDeriver.class);
+    KeysetDeriver deriver = keyset.getPrimitive(RegistryConfiguration.get(), KeysetDeriver.class);
 
     KeysetHandle derivedKeyset = deriver.deriveKeyset(Hex.decode("000102"));
 

@@ -21,6 +21,7 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.StreamingAead;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
@@ -76,7 +77,8 @@ public class StreamingAeadWrapperTest {
             .addEntry(KeysetHandle.importKey(key).withFixedId(42).makePrimary())
             .build();
 
-    StreamingAead streamingAead = keysetHandle.getPrimitive(StreamingAead.class);
+    StreamingAead streamingAead =
+        keysetHandle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
 
     StreamingTestUtil.testEncryptDecrypt(streamingAead, 0, 20, 5);
   }
@@ -121,9 +123,10 @@ public class StreamingAeadWrapperTest {
             .addEntry(KeysetHandle.importKey(aesGcmHkdfStreamingKey).withFixedId(42).makePrimary())
             .build();
 
-    StreamingAead fullStreamingAead = fullKeysetHandle.getPrimitive(StreamingAead.class);
+    StreamingAead fullStreamingAead =
+        fullKeysetHandle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
     StreamingAead onlyPrimaryStreamingAead =
-        onlyPrimaryKeysetHandle.getPrimitive(StreamingAead.class);
+        onlyPrimaryKeysetHandle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
 
     StreamingTestUtil.testEncryptDecryptDifferentInstances(
         fullStreamingAead, onlyPrimaryStreamingAead, 0, 20, 5);
@@ -172,9 +175,10 @@ public class StreamingAeadWrapperTest {
             .addEntry(KeysetHandle.importKey(aesGcmHkdfStreamingKey).withFixedId(42))
             .build();
 
-    StreamingAead streamingAead = keysetHandle.getPrimitive(StreamingAead.class);
+    StreamingAead streamingAead =
+        keysetHandle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
     StreamingAead shiftedPrimaryStreamingAead =
-        shiftedPrimaryKeysetHandle.getPrimitive(StreamingAead.class);
+        shiftedPrimaryKeysetHandle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
 
     StreamingTestUtil.testEncryptDecryptDifferentInstances(
         streamingAead, shiftedPrimaryStreamingAead, 0, 20, 5);
@@ -221,8 +225,10 @@ public class StreamingAeadWrapperTest {
             .addEntry(KeysetHandle.importKey(aesGcmHkdfStreamingKey).withFixedId(42).makePrimary())
             .build();
 
-    StreamingAead aesCtrHmac = aesCtrHmacKeysetHandle.getPrimitive(StreamingAead.class);
-    StreamingAead aesGcmHkdf = aesGcmHkdfKeysetHandle.getPrimitive(StreamingAead.class);
+    StreamingAead aesCtrHmac =
+        aesCtrHmacKeysetHandle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
+    StreamingAead aesGcmHkdf =
+        aesGcmHkdfKeysetHandle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
 
     assertThrows(
         IOException.class,
@@ -285,7 +291,8 @@ public class StreamingAeadWrapperTest {
         Keyset.newBuilder().addKey(keysetKey1).addKey(keysetKey2).setPrimaryKeyId(1).build();
     KeysetHandle keysetHandle =
         TinkProtoKeysetFormat.parseKeyset(keyset.toByteArray(), InsecureSecretKeyAccess.get());
-    StreamingAead streamingAead = keysetHandle.getPrimitive(StreamingAead.class);
+    StreamingAead streamingAead =
+        keysetHandle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
 
     StreamingTestUtil.testEncryptionAndDecryption(streamingAead, streamingAead);
   }

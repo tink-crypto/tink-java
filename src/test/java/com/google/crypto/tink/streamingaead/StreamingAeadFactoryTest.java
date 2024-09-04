@@ -18,6 +18,7 @@ package com.google.crypto.tink.streamingaead;
 
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.StreamingAead;
 import com.google.crypto.tink.testing.StreamingTestUtil;
 import org.junit.BeforeClass;
@@ -39,7 +40,8 @@ public class StreamingAeadFactoryTest {
   public void deprecatedMacFactoryGetPrimitive_sameAs_keysetHandleGetPrimitive() throws Exception {
     KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get("AES128_CTR_HMAC_SHA256_4KB"));
 
-    StreamingAead streamingAead = handle.getPrimitive(StreamingAead.class);
+    StreamingAead streamingAead =
+        handle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
     StreamingAead factoryStreamingAead = StreamingAeadFactory.getPrimitive(handle);
 
     StreamingTestUtil.testEncryptionAndDecryption(streamingAead, factoryStreamingAead);
