@@ -24,6 +24,7 @@ import static org.junit.Assume.assumeTrue;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.mac.AesCmacKey;
 import com.google.crypto.tink.mac.AesCmacParameters;
@@ -129,7 +130,7 @@ public class ChunkedAesCmacTest {
                     .withFixedId(1234)
                     .makePrimary())
             .build();
-    Mac mac = keysetHandle.getPrimitive(Mac.class);
+    Mac mac = keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
     AesCmacKey key = (AesCmacKey) keysetHandle.getAt(0).getKey();
     ChunkedMac chunkedMac = new ChunkedAesCmacImpl(key);
     ChunkedMacComputation chunkedMacComputation = chunkedMac.createComputation();

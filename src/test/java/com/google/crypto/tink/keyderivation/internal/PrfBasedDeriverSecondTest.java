@@ -25,6 +25,7 @@ import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.aead.AesCtrHmacAeadKey;
 import com.google.crypto.tink.aead.AesGcmKey;
 import com.google.crypto.tink.aead.AesGcmParameters;
@@ -132,7 +133,7 @@ public final class PrfBasedDeriverSecondTest {
             .addEntry(KeysetHandle.importKey(keyDerivationKey).withFixedId(123).makePrimary())
             .build();
 
-    KeysetDeriver deriver = keyset.getPrimitive(KeysetDeriver.class);
+    KeysetDeriver deriver = keyset.getPrimitive(RegistryConfiguration.get(), KeysetDeriver.class);
 
     KeysetHandle derivedKeyset = deriver.deriveKeyset(new byte[] {1});
     Key expectedKey =
@@ -275,7 +276,7 @@ public final class PrfBasedDeriverSecondTest {
             .addEntry(KeysetHandle.importKey(keyDerivationKey1).withFixedId(557).makePrimary())
             .addEntry(KeysetHandle.importKey(keyDerivationKey2).withFixedId(555))
             .build();
-    KeysetDeriver deriver = keyset.getPrimitive(KeysetDeriver.class);
+    KeysetDeriver deriver = keyset.getPrimitive(RegistryConfiguration.get(), KeysetDeriver.class);
     KeysetHandle derivedKeyset = deriver.deriveKeyset(new byte[] {1, 0, 1});
 
     Key expectedKey0 =
@@ -499,7 +500,7 @@ public final class PrfBasedDeriverSecondTest {
                     .withFixedId(idRequirement == null ? 789789 : idRequirement)
                     .makePrimary())
             .build();
-    KeysetDeriver deriver = keyset.getPrimitive(KeysetDeriver.class);
+    KeysetDeriver deriver = keyset.getPrimitive(RegistryConfiguration.get(), KeysetDeriver.class);
 
     KeysetHandle derivedKeyset = deriver.deriveKeyset(Hex.decode(t.inputHex));
 

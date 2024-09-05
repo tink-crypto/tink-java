@@ -22,6 +22,7 @@ import static org.junit.Assume.assumeTrue;
 
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.mac.ChunkedMac;
@@ -168,7 +169,7 @@ public class ChunkedHmacTest {
                     .withFixedId(1234)
                     .makePrimary()
             ).build();
-    Mac mac = keysetHandle.getPrimitive(Mac.class);
+    Mac mac = keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
     HmacKey key = (HmacKey) keysetHandle.getAt(0).getKey();
     ChunkedMac chunkedMac = new ChunkedHmacImpl(key);
     ChunkedMacComputation chunkedMacComputation = chunkedMac.createComputation();

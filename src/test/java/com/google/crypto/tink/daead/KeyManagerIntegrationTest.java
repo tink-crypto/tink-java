@@ -23,6 +23,7 @@ import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Registry;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.daead.internal.testing.LegacyAesSivTestKeyManager;
 import com.google.crypto.tink.internal.EnumTypeProtoConverter;
@@ -121,7 +122,8 @@ public final class KeyManagerIntegrationTest {
         AesSivKey.newBuilder().setVersion(0).setKeyValue(ByteString.copyFrom(KEY_BYTES)).build();
     KeysetHandle handle = getKeysetHandleFromProtoKey(protoKey, outputPrefixType);
 
-    DeterministicAead customDaead = handle.getPrimitive(DeterministicAead.class);
+    DeterministicAead customDaead =
+        handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
     byte[] ciphertext = customDaead.encryptDeterministically(plaintext, associatedData);
     byte[] ciphertext2 = customDaead.encryptDeterministically(plaintext, associatedData);
     DeterministicAead tinkDaead = AesSiv.create(createKey(outputPrefixType));
@@ -149,7 +151,8 @@ public final class KeyManagerIntegrationTest {
     AesSivKey protoKey =
         AesSivKey.newBuilder().setVersion(0).setKeyValue(ByteString.copyFrom(KEY_BYTES)).build();
     KeysetHandle handle = getKeysetHandleFromProtoKey(protoKey, outputPrefixType);
-    DeterministicAead customDaead = handle.getPrimitive(DeterministicAead.class);
+    DeterministicAead customDaead =
+        handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
     byte[] decrypted = customDaead.decryptDeterministically(ciphertext, associatedData);
     byte[] decrypted2 = customDaead.decryptDeterministically(ciphertext2, associatedData);
 

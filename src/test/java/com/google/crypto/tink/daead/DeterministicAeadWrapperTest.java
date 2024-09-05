@@ -24,6 +24,7 @@ import static org.junit.Assert.fail;
 
 import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.daead.internal.AesSivProtoSerialization;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
@@ -78,7 +79,8 @@ public class DeterministicAeadWrapperTest {
 
     KeysetHandle keysetHandle =
         KeysetHandle.newBuilder().addEntry(KeysetHandle.importKey(tinkKey).makePrimary()).build();
-    DeterministicAead daead = keysetHandle.getPrimitive(DeterministicAead.class);
+    DeterministicAead daead =
+        keysetHandle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
 
     byte[] ciphertext = daead.encryptDeterministically(plaintext, associatedData);
     byte[] ciphertext2 = daead.encryptDeterministically(plaintext, associatedData);
@@ -111,7 +113,8 @@ public class DeterministicAeadWrapperTest {
             .addEntry(KeysetHandle.importKey(rawKey).withFixedId(43))
             .addEntry(KeysetHandle.importKey(crunchyKey))
             .build();
-    DeterministicAead daead = mainKeysetHandle.getPrimitive(DeterministicAead.class);
+    DeterministicAead daead =
+        mainKeysetHandle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
 
     // encrypt and decrypt with the main keyset works
     byte[] ciphertext = daead.encryptDeterministically(plaintext, associatedData);
@@ -139,13 +142,15 @@ public class DeterministicAeadWrapperTest {
             .addEntry(KeysetHandle.importKey(tinkKey).makePrimary())
             .addEntry(KeysetHandle.importKey(rawKey).withFixedId(43))
             .build();
-    DeterministicAead daeadMain = mainKeysetHandle.getPrimitive(DeterministicAead.class);
+    DeterministicAead daeadMain =
+        mainKeysetHandle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
 
     KeysetHandle rawKeyKeysetHandle =
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(rawKey).withFixedId(43).makePrimary())
             .build();
-    DeterministicAead daeadRaw = rawKeyKeysetHandle.getPrimitive(DeterministicAead.class);
+    DeterministicAead daeadRaw =
+        rawKeyKeysetHandle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
 
     // encrypt with RAW key (non-primary in the main keyset) and decrypt with the main keyset works
     byte[] ciphertext = daeadRaw.encryptDeterministically(plaintext, associatedData);
@@ -169,11 +174,13 @@ public class DeterministicAeadWrapperTest {
             .addEntry(KeysetHandle.importKey(tinkKey0).makePrimary())
             .addEntry(KeysetHandle.importKey(rawKey).withFixedId(43))
             .build();
-    DeterministicAead daead = mainKeysetHandle.getPrimitive(DeterministicAead.class);
+    DeterministicAead daead =
+        mainKeysetHandle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
 
     KeysetHandle otherKeyKeysetHandle =
         KeysetHandle.newBuilder().addEntry(KeysetHandle.importKey(tinkKey1).makePrimary()).build();
-    DeterministicAead daead2 = otherKeyKeysetHandle.getPrimitive(DeterministicAead.class);
+    DeterministicAead daead2 =
+        otherKeyKeysetHandle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
 
     // encrypt with a random key not in the main keyset, decrypt with the main keyset should fail
     byte[] ciphertext = daead2.encryptDeterministically(plaintext, associatedData);
@@ -201,7 +208,8 @@ public class DeterministicAeadWrapperTest {
             .addEntry(KeysetHandle.importKey(crunchyKey))
             .build();
 
-    DeterministicAead daead = keysetHandle.getPrimitive(DeterministicAead.class);
+    DeterministicAead daead =
+        keysetHandle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
 
     byte[] ciphertext = daead.encryptDeterministically(plaintext, associatedData);
     byte[] ciphertext2 = daead.encryptDeterministically(plaintext, associatedData);
@@ -227,7 +235,8 @@ public class DeterministicAeadWrapperTest {
             .addEntry(KeysetHandle.importKey(rawKey).withFixedId(42).makePrimary())
             .build();
 
-    DeterministicAead daead = keysetHandle.getPrimitive(DeterministicAead.class);
+    DeterministicAead daead =
+        keysetHandle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
 
     byte[] ciphertext = daead.encryptDeterministically(plaintext, associatedData);
     byte[] ciphertext2 = daead.encryptDeterministically(plaintext, associatedData);
@@ -262,14 +271,16 @@ public class DeterministicAeadWrapperTest {
             .addEntry(KeysetHandle.importKey(rawKey).withFixedId(43))
             .setMonitoringAnnotations(annotations)
             .build();
-    DeterministicAead daead = keysetHandle.getPrimitive(DeterministicAead.class);
+    DeterministicAead daead =
+        keysetHandle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
 
     // encrypt with a non-primary RAW key, without monitoring
     KeysetHandle keysetHandle2 =
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(rawKey).withFixedId(43).makePrimary())
             .build();
-    DeterministicAead daead2 = keysetHandle2.getPrimitive(DeterministicAead.class);
+    DeterministicAead daead2 =
+        keysetHandle2.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
 
     byte[] ciphertext2 = daead2.encryptDeterministically(plaintext2, associatedData);
     byte[] ciphertext = daead.encryptDeterministically(plaintext, associatedData);
@@ -355,7 +366,8 @@ public class DeterministicAeadWrapperTest {
             .addEntry(KeysetHandle.importKey(tinkKey).makePrimary())
             .setMonitoringAnnotations(annotations)
             .build();
-    DeterministicAead daead = keysetHandle.getPrimitive(DeterministicAead.class);
+    DeterministicAead daead =
+        keysetHandle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
 
     byte[] randomBytes = Random.randBytes(20);
     byte[] associatedData = Random.randBytes(20);

@@ -21,6 +21,7 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.EnumTypeProtoConverter;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
@@ -94,7 +95,7 @@ public class LegacyFullMacIntegrationTest {
     MacConfig.register();
 
     KeysetHandle keysetHandle = getKeysetHandleFromKeyNoSerialization(t.key);
-    Mac mac = keysetHandle.getPrimitive(Mac.class);
+    Mac mac = keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
 
     mac.verifyMac(t.tag, t.message);
   }
@@ -119,7 +120,9 @@ public class LegacyFullMacIntegrationTest {
     KeysetHandle keysetHandle =
         getKeysetHandleFromKeyNoSerialization(hmacImplementationTestVectors[0].key);
 
-    assertThrows(GeneralSecurityException.class, () -> keysetHandle.getPrimitive(Mac.class));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class));
   }
 
   private static KeysetHandle getKeysetHandleFromKeyNoSerialization(HmacKey key)

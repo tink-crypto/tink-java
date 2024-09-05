@@ -27,6 +27,7 @@ import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.SlowInputStream;
@@ -172,7 +173,8 @@ public class AesSivKeyManagerTest {
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] aad = "aad".getBytes(UTF_8);
 
-    DeterministicAead daead = keysetHandle.getPrimitive(DeterministicAead.class);
+    DeterministicAead daead =
+        keysetHandle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
     DeterministicAead directDaead = AesSiv.create(key);
 
     Object unused =
@@ -233,7 +235,8 @@ public class AesSivKeyManagerTest {
             .build();
     KeysetHandle handle = KeysetHandle.generateNew(params);
     assertThat(handle.size()).isEqualTo(1);
-    DeterministicAead daead = handle.getPrimitive(DeterministicAead.class);
+    DeterministicAead daead =
+        handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
     DeterministicAead directDaead =
         AesSiv.create((com.google.crypto.tink.daead.AesSivKey) handle.getAt(0).getKey());
     byte[] ciphertext = daead.encryptDeterministically(new byte[] {1, 2, 3}, new byte[0]);
@@ -285,7 +288,8 @@ public class AesSivKeyManagerTest {
             .addEntry(KeysetHandle.importKey(key).withFixedId(3133).makePrimary())
             .build();
     assertThrows(
-        GeneralSecurityException.class, () -> handle.getPrimitive(DeterministicAead.class));
+        GeneralSecurityException.class,
+        () -> handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class));
   }
 
   @Test
@@ -343,7 +347,7 @@ public class AesSivKeyManagerTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(key).withFixedId(112233).makePrimary())
             .build();
-    KeysetDeriver deriver = keyset.getPrimitive(KeysetDeriver.class);
+    KeysetDeriver deriver = keyset.getPrimitive(RegistryConfiguration.get(), KeysetDeriver.class);
 
     KeysetHandle derivedKeyset = deriver.deriveKeyset(Hex.decode("000102"));
 
@@ -396,6 +400,8 @@ public class AesSivKeyManagerTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(key).withFixedId(112233).makePrimary())
             .build();
-    assertThrows(GeneralSecurityException.class, () -> keyset.getPrimitive(KeysetDeriver.class));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> keyset.getPrimitive(RegistryConfiguration.get(), KeysetDeriver.class));
   }
 }

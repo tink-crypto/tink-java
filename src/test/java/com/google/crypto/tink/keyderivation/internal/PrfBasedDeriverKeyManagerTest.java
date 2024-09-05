@@ -24,6 +24,7 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.aead.AesGcmKey;
 import com.google.crypto.tink.aead.PredefinedAeadParameters;
@@ -337,7 +338,7 @@ public class PrfBasedDeriverKeyManagerTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(keyDerivationKey).makePrimary().withFixedId(123))
             .build();
-    KeysetDeriver deriver = handle.getPrimitive(KeysetDeriver.class);
+    KeysetDeriver deriver = handle.getPrimitive(RegistryConfiguration.get(), KeysetDeriver.class);
 
     Key expectedKey =
         AesGcmKey.builder()
