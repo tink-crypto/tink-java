@@ -40,7 +40,6 @@ import javax.crypto.spec.GCMParameterSpec;
  *
  * <p>This is not yet part of the public API.
  */
-@RequiresApi(Build.VERSION_CODES.M)
 final class AndroidKeystore {
 
   /**
@@ -48,6 +47,7 @@ final class AndroidKeystore {
    *
    * <p>Warning: Existing keys with the same {@code alias} will be overwritten.
    */
+  @RequiresApi(23)
   public static void generateNewAes256GcmKey(String alias) throws GeneralSecurityException {
     KeyGenParameterSpec spec =
         new KeyGenParameterSpec.Builder(
@@ -68,6 +68,7 @@ final class AndroidKeystore {
    *
    * <p>Warning: Existing keys with the same {@code alias} will be overwritten.
    */
+  @RequiresApi(23)
   public static void generateNewKeyWithSpec(KeyGenParameterSpec spec)
       throws GeneralSecurityException {
     KeyGenerator keyGenerator =

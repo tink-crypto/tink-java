@@ -21,7 +21,10 @@ android_library(
 android_library(
     name = "android_keystore_aes_gcm",
     srcs = ["AndroidKeystoreAesGcm.java"],
-    deps = ["//src/main/java/com/google/crypto/tink:aead-android"],
+    deps = [
+        ":android_keystore",
+        "//src/main/java/com/google/crypto/tink:aead-android",
+    ],
 )
 
 android_library(
