@@ -158,6 +158,7 @@ java_test(
         "//src/main/java/com/google/crypto/tink:key_templates",
         "//src/main/java/com/google/crypto/tink:parameters",
         "//src/main/java/com/google/crypto/tink:registry_cluster",
+        "//src/main/java/com/google/crypto/tink:registry_configuration",
         "//src/main/java/com/google/crypto/tink:tink_proto_keyset_format",
         "//src/main/java/com/google/crypto/tink/hybrid:hpke_private_key",
         "//src/main/java/com/google/crypto/tink/hybrid:hybrid_config",

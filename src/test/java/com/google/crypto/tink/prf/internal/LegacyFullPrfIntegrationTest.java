@@ -21,6 +21,7 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.EnumTypeProtoConverter;
 import com.google.crypto.tink.internal.LegacyProtoKey;
@@ -89,7 +90,7 @@ public class LegacyFullPrfIntegrationTest {
     TestLegacyPrfWrapper.register();
 
     KeysetHandle keysetHandle = getKeysetHandleFromKeyNoSerialization(t.key);
-    PrfSet prfSet = keysetHandle.getPrimitive(PrfSet.class);
+    PrfSet prfSet = keysetHandle.getPrimitive(RegistryConfiguration.get(), PrfSet.class);
     Prf prf = prfSet.getPrfs().get(prfSet.getPrimaryId());
 
     assertThat(prf).isInstanceOf(LegacyFullPrf.class);
@@ -116,7 +117,9 @@ public class LegacyFullPrfIntegrationTest {
     KeysetHandle keysetHandle =
         getKeysetHandleFromKeyNoSerialization(HMAC_LEGACY_PRF_TEST_VECTORS[0].key);
 
-    assertThrows(GeneralSecurityException.class, () -> keysetHandle.getPrimitive(PrfSet.class));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> keysetHandle.getPrimitive(RegistryConfiguration.get(), PrfSet.class));
   }
 
   private static KeysetHandle getKeysetHandleFromKeyNoSerialization(HmacPrfKey key)

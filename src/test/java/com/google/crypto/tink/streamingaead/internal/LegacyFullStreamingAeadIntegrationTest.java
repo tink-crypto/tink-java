@@ -22,6 +22,7 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.StreamingAead;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.proto.AesGcmHkdfStreamingKey;
@@ -97,7 +98,8 @@ public class LegacyFullStreamingAeadIntegrationTest {
 
   @Test
   public void endToEnd_works() throws Exception {
-    StreamingAead streamingAead = rawKeysetHandle.getPrimitive(StreamingAead.class);
+    StreamingAead streamingAead =
+        rawKeysetHandle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
 
     assertThat(streamingAead).isNotNull();
   }
@@ -111,7 +113,8 @@ public class LegacyFullStreamingAeadIntegrationTest {
                 + "164f6f240a1e9ed9b8d289ec3ddad4c221c0e60b7b143d63231aeeffca384241"
                 + "0d19f0613b690ee32796f2a2d3c19fc778");
 
-    StreamingAead streamingAead = rawKeysetHandle.getPrimitive(StreamingAead.class);
+    StreamingAead streamingAead =
+        rawKeysetHandle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
     ReadableByteChannel plaintextChannel =
         streamingAead.newDecryptingChannel(
             new SeekableByteBufferChannel(ciphertext), associatedData);
@@ -124,7 +127,8 @@ public class LegacyFullStreamingAeadIntegrationTest {
 
   @Test
   public void endToEnd_encryptDecryptIsCorrect() throws Exception {
-    StreamingAead streamingAead = rawKeysetHandle.getPrimitive(StreamingAead.class);
+    StreamingAead streamingAead =
+        rawKeysetHandle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
 
     StreamingTestUtil.testEncryptDecrypt(streamingAead, 0, 20, 20);
   }
@@ -156,7 +160,8 @@ public class LegacyFullStreamingAeadIntegrationTest {
                 .toByteArray(),
             InsecureSecretKeyAccess.get());
 
-    StreamingAead streamingAead = tinkKeysetHandle.getPrimitive(StreamingAead.class);
+    StreamingAead streamingAead =
+        tinkKeysetHandle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
     ReadableByteChannel plaintextChannel =
         streamingAead.newDecryptingChannel(
             new SeekableByteBufferChannel(ciphertext), associatedData);
@@ -190,7 +195,8 @@ public class LegacyFullStreamingAeadIntegrationTest {
                 .toByteArray(),
             InsecureSecretKeyAccess.get());
 
-    StreamingAead streamingAead = crunchyKeysetHandle.getPrimitive(StreamingAead.class);
+    StreamingAead streamingAead =
+        crunchyKeysetHandle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
     ReadableByteChannel plaintextChannel =
         streamingAead.newDecryptingChannel(
             new SeekableByteBufferChannel(ciphertext), associatedData);
@@ -224,7 +230,8 @@ public class LegacyFullStreamingAeadIntegrationTest {
                 .toByteArray(),
             InsecureSecretKeyAccess.get());
 
-    StreamingAead streamingAead = legacyKeysetHandle.getPrimitive(StreamingAead.class);
+    StreamingAead streamingAead =
+        legacyKeysetHandle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
     ReadableByteChannel plaintextChannel =
         streamingAead.newDecryptingChannel(
             new SeekableByteBufferChannel(ciphertext), associatedData);

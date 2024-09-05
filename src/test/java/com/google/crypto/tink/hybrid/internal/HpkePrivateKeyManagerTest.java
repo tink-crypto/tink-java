@@ -26,6 +26,7 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.hybrid.HpkePrivateKey;
 import com.google.crypto.tink.hybrid.HybridConfig;
@@ -90,8 +91,8 @@ public final class HpkePrivateKeyManagerTest {
         KeysetHandle.generateNew(
             KeyTemplates.get("DHKEM_X25519_HKDF_SHA256_HKDF_SHA256_AES_128_GCM"));
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
-    assertNotNull(privateHandle.getPrimitive(HybridDecrypt.class));
-    assertNotNull(publicHandle.getPrimitive(HybridEncrypt.class));
+    assertNotNull(privateHandle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class));
+    assertNotNull(publicHandle.getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class));
   }
 
   @DataPoints("testVectors")
@@ -108,7 +109,8 @@ public final class HpkePrivateKeyManagerTest {
       entry.withFixedId(id);
     }
     KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
-    HybridDecrypt hybridDecrypt = handle.getPrimitive(HybridDecrypt.class);
+    HybridDecrypt hybridDecrypt =
+        handle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
     byte[] plaintext = hybridDecrypt.decrypt(v.getCiphertext(), v.getContextInfo());
     assertThat(Hex.encode(plaintext)).isEqualTo(Hex.encode(v.getPlaintext()));
   }
@@ -124,7 +126,8 @@ public final class HpkePrivateKeyManagerTest {
       entry.withFixedId(id);
     }
     KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
-    HybridDecrypt hybridDecrypt = handle.getPrimitive(HybridDecrypt.class);
+    HybridDecrypt hybridDecrypt =
+        handle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
     byte[] contextInfo = v.getContextInfo();
     if (contextInfo.length > 0) {
       contextInfo[0] ^= 1;
@@ -149,8 +152,12 @@ public final class HpkePrivateKeyManagerTest {
       entry.withFixedId(id);
     }
     KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
-    HybridDecrypt hybridDecrypt = handle.getPrimitive(HybridDecrypt.class);
-    HybridEncrypt hybridEncrypt = handle.getPublicKeysetHandle().getPrimitive(HybridEncrypt.class);
+    HybridDecrypt hybridDecrypt =
+        handle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
+    HybridEncrypt hybridEncrypt =
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class);
     byte[] ciphertext = hybridEncrypt.encrypt(v.getPlaintext(), v.getContextInfo());
     byte[] plaintext = hybridDecrypt.decrypt(ciphertext, v.getContextInfo());
     assertThat(Hex.encode(plaintext)).isEqualTo(Hex.encode(v.getPlaintext()));

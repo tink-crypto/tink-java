@@ -27,6 +27,7 @@ import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
 import com.google.crypto.tink.aead.AeadConfig;
 import com.google.crypto.tink.daead.DeterministicAeadConfig;
@@ -64,12 +65,12 @@ public final class KeyDerivationTest {
             .build();
 
     KeysetHandle handle = KeysetHandle.generateNew(keyDerivationParameters);
-    KeysetDeriver deriver = handle.getPrimitive(KeysetDeriver.class);
+    KeysetDeriver deriver = handle.getPrimitive(RegistryConfiguration.get(), KeysetDeriver.class);
 
     KeysetHandle derivedHandle = deriver.deriveKeyset("salt".getBytes(UTF_8));
 
     // Use derived keyset, which should contain an AES256_GCM key.
-    Aead aead = derivedHandle.getPrimitive(Aead.class);
+    Aead aead = derivedHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "associatedData".getBytes(UTF_8);
     byte[] ciphertext = aead.encrypt(plaintext, associatedData);
@@ -102,11 +103,11 @@ public final class KeyDerivationTest {
     KeysetHandle handle =
         TinkJsonProtoKeysetFormat.parseKeyset(
             JSON_AEAD_KEYSET_DERIVATION_KEYSET, InsecureSecretKeyAccess.get());
-    KeysetDeriver deriver = handle.getPrimitive(KeysetDeriver.class);
+    KeysetDeriver deriver = handle.getPrimitive(RegistryConfiguration.get(), KeysetDeriver.class);
 
     KeysetHandle derivedHandle = deriver.deriveKeyset("salt".getBytes(UTF_8));
 
-    Aead aead = derivedHandle.getPrimitive(Aead.class);
+    Aead aead = derivedHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "associatedData".getBytes(UTF_8);
     byte[] ciphertext = aead.encrypt(plaintext, associatedData);
@@ -167,12 +168,12 @@ public final class KeyDerivationTest {
     KeysetHandle handle =
         TinkJsonProtoKeysetFormat.parseKeyset(
             JSON_AEAD_KEYSET_DERIVATION_KEYSET_WITH_MULTIPLE_KEYS, InsecureSecretKeyAccess.get());
-    KeysetDeriver deriver = handle.getPrimitive(KeysetDeriver.class);
+    KeysetDeriver deriver = handle.getPrimitive(RegistryConfiguration.get(), KeysetDeriver.class);
 
     KeysetHandle derivedHandle = deriver.deriveKeyset("salt".getBytes(UTF_8));
 
     // Derived keyset should only contain AEAD keys
-    Aead aead = derivedHandle.getPrimitive(Aead.class);
+    Aead aead = derivedHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "associatedData".getBytes(UTF_8);
     byte[] ciphertext = aead.encrypt(plaintext, associatedData);
@@ -184,9 +185,9 @@ public final class KeyDerivationTest {
     KeysetHandle handle1 =
         TinkJsonProtoKeysetFormat.parseKeyset(
             JSON_AEAD_KEYSET_DERIVATION_KEYSET, InsecureSecretKeyAccess.get());
-    KeysetDeriver deriver1 = handle1.getPrimitive(KeysetDeriver.class);
+    KeysetDeriver deriver1 = handle1.getPrimitive(RegistryConfiguration.get(), KeysetDeriver.class);
     KeysetHandle derivedHandle1 = deriver1.deriveKeyset("salt".getBytes(UTF_8));
-    Aead aead1 = derivedHandle1.getPrimitive(Aead.class);
+    Aead aead1 = derivedHandle1.getPrimitive(RegistryConfiguration.get(), Aead.class);
     byte[] ciphertext1 = aead1.encrypt(plaintext, associatedData);
     assertThat(aead.decrypt(ciphertext1, associatedData)).isEqualTo(plaintext);
   }
@@ -200,12 +201,12 @@ public final class KeyDerivationTest {
             .build();
 
     KeysetHandle handle = KeysetHandle.generateNew(keyDerivationParameters);
-    KeysetDeriver deriver = handle.getPrimitive(KeysetDeriver.class);
+    KeysetDeriver deriver = handle.getPrimitive(RegistryConfiguration.get(), KeysetDeriver.class);
 
     KeysetHandle derivedHandle = deriver.deriveKeyset("salt".getBytes(UTF_8));
 
     // Use derived keyset, which should contain an HMAC key.
-    Mac mac = derivedHandle.getPrimitive(Mac.class);
+    Mac mac = derivedHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
     byte[] data = "data".getBytes(UTF_8);
     byte[] tag = mac.computeMac(data);
     mac.verifyMac(tag, data);
@@ -236,12 +237,12 @@ public final class KeyDerivationTest {
     KeysetHandle handle =
         TinkJsonProtoKeysetFormat.parseKeyset(
             JSON_MAC_KEYSET_DERIVATION_KEYSET, InsecureSecretKeyAccess.get());
-    KeysetDeriver deriver = handle.getPrimitive(KeysetDeriver.class);
+    KeysetDeriver deriver = handle.getPrimitive(RegistryConfiguration.get(), KeysetDeriver.class);
 
     KeysetHandle derivedHandle = deriver.deriveKeyset("salt".getBytes(UTF_8));
 
     // Use derived keyset, which should contain an HMAC key.
-    Mac mac = derivedHandle.getPrimitive(Mac.class);
+    Mac mac = derivedHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
     byte[] data = "data".getBytes(UTF_8);
     byte[] tag = mac.computeMac(data);
     mac.verifyMac(tag, data);
@@ -273,7 +274,9 @@ public final class KeyDerivationTest {
     KeysetHandle handle =
         TinkJsonProtoKeysetFormat.parseKeyset(JSON_DAEAD_KEYSET, InsecureSecretKeyAccess.get());
     // Test that the keyset can create a DeterministicAead primitive, but not a KeysetDeriver.
-    Object unused = handle.getPrimitive(DeterministicAead.class);
-    assertThrows(GeneralSecurityException.class, () -> handle.getPrimitive(KeysetDeriver.class));
+    Object unused = handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> handle.getPrimitive(RegistryConfiguration.get(), KeysetDeriver.class));
   }
 }

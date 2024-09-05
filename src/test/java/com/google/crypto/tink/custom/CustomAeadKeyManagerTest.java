@@ -25,6 +25,7 @@ import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.Registry;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.TinkProtoParametersFormat;
 import com.google.crypto.tink.aead.AeadConfig;
@@ -159,7 +160,7 @@ public final class CustomAeadKeyManagerTest {
   public void createEncryptAndDecrypt_success() throws Exception {
     Parameters aesGcm128Parameters = MyCustomKeyManager.aesGcm128Parameters();
     KeysetHandle handle = KeysetHandle.generateNew(aesGcm128Parameters);
-    Aead aead = handle.getPrimitive(Aead.class);
+    Aead aead = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "associatedData".getBytes(UTF_8);
@@ -179,7 +180,7 @@ public final class CustomAeadKeyManagerTest {
     KeysetHandle handle =
         MyCustomKeyManager.aesGcm128KeyToKeysetHandle(
             rawAesKey, /* keyId= */ 0x11223344, OutputPrefixType.RAW);
-    Aead aead = handle.getPrimitive(Aead.class);
+    Aead aead = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
     byte[] decrypted = aead.decrypt(ciphertext, associatedData);
     assertThat(decrypted).isEqualTo(plaintext);
   }
@@ -192,7 +193,7 @@ public final class CustomAeadKeyManagerTest {
     KeysetHandle handle =
         MyCustomKeyManager.aesGcm128KeyToKeysetHandle(rawAesKey, keyId, OutputPrefixType.TINK);
 
-    Aead aead = handle.getPrimitive(Aead.class);
+    Aead aead = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "associatedData".getBytes(UTF_8);
     byte[] ciphertext = aead.encrypt(plaintext, associatedData);
@@ -222,7 +223,7 @@ public final class CustomAeadKeyManagerTest {
     KeysetHandle handleWithTinkKey =
         KeysetHandle.generateNew(
             ChaCha20Poly1305Parameters.create(ChaCha20Poly1305Parameters.Variant.TINK));
-    Aead aead2 = handleWithTinkKey.getPrimitive(Aead.class);
+    Aead aead2 = handleWithTinkKey.getPrimitive(RegistryConfiguration.get(), Aead.class);
     byte[] ciphertext2 = aead2.encrypt(plaintext, associatedData);
 
     KeysetHandle handle =
@@ -235,7 +236,7 @@ public final class CustomAeadKeyManagerTest {
             .build();
 
     // Decrypt both ciphertexts
-    Aead aead = handle2.getPrimitive(Aead.class);
+    Aead aead = handle2.getPrimitive(RegistryConfiguration.get(), Aead.class);
     assertThat(aead.decrypt(ciphertext, associatedData)).isEqualTo(plaintext);
     assertThat(aead.decrypt(ciphertext2, associatedData)).isEqualTo(plaintext);
   }
@@ -244,7 +245,7 @@ public final class CustomAeadKeyManagerTest {
   public void serializeAndParse_decrypts() throws Exception {
     Parameters aesGcm128Parameters = MyCustomKeyManager.aesGcm128Parameters();
     KeysetHandle handle = KeysetHandle.generateNew(aesGcm128Parameters);
-    Aead aead = handle.getPrimitive(Aead.class);
+    Aead aead = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "associatedData".getBytes(UTF_8);
     byte[] ciphertext = aead.encrypt(plaintext, associatedData);
@@ -254,7 +255,7 @@ public final class CustomAeadKeyManagerTest {
 
     KeysetHandle handle2 =
         TinkProtoKeysetFormat.parseKeyset(serializedKeyset, InsecureSecretKeyAccess.get());
-    Aead aead2 = handle2.getPrimitive(Aead.class);
+    Aead aead2 = handle2.getPrimitive(RegistryConfiguration.get(), Aead.class);
     byte[] decrypted = aead2.decrypt(ciphertext, associatedData);
     assertThat(decrypted).isEqualTo(plaintext);
   }
