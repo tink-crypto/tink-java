@@ -23,6 +23,7 @@ import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
+import com.google.crypto.tink.RegistryConfiguration;
 import java.security.GeneralSecurityException;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -45,10 +46,12 @@ public class PublicKeyVerifyFactoryTest {
     KeysetHandle privateHandle = KeysetHandle.generateNew(KeyTemplates.get("ECDSA_P256"));
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
 
-    PublicKeySign signer = privateHandle.getPrimitive(PublicKeySign.class);
+    PublicKeySign signer =
+        privateHandle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
 
     PublicKeyVerify factoryVerifier = PublicKeyVerifyFactory.getPrimitive(publicHandle);
-    PublicKeyVerify handleVerifier = publicHandle.getPrimitive(PublicKeyVerify.class);
+    PublicKeyVerify handleVerifier =
+        publicHandle.getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
 
     byte[] data = "data".getBytes(UTF_8);
     byte[] sig = signer.sign(data);

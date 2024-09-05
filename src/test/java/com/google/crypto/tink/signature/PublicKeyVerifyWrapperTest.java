@@ -23,6 +23,7 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
@@ -56,7 +57,10 @@ public class PublicKeyVerifyWrapperTest {
             .build();
     KeysetHandle handle = KeysetHandle.generateNew(parameters);
     PublicKeySign signer = EcdsaSignJce.create((EcdsaPrivateKey) handle.getAt(0).getKey());
-    PublicKeyVerify verifier = handle.getPublicKeysetHandle().getPrimitive(PublicKeyVerify.class);
+    PublicKeyVerify verifier =
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
 
     byte[] data = "data".getBytes(UTF_8);
     byte[] sig = signer.sign(data);
@@ -77,7 +81,10 @@ public class PublicKeyVerifyWrapperTest {
 
     KeysetHandle handle = KeysetHandle.generateNew(parameters);
     PublicKeySign signer = EcdsaSignJce.create((EcdsaPrivateKey) handle.getAt(0).getKey());
-    PublicKeyVerify verifier = handle.getPublicKeysetHandle().getPrimitive(PublicKeyVerify.class);
+    PublicKeyVerify verifier =
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
 
     byte[] data = "data".getBytes(UTF_8);
     byte[] sig = signer.sign(data);
@@ -97,7 +104,10 @@ public class PublicKeyVerifyWrapperTest {
 
     KeysetHandle handle = KeysetHandle.generateNew(parameters);
     PublicKeySign signer = EcdsaSignJce.create((EcdsaPrivateKey) handle.getAt(0).getKey());
-    PublicKeyVerify verifier = handle.getPublicKeysetHandle().getPrimitive(PublicKeyVerify.class);
+    PublicKeyVerify verifier =
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
 
     byte[] data = "data".getBytes(UTF_8);
     byte[] sig = signer.sign(data);
@@ -117,7 +127,10 @@ public class PublicKeyVerifyWrapperTest {
 
     KeysetHandle handle = KeysetHandle.generateNew(parameters);
     PublicKeySign signer = EcdsaSignJce.create((EcdsaPrivateKey) handle.getAt(0).getKey());
-    PublicKeyVerify verifier = handle.getPublicKeysetHandle().getPrimitive(PublicKeyVerify.class);
+    PublicKeyVerify verifier =
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
 
     byte[] data = "data".getBytes(UTF_8);
     byte[] sig = signer.sign(data);
@@ -144,7 +157,10 @@ public class PublicKeyVerifyWrapperTest {
     PublicKeySign signer0 = EcdsaSignJce.create((EcdsaPrivateKey) handle.getAt(0).getKey());
     PublicKeySign signer1 = EcdsaSignJce.create((EcdsaPrivateKey) handle.getAt(1).getKey());
     PublicKeySign signer2 = EcdsaSignJce.create((EcdsaPrivateKey) handle.getAt(2).getKey());
-    PublicKeyVerify verifier = handle.getPublicKeysetHandle().getPrimitive(PublicKeyVerify.class);
+    PublicKeyVerify verifier =
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
 
     byte[] data = "data".getBytes(UTF_8);
     verifier.verify(signer0.sign(data), data);
@@ -174,7 +190,10 @@ public class PublicKeyVerifyWrapperTest {
                 KeysetHandle.generateEntryFromParameters(parameters).withRandomId().makePrimary())
             .build();
     PublicKeySign signer = EcdsaSignJce.create((EcdsaPrivateKey) handle2.getAt(0).getKey());
-    PublicKeyVerify verifier = handle1.getPublicKeysetHandle().getPrimitive(PublicKeyVerify.class);
+    PublicKeyVerify verifier =
+        handle1
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
 
     byte[] data = "data".getBytes(UTF_8);
     byte[] sig = signer.sign(data);
@@ -209,7 +228,8 @@ public class PublicKeyVerifyWrapperTest {
             .build();
 
     PublicKeySign signer = EcdsaSignJce.create((EcdsaPrivateKey) privateHandle.getAt(0).getKey());
-    PublicKeyVerify verifier = publicHandle.getPrimitive(PublicKeyVerify.class);
+    PublicKeyVerify verifier =
+        publicHandle.getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
 
     byte[] data = "data".getBytes(UTF_8);
     byte[] sig = signer.sign(data);
@@ -256,7 +276,8 @@ public class PublicKeyVerifyWrapperTest {
             .setMonitoringAnnotations(annotations)
             .build();
 
-    PublicKeyVerify verifier = publicHandle.getPrimitive(PublicKeyVerify.class);
+    PublicKeyVerify verifier =
+        publicHandle.getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
 
     byte[] data = "data".getBytes(UTF_8);
     assertThrows(GeneralSecurityException.class, () -> verifier.verify(new byte[] {1, 2, 3}, data));
@@ -297,7 +318,8 @@ public class PublicKeyVerifyWrapperTest {
             .setMonitoringAnnotations(annotations)
             .build();
     PublicKeySign signer = EcdsaSignJce.create((EcdsaPrivateKey) privateHandle.getAt(0).getKey());
-    PublicKeyVerify verifier = publicHandle.getPrimitive(PublicKeyVerify.class);
+    PublicKeyVerify verifier =
+        publicHandle.getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
 
     byte[] data = "data".getBytes(UTF_8);
     byte[] wrongSig = signer.sign(new byte[0]);
@@ -353,7 +375,8 @@ public class PublicKeyVerifyWrapperTest {
     PublicKeySign signer20 = EcdsaSignJce.create((EcdsaPrivateKey) privateHandle.getAt(0).getKey());
     PublicKeySign signer30 = EcdsaSignJce.create((EcdsaPrivateKey) privateHandle.getAt(1).getKey());
     PublicKeySign signer40 = EcdsaSignJce.create((EcdsaPrivateKey) privateHandle.getAt(2).getKey());
-    PublicKeyVerify verifier = publicHandle.getPrimitive(PublicKeyVerify.class);
+    PublicKeyVerify verifier =
+        publicHandle.getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
 
     // Verify once with data of length 2 for key with id 20.
     byte[] data = "da".getBytes(UTF_8);
@@ -426,7 +449,8 @@ public class PublicKeyVerifyWrapperTest {
             .build();
 
     PublicKeySign signer = EcdsaSignJce.create((EcdsaPrivateKey) privateHandle.getAt(0).getKey());
-    PublicKeyVerify verifier = publicHandle.getPrimitive(PublicKeyVerify.class);
+    PublicKeyVerify verifier =
+        publicHandle.getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
 
     byte[] data = "data".getBytes(UTF_8);
     byte[] sig = signer.sign(data);

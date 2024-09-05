@@ -26,6 +26,7 @@ import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.signature.internal.testing.EcdsaTestUtil;
@@ -165,7 +166,10 @@ public class EcdsaSignKeyManagerTest {
       entry.withFixedId(id);
     }
     KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
-    PublicKeyVerify verifier = handle.getPublicKeysetHandle().getPrimitive(PublicKeyVerify.class);
+    PublicKeyVerify verifier =
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
     verifier.verify(testVector.getSignature(), testVector.getMessage());
   }
 
@@ -189,9 +193,12 @@ public class EcdsaSignKeyManagerTest {
       entry.withFixedId(id);
     }
     KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
-    PublicKeySign signer = handle.getPrimitive(PublicKeySign.class);
+    PublicKeySign signer = handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
     byte[] signature = signer.sign(testVector.getMessage());
-    PublicKeyVerify verifier = handle.getPublicKeysetHandle().getPrimitive(PublicKeyVerify.class);
+    PublicKeyVerify verifier =
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
     verifier.verify(signature, testVector.getMessage());
   }
 
@@ -221,9 +228,12 @@ public class EcdsaSignKeyManagerTest {
       entry.withFixedId(id);
     }
     KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
-    PublicKeySign signer = handle.getPrimitive(PublicKeySign.class);
+    PublicKeySign signer = handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
     byte[] signature = signer.sign(testVector.getMessage());
-    PublicKeyVerify verifier = handle.getPublicKeysetHandle().getPrimitive(PublicKeyVerify.class);
+    PublicKeyVerify verifier =
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
     assertThrows(
         GeneralSecurityException.class,
         () -> verifier.verify(signature, modifyInput(testVector.getMessage())));

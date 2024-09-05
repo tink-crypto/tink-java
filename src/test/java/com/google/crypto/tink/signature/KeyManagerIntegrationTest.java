@@ -24,6 +24,7 @@ import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.Registry;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.TinkProtoParametersFormat;
 import com.google.crypto.tink.proto.Ed25519KeyFormat;
@@ -202,7 +203,8 @@ public final class KeyManagerIntegrationTest {
 
     KeysetHandle handle =
         TinkProtoKeysetFormat.parseKeyset(keyset.toByteArray(), InsecureSecretKeyAccess.get());
-    PublicKeySign customSigner = handle.getPrimitive(PublicKeySign.class);
+    PublicKeySign customSigner =
+        handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
 
     byte[] message = new byte[] {1, 2, 3};
     byte[] signature = customSigner.sign(message);
@@ -249,7 +251,8 @@ public final class KeyManagerIntegrationTest {
             .build();
 
     KeysetHandle handle = TinkProtoKeysetFormat.parseKeysetWithoutSecret(keyset.toByteArray());
-    PublicKeyVerify customVerifier = handle.getPrimitive(PublicKeyVerify.class);
+    PublicKeyVerify customVerifier =
+        handle.getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
     @Nullable Integer idRequirement = outputPrefixType == OutputPrefixType.RAW ? null : 0x23456789;
 
     PublicKeySign tinkSigner =

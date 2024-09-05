@@ -25,6 +25,7 @@ import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.signature.internal.testing.RsaSsaPkcs1TestUtil;
@@ -235,7 +236,7 @@ public class RsaSsaPkcs1SignKeyManagerTest {
       entry.withFixedId(id);
     }
     KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
-    PublicKeySign signer = handle.getPrimitive(PublicKeySign.class);
+    PublicKeySign signer = handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
     byte[] signature = signer.sign(v.getMessage());
     assertThat(Hex.encode(signature)).isEqualTo(Hex.encode(v.getSignature()));
   }
@@ -251,7 +252,10 @@ public class RsaSsaPkcs1SignKeyManagerTest {
       entry.withFixedId(id);
     }
     KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
-    PublicKeyVerify verifier = handle.getPublicKeysetHandle().getPrimitive(PublicKeyVerify.class);
+    PublicKeyVerify verifier =
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
     verifier.verify(v.getSignature(), v.getMessage());
   }
 

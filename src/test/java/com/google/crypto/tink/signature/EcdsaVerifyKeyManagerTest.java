@@ -20,6 +20,7 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.PublicKeyVerify;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.internal.BigIntegerEncoding;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.subtle.Random;
@@ -242,6 +243,6 @@ public class EcdsaVerifyKeyManagerTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(publicKey).makePrimary().withRandomId())
             .build();
-    return keysetHandle.getPrimitive(PublicKeyVerify.class);
+    return keysetHandle.getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
   }
 }

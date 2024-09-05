@@ -24,6 +24,7 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
@@ -61,7 +62,7 @@ public class PublicKeySignWrapperTest {
             .setVariant(EcdsaParameters.Variant.NO_PREFIX)
             .build();
     KeysetHandle handle = KeysetHandle.generateNew(parameters);
-    PublicKeySign signer = handle.getPrimitive(PublicKeySign.class);
+    PublicKeySign signer = handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
 
     PublicKeyVerify verifier =
         EcdsaVerifyJce.create((EcdsaPublicKey) handle.getPublicKeysetHandle().getAt(0).getKey());
@@ -84,7 +85,7 @@ public class PublicKeySignWrapperTest {
             .build();
 
     KeysetHandle handle = KeysetHandle.generateNew(parameters);
-    PublicKeySign signer = handle.getPrimitive(PublicKeySign.class);
+    PublicKeySign signer = handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
 
     PublicKeyVerify verifier =
         EcdsaVerifyJce.create((EcdsaPublicKey) handle.getPublicKeysetHandle().getAt(0).getKey());
@@ -106,7 +107,7 @@ public class PublicKeySignWrapperTest {
             .build();
 
     KeysetHandle handle = KeysetHandle.generateNew(parameters);
-    PublicKeySign signer = handle.getPrimitive(PublicKeySign.class);
+    PublicKeySign signer = handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
 
     PublicKeyVerify rawVerifier =
         EcdsaVerifyJce.create((EcdsaPublicKey) handle.getPublicKeysetHandle().getAt(0).getKey());
@@ -128,7 +129,7 @@ public class PublicKeySignWrapperTest {
             .build();
 
     KeysetHandle handle = KeysetHandle.generateNew(parameters);
-    PublicKeySign signer = handle.getPrimitive(PublicKeySign.class);
+    PublicKeySign signer = handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
 
     PublicKeyVerify verifier =
         EcdsaVerifyJce.create((EcdsaPublicKey) handle.getPublicKeysetHandle().getAt(0).getKey());
@@ -157,7 +158,7 @@ public class PublicKeySignWrapperTest {
             .addEntry(KeysetHandle.generateEntryFromParameters(parameters).withRandomId())
             .build();
 
-    PublicKeySign signer = handle.getPrimitive(PublicKeySign.class);
+    PublicKeySign signer = handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
 
     PublicKeyVerify verifier =
         EcdsaVerifyJce.create((EcdsaPublicKey) handle.getPublicKeysetHandle().getAt(1).getKey());
@@ -189,7 +190,7 @@ public class PublicKeySignWrapperTest {
         () ->
             TinkProtoKeysetFormat.parseKeyset(
                     keysetWithoutPrimary.toByteArray(), InsecureSecretKeyAccess.get())
-                .getPrimitive(PublicKeySign.class));
+                .getPrimitive(RegistryConfiguration.get(), PublicKeySign.class));
   }
 
   @Theory
@@ -208,7 +209,7 @@ public class PublicKeySignWrapperTest {
             .build();
 
     KeysetHandle handle = KeysetHandle.generateNew(parameters);
-    PublicKeySign signer = handle.getPrimitive(PublicKeySign.class);
+    PublicKeySign signer = handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
 
     byte[] data = "data".getBytes(UTF_8);
     Object unused = signer.sign(data);
@@ -241,7 +242,7 @@ public class PublicKeySignWrapperTest {
             .setMonitoringAnnotations(annotations)
             .build();
 
-    PublicKeySign signer = handle.getPrimitive(PublicKeySign.class);
+    PublicKeySign signer = handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
     byte[] data = "data".getBytes(UTF_8);
     Object unused = signer.sign(data);
 
@@ -279,7 +280,7 @@ public class PublicKeySignWrapperTest {
             .setMonitoringAnnotations(annotations)
             .build();
 
-    PublicKeySign signer = handle.getPrimitive(PublicKeySign.class);
+    PublicKeySign signer = handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
     byte[] data = "data".getBytes(UTF_8);
     Object unused = signer.sign(data);
 
@@ -323,8 +324,8 @@ public class PublicKeySignWrapperTest {
             .setMonitoringAnnotations(annotations)
             .build();
 
-    PublicKeySign signer1 = handle1.getPrimitive(PublicKeySign.class);
-    PublicKeySign signer2 = handle2.getPrimitive(PublicKeySign.class);
+    PublicKeySign signer1 = handle1.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
+    PublicKeySign signer2 = handle2.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
     byte[] data = "data".getBytes(UTF_8);
     Object unused = signer1.sign(data);
     unused = signer2.sign(data);
@@ -382,7 +383,7 @@ public class PublicKeySignWrapperTest {
             .setMonitoringAnnotations(annotations)
             .build();
 
-    PublicKeySign signer = handle.getPrimitive(PublicKeySign.class);
+    PublicKeySign signer = handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
 
     byte[] data = "data".getBytes(UTF_8);
     assertThrows(GeneralSecurityException.class, () -> signer.sign(data));

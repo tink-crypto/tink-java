@@ -20,6 +20,7 @@ import static org.junit.Assert.fail;
 
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.PublicKeyVerify;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.signature.internal.testing.RsaSsaPssTestUtil;
@@ -108,7 +109,8 @@ public class RsaSsaPssVerifyKeyManagerTest {
           KeysetHandle.newBuilder()
               .addEntry(KeysetHandle.importKey(t.publicKey).withRandomId().makePrimary())
               .build();
-      PublicKeyVerify verifier = handle.getPrimitive(PublicKeyVerify.class);
+      PublicKeyVerify verifier =
+          handle.getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
       try {
         verifier.verify(t.sig, t.msg);
       } catch (GeneralSecurityException e) {

@@ -22,6 +22,7 @@ import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
+import com.google.crypto.tink.RegistryConfiguration;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,9 +45,11 @@ public class PublicKeySignFactoryTest {
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
 
     PublicKeySign factorySigner = PublicKeySignFactory.getPrimitive(privateHandle);
-    PublicKeySign handleSigner = privateHandle.getPrimitive(PublicKeySign.class);
+    PublicKeySign handleSigner =
+        privateHandle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
 
-    PublicKeyVerify verifier = publicHandle.getPrimitive(PublicKeyVerify.class);
+    PublicKeyVerify verifier =
+        publicHandle.getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
 
     byte[] data = "data".getBytes(UTF_8);
     byte[] factorySig = factorySigner.sign(data);
