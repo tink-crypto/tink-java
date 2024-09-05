@@ -54,13 +54,13 @@ public class IntegrationTest {
                 Files.readAllBytes(
                     Paths.get("testdata/keysets/ecies_private_keyset2.bin")),
                 InsecureSecretKeyAccess.get())
-            .getPrimitive(HybridDecrypt.class);
+            .getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
 
     HybridEncrypt hybridEncrypt =
         TinkProtoKeysetFormat.parseKeysetWithoutSecret(
                 Files.readAllBytes(
                     Paths.get("testdata/keysets/ecies_public_keyset2.bin")))
-            .getPrimitive(HybridEncrypt.class);
+            .getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class);
 
     byte[] plaintext = Random.randBytes(20);
     byte[] contextInfo = Random.randBytes(20);
@@ -90,13 +90,13 @@ public class IntegrationTest {
                 Files.readAllBytes(
                     Paths.get("testdata/keysets/ecies_private_keyset.bin")),
                 InsecureSecretKeyAccess.get())
-            .getPrimitive(HybridDecrypt.class);
+            .getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
 
     HybridEncrypt hybridEncrypt =
         TinkProtoKeysetFormat.parseKeysetWithoutSecret(
                 Files.readAllBytes(
                     Paths.get("testdata/keysets/ecies_public_keyset.bin")))
-            .getPrimitive(HybridEncrypt.class);
+            .getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class);
 
     byte[] plaintext = Random.randBytes(20);
     byte[] contextInfo = Random.randBytes(20);

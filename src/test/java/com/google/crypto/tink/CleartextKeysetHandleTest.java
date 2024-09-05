@@ -56,7 +56,7 @@ public class CleartextKeysetHandleTest {
     Keyset keyset = CleartextKeysetHandle.getKeyset(handle);
     handle = CleartextKeysetHandle.parseFrom(keyset.toByteArray());
     assertEquals(keyset, handle.getKeyset());
-    Object unused = handle.getPrimitive(Mac.class);
+    Object unused = handle.getPrimitive(RegistryConfiguration.get(), Mac.class);
   }
 
   @Test
@@ -95,9 +95,9 @@ public class CleartextKeysetHandleTest {
     KeysetHandle readHandle2 = CleartextKeysetHandle.read(reader2, new HashMap<String, String>());
 
     // Check that the handle returned by CleartextKeysetHandle.read generates the same MAC.
-    Mac mac = handle.getPrimitive(Mac.class);
-    Mac readMac1 = readHandle1.getPrimitive(Mac.class);
-    Mac readMac2 = readHandle2.getPrimitive(Mac.class);
+    Mac mac = handle.getPrimitive(RegistryConfiguration.get(), Mac.class);
+    Mac readMac1 = readHandle1.getPrimitive(RegistryConfiguration.get(), Mac.class);
+    Mac readMac2 = readHandle2.getPrimitive(RegistryConfiguration.get(), Mac.class);
     byte[] data = "data".getBytes(UTF_8);
     assertThat(readMac1.computeMac(data)).isEqualTo(mac.computeMac(data));
     assertThat(readMac2.computeMac(data)).isEqualTo(mac.computeMac(data));
@@ -166,7 +166,7 @@ public class CleartextKeysetHandleTest {
         CleartextKeysetHandle.read(BinaryKeysetReader.withBytes(serializedKeyset), annotations);
 
     // Trigger monitoring event and verify that it gets logged with the annotations are set.
-    Mac mac = handle.getPrimitive(Mac.class);
+    Mac mac = handle.getPrimitive(RegistryConfiguration.get(), Mac.class);
     byte[] unused = mac.computeMac("data".getBytes(UTF_8));
 
     List<FakeMonitoringClient.LogEntry> logEntries = fakeMonitoringClient.getLogEntries();

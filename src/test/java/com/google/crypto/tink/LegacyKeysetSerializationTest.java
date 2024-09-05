@@ -89,7 +89,7 @@ public final class LegacyKeysetSerializationTest {
                     .withRandomId()
                     .makePrimary())
             .build();
-    return handle.getPrimitive(Aead.class);
+    return handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
   }
 
   @Test

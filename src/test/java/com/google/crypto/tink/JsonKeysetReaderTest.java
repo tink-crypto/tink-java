@@ -81,8 +81,8 @@ public class JsonKeysetReaderTest {
   }
 
   private void assertKeysetHandle(KeysetHandle handle1, KeysetHandle handle2) throws Exception {
-    Mac mac1 = handle1.getPrimitive(Mac.class);
-    Mac mac2 = handle2.getPrimitive(Mac.class);
+    Mac mac1 = handle1.getPrimitive(RegistryConfiguration.get(), Mac.class);
+    Mac mac2 = handle2.getPrimitive(RegistryConfiguration.get(), Mac.class);
     byte[] message = Random.randBytes(20);
 
     assertThat(handle2.getKeyset()).isEqualTo(handle1.getKeyset());
@@ -129,7 +129,7 @@ public class JsonKeysetReaderTest {
   public void readTestKeysetVerifyTestTag() throws Exception {
     KeysetHandle handle = CleartextKeysetHandle.read(JsonKeysetReader.withString(JSON_KEYSET));
     byte[] data = "data".getBytes(UTF_8);
-    Mac mac = handle.getPrimitive(Mac.class);
+    Mac mac = handle.getPrimitive(RegistryConfiguration.get(), Mac.class);
     byte[] tag = Hex.decode("0120a4107f3549e4fb3137415a63f5c8a0524f8ca7");
     mac.verifyMac(tag, data);
   }
@@ -145,7 +145,8 @@ public class JsonKeysetReaderTest {
                 + "e1971801100118b891f5a2042001");
     KeysetHandle keysetEncryptionHandle = TinkProtoKeysetFormat.parseKeyset(
         serializedKeysetEncryptionKeyset, InsecureSecretKeyAccess.get());
-    Aead keysetEncryptionAead = keysetEncryptionHandle.getPrimitive(Aead.class);
+    Aead keysetEncryptionAead =
+        keysetEncryptionHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
     byte[] associatedData = Hex.decode("abcdef330012");
 
     String encryptedKeyset =
@@ -160,7 +161,7 @@ public class JsonKeysetReaderTest {
     KeysetHandle handle = KeysetHandle.readWithAssociatedData(
         JsonKeysetReader.withString(encryptedKeyset), keysetEncryptionAead, associatedData);
     byte[] data = "data".getBytes(UTF_8);
-    Mac mac = handle.getPrimitive(Mac.class);
+    Mac mac = handle.getPrimitive(RegistryConfiguration.get(), Mac.class);
     byte[] tag = Hex.decode("0120a4107f3549e4fb3137415a63f5c8a0524f8ca7");
     mac.verifyMac(tag, data);
   }
@@ -311,7 +312,8 @@ public class JsonKeysetReaderTest {
   @Test
   public void testReadEncrypted_singleKey_shouldWork() throws Exception {
     Aead masterKey =
-        KeysetHandle.generateNew(PredefinedAeadParameters.AES128_EAX).getPrimitive(Aead.class);
+        KeysetHandle.generateNew(PredefinedAeadParameters.AES128_EAX)
+            .getPrimitive(RegistryConfiguration.get(), Aead.class);
     KeysetHandle handle1 = KeysetHandle.generateNew(PredefinedMacParameters.HMAC_SHA256_128BITTAG);
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     handle1.write(JsonKeysetWriter.withOutputStream(outputStream), masterKey);
@@ -326,7 +328,8 @@ public class JsonKeysetReaderTest {
   @Test
   public void testReadEncrypted_multipleKeys_shouldWork() throws Exception {
     Aead keysetEncryptionAead =
-        KeysetHandle.generateNew(KeyTemplates.get("AES128_EAX")).getPrimitive(Aead.class);
+        KeysetHandle.generateNew(KeyTemplates.get("AES128_EAX"))
+            .getPrimitive(RegistryConfiguration.get(), Aead.class);
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     KeysetHandle handle1 =
         KeysetHandle.newBuilder()
@@ -361,7 +364,8 @@ public class JsonKeysetReaderTest {
   @Test
   public void testReadEncrypted_missingKeysetInfo_shouldSucceed() throws Exception {
     Aead keysetEncryptionAead =
-        KeysetHandle.generateNew(KeyTemplates.get("AES128_EAX")).getPrimitive(Aead.class);
+        KeysetHandle.generateNew(KeyTemplates.get("AES128_EAX"))
+            .getPrimitive(RegistryConfiguration.get(), Aead.class);
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     KeysetHandle handle1 = KeysetHandle.generateNew(KeyTemplates.get("HMAC_SHA256_128BITTAG"));
 
@@ -383,7 +387,8 @@ public class JsonKeysetReaderTest {
   @Test
   public void testReadEncrypted_missingEncryptedKeyset_shouldThrowException() throws Exception {
     Aead masterKey =
-        KeysetHandle.generateNew(PredefinedAeadParameters.AES128_EAX).getPrimitive(Aead.class);
+        KeysetHandle.generateNew(PredefinedAeadParameters.AES128_EAX)
+            .getPrimitive(RegistryConfiguration.get(), Aead.class);
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     KeysetHandle handle = KeysetHandle.generateNew(PredefinedMacParameters.HMAC_SHA256_128BITTAG);
     handle.write(JsonKeysetWriter.withOutputStream(outputStream), masterKey);
@@ -400,7 +405,8 @@ public class JsonKeysetReaderTest {
   @Test
   public void testReadEncrypted_jsonKeysetWriter_shouldWork() throws Exception {
     Aead masterKey =
-        KeysetHandle.generateNew(PredefinedAeadParameters.AES128_EAX).getPrimitive(Aead.class);
+        KeysetHandle.generateNew(PredefinedAeadParameters.AES128_EAX)
+            .getPrimitive(RegistryConfiguration.get(), Aead.class);
     KeysetHandle handle1 = KeysetHandle.generateNew(PredefinedMacParameters.HMAC_SHA256_128BITTAG);
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     handle1.write(JsonKeysetWriter.withOutputStream(outputStream), masterKey);

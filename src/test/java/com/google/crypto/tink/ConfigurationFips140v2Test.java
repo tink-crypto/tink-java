@@ -688,7 +688,9 @@ public class ConfigurationFips140v2Test {
             .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
             .build();
 
-    assertThrows(GeneralSecurityException.class, () -> keysetHandle.getPrimitive(Mac.class));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class));
   }
 
   // Point from https://www.ietf.org/rfc/rfc6979.txt, A.2.5

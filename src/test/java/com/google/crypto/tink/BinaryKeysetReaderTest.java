@@ -41,8 +41,8 @@ public class BinaryKeysetReaderTest {
   }
 
   private void assertKeysetHandle(KeysetHandle handle1, KeysetHandle handle2) throws Exception {
-    Mac mac1 = handle1.getPrimitive(Mac.class);
-    Mac mac2 = handle2.getPrimitive(Mac.class);
+    Mac mac1 = handle1.getPrimitive(RegistryConfiguration.get(), Mac.class);
+    Mac mac2 = handle2.getPrimitive(RegistryConfiguration.get(), Mac.class);
     byte[] message = "message".getBytes(UTF_8);
 
     assertThat(handle2.getKeyset()).isEqualTo(handle1.getKeyset());
@@ -121,7 +121,8 @@ public class BinaryKeysetReaderTest {
   @Test
   public void testReadEncrypted_singleKey_shouldWork() throws Exception {
     Aead keysetEncryptionAead =
-        KeysetHandle.generateNew(KeyTemplates.get("AES128_EAX")).getPrimitive(Aead.class);
+        KeysetHandle.generateNew(KeyTemplates.get("AES128_EAX"))
+            .getPrimitive(RegistryConfiguration.get(), Aead.class);
     KeysetHandle handle1 = KeysetHandle.generateNew(KeyTemplates.get("HMAC_SHA256_128BITTAG"));
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     handle1.write(BinaryKeysetWriter.withOutputStream(outputStream), keysetEncryptionAead);
@@ -157,7 +158,8 @@ public class BinaryKeysetReaderTest {
             .build();
 
     Aead keysetEncryptionAead =
-        KeysetHandle.generateNew(KeyTemplates.get("AES128_EAX")).getPrimitive(Aead.class);
+        KeysetHandle.generateNew(KeyTemplates.get("AES128_EAX"))
+            .getPrimitive(RegistryConfiguration.get(), Aead.class);
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     handle1.write(BinaryKeysetWriter.withOutputStream(outputStream), keysetEncryptionAead);
     KeysetHandle handle2 =

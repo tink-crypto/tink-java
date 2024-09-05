@@ -235,7 +235,8 @@ public class KeysetHandleFullPrimitiveTest {
                     .withFixedId(1237))
             .build();
 
-    WrappedTestPrimitive primitive = keysetHandle.getPrimitive(WrappedTestPrimitive.class);
+    WrappedTestPrimitive primitive =
+        keysetHandle.getPrimitive(RegistryConfiguration.get(), WrappedTestPrimitive.class);
 
     for (List<Entry<SingleTestPrimitive>> list : primitive.getPrimitiveSet().getAll()) {
       for (PrimitiveSet.Entry<SingleTestPrimitive> entry : list) {
@@ -272,7 +273,7 @@ public class KeysetHandleFullPrimitiveTest {
 
     assertThrows(
         GeneralSecurityException.class,
-        () -> keysetHandle.getPrimitive(WrappedTestPrimitive.class));
+        () -> keysetHandle.getPrimitive(RegistryConfiguration.get(), WrappedTestPrimitive.class));
   }
 
   @Test
@@ -327,7 +328,8 @@ public class KeysetHandleFullPrimitiveTest {
                     .withFixedId(1237))
             .build();
 
-    WrappedMacTestPrimitive primitive = keysetHandle.getPrimitive(WrappedMacTestPrimitive.class);
+    WrappedMacTestPrimitive primitive =
+        keysetHandle.getPrimitive(RegistryConfiguration.get(), WrappedMacTestPrimitive.class);
 
     for (List<Entry<Mac>> list : primitive.getPrimitiveSet().getAll()) {
       for (PrimitiveSet.Entry<Mac> entry : list) {

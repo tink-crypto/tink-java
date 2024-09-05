@@ -94,7 +94,7 @@ public final class TinkJsonProtoKeysetFormatTest {
                     .withRandomId()
                     .makePrimary())
             .build();
-    return handle.getPrimitive(Aead.class);
+    return handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
   }
 
   @Test
@@ -345,7 +345,7 @@ public final class TinkJsonProtoKeysetFormatTest {
             + "}]}";
     KeysetHandle handle =
         TinkJsonProtoKeysetFormat.parseKeyset(serializedKeyset, InsecureSecretKeyAccess.get());
-    Mac mac = handle.getPrimitive(Mac.class);
+    Mac mac = handle.getPrimitive(RegistryConfiguration.get(), Mac.class);
     mac.verifyMac(Hex.decode("0120a4107f3549e4fb3137415a63f5c8a0524f8ca7"), "data".getBytes(UTF_8));
   }
 
@@ -360,7 +360,8 @@ public final class TinkJsonProtoKeysetFormatTest {
                 + "e1971801100118b891f5a2042001");
     KeysetHandle keysetEncryptionHandle = TinkProtoKeysetFormat.parseKeyset(
         serializedKeysetEncryptionKeyset, InsecureSecretKeyAccess.get());
-    Aead keysetEncryptionAead = keysetEncryptionHandle.getPrimitive(Aead.class);
+    Aead keysetEncryptionAead =
+        keysetEncryptionHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     // A keyset that contains one HMAC key, encrypted with the above, using associatedData
     String encryptedKeyset =
@@ -377,7 +378,7 @@ public final class TinkJsonProtoKeysetFormatTest {
         TinkJsonProtoKeysetFormat.parseEncryptedKeyset(
             encryptedKeyset, keysetEncryptionAead, associatedData);
 
-    Mac mac = handle.getPrimitive(Mac.class);
+    Mac mac = handle.getPrimitive(RegistryConfiguration.get(), Mac.class);
     byte[] data = "data".getBytes(UTF_8);
     byte[] tag = Hex.decode("0120a4107f3549e4fb3137415a63f5c8a0524f8ca7");
     mac.verifyMac(tag, data);

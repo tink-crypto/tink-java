@@ -410,12 +410,14 @@ public class KeysetHandleTest {
     final byte[] tag = Hex.decode("011d270875989dd6fbd5f54dbc9520bb41efd058d5");
 
     KeysetReader wrappingReader = BinaryKeysetReader.withBytes(serializedWrappingKeyset);
-    Aead wrapperAead = CleartextKeysetHandle.read(wrappingReader).getPrimitive(Aead.class);
+    Aead wrapperAead =
+        CleartextKeysetHandle.read(wrappingReader)
+            .getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     KeysetReader encryptedReader = BinaryKeysetReader.withBytes(encryptedSerializedKeyset);
     Mac mac =
         KeysetHandle.readWithAssociatedData(encryptedReader, wrapperAead, associatedData)
-            .getPrimitive(Mac.class);
+            .getPrimitive(RegistryConfiguration.get(), Mac.class);
     mac.verifyMac(tag, message);
   }
 
@@ -441,8 +443,10 @@ public class KeysetHandleTest {
     expect
         .that(publicKeyData.getValue().toByteArray())
         .isEqualTo(privateKey.getPublicKey().toByteArray());
-    PublicKeySign signer = privateHandle.getPrimitive(PublicKeySign.class);
-    PublicKeyVerify verifier = publicHandle.getPrimitive(PublicKeyVerify.class);
+    PublicKeySign signer =
+        privateHandle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
+    PublicKeyVerify verifier =
+        publicHandle.getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
     byte[] message = Random.randBytes(20);
     verifier.verify(signer.sign(message), message);
   }
@@ -472,7 +476,7 @@ public class KeysetHandleTest {
     byte[] message = Random.randBytes(20);
     byte[] aad = Random.randBytes(20);
 
-    Aead aead = handle.getPrimitive(Aead.class);
+    Aead aead = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     assertThat(aead.decrypt(aead.encrypt(message, aad), aad)).isEqualTo(message);
   }
@@ -495,7 +499,7 @@ public class KeysetHandleTest {
     byte[] aad = Random.randBytes(20);
     Aead aeadToEncrypt = Registry.getPrimitive(rawKeyData, Aead.class);
 
-    Aead aead = handle.getPrimitive(Aead.class);
+    Aead aead = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     assertThat(aead.decrypt(aeadToEncrypt.encrypt(message, aad), aad)).isEqualTo(message);
   }
@@ -506,9 +510,9 @@ public class KeysetHandleTest {
     KeysetHandle handle = KeysetHandle.generateNew(AesEaxKeyManager.rawAes128EaxTemplate());
     byte[] message = Random.randBytes(20);
 
-    EncryptOnly encryptOnly = handle.getPrimitive(EncryptOnly.class);
+    EncryptOnly encryptOnly = handle.getPrimitive(RegistryConfiguration.get(), EncryptOnly.class);
 
-    Aead aead = handle.getPrimitive(Aead.class);
+    Aead aead = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
     assertThat(aead.decrypt(encryptOnly.encrypt(message), new byte[0])).isEqualTo(message);
   }
 
@@ -530,7 +534,8 @@ public class KeysetHandleTest {
     MonitoringAnnotations annotations =
         MonitoringAnnotations.newBuilder().add("annotation_name", "annotation_value").build();
     KeysetHandle handleWithAnnotations = KeysetHandle.fromKeysetAndAnnotations(keyset, annotations);
-    EncryptOnly encryptOnlyWithAnnotations = handleWithAnnotations.getPrimitive(EncryptOnly.class);
+    EncryptOnly encryptOnlyWithAnnotations =
+        handleWithAnnotations.getPrimitive(RegistryConfiguration.get(), EncryptOnly.class);
     Object unused = encryptOnlyWithAnnotations.encrypt(message);
     List<FakeMonitoringClient.LogEntry> entries = fakeMonitoringClient.getLogEntries();
     assertThat(entries).hasSize(1);
@@ -558,7 +563,7 @@ public class KeysetHandleTest {
             .setMonitoringAnnotations(annotations)
             .build();
     byte[] plaintext = "plaintext".getBytes(UTF_8);
-    Mac mac = keysetHandleWithAnnotations.getPrimitive(Mac.class);
+    Mac mac = keysetHandleWithAnnotations.getPrimitive(RegistryConfiguration.get(), Mac.class);
 
     // Work triggering various code paths.
     byte[] tag = mac.computeMac(plaintext);
@@ -604,7 +609,7 @@ public class KeysetHandleTest {
                     .makePrimary())
             .build();
     byte[] plaintext = "plaintext".getBytes(UTF_8);
-    Mac mac = keysetHandleWithAnnotations.getPrimitive(Mac.class);
+    Mac mac = keysetHandleWithAnnotations.getPrimitive(RegistryConfiguration.get(), Mac.class);
 
     // Work triggering various code paths.
     byte[] tag = mac.computeMac(plaintext);
@@ -1628,7 +1633,9 @@ public class KeysetHandleTest {
             .build();
     KeysetHandle handle = KeysetHandle.fromKeyset(keyset);
     GeneralSecurityException e =
-        assertThrows(GeneralSecurityException.class, () -> handle.getPrimitive(Aead.class));
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> handle.getPrimitive(RegistryConfiguration.get(), Aead.class));
     assertThat(e).hasMessageThat().contains("Unable to get primitive");
     assertThat(e).hasMessageThat().contains("unregisteredTypeUrl");
   }
@@ -1698,7 +1705,8 @@ public class KeysetHandleTest {
             .build();
 
     assertThrows(
-        GeneralSecurityException.class, () -> keysetHandle.getPrimitive(TestPrimitiveB.class));
+        GeneralSecurityException.class,
+        () -> keysetHandle.getPrimitive(RegistryConfiguration.get(), TestPrimitiveB.class));
     assertThat(keysetHandle.getPrimitive(configuration, TestPrimitiveB.class)).isNotNull();
   }
 
@@ -1714,7 +1722,8 @@ public class KeysetHandleTest {
         MutablePrimitiveRegistry.globalInstance().getPrimitive(rawKey, ChunkedMac.class);
     ChunkedMacComputation registryMacComputation = registryMac.createComputation();
     registryMacComputation.update(ByteBuffer.wrap(plaintext));
-    ChunkedMac keysetHandleMac = keysetHandle.getPrimitive(ChunkedMac.class);
+    ChunkedMac keysetHandleMac =
+        keysetHandle.getPrimitive(RegistryConfiguration.get(), ChunkedMac.class);
     ChunkedMacComputation keysetHandleMacComputation = keysetHandleMac.createComputation();
     keysetHandleMacComputation.update(ByteBuffer.wrap(plaintext));
 
@@ -1750,7 +1759,7 @@ public class KeysetHandleTest {
     byte[] plaintext = "plaintext".getBytes(UTF_8);
 
     Mac registryMac = Registry.getPrimitive(rawKeyData, Mac.class);
-    Mac keysetHandleMac = keysetHandle.getPrimitive(Mac.class);
+    Mac keysetHandleMac = keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
 
     assertThat(keysetHandleMac.computeMac(plaintext)).isEqualTo(registryMac.computeMac(plaintext));
   }
@@ -2006,7 +2015,9 @@ public class KeysetHandleTest {
   public void getPrimitive_wrongType_linksToDevsite() throws Exception {
     KeysetHandle handle = KeysetHandle.generateNew(PredefinedAeadParameters.AES128_EAX);
     GeneralSecurityException ex =
-        assertThrows(GeneralSecurityException.class, () -> handle.getPrimitive(Mac.class));
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> handle.getPrimitive(RegistryConfiguration.get(), Mac.class));
     assertThat(ex)
         .hasMessageThat()
         .contains("https://developers.google.com/tink/faq/registration_errors");

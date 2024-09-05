@@ -41,8 +41,8 @@ public class JsonKeysetWriterTest {
   }
 
   private void assertKeysetHandle(KeysetHandle handle1, KeysetHandle handle2) throws Exception {
-    Mac mac1 = handle1.getPrimitive(Mac.class);
-    Mac mac2 = handle2.getPrimitive(Mac.class);
+    Mac mac1 = handle1.getPrimitive(RegistryConfiguration.get(), Mac.class);
+    Mac mac2 = handle2.getPrimitive(RegistryConfiguration.get(), Mac.class);
     byte[] message = Random.randBytes(20);
 
     assertThat(handle2.getKeyset()).isEqualTo(handle1.getKeyset());
@@ -87,7 +87,8 @@ public class JsonKeysetWriterTest {
   private void testWriteEncrypted_shouldWork(KeysetHandle handle1) throws Exception {
     // Encrypt the keyset with an AeadKey.
     Aead masterKey =
-        KeysetHandle.generateNew(PredefinedAeadParameters.AES128_EAX).getPrimitive(Aead.class);
+        KeysetHandle.generateNew(PredefinedAeadParameters.AES128_EAX)
+            .getPrimitive(RegistryConfiguration.get(), Aead.class);
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     handle1.write(JsonKeysetWriter.withOutputStream(outputStream), masterKey);
     KeysetHandle handle2 =
@@ -149,7 +150,8 @@ public class JsonKeysetWriterTest {
 
     // Write encrypted keyset
     Aead keysetEncryptionAead =
-        KeysetHandle.generateNew(KeyTemplates.get("AES128_EAX")).getPrimitive(Aead.class);
+        KeysetHandle.generateNew(KeyTemplates.get("AES128_EAX"))
+            .getPrimitive(RegistryConfiguration.get(), Aead.class);
     ByteArrayOutputStream outputStream2 = new ByteArrayOutputStream();
     modifiedHandle.write(JsonKeysetWriter.withOutputStream(outputStream2), keysetEncryptionAead);
     String encryptedKeysetInJson = new String(outputStream2.toByteArray(), UTF_8);

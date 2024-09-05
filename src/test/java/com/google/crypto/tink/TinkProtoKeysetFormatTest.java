@@ -97,7 +97,7 @@ public final class TinkProtoKeysetFormatTest {
                     .withRandomId()
                     .makePrimary())
             .build();
-    return handle.getPrimitive(Aead.class);
+    return handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
   }
 
   @Test
@@ -391,7 +391,7 @@ public final class TinkProtoKeysetFormatTest {
                 + "883f2f4a40025532ee1b11f9e587120410100803180110011895e59bcc062001");
     KeysetHandle handle =
         TinkProtoKeysetFormat.parseKeyset(serializedKeyset, InsecureSecretKeyAccess.get());
-    Mac mac = handle.getPrimitive(Mac.class);
+    Mac mac = handle.getPrimitive(RegistryConfiguration.get(), Mac.class);
     mac.verifyMac(Hex.decode("016986f2956092d259136923c6f4323557714ec499"), "data".getBytes(UTF_8));
   }
 
@@ -406,7 +406,8 @@ public final class TinkProtoKeysetFormatTest {
                 + "e1971801100118b891f5a2042001");
     KeysetHandle keysetEncryptionHandle = TinkProtoKeysetFormat.parseKeyset(
         serializedKeysetEncryptionKeyset, InsecureSecretKeyAccess.get());
-    Aead keysetEncryptionAead = keysetEncryptionHandle.getPrimitive(Aead.class);
+    Aead keysetEncryptionAead =
+        keysetEncryptionHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     // A keyset that contains one HMAC key, encrypted with the above, using associatedData
     final byte[] encryptedSerializedKeyset =
@@ -423,7 +424,7 @@ public final class TinkProtoKeysetFormatTest {
         TinkProtoKeysetFormat.parseEncryptedKeyset(
             encryptedSerializedKeyset, keysetEncryptionAead, associatedData);
 
-    Mac mac = handle.getPrimitive(Mac.class);
+    Mac mac = handle.getPrimitive(RegistryConfiguration.get(), Mac.class);
     final byte[] message = Hex.decode("");
     final byte[] tag = Hex.decode("011d270875989dd6fbd5f54dbc9520bb41efd058d5");
     mac.verifyMac(tag, message);
@@ -442,7 +443,9 @@ public final class TinkProtoKeysetFormatTest {
             .setVariant(AesGcmParameters.Variant.NO_PREFIX)
             .build();
     KeysetHandle keysetHandle = KeysetHandle.generateNew(aesGcm128Parameters);
-    Aead keyEncryptionAead = KeysetHandle.generateNew(aesGcm128Parameters).getPrimitive(Aead.class);
+    Aead keyEncryptionAead =
+        KeysetHandle.generateNew(aesGcm128Parameters)
+            .getPrimitive(RegistryConfiguration.get(), Aead.class);
     byte[] serializedKeyset =
         TinkProtoKeysetFormat.serializeKeyset(keysetHandle, InsecureSecretKeyAccess.get());
 
