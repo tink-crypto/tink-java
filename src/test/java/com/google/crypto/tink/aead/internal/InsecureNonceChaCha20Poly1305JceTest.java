@@ -142,6 +142,7 @@ public class InsecureNonceChaCha20Poly1305JceTest {
     Assume.assumeFalse(TinkFips.useOnlyFips());
     Assume.assumeTrue(InsecureNonceChaCha20Poly1305Jce.isSupported());
     Assume.assumeFalse(TestUtil.isAndroid()); // Doesn't work on Android
+    Assume.assumeFalse(TestUtil.isTsan());
 
     int dataSize = 16;
     while (dataSize <= (1 << 24)) {
