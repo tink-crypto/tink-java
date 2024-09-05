@@ -5,12 +5,8 @@ java_test(
     size = "small",
     srcs = ["CustomAeadKeyManagerTest.java"],
     deps = [
-        "@maven//:com_google_protobuf_protobuf_java",
-        "@maven//:com_google_truth_truth",
-        "@maven//:junit_junit",
         "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:aead",
-        "//src/main/java/com/google/crypto/tink:cleartext_keyset_handle",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink:key_manager",
         "//src/main/java/com/google/crypto/tink:parameters",
@@ -22,5 +18,9 @@ java_test(
         "//src/main/java/com/google/crypto/tink/aead:cha_cha20_poly1305_parameters",
         "//src/main/java/com/google/crypto/tink/subtle:aes_gcm_jce",
         "//src/main/java/com/google/crypto/tink/subtle:random",
+        "@com_google_protobuf//:wrappers_proto",
+        "@maven//:com_google_protobuf_protobuf_java",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
     ],
 )
