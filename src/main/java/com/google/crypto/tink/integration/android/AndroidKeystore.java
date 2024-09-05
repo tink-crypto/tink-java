@@ -103,7 +103,7 @@ final class AndroidKeystore {
     return keyStore.containsAlias(alias);
   }
 
-  private static KeyStore getAndroidKeyStore() {
+  private static KeyStore getAndroidKeyStore() throws GeneralSecurityException {
     if (!isAtLeastM()) {
       throw new IllegalStateException("Need Android Keystore on Android M or newer");
     }
@@ -111,8 +111,8 @@ final class AndroidKeystore {
       KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
       keyStore.load(/* param= */ null);
       return keyStore;
-    } catch (GeneralSecurityException | IOException ex) {
-      throw new IllegalStateException(ex);
+    } catch (IOException ex) {
+      throw new GeneralSecurityException(ex);
     }
   }
 
