@@ -150,14 +150,10 @@ public final class AndroidKeystoreKmsClient implements KmsClient {
           String.format(
               "this client is bound to %s, cannot load keys bound to %s", this.keyUri, uri));
     }
-    try {
-      synchronized (keystoreLock) {
-        Aead aead =
-            new AndroidKeystoreAesGcm(Validators.validateKmsKeyUriAndRemovePrefix(PREFIX, uri));
-        return validateAead(aead);
-      }
-    } catch (IOException ex) {
-      throw new GeneralSecurityException(ex);
+    synchronized (keystoreLock) {
+      Aead aead =
+          new AndroidKeystoreAesGcm(Validators.validateKmsKeyUriAndRemovePrefix(PREFIX, uri));
+      return validateAead(aead);
     }
   }
 

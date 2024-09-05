@@ -45,10 +45,14 @@ public final class AndroidKeystoreAesGcm implements Aead {
 
   private final SecretKey key;
 
-  public AndroidKeystoreAesGcm(String keyId) throws GeneralSecurityException, IOException {
-    KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
-    keyStore.load(null /* param */);
-    key = (SecretKey) keyStore.getKey(keyId, null /* password */);
+  public AndroidKeystoreAesGcm(String keyId) throws GeneralSecurityException {
+    try {
+      KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+      keyStore.load(null /* param */);
+      key = (SecretKey) keyStore.getKey(keyId, null /* password */);
+    } catch (IOException ex) {
+      throw new GeneralSecurityException(ex);
+    }
     if (key == null) {
       throw new InvalidKeyException("Keystore cannot load the key with ID: " + keyId);
     }
