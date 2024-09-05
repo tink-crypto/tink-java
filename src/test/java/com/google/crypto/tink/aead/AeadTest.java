@@ -25,6 +25,7 @@ import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
 import com.google.crypto.tink.daead.DeterministicAeadConfig;
 import java.security.GeneralSecurityException;
@@ -70,7 +71,7 @@ public final class AeadTest {
   public void createEncryptDecrypt(@FromDataPoints("templates") String templateName)
       throws Exception {
     KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
-    Aead aead = handle.getPrimitive(Aead.class);
+    Aead aead = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "associatedData".getBytes(UTF_8);
     byte[] ciphertext = aead.encrypt(plaintext, associatedData);
@@ -78,7 +79,7 @@ public final class AeadTest {
     assertThat(decrypted).isEqualTo(plaintext);
 
     KeysetHandle otherHandle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
-    Aead otherAead = otherHandle.getPrimitive(Aead.class);
+    Aead otherAead = otherHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
     assertThrows(
         GeneralSecurityException.class, () -> otherAead.decrypt(ciphertext, associatedData));
 
@@ -116,7 +117,7 @@ public final class AeadTest {
     KeysetHandle handle =
         TinkJsonProtoKeysetFormat.parseKeyset(JSON_AEAD_KEYSET, InsecureSecretKeyAccess.get());
 
-    Aead aead = handle.getPrimitive(Aead.class);
+    Aead aead = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "associatedData".getBytes(UTF_8);
@@ -170,7 +171,7 @@ public final class AeadTest {
         TinkJsonProtoKeysetFormat.parseKeyset(
             JSON_AEAD_KEYSET_WITH_MULTIPLE_KEYS, InsecureSecretKeyAccess.get());
 
-    Aead aead = handle.getPrimitive(Aead.class);
+    Aead aead = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "associatedData".getBytes(UTF_8);
@@ -182,7 +183,7 @@ public final class AeadTest {
     KeysetHandle handle1 =
         TinkJsonProtoKeysetFormat.parseKeyset(JSON_AEAD_KEYSET, InsecureSecretKeyAccess.get());
 
-    Aead aead1 = handle1.getPrimitive(Aead.class);
+    Aead aead1 = handle1.getPrimitive(RegistryConfiguration.get(), Aead.class);
     byte[] ciphertext1 = aead1.encrypt(plaintext, associatedData);
     assertThat(aead.decrypt(ciphertext1, associatedData)).isEqualTo(plaintext);
   }
@@ -213,7 +214,9 @@ public final class AeadTest {
     KeysetHandle handle =
         TinkJsonProtoKeysetFormat.parseKeyset(JSON_DAEAD_KEYSET, InsecureSecretKeyAccess.get());
     // Test that the keyset can create a DeterministicAead primitive, but not a Aead.
-    Object unused = handle.getPrimitive(DeterministicAead.class);
-    assertThrows(GeneralSecurityException.class, () -> handle.getPrimitive(Aead.class));
+    Object unused = handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> handle.getPrimitive(RegistryConfiguration.get(), Aead.class));
   }
 }

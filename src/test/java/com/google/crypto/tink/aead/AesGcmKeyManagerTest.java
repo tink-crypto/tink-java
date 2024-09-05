@@ -30,6 +30,7 @@ import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.SlowInputStream;
 import com.google.crypto.tink.subtle.AesGcmJce;
@@ -264,7 +265,7 @@ public class AesGcmKeyManagerTest {
           KeysetHandle.newBuilder()
               .addEntry(KeysetHandle.importKey(key).makePrimary().withRandomId())
               .build()
-              .getPrimitive(Aead.class);
+              .getPrimitive(RegistryConfiguration.get(), Aead.class);
       try {
         byte[] ciphertext = Bytes.concat(t.iv, t.ciphertext, t.tag);
         byte[] plaintext = aead.decrypt(ciphertext, t.aad);
@@ -427,7 +428,9 @@ public class AesGcmKeyManagerTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(key).makePrimary().withRandomId())
             .build();
-    assertThrows(GeneralSecurityException.class, () -> keysetHandle.getPrimitive(Aead.class));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class));
   }
 
   @Test
@@ -502,7 +505,7 @@ public class AesGcmKeyManagerTest {
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] aad = "aad".getBytes(UTF_8);
 
-    Aead aead = keysetHandle.getPrimitive(Aead.class);
+    Aead aead = keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
     Aead directAead = AesGcmJce.create(key);
 
     Object unused = directAead.decrypt(aead.encrypt(plaintext, aad), aad);

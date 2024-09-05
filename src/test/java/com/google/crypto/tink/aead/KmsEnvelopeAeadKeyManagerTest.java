@@ -89,7 +89,7 @@ public class KmsEnvelopeAeadKeyManagerTest {
             .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
             .build();
 
-    Aead aead = keysetHandle.getPrimitive(Aead.class);
+    Aead aead = keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     TestUtil.runBasicAeadTests(aead);
 
@@ -167,7 +167,9 @@ public class KmsEnvelopeAeadKeyManagerTest {
             .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
             .build();
 
-    assertThrows(GeneralSecurityException.class, () -> keysetHandle.getPrimitive(Aead.class));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class));
   }
 
   @Test
@@ -192,7 +194,7 @@ public class KmsEnvelopeAeadKeyManagerTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
             .build();
-    Aead aead = keysetHandle.getPrimitive(Aead.class);
+    Aead aead = keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     byte[] plaintext = Random.randBytes(20);
     byte[] aad = Random.randBytes(20);
@@ -484,7 +486,7 @@ public class KmsEnvelopeAeadKeyManagerTest {
     KeyTemplate template =
         KmsEnvelopeAeadKeyManager.createKeyTemplate(keyUri, KeyTemplates.get("AES128_GCM"));
     KeysetHandle keysetHandle = KeysetHandle.generateNew(template);
-    Aead aead1 = keysetHandle.getPrimitive(Aead.class);
+    Aead aead1 = keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     // Create Aead using FakeKmsClient.getAead and KmsEnvelopeAead.create.
     // No KmsClient needs to be registered.
@@ -506,11 +508,11 @@ public class KmsEnvelopeAeadKeyManagerTest {
 
     KeysetHandle handle1 =
         KeysetHandle.generateNew(KmsEnvelopeAeadKeyManager.createKeyTemplate(kekUri, dekTemplate));
-    Aead aead1 = handle1.getPrimitive(Aead.class);
+    Aead aead1 = handle1.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     KeysetHandle handle2 =
         KeysetHandle.generateNew(KmsEnvelopeAeadKeyManager.createKeyTemplate(kekUri, dekTemplate));
-    Aead aead2 = handle2.getPrimitive(Aead.class);
+    Aead aead2 = handle2.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     byte[] plaintext = Random.randBytes(20);
     byte[] associatedData = Random.randBytes(20);
@@ -528,13 +530,13 @@ public class KmsEnvelopeAeadKeyManagerTest {
     String kekUri1 = FakeKmsClient.createFakeKeyUri();
     KeysetHandle handle1 =
         KeysetHandle.generateNew(KmsEnvelopeAeadKeyManager.createKeyTemplate(kekUri1, dekTemplate));
-    Aead aead1 = handle1.getPrimitive(Aead.class);
+    Aead aead1 = handle1.getPrimitive(RegistryConfiguration.get(), Aead.class);
     byte[] ciphertext1 = aead1.encrypt(plaintext, associatedData);
 
     String kekUri2 = FakeKmsClient.createFakeKeyUri();
     KeysetHandle handle2 =
         KeysetHandle.generateNew(KmsEnvelopeAeadKeyManager.createKeyTemplate(kekUri2, dekTemplate));
-    Aead aead2 = handle2.getPrimitive(Aead.class);
+    Aead aead2 = handle2.getPrimitive(RegistryConfiguration.get(), Aead.class);
     byte[] ciphertext2 = aead2.encrypt(plaintext, associatedData);
 
     KeysetHandle handle =
@@ -543,7 +545,7 @@ public class KmsEnvelopeAeadKeyManagerTest {
                 KeysetHandle.importKey(handle1.getAt(0).getKey()).withRandomId().makePrimary())
             .addEntry(KeysetHandle.importKey(handle2.getAt(0).getKey()).withRandomId())
             .build();
-    Aead aead = handle.getPrimitive(Aead.class);
+    Aead aead = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     assertThat(aead.decrypt(ciphertext1, associatedData)).isEqualTo(plaintext);
     assertThat(aead.decrypt(ciphertext2, associatedData)).isEqualTo(plaintext);
@@ -557,12 +559,12 @@ public class KmsEnvelopeAeadKeyManagerTest {
     KeyTemplate dek1Template = AesCtrHmacAeadKeyManager.aes128CtrHmacSha256Template();
     KeysetHandle handle1 =
         KeysetHandle.generateNew(KmsEnvelopeAeadKeyManager.createKeyTemplate(kekUri, dek1Template));
-    Aead aead1 = handle1.getPrimitive(Aead.class);
+    Aead aead1 = handle1.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     KeyTemplate dek2Template = AesCtrHmacAeadKeyManager.aes256CtrHmacSha256Template();
     KeysetHandle handle2 =
         KeysetHandle.generateNew(KmsEnvelopeAeadKeyManager.createKeyTemplate(kekUri, dek2Template));
-    Aead aead2 = handle2.getPrimitive(Aead.class);
+    Aead aead2 = handle2.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     byte[] plaintext = Random.randBytes(20);
     byte[] associatedData = Random.randBytes(20);
@@ -582,12 +584,12 @@ public class KmsEnvelopeAeadKeyManagerTest {
     KeyTemplate dek1Template = AesCtrHmacAeadKeyManager.aes128CtrHmacSha256Template();
     KeysetHandle handle1 =
         KeysetHandle.generateNew(KmsEnvelopeAeadKeyManager.createKeyTemplate(kekUri, dek1Template));
-    Aead aead1 = handle1.getPrimitive(Aead.class);
+    Aead aead1 = handle1.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     KeyTemplate dek2Template = AesGcmKeyManager.aes128GcmTemplate();
     KeysetHandle handle2 =
         KeysetHandle.generateNew(KmsEnvelopeAeadKeyManager.createKeyTemplate(kekUri, dek2Template));
-    Aead aead2 = handle2.getPrimitive(Aead.class);
+    Aead aead2 = handle2.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     byte[] plaintext = Random.randBytes(20);
     byte[] associatedData = Random.randBytes(20);

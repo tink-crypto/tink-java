@@ -27,6 +27,7 @@ import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.aead.XChaCha20Poly1305Parameters.Variant;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.SlowInputStream;
@@ -189,7 +190,7 @@ public class XChaCha20Poly1305KeyManagerTest {
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] aad = "aad".getBytes(UTF_8);
 
-    Aead aead = keysetHandle.getPrimitive(Aead.class);
+    Aead aead = keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
     Aead directAead = XChaCha20Poly1305.create(key);
 
 

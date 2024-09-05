@@ -58,7 +58,7 @@ public class KmsAeadKeyManagerTest {
     String keyUri = FakeKmsClient.createFakeKeyUri();
     KeysetHandle keysetHandle =
         KeysetHandle.generateNew(KmsAeadKeyManager.createKeyTemplate(keyUri));
-    TestUtil.runBasicAeadTests(keysetHandle.getPrimitive(Aead.class));
+    TestUtil.runBasicAeadTests(keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class));
   }
 
   @Test
@@ -121,7 +121,9 @@ public class KmsAeadKeyManagerTest {
             .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
             .build();
 
-    assertThrows(GeneralSecurityException.class, () -> keysetHandle.getPrimitive(Aead.class));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class));
   }
 
   @Test
@@ -133,7 +135,7 @@ public class KmsAeadKeyManagerTest {
     // This requires that a KmsClient that supports keyUri is registered.
     KeysetHandle keysetHandle =
         KeysetHandle.generateNew(KmsAeadKeyManager.createKeyTemplate(keyUri));
-    Aead aead1 = keysetHandle.getPrimitive(Aead.class);
+    Aead aead1 = keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     // Create Aead using FakeKmsClient.getAead.
     // No KmsClient needs to be registered.

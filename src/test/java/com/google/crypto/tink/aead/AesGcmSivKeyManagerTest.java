@@ -28,6 +28,7 @@ import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.aead.AesGcmSivParameters.Variant;
 import com.google.crypto.tink.aead.subtle.AesGcmSiv;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
@@ -102,7 +103,7 @@ public class AesGcmSivKeyManagerTest {
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "aad".getBytes(UTF_8);
 
-    Aead aead = keysetHandle.getPrimitive(Aead.class);
+    Aead aead = keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     byte[] ciphertext = aead.encrypt(plaintext, associatedData);
     assertThat(ciphertext.length)
@@ -254,7 +255,7 @@ public class AesGcmSivKeyManagerTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(aesGcmSivKey).withRandomId().makePrimary())
             .build();
-    Aead aead = keysetHandle.getPrimitive(Aead.class);
+    Aead aead = keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     // Encrypt an empty plaintext, and verify that it can be decrypted.
     byte[] ciphertext = aead.encrypt(new byte[] {1, 2, 3}, new byte[] {4, 5, 6});
@@ -286,7 +287,7 @@ public class AesGcmSivKeyManagerTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
             .build();
-    Aead aead = keysetHandle.getPrimitive(Aead.class);
+    Aead aead = keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     assertThrows(GeneralSecurityException.class, () -> aead.encrypt(new byte[] {}, new byte[] {}));
     byte[] fixedCiphertext = Hex.decode("c3561ce7f48b8a6b9b8d5ef957d2e512368f7da837bcf2aeebe176e3");
@@ -339,7 +340,8 @@ public class AesGcmSivKeyManagerTest {
             .addEntry(KeysetHandle.importKey(aesGcmSivKey).withRandomId().makePrimary())
             .addEntry(KeysetHandle.importKey(legacyKey).withRandomId())
             .build();
-    Aead backwardsCompatibleAead = backwardsCompatibleKeysetHandle.getPrimitive(Aead.class);
+    Aead backwardsCompatibleAead =
+        backwardsCompatibleKeysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     // Check that backwardsCompatibleAead can decrypt both valid and legacy ciphertexts.
     assertThat(backwardsCompatibleAead.decrypt(validCiphertext, new byte[] {})).isEmpty();
@@ -364,7 +366,7 @@ public class AesGcmSivKeyManagerTest {
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] aad = "aad".getBytes(UTF_8);
 
-    Aead aead = keysetHandle.getPrimitive(Aead.class);
+    Aead aead = keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
     Aead directAead = AesGcmSiv.create(key);
 
     assertThat(aead.decrypt(directAead.encrypt(plaintext, aad), aad)).isEqualTo(plaintext);

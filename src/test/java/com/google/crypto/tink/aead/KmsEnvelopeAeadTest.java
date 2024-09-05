@@ -26,6 +26,7 @@ import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.KmsClient;
 import com.google.crypto.tink.KmsClients;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.internal.KeyTemplateProtoConverter;
 import com.google.crypto.tink.mac.HmacKeyManager;
 import com.google.crypto.tink.subtle.Random;
@@ -51,7 +52,7 @@ public final class KmsEnvelopeAeadTest {
 
   private Aead generateNewRemoteAead() throws GeneralSecurityException {
     KeysetHandle keysetHandle = KeysetHandle.generateNew(KeyTemplates.get("AES128_EAX"));
-    return keysetHandle.getPrimitive(Aead.class);
+    return keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
   }
 
   @DataPoints("dekParameters")
@@ -227,7 +228,7 @@ public final class KmsEnvelopeAeadTest {
     KmsClients.add(kmsClient1);
     KeysetHandle handle1 =
         KeysetHandle.generateNew(KmsEnvelopeAeadKeyManager.createKeyTemplate(kekUri, dekTemplate));
-    Aead aead1 = handle1.getPrimitive(Aead.class);
+    Aead aead1 = handle1.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     // Get Aead object from the kmsClient, and create the envelope AEAD without the registry.
     Aead remoteAead = new FakeKmsClient().getAead(kekUri);

@@ -28,6 +28,7 @@ import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.SlowInputStream;
@@ -94,7 +95,7 @@ public class AesCtrHmacAeadKeyManagerTest {
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] aad = "aad".getBytes(UTF_8);
 
-    Aead aead = keysetHandle.getPrimitive(Aead.class);
+    Aead aead = keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
     Aead directAead = EncryptThenAuthenticate.create(key);
 
     assertThat(directAead.decrypt(aead.encrypt(plaintext, aad), aad)).isEqualTo(plaintext);
@@ -124,7 +125,7 @@ public class AesCtrHmacAeadKeyManagerTest {
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] aad = "aad".getBytes(UTF_8);
 
-    Aead aead = keysetHandle.getPrimitive(Aead.class);
+    Aead aead = keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     assertThat(aead.decrypt(aead.encrypt(plaintext, aad), aad)).isEqualTo(plaintext);
   }
@@ -152,7 +153,7 @@ public class AesCtrHmacAeadKeyManagerTest {
     byte[] plaintext = Random.randBytes(1001);
     byte[] aad = Random.randBytes(13);
 
-    Aead aead = keysetHandle.getPrimitive(Aead.class);
+    Aead aead = keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
     byte[] ciphertext = aead.encrypt(plaintext, aad);
 
     for (int i = 0; i < ciphertext.length; i++) {
@@ -337,7 +338,7 @@ public class AesCtrHmacAeadKeyManagerTest {
                         createDerivationKey(PredefinedAeadParameters.AES128_CTR_HMAC_SHA256, 24680))
                     .makePrimary())
             .build()
-            .getPrimitive(KeysetDeriver.class);
+            .getPrimitive(RegistryConfiguration.get(), KeysetDeriver.class);
     KeysetHandle derivedKeyset = deriver.deriveKeyset(Hex.decode("000102"));
     assertThat(derivedKeyset.size()).isEqualTo(1);
     assertThat(derivedKeyset.getAt(0).getKey().getParameters())
@@ -379,7 +380,9 @@ public class AesCtrHmacAeadKeyManagerTest {
             .build();
     // TODO(tholenst): This should throw.
     Object unused =
-        derivationHandle.getPrimitive(KeysetDeriver.class).deriveKeyset(Hex.decode("000102"));
+        derivationHandle
+            .getPrimitive(RegistryConfiguration.get(), KeysetDeriver.class)
+            .deriveKeyset(Hex.decode("000102"));
   }
 
   @Test
@@ -421,7 +424,7 @@ public class AesCtrHmacAeadKeyManagerTest {
             KeysetHandle.newBuilder()
                 .addEntry(KeysetHandle.importKey(rejectedKey).makePrimary())
                 .build()
-                .getPrimitive(Aead.class));
+                .getPrimitive(RegistryConfiguration.get(), Aead.class));
   }
 
   @Test
