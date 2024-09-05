@@ -79,6 +79,7 @@ java_library(
         ":mac_wrapper",
         "//src/main/java/com/google/crypto/tink:mac",
         "//src/main/java/com/google/crypto/tink:registry_cluster",
+        "//src/main/java/com/google/crypto/tink:registry_configuration",
     ],
 )
 

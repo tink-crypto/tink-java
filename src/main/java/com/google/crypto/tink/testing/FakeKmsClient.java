@@ -21,6 +21,7 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.KmsClient;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.aead.AesCtrHmacAeadKeyManager;
 import com.google.crypto.tink.subtle.Base64;
@@ -87,7 +88,7 @@ public final class FakeKmsClient implements KmsClient {
     byte[] bytes = Base64.urlSafeDecode(encodedKey);
     KeysetHandle keysetHandle =
         TinkProtoKeysetFormat.parseKeyset(bytes, InsecureSecretKeyAccess.get());
-    return keysetHandle.getPrimitive(Aead.class);
+    return keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
   }
 
   /** @return a new, random fake key_uri. */

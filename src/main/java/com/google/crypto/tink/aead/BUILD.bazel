@@ -127,6 +127,7 @@ java_library(
         ":aead_wrapper",
         "//src/main/java/com/google/crypto/tink:aead",
         "//src/main/java/com/google/crypto/tink:registry_cluster",
+        "//src/main/java/com/google/crypto/tink:registry_configuration",
     ],
 )
 
@@ -559,6 +560,7 @@ android_library(
         ":aead_wrapper-android",
         "//src/main/java/com/google/crypto/tink:aead-android",
         "//src/main/java/com/google/crypto/tink:registry_cluster-android",
+        "//src/main/java/com/google/crypto/tink:registry_configuration-android",
     ],
 )
 
