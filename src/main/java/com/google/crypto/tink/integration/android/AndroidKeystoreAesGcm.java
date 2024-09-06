@@ -18,6 +18,7 @@ package com.google.crypto.tink.integration.android;
 
 import android.util.Log;
 import com.google.crypto.tink.Aead;
+import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.ProviderException;
 import javax.crypto.BadPaddingException;
@@ -36,7 +37,7 @@ public final class AndroidKeystoreAesGcm implements Aead {
 
   private final Aead keystoreAead;
 
-  public AndroidKeystoreAesGcm(String keyId) throws GeneralSecurityException {
+  public AndroidKeystoreAesGcm(String keyId) throws GeneralSecurityException, IOException {
     this.keystoreAead = AndroidKeystore.getAead(keyId);
   }
 
