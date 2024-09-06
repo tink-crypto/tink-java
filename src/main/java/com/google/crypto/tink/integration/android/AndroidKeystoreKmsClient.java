@@ -17,8 +17,6 @@
 package com.google.crypto.tink.integration.android;
 
 import android.os.Build;
-import android.security.keystore.KeyGenParameterSpec;
-import android.security.keystore.KeyProperties;
 import android.util.Log;
 import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.RequiresApi;
@@ -27,13 +25,10 @@ import com.google.crypto.tink.KmsClient;
 import com.google.crypto.tink.subtle.Random;
 import com.google.crypto.tink.subtle.Validators;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.util.Arrays;
 import java.util.Locale;
-import javax.crypto.KeyGenerator;
 
 /**
  * An implementation of {@link KmsClient} for <a
@@ -157,21 +152,11 @@ public final class AndroidKeystoreKmsClient implements KmsClient {
     }
   }
 
-  private static KeyStore getAndroidKeyStore() throws GeneralSecurityException {
-    try {
-      KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
-      keyStore.load(/* param= */ null);
-      return keyStore;
-    } catch (IOException ex) {
-      throw new GeneralSecurityException(ex);
-    }
-  }
-
   /** Deletes a key in Android Keystore. */
   public void deleteKey(String keyUri) throws GeneralSecurityException {
     String keyId = Validators.validateKmsKeyUriAndRemovePrefix(PREFIX, keyUri);
     synchronized (keystoreLock) {
-      getAndroidKeyStore().deleteEntry(keyId);
+      AndroidKeystore.deleteKey(keyId);
     }
   }
 
@@ -180,13 +165,13 @@ public final class AndroidKeystoreKmsClient implements KmsClient {
     String keyId = Validators.validateKmsKeyUriAndRemovePrefix(PREFIX, keyUri);
     try {
       synchronized (keystoreLock) {
-        return getAndroidKeyStore().containsAlias(keyId);
+        return AndroidKeystore.hasKey(keyId);
       }
     } catch (NullPointerException ex1) {
       Log.w(TAG, "Keystore is temporarily unavailable, wait, reinitialize Keystore and try again.");
       sleepRandomAmount();
       synchronized (keystoreLock) {
-        return getAndroidKeyStore().containsAlias(keyId);
+        return AndroidKeystore.hasKey(keyId);
       }
     }
   }
@@ -206,14 +191,14 @@ public final class AndroidKeystoreKmsClient implements KmsClient {
    * <p>Generates AES256-GCM keys.
    */
   @RequiresApi(Build.VERSION_CODES.M)
-  public static Aead getOrGenerateNewAeadKey(String keyUri)
-      throws GeneralSecurityException, IOException {
-    AndroidKeystoreKmsClient client = new AndroidKeystoreKmsClient();
+  public static Aead getOrGenerateNewAeadKey(String keyUri) throws GeneralSecurityException {
+    String keyId = Validators.validateKmsKeyUriAndRemovePrefix(PREFIX, keyUri);
     synchronized (keystoreLock) {
-      if (!client.hasKey(keyUri)) {
-        generateNewAesGcmKeyWithoutExistenceCheck(keyUri);
+      if (!AndroidKeystore.hasKey(keyId)) {
+        AndroidKeystore.generateNewAes256GcmKey(keyId);
       }
-      return client.getAead(keyUri);
+      Aead aead = new AndroidKeystoreAesGcm(keyId);
+      return validateAead(aead);
     }
   }
 
@@ -224,39 +209,17 @@ public final class AndroidKeystoreKmsClient implements KmsClient {
    */
   @RequiresApi(Build.VERSION_CODES.M)
   public static void generateNewAeadKey(String keyUri) throws GeneralSecurityException {
-    AndroidKeystoreKmsClient client = new AndroidKeystoreKmsClient();
     synchronized (keystoreLock) {
-      if (client.hasKey(keyUri)) {
+      String keyId = Validators.validateKmsKeyUriAndRemovePrefix(PREFIX, keyUri);
+      if (AndroidKeystore.hasKey(keyId)) {
         throw new IllegalArgumentException(
             String.format(
                 "cannot generate a new key %s because it already exists; please delete it with"
                     + " deleteKey() and try again",
                 keyUri));
       }
-      generateNewAesGcmKeyWithoutExistenceCheck(keyUri);
+      AndroidKeystore.generateNewAes256GcmKey(keyId);
     }
-  }
-
-  /**
-   * Generates a new AES256-GCM key in Android Keystore.
-   *
-   * <p>This function does not check if the key already exists, and will overwrite any existing key.
-   */
-  @RequiresApi(Build.VERSION_CODES.M)
-  private static void generateNewAesGcmKeyWithoutExistenceCheck(String keyUri)
-      throws GeneralSecurityException {
-    String keyId = Validators.validateKmsKeyUriAndRemovePrefix(PREFIX, keyUri);
-    KeyGenerator keyGenerator =
-        KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore");
-    KeyGenParameterSpec spec =
-        new KeyGenParameterSpec.Builder(
-                keyId, KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-            .setKeySize(256)
-            .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-            .build();
-    keyGenerator.init(spec);
-    keyGenerator.generateKey();
   }
 
   /**
@@ -266,10 +229,10 @@ public final class AndroidKeystoreKmsClient implements KmsClient {
    */
   @RequiresApi(Build.VERSION_CODES.M)
   static boolean generateKeyIfNotExist(String keyUri) throws GeneralSecurityException {
-    AndroidKeystoreKmsClient client = new AndroidKeystoreKmsClient();
     synchronized (keystoreLock) {
-      if (!client.hasKey(keyUri)) {
-        generateNewAesGcmKeyWithoutExistenceCheck(keyUri);
+      String keyId = Validators.validateKmsKeyUriAndRemovePrefix(PREFIX, keyUri);
+      if (!AndroidKeystore.hasKey(keyId)) {
+        AndroidKeystore.generateNewAes256GcmKey(keyId);
         return true;
       }
       return false;
