@@ -34,6 +34,7 @@ import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -119,6 +120,9 @@ public class EcdsaVerifyKeyManagerTest {
   @Test
   public void testRfcTestVectors() throws Exception {
     for (int i = 0; i < rfcTestVectors.length; i++) {
+      if (i != 0) {
+        Assume.assumeFalse(TestUtil.isTsan());
+      }
       RfcTestVector t = rfcTestVectors[i];
       PublicKeyVerify verifier = createVerifier(t);
       verifier.verify(t.sig, t.msg);
