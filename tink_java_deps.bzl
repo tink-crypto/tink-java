@@ -4,8 +4,8 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
 
 TINK_MAVEN_ARTIFACTS = [
-    "com.google.protobuf:protobuf-java:3.25.3",
-    "com.google.protobuf:protobuf-javalite:3.25.3",
+    "com.google.protobuf:protobuf-java:4.28.0",
+    "com.google.protobuf:protobuf-javalite:4.28.0",
     "androidx.annotation:annotation:1.8.2",
     "androidx.test:monitor:1.7.2",
     "com.google.api-client:google-api-client:2.2.0",
@@ -39,13 +39,13 @@ def tink_java_deps():
     # -------------------------------------------------------------------------
     # Protobuf.
     # -------------------------------------------------------------------------
-    # Release from 2024-02-16.
+    # Release from 2024-08-28.
     maybe(
         http_archive,
         name = "com_google_protobuf",
-        strip_prefix = "protobuf-25.3",
-        urls = ["https://github.com/protocolbuffers/protobuf/archive/refs/tags/v25.3.zip"],
-        sha256 = "5156b22536feaa88cf95503153a6b2cd67cc80f20f1218f154b84a12c288a220",
+        strip_prefix = "protobuf-28.0",
+        urls = ["https://github.com/protocolbuffers/protobuf/releases/download/v28.0/protobuf-28.0.tar.gz"],
+        sha256 = "13e7749c30bc24af6ee93e092422f9dc08491c7097efa69461f88eb5f61805ce",
     )
 
     # -------------------------------------------------------------------------
