@@ -85,8 +85,12 @@ final class AndroidKeystore {
    * GeneralSecurityException}. But if you avoid calling keystore from many threads at the same
    * time, then such failures are unlikely and retrying is not necessary.
    *
-   * <p>If decryption throws a {@link AEADBadTagException} or {@link
-   * KeyPermanentlyInvalidatedException}, ciphertext is not decryptable and retrying will not help.
+   * <p>See <a
+   * href="https://android.googlesource.com/platform/frameworks/base/+/master/keystore/java/android/security/KeyStore2.java"
+   * >KeyStore2</a> for more information.
+   *
+   * <p>If decryption throws a {@link BadPaddingException} (which includes {@link
+   * AEADBadTagException}), then the ciphertext is not decryptable and retrying will not help.
    */
   public static Aead getAead(String alias) throws GeneralSecurityException {
     return new AndroidKeystoreAesGcmAead(alias, getAndroidKeyStore());
