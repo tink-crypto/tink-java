@@ -148,17 +148,18 @@ final class AndroidKeystore {
       if (plaintext.length > Integer.MAX_VALUE - IV_SIZE_IN_BYTES - TAG_SIZE_IN_BYTES) {
         throw new GeneralSecurityException("plaintext too long");
       }
+      // ciphertext gets prefixed with the IV of size IV_SIZE_IN_BYTES.
+      byte[] ciphertext = new byte[IV_SIZE_IN_BYTES + plaintext.length + TAG_SIZE_IN_BYTES];
       Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
       cipher.init(Cipher.ENCRYPT_MODE, key);
       cipher.updateAAD(associatedData);
-      // ciphertext gets prefixed with the IV of size IV_SIZE_IN_BYTES.
-      byte[] ciphertext = new byte[IV_SIZE_IN_BYTES + plaintext.length + TAG_SIZE_IN_BYTES];
       int unusedWritten =
           cipher.doFinal(plaintext, 0, plaintext.length, ciphertext, IV_SIZE_IN_BYTES);
-      if (cipher.getIV().length != IV_SIZE_IN_BYTES) {
+      byte[] iv = cipher.getIV();
+      if (iv.length != IV_SIZE_IN_BYTES) {
         throw new GeneralSecurityException("IV has unexpected length");
       }
-      System.arraycopy(cipher.getIV(), 0, ciphertext, 0, IV_SIZE_IN_BYTES);
+      System.arraycopy(iv, 0, ciphertext, 0, IV_SIZE_IN_BYTES);
       return ciphertext;
     }
 
