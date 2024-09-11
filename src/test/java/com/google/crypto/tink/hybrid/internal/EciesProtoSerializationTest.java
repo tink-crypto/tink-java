@@ -1112,6 +1112,24 @@ public final class EciesProtoSerializationTest {
             KeyMaterialType.ASYMMETRIC_PRIVATE,
             OutputPrefixType.TINK,
             /* idRequirement= */ 101),
+        // BadVersion in public Key
+        ProtoKeySerialization.create(
+            "type.googleapis.com/google.crypto.tink.EciesAeadHkdfPrivateKey",
+            EciesAeadHkdfPrivateKey.newBuilder()
+                .setVersion(0)
+                .setPublicKey(
+                    EciesAeadHkdfPublicKey.newBuilder()
+                        .setVersion(1)
+                        .setParams(validParamsForCurve(EllipticCurveType.NIST_P256))
+                        .setX(ByteString.copyFrom(Hex.decode("00" + hexX)))
+                        .setY(ByteString.copyFrom(Hex.decode("00" + hexY)))
+                        .build())
+                .setKeyValue(ByteString.copyFrom(Hex.decode(hexPrivateValue)))
+                .build()
+                .toByteString(),
+            KeyMaterialType.ASYMMETRIC_PRIVATE,
+            OutputPrefixType.TINK,
+            /* idRequirement= */ 101),
         // Unknown prefix
         ProtoKeySerialization.create(
             "type.googleapis.com/google.crypto.tink.EciesAeadHkdfPrivateKey",

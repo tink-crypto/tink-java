@@ -414,6 +414,9 @@ public final class EciesProtoSerialization {
         throw new GeneralSecurityException("Only version 0 keys are accepted");
       }
       com.google.crypto.tink.proto.EciesAeadHkdfPublicKey protoPublicKey = protoKey.getPublicKey();
+      if (protoPublicKey.getVersion() != 0) {
+        throw new GeneralSecurityException("Only version 0 keys are accepted");
+      }
       EciesParameters parameters =
           fromProtoParameters(serialization.getOutputPrefixType(), protoPublicKey.getParams());
       if (parameters.getCurveType().equals(EciesParameters.CurveType.X25519)) {
