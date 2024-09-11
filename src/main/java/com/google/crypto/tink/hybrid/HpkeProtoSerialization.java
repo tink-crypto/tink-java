@@ -315,6 +315,9 @@ public final class HpkeProtoSerialization {
         throw new GeneralSecurityException("Only version " + VERSION + " keys are accepted");
       }
       com.google.crypto.tink.proto.HpkePublicKey protoPublicKey = protoKey.getPublicKey();
+      if (protoPublicKey.getVersion() != VERSION) {
+        throw new GeneralSecurityException("Only version " + VERSION + " keys are accepted");
+      }
       HpkeParameters params =
           fromProtoParameters(serialization.getOutputPrefixType(), protoPublicKey.getParams());
       HpkePublicKey publicKey =

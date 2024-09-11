@@ -701,6 +701,17 @@ public final class HpkeProtoSerializationTest {
             KeyMaterialType.ASYMMETRIC_PRIVATE,
             OutputPrefixType.TINK,
             123),
+        // Bad public key version number (1).
+        ProtoKeySerialization.create(
+            PRIVATE_TYPE_URL,
+            createHpkeProtoPrivateKey(
+                    /* version= */ 0,
+                    createHpkeProtoPublicKey(/* version= */ 1, protoParams, KEMS[0].publicKey),
+                    KEMS[0].privateKey)
+                .toByteString(),
+            KeyMaterialType.ASYMMETRIC_PRIVATE,
+            OutputPrefixType.TINK,
+            123),
         // Unknown prefix.
         ProtoKeySerialization.create(
             PRIVATE_TYPE_URL,
