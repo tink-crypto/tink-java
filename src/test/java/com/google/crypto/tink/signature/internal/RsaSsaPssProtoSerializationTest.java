@@ -1034,6 +1034,34 @@ public final class RsaSsaPssProtoSerializationTest {
             KeyMaterialType.ASYMMETRIC_PRIVATE,
             OutputPrefixType.TINK,
             1479),
+        // Bad Version Number in Public Key (1)
+        ProtoKeySerialization.create(
+            PRIVATE_TYPE_URL,
+            com.google.crypto.tink.proto.RsaSsaPssPrivateKey.newBuilder()
+                .setVersion(0)
+                .setPublicKey(
+                    com.google.crypto.tink.proto.RsaSsaPssPublicKey.newBuilder()
+                        .setVersion(1)
+                        .setParams(
+                            RsaSsaPssParams.newBuilder()
+                                .setSigHash(HashType.SHA512)
+                                .setMgf1Hash(HashType.SHA512)
+                                .setSaltLength(64)
+                                .build())
+                        .setN(ByteString.copyFrom(MODULUS_BYTES))
+                        .setE(ByteString.copyFrom(EXPONENT_BYTES))
+                        .build())
+                .setD(ByteString.copyFrom(D_BYTES))
+                .setP(ByteString.copyFrom(P_BYTES))
+                .setQ(ByteString.copyFrom(Q_BYTES))
+                .setDp(ByteString.copyFrom(DP_BYTES))
+                .setDq(ByteString.copyFrom(DQ_BYTES))
+                .setCrt(ByteString.copyFrom(Q_INV_BYTES))
+                .build()
+                .toByteString(),
+            KeyMaterialType.ASYMMETRIC_PRIVATE,
+            OutputPrefixType.TINK,
+            1479),
         // Unknown prefix
         ProtoKeySerialization.create(
             PRIVATE_TYPE_URL,

@@ -284,6 +284,9 @@ public final class RsaSsaPssProtoSerialization {
         throw new GeneralSecurityException("Only version 0 keys are accepted");
       }
       com.google.crypto.tink.proto.RsaSsaPssPublicKey protoPublicKey = protoKey.getPublicKey();
+      if (protoPublicKey.getVersion() != 0) {
+        throw new GeneralSecurityException("Only version 0 keys are accepted");
+      }
 
       BigInteger modulus = decodeBigInteger(protoPublicKey.getN());
       int modulusSizeInBits = modulus.bitLength();
