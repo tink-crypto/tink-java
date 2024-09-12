@@ -175,7 +175,7 @@ public final class EllipticCurves {
    * @return a value s such that s^2 mod p == x mod p
    * @throws GeneralSecurityException if the square root could not be found.
    */
-  protected static BigInteger modSqrt(BigInteger x, BigInteger p) throws GeneralSecurityException {
+  private static BigInteger modSqrt(BigInteger x, BigInteger p) throws GeneralSecurityException {
     if (p.signum() != 1) {
       throw new InvalidAlgorithmParameterException("p must be positive");
     }
@@ -270,7 +270,7 @@ public final class EllipticCurves {
    * @throws GeneralSecurityException if there is no point with coordinate x on the curve, or if
    *     curve is not supported.
    */
-  public static BigInteger getY(BigInteger x, boolean lsb, EllipticCurve curve)
+  private static BigInteger computeY(BigInteger x, boolean lsb, EllipticCurve curve)
       throws GeneralSecurityException {
     BigInteger p = getModulus(curve);
     BigInteger a = curve.getA();
@@ -281,6 +281,17 @@ public final class EllipticCurves {
       y = p.subtract(y).mod(p);
     }
     return y;
+  }
+
+  /**
+   * Computes the y coordinate of a point on an elliptic curve.
+   *
+   * @deprecated This shouldn't be used directly, use {@link pointDecode} to decompress points.
+   */
+  @Deprecated
+  public static BigInteger getY(BigInteger x, boolean lsb, EllipticCurve curve)
+      throws GeneralSecurityException {
+    return computeY(x, lsb, curve);
   }
 
   /**
@@ -563,7 +574,7 @@ public final class EllipticCurves {
    * Decodes an encoded point on an elliptic curve. This method checks that the encoded point is on
    * the curve.
    *
-   * @param curve the elliptic curve
+   * @param curveType the elliptic curve
    * @param format the format used to enocde the point
    * @param encoded the encoded point
    * @return the point
@@ -612,7 +623,7 @@ public final class EllipticCurves {
           if (encoded.length != 2 * coordinateSize) {
             throw new GeneralSecurityException("invalid point size");
           }
-          BigInteger x = new BigInteger(1, Arrays.copyOfRange(encoded, 0, coordinateSize));
+          BigInteger x = new BigInteger(1, Arrays.copyOf(encoded, coordinateSize));
           BigInteger y =
               new BigInteger(1, Arrays.copyOfRange(encoded, coordinateSize, encoded.length));
           ECPoint point = new ECPoint(x, y);
@@ -637,7 +648,7 @@ public final class EllipticCurves {
           if (x.signum() == -1 || x.compareTo(p) >= 0) {
             throw new GeneralSecurityException("x is out of range");
           }
-          BigInteger y = getY(x, lsb, curve);
+          BigInteger y = computeY(x, lsb, curve);
           return new ECPoint(x, y);
         }
     }
@@ -647,7 +658,7 @@ public final class EllipticCurves {
   /**
    * Encodes a point on an elliptic curve.
    *
-   * @param curve the elliptic curve
+   * @param curveType the elliptic curve
    * @param format the format for the encoding
    * @param point the point to encode
    * @return the encoded key exchange
@@ -735,11 +746,11 @@ public final class EllipticCurves {
   }
 
   /**
-   * Returns an {@link ECPublicKey} from {@code x509PublicKey} which is an encoding of a public
-   * key, encoded according to the ASN.1 type SubjectPublicKeyInfo.
+   * Returns an {@link ECPublicKey} from {@code x509PublicKey} which is an encoding of a public key,
+   * encoded according to the ASN.1 type SubjectPublicKeyInfo.
    *
-   * TODO(b/68672497): test that in Java one can always get this representation by using
-   * {@link ECPublicKey#getEncoded), regardless of the provider.
+   * <p>TODO(b/68672497): test that in Java one can always get this representation by using {@link
+   * ECPublicKey#getEncoded}, regardless of the provider.
    */
   public static ECPublicKey getEcPublicKey(final byte[] x509PublicKey)
       throws GeneralSecurityException {
@@ -789,8 +800,8 @@ public final class EllipticCurves {
    * Returns an {@code ECPrivateKey} from {@code pkcs8PrivateKey} which is an encoding of a private
    * key, encoded according to the ASN.1 type SubjectPublicKeyInfo.
    *
-   * TODO(b/68672497): test that in Java one can always get this representation by using
-   * {@link ECPrivateKey#getEncoded), regardless of the provider.
+   * <p>TODO(b/68672497): test that in Java one can always get this representation by using {@link
+   * ECPrivateKey#getEncoded}, regardless of the provider.
    */
   public static ECPrivateKey getEcPrivateKey(final byte[] pkcs8PrivateKey)
       throws GeneralSecurityException {
@@ -832,7 +843,7 @@ public final class EllipticCurves {
       throw new GeneralSecurityException("shared secret is out of range");
     }
     // This will throw if x is not a valid coordinate.
-    Object unused = getY(x, true /* lsb, doesn't matter here */, privateKeyCurve);
+    Object unused = computeY(x, true /* lsb, doesn't matter here */, privateKeyCurve);
   }
 
   /* Generates the DH shared secret using {@code myPrivateKey} and {@code peerPublicKey} */
@@ -858,7 +869,7 @@ public final class EllipticCurves {
     KeyAgreement ka = EngineFactory.KEY_AGREEMENT.getInstance("ECDH");
     ka.init(myPrivateKey);
     try {
-      ka.doPhase(publicKey, true /* lastPhase */);
+      ka.doPhase(publicKey, /* lastPhase= */ true);
       byte[] secret = ka.generateSecret();
       validateSharedSecret(secret, myPrivateKey);
       return secret;
