@@ -834,8 +834,10 @@ public final class EllipticCurves {
   /**
    * Checks that the shared secret is on the curve of the private key, to prevent arithmetic errors
    * or fault attacks.
+   *
+   * <p>Only visible for testing.
    */
-  private static void validateSharedSecret(byte[] secret, ECPrivateKey privateKey)
+  static void validateSharedSecret(byte[] secret, ECPrivateKey privateKey)
       throws GeneralSecurityException {
     EllipticCurve privateKeyCurve = privateKey.getParams().getCurve();
     BigInteger x = new BigInteger(1, secret);

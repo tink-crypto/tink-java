@@ -615,4 +615,38 @@ public class EllipticCurvesTest {
         GeneralSecurityException.class,
         () -> EllipticCurves.computeSharedSecret(ecPrivateKey, publicPointNotOnCurve));
   }
+
+  @Test
+  public void validateSharedSecret() throws Exception {
+    // test vector from wycheproof's ecdh_secp256r1_ecpoint_test.json, normal case.
+    ECPrivateKey ecPrivateKey =
+        EllipticCurves.getEcPrivateKey(
+            EllipticCurves.CurveType.NIST_P256,
+            Hex.decode("0612465c89a023ab17855b0a6bcebfd3febb53aef84138647b5352e02c10c346"));
+    byte[] sharedSecret =
+        Hex.decode("53020d908b0219328b658b525f26780e3ae12bcd952bb25a93bc0895e1714285");
+    EllipticCurves.validateSharedSecret(sharedSecret, ecPrivateKey);
+
+    // Most byte strings shorter than sharedSecret are valid.
+    byte[] emptySharedSecret = new byte[0];
+    EllipticCurves.validateSharedSecret(emptySharedSecret, ecPrivateKey);
+    byte[] anotherSharedSecret = Hex.decode("00112233445566778899aabbccddeeff");
+    EllipticCurves.validateSharedSecret(anotherSharedSecret, ecPrivateKey);
+    byte[] ffSharedSecret = Hex.decode("ffffffffffffffffffffffffffffffffffffffff");
+    EllipticCurves.validateSharedSecret(ffSharedSecret, ecPrivateKey);
+
+    // The modulusMinus1 is not a valid secret, because computeY fails.
+    byte[] modulusMinus1 =
+        Hex.decode("00ffffffff00000001000000000000000000000000fffffffffffffffffffffffe");
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> EllipticCurves.validateSharedSecret(modulusMinus1, ecPrivateKey));
+
+    // The modulus is not a valid secret, because it is out of range.
+    byte[] modulus =
+        Hex.decode("00ffffffff00000001000000000000000000000000ffffffffffffffffffffffff");
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> EllipticCurves.validateSharedSecret(modulus, ecPrivateKey));
+  }
 }
