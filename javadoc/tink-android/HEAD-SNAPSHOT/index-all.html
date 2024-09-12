@@ -6941,8 +6941,8 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/EllipticCurves.html#getEcPublicKey-byte:A-">getEcPublicKey(byte[])</a></span> - Static method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/EllipticCurves.html" title="class in com.google.crypto.tink.subtle">EllipticCurves</a></dt>
 <dd>
-<div class="block">Returns an <a href="https://docs.oracle.com/javase/8/docs/api/java/security/interfaces/ECPublicKey.html?is-external=true" title="class or interface in java.security.interfaces"><code>ECPublicKey</code></a> from <code>x509PublicKey</code> which is an encoding of a public
- key, encoded according to the ASN.1 type SubjectPublicKeyInfo.</div>
+<div class="block">Returns an <a href="https://docs.oracle.com/javase/8/docs/api/java/security/interfaces/ECPublicKey.html?is-external=true" title="class or interface in java.security.interfaces"><code>ECPublicKey</code></a> from <code>x509PublicKey</code> which is an encoding of a public key,
+ encoded according to the ASN.1 type SubjectPublicKeyInfo.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/EllipticCurves.html#getEcPublicKey-com.google.crypto.tink.subtle.EllipticCurves.CurveType-com.google.crypto.tink.subtle.EllipticCurves.PointFormatType-byte:A-">getEcPublicKey(EllipticCurves.CurveType, EllipticCurves.PointFormatType, byte[])</a></span> - Static method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/EllipticCurves.html" title="class in com.google.crypto.tink.subtle">EllipticCurves</a></dt>
 <dd>
@@ -11886,7 +11886,9 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/EllipticCurves.html#getY-java.math.BigInteger-boolean-java.security.spec.EllipticCurve-">getY(BigInteger, boolean, EllipticCurve)</a></span> - Static method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/EllipticCurves.html" title="class in com.google.crypto.tink.subtle">EllipticCurves</a></dt>
 <dd>
-<div class="block">Computes the y coordinate of a point on an elliptic curve.</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>
+<div class="block"><span class="deprecationComment">This shouldn't be used directly, use <code>pointDecode</code> to decompress points.</span></div>
+</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/KeyManagerRegistry.html#globalInstance--">globalInstance()</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/KeyManagerRegistry.html" title="class in com.google.crypto.tink.internal">KeyManagerRegistry</a></dt>
 <dd>
@@ -15356,10 +15358,6 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/RsaSsaPssParams.html#MGF1_HASH_FIELD_NUMBER">MGF1_HASH_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/RsaSsaPssParams.html" title="class in com.google.crypto.tink.proto">RsaSsaPssParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/EllipticCurves.html#modSqrt-java.math.BigInteger-java.math.BigInteger-">modSqrt(BigInteger, BigInteger)</a></span> - Static method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/EllipticCurves.html" title="class in com.google.crypto.tink.subtle">EllipticCurves</a></dt>
-<dd>
-<div class="block">Computes a square root modulo an odd prime.</div>
-</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/JwtRsaSsaPkcs1KeyFormat.html#MODULUS_SIZE_IN_BITS_FIELD_NUMBER">MODULUS_SIZE_IN_BITS_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/JwtRsaSsaPkcs1KeyFormat.html" title="class in com.google.crypto.tink.proto">JwtRsaSsaPkcs1KeyFormat</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/JwtRsaSsaPssKeyFormat.html#MODULUS_SIZE_IN_BITS_FIELD_NUMBER">MODULUS_SIZE_IN_BITS_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/JwtRsaSsaPssKeyFormat.html" title="class in com.google.crypto.tink.proto">JwtRsaSsaPssKeyFormat</a></dt>
