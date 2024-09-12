@@ -376,6 +376,9 @@ public final class EcdsaProtoSerialization {
         throw new GeneralSecurityException("Only version 0 keys are accepted");
       }
       com.google.crypto.tink.proto.EcdsaPublicKey protoPublicKey = protoKey.getPublicKey();
+      if (protoPublicKey.getVersion() != 0) {
+        throw new GeneralSecurityException("Only version 0 keys are accepted");
+      }
       EcdsaParameters parameters =
           EcdsaParameters.builder()
               .setHashType(toHashType(protoPublicKey.getParams().getHashType()))

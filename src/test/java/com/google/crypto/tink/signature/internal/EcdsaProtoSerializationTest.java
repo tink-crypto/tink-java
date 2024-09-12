@@ -763,6 +763,28 @@ public final class EcdsaProtoSerializationTest {
             KeyMaterialType.ASYMMETRIC_PRIVATE,
             OutputPrefixType.TINK,
             1479),
+        // Bad Public Key Version Number (1)
+        ProtoKeySerialization.create(
+            PRIVATE_TYPE_URL,
+            com.google.crypto.tink.proto.EcdsaPrivateKey.newBuilder()
+                .setVersion(0)
+                .setPublicKey(
+                    com.google.crypto.tink.proto.EcdsaPublicKey.newBuilder()
+                        .setVersion(1)
+                        .setX(ByteString.copyFrom(Hex.decode(hexX)))
+                        .setY(ByteString.copyFrom(Hex.decode(hexY)))
+                        .setParams(
+                            EcdsaParams.newBuilder()
+                                .setHashType(HashType.SHA256)
+                                .setCurve(EllipticCurveType.NIST_P256)
+                                .setEncoding(EcdsaSignatureEncoding.IEEE_P1363))
+                        .build())
+                .setKeyValue(ByteString.copyFrom(Hex.decode(hexPrivateValue)))
+                .build()
+                .toByteString(),
+            KeyMaterialType.ASYMMETRIC_PRIVATE,
+            OutputPrefixType.TINK,
+            1479),
         // Unknown prefix
         ProtoKeySerialization.create(
             PRIVATE_TYPE_URL,
