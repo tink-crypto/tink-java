@@ -70,7 +70,7 @@ public class EllipticCurvesTest {
     }
   }
 
-  protected static TestVector2[] testVectors2 = {
+  protected static final TestVector2[] testVectors2 = {
     // NIST_P256
     new TestVector2(
         EllipticCurves.CurveType.NIST_P256,
@@ -443,7 +443,7 @@ public class EllipticCurvesTest {
     }
   };
 
-  protected static EcdsaIeeeDer[] ieeeDerTestVector =
+  protected static final EcdsaIeeeDer[] ieeeDerTestVector =
       new EcdsaIeeeDer[] {
         new EcdsaIeeeDer( // normal case, short-form length
             "0102030405060708090a0b0c0d0e0f100102030405060708090a0b0c0d0e0f10",
@@ -481,7 +481,7 @@ public class EllipticCurvesTest {
     }
   }
 
-  protected static String[] invalidEcdsaDers =
+  protected static final String[] invalidEcdsaDers =
       new String[] {
         "2006020101020101", // 1st byte is not 0x30 (SEQUENCE tag)
         "3006050101020101", // 3rd byte is not 0x02 (INTEGER tag)
@@ -558,7 +558,7 @@ public class EllipticCurvesTest {
               System.out.println("Wycheproof encoded public key spec: " + hexPubKey);
               System.out.println("Reencoded public key spec: " + hexReencodedKey);
             }
-          } catch (java.lang.RuntimeException ex) {
+          } catch (RuntimeException ex) {
             // Some of the test vectors contain incorrectly encoded public keys.
             // Some java providers do not properly check the encoding, which often results in
             // RuntimeExceptions. Since the decoding is not part of tink, we can simply ignore
@@ -606,5 +606,30 @@ public class EllipticCurvesTest {
     assertEquals(0, errors);
   }
 
-  // TODO(b/238096965): Add test that computeSharedSecret checks that the point is on the curve.
+  @Test
+  public void computeSharedSecretWithPublicPoint() throws Exception {
+    // test vector from wycheproof's ecdh_secp256r1_ecpoint_test.json, normal case.
+    ECPrivateKey ecPrivateKey =
+        EllipticCurves.getEcPrivateKey(
+            EllipticCurves.CurveType.NIST_P256,
+            Hex.decode("0612465c89a023ab17855b0a6bcebfd3febb53aef84138647b5352e02c10c346"));
+    ECPoint ecPublicPoint =
+        EllipticCurves.pointDecode(
+            EllipticCurves.CurveType.NIST_P256,
+            EllipticCurves.PointFormatType.UNCOMPRESSED,
+            Hex.decode(
+                "0462d5bd3372af75fe85a040715d0f502428e07046868b0bfdfa61d731afe44f26ac333a93"
+                    + "a9e70a81cd5a95b5bf8d13990eb741c8c38872b4a07d275a014e30cf"));
+    byte[] expected =
+        Hex.decode("53020d908b0219328b658b525f26780e3ae12bcd952bb25a93bc0895e1714285");
+
+    byte[] sharedSecret = EllipticCurves.computeSharedSecret(ecPrivateKey, ecPublicPoint);
+    assertThat(sharedSecret).isEqualTo(expected);
+
+    ECPoint publicPointNotOnCurve =
+        new ECPoint(ecPublicPoint.getAffineX(), ecPublicPoint.getAffineY().add(BigInteger.ONE));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> EllipticCurves.computeSharedSecret(ecPrivateKey, publicPointNotOnCurve));
+  }
 }
