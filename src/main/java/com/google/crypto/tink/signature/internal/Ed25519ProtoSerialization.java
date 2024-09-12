@@ -238,6 +238,9 @@ public final class Ed25519ProtoSerialization {
         throw new GeneralSecurityException("Only version 0 keys are accepted");
       }
       com.google.crypto.tink.proto.Ed25519PublicKey protoPublicKey = protoKey.getPublicKey();
+      if (protoPublicKey.getVersion() != 0) {
+        throw new GeneralSecurityException("Only version 0 keys are accepted");
+      }
       Ed25519PublicKey publicKey =
           Ed25519PublicKey.create(
               VARIANT_CONVERTER.fromProtoEnum(serialization.getOutputPrefixType()),

@@ -445,6 +445,22 @@ public final class Ed25519ProtoSerializationTest {
             KeyMaterialType.ASYMMETRIC_PRIVATE,
             OutputPrefixType.TINK,
             1479),
+        // Bad Public Key Version Number (1)
+        ProtoKeySerialization.create(
+            PRIVATE_TYPE_URL,
+            com.google.crypto.tink.proto.Ed25519PrivateKey.newBuilder()
+                .setVersion(0)
+                .setPublicKey(
+                    com.google.crypto.tink.proto.Ed25519PublicKey.newBuilder()
+                        .setVersion(1)
+                        .setKeyValue(PUBLIC_KEY_BYTE_STRING)
+                        .build())
+                .setKeyValue(PRIVATE_KEY_BYTE_STRING)
+                .build()
+                .toByteString(),
+            KeyMaterialType.ASYMMETRIC_PRIVATE,
+            OutputPrefixType.TINK,
+            1479),
         // Unknown prefix
         ProtoKeySerialization.create(
             PRIVATE_TYPE_URL,
