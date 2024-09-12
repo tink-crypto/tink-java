@@ -29,7 +29,6 @@ import com.google.gson.JsonObject;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECPoint;
@@ -518,20 +517,13 @@ public class EllipticCurvesTest {
       JsonObject group = testGroups.get(i).getAsJsonObject();
       JsonArray tests = group.get("tests").getAsJsonArray();
       String curve = group.get("curve").getAsString();
-      EllipticCurves.CurveType curveType;
-      try {
-        curveType = WycheproofTestUtil.getCurveType(curve);
-      } catch (NoSuchAlgorithmException ex) {
-        System.out.println("Unsupported curve:" + curve);
+      if (!curve.equals("secp256r1") && !curve.equals("secp384r1") && !curve.equals("secp521r1")) {
+        // Only NIST curves P-256, P-384 and P-521 are supported.
         continue;
       }
+      EllipticCurves.CurveType curveType = WycheproofTestUtil.getCurveType(curve);
       for (int j = 0; j < tests.size(); j++) {
         JsonObject testcase = tests.get(j).getAsJsonObject();
-        if (WycheproofTestUtil.checkFlags(testcase, "CVE_2017_10176")) {
-          System.out.println("Skipping CVE-2017-10176 test, see b/73760761");
-          continue;
-        }
-
         String tcId =
             String.format(
                 "testcase %d (%s)",
@@ -546,25 +538,16 @@ public class EllipticCurvesTest {
         KeyFactory kf = EngineFactory.KEY_FACTORY.getInstance("EC");
         try {
           ECPrivateKey privKey = EllipticCurves.getEcPrivateKey(curveType, Hex.decode(hexPrivKey));
-          ECPublicKey pubKey;
-          try {
-            X509EncodedKeySpec x509keySpec = new X509EncodedKeySpec(Hex.decode(hexPubKey));
-            pubKey = (ECPublicKey) kf.generatePublic(x509keySpec);
-            // Sometimes providers do not encode keys the same way.
-            // E.g. BouncyCastle may use long form encoding, where jdk uses a short encoding
-            // with named curves. This checks the encodings and logs them if they differ.
-            String hexReencodedKey = Hex.encode(pubKey.getEncoded());
-            if (!hexPubKey.equals(hexReencodedKey)) {
-              System.out.println("Wycheproof encoded public key spec: " + hexPubKey);
-              System.out.println("Reencoded public key spec: " + hexReencodedKey);
-            }
-          } catch (RuntimeException ex) {
-            // Some of the test vectors contain incorrectly encoded public keys.
-            // Some java providers do not properly check the encoding, which often results in
-            // RuntimeExceptions. Since the decoding is not part of tink, we can simply ignore
-            // these test vectors here.
-            System.out.println("Got runtime exception: " + ex);
-            continue;
+
+          X509EncodedKeySpec x509keySpec = new X509EncodedKeySpec(Hex.decode(hexPubKey));
+          ECPublicKey pubKey = (ECPublicKey) kf.generatePublic(x509keySpec);
+          // Sometimes providers do not encode keys the same way.
+          // E.g. BouncyCastle may use long form encoding, where jdk uses a short encoding
+          // with named curves. This checks the encodings and logs them if they differ.
+          String hexReencodedKey = Hex.encode(pubKey.getEncoded());
+          if (!hexPubKey.equals(hexReencodedKey)) {
+            System.out.println("Wycheproof encoded public key spec: " + hexPubKey);
+            System.out.println("Reencoded public key spec: " + hexReencodedKey);
           }
           String sharedSecret = Hex.encode(EllipticCurves.computeSharedSecret(privKey, pubKey));
           if (result.equals("invalid")) {
