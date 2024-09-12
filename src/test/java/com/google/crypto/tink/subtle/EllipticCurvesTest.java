@@ -541,14 +541,6 @@ public class EllipticCurvesTest {
 
           X509EncodedKeySpec x509keySpec = new X509EncodedKeySpec(Hex.decode(hexPubKey));
           ECPublicKey pubKey = (ECPublicKey) kf.generatePublic(x509keySpec);
-          // Sometimes providers do not encode keys the same way.
-          // E.g. BouncyCastle may use long form encoding, where jdk uses a short encoding
-          // with named curves. This checks the encodings and logs them if they differ.
-          String hexReencodedKey = Hex.encode(pubKey.getEncoded());
-          if (!hexPubKey.equals(hexReencodedKey)) {
-            System.out.println("Wycheproof encoded public key spec: " + hexPubKey);
-            System.out.println("Reencoded public key spec: " + hexReencodedKey);
-          }
           String sharedSecret = Hex.encode(EllipticCurves.computeSharedSecret(privKey, pubKey));
           if (result.equals("invalid")) {
             if (expectedSharedSecret.equals(sharedSecret)
