@@ -832,7 +832,10 @@ public final class EllipticCurves {
   }
 
   /**
-   * Checks that the shared secret is on the curve of the private key, to prevent arithmetic errors
+   * Basic validation of the shared secret.
+   *
+   * <p>Checks that there exists a point on the curve of {@code privateKey} that has {@code secret}
+   * as x coordinate. This validation gives very limited protection against arithmetic errors
    * or fault attacks.
    *
    * <p>Only visible for testing.
