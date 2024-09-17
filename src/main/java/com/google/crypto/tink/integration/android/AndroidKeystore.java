@@ -93,7 +93,7 @@ final class AndroidKeystore {
    * AEADBadTagException}), then the ciphertext is not decryptable and retrying will not help.
    */
   public static Aead getAead(String alias) throws GeneralSecurityException {
-    return new AndroidKeystoreAesGcmAead(alias, getAndroidKeyStore());
+    return new AeadImpl(alias, getAndroidKeyStore());
   }
 
   /** Deletes a key in Android Keystore if it exists. */
@@ -126,15 +126,14 @@ final class AndroidKeystore {
     return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
   }
 
-  private static final class AndroidKeystoreAesGcmAead implements Aead {
+  private static final class AeadImpl implements Aead {
     // All instances of this class use a 12 byte IV and a 16 byte tag.
     private static final int IV_SIZE_IN_BYTES = 12;
     private static final int TAG_SIZE_IN_BYTES = 16;
 
     private final SecretKey key;
 
-    public AndroidKeystoreAesGcmAead(String alias, KeyStore keyStore)
-        throws GeneralSecurityException {
+    public AeadImpl(String alias, KeyStore keyStore) throws GeneralSecurityException {
       key = (SecretKey) keyStore.getKey(alias, /* password= */ null);
       if (key == null) {
         throw new InvalidKeyException("Keystore cannot load the key with ID: " + alias);
