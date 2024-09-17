@@ -45,7 +45,10 @@ import javax.crypto.KeyAgreement;
  */
 public final class EllipticCurves {
 
-  /** Point formats. */
+  /**
+   * Point format types UNCOMPRESSED and COMPRESSED are defined in https://www.secg.org/sec1-v2.pdf,
+   * Sections 2.3.3 and 2.3.4.
+   */
   public enum PointFormatType {
     UNCOMPRESSED,
     COMPRESSED,

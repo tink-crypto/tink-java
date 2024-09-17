@@ -609,6 +609,73 @@ public class EllipticCurvesTest {
   }
 
   @Test
+  public void computeSharedSecretWithPublicPointP256() throws Exception {
+    // test vector from golang's crypto/ecdh/ecdh_test.go.
+    ECPrivateKey ecPrivateKey =
+        EllipticCurves.getEcPrivateKey(
+            EllipticCurves.CurveType.NIST_P256,
+            Hex.decode("7d7dc5f71eb29ddaf80d6214632eeae03d9058af1fb6d22ed80badb62bc1a534"));
+    ECPoint ecPublicPoint =
+        EllipticCurves.pointDecode(
+            EllipticCurves.CurveType.NIST_P256,
+            EllipticCurves.PointFormatType.UNCOMPRESSED,
+            Hex.decode(
+                "04700c48f77f56584c5cc632ca65640db91b6bacce3a4df6b42ce7cc838833d287"
+                    + "db71e509e3fd9b060ddb20ba5c51dcc5948d46fbf640dfe0441782cab85fa4ac"));
+    byte[] expected =
+        Hex.decode("46fc62106420ff012e54a434fbdd2d25ccc5852060561e68040dd7778997bd7b");
+
+    byte[] sharedSecret = EllipticCurves.computeSharedSecret(ecPrivateKey, ecPublicPoint);
+    assertThat(sharedSecret).isEqualTo(expected);
+  }
+
+  @Test
+  public void computeSharedSecretWithPublicPointP384() throws Exception {
+    // test vector from golang's crypto/ecdh/ecdh_test.go.
+    ECPrivateKey ecPrivateKey =
+        EllipticCurves.getEcPrivateKey(
+            EllipticCurves.CurveType.NIST_P384,
+            Hex.decode(
+                "3cc3122a68f0d95027ad38c067916ba0eb8c38894d22e1b15618b6818a661774ad463b205da88cf699ab4d43c9cf98a1"));
+    ECPoint ecPublicPoint =
+        EllipticCurves.pointDecode(
+            EllipticCurves.CurveType.NIST_P384,
+            EllipticCurves.PointFormatType.UNCOMPRESSED,
+            Hex.decode(
+                "04a7c76b970c3b5fe8b05d2838ae04ab47697b9eaf52e764592efda27fe7513272734466b400091adbf2d68c58e0c50066"
+                    + "ac68f19f2e1cb879aed43a9969b91a0839c4c38a49749b661efedf243451915ed0905a32b060992b468c64766fc8437a"));
+    byte[] expected =
+        Hex.decode(
+            "5f9d29dc5e31a163060356213669c8ce132e22f57c9a04f40ba7fcead493b457e5621e766c40a2e3d4d6a04b25e533f1");
+
+    byte[] sharedSecret = EllipticCurves.computeSharedSecret(ecPrivateKey, ecPublicPoint);
+    assertThat(sharedSecret).isEqualTo(expected);
+  }
+
+  @Test
+  public void computeSharedSecretWithPublicPointP521() throws Exception {
+    // test vector from golang's crypto/ecdh/ecdh_test.go.
+    ECPrivateKey ecPrivateKey =
+        EllipticCurves.getEcPrivateKey(
+            EllipticCurves.CurveType.NIST_P521,
+            Hex.decode(
+                "017eecc07ab4b329068fba65e56a1f8890aa935e57134ae0ffcce802735151f4eac6564f6ee9974c5e6887a1fefee5743ae2241bfeb95d5ce31ddcb6f9edb4d6fc47"));
+    ECPoint ecPublicPoint =
+        EllipticCurves.pointDecode(
+            EllipticCurves.CurveType.NIST_P521,
+            EllipticCurves.PointFormatType.UNCOMPRESSED,
+            Hex.decode(
+                "0400685a48e86c79f0f0875f7bc18d25eb5fc8c0b07e5da4f4370f3a9490340854334b1e1b87fa395464c60626124a4e70d0f785601d37c09870ebf176666877a2046d"
+                    + "01ba52c56fc8776d9e8f5db4f0cc27636d0b741bbe05400697942e80b739884a83bde99e0f6716939e632bc8986fa18dccd443a348b6c3e522497955a4f3c302f676"));
+    byte[] expected =
+        Hex.decode(
+            "005fc70477c3e63bc3954bd0df3ea0d1f41ee21746ed95fc5e1fdf90930d5e136672d72cc770742d1711c3c3a4c334a0ad9759436a4d3c5bf6e74b9578fac148c831");
+
+    byte[] sharedSecret = EllipticCurves.computeSharedSecret(ecPrivateKey, ecPublicPoint);
+    assertThat(sharedSecret).isEqualTo(expected);
+  }
+
+  @Test
   public void validateSharedSecret() throws Exception {
     // test vector from wycheproof's ecdh_secp256r1_ecpoint_test.json, normal case.
     ECPrivateKey ecPrivateKey =
