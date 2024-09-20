@@ -143,6 +143,7 @@ public final class AeadConfig {
     KmsAeadKeyManager.register(/*newKeyAllowed=*/ true);
     KmsEnvelopeAeadKeyManager.register(/*newKeyAllowed=*/ true);
     XChaCha20Poly1305KeyManager.register(/*newKeyAllowed=*/ true);
+    XAesGcmKeyManager.register(/* newKeyAllowed= */ true);
   }
 
   /**
