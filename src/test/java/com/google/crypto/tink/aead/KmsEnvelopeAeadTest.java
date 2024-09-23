@@ -172,8 +172,23 @@ public final class KmsEnvelopeAeadTest {
   }
 
   @Test
+  public void encryptedDekTooLong_fails() throws GeneralSecurityException {
+    Aead remoteAead = this.generateNewRemoteAead();
+    Aead envAead = KmsEnvelopeAead.create(PredefinedAeadParameters.AES128_EAX, remoteAead);
+
+    byte[] ciphertext =
+        new byte[] {
+          (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x88, (byte) 0x88,
+        };
+    GeneralSecurityException expected =
+        assertThrows(
+            GeneralSecurityException.class, () -> envAead.decrypt(ciphertext, new byte[0]));
+    assertThat(expected).hasMessageThat().contains("length of encrypted DEK too large");
+  }
+
+  @Test
   public void malformedDekLength_fails() throws GeneralSecurityException {
-    Aead remoteAead =  this.generateNewRemoteAead();
+    Aead remoteAead = this.generateNewRemoteAead();
     Aead envAead = KmsEnvelopeAead.create(PredefinedAeadParameters.AES128_EAX, remoteAead);
 
     byte[] plaintext = "helloworld".getBytes(UTF_8);

@@ -63,6 +63,8 @@ public final class KmsEnvelopeAead implements Aead {
 
   private final Aead remote;
   private static final int LENGTH_ENCRYPTED_DEK = 4;
+  // A DEK is always an AEAD keyset with one key.
+  private static final int MAX_LENGTH_ENCRYPTED_DEK = 4096;
 
   private static Set<String> listSupportedDekKeyTypes() {
     HashSet<String> dekKeyTypeUrls = new HashSet<>();
@@ -154,6 +156,9 @@ public final class KmsEnvelopeAead implements Aead {
     byte[] dek = serialization.getValue().toByteArray();
     // Wrap it with remote.
     byte[] encryptedDek = remote.encrypt(dek, EMPTY_AAD);
+    if (encryptedDek.length > MAX_LENGTH_ENCRYPTED_DEK) {
+      throw new GeneralSecurityException("length of encrypted DEK too large");
+    }
     // Use DEK to encrypt plaintext.
     Aead aead = MutablePrimitiveRegistry.globalInstance().getPrimitive(key, Aead.class);
     byte[] payload = aead.encrypt(plaintext, associatedData);
@@ -167,8 +172,10 @@ public final class KmsEnvelopeAead implements Aead {
     try {
       ByteBuffer buffer = ByteBuffer.wrap(ciphertext);
       int encryptedDekSize = buffer.getInt();
-      if (encryptedDekSize <= 0 || encryptedDekSize > (ciphertext.length - LENGTH_ENCRYPTED_DEK)) {
-        throw new GeneralSecurityException("invalid ciphertext");
+      if (encryptedDekSize <= 0
+          || encryptedDekSize > MAX_LENGTH_ENCRYPTED_DEK
+          || encryptedDekSize > (ciphertext.length - LENGTH_ENCRYPTED_DEK)) {
+        throw new GeneralSecurityException("length of encrypted DEK too large");
       }
       byte[] encryptedDek = new byte[encryptedDekSize];
       buffer.get(encryptedDek, 0, encryptedDekSize);
