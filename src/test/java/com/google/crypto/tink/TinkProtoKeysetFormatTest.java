@@ -401,32 +401,31 @@ public final class TinkProtoKeysetFormatTest {
     // An AEAD key, with which we encrypted the mac keyset below.
     final byte[] serializedKeysetEncryptionKeyset =
         Hex.decode(
-            "08b891f5a20412580a4c0a30747970652e676f6f676c65617069732e636f6d2f676f6f676c652e6372797"
-                + "0746f2e74696e6b2e4165734561784b65791216120208101a10e5d7d0cdd649e81e7952260689b2"
-                + "e1971801100118b891f5a2042001");
-    KeysetHandle keysetEncryptionHandle = TinkProtoKeysetFormat.parseKeyset(
-        serializedKeysetEncryptionKeyset, InsecureSecretKeyAccess.get());
+            "08cd9bdff30312540a480a30747970652e676f6f676c65617069732e636f6d2f676f6f676c652e63727970"
+                + "746f2e74696e6b2e41657347636d4b657912121a1082bbe6de4bf9a7655305615af46e594c180110"
+                + "0118cd9bdff3032001");
+    KeysetHandle keysetEncryptionHandle =
+        TinkProtoKeysetFormat.parseKeyset(
+            serializedKeysetEncryptionKeyset, InsecureSecretKeyAccess.get());
     Aead keysetEncryptionAead =
         keysetEncryptionHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     // A keyset that contains one HMAC key, encrypted with the above, using associatedData
     final byte[] encryptedSerializedKeyset =
         Hex.decode(
-            "12950101445d48b8b5f591efaf73a46df9ebd7b6ac471cc0cf4f815a4f012fcaffc8f0b2b10b30c33194f"
-                + "0b291614bd8e1d2e80118e5d6226b6c41551e104ef8cd8ee20f1c14c1b87f6eed5fb04a91feafaa"
-                + "cbf6f368519f36f97f7d08b24c8e71b5e620c4f69615ef0479391666e2fb32e46b416893fc4e564"
-                + "ba927b22ebff2a77bd3b5b8d5afa162cbd35c94c155cdfa13c8a9c964cde21a4208f5909ce90112"
-                + "3a0a2e747970652e676f6f676c65617069732e636f6d2f676f6f676c652e63727970746f2e74696"
-                + "e6b2e486d61634b6579100118f5909ce9012001");
-    final byte[] associatedData = Hex.decode("abcdef330012");
+            "129101013e77cdcd28f57ffb418afa7f25d48a74efe720246e9aa538f33a702888bb7c48bce0e5a016a0c8"
+                + "e9085066d67c7c7fb40dceb176a3a10c7f7ab30c564dd8e2d918a2fc2d2e9a0245c537ff6d1fd756"
+                + "ff9d6de5cf4eb7f229de215e6e892f32fd703d0c9c3d2168813ad5bbc6ce108fcbfed0d9e3b14faa"
+                + "e3e3789a891346d983b1ecca082f0546163351339aa142f574");
+    final byte[] associatedData = "associatedData".getBytes(UTF_8);
 
     KeysetHandle handle =
         TinkProtoKeysetFormat.parseEncryptedKeyset(
             encryptedSerializedKeyset, keysetEncryptionAead, associatedData);
 
     Mac mac = handle.getPrimitive(RegistryConfiguration.get(), Mac.class);
-    final byte[] message = Hex.decode("");
-    final byte[] tag = Hex.decode("011d270875989dd6fbd5f54dbc9520bb41efd058d5");
+    final byte[] message = "data".getBytes(UTF_8);
+    final byte[] tag = Hex.decode("018f2d72de5055e622591fcf0fb85a7b4158e96f68");
     mac.verifyMac(tag, message);
   }
 
