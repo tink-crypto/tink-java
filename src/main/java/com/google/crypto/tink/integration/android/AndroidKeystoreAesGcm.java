@@ -27,6 +27,9 @@ import javax.crypto.BadPaddingException;
  * An {@link Aead} that does AES-GCM encryption with a key stored in <a
  * href="https://developer.android.com/training/articles/keystore.html">Android Keystore</a>.
  *
+ * <p>We don't recommend using this class. Instead, directly use {@link AndroidKeystore#getAead} and
+ * implement retries yourself if you need them.
+ *
  * <p>This class requires Android M (API level 23) or newer.
  *
  * @since 1.0.0

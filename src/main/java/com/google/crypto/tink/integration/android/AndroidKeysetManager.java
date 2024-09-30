@@ -47,6 +47,8 @@ import javax.annotation.concurrent.GuardedBy;
  * A wrapper of {@link KeysetManager} that supports reading/writing {@link
  * com.google.crypto.tink.proto.Keyset} to/from private shared preferences on Android.
  *
+ * <p>We don't recommend using this class. Instead, directly use {@link AndroidKeystore}.
+ *
  * <h3>Warning</h3>
  *
  * <p>This class reads and writes to shared preferences, thus is best not to run on the UI thread.

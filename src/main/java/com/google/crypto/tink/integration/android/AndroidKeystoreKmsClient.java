@@ -35,6 +35,8 @@ import java.util.Locale;
  * An implementation of {@link KmsClient} for <a
  * href="https://developer.android.com/training/articles/keystore.html">Android Keystore</a>.
  *
+ * <p>We don't recommend using this class. Instead, directly use {@link AndroidKeystore}.
+ *
  * <p>This class requires Android M (API level 23) or newer.
  *
  * @since 1.0.0

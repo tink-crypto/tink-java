@@ -38,9 +38,9 @@ import javax.crypto.spec.GCMParameterSpec;
  *
  * <p>Android Keystore is only supported on Android M (API level 23) or newer.
  *
- * <p>This is not yet part of the public API.
+ * <p>Waring: This API is not not thread-safe.
  */
-final class AndroidKeystore {
+public final class AndroidKeystore {
 
   /**
    * Generates a new 256 bit AES-GCM key in Android Keystore, with the given {@code alias}.
