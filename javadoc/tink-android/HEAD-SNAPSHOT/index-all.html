@@ -1434,6 +1434,11 @@
 <dd>
 <div class="block">A builder for <a href="com/google/crypto/tink/integration/android/AndroidKeysetManager.html" title="class in com.google.crypto.tink.integration.android"><code>AndroidKeysetManager</code></a>.</div>
 </dd>
+<dt><a href="com/google/crypto/tink/integration/android/AndroidKeystore.html" title="class in com.google.crypto.tink.integration.android"><span class="typeNameLink">AndroidKeystore</span></a> - Class in <a href="com/google/crypto/tink/integration/android/package-summary.html">com.google.crypto.tink.integration.android</a></dt>
+<dd>
+<div class="block">API to store and use AEAD keys in the <a
+ href="https://developer.android.com/training/articles/keystore.html">Android Keystore</a>.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/integration/android/AndroidKeystoreAesGcm.html" title="class in com.google.crypto.tink.integration.android"><span class="typeNameLink">AndroidKeystoreAesGcm</span></a> - Class in <a href="com/google/crypto/tink/integration/android/package-summary.html">com.google.crypto.tink.integration.android</a></dt>
 <dd>
 <div class="block">An <a href="com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a> that does AES-GCM encryption with a key stored in <a
@@ -4020,6 +4025,10 @@
 <dd>
 <div class="block">Deletes the entry at index <code>i</code>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/integration/android/AndroidKeystore.html#deleteKey-java.lang.String-">deleteKey(String)</a></span> - Static method in class com.google.crypto.tink.integration.android.<a href="com/google/crypto/tink/integration/android/AndroidKeystore.html" title="class in com.google.crypto.tink.integration.android">AndroidKeystore</a></dt>
+<dd>
+<div class="block">Deletes a key in Android Keystore if it exists.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/integration/android/AndroidKeystoreKmsClient.html#deleteKey-java.lang.String-">deleteKey(String)</a></span> - Method in class com.google.crypto.tink.integration.android.<a href="com/google/crypto/tink/integration/android/AndroidKeystoreKmsClient.html" title="class in com.google.crypto.tink.integration.android">AndroidKeystoreKmsClient</a></dt>
 <dd>
 <div class="block">Deletes a key in Android Keystore.</div>
@@ -5684,6 +5693,14 @@
 <dd>
 <div class="block">Generates a new key in Android Keystore.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/integration/android/AndroidKeystore.html#generateNewAes256GcmKey-java.lang.String-">generateNewAes256GcmKey(String)</a></span> - Static method in class com.google.crypto.tink.integration.android.<a href="com/google/crypto/tink/integration/android/AndroidKeystore.html" title="class in com.google.crypto.tink.integration.android">AndroidKeystore</a></dt>
+<dd>
+<div class="block">Generates a new 256 bit AES-GCM key in Android Keystore, with the given <code>alias</code>.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/integration/android/AndroidKeystore.html#generateNewKeyWithSpec-android.security.keystore.KeyGenParameterSpec-">generateNewKeyWithSpec(KeyGenParameterSpec)</a></span> - Static method in class com.google.crypto.tink.integration.android.<a href="com/google/crypto/tink/integration/android/AndroidKeystore.html" title="class in com.google.crypto.tink.integration.android">AndroidKeystore</a></dt>
+<dd>
+<div class="block">Generates a new key in Android Keystore with the given <a href="https://developer.android.com/reference/android/security/keystore/KeyGenParameterSpec.html?is-external=true" title="class or interface in android.security.keystore"><code>KeyGenParameterSpec</code></a>.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/X25519.html#generatePrivateKey--">generatePrivateKey()</a></span> - Static method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/X25519.html" title="class in com.google.crypto.tink.subtle">X25519</a></dt>
 <dd>
 <div class="block">Returns a 32-byte private key for Curve25519.</div>
@@ -5715,6 +5732,10 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/RegistryConfiguration.html#get--">get()</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/RegistryConfiguration.html" title="class in com.google.crypto.tink">RegistryConfiguration</a></dt>
 <dd>
 <div class="block">get returns a Configuration forwarding all calls to the global Registry.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/integration/android/AndroidKeystore.html#getAead-java.lang.String-">getAead(String)</a></span> - Static method in class com.google.crypto.tink.integration.android.<a href="com/google/crypto/tink/integration/android/AndroidKeystore.html" title="class in com.google.crypto.tink.integration.android">AndroidKeystore</a></dt>
+<dd>
+<div class="block">Returns an <a href="com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink"><code>Aead</code></a> backed by a key in Android Keystore specified by <code>alias</code>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/integration/android/AndroidKeystoreKmsClient.html#getAead-java.lang.String-">getAead(String)</a></span> - Method in class com.google.crypto.tink.integration.android.<a href="com/google/crypto/tink/integration/android/AndroidKeystoreKmsClient.html" title="class in com.google.crypto.tink.integration.android">AndroidKeystoreKmsClient</a></dt>
 <dd>
@@ -12278,6 +12299,10 @@
 <dd>
 <div class="block">
  Key Encapsulation Mechanism.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/integration/android/AndroidKeystore.html#hasKey-java.lang.String-">hasKey(String)</a></span> - Static method in class com.google.crypto.tink.integration.android.<a href="com/google/crypto/tink/integration/android/AndroidKeystore.html" title="class in com.google.crypto.tink.integration.android">AndroidKeystore</a></dt>
+<dd>
+<div class="block">Returns true if there is a key in Android Keystore.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/Keyset.Key.Builder.html#hasKeyData--">hasKeyData()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/Keyset.Key.Builder.html" title="class in com.google.crypto.tink.proto">Keyset.Key.Builder</a></dt>
 <dd>
