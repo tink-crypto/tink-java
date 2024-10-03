@@ -38,7 +38,7 @@ import javax.crypto.spec.GCMParameterSpec;
  *
  * <p>Android Keystore is only supported on Android M (API level 23) or newer.
  *
- * <p>Waring: This API is not not thread-safe.
+ * <p>Warning: This API is not not thread-safe.
  */
 public final class AndroidKeystore {
 
