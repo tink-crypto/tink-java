@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.subtle;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
@@ -57,13 +58,14 @@ public final class Ed25519SignTest {
       try {
         verifier.verify(sig, msg);
       } catch (GeneralSecurityException ex) {
-        fail(
+        throw new AssertionError(
             String.format(
                 "\n\nMessage: %s\nSignature: %s\nPrivateKey: %s\nPublicKey: %s\n",
                 Hex.encode(msg),
                 Hex.encode(sig),
                 Hex.encode(keyPair.getPrivateKey()),
-                Hex.encode(keyPair.getPublicKey())));
+                Hex.encode(keyPair.getPublicKey())),
+            ex);
       }
     }
   }
@@ -83,13 +85,14 @@ public final class Ed25519SignTest {
       try {
         verifier.verify(sig, msg);
       } catch (GeneralSecurityException ex) {
-        fail(
+        throw new AssertionError(
             String.format(
                 "\n\nMessage: %s\nSignature: %s\nPrivateKey: %s\nPublicKey: %s\n",
                 Hex.encode(msg),
                 Hex.encode(sig),
                 Hex.encode(keyPair.getPrivateKey()),
-                Hex.encode(keyPair.getPublicKey())));
+                Hex.encode(keyPair.getPublicKey())),
+            ex);
       }
     }
     // Ed25519 is deterministic, expect a unique signature for the same message.
@@ -175,6 +178,18 @@ public final class Ed25519SignTest {
       }
     }
     assertEquals(0, errors);
+  }
+
+  @Test
+  public void testKeyPairFromSeedTestVector() throws Exception {
+    Assume.assumeFalse(TinkFips.useOnlyFips());
+
+    byte[] secretSeed =
+        Hex.decode("000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f");
+    Ed25519Sign.KeyPair keyPair = Ed25519Sign.KeyPair.newKeyPairFromSeed(secretSeed);
+    assertThat(keyPair.getPrivateKey()).isEqualTo(secretSeed);
+    assertThat(keyPair.getPublicKey())
+        .isEqualTo(Hex.decode("9b62773323ef41a11834824194e55164d325eb9cdcc10ddda7d10ade4fbd8f6d"));
   }
 
   @Test
