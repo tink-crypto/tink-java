@@ -17,6 +17,7 @@ package jwt;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.jwt.JwkSetConverter;
 import com.google.crypto.tink.jwt.JwtPublicKeyVerify;
 import com.google.crypto.tink.jwt.JwtSignatureConfig;
@@ -68,7 +69,8 @@ public final class JwtVerify {
     String signedToken = lines.get(0).trim();
 
     // Get the primitive.
-    JwtPublicKeyVerify verifier = publicKeysetHandle.getPrimitive(JwtPublicKeyVerify.class);
+    JwtPublicKeyVerify verifier =
+        publicKeysetHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
 
     // Use the primitive to verify a token.
     JwtValidator validator = JwtValidator.newBuilder().expectAudience(audience).build();

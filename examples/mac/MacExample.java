@@ -19,6 +19,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
 import com.google.crypto.tink.mac.MacConfig;
 import java.nio.file.Files;
@@ -63,7 +64,7 @@ public final class MacExample {
             new String(Files.readAllBytes(keyFile), UTF_8), InsecureSecretKeyAccess.get());
 
     // Get the primitive.
-    Mac macPrimitive = handle.getPrimitive(Mac.class);
+    Mac macPrimitive = handle.getPrimitive(RegistryConfiguration.get(), Mac.class);
 
     if (mode.equals("compute")) {
       byte[] macTag = macPrimitive.computeMac(msg);

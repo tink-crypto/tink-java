@@ -20,6 +20,7 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
 import com.google.crypto.tink.signature.SignatureConfig;
 import java.nio.file.Files;
@@ -67,7 +68,7 @@ public final class SignatureExample {
 
     if (mode.equals("sign")) {
       // Get the primitive.
-      PublicKeySign signer = handle.getPrimitive(PublicKeySign.class);
+      PublicKeySign signer = handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
 
       // Use the primitive to sign data.
       byte[] signature = signer.sign(msg);
@@ -76,7 +77,8 @@ public final class SignatureExample {
       byte[] signature = Files.readAllBytes(signatureFile);
 
       // Get the primitive.
-      PublicKeyVerify verifier = handle.getPrimitive(PublicKeyVerify.class);
+      PublicKeyVerify verifier =
+          handle.getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
 
       verifier.verify(signature, msg);
     }

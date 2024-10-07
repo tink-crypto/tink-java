@@ -16,6 +16,7 @@ java_binary(
         "@tink_java//src/main/java/com/google/crypto/tink:public_key_sign",
         "@tink_java//src/main/java/com/google/crypto/tink:public_key_verify",
         "@tink_java//src/main/java/com/google/crypto/tink:registry_cluster",
+        "@tink_java//src/main/java/com/google/crypto/tink:registry_configuration",
         "@tink_java//src/main/java/com/google/crypto/tink:tink_json_proto_keyset_format",
         "@tink_java//src/main/java/com/google/crypto/tink/signature:signature_config",
     ],

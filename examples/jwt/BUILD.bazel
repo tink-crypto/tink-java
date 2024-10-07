@@ -13,6 +13,7 @@ java_binary(
     deps = [
         "@tink_java//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "@tink_java//src/main/java/com/google/crypto/tink:registry_cluster",
+        "@tink_java//src/main/java/com/google/crypto/tink:registry_configuration",
         "@tink_java//src/main/java/com/google/crypto/tink:tink_json_proto_keyset_format",
         "@tink_java//src/main/java/com/google/crypto/tink/jwt:jwt_public_key_sign",
         "@tink_java//src/main/java/com/google/crypto/tink/jwt:jwt_signature_config",
@@ -39,6 +40,7 @@ java_binary(
     main_class = "jwt.JwtVerify",
     deps = [
         "@tink_java//src/main/java/com/google/crypto/tink:registry_cluster",
+        "@tink_java//src/main/java/com/google/crypto/tink:registry_configuration",
         "@tink_java//src/main/java/com/google/crypto/tink/jwt:jwk_set_converter",
         "@tink_java//src/main/java/com/google/crypto/tink/jwt:jwt_public_key_verify",
         "@tink_java//src/main/java/com/google/crypto/tink/jwt:jwt_signature_config",
