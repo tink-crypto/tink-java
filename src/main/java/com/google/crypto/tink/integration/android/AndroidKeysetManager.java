@@ -25,7 +25,6 @@ import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.Nullable;
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.BinaryKeysetReader;
-import com.google.crypto.tink.CleartextKeysetHandle;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeysetHandle;
@@ -272,7 +271,8 @@ public final class AndroidKeysetManager {
     private KeysetManager readKeysetInCleartext(byte[] serializedKeyset)
         throws GeneralSecurityException, IOException {
       return KeysetManager.withKeysetHandle(
-          CleartextKeysetHandle.read(BinaryKeysetReader.withBytes(serializedKeyset)));
+          LegacyKeysetSerialization.parseKeyset(
+              BinaryKeysetReader.withBytes(serializedKeyset), InsecureSecretKeyAccess.get()));
     }
 
     /**
