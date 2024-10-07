@@ -17,13 +17,9 @@
 package com.google.crypto.tink.subtle;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.fail;
 
 import com.google.crypto.tink.PublicKeySign;
-import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.signature.Ed25519PrivateKey;
 import com.google.crypto.tink.signature.internal.testing.Ed25519TestUtil;
@@ -32,7 +28,7 @@ import com.google.crypto.tink.testing.WycheproofTestUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.security.GeneralSecurityException;
-import java.util.TreeSet;
+import java.util.ArrayList;
 import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,48 +51,25 @@ public final class Ed25519SignTest {
     for (int i = 0; i < 100; i++) {
       byte[] msg = Random.randBytes(20);
       byte[] sig = signer.sign(msg);
-      try {
-        verifier.verify(sig, msg);
-      } catch (GeneralSecurityException ex) {
-        throw new AssertionError(
-            String.format(
-                "\n\nMessage: %s\nSignature: %s\nPrivateKey: %s\nPublicKey: %s\n",
-                Hex.encode(msg),
-                Hex.encode(sig),
-                Hex.encode(keyPair.getPrivateKey()),
-                Hex.encode(keyPair.getPublicKey())),
-            ex);
-      }
+      verifier.verify(sig, msg);
     }
   }
 
   @Test
-  public void testSigningOneKeyWithTheSameMessage() throws Exception {
+  public void testSignIsDeterministic() throws Exception {
     Assume.assumeFalse(TinkFips.useOnlyFips());
 
     Ed25519Sign.KeyPair keyPair = Ed25519Sign.KeyPair.newKeyPair();
     Ed25519Sign signer = new Ed25519Sign(keyPair.getPrivateKey());
     Ed25519Verify verifier = new Ed25519Verify(keyPair.getPublicKey());
     byte[] msg = Random.randBytes(20);
-    TreeSet<String> allSignatures = new TreeSet<String>();
+    byte[] sig = signer.sign(msg);
+    verifier.verify(sig, msg);
+
     for (int i = 0; i < 100; i++) {
-      byte[] sig = signer.sign(msg);
-      allSignatures.add(Hex.encode(sig));
-      try {
-        verifier.verify(sig, msg);
-      } catch (GeneralSecurityException ex) {
-        throw new AssertionError(
-            String.format(
-                "\n\nMessage: %s\nSignature: %s\nPrivateKey: %s\nPublicKey: %s\n",
-                Hex.encode(msg),
-                Hex.encode(sig),
-                Hex.encode(keyPair.getPrivateKey()),
-                Hex.encode(keyPair.getPublicKey())),
-            ex);
-      }
+      // Ed25519 is deterministic, expect a unique signature for the same message.
+      assertThat(signer.sign(msg)).isEqualTo(sig);
     }
-    // Ed25519 is deterministic, expect a unique signature for the same message.
-    assertEquals(1, allSignatures.size());
   }
 
   @Test
@@ -125,17 +98,7 @@ public final class Ed25519SignTest {
       Ed25519Verify verifier = new Ed25519Verify(keyPair.getPublicKey());
       byte[] msg = Random.randBytes(20);
       byte[] sig = signer.sign(msg);
-      try {
-        verifier.verify(sig, msg);
-      } catch (GeneralSecurityException ex) {
-        fail(
-            String.format(
-                "\n\nMessage: %s\nSignature: %s\nPrivateKey: %s\nPublicKey: %s\n",
-                Hex.encode(msg),
-                Hex.encode(sig),
-                Hex.encode(keyPair.getPrivateKey()),
-                Hex.encode(keyPair.getPublicKey())));
-      }
+      verifier.verify(sig, msg);
     }
   }
 
@@ -153,7 +116,7 @@ public final class Ed25519SignTest {
 
     JsonObject json =
         WycheproofTestUtil.readJson("../wycheproof/testvectors/eddsa_test.json");
-    int errors = 0;
+    ArrayList<String> errors = new ArrayList<>();
     JsonArray testGroups = json.get("testGroups").getAsJsonArray();
     for (int i = 0; i < testGroups.size(); i++) {
       JsonObject group = testGroups.get(i).getAsJsonObject();
@@ -174,10 +137,13 @@ public final class Ed25519SignTest {
         }
         Ed25519Sign signer = new Ed25519Sign(privateKey);
         byte[] computedSig = signer.sign(msg);
-        assertArrayEquals(tcId, sig, computedSig);
+        if (!Bytes.equal(sig, computedSig)) {
+          errors.add(
+              "FAIL " + tcId + ": got " + Hex.encode(computedSig) + ", want " + Hex.encode(sig));
+        }
       }
     }
-    assertEquals(0, errors);
+    assertThat(errors).isEmpty();
   }
 
   @Test
@@ -210,19 +176,16 @@ public final class Ed25519SignTest {
   }
 
   @Test
-  public void test_computeAndValidateFreshSignatureWithTestVector() throws Exception {
+  public void testSignOutputsSameSignatureAsInTestVector() throws Exception {
     Assume.assumeFalse(TinkFips.useOnlyFips());
     // We are not using parameterized tests because the next line cannot be run if useOnlyFips.
     SignatureTestVector[] testVectors = Ed25519TestUtil.createEd25519TestVectors();
     for (SignatureTestVector testVector : testVectors) {
-      System.out.println(
-          "Testing test_computeAndValidateFreshSignatureWithTestVector with parameters: "
-              + testVector.getPrivateKey().getParameters());
       Ed25519PrivateKey key = (Ed25519PrivateKey) testVector.getPrivateKey();
       PublicKeySign signer = Ed25519Sign.create(key);
       byte[] signature = signer.sign(testVector.getMessage());
-      PublicKeyVerify verifier = Ed25519Verify.create(key.getPublicKey());
-      verifier.verify(signature, testVector.getMessage());
+      // Ed25519 is deterministic, so signature must be the same as in the test vector.
+      assertThat(signature).isEqualTo(testVector.getSignature());
     }
   }
 }

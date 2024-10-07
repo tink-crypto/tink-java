@@ -8,11 +8,11 @@ java_test(
     tags = ["fips"],
     deps = [
         "//src/main/java/com/google/crypto/tink:public_key_sign",
-        "//src/main/java/com/google/crypto/tink:public_key_verify",
         "//src/main/java/com/google/crypto/tink/config:tink_fips",
         "//src/main/java/com/google/crypto/tink/signature:ed25519_private_key",
         "//src/main/java/com/google/crypto/tink/signature/internal/testing:ed25519_test_util",
         "//src/main/java/com/google/crypto/tink/signature/internal/testing:signature_test_vector",
+        "//src/main/java/com/google/crypto/tink/subtle:bytes",
         "//src/main/java/com/google/crypto/tink/subtle:ed25519_sign",
         "//src/main/java/com/google/crypto/tink/subtle:ed25519_verify",
         "//src/main/java/com/google/crypto/tink/subtle:hex",
@@ -147,6 +147,7 @@ java_test(
         "//src/main/java/com/google/crypto/tink/subtle:hex",
         "//src/main/java/com/google/crypto/tink/testing:wycheproof_test_util",
         "@maven//:com_google_code_gson_gson",
+        "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
     ],
 )
