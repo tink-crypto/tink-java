@@ -345,6 +345,28 @@ public final class RsaSsaPkcs1TestUtil {
         Hex.decode("aa"));
   }
 
+  public static SignatureTestVector createTestVector6() throws GeneralSecurityException {
+    RsaSsaPkcs1Parameters parameters =
+        RsaSsaPkcs1Parameters.builder()
+            .setModulusSizeBits(2048)
+            .setPublicExponent(RsaSsaPkcs1Parameters.F4)
+            .setHashType(RsaSsaPkcs1Parameters.HashType.SHA384)
+            .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
+            .build();
+    RsaSsaPkcs1PrivateKey privateKey = privateKeyFor2048BitParameters(parameters, null);
+    return new SignatureTestVector(
+        privateKey,
+        Hex.decode(
+            "71ae1ecd20509a12627a876e2efcd67015659923b9e2564405673641d73615eb937625db427b55c582b971"
+                + "72eeddabc247ee2f0f44652c8310d433f4cdbad3b558d2640414afc70725fe40849d2652d91413a9"
+                + "ce5ee2f234cae1fb1a35b8b3452b60ca33d38c6c84b2feaffff1c0f5be3deab76b3cdff154f76c18"
+                + "bfdbe18e0b62ea832986802e9a07eeeae3b367c551c6672cc64e1e9e13bed3352d6f8a109ebaf86a"
+                + "90a973939f4c6a7b4f0ff214228051bdfd1c00ed2dda804e168fa4247835b25a8d88a57b8e042c45"
+                + "cedc00db2cd03f5bd4ec5647e90737e5325ce2fc3ecea2af569d1fb51a8332f4b526ba214b0b8d10"
+                + "d562ba2dccb0267c85098d8ff1"),
+        Hex.decode("aa"));
+  }
+
   public static SignatureTestVector[] createRsaSsaPkcs1TestVectors() {
     return exceptionIsBug(
         () ->
@@ -354,7 +376,8 @@ public final class RsaSsaPkcs1TestUtil {
               createTestVector2(),
               createTestVector3(),
               createTestVector4(),
-              createTestVector5()
+              createTestVector5(),
+              createTestVector6()
             });
   }
 
