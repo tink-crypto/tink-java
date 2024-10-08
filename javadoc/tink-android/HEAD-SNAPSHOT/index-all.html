@@ -3513,6 +3513,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/Ed25519PublicKey.html#create-com.google.crypto.tink.signature.Ed25519Parameters.Variant-com.google.crypto.tink.util.Bytes-java.lang.Integer-">create(Ed25519Parameters.Variant, Bytes, Integer)</a></span> - Static method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/Ed25519PublicKey.html" title="class in com.google.crypto.tink.signature">Ed25519PublicKey</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/Ed25519VerifyJce.html#create-com.google.crypto.tink.signature.Ed25519PublicKey-">create(Ed25519PublicKey)</a></span> - Static method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/Ed25519VerifyJce.html" title="class in com.google.crypto.tink.signature.internal">Ed25519VerifyJce</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/LegacyFullSign.html#create-com.google.crypto.tink.internal.LegacyProtoKey-">create(LegacyProtoKey)</a></span> - Static method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/LegacyFullSign.html" title="class in com.google.crypto.tink.signature.internal">LegacyFullSign</a></dt>
 <dd>
 <div class="block">Creates the full primitive corresponding to the key.</div>
@@ -5009,6 +5011,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/Ed25519Verify.html#Ed25519Verify-byte:A-">Ed25519Verify(byte[])</a></span> - Constructor for class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/Ed25519Verify.html" title="class in com.google.crypto.tink.subtle">Ed25519Verify</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/signature/internal/Ed25519VerifyJce.html" title="class in com.google.crypto.tink.signature.internal"><span class="typeNameLink">Ed25519VerifyJce</span></a> - Class in <a href="com/google/crypto/tink/signature/internal/package-summary.html">com.google.crypto.tink.signature.internal</a></dt>
+<dd>
+<div class="block">Ed25519 verifying using the JCE.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/PredefinedSignatureParameters.html#ED25519WithRawOutput">ED25519WithRawOutput</a></span> - Static variable in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/PredefinedSignatureParameters.html" title="class in com.google.crypto.tink.signature">PredefinedSignatureParameters</a></dt>
 <dd>
 <div class="block">A <code>Parameters</code> that generates new instances of <code>ED25519PrivateKey</code>.</div>
@@ -5540,6 +5546,8 @@
 <div class="block">Returns the size of an element of the field over which the curve is defined.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/InsecureNonceAesGcmJce.html#FIPS">FIPS</a></span> - Static variable in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/InsecureNonceAesGcmJce.html" title="class in com.google.crypto.tink.aead.internal">InsecureNonceAesGcmJce</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/Ed25519VerifyJce.html#FIPS">FIPS</a></span> - Static variable in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/Ed25519VerifyJce.html" title="class in com.google.crypto.tink.signature.internal">Ed25519VerifyJce</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/RsaSsaPkcs1VerifyConscrypt.html#FIPS">FIPS</a></span> - Static variable in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/RsaSsaPkcs1VerifyConscrypt.html" title="class in com.google.crypto.tink.signature.internal">RsaSsaPkcs1VerifyConscrypt</a></dt>
 <dd>&nbsp;</dd>
@@ -13909,6 +13917,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/XChaCha20Poly1305Jce.html#isSupported--">isSupported()</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/XChaCha20Poly1305Jce.html" title="class in com.google.crypto.tink.aead.internal">XChaCha20Poly1305Jce</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/Ed25519VerifyJce.html#isSupported--">isSupported()</a></span> - Static method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/Ed25519VerifyJce.html" title="class in com.google.crypto.tink.signature.internal">Ed25519VerifyJce</a></dt>
+<dd>
+<div class="block">Returns true if the JCE supports Ed25519.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/RsaSsaPkcs1VerifyConscrypt.html#isSupported--">isSupported()</a></span> - Static method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/RsaSsaPkcs1VerifyConscrypt.html" title="class in com.google.crypto.tink.signature.internal">RsaSsaPkcs1VerifyConscrypt</a></dt>
 <dd>
 <div class="block">Returns true if the RsaSsaPkcs1 signature verification using Conscrypt works.</div>
@@ -23998,6 +24010,8 @@ the order they are declared.</div>
 <dd>
 <div class="block">Verifies whether <code>signature</code> is a valid signature for <code>data</code>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/Ed25519VerifyJce.html#verify-byte:A-byte:A-">verify(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/Ed25519VerifyJce.html" title="class in com.google.crypto.tink.signature.internal">Ed25519VerifyJce</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/LegacyFullVerify.html#verify-byte:A-byte:A-">verify(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/LegacyFullVerify.html" title="class in com.google.crypto.tink.signature.internal">LegacyFullVerify</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/RsaSsaPkcs1VerifyConscrypt.html#verify-byte:A-byte:A-">verify(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/RsaSsaPkcs1VerifyConscrypt.html" title="class in com.google.crypto.tink.signature.internal">RsaSsaPkcs1VerifyConscrypt</a></dt>
