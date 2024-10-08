@@ -300,3 +300,39 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "Ed25519VerifyJceTest",
+    size = "small",
+    srcs = ["Ed25519VerifyJceTest.java"],
+    data = ["@wycheproof//testvectors:all"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:public_key_verify",
+        "//src/main/java/com/google/crypto/tink/config:tink_fips",
+        "//src/main/java/com/google/crypto/tink/internal:util",
+        "//src/main/java/com/google/crypto/tink/signature:ed25519_private_key",
+        "//src/main/java/com/google/crypto/tink/signature/internal:ed25519_verify_jce",
+        "//src/main/java/com/google/crypto/tink/signature/internal/testing:ed25519_test_util",
+        "//src/main/java/com/google/crypto/tink/signature/internal/testing:signature_test_vector",
+        "//src/main/java/com/google/crypto/tink/subtle:base64",
+        "//src/main/java/com/google/crypto/tink/subtle:bytes",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "//src/main/java/com/google/crypto/tink/testing:wycheproof_test_util",
+        "@maven//:com_google_code_gson_gson",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
+    name = "Ed25519VerifyJceWithConscryptTest",
+    size = "small",
+    srcs = ["Ed25519VerifyJceWithConscryptTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/internal:util",
+        "//src/main/java/com/google/crypto/tink/signature/internal:ed25519_verify_jce",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+        "@maven//:org_conscrypt_conscrypt_openjdk_uber",
+    ],
+)
