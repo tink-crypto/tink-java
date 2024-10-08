@@ -29,7 +29,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
-public final class Ed25519VerifyJceWithConscryptTest {
+public final class Ed25519JceWithConscryptTest {
 
   @Before
   public void useOnlyConscrypt() throws Exception {
@@ -50,6 +50,7 @@ public final class Ed25519VerifyJceWithConscryptTest {
   public void isSupported_notOnAndroid_returnsFalse() throws Exception {
     Assume.assumeTrue(!Util.isAndroid());
 
+    assertThat(Ed25519SignJce.isSupported()).isFalse();
     assertThat(Ed25519VerifyJce.isSupported()).isFalse();
   }
 }
