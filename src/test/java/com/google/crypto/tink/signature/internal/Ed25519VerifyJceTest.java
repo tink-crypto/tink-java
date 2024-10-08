@@ -62,7 +62,20 @@ public final class Ed25519VerifyJceTest {
         () -> Ed25519VerifyJce.x509EncodePublicKey(publicKeyWithLeadingZero));
   }
 
-  // TODO(300417656): Add test that isSupported() returns true on non-Android.
+  boolean isJavaOneDotEight() {
+    return System.getProperty("java.version").startsWith("1.8");
+  }
+
+  @Test
+  public void isSupported_returnsTrueExceptForJavaOneDotEight() throws Exception {
+    Assume.assumeTrue(!TinkFips.useOnlyFips() && !Util.isAndroid());
+
+    if (isJavaOneDotEight()) {
+      assertThat(Ed25519VerifyJce.isSupported()).isFalse();
+    } else {
+      assertThat(Ed25519VerifyJce.isSupported()).isTrue();
+    }
+  }
 
   @Test
   public void isSupported_onAndroid_returnsFalse() throws Exception {
