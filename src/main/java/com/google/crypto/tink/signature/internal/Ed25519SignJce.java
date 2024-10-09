@@ -93,7 +93,8 @@ public final class Ed25519SignJce implements PublicKeySign {
     this.privateKey = keyFactory.generatePrivate(spec);
   }
 
-  Ed25519SignJce(final byte[] privateKey) throws GeneralSecurityException {
+  /** Constructs a Ed25519SignJce with the {@code privateKey}. */
+  public Ed25519SignJce(final byte[] privateKey) throws GeneralSecurityException {
     this(privateKey, new byte[0], new byte[0]);
   }
 
