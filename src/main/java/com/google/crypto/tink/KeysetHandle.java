@@ -37,6 +37,7 @@ import com.google.crypto.tink.tinkkey.internal.ProtoKey;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Immutable;
 import com.google.errorprone.annotations.InlineMe;
+import com.google.errorprone.annotations.RestrictedApi;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ExtensionRegistryLite;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -801,7 +802,11 @@ public final class KeysetHandle {
    *     {@code masterKey}
    * @throws GeneralSecurityException if cannot decrypt the keyset or it doesn't contain encrypted
    *     key material
+   * @deprecated New users should prefer TinkProtoKeysetFormat. Existing users can use
+   *     LegacyKeysetSerialization for exactly the same behavior.
    */
+  @SuppressWarnings("UnusedException")
+  @Deprecated /* b/372397203 */
   public static final KeysetHandle read(KeysetReader reader, Aead masterKey)
       throws GeneralSecurityException, IOException {
     return readWithAssociatedData(reader, masterKey, new byte[0]);
@@ -817,7 +822,11 @@ public final class KeysetHandle {
    *     {@code masterKey}
    * @throws GeneralSecurityException if cannot decrypt the keyset or it doesn't contain encrypted
    *     key material
+   * @deprecated New users should prefer TinkProtoKeysetFormat. Existing users can use
+   *     LegacyKeysetSerialization for exactly the same behavior.
    */
+  @SuppressWarnings("UnusedException")
+  @Deprecated /* b/372397203 */
   public static final KeysetHandle readWithAssociatedData(
       KeysetReader reader, Aead masterKey, byte[] associatedData)
       throws GeneralSecurityException, IOException {
@@ -876,7 +885,14 @@ public final class KeysetHandle {
     }
   }
 
-  /** Serializes, encrypts with {@code masterKey} and writes the keyset to {@code outputStream}. */
+  /**
+   * Serializes, encrypts with {@code masterKey} and writes the keyset to {@code outputStream}.
+   *
+   * @deprecated New users should prefer TinkProtoKeysetFormat. Existing users can use
+   *     LegacyKeysetSerialization for exactly the same behavior.
+   */
+  @SuppressWarnings("UnusedException")
+  @Deprecated /* b/372397203 */
   public void write(KeysetWriter keysetWriter, Aead masterKey)
       throws GeneralSecurityException, IOException {
     writeWithAssociatedData(keysetWriter, masterKey, new byte[0]);
@@ -885,7 +901,12 @@ public final class KeysetHandle {
   /**
    * Serializes, encrypts with {@code masterKey} and writes the keyset to {@code outputStream} using
    * the provided associated data.
+   *
+   * @deprecated New users should prefer TinkProtoKeysetFormat. Existing users can use
+   *     LegacyKeysetSerialization for exactly the same behavior.
    */
+  @SuppressWarnings("UnusedException")
+  @Deprecated /* b/372397203 */
   public void writeWithAssociatedData(
       KeysetWriter keysetWriter, Aead masterKey, byte[] associatedData)
       throws GeneralSecurityException, IOException {
