@@ -657,13 +657,25 @@
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colOne"><a href="com/google/crypto/tink/KeysetHandle.html#read-com.google.crypto.tink.KeysetReader-com.google.crypto.tink.Aead-">com.google.crypto.tink.KeysetHandle.read(KeysetReader, Aead)</a>
+<div class="block"><span class="deprecationComment">New users should prefer TinkProtoKeysetFormat. Existing users can use
+     LegacyKeysetSerialization for exactly the same behavior.</span></div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/CleartextKeysetHandle.html#read-com.google.crypto.tink.KeysetReader-java.util.Map-">com.google.crypto.tink.CleartextKeysetHandle.read(KeysetReader, Map&lt;String, String&gt;)</a>
 <div class="block"><span class="deprecationComment">Instead, use a <a href="com/google/crypto/tink/KeysetHandle.Builder.html" title="class in com.google.crypto.tink"><code>KeysetHandle.Builder</code></a>.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/google/crypto/tink/KeysetHandle.html#readNoSecret-byte:A-">com.google.crypto.tink.KeysetHandle.readNoSecret(byte[])</a>
 <div class="block"><span class="deprecationComment">Call {TinkProtoKeysetFormat.parseKeysetWithoutSecret} instead.</span></div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="com/google/crypto/tink/KeysetHandle.html#readWithAssociatedData-com.google.crypto.tink.KeysetReader-com.google.crypto.tink.Aead-byte:A-">com.google.crypto.tink.KeysetHandle.readWithAssociatedData(KeysetReader, Aead, byte[])</a>
+<div class="block"><span class="deprecationComment">New users should prefer TinkProtoKeysetFormat. Existing users can use
+     LegacyKeysetSerialization for exactly the same behavior.</span></div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -846,6 +858,18 @@
 <tr class="altColor">
 <td class="colOne"><a href="com/google/crypto/tink/JsonKeysetReader.html#withPath-java.lang.String-">com.google.crypto.tink.JsonKeysetReader.withPath(String)</a>
 <div class="block"><span class="deprecationComment">Method should be inlined.</span></div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><a href="com/google/crypto/tink/KeysetHandle.html#write-com.google.crypto.tink.KeysetWriter-com.google.crypto.tink.Aead-">com.google.crypto.tink.KeysetHandle.write(KeysetWriter, Aead)</a>
+<div class="block"><span class="deprecationComment">New users should prefer TinkProtoKeysetFormat. Existing users can use
+     LegacyKeysetSerialization for exactly the same behavior.</span></div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="com/google/crypto/tink/KeysetHandle.html#writeWithAssociatedData-com.google.crypto.tink.KeysetWriter-com.google.crypto.tink.Aead-byte:A-">com.google.crypto.tink.KeysetHandle.writeWithAssociatedData(KeysetWriter, Aead, byte[])</a>
+<div class="block"><span class="deprecationComment">New users should prefer TinkProtoKeysetFormat. Existing users can use
+     LegacyKeysetSerialization for exactly the same behavior.</span></div>
 </td>
 </tr>
 </tbody>
