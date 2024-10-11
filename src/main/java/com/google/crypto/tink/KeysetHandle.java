@@ -921,7 +921,10 @@ public final class KeysetHandle {
    * to persist cleartext keysets can use {@link CleartextKeysetHandle}.
    *
    * @throws GeneralSecurityException if the keyset contains any secret key material
+   * @deprecated New users should prefer TinkProtoKeysetFormat. Existing users can use
+   *     LegacyKeysetSerialization for exactly the same behavior.
    */
+  @Deprecated /* b/372397203 */
   public void writeNoSecret(KeysetWriter writer) throws GeneralSecurityException, IOException {
     assertNoSecretKeyMaterial(keyset);
     writer.write(keyset);
