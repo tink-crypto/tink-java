@@ -23,9 +23,7 @@ import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.hybrid.HpkeParameters;
 import com.google.crypto.tink.hybrid.HpkePrivateKey;
-import com.google.crypto.tink.subtle.EllipticCurves;
 import com.google.crypto.tink.util.Bytes;
-import com.google.crypto.tink.util.SecretBytes;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
@@ -80,40 +78,19 @@ public final class HpkeDecrypt implements HybridDecrypt {
     throw new GeneralSecurityException("Unrecognized HPKE KEM identifier");
   }
 
-  static EllipticCurves.CurveType nistHpkeKemToCurve(HpkeParameters.KemId kemId)
-      throws GeneralSecurityException {
-    if (kemId.equals(HpkeParameters.KemId.DHKEM_P256_HKDF_SHA256)) {
-      return EllipticCurves.CurveType.NIST_P256;
-    }
-    if (kemId.equals(HpkeParameters.KemId.DHKEM_P384_HKDF_SHA384)) {
-      return EllipticCurves.CurveType.NIST_P384;
-    }
-    if (kemId.equals(HpkeParameters.KemId.DHKEM_P521_HKDF_SHA512)) {
-      return EllipticCurves.CurveType.NIST_P521;
-    }
-    throw new GeneralSecurityException("Unrecognized NIST HPKE KEM identifier");
-  }
-
-  static HpkeKemPrivateKey toHpkeKemPrivateKey(SecretBytes privateKeyBytes, Bytes publicKeyBytes) {
-    Bytes convertedPrivateKeyBytes =
-        Bytes.copyFrom(privateKeyBytes.toByteArray(InsecureSecretKeyAccess.get()));
-    return new HpkeKemPrivateKey(convertedPrivateKeyBytes, publicKeyBytes);
-  }
-
   @AccessesPartialKey
   private static HpkeKemPrivateKey createHpkeKemPrivateKey(HpkePrivateKey privateKey)
       throws GeneralSecurityException {
-    // TODO(b/373758841): Simplify.
     HpkeParameters.KemId kemId = privateKey.getParameters().getKemId();
-    if (kemId.equals(HpkeParameters.KemId.DHKEM_X25519_HKDF_SHA256)) {
-      return toHpkeKemPrivateKey(
-          privateKey.getPrivateKeyBytes(), privateKey.getPublicKey().getPublicKeyBytes());
-    }
-    if (kemId.equals(HpkeParameters.KemId.DHKEM_P256_HKDF_SHA256)
+    if (kemId.equals(HpkeParameters.KemId.DHKEM_X25519_HKDF_SHA256)
+        || kemId.equals(HpkeParameters.KemId.DHKEM_P256_HKDF_SHA256)
         || kemId.equals(HpkeParameters.KemId.DHKEM_P384_HKDF_SHA384)
         || kemId.equals(HpkeParameters.KemId.DHKEM_P521_HKDF_SHA512)) {
-      return toHpkeKemPrivateKey(
-          privateKey.getPrivateKeyBytes(), privateKey.getPublicKey().getPublicKeyBytes());
+      Bytes convertedPrivateKeyBytes =
+          Bytes.copyFrom(
+              privateKey.getPrivateKeyBytes().toByteArray(InsecureSecretKeyAccess.get()));
+      return new HpkeKemPrivateKey(
+          convertedPrivateKeyBytes, privateKey.getPublicKey().getPublicKeyBytes());
     }
     throw new GeneralSecurityException("Unrecognized HPKE KEM identifier");
   }

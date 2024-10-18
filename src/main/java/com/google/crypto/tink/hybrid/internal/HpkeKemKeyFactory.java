@@ -21,32 +21,24 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.hybrid.HpkeParameters;
 import com.google.crypto.tink.hybrid.HpkePrivateKey;
 import com.google.crypto.tink.util.Bytes;
-import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
 
 /** Helper class for creating HPKE KEM asymmetric keys. */
 public final class HpkeKemKeyFactory {
 
-  static HpkeKemPrivateKey toHpkeKemPrivateKey(SecretBytes privateKeyBytes, Bytes publicKeyBytes) {
-    Bytes convertedPrivateKeyBytes =
-        Bytes.copyFrom(privateKeyBytes.toByteArray(InsecureSecretKeyAccess.get()));
-    return new HpkeKemPrivateKey(convertedPrivateKeyBytes, publicKeyBytes);
-  }
-
   @AccessesPartialKey
   public static HpkeKemPrivateKey createPrivate(HpkePrivateKey privateKey)
       throws GeneralSecurityException {
-    // TODO(b/373758841): Simplify.
     HpkeParameters.KemId kemId = privateKey.getParameters().getKemId();
-    if (kemId == HpkeParameters.KemId.DHKEM_X25519_HKDF_SHA256) {
-      return toHpkeKemPrivateKey(
-          privateKey.getPrivateKeyBytes(), privateKey.getPublicKey().getPublicKeyBytes());
-    }
-    if (kemId == HpkeParameters.KemId.DHKEM_P256_HKDF_SHA256
+    if (kemId == HpkeParameters.KemId.DHKEM_X25519_HKDF_SHA256
+        || kemId == HpkeParameters.KemId.DHKEM_P256_HKDF_SHA256
         || kemId == HpkeParameters.KemId.DHKEM_P384_HKDF_SHA384
         || kemId == HpkeParameters.KemId.DHKEM_P521_HKDF_SHA512) {
-      return toHpkeKemPrivateKey(
-          privateKey.getPrivateKeyBytes(), privateKey.getPublicKey().getPublicKeyBytes());
+      Bytes convertedPrivateKeyBytes =
+          Bytes.copyFrom(
+              privateKey.getPrivateKeyBytes().toByteArray(InsecureSecretKeyAccess.get()));
+      return new HpkeKemPrivateKey(
+          convertedPrivateKeyBytes, privateKey.getPublicKey().getPublicKeyBytes());
     }
     throw new GeneralSecurityException("Unrecognized HPKE KEM identifier");
   }
