@@ -13546,14 +13546,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/ParametersSerializer.html#getSerializationClass--">getSerializationClass()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/ParametersSerializer.html" title="class in com.google.crypto.tink.internal">ParametersSerializer</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/HpkeKemPrivateKey.html#getSerializedPrivate--">getSerializedPrivate()</a></span> - Method in interface com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/HpkeKemPrivateKey.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeKemPrivateKey</a></dt>
-<dd>
-<div class="block">Gets the serialized KEM private key to perform decapsulation.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/HpkeKemPrivateKey.html#getSerializedPublic--">getSerializedPublic()</a></span> - Method in interface com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/HpkeKemPrivateKey.html" title="interface in com.google.crypto.tink.hybrid.internal">HpkeKemPrivateKey</a></dt>
-<dd>
-<div class="block">Gets the serialized KEM public key corresponding to the private key to perform decapsulation.</div>
-</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/AesCmacKey.html#getSerializedSize--">getSerializedSize()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/AesCmacKey.html" title="class in com.google.crypto.tink.proto">AesCmacKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/AesCmacKeyFormat.html#getSerializedSize--">getSerializedSize()</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/AesCmacKeyFormat.html" title="class in com.google.crypto.tink.proto">AesCmacKeyFormat</a></dt>
@@ -16813,10 +16805,12 @@
 <dd>
 <div class="block">Helper class for creating HPKE KEM asymmetric keys.</div>
 </dd>
-<dt><a href="com/google/crypto/tink/hybrid/internal/HpkeKemPrivateKey.html" title="interface in com.google.crypto.tink.hybrid.internal"><span class="typeNameLink">HpkeKemPrivateKey</span></a> - Interface in <a href="com/google/crypto/tink/hybrid/internal/package-summary.html">com.google.crypto.tink.hybrid.internal</a></dt>
+<dt><a href="com/google/crypto/tink/hybrid/internal/HpkeKemPrivateKey.html" title="class in com.google.crypto.tink.hybrid.internal"><span class="typeNameLink">HpkeKemPrivateKey</span></a> - Class in <a href="com/google/crypto/tink/hybrid/internal/package-summary.html">com.google.crypto.tink.hybrid.internal</a></dt>
 <dd>
-<div class="block">Interface for private keys for Key Encapsulation Mechanism (KEM)</div>
+<div class="block">Serialized Private/Public key tuple for Key Encapsulation Mechanism (KEM)</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/HpkeKemPrivateKey.html#HpkeKemPrivateKey-com.google.crypto.tink.util.Bytes-com.google.crypto.tink.util.Bytes-">HpkeKemPrivateKey(Bytes, Bytes)</a></span> - Constructor for class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/HpkeKemPrivateKey.html" title="class in com.google.crypto.tink.hybrid.internal">HpkeKemPrivateKey</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/proto/HpkeKeyFormat.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">HpkeKeyFormat</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>
 <div class="block">Protobuf type <code>google.crypto.tink.HpkeKeyFormat</code></div>
