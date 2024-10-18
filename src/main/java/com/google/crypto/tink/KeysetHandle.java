@@ -844,8 +844,11 @@ public final class KeysetHandle {
    *
    * @return a new {@link KeysetHandle} from {@code serialized} that is a serialized {@link Keyset}
    * @throws GeneralSecurityException if the keyset is invalid
+   * @deprecated New users should prefer TinkProtoKeysetFormat. Existing users can use
+   *     LegacyKeysetSerialization for exactly the same behavior.
    */
   @SuppressWarnings("UnusedException")
+  @Deprecated /* b/372397203 */
   public static final KeysetHandle readNoSecret(KeysetReader reader)
       throws GeneralSecurityException, IOException {
     byte[] serializedKeyset;
