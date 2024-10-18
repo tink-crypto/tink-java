@@ -19,14 +19,24 @@ package com.google.crypto.tink.hybrid.internal;
 import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
 
-/** Interface for private keys for Key Encapsulation Mechanism (KEM) */
+/** Serialized Private/Public key tuple for Key Encapsulation Mechanism (KEM) */
 @Immutable
-public interface HpkeKemPrivateKey {
-  /** Gets the serialized KEM private key to perform decapsulation. */
-  Bytes getSerializedPrivate();
+public class HpkeKemPrivateKey {
 
-  /**
-   * Gets the serialized KEM public key corresponding to the private key to perform decapsulation.
-   */
-  Bytes getSerializedPublic();
+  private final Bytes serializedPrivate;
+  private final Bytes serializedPublic;
+
+  public HpkeKemPrivateKey(Bytes serializedPrivate, Bytes serializedPublic) {
+    this.serializedPrivate = serializedPrivate;
+    this.serializedPublic = serializedPublic;
+  }
+
+  /** Gets the serialized KEM private key to perform decapsulation. */
+  Bytes getSerializedPrivate() {
+    return serializedPrivate;
+  }
+
+  Bytes getSerializedPublic() {
+    return serializedPublic;
+  }
 }

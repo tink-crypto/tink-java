@@ -25,6 +25,7 @@ import com.google.crypto.tink.testing.HpkeTestId;
 import com.google.crypto.tink.testing.HpkeTestSetup;
 import com.google.crypto.tink.testing.HpkeTestUtil;
 import com.google.crypto.tink.testing.HpkeTestVector;
+import com.google.crypto.tink.util.Bytes;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
@@ -63,6 +64,10 @@ public final class X25519HpkeKemTest {
         HpkeUtil.AES_128_GCM_AEAD_ID);
   }
 
+  static HpkeKemPrivateKey toHpkeKemPrivateKey(byte[] privateKeyBytes, byte[] publicKeyBytes) {
+    return new HpkeKemPrivateKey(Bytes.copyFrom(privateKeyBytes), Bytes.copyFrom(publicKeyBytes));
+  }
+
   private void encapsulate(byte[] mode, byte[] kemId, byte[] kdfId, byte[] aeadId)
       throws GeneralSecurityException {
     HpkeTestId testId = new HpkeTestId(mode, kemId, kdfId, aeadId);
@@ -77,7 +82,7 @@ public final class X25519HpkeKemTest {
           kem.authEncapsulate(
               testSetup.recipientPublicKey,
               testSetup.senderEphemeralPrivateKey,
-              X25519HpkeKemPrivateKey.fromBytes(testSetup.senderPrivateKey));
+              toHpkeKemPrivateKey(testSetup.senderPrivateKey, testSetup.senderPublicKey));
     } else {
       throw new IllegalArgumentException("Unsupported mode: " + mode[0]);
     }
@@ -96,12 +101,12 @@ public final class X25519HpkeKemTest {
       result =
           kem.decapsulate(
               testSetup.encapsulatedKey,
-              X25519HpkeKemPrivateKey.fromBytes(testSetup.recipientPrivateKey));
+              toHpkeKemPrivateKey(testSetup.recipientPrivateKey, testSetup.recipientPublicKey));
     } else if (mode == HpkeUtil.AUTH_MODE) {
       result =
           kem.authDecapsulate(
               testSetup.encapsulatedKey,
-              X25519HpkeKemPrivateKey.fromBytes(testSetup.recipientPrivateKey),
+              toHpkeKemPrivateKey(testSetup.recipientPrivateKey, testSetup.recipientPublicKey),
               testSetup.senderPublicKey);
     } else {
       throw new IllegalArgumentException("Unsupported mode: " + mode[0]);
@@ -200,12 +205,11 @@ public final class X25519HpkeKemTest {
     X25519HpkeKem kem = new X25519HpkeKem(new HkdfHpkeKdf("BadMac"));
     HpkeTestSetup testSetup = testVectors.get(getDefaultTestId(HpkeUtil.AUTH_MODE)).getTestSetup();
     byte[] validRecipientPublicKey = testSetup.recipientPublicKey;
-    byte[] senderPrivateKey = testSetup.senderPrivateKey;
+    HpkeKemPrivateKey hpkeKemPrivateKey =
+        toHpkeKemPrivateKey(testSetup.senderPrivateKey, testSetup.recipientPublicKey);
     assertThrows(
         NoSuchAlgorithmException.class,
-        () ->
-            kem.authEncapsulate(
-                validRecipientPublicKey, X25519HpkeKemPrivateKey.fromBytes(senderPrivateKey)));
+        () -> kem.authEncapsulate(validRecipientPublicKey, hpkeKemPrivateKey));
   }
 
   @Test
@@ -223,12 +227,11 @@ public final class X25519HpkeKemTest {
     HpkeTestSetup testSetup = testVectors.get(getDefaultTestId(HpkeUtil.AUTH_MODE)).getTestSetup();
     byte[] invalidRecipientPublicKey =
         Arrays.copyOf(testSetup.recipientPublicKey, testSetup.recipientPublicKey.length + 2);
-    byte[] senderPrivateKey = testSetup.senderPrivateKey;
+    HpkeKemPrivateKey hpkeKemPrivateKey =
+        toHpkeKemPrivateKey(testSetup.senderPrivateKey, testSetup.senderPublicKey);
     assertThrows(
         InvalidKeyException.class,
-        () ->
-            kem.authEncapsulate(
-                invalidRecipientPublicKey, X25519HpkeKemPrivateKey.fromBytes(senderPrivateKey)));
+        () -> kem.authEncapsulate(invalidRecipientPublicKey, hpkeKemPrivateKey));
   }
 
   @Test
@@ -315,7 +318,7 @@ public final class X25519HpkeKemTest {
     HpkeTestSetup testSetup = testVectors.get(getDefaultTestId(HpkeUtil.BASE_MODE)).getTestSetup();
     byte[] validEncapsulatedKey = testSetup.encapsulatedKey;
     HpkeKemPrivateKey validRecipientPrivateKey =
-        X25519HpkeKemPrivateKey.fromBytes(testSetup.recipientPrivateKey);
+        toHpkeKemPrivateKey(testSetup.recipientPrivateKey, testSetup.recipientPublicKey);
     assertThrows(
         NoSuchAlgorithmException.class,
         () -> kem.decapsulate(validEncapsulatedKey, validRecipientPrivateKey));
@@ -328,7 +331,7 @@ public final class X25519HpkeKemTest {
     byte[] validEncapsulatedKey = testSetup.encapsulatedKey;
     byte[] senderPublicKey = testSetup.senderPublicKey;
     HpkeKemPrivateKey validRecipientPrivateKey =
-        X25519HpkeKemPrivateKey.fromBytes(testSetup.recipientPrivateKey);
+        toHpkeKemPrivateKey(testSetup.recipientPrivateKey, testSetup.recipientPublicKey);
     assertThrows(
         NoSuchAlgorithmException.class,
         () -> kem.authDecapsulate(validEncapsulatedKey, validRecipientPrivateKey, senderPublicKey));
@@ -341,7 +344,7 @@ public final class X25519HpkeKemTest {
     byte[] invalidEncapsulatedKey =
         Arrays.copyOf(testSetup.encapsulatedKey, testSetup.encapsulatedKey.length + 2);
     HpkeKemPrivateKey validRecipientPrivateKey =
-        X25519HpkeKemPrivateKey.fromBytes(testSetup.recipientPrivateKey);
+        toHpkeKemPrivateKey(testSetup.recipientPrivateKey, testSetup.recipientPublicKey);
     assertThrows(
         InvalidKeyException.class,
         () -> kem.decapsulate(invalidEncapsulatedKey, validRecipientPrivateKey));
@@ -355,7 +358,7 @@ public final class X25519HpkeKemTest {
     byte[] invalidEncapsulatedKey =
         Arrays.copyOf(testSetup.encapsulatedKey, testSetup.encapsulatedKey.length + 2);
     HpkeKemPrivateKey validRecipientPrivateKey =
-        X25519HpkeKemPrivateKey.fromBytes(testSetup.recipientPrivateKey);
+        toHpkeKemPrivateKey(testSetup.recipientPrivateKey, testSetup.recipientPublicKey);
     byte[] senderPublicKey = testSetup.senderPublicKey;
     assertThrows(
         InvalidKeyException.class,

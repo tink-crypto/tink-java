@@ -72,8 +72,6 @@ java_library(
         ":hpke_kdf",
         ":hpke_kem",
         ":hpke_kem_private_key",
-        ":nist_curves_hpke_kem_private_key",
-        ":x25519_hpke_kem_private_key",
         "//src/main/java/com/google/crypto/tink:accesses_partial_key",
         "//src/main/java/com/google/crypto/tink:hybrid_decrypt",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
@@ -82,6 +80,7 @@ java_library(
         "//src/main/java/com/google/crypto/tink/internal:util",
         "//src/main/java/com/google/crypto/tink/subtle:elliptic_curves",
         "//src/main/java/com/google/crypto/tink/util:bytes",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
@@ -135,13 +134,12 @@ java_library(
     srcs = ["HpkeKemKeyFactory.java"],
     deps = [
         ":hpke_kem_private_key",
-        ":hpke_util",
-        ":nist_curves_hpke_kem_private_key",
-        ":x25519_hpke_kem_private_key",
         "//src/main/java/com/google/crypto/tink:accesses_partial_key",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink/hybrid:hpke_parameters",
         "//src/main/java/com/google/crypto/tink/hybrid:hpke_private_key",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
     ],
 )
 
@@ -241,17 +239,6 @@ java_library(
 )
 
 java_library(
-    name = "nist_curves_hpke_kem_private_key",
-    srcs = ["NistCurvesHpkeKemPrivateKey.java"],
-    deps = [
-        ":hpke_kem_private_key",
-        "//src/main/java/com/google/crypto/tink/subtle:elliptic_curves",
-        "//src/main/java/com/google/crypto/tink/util:bytes",
-        "@maven//:com_google_errorprone_error_prone_annotations",
-    ],
-)
-
-java_library(
     name = "x25519_hpke_kem",
     srcs = ["X25519HpkeKem.java"],
     deps = [
@@ -262,17 +249,6 @@ java_library(
         ":hpke_util",
         "//src/main/java/com/google/crypto/tink/subtle:bytes",
         "//src/main/java/com/google/crypto/tink/subtle:x25519",
-        "@maven//:com_google_errorprone_error_prone_annotations",
-    ],
-)
-
-java_library(
-    name = "x25519_hpke_kem_private_key",
-    srcs = ["X25519HpkeKemPrivateKey.java"],
-    deps = [
-        ":hpke_kem_private_key",
-        "//src/main/java/com/google/crypto/tink/subtle:x25519",
-        "//src/main/java/com/google/crypto/tink/util:bytes",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
@@ -347,8 +323,6 @@ android_library(
         ":hpke_kdf-android",
         ":hpke_kem-android",
         ":hpke_kem_private_key-android",
-        ":nist_curves_hpke_kem_private_key-android",
-        ":x25519_hpke_kem_private_key-android",
         "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
         "//src/main/java/com/google/crypto/tink:hybrid_decrypt-android",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access-android",
@@ -357,6 +331,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink/internal:util-android",
         "//src/main/java/com/google/crypto/tink/subtle:elliptic_curves-android",
         "//src/main/java/com/google/crypto/tink/util:bytes-android",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes-android",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
@@ -410,13 +385,12 @@ android_library(
     srcs = ["HpkeKemKeyFactory.java"],
     deps = [
         ":hpke_kem_private_key-android",
-        ":hpke_util-android",
-        ":nist_curves_hpke_kem_private_key-android",
-        ":x25519_hpke_kem_private_key-android",
         "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access-android",
         "//src/main/java/com/google/crypto/tink/hybrid:hpke_parameters-android",
         "//src/main/java/com/google/crypto/tink/hybrid:hpke_private_key-android",
+        "//src/main/java/com/google/crypto/tink/util:bytes-android",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes-android",
     ],
 )
 
@@ -516,17 +490,6 @@ android_library(
 )
 
 android_library(
-    name = "nist_curves_hpke_kem_private_key-android",
-    srcs = ["NistCurvesHpkeKemPrivateKey.java"],
-    deps = [
-        ":hpke_kem_private_key-android",
-        "//src/main/java/com/google/crypto/tink/subtle:elliptic_curves-android",
-        "//src/main/java/com/google/crypto/tink/util:bytes-android",
-        "@maven//:com_google_errorprone_error_prone_annotations",
-    ],
-)
-
-android_library(
     name = "x25519_hpke_kem-android",
     srcs = ["X25519HpkeKem.java"],
     deps = [
@@ -537,17 +500,6 @@ android_library(
         ":hpke_util-android",
         "//src/main/java/com/google/crypto/tink/subtle:bytes-android",
         "//src/main/java/com/google/crypto/tink/subtle:x25519-android",
-        "@maven//:com_google_errorprone_error_prone_annotations",
-    ],
-)
-
-android_library(
-    name = "x25519_hpke_kem_private_key-android",
-    srcs = ["X25519HpkeKemPrivateKey.java"],
-    deps = [
-        ":hpke_kem_private_key-android",
-        "//src/main/java/com/google/crypto/tink/subtle:x25519-android",
-        "//src/main/java/com/google/crypto/tink/util:bytes-android",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
