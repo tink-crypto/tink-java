@@ -63,45 +63,51 @@ final class X25519HpkeKem implements HpkeKem {
   }
 
   /** Helper function factored out to facilitate unit testing. */
-  HpkeKemEncapOutput encapsulate(byte[] recipientPublicKey, byte[] senderPrivateKey)
+  HpkeKemEncapOutput encapsulateWithFixedEphemeralKey(
+      byte[] recipientPublicKey, byte[] ephemeralPrivateKey, byte[] ephemeralPublicKey)
       throws GeneralSecurityException {
-    byte[] dhSharedSecret = X25519.computeSharedSecret(senderPrivateKey, recipientPublicKey);
-    byte[] senderPublicKey = X25519.publicFromPrivate(senderPrivateKey);
+    byte[] dhSharedSecret = X25519.computeSharedSecret(ephemeralPrivateKey, recipientPublicKey);
     byte[] kemSharedSecret =
-        deriveKemSharedSecret(dhSharedSecret, senderPublicKey, recipientPublicKey);
-    return new HpkeKemEncapOutput(kemSharedSecret, senderPublicKey);
+        deriveKemSharedSecret(dhSharedSecret, ephemeralPublicKey, recipientPublicKey);
+    return new HpkeKemEncapOutput(kemSharedSecret, ephemeralPublicKey);
   }
 
   @Override
   public HpkeKemEncapOutput encapsulate(byte[] recipientPublicKey) throws GeneralSecurityException {
-    return encapsulate(recipientPublicKey, X25519.generatePrivateKey());
+    byte[] ephemeralPrivateKey = X25519.generatePrivateKey();
+    byte[] ephemeralPublicKey = X25519.publicFromPrivate(ephemeralPrivateKey);
+    return encapsulateWithFixedEphemeralKey(
+        recipientPublicKey, ephemeralPrivateKey, ephemeralPublicKey);
   }
 
   /** Helper function factored out to facilitate unit testing. */
-  HpkeKemEncapOutput authEncapsulate(
+  HpkeKemEncapOutput authEncapsulateWithFixedEphemeralKey(
       byte[] recipientPublicKey,
-      byte[] senderEphemeralPrivateKey,
+      byte[] ephemeralPrivateKey,
+      byte[] ephemeralPublicKey,
       HpkeKemPrivateKey senderPrivateKey)
       throws GeneralSecurityException {
     byte[] dhSharedSecret =
         Bytes.concat(
-            X25519.computeSharedSecret(senderEphemeralPrivateKey, recipientPublicKey),
+            X25519.computeSharedSecret(ephemeralPrivateKey, recipientPublicKey),
             X25519.computeSharedSecret(
                 senderPrivateKey.getSerializedPrivate().toByteArray(), recipientPublicKey));
-    byte[] senderEphemeralPublicKey = X25519.publicFromPrivate(senderEphemeralPrivateKey);
     byte[] senderPublicKey =
         X25519.publicFromPrivate(senderPrivateKey.getSerializedPrivate().toByteArray());
     byte[] kemSharedSecret =
         deriveKemSharedSecret(
-            dhSharedSecret, senderEphemeralPublicKey, recipientPublicKey, senderPublicKey);
-    return new HpkeKemEncapOutput(kemSharedSecret, senderEphemeralPublicKey);
+            dhSharedSecret, ephemeralPublicKey, recipientPublicKey, senderPublicKey);
+    return new HpkeKemEncapOutput(kemSharedSecret, ephemeralPublicKey);
   }
 
   @Override
   public HpkeKemEncapOutput authEncapsulate(
       byte[] recipientPublicKey, HpkeKemPrivateKey senderPrivateKey)
       throws GeneralSecurityException {
-    return authEncapsulate(recipientPublicKey, X25519.generatePrivateKey(), senderPrivateKey);
+    byte[] ephemeralPrivateKey = X25519.generatePrivateKey();
+    byte[] ephemeralPublicKey = X25519.publicFromPrivate(ephemeralPrivateKey);
+    return authEncapsulateWithFixedEphemeralKey(
+        recipientPublicKey, ephemeralPrivateKey, ephemeralPublicKey, senderPrivateKey);
   }
 
   @Override

@@ -76,12 +76,17 @@ public final class X25519HpkeKemTest {
     X25519HpkeKem kem = new X25519HpkeKem(new HkdfHpkeKdf(MAC_ALGORITHM));
     HpkeKemEncapOutput result;
     if (mode == HpkeUtil.BASE_MODE) {
-      result = kem.encapsulate(testSetup.recipientPublicKey, testSetup.senderEphemeralPrivateKey);
-    } else if (mode == HpkeUtil.AUTH_MODE) {
       result =
-          kem.authEncapsulate(
+          kem.encapsulateWithFixedEphemeralKey(
               testSetup.recipientPublicKey,
               testSetup.senderEphemeralPrivateKey,
+              testSetup.senderEphemeralPublicKey);
+    } else if (mode == HpkeUtil.AUTH_MODE) {
+      result =
+          kem.authEncapsulateWithFixedEphemeralKey(
+              testSetup.recipientPublicKey,
+              testSetup.senderEphemeralPrivateKey,
+              testSetup.senderEphemeralPublicKey,
               toHpkeKemPrivateKey(testSetup.senderPrivateKey, testSetup.senderPublicKey));
     } else {
       throw new IllegalArgumentException("Unsupported mode: " + mode[0]);
