@@ -10,6 +10,12 @@ loading key material, obtaining a primitive, and using the primitive
 to do crypto. It also shows how one can add a dependency on Tink
 using Gradle.
 
-The easiest way to build this app is to import it to Android Studio. You can
+You can download tink-java source with:
+
+```shell
+git clone https://github.com/tink-crypto/tink-java
+```
+
+The easiest way to build this app is to import it to [Android Studio](https://developer.android.com/studio/). You can
 also
 [build it from the command line](https://developer.android.com/studio/build/building-cmdline).
