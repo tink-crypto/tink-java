@@ -16,14 +16,16 @@
 
 package com.google.crypto.tink.subtle;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.testing.WycheproofTestUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
+import java.util.ArrayList;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -73,67 +75,59 @@ public final class X25519Test {
     assertEquals(128, privateKey[31] & 192);
   }
 
-  private static void x25519Helper(int privateKeyLen, int peersPublicValueLen)
-      throws GeneralSecurityException {
-    byte[] privateKey = new byte[privateKeyLen];
-    byte[] base = new byte[peersPublicValueLen];
-    base[0] = 9;
-    try {
-      X25519.computeSharedSecret(privateKey, base);
-      fail("Expected InvalidKeyException");
-    } catch (InvalidKeyException expected) {
-    }
-  }
-
   @Test
   public void testX25519ThrowsIllegalArgExceptionWhenPrivateKeySizeIsLessThan32Bytes()
       throws Exception {
-    x25519Helper(31, 32);
+    byte[] privateKey = new byte[31];
+    byte[] base = new byte[32];
+    base[0] = 9;
+    assertThrows(InvalidKeyException.class, () -> X25519.computeSharedSecret(privateKey, base));
   }
 
   @Test
   public void testX25519ThrowsIllegalArgExceptionWhenPrivateKeySizeIsGreaterThan32Bytes()
       throws Exception {
-    x25519Helper(33, 32);
+    byte[] privateKey = new byte[33];
+    byte[] base = new byte[32];
+    base[0] = 9;
+    assertThrows(InvalidKeyException.class, () -> X25519.computeSharedSecret(privateKey, base));
   }
 
   @Test
   public void testX25519ThrowsIllegalArgExceptionWhenPeersPublicValueIsLessThan32Bytes()
       throws Exception {
-    x25519Helper(32, 31);
+    byte[] privateKey = new byte[32];
+    byte[] base = new byte[31];
+    base[0] = 9;
+    assertThrows(InvalidKeyException.class, () -> X25519.computeSharedSecret(privateKey, base));
   }
 
   @Test
   public void testX25519ThrowsIllegalArgExceptionWhenPeersPublicValueIsGreaterThan32Bytes()
       throws Exception {
-    x25519Helper(32, 33);
-  }
-
-  private static void publicFromPrivateHelper(int privateKeyLen) {
-    byte[] privateKey = new byte[privateKeyLen];
-    try {
-      X25519.publicFromPrivate(privateKey);
-      fail("Expected InvalidKeyException");
-    } catch (InvalidKeyException expected) {
-    }
+    byte[] privateKey = new byte[32];
+    byte[] base = new byte[33];
+    base[0] = 9;
+    assertThrows(InvalidKeyException.class, () -> X25519.computeSharedSecret(privateKey, base));
   }
 
   @Test
   public void testX25519PublicFromPrivateThrowsIllegalArgExWhenPrivateKeyIsLessThan32Bytes() {
-    publicFromPrivateHelper(31);
+    byte[] privateKey = new byte[31];
+    assertThrows(InvalidKeyException.class, () -> X25519.publicFromPrivate(privateKey));
   }
 
   @Test
   public void testX25519PublicFromPrivateThrowsIllegalArgExWhenPrivateKeyIsGreaterThan32Bytes() {
-    publicFromPrivateHelper(33);
+    byte[] privateKey = new byte[33];
+    assertThrows(InvalidKeyException.class, () -> X25519.publicFromPrivate(privateKey));
   }
 
   @Test
   public void testComputeSharedSecretWithWycheproofVectors() throws Exception {
     JsonObject json =
         WycheproofTestUtil.readJson("../wycheproof/testvectors/x25519_test.json");
-    int errors = 0;
-    int cntSkippedTests = 0;
+    ArrayList<String> errors = new ArrayList<>();
     JsonArray testGroups = json.getAsJsonArray("testGroups");
     for (int i = 0; i < testGroups.size(); i++) {
       JsonObject group = testGroups.get(i).getAsJsonObject();
@@ -148,37 +142,29 @@ public final class X25519Test {
         String hexPubKey = testcase.get("public").getAsString();
         String hexPrivKey = testcase.get("private").getAsString();
         String expectedSharedSecret = testcase.get("shared").getAsString();
-        if (!curve.equals("curve25519")) {
-          System.out.printf("Skipping %s, unknown curve name: %s", tcId, curve);
-          cntSkippedTests++;
-          continue;
-        }
+        assertThat(curve).isEqualTo("curve25519");
         try {
           String sharedSecret =
               Hex.encode(X25519.computeSharedSecret(Hex.decode(hexPrivKey), Hex.decode(hexPubKey)));
           if (result.equals("invalid")) {
-            System.out.printf(
-                "FAIL %s: accepting invalid parameters, shared secret: %s%n", tcId, sharedSecret);
-            errors++;
+            errors.add(
+                "FAIL " + tcId + ": accepting invalid parameters, shared secret: " + sharedSecret);
           } else if (!expectedSharedSecret.equals(sharedSecret)) {
-            System.out.printf(
-                "FAIL %s: incorrect shared secret, computed: %s, expected: %s%n",
-                tcId, sharedSecret, expectedSharedSecret);
-            errors++;
+            errors.add(
+                "FAIL "
+                    + tcId
+                    + ": incorrect shared secret, computed: "
+                    + sharedSecret
+                    + ", expected: "
+                    + expectedSharedSecret);
           }
         } catch (GeneralSecurityException ex) {
           if (result.equals("valid")) {
-            System.out.printf("FAIL %s, exception %s%n", tcId, ex);
-            errors++;
+            errors.add("FAIL " + tcId + ": exception: " + ex.getMessage());
           }
-        } catch (Exception ex) {
-          // Other exceptions typically indicate that something is wrong with the implementation.
-          System.out.printf("FAIL %s, exception %s%n", tcId, ex);
-          errors++;
         }
       }
     }
-    System.out.printf("Number of tests skipped: %d", cntSkippedTests);
-    assertEquals(0, errors);
+    assertThat(errors).isEmpty();
   }
 }
