@@ -142,7 +142,7 @@ public final class RsaSsaPkcs1PublicKeyTest {
   }
 
   @Test
-  public void buildWithoutPublicPoint_fails() throws Exception {
+  public void buildWithoutModulus_fails() throws Exception {
     RsaSsaPkcs1Parameters parameters =
         RsaSsaPkcs1Parameters.builder()
             .setModulusSizeBits(2048)
