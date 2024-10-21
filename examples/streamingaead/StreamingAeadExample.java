@@ -69,7 +69,7 @@ public final class StreamingAeadExample {
       associatedData = args[4].getBytes(UTF_8);
     }
 
-    // Initalise Tink: register all Streaming AEAD key types with the Tink runtime
+    // Initialize Tink: register all Streaming AEAD key types with the Tink runtime
     StreamingAeadConfig.register();
 
     // Read the keyset into a KeysetHandle
@@ -82,12 +82,18 @@ public final class StreamingAeadExample {
         handle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
 
     // Use the primitive to encrypt/decrypt files
-    if (MODE_ENCRYPT.equals(mode)) {
+    if (mode.equals(MODE_ENCRYPT)) {
       encryptFile(streamingAead, inputFile, outputFile, associatedData);
-    } else if (MODE_DECRYPT.equals(mode)) {
+    } else if (mode.equals(MODE_DECRYPT)) {
       decryptFile(streamingAead, inputFile, outputFile, associatedData);
     } else {
-      System.err.println("The first argument must be either encrypt or decrypt, got: " + mode);
+      System.err.println(
+          "The first argument must be either "
+              + MODE_ENCRYPT
+              + " or "
+              + MODE_DECRYPT
+              + ", got: "
+              + mode);
       System.exit(1);
     }
   }
@@ -95,7 +101,7 @@ public final class StreamingAeadExample {
   private static void encryptFile(
       StreamingAead streamingAead, Path inputFile, Path outputFile, byte[] associatedData)
       throws GeneralSecurityException, IOException {
-    try (WritableByteChannel plaintextChannel =
+    try (WritableByteChannel encryptingChannel =
             streamingAead.newEncryptingChannel(
                 FileChannel.open(outputFile, StandardOpenOption.WRITE, StandardOpenOption.CREATE),
                 associatedData);
@@ -108,7 +114,7 @@ public final class StreamingAeadExample {
         }
         byteBuffer.flip();
         while (byteBuffer.hasRemaining()) {
-          plaintextChannel.write(byteBuffer);
+          encryptingChannel.write(byteBuffer);
         }
         byteBuffer.clear();
       }
@@ -118,14 +124,14 @@ public final class StreamingAeadExample {
   private static void decryptFile(
       StreamingAead streamingAead, Path inputFile, Path outputFile, byte[] associatedData)
       throws GeneralSecurityException, IOException {
-    try (ReadableByteChannel plaintextChannel =
+    try (ReadableByteChannel decryptingChannel =
             streamingAead.newDecryptingChannel(
                 FileChannel.open(inputFile, StandardOpenOption.READ), associatedData);
         FileChannel outputChannel =
             FileChannel.open(outputFile, StandardOpenOption.WRITE, StandardOpenOption.CREATE)) {
       ByteBuffer byteBuffer = ByteBuffer.allocate(BLOCK_SIZE_IN_BYTES);
       while (true) {
-        int read = plaintextChannel.read(byteBuffer);
+        int read = decryptingChannel.read(byteBuffer);
         if (read <= 0) {
           return;
         }
