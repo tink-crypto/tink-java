@@ -671,3 +671,23 @@ java_library(
         "//src/main/java/com/google/crypto/tink/util:secret_bytes",
     ],
 )
+
+android_library(
+    name = "x25519_jce-android",
+    srcs = ["X25519Jce.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/internal:util-android",
+        "//src/main/java/com/google/crypto/tink/subtle:bytes-android",
+        "//src/main/java/com/google/crypto/tink/subtle:subtle_util_cluster-android",
+    ],
+)
+
+java_library(
+    name = "x25519_jce",
+    srcs = ["X25519Jce.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/internal:util",
+        "//src/main/java/com/google/crypto/tink/subtle:bytes",
+        "//src/main/java/com/google/crypto/tink/subtle:subtle_util_cluster",
+    ],
+)

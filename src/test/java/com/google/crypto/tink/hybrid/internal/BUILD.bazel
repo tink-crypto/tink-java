@@ -336,3 +336,20 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "X25519JceTest",
+    size = "small",
+    srcs = ["X25519JceTest.java"],
+    data = ["@wycheproof//testvectors:all"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/hybrid/internal:x25519_jce",
+        "//src/main/java/com/google/crypto/tink/internal:util",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "//src/main/java/com/google/crypto/tink/subtle:x25519",
+        "//src/main/java/com/google/crypto/tink/testing:wycheproof_test_util",
+        "@maven//:com_google_code_gson_gson",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)

@@ -14,36 +14,69 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package com.google.crypto.tink.subtle;
+package com.google.crypto.tink.hybrid.internal;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
+import com.google.crypto.tink.internal.Util;
+import com.google.crypto.tink.subtle.Hex;
+import com.google.crypto.tink.subtle.X25519;
 import com.google.crypto.tink.testing.WycheproofTestUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.util.ArrayList;
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-/** Unit tests for {@link X25519}. */
+/**
+ * Unit tests for {@link X25519Jce}.\
+ *
+ * <p>TODO(juerg): Also add tests with Conscrypt.
+ */
 @RunWith(JUnit4.class)
-public final class X25519Test {
+public final class X25519JceTest {
+
+  boolean isJavaOneDotEight() {
+    return System.getProperty("java.version").startsWith("1.8");
+  }
+
+  @Test
+  public void isSupported_returnsTrueExceptForJavaOneDotEight() throws Exception {
+    Assume.assumeTrue(!Util.isAndroid());
+
+    if (isJavaOneDotEight()) {
+      assertThat(X25519Jce.isSupported()).isFalse();
+    } else {
+      assertThat(X25519Jce.isSupported()).isTrue();
+    }
+  }
+
+  @Test
+  public void isSupported_onAndroid_returnsTrue() throws Exception {
+    Assume.assumeTrue(Util.isAndroid());
+
+    assertThat(X25519Jce.isSupported()).isTrue();
+  }
+
   /** Iteration test in Section 5.2 of RFC 7748. https://tools.ietf.org/html/rfc7748 */
   @Test
   public void testComputeSharedSecretWithRfcIteration() throws Exception {
+    Assume.assumeTrue(X25519Jce.isSupported());
+
     byte[] k = new byte[32];
     k[0] = 9;
     byte[] prevK = k;
-    k = X25519.computeSharedSecret(k, prevK);
+    k = X25519Jce.computeSharedSecret(k, prevK);
     assertEquals("422c8e7a6227d7bca1350b3e2bb7279f7897b87bb6854b783c60e80311ae3079", Hex.encode(k));
     for (int i = 0; i < 999; i++) {
       byte[] tmp = k;
-      k = X25519.computeSharedSecret(k, prevK);
+      k = X25519Jce.computeSharedSecret(k, prevK);
       prevK = tmp;
     }
     assertEquals("684cf59ba83309552800ef566f2f4d3c1c3887c49360e3875f2eb94d99532c51", Hex.encode(k));
@@ -66,6 +99,8 @@ public final class X25519Test {
 
   @Test
   public void computeSharedSecret_withBannedPublicKey_throws() throws Exception {
+    Assume.assumeTrue(X25519Jce.isSupported());
+
     byte[] privateKey = new byte[32];
     privateKey[0] = 9;
 
@@ -152,85 +187,72 @@ public final class X25519Test {
         };
     for (byte[] bannedPublicKey : bannedPublicKeys) {
       assertThrows(
-          InvalidKeyException.class, () -> X25519.computeSharedSecret(privateKey, bannedPublicKey));
+          InvalidKeyException.class,
+          () -> X25519Jce.computeSharedSecret(privateKey, bannedPublicKey));
     }
   }
 
-  /**
-   * Tests against the test vectors in Section 6.1 of RFC 7748. https://tools.ietf.org/html/rfc7748
-   */
   @Test
-  public void testPublicFromPrivateWithRfcTestVectors() throws Exception {
-    byte[] out =
-        X25519.publicFromPrivate(
-            Hex.decode("77076d0a7318a57d3c16c17251b26645df4c2f87ebc0992ab177fba51db92c2a"));
-    assertEquals(
-        "8520f0098930a754748b7ddcb43ef75a0dbf3a0d26381af4eba4a98eaa9b4e6a", Hex.encode(out));
+  public void testGeneratePrivateKey_returnsRandomValidKeyPair() throws Exception {
+    Assume.assumeTrue(X25519Jce.isSupported());
 
-    out =
-        X25519.publicFromPrivate(
-            Hex.decode("5dab087e624a8a4b79e17f8b83800ee66f3bb1292618b6fd1c2f8b27ff88e0eb"));
-    assertEquals(
-        "de9edb7d7b7dc1b4d35b61c2ece435373f8343c85b78674dadfc7e146f882b4f", Hex.encode(out));
-  }
+    X25519Jce.KeyPair keyPair = X25519Jce.generateKeyPair();
+    assertThat(keyPair.privateKey).hasLength(32);
+    assertThat(keyPair.publicKey).hasLength(32);
+    assertThat(keyPair.publicKey).isEqualTo(X25519.publicFromPrivate(keyPair.privateKey));
 
-  @Test
-  public void testGeneratePrivateKeyReturnsIntentionallyMalformedKeys() {
-    byte[] privateKey = X25519.generatePrivateKey();
-    assertEquals(7, privateKey[0] & 7);
-    assertEquals(128, privateKey[31] & 192);
+    X25519Jce.KeyPair keyPair2 = X25519Jce.generateKeyPair();
+    assertThat(keyPair2.privateKey).isNotEqualTo(keyPair.privateKey);
   }
 
   @Test
   public void testX25519ThrowsIllegalArgExceptionWhenPrivateKeySizeIsLessThan32Bytes()
       throws Exception {
+    Assume.assumeTrue(X25519Jce.isSupported());
+
     byte[] privateKey = new byte[31];
     byte[] base = new byte[32];
     base[0] = 9;
-    assertThrows(InvalidKeyException.class, () -> X25519.computeSharedSecret(privateKey, base));
+    assertThrows(InvalidKeyException.class, () -> X25519Jce.computeSharedSecret(privateKey, base));
   }
 
   @Test
   public void testX25519ThrowsIllegalArgExceptionWhenPrivateKeySizeIsGreaterThan32Bytes()
       throws Exception {
+    Assume.assumeTrue(X25519Jce.isSupported());
+
     byte[] privateKey = new byte[33];
     byte[] base = new byte[32];
     base[0] = 9;
-    assertThrows(InvalidKeyException.class, () -> X25519.computeSharedSecret(privateKey, base));
+    assertThrows(InvalidKeyException.class, () -> X25519Jce.computeSharedSecret(privateKey, base));
   }
 
   @Test
   public void testX25519ThrowsIllegalArgExceptionWhenPeersPublicValueIsLessThan32Bytes()
       throws Exception {
+    Assume.assumeTrue(X25519Jce.isSupported());
+
     byte[] privateKey = new byte[32];
     byte[] base = new byte[31];
     base[0] = 9;
-    assertThrows(InvalidKeyException.class, () -> X25519.computeSharedSecret(privateKey, base));
+    assertThrows(InvalidKeyException.class, () -> X25519Jce.computeSharedSecret(privateKey, base));
   }
 
   @Test
   public void testX25519ThrowsIllegalArgExceptionWhenPeersPublicValueIsGreaterThan32Bytes()
       throws Exception {
+    Assume.assumeTrue(X25519Jce.isSupported());
+
     byte[] privateKey = new byte[32];
     byte[] base = new byte[33];
     base[0] = 9;
-    assertThrows(InvalidKeyException.class, () -> X25519.computeSharedSecret(privateKey, base));
-  }
-
-  @Test
-  public void testX25519PublicFromPrivateThrowsIllegalArgExWhenPrivateKeyIsLessThan32Bytes() {
-    byte[] privateKey = new byte[31];
-    assertThrows(InvalidKeyException.class, () -> X25519.publicFromPrivate(privateKey));
-  }
-
-  @Test
-  public void testX25519PublicFromPrivateThrowsIllegalArgExWhenPrivateKeyIsGreaterThan32Bytes() {
-    byte[] privateKey = new byte[33];
-    assertThrows(InvalidKeyException.class, () -> X25519.publicFromPrivate(privateKey));
+    assertThrows(InvalidKeyException.class, () -> X25519Jce.computeSharedSecret(privateKey, base));
   }
 
   @Test
   public void testComputeSharedSecretWithWycheproofVectors() throws Exception {
+    Assume.assumeTrue(X25519Jce.isSupported());
+
     JsonObject json =
         WycheproofTestUtil.readJson("../wycheproof/testvectors/x25519_test.json");
     ArrayList<String> errors = new ArrayList<>();
@@ -251,7 +273,8 @@ public final class X25519Test {
         assertThat(curve).isEqualTo("curve25519");
         try {
           String sharedSecret =
-              Hex.encode(X25519.computeSharedSecret(Hex.decode(hexPrivKey), Hex.decode(hexPubKey)));
+              Hex.encode(
+                  X25519Jce.computeSharedSecret(Hex.decode(hexPrivKey), Hex.decode(hexPubKey)));
           if (result.equals("invalid")) {
             errors.add(
                 "FAIL " + tcId + ": accepting invalid parameters, shared secret: " + sharedSecret);
