@@ -21,8 +21,8 @@ tinkey create-public-keyset --in hybrid_test_private_keyset.json \
 ### Bazel
 
 ```shell
-git clone https://github.com/google/tink
-cd tink/java_src/examples
+git clone https://github.com/tink-crypto/tink-java
+cd examples
 bazel build hybrid_example
 ```
 

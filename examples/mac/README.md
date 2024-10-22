@@ -18,8 +18,8 @@ tinkey create-keyset --key-template HMAC_SHA256_256BITTAG --out-format JSON \
 ### Bazel
 
 ```shell
-git clone https://github.com/google/tink
-cd tink/examples/java_src
+git clone https://github.com/tink-crypto/tink-java
+cd examples
 bazel build ...
 
 echo "some data" > data.txt
