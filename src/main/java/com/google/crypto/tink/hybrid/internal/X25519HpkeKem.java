@@ -92,8 +92,7 @@ final class X25519HpkeKem implements HpkeKem {
             X25519.computeSharedSecret(ephemeralPrivateKey, recipientPublicKey),
             X25519.computeSharedSecret(
                 senderPrivateKey.getSerializedPrivate().toByteArray(), recipientPublicKey));
-    byte[] senderPublicKey =
-        X25519.publicFromPrivate(senderPrivateKey.getSerializedPrivate().toByteArray());
+    byte[] senderPublicKey = senderPrivateKey.getSerializedPublic().toByteArray();
     byte[] kemSharedSecret =
         deriveKemSharedSecret(
             dhSharedSecret, ephemeralPublicKey, recipientPublicKey, senderPublicKey);
@@ -129,7 +128,7 @@ final class X25519HpkeKem implements HpkeKem {
         Bytes.concat(
             X25519.computeSharedSecret(privateKey, encapsulatedKey),
             X25519.computeSharedSecret(privateKey, senderPublicKey));
-    byte[] recipientPublicKey = X25519.publicFromPrivate(privateKey);
+    byte[] recipientPublicKey = recipientPrivateKey.getSerializedPublic().toByteArray();
     return deriveKemSharedSecret(
         dhSharedSecret, encapsulatedKey, recipientPublicKey, senderPublicKey);
   }
