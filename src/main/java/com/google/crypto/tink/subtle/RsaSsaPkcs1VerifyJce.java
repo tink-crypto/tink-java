@@ -31,6 +31,7 @@ import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.MessageDigest;
+import java.security.NoSuchProviderException;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Arrays;
@@ -186,8 +187,10 @@ public final class RsaSsaPkcs1VerifyJce implements PublicKeyVerify {
 
   @AccessesPartialKey
   public static PublicKeyVerify create(RsaSsaPkcs1PublicKey key) throws GeneralSecurityException {
-    if (RsaSsaPkcs1VerifyConscrypt.isSupported()) {
+    try {
       return RsaSsaPkcs1VerifyConscrypt.create(key);
+    } catch (NoSuchProviderException e) {
+      // Ignore, and fall back to the Java implementation.
     }
     KeyFactory keyFactory = EngineFactory.KEY_FACTORY.getInstance("RSA");
     RSAPublicKey publicKey =

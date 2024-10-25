@@ -31,6 +31,7 @@ import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.MessageDigest;
+import java.security.NoSuchProviderException;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPrivateCrtKeySpec;
@@ -208,8 +209,10 @@ public final class RsaSsaPssSignJce implements PublicKeySign {
 
   @AccessesPartialKey
   public static PublicKeySign create(RsaSsaPssPrivateKey key) throws GeneralSecurityException {
-    if (RsaSsaPssSignConscrypt.isSupported()) {
+    try {
       return RsaSsaPssSignConscrypt.create(key);
+    } catch (NoSuchProviderException e) {
+      // Ignore, and fall back to the Java implementation.
     }
     KeyFactory kf = EngineFactory.KEY_FACTORY.getInstance("RSA");
     RSAPrivateCrtKey privateKey =

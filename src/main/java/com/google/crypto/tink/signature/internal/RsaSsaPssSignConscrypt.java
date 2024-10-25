@@ -27,6 +27,8 @@ import com.google.crypto.tink.subtle.Validators;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
+import java.security.NoSuchProviderException;
+import java.security.Provider;
 import java.security.Signature;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.spec.PSSParameterSpec;
@@ -40,11 +42,6 @@ public final class RsaSsaPssSignConscrypt implements PublicKeySign {
 
   private static final byte[] EMPTY = new byte[0];
   private static final byte[] LEGACY_MESSAGE_SUFFIX = new byte[] {0};
-
-  /** Returns true if Conscrypt is available and supports RSA SSA PSS. */
-  public static boolean isSupported() {
-    return RsaSsaPssVerifyConscrypt.isSupported();
-  }
 
   @SuppressWarnings("Immutable")
   private final RSAPrivateCrtKey privateKey;
@@ -60,12 +57,16 @@ public final class RsaSsaPssSignConscrypt implements PublicKeySign {
   @SuppressWarnings("Immutable")
   private final byte[] messageSuffix;
 
+  @SuppressWarnings("Immutable")
+  private final Provider conscrypt;
+
   @AccessesPartialKey
   public static PublicKeySign create(RsaSsaPssPrivateKey key) throws GeneralSecurityException {
-    if (!isSupported()) {
-      throw new GeneralSecurityException("RSA SSA PSS using Conscrypt is not supported.");
+    Provider conscrypt = RsaSsaPssVerifyConscrypt.conscryptProviderOrNull();
+    if (conscrypt == null) {
+      throw new NoSuchProviderException("RSA SSA PSS using Conscrypt is not supported.");
     }
-    KeyFactory keyFactory = KeyFactory.getInstance("RSA", RsaSsaPssVerifyConscrypt.CONSCRYPT);
+    KeyFactory keyFactory = KeyFactory.getInstance("RSA", conscrypt);
     RsaSsaPssParameters params = key.getParameters();
     RSAPrivateCrtKey privateKey =
         (RSAPrivateCrtKey)
@@ -87,7 +88,8 @@ public final class RsaSsaPssSignConscrypt implements PublicKeySign {
         key.getOutputPrefix().toByteArray(),
         params.getVariant().equals(RsaSsaPssParameters.Variant.LEGACY)
             ? LEGACY_MESSAGE_SUFFIX
-            : EMPTY);
+            : EMPTY,
+        conscrypt);
   }
 
   private RsaSsaPssSignConscrypt(
@@ -96,7 +98,8 @@ public final class RsaSsaPssSignConscrypt implements PublicKeySign {
       RsaSsaPssParameters.HashType mgf1Hash,
       int saltLength,
       byte[] outputPrefix,
-      byte[] messageSuffix)
+      byte[] messageSuffix,
+      Provider conscrypt)
       throws GeneralSecurityException {
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException(
@@ -110,12 +113,12 @@ public final class RsaSsaPssSignConscrypt implements PublicKeySign {
         RsaSsaPssVerifyConscrypt.getPssParameterSpec(sigHash, mgf1Hash, saltLength);
     this.outputPrefix = outputPrefix;
     this.messageSuffix = messageSuffix;
+    this.conscrypt = conscrypt;
   }
 
   @Override
   public byte[] sign(final byte[] data) throws GeneralSecurityException {
-    Signature signer =
-        Signature.getInstance(signatureAlgorithm, RsaSsaPssVerifyConscrypt.CONSCRYPT);
+    Signature signer = Signature.getInstance(signatureAlgorithm, conscrypt);
     signer.initSign(privateKey);
     signer.setParameter(parameterSpec);
     signer.update(data);

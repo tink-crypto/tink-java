@@ -29,6 +29,7 @@ import com.google.crypto.tink.subtle.Validators;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
+import java.security.NoSuchProviderException;
 import java.security.Provider;
 import java.security.Signature;
 import java.security.interfaces.RSAPublicKey;
@@ -51,20 +52,12 @@ public final class RsaSsaPssVerifyConscrypt implements PublicKeyVerify {
   private static final int TRAILER_FIELD_BC = 1;
 
   @Nullable
-  private static Provider conscryptProviderOrNull() {
+  static Provider conscryptProviderOrNull() {
     if (Util.isAndroid() && Util.getAndroidApiLevel() <= 23) {
       // On Android API level 23 or lower, RSA SSA PSS is not supported.
       return null;
     }
     return ConscryptUtil.providerOrNull();
-  }
-
-  // TODO(b/182987934) Move into a ConscryptUtil class.
-  static final Provider CONSCRYPT = conscryptProviderOrNull();
-
-  /** Returns true if Conscrypt is available and supports RSA SSA PSS. */
-  public static boolean isSupported() {
-    return CONSCRYPT != null;
   }
 
   @SuppressWarnings("Immutable")
@@ -80,6 +73,9 @@ public final class RsaSsaPssVerifyConscrypt implements PublicKeyVerify {
 
   @SuppressWarnings("Immutable")
   private final byte[] messageSuffix;
+
+  @SuppressWarnings("Immutable")
+  private final Provider conscrypt;
 
   // These are the RSA SSA PSS algorithm names used by Conscrypt. See:
   // https://github.com/google/conscrypt/blob/master/CAPABILITIES.md#signature
@@ -131,7 +127,8 @@ public final class RsaSsaPssVerifyConscrypt implements PublicKeyVerify {
       RsaSsaPssParameters.HashType mgf1Hash,
       int saltLength,
       byte[] outputPrefix,
-      byte[] messageSuffix)
+      byte[] messageSuffix,
+      Provider conscrypt)
       throws GeneralSecurityException {
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException(
@@ -147,14 +144,16 @@ public final class RsaSsaPssVerifyConscrypt implements PublicKeyVerify {
     this.parameterSpec = getPssParameterSpec(sigHash, mgf1Hash, saltLength);
     this.outputPrefix = outputPrefix;
     this.messageSuffix = messageSuffix;
+    this.conscrypt = conscrypt;
   }
 
   @AccessesPartialKey
   public static PublicKeyVerify create(RsaSsaPssPublicKey key) throws GeneralSecurityException {
-    if (!isSupported()) {
-      throw new GeneralSecurityException("RSA SSA PSS using Conscrypt is not supported.");
+    Provider conscrypt = conscryptProviderOrNull();
+    if (conscrypt == null) {
+      throw new NoSuchProviderException("RSA SSA PSS using Conscrypt is not supported.");
     }
-    KeyFactory keyFactory = KeyFactory.getInstance("RSA", CONSCRYPT);
+    KeyFactory keyFactory = KeyFactory.getInstance("RSA", conscrypt);
     RSAPublicKey publicKey =
         (RSAPublicKey)
             keyFactory.generatePublic(
@@ -168,7 +167,8 @@ public final class RsaSsaPssVerifyConscrypt implements PublicKeyVerify {
         key.getOutputPrefix().toByteArray(),
         key.getParameters().getVariant().equals(RsaSsaPssParameters.Variant.LEGACY)
             ? LEGACY_MESSAGE_SUFFIX
-            : EMPTY);
+            : EMPTY,
+        conscrypt);
   }
 
   @Override
@@ -176,7 +176,7 @@ public final class RsaSsaPssVerifyConscrypt implements PublicKeyVerify {
     if (!isPrefix(outputPrefix, signature)) {
       throw new GeneralSecurityException("Invalid signature (output prefix mismatch)");
     }
-    Signature verifier = Signature.getInstance(signatureAlgorithm, CONSCRYPT);
+    Signature verifier = Signature.getInstance(signatureAlgorithm, conscrypt);
     verifier.initVerify(publicKey);
     verifier.setParameter(parameterSpec);
     verifier.update(data);

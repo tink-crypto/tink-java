@@ -16,11 +16,13 @@
 
 package com.google.crypto.tink.subtle;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
+import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.signature.RsaSsaPssParameters;
 import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
@@ -29,8 +31,12 @@ import com.google.crypto.tink.signature.internal.testing.SignatureTestVector;
 import com.google.crypto.tink.subtle.Enums.HashType;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
+import java.security.Provider;
+import java.security.Security;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.spec.RSAPrivateCrtKeySpec;
+import org.conscrypt.Conscrypt;
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -128,4 +134,23 @@ public class RsaSsaPssSignJceTest {
   @DataPoints("testVectors")
   public static final SignatureTestVector[] SIGNATURE_TEST_VECTORS =
       RsaSsaPssTestUtil.createRsaPssTestVectors();
+
+  @Test
+  public void usesConscryptImplementationIfInstalled() throws Exception {
+    Assume.assumeFalse(Util.isAndroid());
+
+    SignatureTestVector testVector = SIGNATURE_TEST_VECTORS[0];
+    RsaSsaPssPrivateKey key = (RsaSsaPssPrivateKey) testVector.getPrivateKey();
+
+    PublicKeySign signer = RsaSsaPssSignJce.create(key);
+    assertThat(signer.getClass().getSimpleName()).isEqualTo("InternalImpl");
+
+    Provider conscrypt = Conscrypt.newProvider();
+    Security.addProvider(conscrypt);
+
+    PublicKeySign signer2 = RsaSsaPssSignJce.create(key);
+    assertThat(signer2.getClass().getSimpleName()).isEqualTo("RsaSsaPssSignConscrypt");
+
+    Security.removeProvider(conscrypt.getName());
+  }
 }

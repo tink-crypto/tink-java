@@ -54,11 +54,6 @@ public class RsaSsaPssVerifyConscryptTest {
     }
   }
 
-  @Theory
-  public void isSupported() throws Exception {
-    assertThat(RsaSsaPssVerifyConscrypt.isSupported()).isTrue();
-  }
-
   @DataPoints("testVectors")
   public static final SignatureTestVector[] TEST_VECTORS =
       RsaSsaPssTestUtil.createRsaPssTestVectors();

@@ -20,6 +20,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.PublicKeyVerify;
+import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.signature.RsaSsaPssParameters;
 import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
 import com.google.crypto.tink.signature.internal.testing.RsaSsaPssTestUtil;
@@ -31,9 +32,13 @@ import com.google.gson.JsonObject;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
+import java.security.Provider;
+import java.security.Security;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Arrays;
+import org.conscrypt.Conscrypt;
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -230,5 +235,25 @@ public class RsaSsaPssVerifyJceTest {
     } else {
       return Hex.decode(testcase.get("message").getAsString());
     }
+  }
+
+  @Test
+  public void usesConscryptImplementationIfInstalled() throws Exception {
+    Assume.assumeFalse(Util.isAndroid());
+
+    SignatureTestVector testVector = TEST_VECTORS[0];
+    RsaSsaPssPublicKey testPublicKey =
+        (RsaSsaPssPublicKey) testVector.getPrivateKey().getPublicKey();
+
+    PublicKeyVerify verifier = RsaSsaPssVerifyJce.create(testPublicKey);
+    assertThat(verifier.getClass().getSimpleName()).isEqualTo("InternalImpl");
+
+    Provider conscrypt = Conscrypt.newProvider();
+    Security.addProvider(conscrypt);
+
+    PublicKeyVerify verifier2 = RsaSsaPssVerifyJce.create(testPublicKey);
+    assertThat(verifier2.getClass().getSimpleName()).isEqualTo("RsaSsaPssVerifyConscrypt");
+
+    Security.removeProvider(conscrypt.getName());
   }
 }

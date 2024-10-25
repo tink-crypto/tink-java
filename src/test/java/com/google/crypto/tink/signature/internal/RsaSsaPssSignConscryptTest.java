@@ -16,8 +16,6 @@
 
 package com.google.crypto.tink.signature.internal;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.internal.Util;
@@ -61,10 +59,5 @@ public class RsaSsaPssSignConscryptTest {
     byte[] message = testVector.getMessage();
     byte[] signature = signer.sign(message);
     verifier.verify(signature, message);
-  }
-
-  @Theory
-  public void isSupported() throws Exception {
-    assertThat(RsaSsaPssSignConscrypt.isSupported()).isTrue();
   }
 }

@@ -33,10 +33,12 @@ import com.google.gson.JsonObject;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
+import java.security.Provider;
 import java.security.Security;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPublicKeySpec;
 import org.conscrypt.Conscrypt;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -218,5 +220,25 @@ public class RsaSsaPkcs1VerifyJceTest {
     } else {
       return Hex.decode(testcase.get("message").getAsString());
     }
+  }
+
+  @Test
+  public void usesConscryptImplementationIfInstalled() throws Exception {
+    Assume.assumeFalse(Util.isAndroid());
+
+    RsaSsaPkcs1PublicKey testPublicKey =
+        (RsaSsaPkcs1PublicKey) ALL_TEST_VECTORS[0].getPrivateKey().getPublicKey();
+
+    // Conscrypt is already installed, so RsaSsaPkcs1VerifyConscrypt is used.
+    PublicKeyVerify verifier = RsaSsaPkcs1VerifyJce.create(testPublicKey);
+    assertThat(verifier.getClass().getSimpleName()).isEqualTo("RsaSsaPkcs1VerifyConscrypt");
+
+    Provider conscrypt = Conscrypt.newProvider();
+    Security.removeProvider(conscrypt.getName());
+
+    PublicKeyVerify verifier2 = RsaSsaPkcs1VerifyJce.create(testPublicKey);
+    assertThat(verifier2.getClass().getSimpleName()).isEqualTo("InternalJavaImpl");
+
+    Security.addProvider(conscrypt);
   }
 }

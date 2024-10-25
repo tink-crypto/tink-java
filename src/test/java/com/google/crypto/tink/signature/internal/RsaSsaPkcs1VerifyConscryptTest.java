@@ -68,11 +68,6 @@ public class RsaSsaPkcs1VerifyConscryptTest {
         () -> verifier.verify(testVector.getSignature(), new byte[] {1, 2, 3}));
   }
 
-  @Theory
-  public void isSupported() throws Exception {
-    assertThat(RsaSsaPkcs1VerifyConscrypt.isSupported()).isTrue();
-  }
-
   private static RsaSsaPkcs1Parameters.HashType getHashType(String sha) {
     switch (sha) {
       case "SHA-256":

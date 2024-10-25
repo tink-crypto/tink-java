@@ -29,6 +29,7 @@ import com.google.crypto.tink.subtle.Validators;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
+import java.security.NoSuchProviderException;
 import java.security.Provider;
 import java.security.Signature;
 import java.security.interfaces.RSAPublicKey;
@@ -59,20 +60,6 @@ public final class RsaSsaPkcs1VerifyConscrypt implements PublicKeyVerify {
     return ConscryptUtil.providerOrNull();
   }
 
-  private static final Provider PROVIDER = conscryptProviderOrNull();
-
-  /** Returns true if the RsaSsaPkcs1 signature verification using Conscrypt works. */
-  public static boolean isSupported() {
-    return PROVIDER != null;
-  }
-
-  private static Signature getSignature(String algorithm) throws GeneralSecurityException {
-    if (PROVIDER == null) {
-      throw new GeneralSecurityException("Conscrypt Provider not found");
-    }
-    return Signature.getInstance(algorithm, PROVIDER);
-  }
-
   @SuppressWarnings("Immutable")
   private final RSAPublicKey publicKey;
 
@@ -83,6 +70,9 @@ public final class RsaSsaPkcs1VerifyConscrypt implements PublicKeyVerify {
 
   @SuppressWarnings("Immutable")
   private final byte[] messageSuffix;
+
+  @SuppressWarnings("Immutable")
+  private final Provider conscrypt;
 
   public static String toRsaSsaPkcs1Algo(RsaSsaPkcs1Parameters.HashType hashType)
       throws GeneralSecurityException {
@@ -108,10 +98,11 @@ public final class RsaSsaPkcs1VerifyConscrypt implements PublicKeyVerify {
    */
   @AccessesPartialKey
   public static PublicKeyVerify create(RsaSsaPkcs1PublicKey key) throws GeneralSecurityException {
-    if (!isSupported()) {
-      throw new GeneralSecurityException("RSA-PKCS1.5 using Conscrypt is not supported.");
+    Provider conscrypt = conscryptProviderOrNull();
+    if (conscrypt == null) {
+      throw new NoSuchProviderException("RSA-PKCS1.5 using Conscrypt is not supported.");
     }
-    KeyFactory keyFactory = KeyFactory.getInstance("RSA", PROVIDER);
+    KeyFactory keyFactory = KeyFactory.getInstance("RSA", conscrypt);
     RSAPublicKey publicKey =
         (RSAPublicKey)
             keyFactory.generatePublic(
@@ -123,14 +114,16 @@ public final class RsaSsaPkcs1VerifyConscrypt implements PublicKeyVerify {
         key.getOutputPrefix().toByteArray(),
         key.getParameters().getVariant().equals(RsaSsaPkcs1Parameters.Variant.LEGACY)
             ? LEGACY_MESSAGE_SUFFIX
-            : EMPTY);
+            : EMPTY,
+        conscrypt);
   }
 
   private RsaSsaPkcs1VerifyConscrypt(
       final RSAPublicKey pubKey,
       RsaSsaPkcs1Parameters.HashType hashType,
       byte[] outputPrefix,
-      byte[] messageSuffix)
+      byte[] messageSuffix,
+      Provider conscrypt)
       throws GeneralSecurityException {
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException(
@@ -142,6 +135,7 @@ public final class RsaSsaPkcs1VerifyConscrypt implements PublicKeyVerify {
     this.signatureAlgorithm = toRsaSsaPkcs1Algo(hashType);
     this.outputPrefix = outputPrefix;
     this.messageSuffix = messageSuffix;
+    this.conscrypt = conscrypt;
   }
 
   @Override
@@ -149,7 +143,7 @@ public final class RsaSsaPkcs1VerifyConscrypt implements PublicKeyVerify {
     if (!isPrefix(outputPrefix, signature)) {
       throw new GeneralSecurityException("Invalid signature (output prefix mismatch)");
     }
-    Signature verifier = getSignature(signatureAlgorithm);
+    Signature verifier = Signature.getInstance(signatureAlgorithm, conscrypt);
     verifier.initVerify(publicKey);
     verifier.update(data);
     if (messageSuffix.length > 0) {
