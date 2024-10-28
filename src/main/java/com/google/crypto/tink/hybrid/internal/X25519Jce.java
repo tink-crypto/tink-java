@@ -60,10 +60,15 @@ public final class X25519Jce {
         0x03, 0x21, 0x00, // Bit string: 256 bits
       };
 
-  /** Returns true if the JCE supports X25519. */
+  /**
+   * Returns true if the JCE supports X25519.
+   *
+   * <p>We do not support PKCS8 V2 defined in RFC 5958. If the provider uses that encoding, this
+   * function will return false.
+   */
   public static boolean isSupported() {
     try {
-      KeyPairGenerator unusedKeyPairGenerator = EngineFactory.KEY_PAIR_GENERATOR.getInstance("XDH");
+      KeyPair unused = generateKeyPair();
       KeyFactory unusedKeyFactory = EngineFactory.KEY_FACTORY.getInstance("XDH");
       KeyAgreement unusedKeyAgreement = EngineFactory.KEY_AGREEMENT.getInstance("XDH");
       return true;

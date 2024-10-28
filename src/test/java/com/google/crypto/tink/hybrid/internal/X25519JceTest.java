@@ -58,10 +58,14 @@ public final class X25519JceTest {
   }
 
   @Test
-  public void isSupported_onAndroid_returnsTrue() throws Exception {
+  public void isSupported_onAndroid_returnsTrueForAndroid31AndAbove() throws Exception {
     Assume.assumeTrue(Util.isAndroid());
 
-    assertThat(X25519Jce.isSupported()).isTrue();
+    if (Util.getAndroidApiLevel() < 31) {
+      assertThat(X25519Jce.isSupported()).isFalse();
+    } else {
+      assertThat(X25519Jce.isSupported()).isTrue();
+    }
   }
 
   /** Iteration test in Section 5.2 of RFC 7748. https://tools.ietf.org/html/rfc7748 */
