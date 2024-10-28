@@ -133,8 +133,10 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
  HybridConfig.register();
  KeysetHandle handle = KeysetHandle.generateNew(
      HybridKeyTemplates.ECIES_P256_HKDF_HMAC_SHA256_AES128_GCM);
- HybridDecrypt decrypter = handle.getPrimitive(HybridDecrypt.class);
- HybridEncrypt encrypter = handle.getPublicKeysetHandle().getPrimitive(HybridDecrypt.class);
+ HybridDecrypt decrypter = handle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
+ HybridEncrypt encrypter =
+     handle.getPublicKeysetHandle()
+         .getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
  </code></pre></div>
 <dl>
 <dt><span class="simpleTagLabel">Since:</span></dt>

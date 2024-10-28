@@ -195,9 +195,9 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
  remote key.
 
  <p>It is often not necessary to use this function. Instead of registering a <code>KmsClient</code>,
- and creating an <code>Aead</code> using <code>KeysetHandle.generateNew(KmsAeadKeyManager.createKeyTemplate(keyUri)).getPrimitive(Aead.class)</code>,
- you can create the <code>Aead</code> directly using <code>kmsClient.getAead(kekUri)</code>, without
- registering any <code>KmsClient</code>.</div>
+ and creating an <code>Aead</code> using <code>KeysetHandle.generateNew(KmsAeadKeyManager.createKeyTemplate(keyUri)).getPrimitive(RegistryConfiguration.get(),
+ Aead.class)</code>, you can create the <code>Aead</code> directly using <code>kmsClient.getAead(kekUri)</code>,
+ without registering any <code>KmsClient</code>.</div>
 </li>
 </ul>
 </li>

@@ -189,9 +189,9 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 
  <p>It is often not necessary to use this function. Instead of registering a <code>KmsClient</code>,
  and creating an <code>Aead</code> using <code>KeysetHandle.generateNew(KmsEnvelopeAeadKeyManager.createKeyTemplate(keyUri,
- KeyTemplates.get("AES128_GCM"))).getPrimitive(Aead.class)</code>, create the <code>Aead</code> directly
- using <code>KmsEnvelopeAead.create(PredefinedAeadParameters.AES256_GCM,
- kmsClient.getAead(keyUri))</code>, without registering any <code>KmsClient</code>.</div>
+ KeyTemplates.get("AES128_GCM"))).getPrimitive(RegistryConfiguration.get(), Aead.class)</code>, create
+ the <code>Aead</code> directly using <code>KmsEnvelopeAead.create(PredefinedAeadParameters.AES256_GCM, kmsClient.getAead(keyUri))</code>,
+ without registering any <code>KmsClient</code>.</div>
 </li>
 </ul>
 <a name="register-boolean-">

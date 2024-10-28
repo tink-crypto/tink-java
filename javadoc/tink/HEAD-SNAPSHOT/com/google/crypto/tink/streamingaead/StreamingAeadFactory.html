@@ -108,16 +108,16 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <hr>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(StreamingAead.class)</code> after registering the
-     <code>StreamingAeadWrapper</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">Use <code>keysetHandle.getPrimitive(RegistryConfiguration.get(),
+     StreamingAead.class)</code> after registering the <code>StreamingAeadWrapper</code> instead.</span></div>
 </div>
 <br>
 <pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
 public final class <span class="typeNameLabel">StreamingAeadFactory</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
 <div class="block">Deprecated class to create <code>StreamingAead</code> primitives. Instead of using this class, make
- sure that the <code>StreamingAeadWrapper</code> is registered in your binary, then call <code>keysetHandle.GetPrimitive(StreamingAead.class)</code>. The required registration happens automatically
- if you called one of the following in your binary:
+ sure that the <code>StreamingAeadWrapper</code> is registered in your binary, then call <code>keysetHandle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class)</code>. The required
+ registration happens automatically if you called one of the following in your binary:
 
  <ul>
    <li><code>StreamingAeadConfig.register()</code>

@@ -303,7 +303,8 @@
 <dt><a href="com/google/crypto/tink/aead/AeadFactory.html" title="class in com.google.crypto.tink.aead"><span class="typeNameLink">AeadFactory</span></a> - Class in <a href="com/google/crypto/tink/aead/package-summary.html">com.google.crypto.tink.aead</a></dt>
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(Aead.class)</code> after registering the <code>AeadWrapper</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">Use <code>keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class)</code> after
+     registering the <code>AeadWrapper</code> instead.</span></div>
 </div>
 </dd>
 <dt><a href="com/google/crypto/tink/aead/subtle/AeadFactory.html" title="interface in com.google.crypto.tink.aead.subtle"><span class="typeNameLink">AeadFactory</span></a> - Interface in <a href="com/google/crypto/tink/aead/subtle/package-summary.html">com.google.crypto.tink.aead.subtle</a></dt>
@@ -4650,8 +4651,8 @@
 <dt><a href="com/google/crypto/tink/daead/DeterministicAeadFactory.html" title="class in com.google.crypto.tink.daead"><span class="typeNameLink">DeterministicAeadFactory</span></a> - Class in <a href="com/google/crypto/tink/daead/package-summary.html">com.google.crypto.tink.daead</a></dt>
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(DeterministicAead.class)</code> after registering the
-     <code>DeterministicAeadWrapper</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">Use <code>keysetHandle.getPrimitive(RegistryConfiguration.get(),
+     DeterministicAead.class)</code> after registering the <code>DeterministicAeadWrapper</code> instead.</span></div>
 </div>
 </dd>
 <dt><a href="com/google/crypto/tink/daead/DeterministicAeadKey.html" title="class in com.google.crypto.tink.daead"><span class="typeNameLink">DeterministicAeadKey</span></a> - Class in <a href="com/google/crypto/tink/daead/package-summary.html">com.google.crypto.tink.daead</a></dt>
@@ -12738,28 +12739,29 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/AeadFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">getPrimitive(KeysetHandle)</a></span> - Static method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/AeadFactory.html" title="class in com.google.crypto.tink.aead">AeadFactory</a></dt>
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(Aead.class)</code> after registering the <code>AeadWrapper</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">Use <code>keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class)</code>
+     after registering the <code>AeadWrapper</code> instead.</span></div>
 </div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/daead/DeterministicAeadFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">getPrimitive(KeysetHandle)</a></span> - Static method in class com.google.crypto.tink.daead.<a href="com/google/crypto/tink/daead/DeterministicAeadFactory.html" title="class in com.google.crypto.tink.daead">DeterministicAeadFactory</a></dt>
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(DeterministicAead.class)</code> after registering
-     the <code>DeterministicAeadWrapper</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">Use <code>keysetHandle.getPrimitive(RegistryConfiguration.get(),
+     DeterministicAead.class)</code> after registering the <code>DeterministicAeadWrapper</code> instead.</span></div>
 </div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HybridDecryptFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">getPrimitive(KeysetHandle)</a></span> - Static method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HybridDecryptFactory.html" title="class in com.google.crypto.tink.hybrid">HybridDecryptFactory</a></dt>
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(HybridDecrypt.class)</code> after registering the
-     <code>HybridDecryptWrapper</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">Use <code>keysetHandle.getPrimitive(RegistryConfiguration.get(),
+     HybridDecrypt.class)</code> after registering the <code>HybridDecryptWrapper</code> instead.</span></div>
 </div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/HybridEncryptFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">getPrimitive(KeysetHandle)</a></span> - Static method in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/HybridEncryptFactory.html" title="class in com.google.crypto.tink.hybrid">HybridEncryptFactory</a></dt>
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(HybridEncrypt.class)</code> after registering the
-     <code>HybridEncryptWrapper</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">Use <code>keysetHandle.getPrimitive(RegistryConfiguration.get(),
+     HybridEncrypt.class)</code> after registering the <code>HybridEncryptWrapper</code> instead.</span></div>
 </div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/InternalConfiguration.html#getPrimitive-com.google.crypto.tink.Key-java.lang.Class-">getPrimitive(Key, Class&lt;P&gt;)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/InternalConfiguration.html" title="class in com.google.crypto.tink.internal">InternalConfiguration</a></dt>
@@ -12816,7 +12818,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/mac/MacFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">getPrimitive(KeysetHandle)</a></span> - Static method in class com.google.crypto.tink.mac.<a href="com/google/crypto/tink/mac/MacFactory.html" title="class in com.google.crypto.tink.mac">MacFactory</a></dt>
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(Mac.class)</code> after registering the <code>MacWrapper</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">Use <code>keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class)</code> after
+     registering the <code>MacWrapper</code> instead.</span></div>
 </div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/Registry.html#getPrimitive-java.lang.String-com.google.protobuf.MessageLite-java.lang.Class-">getPrimitive(String, MessageLite, Class&lt;P&gt;)</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink">Registry</a></dt>
@@ -12840,15 +12843,15 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/PublicKeySignFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">getPrimitive(KeysetHandle)</a></span> - Static method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/PublicKeySignFactory.html" title="class in com.google.crypto.tink.signature">PublicKeySignFactory</a></dt>
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(PublicKeySign.class)</code> after registering the
-     <code>PublicKeySignWrapper</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">Use <code>keysetHandle.getPrimitive(RegistryConfiguration.get(),
+     PublicKeySign.class)</code> after registering the <code>PublicKeySignWrapper</code> instead.</span></div>
 </div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/PublicKeyVerifyFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">getPrimitive(KeysetHandle)</a></span> - Static method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/PublicKeyVerifyFactory.html" title="class in com.google.crypto.tink.signature">PublicKeyVerifyFactory</a></dt>
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(PublicKeyVerify.class)</code> after registering the
-     <code>PublicKeyVerifyWrapper</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">Use <code>keysetHandle.getPrimitive(RegistryConfiguration.get(),
+     PublicKeyVerify.class)</code> after registering the <code>PublicKeyVerifyWrapper</code> instead.</span></div>
 </div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/streamingaead/StreamingAeadFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">getPrimitive(KeysetHandle)</a></span> - Static method in class com.google.crypto.tink.streamingaead.<a href="com/google/crypto/tink/streamingaead/StreamingAeadFactory.html" title="class in com.google.crypto.tink.streamingaead">StreamingAeadFactory</a></dt>
@@ -16963,8 +16966,8 @@
 <dt><a href="com/google/crypto/tink/hybrid/HybridDecryptFactory.html" title="class in com.google.crypto.tink.hybrid"><span class="typeNameLink">HybridDecryptFactory</span></a> - Class in <a href="com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a></dt>
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(HybridDecrypt.class)</code> after registering the
-     <code>HybridDecryptWrapper</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">Use <code>keysetHandle.getPrimitive(RegistryConfiguration.get(),
+     HybridDecrypt.class)</code> after registering the <code>HybridDecryptWrapper</code> instead.</span></div>
 </div>
 </dd>
 <dt><a href="com/google/crypto/tink/hybrid/HybridDecryptWrapper.html" title="class in com.google.crypto.tink.hybrid"><span class="typeNameLink">HybridDecryptWrapper</span></a> - Class in <a href="com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a></dt>
@@ -16984,8 +16987,8 @@
 <dt><a href="com/google/crypto/tink/hybrid/HybridEncryptFactory.html" title="class in com.google.crypto.tink.hybrid"><span class="typeNameLink">HybridEncryptFactory</span></a> - Class in <a href="com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a></dt>
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(HybridEncrypt.class)</code> after registering the
-     <code>HybridEncryptWrapper</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">Use <code>keysetHandle.getPrimitive(RegistryConfiguration.get(),
+     HybridEncrypt.class)</code> after registering the <code>HybridEncryptWrapper</code> instead.</span></div>
 </div>
 </dd>
 <dt><a href="com/google/crypto/tink/hybrid/HybridEncryptWrapper.html" title="class in com.google.crypto.tink.hybrid"><span class="typeNameLink">HybridEncryptWrapper</span></a> - Class in <a href="com/google/crypto/tink/hybrid/package-summary.html">com.google.crypto.tink.hybrid</a></dt>
@@ -19258,7 +19261,8 @@
 <dt><a href="com/google/crypto/tink/mac/MacFactory.html" title="class in com.google.crypto.tink.mac"><span class="typeNameLink">MacFactory</span></a> - Class in <a href="com/google/crypto/tink/mac/package-summary.html">com.google.crypto.tink.mac</a></dt>
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(Mac.class)</code> after registering the <code>MacWrapper</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">Use <code>keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class)</code> after
+     registering the <code>MacWrapper</code> instead.</span></div>
 </div>
 </dd>
 <dt><a href="com/google/crypto/tink/mac/MacKey.html" title="class in com.google.crypto.tink.mac"><span class="typeNameLink">MacKey</span></a> - Class in <a href="com/google/crypto/tink/mac/package-summary.html">com.google.crypto.tink.mac</a></dt>
@@ -24442,8 +24446,8 @@
 <dt><a href="com/google/crypto/tink/signature/PublicKeySignFactory.html" title="class in com.google.crypto.tink.signature"><span class="typeNameLink">PublicKeySignFactory</span></a> - Class in <a href="com/google/crypto/tink/signature/package-summary.html">com.google.crypto.tink.signature</a></dt>
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(PublicKeySign.class)</code> after registering the
-     <code>PublicKeySignWrapper</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">Use <code>keysetHandle.getPrimitive(RegistryConfiguration.get(),
+     PublicKeySign.class)</code> after registering the <code>PublicKeySignWrapper</code> instead.</span></div>
 </div>
 </dd>
 <dt><a href="com/google/crypto/tink/signature/PublicKeySignWrapper.html" title="class in com.google.crypto.tink.signature"><span class="typeNameLink">PublicKeySignWrapper</span></a> - Class in <a href="com/google/crypto/tink/signature/package-summary.html">com.google.crypto.tink.signature</a></dt>
@@ -24463,8 +24467,8 @@
 <dt><a href="com/google/crypto/tink/signature/PublicKeyVerifyFactory.html" title="class in com.google.crypto.tink.signature"><span class="typeNameLink">PublicKeyVerifyFactory</span></a> - Class in <a href="com/google/crypto/tink/signature/package-summary.html">com.google.crypto.tink.signature</a></dt>
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(PublicKeyVerify.class)</code> after registering the
-     <code>PublicKeyVerifyWrapper</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">Use <code>keysetHandle.getPrimitive(RegistryConfiguration.get(),
+     PublicKeyVerify.class)</code> after registering the <code>PublicKeyVerifyWrapper</code> instead.</span></div>
 </div>
 </dd>
 <dt><a href="com/google/crypto/tink/signature/PublicKeyVerifyWrapper.html" title="class in com.google.crypto.tink.signature"><span class="typeNameLink">PublicKeyVerifyWrapper</span></a> - Class in <a href="com/google/crypto/tink/signature/package-summary.html">com.google.crypto.tink.signature</a></dt>
@@ -28227,8 +28231,8 @@
 <dt><a href="com/google/crypto/tink/streamingaead/StreamingAeadFactory.html" title="class in com.google.crypto.tink.streamingaead"><span class="typeNameLink">StreamingAeadFactory</span></a> - Class in <a href="com/google/crypto/tink/streamingaead/package-summary.html">com.google.crypto.tink.streamingaead</a></dt>
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(StreamingAead.class)</code> after registering the
-     <code>StreamingAeadWrapper</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">Use <code>keysetHandle.getPrimitive(RegistryConfiguration.get(),
+     StreamingAead.class)</code> after registering the <code>StreamingAeadWrapper</code> instead.</span></div>
 </div>
 </dd>
 <dt><a href="com/google/crypto/tink/streamingaead/StreamingAeadKey.html" title="class in com.google.crypto.tink.streamingaead"><span class="typeNameLink">StreamingAeadKey</span></a> - Class in <a href="com/google/crypto/tink/streamingaead/package-summary.html">com.google.crypto.tink.streamingaead</a></dt>
