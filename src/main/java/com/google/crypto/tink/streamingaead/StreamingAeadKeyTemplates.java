@@ -50,7 +50,7 @@ import com.google.crypto.tink.proto.OutputPrefixType;
  * <pre>{@code
  * StreamingAeadConfig.register();
  * KeysetHandle handle = KeysetHandle.generateNew(StreamingAeadKeyTemplates.AES128_GCM_HKDF_4KB);
- * StreamingAead ags = handle.getPrimitive(StreamingAead.class);
+ * StreamingAead ags = handle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
  * }</pre>
  *
  * @deprecated Try using our refaster templates to replace them (see

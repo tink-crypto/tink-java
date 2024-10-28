@@ -23,16 +23,16 @@ import java.security.GeneralSecurityException;
 /**
  * Deprecated class to create {@code HybridEncrypt} primitives. Instead of using this class, make
  * sure that the {@code HybridEncryptWrapper} is registered in your binary, then call {@code
- * keysetHandle.GetPrimitive(HybridEncrypt.class)} instead. The required registration happens
- * automatically if you called one of the following in your binary:
+ * keysetHandle.getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class)} instead. The
+ * required registration happens automatically if you called one of the following in your binary:
  *
  * <ul>
  *   <li>{@code HybridConfig.register()}
  *   <li>{@code TinkConfig.register()}
  * </ul>
  *
- * @deprecated Use {@code keysetHandle.GetPrimitive(HybridEncrypt.class)} after registering the
- *     {@code HybridEncryptWrapper} instead.
+ * @deprecated Use {@code keysetHandle.getPrimitive(RegistryConfiguration.get(),
+ *     HybridEncrypt.class)} after registering the {@code HybridEncryptWrapper} instead.
  * @since 1.0.0
  */
 @Deprecated
@@ -40,8 +40,8 @@ public final class HybridEncryptFactory {
   /**
    * @return a HybridEncrypt primitive from a {@code keysetHandle}.
    * @throws GeneralSecurityException
-   * @deprecated Use {@code keysetHandle.GetPrimitive(HybridEncrypt.class)} after registering the
-   *     {@code HybridEncryptWrapper} instead.
+   * @deprecated Use {@code keysetHandle.getPrimitive(RegistryConfiguration.get(),
+   *     HybridEncrypt.class)} after registering the {@code HybridEncryptWrapper} instead.
    */
   @Deprecated
   public static HybridEncrypt getPrimitive(KeysetHandle keysetHandle)

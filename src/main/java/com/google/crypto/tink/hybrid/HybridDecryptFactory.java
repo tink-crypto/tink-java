@@ -23,24 +23,24 @@ import java.security.GeneralSecurityException;
 /**
  * Deprecated class to create {@code HybridDecrypt} primitives. Instead of using this class, make
  * sure that the {@code HybridDecryptWrapper} is registered in your binary, then call {@code
- * keysetHandle.GetPrimitive(HybridDecrypt.class)} instead. The required registration happens
- * automatically if you called one of the following in your binary:
+ * keysetHandle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class)} instead. The
+ * required registration happens automatically if you called one of the following in your binary:
  *
  * <ul>
  *   <li>{@code HybridConfig.register()}
  *   <li>{@code TinkConfig.register()}
  * </ul>
  *
- * @deprecated Use {@code keysetHandle.GetPrimitive(HybridDecrypt.class)} after registering the
- *     {@code HybridDecryptWrapper} instead.
+ * @deprecated Use {@code keysetHandle.getPrimitive(RegistryConfiguration.get(),
+ *     HybridDecrypt.class)} after registering the {@code HybridDecryptWrapper} instead.
  * @since 1.0.0
  */
 @Deprecated
 public final class HybridDecryptFactory {
   /**
    * @return a HybridDecrypt primitive from a {@code keysetHandle}.
-   * @deprecated Use {@code keysetHandle.GetPrimitive(HybridDecrypt.class)} after registering the
-   *     {@code HybridDecryptWrapper} instead.
+   * @deprecated Use {@code keysetHandle.getPrimitive(RegistryConfiguration.get(),
+   *     HybridDecrypt.class)} after registering the {@code HybridDecryptWrapper} instead.
    */
   @Deprecated
   public static HybridDecrypt getPrimitive(KeysetHandle keysetHandle)

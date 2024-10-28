@@ -24,8 +24,8 @@ import java.security.GeneralSecurityException;
 /**
  * Deprecated class to create {@code Aead} primitives. Instead of using this class, make sure that
  * the {@code AeadWrapper} is registered in your binary, then call {@code
- * keysetHandle.GetPrimitive(Aead.class)} instead. The required registration happens automatically
- * if you called one of the following in your binary:
+ * keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class)} instead. The required
+ * registration happens automatically if you called one of the following in your binary:
  *
  * <ul>
  *   <li>{@code HybridConfig.register()}
@@ -33,16 +33,16 @@ import java.security.GeneralSecurityException;
  *   <li>{@code TinkConfig.register()}
  * </ul>
  *
- * @deprecated Use {@code keysetHandle.GetPrimitive(Aead.class)} after registering the {@code
- *     AeadWrapper} instead.
+ * @deprecated Use {@code keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class)} after
+ *     registering the {@code AeadWrapper} instead.
  * @since 1.0.0
  */
 @Deprecated
 public final class AeadFactory {
   /**
    * @return a Aead primitive from a {@code keysetHandle}.
-   * @deprecated Use {@code keysetHandle.GetPrimitive(Aead.class)} after registering the {@code
-   *     AeadWrapper} instead.
+   * @deprecated Use {@code keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class)}
+   *     after registering the {@code AeadWrapper} instead.
    */
   @Deprecated
   public static Aead getPrimitive(KeysetHandle keysetHandle)

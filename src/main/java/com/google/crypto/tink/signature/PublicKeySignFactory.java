@@ -24,27 +24,27 @@ import java.security.GeneralSecurityException;
 /**
  * Deprecated class to create {@code PublicKeySign} primitives. Instead of using this class, make
  * sure that the {@code PublicKeySignWrapper} is registered in your binary, then call {@code
- * keysetHandle.GetPrimitive(PublicKeySign.class)} instead. The required registration happens
- * automatically if you called one of the following in your binary:
+ * keysetHandle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class)} instead. The
+ * required registration happens automatically if you called one of the following in your binary:
  *
  * <ul>
  *   <li>{@code SignatureConfig.register()}
  *   <li>{@code TinkConfig.register()}
  * </ul>
  *
- * @deprecated Use {@code keysetHandle.GetPrimitive(PublicKeySign.class)} after registering the
- *     {@code PublicKeySignWrapper} instead.
+ * @deprecated Use {@code keysetHandle.getPrimitive(RegistryConfiguration.get(),
+ *     PublicKeySign.class)} after registering the {@code PublicKeySignWrapper} instead.
  * @since 1.0.0
  */
 @Deprecated
 public final class PublicKeySignFactory {
   /**
    * @return a PublicKeySign primitive from a {@code keysetHandle}.
-   * @deprecated Use {@code keysetHandle.GetPrimitive(PublicKeySign.class)} after registering the
-   *     {@code PublicKeySignWrapper} instead.
+   * @deprecated Use {@code keysetHandle.getPrimitive(RegistryConfiguration.get(),
+   *     PublicKeySign.class)} after registering the {@code PublicKeySignWrapper} instead.
    */
   @Deprecated
-  public  static PublicKeySign getPrimitive(KeysetHandle keysetHandle)
+  public static PublicKeySign getPrimitive(KeysetHandle keysetHandle)
       throws GeneralSecurityException {
     PublicKeySignWrapper.register();
     return keysetHandle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);

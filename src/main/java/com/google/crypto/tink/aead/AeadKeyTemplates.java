@@ -54,7 +54,7 @@ import com.google.crypto.tink.proto.OutputPrefixType;
  * <pre>{@code
  * AeadConfig.register();
  * KeysetHandle handle = KeysetHandle.generateNew(AeadKeyTemplates.AES128_GCM);
- * Aead aead = handle.getPrimitive(Aead.class);
+ * Aead aead = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
  * }</pre>
  *
  * @since 1.0.0

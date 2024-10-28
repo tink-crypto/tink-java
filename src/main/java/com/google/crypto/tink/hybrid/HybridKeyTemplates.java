@@ -54,8 +54,10 @@ import com.google.protobuf.ByteString;
  * HybridConfig.register();
  * KeysetHandle handle = KeysetHandle.generateNew(
  *     HybridKeyTemplates.ECIES_P256_HKDF_HMAC_SHA256_AES128_GCM);
- * HybridDecrypt decrypter = handle.getPrimitive(HybridDecrypt.class);
- * HybridEncrypt encrypter = handle.getPublicKeysetHandle().getPrimitive(HybridDecrypt.class);
+ * HybridDecrypt decrypter = handle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
+ * HybridEncrypt encrypter =
+ *     handle.getPublicKeysetHandle()
+ *         .getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
  * }</pre>
  *
  * @since 1.0.0

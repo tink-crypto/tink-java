@@ -49,7 +49,7 @@ import com.google.crypto.tink.proto.OutputPrefixType;
  * <pre>{@code
  * MacConfig.register();
  * KeysetHandle handle = KeysetHandle.generateNew(MacKeyTemplates.HMAC_SHA256_128BITTAG);
- * Mac mac = handle.getPrimitive(Mac.class);
+ * Mac mac = handle.getPrimitive(RegistryConfiguration.get(), Mac.java);
  * }</pre>
  *
  * @since 1.0.0

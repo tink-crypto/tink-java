@@ -62,7 +62,8 @@ import javax.annotation.concurrent.GuardedBy;
  *    .withSharedPref(getApplicationContext(), "my_keyset_name", "my_pref_file_name")
  *    .withKeyTemplate(KeyTemplates.get("AES128_GCM_HKDF_4KB"))
  *    .build();
- * StreamingAead streamingAead = manager.getKeysetHandle().getPrimitive(StreamingAead.class);
+ * StreamingAead streamingAead =
+ *     manager.getKeysetHandle().getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
  * }</pre>
  *
  * <p>This will read a keyset stored in the {@code my_keyset_name} preference of the {@code

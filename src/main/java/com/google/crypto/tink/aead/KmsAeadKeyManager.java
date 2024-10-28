@@ -107,9 +107,9 @@ public final class KmsAeadKeyManager {
    *
    * <p>It is often not necessary to use this function. Instead of registering a {@code KmsClient},
    * and creating an {@code Aead} using {@code
-   * KeysetHandle.generateNew(KmsAeadKeyManager.createKeyTemplate(keyUri)).getPrimitive(Aead.class)},
-   * you can create the {@code Aead} directly using {@code kmsClient.getAead(kekUri)}, without
-   * registering any {@code KmsClient}.
+   * KeysetHandle.generateNew(KmsAeadKeyManager.createKeyTemplate(keyUri)).getPrimitive(RegistryConfiguration.get(),
+   * Aead.class)}, you can create the {@code Aead} directly using {@code kmsClient.getAead(kekUri)},
+   * without registering any {@code KmsClient}.
    */
   public static KeyTemplate createKeyTemplate(String keyUri) {
     try {

@@ -73,7 +73,7 @@ import javax.annotation.Nullable;
  *
  * <pre>{@code
  * KeysetHandle keysetHandle = ...;
- * Aead aead = keysetHandle.getPrimitive(Aead.class);
+ * Aead aead = keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
  * }</pre>
  *
  * @since 1.0.0

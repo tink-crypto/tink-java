@@ -57,8 +57,9 @@ import java.security.spec.RSAKeyGenParameterSpec;
  * <pre>{@code
  * SignatureConfig.register();
  * KeysetHandle handle = KeysetHandle.generateNew(SignatureKeyTemplates.ECDSA_P256);
- * PublicKeySign signer = handle.getPrimitive(PublicKeySign.class);
- * PublicKeyVerify verifier = handle.getPublicKeyset().getPrimitive(PublicKeyVerify.class);
+ * PublicKeySign signer = handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
+ * PublicKeyVerify verifier =
+ *     handle.getPublicKeyset().getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
  * }</pre>
  *
  * @since 1.0.0

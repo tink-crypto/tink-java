@@ -201,9 +201,10 @@ public class KmsEnvelopeAeadKeyManager {
    * <p>It is often not necessary to use this function. Instead of registering a {@code KmsClient},
    * and creating an {@code Aead} using {@code
    * KeysetHandle.generateNew(KmsEnvelopeAeadKeyManager.createKeyTemplate(keyUri,
-   * KeyTemplates.get("AES128_GCM"))).getPrimitive(Aead.class)}, create the {@code Aead} directly
-   * using {@code KmsEnvelopeAead.create(PredefinedAeadParameters.AES256_GCM,
-   * kmsClient.getAead(keyUri))}, without registering any {@code KmsClient}.
+   * KeyTemplates.get("AES128_GCM"))).getPrimitive(RegistryConfiguration.get(), Aead.class)}, create
+   * the {@code Aead} directly using {@code
+   * KmsEnvelopeAead.create(PredefinedAeadParameters.AES256_GCM, kmsClient.getAead(keyUri))},
+   * without registering any {@code KmsClient}.
    */
   @AccessesPartialKey
   public static KeyTemplate createKeyTemplate(String kekUri, KeyTemplate dekTemplate) {

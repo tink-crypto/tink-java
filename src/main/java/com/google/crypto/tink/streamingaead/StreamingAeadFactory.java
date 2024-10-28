@@ -24,16 +24,16 @@ import java.security.GeneralSecurityException;
 /**
  * Deprecated class to create {@code StreamingAead} primitives. Instead of using this class, make
  * sure that the {@code StreamingAeadWrapper} is registered in your binary, then call {@code
- * keysetHandle.GetPrimitive(StreamingAead.class)}. The required registration happens automatically
- * if you called one of the following in your binary:
+ * keysetHandle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class)}. The required
+ * registration happens automatically if you called one of the following in your binary:
  *
  * <ul>
  *   <li>{@code StreamingAeadConfig.register()}
  *   <li>{@code TinkConfig.register()}
  * </ul>
  *
- * @deprecated Use {@code keysetHandle.GetPrimitive(StreamingAead.class)} after registering the
- *     {@code StreamingAeadWrapper} instead.
+ * @deprecated Use {@code keysetHandle.getPrimitive(RegistryConfiguration.get(),
+ *     StreamingAead.class)} after registering the {@code StreamingAeadWrapper} instead.
  * @since 1.1.0
  */
 @Deprecated

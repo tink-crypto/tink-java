@@ -44,7 +44,8 @@ import com.google.crypto.tink.proto.OutputPrefixType;
  * <pre>
  *   DeterministicAeadConfig.register();
  *   KeysetHandle handle = KeysetHandle.generateNew(DeterministicAeadKeyTemplates.AES256_SIV);
- *   DeterministicAead daead = handle.getPrimitive(DeterministicAead.class);
+ *   DeterministicAead daead =
+ *       handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.java);
  * </pre>
  *
  * @since 1.1.0
