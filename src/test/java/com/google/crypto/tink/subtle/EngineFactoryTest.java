@@ -24,6 +24,7 @@ import java.util.List;
 import javax.crypto.Cipher;
 import org.conscrypt.Conscrypt;
 import org.junit.Assume;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -31,6 +32,18 @@ import org.junit.runners.JUnit4;
 /** Tests for EngineFactory. */
 @RunWith(JUnit4.class)
 public class EngineFactoryTest {
+
+  static Provider conscrypt;
+
+  @BeforeClass
+  public static void setUp() throws Exception {
+    if (!SubtleUtil.isAndroid()) {
+      // Add Conscrypt as an additional provider.
+      Conscrypt.checkAvailability();
+      conscrypt = Conscrypt.newProvider();
+      Security.addProvider(conscrypt);
+    }
+  }
 
   @Test
   public void testAtLeastGetsACipherByDefault() throws Exception {
@@ -50,11 +63,7 @@ public class EngineFactoryTest {
   public void testDefaultPolicyStillPrefersDefaultProviders() throws Exception {
     Assume.assumeFalse(SubtleUtil.isAndroid());
 
-    // Add Conscrypt as an additional provider.
-    Conscrypt.checkAvailability();
-    Provider p = Conscrypt.newProvider();
-    Security.addProvider(p);
-    String conscryptName = p.getName();
+    String conscryptName = conscrypt.getName();
 
     // We expect that JDK gets picked first nonetheless.
     assertThat(EngineFactory.CIPHER.getInstance("AES/GCM/NoPadding").getProvider().getName())

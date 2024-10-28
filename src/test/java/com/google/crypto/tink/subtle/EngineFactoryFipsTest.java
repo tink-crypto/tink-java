@@ -26,6 +26,7 @@ import java.util.List;
 import org.conscrypt.Conscrypt;
 import org.junit.Assume;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -34,20 +35,27 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public final class EngineFactoryFipsTest {
 
+  static Provider conscrypt;
+
+  @BeforeClass
+  public static void setUpClass() throws Exception {
+    if (!SubtleUtil.isAndroid()) {
+      // Register conscrypt
+      Conscrypt.checkAvailability();
+      conscrypt = Conscrypt.newProvider();
+      Security.addProvider(conscrypt);
+    }
+  }
+
   @Before
   public void setUp() throws Exception {
     // All tests here require that Tink is build in FIPS-mode.
     Assume.assumeTrue(TinkFips.useOnlyFips());
-
-    // Register conscrypt
-    Conscrypt.checkAvailability();
   }
 
   @Test
   public void testConscryptUsedAsProviderForCiphers() throws Exception {
-    Provider p = Conscrypt.newProvider();
-    Security.addProvider(p);
-    String conscryptName = p.getName();
+    String conscryptName = conscrypt.getName();
 
     assertThat(EngineFactory.CIPHER.getInstance("AES/GCM/NoPadding").getProvider().getName())
         .isEqualTo(conscryptName);
@@ -57,9 +65,7 @@ public final class EngineFactoryFipsTest {
 
   @Test
   public void testConscryptUsedAsProviderForMac() throws Exception {
-    Provider p = Conscrypt.newProvider();
-    Security.addProvider(p);
-    String conscryptName = p.getName();
+    String conscryptName = conscrypt.getName();
 
     assertThat(EngineFactory.MAC.getInstance("HMACSHA1").getProvider().getName())
         .isEqualTo(conscryptName);
@@ -75,9 +81,7 @@ public final class EngineFactoryFipsTest {
 
   @Test
   public void testConscryptUsedAsProviderForSigner() throws Exception {
-    Provider p = Conscrypt.newProvider();
-    Security.addProvider(p);
-    String conscryptName = p.getName();
+    String conscryptName = conscrypt.getName();
 
     assertThat(EngineFactory.SIGNATURE.getInstance("SHA256withRSA").getProvider().getName())
         .isEqualTo(conscryptName);
@@ -101,18 +105,12 @@ public final class EngineFactoryFipsTest {
 
   @Test
   public void testNoFallback() throws Exception {
-    Provider p = Conscrypt.newProvider();
-    Security.addProvider(p);
-
     // Conscrypt does not provide "AES", so this must fail and not use another provider.
     assertThrows(GeneralSecurityException.class, () -> EngineFactory.CIPHER.getInstance("AES"));
   }
 
   @Test
   public void testNoFallbackEvenIfPreferred() throws Exception {
-    Provider p = Conscrypt.newProvider();
-    Security.addProvider(p);
-
     for (Provider provider : Security.getProviders()) {
       List<Provider> preferredProviders = EngineFactory.toProviderList(provider.getName());
       // Conscrypt does not provide "AES", so this must fail and not use the preferred provider.
