@@ -133,7 +133,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
  <pre><code>
  AeadConfig.register();
  KeysetHandle handle = KeysetHandle.generateNew(AeadKeyTemplates.AES128_GCM);
- Aead aead = handle.getPrimitive(Aead.class);
+ Aead aead = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
  </code></pre></div>
 <dl>
 <dt><span class="simpleTagLabel">Since:</span></dt>

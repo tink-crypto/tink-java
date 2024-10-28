@@ -436,7 +436,8 @@
 <td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a></code></td>
 <td class="colLast"><span class="typeNameLabel">AeadFactory.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/AeadFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">getPrimitive</a></span>(<a href="../../../../../com/google/crypto/tink/KeysetHandle.html" title="class in com.google.crypto.tink">KeysetHandle</a>&nbsp;keysetHandle)</code>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(Aead.class)</code> after registering the <code>AeadWrapper</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">Use <code>keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class)</code>
+     after registering the <code>AeadWrapper</code> instead.</span></div>
 </div>
 </td>
 </tr>
@@ -458,8 +459,8 @@
 <td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/DeterministicAead.html" title="interface in com.google.crypto.tink">DeterministicAead</a></code></td>
 <td class="colLast"><span class="typeNameLabel">DeterministicAeadFactory.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/daead/DeterministicAeadFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">getPrimitive</a></span>(<a href="../../../../../com/google/crypto/tink/KeysetHandle.html" title="class in com.google.crypto.tink">KeysetHandle</a>&nbsp;keysetHandle)</code>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(DeterministicAead.class)</code> after registering
-     the <code>DeterministicAeadWrapper</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">Use <code>keysetHandle.getPrimitive(RegistryConfiguration.get(),
+     DeterministicAead.class)</code> after registering the <code>DeterministicAeadWrapper</code> instead.</span></div>
 </div>
 </td>
 </tr>
@@ -481,8 +482,8 @@
 <td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/HybridEncrypt.html" title="interface in com.google.crypto.tink">HybridEncrypt</a></code></td>
 <td class="colLast"><span class="typeNameLabel">HybridEncryptFactory.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/HybridEncryptFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">getPrimitive</a></span>(<a href="../../../../../com/google/crypto/tink/KeysetHandle.html" title="class in com.google.crypto.tink">KeysetHandle</a>&nbsp;keysetHandle)</code>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(HybridEncrypt.class)</code> after registering the
-     <code>HybridEncryptWrapper</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">Use <code>keysetHandle.getPrimitive(RegistryConfiguration.get(),
+     HybridEncrypt.class)</code> after registering the <code>HybridEncryptWrapper</code> instead.</span></div>
 </div>
 </td>
 </tr>
@@ -490,8 +491,8 @@
 <td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/HybridDecrypt.html" title="interface in com.google.crypto.tink">HybridDecrypt</a></code></td>
 <td class="colLast"><span class="typeNameLabel">HybridDecryptFactory.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/hybrid/HybridDecryptFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">getPrimitive</a></span>(<a href="../../../../../com/google/crypto/tink/KeysetHandle.html" title="class in com.google.crypto.tink">KeysetHandle</a>&nbsp;keysetHandle)</code>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(HybridDecrypt.class)</code> after registering the
-     <code>HybridDecryptWrapper</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">Use <code>keysetHandle.getPrimitive(RegistryConfiguration.get(),
+     HybridDecrypt.class)</code> after registering the <code>HybridDecryptWrapper</code> instead.</span></div>
 </div>
 </td>
 </tr>
@@ -604,7 +605,8 @@
 <td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/Mac.html" title="interface in com.google.crypto.tink">Mac</a></code></td>
 <td class="colLast"><span class="typeNameLabel">MacFactory.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/mac/MacFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">getPrimitive</a></span>(<a href="../../../../../com/google/crypto/tink/KeysetHandle.html" title="class in com.google.crypto.tink">KeysetHandle</a>&nbsp;keysetHandle)</code>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(Mac.class)</code> after registering the <code>MacWrapper</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">Use <code>keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class)</code> after
+     registering the <code>MacWrapper</code> instead.</span></div>
 </div>
 </td>
 </tr>
@@ -626,8 +628,8 @@
 <td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/PublicKeyVerify.html" title="interface in com.google.crypto.tink">PublicKeyVerify</a></code></td>
 <td class="colLast"><span class="typeNameLabel">PublicKeyVerifyFactory.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/signature/PublicKeyVerifyFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">getPrimitive</a></span>(<a href="../../../../../com/google/crypto/tink/KeysetHandle.html" title="class in com.google.crypto.tink">KeysetHandle</a>&nbsp;keysetHandle)</code>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(PublicKeyVerify.class)</code> after registering the
-     <code>PublicKeyVerifyWrapper</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">Use <code>keysetHandle.getPrimitive(RegistryConfiguration.get(),
+     PublicKeyVerify.class)</code> after registering the <code>PublicKeyVerifyWrapper</code> instead.</span></div>
 </div>
 </td>
 </tr>
@@ -635,8 +637,8 @@
 <td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/PublicKeySign.html" title="interface in com.google.crypto.tink">PublicKeySign</a></code></td>
 <td class="colLast"><span class="typeNameLabel">PublicKeySignFactory.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/signature/PublicKeySignFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">getPrimitive</a></span>(<a href="../../../../../com/google/crypto/tink/KeysetHandle.html" title="class in com.google.crypto.tink">KeysetHandle</a>&nbsp;keysetHandle)</code>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(PublicKeySign.class)</code> after registering the
-     <code>PublicKeySignWrapper</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">Use <code>keysetHandle.getPrimitive(RegistryConfiguration.get(),
+     PublicKeySign.class)</code> after registering the <code>PublicKeySignWrapper</code> instead.</span></div>
 </div>
 </td>
 </tr>

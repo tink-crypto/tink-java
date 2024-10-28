@@ -108,15 +108,16 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <hr>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(Mac.class)</code> after registering the <code>MacWrapper</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">Use <code>keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class)</code> after
+     registering the <code>MacWrapper</code> instead.</span></div>
 </div>
 <br>
 <pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
 public final class <span class="typeNameLabel">MacFactory</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
 <div class="block">Deprecated class to create <code>Mac</code> primitives. Instead of using this class, make sure that
- the <code>MacWrapper</code> is registered in your binary, then call <code>keysetHandle.GetPrimitive(Mac.class)</code> instead. The required registration happens automatically if
- you called one of the following in your binary:
+ the <code>MacWrapper</code> is registered in your binary, then call <code>keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class)</code> instead. The required
+ registration happens automatically if you called one of the following in your binary:
 
  <ul>
    <li><code>MacConfig.register()</code>
@@ -150,7 +151,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/Mac.html" title="interface in com.google.crypto.tink">Mac</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/mac/MacFactory.html#getPrimitive-com.google.crypto.tink.KeysetHandle-">getPrimitive</a></span>(<a href="../../../../../com/google/crypto/tink/KeysetHandle.html" title="class in com.google.crypto.tink">KeysetHandle</a>&nbsp;keysetHandle)</code>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(Mac.class)</code> after registering the <code>MacWrapper</code> instead.</span></div>
+<div class="block"><span class="deprecationComment">Use <code>keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class)</code> after
+     registering the <code>MacWrapper</code> instead.</span></div>
 </div>
 </td>
 </tr>
@@ -185,7 +187,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
 public static&nbsp;<a href="../../../../../com/google/crypto/tink/Mac.html" title="interface in com.google.crypto.tink">Mac</a>&nbsp;getPrimitive(<a href="../../../../../com/google/crypto/tink/KeysetHandle.html" title="class in com.google.crypto.tink">KeysetHandle</a>&nbsp;keysetHandle)
                                     throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">Use <code>keysetHandle.GetPrimitive(Mac.class)</code> after registering the <code>MacWrapper</code> instead.</span></div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">Use <code>keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class)</code> after
+     registering the <code>MacWrapper</code> instead.</span></div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a Mac primitive from a <code>keysetHandle</code>.</dd>

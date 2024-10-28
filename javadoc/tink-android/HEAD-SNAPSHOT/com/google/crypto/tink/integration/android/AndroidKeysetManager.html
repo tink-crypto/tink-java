@@ -128,7 +128,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
     .withSharedPref(getApplicationContext(), "my_keyset_name", "my_pref_file_name")
     .withKeyTemplate(KeyTemplates.get("AES128_GCM_HKDF_4KB"))
     .build();
- StreamingAead streamingAead = manager.getKeysetHandle().getPrimitive(StreamingAead.class);
+ StreamingAead streamingAead =
+     manager.getKeysetHandle().getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
  </code></pre>
 
  <p>This will read a keyset stored in the <code>my_keyset_name</code> preference of the <code>my_pref_file_name</code> preferences file. If the preference file name is null, it uses the default

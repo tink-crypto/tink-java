@@ -137,7 +137,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
  <pre><code>
  MacConfig.register();
  KeysetHandle handle = KeysetHandle.generateNew(MacKeyTemplates.HMAC_SHA256_128BITTAG);
- Mac mac = handle.getPrimitive(Mac.class);
+ Mac mac = handle.getPrimitive(RegistryConfiguration.get(), Mac.java);
  </code></pre></div>
 <dl>
 <dt><span class="simpleTagLabel">Since:</span></dt>
