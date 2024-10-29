@@ -3307,7 +3307,11 @@
 <dd>
 <div class="block">Convenience method to compute the primary PRF on a given input.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/X25519Jce.html#computeSharedSecret-byte:A-byte:A-">computeSharedSecret(byte[], byte[])</a></span> - Static method in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/X25519Jce.html" title="class in com.google.crypto.tink.hybrid.internal">X25519Jce</a></dt>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/X25519.html#computeSharedSecret-byte:A-byte:A-">computeSharedSecret(byte[], byte[])</a></span> - Method in interface com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/X25519.html" title="interface in com.google.crypto.tink.hybrid.internal">X25519</a></dt>
+<dd>
+<div class="block">computeSharedSecret.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/X25519Conscrypt.html#computeSharedSecret-byte:A-byte:A-">computeSharedSecret(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/X25519Conscrypt.html" title="class in com.google.crypto.tink.hybrid.internal">X25519Conscrypt</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/EllipticCurves.html#computeSharedSecret-java.security.interfaces.ECPrivateKey-java.security.interfaces.ECPublicKey-">computeSharedSecret(ECPrivateKey, ECPublicKey)</a></span> - Static method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/EllipticCurves.html" title="class in com.google.crypto.tink.subtle">EllipticCurves</a></dt>
 <dd>&nbsp;</dd>
@@ -3446,6 +3450,8 @@
 <dd>
 <div class="block">This method covers the cases where users created their own aead/key classes.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/X25519Conscrypt.html#create--">create()</a></span> - Static method in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/X25519Conscrypt.html" title="class in com.google.crypto.tink.hybrid.internal">X25519Conscrypt</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/KeyParser.html#create-com.google.crypto.tink.internal.KeyParser.KeyParsingFunction-com.google.crypto.tink.util.Bytes-java.lang.Class-">create(KeyParser.KeyParsingFunction&lt;SerializationT&gt;, Bytes, Class&lt;SerializationT&gt;)</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/KeyParser.html" title="class in com.google.crypto.tink.internal">KeyParser</a></dt>
 <dd>
 <div class="block">Creates a KeyParser object.</div>
@@ -5684,7 +5690,11 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/EciesHkdfSenderKem.html#generateKey-java.lang.String-byte:A-byte:A-int-com.google.crypto.tink.subtle.EllipticCurves.PointFormatType-">generateKey(String, byte[], byte[], int, EllipticCurves.PointFormatType)</a></span> - Method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/EciesHkdfSenderKem.html" title="class in com.google.crypto.tink.subtle">EciesHkdfSenderKem</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/X25519Jce.html#generateKeyPair--">generateKeyPair()</a></span> - Static method in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/X25519Jce.html" title="class in com.google.crypto.tink.hybrid.internal">X25519Jce</a></dt>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/X25519.html#generateKeyPair--">generateKeyPair()</a></span> - Method in interface com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/X25519.html" title="interface in com.google.crypto.tink.hybrid.internal">X25519</a></dt>
+<dd>
+<div class="block">generateKeyPair.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/X25519Conscrypt.html#generateKeyPair--">generateKeyPair()</a></span> - Method in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/X25519Conscrypt.html" title="class in com.google.crypto.tink.hybrid.internal">X25519Conscrypt</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/EllipticCurves.html#generateKeyPair-com.google.crypto.tink.subtle.EllipticCurves.CurveType-">generateKeyPair(EllipticCurves.CurveType)</a></span> - Static method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/EllipticCurves.html" title="class in com.google.crypto.tink.subtle">EllipticCurves</a></dt>
 <dd>
@@ -13930,10 +13940,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/XChaCha20Poly1305Jce.html#isSupported--">isSupported()</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/XChaCha20Poly1305Jce.html" title="class in com.google.crypto.tink.aead.internal">XChaCha20Poly1305Jce</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/X25519Jce.html#isSupported--">isSupported()</a></span> - Static method in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/X25519Jce.html" title="class in com.google.crypto.tink.hybrid.internal">X25519Jce</a></dt>
-<dd>
-<div class="block">Returns true if the JCE supports X25519.</div>
-</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/Ed25519SignJce.html#isSupported--">isSupported()</a></span> - Static method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/Ed25519SignJce.html" title="class in com.google.crypto.tink.signature.internal">Ed25519SignJce</a></dt>
 <dd>
 <div class="block">Returns true if the JCE supports Ed25519.</div>
@@ -14617,7 +14623,7 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/KeyManagerRegistry.html#KeyManagerRegistry--">KeyManagerRegistry()</a></span> - Constructor for class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/KeyManagerRegistry.html" title="class in com.google.crypto.tink.internal">KeyManagerRegistry</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/X25519Jce.KeyPair.html#KeyPair-byte:A-byte:A-">KeyPair(byte[], byte[])</a></span> - Constructor for class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/X25519Jce.KeyPair.html" title="class in com.google.crypto.tink.hybrid.internal">X25519Jce.KeyPair</a></dt>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/X25519.KeyPair.html#KeyPair-byte:A-byte:A-">KeyPair(byte[], byte[])</a></span> - Constructor for class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/X25519.KeyPair.html" title="class in com.google.crypto.tink.hybrid.internal">X25519.KeyPair</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/internal/KeyParser.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">KeyParser</span></a>&lt;<a href="com/google/crypto/tink/internal/KeyParser.html" title="type parameter in KeyParser">SerializationT</a> extends <a href="com/google/crypto/tink/internal/Serialization.html" title="interface in com.google.crypto.tink.internal">Serialization</a>&gt; - Class in <a href="com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></dt>
 <dd>
@@ -19181,9 +19187,7 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/HpkePrivateKey.html#PRIVATE_KEY_FIELD_NUMBER">PRIVATE_KEY_FIELD_NUMBER</a></span> - Static variable in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/HpkePrivateKey.html" title="class in com.google.crypto.tink.proto">HpkePrivateKey</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/X25519Jce.html#PRIVATE_KEY_LEN">PRIVATE_KEY_LEN</a></span> - Static variable in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/X25519Jce.html" title="class in com.google.crypto.tink.hybrid.internal">X25519Jce</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/X25519Jce.KeyPair.html#privateKey">privateKey</a></span> - Variable in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/X25519Jce.KeyPair.html" title="class in com.google.crypto.tink.hybrid.internal">X25519Jce.KeyPair</a></dt>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/X25519.KeyPair.html#privateKey">privateKey</a></span> - Variable in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/X25519.KeyPair.html" title="class in com.google.crypto.tink.hybrid.internal">X25519.KeyPair</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/PrivateKey.html" title="interface in com.google.crypto.tink"><span class="typeNameLink">PrivateKey</span></a> - Interface in <a href="com/google/crypto/tink/package-summary.html">com.google.crypto.tink</a></dt>
 <dd>
@@ -19300,7 +19304,7 @@
 <div class="block">Returns the 32-byte Diffie-Hellman public value based on the given <code>privateKey</code> (i.e.,
  <code>privateKey</code>·[9] on the curve).</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/X25519Jce.KeyPair.html#publicKey">publicKey</a></span> - Variable in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/X25519Jce.KeyPair.html" title="class in com.google.crypto.tink.hybrid.internal">X25519Jce.KeyPair</a></dt>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/X25519.KeyPair.html#publicKey">publicKey</a></span> - Variable in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/X25519.KeyPair.html" title="class in com.google.crypto.tink.hybrid.internal">X25519.KeyPair</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/jwt/JwtEcdsaPrivateKey.html#publicKey">publicKey</a></span> - Variable in class com.google.crypto.tink.jwt.<a href="com/google/crypto/tink/jwt/JwtEcdsaPrivateKey.html" title="class in com.google.crypto.tink.jwt">JwtEcdsaPrivateKey</a></dt>
 <dd>&nbsp;</dd>
@@ -24456,20 +24460,24 @@ the order they are declared.</div>
 <dl>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/EciesParameters.CurveType.html#X25519">X25519</a></span> - Static variable in class com.google.crypto.tink.hybrid.<a href="com/google/crypto/tink/hybrid/EciesParameters.CurveType.html" title="class in com.google.crypto.tink.hybrid">EciesParameters.CurveType</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/hybrid/internal/X25519.html" title="interface in com.google.crypto.tink.hybrid.internal"><span class="typeNameLink">X25519</span></a> - Interface in <a href="com/google/crypto/tink/hybrid/internal/package-summary.html">com.google.crypto.tink.hybrid.internal</a></dt>
+<dd>
+<div class="block">Interface for X25519.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/subtle/X25519.html" title="class in com.google.crypto.tink.subtle"><span class="typeNameLink">X25519</span></a> - Class in <a href="com/google/crypto/tink/subtle/package-summary.html">com.google.crypto.tink.subtle</a></dt>
 <dd>
 <div class="block">Defines <a href="https://cr.yp.to/ecdh/curve25519-20060209.pdf">the ECDH Curve25519 function</a>,
  also known as the X25519 function.</div>
 </dd>
+<dt><a href="com/google/crypto/tink/hybrid/internal/X25519.KeyPair.html" title="class in com.google.crypto.tink.hybrid.internal"><span class="typeNameLink">X25519.KeyPair</span></a> - Class in <a href="com/google/crypto/tink/hybrid/internal/package-summary.html">com.google.crypto.tink.hybrid.internal</a></dt>
+<dd>
+<div class="block">Keypair.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/hybrid/internal/HpkeUtil.html#X25519_HKDF_SHA256_KEM_ID">X25519_HKDF_SHA256_KEM_ID</a></span> - Static variable in class com.google.crypto.tink.hybrid.internal.<a href="com/google/crypto/tink/hybrid/internal/HpkeUtil.html" title="class in com.google.crypto.tink.hybrid.internal">HpkeUtil</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/google/crypto/tink/hybrid/internal/X25519Jce.html" title="class in com.google.crypto.tink.hybrid.internal"><span class="typeNameLink">X25519Jce</span></a> - Class in <a href="com/google/crypto/tink/hybrid/internal/package-summary.html">com.google.crypto.tink.hybrid.internal</a></dt>
+<dt><a href="com/google/crypto/tink/hybrid/internal/X25519Conscrypt.html" title="class in com.google.crypto.tink.hybrid.internal"><span class="typeNameLink">X25519Conscrypt</span></a> - Class in <a href="com/google/crypto/tink/hybrid/internal/package-summary.html">com.google.crypto.tink.hybrid.internal</a></dt>
 <dd>
-<div class="block">X25519 implementation using JCE.</div>
-</dd>
-<dt><a href="com/google/crypto/tink/hybrid/internal/X25519Jce.KeyPair.html" title="class in com.google.crypto.tink.hybrid.internal"><span class="typeNameLink">X25519Jce.KeyPair</span></a> - Class in <a href="com/google/crypto/tink/hybrid/internal/package-summary.html">com.google.crypto.tink.hybrid.internal</a></dt>
-<dd>
-<div class="block">An X25519 key pair.</div>
+<div class="block">X25519 implementation using Conscrypt.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/PredefinedAeadParameters.html#X_AES_GCM_8_BYTE_SALT_NO_PREFIX">X_AES_GCM_8_BYTE_SALT_NO_PREFIX</a></span> - Static variable in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/PredefinedAeadParameters.html" title="class in com.google.crypto.tink.aead">PredefinedAeadParameters</a></dt>
 <dd>
