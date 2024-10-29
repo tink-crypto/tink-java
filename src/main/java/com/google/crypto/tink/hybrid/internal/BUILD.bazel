@@ -250,6 +250,22 @@ java_library(
     ],
 )
 
+java_library(
+    name = "x25519",
+    srcs = ["X25519.java"],
+)
+
+java_library(
+    name = "x25519_conscrypt",
+    srcs = ["X25519Conscrypt.java"],
+    deps = [
+        ":x25519",
+        "//src/main/java/com/google/crypto/tink/internal:conscrypt_util",
+        "//src/main/java/com/google/crypto/tink/internal:util",
+        "//src/main/java/com/google/crypto/tink/subtle:bytes",
+    ],
+)
+
 # Android libraries
 
 android_library(
@@ -673,21 +689,17 @@ java_library(
 )
 
 android_library(
-    name = "x25519_jce-android",
-    srcs = ["X25519Jce.java"],
-    deps = [
-        "//src/main/java/com/google/crypto/tink/internal:util-android",
-        "//src/main/java/com/google/crypto/tink/subtle:bytes-android",
-        "//src/main/java/com/google/crypto/tink/subtle:subtle_util_cluster-android",
-    ],
+    name = "x25519-android",
+    srcs = ["X25519.java"],
 )
 
-java_library(
-    name = "x25519_jce",
-    srcs = ["X25519Jce.java"],
+android_library(
+    name = "x25519_conscrypt-android",
+    srcs = ["X25519Conscrypt.java"],
     deps = [
-        "//src/main/java/com/google/crypto/tink/internal:util",
-        "//src/main/java/com/google/crypto/tink/subtle:bytes",
-        "//src/main/java/com/google/crypto/tink/subtle:subtle_util_cluster",
+        ":x25519-android",
+        "//src/main/java/com/google/crypto/tink/internal:conscrypt_util-android",
+        "//src/main/java/com/google/crypto/tink/internal:util-android",
+        "//src/main/java/com/google/crypto/tink/subtle:bytes-android",
     ],
 )
