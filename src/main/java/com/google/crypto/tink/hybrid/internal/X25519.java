@@ -16,11 +16,9 @@
 
 package com.google.crypto.tink.hybrid.internal;
 
-import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 
 /** Interface for X25519. */
-@Immutable
 public interface X25519 {
 
   /** Keypair. */
