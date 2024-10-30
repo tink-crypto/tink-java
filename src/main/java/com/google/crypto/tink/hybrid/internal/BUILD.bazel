@@ -244,6 +244,8 @@ java_library(
         ":hpke_kem_encap_output",
         ":hpke_kem_private_key",
         ":hpke_util",
+        ":x25519",
+        ":x25519_conscrypt",
         "//src/main/java/com/google/crypto/tink/subtle:bytes",
         "//src/main/java/com/google/crypto/tink/subtle:x25519",
         "@maven//:com_google_errorprone_error_prone_annotations",
@@ -253,6 +255,7 @@ java_library(
 java_library(
     name = "x25519",
     srcs = ["X25519.java"],
+    deps = ["@maven//:com_google_errorprone_error_prone_annotations"],
 )
 
 java_library(
@@ -263,6 +266,7 @@ java_library(
         "//src/main/java/com/google/crypto/tink/internal:conscrypt_util",
         "//src/main/java/com/google/crypto/tink/internal:util",
         "//src/main/java/com/google/crypto/tink/subtle:bytes",
+        "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
 
@@ -508,6 +512,8 @@ android_library(
         ":hpke_kem_encap_output-android",
         ":hpke_kem_private_key-android",
         ":hpke_util-android",
+        ":x25519-android",
+        ":x25519_conscrypt-android",
         "//src/main/java/com/google/crypto/tink/subtle:bytes-android",
         "//src/main/java/com/google/crypto/tink/subtle:x25519-android",
         "@maven//:com_google_errorprone_error_prone_annotations",
@@ -691,6 +697,7 @@ java_library(
 android_library(
     name = "x25519-android",
     srcs = ["X25519.java"],
+    deps = ["@maven//:com_google_errorprone_error_prone_annotations"],
 )
 
 android_library(
@@ -701,5 +708,6 @@ android_library(
         "//src/main/java/com/google/crypto/tink/internal:conscrypt_util-android",
         "//src/main/java/com/google/crypto/tink/internal:util-android",
         "//src/main/java/com/google/crypto/tink/subtle:bytes-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
