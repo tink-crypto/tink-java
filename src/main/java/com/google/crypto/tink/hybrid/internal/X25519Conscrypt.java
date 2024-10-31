@@ -20,6 +20,7 @@ import static com.google.crypto.tink.internal.Util.isPrefix;
 
 import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.subtle.Bytes;
+import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
@@ -40,6 +41,7 @@ import javax.crypto.KeyAgreement;
  * supported by all JCE implementations and they are easier to convert from and to their raw 32-byte
  * encodings.
  */
+@Immutable
 public final class X25519Conscrypt implements X25519 {
   private static final int PRIVATE_KEY_LEN = 32;
   private static final int PUBLIC_KEY_LEN = 32;
@@ -63,6 +65,7 @@ public final class X25519Conscrypt implements X25519 {
         0x03, 0x21, 0x00, // Bit string: 256 bits
       };
 
+  @SuppressWarnings("Immutable") // Provider is immutable.
   final Provider provider;
 
   private X25519Conscrypt(Provider provider) {
