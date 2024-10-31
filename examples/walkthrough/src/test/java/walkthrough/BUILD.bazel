@@ -12,6 +12,7 @@ java_test(
         "@maven//:junit_junit",
         "@tink_java//src/main/java/com/google/crypto/tink:aead",
         "@tink_java//src/main/java/com/google/crypto/tink:registry_cluster",
+        "@tink_java//src/main/java/com/google/crypto/tink:registry_configuration",
         "@tink_java//src/main/java/com/google/crypto/tink/aead:aead_config",
     ],
 )

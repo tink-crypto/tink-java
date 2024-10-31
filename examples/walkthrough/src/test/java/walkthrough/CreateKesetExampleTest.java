@@ -18,6 +18,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.aead.AeadConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,7 +35,7 @@ public final class CreateKesetExampleTest {
 
     KeysetHandle keysetHandle = CreateKeysetExample.createAes128GcmKeyset();
 
-    Aead aead = keysetHandle.getPrimitive(Aead.class);
+    Aead aead = keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
     assertThat(aead.decrypt(aead.encrypt(plaintext, associatedData), associatedData))
         .isEqualTo(plaintext);
   }
