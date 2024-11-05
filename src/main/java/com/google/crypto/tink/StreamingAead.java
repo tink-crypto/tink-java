@@ -35,7 +35,7 @@ import java.security.GeneralSecurityException;
  *
  * <h3>Security guarantees</h3>
  *
- * <p>Instances of StreamingAead must follow the OAE2 definition as proposed in the paper "Online
+ * <p>Instances of StreamingAead must follow the nOAE definition as proposed in the paper "Online
  * Authenticated-Encryption and its Nonce-Reuse Misuse-Resistance" by Hoang, Reyhanitabar, Rogaway
  * and Vizár https://eprint.iacr.org/2015/189.pdf
  *
