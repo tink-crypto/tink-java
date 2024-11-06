@@ -1138,7 +1138,13 @@ public final class KeysetHandle {
   /**
    * Returns a primitive from this keyset, using the global registry to create resources creating
    * the primitive.
+   *
+   * @deprecated New users should use {@code KeysetHandle.getPrimitive} with a suitable
+   *     {@code Configuration}. Existing users can use
+   *     {@code KeysetHandle.getPrimitive(RegistryConfiguration.get(), targetClassObject)} for
+   *     exactly the same behavior.
    */
+    @Deprecated /* b/265864709 */
   @InlineMe(
       replacement = "this.getPrimitive(RegistryConfiguration.get(), targetClassObject)",
       imports = {"com.google.crypto.tink.RegistryConfiguration"})
