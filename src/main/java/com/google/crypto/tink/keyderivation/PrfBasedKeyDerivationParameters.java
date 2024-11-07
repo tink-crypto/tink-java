@@ -18,6 +18,7 @@ package com.google.crypto.tink.keyderivation;
 
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.prf.PrfParameters;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.util.Objects;
@@ -33,6 +34,7 @@ public final class PrfBasedKeyDerivationParameters extends KeyDerivationParamete
     @Nullable private Parameters derivedKeyParameters = null;
 
     /** Sets the parameters of the PRF used to create randomness from the salt. */
+    @CanIgnoreReturnValue
     public Builder setPrfParameters(PrfParameters prfParameters) {
       this.prfParameters = prfParameters;
       return this;
@@ -42,6 +44,7 @@ public final class PrfBasedKeyDerivationParameters extends KeyDerivationParamete
      * The parameters of the keys which are in the result keyset when the user calls {@code
      * KeysetDeriver.deriveKeyset()}.
      */
+    @CanIgnoreReturnValue
     public Builder setDerivedKeyParameters(Parameters derivedKeyParameters) {
       this.derivedKeyParameters = derivedKeyParameters;
       return this;

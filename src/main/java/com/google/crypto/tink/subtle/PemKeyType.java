@@ -17,6 +17,7 @@
 package com.google.crypto.tink.subtle;
 
 import com.google.crypto.tink.subtle.Enums.HashType;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -136,6 +137,7 @@ public enum PemKeyType {
     return validate(keyFactory.generatePrivate(new PKCS8EncodedKeySpec(key)));
   }
 
+  @CanIgnoreReturnValue
   private Key validate(Key key) throws GeneralSecurityException {
     if (this.keyType.equals("RSA")) {
       RSAKey rsaKey = (RSAKey) key;

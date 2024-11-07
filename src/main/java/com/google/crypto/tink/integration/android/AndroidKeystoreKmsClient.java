@@ -248,6 +248,7 @@ public final class AndroidKeystoreKmsClient implements KmsClient {
   }
 
   /** Does a self-test to verify whether we can rely on Android Keystore */
+  @CanIgnoreReturnValue
   private static Aead validateAead(Aead aead) throws GeneralSecurityException {
     // Non-empty message and empty aad.
     // This is a combination that usually fails.

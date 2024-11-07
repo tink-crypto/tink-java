@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.streamingaead;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.util.Objects;
@@ -67,6 +68,7 @@ public class AesGcmHkdfStreamingParameters extends StreamingAeadParameters {
      * <p>Must be at least 16, and at least equal to the value set in {@link
      * #setDerivedAesGcmKeySizeBytes}
      */
+    @CanIgnoreReturnValue
     public Builder setKeySizeBytes(int keySizeBytes) {
       this.keySizeBytes = keySizeBytes;
       return this;
@@ -77,12 +79,14 @@ public class AesGcmHkdfStreamingParameters extends StreamingAeadParameters {
      *
      * <p>Must be 16 or 32.
      */
+    @CanIgnoreReturnValue
     public Builder setDerivedAesGcmKeySizeBytes(int derivedAesGcmKeySizeBytes) {
       this.derivedAesGcmKeySizeBytes = derivedAesGcmKeySizeBytes;
       return this;
     }
 
     /** Sets the type of the hash function used in HKDF. */
+    @CanIgnoreReturnValue
     public Builder setHkdfHashType(HashType hkdfHashType) {
       this.hkdfHashType = hkdfHashType;
       return this;
@@ -94,6 +98,7 @@ public class AesGcmHkdfStreamingParameters extends StreamingAeadParameters {
      * <p>Must be at least equal 24 plus the value set in {@link #setDerivedAesGcmKeySizeBytes}, and
      * less than 2^31.
      */
+    @CanIgnoreReturnValue
     public Builder setCiphertextSegmentSizeBytes(int ciphertextSegmentSizeBytes) {
       this.ciphertextSegmentSizeBytes = ciphertextSegmentSizeBytes;
       return this;

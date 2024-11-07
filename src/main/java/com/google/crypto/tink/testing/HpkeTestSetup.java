@@ -17,6 +17,7 @@
 package com.google.crypto.tink.testing;
 
 import com.google.crypto.tink.subtle.Hex;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import javax.annotation.Nullable;
 
 /** Helper class that contains setup parameter values for an individual test vector. */
@@ -53,66 +54,79 @@ public final class HpkeTestSetup {
 
     private Builder() {}
 
+    @CanIgnoreReturnValue
     public Builder setInfo(String info) {
       this.info = info;
       return this;
     }
 
+    @CanIgnoreReturnValue
     public Builder setSenderPublicKey(String senderPublicKey) {
       this.senderPublicKey = senderPublicKey;
       return this;
     }
 
+    @CanIgnoreReturnValue
     public Builder setSenderPrivateKey(String senderPrivateKey) {
       this.senderPrivateKey = senderPrivateKey;
       return this;
     }
 
+    @CanIgnoreReturnValue
     public Builder setSenderEphemeralPublicKey(String senderEphemeralPublicKey) {
       this.senderEphemeralPublicKey = senderEphemeralPublicKey;
       return this;
     }
 
+    @CanIgnoreReturnValue
     public Builder setSenderEphemeralPrivateKey(String senderEphemeralPrivateKey) {
       this.senderEphemeralPrivateKey = senderEphemeralPrivateKey;
       return this;
     }
 
+    @CanIgnoreReturnValue
     public Builder setRecipientPublicKey(String recipientPublicKey) {
       this.recipientPublicKey = recipientPublicKey;
       return this;
     }
 
+    @CanIgnoreReturnValue
     public Builder setRecipientPrivateKey(String recipientPrivateKey) {
       this.recipientPrivateKey = recipientPrivateKey;
       return this;
     }
 
+    @CanIgnoreReturnValue
     public Builder setEncapsulatedKey(String encapsulatedKey) {
       this.encapsulatedKey = encapsulatedKey;
       return this;
     }
 
+    @CanIgnoreReturnValue
     public Builder setSharedSecret(String sharedSecret) {
       this.sharedSecret = sharedSecret;
       return this;
     }
 
+    @CanIgnoreReturnValue
     public Builder setKeyScheduleContext(String keyScheduleContext) {
       this.keyScheduleContext = keyScheduleContext;
       return this;
     }
 
+    @CanIgnoreReturnValue
     public Builder setSecret(String secret) {
       this.secret = secret;
       return this;
     }
 
+    @CanIgnoreReturnValue
     public Builder setKey(String key) {
       this.key = key;
       return this;
     }
 
+    @CanIgnoreReturnValue
     public Builder setBaseNonce(String baseNonce) {
       this.baseNonce = baseNonce;
       return this;

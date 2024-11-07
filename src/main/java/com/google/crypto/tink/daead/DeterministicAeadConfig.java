@@ -18,6 +18,7 @@ package com.google.crypto.tink.daead;
 
 import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.proto.RegistryConfig;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.InlineMe;
 import java.security.GeneralSecurityException;
 
@@ -78,6 +79,7 @@ public final class DeterministicAeadConfig {
    * initializer, i.e. to enforce that when a user accesses any of the variables here, the class is
    * initialized.
    */
+  @CanIgnoreReturnValue
   private static String initializeClassReturnInput(String s) {
     return s;
   }

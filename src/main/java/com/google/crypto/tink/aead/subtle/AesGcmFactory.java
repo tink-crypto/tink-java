@@ -18,6 +18,7 @@ package com.google.crypto.tink.aead.subtle;
 
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.subtle.AesGcmJce;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
@@ -47,7 +48,10 @@ public final class AesGcmFactory implements AeadFactory {
     return new AesGcmJce(symmetricKey);
   }
 
-  /** @throws InvalidAlgorithmParameterException if {@code sizeInBytes} is not supported. */
+  /**
+   * @throws InvalidAlgorithmParameterException if {@code sizeInBytes} is not supported.
+   */
+  @CanIgnoreReturnValue
   private static int validateAesKeySize(int sizeInBytes) throws InvalidAlgorithmParameterException {
     if (sizeInBytes != 16 && sizeInBytes != 32) {
       throw new InvalidAlgorithmParameterException(
