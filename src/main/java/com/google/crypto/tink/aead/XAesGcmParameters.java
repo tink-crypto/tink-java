@@ -44,6 +44,17 @@ public final class XAesGcmParameters extends AeadParameters {
     }
   }
 
+  /**
+   * Creates a new {@link XAesGcmParameters} object for generating new instances of {@link
+   * XAesGcmKey}. The key size is 32 bytes and the tag size is 16 bytes. The IV size in bytes is
+   * {@code saltSizeBytes + 12}.
+   *
+   * <p>{@code create(Variant.NO_PREFIX, 12)} returns {@link XAesGcmParameters} that follow the <a
+   * href="https://github.com/C2SP/C2SP/blob/main/XAES-256-GCM.md">XAES-256-GCM specification</a>.
+   *
+   * @param variant the variant of the X-AES-GCM key.
+   * @param saltSizeBytes the size of the salt in bytes. Must be between 8 and 12 bytes.
+   */
   public static XAesGcmParameters create(Variant variant, int saltSizeBytes)
       throws GeneralSecurityException {
     if (saltSizeBytes < 8 || saltSizeBytes > 12) {

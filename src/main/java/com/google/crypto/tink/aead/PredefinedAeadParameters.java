@@ -19,14 +19,15 @@ package com.google.crypto.tink.aead;
 import static com.google.crypto.tink.internal.TinkBugException.exceptionIsBug;
 
 /**
- * Pre-generated {@link KeyTemplate} for {@link com.google.crypto.tink.Aead} keys.
+ * Pre-generated {@link com.google.crypto.tink.Parameters} objects for creating new instances of
+ * {@link AeadKey}.
  *
  * <p>Note: if you want to keep dependencies small, consider inlining the constants here.
  */
 public final class PredefinedAeadParameters {
   /**
-   * A {@link Parameters} object for generating new instances of {@link AesGcmKey} with the
-   * following parameters:
+   * A {@link com.google.crypto.tink.Parameters} object for generating new instances of {@link
+   * AesGcmKey} with the following parameters:
    *
    * <ul>
    *   <li>Key size: 16 bytes
@@ -47,8 +48,8 @@ public final class PredefinedAeadParameters {
                   .build());
 
   /**
-   * A {@link Parameters} object for generating new instances of {@link AesGcmKey} with the
-   * following parameters:
+   * A {@link com.google.crypto.tink.Parameters} object for generating new instances of {@link
+   * AesGcmKey} with the following parameters:
    *
    * <ul>
    *   <li>Key size: 32 bytes
@@ -69,8 +70,8 @@ public final class PredefinedAeadParameters {
                   .build());
 
   /**
-   * A {@link Parameters} object for generating new instances of {@link AesEaxKey} with the
-   * following parameters:
+   * A {@link com.google.crypto.tink.Parameters} object for generating new instances of {@link
+   * AesEaxKey} with the following parameters:
    *
    * <ul>
    *   <li>Key size: 16 bytes
@@ -88,8 +89,8 @@ public final class PredefinedAeadParameters {
                   .build());
 
   /**
-   * A {@link Parameters} object for generating new instances of {@link AesEaxKey} with the
-   * following parameters:
+   * A {@link com.google.crypto.tink.Parameters} object for generating new instances of {@link
+   * AesEaxKey} with the following parameters:
    *
    * <ul>
    *   <li>Key size: 32 bytes
@@ -107,8 +108,8 @@ public final class PredefinedAeadParameters {
                   .build());
 
   /**
-   * A {@link Parameters} object for generating new instances of {@link AesCtrHmacAeadKey} with the
-   * following parameters:
+   * A {@link com.google.crypto.tink.Parameters} object for generating new instances of {@link
+   * AesCtrHmacAeadKey} with the following parameters:
    *
    * <ul>
    *   <li>AES key size: 16 bytes
@@ -131,8 +132,8 @@ public final class PredefinedAeadParameters {
                   .build());
 
   /**
-   * A {@link Parameters} object for generating new instances of {@link AesCtrHmacAeadKey} with the
-   * following parameters:
+   * A {@link com.google.crypto.tink.Parameters} object for generating new instances of {@link
+   * AesCtrHmacAeadKey} with the following parameters:
    *
    * <ul>
    *   <li>AES key size: 32 bytes
@@ -155,30 +156,38 @@ public final class PredefinedAeadParameters {
                   .build());
 
   /**
-   * A {@link KeyTemplate} that generates new instances of {@link
-   * com.google.crypto.tink.proto.ChaCha20Poly1305Key}.
+   * A {@link com.google.crypto.tink.Parameters} object that generates new instances of {@link
+   * ChaCha20Poly1305Key}.
    */
   public static final ChaCha20Poly1305Parameters CHACHA20_POLY1305 =
       ChaCha20Poly1305Parameters.create(ChaCha20Poly1305Parameters.Variant.TINK);
 
   /**
-   * A {@link KeyTemplate} that generates new instances of {@link
-   * com.google.crypto.tink.proto.XChaCha20Poly1305Key}.
+   * A {@link com.google.crypto.tink.Parameters} object that generates new instances of {@link
+   * XChaCha20Poly1305Key}.
    */
   public static final XChaCha20Poly1305Parameters XCHACHA20_POLY1305 =
       XChaCha20Poly1305Parameters.create(XChaCha20Poly1305Parameters.Variant.TINK);
 
   /**
-   * A {@link com.google.crypto.tink.Parameters} object for generating new instances of
-   * {@link XAesGcmKey} with the following parameters:
+   * A {@link com.google.crypto.tink.Parameters} object for generating new instances of {@link
+   * XAesGcmKey}. This follows the algorithm defined in the <a
+   * href="https://github.com/C2SP/C2SP/blob/main/XAES-256-GCM.md">XAES-256-GCM specification</a>,
+   * except that the salt is 8 bytes instead of 12 bytes.
    *
    * <ul>
+   *   <li>Key size: 32 bytes
+   *   <li>IV size: 20 bytes (8 bytes of salt, 12 bytes of AES-GCM IV)
    *   <li>Salt size: 8 bytes
-   *   <li>Output prefix type: NO_PREFIX
+   *   <li>Tag size: 16 bytes
+   *   <li>Output prefix: None
    * </ul>
    */
   public static final XAesGcmParameters X_AES_GCM_8_BYTE_SALT_NO_PREFIX =
-      exceptionIsBug(() -> XAesGcmParameters.create(XAesGcmParameters.Variant.NO_PREFIX, 8));
+      exceptionIsBug(
+          () ->
+              XAesGcmParameters.create(
+                  XAesGcmParameters.Variant.NO_PREFIX, /* saltSizeBytes= */ 8));
 
   private PredefinedAeadParameters() {}
 }
