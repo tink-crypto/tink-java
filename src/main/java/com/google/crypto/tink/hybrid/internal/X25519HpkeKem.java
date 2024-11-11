@@ -21,7 +21,14 @@ import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 
-/** Diffie-Hellman-based X25519-HKDF HPKE KEM variant. */
+/**
+ * Diffie-Hellman-based X25519-HKDF HPKE KEM variant.
+ *
+ * <p>It uses the Conscrypt implementation if available. If not, it uses Tink's subtle
+ * implementation.
+ *
+ * <p>On Android and on Java since JDK 11, the Conscrypt implementation is available by default.
+ */
 @Immutable
 final class X25519HpkeKem implements HpkeKem {
   private final HkdfHpkeKdf hkdf;
@@ -48,7 +55,13 @@ final class X25519HpkeKem implements HpkeKem {
   /** Construct X25519-HKDF HPKE KEM using {@code hkdf}. */
   X25519HpkeKem(HkdfHpkeKdf hkdf) {
     this.hkdf = hkdf;
-    this.x25519 = new X25519Java();
+    X25519 x25519 = null;
+    try {
+      x25519 = X25519Conscrypt.create();
+    } catch (GeneralSecurityException e) {
+      x25519 = new X25519Java();
+    }
+    this.x25519 = x25519;
   }
 
   private byte[] deriveKemSharedSecret(
