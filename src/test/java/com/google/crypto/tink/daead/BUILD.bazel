@@ -218,3 +218,21 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "DeterministicAeadConfigurationV0Test",
+    size = "small",
+    srcs = ["DeterministicAeadConfigurationV0Test.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:deterministic_aead",
+        "//src/main/java/com/google/crypto/tink:registry_cluster",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
+        "//src/main/java/com/google/crypto/tink/daead:aes_siv_key",
+        "//src/main/java/com/google/crypto/tink/daead:aes_siv_parameters",
+        "//src/main/java/com/google/crypto/tink/daead:deterministic_aead_configuration_v0",
+        "//src/main/java/com/google/crypto/tink/daead/internal:aes_siv_proto_serialization",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
