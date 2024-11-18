@@ -163,7 +163,9 @@ extends <a href="../../../../../com/google/crypto/tink/aead/AeadParameters.html"
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../com/google/crypto/tink/aead/XAesGcmParameters.html" title="class in com.google.crypto.tink.aead">XAesGcmParameters</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/XAesGcmParameters.html#create-com.google.crypto.tink.aead.XAesGcmParameters.Variant-int-">create</a></span>(<a href="../../../../../com/google/crypto/tink/aead/XAesGcmParameters.Variant.html" title="class in com.google.crypto.tink.aead">XAesGcmParameters.Variant</a>&nbsp;variant,
-      int&nbsp;saltSizeBytes)</code>&nbsp;</td>
+      int&nbsp;saltSizeBytes)</code>
+<div class="block">Creates a new <a href="../../../../../com/google/crypto/tink/aead/XAesGcmParameters.html" title="class in com.google.crypto.tink.aead"><code>XAesGcmParameters</code></a> object for generating new instances of <a href="../../../../../com/google/crypto/tink/aead/XAesGcmKey.html" title="class in com.google.crypto.tink.aead"><code>XAesGcmKey</code></a>.</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
@@ -225,7 +227,15 @@ extends <a href="../../../../../com/google/crypto/tink/aead/AeadParameters.html"
 <pre>public static&nbsp;<a href="../../../../../com/google/crypto/tink/aead/XAesGcmParameters.html" title="class in com.google.crypto.tink.aead">XAesGcmParameters</a>&nbsp;create(<a href="../../../../../com/google/crypto/tink/aead/XAesGcmParameters.Variant.html" title="class in com.google.crypto.tink.aead">XAesGcmParameters.Variant</a>&nbsp;variant,
                                        int&nbsp;saltSizeBytes)
                                 throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<div class="block">Creates a new <a href="../../../../../com/google/crypto/tink/aead/XAesGcmParameters.html" title="class in com.google.crypto.tink.aead"><code>XAesGcmParameters</code></a> object for generating new instances of <a href="../../../../../com/google/crypto/tink/aead/XAesGcmKey.html" title="class in com.google.crypto.tink.aead"><code>XAesGcmKey</code></a>. The key size is 32 bytes and the tag size is 16 bytes. The IV size in bytes is
+ <code>saltSizeBytes + 12</code>.
+
+ <p><code>create(Variant.NO_PREFIX, 12)</code> returns <a href="../../../../../com/google/crypto/tink/aead/XAesGcmParameters.html" title="class in com.google.crypto.tink.aead"><code>XAesGcmParameters</code></a> that follow the <a
+ href="https://github.com/C2SP/C2SP/blob/main/XAES-256-GCM.md">XAES-256-GCM specification</a>.</div>
 <dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>variant</code> - the variant of the X-AES-GCM key.</dd>
+<dd><code>saltSizeBytes</code> - the size of the salt in bytes. Must be between 8 and 12 bytes.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
 </dl>
