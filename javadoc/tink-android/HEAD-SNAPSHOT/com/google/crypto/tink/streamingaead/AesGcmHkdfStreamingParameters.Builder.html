@@ -225,7 +225,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <ul class="blockList">
 <li class="blockList">
 <h4>setKeySizeBytes</h4>
-<pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingParameters.Builder.html" title="class in com.google.crypto.tink.streamingaead">AesGcmHkdfStreamingParameters.Builder</a>&nbsp;setKeySizeBytes(int&nbsp;keySizeBytes)</pre>
+<pre>@CanIgnoreReturnValue
+public&nbsp;<a href="../../../../../com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingParameters.Builder.html" title="class in com.google.crypto.tink.streamingaead">AesGcmHkdfStreamingParameters.Builder</a>&nbsp;setKeySizeBytes(int&nbsp;keySizeBytes)</pre>
 <div class="block">Sets the size of the initial key material (used as input to HKDF).
 
  <p>Must be at least 16, and at least equal to the value set in <a href="../../../../../com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingParameters.Builder.html#setDerivedAesGcmKeySizeBytes-int-"><code>setDerivedAesGcmKeySizeBytes(int)</code></a></div>
@@ -237,7 +238,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <ul class="blockList">
 <li class="blockList">
 <h4>setDerivedAesGcmKeySizeBytes</h4>
-<pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingParameters.Builder.html" title="class in com.google.crypto.tink.streamingaead">AesGcmHkdfStreamingParameters.Builder</a>&nbsp;setDerivedAesGcmKeySizeBytes(int&nbsp;derivedAesGcmKeySizeBytes)</pre>
+<pre>@CanIgnoreReturnValue
+public&nbsp;<a href="../../../../../com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingParameters.Builder.html" title="class in com.google.crypto.tink.streamingaead">AesGcmHkdfStreamingParameters.Builder</a>&nbsp;setDerivedAesGcmKeySizeBytes(int&nbsp;derivedAesGcmKeySizeBytes)</pre>
 <div class="block">Sets the size of the AES GCM key which will internally be derived.
 
  <p>Must be 16 or 32.</div>
@@ -249,7 +251,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <ul class="blockList">
 <li class="blockList">
 <h4>setHkdfHashType</h4>
-<pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingParameters.Builder.html" title="class in com.google.crypto.tink.streamingaead">AesGcmHkdfStreamingParameters.Builder</a>&nbsp;setHkdfHashType(<a href="../../../../../com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingParameters.HashType.html" title="class in com.google.crypto.tink.streamingaead">AesGcmHkdfStreamingParameters.HashType</a>&nbsp;hkdfHashType)</pre>
+<pre>@CanIgnoreReturnValue
+public&nbsp;<a href="../../../../../com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingParameters.Builder.html" title="class in com.google.crypto.tink.streamingaead">AesGcmHkdfStreamingParameters.Builder</a>&nbsp;setHkdfHashType(<a href="../../../../../com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingParameters.HashType.html" title="class in com.google.crypto.tink.streamingaead">AesGcmHkdfStreamingParameters.HashType</a>&nbsp;hkdfHashType)</pre>
 <div class="block">Sets the type of the hash function used in HKDF.</div>
 </li>
 </ul>
@@ -259,7 +262,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <ul class="blockList">
 <li class="blockList">
 <h4>setCiphertextSegmentSizeBytes</h4>
-<pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingParameters.Builder.html" title="class in com.google.crypto.tink.streamingaead">AesGcmHkdfStreamingParameters.Builder</a>&nbsp;setCiphertextSegmentSizeBytes(int&nbsp;ciphertextSegmentSizeBytes)</pre>
+<pre>@CanIgnoreReturnValue
+public&nbsp;<a href="../../../../../com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingParameters.Builder.html" title="class in com.google.crypto.tink.streamingaead">AesGcmHkdfStreamingParameters.Builder</a>&nbsp;setCiphertextSegmentSizeBytes(int&nbsp;ciphertextSegmentSizeBytes)</pre>
 <div class="block">Sets the size of a segment.
 
  <p>Must be at least equal 24 plus the value set in <a href="../../../../../com/google/crypto/tink/streamingaead/AesGcmHkdfStreamingParameters.Builder.html#setDerivedAesGcmKeySizeBytes-int-"><code>setDerivedAesGcmKeySizeBytes(int)</code></a>, and

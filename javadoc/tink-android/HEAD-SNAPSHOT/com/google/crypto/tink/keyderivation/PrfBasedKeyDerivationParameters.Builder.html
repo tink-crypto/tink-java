@@ -211,7 +211,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <ul class="blockList">
 <li class="blockList">
 <h4>setPrfParameters</h4>
-<pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/keyderivation/PrfBasedKeyDerivationParameters.Builder.html" title="class in com.google.crypto.tink.keyderivation">PrfBasedKeyDerivationParameters.Builder</a>&nbsp;setPrfParameters(<a href="../../../../../com/google/crypto/tink/prf/PrfParameters.html" title="class in com.google.crypto.tink.prf">PrfParameters</a>&nbsp;prfParameters)</pre>
+<pre>@CanIgnoreReturnValue
+public&nbsp;<a href="../../../../../com/google/crypto/tink/keyderivation/PrfBasedKeyDerivationParameters.Builder.html" title="class in com.google.crypto.tink.keyderivation">PrfBasedKeyDerivationParameters.Builder</a>&nbsp;setPrfParameters(<a href="../../../../../com/google/crypto/tink/prf/PrfParameters.html" title="class in com.google.crypto.tink.prf">PrfParameters</a>&nbsp;prfParameters)</pre>
 <div class="block">Sets the parameters of the PRF used to create randomness from the salt.</div>
 </li>
 </ul>
@@ -221,7 +222,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <ul class="blockList">
 <li class="blockList">
 <h4>setDerivedKeyParameters</h4>
-<pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/keyderivation/PrfBasedKeyDerivationParameters.Builder.html" title="class in com.google.crypto.tink.keyderivation">PrfBasedKeyDerivationParameters.Builder</a>&nbsp;setDerivedKeyParameters(<a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a>&nbsp;derivedKeyParameters)</pre>
+<pre>@CanIgnoreReturnValue
+public&nbsp;<a href="../../../../../com/google/crypto/tink/keyderivation/PrfBasedKeyDerivationParameters.Builder.html" title="class in com.google.crypto.tink.keyderivation">PrfBasedKeyDerivationParameters.Builder</a>&nbsp;setDerivedKeyParameters(<a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a>&nbsp;derivedKeyParameters)</pre>
 <div class="block">The parameters of the keys which are in the result keyset when the user calls <code>KeysetDeriver.deriveKeyset()</code>.</div>
 </li>
 </ul>
