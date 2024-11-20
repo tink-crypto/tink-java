@@ -653,3 +653,29 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "SignatureConfigurationV0Test",
+    size = "small",
+    srcs = ["SignatureConfigurationV0Test.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:public_key_sign",
+        "//src/main/java/com/google/crypto/tink:public_key_verify",
+        "//src/main/java/com/google/crypto/tink:registry_cluster",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
+        "//src/main/java/com/google/crypto/tink/internal:util",
+        "//src/main/java/com/google/crypto/tink/signature:signature_configuration_v0",
+        "//src/main/java/com/google/crypto/tink/signature:signature_private_key",
+        "//src/main/java/com/google/crypto/tink/signature/internal:ecdsa_proto_serialization",
+        "//src/main/java/com/google/crypto/tink/signature/internal:ed25519_proto_serialization",
+        "//src/main/java/com/google/crypto/tink/signature/internal:rsa_ssa_pkcs1_proto_serialization",
+        "//src/main/java/com/google/crypto/tink/signature/internal:rsa_ssa_pss_proto_serialization",
+        "//src/main/java/com/google/crypto/tink/signature/internal/testing:ecdsa_test_util",
+        "//src/main/java/com/google/crypto/tink/signature/internal/testing:ed25519_test_util",
+        "//src/main/java/com/google/crypto/tink/signature/internal/testing:rsa_ssa_pkcs1_test_util",
+        "//src/main/java/com/google/crypto/tink/signature/internal/testing:rsa_ssa_pss_test_util",
+        "//src/main/java/com/google/crypto/tink/signature/internal/testing:signature_test_vector",
+        "@maven//:com_google_code_findbugs_jsr305",
+        "@maven//:junit_junit",
+    ],
+)
