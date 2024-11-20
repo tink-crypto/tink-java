@@ -70,6 +70,7 @@ public class SignatureConfigurationV0Test {
   @Theory
   public void test_validateSignatureInTestVector(
       @FromDataPoints("signatureTests") SignatureTestVector testVector) throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
     @Nullable Integer apiLevel = Util.getAndroidApiLevel();
     if (apiLevel != null && apiLevel == 19) {
       // Android API 19 is slower than the others in this.
@@ -101,6 +102,7 @@ public class SignatureConfigurationV0Test {
   @Theory
   public void test_computeAndValidateFreshSignatureWithTestVector(
       @FromDataPoints("signatureTests") SignatureTestVector testVector) throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
     @Nullable Integer apiLevel = Util.getAndroidApiLevel();
     if (apiLevel != null && apiLevel == 19) {
       // Android API 19 is slower than the others in this.
@@ -142,6 +144,7 @@ public class SignatureConfigurationV0Test {
   @Theory
   public void test_computeFreshSignatureWithTestVector_throwsWithWrongMessage(
       @FromDataPoints("signatureTests") SignatureTestVector testVector) throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
     @Nullable Integer apiLevel = Util.getAndroidApiLevel();
     if (apiLevel != null && apiLevel == 19) {
       // Android API 19 is slower than the others in this.
