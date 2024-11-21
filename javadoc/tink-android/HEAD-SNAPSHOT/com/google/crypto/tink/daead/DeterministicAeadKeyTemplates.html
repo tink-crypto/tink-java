@@ -137,7 +137,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
    DeterministicAeadConfig.register();
    KeysetHandle handle = KeysetHandle.generateNew(DeterministicAeadKeyTemplates.AES256_SIV);
    DeterministicAead daead =
-       handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.java);
+       handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
  </pre></div>
 <dl>
 <dt><span class="simpleTagLabel">Since:</span></dt>
