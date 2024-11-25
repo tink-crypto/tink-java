@@ -45,7 +45,8 @@ public final class PredefinedAeadParametersTest {
         PredefinedAeadParameters.AES128_CTR_HMAC_SHA256,
         PredefinedAeadParameters.AES256_CTR_HMAC_SHA256,
         PredefinedAeadParameters.CHACHA20_POLY1305,
-        PredefinedAeadParameters.XCHACHA20_POLY1305
+        PredefinedAeadParameters.XCHACHA20_POLY1305,
+        PredefinedAeadParameters.XAES_256_GCM_192_BIT_NONCE,
       };
 
   @Theory
@@ -65,6 +66,9 @@ public final class PredefinedAeadParametersTest {
     assertThat(PredefinedAeadParameters.AES256_CTR_HMAC_SHA256).isNotNull();
     assertThat(PredefinedAeadParameters.CHACHA20_POLY1305).isNotNull();
     assertThat(PredefinedAeadParameters.XCHACHA20_POLY1305).isNotNull();
+    assertThat(PredefinedAeadParameters.XAES_256_GCM_192_BIT_NONCE).isNotNull();
+    assertThat(PredefinedAeadParameters.XAES_256_GCM_192_BIT_NONCE_NO_PREFIX).isNotNull();
+    assertThat(PredefinedAeadParameters.XAES_256_GCM_160_BIT_NONCE_NO_PREFIX).isNotNull();
     assertThat(PredefinedAeadParameters.X_AES_GCM_8_BYTE_SALT_NO_PREFIX).isNotNull();
   }
 }

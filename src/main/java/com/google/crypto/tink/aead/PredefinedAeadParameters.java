@@ -18,6 +18,7 @@ package com.google.crypto.tink.aead;
 
 import static com.google.crypto.tink.internal.TinkBugException.exceptionIsBug;
 
+
 /**
  * Pre-generated {@link com.google.crypto.tink.Parameters} objects for creating new instances of
  * {@link AeadKey}.
@@ -172,22 +173,62 @@ public final class PredefinedAeadParameters {
   /**
    * A {@link com.google.crypto.tink.Parameters} object for generating new instances of {@link
    * XAesGcmKey}. This follows the algorithm defined in the <a
-   * href="https://github.com/C2SP/C2SP/blob/main/XAES-256-GCM.md">XAES-256-GCM specification</a>,
-   * except that the salt is 8 bytes instead of 12 bytes.
+   * href="https://github.com/C2SP/C2SP/blob/main/XAES-256-GCM.md">XAES-256-GCM specification</a>
    *
    * <ul>
    *   <li>Key size: 32 bytes
-   *   <li>IV size: 20 bytes (8 bytes of salt, 12 bytes of AES-GCM IV)
-   *   <li>Salt size: 8 bytes
+   *   <li>Nonce size: 24 bytes (12 bytes of salt, 12 bytes of AES-GCM IV)
+   *   <li>Salt size: 12 bytes
    *   <li>Tag size: 16 bytes
-   *   <li>Output prefix: None
+   *   <li>Output prefix: TINK
    * </ul>
    */
-  public static final XAesGcmParameters X_AES_GCM_8_BYTE_SALT_NO_PREFIX =
+  public static final XAesGcmParameters XAES_256_GCM_192_BIT_NONCE =
+      exceptionIsBug(
+          () -> XAesGcmParameters.create(XAesGcmParameters.Variant.TINK, /* saltSizeBytes= */ 12));
+
+  /**
+   * A {@link com.google.crypto.tink.Parameters} object for generating new instances of {@link
+   * XAesGcmKey}. This follows the algorithm defined in the <a
+   * href="https://github.com/C2SP/C2SP/blob/main/XAES-256-GCM.md">XAES-256-GCM specification</a>
+   *
+   * <ul>
+   *   <li>Key size: 32 bytes
+   *   <li>Nonce size: 24 bytes (12 bytes of salt, 12 bytes of AES-GCM IV)
+   *   <li>Salt size: 12 bytes
+   *   <li>Tag size: 16 bytes
+   *   <li>Output prefix: NO_PREFIX
+   * </ul>
+   */
+  public static final XAesGcmParameters XAES_256_GCM_192_BIT_NONCE_NO_PREFIX =
+      exceptionIsBug(
+          () ->
+              XAesGcmParameters.create(
+                  XAesGcmParameters.Variant.NO_PREFIX, /* saltSizeBytes= */ 12));
+
+  /**
+   * A {@link com.google.crypto.tink.Parameters} object for generating new instances of {@link
+   * XAesGcmKey}. This follows the algorithm defined in the <a
+   * href="https://github.com/C2SP/C2SP/blob/main/XAES-256-GCM.md">XAES-256-GCM specification</a>,
+   * except that the nonce size is 160 bits instead of 192 bits. The remaining 4 bytes are padded
+   * with zeros.
+   *
+   * <ul>
+   *   <li>Key size: 32 bytes
+   *   <li>Nonce size: 20 bytes (8 bytes of salt, 12 bytes of AES-GCM IV)
+   *   <li>Salt size: 8 bytes
+   *   <li>Tag size: 16 bytes
+   *   <li>Output prefix: NO_PREFIX
+   * </ul>
+   */
+  public static final XAesGcmParameters XAES_256_GCM_160_BIT_NONCE_NO_PREFIX =
       exceptionIsBug(
           () ->
               XAesGcmParameters.create(
                   XAesGcmParameters.Variant.NO_PREFIX, /* saltSizeBytes= */ 8));
+
+  public static final XAesGcmParameters X_AES_GCM_8_BYTE_SALT_NO_PREFIX =
+      XAES_256_GCM_160_BIT_NONCE_NO_PREFIX;
 
   private PredefinedAeadParameters() {}
 }

@@ -49,8 +49,9 @@ public class AeadConfigTest {
     assertNotNull(KeysetHandle.generateNew(PredefinedAeadParameters.AES128_EAX));
     assertNotNull(KeysetHandle.generateNew(PredefinedAeadParameters.CHACHA20_POLY1305));
     assertNotNull(KeysetHandle.generateNew(PredefinedAeadParameters.XCHACHA20_POLY1305));
+    assertNotNull(KeysetHandle.generateNew(PredefinedAeadParameters.XAES_256_GCM_192_BIT_NONCE));
     assertNotNull(
-        KeysetHandle.generateNew(PredefinedAeadParameters.X_AES_GCM_8_BYTE_SALT_NO_PREFIX));
+        KeysetHandle.generateNew(PredefinedAeadParameters.XAES_256_GCM_160_BIT_NONCE_NO_PREFIX));
   }
 
   @Test
@@ -83,6 +84,9 @@ public class AeadConfigTest {
     assertThrows(
         GeneralSecurityException.class,
         () -> KeysetHandle.generateNew(PredefinedAeadParameters.XCHACHA20_POLY1305));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> KeysetHandle.generateNew(PredefinedAeadParameters.XAES_256_GCM_192_BIT_NONCE));
     assertThrows(
         GeneralSecurityException.class,
         () -> KeysetHandle.generateNew(PredefinedAeadParameters.X_AES_GCM_8_BYTE_SALT_NO_PREFIX));

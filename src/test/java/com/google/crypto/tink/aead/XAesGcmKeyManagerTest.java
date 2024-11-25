@@ -45,19 +45,19 @@ public final class XAesGcmKeyManagerTest {
   @Test
   public void xAesGcmKeyTypeIsRegistered() throws Exception {
     assertNotNull(
-        KeysetHandle.generateNew(PredefinedAeadParameters.X_AES_GCM_8_BYTE_SALT_NO_PREFIX));
+        KeysetHandle.generateNew(PredefinedAeadParameters.XAES_256_GCM_160_BIT_NONCE_NO_PREFIX));
   }
 
   @Test
   public void xAesGcmKeyCreator_generatesNewKey() throws Exception {
     XAesGcmKey key1 =
         (XAesGcmKey)
-            KeysetHandle.generateNew(PredefinedAeadParameters.X_AES_GCM_8_BYTE_SALT_NO_PREFIX)
+            KeysetHandle.generateNew(PredefinedAeadParameters.XAES_256_GCM_160_BIT_NONCE_NO_PREFIX)
                 .getPrimary()
                 .getKey();
     XAesGcmKey key2 =
         (XAesGcmKey)
-            KeysetHandle.generateNew(PredefinedAeadParameters.X_AES_GCM_8_BYTE_SALT_NO_PREFIX)
+            KeysetHandle.generateNew(PredefinedAeadParameters.XAES_256_GCM_160_BIT_NONCE_NO_PREFIX)
                 .getPrimary()
                 .getKey();
 
@@ -69,7 +69,7 @@ public final class XAesGcmKeyManagerTest {
     assertNotNull(
         KeysetHandle.newBuilder()
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("X_AES_GCM_8_BYTE_SALT_NO_PREFIX")
+                KeysetHandle.generateEntryFromParametersName("XAES_256_GCM_160_BIT_NONCE_NO_PREFIX")
                     .withRandomId()
                     .makePrimary())
             .build());
@@ -78,7 +78,7 @@ public final class XAesGcmKeyManagerTest {
   @Test
   public void xAesGcmKeySerialization_isRegistered() throws Exception {
     KeysetHandle handle =
-        KeysetHandle.generateNew(PredefinedAeadParameters.X_AES_GCM_8_BYTE_SALT_NO_PREFIX);
+        KeysetHandle.generateNew(PredefinedAeadParameters.XAES_256_GCM_160_BIT_NONCE_NO_PREFIX);
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     KeysetWriter keysetWriter = BinaryKeysetWriter.withOutputStream(outputStream);
     LegacyKeysetSerialization.serializeKeyset(handle, keysetWriter, InsecureSecretKeyAccess.get());
@@ -88,7 +88,7 @@ public final class XAesGcmKeyManagerTest {
   public void xAesGcmPrimitiveCreation() throws Exception {
     AeadConfig.register();
     KeysetHandle handle =
-        KeysetHandle.generateNew(PredefinedAeadParameters.X_AES_GCM_8_BYTE_SALT_NO_PREFIX);
+        KeysetHandle.generateNew(PredefinedAeadParameters.XAES_256_GCM_160_BIT_NONCE_NO_PREFIX);
     Aead xAesGcm = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
     String plaintext = "plaintext";
     String associatedData = "associatedData";

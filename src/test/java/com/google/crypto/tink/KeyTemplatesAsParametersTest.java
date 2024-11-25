@@ -172,8 +172,19 @@ public final class KeyTemplatesAsParametersTest {
             XChaCha20Poly1305Parameters.create(XChaCha20Poly1305Parameters.Variant.NO_PREFIX)));
     result.add(
         new Pair(
+            "XAES_256_GCM_192_BIT_NONCE", PredefinedAeadParameters.XAES_256_GCM_192_BIT_NONCE));
+    result.add(
+        new Pair(
+            "XAES_256_GCM_192_BIT_NONCE_NO_PREFIX",
+            PredefinedAeadParameters.XAES_256_GCM_192_BIT_NONCE_NO_PREFIX));
+    result.add(
+        new Pair(
+            "XAES_256_GCM_160_BIT_NONCE_NO_PREFIX",
+            PredefinedAeadParameters.XAES_256_GCM_160_BIT_NONCE_NO_PREFIX));
+    result.add(
+        new Pair(
             "X_AES_GCM_8_BYTE_SALT_NO_PREFIX",
-            PredefinedAeadParameters.X_AES_GCM_8_BYTE_SALT_NO_PREFIX));
+            PredefinedAeadParameters.XAES_256_GCM_160_BIT_NONCE_NO_PREFIX));
     // Mac
     result.add(new Pair("HMAC_SHA256_128BITTAG", PredefinedMacParameters.HMAC_SHA256_128BITTAG));
     result.add(

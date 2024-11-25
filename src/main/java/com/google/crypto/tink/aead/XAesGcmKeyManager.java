@@ -44,6 +44,13 @@ public final class XAesGcmKeyManager {
 
   private static Map<String, Parameters> namedParameters() {
     Map<String, Parameters> result = new HashMap<>();
+    result.put("XAES_256_GCM_192_BIT_NONCE", PredefinedAeadParameters.XAES_256_GCM_192_BIT_NONCE);
+    result.put(
+        "XAES_256_GCM_192_BIT_NONCE_NO_PREFIX",
+        PredefinedAeadParameters.XAES_256_GCM_192_BIT_NONCE_NO_PREFIX);
+    result.put(
+        "XAES_256_GCM_160_BIT_NONCE_NO_PREFIX",
+        PredefinedAeadParameters.XAES_256_GCM_160_BIT_NONCE_NO_PREFIX);
     result.put(
         "X_AES_GCM_8_BYTE_SALT_NO_PREFIX",
         PredefinedAeadParameters.X_AES_GCM_8_BYTE_SALT_NO_PREFIX);
