@@ -38,12 +38,12 @@ import javax.crypto.spec.GCMParameterSpec;
  *
  * <p>Android Keystore is only supported on Android M (API level 23) or newer.
  *
- * <p>Warning: This API is not not thread-safe.
+ * <p>Warning: This API is not thread-safe.
  */
 public final class AndroidKeystore {
 
   /**
-   * Generates a new 256 bit AES-GCM key in Android Keystore, with the given {@code alias}.
+   * Generates a new 256-bit AES-GCM key in Android Keystore, with the given {@code alias}.
    *
    * <p>Warning: Existing keys with the same {@code alias} will be overwritten.
    */
@@ -80,7 +80,7 @@ public final class AndroidKeystore {
   /**
    * Returns an {@link Aead} backed by a key in Android Keystore specified by {@code alias}.
    *
-   * <p>Waring: Android Keystore can only handle a limited number of requests in parallel. If too
+   * <p>Warning: Android Keystore can only handle a limited number of requests in parallel. If too
    * many calls are made at the same time, both encrypt or decrypt may fail with a {@link
    * GeneralSecurityException}. But if you avoid calling keystore from many threads at the same
    * time, then such failures are unlikely and retrying is not necessary.
@@ -127,7 +127,7 @@ public final class AndroidKeystore {
   }
 
   private static final class AeadImpl implements Aead {
-    // All instances of this class use a 12 byte IV and a 16 byte tag.
+    // All instances of this class use a 12-byte IV and a 16-byte tag.
     private static final int IV_SIZE_IN_BYTES = 12;
     private static final int TAG_SIZE_IN_BYTES = 16;
 
