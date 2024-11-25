@@ -17,35 +17,33 @@
 package com.google.crypto.tink.subtle;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.Mac;
-import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.prf.AesCmacPrfKey;
 import com.google.crypto.tink.prf.AesCmacPrfParameters;
 import com.google.crypto.tink.prf.Prf;
 import com.google.crypto.tink.util.SecretBytes;
-import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.util.Arrays;
-import org.junit.Assume;
-import org.junit.Test;
+import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.FromDataPoints;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-/** Unit tests for {@link AesCmac}. */
-@RunWith(JUnit4.class)
+/** Unit tests for {@link PrfAesCmac}. */
+@RunWith(Theories.class)
 public class PrfAesCmacTest {
-  private static class MacTestVector {
-    String algName;
+
+  private static final int KEY_SIZE = 16;
+
+  private static class AesCmacTestVector {
     public byte[] key;
     public byte[] message;
     public byte[] tag;
 
-    public MacTestVector(String algName, String key, String message, String tag) {
-      this.algName = algName;
+    public AesCmacTestVector(String key, String message, String tag) {
       this.key = Hex.decode(key);
       this.message = Hex.decode(message);
       this.tag = Hex.decode(tag);
@@ -53,39 +51,30 @@ public class PrfAesCmacTest {
   }
 
   // Test data from https://tools.ietf.org/html/rfc4493#section-4.
-  private static final MacTestVector[] CMAC_TEST_VECTORS = {
-    new MacTestVector(
-        "AESCMAC", "2b7e151628aed2a6abf7158809cf4f3c", "", "bb1d6929e95937287fa37d129b756746"),
-    new MacTestVector(
-        "AESCMAC",
-        "2b7e151628aed2a6abf7158809cf4f3c",
-        "6bc1bee22e409f96e93d7e117393172a"
+  @DataPoints("aesCmacTestVectors")
+  public static final AesCmacTestVector[] aesCmacTestVectors = {
+    new AesCmacTestVector(
+        /*key=*/ "2b7e151628aed2a6abf7158809cf4f3c",
+        /*message=*/ "",
+        /*tag=*/ "bb1d6929e95937287fa37d129b756746"),
+    new AesCmacTestVector(
+        /*key=*/ "2b7e151628aed2a6abf7158809cf4f3c",
+        /*message=*/ "6bc1bee22e409f96e93d7e117393172a"
             + "ae2d8a571e03ac9c9eb76fac45af8e51"
             + "30c81c46a35ce411",
-        "dfa66747de9ae63030ca32611497c827"),
-    new MacTestVector(
-        "AESCMAC",
-        "2b7e151628aed2a6abf7158809cf4f3c",
-        "6bc1bee22e409f96e93d7e117393172a"
+        /*tag=*/ "dfa66747de9ae63030ca32611497c827"),
+    new AesCmacTestVector(
+        /*key=*/ "2b7e151628aed2a6abf7158809cf4f3c",
+        /*message=*/ "6bc1bee22e409f96e93d7e117393172a"
             + "ae2d8a571e03ac9c9eb76fac45af8e51"
             + "30c81c46a35ce411e5fbc1191a0a52ef"
             + "f69f2445df4f9b17ad2b417be66c3710",
-        "51f0bebf7e3b9d92fc49741779363cfe"),
+        /*tag=*/ "51f0bebf7e3b9d92fc49741779363cfe"),
   };
 
-  @Test
-  public void testFipsCompatibility() throws Exception {
-    Assume.assumeTrue(TinkFips.useOnlyFips());
-
-    // In FIPS-mode we expect that creating a PrfAesCmac fails.
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> new PrfMac(new PrfAesCmac(CMAC_TEST_VECTORS[0].key), 16));
-  }
-
-  @Test
-  public void calcN() throws Exception {
-    // AesUtil.BLOCK_SIZE == 16
+  @Theory
+  public void calcN_returnsNumberOfAesBlocks() throws Exception {
+    // AES block size is 16 bytes.
     assertThat(PrfAesCmac.calcN(0)).isEqualTo(1);
     assertThat(PrfAesCmac.calcN(1)).isEqualTo(1);
     assertThat(PrfAesCmac.calcN(16)).isEqualTo(1);
@@ -99,123 +88,63 @@ public class PrfAesCmacTest {
     assertThat(PrfAesCmac.calcN(Integer.MAX_VALUE)).isEqualTo(0x08000000);
   }
 
-  @Test
-  public void testMacTestVectors() throws Exception {
-    Assume.assumeFalse(TinkFips.useOnlyFips());
-    for (MacTestVector t : CMAC_TEST_VECTORS) {
-      Mac mac = new PrfMac(new PrfAesCmac(t.key), t.tag.length);
-      assertArrayEquals(t.tag, mac.computeMac(t.message));
-      try {
-        mac.verifyMac(t.tag, t.message);
-      } catch (GeneralSecurityException e) {
-        throw new AssertionError("Valid MAC, should not throw exception", e);
-      }
-    }
+  @Theory
+  public void compute_isCorrect(@FromDataPoints("aesCmacTestVectors") AesCmacTestVector testVector) throws Exception {
+    Prf prf = new PrfAesCmac(testVector.key);
+
+    assertThat(prf.compute(testVector.message, testVector.tag.length)).isEqualTo(testVector.tag);
   }
 
-  @Test
-  public void testTagTruncation() throws Exception {
-    Assume.assumeFalse(TinkFips.useOnlyFips());
-    for (MacTestVector t : CMAC_TEST_VECTORS) {
-      Mac mac = new PrfMac(new PrfAesCmac(t.key), t.tag.length);
-      for (int j = 1; j < t.tag.length; j++) {
-        byte[] modifiedTag = Arrays.copyOf(t.tag, t.tag.length - j);
-        assertThrows(GeneralSecurityException.class, () -> mac.verifyMac(modifiedTag, t.message));
-      }
-    }
-    // Test with random keys.
-    for (MacTestVector t : CMAC_TEST_VECTORS) {
-      Mac mac = new PrfMac(new PrfAesCmac(Random.randBytes(t.key.length)), t.tag.length);
-      for (int j = 1; j < t.tag.length; j++) {
-        byte[] modifiedTag = Arrays.copyOf(t.tag, t.tag.length - j);
-        assertThrows(GeneralSecurityException.class, () -> mac.verifyMac(modifiedTag, t.message));
-      }
-    }
+  @Theory
+  public void createWithAesCmacPrfKey_compute_isCorrect(@FromDataPoints("aesCmacTestVectors") AesCmacTestVector testVector) throws Exception {
+    Prf prf = PrfAesCmac.create(
+          AesCmacPrfKey.create(
+              AesCmacPrfParameters.create(testVector.key.length),
+              SecretBytes.copyFrom(testVector.key, InsecureSecretKeyAccess.get())));
+
+    assertThat(prf.compute(testVector.message, testVector.tag.length)).isEqualTo(testVector.tag);
   }
 
-  @Test
-  public void testBitFlipMessage() throws Exception {
-    Assume.assumeFalse(TinkFips.useOnlyFips());
-    for (MacTestVector t : CMAC_TEST_VECTORS) {
-      Mac mac = new PrfMac(new PrfAesCmac(t.key), t.tag.length);
-      for (int b = 0; b < t.message.length; b++) {
-        for (int bit = 0; bit < 8; bit++) {
-          byte[] modifiedMessage = Arrays.copyOf(t.message, t.message.length);
-          modifiedMessage[b] = (byte) (modifiedMessage[b] ^ (1 << bit));
-          assertThrows(GeneralSecurityException.class, () -> mac.verifyMac(t.tag, modifiedMessage));
-        }
-      }
-    }
-    // Test with random keys.
-    for (MacTestVector t : CMAC_TEST_VECTORS) {
-      Mac mac = new PrfMac(new PrfAesCmac(Random.randBytes(t.key.length)), t.tag.length);
-      for (int b = 0; b < t.message.length; b++) {
-        for (int bit = 0; bit < 8; bit++) {
-          byte[] modifiedMessage = Arrays.copyOf(t.message, t.message.length);
-          modifiedMessage[b] = (byte) (modifiedMessage[b] ^ (1 << bit));
-          assertThrows(GeneralSecurityException.class, () -> mac.verifyMac(t.tag, modifiedMessage));
-        }
-      }
-    }
+  @Theory
+  public void compute_truncatesToOutputLength() throws Exception {
+    Prf prf = new PrfAesCmac(Hex.decode("2b7e151628aed2a6abf7158809cf4f3c"));
+    byte[] message = new byte[0];
+    byte[] output16 = prf.compute(message, 16);
+    byte[] output8 = prf.compute(message, 8);
+
+    assertThat(output16).hasLength(16);
+    assertThat(output16).isEqualTo(Hex.decode("bb1d6929e95937287fa37d129b756746"));
+    assertThat(output8).hasLength(8);
+    assertThat(output8).isEqualTo(Hex.decode("bb1d6929e9593728"));
   }
 
-  @Test
-  public void testBitFlipTag() throws Exception {
-    Assume.assumeFalse(TinkFips.useOnlyFips());
-    for (MacTestVector t : CMAC_TEST_VECTORS) {
-      Mac mac = new PrfMac(new PrfAesCmac(t.key), t.tag.length);
-      for (int b = 0; b < t.tag.length; b++) {
-        for (int bit = 0; bit < 8; bit++) {
-          byte[] modifiedTag = Arrays.copyOf(t.tag, t.tag.length);
-          modifiedTag[b] = (byte) (modifiedTag[b] ^ (1 << bit));
-          assertThrows(GeneralSecurityException.class, () -> mac.verifyMac(modifiedTag, t.message));
-        }
+  @Theory
+  public void compute_outputLengthTooLarge_throws() throws Exception {
+    Prf prf = new PrfAesCmac(Hex.decode("2b7e151628aed2a6abf7158809cf4f3c"));
+    byte[] message = new byte[0];
+
+    assertThrows(InvalidAlgorithmParameterException.class, () -> prf.compute(message, 17));
+  }
+
+
+  @Theory
+  public void compute_bitFlipInMessage_outputIsDifferent() throws Exception {
+    byte[] key = Random.randBytes(KEY_SIZE);
+    Prf prf = new PrfAesCmac(key);
+    byte[] message = Random.randBytes(20);
+    int outputLength = 16;
+
+    byte[] output = prf.compute(message, outputLength);
+
+    for (int b = 0; b < message.length; b++) {
+      for (int bit = 0; bit < 8; bit++) {
+        byte[] modifiedMessage = Arrays.copyOf(message, message.length);
+        modifiedMessage[b] = (byte) (modifiedMessage[b] ^ (1 << bit));
+
+        byte[] outputOfModifiedMessage = prf.compute(modifiedMessage, outputLength);
+
+        assertThat(outputOfModifiedMessage).isNotEqualTo(output);
       }
-    }
-    // Test with random keys.
-    for (MacTestVector t : CMAC_TEST_VECTORS) {
-      Mac mac = new PrfMac(new PrfAesCmac(Random.randBytes(t.key.length)), t.tag.length);
-      for (int b = 0; b < t.tag.length; b++) {
-        for (int bit = 0; bit < 8; bit++) {
-          byte[] modifiedTag = Arrays.copyOf(t.tag, t.tag.length);
-          modifiedTag[b] = (byte) (modifiedTag[b] ^ (1 << bit));
-          assertThrows(GeneralSecurityException.class, () -> mac.verifyMac(modifiedTag, t.message));
-        }
-      }
-    }
-  }
-
-  @Test
-  public void testThrowExceptionIfTagSizeIsTooSmall() throws Exception {
-    Assume.assumeFalse(TinkFips.useOnlyFips());
-    for (int i = 0; i < PrfMac.MIN_TAG_SIZE_IN_BYTES; i++) {
-      final int j = i;
-      assertThrows(
-          InvalidAlgorithmParameterException.class,
-          () -> new PrfMac(new PrfAesCmac(Random.randBytes(16)), j));
-    }
-  }
-
-  @Test
-  public void testThrowExceptionIfTagSizeIsTooLarge() throws Exception {
-    Assume.assumeFalse(TinkFips.useOnlyFips());
-    assertThrows(
-        InvalidAlgorithmParameterException.class,
-        () -> new PrfMac(new PrfAesCmac(Random.randBytes(16)), 17));
-  }
-
-  @Test
-  public void createWithAesCmacPrfKey_equivalentToByteArray() throws Exception {
-    Assume.assumeFalse(TinkFips.useOnlyFips());
-    for (MacTestVector t : CMAC_TEST_VECTORS) {
-      Prf aesCmacPrfKeyPrf =
-          PrfAesCmac.create(
-              AesCmacPrfKey.create(
-                  AesCmacPrfParameters.create(t.key.length),
-                  SecretBytes.copyFrom(t.key, InsecureSecretKeyAccess.get())));
-      Prf byteArrayPrf = new PrfAesCmac(t.key);
-      assertThat(aesCmacPrfKeyPrf.compute(t.message, t.tag.length))
-          .isEqualTo(byteArrayPrf.compute(t.message, t.tag.length));
     }
   }
 }
