@@ -20,12 +20,11 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.prf.AesCmacPrfKey;
-import com.google.crypto.tink.prf.AesCmacPrfParameters;
 import com.google.crypto.tink.prf.Prf;
-import com.google.crypto.tink.util.SecretBytes;
+import com.google.crypto.tink.prf.internal.AesCmacPrfTestUtil;
 import java.security.InvalidAlgorithmParameterException;
 import java.util.Arrays;
+import java.util.List;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
 import org.junit.experimental.theories.Theories;
@@ -38,39 +37,9 @@ public class PrfAesCmacTest {
 
   private static final int KEY_SIZE = 16;
 
-  private static class AesCmacTestVector {
-    public byte[] key;
-    public byte[] message;
-    public byte[] tag;
-
-    public AesCmacTestVector(String key, String message, String tag) {
-      this.key = Hex.decode(key);
-      this.message = Hex.decode(message);
-      this.tag = Hex.decode(tag);
-    }
-  }
-
-  // Test data from https://tools.ietf.org/html/rfc4493#section-4.
-  @DataPoints("aesCmacTestVectors")
-  public static final AesCmacTestVector[] aesCmacTestVectors = {
-    new AesCmacTestVector(
-        /*key=*/ "2b7e151628aed2a6abf7158809cf4f3c",
-        /*message=*/ "",
-        /*tag=*/ "bb1d6929e95937287fa37d129b756746"),
-    new AesCmacTestVector(
-        /*key=*/ "2b7e151628aed2a6abf7158809cf4f3c",
-        /*message=*/ "6bc1bee22e409f96e93d7e117393172a"
-            + "ae2d8a571e03ac9c9eb76fac45af8e51"
-            + "30c81c46a35ce411",
-        /*tag=*/ "dfa66747de9ae63030ca32611497c827"),
-    new AesCmacTestVector(
-        /*key=*/ "2b7e151628aed2a6abf7158809cf4f3c",
-        /*message=*/ "6bc1bee22e409f96e93d7e117393172a"
-            + "ae2d8a571e03ac9c9eb76fac45af8e51"
-            + "30c81c46a35ce411e5fbc1191a0a52ef"
-            + "f69f2445df4f9b17ad2b417be66c3710",
-        /*tag=*/ "51f0bebf7e3b9d92fc49741779363cfe"),
-  };
+  @DataPoints("AesCmacPrfTestVectors")
+  public static final List<AesCmacPrfTestUtil.AesCmacPrfTestVector> testVectors =
+      AesCmacPrfTestUtil.creatTestVectors();
 
   @Theory
   public void calcN_returnsNumberOfAesBlocks() throws Exception {
@@ -89,33 +58,22 @@ public class PrfAesCmacTest {
   }
 
   @Theory
-  public void compute_isCorrect(@FromDataPoints("aesCmacTestVectors") AesCmacTestVector testVector) throws Exception {
-    Prf prf = new PrfAesCmac(testVector.key);
+  public void compute_isCorrect(
+      @FromDataPoints("AesCmacPrfTestVectors") AesCmacPrfTestUtil.AesCmacPrfTestVector testVector)
+      throws Exception {
+    Prf prf =
+        new PrfAesCmac(testVector.key().getKeyBytes().toByteArray(InsecureSecretKeyAccess.get()));
 
-    assertThat(prf.compute(testVector.message, testVector.tag.length)).isEqualTo(testVector.tag);
+    assertThat(prf.compute(testVector.data(), testVector.outputLength())).isEqualTo(testVector.output());
   }
 
   @Theory
-  public void createWithAesCmacPrfKey_compute_isCorrect(@FromDataPoints("aesCmacTestVectors") AesCmacTestVector testVector) throws Exception {
-    Prf prf = PrfAesCmac.create(
-          AesCmacPrfKey.create(
-              AesCmacPrfParameters.create(testVector.key.length),
-              SecretBytes.copyFrom(testVector.key, InsecureSecretKeyAccess.get())));
+  public void createWithAesCmacPrfKey_compute_isCorrect(
+      @FromDataPoints("AesCmacPrfTestVectors") AesCmacPrfTestUtil.AesCmacPrfTestVector testVector)
+      throws Exception {
+    Prf prf = PrfAesCmac.create(testVector.key());
 
-    assertThat(prf.compute(testVector.message, testVector.tag.length)).isEqualTo(testVector.tag);
-  }
-
-  @Theory
-  public void compute_truncatesToOutputLength() throws Exception {
-    Prf prf = new PrfAesCmac(Hex.decode("2b7e151628aed2a6abf7158809cf4f3c"));
-    byte[] message = new byte[0];
-    byte[] output16 = prf.compute(message, 16);
-    byte[] output8 = prf.compute(message, 8);
-
-    assertThat(output16).hasLength(16);
-    assertThat(output16).isEqualTo(Hex.decode("bb1d6929e95937287fa37d129b756746"));
-    assertThat(output8).hasLength(8);
-    assertThat(output8).isEqualTo(Hex.decode("bb1d6929e9593728"));
+    assertThat(prf.compute(testVector.data(), testVector.outputLength())).isEqualTo(testVector.output());
   }
 
   @Theory
