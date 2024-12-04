@@ -227,6 +227,10 @@ public final class PredefinedAeadParameters {
               XAesGcmParameters.create(
                   XAesGcmParameters.Variant.NO_PREFIX, /* saltSizeBytes= */ 8));
 
+  /**
+   * @deprecated Use {@link #XAES_256_GCM_160_BIT_NONCE_NO_PREFIX} instead.
+   */
+  @Deprecated
   public static final XAesGcmParameters X_AES_GCM_8_BYTE_SALT_NO_PREFIX =
       XAES_256_GCM_160_BIT_NONCE_NO_PREFIX;
 
