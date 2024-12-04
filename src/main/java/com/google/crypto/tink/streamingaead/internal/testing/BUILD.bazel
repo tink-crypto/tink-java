@@ -1,0 +1,61 @@
+licenses(["notice"])
+
+package(default_visibility = ["//:__subpackages__"])
+
+java_library(
+    name = "aes_ctr_hmac_streaming_test_util",
+    testonly = 1,
+    srcs = ["AesCtrHmacStreamingTestUtil.java"],
+    deps = [
+        ":streaming_aead_test_vector",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink/internal:tink_bug_exception",
+        "//src/main/java/com/google/crypto/tink/streamingaead:aes_ctr_hmac_streaming_key",
+        "//src/main/java/com/google/crypto/tink/streamingaead:aes_ctr_hmac_streaming_parameters",
+        "//src/main/java/com/google/crypto/tink/subtle:bytes",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
+        "@maven//:com_google_truth_truth",
+    ],
+)
+
+java_library(
+    name = "streaming_aead_test_vector",
+    testonly = 1,
+    srcs = ["StreamingAeadTestVector.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/streamingaead:streaming_aead_key",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
+    name = "aes_ctr_hmac_streaming_test_util-android",
+    testonly = 1,
+    srcs = ["AesCtrHmacStreamingTestUtil.java"],
+    deps = [
+        ":streaming_aead_test_vector-android",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access-android",
+        "//src/main/java/com/google/crypto/tink/internal:tink_bug_exception-android",
+        "//src/main/java/com/google/crypto/tink/streamingaead:aes_ctr_hmac_streaming_key-android",
+        "//src/main/java/com/google/crypto/tink/streamingaead:aes_ctr_hmac_streaming_parameters-android",
+        "//src/main/java/com/google/crypto/tink/subtle:bytes-android",
+        "//src/main/java/com/google/crypto/tink/subtle:hex-android",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes-android",
+        "@maven//:com_google_truth_truth",
+    ],
+)
+
+android_library(
+    name = "streaming_aead_test_vector-android",
+    testonly = 1,
+    srcs = ["StreamingAeadTestVector.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/streamingaead:streaming_aead_key-android",
+        "//src/main/java/com/google/crypto/tink/util:bytes-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
