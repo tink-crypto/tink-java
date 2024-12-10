@@ -15,7 +15,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 package com.google.crypto.tink;
 
-import java.lang.annotation.ElementType;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.LOCAL_VARIABLE;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -61,6 +65,6 @@ import java.lang.annotation.Target;
  *   }
  * </pre>
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target({TYPE, METHOD, FIELD, LOCAL_VARIABLE})
 @Retention(RetentionPolicy.CLASS)
 public @interface AccessesPartialKey {}
