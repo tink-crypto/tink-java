@@ -26,6 +26,7 @@ import com.google.crypto.tink.aead.internal.AesEaxProtoSerialization;
 import com.google.crypto.tink.aead.internal.AesGcmProtoSerialization;
 import com.google.crypto.tink.aead.internal.AesGcmSivProtoSerialization;
 import com.google.crypto.tink.aead.internal.ChaCha20Poly1305ProtoSerialization;
+import com.google.crypto.tink.aead.internal.XAesGcmProtoSerialization;
 import com.google.crypto.tink.aead.internal.XChaCha20Poly1305ProtoSerialization;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.util.SecretBytes;
@@ -177,6 +178,22 @@ public class AeadConfigurationV0Test {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(key).withFixedId(42).makePrimary())
             .build();
+
+    assertThat(keysetHandle.getPrimitive(AeadConfigurationV0.get(), Aead.class)).isNotNull();
+  }
+
+  @Test
+  public void config_containsXAesGcmAead() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+    XAesGcmProtoSerialization.register();
+
+    XAesGcmKey key =
+        XAesGcmKey.create(
+            XAesGcmParameters.create(XAesGcmParameters.Variant.TINK, 10),
+            SecretBytes.randomBytes(32),
+            42);
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder().addEntry(KeysetHandle.importKey(key).makePrimary()).build();
 
     assertThat(keysetHandle.getPrimitive(AeadConfigurationV0.get(), Aead.class)).isNotNull();
   }

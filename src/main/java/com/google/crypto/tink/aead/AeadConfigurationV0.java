@@ -19,6 +19,7 @@ package com.google.crypto.tink.aead;
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.aead.internal.ChaCha20Poly1305Jce;
+import com.google.crypto.tink.aead.internal.XAesGcm;
 import com.google.crypto.tink.aead.internal.XChaCha20Poly1305Jce;
 import com.google.crypto.tink.aead.subtle.AesGcmSiv;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
@@ -74,6 +75,8 @@ import java.security.GeneralSecurityException;
               AeadConfigurationV0::createXChaCha20Poly1305,
               XChaCha20Poly1305Key.class,
               Aead.class));
+      builder.registerPrimitiveConstructor(
+          PrimitiveConstructor.create(XAesGcm::create, XAesGcmKey.class, Aead.class));
 
       return InternalConfiguration.createFromPrimitiveRegistry(builder.build());
     } catch (GeneralSecurityException e) {
