@@ -89,7 +89,7 @@ public final class WycheproofTestUtil {
   }
 
   /** Gets JsonObject from file. */
-  public static JsonObject readJson(String path) throws Exception {
+  public static JsonObject readJson(String path) throws IOException {
     JsonObject result;
     try (InputStream inputStream = TestFiles.openInputFile(path)) {
       result = JsonParser.parseString(new String(readAll(inputStream), UTF_8)).getAsJsonObject();

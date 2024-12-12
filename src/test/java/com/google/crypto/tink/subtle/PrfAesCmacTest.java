@@ -22,6 +22,7 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.prf.Prf;
 import com.google.crypto.tink.prf.internal.AesCmacPrfTestUtil;
+import com.google.crypto.tink.prf.internal.AesCmacPrfWycheproofTestUtil;
 import java.security.InvalidAlgorithmParameterException;
 import java.util.Arrays;
 import java.util.List;
@@ -38,8 +39,12 @@ public class PrfAesCmacTest {
   private static final int KEY_SIZE = 16;
 
   @DataPoints("AesCmacPrfTestVectors")
-  public static final List<AesCmacPrfTestUtil.AesCmacPrfTestVector> testVectors =
+  public static final List<AesCmacPrfTestUtil.TestVector> testVectors =
       AesCmacPrfTestUtil.creatTestVectors();
+
+  @DataPoints("WycheproofTestVectors")
+  public static final List<AesCmacPrfTestUtil.TestVector> wycheproofTestVectors =
+      AesCmacPrfWycheproofTestUtil.readTestVectors();
 
   @Theory
   public void calcN_returnsNumberOfAesBlocks() throws Exception {
@@ -59,7 +64,7 @@ public class PrfAesCmacTest {
 
   @Theory
   public void compute_isCorrect(
-      @FromDataPoints("AesCmacPrfTestVectors") AesCmacPrfTestUtil.AesCmacPrfTestVector testVector)
+      @FromDataPoints("AesCmacPrfTestVectors") AesCmacPrfTestUtil.TestVector testVector)
       throws Exception {
     Prf prf =
         new PrfAesCmac(testVector.key().getKeyBytes().toByteArray(InsecureSecretKeyAccess.get()));
@@ -69,11 +74,21 @@ public class PrfAesCmacTest {
 
   @Theory
   public void createWithAesCmacPrfKey_compute_isCorrect(
-      @FromDataPoints("AesCmacPrfTestVectors") AesCmacPrfTestUtil.AesCmacPrfTestVector testVector)
+      @FromDataPoints("AesCmacPrfTestVectors") AesCmacPrfTestUtil.TestVector testVector)
       throws Exception {
     Prf prf = PrfAesCmac.create(testVector.key());
 
     assertThat(prf.compute(testVector.data(), testVector.outputLength())).isEqualTo(testVector.output());
+  }
+
+  @Theory
+  public void wycheproofTestVectors_compute_isCorrect(
+      @FromDataPoints("WycheproofTestVectors") AesCmacPrfTestUtil.TestVector testVector)
+      throws Exception {
+    Prf prf = PrfAesCmac.create(testVector.key());
+
+    assertThat(prf.compute(testVector.data(), testVector.outputLength()))
+        .isEqualTo(testVector.output());
   }
 
   @Theory
@@ -83,7 +98,6 @@ public class PrfAesCmacTest {
 
     assertThrows(InvalidAlgorithmParameterException.class, () -> prf.compute(message, 17));
   }
-
 
   @Theory
   public void compute_bitFlipInMessage_outputIsDifferent() throws Exception {

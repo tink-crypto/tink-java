@@ -271,3 +271,27 @@ java_library(
         "//src/main/java/com/google/crypto/tink/util:secret_bytes",
     ],
 )
+
+java_library(
+    name = "aes_cmac_prf_wycheproof_test_util",
+    testonly = 1,
+    srcs = ["AesCmacPrfWycheproofTestUtil.java"],
+    deps = [
+        ":aes_cmac_prf_test_util",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "//src/main/java/com/google/crypto/tink/testing:wycheproof_test_util",
+        "@maven//:com_google_code_gson_gson",
+    ],
+)
+
+android_library(
+    name = "aes_cmac_prf_wycheproof_test_util-android",
+    testonly = 1,
+    srcs = ["AesCmacPrfWycheproofTestUtil.java"],
+    deps = [
+        ":aes_cmac_prf_test_util-android",
+        "//src/main/java/com/google/crypto/tink/subtle:hex-android",
+        "//src/main/java/com/google/crypto/tink/testing:wycheproof_test_util-android",
+        "@maven//:com_google_code_gson_gson",
+    ],
+)
