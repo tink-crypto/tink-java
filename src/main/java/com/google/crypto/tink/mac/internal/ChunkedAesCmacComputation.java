@@ -56,8 +56,9 @@ final class ChunkedAesCmacComputation implements ChunkedMacComputation {
    */
   private final ByteBuffer localStash;
   /* x and y contain the contents as in RFC 4493. */
-  private final ByteBuffer x;
-  private final ByteBuffer y;
+  private final byte[] x;
+  private final byte[] y;
+  private final byte[] dataBlock;
 
   private boolean finalized = false;
 
@@ -77,18 +78,17 @@ final class ChunkedAesCmacComputation implements ChunkedMacComputation {
     subKey2 = AesUtil.dbl(subKey1);
 
     localStash = ByteBuffer.allocate(AesUtil.BLOCK_SIZE);
-    x = ByteBuffer.allocate(AesUtil.BLOCK_SIZE);
-    y = ByteBuffer.allocate(AesUtil.BLOCK_SIZE);
+    x = new byte[AesUtil.BLOCK_SIZE];
+    y = new byte[AesUtil.BLOCK_SIZE];
+    dataBlock = new byte[AesUtil.BLOCK_SIZE];
   }
 
   private void munch(ByteBuffer data) throws GeneralSecurityException {
-    y.rewind();
-    x.rewind();
-    Bytes.xor(/* output= */ y, /* x= */ x, /* y= */ data, AesUtil.BLOCK_SIZE);
-
-    y.rewind();
-    x.rewind();
-    aes.doFinal(/* input= */ y, /* output= */ x);
+    data.get(dataBlock);
+    for (int i = 0; i < AesUtil.BLOCK_SIZE; i++) {
+      y[i] = (byte) (x[i] ^ dataBlock[i]);
+    }
+    aes.doFinal(y, 0, AesUtil.BLOCK_SIZE, /* output= */ x);
   }
 
   @Override
@@ -150,7 +150,7 @@ final class ChunkedAesCmacComputation implements ChunkedMacComputation {
     return Bytes.concat(
         key.getOutputPrefix().toByteArray(),
         Arrays.copyOf(
-            aes.doFinal(Bytes.xor(mLast, x.array())),
+            aes.doFinal(Bytes.xor(mLast, x)),
             key.getParameters().getCryptographicTagSizeBytes()));
   }
 }
