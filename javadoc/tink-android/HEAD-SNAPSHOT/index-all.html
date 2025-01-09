@@ -3251,6 +3251,8 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/internal/LegacyFullPrf.html#compute-byte:A-int-">compute(byte[], int)</a></span> - Method in class com.google.crypto.tink.prf.internal.<a href="com/google/crypto/tink/prf/internal/LegacyFullPrf.html" title="class in com.google.crypto.tink.prf.internal">LegacyFullPrf</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/internal/PrfAesCmacConscrypt.html#compute-byte:A-int-">compute(byte[], int)</a></span> - Method in class com.google.crypto.tink.prf.internal.<a href="com/google/crypto/tink/prf/internal/PrfAesCmacConscrypt.html" title="class in com.google.crypto.tink.prf.internal">PrfAesCmacConscrypt</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/Prf.html#compute-byte:A-int-">compute(byte[], int)</a></span> - Method in interface com.google.crypto.tink.prf.<a href="com/google/crypto/tink/prf/Prf.html" title="interface in com.google.crypto.tink.prf">Prf</a></dt>
 <dd>
 <div class="block">Computes the PRF selected by the underlying key on input and returns the first outputLength
@@ -3503,6 +3505,10 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/internal/LegacyFullPrf.html#create-com.google.crypto.tink.internal.LegacyProtoKey-">create(LegacyProtoKey)</a></span> - Static method in class com.google.crypto.tink.prf.internal.<a href="com/google/crypto/tink/prf/internal/LegacyFullPrf.html" title="class in com.google.crypto.tink.prf.internal">LegacyFullPrf</a></dt>
 <dd>
 <div class="block">This method covers the cases where users created their own prf/key classes.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/prf/internal/PrfAesCmacConscrypt.html#create-com.google.crypto.tink.prf.AesCmacPrfKey-">create(AesCmacPrfKey)</a></span> - Static method in class com.google.crypto.tink.prf.internal.<a href="com/google/crypto/tink/prf/internal/PrfAesCmacConscrypt.html" title="class in com.google.crypto.tink.prf.internal">PrfAesCmacConscrypt</a></dt>
+<dd>
+<div class="block">Returns a <a href="com/google/crypto/tink/prf/Prf.html" title="interface in com.google.crypto.tink.prf"><code>Prf</code></a> primitive from an <a href="com/google/crypto/tink/prf/AesCmacPrfKey.html" title="class in com.google.crypto.tink.prf"><code>AesCmacPrfKey</code></a>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/Ed25519Parameters.html#create--">create()</a></span> - Static method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/Ed25519Parameters.html" title="class in com.google.crypto.tink.signature">Ed25519Parameters</a></dt>
 <dd>
@@ -19024,6 +19030,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/PrfAesCmac.html#PrfAesCmac-byte:A-">PrfAesCmac(byte[])</a></span> - Constructor for class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/PrfAesCmac.html" title="class in com.google.crypto.tink.subtle">PrfAesCmac</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/prf/internal/PrfAesCmacConscrypt.html" title="class in com.google.crypto.tink.prf.internal"><span class="typeNameLink">PrfAesCmacConscrypt</span></a> - Class in <a href="com/google/crypto/tink/prf/internal/package-summary.html">com.google.crypto.tink.prf.internal</a></dt>
+<dd>
+<div class="block"><a href="com/google/crypto/tink/prf/Prf.html" title="interface in com.google.crypto.tink.prf"><code>Prf</code></a> implementation of AES-CMAC using Conscrypt.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/proto/PrfBasedDeriver.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">PrfBasedDeriver</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/proto/PrfBasedDeriverKey.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">PrfBasedDeriverKey</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
