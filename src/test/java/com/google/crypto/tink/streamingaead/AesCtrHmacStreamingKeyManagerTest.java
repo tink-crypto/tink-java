@@ -18,6 +18,7 @@ package com.google.crypto.tink.streamingaead;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.google.common.truth.Truth;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeyTemplates;
@@ -34,7 +35,9 @@ import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.testing.StreamingTestUtil;
 import com.google.crypto.tink.testing.StreamingTestUtil.ByteBufferChannel;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Set;
@@ -225,6 +228,35 @@ public class AesCtrHmacStreamingKeyManagerTest {
     byte[] decryption = new byte[v.getPlaintext().length];
     plaintextStream.read(decryption);
     assertThat(decryption).isEqualTo(v.getPlaintext());
+    // There must be no more data available.
+    assertThat(plaintextStream.read()).isEqualTo(-1);
+  }
+
+  // A test to create test vectors: If a test vector contains an empty ciphertext, this test will
+  // fail with a possible ciphertext in the error message.
+  @Theory
+  public void encryptCiphertextInputStream_forCreation(
+      @FromDataPoints("testVectors") StreamingAeadTestVector v) throws Exception {
+    KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(v.getKey()).makePrimary();
+    @Nullable Integer id = v.getKey().getIdRequirementOrNull();
+    if (id == null) {
+      entry.withRandomId();
+    } else {
+      entry.withFixedId(id);
+    }
+    KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
+    StreamingAead streamingAead =
+        handle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
+    ByteArrayOutputStream ciphertextStream = new ByteArrayOutputStream();
+    OutputStream plaintextStream =
+        streamingAead.newEncryptingStream(ciphertextStream, v.getAssociatedData());
+    plaintextStream.write(v.getPlaintext());
+    plaintextStream.close();
+
+    Truth.assertWithMessage(
+            "A possible ciphertext would be " + Hex.encode(ciphertextStream.toByteArray()))
+        .that(v.getCiphertext())
+        .isNotEmpty();
   }
 
   @Theory
@@ -246,5 +278,8 @@ public class AesCtrHmacStreamingKeyManagerTest {
     ByteBuffer decryption = ByteBuffer.allocate(v.getPlaintext().length);
     plaintextChannel.read(decryption);
     assertThat(decryption.array()).isEqualTo(v.getPlaintext());
+    // There must be no more data available.
+    ByteBuffer endOfStreamChecker = ByteBuffer.allocate(1);
+    assertThat(plaintextChannel.read(endOfStreamChecker)).isEqualTo(-1);
   }
 }

@@ -86,11 +86,137 @@ public final class AesCtrHmacStreamingTestUtil {
     return new StreamingAeadTestVector(key, plaintext, aad, ciphertext);
   }
 
+  private static StreamingAeadTestVector createTestVector1() throws GeneralSecurityException {
+    AesCtrHmacStreamingParameters parameters =
+        AesCtrHmacStreamingParameters.builder()
+            .setKeySizeBytes(16)
+            .setDerivedKeySizeBytes(16)
+            .setHkdfHashType(AesCtrHmacStreamingParameters.HashType.SHA1)
+            .setHmacHashType(AesCtrHmacStreamingParameters.HashType.SHA256)
+            .setHmacTagSizeBytes(32)
+            .setCiphertextSegmentSizeBytes(64)
+            .build();
+    AesCtrHmacStreamingKey key =
+        AesCtrHmacStreamingKey.create(
+            parameters,
+            SecretBytes.copyFrom(
+                Hex.decode("6eb56cdc726dfbe5d57f2fcdc6e9345b"), InsecureSecretKeyAccess.get()));
+    byte[] plaintext = new byte[] {};
+    byte[] aad = new byte[0];
+    byte[] ciphertext =
+        Hex.decode(
+            "1874eaeea1260b1cf44d00bfec6d7f58878ce2dd70d5844e2f4410a04703ec4c17ca8c8831be0f1711da64b5b893ca9f3ba643d6764fd787");
+    return new StreamingAeadTestVector(key, plaintext, aad, ciphertext);
+  }
+
+  // Use SHA256/SHA512
+  private static StreamingAeadTestVector createTestVector2() throws GeneralSecurityException {
+    AesCtrHmacStreamingParameters parameters =
+        AesCtrHmacStreamingParameters.builder()
+            .setKeySizeBytes(16)
+            .setDerivedKeySizeBytes(16)
+            .setHkdfHashType(AesCtrHmacStreamingParameters.HashType.SHA256)
+            .setHmacHashType(AesCtrHmacStreamingParameters.HashType.SHA512)
+            .setHmacTagSizeBytes(32)
+            .setCiphertextSegmentSizeBytes(64)
+            .build();
+    AesCtrHmacStreamingKey key =
+        AesCtrHmacStreamingKey.create(
+            parameters,
+            SecretBytes.copyFrom(
+                Hex.decode("6eb56cdc726dfbe5d57f2fcdc6e9345b"), InsecureSecretKeyAccess.get()));
+    byte[] plaintext = new byte[0];
+    byte[] aad = new byte[] {0, 1, 2, 3, 4, 5};
+    byte[] ciphertext =
+        Hex.decode(
+            "18ae4fc7af4ed0433d33110793196ead8a77d2ae3f42db8425dc9e0789bdba7d5c23d61287fbe108224fbf11da38c8eaf5c9feab7deb9c62");
+    return new StreamingAeadTestVector(key, plaintext, aad, ciphertext);
+  }
+
+  // Use SHA512/SHA1
+  private static StreamingAeadTestVector createTestVector3() throws GeneralSecurityException {
+    AesCtrHmacStreamingParameters parameters =
+        AesCtrHmacStreamingParameters.builder()
+            .setKeySizeBytes(16)
+            .setDerivedKeySizeBytes(16)
+            .setHkdfHashType(AesCtrHmacStreamingParameters.HashType.SHA512)
+            .setHmacHashType(AesCtrHmacStreamingParameters.HashType.SHA1)
+            .setHmacTagSizeBytes(20)
+            .setCiphertextSegmentSizeBytes(64)
+            .build();
+    AesCtrHmacStreamingKey key =
+        AesCtrHmacStreamingKey.create(
+            parameters,
+            SecretBytes.copyFrom(
+                Hex.decode("6eb56cdc726dfbe5d57f2fcdc6e9345b"), InsecureSecretKeyAccess.get()));
+    byte[] plaintext = new byte[0];
+    byte[] aad = new byte[] {0, 1, 2, 3, 4, 5};
+    byte[] ciphertext =
+        Hex.decode(
+            "180d87a22c8979d8eb90163aa33aa09a02bab964d5bb2d7a035e62206d62807b3e9bb4984109ebeb3dfcbf43");
+    return new StreamingAeadTestVector(key, plaintext, aad, ciphertext);
+  }
+
+  // Use KeySizeBytes=32
+  private static StreamingAeadTestVector createTestVector4() throws GeneralSecurityException {
+    AesCtrHmacStreamingParameters parameters =
+        AesCtrHmacStreamingParameters.builder()
+            .setKeySizeBytes(32)
+            .setDerivedKeySizeBytes(16)
+            .setHkdfHashType(AesCtrHmacStreamingParameters.HashType.SHA512)
+            .setHmacHashType(AesCtrHmacStreamingParameters.HashType.SHA512)
+            .setHmacTagSizeBytes(20)
+            .setCiphertextSegmentSizeBytes(64)
+            .build();
+    AesCtrHmacStreamingKey key =
+        AesCtrHmacStreamingKey.create(
+            parameters,
+            SecretBytes.copyFrom(
+                Hex.decode("00112233445566778899aabbccddeeff000102030405060708090a0b0c0d0e0f"),
+                InsecureSecretKeyAccess.get()));
+    byte[] plaintext = new byte[0];
+    byte[] aad = Hex.decode("012345678901234567890123456789");
+    byte[] ciphertext =
+        Hex.decode(
+            "18290c66c47a6095d947aa1671bd7b6d9c306e24d51d4b8a4f1b9db123a01226ebd2b6f7e05298a9f5908072");
+    return new StreamingAeadTestVector(key, plaintext, aad, ciphertext);
+  }
+
+  // Use DerivedKeySizeBytes=32
+  private static StreamingAeadTestVector createTestVector5() throws GeneralSecurityException {
+    AesCtrHmacStreamingParameters parameters =
+        AesCtrHmacStreamingParameters.builder()
+            .setKeySizeBytes(32)
+            .setDerivedKeySizeBytes(32)
+            .setHkdfHashType(AesCtrHmacStreamingParameters.HashType.SHA512)
+            .setHmacHashType(AesCtrHmacStreamingParameters.HashType.SHA512)
+            .setHmacTagSizeBytes(20)
+            .setCiphertextSegmentSizeBytes(64)
+            .build();
+    AesCtrHmacStreamingKey key =
+        AesCtrHmacStreamingKey.create(
+            parameters,
+            SecretBytes.copyFrom(
+                Hex.decode("00112233445566778899aabbccddeeff000102030405060708090a0b0c0d0e0f"),
+                InsecureSecretKeyAccess.get()));
+    byte[] plaintext = new byte[0];
+    byte[] aad = Hex.decode("012345678901234567890123456789");
+    byte[] ciphertext =
+        Hex.decode(
+            "28f7bcc58e83e8e24bf833d8586c889ef465f52fdebcad6deb18be062c180e466de959eba1a884926692e496d85e1873a1bf9b46e56d76d83772bfc6");
+    return new StreamingAeadTestVector(key, plaintext, aad, ciphertext);
+  }
+
   public static StreamingAeadTestVector[] createAesCtrHmacTestVectors() {
     return exceptionIsBug(
         () ->
             new StreamingAeadTestVector[] {
               createTestVector0(),
+              createTestVector1(),
+              createTestVector2(),
+              createTestVector3(),
+              createTestVector4(),
+              createTestVector5()
             });
   }
 
