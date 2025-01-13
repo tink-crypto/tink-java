@@ -19,6 +19,8 @@ package com.google.crypto.tink.signature.internal;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.crypto.tink.internal.Util;
+import com.google.crypto.tink.subtle.Ed25519Sign;
+import com.google.crypto.tink.subtle.Random;
 import java.security.Provider;
 import java.security.Security;
 import org.conscrypt.Conscrypt;
@@ -47,10 +49,20 @@ public final class Ed25519JceWithConscryptTest {
   }
 
   @Test
-  public void isSupported_notOnAndroid_returnsFalse() throws Exception {
+  public void signAndVerify_worksIfSupported() throws Exception {
     Assume.assumeTrue(!Util.isAndroid());
+    Assume.assumeTrue(Ed25519SignJce.isSupported());
+    Assume.assumeTrue(Ed25519VerifyJce.isSupported());
 
-    assertThat(Ed25519SignJce.isSupported()).isFalse();
-    assertThat(Ed25519VerifyJce.isSupported()).isFalse();
+    Ed25519Sign.KeyPair keyPair = Ed25519Sign.KeyPair.newKeyPair();
+    Ed25519SignJce signer = new Ed25519SignJce(keyPair.getPrivateKey());
+    Ed25519VerifyJce verifier = new Ed25519VerifyJce(keyPair.getPublicKey());
+    byte[] msg = Random.randBytes(20);
+    byte[] sig = signer.sign(msg);
+    verifier.verify(sig, msg);
+
+    // Test that Ed25519SignJce and Ed25519Sign are compatible.
+    Ed25519Sign tinkSubtleSigner = new Ed25519Sign(keyPair.getPrivateKey());
+    assertThat(sig).isEqualTo(tinkSubtleSigner.sign(msg));
   }
 }
