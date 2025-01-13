@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc.
+// Copyright 2017 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.google.crypto.tink.streamingaead;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import com.google.common.truth.Truth;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyTemplate;
@@ -36,14 +37,23 @@ import com.google.crypto.tink.keyderivation.PrfBasedKeyDerivationKey;
 import com.google.crypto.tink.keyderivation.PrfBasedKeyDerivationParameters;
 import com.google.crypto.tink.prf.HkdfPrfKey;
 import com.google.crypto.tink.prf.HkdfPrfParameters;
+import com.google.crypto.tink.streamingaead.internal.testing.AesGcmHkdfStreamingTestUtil;
+import com.google.crypto.tink.streamingaead.internal.testing.StreamingAeadTestVector;
 import com.google.crypto.tink.subtle.AesGcmHkdfStreaming;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.testing.StreamingTestUtil;
+import com.google.crypto.tink.testing.StreamingTestUtil.ByteBufferChannel;
 import com.google.crypto.tink.util.SecretBytes;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.ReadableByteChannel;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
+import javax.annotation.Nullable;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -154,6 +164,7 @@ public class AesGcmHkdfStreamingKeyManagerTest {
                 .setHkdfHashType(AesGcmHkdfStreamingParameters.HashType.SHA256)
                 .build());
   }
+
 
   @Test
   public void testAes256GcmHkdf1MBTemplate() throws Exception {
@@ -287,5 +298,83 @@ public class AesGcmHkdfStreamingKeyManagerTest {
     KeysetHandle parsedHandle =
         TinkProtoKeysetFormat.parseKeyset(serializedHandle, InsecureSecretKeyAccess.get());
     assertThat(parsedHandle.equalsKeyset(handle)).isTrue();
+  }
+
+  @DataPoints("testVectors")
+  public static final StreamingAeadTestVector[] streamingTestVector =
+      AesGcmHkdfStreamingTestUtil.createAesGcmHkdfTestVectors();
+
+  @Theory
+  public void decryptCiphertextInputStream_works(
+      @FromDataPoints("testVectors") StreamingAeadTestVector v) throws Exception {
+    KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(v.getKey()).makePrimary();
+    @Nullable Integer id = v.getKey().getIdRequirementOrNull();
+    if (id == null) {
+      entry.withRandomId();
+    } else {
+      entry.withFixedId(id);
+    }
+    KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
+    StreamingAead streamingAead =
+        handle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
+    InputStream plaintextStream =
+        streamingAead.newDecryptingStream(
+            new ByteArrayInputStream(v.getCiphertext()), v.getAssociatedData());
+    byte[] decryption = new byte[v.getPlaintext().length];
+    plaintextStream.read(decryption);
+    assertThat(decryption).isEqualTo(v.getPlaintext());
+    // There must be no more data available.
+    assertThat(plaintextStream.read()).isEqualTo(-1);
+  }
+
+  // A test to create test vectors: If a test vector contains an empty ciphertext, this test will
+  // fail with a possible ciphertext in the error message.
+  @Theory
+  public void encryptCiphertextInputStream_forCreation(
+      @FromDataPoints("testVectors") StreamingAeadTestVector v) throws Exception {
+    KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(v.getKey()).makePrimary();
+    @Nullable Integer id = v.getKey().getIdRequirementOrNull();
+    if (id == null) {
+      entry.withRandomId();
+    } else {
+      entry.withFixedId(id);
+    }
+    KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
+    StreamingAead streamingAead =
+        handle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
+    ByteArrayOutputStream ciphertextStream = new ByteArrayOutputStream();
+    OutputStream plaintextStream =
+        streamingAead.newEncryptingStream(ciphertextStream, v.getAssociatedData());
+    plaintextStream.write(v.getPlaintext());
+    plaintextStream.close();
+
+    Truth.assertWithMessage(
+            "A possible ciphertext would be " + Hex.encode(ciphertextStream.toByteArray()))
+        .that(v.getCiphertext())
+        .isNotEmpty();
+  }
+
+  @Theory
+  public void decryptCiphertextChannel_works(
+      @FromDataPoints("testVectors") StreamingAeadTestVector v) throws Exception {
+    KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(v.getKey()).makePrimary();
+    @Nullable Integer id = v.getKey().getIdRequirementOrNull();
+    if (id == null) {
+      entry.withRandomId();
+    } else {
+      entry.withFixedId(id);
+    }
+    KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
+    StreamingAead streamingAead =
+        handle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
+    ReadableByteChannel plaintextChannel =
+        streamingAead.newDecryptingChannel(
+            new ByteBufferChannel(v.getCiphertext()), v.getAssociatedData());
+    ByteBuffer decryption = ByteBuffer.allocate(v.getPlaintext().length);
+    plaintextChannel.read(decryption);
+    assertThat(decryption.array()).isEqualTo(v.getPlaintext());
+    // There must be no more data available.
+    ByteBuffer endOfStreamChecker = ByteBuffer.allocate(1);
+    assertThat(plaintextChannel.read(endOfStreamChecker)).isEqualTo(-1);
   }
 }
