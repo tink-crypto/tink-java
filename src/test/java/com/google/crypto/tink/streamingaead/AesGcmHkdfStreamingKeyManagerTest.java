@@ -43,6 +43,7 @@ import com.google.crypto.tink.subtle.AesGcmHkdfStreaming;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.testing.StreamingTestUtil;
 import com.google.crypto.tink.testing.StreamingTestUtil.ByteBufferChannel;
+import com.google.crypto.tink.testing.StreamingTestUtil.SeekableByteBufferChannel;
 import com.google.crypto.tink.util.SecretBytes;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -50,6 +51,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.SeekableByteChannel;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
@@ -321,7 +323,7 @@ public class AesGcmHkdfStreamingKeyManagerTest {
         streamingAead.newDecryptingStream(
             new ByteArrayInputStream(v.getCiphertext()), v.getAssociatedData());
     byte[] decryption = new byte[v.getPlaintext().length];
-    plaintextStream.read(decryption);
+    assertThat(plaintextStream.read(decryption)).isEqualTo(v.getPlaintext().length);
     assertThat(decryption).isEqualTo(v.getPlaintext());
     // There must be no more data available.
     assertThat(plaintextStream.read()).isEqualTo(-1);
@@ -371,10 +373,44 @@ public class AesGcmHkdfStreamingKeyManagerTest {
         streamingAead.newDecryptingChannel(
             new ByteBufferChannel(v.getCiphertext()), v.getAssociatedData());
     ByteBuffer decryption = ByteBuffer.allocate(v.getPlaintext().length);
-    plaintextChannel.read(decryption);
+    assertThat(plaintextChannel.read(decryption)).isEqualTo(v.getPlaintext().length);
     assertThat(decryption.array()).isEqualTo(v.getPlaintext());
     // There must be no more data available.
     ByteBuffer endOfStreamChecker = ByteBuffer.allocate(1);
     assertThat(plaintextChannel.read(endOfStreamChecker)).isEqualTo(-1);
+  }
+
+  @Theory
+  public void decryptSeekableByteChannel_works(
+      @FromDataPoints("testVectors") StreamingAeadTestVector v) throws Exception {
+    KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(v.getKey()).makePrimary();
+    @Nullable Integer id = v.getKey().getIdRequirementOrNull();
+    if (id == null) {
+      entry.withRandomId();
+    } else {
+      entry.withFixedId(id);
+    }
+    KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
+    StreamingAead streamingAead =
+        handle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
+    SeekableByteChannel plaintextChannel =
+        streamingAead.newSeekableDecryptingChannel(
+            new SeekableByteBufferChannel(v.getCiphertext()), v.getAssociatedData());
+    // We move to some arbitrary place in the buffer and read the rest of the stream.
+    int start = (v.getPlaintext().length + 1) / 2;
+    int len = v.getPlaintext().length - start;
+    plaintextChannel.position(start);
+    ByteBuffer decryption = ByteBuffer.allocate(len);
+    assertThat(plaintextChannel.read(decryption)).isEqualTo(len);
+    assertThat(decryption.array())
+        .isEqualTo(Arrays.copyOfRange(v.getPlaintext(), start, start + len));
+    // There must be no more data available.
+    ByteBuffer endOfStreamChecker = ByteBuffer.allocate(1);
+    if (v.getPlaintext().length != 0) {
+      assertThat(plaintextChannel.read(endOfStreamChecker)).isEqualTo(-1);
+    } else {
+      // TODO: b/390077226 - This should return -1.
+      assertThat(plaintextChannel.read(endOfStreamChecker)).isEqualTo(0);
+    }
   }
 }
