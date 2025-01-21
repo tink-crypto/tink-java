@@ -1730,8 +1730,7 @@ public class KeysetHandleTest {
   }
 
   @Test
-  public void getLegacyPrimitive_usesRegistryWhenNoConfigurationProvided()
-      throws Exception {
+  public void getLegacyPrimitive_usesRegistryWhenNoConfigurationProvided() throws Exception {
     KeysetHandle keysetHandle =
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(rawKey).withRandomId().makePrimary())

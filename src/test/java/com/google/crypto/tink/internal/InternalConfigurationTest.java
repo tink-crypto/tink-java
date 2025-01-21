@@ -19,14 +19,9 @@ package com.google.crypto.tink.internal;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
-import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
-import com.google.crypto.tink.proto.KeyData;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.util.SecretBytes;
 import com.google.errorprone.annotations.Immutable;
-import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import javax.annotation.Nullable;
 import org.junit.Test;
@@ -152,33 +147,6 @@ public class InternalConfigurationTest {
 
   private static TestPrimitiveB getPrimitiveBKey2(TestKey2 key) {
     return new TestPrimitiveB();
-  }
-
-  @Test
-  public void getLegacyPrimitive_throws() throws Exception {
-    PrimitiveRegistry registry =
-        PrimitiveRegistry.builder()
-            .registerPrimitiveConstructor(
-                PrimitiveConstructor.create(
-                    InternalConfigurationTest::getPrimitiveAKey1,
-                    TestKey1.class,
-                    TestPrimitiveA.class))
-            .build();
-    InternalConfiguration configuration =
-        InternalConfiguration.createFromPrimitiveRegistry(registry);
-
-    assertThrows(
-        UnsupportedOperationException.class,
-        () ->
-            configuration.getLegacyPrimitive(
-                KeyData.newBuilder()
-                    .setValue(
-                        ByteString.copyFrom(
-                            SecretBytes.randomBytes(32).toByteArray(InsecureSecretKeyAccess.get())))
-                    .setTypeUrl("type.googleapis.com/google.crypto.tink.HmacKey")
-                    .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
-                    .build(),
-                TestPrimitiveA.class));
   }
 
   @Test

@@ -21,10 +21,10 @@ import static com.google.crypto.tink.internal.Util.isPrefix;
 import com.google.crypto.tink.CryptoFormat;
 import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.Registry;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.OutputPrefixUtil;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
-import com.google.crypto.tink.internal.RegistryConfiguration;
 import com.google.crypto.tink.proto.KeyData;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.subtle.Bytes;
@@ -55,8 +55,7 @@ public class LegacyFullDeterministicAead implements DeterministicAead {
             .setKeyMaterialType(protoKeySerialization.getKeyMaterialType())
             .build();
 
-    DeterministicAead rawPrimitive =
-        RegistryConfiguration.get().getLegacyPrimitive(keyData, DeterministicAead.class);
+    DeterministicAead rawPrimitive = Registry.getPrimitive(keyData, DeterministicAead.class);
 
     OutputPrefixType outputPrefixType = protoKeySerialization.getOutputPrefixType();
     byte[] identifier;

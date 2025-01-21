@@ -122,17 +122,6 @@ public class RegistryConfigurationTest {
   }
 
   @Test
-  public void getLegacyPrimitive_matchesRegistry() throws Exception {
-    byte[] plaintext = "plaintext".getBytes(UTF_8);
-
-    Mac configurationMac =
-        RegistryConfiguration.get().getLegacyPrimitive(rawKeyData, Mac.class);
-    Mac registryMac = Registry.getPrimitive(rawKeyData, Mac.class);
-
-    assertThat(configurationMac.computeMac(plaintext)).isEqualTo(registryMac.computeMac(plaintext));
-  }
-
-  @Test
   public void getPrimitive_matchesRegistry() throws Exception {
     byte[] plaintext = "plaintext".getBytes(UTF_8);
 

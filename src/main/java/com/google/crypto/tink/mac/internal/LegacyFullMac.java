@@ -19,10 +19,10 @@ package com.google.crypto.tink.mac.internal;
 import com.google.crypto.tink.CryptoFormat;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Mac;
+import com.google.crypto.tink.Registry;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.OutputPrefixUtil;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
-import com.google.crypto.tink.internal.RegistryConfiguration;
 import com.google.crypto.tink.proto.KeyData;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.subtle.Bytes;
@@ -54,7 +54,7 @@ public final class LegacyFullMac implements Mac {
             .setValue(protoKeySerialization.getValue())
             .setKeyMaterialType(protoKeySerialization.getKeyMaterialType())
             .build();
-    Mac rawPrimitive = RegistryConfiguration.get().getLegacyPrimitive(keyData, Mac.class);
+    Mac rawPrimitive = Registry.getPrimitive(keyData, Mac.class);
 
     OutputPrefixType outputPrefixType = protoKeySerialization.getOutputPrefixType();
     byte[] outputPrefix;

@@ -642,7 +642,6 @@ java_library(
     deps = [
         ":primitive_registry",
         ":primitive_set",
-        "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:configuration",
         "//src/main/java/com/google/crypto/tink:key",
     ],
@@ -654,7 +653,6 @@ android_library(
     deps = [
         ":primitive_registry-android",
         ":primitive_set-android",
-        "//proto:tink_java_proto_lite",
         "//src/main/java/com/google/crypto/tink:configuration-android",
         "//src/main/java/com/google/crypto/tink:key-android",
     ],
@@ -668,7 +666,6 @@ android_library(
         ":mutable_primitive_registry-android",
         ":primitive_registry-android",
         ":primitive_set-android",
-        "//proto:tink_java_proto_lite",
         "//src/main/java/com/google/crypto/tink:key-android",
         "//src/main/java/com/google/crypto/tink:registry-android",
         "@maven//:com_google_code_findbugs_jsr305",
@@ -684,7 +681,6 @@ java_library(
         ":mutable_primitive_registry",
         ":primitive_registry",
         ":primitive_set",
-        "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink:registry",
         "@maven//:com_google_code_findbugs_jsr305",
