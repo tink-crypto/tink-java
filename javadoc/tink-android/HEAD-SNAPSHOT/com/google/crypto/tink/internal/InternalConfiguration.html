@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":6,"i2":6,"i3":6,"i4":6};
+var methods = {"i0":9,"i1":6,"i2":6,"i3":6};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -170,19 +170,12 @@ extends <a href="../../../../../com/google/crypto/tink/Configuration.html" title
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>abstract &lt;P&gt;&nbsp;P</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/InternalConfiguration.html#getLegacyPrimitive-com.google.crypto.tink.proto.KeyData-java.lang.Class-">getLegacyPrimitive</a></span>(<a href="../../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto">KeyData</a>&nbsp;keyData,
-                  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;primitiveClass)</code>
-<div class="block">Creates a primitive from a key in the old (proto) format.</div>
-</td>
-</tr>
-<tr id="i3" class="rowColor">
-<td class="colFirst"><code>abstract &lt;P&gt;&nbsp;P</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/InternalConfiguration.html#getPrimitive-com.google.crypto.tink.Key-java.lang.Class-">getPrimitive</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;key,
             <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;primitiveClass)</code>
 <div class="block">Given a key and a desired primitive class, creates the required primitive.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>abstract &lt;B,P&gt;&nbsp;P</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/InternalConfiguration.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-java.lang.Class-">wrap</a></span>(<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.html" title="class in com.google.crypto.tink.internal">PrimitiveSet</a>&lt;B&gt;&nbsp;primitiveSet,
     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;clazz)</code>
@@ -228,22 +221,6 @@ extends <a href="../../../../../com/google/crypto/tink/Configuration.html" title
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="getLegacyPrimitive-com.google.crypto.tink.proto.KeyData-java.lang.Class-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getLegacyPrimitive</h4>
-<pre>public abstract&nbsp;&lt;P&gt;&nbsp;P&nbsp;getLegacyPrimitive(<a href="../../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto">KeyData</a>&nbsp;keyData,
-                                         <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;primitiveClass)
-                                  throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block">Creates a primitive from a key in the old (proto) format.</div>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
-</dl>
-</li>
-</ul>
 <a name="getPrimitive-com.google.crypto.tink.Key-java.lang.Class-">
 <!--   -->
 </a>

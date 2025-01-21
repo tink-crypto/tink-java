@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":10,"i3":10,"i4":10,"i5":10};
+var methods = {"i0":9,"i1":9,"i2":10,"i3":10,"i4":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -162,19 +162,12 @@ extends <a href="../../../../../com/google/crypto/tink/internal/InternalConfigur
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>&lt;P&gt;&nbsp;P</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/RegistryConfiguration.html#getLegacyPrimitive-com.google.crypto.tink.proto.KeyData-java.lang.Class-">getLegacyPrimitive</a></span>(<a href="../../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto">KeyData</a>&nbsp;keyData,
-                  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;primitiveClass)</code>
-<div class="block">Creates a primitive from a key in the old (proto) format.</div>
-</td>
-</tr>
-<tr id="i4" class="altColor">
-<td class="colFirst"><code>&lt;P&gt;&nbsp;P</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/RegistryConfiguration.html#getPrimitive-com.google.crypto.tink.Key-java.lang.Class-">getPrimitive</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;key,
             <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;primitiveClass)</code>
 <div class="block">Given a key and a desired primitive class, creates the required primitive.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>&lt;B,P&gt;&nbsp;P</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/RegistryConfiguration.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-java.lang.Class-">wrap</a></span>(<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.html" title="class in com.google.crypto.tink.internal">PrimitiveSet</a>&lt;B&gt;&nbsp;primitiveSet,
     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;clazz)</code>
@@ -210,25 +203,6 @@ extends <a href="../../../../../com/google/crypto/tink/internal/InternalConfigur
 <li class="blockList">
 <h4>get</h4>
 <pre>public static&nbsp;<a href="../../../../../com/google/crypto/tink/internal/RegistryConfiguration.html" title="class in com.google.crypto.tink.internal">RegistryConfiguration</a>&nbsp;get()</pre>
-</li>
-</ul>
-<a name="getLegacyPrimitive-com.google.crypto.tink.proto.KeyData-java.lang.Class-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getLegacyPrimitive</h4>
-<pre>public&nbsp;&lt;P&gt;&nbsp;P&nbsp;getLegacyPrimitive(<a href="../../../../../com/google/crypto/tink/proto/KeyData.html" title="class in com.google.crypto.tink.proto">KeyData</a>&nbsp;keyData,
-                                <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;primitiveClass)
-                         throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../com/google/crypto/tink/internal/InternalConfiguration.html#getLegacyPrimitive-com.google.crypto.tink.proto.KeyData-java.lang.Class-">InternalConfiguration</a></code></span></div>
-<div class="block">Creates a primitive from a key in the old (proto) format.</div>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/google/crypto/tink/internal/InternalConfiguration.html#getLegacyPrimitive-com.google.crypto.tink.proto.KeyData-java.lang.Class-">getLegacyPrimitive</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/google/crypto/tink/internal/InternalConfiguration.html" title="class in com.google.crypto.tink.internal">InternalConfiguration</a></code></dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
-</dl>
 </li>
 </ul>
 <a name="getPrimitive-com.google.crypto.tink.Key-java.lang.Class-">
