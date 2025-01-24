@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc.
+// Copyright 2017 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -74,7 +74,7 @@ enum KeyStatusType {
 // Tink produces and accepts ciphertexts or signatures that consist
 // of a prefix and a payload. The payload and its format is determined
 // entirely by the primitive, but the prefix has to be one of the following
-// 4 types:
+// 5 types:
 //   - Legacy: prefix is 5 bytes, starts with \x00 and followed by a 4-byte
 //             key id that is computed from the key material. In addition to
 //             that, signature schemes and MACs will add a \x00 byte to the
@@ -85,12 +85,18 @@ enum KeyStatusType {
 //   - Tink  : prefix is 5 bytes, starts with \x01 and followed by 4-byte
 //             key id that is generated randomly.
 //   - Raw   : prefix is 0 byte, i.e., empty.
+//   - WITH_ID_REQUIREMENT: prefix size may vary i.e., empty, 1 byte etc, but
+//                         the key is always required to have an ID. This is
+//                         used for example for pre-hashing, where the ID is
+//                         used to sync with a remote pre-hash signer, but no
+//                         prefix is added to the signature.
 enum OutputPrefixType {
   UNKNOWN_PREFIX = 0;
   TINK = 1;
   LEGACY = 2;
   RAW = 3;
   CRUNCHY = 4;
+  WITH_ID_REQUIREMENT = 5;
 }
 
 // Each *Key proto by convention contains a version field, which
