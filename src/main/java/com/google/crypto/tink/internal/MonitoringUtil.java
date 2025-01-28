@@ -65,8 +65,7 @@ public final class MonitoringUtil {
         builder.addEntry(
             parseStatus(entry.getStatus()),
             entry.getKeyId(),
-            parseKeyTypeUrl(entry.getKeyTypeUrl()),
-            entry.getOutputPrefixType().name());
+            parseKeyTypeUrl(entry.getKeyTypeUrl()));
       }
     }
     @Nullable PrimitiveSet.Entry<P> primary = primitiveSet.getPrimary();

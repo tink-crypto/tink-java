@@ -43,7 +43,6 @@ public final class MonitoringKeysetInfo {
     private final KeyStatus status;
     private final int keyId;
     private final String keyType;
-    private final String keyPrefix;
 
     public KeyStatus getStatus() {
       return status;
@@ -57,15 +56,10 @@ public final class MonitoringKeysetInfo {
       return keyType;
     }
 
-    public String getKeyPrefix() {
-      return keyPrefix;
-    }
-
-    private Entry(KeyStatus status, int keyId, String keyType, String keyPrefix) {
+    private Entry(KeyStatus status, int keyId, String keyType) {
       this.status = status;
       this.keyId = keyId;
       this.keyType = keyType;
-      this.keyPrefix = keyPrefix;
     }
 
     @Override
@@ -76,20 +70,18 @@ public final class MonitoringKeysetInfo {
       Entry entry = (Entry) obj;
       return this.status == entry.status
           && this.keyId == entry.keyId
-          && this.keyType.equals(entry.keyType)
-          && this.keyPrefix.equals(entry.keyPrefix);
+          && this.keyType.equals(entry.keyType);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(status, keyId, keyType, keyPrefix);
+      return Objects.hash(status, keyId, keyType);
     }
 
     @Override
     public String toString() {
       return String.format(
-          "(status=%s, keyId=%s, keyType='%s', keyPrefix='%s')",
-          this.status, this.keyId, this.keyType, this.keyPrefix);
+          "(status=%s, keyId=%s, keyType='%s')", this.status, this.keyId, this.keyType);
     }
   }
 
@@ -111,11 +103,11 @@ public final class MonitoringKeysetInfo {
     }
 
     @CanIgnoreReturnValue
-    public Builder addEntry(KeyStatus status, int keyId, String keyType, String keyPrefix) {
+    public Builder addEntry(KeyStatus status, int keyId, String keyType) {
       if (builderEntries == null) {
         throw new IllegalStateException("addEntry cannot be called after build()");
       }
-      builderEntries.add(new Entry(status, keyId, keyType, keyPrefix));
+      builderEntries.add(new Entry(status, keyId, keyType));
       return this;
     }
 

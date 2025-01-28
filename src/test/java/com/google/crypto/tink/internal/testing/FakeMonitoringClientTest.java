@@ -40,8 +40,8 @@ public final class FakeMonitoringClientTest {
                 MonitoringAnnotations.newBuilder()
                     .add("annotation_name", "annotation_value")
                     .build())
-            .addEntry(KeyStatus.ENABLED, 123, "typeUrl123", "TINK")
-            .addEntry(KeyStatus.ENABLED, 234, "typeUrl234", "TINK")
+            .addEntry(KeyStatus.ENABLED, 123, "typeUrl123")
+            .addEntry(KeyStatus.ENABLED, 234, "typeUrl234")
             .setPrimaryKeyId(123)
             .build();
     MonitoringClient.Logger encLogger = client.createLogger(keysetInfo, "aead", "encrypt");
@@ -72,8 +72,8 @@ public final class FakeMonitoringClientTest {
                 MonitoringAnnotations.newBuilder()
                     .add("annotation_name", "annotation_value")
                     .build())
-            .addEntry(KeyStatus.ENABLED, 123, "typeUrl123", "TINK")
-            .addEntry(KeyStatus.ENABLED, 234, "typeUrl234", "TINK")
+            .addEntry(KeyStatus.ENABLED, 123, "typeUrl123")
+            .addEntry(KeyStatus.ENABLED, 234, "typeUrl234")
             .setPrimaryKeyId(123)
             .build();
     MonitoringClient.Logger encLogger = client.createLogger(keysetInfo, "aead", "encrypt");
@@ -101,8 +101,8 @@ public final class FakeMonitoringClientTest {
                 MonitoringAnnotations.newBuilder()
                     .add("annotation_name", "annotation_value")
                     .build())
-            .addEntry(KeyStatus.ENABLED, 123, "typeUrl123", "TINK")
-            .addEntry(KeyStatus.ENABLED, 234, "typeUrl234", "TINK")
+            .addEntry(KeyStatus.ENABLED, 123, "typeUrl123")
+            .addEntry(KeyStatus.ENABLED, 234, "typeUrl234")
             .setPrimaryKeyId(123)
             .build();
     MonitoringClient.Logger encLogger = client.createLogger(info, "aead", "encrypt");
@@ -127,7 +127,7 @@ public final class FakeMonitoringClientTest {
     FakeMonitoringClient client = new FakeMonitoringClient();
     MonitoringKeysetInfo info =
         MonitoringKeysetInfo.newBuilder()
-            .addEntry(KeyStatus.ENABLED, 123, "typeUrl123", "TINK")
+            .addEntry(KeyStatus.ENABLED, 123, "typeUrl123")
             .setPrimaryKeyId(123)
             .build();
     MonitoringClient.Logger encLogger = client.createLogger(info, "aead", "encrypt");
