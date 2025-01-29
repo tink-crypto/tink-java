@@ -131,7 +131,6 @@ public class PrimitiveSetTest {
     PrimitiveSet.Entry<Aead> entry = entries.get(0);
     assertThat(entry.getFullPrimitive()).isEqualTo(fullPrimitive);
     assertThat(entry.getStatus()).isEqualTo(KeyStatusType.ENABLED);
-    assertThat(entry.getOutputPrefixType()).isEqualTo(OutputPrefixType.TINK);
     assertThat(entry.getKeyId()).isEqualTo(42);
     assertThat(entry.getKeyTypeUrl()).isEqualTo("type.googleapis.com/google.crypto.tink.AesGcmKey");
     assertThat(entry.getKey()).isEqualTo(key);
@@ -711,8 +710,8 @@ public class PrimitiveSetTest {
 
     List<PrimitiveSet.Entry<Mac>> entries = pset.getAllInKeysetOrder();
     assertThat(entries).hasSize(3);
-    assertThat(entries.get(0).getOutputPrefixType()).isEqualTo(OutputPrefixType.TINK);
-    assertThat(entries.get(1).getOutputPrefixType()).isEqualTo(OutputPrefixType.RAW);
-    assertThat(entries.get(2).getOutputPrefixType()).isEqualTo(OutputPrefixType.LEGACY);
+    assertThat(entries.get(0).getKeyId()).isEqualTo(0xffffffff);
+    assertThat(entries.get(1).getKeyId()).isEqualTo(0xffffffdf);
+    assertThat(entries.get(2).getKeyId()).isEqualTo(0xffffffef);
   }
 }

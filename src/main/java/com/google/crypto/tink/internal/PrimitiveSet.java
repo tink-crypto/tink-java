@@ -21,7 +21,6 @@ import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.proto.KeyStatusType;
 import com.google.crypto.tink.proto.Keyset;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.security.GeneralSecurityException;
@@ -62,8 +61,6 @@ public final class PrimitiveSet<P> {
     private final Bytes outputPrefix;
     // The status of the key represented by the primitive. Currently always equal to "ENABLED".
     private final KeyStatusType status;
-    // The output prefix type of the key represented by the primitive.
-    private final OutputPrefixType outputPrefixType;
     // The id of the key.
     private final int keyId;
     private final String keyTypeUrl;
@@ -73,14 +70,12 @@ public final class PrimitiveSet<P> {
         P fullPrimitive,
         final Bytes outputPrefix,
         KeyStatusType status,
-        OutputPrefixType outputPrefixType,
         int keyId,
         String keyTypeUrl,
         Key key) {
       this.fullPrimitive = fullPrimitive;
       this.outputPrefix = outputPrefix;
       this.status = status;
-      this.outputPrefixType = outputPrefixType;
       this.keyId = keyId;
       this.keyTypeUrl = keyTypeUrl;
       this.key = key;
@@ -100,10 +95,6 @@ public final class PrimitiveSet<P> {
 
     public KeyStatusType getStatus() {
       return status;
-    }
-
-    public OutputPrefixType getOutputPrefixType() {
-      return outputPrefixType;
     }
 
     private final Bytes getOutputPrefix() {
@@ -242,7 +233,6 @@ public final class PrimitiveSet<P> {
               fullPrimitive,
               Bytes.copyFrom(CryptoFormat.getOutputPrefix(protoKey)),
               protoKey.getStatus(),
-              protoKey.getOutputPrefixType(),
               protoKey.getKeyId(),
               protoKey.getKeyData().getTypeUrl(),
               key);
