@@ -17,6 +17,10 @@ syntax = "proto3";
 
 package google.crypto.tink;
 
+option java_package = "com.google.crypto.tink.proto";
+option java_multiple_files = true;
+option go_package = "github.com/tink-crypto/tink-go/v2/proto/slh_dsa_proto";
+
 enum SlhDsaHashType {
   SLH_DSA_HASH_TYPE_UNSPECIFIED = 0;
   SHA2 = 1;
