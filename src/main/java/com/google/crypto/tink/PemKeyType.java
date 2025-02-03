@@ -53,11 +53,11 @@ public enum PemKeyType {
   // RSASSA-PKCS1-v1_5 with a 4096 bit key and a SHA512 digest.
   RSA_SIGN_PKCS1_4096_SHA512("RSA", "RSASSA-PKCS1-v1_5", 4096, HashType.SHA512),
 
-  // ECDSA on the NIST P-256 curve with a SHA256 digest.
+  // ECDSA on the NIST P-256 curve with a SHA256 digest and SignatureEncoding DER.
   ECDSA_P256_SHA256("EC", "ECDSA", 256, HashType.SHA256),
-  // ECDSA on the NIST P-384 curve with a SHA384 digest.
+  // ECDSA on the NIST P-384 curve with a SHA384 digest and SignatureEncoding DER.
   ECDSA_P384_SHA384("EC", "ECDSA", 384, HashType.SHA384),
-  // ECDSA on the NIST P-521 curve with a SHA512 digest.
+  // ECDSA on the NIST P-521 curve with a SHA512 digest and SignatureEncoding DER.
   ECDSA_P521_SHA512("EC", "ECDSA", 521, HashType.SHA512);
 
   public final String keyType;
