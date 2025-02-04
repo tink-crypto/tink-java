@@ -24,7 +24,6 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import javax.annotation.Nullable;
 
 /**
@@ -60,22 +59,6 @@ public final class MonitoringKeysetInfo {
       this.status = status;
       this.keyId = keyId;
       this.keyType = keyType;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-      if (!(obj instanceof Entry)) {
-        return false;
-      }
-      Entry entry = (Entry) obj;
-      return this.status == entry.status
-          && this.keyId == entry.keyId
-          && this.keyType.equals(entry.keyType);
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(status, keyId, keyType);
     }
 
     @Override
@@ -183,22 +166,6 @@ public final class MonitoringKeysetInfo {
   @Nullable
   public Integer getPrimaryKeyId() {
     return primaryKeyId;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof MonitoringKeysetInfo)) {
-      return false;
-    }
-    MonitoringKeysetInfo info = (MonitoringKeysetInfo) obj;
-    return annotations.equals(info.annotations)
-        && entries.equals(info.entries)
-        && Objects.equals(primaryKeyId, info.primaryKeyId);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(annotations, entries);
   }
 
   @Override
