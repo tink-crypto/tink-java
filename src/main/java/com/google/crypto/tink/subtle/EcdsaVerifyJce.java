@@ -30,9 +30,13 @@ import com.google.crypto.tink.subtle.EllipticCurves.EcdsaEncoding;
 import com.google.crypto.tink.subtle.Enums.HashType;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
 import java.security.Provider;
 import java.security.Signature;
 import java.security.interfaces.ECPublicKey;
+import java.security.spec.ECParameterSpec;
+import java.security.spec.ECPoint;
+import java.security.spec.ECPublicKeySpec;
 import java.security.spec.EllipticCurve;
 import java.util.Arrays;
 
@@ -86,11 +90,20 @@ public final class EcdsaVerifyJce implements PublicKeyVerify {
 
   @AccessesPartialKey
   public static PublicKeyVerify create(EcdsaPublicKey key) throws GeneralSecurityException {
-    ECPublicKey publicKey =
-        EllipticCurves.getEcPublicKey(
-            CURVE_TYPE_CONVERTER.toProtoEnum(key.getParameters().getCurveType()),
-            key.getPublicPoint().getAffineX().toByteArray(),
-            key.getPublicPoint().getAffineY().toByteArray());
+    Provider provider = ConscryptUtil.providerOrNull();
+
+    ECParameterSpec ecParams =
+        EllipticCurves.getCurveSpec(
+            CURVE_TYPE_CONVERTER.toProtoEnum(key.getParameters().getCurveType()));
+    ECPoint publicPoint = key.getPublicPoint();
+    ECPublicKeySpec spec = new ECPublicKeySpec(publicPoint, ecParams);
+    KeyFactory keyFactory;
+    if (provider != null) {
+      keyFactory = KeyFactory.getInstance("EC", provider);
+    } else {
+      keyFactory = EngineFactory.KEY_FACTORY.getInstance("EC");
+    }
+    ECPublicKey publicKey = (ECPublicKey) keyFactory.generatePublic(spec);
 
     return new EcdsaVerifyJce(
         publicKey,
@@ -99,33 +112,34 @@ public final class EcdsaVerifyJce implements PublicKeyVerify {
         key.getOutputPrefix().toByteArray(),
         key.getParameters().getVariant().equals(EcdsaParameters.Variant.LEGACY)
             ? LEGACY_MESSAGE_SUFFIX
-            : EMPTY);
+            : EMPTY, provider);
   }
 
   private EcdsaVerifyJce(
-      final ECPublicKey pubKey,
+      final ECPublicKey publicKey,
       HashType hash,
       EcdsaEncoding encoding,
       byte[] outputPrefix,
-      byte[] messageSuffix)
+      byte[] messageSuffix,
+      Provider provider)
       throws GeneralSecurityException {
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException(
           "Can not use ECDSA in FIPS-mode, as BoringCrypto is not available.");
     }
 
-    EllipticCurves.checkPublicKey(pubKey);
+    EllipticCurves.checkPublicKey(publicKey);
     this.signatureAlgorithm = SubtleUtil.toEcdsaAlgo(hash);
-    this.publicKey = pubKey;
+    this.publicKey = publicKey;
     this.encoding = encoding;
     this.outputPrefix = outputPrefix;
     this.messageSuffix = messageSuffix;
-    this.provider = ConscryptUtil.providerOrNull();
+    this.provider = provider;
   }
 
-  public EcdsaVerifyJce(final ECPublicKey pubKey, HashType hash, EcdsaEncoding encoding)
+  public EcdsaVerifyJce(final ECPublicKey publicKey, HashType hash, EcdsaEncoding encoding)
       throws GeneralSecurityException {
-    this(pubKey, hash, encoding, EMPTY, EMPTY);
+    this(publicKey, hash, encoding, EMPTY, EMPTY, ConscryptUtil.providerOrNull());
   }
 
   private Signature getInstance(String signatureAlgorithm) throws GeneralSecurityException {

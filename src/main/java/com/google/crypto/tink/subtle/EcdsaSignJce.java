@@ -19,7 +19,6 @@ package com.google.crypto.tink.subtle;
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.PublicKeySign;
-import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.signature.EcdsaParameters;
@@ -29,9 +28,12 @@ import com.google.crypto.tink.subtle.EllipticCurves.EcdsaEncoding;
 import com.google.crypto.tink.subtle.Enums.HashType;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
 import java.security.Provider;
 import java.security.Signature;
 import java.security.interfaces.ECPrivateKey;
+import java.security.spec.ECParameterSpec;
+import java.security.spec.ECPrivateKeySpec;
 import java.security.spec.EllipticCurve;
 
 /**
@@ -46,7 +48,6 @@ public final class EcdsaSignJce implements PublicKeySign {
 
   private static final byte[] EMPTY = new byte[0];
   private static final byte[] LEGACY_MESSAGE_SUFFIX = new byte[] {0};
-  private static final byte[] TEST_DATA = new byte[] {1, 2, 3};
 
   @SuppressWarnings("Immutable")
   private final ECPrivateKey privateKey;
@@ -64,28 +65,29 @@ public final class EcdsaSignJce implements PublicKeySign {
   private final Provider provider;
 
   private EcdsaSignJce(
-      final ECPrivateKey priv,
+      final ECPrivateKey privateKey,
       HashType hash,
       EcdsaEncoding encoding,
       byte[] outputPrefix,
-      byte[] messageSuffix)
+      byte[] messageSuffix,
+      Provider provider)
       throws GeneralSecurityException {
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException(
           "Can not use ECDSA in FIPS-mode, as BoringCrypto is not available.");
     }
 
-    this.privateKey = priv;
+    this.privateKey = privateKey;
     this.signatureAlgorithm = SubtleUtil.toEcdsaAlgo(hash);
     this.encoding = encoding;
     this.outputPrefix = outputPrefix;
     this.messageSuffix = messageSuffix;
-    this.provider = ConscryptUtil.providerOrNull();
+    this.provider = provider;
   }
 
-  public EcdsaSignJce(final ECPrivateKey priv, HashType hash, EcdsaEncoding encoding)
+  public EcdsaSignJce(final ECPrivateKey privateKey, HashType hash, EcdsaEncoding encoding)
       throws GeneralSecurityException {
-    this(priv, hash, encoding, EMPTY, EMPTY);
+    this(privateKey, hash, encoding, EMPTY, EMPTY, ConscryptUtil.providerOrNull());
   }
 
   @AccessesPartialKey
@@ -97,30 +99,28 @@ public final class EcdsaSignJce implements PublicKeySign {
     CurveType curveType =
         EcdsaVerifyJce.CURVE_TYPE_CONVERTER.toProtoEnum(key.getParameters().getCurveType());
 
-    ECPrivateKey privateKey =
-        EllipticCurves.getEcPrivateKey(
-            curveType,
-            key.getPrivateValue().getBigInteger(InsecureSecretKeyAccess.get()).toByteArray());
-
-    PublicKeySign signer =
-        new EcdsaSignJce(
-            privateKey,
-            hashType,
-            ecdsaEncoding,
-            key.getOutputPrefix().toByteArray(),
-            key.getParameters().getVariant().equals(EcdsaParameters.Variant.LEGACY)
-                ? LEGACY_MESSAGE_SUFFIX
-                : EMPTY);
-    PublicKeyVerify verify = EcdsaVerifyJce.create(key.getPublicKey());
-    try {
-      verify.verify(signer.sign(TEST_DATA), TEST_DATA);
-    } catch (GeneralSecurityException e) {
-      throw new GeneralSecurityException(
-          "ECDSA signing with private key followed by verifying with public key failed."
-              + " The key may be corrupted.",
-          e);
+    Provider provider = ConscryptUtil.providerOrNull();
+    ECParameterSpec ecParams = EllipticCurves.getCurveSpec(curveType);
+    ECPrivateKeySpec spec =
+        new ECPrivateKeySpec(
+            key.getPrivateValue().getBigInteger(InsecureSecretKeyAccess.get()), ecParams);
+    KeyFactory keyFactory;
+    if (provider != null) {
+      keyFactory = KeyFactory.getInstance("EC", provider);
+    } else {
+      keyFactory = EngineFactory.KEY_FACTORY.getInstance("EC");
     }
-    return signer;
+    ECPrivateKey privateKey = (ECPrivateKey) keyFactory.generatePrivate(spec);
+
+    return new EcdsaSignJce(
+        privateKey,
+        hashType,
+        ecdsaEncoding,
+        key.getOutputPrefix().toByteArray(),
+        key.getParameters().getVariant().equals(EcdsaParameters.Variant.LEGACY)
+            ? LEGACY_MESSAGE_SUFFIX
+            : EMPTY,
+        provider);
   }
 
   private Signature getInstance(String signatureAlgorithm) throws GeneralSecurityException {
