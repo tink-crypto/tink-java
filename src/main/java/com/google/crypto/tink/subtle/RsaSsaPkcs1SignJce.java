@@ -137,7 +137,7 @@ public final class RsaSsaPkcs1SignJce implements PublicKeySign {
       verifier.update(messageSuffix);
     }
     if (!verifier.verify(signature)) {
-      throw new java.lang.RuntimeException("Security bug: RSA signature computation error");
+      throw new IllegalStateException("Security bug: RSA signature computation error");
     }
     return signature;
   }
