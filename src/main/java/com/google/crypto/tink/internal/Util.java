@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
-import java.security.SecureRandom;
 import java.util.Objects;
 import javax.annotation.Nullable;
 
@@ -32,13 +31,11 @@ public final class Util {
   /** Android 18-compatible alternative to {@link java.nio.charset.StandardCharsets#UTF_8}. */
   public static final Charset UTF_8 = Charset.forName("UTF-8");
 
-  /** Returns a positive random int which can be used as a key ID in a keyset. */
+  /** Returns a non-zero random int which can be used as a key ID in a keyset. */
   public static int randKeyId() {
-    SecureRandom secureRandom = new SecureRandom();
-    byte[] rand = new byte[4];
     int result = 0;
     while (result == 0) {
-      secureRandom.nextBytes(rand);
+      byte[] rand = Random.randBytes(4);
       result =
           ((rand[0] & 0xff) << 24)
               | ((rand[1] & 0xff) << 16)
