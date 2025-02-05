@@ -6,10 +6,13 @@ java_test(
     srcs = ["FakeMonitoringClientTest.java"],
     deps = [
         "//src/main/java/com/google/crypto/tink:key_status",
+        "//src/main/java/com/google/crypto/tink/aead:cha_cha20_poly1305_key",
+        "//src/main/java/com/google/crypto/tink/aead:cha_cha20_poly1305_parameters",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_annotations",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_client",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_keyset_info",
         "//src/main/java/com/google/crypto/tink/internal/testing:fake_monitoring_client",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
     ],

@@ -21,8 +21,11 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.aead.ChaCha20Poly1305Key;
+import com.google.crypto.tink.aead.ChaCha20Poly1305Parameters;
 import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.proto.OutputPrefixType;
+import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
@@ -47,9 +50,12 @@ public final class MonitoringKeysetInfoTest {
 
   @Test
   public void addAndGetEntry() throws Exception {
+    ChaCha20Poly1305Key key123 =
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 123);
     MonitoringKeysetInfo info =
         MonitoringKeysetInfo.newBuilder()
-            .addEntry(KeyStatus.ENABLED, 123, "typeUrl123")
+            .addEntry(key123, KeyStatus.ENABLED, 123, "typeUrl123")
             .setPrimaryKeyId(123)
             .build();
     assertThat(info.getEntries()).hasSize(1);
@@ -57,14 +63,21 @@ public final class MonitoringKeysetInfoTest {
     assertThat(entry.getStatus()).isEqualTo(KeyStatus.ENABLED);
     assertThat(entry.getKeyId()).isEqualTo(123);
     assertThat(entry.getKeyType()).isEqualTo("typeUrl123");
+    assertThat(entry.getKey().equalsKey(key123)).isTrue();
   }
 
   @Test
   public void addEntries() throws Exception  {
+    ChaCha20Poly1305Key key123 =
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 123);
+    ChaCha20Poly1305Key key234 =
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 234);
     MonitoringKeysetInfo info =
         MonitoringKeysetInfo.newBuilder()
-            .addEntry(KeyStatus.ENABLED, 123, "typeUrl123")
-            .addEntry(KeyStatus.ENABLED, 234, "typeUrl234")
+            .addEntry(key123, KeyStatus.ENABLED, 123, "typeUrl123")
+            .addEntry(key234, KeyStatus.ENABLED, 234, "typeUrl234")
             .setPrimaryKeyId(123)
             .build();
     assertThat(info.getEntries()).hasSize(2);
@@ -72,10 +85,13 @@ public final class MonitoringKeysetInfoTest {
 
   @Test
   public void addSameEntryTwice() throws Exception  {
+    ChaCha20Poly1305Key key123 =
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 123);
     MonitoringKeysetInfo info =
         MonitoringKeysetInfo.newBuilder()
-            .addEntry(KeyStatus.ENABLED, 123, "typeUrl123")
-            .addEntry(KeyStatus.ENABLED, 123, "typeUrl123")
+            .addEntry(key123, KeyStatus.ENABLED, 123, "typeUrl123")
+            .addEntry(key123, KeyStatus.ENABLED, 123, "typeUrl123")
             .setPrimaryKeyId(123)
             .build();
     // entries are a list, so we can add the same entry twice.
@@ -84,6 +100,9 @@ public final class MonitoringKeysetInfoTest {
 
   @Test
   public void setAndGetAnnotations() throws Exception {
+    ChaCha20Poly1305Key key123 =
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 123);
     HashMap<String, String> annotations = new HashMap<>();
     annotations.put("annotation_name1", "annotation_value1");
     annotations.put("annotation_name2", "annotation_value2");
@@ -96,7 +115,7 @@ public final class MonitoringKeysetInfoTest {
     MonitoringKeysetInfo info =
         MonitoringKeysetInfo.newBuilder()
             .setAnnotations(monitoringAnnotations)
-            .addEntry(KeyStatus.ENABLED, 123, "typeUrl123")
+            .addEntry(key123, KeyStatus.ENABLED, 123, "typeUrl123")
             .setPrimaryKeyId(123)
             .build();
     HashMap<String, String> expected = new HashMap<>();
@@ -109,18 +128,26 @@ public final class MonitoringKeysetInfoTest {
 
   @Test
   public void primaryIsNullIfItIsNotSet() throws Exception  {
+    ChaCha20Poly1305Key key123 =
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 123);
     MonitoringKeysetInfo info =
-        MonitoringKeysetInfo.newBuilder().addEntry(KeyStatus.ENABLED, 123, "typeUrl123").build();
+        MonitoringKeysetInfo.newBuilder()
+            .addEntry(key123, KeyStatus.ENABLED, 123, "typeUrl123")
+            .build();
     assertThat(info.getPrimaryKeyId()).isNull();
   }
 
   @Test
   public void primaryKeyMustBePresentInEntries() throws Exception  {
+    ChaCha20Poly1305Key key123 =
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 123);
     assertThrows(
         GeneralSecurityException.class,
         () ->
             MonitoringKeysetInfo.newBuilder()
-                .addEntry(KeyStatus.ENABLED, 123, "typeUrl123")
+                .addEntry(key123, KeyStatus.ENABLED, 123, "typeUrl123")
                 .setPrimaryKeyId(124)
                 .build());
     assertThrows(
@@ -133,9 +160,12 @@ public final class MonitoringKeysetInfoTest {
 
   @Test
   public void entriesAreNotModifiable() throws Exception {
+    ChaCha20Poly1305Key key123 =
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 123);
     MonitoringKeysetInfo info =
         MonitoringKeysetInfo.newBuilder()
-            .addEntry(KeyStatus.ENABLED, 123, "typeUrl123")
+            .addEntry(key123, KeyStatus.ENABLED, 123, "typeUrl123")
             .setPrimaryKeyId(123)
             .setAnnotations(
                 MonitoringAnnotations.newBuilder()
@@ -144,7 +174,7 @@ public final class MonitoringKeysetInfoTest {
             .build();
     MonitoringKeysetInfo info2 =
         MonitoringKeysetInfo.newBuilder()
-            .addEntry(KeyStatus.ENABLED, 234, "typeUrl234")
+            .addEntry(key123, KeyStatus.ENABLED, 234, "typeUrl234")
             .setPrimaryKeyId(234)
             .build();
     assertThrows(
@@ -157,30 +187,43 @@ public final class MonitoringKeysetInfoTest {
 
   @Test
   public void builderIsInvalidAfterBuild() throws Exception  {
+    ChaCha20Poly1305Key key123 =
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 123);
+    ChaCha20Poly1305Key key234 =
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 234);
     MonitoringAnnotations annotations =
         MonitoringAnnotations.newBuilder().add("annotation_name2", "annotation_value2").build();
     MonitoringKeysetInfo.Builder builder =
         MonitoringKeysetInfo.newBuilder()
-            .addEntry(KeyStatus.ENABLED, 123, "typeUrl123")
+            .addEntry(key123, KeyStatus.ENABLED, 123, "typeUrl123")
             .setPrimaryKeyId(123)
             .setAnnotations(annotations);
     Object unused = builder.build();
     assertThrows(IllegalStateException.class, () -> builder.setAnnotations(annotations));
     assertThrows(
-        IllegalStateException.class, () -> builder.addEntry(KeyStatus.ENABLED, 234, "typeUrl234"));
+        IllegalStateException.class,
+        () -> builder.addEntry(key234, KeyStatus.ENABLED, 234, "typeUrl234"));
     assertThrows(IllegalStateException.class, () -> builder.setPrimaryKeyId(123));
   }
 
   @Test
   public void toStringConversion()  throws Exception {
+    ChaCha20Poly1305Key key123 =
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 123);
+    ChaCha20Poly1305Key key234 =
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 234);
     MonitoringKeysetInfo info =
         MonitoringKeysetInfo.newBuilder()
             .setAnnotations(
                 MonitoringAnnotations.newBuilder()
                     .add("annotation_name1", "annotation_value1")
                     .build())
-            .addEntry(KeyStatus.ENABLED, 123, "typeUrl123")
-            .addEntry(KeyStatus.DISABLED, 234, "typeUrl234")
+            .addEntry(key123, KeyStatus.ENABLED, 123, "typeUrl123")
+            .addEntry(key234, KeyStatus.DISABLED, 234, "typeUrl234")
             .setPrimaryKeyId(123)
             .build();
     assertThat(info.toString())

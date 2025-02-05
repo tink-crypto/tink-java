@@ -20,9 +20,12 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.KeyStatus;
+import com.google.crypto.tink.aead.ChaCha20Poly1305Key;
+import com.google.crypto.tink.aead.ChaCha20Poly1305Parameters;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringKeysetInfo;
+import com.google.crypto.tink.util.SecretBytes;
 import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,14 +37,20 @@ public final class FakeMonitoringClientTest {
   @Test
   public void log() throws Exception {
     FakeMonitoringClient client = new FakeMonitoringClient();
+    ChaCha20Poly1305Key key123 =
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 123);
+    ChaCha20Poly1305Key key234 =
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 234);
     MonitoringKeysetInfo keysetInfo =
         MonitoringKeysetInfo.newBuilder()
             .setAnnotations(
                 MonitoringAnnotations.newBuilder()
                     .add("annotation_name", "annotation_value")
                     .build())
-            .addEntry(KeyStatus.ENABLED, 123, "typeUrl123")
-            .addEntry(KeyStatus.ENABLED, 234, "typeUrl234")
+            .addEntry(key123, KeyStatus.ENABLED, 123, "typeUrl123")
+            .addEntry(key234, KeyStatus.ENABLED, 234, "typeUrl234")
             .setPrimaryKeyId(123)
             .build();
     MonitoringClient.Logger encLogger = client.createLogger(keysetInfo, "aead", "encrypt");
@@ -66,14 +75,20 @@ public final class FakeMonitoringClientTest {
   @Test
   public void logFailure() throws Exception {
     FakeMonitoringClient client = new FakeMonitoringClient();
+    ChaCha20Poly1305Key key123 =
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 123);
+    ChaCha20Poly1305Key key234 =
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 234);
     MonitoringKeysetInfo keysetInfo =
         MonitoringKeysetInfo.newBuilder()
             .setAnnotations(
                 MonitoringAnnotations.newBuilder()
                     .add("annotation_name", "annotation_value")
                     .build())
-            .addEntry(KeyStatus.ENABLED, 123, "typeUrl123")
-            .addEntry(KeyStatus.ENABLED, 234, "typeUrl234")
+            .addEntry(key123, KeyStatus.ENABLED, 123, "typeUrl123")
+            .addEntry(key234, KeyStatus.ENABLED, 234, "typeUrl234")
             .setPrimaryKeyId(123)
             .build();
     MonitoringClient.Logger encLogger = client.createLogger(keysetInfo, "aead", "encrypt");
@@ -95,14 +110,20 @@ public final class FakeMonitoringClientTest {
   @Test
   public void twoLoggers() throws Exception {
     FakeMonitoringClient client = new FakeMonitoringClient();
+    ChaCha20Poly1305Key key123 =
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 123);
+    ChaCha20Poly1305Key key234 =
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 234);
     MonitoringKeysetInfo info =
         MonitoringKeysetInfo.newBuilder()
             .setAnnotations(
                 MonitoringAnnotations.newBuilder()
                     .add("annotation_name", "annotation_value")
                     .build())
-            .addEntry(KeyStatus.ENABLED, 123, "typeUrl123")
-            .addEntry(KeyStatus.ENABLED, 234, "typeUrl234")
+            .addEntry(key123, KeyStatus.ENABLED, 123, "typeUrl123")
+            .addEntry(key234, KeyStatus.ENABLED, 234, "typeUrl234")
             .setPrimaryKeyId(123)
             .build();
     MonitoringClient.Logger encLogger = client.createLogger(info, "aead", "encrypt");
@@ -125,9 +146,12 @@ public final class FakeMonitoringClientTest {
   @Test
   public void logWrongKeyIdFails() throws Exception {
     FakeMonitoringClient client = new FakeMonitoringClient();
+    ChaCha20Poly1305Key key123 =
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 123);
     MonitoringKeysetInfo info =
         MonitoringKeysetInfo.newBuilder()
-            .addEntry(KeyStatus.ENABLED, 123, "typeUrl123")
+            .addEntry(key123, KeyStatus.ENABLED, 123, "typeUrl123")
             .setPrimaryKeyId(123)
             .build();
     MonitoringClient.Logger encLogger = client.createLogger(info, "aead", "encrypt");

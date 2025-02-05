@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.internal;
 
+import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.annotations.Alpha;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -39,6 +40,7 @@ public final class MonitoringKeysetInfo {
   /** Description about each entry of the Keyset. */
   @Immutable
   public static final class Entry {
+    private final Key key;
     private final KeyStatus status;
     private final int keyId;
     private final String keyType;
@@ -51,11 +53,17 @@ public final class MonitoringKeysetInfo {
       return keyId;
     }
 
+    public Key getKey() {
+      return key;
+    }
+
     public String getKeyType() {
       return keyType;
     }
 
-    private Entry(KeyStatus status, int keyId, String keyType) {
+    private Entry(Key key, KeyStatus status, int keyId, String keyType) {
+
+      this.key = key;
       this.status = status;
       this.keyId = keyId;
       this.keyType = keyType;
@@ -86,11 +94,11 @@ public final class MonitoringKeysetInfo {
     }
 
     @CanIgnoreReturnValue
-    public Builder addEntry(KeyStatus status, int keyId, String keyType) {
+    public Builder addEntry(Key key, KeyStatus status, int keyId, String keyType) {
       if (builderEntries == null) {
         throw new IllegalStateException("addEntry cannot be called after build()");
       }
-      builderEntries.add(new Entry(status, keyId, keyType));
+      builderEntries.add(new Entry(key, status, keyId, keyType));
       return this;
     }
 

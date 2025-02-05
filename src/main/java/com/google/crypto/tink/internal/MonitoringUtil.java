@@ -63,6 +63,7 @@ public final class MonitoringUtil {
     for (List<PrimitiveSet.Entry<P>> entries : primitiveSet.getAll()) {
       for (PrimitiveSet.Entry<P> entry : entries) {
         builder.addEntry(
+            entry.getKey(),
             parseStatus(entry.getStatus()),
             entry.getKeyId(),
             parseKeyTypeUrl(entry.getKeyTypeUrl()));
