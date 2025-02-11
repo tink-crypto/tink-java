@@ -55,14 +55,13 @@ public final class MonitoringKeysetInfoTest {
             ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 123);
     MonitoringKeysetInfo info =
         MonitoringKeysetInfo.newBuilder()
-            .addEntry(key123, KeyStatus.ENABLED, 123, "typeUrl123")
+            .addEntry(key123, KeyStatus.ENABLED, 123)
             .setPrimaryKeyId(123)
             .build();
     assertThat(info.getEntries()).hasSize(1);
     MonitoringKeysetInfo.Entry entry = info.getEntries().get(0);
     assertThat(entry.getStatus()).isEqualTo(KeyStatus.ENABLED);
     assertThat(entry.getKeyId()).isEqualTo(123);
-    assertThat(entry.getKeyType()).isEqualTo("typeUrl123");
     assertThat(entry.getKey().equalsKey(key123)).isTrue();
   }
 
@@ -76,8 +75,8 @@ public final class MonitoringKeysetInfoTest {
             ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 234);
     MonitoringKeysetInfo info =
         MonitoringKeysetInfo.newBuilder()
-            .addEntry(key123, KeyStatus.ENABLED, 123, "typeUrl123")
-            .addEntry(key234, KeyStatus.ENABLED, 234, "typeUrl234")
+            .addEntry(key123, KeyStatus.ENABLED, 123)
+            .addEntry(key234, KeyStatus.ENABLED, 234)
             .setPrimaryKeyId(123)
             .build();
     assertThat(info.getEntries()).hasSize(2);
@@ -90,8 +89,8 @@ public final class MonitoringKeysetInfoTest {
             ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 123);
     MonitoringKeysetInfo info =
         MonitoringKeysetInfo.newBuilder()
-            .addEntry(key123, KeyStatus.ENABLED, 123, "typeUrl123")
-            .addEntry(key123, KeyStatus.ENABLED, 123, "typeUrl123")
+            .addEntry(key123, KeyStatus.ENABLED, 123)
+            .addEntry(key123, KeyStatus.ENABLED, 123)
             .setPrimaryKeyId(123)
             .build();
     // entries are a list, so we can add the same entry twice.
@@ -115,7 +114,7 @@ public final class MonitoringKeysetInfoTest {
     MonitoringKeysetInfo info =
         MonitoringKeysetInfo.newBuilder()
             .setAnnotations(monitoringAnnotations)
-            .addEntry(key123, KeyStatus.ENABLED, 123, "typeUrl123")
+            .addEntry(key123, KeyStatus.ENABLED, 123)
             .setPrimaryKeyId(123)
             .build();
     HashMap<String, String> expected = new HashMap<>();
@@ -132,9 +131,7 @@ public final class MonitoringKeysetInfoTest {
         ChaCha20Poly1305Key.create(
             ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 123);
     MonitoringKeysetInfo info =
-        MonitoringKeysetInfo.newBuilder()
-            .addEntry(key123, KeyStatus.ENABLED, 123, "typeUrl123")
-            .build();
+        MonitoringKeysetInfo.newBuilder().addEntry(key123, KeyStatus.ENABLED, 123).build();
     assertThat(info.getPrimaryKeyId()).isNull();
   }
 
@@ -147,7 +144,7 @@ public final class MonitoringKeysetInfoTest {
         GeneralSecurityException.class,
         () ->
             MonitoringKeysetInfo.newBuilder()
-                .addEntry(key123, KeyStatus.ENABLED, 123, "typeUrl123")
+                .addEntry(key123, KeyStatus.ENABLED, 123)
                 .setPrimaryKeyId(124)
                 .build());
     assertThrows(
@@ -165,7 +162,7 @@ public final class MonitoringKeysetInfoTest {
             ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 123);
     MonitoringKeysetInfo info =
         MonitoringKeysetInfo.newBuilder()
-            .addEntry(key123, KeyStatus.ENABLED, 123, "typeUrl123")
+            .addEntry(key123, KeyStatus.ENABLED, 123)
             .setPrimaryKeyId(123)
             .setAnnotations(
                 MonitoringAnnotations.newBuilder()
@@ -174,7 +171,7 @@ public final class MonitoringKeysetInfoTest {
             .build();
     MonitoringKeysetInfo info2 =
         MonitoringKeysetInfo.newBuilder()
-            .addEntry(key123, KeyStatus.ENABLED, 234, "typeUrl234")
+            .addEntry(key123, KeyStatus.ENABLED, 234)
             .setPrimaryKeyId(234)
             .build();
     assertThrows(
@@ -197,14 +194,13 @@ public final class MonitoringKeysetInfoTest {
         MonitoringAnnotations.newBuilder().add("annotation_name2", "annotation_value2").build();
     MonitoringKeysetInfo.Builder builder =
         MonitoringKeysetInfo.newBuilder()
-            .addEntry(key123, KeyStatus.ENABLED, 123, "typeUrl123")
+            .addEntry(key123, KeyStatus.ENABLED, 123)
             .setPrimaryKeyId(123)
             .setAnnotations(annotations);
     Object unused = builder.build();
     assertThrows(IllegalStateException.class, () -> builder.setAnnotations(annotations));
     assertThrows(
-        IllegalStateException.class,
-        () -> builder.addEntry(key234, KeyStatus.ENABLED, 234, "typeUrl234"));
+        IllegalStateException.class, () -> builder.addEntry(key234, KeyStatus.ENABLED, 234));
     assertThrows(IllegalStateException.class, () -> builder.setPrimaryKeyId(123));
   }
 
@@ -222,14 +218,14 @@ public final class MonitoringKeysetInfoTest {
                 MonitoringAnnotations.newBuilder()
                     .add("annotation_name1", "annotation_value1")
                     .build())
-            .addEntry(key123, KeyStatus.ENABLED, 123, "typeUrl123")
-            .addEntry(key234, KeyStatus.DISABLED, 234, "typeUrl234")
+            .addEntry(key123, KeyStatus.ENABLED, 123)
+            .addEntry(key234, KeyStatus.DISABLED, 234)
             .setPrimaryKeyId(123)
             .build();
     assertThat(info.toString())
         .isEqualTo(
             "(annotations={annotation_name1=annotation_value1}, entries="
-                + "[(status=ENABLED, keyId=123, keyType='typeUrl123'), "
-                + "(status=DISABLED, keyId=234, keyType='typeUrl234')], primaryKeyId=123)");
+                + "[(status=ENABLED, keyId=123), "
+                + "(status=DISABLED, keyId=234)], primaryKeyId=123)");
   }
 }

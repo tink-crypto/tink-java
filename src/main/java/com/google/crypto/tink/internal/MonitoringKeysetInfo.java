@@ -43,7 +43,6 @@ public final class MonitoringKeysetInfo {
     private final Key key;
     private final KeyStatus status;
     private final int keyId;
-    private final String keyType;
 
     public KeyStatus getStatus() {
       return status;
@@ -57,22 +56,15 @@ public final class MonitoringKeysetInfo {
       return key;
     }
 
-    public String getKeyType() {
-      return keyType;
-    }
-
-    private Entry(Key key, KeyStatus status, int keyId, String keyType) {
-
+    private Entry(Key key, KeyStatus status, int keyId) {
       this.key = key;
       this.status = status;
       this.keyId = keyId;
-      this.keyType = keyType;
     }
 
     @Override
     public String toString() {
-      return String.format(
-          "(status=%s, keyId=%s, keyType='%s')", this.status, this.keyId, this.keyType);
+      return String.format("(status=%s, keyId=%s)", this.status, this.keyId);
     }
   }
 
@@ -94,11 +86,11 @@ public final class MonitoringKeysetInfo {
     }
 
     @CanIgnoreReturnValue
-    public Builder addEntry(Key key, KeyStatus status, int keyId, String keyType) {
+    public Builder addEntry(Key key, KeyStatus status, int keyId) {
       if (builderEntries == null) {
         throw new IllegalStateException("addEntry cannot be called after build()");
       }
-      builderEntries.add(new Entry(key, status, keyId, keyType));
+      builderEntries.add(new Entry(key, status, keyId));
       return this;
     }
 

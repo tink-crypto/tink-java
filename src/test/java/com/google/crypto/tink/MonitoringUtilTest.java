@@ -69,7 +69,6 @@ public final class MonitoringUtilTest {
     assertThat(entries).hasSize(1);
     assertThat(entries.get(0).getStatus()).isEqualTo(KeyStatus.ENABLED);
     assertThat(entries.get(0).getKeyId()).isEqualTo(42);
-    assertThat(entries.get(0).getKeyType()).isEqualTo("tink.AesGcmKey");
   }
 
   @Test
