@@ -132,7 +132,6 @@ public class PrimitiveSetTest {
     assertThat(entry.getFullPrimitive()).isEqualTo(fullPrimitive);
     assertThat(entry.getStatus()).isEqualTo(KeyStatusType.ENABLED);
     assertThat(entry.getKeyId()).isEqualTo(42);
-    assertThat(entry.getKeyTypeUrl()).isEqualTo("type.googleapis.com/google.crypto.tink.AesGcmKey");
     assertThat(entry.getKey()).isEqualTo(key);
   }
 

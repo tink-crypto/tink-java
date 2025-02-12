@@ -63,21 +63,14 @@ public final class PrimitiveSet<P> {
     private final KeyStatusType status;
     // The id of the key.
     private final int keyId;
-    private final String keyTypeUrl;
     private final Key key;
 
     private Entry(
-        P fullPrimitive,
-        final Bytes outputPrefix,
-        KeyStatusType status,
-        int keyId,
-        String keyTypeUrl,
-        Key key) {
+        P fullPrimitive, final Bytes outputPrefix, KeyStatusType status, int keyId, Key key) {
       this.fullPrimitive = fullPrimitive;
       this.outputPrefix = outputPrefix;
       this.status = status;
       this.keyId = keyId;
-      this.keyTypeUrl = keyTypeUrl;
       this.key = key;
     }
 
@@ -103,10 +96,6 @@ public final class PrimitiveSet<P> {
 
     public int getKeyId() {
       return keyId;
-    }
-
-    public String getKeyTypeUrl() {
-      return keyTypeUrl;
     }
 
     public Key getKey() {
@@ -234,7 +223,6 @@ public final class PrimitiveSet<P> {
               Bytes.copyFrom(CryptoFormat.getOutputPrefix(protoKey)),
               protoKey.getStatus(),
               protoKey.getKeyId(),
-              protoKey.getKeyData().getTypeUrl(),
               key);
       storeEntryInPrimitiveSet(entry, entries, entriesInKeysetOrder);
       if (asPrimary) {
