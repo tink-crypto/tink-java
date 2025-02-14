@@ -972,3 +972,21 @@ java_library(
     srcs = ["ConscryptUtil.java"],
     deps = ["@maven//:com_google_code_findbugs_jsr305"],
 )
+
+android_library(
+    name = "prefix_map-android",
+    srcs = ["PrefixMap.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/util:bytes-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "prefix_map",
+    srcs = ["PrefixMap.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/util:bytes",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)

@@ -756,3 +756,15 @@ java_test(
         "@maven//:org_conscrypt_conscrypt_openjdk_uber",
     ],
 )
+
+java_test(
+    name = "PrefixMapTest",
+    size = "small",
+    srcs = ["PrefixMapTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/internal:prefix_map",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
