@@ -1594,6 +1594,8 @@
 <dd>
 <div class="block">Builds the MonitoringKeysetInfo object.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/PrefixMap.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/PrefixMap.Builder.html" title="class in com.google.crypto.tink.internal">PrefixMap.Builder</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/PrimitiveRegistry.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/PrimitiveRegistry.Builder.html" title="class in com.google.crypto.tink.internal">PrimitiveRegistry.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/PrimitiveSet.Builder.html#build--">build()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/PrimitiveSet.Builder.html" title="class in com.google.crypto.tink.internal">PrimitiveSet.Builder</a></dt>
@@ -1709,6 +1711,8 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/MonitoringAnnotations.Builder.html#Builder--">Builder()</a></span> - Constructor for class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/MonitoringAnnotations.Builder.html" title="class in com.google.crypto.tink.internal">MonitoringAnnotations.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/MonitoringKeysetInfo.Builder.html#Builder--">Builder()</a></span> - Constructor for class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/MonitoringKeysetInfo.Builder.html" title="class in com.google.crypto.tink.internal">MonitoringKeysetInfo.Builder</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/PrefixMap.Builder.html#Builder--">Builder()</a></span> - Constructor for class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/PrefixMap.Builder.html" title="class in com.google.crypto.tink.internal">PrefixMap.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/PrimitiveRegistry.html#builder--">builder()</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/PrimitiveRegistry.html" title="class in com.google.crypto.tink.internal">PrimitiveRegistry</a></dt>
 <dd>&nbsp;</dd>
@@ -6064,6 +6068,11 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/PrimitiveSet.html#getAllInKeysetOrder--">getAllInKeysetOrder()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/PrimitiveSet.html" title="class in com.google.crypto.tink.internal">PrimitiveSet</a></dt>
 <dd>
 <div class="block">Returns all primitives in the original keyset key order.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/PrefixMap.html#getAllWithMatchingPrefix-byte:A-">getAllWithMatchingPrefix(byte[])</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/PrefixMap.html" title="class in com.google.crypto.tink.internal">PrefixMap</a></dt>
+<dd>
+<div class="block">Provides an iterable which goves over all values which were added with a prefix of the given
+ <code>text</code>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/Util.html#getAndroidApiLevel--">getAndroidApiLevel()</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/Util.html" title="class in com.google.crypto.tink.internal">Util</a></dt>
 <dd>
@@ -18993,6 +19002,15 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/KeyTemplateProtoConverter.html#prefixFromProto-com.google.crypto.tink.proto.OutputPrefixType-">prefixFromProto(OutputPrefixType)</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/KeyTemplateProtoConverter.html" title="class in com.google.crypto.tink.internal">KeyTemplateProtoConverter</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/internal/PrefixMap.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">PrefixMap</span></a>&lt;<a href="com/google/crypto/tink/internal/PrefixMap.html" title="type parameter in PrefixMap">P</a>&gt; - Class in <a href="com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></dt>
+<dd>
+<div class="block">Provides a map from prefix to arbitrary element, allowing to iterate over all elements whose
+ prefixes matches a given <code>byte[]</code>.</div>
+</dd>
+<dt><a href="com/google/crypto/tink/internal/PrefixMap.Builder.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">PrefixMap.Builder</span></a>&lt;<a href="com/google/crypto/tink/internal/PrefixMap.Builder.html" title="type parameter in PrefixMap.Builder">P</a>&gt; - Class in <a href="com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></dt>
+<dd>
+<div class="block">Builder for PrefixMap.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/prf/Prf.html" title="interface in com.google.crypto.tink.prf"><span class="typeNameLink">Prf</span></a> - Interface in <a href="com/google/crypto/tink/prf/package-summary.html">com.google.crypto.tink.prf</a></dt>
 <dd>
 <div class="block">The Prf interface is an abstraction for an element of a pseudo random function family, selected
@@ -19345,6 +19363,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/MutableParametersRegistry.html#put-java.lang.String-com.google.crypto.tink.Parameters-">put(String, Parameters)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/MutableParametersRegistry.html" title="class in com.google.crypto.tink.internal">MutableParametersRegistry</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/PrefixMap.Builder.html#put-com.google.crypto.tink.util.Bytes-P-">put(Bytes, P)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/PrefixMap.Builder.html" title="class in com.google.crypto.tink.internal">PrefixMap.Builder</a></dt>
+<dd>
+<div class="block">Adds a value for a given prefix.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/MutableParametersRegistry.html#putAll-java.util.Map-">putAll(Map&lt;String, Parameters&gt;)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/MutableParametersRegistry.html" title="class in com.google.crypto.tink.internal">MutableParametersRegistry</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/SubtleUtil.html#putAsUnsigedInt-java.nio.ByteBuffer-long-">putAsUnsigedInt(ByteBuffer, long)</a></span> - Static method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/SubtleUtil.html" title="class in com.google.crypto.tink.subtle">SubtleUtil</a></dt>
