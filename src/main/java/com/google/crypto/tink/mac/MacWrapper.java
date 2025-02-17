@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink.mac;
 
-import com.google.crypto.tink.CryptoFormat;
 import com.google.crypto.tink.Mac;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringClient;
@@ -24,14 +23,13 @@ import com.google.crypto.tink.internal.MonitoringKeysetInfo;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
+import com.google.crypto.tink.internal.PrefixMap;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.mac.internal.LegacyFullMac;
 import java.security.GeneralSecurityException;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * MacWrapper is the implementation of PrimitiveWrapper for the Mac primitive.
@@ -43,6 +41,15 @@ import java.util.List;
  * primitive tries all keys with {@link com.google.crypto.tink.proto.OutputPrefixType#RAW}.
  */
 public class MacWrapper implements PrimitiveWrapper<Mac, Mac> {
+  private static class MacWithId {
+    public MacWithId(Mac mac, int id) {
+      this.mac = mac;
+      this.id = id;
+    }
+
+    public final Mac mac;
+    public final int id;
+  }
 
   private static final MacWrapper WRAPPER = new MacWrapper();
   private static final PrimitiveConstructor<LegacyProtoKey, Mac>
@@ -50,28 +57,27 @@ public class MacWrapper implements PrimitiveWrapper<Mac, Mac> {
           PrimitiveConstructor.create(LegacyFullMac::create, LegacyProtoKey.class, Mac.class);
 
   private static class WrappedMac implements Mac {
-    private final PrimitiveSet<Mac> primitives;
+    private final MacWithId primary;
+    private final PrefixMap<MacWithId> allMacs;
     private final MonitoringClient.Logger computeLogger;
     private final MonitoringClient.Logger verifyLogger;
 
-    private WrappedMac(PrimitiveSet<Mac> primitives) {
-      this.primitives = primitives;
-      if (primitives.hasAnnotations()) {
-        MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-        MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
-        computeLogger = client.createLogger(keysetInfo, "mac", "compute");
-        verifyLogger = client.createLogger(keysetInfo, "mac", "verify");
-      } else {
-        computeLogger = MonitoringUtil.DO_NOTHING_LOGGER;
-        verifyLogger = MonitoringUtil.DO_NOTHING_LOGGER;
-      }
+    private WrappedMac(
+        MacWithId primary,
+        PrefixMap<MacWithId> allMacs,
+        MonitoringClient.Logger computeLogger,
+        MonitoringClient.Logger verifyLogger) {
+      this.primary = primary;
+      this.allMacs = allMacs;
+      this.computeLogger = computeLogger;
+      this.verifyLogger = verifyLogger;
     }
 
     @Override
     public byte[] computeMac(final byte[] data) throws GeneralSecurityException {
       try {
-        byte[] output = primitives.getPrimary().getFullPrimitive().computeMac(data);
-        computeLogger.log(primitives.getPrimary().getKeyId(), data.length);
+        byte[] output = primary.mac.computeMac(data);
+        computeLogger.log(primary.id, data.length);
         return output;
       } catch (GeneralSecurityException e) {
         computeLogger.logFailure();
@@ -81,38 +87,16 @@ public class MacWrapper implements PrimitiveWrapper<Mac, Mac> {
 
     @Override
     public void verifyMac(final byte[] mac, final byte[] data) throws GeneralSecurityException {
-      if (mac.length <= CryptoFormat.NON_RAW_PREFIX_SIZE) {
-        // This also rejects raw MAC with size of 4 bytes or fewer. Those MACs are
-        // clearly insecure, thus should be discouraged.
-        verifyLogger.logFailure();
-        throw new GeneralSecurityException("tag too short");
-      }
-      byte[] prefix = Arrays.copyOf(mac, CryptoFormat.NON_RAW_PREFIX_SIZE);
-      List<PrimitiveSet.Entry<Mac>> entries = primitives.getPrimitive(prefix);
-      for (PrimitiveSet.Entry<Mac> entry : entries) {
+      for (MacWithId macWithId : allMacs.getAllWithMatchingPrefix(mac)) {
         try {
-          entry.getFullPrimitive().verifyMac(mac, data);
-          verifyLogger.log(entry.getKeyId(), data.length);
+          macWithId.mac.verifyMac(mac, data);
+          verifyLogger.log(macWithId.id, data.length);
           // If there is no exception, the MAC is valid and we can return.
           return;
         } catch (GeneralSecurityException e) {
           // Ignored as we want to continue verification with the remaining keys.
         }
       }
-
-      // None "non-raw" key matched, so let's try the raw keys (if any exist).
-      entries = primitives.getRawPrimitives();
-      for (PrimitiveSet.Entry<Mac> entry : entries) {
-        try {
-          entry.getFullPrimitive().verifyMac(mac, data);
-          verifyLogger.log(entry.getKeyId(), data.length);
-          // If there is no exception, the MAC is valid and we can return.
-          return;
-        } catch (GeneralSecurityException ignored) {
-          // Ignored as we want to continue verification with other raw keys.
-        }
-      }
-      // nothing works.
       verifyLogger.logFailure();
       throw new GeneralSecurityException("invalid MAC");
     }
@@ -122,7 +106,28 @@ public class MacWrapper implements PrimitiveWrapper<Mac, Mac> {
 
   @Override
   public Mac wrap(final PrimitiveSet<Mac> primitives) throws GeneralSecurityException {
-    return new WrappedMac(primitives);
+    PrefixMap.Builder<MacWithId> builder = new PrefixMap.Builder<>();
+    for (PrimitiveSet.Entry<Mac> entry : primitives.getAllInKeysetOrder()) {
+      builder.put(
+          entry.getOutputPrefix(), new MacWithId(entry.getFullPrimitive(), entry.getKeyId()));
+    }
+    MonitoringClient.Logger computeLogger;
+    MonitoringClient.Logger verifyLogger;
+    if (primitives.hasAnnotations()) {
+      MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
+      MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
+      computeLogger = client.createLogger(keysetInfo, "mac", "compute");
+      verifyLogger = client.createLogger(keysetInfo, "mac", "verify");
+    } else {
+      computeLogger = MonitoringUtil.DO_NOTHING_LOGGER;
+      verifyLogger = MonitoringUtil.DO_NOTHING_LOGGER;
+    }
+    return new WrappedMac(
+        new MacWithId(
+            primitives.getPrimary().getFullPrimitive(), primitives.getPrimary().getKeyId()),
+        builder.build(),
+        computeLogger,
+        verifyLogger);
   }
 
   @Override
