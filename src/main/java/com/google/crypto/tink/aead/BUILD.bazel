@@ -212,7 +212,6 @@ java_library(
     srcs = ["AeadWrapper.java"],
     deps = [
         "//src/main/java/com/google/crypto/tink:aead",
-        "//src/main/java/com/google/crypto/tink:crypto_format",
         "//src/main/java/com/google/crypto/tink/aead/internal:legacy_full_aead",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_client",
@@ -220,6 +219,7 @@ java_library(
         "//src/main/java/com/google/crypto/tink/internal:monitoring_util",
         "//src/main/java/com/google/crypto/tink/internal:mutable_monitoring_registry",
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry",
+        "//src/main/java/com/google/crypto/tink/internal:prefix_map",
         "//src/main/java/com/google/crypto/tink/internal:primitive_constructor",
         "//src/main/java/com/google/crypto/tink/internal:primitive_registry",
         "//src/main/java/com/google/crypto/tink/internal:primitive_set",
@@ -647,7 +647,6 @@ android_library(
     srcs = ["AeadWrapper.java"],
     deps = [
         "//src/main/java/com/google/crypto/tink:aead-android",
-        "//src/main/java/com/google/crypto/tink:crypto_format-android",
         "//src/main/java/com/google/crypto/tink/aead/internal:legacy_full_aead-android",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key-android",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_client-android",
@@ -655,6 +654,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink/internal:monitoring_util-android",
         "//src/main/java/com/google/crypto/tink/internal:mutable_monitoring_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry-android",
+        "//src/main/java/com/google/crypto/tink/internal:prefix_map-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_constructor-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_set-android",

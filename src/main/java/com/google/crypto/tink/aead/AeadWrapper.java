@@ -17,7 +17,6 @@
 package com.google.crypto.tink.aead;
 
 import com.google.crypto.tink.Aead;
-import com.google.crypto.tink.CryptoFormat;
 import com.google.crypto.tink.aead.internal.LegacyFullAead;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringClient;
@@ -25,13 +24,12 @@ import com.google.crypto.tink.internal.MonitoringKeysetInfo;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
+import com.google.crypto.tink.internal.PrefixMap;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import java.security.GeneralSecurityException;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * AeadWrapper is the implementation of SetWrapper for the Aead primitive.
@@ -42,6 +40,15 @@ import java.util.List;
  * simply throw a GeneralSecurityException.
  */
 public class AeadWrapper implements PrimitiveWrapper<Aead, Aead> {
+  private static class AeadWithId {
+    public AeadWithId(Aead aead, int id) {
+      this.aead = aead;
+      this.id = id;
+    }
+
+    public final Aead aead;
+    public final int id;
+  }
 
   private static final AeadWrapper WRAPPER = new AeadWrapper();
   private static final PrimitiveConstructor<LegacyProtoKey, Aead>
@@ -49,29 +56,28 @@ public class AeadWrapper implements PrimitiveWrapper<Aead, Aead> {
           PrimitiveConstructor.create(LegacyFullAead::create, LegacyProtoKey.class, Aead.class);
 
   private static class WrappedAead implements Aead {
-    private final PrimitiveSet<Aead> pSet;
+    private final AeadWithId primary;
+    private final PrefixMap<AeadWithId> allAeads;
     private final MonitoringClient.Logger encLogger;
     private final MonitoringClient.Logger decLogger;
 
-    private WrappedAead(PrimitiveSet<Aead> pSet) {
-      this.pSet = pSet;
-      if (pSet.hasAnnotations()) {
-        MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-        MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(pSet);
-        this.encLogger = client.createLogger(keysetInfo, "aead", "encrypt");
-        this.decLogger = client.createLogger(keysetInfo, "aead", "decrypt");
-      } else {
-        this.encLogger = MonitoringUtil.DO_NOTHING_LOGGER;
-        this.decLogger = MonitoringUtil.DO_NOTHING_LOGGER;
-      }
+    private WrappedAead(
+        AeadWithId primary,
+        PrefixMap<AeadWithId> allAeads,
+        MonitoringClient.Logger encLogger,
+        MonitoringClient.Logger decLogger) {
+      this.primary = primary;
+      this.allAeads = allAeads;
+      this.encLogger = encLogger;
+      this.decLogger = decLogger;
     }
 
     @Override
     public byte[] encrypt(final byte[] plaintext, final byte[] associatedData)
         throws GeneralSecurityException {
       try {
-        byte[] result = pSet.getPrimary().getFullPrimitive().encrypt(plaintext, associatedData);
-        encLogger.log(pSet.getPrimary().getKeyId(), plaintext.length);
+        byte[] result = primary.aead.encrypt(plaintext, associatedData);
+        encLogger.log(primary.id, plaintext.length);
         return result;
       } catch (GeneralSecurityException e) {
         encLogger.logFailure();
@@ -82,26 +88,10 @@ public class AeadWrapper implements PrimitiveWrapper<Aead, Aead> {
     @Override
     public byte[] decrypt(final byte[] ciphertext, final byte[] associatedData)
         throws GeneralSecurityException {
-      if (ciphertext.length > CryptoFormat.NON_RAW_PREFIX_SIZE) {
-        byte[] prefix = Arrays.copyOf(ciphertext, CryptoFormat.NON_RAW_PREFIX_SIZE);
-        List<PrimitiveSet.Entry<Aead>> entries = pSet.getPrimitive(prefix);
-        for (PrimitiveSet.Entry<Aead> entry : entries) {
-          try {
-            byte[] result = entry.getFullPrimitive().decrypt(ciphertext, associatedData);
-            decLogger.log(entry.getKeyId(), ciphertext.length);
-            return result;
-          } catch (GeneralSecurityException ignored) {
-            // ignore and continue trying
-          }
-        }
-      }
-
-      // Let's try all RAW keys.
-      List<PrimitiveSet.Entry<Aead>> entries = pSet.getRawPrimitives();
-      for (PrimitiveSet.Entry<Aead> entry : entries) {
+      for (AeadWithId aeadWithId : allAeads.getAllWithMatchingPrefix(ciphertext)) {
         try {
-          byte[] result = entry.getFullPrimitive().decrypt(ciphertext, associatedData);
-          decLogger.log(entry.getKeyId(), ciphertext.length);
+          byte[] result = aeadWithId.aead.decrypt(ciphertext, associatedData);
+          decLogger.log(aeadWithId.id, ciphertext.length);
           return result;
         } catch (GeneralSecurityException ignored) {
           // ignore and continue trying
@@ -117,7 +107,27 @@ public class AeadWrapper implements PrimitiveWrapper<Aead, Aead> {
 
   @Override
   public Aead wrap(final PrimitiveSet<Aead> pset) throws GeneralSecurityException {
-    return new WrappedAead(pset);
+    PrefixMap.Builder<AeadWithId> builder = new PrefixMap.Builder<>();
+    for (PrimitiveSet.Entry<Aead> entry : pset.getAllInKeysetOrder()) {
+      builder.put(
+          entry.getOutputPrefix(), new AeadWithId(entry.getFullPrimitive(), entry.getKeyId()));
+    }
+    MonitoringClient.Logger encLogger;
+    MonitoringClient.Logger decLogger;
+    if (pset.hasAnnotations()) {
+      MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
+      MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(pset);
+      encLogger = client.createLogger(keysetInfo, "aead", "encrypt");
+      decLogger = client.createLogger(keysetInfo, "aead", "decrypt");
+    } else {
+      encLogger = MonitoringUtil.DO_NOTHING_LOGGER;
+      decLogger = MonitoringUtil.DO_NOTHING_LOGGER;
+    }
+    return new WrappedAead(
+        new AeadWithId(pset.getPrimary().getFullPrimitive(), pset.getPrimary().getKeyId()),
+        builder.build(),
+        encLogger,
+        decLogger);
   }
 
   @Override

@@ -39,6 +39,7 @@ import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.subtle.AesGcmJce;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.testing.TestUtil;
+import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
@@ -172,7 +173,7 @@ public class PrimitiveSetTest {
         new String(entry.getFullPrimitive().computeMac(null), UTF_8));
     assertEquals(KeyStatusType.ENABLED, entry.getStatus());
     assertEquals(1, entry.getKeyId());
-
+    assertEquals(Bytes.copyFrom(CryptoFormat.getOutputPrefix(key1)), entry.getOutputPrefix());
     entries = pset.getPrimitive(CryptoFormat.getOutputPrefix(key2));
     assertThat(entries).hasSize(1);
     entry = entries.get(0);
@@ -181,6 +182,7 @@ public class PrimitiveSetTest {
         new String(entry.getFullPrimitive().computeMac(null), UTF_8));
     assertEquals(KeyStatusType.ENABLED, entry.getStatus());
     assertEquals(2, entry.getKeyId());
+    assertEquals(Bytes.copyFrom(CryptoFormat.getOutputPrefix(key2)), entry.getOutputPrefix());
 
     entries = pset.getPrimitive(CryptoFormat.getOutputPrefix(key3));
     assertThat(entries).hasSize(1);
@@ -190,6 +192,7 @@ public class PrimitiveSetTest {
         new String(entry.getFullPrimitive().computeMac(null), UTF_8));
     assertEquals(KeyStatusType.ENABLED, entry.getStatus());
     assertEquals(3, entry.getKeyId());
+    assertEquals(Bytes.copyFrom(CryptoFormat.getOutputPrefix(key3)), entry.getOutputPrefix());
 
     entry = pset.getPrimary();
     assertEquals(
@@ -197,6 +200,7 @@ public class PrimitiveSetTest {
         new String(entry.getFullPrimitive().computeMac(null), UTF_8));
     assertEquals(KeyStatusType.ENABLED, entry.getStatus());
     assertEquals(2, entry.getKeyId());
+    assertEquals(Bytes.copyFrom(CryptoFormat.getOutputPrefix(key2)), entry.getOutputPrefix());
   }
 
   @Test

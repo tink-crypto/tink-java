@@ -90,7 +90,7 @@ public final class PrimitiveSet<P> {
       return status;
     }
 
-    private final Bytes getOutputPrefix() {
+    public final Bytes getOutputPrefix() {
       return outputPrefix;
     }
 
