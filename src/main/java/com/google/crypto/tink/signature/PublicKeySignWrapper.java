@@ -45,27 +45,32 @@ public class PublicKeySignWrapper implements PrimitiveWrapper<PublicKeySign, Pub
           PrimitiveConstructor.create(
               LegacyFullSign::create, LegacyProtoKey.class, PublicKeySign.class);
 
+  private static class PublicKeySignWithId {
+    public PublicKeySignWithId(PublicKeySign publicKeySign, int id) {
+      this.publicKeySign = publicKeySign;
+      this.id = id;
+    }
+
+    public final PublicKeySign publicKeySign;
+    public final int id;
+  }
+
   private static class WrappedPublicKeySign implements PublicKeySign {
-    private final PrimitiveSet<PublicKeySign> primitives;
+
+    private final PublicKeySignWithId primary;
 
     private final MonitoringClient.Logger logger;
 
-    public WrappedPublicKeySign(final PrimitiveSet<PublicKeySign> primitives) {
-      this.primitives = primitives;
-      if (primitives.hasAnnotations()) {
-        MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-        MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
-        this.logger = client.createLogger(keysetInfo, "public_key_sign", "sign");
-      } else {
-        this.logger = MonitoringUtil.DO_NOTHING_LOGGER;
-      }
+    public WrappedPublicKeySign(PublicKeySignWithId primary, MonitoringClient.Logger logger) {
+      this.primary = primary;
+      this.logger = logger;
     }
 
     @Override
     public byte[] sign(final byte[] data) throws GeneralSecurityException {
       try {
-        byte[] output = primitives.getPrimary().getFullPrimitive().sign(data);
-        logger.log(primitives.getPrimary().getKeyId(), data.length);
+        byte[] output = primary.publicKeySign.sign(data);
+        logger.log(primary.id, data.length);
         return output;
       } catch (GeneralSecurityException e) {
         logger.logFailure();
@@ -78,7 +83,18 @@ public class PublicKeySignWrapper implements PrimitiveWrapper<PublicKeySign, Pub
 
   @Override
   public PublicKeySign wrap(final PrimitiveSet<PublicKeySign> primitives) {
-    return new WrappedPublicKeySign(primitives);
+    MonitoringClient.Logger logger;
+    if (primitives.hasAnnotations()) {
+      MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
+      MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
+      logger = client.createLogger(keysetInfo, "public_key_sign", "sign");
+    } else {
+      logger = MonitoringUtil.DO_NOTHING_LOGGER;
+    }
+    return new WrappedPublicKeySign(
+        new PublicKeySignWithId(
+            primitives.getPrimary().getFullPrimitive(), primitives.getPrimary().getKeyId()),
+        logger);
   }
 
   @Override

@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink.signature;
 
-import com.google.crypto.tink.CryptoFormat;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringClient;
@@ -24,14 +23,13 @@ import com.google.crypto.tink.internal.MonitoringKeysetInfo;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
+import com.google.crypto.tink.internal.PrefixMap;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.signature.internal.LegacyFullVerify;
 import java.security.GeneralSecurityException;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * The implementation of {@code PrimitiveWrapper<DeterministicAead>}.
@@ -44,6 +42,15 @@ import java.util.List;
  * @since 1.0.0
  */
 public class PublicKeyVerifyWrapper implements PrimitiveWrapper<PublicKeyVerify, PublicKeyVerify> {
+  private static class PublicKeyVerifyWithId {
+    public PublicKeyVerifyWithId(PublicKeyVerify publicKeyVerify, int id) {
+      this.publicKeyVerify = publicKeyVerify;
+      this.id = id;
+    }
+
+    public final PublicKeyVerify publicKeyVerify;
+    public final int id;
+  }
 
   private static final PublicKeyVerifyWrapper WRAPPER = new PublicKeyVerifyWrapper();
   private static final PrimitiveConstructor<LegacyProtoKey, PublicKeyVerify>
@@ -52,63 +59,53 @@ public class PublicKeyVerifyWrapper implements PrimitiveWrapper<PublicKeyVerify,
               LegacyFullVerify::create, LegacyProtoKey.class, PublicKeyVerify.class);
 
   private static class WrappedPublicKeyVerify implements PublicKeyVerify {
-    private final PrimitiveSet<PublicKeyVerify> primitives;
+    private final PrefixMap<PublicKeyVerifyWithId> allPublicKeyVerifys;
 
     private final MonitoringClient.Logger monitoringLogger;
 
-    public WrappedPublicKeyVerify(PrimitiveSet<PublicKeyVerify> primitives) {
-      this.primitives = primitives;
-      if (primitives.hasAnnotations()) {
-        MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-        MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
-        this.monitoringLogger = client.createLogger(keysetInfo, "public_key_verify", "verify");
-      } else {
-        this.monitoringLogger = MonitoringUtil.DO_NOTHING_LOGGER;
-      }
+    public WrappedPublicKeyVerify(
+        PrefixMap<PublicKeyVerifyWithId> allPublicKeyVerifys,
+        MonitoringClient.Logger monitoringLogger) {
+      this.allPublicKeyVerifys = allPublicKeyVerifys;
+      this.monitoringLogger = monitoringLogger;
     }
 
     @Override
     public void verify(final byte[] signature, final byte[] data) throws GeneralSecurityException {
-      if (signature.length <= CryptoFormat.NON_RAW_PREFIX_SIZE) {
-        // This also rejects raw signatures with size of 4 bytes or fewer. We're not aware of any
-        // schemes that output signatures that small.
-        monitoringLogger.logFailure();
-        throw new GeneralSecurityException("signature too short");
-      }
-      byte[] prefix = Arrays.copyOf(signature, CryptoFormat.NON_RAW_PREFIX_SIZE);
-      List<PrimitiveSet.Entry<PublicKeyVerify>> entries = primitives.getPrimitive(prefix);
-      for (PrimitiveSet.Entry<PublicKeyVerify> entry : entries) {
+      for (PublicKeyVerifyWithId publicKeyVerifyWithId :
+          allPublicKeyVerifys.getAllWithMatchingPrefix(signature)) {
         try {
-          entry.getFullPrimitive().verify(signature, data);
-          monitoringLogger.log(entry.getKeyId(), data.length);
+          publicKeyVerifyWithId.publicKeyVerify.verify(signature, data);
+          monitoringLogger.log(publicKeyVerifyWithId.id, data.length);
           // If there is no exception, the signature is valid and we can return.
           return;
         } catch (GeneralSecurityException e) {
-          // Ignored as we want to continue verification with the remaining keys.
+          // Ignored
         }
       }
-
-      // None "non-raw" key matched, so let's try the raw keys (if any exist).
-      entries = primitives.getRawPrimitives();
-      for (PrimitiveSet.Entry<PublicKeyVerify> entry : entries) {
-        try {
-          entry.getFullPrimitive().verify(signature, data);
-          monitoringLogger.log(entry.getKeyId(), data.length);
-          // If there is no exception, the signature is valid and we can return.
-          return;
-        } catch (GeneralSecurityException e) {
-          // Ignored as we want to continue verification with raw keys.
-        }
-      }
-      // nothing works.
       monitoringLogger.logFailure();
       throw new GeneralSecurityException("invalid signature");
     }
   }
 
   @Override
-  public PublicKeyVerify wrap(final PrimitiveSet<PublicKeyVerify> primitives) {
-    return new WrappedPublicKeyVerify(primitives);
+  public PublicKeyVerify wrap(final PrimitiveSet<PublicKeyVerify> primitives)
+      throws GeneralSecurityException {
+    PrefixMap.Builder<PublicKeyVerifyWithId> builder = new PrefixMap.Builder<>();
+    for (PrimitiveSet.Entry<PublicKeyVerify> entry : primitives.getAllInKeysetOrder()) {
+      builder.put(
+          entry.getOutputPrefix(),
+          new PublicKeyVerifyWithId(entry.getFullPrimitive(), entry.getKeyId()));
+    }
+    MonitoringClient.Logger logger;
+    if (primitives.hasAnnotations()) {
+      MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
+      MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
+      logger = client.createLogger(keysetInfo, "public_key_verify", "verify");
+    } else {
+      logger = MonitoringUtil.DO_NOTHING_LOGGER;
+    }
+    return new WrappedPublicKeyVerify(builder.build(), logger);
   }
 
   @Override
