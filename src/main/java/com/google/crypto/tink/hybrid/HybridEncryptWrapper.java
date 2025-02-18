@@ -37,6 +37,15 @@ import java.security.GeneralSecurityException;
  * with the primary key.
  */
 public class HybridEncryptWrapper implements PrimitiveWrapper<HybridEncrypt, HybridEncrypt> {
+  private static class HybridEncryptWithId {
+    public HybridEncryptWithId(HybridEncrypt hybridEncrypt, int id) {
+      this.hybridEncrypt = hybridEncrypt;
+      this.id = id;
+    }
+
+    public final HybridEncrypt hybridEncrypt;
+    public final int id;
+  }
 
   private static final HybridEncryptWrapper WRAPPER = new HybridEncryptWrapper();
   private static final PrimitiveConstructor<LegacyProtoKey, HybridEncrypt>
@@ -45,31 +54,24 @@ public class HybridEncryptWrapper implements PrimitiveWrapper<HybridEncrypt, Hyb
               LegacyFullHybridEncrypt::create, LegacyProtoKey.class, HybridEncrypt.class);
 
   private static class WrappedHybridEncrypt implements HybridEncrypt {
-    final PrimitiveSet<HybridEncrypt> primitives;
-
+    private final HybridEncryptWithId primary;
     private final MonitoringClient.Logger encLogger;
 
-    public WrappedHybridEncrypt(final PrimitiveSet<HybridEncrypt> primitives) {
-      this.primitives = primitives;
-      if (primitives.hasAnnotations()) {
-        MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-        MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
-        this.encLogger = client.createLogger(keysetInfo, "hybrid_encrypt", "encrypt");
-      } else {
-        this.encLogger = MonitoringUtil.DO_NOTHING_LOGGER;
-      }
+    public WrappedHybridEncrypt(HybridEncryptWithId primary, MonitoringClient.Logger encLogger) {
+      this.primary = primary;
+      this.encLogger = encLogger;
     }
 
     @Override
     public byte[] encrypt(final byte[] plaintext, final byte[] contextInfo)
         throws GeneralSecurityException {
-      if (primitives.getPrimary() == null) {
+      if (primary.hybridEncrypt == null) {
         encLogger.logFailure();
         throw new GeneralSecurityException("keyset without primary key");
       }
       try {
-        byte[] output = primitives.getPrimary().getFullPrimitive().encrypt(plaintext, contextInfo);
-        encLogger.log(primitives.getPrimary().getKeyId(), plaintext.length);
+        byte[] output = primary.hybridEncrypt.encrypt(plaintext, contextInfo);
+        encLogger.log(primary.id, plaintext.length);
         return output;
       } catch (GeneralSecurityException e) {
         encLogger.logFailure();
@@ -82,7 +84,23 @@ public class HybridEncryptWrapper implements PrimitiveWrapper<HybridEncrypt, Hyb
 
   @Override
   public HybridEncrypt wrap(final PrimitiveSet<HybridEncrypt> primitives) {
-    return new WrappedHybridEncrypt(primitives);
+    MonitoringClient.Logger encLogger;
+    if (primitives.hasAnnotations()) {
+      MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
+      MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
+      encLogger = client.createLogger(keysetInfo, "hybrid_encrypt", "encrypt");
+    } else {
+      encLogger = MonitoringUtil.DO_NOTHING_LOGGER;
+    }
+    PrimitiveSet.Entry<HybridEncrypt> primary = primitives.getPrimary();
+
+    // It would actually be better to just throw a nullpointer exception (or maybe a
+    // GeneralSecurityException) here, but I don't want to change behavior today.
+    return new WrappedHybridEncrypt(
+        new HybridEncryptWithId(
+            primary == null ? null : primary.getFullPrimitive(),
+            primary == null ? 0 : primitives.getPrimary().getKeyId()),
+        encLogger);
   }
 
   @Override

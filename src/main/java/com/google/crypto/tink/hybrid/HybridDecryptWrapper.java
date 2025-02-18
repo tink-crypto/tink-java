@@ -15,7 +15,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 package com.google.crypto.tink.hybrid;
 
-import com.google.crypto.tink.CryptoFormat;
 import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.hybrid.internal.LegacyFullHybridDecrypt;
 import com.google.crypto.tink.internal.LegacyProtoKey;
@@ -24,13 +23,12 @@ import com.google.crypto.tink.internal.MonitoringKeysetInfo;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
+import com.google.crypto.tink.internal.PrefixMap;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import java.security.GeneralSecurityException;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * The implementation of {@code PrimitiveWrapper<HybridDecrypt>}.
@@ -41,6 +39,15 @@ import java.util.List;
  * com.google.crypto.tink.proto.OutputPrefixType#RAW}.
  */
 public class HybridDecryptWrapper implements PrimitiveWrapper<HybridDecrypt, HybridDecrypt> {
+  private static class HybridDecryptWithId {
+    public HybridDecryptWithId(HybridDecrypt hybridDecrypt, int id) {
+      this.hybridDecrypt = hybridDecrypt;
+      this.id = id;
+    }
+
+    public final HybridDecrypt hybridDecrypt;
+    public final int id;
+  }
 
   private static final HybridDecryptWrapper WRAPPER = new HybridDecryptWrapper();
   private static final PrimitiveConstructor<LegacyProtoKey, HybridDecrypt>
@@ -49,50 +56,30 @@ public class HybridDecryptWrapper implements PrimitiveWrapper<HybridDecrypt, Hyb
               LegacyFullHybridDecrypt::create, LegacyProtoKey.class, HybridDecrypt.class);
 
   private static class WrappedHybridDecrypt implements HybridDecrypt {
-    private final PrimitiveSet<HybridDecrypt> primitives;
-
+    private final PrefixMap<HybridDecryptWithId> allHybridDecrypts;
     private final MonitoringClient.Logger decLogger;
 
-    public WrappedHybridDecrypt(final PrimitiveSet<HybridDecrypt> primitives) {
-      this.primitives = primitives;
-      if (primitives.hasAnnotations()) {
-        MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-        MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
-        this.decLogger = client.createLogger(keysetInfo, "hybrid_decrypt", "decrypt");
-      } else {
-        this.decLogger = MonitoringUtil.DO_NOTHING_LOGGER;
-      }
+    public WrappedHybridDecrypt(
+        PrefixMap<HybridDecryptWithId> allHybridDecrypts, MonitoringClient.Logger decLogger) {
+      this.allHybridDecrypts = allHybridDecrypts;
+      this.decLogger = decLogger;
     }
 
     @Override
     public byte[] decrypt(final byte[] ciphertext, final byte[] contextInfo)
         throws GeneralSecurityException {
-      if (ciphertext.length > CryptoFormat.NON_RAW_PREFIX_SIZE) {
-        byte[] prefix = Arrays.copyOfRange(ciphertext, 0, CryptoFormat.NON_RAW_PREFIX_SIZE);
-        List<PrimitiveSet.Entry<HybridDecrypt>> entries = primitives.getPrimitive(prefix);
-        for (PrimitiveSet.Entry<HybridDecrypt> entry : entries) {
-          try {
-            byte[] output = entry.getFullPrimitive().decrypt(ciphertext, contextInfo);
-            decLogger.log(entry.getKeyId(), ciphertext.length);
-            return output;
-          } catch (GeneralSecurityException e) {
-            continue;
-          }
-        }
-      }
-      // Let's try all RAW keys.
-      List<PrimitiveSet.Entry<HybridDecrypt>> entries = primitives.getRawPrimitives();
-      for (PrimitiveSet.Entry<HybridDecrypt> entry : entries) {
+      for (HybridDecryptWithId hybridDecryptWithId :
+          allHybridDecrypts.getAllWithMatchingPrefix(ciphertext)) {
         try {
-          byte[] output = entry.getFullPrimitive().decrypt(ciphertext, contextInfo);
-          decLogger.log(entry.getKeyId(), ciphertext.length);
-          return output;
-        } catch (GeneralSecurityException e) {
-          continue;
+          byte[] result = hybridDecryptWithId.hybridDecrypt.decrypt(ciphertext, contextInfo);
+          decLogger.log(hybridDecryptWithId.id, ciphertext.length);
+          return result;
+        } catch (GeneralSecurityException ignored) {
+          // ignore and continue trying
         }
       }
-      // nothing works.
       decLogger.logFailure();
+      // nothing works.
       throw new GeneralSecurityException("decryption failed");
     }
   }
@@ -100,8 +87,23 @@ public class HybridDecryptWrapper implements PrimitiveWrapper<HybridDecrypt, Hyb
   HybridDecryptWrapper() {}
 
   @Override
-  public HybridDecrypt wrap(final PrimitiveSet<HybridDecrypt> primitives) {
-    return new WrappedHybridDecrypt(primitives);
+  public HybridDecrypt wrap(final PrimitiveSet<HybridDecrypt> primitives)
+      throws GeneralSecurityException {
+    PrefixMap.Builder<HybridDecryptWithId> builder = new PrefixMap.Builder<>();
+    for (PrimitiveSet.Entry<HybridDecrypt> entry : primitives.getAllInKeysetOrder()) {
+      builder.put(
+          entry.getOutputPrefix(),
+          new HybridDecryptWithId(entry.getFullPrimitive(), entry.getKeyId()));
+    }
+    MonitoringClient.Logger decLogger;
+    if (primitives.hasAnnotations()) {
+      MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
+      MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
+      decLogger = client.createLogger(keysetInfo, "hybrid_decrypt", "decrypt");
+    } else {
+      decLogger = MonitoringUtil.DO_NOTHING_LOGGER;
+    }
+    return new WrappedHybridDecrypt(builder.build(), decLogger);
   }
 
   @Override
