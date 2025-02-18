@@ -16,17 +16,15 @@
 
 package com.google.crypto.tink.mac;
 
-import com.google.crypto.tink.CryptoFormat;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
+import com.google.crypto.tink.internal.PrefixMap;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveSet;
-import com.google.crypto.tink.internal.PrimitiveSet.Entry;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.errorprone.annotations.Immutable;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -87,38 +85,28 @@ public class ChunkedMacWrapper implements PrimitiveWrapper<ChunkedMac, ChunkedMa
 
   @Immutable
   private static class WrappedChunkedMac implements ChunkedMac {
-    @SuppressWarnings("Immutable") // We never change the primitives set.
-    private final PrimitiveSet<ChunkedMac> primitives;
+    private final PrefixMap<ChunkedMac> allChunkedMacs;
 
-    private WrappedChunkedMac(PrimitiveSet<ChunkedMac> primitives) {
-      this.primitives = primitives;
+    private final ChunkedMac primaryChunkedMac;
+
+    private WrappedChunkedMac(PrefixMap<ChunkedMac> allChunkedMacs, ChunkedMac primaryChunkedMac) {
+      this.allChunkedMacs = allChunkedMacs;
+      this.primaryChunkedMac = primaryChunkedMac;
     }
 
     @Override
     public ChunkedMacComputation createComputation() throws GeneralSecurityException {
-      return getChunkedMac(primitives.getPrimary()).createComputation();
-    }
-
-    private ChunkedMac getChunkedMac(Entry<ChunkedMac> entry) {
-      return entry.getFullPrimitive();
+      return primaryChunkedMac.createComputation();
     }
 
     @Override
     public ChunkedMacVerification createVerification(final byte[] tag)
         throws GeneralSecurityException {
-      byte[] prefix = Arrays.copyOf(tag, CryptoFormat.NON_RAW_PREFIX_SIZE);
-
-      // First add verifications with prefixed keys.
-      List<ChunkedMacVerification> verifications = new ArrayList<>();
-      for (PrimitiveSet.Entry<ChunkedMac> primitive : primitives.getPrimitive(prefix)) {
-        verifications.add(getChunkedMac(primitive).createVerification(tag));
+      List<ChunkedMacVerification> allVerifications = new ArrayList<>();
+      for (ChunkedMac mac : allChunkedMacs.getAllWithMatchingPrefix(tag)) {
+        allVerifications.add(mac.createVerification(tag));
       }
-      // Also add verifications with non-prefixed keys.
-      for (PrimitiveSet.Entry<ChunkedMac> primitive : primitives.getRawPrimitives()) {
-        verifications.add(getChunkedMac(primitive).createVerification(tag));
-      }
-
-      return new WrappedChunkedMacVerification(verifications);
+      return new WrappedChunkedMacVerification(allVerifications);
     }
   }
 
@@ -133,14 +121,12 @@ public class ChunkedMacWrapper implements PrimitiveWrapper<ChunkedMac, ChunkedMa
     if (primitives.getPrimary() == null) {
       throw new GeneralSecurityException("no primary in primitive set");
     }
-    for (List<PrimitiveSet.Entry<ChunkedMac>> list : primitives.getAll()) {
-      for (PrimitiveSet.Entry<ChunkedMac> entry : list) {
-        // Ensure that all entries in the primitive set are present and valid (i.e. have
-        // `fullPrimitive` field set). Throws unchecked exceptions if it's not the case.
-        ChunkedMac unused = entry.getFullPrimitive();
-      }
+    PrefixMap.Builder<ChunkedMac> allChunkedMacsBuilder = new PrefixMap.Builder<ChunkedMac>();
+    for (PrimitiveSet.Entry<ChunkedMac> entry : primitives.getAllInKeysetOrder()) {
+      allChunkedMacsBuilder.put(entry.getOutputPrefix(), entry.getFullPrimitive());
     }
-    return new WrappedChunkedMac(primitives);
+    return new WrappedChunkedMac(
+        allChunkedMacsBuilder.build(), primitives.getPrimary().getFullPrimitive());
   }
 
   @Override
