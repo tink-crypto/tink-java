@@ -25,19 +25,24 @@ import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Registry;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.internal.LegacyKeyManagerImpl;
+import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
+import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
 import com.google.crypto.tink.prf.HkdfPrfParameters.HashType;
 import com.google.crypto.tink.prf.internal.HkdfPrfProtoSerialization;
+import com.google.crypto.tink.proto.HkdfPrfParams;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
+import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.errorprone.annotations.Immutable;
+import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import java.util.List;
 import org.junit.BeforeClass;
@@ -314,6 +319,72 @@ public class PrfSetWrapperTest {
     assertThat(failure1.getApi()).isEqualTo("compute");
     assertThat(failure1.getKeysetInfo().getPrimaryKeyId()).isEqualTo(5);
     assertThat(failure1.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+  }
+
+  @Test
+  public void prfLegacyKeys() throws Exception {
+    // Tink reparses keys when we use the RegistryConfiguration. See b/389599314 for a discussion
+    // how to handle this.
+    MutablePrimitiveRegistry.resetGlobalInstanceTestOnly();
+    PrfConfig.register();
+    LegacyProtoKey legacyProtoKey =
+        new LegacyProtoKey(
+            ProtoKeySerialization.create(
+                "type.googleapis.com/google.crypto.tink.HkdfPrfKey",
+                com.google.crypto.tink.proto.HkdfPrfKey.newBuilder()
+                    .setParams(
+                        HkdfPrfParams.newBuilder()
+                            .setHash(com.google.crypto.tink.proto.HashType.SHA256))
+                    .setKeyValue(
+                        ByteString.fromHex(
+                            "0102030405060708091011121314151617181920212123242526272829303132"))
+                    .build()
+                    .toByteString(),
+                KeyMaterialType.SYMMETRIC,
+                OutputPrefixType.RAW,
+                /* idRequirement= */ null),
+            InsecureSecretKeyAccess.get());
+
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(legacyProtoKey).withFixedId(42).makePrimary())
+            .build();
+    PrfSet prfSet = keysetHandle.getPrimitive(RegistryConfiguration.get(), PrfSet.class);
+    byte[] plaintext = new byte[] {1};
+    // Same result as in PrfBasedKeyDeriverTest.java, basicTest(), where this becomes key material.
+    assertArrayEquals(
+        prfSet.getPrfs().get(42).compute(plaintext, 12), Hex.decode("4A8984211468FF8B78399156"));
+  }
+
+  @Test
+  public void prfLegacyKeysTinkFail() throws Exception {
+    MutablePrimitiveRegistry.resetGlobalInstanceTestOnly();
+    PrfConfig.register();
+    LegacyProtoKey legacyProtoKey =
+        new LegacyProtoKey(
+            ProtoKeySerialization.create(
+                "type.googleapis.com/google.crypto.tink.HkdfPrfKey",
+                com.google.crypto.tink.proto.HkdfPrfKey.newBuilder()
+                    .setParams(
+                        HkdfPrfParams.newBuilder()
+                            .setHash(com.google.crypto.tink.proto.HashType.SHA256))
+                    .setKeyValue(
+                        ByteString.fromHex(
+                            "0102030405060708091011121314151617181920212123242526272829303132"))
+                    .build()
+                    .toByteString(),
+                KeyMaterialType.SYMMETRIC,
+                OutputPrefixType.TINK,
+                /* idRequirement= */ 42),
+            InsecureSecretKeyAccess.get());
+
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(legacyProtoKey).withFixedId(42).makePrimary())
+            .build();
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> keysetHandle.getPrimitive(RegistryConfiguration.get(), PrfSet.class));
   }
 
   @Test

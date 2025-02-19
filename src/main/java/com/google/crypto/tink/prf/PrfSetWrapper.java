@@ -28,9 +28,7 @@ import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.prf.internal.LegacyFullPrf;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -81,32 +79,9 @@ public class PrfSetWrapper implements PrimitiveWrapper<Prf, PrfSet> {
       }
     }
 
-    private WrappedPrfSet(PrimitiveSet<Prf> primitives) throws GeneralSecurityException {
-      if (primitives.getRawPrimitives().isEmpty()) {
-        throw new GeneralSecurityException("No primitives provided.");
-      }
-      if (primitives.getPrimary() == null) {
-        throw new GeneralSecurityException("Primary key not set.");
-      }
-      MonitoringClient.Logger logger;
-      if (primitives.hasAnnotations()) {
-        MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-        MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
-        logger = client.createLogger(keysetInfo, "prf", "compute");
-      } else {
-        logger = MonitoringUtil.DO_NOTHING_LOGGER;
-      }
-
-      primaryKeyId = primitives.getPrimary().getKeyId();
-      List<PrimitiveSet.Entry<Prf>> entries = primitives.getRawPrimitives();
-      Map<Integer, Prf> mutablePrfMap = new HashMap<>();
-      for (PrimitiveSet.Entry<Prf> entry : entries) {
-        // Likewise, the key IDs of the PrfSet passed
-        mutablePrfMap.put(
-            entry.getKeyId(),
-            new PrfWithMonitoring(entry.getFullPrimitive(), entry.getKeyId(), logger));
-      }
-      keyIdToPrfMap = Collections.unmodifiableMap(mutablePrfMap);
+    private WrappedPrfSet(Map<Integer, Prf> keyIdToPrfMap, int primaryKeyId) {
+      this.keyIdToPrfMap = keyIdToPrfMap;
+      this.primaryKeyId = primaryKeyId;
     }
 
     @Override
@@ -122,7 +97,27 @@ public class PrfSetWrapper implements PrimitiveWrapper<Prf, PrfSet> {
 
   @Override
   public PrfSet wrap(PrimitiveSet<Prf> set) throws GeneralSecurityException {
-    return new WrappedPrfSet(set);
+    MonitoringClient.Logger logger;
+    if (set.hasAnnotations()) {
+      MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
+      MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(set);
+      logger = client.createLogger(keysetInfo, "prf", "compute");
+    } else {
+      logger = MonitoringUtil.DO_NOTHING_LOGGER;
+    }
+
+    Map<Integer, Prf> mutablePrfMap = new HashMap<>();
+    for (PrimitiveSet.Entry<Prf> entry : set.getAllInKeysetOrder()) {
+      if (entry.getOutputPrefix().size() != 0) {
+        throw new GeneralSecurityException(
+            "Cannot build PrfSet with keys with non-empty output prefix");
+      }
+      // Likewise, the key IDs of the PrfSet passed
+      mutablePrfMap.put(
+          entry.getKeyId(),
+          new WrappedPrfSet.PrfWithMonitoring(entry.getFullPrimitive(), entry.getKeyId(), logger));
+    }
+    return new WrappedPrfSet(mutablePrfMap, set.getPrimary().getKeyId());
   }
 
   @Override
