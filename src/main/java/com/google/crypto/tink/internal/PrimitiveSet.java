@@ -18,6 +18,7 @@ package com.google.crypto.tink.internal;
 
 import com.google.crypto.tink.CryptoFormat;
 import com.google.crypto.tink.Key;
+import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.proto.KeyStatusType;
 import com.google.crypto.tink.proto.Keyset;
@@ -60,13 +61,12 @@ public final class PrimitiveSet<P> {
     // It is the ciphertext prefix of the corresponding key.
     private final Bytes outputPrefix;
     // The status of the key represented by the primitive. Currently always equal to "ENABLED".
-    private final KeyStatusType status;
+    private final KeyStatus status;
     // The id of the key.
     private final int keyId;
     private final Key key;
 
-    private Entry(
-        P fullPrimitive, final Bytes outputPrefix, KeyStatusType status, int keyId, Key key) {
+    private Entry(P fullPrimitive, final Bytes outputPrefix, KeyStatus status, int keyId, Key key) {
       this.fullPrimitive = fullPrimitive;
       this.outputPrefix = outputPrefix;
       this.status = status;
@@ -86,7 +86,7 @@ public final class PrimitiveSet<P> {
       return this.fullPrimitive;
     }
 
-    public KeyStatusType getStatus() {
+    public KeyStatus getStatus() {
       return status;
     }
 
@@ -211,13 +211,15 @@ public final class PrimitiveSet<P> {
         throw new NullPointerException("`fullPrimitive` must not be null");
       }
       if (protoKey.getStatus() != KeyStatusType.ENABLED) {
+        // Note: ENABLED is hard coded below.
         throw new GeneralSecurityException("only ENABLED key is allowed");
       }
       Entry<P> entry =
           new Entry<P>(
               fullPrimitive,
               Bytes.copyFrom(CryptoFormat.getOutputPrefix(protoKey)),
-              protoKey.getStatus(),
+              // We just checked above that we allow only ENABLED.
+              KeyStatus.ENABLED,
               protoKey.getKeyId(),
               key);
       storeEntryInPrimitiveSet(entry, entries, entriesInKeysetOrder);

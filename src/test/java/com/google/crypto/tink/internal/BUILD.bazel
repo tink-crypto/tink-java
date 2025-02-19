@@ -653,6 +653,7 @@ java_test(
         "//src/main/java/com/google/crypto/tink:crypto_format",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink:key",
+        "//src/main/java/com/google/crypto/tink:key_status",
         "//src/main/java/com/google/crypto/tink:mac",
         "//src/main/java/com/google/crypto/tink/aead:aes_gcm_key",
         "//src/main/java/com/google/crypto/tink/aead:predefined_aead_parameters",

@@ -427,8 +427,6 @@ java_library(
         ":monitoring_client",
         ":monitoring_keyset_info",
         ":primitive_set",
-        "//proto:tink_java_proto",
-        "//src/main/java/com/google/crypto/tink:key_status",
         "@maven//:com_google_code_findbugs_jsr305",
     ],
 )
@@ -440,8 +438,6 @@ android_library(
         ":monitoring_client-android",
         ":monitoring_keyset_info-android",
         ":primitive_set-android",
-        "//proto:tink_java_proto_lite",
-        "//src/main/java/com/google/crypto/tink:key_status-android",
         "@maven//:com_google_code_findbugs_jsr305",
     ],
 )
@@ -852,6 +848,7 @@ android_library(
         "//proto:tink_java_proto_lite",
         "//src/main/java/com/google/crypto/tink:crypto_format-android",
         "//src/main/java/com/google/crypto/tink:key-android",
+        "//src/main/java/com/google/crypto/tink:key_status-android",
         "//src/main/java/com/google/crypto/tink:parameters-android",
         "//src/main/java/com/google/crypto/tink/util:bytes-android",
         "@maven//:com_google_code_findbugs_jsr305",
@@ -867,6 +864,7 @@ java_library(
         "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:crypto_format",
         "//src/main/java/com/google/crypto/tink:key",
+        "//src/main/java/com/google/crypto/tink:key_status",
         "//src/main/java/com/google/crypto/tink:parameters",
         "//src/main/java/com/google/crypto/tink/util:bytes",
         "@maven//:com_google_code_findbugs_jsr305",

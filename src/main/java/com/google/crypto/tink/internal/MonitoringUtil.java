@@ -16,8 +16,6 @@
 
 package com.google.crypto.tink.internal;
 
-import com.google.crypto.tink.KeyStatus;
-import com.google.crypto.tink.proto.KeyStatusType;
 import java.security.GeneralSecurityException;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -35,25 +33,12 @@ public final class MonitoringUtil {
 
   public static final MonitoringClient.Logger DO_NOTHING_LOGGER = new DoNothingLogger();
 
-  private static KeyStatus parseStatus(KeyStatusType in) {
-    switch (in) {
-      case ENABLED:
-        return KeyStatus.ENABLED;
-      case DISABLED:
-        return KeyStatus.DISABLED;
-      case DESTROYED:
-        return KeyStatus.DESTROYED;
-      default:
-        throw new IllegalStateException("Unknown key status");
-    }
-  }
-
   public static <P> MonitoringKeysetInfo getMonitoringKeysetInfo(PrimitiveSet<P> primitiveSet) {
     MonitoringKeysetInfo.Builder builder = MonitoringKeysetInfo.newBuilder();
     builder.setAnnotations(primitiveSet.getAnnotations());
     for (List<PrimitiveSet.Entry<P>> entries : primitiveSet.getAll()) {
       for (PrimitiveSet.Entry<P> entry : entries) {
-        builder.addEntry(entry.getKey(), parseStatus(entry.getStatus()), entry.getKeyId());
+        builder.addEntry(entry.getKey(), entry.getStatus(), entry.getKeyId());
       }
     }
     @Nullable PrimitiveSet.Entry<P> primary = primitiveSet.getPrimary();
