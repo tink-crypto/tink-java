@@ -45,12 +45,13 @@ public final class MonitoringAnnotationsTest {
     expected.put("annotation_name3", "annotation_value3");
     expected.put("annotation_name4", "annotation_value4");
     assertThat(annotations.toMap()).containsExactlyEntriesIn(expected);
+    assertThat(annotations.isEmpty()).isFalse();
   }
 
   @Test
   public void emptyIsEmpty() throws Exception {
-    HashMap<String, String> empty = new HashMap<>();
-    assertThat(MonitoringAnnotations.EMPTY.toMap()).containsExactlyEntriesIn(empty);
+    assertThat(MonitoringAnnotations.EMPTY.toMap()).isEmpty();
+    assertThat(MonitoringAnnotations.EMPTY.isEmpty()).isTrue();
   }
 
   @Test

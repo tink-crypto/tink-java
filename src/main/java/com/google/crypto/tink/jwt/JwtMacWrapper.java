@@ -53,7 +53,7 @@ class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
 
     private WrappedJwtMac(PrimitiveSet<JwtMac> primitives) {
       this.primitives = primitives;
-      if (primitives.hasAnnotations()) {
+      if (!primitives.getAnnotations().isEmpty()) {
         MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
         MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
         this.computeLogger = client.createLogger(keysetInfo, "jwtmac", "compute");

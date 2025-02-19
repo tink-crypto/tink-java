@@ -44,7 +44,7 @@ class JwtPublicKeyVerifyWrapper
 
     public WrappedJwtPublicKeyVerify(PrimitiveSet<JwtPublicKeyVerify> primitives) {
       this.primitives = primitives;
-      if (primitives.hasAnnotations()) {
+      if (!primitives.getAnnotations().isEmpty()) {
         MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
         MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
         this.logger = client.createLogger(keysetInfo, "jwtverify", "verify");

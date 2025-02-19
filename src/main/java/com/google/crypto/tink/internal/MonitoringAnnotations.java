@@ -87,6 +87,11 @@ public final class MonitoringAnnotations {
     return entries;
   }
 
+  /** Returns true if the annotations are empty. */
+  public boolean isEmpty() {
+    return entries.isEmpty();
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof MonitoringAnnotations)) {

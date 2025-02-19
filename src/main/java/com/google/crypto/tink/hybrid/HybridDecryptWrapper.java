@@ -96,7 +96,7 @@ public class HybridDecryptWrapper implements PrimitiveWrapper<HybridDecrypt, Hyb
           new HybridDecryptWithId(entry.getFullPrimitive(), entry.getKeyId()));
     }
     MonitoringClient.Logger decLogger;
-    if (primitives.hasAnnotations()) {
+    if (!primitives.getAnnotations().isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
       MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
       decLogger = client.createLogger(keysetInfo, "hybrid_decrypt", "decrypt");

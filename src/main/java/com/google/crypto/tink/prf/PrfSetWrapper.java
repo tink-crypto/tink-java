@@ -98,7 +98,7 @@ public class PrfSetWrapper implements PrimitiveWrapper<Prf, PrfSet> {
   @Override
   public PrfSet wrap(PrimitiveSet<Prf> set) throws GeneralSecurityException {
     MonitoringClient.Logger logger;
-    if (set.hasAnnotations()) {
+    if (!set.getAnnotations().isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
       MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(set);
       logger = client.createLogger(keysetInfo, "prf", "compute");
