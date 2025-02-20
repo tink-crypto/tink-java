@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -168,12 +168,16 @@ extends <a href="../../../../../com/google/crypto/tink/Key.html" title="class in
 </td>
 </tr>
 <tr id="i2" class="altColor">
+<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/LegacyProtoKey.html#getOutputPrefix--">getOutputPrefix</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/LegacyProtoKey.html#getParameters--">getParameters</a></span>()</code>
 <div class="block">Returns a LegacyParametersNotForCreation object.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/internal/ProtoKeySerialization.html" title="class in com.google.crypto.tink.internal">ProtoKeySerialization</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/LegacyProtoKey.html#getSerialization-com.google.crypto.tink.SecretKeyAccess-">getSerialization</a></span>(<a href="../../../../../com/google/crypto/tink/SecretKeyAccess.html" title="class in com.google.crypto.tink">SecretKeyAccess</a>&nbsp;access)</code>
 <div class="block">Returns the protokeyserialization with which this object was created.</div>
@@ -293,7 +297,7 @@ public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer
 <a name="getParameters--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getParameters</h4>
 <pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a>&nbsp;getParameters()</pre>
@@ -305,6 +309,15 @@ public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../com/google/crypto/tink/Key.html#getParameters--">getParameters</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a></code></dd>
 </dl>
+</li>
+</ul>
+<a name="getOutputPrefix--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getOutputPrefix</h4>
+<pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a>&nbsp;getOutputPrefix()</pre>
 </li>
 </ul>
 </li>
