@@ -211,7 +211,9 @@ java_library(
     name = "aead_wrapper",
     srcs = ["AeadWrapper.java"],
     deps = [
+        ":aead_key",
         "//src/main/java/com/google/crypto/tink:aead",
+        "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink/aead/internal:legacy_full_aead",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_client",
@@ -224,6 +226,7 @@ java_library(
         "//src/main/java/com/google/crypto/tink/internal:primitive_registry",
         "//src/main/java/com/google/crypto/tink/internal:primitive_set",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
     ],
 )
 
@@ -646,7 +649,9 @@ android_library(
     name = "aead_wrapper-android",
     srcs = ["AeadWrapper.java"],
     deps = [
+        ":aead_key-android",
         "//src/main/java/com/google/crypto/tink:aead-android",
+        "//src/main/java/com/google/crypto/tink:key-android",
         "//src/main/java/com/google/crypto/tink/aead/internal:legacy_full_aead-android",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key-android",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_client-android",
@@ -659,6 +664,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink/internal:primitive_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_set-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper-android",
+        "//src/main/java/com/google/crypto/tink/util:bytes-android",
     ],
 )
 

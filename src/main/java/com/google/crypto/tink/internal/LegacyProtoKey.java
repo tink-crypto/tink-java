@@ -20,7 +20,7 @@ import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.proto.OutputPrefixType;
-import com.google.crypto.tink.subtle.Bytes;
+import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.util.Objects;
@@ -77,6 +77,7 @@ public final class LegacyProtoKey extends Key {
   }
 
   private final ProtoKeySerialization serialization;
+  private final Bytes outputPrefix;
 
   private static void throwIfMissingAccess(
       ProtoKeySerialization protoKeySerialization, @Nullable SecretKeyAccess access)
@@ -90,6 +91,21 @@ public final class LegacyProtoKey extends Key {
     }
   }
 
+  private static Bytes computeOutputPrefix(ProtoKeySerialization serialization)
+      throws GeneralSecurityException {
+    if (serialization.getOutputPrefixType().equals(OutputPrefixType.RAW)) {
+      return Bytes.copyFrom(new byte[0]);
+    }
+    if (serialization.getOutputPrefixType().equals(OutputPrefixType.TINK)) {
+      return OutputPrefixUtil.getTinkOutputPrefix(serialization.getIdRequirementOrNull());
+    }
+    if (serialization.getOutputPrefixType().equals(OutputPrefixType.LEGACY)
+        || serialization.getOutputPrefixType().equals(OutputPrefixType.CRUNCHY)) {
+      return OutputPrefixUtil.getLegacyOutputPrefix(serialization.getIdRequirementOrNull());
+    }
+    throw new GeneralSecurityException("Unknown output prefix type");
+  }
+
   /**
    * Creates a new LegacyProtoKey object.
    *
@@ -99,6 +115,7 @@ public final class LegacyProtoKey extends Key {
       throws GeneralSecurityException {
     throwIfMissingAccess(serialization, access);
     this.serialization = serialization;
+    this.outputPrefix = computeOutputPrefix(serialization);
   }
 
   /**
@@ -132,7 +149,8 @@ public final class LegacyProtoKey extends Key {
     if (!Objects.equals(other.getIdRequirementOrNull(), serialization.getIdRequirementOrNull())) {
       return false;
     }
-    return Bytes.equal(serialization.getValue().toByteArray(), other.getValue().toByteArray());
+    return com.google.crypto.tink.subtle.Bytes.equal(
+        serialization.getValue().toByteArray(), other.getValue().toByteArray());
   }
 
   @Override
@@ -162,5 +180,9 @@ public final class LegacyProtoKey extends Key {
   public Parameters getParameters() {
     return new LegacyProtoParametersNotForCreation(
         serialization.getTypeUrl(), serialization.getOutputPrefixType());
+  }
+
+  public Bytes getOutputPrefix() {
+    return outputPrefix;
   }
 }

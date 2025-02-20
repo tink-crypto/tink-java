@@ -17,6 +17,7 @@
 package com.google.crypto.tink.aead;
 
 import com.google.crypto.tink.Aead;
+import com.google.crypto.tink.Key;
 import com.google.crypto.tink.aead.internal.LegacyFullAead;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringClient;
@@ -29,6 +30,7 @@ import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
+import com.google.crypto.tink.util.Bytes;
 import java.security.GeneralSecurityException;
 
 /**
@@ -54,6 +56,20 @@ public class AeadWrapper implements PrimitiveWrapper<Aead, Aead> {
   private static final PrimitiveConstructor<LegacyProtoKey, Aead>
       LEGACY_FULL_AEAD_PRIMITIVE_CONSTRUCTOR =
           PrimitiveConstructor.create(LegacyFullAead::create, LegacyProtoKey.class, Aead.class);
+
+  private static Bytes getOutputPrefix(Key key) throws GeneralSecurityException {
+    if (key instanceof AeadKey) {
+      return ((AeadKey) key).getOutputPrefix();
+    }
+    if (key instanceof LegacyProtoKey) {
+      return ((LegacyProtoKey) key).getOutputPrefix();
+    }
+    throw new GeneralSecurityException(
+        "Cannot get output prefix for key of class "
+            + key.getClass().getName()
+            + " with parameters "
+            + key.getParameters());
+  }
 
   private static class WrappedAead implements Aead {
     private final AeadWithId primary;
@@ -110,7 +126,8 @@ public class AeadWrapper implements PrimitiveWrapper<Aead, Aead> {
     PrefixMap.Builder<AeadWithId> builder = new PrefixMap.Builder<>();
     for (PrimitiveSet.Entry<Aead> entry : pset.getAllInKeysetOrder()) {
       builder.put(
-          entry.getOutputPrefix(), new AeadWithId(entry.getFullPrimitive(), entry.getKeyId()));
+          getOutputPrefix(entry.getKey()),
+          new AeadWithId(entry.getFullPrimitive(), entry.getKeyId()));
     }
     MonitoringClient.Logger encLogger;
     MonitoringClient.Logger decLogger;

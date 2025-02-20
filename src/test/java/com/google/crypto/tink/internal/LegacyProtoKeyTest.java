@@ -23,6 +23,7 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.OutputPrefixType;
+import com.google.crypto.tink.util.Bytes;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import org.junit.Test;
@@ -75,7 +76,7 @@ public final class LegacyProtoKeyTest {
                 /*idRequirement = */ null),
             ACCESS);
     assertThat(key.getIdRequirementOrNull()).isNull();
-
+    assertThat(key.getOutputPrefix()).isEqualTo(Bytes.copyFrom(new byte[0]));
     // TINK
     key =
         new LegacyProtoKey(
@@ -84,9 +85,11 @@ public final class LegacyProtoKeyTest {
                 ByteString.copyFrom(new byte[] {}),
                 KeyMaterialType.SYMMETRIC,
                 OutputPrefixType.TINK,
-                123),
+                0x11223344),
             ACCESS);
-    assertThat(key.getIdRequirementOrNull()).isEqualTo(123);
+    assertThat(key.getIdRequirementOrNull()).isEqualTo(0x11223344);
+    assertThat(key.getOutputPrefix())
+        .isEqualTo(Bytes.copyFrom(new byte[] {01, 0x11, 0x22, 0x33, 0x44}));
 
     // CRUNCHY
     key =
@@ -96,9 +99,11 @@ public final class LegacyProtoKeyTest {
                 ByteString.copyFrom(new byte[] {}),
                 KeyMaterialType.SYMMETRIC,
                 OutputPrefixType.CRUNCHY,
-                123),
+                0x11223344),
             ACCESS);
-    assertThat(key.getIdRequirementOrNull()).isEqualTo(123);
+    assertThat(key.getIdRequirementOrNull()).isEqualTo(0x11223344);
+    assertThat(key.getOutputPrefix())
+        .isEqualTo(Bytes.copyFrom(new byte[] {00, 0x11, 0x22, 0x33, 0x44}));
 
     // LEGACY
     key =
@@ -108,9 +113,11 @@ public final class LegacyProtoKeyTest {
                 ByteString.EMPTY,
                 KeyMaterialType.SYMMETRIC,
                 OutputPrefixType.LEGACY,
-                123),
+                0x11223344),
             ACCESS);
-    assertThat(key.getIdRequirementOrNull()).isEqualTo(123);
+    assertThat(key.getIdRequirementOrNull()).isEqualTo(0x11223344);
+    assertThat(key.getOutputPrefix())
+        .isEqualTo(Bytes.copyFrom(new byte[] {00, 0x11, 0x22, 0x33, 0x44}));
   }
 
   @Test
