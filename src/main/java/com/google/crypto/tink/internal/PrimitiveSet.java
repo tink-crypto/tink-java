@@ -136,12 +136,6 @@ public final class PrimitiveSet<P> {
     return annotations;
   }
 
-  /** Returns the entries with primitive identifed by {@code identifier}. */
-  public List<Entry<P>> getPrimitive(final byte[] identifier) {
-    List<Entry<P>> found = entries.get(Bytes.copyFrom(identifier));
-    return found != null ? found : Collections.<Entry<P>>emptyList();
-  }
-
   /** Returns all primitives. */
   public Collection<List<Entry<P>>> getAll() {
     return entries.values();

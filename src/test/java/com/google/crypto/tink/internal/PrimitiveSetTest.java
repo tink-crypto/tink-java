@@ -44,7 +44,6 @@ import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -127,8 +126,7 @@ public class PrimitiveSetTest {
             .addPrimaryFullPrimitive(fullPrimitive, key, protoKey)
             .build();
     assertThat(pset.getAll()).hasSize(1);
-    List<PrimitiveSet.Entry<Aead>> entries =
-        pset.getPrimitive(CryptoFormat.getOutputPrefix(protoKey));
+    List<PrimitiveSet.Entry<Aead>> entries = pset.getAllInKeysetOrder();
     assertThat(entries).hasSize(1);
     PrimitiveSet.Entry<Aead> entry = entries.get(0);
     assertThat(entry.getFullPrimitive()).isEqualTo(fullPrimitive);
@@ -166,8 +164,8 @@ public class PrimitiveSetTest {
 
     assertThat(pset.getAll()).hasSize(3);
 
-    List<PrimitiveSet.Entry<Mac>> entries = pset.getPrimitive(CryptoFormat.getOutputPrefix(key1));
-    assertThat(entries).hasSize(1);
+    List<PrimitiveSet.Entry<Mac>> entries = pset.getAllInKeysetOrder();
+    assertThat(entries).hasSize(3);
     PrimitiveSet.Entry<Mac> entry = entries.get(0);
     assertEquals(
         DummyMac1.class.getSimpleName(),
@@ -175,9 +173,7 @@ public class PrimitiveSetTest {
     assertEquals(KeyStatus.ENABLED, entry.getStatus());
     assertEquals(1, entry.getKeyId());
     assertEquals(Bytes.copyFrom(CryptoFormat.getOutputPrefix(key1)), entry.getOutputPrefix());
-    entries = pset.getPrimitive(CryptoFormat.getOutputPrefix(key2));
-    assertThat(entries).hasSize(1);
-    entry = entries.get(0);
+    entry = entries.get(1);
     assertEquals(
         DummyMac2.class.getSimpleName(),
         new String(entry.getFullPrimitive().computeMac(null), UTF_8));
@@ -185,9 +181,7 @@ public class PrimitiveSetTest {
     assertEquals(2, entry.getKeyId());
     assertEquals(Bytes.copyFrom(CryptoFormat.getOutputPrefix(key2)), entry.getOutputPrefix());
 
-    entries = pset.getPrimitive(CryptoFormat.getOutputPrefix(key3));
-    assertThat(entries).hasSize(1);
-    entry = entries.get(0);
+    entry = entries.get(2);
     assertEquals(
         DummyMac1.class.getSimpleName(),
         new String(entry.getFullPrimitive().computeMac(null), UTF_8));
@@ -232,16 +226,7 @@ public class PrimitiveSetTest {
             .build();
 
     assertThat(pset.getAll()).hasSize(3);
-
-    List<PrimitiveSet.Entry<Mac>> entries = pset.getPrimitive(CryptoFormat.getOutputPrefix(key1));
-    assertThat(entries).hasSize(1);
-
-    entries = pset.getPrimitive(CryptoFormat.getOutputPrefix(key2));
-    assertThat(entries).hasSize(1);
-
-    entries = pset.getPrimitive(CryptoFormat.getOutputPrefix(key3));
-    assertThat(entries).hasSize(1);
-
+    assertThat(pset.getAllInKeysetOrder()).hasSize(3);
     PrimitiveSet.Entry<Mac> entry = pset.getPrimary();
     assertThat(entry).isNotNull();
   }
@@ -273,17 +258,17 @@ public class PrimitiveSetTest {
             .addFullPrimitive(new DummyMac1(), getKeyFromProtoKey(key3), key3)
             .build();
 
-    PrimitiveSet.Entry<Mac> entry = pset.getPrimitive(CryptoFormat.getOutputPrefix(key1)).get(0);
+    PrimitiveSet.Entry<Mac> entry = pset.getAllInKeysetOrder().get(0);
     assertEquals(
         DummyMac1.class.getSimpleName(),
         new String(entry.getFullPrimitive().computeMac(null), UTF_8));
 
-    entry = pset.getPrimitive(CryptoFormat.getOutputPrefix(key2)).get(0);
+    entry = pset.getAllInKeysetOrder().get(1);
     assertEquals(
         DummyMac2.class.getSimpleName(),
         new String(entry.getFullPrimitive().computeMac(null), UTF_8));
 
-    entry = pset.getPrimitive(CryptoFormat.getOutputPrefix(key3)).get(0);
+    entry = pset.getAllInKeysetOrder().get(2);
     assertEquals(
         DummyMac1.class.getSimpleName(),
         new String(entry.getFullPrimitive().computeMac(null), UTF_8));
@@ -321,15 +306,15 @@ public class PrimitiveSetTest {
             .addFullPrimitive(new DummyMac1(), getKeyFromProtoKey(key3), key3)
             .build();
 
-    PrimitiveSet.Entry<Mac> entry = pset.getPrimitive(CryptoFormat.getOutputPrefix(key1)).get(0);
+    PrimitiveSet.Entry<Mac> entry = pset.getAllInKeysetOrder().get(0);
     assertEquals(KeyStatus.ENABLED, entry.getStatus());
     assertEquals(1, entry.getKeyId());
 
-    entry = pset.getPrimitive(CryptoFormat.getOutputPrefix(key2)).get(0);
+    entry = pset.getAllInKeysetOrder().get(1);
     assertEquals(KeyStatus.ENABLED, entry.getStatus());
     assertEquals(2, entry.getKeyId());
 
-    entry = pset.getPrimitive(CryptoFormat.getOutputPrefix(key3)).get(0);
+    entry = pset.getAllInKeysetOrder().get(2);
     assertEquals(KeyStatus.ENABLED, entry.getStatus());
     assertEquals(3, entry.getKeyId());
 
@@ -390,8 +375,7 @@ public class PrimitiveSetTest {
         PrimitiveSet.newBuilder(Mac.class)
             .addPrimaryFullPrimitive(new DummyMac1(), getKeyFromProtoKey(key1), key1)
             .build();
-    assertThat(
-            pset.getPrimitive(CryptoFormat.getOutputPrefix(key1)).get(0).getParameters().toString())
+    assertThat(pset.getAllInKeysetOrder().get(0).getParameters().toString())
         .isEqualTo("(typeUrl=typeUrl1, outputPrefixType=TINK)");
   }
 
@@ -407,8 +391,7 @@ public class PrimitiveSetTest {
             .build();
     builder.addFullPrimitive(new DummyMac1(), getKeyFromProtoKey(key1), key1);
     PrimitiveSet<Mac> pset = builder.build();
-    com.google.crypto.tink.Key key =
-        pset.getPrimitive(CryptoFormat.getOutputPrefix(key1)).get(0).getKey();
+    com.google.crypto.tink.Key key = pset.getAllInKeysetOrder().get(0).getKey();
 
     assertThat(key).isInstanceOf(LegacyProtoKey.class);
     LegacyProtoKey legacyProtoKey = (LegacyProtoKey) key;
@@ -425,12 +408,11 @@ public class PrimitiveSetTest {
             /* keyId= */ 42,
             KeyStatusType.ENABLED,
             OutputPrefixType.TINK);
-    byte[] prefix = CryptoFormat.getOutputPrefix(protoKey);
     PrimitiveSet.Builder<Mac> builder = PrimitiveSet.newBuilder(Mac.class);
     builder.addFullPrimitive(new DummyMac1(), getKeyFromProtoKey(protoKey), protoKey);
     PrimitiveSet<Mac> pset = builder.build();
 
-    com.google.crypto.tink.Key key = pset.getPrimitive(prefix).get(0).getKey();
+    com.google.crypto.tink.Key key = pset.getAllInKeysetOrder().get(0).getKey();
     assertThat(key).isInstanceOf(HmacKey.class);
     HmacKey hmacKey = (HmacKey) key;
     assertThat(hmacKey.getIdRequirementOrNull()).isEqualTo(42);
@@ -529,62 +511,64 @@ public class PrimitiveSetTest {
 
     assertThat(pset.getAll()).hasSize(3); // 3 instead of 6 because of duplicated key ids
 
-    // tink keys
-    List<PrimitiveSet.Entry<Mac>> entries = pset.getPrimitive(CryptoFormat.getOutputPrefix(key1));
-    assertThat(entries).hasSize(1);
-    PrimitiveSet.Entry<Mac> entry = entries.get(0);
-    assertEquals(
-        DummyMac1.class.getSimpleName(),
-        new String(entry.getFullPrimitive().computeMac(null), UTF_8));
-    assertEquals(KeyStatus.ENABLED, entry.getStatus());
-    assertEquals(1, entry.getKeyId());
-
-    // raw keys
-    List<Integer> ids = new ArrayList<>(); // The order of the keys is an implementation detail.
-    entries = pset.getPrimitive(CryptoFormat.getOutputPrefix(key2));
-    assertThat(entries).hasSize(3);
-    entry = entries.get(0);
-    assertEquals(
-        DummyMac2.class.getSimpleName(),
-        new String(entry.getFullPrimitive().computeMac(null), UTF_8));
-    assertEquals(KeyStatus.ENABLED, entry.getStatus());
-    ids.add(entry.getKeyId());
-    entry = entries.get(1);
-    assertEquals(
-        DummyMac1.class.getSimpleName(),
-        new String(entry.getFullPrimitive().computeMac(null), UTF_8));
-    assertEquals(KeyStatus.ENABLED, entry.getStatus());
-    ids.add(entry.getKeyId());
-    entry = entries.get(2);
-    assertEquals(
-        DummyMac1.class.getSimpleName(),
-        new String(entry.getFullPrimitive().computeMac(null), UTF_8));
-    assertEquals(KeyStatus.ENABLED, entry.getStatus());
-    ids.add(entry.getKeyId());
-
-    assertThat(ids).containsExactly(1, 3, 3);
-    // legacy keys
-    entries = pset.getPrimitive(CryptoFormat.getOutputPrefix(key3));
-    assertThat(entries).hasSize(2);
-    entry = entries.get(0);
-    assertEquals(
-        DummyMac1.class.getSimpleName(),
-        new String(entry.getFullPrimitive().computeMac(null), UTF_8));
-    assertEquals(KeyStatus.ENABLED, entry.getStatus());
-    assertEquals(2, entry.getKeyId());
-    entry = entries.get(1);
-    assertEquals(
-        DummyMac2.class.getSimpleName(),
-        new String(entry.getFullPrimitive().computeMac(null), UTF_8));
-    assertEquals(KeyStatus.ENABLED, entry.getStatus());
-    assertEquals(2, entry.getKeyId());
-
-    entry = pset.getPrimary();
-    assertEquals(
-        DummyMac2.class.getSimpleName(),
-        new String(entry.getFullPrimitive().computeMac(null), UTF_8));
-    assertEquals(KeyStatus.ENABLED, entry.getStatus());
-    assertEquals(1, entry.getKeyId());
+    List<PrimitiveSet.Entry<Mac>> entries = pset.getAllInKeysetOrder();
+    assertThat(entries).hasSize(6);
+    {
+      PrimitiveSet.Entry<Mac> entry = entries.get(0);
+      assertEquals(
+          DummyMac1.class.getSimpleName(),
+          new String(entry.getFullPrimitive().computeMac(null), UTF_8));
+      assertEquals(KeyStatus.ENABLED, entry.getStatus());
+      assertEquals(1, entry.getKeyId());
+    }
+    {
+      PrimitiveSet.Entry<Mac> entry = entries.get(1);
+      assertEquals(
+          DummyMac2.class.getSimpleName(),
+          new String(entry.getFullPrimitive().computeMac(null), UTF_8));
+      assertEquals(KeyStatus.ENABLED, entry.getStatus());
+      assertEquals(1, entry.getKeyId());
+    }
+    {
+      PrimitiveSet.Entry<Mac> entry = entries.get(2);
+      assertEquals(
+          DummyMac1.class.getSimpleName(),
+          new String(entry.getFullPrimitive().computeMac(null), UTF_8));
+      assertEquals(KeyStatus.ENABLED, entry.getStatus());
+      assertEquals(2, entry.getKeyId());
+    }
+    {
+      PrimitiveSet.Entry<Mac> entry = entries.get(3);
+      assertEquals(
+          DummyMac2.class.getSimpleName(),
+          new String(entry.getFullPrimitive().computeMac(null), UTF_8));
+      assertEquals(KeyStatus.ENABLED, entry.getStatus());
+      assertEquals(2, entry.getKeyId());
+    }
+    {
+      PrimitiveSet.Entry<Mac> entry = entries.get(4);
+      assertEquals(
+          DummyMac1.class.getSimpleName(),
+          new String(entry.getFullPrimitive().computeMac(null), UTF_8));
+      assertEquals(KeyStatus.ENABLED, entry.getStatus());
+      assertEquals(3, entry.getKeyId());
+    }
+    {
+      PrimitiveSet.Entry<Mac> entry = entries.get(5);
+      assertEquals(
+          DummyMac1.class.getSimpleName(),
+          new String(entry.getFullPrimitive().computeMac(null), UTF_8));
+      assertEquals(KeyStatus.ENABLED, entry.getStatus());
+      assertEquals(3, entry.getKeyId());
+    }
+    {
+      PrimitiveSet.Entry<Mac> entry = pset.getPrimary();
+      assertEquals(
+          DummyMac2.class.getSimpleName(),
+          new String(entry.getFullPrimitive().computeMac(null), UTF_8));
+      assertEquals(KeyStatus.ENABLED, entry.getStatus());
+      assertEquals(1, entry.getKeyId());
+    }
   }
 
   @Test
@@ -648,41 +632,6 @@ public class PrimitiveSetTest {
         () ->
             PrimitiveSet.newBuilder(Mac.class)
                 .addPrimaryFullPrimitive(null, getKeyFromProtoKey(key), key));
-  }
-
-  @Test
-  public void testPrefixIsUnique() throws Exception {
-    Key key1 =
-        Key.newBuilder()
-            .setKeyId(0xffffffff)
-            .setStatus(KeyStatusType.ENABLED)
-            .setOutputPrefixType(OutputPrefixType.TINK)
-            .build();
-    Key key2 =
-        Key.newBuilder()
-            .setKeyId(0xffffffdf)
-            .setStatus(KeyStatusType.ENABLED)
-            .setOutputPrefixType(OutputPrefixType.RAW)
-            .build();
-    Key key3 =
-        Key.newBuilder()
-            .setKeyId(0xffffffef)
-            .setStatus(KeyStatusType.ENABLED)
-            .setOutputPrefixType(OutputPrefixType.LEGACY)
-            .build();
-
-    PrimitiveSet<Mac> pset =
-        PrimitiveSet.newBuilder(Mac.class)
-            .addFullPrimitive(new DummyMac1(), getKeyFromProtoKey(key1), key1)
-            .addPrimaryFullPrimitive(new DummyMac2(), getKeyFromProtoKey(key2), key2)
-            .addFullPrimitive(new DummyMac1(), getKeyFromProtoKey(key3), key3)
-            .build();
-
-    assertThat(pset.getAll()).hasSize(3);
-    assertThat(pset.getPrimitive(Hex.decode("01ffffffff"))).hasSize(1);
-    assertThat(pset.getPrimitive(Hex.decode("01ffffffef"))).isEmpty();
-    assertThat(pset.getPrimitive(Hex.decode("00ffffffff"))).isEmpty();
-    assertThat(pset.getPrimitive(Hex.decode("00ffffffef"))).hasSize(1);
   }
 
   @Test
