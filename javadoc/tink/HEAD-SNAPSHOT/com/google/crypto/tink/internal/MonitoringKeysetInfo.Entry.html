@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -135,18 +135,22 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/MonitoringKeysetInfo.Entry.html#getKey--">getKey</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/MonitoringKeysetInfo.Entry.html#getId--">getId</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/MonitoringKeysetInfo.Entry.html#getKeyId--">getKeyId</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/MonitoringKeysetInfo.Entry.html#getKey--">getKey</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/KeyStatus.html" title="class in com.google.crypto.tink">KeyStatus</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/MonitoringKeysetInfo.Entry.html#getStatus--">getStatus</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/MonitoringKeysetInfo.Entry.html#isPrimary--">isPrimary</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/MonitoringKeysetInfo.Entry.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
@@ -181,13 +185,13 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/KeyStatus.html" title="class in com.google.crypto.tink">KeyStatus</a>&nbsp;getStatus()</pre>
 </li>
 </ul>
-<a name="getKeyId--">
+<a name="getId--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getKeyId</h4>
-<pre>public&nbsp;int&nbsp;getKeyId()</pre>
+<h4>getId</h4>
+<pre>public&nbsp;int&nbsp;getId()</pre>
 </li>
 </ul>
 <a name="getKey--">
@@ -197,6 +201,15 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>getKey</h4>
 <pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;getKey()</pre>
+</li>
+</ul>
+<a name="isPrimary--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isPrimary</h4>
+<pre>public&nbsp;boolean&nbsp;isPrimary()</pre>
 </li>
 </ul>
 <a name="toString--">
