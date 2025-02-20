@@ -58,10 +58,10 @@ public final class MonitoringKeysetInfoTest {
             .addEntry(key123, KeyStatus.ENABLED, 123)
             .setPrimaryKeyId(123)
             .build();
-    assertThat(info.getEntries()).hasSize(1);
-    MonitoringKeysetInfo.Entry entry = info.getEntries().get(0);
+    assertThat(info.size()).isEqualTo(1);
+    MonitoringKeysetInfo.Entry entry = info.getAt(0);
     assertThat(entry.getStatus()).isEqualTo(KeyStatus.ENABLED);
-    assertThat(entry.getKeyId()).isEqualTo(123);
+    assertThat(entry.getId()).isEqualTo(123);
     assertThat(entry.getKey().equalsKey(key123)).isTrue();
   }
 
@@ -79,7 +79,7 @@ public final class MonitoringKeysetInfoTest {
             .addEntry(key234, KeyStatus.ENABLED, 234)
             .setPrimaryKeyId(123)
             .build();
-    assertThat(info.getEntries()).hasSize(2);
+    assertThat(info.size()).isEqualTo(2);
   }
 
   @Test
@@ -94,7 +94,7 @@ public final class MonitoringKeysetInfoTest {
             .setPrimaryKeyId(123)
             .build();
     // entries are a list, so we can add the same entry twice.
-    assertThat(info.getEntries()).hasSize(2);
+    assertThat(info.size()).isEqualTo(2);
   }
 
   @Test
@@ -169,17 +169,9 @@ public final class MonitoringKeysetInfoTest {
                     .add("annotation_name", "annotation_value")
                     .build())
             .build();
-    MonitoringKeysetInfo info2 =
-        MonitoringKeysetInfo.newBuilder()
-            .addEntry(key123, KeyStatus.ENABLED, 234)
-            .setPrimaryKeyId(234)
-            .build();
     assertThrows(
         UnsupportedOperationException.class,
         () -> info.getAnnotations().toMap().put("name", "value"));
-    assertThrows(
-        UnsupportedOperationException.class,
-        () -> info.getEntries().add(info2.getEntries().get(0)));
   }
 
   @Test

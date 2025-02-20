@@ -62,7 +62,7 @@ public final class FakeMonitoringClientTest {
     assertThat(logEntries).hasSize(1);
     FakeMonitoringClient.LogEntry logEntry = logEntries.get(0);
     assertThat(logEntry.getKeysetInfo()).isEqualTo(keysetInfo);
-    assertThat(logEntry.getKeyInfo()).isEqualTo(keysetInfo.getEntries().get(0));
+    assertThat(logEntry.getKeyInfo()).isEqualTo(keysetInfo.getAt(0));
     assertThat(logEntry.getPrimitive()).isEqualTo("aead");
     assertThat(logEntry.getApi()).isEqualTo("encrypt");
     assertThat(logEntry.getKeyId()).isEqualTo(123);

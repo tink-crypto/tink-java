@@ -43,12 +43,13 @@ public final class MonitoringKeysetInfo {
     private final Key key;
     private final KeyStatus status;
     private final int keyId;
+    private final boolean isPrimary;
 
     public KeyStatus getStatus() {
       return status;
     }
 
-    public int getKeyId() {
+    public int getId() {
       return keyId;
     }
 
@@ -56,10 +57,15 @@ public final class MonitoringKeysetInfo {
       return key;
     }
 
-    private Entry(Key key, KeyStatus status, int keyId) {
+    public boolean isPrimary() {
+      return isPrimary;
+    }
+
+    private Entry(Key key, KeyStatus status, int keyId, boolean isPrimary) {
       this.key = key;
       this.status = status;
       this.keyId = keyId;
+      this.isPrimary = isPrimary;
     }
 
     @Override
@@ -90,7 +96,7 @@ public final class MonitoringKeysetInfo {
       if (builderEntries == null) {
         throw new IllegalStateException("addEntry cannot be called after build()");
       }
-      builderEntries.add(new Entry(key, status, keyId));
+      builderEntries.add(new Entry(key, status, keyId, false));
       return this;
     }
 
@@ -103,9 +109,11 @@ public final class MonitoringKeysetInfo {
       return this;
     }
 
-    private boolean isKeyIdInEntries(int keyId) {
-      for (Entry entry : builderEntries) {
-        if (entry.getKeyId() == keyId) {
+    private boolean verifyPrimaryAndSetToPrimary(int keyId) {
+      for (int i = 0; i < builderEntries.size(); i++) {
+        Entry entry = builderEntries.get(i);
+        if (entry.getId() == keyId) {
+          builderEntries.set(i, new Entry(entry.key, entry.status, entry.keyId, true));
           return true;
         }
       }
@@ -119,8 +127,8 @@ public final class MonitoringKeysetInfo {
       }
       if (builderPrimaryKeyId != null) {
         // We allow the primary key to not be set. But if it is set, we verify that it is present in
-        // the keyset.
-        if (!isKeyIdInEntries(builderPrimaryKeyId.intValue())) {
+        // the keyset. We also replace the entry with one which knows that it's the primary.
+        if (!verifyPrimaryAndSetToPrimary(builderPrimaryKeyId.intValue())) {
           throw new GeneralSecurityException("primary key ID is not present in entries");
         }
       }
@@ -159,8 +167,21 @@ public final class MonitoringKeysetInfo {
     return annotations;
   }
 
-  public List<Entry> getEntries() {
-    return entries;
+  public Entry getAt(int i) {
+    return entries.get(i);
+  }
+
+  public int size() {
+    return entries.size();
+  }
+
+  public Entry getPrimary() {
+    for (int i = 0; i < size(); i++) {
+      if (getAt(i).isPrimary()) {
+        return getAt(i);
+      }
+    }
+    throw new IllegalStateException("Keyset has no valid primary");
   }
 
   @Nullable

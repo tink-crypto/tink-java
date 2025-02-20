@@ -144,8 +144,9 @@ public final class FakeMonitoringClient implements MonitoringClient {
       this.primitive = primitive;
       this.api = api;
       entries = new HashMap<>();
-      for (MonitoringKeysetInfo.Entry entry : keysetInfo.getEntries()) {
-        entries.put(entry.getKeyId(), entry);
+      for (int i = 0; i < keysetInfo.size(); i++) {
+        MonitoringKeysetInfo.Entry entry = keysetInfo.getAt(i);
+        entries.put(entry.getId(), entry);
       }
     }
   }

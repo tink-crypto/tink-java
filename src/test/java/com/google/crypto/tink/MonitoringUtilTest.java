@@ -31,7 +31,6 @@ import com.google.crypto.tink.subtle.AesGcmJce;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.testing.TestUtil;
 import com.google.crypto.tink.util.SecretBytes;
-import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -65,10 +64,9 @@ public final class MonitoringUtilTest {
     MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
     assertThat(keysetInfo.getAnnotations()).isEqualTo(annotations);
     assertThat(keysetInfo.getPrimaryKeyId()).isEqualTo(42);
-    List<MonitoringKeysetInfo.Entry> entries = keysetInfo.getEntries();
-    assertThat(entries).hasSize(1);
-    assertThat(entries.get(0).getStatus()).isEqualTo(KeyStatus.ENABLED);
-    assertThat(entries.get(0).getKeyId()).isEqualTo(42);
+    assertThat(keysetInfo.size()).isEqualTo(1);
+    assertThat(keysetInfo.getAt(0).getStatus()).isEqualTo(KeyStatus.ENABLED);
+    assertThat(keysetInfo.getAt(0).getId()).isEqualTo(42);
   }
 
   @Test
@@ -103,7 +101,7 @@ public final class MonitoringUtilTest {
             .addFullPrimitive(fullPrimitive2, key2, protoKey2)
             .build();
     MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
-    assertThat(keysetInfo.getEntries()).hasSize(2);
+    assertThat(keysetInfo.size()).isEqualTo(2);
   }
 
   @Test
