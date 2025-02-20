@@ -136,11 +136,6 @@ public final class PrimitiveSet<P> {
     return annotations;
   }
 
-  /** Returns all primitives using RAW prefix. */
-  public List<Entry<P>> getRawPrimitives() {
-    return getPrimitive(CryptoFormat.RAW_PREFIX);
-  }
-
   /** Returns the entries with primitive identifed by {@code identifier}. */
   public List<Entry<P>> getPrimitive(final byte[] identifier) {
     List<Entry<P>> found = entries.get(Bytes.copyFrom(identifier));
