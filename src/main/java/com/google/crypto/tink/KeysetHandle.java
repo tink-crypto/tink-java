@@ -18,6 +18,7 @@ package com.google.crypto.tink;
 
 import com.google.crypto.tink.annotations.Alpha;
 import com.google.crypto.tink.internal.InternalConfiguration;
+import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
 import com.google.crypto.tink.internal.MutableParametersRegistry;
@@ -60,7 +61,7 @@ import javax.annotation.Nullable;
  *
  * @since 1.0.0
  */
-public final class KeysetHandle {
+public final class KeysetHandle implements KeysetHandleInterface {
   /**
    * Used to create new {@code KeysetHandle} objects.
    *
@@ -420,7 +421,7 @@ public final class KeysetHandle {
    * Tink still accepts keysets which have none. This will be changed in the future.
    */
   @Immutable
-  public static final class Entry {
+  public static final class Entry implements KeysetHandleInterface.Entry {
     private Entry(Key key, KeyStatus keyStatus, int id, boolean isPrimary) {
       this.key = key;
       this.keyStatus = keyStatus;
@@ -432,21 +433,26 @@ public final class KeysetHandle {
     private final KeyStatus keyStatus;
     private final int id;
     private final boolean isPrimary;
+
     /**
      * May return an internal class {@link com.google.crypto.tink.internal.LegacyProtoKey} in case
      * there is no implementation of the corresponding key class yet.
      */
+    @Override
     public Key getKey() {
       return key;
     }
 
+    @Override
     public KeyStatus getStatus() {
       return keyStatus;
     }
 
+    @Override
     public int getId() {
       return id;
     }
+
     /**
      * Guaranteed to be true in exactly one entry.
      *
@@ -454,6 +460,7 @@ public final class KeysetHandle {
      * parsed without a primary. In the future, such keysets will be rejected when the keyset is
      * parsed.
      */
+    @Override
     public boolean isPrimary() {
       return isPrimary;
     }
@@ -657,6 +664,7 @@ public final class KeysetHandle {
    * parsed without a primary. In the future, such keysets will be rejected when the keyset is
    * parsed.
    */
+  @Override
   public KeysetHandle.Entry getPrimary() {
     for (Entry entry : entries) {
       if (entry != null && entry.isPrimary()) {
@@ -670,6 +678,7 @@ public final class KeysetHandle {
   }
 
   /** Returns the size of this keyset. */
+  @Override
   public int size() {
     return entries.size();
   }
@@ -689,6 +698,7 @@ public final class KeysetHandle {
    *
    * @throws IndexOutOfBoundsException if i < 0 or i >= size();
    */
+  @Override
   public KeysetHandle.Entry getAt(int i) {
     if (i < 0 || i >= size()) {
       throw new IndexOutOfBoundsException("Invalid index " + i + " for keyset of size " + size());

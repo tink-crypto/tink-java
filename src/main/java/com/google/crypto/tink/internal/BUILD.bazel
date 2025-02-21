@@ -992,3 +992,21 @@ java_library(
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
+
+android_library(
+    name = "keyset_handle_interface-android",
+    srcs = ["KeysetHandleInterface.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:key-android",
+        "//src/main/java/com/google/crypto/tink:key_status-android",
+    ],
+)
+
+java_library(
+    name = "keyset_handle_interface",
+    srcs = ["KeysetHandleInterface.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:key",
+        "//src/main/java/com/google/crypto/tink:key_status",
+    ],
+)
