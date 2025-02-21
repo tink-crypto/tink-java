@@ -122,6 +122,8 @@ java_library(
     name = "mac_wrapper",
     srcs = ["MacWrapper.java"],
     deps = [
+        ":mac_key",
+        "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink:mac",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_client",
@@ -135,6 +137,7 @@ java_library(
         "//src/main/java/com/google/crypto/tink/internal:primitive_set",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper",
         "//src/main/java/com/google/crypto/tink/mac/internal:legacy_full_mac",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
     ],
 )
 
@@ -142,6 +145,8 @@ android_library(
     name = "mac_wrapper-android",
     srcs = ["MacWrapper.java"],
     deps = [
+        ":mac_key-android",
+        "//src/main/java/com/google/crypto/tink:key-android",
         "//src/main/java/com/google/crypto/tink:mac-android",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key-android",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_client-android",
@@ -155,6 +160,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink/internal:primitive_set-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper-android",
         "//src/main/java/com/google/crypto/tink/mac/internal:legacy_full_mac-android",
+        "//src/main/java/com/google/crypto/tink/util:bytes-android",
     ],
 )
 
@@ -437,11 +443,15 @@ java_library(
         ":chunked_mac",
         ":chunked_mac_computation",
         ":chunked_mac_verification",
+        ":mac_key",
+        "//src/main/java/com/google/crypto/tink:key",
+        "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry",
         "//src/main/java/com/google/crypto/tink/internal:prefix_map",
         "//src/main/java/com/google/crypto/tink/internal:primitive_registry",
         "//src/main/java/com/google/crypto/tink/internal:primitive_set",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
@@ -453,11 +463,15 @@ android_library(
         ":chunked_mac-android",
         ":chunked_mac_computation-android",
         ":chunked_mac_verification-android",
+        ":mac_key-android",
+        "//src/main/java/com/google/crypto/tink:key-android",
+        "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key-android",
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:prefix_map-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_set-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper-android",
+        "//src/main/java/com/google/crypto/tink/util:bytes-android",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )

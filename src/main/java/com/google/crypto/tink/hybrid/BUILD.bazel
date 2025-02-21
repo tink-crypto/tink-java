@@ -36,7 +36,9 @@ java_library(
     name = "hybrid_decrypt_wrapper",
     srcs = ["HybridDecryptWrapper.java"],
     deps = [
+        ":hybrid_private_key",
         "//src/main/java/com/google/crypto/tink:hybrid_decrypt",
+        "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink/hybrid/internal:legacy_full_hybrid_decrypt",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_client",
@@ -49,6 +51,7 @@ java_library(
         "//src/main/java/com/google/crypto/tink/internal:primitive_registry",
         "//src/main/java/com/google/crypto/tink/internal:primitive_set",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
     ],
 )
 
@@ -357,7 +360,9 @@ android_library(
     name = "hybrid_decrypt_wrapper-android",
     srcs = ["HybridDecryptWrapper.java"],
     deps = [
+        ":hybrid_private_key-android",
         "//src/main/java/com/google/crypto/tink:hybrid_decrypt-android",
+        "//src/main/java/com/google/crypto/tink:key-android",
         "//src/main/java/com/google/crypto/tink/hybrid/internal:legacy_full_hybrid_decrypt-android",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key-android",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_client-android",
@@ -370,6 +375,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink/internal:primitive_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_set-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper-android",
+        "//src/main/java/com/google/crypto/tink/util:bytes-android",
     ],
 )
 

@@ -16,11 +16,14 @@
 
 package com.google.crypto.tink.mac;
 
+import com.google.crypto.tink.Key;
+import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrefixMap;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
+import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
@@ -39,6 +42,20 @@ import java.util.List;
 public class ChunkedMacWrapper implements PrimitiveWrapper<ChunkedMac, ChunkedMac> {
 
   private static final ChunkedMacWrapper WRAPPER = new ChunkedMacWrapper();
+
+  private static Bytes getOutputPrefix(Key key) throws GeneralSecurityException {
+    if (key instanceof MacKey) {
+      return ((MacKey) key).getOutputPrefix();
+    }
+    if (key instanceof LegacyProtoKey) {
+      return ((LegacyProtoKey) key).getOutputPrefix();
+    }
+    throw new GeneralSecurityException(
+        "Cannot get output prefix for key of class "
+            + key.getClass().getName()
+            + " with parameters "
+            + key.getParameters());
+  }
 
   private static class WrappedChunkedMacVerification implements ChunkedMacVerification {
     private final List<ChunkedMacVerification> verifications;
@@ -123,7 +140,7 @@ public class ChunkedMacWrapper implements PrimitiveWrapper<ChunkedMac, ChunkedMa
     }
     PrefixMap.Builder<ChunkedMac> allChunkedMacsBuilder = new PrefixMap.Builder<ChunkedMac>();
     for (PrimitiveSet.Entry<ChunkedMac> entry : primitives.getAllInKeysetOrder()) {
-      allChunkedMacsBuilder.put(entry.getOutputPrefix(), entry.getFullPrimitive());
+      allChunkedMacsBuilder.put(getOutputPrefix(entry.getKey()), entry.getFullPrimitive());
     }
     return new WrappedChunkedMac(
         allChunkedMacsBuilder.build(), primitives.getPrimary().getFullPrimitive());

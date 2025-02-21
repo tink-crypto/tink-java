@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.mac;
 
+import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Mac;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringClient;
@@ -29,6 +30,7 @@ import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.mac.internal.LegacyFullMac;
+import com.google.crypto.tink.util.Bytes;
 import java.security.GeneralSecurityException;
 
 /**
@@ -55,6 +57,20 @@ public class MacWrapper implements PrimitiveWrapper<Mac, Mac> {
   private static final PrimitiveConstructor<LegacyProtoKey, Mac>
       LEGACY_FULL_MAC_PRIMITIVE_CONSTRUCTOR =
           PrimitiveConstructor.create(LegacyFullMac::create, LegacyProtoKey.class, Mac.class);
+
+  private static Bytes getOutputPrefix(Key key) throws GeneralSecurityException {
+    if (key instanceof MacKey) {
+      return ((MacKey) key).getOutputPrefix();
+    }
+    if (key instanceof LegacyProtoKey) {
+      return ((LegacyProtoKey) key).getOutputPrefix();
+    }
+    throw new GeneralSecurityException(
+        "Cannot get output prefix for key of class "
+            + key.getClass().getName()
+            + " with parameters "
+            + key.getParameters());
+  }
 
   private static class WrappedMac implements Mac {
     private final MacWithId primary;
@@ -109,7 +125,8 @@ public class MacWrapper implements PrimitiveWrapper<Mac, Mac> {
     PrefixMap.Builder<MacWithId> builder = new PrefixMap.Builder<>();
     for (PrimitiveSet.Entry<Mac> entry : primitives.getAllInKeysetOrder()) {
       builder.put(
-          entry.getOutputPrefix(), new MacWithId(entry.getFullPrimitive(), entry.getKeyId()));
+          getOutputPrefix(entry.getKey()),
+          new MacWithId(entry.getFullPrimitive(), entry.getKeyId()));
     }
     MonitoringClient.Logger computeLogger;
     MonitoringClient.Logger verifyLogger;

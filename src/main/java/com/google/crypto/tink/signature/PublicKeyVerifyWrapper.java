@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.signature;
 
+import com.google.crypto.tink.Key;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringClient;
@@ -29,6 +30,7 @@ import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.signature.internal.LegacyFullVerify;
+import com.google.crypto.tink.util.Bytes;
 import java.security.GeneralSecurityException;
 
 /**
@@ -57,6 +59,20 @@ public class PublicKeyVerifyWrapper implements PrimitiveWrapper<PublicKeyVerify,
       LEGACY_PRIMITIVE_CONSTRUCTOR =
           PrimitiveConstructor.create(
               LegacyFullVerify::create, LegacyProtoKey.class, PublicKeyVerify.class);
+
+  private static Bytes getOutputPrefix(Key key) throws GeneralSecurityException {
+    if (key instanceof SignaturePublicKey) {
+      return ((SignaturePublicKey) key).getOutputPrefix();
+    }
+    if (key instanceof LegacyProtoKey) {
+      return ((LegacyProtoKey) key).getOutputPrefix();
+    }
+    throw new GeneralSecurityException(
+        "Cannot get output prefix for key of class "
+            + key.getClass().getName()
+            + " with parameters "
+            + key.getParameters());
+  }
 
   private static class WrappedPublicKeyVerify implements PublicKeyVerify {
     private final PrefixMap<PublicKeyVerifyWithId> allPublicKeyVerifys;
@@ -94,7 +110,7 @@ public class PublicKeyVerifyWrapper implements PrimitiveWrapper<PublicKeyVerify,
     PrefixMap.Builder<PublicKeyVerifyWithId> builder = new PrefixMap.Builder<>();
     for (PrimitiveSet.Entry<PublicKeyVerify> entry : primitives.getAllInKeysetOrder()) {
       builder.put(
-          entry.getOutputPrefix(),
+          getOutputPrefix(entry.getKey()),
           new PublicKeyVerifyWithId(entry.getFullPrimitive(), entry.getKeyId()));
     }
     MonitoringClient.Logger logger;

@@ -17,6 +17,7 @@
 package com.google.crypto.tink.daead;
 
 import com.google.crypto.tink.DeterministicAead;
+import com.google.crypto.tink.Key;
 import com.google.crypto.tink.daead.internal.LegacyFullDeterministicAead;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringClient;
@@ -29,6 +30,7 @@ import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
+import com.google.crypto.tink.util.Bytes;
 import java.security.GeneralSecurityException;
 
 /**
@@ -57,6 +59,20 @@ public class DeterministicAeadWrapper
       LEGACY_FULL_DAEAD_PRIMITIVE_CONSTRUCTOR =
           PrimitiveConstructor.create(
               LegacyFullDeterministicAead::create, LegacyProtoKey.class, DeterministicAead.class);
+
+  private static Bytes getOutputPrefix(Key key) throws GeneralSecurityException {
+    if (key instanceof DeterministicAeadKey) {
+      return ((DeterministicAeadKey) key).getOutputPrefix();
+    }
+    if (key instanceof LegacyProtoKey) {
+      return ((LegacyProtoKey) key).getOutputPrefix();
+    }
+    throw new GeneralSecurityException(
+        "Cannot get output prefix for key of class "
+            + key.getClass().getName()
+            + " with parameters "
+            + key.getParameters());
+  }
 
   private static class WrappedDeterministicAead implements DeterministicAead {
     private final DeterministicAeadWithId primary;
@@ -114,7 +130,7 @@ public class DeterministicAeadWrapper
     PrefixMap.Builder<DeterministicAeadWithId> builder = new PrefixMap.Builder<>();
     for (PrimitiveSet.Entry<DeterministicAead> entry : primitives.getAllInKeysetOrder()) {
       builder.put(
-          entry.getOutputPrefix(),
+          getOutputPrefix(entry.getKey()),
           new DeterministicAeadWithId(entry.getFullPrimitive(), entry.getKeyId()));
     }
     MonitoringClient.Logger encLogger;

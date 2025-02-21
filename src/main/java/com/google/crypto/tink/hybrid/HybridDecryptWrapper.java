@@ -16,6 +16,7 @@
 package com.google.crypto.tink.hybrid;
 
 import com.google.crypto.tink.HybridDecrypt;
+import com.google.crypto.tink.Key;
 import com.google.crypto.tink.hybrid.internal.LegacyFullHybridDecrypt;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringClient;
@@ -28,6 +29,7 @@ import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
+import com.google.crypto.tink.util.Bytes;
 import java.security.GeneralSecurityException;
 
 /**
@@ -54,6 +56,20 @@ public class HybridDecryptWrapper implements PrimitiveWrapper<HybridDecrypt, Hyb
       LEGACY_PRIMITIVE_CONSTRUCTOR =
           PrimitiveConstructor.create(
               LegacyFullHybridDecrypt::create, LegacyProtoKey.class, HybridDecrypt.class);
+
+  private static Bytes getOutputPrefix(Key key) throws GeneralSecurityException {
+    if (key instanceof HybridPrivateKey) {
+      return ((HybridPrivateKey) key).getOutputPrefix();
+    }
+    if (key instanceof LegacyProtoKey) {
+      return ((LegacyProtoKey) key).getOutputPrefix();
+    }
+    throw new GeneralSecurityException(
+        "Cannot get output prefix for key of class "
+            + key.getClass().getName()
+            + " with parameters "
+            + key.getParameters());
+  }
 
   private static class WrappedHybridDecrypt implements HybridDecrypt {
     private final PrefixMap<HybridDecryptWithId> allHybridDecrypts;
@@ -92,7 +108,7 @@ public class HybridDecryptWrapper implements PrimitiveWrapper<HybridDecrypt, Hyb
     PrefixMap.Builder<HybridDecryptWithId> builder = new PrefixMap.Builder<>();
     for (PrimitiveSet.Entry<HybridDecrypt> entry : primitives.getAllInKeysetOrder()) {
       builder.put(
-          entry.getOutputPrefix(),
+          getOutputPrefix(entry.getKey()),
           new HybridDecryptWithId(entry.getFullPrimitive(), entry.getKeyId()));
     }
     MonitoringClient.Logger decLogger;
