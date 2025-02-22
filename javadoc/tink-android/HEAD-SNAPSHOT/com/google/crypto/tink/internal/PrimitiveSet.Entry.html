@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -107,13 +107,18 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <dl>
+<dt>All Implemented Interfaces:</dt>
+<dd><a href="../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.Entry.html" title="interface in com.google.crypto.tink.internal">KeysetHandleInterface.Entry</a></dd>
+</dl>
+<dl>
 <dt>Enclosing class:</dt>
 <dd><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.html" title="class in com.google.crypto.tink.internal">PrimitiveSet</a>&lt;<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.html" title="type parameter in PrimitiveSet">P</a>&gt;</dd>
 </dl>
 <hr>
 <br>
 <pre>public static final class <span class="typeNameLabel">PrimitiveSet.Entry&lt;P&gt;</span>
-extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
+extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
+implements <a href="../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.Entry.html" title="interface in com.google.crypto.tink.internal">KeysetHandleInterface.Entry</a></pre>
 <div class="block">A single entry in the set. In addition to the actual primitive it holds also some extra
  information about the primitive.</div>
 </li>
@@ -141,12 +146,12 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Entry.html#getKey--">getKey</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Entry.html#getId--">getId</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Entry.html#getKeyId--">getKeyId</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Entry.html#getKey--">getKey</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
@@ -159,6 +164,10 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/KeyStatus.html" title="class in com.google.crypto.tink">KeyStatus</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Entry.html#getStatus--">getStatus</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Entry.html#isPrimary--">isPrimary</a></span>()</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -204,6 +213,10 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>getStatus</h4>
 <pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/KeyStatus.html" title="class in com.google.crypto.tink">KeyStatus</a>&nbsp;getStatus()</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.Entry.html#getStatus--">getStatus</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.Entry.html" title="interface in com.google.crypto.tink.internal">KeysetHandleInterface.Entry</a></code></dd>
+</dl>
 </li>
 </ul>
 <a name="getOutputPrefix--">
@@ -215,13 +228,17 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <pre>public final&nbsp;<a href="../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a>&nbsp;getOutputPrefix()</pre>
 </li>
 </ul>
-<a name="getKeyId--">
+<a name="getId--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getKeyId</h4>
-<pre>public&nbsp;int&nbsp;getKeyId()</pre>
+<h4>getId</h4>
+<pre>public&nbsp;int&nbsp;getId()</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.Entry.html#getId--">getId</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.Entry.html" title="interface in com.google.crypto.tink.internal">KeysetHandleInterface.Entry</a></code></dd>
+</dl>
 </li>
 </ul>
 <a name="getKey--">
@@ -231,16 +248,33 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <li class="blockList">
 <h4>getKey</h4>
 <pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;getKey()</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.Entry.html#getKey--">getKey</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.Entry.html" title="interface in com.google.crypto.tink.internal">KeysetHandleInterface.Entry</a></code></dd>
+</dl>
 </li>
 </ul>
 <a name="getParameters--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getParameters</h4>
 <pre><a href="https://docs.oracle.com/javase/8/docs/api/javax/annotation/Nullable.html?is-external=true" title="class or interface in javax.annotation">@Nullable</a>
 public&nbsp;<a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a>&nbsp;getParameters()</pre>
+</li>
+</ul>
+<a name="isPrimary--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>isPrimary</h4>
+<pre>public&nbsp;boolean&nbsp;isPrimary()</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.Entry.html#isPrimary--">isPrimary</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.Entry.html" title="interface in com.google.crypto.tink.internal">KeysetHandleInterface.Entry</a></code></dd>
+</dl>
 </li>
 </ul>
 </li>
