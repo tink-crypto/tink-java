@@ -131,7 +131,7 @@ public class DeterministicAeadWrapper
     for (PrimitiveSet.Entry<DeterministicAead> entry : primitives.getAllInKeysetOrder()) {
       builder.put(
           getOutputPrefix(entry.getKey()),
-          new DeterministicAeadWithId(entry.getFullPrimitive(), entry.getKeyId()));
+          new DeterministicAeadWithId(entry.getFullPrimitive(), entry.getId()));
     }
     MonitoringClient.Logger encLogger;
     MonitoringClient.Logger decLogger;
@@ -146,7 +146,7 @@ public class DeterministicAeadWrapper
     }
     return new WrappedDeterministicAead(
         new DeterministicAeadWithId(
-            primitives.getPrimary().getFullPrimitive(), primitives.getPrimary().getKeyId()),
+            primitives.getPrimary().getFullPrimitive(), primitives.getPrimary().getId()),
         builder.build(),
         encLogger,
         decLogger);

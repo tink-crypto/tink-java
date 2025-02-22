@@ -99,7 +99,7 @@ public class HybridEncryptWrapper implements PrimitiveWrapper<HybridEncrypt, Hyb
     return new WrappedHybridEncrypt(
         new HybridEncryptWithId(
             primary == null ? null : primary.getFullPrimitive(),
-            primary == null ? 0 : primitives.getPrimary().getKeyId()),
+            primary == null ? 0 : primitives.getPrimary().getId()),
         encLogger);
   }
 

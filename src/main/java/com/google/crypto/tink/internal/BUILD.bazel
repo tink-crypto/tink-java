@@ -848,6 +848,7 @@ android_library(
     name = "primitive_set-android",
     srcs = ["PrimitiveSet.java"],
     deps = [
+        ":keyset_handle_interface-android",
         ":monitoring_annotations-android",
         "//proto:tink_java_proto_lite",
         "//src/main/java/com/google/crypto/tink:crypto_format-android",
@@ -864,6 +865,7 @@ java_library(
     name = "primitive_set",
     srcs = ["PrimitiveSet.java"],
     deps = [
+        ":keyset_handle_interface",
         ":monitoring_annotations",
         "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:crypto_format",

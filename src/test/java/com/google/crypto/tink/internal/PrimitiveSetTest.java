@@ -131,7 +131,7 @@ public class PrimitiveSetTest {
     PrimitiveSet.Entry<Aead> entry = entries.get(0);
     assertThat(entry.getFullPrimitive()).isEqualTo(fullPrimitive);
     assertThat(entry.getStatus()).isEqualTo(KeyStatus.ENABLED);
-    assertThat(entry.getKeyId()).isEqualTo(42);
+    assertThat(entry.getId()).isEqualTo(42);
     assertThat(entry.getKey()).isEqualTo(key);
   }
 
@@ -171,14 +171,16 @@ public class PrimitiveSetTest {
         DummyMac1.class.getSimpleName(),
         new String(entry.getFullPrimitive().computeMac(null), UTF_8));
     assertEquals(KeyStatus.ENABLED, entry.getStatus());
-    assertEquals(1, entry.getKeyId());
+    assertEquals(1, entry.getId());
+    assertThat(entry.isPrimary()).isFalse();
     assertEquals(Bytes.copyFrom(CryptoFormat.getOutputPrefix(key1)), entry.getOutputPrefix());
     entry = entries.get(1);
     assertEquals(
         DummyMac2.class.getSimpleName(),
         new String(entry.getFullPrimitive().computeMac(null), UTF_8));
     assertEquals(KeyStatus.ENABLED, entry.getStatus());
-    assertEquals(2, entry.getKeyId());
+    assertEquals(2, entry.getId());
+    assertThat(entry.isPrimary()).isTrue();
     assertEquals(Bytes.copyFrom(CryptoFormat.getOutputPrefix(key2)), entry.getOutputPrefix());
 
     entry = entries.get(2);
@@ -186,7 +188,8 @@ public class PrimitiveSetTest {
         DummyMac1.class.getSimpleName(),
         new String(entry.getFullPrimitive().computeMac(null), UTF_8));
     assertEquals(KeyStatus.ENABLED, entry.getStatus());
-    assertEquals(3, entry.getKeyId());
+    assertEquals(3, entry.getId());
+    assertThat(entry.isPrimary()).isFalse();
     assertEquals(Bytes.copyFrom(CryptoFormat.getOutputPrefix(key3)), entry.getOutputPrefix());
 
     entry = pset.getPrimary();
@@ -194,7 +197,7 @@ public class PrimitiveSetTest {
         DummyMac2.class.getSimpleName(),
         new String(entry.getFullPrimitive().computeMac(null), UTF_8));
     assertEquals(KeyStatus.ENABLED, entry.getStatus());
-    assertEquals(2, entry.getKeyId());
+    assertEquals(2, entry.getId());
     assertEquals(Bytes.copyFrom(CryptoFormat.getOutputPrefix(key2)), entry.getOutputPrefix());
   }
 
@@ -308,19 +311,19 @@ public class PrimitiveSetTest {
 
     PrimitiveSet.Entry<Mac> entry = pset.getAllInKeysetOrder().get(0);
     assertEquals(KeyStatus.ENABLED, entry.getStatus());
-    assertEquals(1, entry.getKeyId());
+    assertEquals(1, entry.getId());
 
     entry = pset.getAllInKeysetOrder().get(1);
     assertEquals(KeyStatus.ENABLED, entry.getStatus());
-    assertEquals(2, entry.getKeyId());
+    assertEquals(2, entry.getId());
 
     entry = pset.getAllInKeysetOrder().get(2);
     assertEquals(KeyStatus.ENABLED, entry.getStatus());
-    assertEquals(3, entry.getKeyId());
+    assertEquals(3, entry.getId());
 
     entry = pset.getPrimary();
     assertEquals(KeyStatus.ENABLED, entry.getStatus());
-    assertEquals(2, entry.getKeyId());
+    assertEquals(2, entry.getId());
   }
 
   @Test
@@ -519,7 +522,7 @@ public class PrimitiveSetTest {
           DummyMac1.class.getSimpleName(),
           new String(entry.getFullPrimitive().computeMac(null), UTF_8));
       assertEquals(KeyStatus.ENABLED, entry.getStatus());
-      assertEquals(1, entry.getKeyId());
+      assertEquals(1, entry.getId());
     }
     {
       PrimitiveSet.Entry<Mac> entry = entries.get(1);
@@ -527,7 +530,7 @@ public class PrimitiveSetTest {
           DummyMac2.class.getSimpleName(),
           new String(entry.getFullPrimitive().computeMac(null), UTF_8));
       assertEquals(KeyStatus.ENABLED, entry.getStatus());
-      assertEquals(1, entry.getKeyId());
+      assertEquals(1, entry.getId());
     }
     {
       PrimitiveSet.Entry<Mac> entry = entries.get(2);
@@ -535,7 +538,7 @@ public class PrimitiveSetTest {
           DummyMac1.class.getSimpleName(),
           new String(entry.getFullPrimitive().computeMac(null), UTF_8));
       assertEquals(KeyStatus.ENABLED, entry.getStatus());
-      assertEquals(2, entry.getKeyId());
+      assertEquals(2, entry.getId());
     }
     {
       PrimitiveSet.Entry<Mac> entry = entries.get(3);
@@ -543,7 +546,7 @@ public class PrimitiveSetTest {
           DummyMac2.class.getSimpleName(),
           new String(entry.getFullPrimitive().computeMac(null), UTF_8));
       assertEquals(KeyStatus.ENABLED, entry.getStatus());
-      assertEquals(2, entry.getKeyId());
+      assertEquals(2, entry.getId());
     }
     {
       PrimitiveSet.Entry<Mac> entry = entries.get(4);
@@ -551,7 +554,7 @@ public class PrimitiveSetTest {
           DummyMac1.class.getSimpleName(),
           new String(entry.getFullPrimitive().computeMac(null), UTF_8));
       assertEquals(KeyStatus.ENABLED, entry.getStatus());
-      assertEquals(3, entry.getKeyId());
+      assertEquals(3, entry.getId());
     }
     {
       PrimitiveSet.Entry<Mac> entry = entries.get(5);
@@ -559,7 +562,7 @@ public class PrimitiveSetTest {
           DummyMac1.class.getSimpleName(),
           new String(entry.getFullPrimitive().computeMac(null), UTF_8));
       assertEquals(KeyStatus.ENABLED, entry.getStatus());
-      assertEquals(3, entry.getKeyId());
+      assertEquals(3, entry.getId());
     }
     {
       PrimitiveSet.Entry<Mac> entry = pset.getPrimary();
@@ -567,7 +570,7 @@ public class PrimitiveSetTest {
           DummyMac2.class.getSimpleName(),
           new String(entry.getFullPrimitive().computeMac(null), UTF_8));
       assertEquals(KeyStatus.ENABLED, entry.getStatus());
-      assertEquals(1, entry.getKeyId());
+      assertEquals(1, entry.getId());
     }
   }
 
@@ -663,8 +666,8 @@ public class PrimitiveSetTest {
 
     List<PrimitiveSet.Entry<Mac>> entries = pset.getAllInKeysetOrder();
     assertThat(entries).hasSize(3);
-    assertThat(entries.get(0).getKeyId()).isEqualTo(0xffffffff);
-    assertThat(entries.get(1).getKeyId()).isEqualTo(0xffffffdf);
-    assertThat(entries.get(2).getKeyId()).isEqualTo(0xffffffef);
+    assertThat(entries.get(0).getId()).isEqualTo(0xffffffff);
+    assertThat(entries.get(1).getId()).isEqualTo(0xffffffdf);
+    assertThat(entries.get(2).getId()).isEqualTo(0xffffffef);
   }
 }

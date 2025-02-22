@@ -49,7 +49,7 @@ class JwtPublicKeySignWrapper implements PrimitiveWrapper<JwtPublicKeySign, JwtP
 
     public WrappedJwtPublicKeySign(final PrimitiveSet<JwtPublicKeySign> primitives) {
       this.primary = primitives.getPrimary().getFullPrimitive();
-      this.primaryKeyId = primitives.getPrimary().getKeyId();
+      this.primaryKeyId = primitives.getPrimary().getId();
       if (!primitives.getAnnotations().isEmpty()) {
         MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
         MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);

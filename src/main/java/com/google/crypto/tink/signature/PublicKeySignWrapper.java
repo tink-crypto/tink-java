@@ -93,7 +93,7 @@ public class PublicKeySignWrapper implements PrimitiveWrapper<PublicKeySign, Pub
     }
     return new WrappedPublicKeySign(
         new PublicKeySignWithId(
-            primitives.getPrimary().getFullPrimitive(), primitives.getPrimary().getKeyId()),
+            primitives.getPrimary().getFullPrimitive(), primitives.getPrimary().getId()),
         logger);
   }
 

@@ -56,8 +56,8 @@ public final class KeysetDeriverWrapper implements PrimitiveWrapper<KeyDeriver, 
       }
       Key key = deriver.deriveKey(salt);
       KeysetHandle.Builder.Entry result = KeysetHandle.importKey(key);
-      result.withFixedId(entry.getKeyId());
-      if (entry.getKeyId() == primaryKeyId) {
+      result.withFixedId(entry.getId());
+      if (entry.getId() == primaryKeyId) {
         result.makePrimary();
       }
       return result;
@@ -67,7 +67,7 @@ public final class KeysetDeriverWrapper implements PrimitiveWrapper<KeyDeriver, 
     public KeysetHandle deriveKeyset(byte[] salt) throws GeneralSecurityException {
       KeysetHandle.Builder builder = KeysetHandle.newBuilder();
       for (PrimitiveSet.Entry<KeyDeriver> entry : primitiveSet.getAllInKeysetOrder()) {
-        builder.addEntry(deriveAndGetEntry(salt, entry, primitiveSet.getPrimary().getKeyId()));
+        builder.addEntry(deriveAndGetEntry(salt, entry, primitiveSet.getPrimary().getId()));
       }
       return builder.build();
     }

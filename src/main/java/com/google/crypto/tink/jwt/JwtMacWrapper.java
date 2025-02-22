@@ -68,7 +68,7 @@ class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
     public String computeMacAndEncode(RawJwt token) throws GeneralSecurityException {
       try {
         String result = primitives.getPrimary().getFullPrimitive().computeMacAndEncode(token);
-        computeLogger.log(primitives.getPrimary().getKeyId(), 1);
+        computeLogger.log(primitives.getPrimary().getId(), 1);
         return result;
       } catch (GeneralSecurityException e) {
         computeLogger.logFailure();
@@ -84,7 +84,7 @@ class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
         for (PrimitiveSet.Entry<JwtMac> entry : entries) {
           try {
             VerifiedJwt result = entry.getFullPrimitive().verifyMacAndDecode(compact, validator);
-            verifyLogger.log(entry.getKeyId(), 1);
+            verifyLogger.log(entry.getId(), 1);
             return result;
           } catch (GeneralSecurityException e) {
             if (e instanceof JwtInvalidException) {

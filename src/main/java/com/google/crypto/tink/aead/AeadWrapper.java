@@ -126,8 +126,7 @@ public class AeadWrapper implements PrimitiveWrapper<Aead, Aead> {
     PrefixMap.Builder<AeadWithId> builder = new PrefixMap.Builder<>();
     for (PrimitiveSet.Entry<Aead> entry : pset.getAllInKeysetOrder()) {
       builder.put(
-          getOutputPrefix(entry.getKey()),
-          new AeadWithId(entry.getFullPrimitive(), entry.getKeyId()));
+          getOutputPrefix(entry.getKey()), new AeadWithId(entry.getFullPrimitive(), entry.getId()));
     }
     MonitoringClient.Logger encLogger;
     MonitoringClient.Logger decLogger;
@@ -141,7 +140,7 @@ public class AeadWrapper implements PrimitiveWrapper<Aead, Aead> {
       decLogger = MonitoringUtil.DO_NOTHING_LOGGER;
     }
     return new WrappedAead(
-        new AeadWithId(pset.getPrimary().getFullPrimitive(), pset.getPrimary().getKeyId()),
+        new AeadWithId(pset.getPrimary().getFullPrimitive(), pset.getPrimary().getId()),
         builder.build(),
         encLogger,
         decLogger);

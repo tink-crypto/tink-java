@@ -38,12 +38,12 @@ public final class MonitoringUtil {
     builder.setAnnotations(primitiveSet.getAnnotations());
     for (List<PrimitiveSet.Entry<P>> entries : primitiveSet.getAll()) {
       for (PrimitiveSet.Entry<P> entry : entries) {
-        builder.addEntry(entry.getKey(), entry.getStatus(), entry.getKeyId());
+        builder.addEntry(entry.getKey(), entry.getStatus(), entry.getId());
       }
     }
     @Nullable PrimitiveSet.Entry<P> primary = primitiveSet.getPrimary();
     if (primary != null) {
-      builder.setPrimaryKeyId(primitiveSet.getPrimary().getKeyId());
+      builder.setPrimaryKeyId(primitiveSet.getPrimary().getId());
     }
     try {
       return builder.build();

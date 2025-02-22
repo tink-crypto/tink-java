@@ -54,7 +54,7 @@ public final class PrimitiveSet<P> {
    * A single entry in the set. In addition to the actual primitive it holds also some extra
    * information about the primitive.
    */
-  public static final class Entry<P> {
+  public static final class Entry<P> implements KeysetHandleInterface.Entry {
     // If set, this is a primitive of a key.
     private final P fullPrimitive;
     // Identifies the primitive within the set.
@@ -65,13 +65,21 @@ public final class PrimitiveSet<P> {
     // The id of the key.
     private final int keyId;
     private final Key key;
+    private final boolean isPrimary;
 
-    private Entry(P fullPrimitive, final Bytes outputPrefix, KeyStatus status, int keyId, Key key) {
+    private Entry(
+        P fullPrimitive,
+        final Bytes outputPrefix,
+        KeyStatus status,
+        int keyId,
+        Key key,
+        boolean isPrimary) {
       this.fullPrimitive = fullPrimitive;
       this.outputPrefix = outputPrefix;
       this.status = status;
       this.keyId = keyId;
       this.key = key;
+      this.isPrimary = isPrimary;
     }
 
     /**
@@ -86,6 +94,7 @@ public final class PrimitiveSet<P> {
       return this.fullPrimitive;
     }
 
+    @Override
     public KeyStatus getStatus() {
       return status;
     }
@@ -94,10 +103,12 @@ public final class PrimitiveSet<P> {
       return outputPrefix;
     }
 
-    public int getKeyId() {
+    @Override
+    public int getId() {
       return keyId;
     }
 
+    @Override
     public Key getKey() {
       return key;
     }
@@ -108,6 +119,11 @@ public final class PrimitiveSet<P> {
         return null;
       }
       return key.getParameters();
+    }
+
+    @Override
+    public boolean isPrimary() {
+      return isPrimary;
     }
   }
 
@@ -210,7 +226,8 @@ public final class PrimitiveSet<P> {
               // We just checked above that we allow only ENABLED.
               KeyStatus.ENABLED,
               protoKey.getKeyId(),
-              key);
+              key,
+              asPrimary);
       storeEntryInPrimitiveSet(entry, entries, entriesInKeysetOrder);
       if (asPrimary) {
         if (this.primary != null) {
@@ -266,7 +283,7 @@ public final class PrimitiveSet<P> {
     }
 
     private Builder(Class<P> primitiveClass) {
-      this.primitiveClass = primitiveClass;
+        this.primitiveClass = primitiveClass;
       this.annotations = MonitoringAnnotations.EMPTY;
     }
   }

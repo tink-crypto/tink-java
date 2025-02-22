@@ -114,10 +114,10 @@ public class PrfSetWrapper implements PrimitiveWrapper<Prf, PrfSet> {
       }
       // Likewise, the key IDs of the PrfSet passed
       mutablePrfMap.put(
-          entry.getKeyId(),
-          new WrappedPrfSet.PrfWithMonitoring(entry.getFullPrimitive(), entry.getKeyId(), logger));
+          entry.getId(),
+          new WrappedPrfSet.PrfWithMonitoring(entry.getFullPrimitive(), entry.getId(), logger));
     }
-    return new WrappedPrfSet(mutablePrfMap, set.getPrimary().getKeyId());
+    return new WrappedPrfSet(mutablePrfMap, set.getPrimary().getId());
   }
 
   @Override

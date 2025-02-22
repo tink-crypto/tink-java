@@ -175,7 +175,7 @@ public class LegacyFullPrfIntegrationTest {
       }
 
       private WrappedPrfSet(PrimitiveSet<Prf> primitiveSet) {
-        this.primaryKeyId = primitiveSet.getPrimary().getKeyId();
+        this.primaryKeyId = primitiveSet.getPrimary().getId();
         HashMap<Integer, Prf> keyIdToPrfMap = new HashMap<>();
         keyIdToPrfMap.put(this.primaryKeyId, primitiveSet.getPrimary().getFullPrimitive());
         this.keyIdToPrfMap = Collections.unmodifiableMap(keyIdToPrfMap);

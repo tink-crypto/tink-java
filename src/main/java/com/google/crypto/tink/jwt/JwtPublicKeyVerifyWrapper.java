@@ -61,7 +61,7 @@ class JwtPublicKeyVerifyWrapper
         for (PrimitiveSet.Entry<JwtPublicKeyVerify> entry : entries) {
           try {
             VerifiedJwt result = entry.getFullPrimitive().verifyAndDecode(compact, validator);
-            logger.log(entry.getKeyId(), 1);
+            logger.log(entry.getId(), 1);
             return result;
           } catch (GeneralSecurityException e) {
             if (e instanceof JwtInvalidException) {

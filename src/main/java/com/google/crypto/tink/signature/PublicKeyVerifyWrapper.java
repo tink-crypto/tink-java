@@ -111,7 +111,7 @@ public class PublicKeyVerifyWrapper implements PrimitiveWrapper<PublicKeyVerify,
     for (PrimitiveSet.Entry<PublicKeyVerify> entry : primitives.getAllInKeysetOrder()) {
       builder.put(
           getOutputPrefix(entry.getKey()),
-          new PublicKeyVerifyWithId(entry.getFullPrimitive(), entry.getKeyId()));
+          new PublicKeyVerifyWithId(entry.getFullPrimitive(), entry.getId()));
     }
     MonitoringClient.Logger logger;
     if (!primitives.getAnnotations().isEmpty()) {

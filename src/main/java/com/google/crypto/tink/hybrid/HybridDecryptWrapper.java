@@ -109,7 +109,7 @@ public class HybridDecryptWrapper implements PrimitiveWrapper<HybridDecrypt, Hyb
     for (PrimitiveSet.Entry<HybridDecrypt> entry : primitives.getAllInKeysetOrder()) {
       builder.put(
           getOutputPrefix(entry.getKey()),
-          new HybridDecryptWithId(entry.getFullPrimitive(), entry.getKeyId()));
+          new HybridDecryptWithId(entry.getFullPrimitive(), entry.getId()));
     }
     MonitoringClient.Logger decLogger;
     if (!primitives.getAnnotations().isEmpty()) {

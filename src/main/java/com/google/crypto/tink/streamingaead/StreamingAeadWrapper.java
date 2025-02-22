@@ -59,8 +59,7 @@ public class StreamingAeadWrapper implements PrimitiveWrapper<StreamingAead, Str
       // primitives, even those which have output_prefix_type != RAW.
       for (PrimitiveSet.Entry<StreamingAead> entry : entryList) {
         if (entry.getFullPrimitive() == null) {
-          throw new GeneralSecurityException(
-              "No full primitive set for key id " + entry.getKeyId());
+          throw new GeneralSecurityException("No full primitive set for key id " + entry.getId());
         }
         allStreamingAeads.add(entry.getFullPrimitive());
       }

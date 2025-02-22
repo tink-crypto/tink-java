@@ -125,8 +125,7 @@ public class MacWrapper implements PrimitiveWrapper<Mac, Mac> {
     PrefixMap.Builder<MacWithId> builder = new PrefixMap.Builder<>();
     for (PrimitiveSet.Entry<Mac> entry : primitives.getAllInKeysetOrder()) {
       builder.put(
-          getOutputPrefix(entry.getKey()),
-          new MacWithId(entry.getFullPrimitive(), entry.getKeyId()));
+          getOutputPrefix(entry.getKey()), new MacWithId(entry.getFullPrimitive(), entry.getId()));
     }
     MonitoringClient.Logger computeLogger;
     MonitoringClient.Logger verifyLogger;
@@ -140,8 +139,7 @@ public class MacWrapper implements PrimitiveWrapper<Mac, Mac> {
       verifyLogger = MonitoringUtil.DO_NOTHING_LOGGER;
     }
     return new WrappedMac(
-        new MacWithId(
-            primitives.getPrimary().getFullPrimitive(), primitives.getPrimary().getKeyId()),
+        new MacWithId(primitives.getPrimary().getFullPrimitive(), primitives.getPrimary().getId()),
         builder.build(),
         computeLogger,
         verifyLogger);
