@@ -3528,6 +3528,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/Ed25519PublicKey.html#create-com.google.crypto.tink.signature.Ed25519Parameters.Variant-com.google.crypto.tink.util.Bytes-java.lang.Integer-">create(Ed25519Parameters.Variant, Bytes, Integer)</a></span> - Static method in class com.google.crypto.tink.signature.<a href="com/google/crypto/tink/signature/Ed25519PublicKey.html" title="class in com.google.crypto.tink.signature">Ed25519PublicKey</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/EcdsaSignJce.html#create-com.google.crypto.tink.signature.EcdsaPrivateKey-">create(EcdsaPrivateKey)</a></span> - Static method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/EcdsaSignJce.html" title="class in com.google.crypto.tink.signature.internal">EcdsaSignJce</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/EcdsaVerifyJce.html#create-com.google.crypto.tink.signature.EcdsaPublicKey-">create(EcdsaPublicKey)</a></span> - Static method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/EcdsaVerifyJce.html" title="class in com.google.crypto.tink.signature.internal">EcdsaVerifyJce</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/Ed25519SignJce.html#create-com.google.crypto.tink.signature.Ed25519PrivateKey-">create(Ed25519PrivateKey)</a></span> - Static method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/Ed25519SignJce.html" title="class in com.google.crypto.tink.signature.internal">Ed25519SignJce</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/Ed25519VerifyJce.html#create-com.google.crypto.tink.signature.Ed25519PublicKey-">create(Ed25519PublicKey)</a></span> - Static method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/Ed25519VerifyJce.html" title="class in com.google.crypto.tink.signature.internal">Ed25519VerifyJce</a></dt>
@@ -4677,6 +4681,12 @@
 <dd>
 <div class="block">Protobuf enum <code>google.crypto.tink.EcdsaSignatureEncoding</code></div>
 </dd>
+<dt><a href="com/google/crypto/tink/signature/internal/EcdsaSignJce.html" title="class in com.google.crypto.tink.signature.internal"><span class="typeNameLink">EcdsaSignJce</span></a> - Class in <a href="com/google/crypto/tink/signature/internal/package-summary.html">com.google.crypto.tink.signature.internal</a></dt>
+<dd>
+<div class="block">ECDSA signing with JCE.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/EcdsaSignJce.html#EcdsaSignJce-java.security.interfaces.ECPrivateKey-com.google.crypto.tink.subtle.Enums.HashType-com.google.crypto.tink.subtle.EllipticCurves.EcdsaEncoding-">EcdsaSignJce(ECPrivateKey, Enums.HashType, EllipticCurves.EcdsaEncoding)</a></span> - Constructor for class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/EcdsaSignJce.html" title="class in com.google.crypto.tink.signature.internal">EcdsaSignJce</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/subtle/EcdsaSignJce.html" title="class in com.google.crypto.tink.subtle"><span class="typeNameLink">EcdsaSignJce</span></a> - Class in <a href="com/google/crypto/tink/subtle/package-summary.html">com.google.crypto.tink.subtle</a></dt>
 <dd>
 <div class="block">ECDSA signing with JCE.</div>
@@ -4687,6 +4697,12 @@
 <dd>
 <div class="block">This key manager generates new <code>EcdsaPrivateKey</code> keys and produces new instances of <code>EcdsaSignJce</code>.</div>
 </dd>
+<dt><a href="com/google/crypto/tink/signature/internal/EcdsaVerifyJce.html" title="class in com.google.crypto.tink.signature.internal"><span class="typeNameLink">EcdsaVerifyJce</span></a> - Class in <a href="com/google/crypto/tink/signature/internal/package-summary.html">com.google.crypto.tink.signature.internal</a></dt>
+<dd>
+<div class="block">ECDSA verifying with JCE.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/EcdsaVerifyJce.html#EcdsaVerifyJce-java.security.interfaces.ECPublicKey-com.google.crypto.tink.subtle.Enums.HashType-com.google.crypto.tink.subtle.EllipticCurves.EcdsaEncoding-">EcdsaVerifyJce(ECPublicKey, Enums.HashType, EllipticCurves.EcdsaEncoding)</a></span> - Constructor for class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/EcdsaVerifyJce.html" title="class in com.google.crypto.tink.signature.internal">EcdsaVerifyJce</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/subtle/EcdsaVerifyJce.html" title="class in com.google.crypto.tink.subtle"><span class="typeNameLink">EcdsaVerifyJce</span></a> - Class in <a href="com/google/crypto/tink/subtle/package-summary.html">com.google.crypto.tink.subtle</a></dt>
 <dd>
 <div class="block">ECDSA verifying with JCE.</div>
@@ -5568,6 +5584,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/InsecureNonceAesGcmJce.html#FIPS">FIPS</a></span> - Static variable in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/InsecureNonceAesGcmJce.html" title="class in com.google.crypto.tink.aead.internal">InsecureNonceAesGcmJce</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/EcdsaSignJce.html#FIPS">FIPS</a></span> - Static variable in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/EcdsaSignJce.html" title="class in com.google.crypto.tink.signature.internal">EcdsaSignJce</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/EcdsaVerifyJce.html#FIPS">FIPS</a></span> - Static variable in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/EcdsaVerifyJce.html" title="class in com.google.crypto.tink.signature.internal">EcdsaVerifyJce</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/Ed25519SignJce.html#FIPS">FIPS</a></span> - Static variable in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/Ed25519SignJce.html" title="class in com.google.crypto.tink.signature.internal">Ed25519SignJce</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/Ed25519VerifyJce.html#FIPS">FIPS</a></span> - Static variable in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/Ed25519VerifyJce.html" title="class in com.google.crypto.tink.signature.internal">Ed25519VerifyJce</a></dt>
@@ -5587,8 +5607,6 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/AesGcmJce.html#FIPS">FIPS</a></span> - Static variable in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/AesGcmJce.html" title="class in com.google.crypto.tink.subtle">AesGcmJce</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/AesSiv.html#FIPS">FIPS</a></span> - Static variable in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/AesSiv.html" title="class in com.google.crypto.tink.subtle">AesSiv</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/EcdsaSignJce.html#FIPS">FIPS</a></span> - Static variable in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/EcdsaSignJce.html" title="class in com.google.crypto.tink.subtle">EcdsaSignJce</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/EcdsaVerifyJce.html#FIPS">FIPS</a></span> - Static variable in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/EcdsaVerifyJce.html" title="class in com.google.crypto.tink.subtle">EcdsaVerifyJce</a></dt>
 <dd>&nbsp;</dd>
@@ -22991,6 +23009,8 @@
 <dd>
 <div class="block">Computes the signature for <code>data</code>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/EcdsaSignJce.html#sign-byte:A-">sign(byte[])</a></span> - Method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/EcdsaSignJce.html" title="class in com.google.crypto.tink.signature.internal">EcdsaSignJce</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/Ed25519SignJce.html#sign-byte:A-">sign(byte[])</a></span> - Method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/Ed25519SignJce.html" title="class in com.google.crypto.tink.signature.internal">Ed25519SignJce</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/LegacyFullSign.html#sign-byte:A-">sign(byte[])</a></span> - Method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/LegacyFullSign.html" title="class in com.google.crypto.tink.signature.internal">LegacyFullSign</a></dt>
@@ -24088,6 +24108,8 @@ the order they are declared.</div>
 <dd>
 <div class="block">Verifies whether <code>signature</code> is a valid signature for <code>data</code>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/EcdsaVerifyJce.html#verify-byte:A-byte:A-">verify(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/EcdsaVerifyJce.html" title="class in com.google.crypto.tink.signature.internal">EcdsaVerifyJce</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/Ed25519VerifyJce.html#verify-byte:A-byte:A-">verify(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/Ed25519VerifyJce.html" title="class in com.google.crypto.tink.signature.internal">Ed25519VerifyJce</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/LegacyFullVerify.html#verify-byte:A-byte:A-">verify(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/LegacyFullVerify.html" title="class in com.google.crypto.tink.signature.internal">LegacyFullVerify</a></dt>
