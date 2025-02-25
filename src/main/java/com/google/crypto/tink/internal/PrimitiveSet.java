@@ -152,6 +152,47 @@ public final class PrimitiveSet<P> {
     return annotations;
   }
 
+  /**
+   * Implementats KeysetHandle based on the information available in PrimitiveSet.
+   *
+   * <p>Note: in the future we will simply pass in the actual KeysetHandle when constructing the
+   * primitive set, and not build a new one here.
+   *
+   * <p>Note: this class is not static, and hence always has a pointer to the primitive set.
+   */
+  private class KeysetHandleImpl implements KeysetHandleInterface {
+    @Override
+    public KeysetHandleInterface.Entry getPrimary() {
+      return primary;
+    }
+
+    @Override
+    public int size() {
+      return entriesInKeysetOrder.size();
+    }
+
+    @Override
+    public KeysetHandleInterface.Entry getAt(int i) {
+      return entriesInKeysetOrder.get(i);
+    }
+  }
+
+  public KeysetHandleInterface getKeysetHandle() {
+    return new KeysetHandleImpl();
+  }
+
+  P getPrimitiveForEntry(KeysetHandleInterface.Entry entry) throws GeneralSecurityException {
+    if (!(entry instanceof Entry)) {
+      throw new GeneralSecurityException("getPrimitiveForEntry requires PrimitiveSet.Entry");
+    }
+    Entry<?> castEntry = (Entry<?>) entry;
+    Object result = castEntry.getFullPrimitive();
+    if (primitiveClass.isInstance(result)) {
+      return primitiveClass.cast(result);
+    }
+    throw new GeneralSecurityException("Wrong primitive in getPrimitiveForEntry");
+  }
+
   /** Returns all primitives. */
   public Collection<List<Entry<P>>> getAll() {
     return entries.values();

@@ -202,6 +202,56 @@ public class PrimitiveSetTest {
   }
 
   @Test
+  public void testGetKeysetHandle() throws Exception {
+    Key key1 =
+        Key.newBuilder()
+            .setKeyId(1)
+            .setStatus(KeyStatusType.ENABLED)
+            .setOutputPrefixType(OutputPrefixType.TINK)
+            .build();
+    Key key2 =
+        Key.newBuilder()
+            .setKeyId(2)
+            .setStatus(KeyStatusType.ENABLED)
+            .setOutputPrefixType(OutputPrefixType.RAW)
+            .build();
+    Key key3 =
+        Key.newBuilder()
+            .setKeyId(3)
+            .setStatus(KeyStatusType.ENABLED)
+            .setOutputPrefixType(OutputPrefixType.LEGACY)
+            .build();
+    PrimitiveSet<Mac> pset =
+        PrimitiveSet.newBuilder(Mac.class)
+            .addFullPrimitive(new DummyMac1(), getKeyFromProtoKey(key1), key1)
+            .addPrimaryFullPrimitive(new DummyMac2(), getKeyFromProtoKey(key2), key2)
+            .addFullPrimitive(new DummyMac1(), getKeyFromProtoKey(key3), key3)
+            .build();
+
+    assertThat(pset.getKeysetHandle().size()).isEqualTo(3);
+    assertThat(pset.getKeysetHandle().getPrimary().getId()).isEqualTo(2);
+    assertThat(pset.getKeysetHandle().getAt(0).getId()).isEqualTo(1);
+    assertThat(pset.getKeysetHandle().getAt(0).getStatus()).isEqualTo(KeyStatus.ENABLED);
+    assertThat(pset.getKeysetHandle().getAt(0).getKey().getIdRequirementOrNull()).isEqualTo(1);
+    assertThat(pset.getKeysetHandle().getAt(0).isPrimary()).isFalse();
+    assertThat(pset.getKeysetHandle().getAt(1).getId()).isEqualTo(2);
+    assertThat(pset.getKeysetHandle().getAt(1).getStatus()).isEqualTo(KeyStatus.ENABLED);
+    assertThat(pset.getKeysetHandle().getAt(1).getKey().getIdRequirementOrNull()).isEqualTo(null);
+    assertThat(pset.getKeysetHandle().getAt(1).isPrimary()).isTrue();
+    assertThat(pset.getKeysetHandle().getAt(2).getId()).isEqualTo(3);
+    assertThat(pset.getKeysetHandle().getAt(2).getStatus()).isEqualTo(KeyStatus.ENABLED);
+    assertThat(pset.getKeysetHandle().getAt(2).getKey().getIdRequirementOrNull()).isEqualTo(3);
+    assertThat(pset.getKeysetHandle().getAt(2).isPrimary()).isFalse();
+
+    assertThat(pset.getPrimitiveForEntry(pset.getKeysetHandle().getAt(0)).getClass())
+        .isEqualTo(DummyMac1.class);
+    assertThat(pset.getPrimitiveForEntry(pset.getKeysetHandle().getAt(1)).getClass())
+        .isEqualTo(DummyMac2.class);
+    assertThat(pset.getPrimitiveForEntry(pset.getKeysetHandle().getAt(2)).getClass())
+        .isEqualTo(DummyMac1.class);
+  }
+
+  @Test
   public void testAddFullPrimitive_works() throws Exception {
     Key key1 =
         Key.newBuilder()
