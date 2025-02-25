@@ -18,6 +18,7 @@ package com.google.crypto.tink.mac;
 
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Mac;
+import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringKeysetInfo;
@@ -123,9 +124,11 @@ public class MacWrapper implements PrimitiveWrapper<Mac, Mac> {
   @Override
   public Mac wrap(final PrimitiveSet<Mac> primitives) throws GeneralSecurityException {
     PrefixMap.Builder<MacWithId> builder = new PrefixMap.Builder<>();
-    for (PrimitiveSet.Entry<Mac> entry : primitives.getAllInKeysetOrder()) {
-      builder.put(
-          getOutputPrefix(entry.getKey()), new MacWithId(entry.getFullPrimitive(), entry.getId()));
+    KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
+    for (int i = 0; i < keysetHandle.size(); i++) {
+      KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
+      Mac mac = primitives.getPrimitiveForEntry(entry);
+      builder.put(getOutputPrefix(entry.getKey()), new MacWithId(mac, entry.getId()));
     }
     MonitoringClient.Logger computeLogger;
     MonitoringClient.Logger verifyLogger;
@@ -138,8 +141,9 @@ public class MacWrapper implements PrimitiveWrapper<Mac, Mac> {
       computeLogger = MonitoringUtil.DO_NOTHING_LOGGER;
       verifyLogger = MonitoringUtil.DO_NOTHING_LOGGER;
     }
+    Mac primaryMac = primitives.getPrimitiveForEntry(keysetHandle.getPrimary());
     return new WrappedMac(
-        new MacWithId(primitives.getPrimary().getFullPrimitive(), primitives.getPrimary().getId()),
+        new MacWithId(primaryMac, primitives.getPrimary().getId()),
         builder.build(),
         computeLogger,
         verifyLogger);

@@ -17,6 +17,7 @@
 package com.google.crypto.tink.mac;
 
 import com.google.crypto.tink.Key;
+import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrefixMap;
@@ -139,11 +140,16 @@ public class ChunkedMacWrapper implements PrimitiveWrapper<ChunkedMac, ChunkedMa
       throw new GeneralSecurityException("no primary in primitive set");
     }
     PrefixMap.Builder<ChunkedMac> allChunkedMacsBuilder = new PrefixMap.Builder<ChunkedMac>();
-    for (PrimitiveSet.Entry<ChunkedMac> entry : primitives.getAllInKeysetOrder()) {
-      allChunkedMacsBuilder.put(getOutputPrefix(entry.getKey()), entry.getFullPrimitive());
+    KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
+    for (int i = 0; i < keysetHandle.size(); i++) {
+      KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
+      ChunkedMac chunkedMac = primitives.getPrimitiveForEntry(entry);
+      allChunkedMacsBuilder.put(getOutputPrefix(entry.getKey()), chunkedMac);
     }
-    return new WrappedChunkedMac(
-        allChunkedMacsBuilder.build(), primitives.getPrimary().getFullPrimitive());
+    KeysetHandleInterface.Entry primaryEntry = keysetHandle.getPrimary();
+    ChunkedMac primaryChunkedMac = primitives.getPrimitiveForEntry(primaryEntry);
+
+    return new WrappedChunkedMac(allChunkedMacsBuilder.build(), primaryChunkedMac);
   }
 
   @Override

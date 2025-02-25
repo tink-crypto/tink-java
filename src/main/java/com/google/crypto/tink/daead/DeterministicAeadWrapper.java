@@ -19,6 +19,7 @@ package com.google.crypto.tink.daead;
 import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.daead.internal.LegacyFullDeterministicAead;
+import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringKeysetInfo;
@@ -128,10 +129,13 @@ public class DeterministicAeadWrapper
   public DeterministicAead wrap(final PrimitiveSet<DeterministicAead> primitives)
       throws GeneralSecurityException {
     PrefixMap.Builder<DeterministicAeadWithId> builder = new PrefixMap.Builder<>();
-    for (PrimitiveSet.Entry<DeterministicAead> entry : primitives.getAllInKeysetOrder()) {
+    KeysetHandleInterface handle = primitives.getKeysetHandle();
+    for (int i = 0; i < handle.size(); i++) {
+      KeysetHandleInterface.Entry entry = handle.getAt(i);
+      DeterministicAead deterministicAead = primitives.getPrimitiveForEntry(entry);
       builder.put(
           getOutputPrefix(entry.getKey()),
-          new DeterministicAeadWithId(entry.getFullPrimitive(), entry.getId()));
+          new DeterministicAeadWithId(deterministicAead, entry.getId()));
     }
     MonitoringClient.Logger encLogger;
     MonitoringClient.Logger decLogger;

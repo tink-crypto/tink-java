@@ -181,7 +181,7 @@ public final class PrimitiveSet<P> {
     return new KeysetHandleImpl();
   }
 
-  P getPrimitiveForEntry(KeysetHandleInterface.Entry entry) throws GeneralSecurityException {
+  public P getPrimitiveForEntry(KeysetHandleInterface.Entry entry) throws GeneralSecurityException {
     if (!(entry instanceof Entry)) {
       throw new GeneralSecurityException("getPrimitiveForEntry requires PrimitiveSet.Entry");
     }

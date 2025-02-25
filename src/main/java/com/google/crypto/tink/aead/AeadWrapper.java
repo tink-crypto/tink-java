@@ -19,6 +19,7 @@ package com.google.crypto.tink.aead;
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.aead.internal.LegacyFullAead;
+import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringKeysetInfo;
@@ -124,9 +125,12 @@ public class AeadWrapper implements PrimitiveWrapper<Aead, Aead> {
   @Override
   public Aead wrap(final PrimitiveSet<Aead> pset) throws GeneralSecurityException {
     PrefixMap.Builder<AeadWithId> builder = new PrefixMap.Builder<>();
-    for (PrimitiveSet.Entry<Aead> entry : pset.getAllInKeysetOrder()) {
+    KeysetHandleInterface keysetHandle = pset.getKeysetHandle();
+    for (int i = 0; i < keysetHandle.size(); i++) {
+      KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
       builder.put(
-          getOutputPrefix(entry.getKey()), new AeadWithId(entry.getFullPrimitive(), entry.getId()));
+          getOutputPrefix(entry.getKey()),
+          new AeadWithId(pset.getPrimitiveForEntry(entry), entry.getId()));
     }
     MonitoringClient.Logger encLogger;
     MonitoringClient.Logger decLogger;
@@ -140,7 +144,8 @@ public class AeadWrapper implements PrimitiveWrapper<Aead, Aead> {
       decLogger = MonitoringUtil.DO_NOTHING_LOGGER;
     }
     return new WrappedAead(
-        new AeadWithId(pset.getPrimary().getFullPrimitive(), pset.getPrimary().getId()),
+        new AeadWithId(
+            pset.getPrimitiveForEntry(keysetHandle.getPrimary()), pset.getPrimary().getId()),
         builder.build(),
         encLogger,
         decLogger);
