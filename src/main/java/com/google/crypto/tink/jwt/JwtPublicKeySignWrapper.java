@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.jwt;
 
+import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringKeysetInfo;
 import com.google.crypto.tink.internal.MonitoringUtil;
@@ -47,9 +48,11 @@ class JwtPublicKeySignWrapper implements PrimitiveWrapper<JwtPublicKeySign, JwtP
     @SuppressWarnings("Immutable")
     private final MonitoringClient.Logger logger;
 
-    public WrappedJwtPublicKeySign(final PrimitiveSet<JwtPublicKeySign> primitives) {
-      this.primary = primitives.getPrimary().getFullPrimitive();
-      this.primaryKeyId = primitives.getPrimary().getId();
+    public WrappedJwtPublicKeySign(final PrimitiveSet<JwtPublicKeySign> primitives)
+        throws GeneralSecurityException {
+      KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
+      this.primary = primitives.getPrimitiveForEntry(keysetHandle.getPrimary());
+      this.primaryKeyId = keysetHandle.getPrimary().getId();
       if (!primitives.getAnnotations().isEmpty()) {
         MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
         MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);

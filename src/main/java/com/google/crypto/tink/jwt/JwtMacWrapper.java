@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.jwt;
 
+import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringKeysetInfo;
 import com.google.crypto.tink.internal.MonitoringUtil;
@@ -25,7 +26,6 @@ import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
-import java.util.List;
 
 /**
  * JwtMacWrapper is the implementation of {@link PrimitiveWrapper} for the {@link JwtMac} primitive.
@@ -35,7 +35,7 @@ class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
   private static final JwtMacWrapper WRAPPER = new JwtMacWrapper();
 
   private static void validate(PrimitiveSet<JwtMac> primitiveSet) throws GeneralSecurityException {
-    if (primitiveSet.getPrimary() == null) {
+    if (primitiveSet.getKeysetHandle().getPrimary() == null) {
       throw new GeneralSecurityException("Primitive set has no primary.");
     }
   }
@@ -67,8 +67,10 @@ class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
     @Override
     public String computeMacAndEncode(RawJwt token) throws GeneralSecurityException {
       try {
-        String result = primitives.getPrimary().getFullPrimitive().computeMacAndEncode(token);
-        computeLogger.log(primitives.getPrimary().getId(), 1);
+        KeysetHandleInterface.Entry primary = primitives.getKeysetHandle().getPrimary();
+        JwtMac primaryJwtMac = primitives.getPrimitiveForEntry(primary);
+        String result = primaryJwtMac.computeMacAndEncode(token);
+        computeLogger.log(primary.getId(), 1);
         return result;
       } catch (GeneralSecurityException e) {
         computeLogger.logFailure();
@@ -80,19 +82,20 @@ class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
     public VerifiedJwt verifyMacAndDecode(String compact, JwtValidator validator)
         throws GeneralSecurityException {
       GeneralSecurityException interestingException = null;
-      for (List<PrimitiveSet.Entry<JwtMac>> entries : primitives.getAll()) {
-        for (PrimitiveSet.Entry<JwtMac> entry : entries) {
-          try {
-            VerifiedJwt result = entry.getFullPrimitive().verifyMacAndDecode(compact, validator);
-            verifyLogger.log(entry.getId(), 1);
-            return result;
-          } catch (GeneralSecurityException e) {
-            if (e instanceof JwtInvalidException) {
-              // Keep this exception so that we are able to throw a meaningful message in the end
-              interestingException = e;
-            }
-            // Ignored as we want to continue verification with other raw keys.
+      KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
+      for (int i = 0; i < keysetHandle.size(); i++) {
+        KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
+        JwtMac jwtMac = primitives.getPrimitiveForEntry(entry);
+        try {
+          VerifiedJwt result = jwtMac.verifyMacAndDecode(compact, validator);
+          verifyLogger.log(entry.getId(), 1);
+          return result;
+        } catch (GeneralSecurityException e) {
+          if (e instanceof JwtInvalidException) {
+            // Keep this exception so that we are able to throw a meaningful message in the end
+            interestingException = e;
           }
+          // Ignored as we want to continue verification with other raw keys.
         }
       }
       verifyLogger.logFailure();

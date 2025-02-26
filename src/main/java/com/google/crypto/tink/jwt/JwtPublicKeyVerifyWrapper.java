@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.jwt;
 
+import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringKeysetInfo;
 import com.google.crypto.tink.internal.MonitoringUtil;
@@ -25,7 +26,6 @@ import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
-import java.util.List;
 
 /** The implementation of {@code PrimitiveWrapper<JwtPublicKeyVerify>}. */
 class JwtPublicKeyVerifyWrapper
@@ -57,19 +57,20 @@ class JwtPublicKeyVerifyWrapper
     public VerifiedJwt verifyAndDecode(String compact, JwtValidator validator)
         throws GeneralSecurityException {
       GeneralSecurityException interestingException = null;
-      for (List<PrimitiveSet.Entry<JwtPublicKeyVerify>> entries : primitives.getAll()) {
-        for (PrimitiveSet.Entry<JwtPublicKeyVerify> entry : entries) {
-          try {
-            VerifiedJwt result = entry.getFullPrimitive().verifyAndDecode(compact, validator);
-            logger.log(entry.getId(), 1);
-            return result;
-          } catch (GeneralSecurityException e) {
-            if (e instanceof JwtInvalidException) {
-              // Keep this exception so that we are able to throw a meaningful message in the end
-              interestingException = e;
-            }
-            // Ignored as we want to continue verification with other raw keys.
+      KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
+      for (int i = 0; i < keysetHandle.size(); i++) {
+        KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
+        JwtPublicKeyVerify primitive = primitives.getPrimitiveForEntry(entry);
+        try {
+          VerifiedJwt result = primitive.verifyAndDecode(compact, validator);
+          logger.log(entry.getId(), 1);
+          return result;
+        } catch (GeneralSecurityException e) {
+          if (e instanceof JwtInvalidException) {
+            // Keep this exception so that we are able to throw a meaningful message in the end
+            interestingException = e;
           }
+          // Ignored as we want to continue verification with other raw keys.
         }
       }
       logger.logFailure();
