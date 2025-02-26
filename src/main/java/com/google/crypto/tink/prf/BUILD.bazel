@@ -77,6 +77,7 @@ java_library(
     visibility = ["//visibility:public"],
     deps = [
         ":prf_set",
+        "//src/main/java/com/google/crypto/tink/internal:keyset_handle_interface",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_client",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_keyset_info",
@@ -303,6 +304,7 @@ android_library(
     srcs = ["PrfSetWrapper.java"],
     deps = [
         ":prf_set-android",
+        "//src/main/java/com/google/crypto/tink/internal:keyset_handle_interface-android",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key-android",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_client-android",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_keyset_info-android",

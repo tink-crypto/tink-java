@@ -15,6 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 package com.google.crypto.tink.prf;
 
+import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringKeysetInfo;
@@ -107,17 +108,22 @@ public class PrfSetWrapper implements PrimitiveWrapper<Prf, PrfSet> {
     }
 
     Map<Integer, Prf> mutablePrfMap = new HashMap<>();
-    for (PrimitiveSet.Entry<Prf> entry : set.getAllInKeysetOrder()) {
-      if (entry.getOutputPrefix().size() != 0) {
-        throw new GeneralSecurityException(
-            "Cannot build PrfSet with keys with non-empty output prefix");
+    KeysetHandleInterface keysetHandle = set.getKeysetHandle();
+    for (int i = 0; i < keysetHandle.size(); i++) {
+      KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
+      if (entry.getKey() instanceof LegacyProtoKey) {
+        LegacyProtoKey legacyProtoKey = (LegacyProtoKey) entry.getKey();
+        if (legacyProtoKey.getOutputPrefix().size() != 0) {
+          throw new GeneralSecurityException(
+              "Cannot build PrfSet with keys with non-empty output prefix");
+        }
       }
+      Prf prf = set.getPrimitiveForEntry(entry);
       // Likewise, the key IDs of the PrfSet passed
       mutablePrfMap.put(
-          entry.getId(),
-          new WrappedPrfSet.PrfWithMonitoring(entry.getFullPrimitive(), entry.getId(), logger));
+          entry.getId(), new WrappedPrfSet.PrfWithMonitoring(prf, entry.getId(), logger));
     }
-    return new WrappedPrfSet(mutablePrfMap, set.getPrimary().getId());
+    return new WrappedPrfSet(mutablePrfMap, keysetHandle.getPrimary().getId());
   }
 
   @Override
