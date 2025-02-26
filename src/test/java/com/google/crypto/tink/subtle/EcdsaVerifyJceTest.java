@@ -28,6 +28,7 @@ import com.google.crypto.tink.testing.TestUtil.BytesMutation;
 import com.google.crypto.tink.testing.WycheproofTestUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -37,6 +38,7 @@ import java.security.Signature;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
+import java.security.spec.ECPoint;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import org.conscrypt.Conscrypt;
@@ -319,5 +321,56 @@ public class EcdsaVerifyJceTest {
         () ->
             new EcdsaVerifyJce(
                 (ECPublicKey) keyPair.getPublic(), HashType.SHA256, EcdsaEncoding.DER));
+  }
+
+  // A ECPublicKey implementation that returns a point that is not on the curve.
+  private static class InvalidEcPublicKey implements ECPublicKey {
+    private final ECPublicKey validPublicKey;
+
+    public InvalidEcPublicKey(ECPublicKey validPublicKey) {
+      this.validPublicKey = validPublicKey;
+    }
+
+    @Override
+    public String getAlgorithm() {
+      return validPublicKey.getAlgorithm();
+    }
+
+    @Override
+    public byte[] getEncoded() {
+      return validPublicKey.getEncoded();
+    }
+
+    @Override
+    public String getFormat() {
+      return validPublicKey.getFormat();
+    }
+
+    @Override
+    public ECPoint getW() {
+      ECPoint w = validPublicKey.getW();
+      BigInteger invalidY = w.getAffineY().add(BigInteger.ONE);
+      return new ECPoint(w.getAffineX(), invalidY);
+    }
+
+    @Override
+    public ECParameterSpec getParams() {
+      return validPublicKey.getParams();
+    }
+  }
+
+  @Test
+  public void testInvalidPublicKey() throws Exception {
+    Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
+
+    KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
+    keyGen.initialize(EllipticCurves.getNistP256Params());
+    KeyPair keyPair = keyGen.generateKeyPair();
+    ECPublicKey validPublicKey = (ECPublicKey) keyPair.getPublic();
+    ECPublicKey invalidPublicKey = new InvalidEcPublicKey(validPublicKey);
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> new EcdsaVerifyJce(invalidPublicKey, HashType.SHA256, EcdsaEncoding.DER));
   }
 }

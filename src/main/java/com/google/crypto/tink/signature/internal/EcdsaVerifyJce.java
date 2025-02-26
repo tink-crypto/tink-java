@@ -133,7 +133,6 @@ public final class EcdsaVerifyJce implements PublicKeyVerify {
           "Can not use ECDSA in FIPS-mode, as BoringCrypto is not available.");
     }
 
-    EllipticCurvesUtil.checkPointOnCurve(publicKey.getW(), publicKey.getParams().getCurve());
     this.signatureAlgorithm = SubtleUtil.toEcdsaAlgo(hash);
     this.publicKey = publicKey;
     this.encoding = encoding;
@@ -145,6 +144,7 @@ public final class EcdsaVerifyJce implements PublicKeyVerify {
   public EcdsaVerifyJce(final ECPublicKey publicKey, HashType hash, EcdsaEncoding encoding)
       throws GeneralSecurityException {
     this(publicKey, hash, encoding, EMPTY, EMPTY, ConscryptUtil.providerOrNull());
+    EllipticCurvesUtil.checkPointOnCurve(publicKey.getW(), publicKey.getParams().getCurve());
   }
 
   private Signature getInstance(String signatureAlgorithm) throws GeneralSecurityException {
