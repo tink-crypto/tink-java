@@ -17,6 +17,7 @@
 package com.google.crypto.tink.streamingaead;
 
 import com.google.crypto.tink.StreamingAead;
+import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
@@ -54,21 +55,22 @@ public class StreamingAeadWrapper implements PrimitiveWrapper<StreamingAead, Str
   public StreamingAead wrap(final PrimitiveSet<StreamingAead> primitives)
       throws GeneralSecurityException {
     List<StreamingAead> allStreamingAeads = new ArrayList<>();
-    for (List<PrimitiveSet.Entry<StreamingAead>> entryList : primitives.getAll()) {
-      // For legacy reasons (Tink always encrypted with non-RAW keys) we use all
-      // primitives, even those which have output_prefix_type != RAW.
-      for (PrimitiveSet.Entry<StreamingAead> entry : entryList) {
-        if (entry.getFullPrimitive() == null) {
-          throw new GeneralSecurityException("No full primitive set for key id " + entry.getId());
-        }
-        allStreamingAeads.add(entry.getFullPrimitive());
-      }
+    KeysetHandleInterface handle = primitives.getKeysetHandle();
+    for (int i = 0; i < handle.size(); i++) {
+      KeysetHandleInterface.Entry entry = handle.getAt(i);
+      StreamingAead streamingAead = primitives.getPrimitiveForEntry(entry);
+      allStreamingAeads.add(streamingAead);
     }
-    PrimitiveSet.Entry<StreamingAead> primary = primitives.getPrimary();
-    if (primary == null || primary.getFullPrimitive() == null) {
+    KeysetHandleInterface.Entry primaryEntry = handle.getPrimary();
+    if (primaryEntry == null) {
       throw new GeneralSecurityException("No primary set");
     }
-    return new StreamingAeadHelper(allStreamingAeads, primary.getFullPrimitive());
+    StreamingAead primaryStreamingAead = primitives.getPrimitiveForEntry(primaryEntry);
+    if (primaryStreamingAead == null) {
+      throw new GeneralSecurityException("No primary set");
+    }
+
+    return new StreamingAeadHelper(allStreamingAeads, primaryStreamingAead);
   }
 
   @Override
