@@ -17,6 +17,7 @@
 package com.google.crypto.tink.signature;
 
 import com.google.crypto.tink.PublicKeySign;
+import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringKeysetInfo;
@@ -82,7 +83,9 @@ public class PublicKeySignWrapper implements PrimitiveWrapper<PublicKeySign, Pub
   PublicKeySignWrapper() {}
 
   @Override
-  public PublicKeySign wrap(final PrimitiveSet<PublicKeySign> primitives) {
+  public PublicKeySign wrap(final PrimitiveSet<PublicKeySign> primitives)
+      throws GeneralSecurityException {
+    KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
     MonitoringClient.Logger logger;
     if (!primitives.getAnnotations().isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
@@ -93,7 +96,8 @@ public class PublicKeySignWrapper implements PrimitiveWrapper<PublicKeySign, Pub
     }
     return new WrappedPublicKeySign(
         new PublicKeySignWithId(
-            primitives.getPrimary().getFullPrimitive(), primitives.getPrimary().getId()),
+            primitives.getPrimitiveForEntry(keysetHandle.getPrimary()),
+            keysetHandle.getPrimary().getId()),
         logger);
   }
 

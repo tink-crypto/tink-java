@@ -87,6 +87,7 @@ java_library(
     srcs = ["PublicKeySignWrapper.java"],
     deps = [
         "//src/main/java/com/google/crypto/tink:public_key_sign",
+        "//src/main/java/com/google/crypto/tink/internal:keyset_handle_interface",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_client",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_keyset_info",
@@ -190,6 +191,7 @@ java_library(
         ":signature_public_key",
         "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink:public_key_verify",
+        "//src/main/java/com/google/crypto/tink/internal:keyset_handle_interface",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_client",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_keyset_info",
@@ -584,6 +586,7 @@ android_library(
     srcs = ["PublicKeySignWrapper.java"],
     deps = [
         "//src/main/java/com/google/crypto/tink:public_key_sign-android",
+        "//src/main/java/com/google/crypto/tink/internal:keyset_handle_interface-android",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key-android",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_client-android",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_keyset_info-android",
@@ -687,6 +690,7 @@ android_library(
         ":signature_public_key-android",
         "//src/main/java/com/google/crypto/tink:key-android",
         "//src/main/java/com/google/crypto/tink:public_key_verify-android",
+        "//src/main/java/com/google/crypto/tink/internal:keyset_handle_interface-android",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key-android",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_client-android",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_keyset_info-android",
