@@ -17,6 +17,7 @@ package com.google.crypto.tink.hybrid;
 
 import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.hybrid.internal.LegacyFullHybridEncrypt;
+import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringKeysetInfo;
@@ -83,7 +84,9 @@ public class HybridEncryptWrapper implements PrimitiveWrapper<HybridEncrypt, Hyb
   HybridEncryptWrapper() {}
 
   @Override
-  public HybridEncrypt wrap(final PrimitiveSet<HybridEncrypt> primitives) {
+  public HybridEncrypt wrap(final PrimitiveSet<HybridEncrypt> primitives)
+      throws GeneralSecurityException {
+    KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
     MonitoringClient.Logger encLogger;
     if (!primitives.getAnnotations().isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
@@ -92,14 +95,14 @@ public class HybridEncryptWrapper implements PrimitiveWrapper<HybridEncrypt, Hyb
     } else {
       encLogger = MonitoringUtil.DO_NOTHING_LOGGER;
     }
-    PrimitiveSet.Entry<HybridEncrypt> primary = primitives.getPrimary();
+    KeysetHandleInterface.Entry primary = keysetHandle.getPrimary();
 
     // It would actually be better to just throw a nullpointer exception (or maybe a
     // GeneralSecurityException) here, but I don't want to change behavior today.
     return new WrappedHybridEncrypt(
         new HybridEncryptWithId(
-            primary == null ? null : primary.getFullPrimitive(),
-            primary == null ? 0 : primitives.getPrimary().getId()),
+            primary == null ? null : primitives.getPrimitiveForEntry(primary),
+            primary == null ? 0 : primary.getId()),
         encLogger);
   }
 

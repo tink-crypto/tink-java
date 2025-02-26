@@ -18,6 +18,7 @@ package com.google.crypto.tink.hybrid;
 import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.hybrid.internal.LegacyFullHybridDecrypt;
+import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringKeysetInfo;
@@ -106,10 +107,12 @@ public class HybridDecryptWrapper implements PrimitiveWrapper<HybridDecrypt, Hyb
   public HybridDecrypt wrap(final PrimitiveSet<HybridDecrypt> primitives)
       throws GeneralSecurityException {
     PrefixMap.Builder<HybridDecryptWithId> builder = new PrefixMap.Builder<>();
-    for (PrimitiveSet.Entry<HybridDecrypt> entry : primitives.getAllInKeysetOrder()) {
+    KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
+    for (int i = 0; i < keysetHandle.size(); i++) {
+      KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
+      HybridDecrypt hybridDecrypt = primitives.getPrimitiveForEntry(entry);
       builder.put(
-          getOutputPrefix(entry.getKey()),
-          new HybridDecryptWithId(entry.getFullPrimitive(), entry.getId()));
+          getOutputPrefix(entry.getKey()), new HybridDecryptWithId(hybridDecrypt, entry.getId()));
     }
     MonitoringClient.Logger decLogger;
     if (!primitives.getAnnotations().isEmpty()) {
