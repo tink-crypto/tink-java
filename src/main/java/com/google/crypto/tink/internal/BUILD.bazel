@@ -428,6 +428,7 @@ java_library(
     name = "monitoring_util",
     srcs = ["MonitoringUtil.java"],
     deps = [
+        ":keyset_handle_interface",
         ":monitoring_client",
         ":monitoring_keyset_info",
         ":primitive_set",
@@ -439,6 +440,7 @@ android_library(
     name = "monitoring_util-android",
     srcs = ["MonitoringUtil.java"],
     deps = [
+        ":keyset_handle_interface-android",
         ":monitoring_client-android",
         ":monitoring_keyset_info-android",
         ":primitive_set-android",

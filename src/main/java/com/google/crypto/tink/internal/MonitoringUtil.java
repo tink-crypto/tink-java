@@ -17,7 +17,6 @@
 package com.google.crypto.tink.internal;
 
 import java.security.GeneralSecurityException;
-import java.util.List;
 import javax.annotation.Nullable;
 
 /** Some util functions needed to add monitoring to the Primitives. */
@@ -36,10 +35,10 @@ public final class MonitoringUtil {
   public static <P> MonitoringKeysetInfo getMonitoringKeysetInfo(PrimitiveSet<P> primitiveSet) {
     MonitoringKeysetInfo.Builder builder = MonitoringKeysetInfo.newBuilder();
     builder.setAnnotations(primitiveSet.getAnnotations());
-    for (List<PrimitiveSet.Entry<P>> entries : primitiveSet.getAll()) {
-      for (PrimitiveSet.Entry<P> entry : entries) {
-        builder.addEntry(entry.getKey(), entry.getStatus(), entry.getId());
-      }
+    KeysetHandleInterface handle = primitiveSet.getKeysetHandle();
+    for (int i = 0; i < handle.size(); i++) {
+      KeysetHandleInterface.Entry entry = handle.getAt(i);
+      builder.addEntry(entry.getKey(), entry.getStatus(), entry.getId());
     }
     @Nullable PrimitiveSet.Entry<P> primary = primitiveSet.getPrimary();
     if (primary != null) {
