@@ -25,9 +25,23 @@ import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.keyderivation.KeysetDeriver;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.List;
 
-/** */
+/** Knows how to implement a KeysetDeriver object from KeyDeriver objects. */
 public final class KeysetDeriverWrapper implements PrimitiveWrapper<KeyDeriver, KeysetDeriver> {
+
+  private static class DeriverWithId {
+    DeriverWithId(KeyDeriver deriver, int id, boolean isPrimary) {
+      this.deriver = deriver;
+      this.id = id;
+      this.isPrimary = isPrimary;
+    }
+
+    final KeyDeriver deriver;
+    final int id;
+    final boolean isPrimary;
+  }
 
   private static final KeysetDeriverWrapper WRAPPER = new KeysetDeriverWrapper();
 
@@ -40,23 +54,22 @@ public final class KeysetDeriverWrapper implements PrimitiveWrapper<KeyDeriver, 
   @Immutable
   private static class WrappedKeysetDeriver implements KeysetDeriver {
     @SuppressWarnings("Immutable")
-    private final PrimitiveSet<KeyDeriver> primitiveSet;
+    private final List<DeriverWithId> derivers;
 
-    private WrappedKeysetDeriver(PrimitiveSet<KeyDeriver> primitiveSet) {
-      this.primitiveSet = primitiveSet;
+    private WrappedKeysetDeriver(List<DeriverWithId> derivers) {
+      this.derivers = derivers;
     }
 
     private static KeysetHandle.Builder.Entry deriveAndGetEntry(
-        byte[] salt, KeysetHandleInterface.Entry entry, KeyDeriver deriver, int primaryKeyId)
-        throws GeneralSecurityException {
-      if (deriver == null) {
+        byte[] salt, DeriverWithId deriverWithId) throws GeneralSecurityException {
+      if (deriverWithId.deriver == null) {
         throw new GeneralSecurityException(
             "Primitive set has non-full primitives -- this is probably a bug");
       }
-      Key key = deriver.deriveKey(salt);
+      Key key = deriverWithId.deriver.deriveKey(salt);
       KeysetHandle.Builder.Entry result = KeysetHandle.importKey(key);
-      result.withFixedId(entry.getId());
-      if (entry.getId() == primaryKeyId) {
+      result.withFixedId(deriverWithId.id);
+      if (deriverWithId.isPrimary) {
         result.makePrimary();
       }
       return result;
@@ -65,13 +78,8 @@ public final class KeysetDeriverWrapper implements PrimitiveWrapper<KeyDeriver, 
     @Override
     public KeysetHandle deriveKeyset(byte[] salt) throws GeneralSecurityException {
       KeysetHandle.Builder builder = KeysetHandle.newBuilder();
-      KeysetHandleInterface keysetHandleFromPrimitiveSet = primitiveSet.getKeysetHandle();
-      for (int i = 0; i < keysetHandleFromPrimitiveSet.size(); i++) {
-        KeysetHandleInterface.Entry entry = keysetHandleFromPrimitiveSet.getAt(i);
-        KeyDeriver deriver = primitiveSet.getPrimitiveForEntry(entry);
-        builder.addEntry(
-            deriveAndGetEntry(
-                salt, entry, deriver, keysetHandleFromPrimitiveSet.getPrimary().getId()));
+      for (DeriverWithId deriverWithId : derivers) {
+        builder.addEntry(deriveAndGetEntry(salt, deriverWithId));
       }
       return builder.build();
     }
@@ -83,7 +91,16 @@ public final class KeysetDeriverWrapper implements PrimitiveWrapper<KeyDeriver, 
   public KeysetDeriver wrap(final PrimitiveSet<KeyDeriver> primitiveSet)
       throws GeneralSecurityException {
     validate(primitiveSet.getKeysetHandle());
-    return new WrappedKeysetDeriver(primitiveSet);
+    KeysetHandleInterface keysetHandle = primitiveSet.getKeysetHandle();
+    List<DeriverWithId> derivers = new ArrayList<>(keysetHandle.size());
+    for (int i = 0; i < keysetHandle.size(); i++) {
+      KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
+      derivers.add(
+          new DeriverWithId(
+              primitiveSet.getPrimitiveForEntry(entry), entry.getId(), entry.isPrimary()));
+    }
+
+    return new WrappedKeysetDeriver(derivers);
   }
 
   @Override
