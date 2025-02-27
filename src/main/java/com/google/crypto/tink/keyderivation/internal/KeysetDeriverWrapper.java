@@ -18,6 +18,7 @@ package com.google.crypto.tink.keyderivation.internal;
 
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
@@ -30,9 +31,8 @@ public final class KeysetDeriverWrapper implements PrimitiveWrapper<KeyDeriver, 
 
   private static final KeysetDeriverWrapper WRAPPER = new KeysetDeriverWrapper();
 
-  private static void validate(PrimitiveSet<KeyDeriver> primitiveSet)
-      throws GeneralSecurityException {
-    if (primitiveSet.getPrimary() == null) {
+  private static void validate(KeysetHandleInterface keysetHandle) throws GeneralSecurityException {
+    if (keysetHandle.getPrimary() == null) {
       throw new GeneralSecurityException("Primitive set has no primary.");
     }
   }
@@ -47,9 +47,8 @@ public final class KeysetDeriverWrapper implements PrimitiveWrapper<KeyDeriver, 
     }
 
     private static KeysetHandle.Builder.Entry deriveAndGetEntry(
-        byte[] salt, PrimitiveSet.Entry<KeyDeriver> entry, int primaryKeyId)
+        byte[] salt, KeysetHandleInterface.Entry entry, KeyDeriver deriver, int primaryKeyId)
         throws GeneralSecurityException {
-      KeyDeriver deriver = entry.getFullPrimitive();
       if (deriver == null) {
         throw new GeneralSecurityException(
             "Primitive set has non-full primitives -- this is probably a bug");
@@ -66,8 +65,13 @@ public final class KeysetDeriverWrapper implements PrimitiveWrapper<KeyDeriver, 
     @Override
     public KeysetHandle deriveKeyset(byte[] salt) throws GeneralSecurityException {
       KeysetHandle.Builder builder = KeysetHandle.newBuilder();
-      for (PrimitiveSet.Entry<KeyDeriver> entry : primitiveSet.getAllInKeysetOrder()) {
-        builder.addEntry(deriveAndGetEntry(salt, entry, primitiveSet.getPrimary().getId()));
+      KeysetHandleInterface keysetHandleFromPrimitiveSet = primitiveSet.getKeysetHandle();
+      for (int i = 0; i < keysetHandleFromPrimitiveSet.size(); i++) {
+        KeysetHandleInterface.Entry entry = keysetHandleFromPrimitiveSet.getAt(i);
+        KeyDeriver deriver = primitiveSet.getPrimitiveForEntry(entry);
+        builder.addEntry(
+            deriveAndGetEntry(
+                salt, entry, deriver, keysetHandleFromPrimitiveSet.getPrimary().getId()));
       }
       return builder.build();
     }
@@ -78,7 +82,7 @@ public final class KeysetDeriverWrapper implements PrimitiveWrapper<KeyDeriver, 
   @Override
   public KeysetDeriver wrap(final PrimitiveSet<KeyDeriver> primitiveSet)
       throws GeneralSecurityException {
-    validate(primitiveSet);
+    validate(primitiveSet.getKeysetHandle());
     return new WrappedKeysetDeriver(primitiveSet);
   }
 

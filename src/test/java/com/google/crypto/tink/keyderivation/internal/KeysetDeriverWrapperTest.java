@@ -18,6 +18,8 @@ package com.google.crypto.tink.keyderivation.internal;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.crypto.tink.internal.TinkBugException.exceptionIsBug;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
@@ -26,6 +28,7 @@ import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.RegistryConfiguration;
+import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.aead.AeadConfig;
 import com.google.crypto.tink.aead.AesCtrHmacAeadKey;
 import com.google.crypto.tink.aead.AesGcmKey;
@@ -53,6 +56,17 @@ import com.google.crypto.tink.prf.HmacPrfKey;
 import com.google.crypto.tink.prf.PredefinedPrfParameters;
 import com.google.crypto.tink.prf.PrfConfig;
 import com.google.crypto.tink.prf.PrfKey;
+import com.google.crypto.tink.proto.HashType;
+import com.google.crypto.tink.proto.HkdfPrfParams;
+import com.google.crypto.tink.proto.KeyData;
+import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
+import com.google.crypto.tink.proto.KeyStatusType;
+import com.google.crypto.tink.proto.KeyTemplate;
+import com.google.crypto.tink.proto.Keyset;
+import com.google.crypto.tink.proto.OutputPrefixType;
+import com.google.crypto.tink.proto.PrfBasedDeriverKey;
+import com.google.crypto.tink.proto.PrfBasedDeriverParams;
+import com.google.crypto.tink.proto.XChaCha20Poly1305KeyFormat;
 import com.google.crypto.tink.signature.Ed25519Parameters;
 import com.google.crypto.tink.signature.Ed25519PrivateKey;
 import com.google.crypto.tink.signature.Ed25519PublicKey;
@@ -64,6 +78,7 @@ import com.google.crypto.tink.streamingaead.StreamingAeadConfig;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
+import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import java.security.Security;
 import javax.annotation.Nullable;
@@ -513,5 +528,62 @@ public final class KeysetDeriverWrapperTest {
     assertThat(derivedKeyset.getAt(0).getKey().getParameters()).isEqualTo(t.derivedKeyParameters);
     assertThat(derivedKeyset.getAt(0).getKey().getIdRequirementOrNull()).isEqualTo(idRequirement);
     assertTrue(derivedKeyset.getAt(0).getKey().equalsKey(t.expectedKey));
+  }
+
+  @Test
+  public void keysetWithoutPrimary_throws() throws Exception {
+    // We check that the wrapper validates that the keyset has a primary. For this, we first need
+    // to create a keyset without, which can only be done using the public API by parsing a
+    // serialized key without primary.
+    KeyData prfAsKeyData =
+        KeyData.newBuilder()
+            .setTypeUrl("type.googleapis.com/google.crypto.tink.HkdfPrfKey")
+            .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
+            .setValue(
+                com.google.crypto.tink.proto.HkdfPrfKey.newBuilder()
+                    .setVersion(0)
+                    .setKeyValue(
+                        ByteString.copyFrom("0123456789abcdef0123456789abcdef".getBytes(UTF_8)))
+                    .setParams(HkdfPrfParams.newBuilder().setHash(HashType.SHA256).build())
+                    .build()
+                    .toByteString())
+            .build();
+
+    PrfBasedDeriverKey protoKey =
+        PrfBasedDeriverKey.newBuilder()
+            .setPrfKey(prfAsKeyData)
+            .setParams(
+                PrfBasedDeriverParams.newBuilder()
+                    .setDerivedKeyTemplate(
+                        KeyTemplate.newBuilder()
+                            .setTypeUrl(
+                                "type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key")
+                            .setValue(
+                                XChaCha20Poly1305KeyFormat.getDefaultInstance().toByteString())
+                            .setOutputPrefixType(OutputPrefixType.RAW)))
+            .build();
+    KeyData deriverKeyAsKeyData =
+        KeyData.newBuilder()
+            .setTypeUrl("type.googleapis.com/google.crypto.tink.PrfBasedDeriverKey")
+            .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
+            .setValue(protoKey.toByteString())
+            .build();
+    Keyset keysetProto =
+        Keyset.newBuilder()
+            .addKey(
+                Keyset.Key.newBuilder()
+                    .setKeyId(10)
+                    .setKeyData(deriverKeyAsKeyData)
+                    .setStatus(KeyStatusType.ENABLED)
+                    .setOutputPrefixType(OutputPrefixType.RAW)
+                    .build())
+            .setPrimaryKeyId(1)
+            .build();
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            TinkProtoKeysetFormat.parseKeyset(
+                    keysetProto.toByteArray(), InsecureSecretKeyAccess.get())
+                .getPrimitive(RegistryConfiguration.get(), KeysetDeriver.class));
   }
 }
