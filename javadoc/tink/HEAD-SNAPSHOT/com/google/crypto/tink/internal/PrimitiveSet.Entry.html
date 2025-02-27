@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -140,32 +140,22 @@ implements <a href="../../../../../com/google/crypto/tink/internal/KeysetHandleI
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Entry.html" title="type parameter in PrimitiveSet.Entry">P</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Entry.html#getFullPrimitive--">getFullPrimitive</a></span>()</code>
-<div class="block">Returns the full primitive for this entry.</div>
-</td>
-</tr>
-<tr id="i1" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Entry.html#getId--">getId</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Entry.html#getKey--">getKey</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
-<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Entry.html#getOutputPrefix--">getOutputPrefix</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i4" class="altColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Entry.html#getParameters--">getParameters</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/KeyStatus.html" title="class in com.google.crypto.tink">KeyStatus</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Entry.html#getStatus--">getStatus</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Entry.html#isPrimary--">isPrimary</a></span>()</code>&nbsp;</td>
 </tr>
@@ -191,21 +181,6 @@ implements <a href="../../../../../com/google/crypto/tink/internal/KeysetHandleI
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="getFullPrimitive--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getFullPrimitive</h4>
-<pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Entry.html" title="type parameter in PrimitiveSet.Entry">P</a>&nbsp;getFullPrimitive()</pre>
-<div class="block">Returns the full primitive for this entry.
-
- <p>This is used in cases when the new Tink Key interface is used and the primitive is
- self-sufficient by itself, meaning that all the necessary information to process the
- primitive is contained in the primitive (most likely through the new Key interface), as
- opposed to the <code>primitive</code> field (see <code>#getPrimitive</code> for details).</div>
-</li>
-</ul>
 <a name="getStatus--">
 <!--   -->
 </a>
@@ -217,15 +192,6 @@ implements <a href="../../../../../com/google/crypto/tink/internal/KeysetHandleI
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.Entry.html#getStatus--">getStatus</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.Entry.html" title="interface in com.google.crypto.tink.internal">KeysetHandleInterface.Entry</a></code></dd>
 </dl>
-</li>
-</ul>
-<a name="getOutputPrefix--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getOutputPrefix</h4>
-<pre>public final&nbsp;<a href="../../../../../com/google/crypto/tink/util/Bytes.html" title="class in com.google.crypto.tink.util">Bytes</a>&nbsp;getOutputPrefix()</pre>
 </li>
 </ul>
 <a name="getId--">
