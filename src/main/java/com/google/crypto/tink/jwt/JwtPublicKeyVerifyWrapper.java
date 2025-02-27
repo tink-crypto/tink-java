@@ -26,10 +26,21 @@ import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.List;
 
 /** The implementation of {@code PrimitiveWrapper<JwtPublicKeyVerify>}. */
 class JwtPublicKeyVerifyWrapper
     implements PrimitiveWrapper<JwtPublicKeyVerify, JwtPublicKeyVerify> {
+  private static class JwtPublicKeyVerifyWithId {
+    JwtPublicKeyVerifyWithId(JwtPublicKeyVerify verify, int id) {
+      this.verify = verify;
+      this.id = id;
+    }
+
+    final JwtPublicKeyVerify verify;
+    final int id;
+  }
 
   private static final JwtPublicKeyVerifyWrapper WRAPPER = new JwtPublicKeyVerifyWrapper();
 
@@ -37,33 +48,25 @@ class JwtPublicKeyVerifyWrapper
   private static class WrappedJwtPublicKeyVerify implements JwtPublicKeyVerify {
 
     @SuppressWarnings("Immutable")
-    private final PrimitiveSet<JwtPublicKeyVerify> primitives;
-
-    @SuppressWarnings("Immutable")
     private final MonitoringClient.Logger logger;
 
-    public WrappedJwtPublicKeyVerify(PrimitiveSet<JwtPublicKeyVerify> primitives) {
-      this.primitives = primitives;
-      if (!primitives.getAnnotations().isEmpty()) {
-        MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-        MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
-        this.logger = client.createLogger(keysetInfo, "jwtverify", "verify");
-      } else {
-        this.logger = MonitoringUtil.DO_NOTHING_LOGGER;
-      }
+    @SuppressWarnings("Immutable")
+    private final List<JwtPublicKeyVerifyWithId> allVerifiers;
+
+    public WrappedJwtPublicKeyVerify(
+        MonitoringClient.Logger logger, List<JwtPublicKeyVerifyWithId> allVerifiers) {
+      this.logger = logger;
+      this.allVerifiers = allVerifiers;
     }
 
     @Override
     public VerifiedJwt verifyAndDecode(String compact, JwtValidator validator)
         throws GeneralSecurityException {
       GeneralSecurityException interestingException = null;
-      KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
-      for (int i = 0; i < keysetHandle.size(); i++) {
-        KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
-        JwtPublicKeyVerify primitive = primitives.getPrimitiveForEntry(entry);
+      for (JwtPublicKeyVerifyWithId verifier : allVerifiers) {
         try {
-          VerifiedJwt result = primitive.verifyAndDecode(compact, validator);
-          logger.log(entry.getId(), 1);
+          VerifiedJwt result = verifier.verify.verifyAndDecode(compact, validator);
+          logger.log(verifier.id, 1);
           return result;
         } catch (GeneralSecurityException e) {
           if (e instanceof JwtInvalidException) {
@@ -84,7 +87,23 @@ class JwtPublicKeyVerifyWrapper
   @Override
   public JwtPublicKeyVerify wrap(final PrimitiveSet<JwtPublicKeyVerify> primitives)
       throws GeneralSecurityException {
-    return new WrappedJwtPublicKeyVerify(primitives);
+    KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
+    List<JwtPublicKeyVerifyWithId> allVerifiers = new ArrayList<>(keysetHandle.size());
+    for (int i = 0; i < keysetHandle.size(); i++) {
+      KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
+      allVerifiers.add(
+          new JwtPublicKeyVerifyWithId(primitives.getPrimitiveForEntry(entry), entry.getId()));
+    }
+    MonitoringClient.Logger logger;
+    if (!primitives.getAnnotations().isEmpty()) {
+      MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
+      MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
+      logger = client.createLogger(keysetInfo, "jwtverify", "verify");
+    } else {
+      logger = MonitoringUtil.DO_NOTHING_LOGGER;
+    }
+
+    return new WrappedJwtPublicKeyVerify(logger, allVerifiers);
   }
 
   @Override
