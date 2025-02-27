@@ -20,6 +20,10 @@ syntax = "proto3";
 
 package google.crypto.tink;
 
+option java_package = "com.google.crypto.tink.proto";
+option java_multiple_files = true;
+option go_package = "github.com/tink-crypto/tink-go/v2/proto/ml_dsa_proto";
+
 enum MlDsaInstance {
   ML_DSA_UNKNOWN_INSTANCE = 0;
   ML_DSA_65 = 1;
