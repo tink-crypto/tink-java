@@ -136,17 +136,17 @@ public class ChunkedMacWrapper implements PrimitiveWrapper<ChunkedMac, ChunkedMa
     if (primitives == null) {
       throw new GeneralSecurityException("primitive set must be non-null");
     }
-    if (primitives.getPrimary() == null) {
+    KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
+    KeysetHandleInterface.Entry primaryEntry = keysetHandle.getPrimary();
+    if (primaryEntry == null) {
       throw new GeneralSecurityException("no primary in primitive set");
     }
     PrefixMap.Builder<ChunkedMac> allChunkedMacsBuilder = new PrefixMap.Builder<ChunkedMac>();
-    KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
     for (int i = 0; i < keysetHandle.size(); i++) {
       KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
       ChunkedMac chunkedMac = primitives.getPrimitiveForEntry(entry);
       allChunkedMacsBuilder.put(getOutputPrefix(entry.getKey()), chunkedMac);
     }
-    KeysetHandleInterface.Entry primaryEntry = keysetHandle.getPrimary();
     ChunkedMac primaryChunkedMac = primitives.getPrimitiveForEntry(primaryEntry);
 
     return new WrappedChunkedMac(allChunkedMacsBuilder.build(), primaryChunkedMac);

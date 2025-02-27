@@ -143,7 +143,7 @@ public class MacWrapper implements PrimitiveWrapper<Mac, Mac> {
     }
     Mac primaryMac = primitives.getPrimitiveForEntry(keysetHandle.getPrimary());
     return new WrappedMac(
-        new MacWithId(primaryMac, primitives.getPrimary().getId()),
+        new MacWithId(primaryMac, keysetHandle.getPrimary().getId()),
         builder.build(),
         computeLogger,
         verifyLogger);

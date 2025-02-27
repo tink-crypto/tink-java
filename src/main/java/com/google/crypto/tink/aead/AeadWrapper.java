@@ -145,7 +145,8 @@ public class AeadWrapper implements PrimitiveWrapper<Aead, Aead> {
     }
     return new WrappedAead(
         new AeadWithId(
-            pset.getPrimitiveForEntry(keysetHandle.getPrimary()), pset.getPrimary().getId()),
+            pset.getPrimitiveForEntry(keysetHandle.getPrimary()),
+            keysetHandle.getPrimary().getId()),
         builder.build(),
         encLogger,
         decLogger);

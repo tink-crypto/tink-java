@@ -150,7 +150,7 @@ public class DeterministicAeadWrapper
     }
     return new WrappedDeterministicAead(
         new DeterministicAeadWithId(
-            primitives.getPrimary().getFullPrimitive(), primitives.getPrimary().getId()),
+            primitives.getPrimitiveForEntry(handle.getPrimary()), handle.getPrimary().getId()),
         builder.build(),
         encLogger,
         decLogger);
