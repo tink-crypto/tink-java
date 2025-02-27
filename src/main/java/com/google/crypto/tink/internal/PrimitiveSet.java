@@ -90,7 +90,7 @@ public final class PrimitiveSet<P> {
      * primitive is contained in the primitive (most likely through the new Key interface), as
      * opposed to the {@code primitive} field (see {@link #getPrimitive} for details).
      */
-    public P getFullPrimitive() {
+    P getFullPrimitive() {
       return this.fullPrimitive;
     }
 
@@ -99,7 +99,7 @@ public final class PrimitiveSet<P> {
       return status;
     }
 
-    public final Bytes getOutputPrefix() {
+    final Bytes getOutputPrefix() {
       return outputPrefix;
     }
 
@@ -144,7 +144,7 @@ public final class PrimitiveSet<P> {
 
   /** Returns the entry with the primary primitive. */
   @Nullable
-  public Entry<P> getPrimary() {
+  Entry<P> getPrimary() {
     return primary;
   }
 
@@ -194,12 +194,12 @@ public final class PrimitiveSet<P> {
   }
 
   /** Returns all primitives. */
-  public Collection<List<Entry<P>>> getAll() {
+  Collection<List<Entry<P>>> getAll() {
     return entries.values();
   }
 
   /** Returns all primitives in the original keyset key order. */
-  public List<Entry<P>> getAllInKeysetOrder() {
+  List<Entry<P>> getAllInKeysetOrder() {
     return Collections.unmodifiableList(entriesInKeysetOrder);
   }
 
