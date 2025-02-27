@@ -253,7 +253,7 @@ public class PublicKeySignWrapperTest {
     assertThat(signEntry.getPrimitive()).isEqualTo("public_key_sign");
     assertThat(signEntry.getApi()).isEqualTo("sign");
     assertThat(signEntry.getNumBytesAsInput()).isEqualTo(data.length);
-    assertThat(signEntry.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(signEntry.getAnnotations()).isEqualTo(annotations);
   }
 
   @Theory
@@ -291,7 +291,7 @@ public class PublicKeySignWrapperTest {
     assertThat(signEntry.getPrimitive()).isEqualTo("public_key_sign");
     assertThat(signEntry.getApi()).isEqualTo("sign");
     assertThat(signEntry.getNumBytesAsInput()).isEqualTo(data.length);
-    assertThat(signEntry.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(signEntry.getAnnotations()).isEqualTo(annotations);
   }
 
   @Theory
@@ -337,13 +337,13 @@ public class PublicKeySignWrapperTest {
     assertThat(sign1Entry.getPrimitive()).isEqualTo("public_key_sign");
     assertThat(sign1Entry.getApi()).isEqualTo("sign");
     assertThat(sign1Entry.getNumBytesAsInput()).isEqualTo(data.length);
-    assertThat(sign1Entry.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(sign1Entry.getAnnotations()).isEqualTo(annotations);
     FakeMonitoringClient.LogEntry sign2Entry = logEntries.get(1);
     assertThat(sign2Entry.getKeyId()).isEqualTo(456);
     assertThat(sign2Entry.getPrimitive()).isEqualTo("public_key_sign");
     assertThat(sign2Entry.getApi()).isEqualTo("sign");
     assertThat(sign2Entry.getNumBytesAsInput()).isEqualTo(data.length);
-    assertThat(sign2Entry.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(sign2Entry.getAnnotations()).isEqualTo(annotations);
   }
 
   private static class AlwaysFailingPublicKeySign implements PublicKeySign {
@@ -397,7 +397,7 @@ public class PublicKeySignWrapperTest {
     assertThat(signFailure.getPrimitive()).isEqualTo("public_key_sign");
     assertThat(signFailure.getApi()).isEqualTo("sign");
     assertThat(signFailure.getKeysetInfo().getPrimaryKeyId()).isEqualTo(123);
-    assertThat(signFailure.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(signFailure.getAnnotations()).isEqualTo(annotations);
   }
 
   @Test

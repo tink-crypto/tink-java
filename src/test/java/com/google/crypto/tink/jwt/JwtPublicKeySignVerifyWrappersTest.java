@@ -443,14 +443,14 @@ public class JwtPublicKeySignVerifyWrappersTest {
     assertThat(signEntry.getPrimitive()).isEqualTo("jwtsign");
     assertThat(signEntry.getApi()).isEqualTo("sign");
     assertThat(signEntry.getNumBytesAsInput()).isEqualTo(1);
-    assertThat(signEntry.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(signEntry.getAnnotations()).isEqualTo(annotations);
 
     FakeMonitoringClient.LogEntry verifyEntry = logEntries.get(1);
     assertThat(verifyEntry.getKeyId()).isEqualTo(42);
     assertThat(verifyEntry.getPrimitive()).isEqualTo("jwtverify");
     assertThat(verifyEntry.getApi()).isEqualTo("verify");
     assertThat(verifyEntry.getNumBytesAsInput()).isEqualTo(1);
-    assertThat(verifyEntry.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(verifyEntry.getAnnotations()).isEqualTo(annotations);
 
     List<FakeMonitoringClient.LogFailureEntry> failures =
         fakeMonitoringClient.getLogFailureEntries();
@@ -459,6 +459,6 @@ public class JwtPublicKeySignVerifyWrappersTest {
     assertThat(verifyFailure.getPrimitive()).isEqualTo("jwtverify");
     assertThat(verifyFailure.getApi()).isEqualTo("verify");
     assertThat(verifyFailure.getKeysetInfo().getPrimaryKeyId()).isEqualTo(42);
-    assertThat(verifyFailure.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(verifyFailure.getAnnotations()).isEqualTo(annotations);
   }
 }

@@ -294,7 +294,7 @@ public class HybridDecryptWrapperTest {
     assertThat(signEntry.getPrimitive()).isEqualTo("hybrid_decrypt");
     assertThat(signEntry.getApi()).isEqualTo("decrypt");
     assertThat(signEntry.getNumBytesAsInput()).isEqualTo(ciphertext.length);
-    assertThat(signEntry.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(signEntry.getAnnotations()).isEqualTo(annotations);
   }
 
   @Test
@@ -349,14 +349,14 @@ public class HybridDecryptWrapperTest {
     assertThat(signEntry0.getPrimitive()).isEqualTo("hybrid_decrypt");
     assertThat(signEntry0.getApi()).isEqualTo("decrypt");
     assertThat(signEntry0.getNumBytesAsInput()).isEqualTo(ciphertext0.length);
-    assertThat(signEntry0.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(signEntry0.getAnnotations()).isEqualTo(annotations);
 
     FakeMonitoringClient.LogEntry signEntry1 = logEntries.get(1);
     assertThat(signEntry1.getKeyId()).isEqualTo(200);
     assertThat(signEntry1.getPrimitive()).isEqualTo("hybrid_decrypt");
     assertThat(signEntry1.getApi()).isEqualTo("decrypt");
     assertThat(signEntry1.getNumBytesAsInput()).isEqualTo(ciphertext1.length);
-    assertThat(signEntry1.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(signEntry1.getAnnotations()).isEqualTo(annotations);
   }
 
   @Test

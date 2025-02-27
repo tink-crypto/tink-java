@@ -239,17 +239,17 @@ public class PrfSetWrapperTest {
     assertThat(entry0.getKeyId()).isEqualTo(5);
     assertThat(entry0.getPrimitive()).isEqualTo("prf");
     assertThat(entry0.getApi()).isEqualTo("compute");
-    assertThat(entry0.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(entry0.getAnnotations()).isEqualTo(annotations);
     FakeMonitoringClient.LogEntry entry1 = logEntries.get(1);
     assertThat(entry1.getKeyId()).isEqualTo(5);
     assertThat(entry1.getPrimitive()).isEqualTo("prf");
     assertThat(entry1.getApi()).isEqualTo("compute");
-    assertThat(entry1.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(entry1.getAnnotations()).isEqualTo(annotations);
     FakeMonitoringClient.LogEntry entry2 = logEntries.get(2);
     assertThat(entry2.getKeyId()).isEqualTo(6);
     assertThat(entry2.getPrimitive()).isEqualTo("prf");
     assertThat(entry2.getApi()).isEqualTo("compute");
-    assertThat(entry2.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(entry2.getAnnotations()).isEqualTo(annotations);
   }
 
   @Immutable
@@ -313,12 +313,12 @@ public class PrfSetWrapperTest {
     assertThat(failure0.getPrimitive()).isEqualTo("prf");
     assertThat(failure0.getApi()).isEqualTo("compute");
     assertThat(failure0.getKeysetInfo().getPrimaryKeyId()).isEqualTo(5);
-    assertThat(failure0.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(failure0.getAnnotations()).isEqualTo(annotations);
     FakeMonitoringClient.LogFailureEntry failure1 = failures.get(1);
     assertThat(failure1.getPrimitive()).isEqualTo("prf");
     assertThat(failure1.getApi()).isEqualTo("compute");
     assertThat(failure1.getKeysetInfo().getPrimaryKeyId()).isEqualTo(5);
-    assertThat(failure1.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(failure1.getAnnotations()).isEqualTo(annotations);
   }
 
   @Test

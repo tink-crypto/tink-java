@@ -242,7 +242,7 @@ public class PublicKeyVerifyWrapperTest {
     assertThat(verifyEntry.getPrimitive()).isEqualTo("public_key_verify");
     assertThat(verifyEntry.getApi()).isEqualTo("verify");
     assertThat(verifyEntry.getNumBytesAsInput()).isEqualTo(data.length);
-    assertThat(verifyEntry.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(verifyEntry.getAnnotations()).isEqualTo(annotations);
 
     List<FakeMonitoringClient.LogFailureEntry> failures =
         fakeMonitoringClient.getLogFailureEntries();
@@ -288,7 +288,7 @@ public class PublicKeyVerifyWrapperTest {
     FakeMonitoringClient.LogFailureEntry verifyFailure = failures.get(0);
     assertThat(verifyFailure.getPrimitive()).isEqualTo("public_key_verify");
     assertThat(verifyFailure.getApi()).isEqualTo("verify");
-    assertThat(verifyFailure.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(verifyFailure.getAnnotations()).isEqualTo(annotations);
   }
 
   @Test
@@ -331,7 +331,7 @@ public class PublicKeyVerifyWrapperTest {
     FakeMonitoringClient.LogFailureEntry verifyFailure = failures.get(0);
     assertThat(verifyFailure.getPrimitive()).isEqualTo("public_key_verify");
     assertThat(verifyFailure.getApi()).isEqualTo("verify");
-    assertThat(verifyFailure.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(verifyFailure.getAnnotations()).isEqualTo(annotations);
   }
 
   @Test
@@ -400,21 +400,21 @@ public class PublicKeyVerifyWrapperTest {
     assertThat(verify0Entry.getPrimitive()).isEqualTo("public_key_verify");
     assertThat(verify0Entry.getApi()).isEqualTo("verify");
     assertThat(verify0Entry.getNumBytesAsInput()).isEqualTo(2);
-    assertThat(verify0Entry.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(verify0Entry.getAnnotations()).isEqualTo(annotations);
 
     FakeMonitoringClient.LogEntry verify1Entry = logEntries.get(1);
     assertThat(verify1Entry.getKeyId()).isEqualTo(30);
     assertThat(verify1Entry.getPrimitive()).isEqualTo("public_key_verify");
     assertThat(verify1Entry.getApi()).isEqualTo("verify");
     assertThat(verify1Entry.getNumBytesAsInput()).isEqualTo(3);
-    assertThat(verify1Entry.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(verify1Entry.getAnnotations()).isEqualTo(annotations);
 
     FakeMonitoringClient.LogEntry verify2Entry = logEntries.get(2);
     assertThat(verify2Entry.getKeyId()).isEqualTo(40);
     assertThat(verify2Entry.getPrimitive()).isEqualTo("public_key_verify");
     assertThat(verify2Entry.getApi()).isEqualTo("verify");
     assertThat(verify2Entry.getNumBytesAsInput()).isEqualTo(4);
-    assertThat(verify2Entry.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(verify2Entry.getAnnotations()).isEqualTo(annotations);
 
     List<FakeMonitoringClient.LogFailureEntry> failures =
         fakeMonitoringClient.getLogFailureEntries();
@@ -464,7 +464,7 @@ public class PublicKeyVerifyWrapperTest {
     assertThat(verifyEntry.getApi()).isEqualTo("verify");
     // For keys of type legacy we report 1 more.
     assertThat(verifyEntry.getNumBytesAsInput()).isEqualTo(data.length);
-    assertThat(verifyEntry.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(verifyEntry.getAnnotations()).isEqualTo(annotations);
 
     List<FakeMonitoringClient.LogFailureEntry> failures =
         fakeMonitoringClient.getLogFailureEntries();

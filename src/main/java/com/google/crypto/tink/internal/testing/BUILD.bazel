@@ -11,6 +11,7 @@ java_library(
     name = "fake_monitoring_client",
     srcs = ["FakeMonitoringClient.java"],
     deps = [
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_annotations",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_client",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_keyset_info",
     ],
@@ -20,6 +21,7 @@ android_library(
     name = "fake_monitoring_client-android",
     srcs = ["FakeMonitoringClient.java"],
     deps = [
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_annotations-android",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_client-android",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_keyset_info-android",
     ],

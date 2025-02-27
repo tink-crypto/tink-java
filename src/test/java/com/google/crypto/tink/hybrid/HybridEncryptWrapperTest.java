@@ -237,7 +237,7 @@ public class HybridEncryptWrapperTest {
     assertThat(encryptEntry.getPrimitive()).isEqualTo("hybrid_encrypt");
     assertThat(encryptEntry.getApi()).isEqualTo("encrypt");
     assertThat(encryptEntry.getNumBytesAsInput()).isEqualTo(message.length);
-    assertThat(encryptEntry.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(encryptEntry.getAnnotations()).isEqualTo(annotations);
   }
 
   @Test
@@ -293,13 +293,13 @@ public class HybridEncryptWrapperTest {
     assertThat(encryptEntry1.getPrimitive()).isEqualTo("hybrid_encrypt");
     assertThat(encryptEntry1.getApi()).isEqualTo("encrypt");
     assertThat(encryptEntry1.getNumBytesAsInput()).isEqualTo(message.length);
-    assertThat(encryptEntry1.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(encryptEntry1.getAnnotations()).isEqualTo(annotations);
     FakeMonitoringClient.LogEntry encryptEntry2 = logEntries.get(0);
     assertThat(encryptEntry2.getKeyId()).isEqualTo(123);
     assertThat(encryptEntry2.getPrimitive()).isEqualTo("hybrid_encrypt");
     assertThat(encryptEntry2.getApi()).isEqualTo("encrypt");
     assertThat(encryptEntry2.getNumBytesAsInput()).isEqualTo(message.length);
-    assertThat(encryptEntry2.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(encryptEntry2.getAnnotations()).isEqualTo(annotations);
   }
 
   private static class AlwaysFailingHybridEncrypt implements HybridEncrypt {
@@ -357,7 +357,7 @@ public class HybridEncryptWrapperTest {
     assertThat(signFailure.getPrimitive()).isEqualTo("hybrid_encrypt");
     assertThat(signFailure.getApi()).isEqualTo("encrypt");
     assertThat(signFailure.getKeysetInfo().getPrimaryKeyId()).isEqualTo(123);
-    assertThat(signFailure.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(signFailure.getAnnotations()).isEqualTo(annotations);
   }
 
   @Test

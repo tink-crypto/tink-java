@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc.
+// Copyright 2017 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -298,14 +298,14 @@ public class DeterministicAeadWrapperTest {
     assertThat(encEntry.getPrimitive()).isEqualTo("daead");
     assertThat(encEntry.getApi()).isEqualTo("encrypt");
     assertThat(encEntry.getNumBytesAsInput()).isEqualTo(plaintext.length);
-    assertThat(encEntry.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(encEntry.getAnnotations()).isEqualTo(annotations);
 
     FakeMonitoringClient.LogEntry decEntry = logEntries.get(1);
     assertThat(decEntry.getKeyId()).isEqualTo(42);
     assertThat(decEntry.getPrimitive()).isEqualTo("daead");
     assertThat(decEntry.getApi()).isEqualTo("decrypt");
     assertThat(decEntry.getNumBytesAsInput()).isEqualTo(ciphertext.length);
-    assertThat(decEntry.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(decEntry.getAnnotations()).isEqualTo(annotations);
 
     FakeMonitoringClient.LogEntry dec2Entry = logEntries.get(2);
     assertThat(dec2Entry.getKeyId()).isEqualTo(43);
@@ -313,7 +313,7 @@ public class DeterministicAeadWrapperTest {
     assertThat(dec2Entry.getApi()).isEqualTo("decrypt");
     // ciphertext2 was encrypted with key2, which has a RAW ouput prefix.
     assertThat(dec2Entry.getNumBytesAsInput()).isEqualTo(ciphertext2.length);
-    assertThat(dec2Entry.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(dec2Entry.getAnnotations()).isEqualTo(annotations);
 
     List<FakeMonitoringClient.LogFailureEntry> failures =
         fakeMonitoringClient.getLogFailureEntries();
@@ -322,7 +322,7 @@ public class DeterministicAeadWrapperTest {
     assertThat(decFailure.getPrimitive()).isEqualTo("daead");
     assertThat(decFailure.getApi()).isEqualTo("decrypt");
     assertThat(decFailure.getKeysetInfo().getPrimaryKeyId()).isEqualTo(42);
-    assertThat(decFailure.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(decFailure.getAnnotations()).isEqualTo(annotations);
   }
 
   private static class AlwaysFailingDeterministicAead implements DeterministicAead {
@@ -387,13 +387,13 @@ public class DeterministicAeadWrapperTest {
     assertThat(encFailure.getPrimitive()).isEqualTo("daead");
     assertThat(encFailure.getApi()).isEqualTo("encrypt");
     assertThat(encFailure.getKeysetInfo().getPrimaryKeyId()).isEqualTo(42);
-    assertThat(encFailure.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(encFailure.getAnnotations()).isEqualTo(annotations);
 
     FakeMonitoringClient.LogFailureEntry decFailure = failures.get(1);
     assertThat(decFailure.getPrimitive()).isEqualTo("daead");
     assertThat(decFailure.getApi()).isEqualTo("decrypt");
     assertThat(decFailure.getKeysetInfo().getPrimaryKeyId()).isEqualTo(42);
-    assertThat(decFailure.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(decFailure.getAnnotations()).isEqualTo(annotations);
   }
 
   @Test

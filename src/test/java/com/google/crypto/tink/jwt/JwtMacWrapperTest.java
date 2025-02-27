@@ -296,14 +296,14 @@ public class JwtMacWrapperTest {
     assertThat(computeEntry.getPrimitive()).isEqualTo("jwtmac");
     assertThat(computeEntry.getApi()).isEqualTo("compute");
     assertThat(computeEntry.getNumBytesAsInput()).isEqualTo(1);
-    assertThat(computeEntry.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(computeEntry.getAnnotations()).isEqualTo(annotations);
 
     FakeMonitoringClient.LogEntry verifyEntry = logEntries.get(1);
     assertThat(verifyEntry.getKeyId()).isEqualTo(42);
     assertThat(verifyEntry.getPrimitive()).isEqualTo("jwtmac");
     assertThat(verifyEntry.getApi()).isEqualTo("verify");
     assertThat(verifyEntry.getNumBytesAsInput()).isEqualTo(1);
-    assertThat(verifyEntry.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(verifyEntry.getAnnotations()).isEqualTo(annotations);
 
     List<FakeMonitoringClient.LogFailureEntry> failures =
         fakeMonitoringClient.getLogFailureEntries();
@@ -312,6 +312,6 @@ public class JwtMacWrapperTest {
     assertThat(verifyFailure.getPrimitive()).isEqualTo("jwtmac");
     assertThat(verifyFailure.getApi()).isEqualTo("verify");
     assertThat(verifyFailure.getKeysetInfo().getPrimaryKeyId()).isEqualTo(42);
-    assertThat(verifyFailure.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(verifyFailure.getAnnotations()).isEqualTo(annotations);
   }
 }

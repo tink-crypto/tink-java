@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.internal.testing;
 
+import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringKeysetInfo;
 import java.util.ArrayList;
@@ -78,6 +79,10 @@ public final class FakeMonitoringClient implements MonitoringClient {
     public long getNumBytesAsInput() {
       return numBytesAsInput;
     }
+
+    public MonitoringAnnotations getAnnotations() {
+      return keysetInfo.getAnnotations();
+    }
   }
 
   /** LogFailureEntry */
@@ -105,6 +110,10 @@ public final class FakeMonitoringClient implements MonitoringClient {
 
     public MonitoringKeysetInfo getKeysetInfo() {
       return keysetInfo;
+    }
+
+    public MonitoringAnnotations getAnnotations() {
+      return keysetInfo.getAnnotations();
     }
   }
 
