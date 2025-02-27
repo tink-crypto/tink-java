@@ -22,11 +22,11 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.internal.KeyParser;
 import com.google.crypto.tink.internal.KeySerializer;
+import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveSet;
-import com.google.crypto.tink.internal.PrimitiveSet.Entry;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.mac.AesCmacKey;
@@ -39,7 +39,6 @@ import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
-import java.util.List;
 import javax.annotation.Nullable;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -238,10 +237,14 @@ public class KeysetHandleFullPrimitiveTest {
     WrappedTestPrimitive primitive =
         keysetHandle.getPrimitive(RegistryConfiguration.get(), WrappedTestPrimitive.class);
 
-    for (List<Entry<SingleTestPrimitive>> list : primitive.getPrimitiveSet().getAll()) {
-      for (PrimitiveSet.Entry<SingleTestPrimitive> entry : list) {
-        assertThat(entry.getFullPrimitive()).isNotNull();
-      }
+    KeysetHandleInterface keysetHandleFromPrimitiveSet =
+        primitive.getPrimitiveSet().getKeysetHandle();
+    for (int i = 0; i < keysetHandleFromPrimitiveSet.size(); i++) {
+      assertThat(
+              primitive
+                  .getPrimitiveSet()
+                  .getPrimitiveForEntry(keysetHandleFromPrimitiveSet.getAt(i)))
+          .isNotNull();
     }
   }
 
@@ -331,10 +334,10 @@ public class KeysetHandleFullPrimitiveTest {
     WrappedMacTestPrimitive primitive =
         keysetHandle.getPrimitive(RegistryConfiguration.get(), WrappedMacTestPrimitive.class);
 
-    for (List<Entry<Mac>> list : primitive.getPrimitiveSet().getAll()) {
-      for (PrimitiveSet.Entry<Mac> entry : list) {
-        assertThat(entry.getFullPrimitive()).isNotNull();
-      }
+    KeysetHandleInterface keysetHandleFromPrimitive = primitive.getPrimitiveSet().getKeysetHandle();
+    for (int i = 0; i < keysetHandleFromPrimitive.size(); i++) {
+      KeysetHandleInterface.Entry entry = keysetHandleFromPrimitive.getAt(i);
+      assertThat(primitive.getPrimitiveSet().getPrimitiveForEntry(entry)).isNotNull();
     }
   }
 }

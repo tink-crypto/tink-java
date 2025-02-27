@@ -32,6 +32,7 @@ import com.google.crypto.tink.aead.XChaCha20Poly1305Parameters;
 import com.google.crypto.tink.internal.InternalConfiguration;
 import com.google.crypto.tink.internal.KeyParser;
 import com.google.crypto.tink.internal.KeyStatusTypeProtoConverter;
+import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MonitoringClient;
@@ -135,8 +136,9 @@ public class KeysetHandleTest {
 
       @Override
       public byte[] encrypt(final byte[] plaintext) throws GeneralSecurityException {
-        logger.log(primitiveSet.getPrimary().getId(), plaintext.length);
-        return primitiveSet.getPrimary().getFullPrimitive().encrypt(plaintext, new byte[0]);
+        KeysetHandleInterface.Entry primary = primitiveSet.getKeysetHandle().getPrimary();
+        logger.log(primary.getId(), plaintext.length);
+        return primitiveSet.getPrimitiveForEntry(primary).encrypt(plaintext, new byte[0]);
       }
     }
 

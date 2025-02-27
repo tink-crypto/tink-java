@@ -132,7 +132,8 @@ public class RegistryTest {
       return new EncryptOnly() {
         @Override
         public byte[] encrypt(final byte[] plaintext) throws GeneralSecurityException {
-          return set.getPrimary().getFullPrimitive().encrypt(plaintext, new byte[0]);
+          return set.getPrimitiveForEntry(set.getKeysetHandle().getPrimary())
+              .encrypt(plaintext, new byte[0]);
         }
       };
     }

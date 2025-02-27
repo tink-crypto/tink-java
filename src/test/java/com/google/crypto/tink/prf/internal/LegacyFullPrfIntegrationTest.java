@@ -24,6 +24,7 @@ import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.EnumTypeProtoConverter;
+import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
@@ -174,10 +175,11 @@ public class LegacyFullPrfIntegrationTest {
         return keyIdToPrfMap;
       }
 
-      private WrappedPrfSet(PrimitiveSet<Prf> primitiveSet) {
-        this.primaryKeyId = primitiveSet.getPrimary().getId();
+      private WrappedPrfSet(PrimitiveSet<Prf> primitiveSet) throws GeneralSecurityException {
+        KeysetHandleInterface.Entry primary = primitiveSet.getKeysetHandle().getPrimary();
+        this.primaryKeyId = primary.getId();
         HashMap<Integer, Prf> keyIdToPrfMap = new HashMap<>();
-        keyIdToPrfMap.put(this.primaryKeyId, primitiveSet.getPrimary().getFullPrimitive());
+        keyIdToPrfMap.put(this.primaryKeyId, primitiveSet.getPrimitiveForEntry(primary));
         this.keyIdToPrfMap = Collections.unmodifiableMap(keyIdToPrfMap);
       }
     }
