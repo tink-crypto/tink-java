@@ -112,7 +112,7 @@ public class HkdfStreamingPrf implements StreamingPrf {
       }
       mac.update(ikm);
       prk = mac.doFinal();
-      buffer = ByteBuffer.allocateDirect(0);
+      buffer = ByteBuffer.allocate(0);
       buffer.mark();
       ctr = 0;
     }
