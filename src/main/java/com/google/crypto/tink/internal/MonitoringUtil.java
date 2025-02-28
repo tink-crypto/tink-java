@@ -34,7 +34,6 @@ public final class MonitoringUtil {
 
   public static <P> MonitoringKeysetInfo getMonitoringKeysetInfo(PrimitiveSet<P> primitiveSet) {
     MonitoringKeysetInfo.Builder builder = MonitoringKeysetInfo.newBuilder();
-    builder.setAnnotations(primitiveSet.getAnnotations());
     KeysetHandleInterface handle = primitiveSet.getKeysetHandle();
     for (int i = 0; i < handle.size(); i++) {
       KeysetHandleInterface.Entry entry = handle.getAt(i);

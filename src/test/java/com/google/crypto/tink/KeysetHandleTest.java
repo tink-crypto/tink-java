@@ -131,7 +131,10 @@ public class KeysetHandleTest {
         MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
         logger =
             client.createLogger(
-                MonitoringUtil.getMonitoringKeysetInfo(primitiveSet), "encrypt_only", "encrypt");
+                MonitoringUtil.getMonitoringKeysetInfo(primitiveSet),
+                primitiveSet.getAnnotations(),
+                "encrypt_only",
+                "encrypt");
       }
 
       @Override
@@ -539,7 +542,7 @@ public class KeysetHandleTest {
     Object unused = encryptOnlyWithAnnotations.encrypt(message);
     List<FakeMonitoringClient.LogEntry> entries = fakeMonitoringClient.getLogEntries();
     assertThat(entries).hasSize(1);
-    assertThat(entries.get(0).getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(entries.get(0).getAnnotations()).isEqualTo(annotations);
   }
 
   @Test
@@ -581,14 +584,14 @@ public class KeysetHandleTest {
     assertThat(tinkComputeEntry.getPrimitive()).isEqualTo("mac");
     assertThat(tinkComputeEntry.getApi()).isEqualTo("compute");
     assertThat(tinkComputeEntry.getNumBytesAsInput()).isEqualTo(plaintext.length);
-    assertThat(tinkComputeEntry.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(tinkComputeEntry.getAnnotations()).isEqualTo(annotations);
 
     FakeMonitoringClient.LogEntry rawComputeEntry = logEntries.get(1);
     assertThat(rawComputeEntry.getKeyId()).isEqualTo(42);
     assertThat(rawComputeEntry.getPrimitive()).isEqualTo("mac");
     assertThat(rawComputeEntry.getApi()).isEqualTo("verify");
     assertThat(rawComputeEntry.getNumBytesAsInput()).isEqualTo(plaintext.length);
-    assertThat(rawComputeEntry.getKeysetInfo().getAnnotations()).isEqualTo(annotations);
+    assertThat(rawComputeEntry.getAnnotations()).isEqualTo(annotations);
   }
 
   @Test

@@ -36,6 +36,7 @@ public final class FakeMonitoringClient implements MonitoringClient {
   public static final class LogEntry {
     private final MonitoringKeysetInfo keysetInfo;
     private final MonitoringKeysetInfo.Entry keyInfo;
+    private final MonitoringAnnotations annotations;
     private final String primitive;
     private final String api;
     private final int keyId;
@@ -44,12 +45,14 @@ public final class FakeMonitoringClient implements MonitoringClient {
     private LogEntry(
         MonitoringKeysetInfo keysetInfo,
         MonitoringKeysetInfo.Entry keyInfo,
+        MonitoringAnnotations annotations,
         String primitive,
         String api,
         int keyId,
         long numBytesAsInput) {
       this.keysetInfo = keysetInfo;
       this.keyInfo = keyInfo;
+      this.annotations = annotations;
       this.primitive = primitive;
       this.api = api;
       this.keyId = keyId;
@@ -81,7 +84,7 @@ public final class FakeMonitoringClient implements MonitoringClient {
     }
 
     public MonitoringAnnotations getAnnotations() {
-      return keysetInfo.getAnnotations();
+      return annotations;
     }
   }
 
@@ -90,12 +93,15 @@ public final class FakeMonitoringClient implements MonitoringClient {
     private final String primitive;
     private final String api;
     private final MonitoringKeysetInfo keysetInfo;
+    private final MonitoringAnnotations annotations;
 
     private LogFailureEntry(
         MonitoringKeysetInfo keysetInfo,
+        MonitoringAnnotations annotations,
         String primitive,
         String api) {
       this.keysetInfo = keysetInfo;
+      this.annotations = annotations;
       this.primitive = primitive;
       this.api = api;
     }
@@ -113,7 +119,7 @@ public final class FakeMonitoringClient implements MonitoringClient {
     }
 
     public MonitoringAnnotations getAnnotations() {
-      return keysetInfo.getAnnotations();
+      return annotations;
     }
   }
 
@@ -130,6 +136,7 @@ public final class FakeMonitoringClient implements MonitoringClient {
 
   private final class Logger implements MonitoringClient.Logger {
     private final MonitoringKeysetInfo keysetInfo;
+    private final MonitoringAnnotations annotations;
     private final HashMap<Integer, MonitoringKeysetInfo.Entry> entries;
     private final String primitive;
     private final String api;
@@ -140,17 +147,23 @@ public final class FakeMonitoringClient implements MonitoringClient {
         throw new IllegalStateException("keyId not found in keysetInfo: " + keyId);
       }
       addLogEntry(
-          new LogEntry(keysetInfo, entries.get(keyId), primitive, api, keyId, numBytesAsInput));
+          new LogEntry(
+              keysetInfo, entries.get(keyId), annotations, primitive, api, keyId, numBytesAsInput));
     }
 
     @Override
     public void logFailure() {
-      addLogFailureEntry(new LogFailureEntry(keysetInfo, primitive, api));
+      addLogFailureEntry(new LogFailureEntry(keysetInfo, annotations, primitive, api));
     }
 
-    private Logger(MonitoringKeysetInfo keysetInfo, String primitive, String api) {
+    private Logger(
+        MonitoringKeysetInfo keysetInfo,
+        MonitoringAnnotations annotations,
+        String primitive,
+        String api) {
       this.keysetInfo = keysetInfo;
       this.primitive = primitive;
+      this.annotations = annotations;
       this.api = api;
       entries = new HashMap<>();
       for (int i = 0; i < keysetInfo.size(); i++) {
@@ -164,8 +177,12 @@ public final class FakeMonitoringClient implements MonitoringClient {
   }
 
   @Override
-  public Logger createLogger(MonitoringKeysetInfo keysetInfo, String primitive, String api) {
-    return new Logger(keysetInfo, primitive, api);
+  public Logger createLogger(
+      MonitoringKeysetInfo keysetInfo,
+      MonitoringAnnotations annotations,
+      String primitive,
+      String api) {
+    return new Logger(keysetInfo, annotations, primitive, api);
   }
 
   /** Clears all log and log failure entries. */

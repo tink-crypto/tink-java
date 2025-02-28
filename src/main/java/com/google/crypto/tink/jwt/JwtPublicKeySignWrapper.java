@@ -56,7 +56,8 @@ class JwtPublicKeySignWrapper implements PrimitiveWrapper<JwtPublicKeySign, JwtP
       if (!primitives.getAnnotations().isEmpty()) {
         MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
         MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
-        this.logger = client.createLogger(keysetInfo, "jwtsign", "sign");
+        this.logger =
+            client.createLogger(keysetInfo, primitives.getAnnotations(), "jwtsign", "sign");
       } else {
         this.logger = MonitoringUtil.DO_NOTHING_LOGGER;
       }

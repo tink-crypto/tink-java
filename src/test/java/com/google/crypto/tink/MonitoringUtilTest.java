@@ -20,7 +20,6 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.crypto.tink.aead.AesGcmKey;
 import com.google.crypto.tink.aead.PredefinedAeadParameters;
-import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MonitoringKeysetInfo;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.PrimitiveSet;
@@ -54,15 +53,11 @@ public final class MonitoringUtilTest {
     Keyset.Key protoKey =
         TestUtil.createKey(
             TestUtil.createAesGcmKeyData(KEY), 42, KeyStatusType.ENABLED, OutputPrefixType.TINK);
-    MonitoringAnnotations annotations =
-        MonitoringAnnotations.newBuilder().add("annotation_name", "annotation_value").build();
     PrimitiveSet<Aead> primitives =
         PrimitiveSet.newBuilder(Aead.class)
-            .setAnnotations(annotations)
             .addPrimaryFullPrimitive(fullPrimitive, key, protoKey)
             .build();
     MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
-    assertThat(keysetInfo.getAnnotations()).isEqualTo(annotations);
     assertThat(keysetInfo.getPrimaryKeyId()).isEqualTo(42);
     assertThat(keysetInfo.size()).isEqualTo(1);
     assertThat(keysetInfo.getAt(0).getStatus()).isEqualTo(KeyStatus.ENABLED);
@@ -92,11 +87,8 @@ public final class MonitoringUtilTest {
     Keyset.Key protoKey2 =
         TestUtil.createKey(
             TestUtil.createAesGcmKeyData(KEY2), 43, KeyStatusType.ENABLED, OutputPrefixType.RAW);
-    MonitoringAnnotations annotations =
-        MonitoringAnnotations.newBuilder().add("annotation_name", "annotation_value").build();
     PrimitiveSet<Aead> primitives =
         PrimitiveSet.newBuilder(Aead.class)
-            .setAnnotations(annotations)
             .addPrimaryFullPrimitive(fullPrimitive1, key1, protoKey1)
             .addFullPrimitive(fullPrimitive2, key2, protoKey2)
             .build();
@@ -121,7 +113,6 @@ public final class MonitoringUtilTest {
         PrimitiveSet.newBuilder(Aead.class).addFullPrimitive(fullPrimitive, key, protoKey).build();
     MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
     assertThat(keysetInfo.getPrimaryKeyId()).isNull();
-    assertThat(keysetInfo.getAnnotations().toMap()).isEmpty();
   }
 
   @Test

@@ -121,7 +121,9 @@ public class PublicKeyVerifyWrapper implements PrimitiveWrapper<PublicKeyVerify,
     if (!primitives.getAnnotations().isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
       MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
-      logger = client.createLogger(keysetInfo, "public_key_verify", "verify");
+      logger =
+          client.createLogger(
+              keysetInfo, primitives.getAnnotations(), "public_key_verify", "verify");
     } else {
       logger = MonitoringUtil.DO_NOTHING_LOGGER;
     }

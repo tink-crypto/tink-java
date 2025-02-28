@@ -135,8 +135,9 @@ public class MacWrapper implements PrimitiveWrapper<Mac, Mac> {
     if (!primitives.getAnnotations().isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
       MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
-      computeLogger = client.createLogger(keysetInfo, "mac", "compute");
-      verifyLogger = client.createLogger(keysetInfo, "mac", "verify");
+      computeLogger =
+          client.createLogger(keysetInfo, primitives.getAnnotations(), "mac", "compute");
+      verifyLogger = client.createLogger(keysetInfo, primitives.getAnnotations(), "mac", "verify");
     } else {
       computeLogger = MonitoringUtil.DO_NOTHING_LOGGER;
       verifyLogger = MonitoringUtil.DO_NOTHING_LOGGER;

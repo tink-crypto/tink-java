@@ -79,17 +79,7 @@ public final class MonitoringKeysetInfo {
     // builderEntries == null indicates that build has already been called and the builder is not
     // usable anymore.
     @Nullable private ArrayList<Entry> builderEntries = new ArrayList<>();
-    private MonitoringAnnotations builderAnnotations = MonitoringAnnotations.EMPTY;
     @Nullable private Integer builderPrimaryKeyId = null;
-
-    @CanIgnoreReturnValue
-    public Builder setAnnotations(MonitoringAnnotations annotations) {
-      if (builderEntries == null) {
-        throw new IllegalStateException("setAnnotations cannot be called after build()");
-      }
-      builderAnnotations = annotations;
-      return this;
-    }
 
     @CanIgnoreReturnValue
     public Builder addEntry(Key key, KeyStatus status, int keyId) {
@@ -134,9 +124,7 @@ public final class MonitoringKeysetInfo {
       }
       MonitoringKeysetInfo output =
           new MonitoringKeysetInfo(
-              builderAnnotations,
-              Collections.unmodifiableList(builderEntries),
-              builderPrimaryKeyId);
+              Collections.unmodifiableList(builderEntries), builderPrimaryKeyId);
       // Collections.unmodifiableMap/List only gives an unmodifiable view of the underlying
       // collection. To make output immutable, we have to remove the reference to these collections.
       // This makes the builder unusable.
@@ -145,26 +133,18 @@ public final class MonitoringKeysetInfo {
     }
   }
 
-  private final MonitoringAnnotations annotations;
-
   @SuppressWarnings("Immutable")
   private final List<Entry> entries;
 
   @Nullable private final Integer primaryKeyId;
 
-  private MonitoringKeysetInfo(
-      MonitoringAnnotations annotations, List<Entry> entries, Integer primaryKeyId) {
-    this.annotations = annotations;
+  private MonitoringKeysetInfo(List<Entry> entries, Integer primaryKeyId) {
     this.entries = entries;
     this.primaryKeyId = primaryKeyId;
   }
 
   public static Builder newBuilder() {
     return new Builder();
-  }
-
-  public MonitoringAnnotations getAnnotations() {
-    return annotations;
   }
 
   public Entry getAt(int i) {
@@ -191,7 +171,6 @@ public final class MonitoringKeysetInfo {
 
   @Override
   public String toString() {
-    return String.format(
-        "(annotations=%s, entries=%s, primaryKeyId=%s)", annotations, entries, primaryKeyId);
+    return String.format("(entries=%s, primaryKeyId=%s)", entries, primaryKeyId);
   }
 }

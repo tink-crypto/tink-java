@@ -137,8 +137,8 @@ public class AeadWrapper implements PrimitiveWrapper<Aead, Aead> {
     if (!pset.getAnnotations().isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
       MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(pset);
-      encLogger = client.createLogger(keysetInfo, "aead", "encrypt");
-      decLogger = client.createLogger(keysetInfo, "aead", "decrypt");
+      encLogger = client.createLogger(keysetInfo, pset.getAnnotations(), "aead", "encrypt");
+      decLogger = client.createLogger(keysetInfo, pset.getAnnotations(), "aead", "decrypt");
     } else {
       encLogger = MonitoringUtil.DO_NOTHING_LOGGER;
       decLogger = MonitoringUtil.DO_NOTHING_LOGGER;

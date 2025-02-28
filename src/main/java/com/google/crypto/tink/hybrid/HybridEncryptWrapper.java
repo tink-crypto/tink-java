@@ -91,7 +91,8 @@ public class HybridEncryptWrapper implements PrimitiveWrapper<HybridEncrypt, Hyb
     if (!primitives.getAnnotations().isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
       MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
-      encLogger = client.createLogger(keysetInfo, "hybrid_encrypt", "encrypt");
+      encLogger =
+          client.createLogger(keysetInfo, primitives.getAnnotations(), "hybrid_encrypt", "encrypt");
     } else {
       encLogger = MonitoringUtil.DO_NOTHING_LOGGER;
     }

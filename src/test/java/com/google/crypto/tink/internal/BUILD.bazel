@@ -257,6 +257,7 @@ java_test(
     size = "small",
     srcs = ["MutableMonitoringRegistryTest.java"],
     deps = [
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_annotations",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_client",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_keyset_info",
         "//src/main/java/com/google/crypto/tink/internal:mutable_monitoring_registry",
@@ -712,7 +713,6 @@ java_test(
         "//src/main/java/com/google/crypto/tink/aead:cha_cha20_poly1305_key",
         "//src/main/java/com/google/crypto/tink/aead:cha_cha20_poly1305_parameters",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_parameters",
-        "//src/main/java/com/google/crypto/tink/internal:monitoring_annotations",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_keyset_info",
         "//src/main/java/com/google/crypto/tink/internal:proto_parameters_serialization",
         "//src/main/java/com/google/crypto/tink/util:secret_bytes",

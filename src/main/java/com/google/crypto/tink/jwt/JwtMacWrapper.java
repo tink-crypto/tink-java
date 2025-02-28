@@ -130,8 +130,10 @@ class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
     if (!primitives.getAnnotations().isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
       MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
-      computeLogger = client.createLogger(keysetInfo, "jwtmac", "compute");
-      verifyLogger = client.createLogger(keysetInfo, "jwtmac", "verify");
+      computeLogger =
+          client.createLogger(keysetInfo, primitives.getAnnotations(), "jwtmac", "compute");
+      verifyLogger =
+          client.createLogger(keysetInfo, primitives.getAnnotations(), "jwtmac", "verify");
     } else {
       computeLogger = MonitoringUtil.DO_NOTHING_LOGGER;
       verifyLogger = MonitoringUtil.DO_NOTHING_LOGGER;

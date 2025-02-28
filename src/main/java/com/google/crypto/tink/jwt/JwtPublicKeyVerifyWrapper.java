@@ -98,7 +98,7 @@ class JwtPublicKeyVerifyWrapper
     if (!primitives.getAnnotations().isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
       MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
-      logger = client.createLogger(keysetInfo, "jwtverify", "verify");
+      logger = client.createLogger(keysetInfo, primitives.getAnnotations(), "jwtverify", "verify");
     } else {
       logger = MonitoringUtil.DO_NOTHING_LOGGER;
     }

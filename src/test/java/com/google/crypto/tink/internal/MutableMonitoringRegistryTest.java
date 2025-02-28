@@ -30,7 +30,7 @@ public final class MutableMonitoringRegistryTest {
   public void defaultClientWorks() throws Exception {
     MutableMonitoringRegistry registry = new MutableMonitoringRegistry();
     MonitoringClient client = registry.getMonitoringClient();
-    MonitoringClient.Logger logger = client.createLogger(null, "primitive", "api");
+    MonitoringClient.Logger logger = client.createLogger(null, null, "primitive", "api");
     // We only expect the default client to not throw any exceptions.
     logger.log(123, 42L);
     logger.logFailure();
@@ -39,7 +39,10 @@ public final class MutableMonitoringRegistryTest {
   private static class StubMonitoringClient implements MonitoringClient {
     @Override
     public MonitoringClient.Logger createLogger(
-        MonitoringKeysetInfo keysetInfo, String primitive, String api) {
+        MonitoringKeysetInfo keysetInfo,
+        MonitoringAnnotations annotations,
+        String primitive,
+        String api) {
       return null;
     }
   }

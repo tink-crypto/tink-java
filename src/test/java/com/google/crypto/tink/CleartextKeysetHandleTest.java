@@ -174,6 +174,6 @@ public class CleartextKeysetHandleTest {
     FakeMonitoringClient.LogEntry entry = logEntries.get(0);
     MonitoringAnnotations expectedAnnotations =
         MonitoringAnnotations.newBuilder().add("annotation_name", "annotation_value").build();
-    assertThat(entry.getKeysetInfo().getAnnotations()).isEqualTo(expectedAnnotations);
+    assertThat(entry.getAnnotations()).isEqualTo(expectedAnnotations);
   }
 }

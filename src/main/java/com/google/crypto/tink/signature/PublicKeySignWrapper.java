@@ -90,7 +90,8 @@ public class PublicKeySignWrapper implements PrimitiveWrapper<PublicKeySign, Pub
     if (!primitives.getAnnotations().isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
       MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
-      logger = client.createLogger(keysetInfo, "public_key_sign", "sign");
+      logger =
+          client.createLogger(keysetInfo, primitives.getAnnotations(), "public_key_sign", "sign");
     } else {
       logger = MonitoringUtil.DO_NOTHING_LOGGER;
     }

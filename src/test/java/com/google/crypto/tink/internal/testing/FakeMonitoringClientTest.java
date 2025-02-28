@@ -45,15 +45,16 @@ public final class FakeMonitoringClientTest {
             ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 234);
     MonitoringKeysetInfo keysetInfo =
         MonitoringKeysetInfo.newBuilder()
-            .setAnnotations(
-                MonitoringAnnotations.newBuilder()
-                    .add("annotation_name", "annotation_value")
-                    .build())
             .addEntry(key123, KeyStatus.ENABLED, 123)
             .addEntry(key234, KeyStatus.ENABLED, 234)
             .setPrimaryKeyId(123)
             .build();
-    MonitoringClient.Logger encLogger = client.createLogger(keysetInfo, "aead", "encrypt");
+    MonitoringClient.Logger encLogger =
+        client.createLogger(
+            keysetInfo,
+            MonitoringAnnotations.newBuilder().add("annotation_name", "annotation_value").build(),
+            "aead",
+            "encrypt");
 
     encLogger.log(123, 42);
 
@@ -86,15 +87,16 @@ public final class FakeMonitoringClientTest {
             ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 234);
     MonitoringKeysetInfo keysetInfo =
         MonitoringKeysetInfo.newBuilder()
-            .setAnnotations(
-                MonitoringAnnotations.newBuilder()
-                    .add("annotation_name", "annotation_value")
-                    .build())
             .addEntry(key123, KeyStatus.ENABLED, 123)
             .addEntry(key234, KeyStatus.ENABLED, 234)
             .setPrimaryKeyId(123)
             .build();
-    MonitoringClient.Logger encLogger = client.createLogger(keysetInfo, "aead", "encrypt");
+    MonitoringClient.Logger encLogger =
+        client.createLogger(
+            keysetInfo,
+            MonitoringAnnotations.newBuilder().add("annotation_name", "annotation_value").build(),
+            "aead",
+            "encrypt");
 
     encLogger.logFailure();
 
@@ -124,16 +126,22 @@ public final class FakeMonitoringClientTest {
             ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 234);
     MonitoringKeysetInfo info =
         MonitoringKeysetInfo.newBuilder()
-            .setAnnotations(
-                MonitoringAnnotations.newBuilder()
-                    .add("annotation_name", "annotation_value")
-                    .build())
             .addEntry(key123, KeyStatus.ENABLED, 123)
             .addEntry(key234, KeyStatus.ENABLED, 234)
             .setPrimaryKeyId(123)
             .build();
-    MonitoringClient.Logger encLogger = client.createLogger(info, "aead", "encrypt");
-    MonitoringClient.Logger decLogger = client.createLogger(info, "aead", "decrypt");
+    MonitoringClient.Logger encLogger =
+        client.createLogger(
+            info,
+            MonitoringAnnotations.newBuilder().add("annotation_name", "annotation_value").build(),
+            "aead",
+            "encrypt");
+    MonitoringClient.Logger decLogger =
+        client.createLogger(
+            info,
+            MonitoringAnnotations.newBuilder().add("annotation_name", "annotation_value").build(),
+            "aead",
+            "decrypt");
 
     encLogger.log(123, 42);
     decLogger.log(234, 18);
@@ -160,7 +168,8 @@ public final class FakeMonitoringClientTest {
             .addEntry(key123, KeyStatus.ENABLED, 123)
             .setPrimaryKeyId(123)
             .build();
-    MonitoringClient.Logger encLogger = client.createLogger(info, "aead", "encrypt");
+    MonitoringClient.Logger encLogger =
+        client.createLogger(info, MonitoringAnnotations.EMPTY, "aead", "encrypt");
 
     assertThrows(IllegalStateException.class, () -> encLogger.log(1234, 42));
   }

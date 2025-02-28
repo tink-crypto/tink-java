@@ -28,7 +28,6 @@ import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
-import java.util.HashMap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -98,34 +97,6 @@ public final class MonitoringKeysetInfoTest {
   }
 
   @Test
-  public void setAndGetAnnotations() throws Exception {
-    ChaCha20Poly1305Key key123 =
-        ChaCha20Poly1305Key.create(
-            ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 123);
-    HashMap<String, String> annotations = new HashMap<>();
-    annotations.put("annotation_name1", "annotation_value1");
-    annotations.put("annotation_name2", "annotation_value2");
-    MonitoringAnnotations monitoringAnnotations =
-        MonitoringAnnotations.newBuilder()
-            .addAll(annotations)
-            .add("annotation_name3", "annotation_value3")
-            .add("annotation_name4", "annotation_value4")
-            .build();
-    MonitoringKeysetInfo info =
-        MonitoringKeysetInfo.newBuilder()
-            .setAnnotations(monitoringAnnotations)
-            .addEntry(key123, KeyStatus.ENABLED, 123)
-            .setPrimaryKeyId(123)
-            .build();
-    HashMap<String, String> expected = new HashMap<>();
-    expected.put("annotation_name1", "annotation_value1");
-    expected.put("annotation_name2", "annotation_value2");
-    expected.put("annotation_name3", "annotation_value3");
-    expected.put("annotation_name4", "annotation_value4");
-    assertThat(info.getAnnotations().toMap()).containsExactlyEntriesIn(expected);
-  }
-
-  @Test
   public void primaryIsNullIfItIsNotSet() throws Exception  {
     ChaCha20Poly1305Key key123 =
         ChaCha20Poly1305Key.create(
@@ -156,25 +127,6 @@ public final class MonitoringKeysetInfoTest {
   }
 
   @Test
-  public void entriesAreNotModifiable() throws Exception {
-    ChaCha20Poly1305Key key123 =
-        ChaCha20Poly1305Key.create(
-            ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 123);
-    MonitoringKeysetInfo info =
-        MonitoringKeysetInfo.newBuilder()
-            .addEntry(key123, KeyStatus.ENABLED, 123)
-            .setPrimaryKeyId(123)
-            .setAnnotations(
-                MonitoringAnnotations.newBuilder()
-                    .add("annotation_name", "annotation_value")
-                    .build())
-            .build();
-    assertThrows(
-        UnsupportedOperationException.class,
-        () -> info.getAnnotations().toMap().put("name", "value"));
-  }
-
-  @Test
   public void builderIsInvalidAfterBuild() throws Exception  {
     ChaCha20Poly1305Key key123 =
         ChaCha20Poly1305Key.create(
@@ -182,15 +134,11 @@ public final class MonitoringKeysetInfoTest {
     ChaCha20Poly1305Key key234 =
         ChaCha20Poly1305Key.create(
             ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 234);
-    MonitoringAnnotations annotations =
-        MonitoringAnnotations.newBuilder().add("annotation_name2", "annotation_value2").build();
     MonitoringKeysetInfo.Builder builder =
         MonitoringKeysetInfo.newBuilder()
             .addEntry(key123, KeyStatus.ENABLED, 123)
-            .setPrimaryKeyId(123)
-            .setAnnotations(annotations);
+            .setPrimaryKeyId(123);
     Object unused = builder.build();
-    assertThrows(IllegalStateException.class, () -> builder.setAnnotations(annotations));
     assertThrows(
         IllegalStateException.class, () -> builder.addEntry(key234, KeyStatus.ENABLED, 234));
     assertThrows(IllegalStateException.class, () -> builder.setPrimaryKeyId(123));
@@ -206,17 +154,13 @@ public final class MonitoringKeysetInfoTest {
             ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 234);
     MonitoringKeysetInfo info =
         MonitoringKeysetInfo.newBuilder()
-            .setAnnotations(
-                MonitoringAnnotations.newBuilder()
-                    .add("annotation_name1", "annotation_value1")
-                    .build())
             .addEntry(key123, KeyStatus.ENABLED, 123)
             .addEntry(key234, KeyStatus.DISABLED, 234)
             .setPrimaryKeyId(123)
             .build();
     assertThat(info.toString())
         .isEqualTo(
-            "(annotations={annotation_name1=annotation_value1}, entries="
+            "(entries="
                 + "[(status=ENABLED, keyId=123), "
                 + "(status=DISABLED, keyId=234)], primaryKeyId=123)");
   }

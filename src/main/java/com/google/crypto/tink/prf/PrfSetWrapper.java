@@ -102,7 +102,7 @@ public class PrfSetWrapper implements PrimitiveWrapper<Prf, PrfSet> {
     if (!set.getAnnotations().isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
       MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(set);
-      logger = client.createLogger(keysetInfo, "prf", "compute");
+      logger = client.createLogger(keysetInfo, set.getAnnotations(), "prf", "compute");
     } else {
       logger = MonitoringUtil.DO_NOTHING_LOGGER;
     }
