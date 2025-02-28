@@ -26,11 +26,22 @@ import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * JwtMacWrapper is the implementation of {@link PrimitiveWrapper} for the {@link JwtMac} primitive.
  */
 class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
+  private static class JwtMacWithId {
+    JwtMacWithId(JwtMac jwtMac, int id) {
+      this.jwtMac = jwtMac;
+      this.id = id;
+    }
+
+    final JwtMac jwtMac;
+    final int id;
+  }
 
   private static final JwtMacWrapper WRAPPER = new JwtMacWrapper();
 
@@ -42,8 +53,11 @@ class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
 
   @Immutable
   private static class WrappedJwtMac implements JwtMac {
+    @SuppressWarnings("Immutable")
+    private final JwtMacWithId primary;
+
     @SuppressWarnings("Immutable") // We do not mutate the primitive set.
-    private final PrimitiveSet<JwtMac> primitives;
+    private final List<JwtMacWithId> allMacs;
 
     @SuppressWarnings("Immutable")
     private final MonitoringClient.Logger computeLogger;
@@ -51,26 +65,22 @@ class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
     @SuppressWarnings("Immutable")
     private final MonitoringClient.Logger verifyLogger;
 
-    private WrappedJwtMac(PrimitiveSet<JwtMac> primitives) {
-      this.primitives = primitives;
-      if (!primitives.getAnnotations().isEmpty()) {
-        MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-        MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
-        this.computeLogger = client.createLogger(keysetInfo, "jwtmac", "compute");
-        this.verifyLogger = client.createLogger(keysetInfo, "jwtmac", "verify");
-      } else {
-        this.computeLogger = MonitoringUtil.DO_NOTHING_LOGGER;
-        this.verifyLogger = MonitoringUtil.DO_NOTHING_LOGGER;
-      }
+    private WrappedJwtMac(
+        JwtMacWithId primary,
+        List<JwtMacWithId> allMacs,
+        MonitoringClient.Logger computeLogger,
+        MonitoringClient.Logger verifyLogger) {
+      this.primary = primary;
+      this.allMacs = allMacs;
+      this.computeLogger = computeLogger;
+      this.verifyLogger = verifyLogger;
     }
 
     @Override
     public String computeMacAndEncode(RawJwt token) throws GeneralSecurityException {
       try {
-        KeysetHandleInterface.Entry primary = primitives.getKeysetHandle().getPrimary();
-        JwtMac primaryJwtMac = primitives.getPrimitiveForEntry(primary);
-        String result = primaryJwtMac.computeMacAndEncode(token);
-        computeLogger.log(primary.getId(), 1);
+        String result = primary.jwtMac.computeMacAndEncode(token);
+        computeLogger.log(primary.id, 1);
         return result;
       } catch (GeneralSecurityException e) {
         computeLogger.logFailure();
@@ -82,13 +92,10 @@ class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
     public VerifiedJwt verifyMacAndDecode(String compact, JwtValidator validator)
         throws GeneralSecurityException {
       GeneralSecurityException interestingException = null;
-      KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
-      for (int i = 0; i < keysetHandle.size(); i++) {
-        KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
-        JwtMac jwtMac = primitives.getPrimitiveForEntry(entry);
+      for (JwtMacWithId macAndId : allMacs) {
         try {
-          VerifiedJwt result = jwtMac.verifyMacAndDecode(compact, validator);
-          verifyLogger.log(entry.getId(), 1);
+          VerifiedJwt result = macAndId.jwtMac.verifyMacAndDecode(compact, validator);
+          verifyLogger.log(macAndId.id, 1);
           return result;
         } catch (GeneralSecurityException e) {
           if (e instanceof JwtInvalidException) {
@@ -111,7 +118,31 @@ class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
   @Override
   public JwtMac wrap(final PrimitiveSet<JwtMac> primitives) throws GeneralSecurityException {
     validate(primitives);
-    return new WrappedJwtMac(primitives);
+    KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
+    List<JwtMacWithId> allMacs = new ArrayList<>(keysetHandle.size());
+    for (int i = 0; i < keysetHandle.size(); i++) {
+      KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
+      JwtMac jwtMac = primitives.getPrimitiveForEntry(entry);
+      allMacs.add(new JwtMacWithId(jwtMac, entry.getId()));
+    }
+    MonitoringClient.Logger computeLogger;
+    MonitoringClient.Logger verifyLogger;
+    if (!primitives.getAnnotations().isEmpty()) {
+      MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
+      MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
+      computeLogger = client.createLogger(keysetInfo, "jwtmac", "compute");
+      verifyLogger = client.createLogger(keysetInfo, "jwtmac", "verify");
+    } else {
+      computeLogger = MonitoringUtil.DO_NOTHING_LOGGER;
+      verifyLogger = MonitoringUtil.DO_NOTHING_LOGGER;
+    }
+    JwtMac primaryMac = primitives.getPrimitiveForEntry(keysetHandle.getPrimary());
+
+    return new WrappedJwtMac(
+        new JwtMacWithId(primaryMac, keysetHandle.getPrimary().getId()),
+        allMacs,
+        computeLogger,
+        verifyLogger);
   }
 
   @Override
