@@ -18,7 +18,6 @@ package com.google.crypto.tink.prf;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringClient;
-import com.google.crypto.tink.internal.MonitoringKeysetInfo;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
@@ -101,7 +100,7 @@ public class PrfSetWrapper implements PrimitiveWrapper<Prf, PrfSet> {
     MonitoringClient.Logger logger;
     if (!set.getAnnotations().isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-      MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(set);
+      KeysetHandleInterface keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(set);
       logger = client.createLogger(keysetInfo, set.getAnnotations(), "prf", "compute");
     } else {
       logger = MonitoringUtil.DO_NOTHING_LOGGER;

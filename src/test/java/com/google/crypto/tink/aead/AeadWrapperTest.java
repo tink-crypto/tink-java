@@ -543,7 +543,7 @@ public class AeadWrapperTest {
     FakeMonitoringClient.LogFailureEntry decFailure = failures.get(0);
     assertThat(decFailure.getPrimitive()).isEqualTo("aead");
     assertThat(decFailure.getApi()).isEqualTo("decrypt");
-    assertThat(decFailure.getKeysetInfo().getPrimaryKeyId()).isEqualTo(42);
+    assertThat(decFailure.getKeysetInfo().getPrimary().getId()).isEqualTo(42);
     assertThat(decFailure.getAnnotations()).isEqualTo(annotations);
   }
 
@@ -597,13 +597,13 @@ public class AeadWrapperTest {
     FakeMonitoringClient.LogFailureEntry encFailure = failures.get(0);
     assertThat(encFailure.getPrimitive()).isEqualTo("aead");
     assertThat(encFailure.getApi()).isEqualTo("encrypt");
-    assertThat(encFailure.getKeysetInfo().getPrimaryKeyId()).isEqualTo(42);
+    assertThat(encFailure.getKeysetInfo().getPrimary().getId()).isEqualTo(42);
     assertThat(encFailure.getAnnotations()).isEqualTo(annotations);
 
     FakeMonitoringClient.LogFailureEntry decFailure = failures.get(1);
     assertThat(decFailure.getPrimitive()).isEqualTo("aead");
     assertThat(decFailure.getApi()).isEqualTo("decrypt");
-    assertThat(decFailure.getKeysetInfo().getPrimaryKeyId()).isEqualTo(42);
+    assertThat(decFailure.getKeysetInfo().getPrimary().getId()).isEqualTo(42);
     assertThat(decFailure.getAnnotations()).isEqualTo(annotations);
   }
 

@@ -356,7 +356,7 @@ public class HybridEncryptWrapperTest {
     FakeMonitoringClient.LogFailureEntry signFailure = failures.get(0);
     assertThat(signFailure.getPrimitive()).isEqualTo("hybrid_encrypt");
     assertThat(signFailure.getApi()).isEqualTo("encrypt");
-    assertThat(signFailure.getKeysetInfo().getPrimaryKeyId()).isEqualTo(123);
+    assertThat(signFailure.getKeysetInfo().getPrimary().getId()).isEqualTo(123);
     assertThat(signFailure.getAnnotations()).isEqualTo(annotations);
   }
 

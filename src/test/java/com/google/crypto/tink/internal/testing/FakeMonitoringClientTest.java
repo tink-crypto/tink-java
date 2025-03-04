@@ -20,19 +20,26 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.KeyStatus;
+import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.aead.ChaCha20Poly1305Key;
 import com.google.crypto.tink.aead.ChaCha20Poly1305Parameters;
+import com.google.crypto.tink.config.TinkConfig;
+import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MonitoringClient;
-import com.google.crypto.tink.internal.MonitoringKeysetInfo;
 import com.google.crypto.tink.util.SecretBytes;
 import java.util.List;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public final class FakeMonitoringClientTest {
+  @BeforeClass
+  public static void register() throws Exception {
+    TinkConfig.register();
+  }
 
   @Test
   public void log() throws Exception {
@@ -43,11 +50,14 @@ public final class FakeMonitoringClientTest {
     ChaCha20Poly1305Key key234 =
         ChaCha20Poly1305Key.create(
             ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 234);
-    MonitoringKeysetInfo keysetInfo =
-        MonitoringKeysetInfo.newBuilder()
-            .addEntry(key123, KeyStatus.ENABLED, 123)
-            .addEntry(key234, KeyStatus.ENABLED, 234)
-            .setPrimaryKeyId(123)
+    KeysetHandleInterface keysetInfo =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.importKey(key123)
+                    .setStatus(KeyStatus.ENABLED)
+                    .withFixedId(123)
+                    .makePrimary())
+            .addEntry(KeysetHandle.importKey(key234).setStatus(KeyStatus.ENABLED).withFixedId(234))
             .build();
     MonitoringClient.Logger encLogger =
         client.createLogger(
@@ -85,11 +95,14 @@ public final class FakeMonitoringClientTest {
     ChaCha20Poly1305Key key234 =
         ChaCha20Poly1305Key.create(
             ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 234);
-    MonitoringKeysetInfo keysetInfo =
-        MonitoringKeysetInfo.newBuilder()
-            .addEntry(key123, KeyStatus.ENABLED, 123)
-            .addEntry(key234, KeyStatus.ENABLED, 234)
-            .setPrimaryKeyId(123)
+    KeysetHandleInterface keysetInfo =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.importKey(key234)
+                    .setStatus(KeyStatus.ENABLED)
+                    .withFixedId(234)
+                    .makePrimary())
+            .addEntry(KeysetHandle.importKey(key123).setStatus(KeyStatus.ENABLED).withFixedId(123))
             .build();
     MonitoringClient.Logger encLogger =
         client.createLogger(
@@ -124,11 +137,14 @@ public final class FakeMonitoringClientTest {
     ChaCha20Poly1305Key key234 =
         ChaCha20Poly1305Key.create(
             ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 234);
-    MonitoringKeysetInfo info =
-        MonitoringKeysetInfo.newBuilder()
-            .addEntry(key123, KeyStatus.ENABLED, 123)
-            .addEntry(key234, KeyStatus.ENABLED, 234)
-            .setPrimaryKeyId(123)
+    KeysetHandleInterface info =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.importKey(key234)
+                    .setStatus(KeyStatus.ENABLED)
+                    .withFixedId(234)
+                    .makePrimary())
+            .addEntry(KeysetHandle.importKey(key123).setStatus(KeyStatus.ENABLED).withFixedId(123))
             .build();
     MonitoringClient.Logger encLogger =
         client.createLogger(
@@ -163,10 +179,13 @@ public final class FakeMonitoringClientTest {
     ChaCha20Poly1305Key key123 =
         ChaCha20Poly1305Key.create(
             ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 123);
-    MonitoringKeysetInfo info =
-        MonitoringKeysetInfo.newBuilder()
-            .addEntry(key123, KeyStatus.ENABLED, 123)
-            .setPrimaryKeyId(123)
+    KeysetHandleInterface info =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.importKey(key123)
+                    .setStatus(KeyStatus.ENABLED)
+                    .withFixedId(123)
+                    .makePrimary())
             .build();
     MonitoringClient.Logger encLogger =
         client.createLogger(info, MonitoringAnnotations.EMPTY, "aead", "encrypt");

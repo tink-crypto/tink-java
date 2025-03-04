@@ -18,7 +18,6 @@ package com.google.crypto.tink.jwt;
 
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.MonitoringClient;
-import com.google.crypto.tink.internal.MonitoringKeysetInfo;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
@@ -97,7 +96,7 @@ class JwtPublicKeyVerifyWrapper
     MonitoringClient.Logger logger;
     if (!primitives.getAnnotations().isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-      MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
+      KeysetHandleInterface keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
       logger = client.createLogger(keysetInfo, primitives.getAnnotations(), "jwtverify", "verify");
     } else {
       logger = MonitoringUtil.DO_NOTHING_LOGGER;

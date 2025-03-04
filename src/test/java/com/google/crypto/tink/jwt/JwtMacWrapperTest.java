@@ -311,7 +311,7 @@ public class JwtMacWrapperTest {
     FakeMonitoringClient.LogFailureEntry verifyFailure = failures.get(0);
     assertThat(verifyFailure.getPrimitive()).isEqualTo("jwtmac");
     assertThat(verifyFailure.getApi()).isEqualTo("verify");
-    assertThat(verifyFailure.getKeysetInfo().getPrimaryKeyId()).isEqualTo(42);
+    assertThat(verifyFailure.getKeysetInfo().getPrimary().getId()).isEqualTo(42);
     assertThat(verifyFailure.getAnnotations()).isEqualTo(annotations);
   }
 }

@@ -22,7 +22,6 @@ import com.google.crypto.tink.aead.internal.LegacyFullAead;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringClient;
-import com.google.crypto.tink.internal.MonitoringKeysetInfo;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
@@ -136,7 +135,7 @@ public class AeadWrapper implements PrimitiveWrapper<Aead, Aead> {
     MonitoringClient.Logger decLogger;
     if (!pset.getAnnotations().isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-      MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(pset);
+      KeysetHandleInterface keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(pset);
       encLogger = client.createLogger(keysetInfo, pset.getAnnotations(), "aead", "encrypt");
       decLogger = client.createLogger(keysetInfo, pset.getAnnotations(), "aead", "decrypt");
     } else {

@@ -32,7 +32,7 @@ public final class MutableMonitoringRegistry {
   private static class DoNothingClient implements MonitoringClient {
     @Override
     public MonitoringClient.Logger createLogger(
-        MonitoringKeysetInfo keysetInfo,
+        KeysetHandleInterface keysetInfo,
         MonitoringAnnotations annotations,
         String primitive,
         String api) {

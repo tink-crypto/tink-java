@@ -41,7 +41,7 @@ public interface MonitoringClient {
 
   /** Function that creates Logger objects. It is called when a primitive is created. */
   public Logger createLogger(
-      MonitoringKeysetInfo keysetInfo,
+      KeysetHandleInterface keysetInfo,
       MonitoringAnnotations annotations,
       String primitive,
       String api);

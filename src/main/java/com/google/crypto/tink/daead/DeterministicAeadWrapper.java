@@ -22,7 +22,6 @@ import com.google.crypto.tink.daead.internal.LegacyFullDeterministicAead;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringClient;
-import com.google.crypto.tink.internal.MonitoringKeysetInfo;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
@@ -141,7 +140,7 @@ public class DeterministicAeadWrapper
     MonitoringClient.Logger decLogger;
     if (!primitives.getAnnotations().isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-      MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
+      KeysetHandleInterface keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
       encLogger = client.createLogger(keysetInfo, primitives.getAnnotations(), "daead", "encrypt");
       decLogger = client.createLogger(keysetInfo, primitives.getAnnotations(), "daead", "decrypt");
     } else {

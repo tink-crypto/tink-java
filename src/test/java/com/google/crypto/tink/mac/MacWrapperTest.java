@@ -509,7 +509,7 @@ public class MacWrapperTest {
     assertThat(verifyFailure.getPrimitive()).isEqualTo("mac");
     assertThat(verifyFailure.getApi()).isEqualTo("verify");
     // 5 is tinkKey1's id.
-    assertThat(verifyFailure.getKeysetInfo().getPrimaryKeyId()).isEqualTo(5);
+    assertThat(verifyFailure.getKeysetInfo().getPrimary().getId()).isEqualTo(5);
     assertThat(verifyFailure.getAnnotations()).isEqualTo(annotations);
   }
 
@@ -578,21 +578,21 @@ public class MacWrapperTest {
     assertThat(compFailure.getPrimitive()).isEqualTo("mac");
     assertThat(compFailure.getApi()).isEqualTo("compute");
     // 4 is tinkKey0's id.
-    assertThat(compFailure.getKeysetInfo().getPrimaryKeyId()).isEqualTo(4);
+    assertThat(compFailure.getKeysetInfo().getPrimary().getId()).isEqualTo(4);
     assertThat(compFailure.getAnnotations()).isEqualTo(annotations);
 
     FakeMonitoringClient.LogFailureEntry verifyFailure = failures.get(1);
     assertThat(verifyFailure.getPrimitive()).isEqualTo("mac");
     assertThat(verifyFailure.getApi()).isEqualTo("verify");
     // 4 is tinkKey0's id.
-    assertThat(verifyFailure.getKeysetInfo().getPrimaryKeyId()).isEqualTo(4);
+    assertThat(verifyFailure.getKeysetInfo().getPrimary().getId()).isEqualTo(4);
     assertThat(verifyFailure.getAnnotations()).isEqualTo(annotations);
 
     FakeMonitoringClient.LogFailureEntry verifyFailure2 = failures.get(2);
     assertThat(verifyFailure2.getPrimitive()).isEqualTo("mac");
     assertThat(verifyFailure2.getApi()).isEqualTo("verify");
     // 4 is tinkKey0's id.
-    assertThat(verifyFailure2.getKeysetInfo().getPrimaryKeyId()).isEqualTo(4);
+    assertThat(verifyFailure2.getKeysetInfo().getPrimary().getId()).isEqualTo(4);
     assertThat(verifyFailure2.getAnnotations()).isEqualTo(annotations);
   }
 

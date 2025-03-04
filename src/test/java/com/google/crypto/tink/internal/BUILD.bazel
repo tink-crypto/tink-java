@@ -257,9 +257,9 @@ java_test(
     size = "small",
     srcs = ["MutableMonitoringRegistryTest.java"],
     deps = [
+        "//src/main/java/com/google/crypto/tink/internal:keyset_handle_interface",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_annotations",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_client",
-        "//src/main/java/com/google/crypto/tink/internal:monitoring_keyset_info",
         "//src/main/java/com/google/crypto/tink/internal:mutable_monitoring_registry",
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
@@ -697,26 +697,6 @@ java_test(
     visibility = ["//visibility:public"],
     deps = [
         "//src/main/java/com/google/crypto/tink/internal:monitoring_annotations",
-        "@maven//:com_google_truth_truth",
-        "@maven//:junit_junit",
-    ],
-)
-
-java_test(
-    name = "MonitoringKeysetInfoTest",
-    size = "small",
-    srcs = ["MonitoringKeysetInfoTest.java"],
-    deps = [
-        "//proto:tink_java_proto",
-        "//src/main/java/com/google/crypto/tink:key_status",
-        "//src/main/java/com/google/crypto/tink:parameters",
-        "//src/main/java/com/google/crypto/tink/aead:cha_cha20_poly1305_key",
-        "//src/main/java/com/google/crypto/tink/aead:cha_cha20_poly1305_parameters",
-        "//src/main/java/com/google/crypto/tink/internal:legacy_proto_parameters",
-        "//src/main/java/com/google/crypto/tink/internal:monitoring_keyset_info",
-        "//src/main/java/com/google/crypto/tink/internal:proto_parameters_serialization",
-        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
-        "@maven//:com_google_protobuf_protobuf_java",
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
     ],

@@ -39,7 +39,7 @@ public final class MutableMonitoringRegistryTest {
   private static class StubMonitoringClient implements MonitoringClient {
     @Override
     public MonitoringClient.Logger createLogger(
-        MonitoringKeysetInfo keysetInfo,
+        KeysetHandleInterface keysetInfo,
         MonitoringAnnotations annotations,
         String primitive,
         String api) {

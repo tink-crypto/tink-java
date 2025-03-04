@@ -16,9 +16,9 @@
 
 package com.google.crypto.tink.internal.testing;
 
+import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MonitoringClient;
-import com.google.crypto.tink.internal.MonitoringKeysetInfo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,8 +34,8 @@ public final class FakeMonitoringClient implements MonitoringClient {
 
   /** LogEntry */
   public static final class LogEntry {
-    private final MonitoringKeysetInfo keysetInfo;
-    private final MonitoringKeysetInfo.Entry keyInfo;
+    private final KeysetHandleInterface keysetInfo;
+    private final KeysetHandleInterface.Entry keyInfo;
     private final MonitoringAnnotations annotations;
     private final String primitive;
     private final String api;
@@ -43,8 +43,8 @@ public final class FakeMonitoringClient implements MonitoringClient {
     private final long numBytesAsInput;
 
     private LogEntry(
-        MonitoringKeysetInfo keysetInfo,
-        MonitoringKeysetInfo.Entry keyInfo,
+        KeysetHandleInterface keysetInfo,
+        KeysetHandleInterface.Entry keyInfo,
         MonitoringAnnotations annotations,
         String primitive,
         String api,
@@ -59,11 +59,11 @@ public final class FakeMonitoringClient implements MonitoringClient {
       this.numBytesAsInput = numBytesAsInput;
     }
 
-    public MonitoringKeysetInfo getKeysetInfo() {
+    public KeysetHandleInterface getKeysetInfo() {
       return keysetInfo;
     }
 
-    public MonitoringKeysetInfo.Entry getKeyInfo() {
+    public KeysetHandleInterface.Entry getKeyInfo() {
       return keyInfo;
     }
 
@@ -92,11 +92,11 @@ public final class FakeMonitoringClient implements MonitoringClient {
   public static final class LogFailureEntry {
     private final String primitive;
     private final String api;
-    private final MonitoringKeysetInfo keysetInfo;
+    private final KeysetHandleInterface keysetInfo;
     private final MonitoringAnnotations annotations;
 
     private LogFailureEntry(
-        MonitoringKeysetInfo keysetInfo,
+        KeysetHandleInterface keysetInfo,
         MonitoringAnnotations annotations,
         String primitive,
         String api) {
@@ -114,7 +114,7 @@ public final class FakeMonitoringClient implements MonitoringClient {
       return api;
     }
 
-    public MonitoringKeysetInfo getKeysetInfo() {
+    public KeysetHandleInterface getKeysetInfo() {
       return keysetInfo;
     }
 
@@ -135,9 +135,9 @@ public final class FakeMonitoringClient implements MonitoringClient {
   }
 
   private final class Logger implements MonitoringClient.Logger {
-    private final MonitoringKeysetInfo keysetInfo;
+    private final KeysetHandleInterface keysetInfo;
     private final MonitoringAnnotations annotations;
-    private final HashMap<Integer, MonitoringKeysetInfo.Entry> entries;
+    private final HashMap<Integer, KeysetHandleInterface.Entry> entries;
     private final String primitive;
     private final String api;
 
@@ -157,7 +157,7 @@ public final class FakeMonitoringClient implements MonitoringClient {
     }
 
     private Logger(
-        MonitoringKeysetInfo keysetInfo,
+        KeysetHandleInterface keysetInfo,
         MonitoringAnnotations annotations,
         String primitive,
         String api) {
@@ -167,7 +167,7 @@ public final class FakeMonitoringClient implements MonitoringClient {
       this.api = api;
       entries = new HashMap<>();
       for (int i = 0; i < keysetInfo.size(); i++) {
-        MonitoringKeysetInfo.Entry entry = keysetInfo.getAt(i);
+        KeysetHandleInterface.Entry entry = keysetInfo.getAt(i);
         entries.put(entry.getId(), entry);
       }
     }
@@ -178,7 +178,7 @@ public final class FakeMonitoringClient implements MonitoringClient {
 
   @Override
   public Logger createLogger(
-      MonitoringKeysetInfo keysetInfo,
+      KeysetHandleInterface keysetInfo,
       MonitoringAnnotations annotations,
       String primitive,
       String api) {

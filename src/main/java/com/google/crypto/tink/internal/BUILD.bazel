@@ -408,9 +408,9 @@ java_library(
     name = "mutable_monitoring_registry",
     srcs = ["MutableMonitoringRegistry.java"],
     deps = [
+        ":keyset_handle_interface",
         ":monitoring_annotations",
         ":monitoring_client",
-        ":monitoring_keyset_info",
         ":monitoring_util",
     ],
 )
@@ -419,9 +419,9 @@ android_library(
     name = "mutable_monitoring_registry-android",
     srcs = ["MutableMonitoringRegistry.java"],
     deps = [
+        ":keyset_handle_interface-android",
         ":monitoring_annotations-android",
         ":monitoring_client-android",
-        ":monitoring_keyset_info-android",
         ":monitoring_util-android",
     ],
 )
@@ -432,9 +432,7 @@ java_library(
     deps = [
         ":keyset_handle_interface",
         ":monitoring_client",
-        ":monitoring_keyset_info",
         ":primitive_set",
-        "@maven//:com_google_code_findbugs_jsr305",
     ],
 )
 
@@ -444,9 +442,7 @@ android_library(
     deps = [
         ":keyset_handle_interface-android",
         ":monitoring_client-android",
-        ":monitoring_keyset_info-android",
         ":primitive_set-android",
-        "@maven//:com_google_code_findbugs_jsr305",
     ],
 )
 
@@ -919,21 +915,9 @@ android_library(
     name = "monitoring_client-android",
     srcs = ["MonitoringClient.java"],
     deps = [
+        ":keyset_handle_interface-android",
         ":monitoring_annotations-android",
-        ":monitoring_keyset_info-android",
         "//src/main/java/com/google/crypto/tink/annotations:alpha-android",
-    ],
-)
-
-android_library(
-    name = "monitoring_keyset_info-android",
-    srcs = ["MonitoringKeysetInfo.java"],
-    deps = [
-        "//src/main/java/com/google/crypto/tink:key-android",
-        "//src/main/java/com/google/crypto/tink:key_status-android",
-        "//src/main/java/com/google/crypto/tink/annotations:alpha-android",
-        "@maven//:com_google_code_findbugs_jsr305",
-        "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
 
@@ -951,21 +935,9 @@ java_library(
     name = "monitoring_client",
     srcs = ["MonitoringClient.java"],
     deps = [
+        ":keyset_handle_interface",
         ":monitoring_annotations",
-        ":monitoring_keyset_info",
         "//src/main/java/com/google/crypto/tink/annotations:alpha",
-    ],
-)
-
-java_library(
-    name = "monitoring_keyset_info",
-    srcs = ["MonitoringKeysetInfo.java"],
-    deps = [
-        "//src/main/java/com/google/crypto/tink:key",
-        "//src/main/java/com/google/crypto/tink:key_status",
-        "//src/main/java/com/google/crypto/tink/annotations:alpha",
-        "@maven//:com_google_code_findbugs_jsr305",
-        "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
 

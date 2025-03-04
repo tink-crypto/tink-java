@@ -20,7 +20,6 @@ import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringClient;
-import com.google.crypto.tink.internal.MonitoringKeysetInfo;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
@@ -89,7 +88,7 @@ public class PublicKeySignWrapper implements PrimitiveWrapper<PublicKeySign, Pub
     MonitoringClient.Logger logger;
     if (!primitives.getAnnotations().isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-      MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
+      KeysetHandleInterface keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
       logger =
           client.createLogger(keysetInfo, primitives.getAnnotations(), "public_key_sign", "sign");
     } else {

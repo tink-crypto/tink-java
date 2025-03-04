@@ -21,7 +21,6 @@ import com.google.crypto.tink.Mac;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringClient;
-import com.google.crypto.tink.internal.MonitoringKeysetInfo;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
@@ -134,7 +133,7 @@ public class MacWrapper implements PrimitiveWrapper<Mac, Mac> {
     MonitoringClient.Logger verifyLogger;
     if (!primitives.getAnnotations().isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-      MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
+      KeysetHandleInterface keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
       computeLogger =
           client.createLogger(keysetInfo, primitives.getAnnotations(), "mac", "compute");
       verifyLogger = client.createLogger(keysetInfo, primitives.getAnnotations(), "mac", "verify");

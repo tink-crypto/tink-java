@@ -396,7 +396,7 @@ public class PublicKeySignWrapperTest {
     FakeMonitoringClient.LogFailureEntry signFailure = failures.get(0);
     assertThat(signFailure.getPrimitive()).isEqualTo("public_key_sign");
     assertThat(signFailure.getApi()).isEqualTo("sign");
-    assertThat(signFailure.getKeysetInfo().getPrimaryKeyId()).isEqualTo(123);
+    assertThat(signFailure.getKeysetInfo().getPrimary().getId()).isEqualTo(123);
     assertThat(signFailure.getAnnotations()).isEqualTo(annotations);
   }
 

@@ -21,7 +21,6 @@ import com.google.crypto.tink.hybrid.internal.LegacyFullHybridDecrypt;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringClient;
-import com.google.crypto.tink.internal.MonitoringKeysetInfo;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
@@ -117,7 +116,7 @@ public class HybridDecryptWrapper implements PrimitiveWrapper<HybridDecrypt, Hyb
     MonitoringClient.Logger decLogger;
     if (!primitives.getAnnotations().isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-      MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
+      KeysetHandleInterface keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
       decLogger =
           client.createLogger(keysetInfo, primitives.getAnnotations(), "hybrid_decrypt", "decrypt");
     } else {

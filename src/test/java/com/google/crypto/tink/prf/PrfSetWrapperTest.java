@@ -312,12 +312,12 @@ public class PrfSetWrapperTest {
     FakeMonitoringClient.LogFailureEntry failure0 = failures.get(0);
     assertThat(failure0.getPrimitive()).isEqualTo("prf");
     assertThat(failure0.getApi()).isEqualTo("compute");
-    assertThat(failure0.getKeysetInfo().getPrimaryKeyId()).isEqualTo(5);
+    assertThat(failure0.getKeysetInfo().getPrimary().getId()).isEqualTo(5);
     assertThat(failure0.getAnnotations()).isEqualTo(annotations);
     FakeMonitoringClient.LogFailureEntry failure1 = failures.get(1);
     assertThat(failure1.getPrimitive()).isEqualTo("prf");
     assertThat(failure1.getApi()).isEqualTo("compute");
-    assertThat(failure1.getKeysetInfo().getPrimaryKeyId()).isEqualTo(5);
+    assertThat(failure1.getKeysetInfo().getPrimary().getId()).isEqualTo(5);
     assertThat(failure1.getAnnotations()).isEqualTo(annotations);
   }
 

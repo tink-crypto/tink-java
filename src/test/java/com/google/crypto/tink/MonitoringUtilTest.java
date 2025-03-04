@@ -20,7 +20,7 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.crypto.tink.aead.AesGcmKey;
 import com.google.crypto.tink.aead.PredefinedAeadParameters;
-import com.google.crypto.tink.internal.MonitoringKeysetInfo;
+import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.proto.KeyStatusType;
@@ -57,8 +57,8 @@ public final class MonitoringUtilTest {
         PrimitiveSet.newBuilder(Aead.class)
             .addPrimaryFullPrimitive(fullPrimitive, key, protoKey)
             .build();
-    MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
-    assertThat(keysetInfo.getPrimaryKeyId()).isEqualTo(42);
+    KeysetHandleInterface keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
+    assertThat(keysetInfo.getPrimary().getId()).isEqualTo(42);
     assertThat(keysetInfo.size()).isEqualTo(1);
     assertThat(keysetInfo.getAt(0).getStatus()).isEqualTo(KeyStatus.ENABLED);
     assertThat(keysetInfo.getAt(0).getId()).isEqualTo(42);
@@ -92,7 +92,7 @@ public final class MonitoringUtilTest {
             .addPrimaryFullPrimitive(fullPrimitive1, key1, protoKey1)
             .addFullPrimitive(fullPrimitive2, key2, protoKey2)
             .build();
-    MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
+    KeysetHandleInterface keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
     assertThat(keysetInfo.size()).isEqualTo(2);
   }
 
@@ -111,8 +111,8 @@ public final class MonitoringUtilTest {
             TestUtil.createAesGcmKeyData(KEY), 42, KeyStatusType.ENABLED, OutputPrefixType.TINK);
     PrimitiveSet<Aead> primitives =
         PrimitiveSet.newBuilder(Aead.class).addFullPrimitive(fullPrimitive, key, protoKey).build();
-    MonitoringKeysetInfo keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
-    assertThat(keysetInfo.getPrimaryKeyId()).isNull();
+    KeysetHandleInterface keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
+    assertThat(keysetInfo.getPrimary()).isNull();
   }
 
   @Test
