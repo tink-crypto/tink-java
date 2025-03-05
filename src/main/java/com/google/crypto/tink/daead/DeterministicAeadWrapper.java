@@ -140,9 +140,8 @@ public class DeterministicAeadWrapper
     MonitoringClient.Logger decLogger;
     if (!primitives.getAnnotations().isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-      KeysetHandleInterface keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(primitives);
-      encLogger = client.createLogger(keysetInfo, primitives.getAnnotations(), "daead", "encrypt");
-      decLogger = client.createLogger(keysetInfo, primitives.getAnnotations(), "daead", "decrypt");
+      encLogger = client.createLogger(handle, primitives.getAnnotations(), "daead", "encrypt");
+      decLogger = client.createLogger(handle, primitives.getAnnotations(), "daead", "decrypt");
     } else {
       encLogger = MonitoringUtil.DO_NOTHING_LOGGER;
       decLogger = MonitoringUtil.DO_NOTHING_LOGGER;

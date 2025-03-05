@@ -36,7 +36,6 @@ import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MonitoringClient;
-import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
@@ -131,7 +130,7 @@ public class KeysetHandleTest {
         MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
         logger =
             client.createLogger(
-                MonitoringUtil.getMonitoringKeysetInfo(primitiveSet),
+                primitiveSet.getKeysetHandle(),
                 primitiveSet.getAnnotations(),
                 "encrypt_only",
                 "encrypt");

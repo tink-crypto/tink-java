@@ -30,9 +30,5 @@ public final class MonitoringUtil {
 
   public static final MonitoringClient.Logger DO_NOTHING_LOGGER = new DoNothingLogger();
 
-  public static <P> KeysetHandleInterface getMonitoringKeysetInfo(PrimitiveSet<P> primitiveSet) {
-    return primitiveSet.getKeysetHandle();
-  }
-
   private MonitoringUtil() {}
 }

@@ -97,17 +97,16 @@ public class PrfSetWrapper implements PrimitiveWrapper<Prf, PrfSet> {
 
   @Override
   public PrfSet wrap(PrimitiveSet<Prf> set) throws GeneralSecurityException {
+    KeysetHandleInterface keysetHandle = set.getKeysetHandle();
     MonitoringClient.Logger logger;
     if (!set.getAnnotations().isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-      KeysetHandleInterface keysetInfo = MonitoringUtil.getMonitoringKeysetInfo(set);
-      logger = client.createLogger(keysetInfo, set.getAnnotations(), "prf", "compute");
+      logger = client.createLogger(keysetHandle, set.getAnnotations(), "prf", "compute");
     } else {
       logger = MonitoringUtil.DO_NOTHING_LOGGER;
     }
 
     Map<Integer, Prf> mutablePrfMap = new HashMap<>();
-    KeysetHandleInterface keysetHandle = set.getKeysetHandle();
     for (int i = 0; i < keysetHandle.size(); i++) {
       KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
       if (entry.getKey() instanceof LegacyProtoKey) {
