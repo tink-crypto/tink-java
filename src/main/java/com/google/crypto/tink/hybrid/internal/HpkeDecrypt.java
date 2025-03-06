@@ -97,9 +97,9 @@ public final class HpkeDecrypt implements HybridDecrypt {
 
   public static HybridDecrypt create(HpkePrivateKey privateKey) throws GeneralSecurityException {
     HpkeParameters parameters = privateKey.getParameters();
-    HpkeKem kem = HpkeEncrypt.createKem(parameters.getKemId());
-    HpkeKdf kdf = HpkeEncrypt.createKdf(parameters.getKdfId());
-    HpkeAead aead = HpkeEncrypt.createAead(parameters.getAeadId());
+    HpkeKem kem = HpkePrimitiveFactory.createKem(parameters.getKemId());
+    HpkeKdf kdf = HpkePrimitiveFactory.createKdf(parameters.getKdfId());
+    HpkeAead aead = HpkePrimitiveFactory.createAead(parameters.getAeadId());
     int encapsulatedKeyLength = encodingSizeInBytes(parameters.getKemId());
     HpkeKemPrivateKey recipientKemPrivateKey = createHpkeKemPrivateKey(privateKey);
     return new HpkeDecrypt(

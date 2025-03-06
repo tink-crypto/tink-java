@@ -20,7 +20,6 @@ import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.hybrid.HpkeParameters;
 import com.google.crypto.tink.hybrid.HpkePublicKey;
-import com.google.crypto.tink.subtle.EllipticCurves;
 import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
@@ -58,52 +57,10 @@ public final class HpkeEncrypt implements HybridEncrypt {
     HpkeParameters parameters = key.getParameters();
     return new HpkeEncrypt(
         key.getPublicKeyBytes(),
-        createKem(parameters.getKemId()),
-        createKdf(parameters.getKdfId()),
-        createAead(parameters.getAeadId()),
+        HpkePrimitiveFactory.createKem(parameters.getKemId()),
+        HpkePrimitiveFactory.createKdf(parameters.getKdfId()),
+        HpkePrimitiveFactory.createAead(parameters.getAeadId()),
         key.getOutputPrefix());
-  }
-
-  static HpkeKem createKem(HpkeParameters.KemId kemId) throws GeneralSecurityException {
-    if (kemId.equals(HpkeParameters.KemId.DHKEM_X25519_HKDF_SHA256)) {
-      return new X25519HpkeKem(new HkdfHpkeKdf("HmacSha256"));
-    }
-    if (kemId.equals(HpkeParameters.KemId.DHKEM_P256_HKDF_SHA256)) {
-      return NistCurvesHpkeKem.fromCurve(EllipticCurves.CurveType.NIST_P256);
-    }
-    if (kemId.equals(HpkeParameters.KemId.DHKEM_P384_HKDF_SHA384)) {
-      return NistCurvesHpkeKem.fromCurve(EllipticCurves.CurveType.NIST_P384);
-    }
-    if (kemId.equals(HpkeParameters.KemId.DHKEM_P521_HKDF_SHA512)) {
-      return NistCurvesHpkeKem.fromCurve(EllipticCurves.CurveType.NIST_P521);
-    }
-    throw new GeneralSecurityException("Unrecognized HPKE KEM identifier");
-  }
-
-  static HpkeKdf createKdf(HpkeParameters.KdfId kdfId) throws GeneralSecurityException {
-    if (kdfId.equals(HpkeParameters.KdfId.HKDF_SHA256)) {
-      return new HkdfHpkeKdf("HmacSha256");
-    }
-    if (kdfId.equals(HpkeParameters.KdfId.HKDF_SHA384)) {
-      return new HkdfHpkeKdf("HmacSha384");
-    }
-    if (kdfId.equals(HpkeParameters.KdfId.HKDF_SHA512)) {
-      return new HkdfHpkeKdf("HmacSha512");
-    }
-    throw new GeneralSecurityException("Unrecognized HPKE KDF identifier");
-  }
-
-  static HpkeAead createAead(HpkeParameters.AeadId aeadId) throws GeneralSecurityException {
-    if (aeadId.equals(HpkeParameters.AeadId.AES_128_GCM)) {
-      return new AesGcmHpkeAead(16);
-    }
-    if (aeadId.equals(HpkeParameters.AeadId.AES_256_GCM)) {
-      return new AesGcmHpkeAead(32);
-    }
-    if (aeadId.equals(HpkeParameters.AeadId.CHACHA20_POLY1305)) {
-      return new ChaCha20Poly1305HpkeAead();
-    }
-    throw new GeneralSecurityException("Unrecognized HPKE AEAD identifier");
   }
 
   @Override
