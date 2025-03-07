@@ -67,7 +67,10 @@ public final class KeyManagerRegistry {
   private synchronized KeyManager<?> getKeyManagerOrThrow(String typeUrl)
       throws GeneralSecurityException {
     if (!keyManagerMap.containsKey(typeUrl)) {
-      throw new GeneralSecurityException("No key manager found for key type " + typeUrl);
+      throw new GeneralSecurityException(
+          "No key manager found for key type "
+              + typeUrl
+              + ", see https://developers.google.com/tink/faq/registration_errors");
     }
     return keyManagerMap.get(typeUrl);
   }

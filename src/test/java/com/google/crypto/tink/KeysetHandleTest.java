@@ -1638,7 +1638,7 @@ public class KeysetHandleTest {
         assertThrows(
             GeneralSecurityException.class,
             () -> handle.getPrimitive(RegistryConfiguration.get(), Aead.class));
-    assertThat(e).hasMessageThat().contains("Unable to get primitive");
+    assertThat(e).hasMessageThat().contains("registration_errors");
     assertThat(e).hasMessageThat().contains("unregisteredTypeUrl");
   }
 

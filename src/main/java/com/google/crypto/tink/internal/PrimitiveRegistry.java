@@ -133,7 +133,10 @@ public class PrimitiveRegistry {
       KeyT key, Class<PrimitiveT> primitiveClass) throws GeneralSecurityException {
     PrimitiveConstructorIndex index = new PrimitiveConstructorIndex(key.getClass(), primitiveClass);
     if (!primitiveConstructorMap.containsKey(index)) {
-      throw new GeneralSecurityException("No PrimitiveConstructor for " + index + " available");
+      throw new GeneralSecurityException(
+          "No PrimitiveConstructor for "
+              + index
+              + " available, see https://developers.google.com/tink/faq/registration_errors");
     }
     @SuppressWarnings("unchecked") // We know we only insert like this.
     PrimitiveConstructor<KeyT, PrimitiveT> primitiveConstructor =

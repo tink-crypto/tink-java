@@ -1104,18 +1104,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
                   + " failed, unable to get primitive");
         }
         Key key = entry.getKey();
-        B fullPrimitive;
-        try {
-          fullPrimitive = config.getPrimitive(key, inputPrimitiveClassObject);
-        } catch (GeneralSecurityException e) {
-          throw new GeneralSecurityException(
-              "Unable to get primitive "
-                  + inputPrimitiveClassObject
-                  + " for key of type "
-                  + protoKey.getKeyData().getTypeUrl()
-                  + ", see https://developers.google.com/tink/faq/registration_errors",
-              e);
-        }
+        B fullPrimitive = config.getPrimitive(key, inputPrimitiveClassObject);
         if (protoKey.getKeyId() == keyset.getPrimaryKeyId()) {
           builder.addPrimaryFullPrimitive(fullPrimitive, key, protoKey);
         } else {
