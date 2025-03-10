@@ -16,11 +16,11 @@
 
 package com.google.crypto.tink.subtle;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.config.TinkFips;
-import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.subtle.EllipticCurves.EcdsaEncoding;
 import com.google.crypto.tink.subtle.Enums.HashType;
 import com.google.crypto.tink.testing.TestUtil;
@@ -42,14 +42,16 @@ import java.security.spec.ECPoint;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import org.conscrypt.Conscrypt;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.FromDataPoints;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /** Unit tests for EcdsaVerifyJce. */
-@RunWith(JUnit4.class)
+@RunWith(Theories.class)
 public class EcdsaVerifyJceTest {
 
   @Before
@@ -66,30 +68,60 @@ public class EcdsaVerifyJceTest {
     }
   }
 
-  @Test
-  public void testWycheproofVectors() throws Exception {
-    Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
+  public static class WycheproofTestCase {
+    private final String fileName;
+    private final EcdsaEncoding encoding;
 
-    testWycheproofVectors(
-        "../wycheproof/testvectors/ecdsa_secp256r1_sha256_test.json", EcdsaEncoding.DER);
-    testWycheproofVectors(
-        "../wycheproof/testvectors/ecdsa_secp384r1_sha512_test.json", EcdsaEncoding.DER);
-    testWycheproofVectors(
-        "../wycheproof/testvectors/ecdsa_secp521r1_sha512_test.json", EcdsaEncoding.DER);
-    testWycheproofVectors(
-        "../wycheproof/testvectors/ecdsa_secp256r1_sha256_p1363_test.json",
-        EcdsaEncoding.IEEE_P1363);
-    testWycheproofVectors(
-        "../wycheproof/testvectors/ecdsa_secp384r1_sha512_p1363_test.json",
-        EcdsaEncoding.IEEE_P1363);
-    testWycheproofVectors(
-        "../wycheproof/testvectors/ecdsa_secp521r1_sha512_p1363_test.json",
-        EcdsaEncoding.IEEE_P1363);
+    public String fileName() {
+      return fileName;
+    }
+
+    public EcdsaEncoding encoding() {
+      return encoding;
+    }
+
+    public WycheproofTestCase(String fileName, EcdsaEncoding encoding) {
+      this.fileName = fileName;
+      this.encoding = encoding;
+    }
   }
 
-  private static void testWycheproofVectors(String fileName, EcdsaEncoding encoding)
-      throws Exception {
-    JsonObject jsonObj = WycheproofTestUtil.readJson(fileName);
+  @DataPoints("wycheproofTestCases")
+  public static final WycheproofTestCase[] wycheproofTestCases =
+      new WycheproofTestCase[] {
+        new WycheproofTestCase(
+            "../wycheproof/testvectors/ecdsa_secp256r1_sha256_test.json",
+            EcdsaEncoding.DER),
+        new WycheproofTestCase(
+            "../wycheproof/testvectors/ecdsa_secp256r1_sha512_test.json",
+            EcdsaEncoding.DER),
+        new WycheproofTestCase(
+            "../wycheproof/testvectors/ecdsa_secp384r1_sha384_test.json",
+            EcdsaEncoding.DER),
+        new WycheproofTestCase(
+            "../wycheproof/testvectors/ecdsa_secp384r1_sha512_test.json",
+            EcdsaEncoding.DER),
+        new WycheproofTestCase(
+            "../wycheproof/testvectors/ecdsa_secp521r1_sha512_test.json",
+            EcdsaEncoding.DER),
+        new WycheproofTestCase(
+            "../wycheproof/testvectors/ecdsa_secp256r1_sha256_p1363_test.json",
+            EcdsaEncoding.IEEE_P1363),
+        new WycheproofTestCase(
+            "../wycheproof/testvectors/ecdsa_secp384r1_sha384_p1363_test.json",
+            EcdsaEncoding.IEEE_P1363),
+        new WycheproofTestCase(
+            "../wycheproof/testvectors/ecdsa_secp384r1_sha512_p1363_test.json",
+            EcdsaEncoding.IEEE_P1363),
+        new WycheproofTestCase(
+            "../wycheproof/testvectors/ecdsa_secp521r1_sha512_p1363_test.json",
+            EcdsaEncoding.IEEE_P1363)
+      };
+
+  @Theory
+  public void testWycheproofVectors(
+      @FromDataPoints("wycheproofTestCases") WycheproofTestCase testCase) throws Exception {
+    JsonObject jsonObj = WycheproofTestUtil.readJson(testCase.fileName());
 
     int errors = 0;
     int cntSkippedTests = 0;
@@ -119,7 +151,7 @@ public class EcdsaVerifyJceTest {
         try {
           ECPublicKey pubKey = (ECPublicKey) kf.generatePublic(x509keySpec);
           HashType hash = WycheproofTestUtil.getHashType(sha);
-          verifier = new EcdsaVerifyJce(pubKey, hash, encoding);
+          verifier = new EcdsaVerifyJce(pubKey, hash, testCase.encoding());
         } catch (GeneralSecurityException ignored) {
           // Invalid or unsupported public key.
           System.out.printf("Skipping %s, exception: %s\n", tcId, ignored);
@@ -158,8 +190,6 @@ public class EcdsaVerifyJceTest {
 
   @Test
   public void testConstrutorExceptions() throws Exception {
-    Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
-
     ECParameterSpec ecParams = EllipticCurves.getNistP256Params();
     KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
     keyGen.initialize(ecParams);
@@ -173,80 +203,72 @@ public class EcdsaVerifyJceTest {
     TestUtil.assertExceptionContains(e, "Unsupported hash: SHA1");
   }
 
-  @Test
-  public void testAgainstJCEInstance256() throws Exception {
-    Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
-    testAgainstJceSignatureInstance(EllipticCurves.getNistP256Params(), HashType.SHA256);
+  public static class TestCase {
+    private final ECParameterSpec paramSpec;
+    private final HashType hash;
+
+    public ECParameterSpec paramSpec() {
+      return paramSpec;
+    }
+
+    public HashType hash() {
+      return hash;
+    }
+
+    public TestCase(ECParameterSpec paramSpec, HashType hash) {
+      this.paramSpec = paramSpec;
+      this.hash = hash;
+    }
   }
 
-  @Test
-  public void testAgainstJCEInstance384() throws Exception {
-    Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
-    testAgainstJceSignatureInstance(EllipticCurves.getNistP384Params(), HashType.SHA512);
-  }
+  @DataPoints("testCases")
+  public static final TestCase[] testCases = {
+    new TestCase(EllipticCurves.getNistP256Params(), HashType.SHA256),
+    new TestCase(EllipticCurves.getNistP256Params(), HashType.SHA384),
+    new TestCase(EllipticCurves.getNistP256Params(), HashType.SHA512),
+    new TestCase(EllipticCurves.getNistP384Params(), HashType.SHA256),
+    new TestCase(EllipticCurves.getNistP384Params(), HashType.SHA384),
+    new TestCase(EllipticCurves.getNistP384Params(), HashType.SHA512),
+    new TestCase(EllipticCurves.getNistP521Params(), HashType.SHA256),
+    new TestCase(EllipticCurves.getNistP521Params(), HashType.SHA512)
+  };
 
-  @Test
-  public void testAgainstJCEInstance512() throws Exception {
-    Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
-    testAgainstJceSignatureInstance(EllipticCurves.getNistP521Params(), HashType.SHA512);
-  }
-
-  @Test
-  public void testSignVerify256() throws Exception {
-    Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
-    testSignVerify(EllipticCurves.getNistP256Params(), HashType.SHA256);
-  }
-
-  @Test
-  public void testSignVerify384() throws Exception {
-    Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
-    testSignVerify(EllipticCurves.getNistP384Params(), HashType.SHA512);
-  }
-
-  @Test
-  public void testSignVerify512() throws Exception {
-    Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
-    testSignVerify(EllipticCurves.getNistP521Params(), HashType.SHA512);
-  }
-
-  private static void testAgainstJceSignatureInstance(ECParameterSpec ecParams, HashType hash)
+  @Theory
+  public void testAgainstJceSignatureInstance(@FromDataPoints("testCases") TestCase testCase)
       throws Exception {
-    Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
-
     int numSignatures = 100;
     if (TestUtil.isTsan()) {
       numSignatures = 5;
     }
     for (int i = 0; i < numSignatures; i++) {
       KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
-      keyGen.initialize(ecParams);
+      keyGen.initialize(testCase.paramSpec());
       KeyPair keyPair = keyGen.generateKeyPair();
       ECPublicKey pub = (ECPublicKey) keyPair.getPublic();
       ECPrivateKey priv = (ECPrivateKey) keyPair.getPrivate();
 
       // Sign with JCE's Signature.
-      Signature signer = Signature.getInstance(SubtleUtil.toEcdsaAlgo(hash));
+      Signature signer = Signature.getInstance(SubtleUtil.toEcdsaAlgo(testCase.hash()));
       signer.initSign(priv);
       String message = "Hello";
-      signer.update(message.getBytes("UTF-8"));
+      signer.update(message.getBytes(UTF_8));
       byte[] signature = signer.sign();
 
       // Verify with EcdsaVerifyJce.
-      EcdsaVerifyJce verifier = new EcdsaVerifyJce(pub, hash, EcdsaEncoding.DER);
-      verifier.verify(signature, message.getBytes("UTF-8"));
+      EcdsaVerifyJce verifier = new EcdsaVerifyJce(pub, testCase.hash(), EcdsaEncoding.DER);
+      verifier.verify(signature, message.getBytes(UTF_8));
     }
   }
 
-  private static void testSignVerify(ECParameterSpec ecParams, HashType hash) throws Exception {
-    Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
-
+  @Theory
+  public void testSignVerify(@FromDataPoints("testCases") TestCase testCase) throws Exception {
     int numSignatures = 100;
     if (TestUtil.isTsan()) {
       numSignatures = 5;
     }
     for (int i = 0; i < numSignatures; i++) {
       KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
-      keyGen.initialize(ecParams);
+      keyGen.initialize(testCase.paramSpec());
       KeyPair keyPair = keyGen.generateKeyPair();
       ECPublicKey pub = (ECPublicKey) keyPair.getPublic();
       ECPrivateKey priv = (ECPrivateKey) keyPair.getPrivate();
@@ -254,13 +276,13 @@ public class EcdsaVerifyJceTest {
       EcdsaEncoding[] encodings = new EcdsaEncoding[] {EcdsaEncoding.IEEE_P1363, EcdsaEncoding.DER};
       for (EcdsaEncoding encoding : encodings) {
         // Sign with EcdsaSignJce
-        EcdsaSignJce signer = new EcdsaSignJce(priv, hash, encoding);
+        EcdsaSignJce signer = new EcdsaSignJce(priv, testCase.hash(), encoding);
 
-        byte[] message = "Hello".getBytes("UTF-8");
+        byte[] message = "Hello".getBytes(UTF_8);
         byte[] signature = signer.sign(message);
 
         // Verify with EcdsaVerifyJce.
-        EcdsaVerifyJce verifier = new EcdsaVerifyJce(pub, hash, encoding);
+        EcdsaVerifyJce verifier = new EcdsaVerifyJce(pub, testCase.hash(), encoding);
         verifier.verify(signature, message);
       }
     }
@@ -268,8 +290,6 @@ public class EcdsaVerifyJceTest {
 
   @Test
   public void testModification() throws Exception {
-    Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
-
     ECParameterSpec ecParams = EllipticCurves.getNistP256Params();
     KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
     keyGen.initialize(ecParams);
@@ -281,7 +301,7 @@ public class EcdsaVerifyJceTest {
     for (EcdsaEncoding encoding : encodings) {
       // Sign with EcdsaSignJce
       EcdsaSignJce signer = new EcdsaSignJce(priv, HashType.SHA256, encoding);
-      byte[] message = "Hello".getBytes("UTF-8");
+      byte[] message = "Hello".getBytes(UTF_8);
       byte[] signature = signer.sign(message);
 
       // Verify with EcdsaVerifyJce.
@@ -305,22 +325,6 @@ public class EcdsaVerifyJceTest {
               encoding == EcdsaEncoding.IEEE_P1363 ? EcdsaEncoding.DER : EcdsaEncoding.IEEE_P1363);
       assertThrows(GeneralSecurityException.class, () -> verifier2.verify(signature, message));
     }
-  }
-
-  @Test
-  public void testFailIfFipsModuleNotAvailable() throws Exception {
-    Assume.assumeTrue(TinkFips.useOnlyFips() && !TinkFipsUtil.fipsModuleAvailable());
-
-    ECParameterSpec ecParams = EllipticCurves.getNistP256Params();
-    KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
-    keyGen.initialize(ecParams);
-    KeyPair keyPair = keyGen.generateKeyPair();
-
-    assertThrows(
-        GeneralSecurityException.class,
-        () ->
-            new EcdsaVerifyJce(
-                (ECPublicKey) keyPair.getPublic(), HashType.SHA256, EcdsaEncoding.DER));
   }
 
   // A ECPublicKey implementation that returns a point that is not on the curve.
@@ -361,8 +365,6 @@ public class EcdsaVerifyJceTest {
 
   @Test
   public void testInvalidPublicKey() throws Exception {
-    Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
-
     KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
     keyGen.initialize(EllipticCurves.getNistP256Params());
     KeyPair keyPair = keyGen.generateKeyPair();

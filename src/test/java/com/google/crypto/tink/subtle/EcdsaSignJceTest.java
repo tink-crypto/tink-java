@@ -16,14 +16,12 @@
 
 package com.google.crypto.tink.subtle;
 
-import static org.junit.Assert.assertFalse;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
-import com.google.crypto.tink.config.TinkFips;
-import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.signature.EcdsaPrivateKey;
 import com.google.crypto.tink.signature.EcdsaPublicKey;
 import com.google.crypto.tink.signature.internal.testing.EcdsaTestUtil;
@@ -34,14 +32,10 @@ import com.google.crypto.tink.testing.TestUtil;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.Security;
 import java.security.Signature;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
-import org.conscrypt.Conscrypt;
-import org.junit.Assume;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -53,24 +47,8 @@ import org.junit.runner.RunWith;
 @RunWith(Theories.class)
 public class EcdsaSignJceTest {
 
-  @Before
-  public void useConscrypt() throws Exception {
-    // If Tink is build in FIPS-only mode, then we register Conscrypt for the tests.
-    if (TinkFips.useOnlyFips()) {
-      try {
-        Conscrypt.checkAvailability();
-        Security.addProvider(Conscrypt.newProvider());
-      } catch (Throwable cause) {
-        throw new IllegalStateException(
-            "Cannot test ECDSA sign in FIPS-mode without Conscrypt Provider", cause);
-      }
-    }
-  }
-
   @Test
   public void testBasic() throws Exception {
-    Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
-
     ECParameterSpec ecParams = EllipticCurves.getNistP256Params();
     KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
     keyGen.initialize(ecParams);
@@ -81,19 +59,17 @@ public class EcdsaSignJceTest {
     // Sign with EcdsaSign.
     String message = "Hello";
     EcdsaSignJce signer = new EcdsaSignJce(priv, HashType.SHA256, EcdsaEncoding.DER);
-    byte[] signature = signer.sign(message.getBytes("UTF-8"));
+    byte[] signature = signer.sign(message.getBytes(UTF_8));
 
     // Verify with JCE's Signature.
     Signature verifier = Signature.getInstance("SHA256WithECDSA");
     verifier.initVerify(pub);
-    verifier.update(message.getBytes("UTF-8"));
+    verifier.update(message.getBytes(UTF_8));
     assertTrue(verifier.verify(signature));
   }
 
   @Test
   public void testConstructorExceptions() throws Exception {
-    Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
-
     ECParameterSpec ecParams = EllipticCurves.getNistP256Params();
     KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
     keyGen.initialize(ecParams);
@@ -105,57 +81,6 @@ public class EcdsaSignJceTest {
             GeneralSecurityException.class,
             () -> new EcdsaSignJce(priv, HashType.SHA1, EcdsaEncoding.DER));
     TestUtil.assertExceptionContains(e, "Unsupported hash: SHA1");
-  }
-
-  @Test
-  public void testBitFlipAgainstSignatureInstance() throws Exception {
-    Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
-
-    ECParameterSpec ecParams = EllipticCurves.getNistP256Params();
-    KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
-    keyGen.initialize(ecParams);
-    KeyPair keyPair = keyGen.generateKeyPair();
-    ECPublicKey pub = (ECPublicKey) keyPair.getPublic();
-    ECPrivateKey priv = (ECPrivateKey) keyPair.getPrivate();
-
-    // Sign with EcdsaSign.
-    String message = "Hello";
-    EcdsaSignJce signer = new EcdsaSignJce(priv, HashType.SHA256, EcdsaEncoding.DER);
-    byte[] signature = signer.sign(message.getBytes("UTF-8"));
-
-    for (int i = 0; i < signature.length; i++) {
-      for (int j = 0; j < 8; j++) {
-        signature[i] = (byte) (signature[i] ^ (1 << j));
-        // Verify with JCE's Signature.
-        Signature verifier = Signature.getInstance("SHA256WithECDSA");
-        verifier.initVerify(pub);
-        verifier.update(message.getBytes("UTF-8"));
-        boolean verified = true;
-        try {
-          verified = verifier.verify(signature);
-        } catch (GeneralSecurityException expected) {
-          verified = false;
-        }
-        assertFalse(verified);
-        signature[i] = (byte) (signature[i] ^ (1 << j));
-      }
-    }
-  }
-
-  @Test
-  public void testFailIfFipsModuleNotAvailable() throws Exception {
-    Assume.assumeTrue(TinkFips.useOnlyFips() && !TinkFipsUtil.fipsModuleAvailable());
-
-    ECParameterSpec ecParams = EllipticCurves.getNistP256Params();
-    KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
-    keyGen.initialize(ecParams);
-    KeyPair keyPair = keyGen.generateKeyPair();
-
-    assertThrows(
-        GeneralSecurityException.class,
-        () ->
-            new EcdsaSignJce(
-                (ECPrivateKey) keyPair.getPrivate(), HashType.SHA256, EcdsaEncoding.DER));
   }
 
   @Theory
@@ -188,6 +113,5 @@ public class EcdsaSignJceTest {
   }
 
   @DataPoints("allTests")
-  public static final SignatureTestVector[] ALL_TEST_VECTORS =
-      EcdsaTestUtil.createEcdsaTestVectors();
+  public static final SignatureTestVector[] testVectors = EcdsaTestUtil.createEcdsaTestVectors();
 }

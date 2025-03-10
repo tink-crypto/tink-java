@@ -28,10 +28,8 @@ java_test(
     name = "EcdsaVerifyJceTest",
     srcs = ["EcdsaVerifyJceTest.java"],
     data = ["@wycheproof//testvectors:all"],
-    tags = ["fips"],
     deps = [
         "//src/main/java/com/google/crypto/tink/config:tink_fips",
-        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
         "//src/main/java/com/google/crypto/tink/subtle:ecdsa_sign_jce",
         "//src/main/java/com/google/crypto/tink/subtle:ecdsa_verify_jce",
         "//src/main/java/com/google/crypto/tink/subtle:elliptic_curves",
@@ -53,8 +51,6 @@ java_test(
     deps = [
         "//src/main/java/com/google/crypto/tink:public_key_sign",
         "//src/main/java/com/google/crypto/tink:public_key_verify",
-        "//src/main/java/com/google/crypto/tink/config:tink_fips",
-        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
         "//src/main/java/com/google/crypto/tink/signature:ecdsa_private_key",
         "//src/main/java/com/google/crypto/tink/signature:ecdsa_public_key",
         "//src/main/java/com/google/crypto/tink/signature/internal/testing:ecdsa_test_util",
@@ -66,7 +62,6 @@ java_test(
         "//src/main/java/com/google/crypto/tink/subtle:enums",
         "//src/main/java/com/google/crypto/tink/testing:test_util",
         "@maven//:junit_junit",
-        "@maven//:org_conscrypt_conscrypt_openjdk_uber",
     ],
 )
 
@@ -831,5 +826,28 @@ java_test(
         "//src/main/java/com/google/crypto/tink/subtle:prf_aes_cmac",
         "//src/main/java/com/google/crypto/tink/subtle:random",
         "@maven//:junit_junit",
+    ],
+)
+
+java_test(
+    name = "EcdsaSignVerifyFipsTest",
+    size = "small",
+    srcs = ["EcdsaSignVerifyFipsTest.java"],
+    tags = ["fips"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:public_key_sign",
+        "//src/main/java/com/google/crypto/tink:public_key_verify",
+        "//src/main/java/com/google/crypto/tink/config:tink_fips",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
+        "//src/main/java/com/google/crypto/tink/signature:ecdsa_private_key",
+        "//src/main/java/com/google/crypto/tink/signature:ecdsa_public_key",
+        "//src/main/java/com/google/crypto/tink/signature/internal/testing:ecdsa_test_util",
+        "//src/main/java/com/google/crypto/tink/signature/internal/testing:signature_test_vector",
+        "//src/main/java/com/google/crypto/tink/subtle:ecdsa_sign_jce",
+        "//src/main/java/com/google/crypto/tink/subtle:ecdsa_verify_jce",
+        "//src/main/java/com/google/crypto/tink/subtle:elliptic_curves",
+        "//src/main/java/com/google/crypto/tink/subtle:enums",
+        "@maven//:junit_junit",
+        "@maven//:org_conscrypt_conscrypt_openjdk_uber",
     ],
 )
