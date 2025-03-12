@@ -55,8 +55,6 @@ public final class PrimitiveSet<P> {
    * information about the primitive.
    */
   public static final class Entry<P> implements KeysetHandleInterface.Entry {
-    // If set, this is a primitive of a key.
-    private final P fullPrimitive;
     // Identifies the primitive within the set.
     // It is the ciphertext prefix of the corresponding key.
     private final Bytes outputPrefix;
@@ -68,30 +66,12 @@ public final class PrimitiveSet<P> {
     private final boolean isPrimary;
 
     private Entry(
-        P fullPrimitive,
-        final Bytes outputPrefix,
-        KeyStatus status,
-        int keyId,
-        Key key,
-        boolean isPrimary) {
-      this.fullPrimitive = fullPrimitive;
+        final Bytes outputPrefix, KeyStatus status, int keyId, Key key, boolean isPrimary) {
       this.outputPrefix = outputPrefix;
       this.status = status;
       this.keyId = keyId;
       this.key = key;
       this.isPrimary = isPrimary;
-    }
-
-    /**
-     * Returns the full primitive for this entry.
-     *
-     * <p>This is used in cases when the new Tink Key interface is used and the primitive is
-     * self-sufficient by itself, meaning that all the necessary information to process the
-     * primitive is contained in the primitive (most likely through the new Key interface), as
-     * opposed to the {@code primitive} field (see {@link #getPrimitive} for details).
-     */
-    P getFullPrimitive() {
-      return this.fullPrimitive;
     }
 
     @Override
@@ -182,15 +162,7 @@ public final class PrimitiveSet<P> {
   }
 
   public P getPrimitiveForEntry(KeysetHandleInterface.Entry entry) throws GeneralSecurityException {
-    if (!(entry instanceof Entry)) {
-      throw new GeneralSecurityException("getPrimitiveForEntry requires PrimitiveSet.Entry");
-    }
-    Entry<?> castEntry = (Entry<?>) entry;
-    Object result = castEntry.getFullPrimitive();
-    if (primitiveClass.isInstance(result)) {
-      return primitiveClass.cast(result);
-    }
-    throw new GeneralSecurityException("Wrong primitive in getPrimitiveForEntry");
+    return primitiveConstructionFunction.constructPrimitive(entry.getKey());
   }
 
   /** Returns all primitives. */
@@ -216,6 +188,8 @@ public final class PrimitiveSet<P> {
   private final Entry<P> primary;
   private final Class<P> primitiveClass;
   private final MonitoringAnnotations annotations;
+  private final PrimitiveConstructor.PrimitiveConstructionFunction<Key, P>
+      primitiveConstructionFunction;
 
   /** Creates an immutable PrimitiveSet. It is used by the Builder. */
   private PrimitiveSet(
@@ -223,10 +197,12 @@ public final class PrimitiveSet<P> {
       List<Entry<P>> entriesInKeysetOrder,
       Entry<P> primary,
       MonitoringAnnotations annotations,
+      PrimitiveConstructor.PrimitiveConstructionFunction<Key, P> primitiveConstructionFunction,
       Class<P> primitiveClass) {
     this.entries = entries;
     this.entriesInKeysetOrder = entriesInKeysetOrder;
     this.primary = primary;
+    this.primitiveConstructionFunction = primitiveConstructionFunction;
     this.primitiveClass = primitiveClass;
     this.annotations = annotations;
   }
@@ -245,16 +221,17 @@ public final class PrimitiveSet<P> {
     private final List<Entry<P>> entriesInKeysetOrder = new ArrayList<>();
     private Entry<P> primary;
     private MonitoringAnnotations annotations;
+    private PrimitiveConstructor.PrimitiveConstructionFunction<Key, P>
+        primitiveConstructionFunction =
+            key -> {
+              throw new GeneralSecurityException("No PrimitiveConstructionFunction specified");
+            };
 
     @CanIgnoreReturnValue
-    private Builder<P> addEntry(
-        final P fullPrimitive, Key key, Keyset.Key protoKey, boolean asPrimary)
+    private Builder<P> addEntry(Key key, Keyset.Key protoKey, boolean asPrimary)
         throws GeneralSecurityException {
       if (entries == null) {
         throw new IllegalStateException("addEntry cannot be called after build");
-      }
-      if (fullPrimitive == null) {
-        throw new NullPointerException("`fullPrimitive` must not be null");
       }
       if (protoKey.getStatus() != KeyStatusType.ENABLED) {
         // Note: ENABLED is hard coded below.
@@ -262,7 +239,6 @@ public final class PrimitiveSet<P> {
       }
       Entry<P> entry =
           new Entry<P>(
-              fullPrimitive,
               Bytes.copyFrom(CryptoFormat.getOutputPrefix(protoKey)),
               // We just checked above that we allow only ENABLED.
               KeyStatus.ENABLED,
@@ -286,9 +262,8 @@ public final class PrimitiveSet<P> {
      * from key, and that {@code protoKey} contains the same key as {@code fullPrimitive}.
      */
     @CanIgnoreReturnValue
-    public Builder<P> addFullPrimitive(final P fullPrimitive, Key key, Keyset.Key protoKey)
-        throws GeneralSecurityException {
-      return addEntry(fullPrimitive, key, protoKey, false);
+    public Builder<P> add(Key key, Keyset.Key protoKey) throws GeneralSecurityException {
+      return addEntry(key, protoKey, false);
     }
 
     /**
@@ -298,9 +273,8 @@ public final class PrimitiveSet<P> {
      * from key, and that {@code protoKey} contains the same key as {@code fullPrimitive}.
      */
     @CanIgnoreReturnValue
-    public Builder<P> addPrimaryFullPrimitive(final P fullPrimitive, Key key, Keyset.Key protoKey)
-        throws GeneralSecurityException {
-      return addEntry(fullPrimitive, key, protoKey, true);
+    public Builder<P> addPrimary(Key key, Keyset.Key protoKey) throws GeneralSecurityException {
+      return addEntry(key, protoKey, true);
     }
 
     @CanIgnoreReturnValue
@@ -312,13 +286,26 @@ public final class PrimitiveSet<P> {
       return this;
     }
 
+    @CanIgnoreReturnValue
+    public Builder<P> addPrimitiveConstructor(
+        PrimitiveConstructor.PrimitiveConstructionFunction<Key, P> primitiveConstructionFunction) {
+      this.primitiveConstructionFunction = primitiveConstructionFunction;
+      return this;
+    }
+
     public PrimitiveSet<P> build() throws GeneralSecurityException {
       if (entries == null) {
         throw new IllegalStateException("build cannot be called twice");
       }
       // Note that we currently don't enforce that primary must be set.
       PrimitiveSet<P> output =
-          new PrimitiveSet<P>(entries, entriesInKeysetOrder, primary, annotations, primitiveClass);
+          new PrimitiveSet<P>(
+              entries,
+              entriesInKeysetOrder,
+              primary,
+              annotations,
+              primitiveConstructionFunction,
+              primitiveClass);
       this.entries = null;
       return output;
     }

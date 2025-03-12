@@ -176,8 +176,9 @@ public class InternalConfigurationTest {
         InternalConfiguration.createFromPrimitiveRegistry(registry);
 
     // Check that the type is as expected.
-    TestPrimitiveA unused = configuration.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(), TestPrimitiveA.class);
+    TestPrimitiveA unused =
+        configuration.wrap(
+            PrimitiveSet.newBuilder(TestPrimitiveA.class).build(), TestPrimitiveA.class);
   }
 
   @Test
@@ -236,10 +237,12 @@ public class InternalConfigurationTest {
         InternalConfiguration.createFromPrimitiveRegistry(registry);
 
     // Check that the wrapped primitives are of the expected types.
-    TestPrimitiveA unusedA = configuration.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(), TestPrimitiveA.class);
-    TestPrimitiveB unusedB = configuration.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveB.class).build(), TestPrimitiveB.class);
+    TestPrimitiveA unusedA =
+        configuration.wrap(
+            PrimitiveSet.newBuilder(TestPrimitiveA.class).build(), TestPrimitiveA.class);
+    TestPrimitiveB unusedB =
+        configuration.wrap(
+            PrimitiveSet.newBuilder(TestPrimitiveB.class).build(), TestPrimitiveB.class);
   }
 
   @Test

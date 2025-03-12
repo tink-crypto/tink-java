@@ -689,14 +689,12 @@ public class RegistryTest {
             .setKeyBytes(SecretBytes.copyFrom(KEY, InsecureSecretKeyAccess.get()))
             .setIdRequirement(42)
             .build();
-    Aead fullPrimitive1 = AesGcmJce.create(key1);
     com.google.crypto.tink.aead.AesGcmKey key2 =
         com.google.crypto.tink.aead.AesGcmKey.builder()
             .setParameters(PredefinedAeadParameters.AES128_GCM)
             .setKeyBytes(SecretBytes.copyFrom(KEY2, InsecureSecretKeyAccess.get()))
             .setIdRequirement(43)
             .build();
-    Aead fullPrimitive2 = AesGcmJce.create(key2);
     // Also create protoKey, because it is currently needed in PrimitiveSet.newBuilder.
     Keyset.Key protoKey1 =
         TestUtil.createKey(
@@ -705,8 +703,10 @@ public class RegistryTest {
         TestUtil.createKey(
             TestUtil.createAesGcmKeyData(KEY2), 43, KeyStatusType.ENABLED, OutputPrefixType.RAW);
     return PrimitiveSet.newBuilder(Aead.class)
-        .addPrimaryFullPrimitive(fullPrimitive1, key1, protoKey1)
-        .addFullPrimitive(fullPrimitive2, key2, protoKey2)
+        .addPrimary(key1, protoKey1)
+        .add(key2, protoKey2)
+        .addPrimitiveConstructor(
+            key -> AesGcmJce.create((com.google.crypto.tink.aead.AesGcmKey) key))
         .build();
   }
 

@@ -1104,14 +1104,15 @@ public final class KeysetHandle implements KeysetHandleInterface {
                   + " failed, unable to get primitive");
         }
         Key key = entry.getKey();
-        B fullPrimitive = config.getPrimitive(key, inputPrimitiveClassObject);
         if (protoKey.getKeyId() == keyset.getPrimaryKeyId()) {
-          builder.addPrimaryFullPrimitive(fullPrimitive, key, protoKey);
+          builder.addPrimary(key, protoKey);
         } else {
-          builder.addFullPrimitive(fullPrimitive, key, protoKey);
+          builder.add(key, protoKey);
         }
       }
     }
+    builder.addPrimitiveConstructor(
+        givenKey -> config.getPrimitive(givenKey, inputPrimitiveClassObject));
     return config.wrap(builder.build(), classObject);
   }
 
