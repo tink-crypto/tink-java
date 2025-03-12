@@ -647,17 +647,15 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html" title="class in com.google.crypto.tink.internal">PrimitiveSet.Builder</a>&lt;<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html" title="type parameter in PrimitiveSet.Builder">P</a>&gt;</code></td>
-<td class="colLast"><span class="typeNameLabel">PrimitiveSet.Builder.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html#addFullPrimitive-P-com.google.crypto.tink.Key-com.google.crypto.tink.proto.Keyset.Key-">addFullPrimitive</a></span>(<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html" title="type parameter in PrimitiveSet.Builder">P</a>&nbsp;fullPrimitive,
-                <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;key,
-                <a href="../../../../../com/google/crypto/tink/proto/Keyset.Key.html" title="class in com.google.crypto.tink.proto">Keyset.Key</a>&nbsp;protoKey)</code>
+<td class="colLast"><span class="typeNameLabel">PrimitiveSet.Builder.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html#add-com.google.crypto.tink.Key-com.google.crypto.tink.proto.Keyset.Key-">add</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;key,
+   <a href="../../../../../com/google/crypto/tink/proto/Keyset.Key.html" title="class in com.google.crypto.tink.proto">Keyset.Key</a>&nbsp;protoKey)</code>
 <div class="block">Adds a non-primary primitive.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html" title="class in com.google.crypto.tink.internal">PrimitiveSet.Builder</a>&lt;<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html" title="type parameter in PrimitiveSet.Builder">P</a>&gt;</code></td>
-<td class="colLast"><span class="typeNameLabel">PrimitiveSet.Builder.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html#addPrimaryFullPrimitive-P-com.google.crypto.tink.Key-com.google.crypto.tink.proto.Keyset.Key-">addPrimaryFullPrimitive</a></span>(<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html" title="type parameter in PrimitiveSet.Builder">P</a>&nbsp;fullPrimitive,
-                       <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;key,
-                       <a href="../../../../../com/google/crypto/tink/proto/Keyset.Key.html" title="class in com.google.crypto.tink.proto">Keyset.Key</a>&nbsp;protoKey)</code>
+<td class="colLast"><span class="typeNameLabel">PrimitiveSet.Builder.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html#addPrimary-com.google.crypto.tink.Key-com.google.crypto.tink.proto.Keyset.Key-">addPrimary</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;key,
+          <a href="../../../../../com/google/crypto/tink/proto/Keyset.Key.html" title="class in com.google.crypto.tink.proto">Keyset.Key</a>&nbsp;protoKey)</code>
 <div class="block">Adds the primary primitive.</div>
 </td>
 </tr>
@@ -678,6 +676,19 @@
 <td class="colFirst"><code>&lt;P&gt;&nbsp;P</code></td>
 <td class="colLast"><span class="typeNameLabel">RegistryConfiguration.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/RegistryConfiguration.html#getPrimitive-com.google.crypto.tink.Key-java.lang.Class-">getPrimitive</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;key,
             <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;primitiveClass)</code>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Method parameters in <a href="../../../../../com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a> with type arguments of type <a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html" title="class in com.google.crypto.tink.internal">PrimitiveSet.Builder</a>&lt;<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html" title="type parameter in PrimitiveSet.Builder">P</a>&gt;</code></td>
+<td class="colLast"><span class="typeNameLabel">PrimitiveSet.Builder.</span><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html#addPrimitiveConstructor-com.google.crypto.tink.internal.PrimitiveConstructor.PrimitiveConstructionFunction-">addPrimitiveConstructor</a></span>(<a href="../../../../../com/google/crypto/tink/internal/PrimitiveConstructor.PrimitiveConstructionFunction.html" title="interface in com.google.crypto.tink.internal">PrimitiveConstructor.PrimitiveConstructionFunction</a>&lt;<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>,<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Builder.html" title="type parameter in PrimitiveSet.Builder">P</a>&gt;&nbsp;primitiveConstructionFunction)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
