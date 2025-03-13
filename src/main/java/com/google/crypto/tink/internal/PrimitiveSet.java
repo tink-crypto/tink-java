@@ -16,21 +16,15 @@
 
 package com.google.crypto.tink.internal;
 
-import com.google.crypto.tink.CryptoFormat;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.proto.KeyStatusType;
 import com.google.crypto.tink.proto.Keyset;
-import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.annotation.Nullable;
 
 /**
@@ -54,10 +48,7 @@ public final class PrimitiveSet<P> {
    * A single entry in the set. In addition to the actual primitive it holds also some extra
    * information about the primitive.
    */
-  public static final class Entry<P> implements KeysetHandleInterface.Entry {
-    // Identifies the primitive within the set.
-    // It is the ciphertext prefix of the corresponding key.
-    private final Bytes outputPrefix;
+  public static final class Entry implements KeysetHandleInterface.Entry {
     // The status of the key represented by the primitive. Currently always equal to "ENABLED".
     private final KeyStatus status;
     // The id of the key.
@@ -65,9 +56,7 @@ public final class PrimitiveSet<P> {
     private final Key key;
     private final boolean isPrimary;
 
-    private Entry(
-        final Bytes outputPrefix, KeyStatus status, int keyId, Key key, boolean isPrimary) {
-      this.outputPrefix = outputPrefix;
+    private Entry(KeyStatus status, int keyId, Key key, boolean isPrimary) {
       this.status = status;
       this.keyId = keyId;
       this.key = key;
@@ -77,10 +66,6 @@ public final class PrimitiveSet<P> {
     @Override
     public KeyStatus getStatus() {
       return status;
-    }
-
-    final Bytes getOutputPrefix() {
-      return outputPrefix;
     }
 
     @Override
@@ -107,24 +92,13 @@ public final class PrimitiveSet<P> {
     }
   }
 
-  private static <P> void storeEntryInPrimitiveSet(
-      Entry<P> entry, Map<Bytes, List<Entry<P>>> entries, List<Entry<P>> entriesInKeysetOrder) {
-    List<Entry<P>> list = new ArrayList<>();
-    list.add(entry);
-    List<Entry<P>> existing =
-        entries.put(entry.getOutputPrefix(), Collections.unmodifiableList(list));
-    if (existing != null) {
-      List<Entry<P>> newList = new ArrayList<>();
-      newList.addAll(existing);
-      newList.add(entry);
-      entries.put(entry.getOutputPrefix(), Collections.unmodifiableList(newList));
-    }
+  private static void storeEntryInPrimitiveSet(Entry entry, List<Entry> entriesInKeysetOrder) {
     entriesInKeysetOrder.add(entry);
   }
 
   /** Returns the entry with the primary primitive. */
   @Nullable
-  Entry<P> getPrimary() {
+  Entry getPrimary() {
     return primary;
   }
 
@@ -165,27 +139,10 @@ public final class PrimitiveSet<P> {
     return primitiveConstructionFunction.constructPrimitive(entry.getKey());
   }
 
-  /** Returns all primitives. */
-  Collection<List<Entry<P>>> getAll() {
-    return entries.values();
-  }
-
-  /** Returns all primitives in the original keyset key order. */
-  List<Entry<P>> getAllInKeysetOrder() {
-    return Collections.unmodifiableList(entriesInKeysetOrder);
-  }
-
-  /**
-   * The primitives are stored in a hash map of (ciphertext prefix, list of primitives sharing the
-   * prefix). This allows quickly retrieving the list of primitives sharing some particular prefix.
-   * Because all RAW keys are using an empty prefix, this also quickly allows retrieving them.
-   */
-  private final Map<Bytes, List<Entry<P>>> entries;
-
   /** Stores entries in the original keyset key order. */
-  private final List<Entry<P>> entriesInKeysetOrder;
+  private final List<Entry> entriesInKeysetOrder;
 
-  private final Entry<P> primary;
+  private final Entry primary;
   private final Class<P> primitiveClass;
   private final MonitoringAnnotations annotations;
   private final PrimitiveConstructor.PrimitiveConstructionFunction<Key, P>
@@ -193,13 +150,11 @@ public final class PrimitiveSet<P> {
 
   /** Creates an immutable PrimitiveSet. It is used by the Builder. */
   private PrimitiveSet(
-      Map<Bytes, List<Entry<P>>> entries,
-      List<Entry<P>> entriesInKeysetOrder,
-      Entry<P> primary,
+      List<Entry> entriesInKeysetOrder,
+      Entry primary,
       MonitoringAnnotations annotations,
       PrimitiveConstructor.PrimitiveConstructionFunction<Key, P> primitiveConstructionFunction,
       Class<P> primitiveClass) {
-    this.entries = entries;
     this.entriesInKeysetOrder = entriesInKeysetOrder;
     this.primary = primary;
     this.primitiveConstructionFunction = primitiveConstructionFunction;
@@ -217,9 +172,8 @@ public final class PrimitiveSet<P> {
 
     // primitives == null indicates that build has been called and the builder can't be used
     // anymore.
-    private Map<Bytes, List<Entry<P>>> entries = new HashMap<>();
-    private final List<Entry<P>> entriesInKeysetOrder = new ArrayList<>();
-    private Entry<P> primary;
+    private List<Entry> entriesInKeysetOrder = new ArrayList<>();
+    private Entry primary;
     private MonitoringAnnotations annotations;
     private PrimitiveConstructor.PrimitiveConstructionFunction<Key, P>
         primitiveConstructionFunction =
@@ -230,22 +184,18 @@ public final class PrimitiveSet<P> {
     @CanIgnoreReturnValue
     private Builder<P> addEntry(Key key, Keyset.Key protoKey, boolean asPrimary)
         throws GeneralSecurityException {
-      if (entries == null) {
+      if (entriesInKeysetOrder == null) {
         throw new IllegalStateException("addEntry cannot be called after build");
       }
       if (protoKey.getStatus() != KeyStatusType.ENABLED) {
         // Note: ENABLED is hard coded below.
         throw new GeneralSecurityException("only ENABLED key is allowed");
       }
-      Entry<P> entry =
-          new Entry<P>(
-              Bytes.copyFrom(CryptoFormat.getOutputPrefix(protoKey)),
+      Entry entry =
+          new Entry(
               // We just checked above that we allow only ENABLED.
-              KeyStatus.ENABLED,
-              protoKey.getKeyId(),
-              key,
-              asPrimary);
-      storeEntryInPrimitiveSet(entry, entries, entriesInKeysetOrder);
+              KeyStatus.ENABLED, protoKey.getKeyId(), key, asPrimary);
+      storeEntryInPrimitiveSet(entry, entriesInKeysetOrder);
       if (asPrimary) {
         if (this.primary != null) {
           throw new IllegalStateException("you cannot set two primary primitives");
@@ -279,7 +229,7 @@ public final class PrimitiveSet<P> {
 
     @CanIgnoreReturnValue
     public Builder<P> setAnnotations(MonitoringAnnotations annotations) {
-      if (entries == null) {
+      if (entriesInKeysetOrder == null) {
         throw new IllegalStateException("setAnnotations cannot be called after build");
       }
       this.annotations = annotations;
@@ -294,19 +244,18 @@ public final class PrimitiveSet<P> {
     }
 
     public PrimitiveSet<P> build() throws GeneralSecurityException {
-      if (entries == null) {
+      if (entriesInKeysetOrder == null) {
         throw new IllegalStateException("build cannot be called twice");
       }
       // Note that we currently don't enforce that primary must be set.
       PrimitiveSet<P> output =
           new PrimitiveSet<P>(
-              entries,
               entriesInKeysetOrder,
               primary,
               annotations,
               primitiveConstructionFunction,
               primitiveClass);
-      this.entries = null;
+      this.entriesInKeysetOrder = null;
       return output;
     }
 
