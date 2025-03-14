@@ -92,14 +92,9 @@ public final class PrimitiveSet<P> {
     }
   }
 
-  private static void storeEntryInPrimitiveSet(Entry entry, List<Entry> entriesInKeysetOrder) {
+  private static void storeEntryInPrimitiveSet(
+      KeysetHandleInterface.Entry entry, List<KeysetHandleInterface.Entry> entriesInKeysetOrder) {
     entriesInKeysetOrder.add(entry);
-  }
-
-  /** Returns the entry with the primary primitive. */
-  @Nullable
-  Entry getPrimary() {
-    return primary;
   }
 
   public MonitoringAnnotations getAnnotations() {
@@ -107,14 +102,24 @@ public final class PrimitiveSet<P> {
   }
 
   /**
-   * Implementats KeysetHandle based on the information available in PrimitiveSet.
+   * Implements KeysetHandle based on the information available in PrimitiveSet.
    *
    * <p>Note: in the future we will simply pass in the actual KeysetHandle when constructing the
    * primitive set, and not build a new one here.
    *
    * <p>Note: this class is not static, and hence always has a pointer to the primitive set.
    */
-  private class KeysetHandleImpl implements KeysetHandleInterface {
+  private static class KeysetHandleImpl implements KeysetHandleInterface {
+    private final List<KeysetHandleInterface.Entry> entriesInKeysetOrder;
+    private final KeysetHandleInterface.Entry primary;
+
+    public KeysetHandleImpl(
+        List<KeysetHandleInterface.Entry> entriesInKeysetOrder,
+        KeysetHandleInterface.Entry primary) {
+      this.entriesInKeysetOrder = entriesInKeysetOrder;
+      this.primary = primary;
+    }
+
     @Override
     public KeysetHandleInterface.Entry getPrimary() {
       return primary;
@@ -132,17 +137,14 @@ public final class PrimitiveSet<P> {
   }
 
   public KeysetHandleInterface getKeysetHandle() {
-    return new KeysetHandleImpl();
+    return keysetHandle;
   }
 
   public P getPrimitiveForEntry(KeysetHandleInterface.Entry entry) throws GeneralSecurityException {
     return primitiveConstructionFunction.constructPrimitive(entry.getKey());
   }
 
-  /** Stores entries in the original keyset key order. */
-  private final List<Entry> entriesInKeysetOrder;
-
-  private final Entry primary;
+  private final KeysetHandleInterface keysetHandle;
   private final Class<P> primitiveClass;
   private final MonitoringAnnotations annotations;
   private final PrimitiveConstructor.PrimitiveConstructionFunction<Key, P>
@@ -150,13 +152,11 @@ public final class PrimitiveSet<P> {
 
   /** Creates an immutable PrimitiveSet. It is used by the Builder. */
   private PrimitiveSet(
-      List<Entry> entriesInKeysetOrder,
-      Entry primary,
+      KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveConstructor.PrimitiveConstructionFunction<Key, P> primitiveConstructionFunction,
       Class<P> primitiveClass) {
-    this.entriesInKeysetOrder = entriesInKeysetOrder;
-    this.primary = primary;
+    this.keysetHandle = keysetHandle;
     this.primitiveConstructionFunction = primitiveConstructionFunction;
     this.primitiveClass = primitiveClass;
     this.annotations = annotations;
@@ -172,8 +172,8 @@ public final class PrimitiveSet<P> {
 
     // primitives == null indicates that build has been called and the builder can't be used
     // anymore.
-    private List<Entry> entriesInKeysetOrder = new ArrayList<>();
-    private Entry primary;
+    private List<KeysetHandleInterface.Entry> entriesInKeysetOrder = new ArrayList<>();
+    private KeysetHandleInterface.Entry primary;
     private MonitoringAnnotations annotations;
     private PrimitiveConstructor.PrimitiveConstructionFunction<Key, P>
         primitiveConstructionFunction =
@@ -191,7 +191,7 @@ public final class PrimitiveSet<P> {
         // Note: ENABLED is hard coded below.
         throw new GeneralSecurityException("only ENABLED key is allowed");
       }
-      Entry entry =
+      KeysetHandleInterface.Entry entry =
           new Entry(
               // We just checked above that we allow only ENABLED.
               KeyStatus.ENABLED, protoKey.getKeyId(), key, asPrimary);
@@ -250,8 +250,7 @@ public final class PrimitiveSet<P> {
       // Note that we currently don't enforce that primary must be set.
       PrimitiveSet<P> output =
           new PrimitiveSet<P>(
-              entriesInKeysetOrder,
-              primary,
+              new KeysetHandleImpl(entriesInKeysetOrder, primary),
               annotations,
               primitiveConstructionFunction,
               primitiveClass);

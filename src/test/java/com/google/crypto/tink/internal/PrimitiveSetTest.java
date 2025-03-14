@@ -147,7 +147,7 @@ public class PrimitiveSetTest {
             .build();
     PrimitiveSet<Mac> pset =
         PrimitiveSet.newBuilder(Mac.class).add(getKeyFromProtoKey(key), key).build();
-    assertThat(pset.getPrimary()).isNull();
+    assertThat(pset.getKeysetHandle().getPrimary()).isNull();
   }
 
   @Test
