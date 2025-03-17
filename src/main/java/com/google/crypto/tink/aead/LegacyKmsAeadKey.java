@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
  * are multiple KMS backends or multiple credentials in a binary. Because of this, we recommend to
  * create the {@link Aead} directly from the KmsClient you need.
  */
-public class LegacyKmsAeadKey extends AeadKey {
+public final class LegacyKmsAeadKey extends AeadKey {
   private final LegacyKmsAeadParameters parameters;
   private final Bytes outputPrefix;
   @Nullable private final Integer idRequirement;

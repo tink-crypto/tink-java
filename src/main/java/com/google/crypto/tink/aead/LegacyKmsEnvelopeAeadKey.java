@@ -38,7 +38,7 @@ import javax.annotation.Nullable;
  *
  * See {@link LegacyKmsEnvelopeParameters} for known issues.
  */
-public class LegacyKmsEnvelopeAeadKey extends AeadKey {
+public final class LegacyKmsEnvelopeAeadKey extends AeadKey {
   private final LegacyKmsEnvelopeAeadParameters parameters;
   private final Bytes outputPrefix;
   @Nullable private final Integer idRequirement;

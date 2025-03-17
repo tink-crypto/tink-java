@@ -28,7 +28,7 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 /** Represents a JWT HMAC key to create and verify JWT using HMAC. */
-public class JwtHmacKey extends JwtMacKey {
+public final class JwtHmacKey extends JwtMacKey {
   private final JwtHmacParameters parameters;
   private final SecretBytes key;
   private final Optional<Integer> idRequirement;
