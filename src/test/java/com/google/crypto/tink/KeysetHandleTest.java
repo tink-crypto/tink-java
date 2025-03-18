@@ -98,14 +98,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-/**
- * Tests for {@link KeysetHandle}.
- *
- * <p>Please note, that in relation to the {@link PrimitiveSet#fullPrimitive} this file only tests
- * the legacy scenario where the {@link PrimitiveSet#primitive} is set and {@link
- * PrimitiveSet#fullPrimitive} isn't; the other scenarios are tested in
- * {@link KeysetHandleFullPrimitiveTest}.
- */
+/** Tests for {@link KeysetHandle}. */
 @RunWith(JUnit4.class)
 @SuppressWarnings("UnnecessarilyFullyQualified") // Fully specifying proto types is more readable
 public class KeysetHandleTest {
