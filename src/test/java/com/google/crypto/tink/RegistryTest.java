@@ -712,7 +712,8 @@ public class RegistryTest {
 
   @Test
   public void testWrap_wrapperRegistered() throws Exception {
-    assertNotNull(Registry.wrap(createAeadPrimitiveSet()));
+    assertNotNull(
+        MutablePrimitiveRegistry.globalInstance().wrap(createAeadPrimitiveSet(), Aead.class));
   }
 
   @Test
@@ -720,15 +721,17 @@ public class RegistryTest {
     PrimitiveSet<Aead> aeadSet = createAeadPrimitiveSet();
     Registry.reset();
     GeneralSecurityException e =
-        assertThrows(GeneralSecurityException.class, () -> Registry.wrap(aeadSet));
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> MutablePrimitiveRegistry.globalInstance().wrap(aeadSet, Aead.class));
     assertExceptionContains(e, "No wrapper found");
     assertExceptionContains(e, "Aead");
   }
 
   @Test
   public void testWrap_wrapAsEncryptOnly() throws Exception {
-    // Check that Registry.wrap can be assigned to an EncryptOnly (as there's a suppress warning).
-    EncryptOnly encrypt = Registry.wrap(createAeadPrimitiveSet(), EncryptOnly.class);
+    EncryptOnly encrypt =
+        MutablePrimitiveRegistry.globalInstance().wrap(createAeadPrimitiveSet(), EncryptOnly.class);
     assertThat(encrypt).isNotNull();
   }
 

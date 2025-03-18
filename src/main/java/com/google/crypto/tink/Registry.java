@@ -20,7 +20,6 @@ import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
-import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.prf.Prf;
 import com.google.crypto.tink.proto.KeyData;
 import com.google.protobuf.ByteString;
@@ -473,20 +472,6 @@ public final class Registry {
   static <KeyT extends Key, P> P getFullPrimitive(KeyT key, Class<P> primitiveClass)
       throws GeneralSecurityException {
     return MutablePrimitiveRegistry.globalInstance().getPrimitive(key, primitiveClass);
-  }
-
-  /**
-   * Looks up the globally registered PrimitiveWrapper for this primitive and wraps the given
-   * PrimitiveSet with it.
-   */
-  public static <B, P> P wrap(PrimitiveSet<B> primitiveSet, Class<P> clazz)
-      throws GeneralSecurityException {
-    return MutablePrimitiveRegistry.globalInstance().wrap(primitiveSet, clazz);
-  }
-
-  public static <P> P wrap(PrimitiveSet<P> primitiveSet)
-      throws GeneralSecurityException {
-    return wrap(primitiveSet, primitiveSet.getPrimitiveClass());
   }
 
   /**
