@@ -32,9 +32,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.Signature;
 import java.security.interfaces.RSAPrivateCrtKey;
-import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPrivateCrtKeySpec;
-import java.security.spec.RSAPublicKeySpec;
 
 /**
  * RsaSsaPkcs1 (i.e. RSA Signature Schemes with Appendix (SSA) with PKCS1-v1_5 encoding) signing
@@ -52,9 +50,6 @@ public final class RsaSsaPkcs1SignJce implements PublicKeySign {
   @SuppressWarnings("Immutable")
   private final RSAPrivateCrtKey privateKey;
 
-  @SuppressWarnings("Immutable")
-  private final RSAPublicKey publicKey;
-
   private final String signatureAlgorithm;
 
   @SuppressWarnings("Immutable")
@@ -62,6 +57,9 @@ public final class RsaSsaPkcs1SignJce implements PublicKeySign {
 
   @SuppressWarnings("Immutable")
   private final byte[] messageSuffix;
+
+  @SuppressWarnings("Immutable")
+  private final PublicKeyVerify verifier;
 
   private static void validateHash(RsaSsaPkcs1Parameters.HashType hash)
       throws GeneralSecurityException {
@@ -74,7 +72,7 @@ public final class RsaSsaPkcs1SignJce implements PublicKeySign {
   }
 
   private RsaSsaPkcs1SignJce(
-      final RSAPrivateCrtKey priv, RsaSsaPkcs1Parameters.HashType hash, byte[] outputPrefix, byte[] messageSuffix)
+      final RSAPrivateCrtKey privateKey, RsaSsaPkcs1Parameters.HashType hash, byte[] outputPrefix, byte[] messageSuffix, PublicKeyVerify verifier)
       throws GeneralSecurityException {
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException(
@@ -82,16 +80,13 @@ public final class RsaSsaPkcs1SignJce implements PublicKeySign {
     }
 
     validateHash(hash);
-    Validators.validateRsaModulusSize(priv.getModulus().bitLength());
-    Validators.validateRsaPublicExponent(priv.getPublicExponent());
-    this.privateKey = priv;
+    Validators.validateRsaModulusSize(privateKey.getModulus().bitLength());
+    Validators.validateRsaPublicExponent(privateKey.getPublicExponent());
+    this.privateKey = privateKey;
     this.signatureAlgorithm = RsaSsaPkcs1VerifyConscrypt.toRsaSsaPkcs1Algo(hash);
-    KeyFactory kf = EngineFactory.KEY_FACTORY.getInstance("RSA");
-    this.publicKey =
-        (RSAPublicKey)
-            kf.generatePublic(new RSAPublicKeySpec(priv.getModulus(), priv.getPublicExponent()));
     this.outputPrefix = outputPrefix;
     this.messageSuffix = messageSuffix;
+    this.verifier = verifier;
   }
 
   @AccessesPartialKey
@@ -109,6 +104,7 @@ public final class RsaSsaPkcs1SignJce implements PublicKeySign {
                     key.getPrimeExponentP().getBigInteger(InsecureSecretKeyAccess.get()),
                     key.getPrimeExponentQ().getBigInteger(InsecureSecretKeyAccess.get()),
                     key.getCrtCoefficient().getBigInteger(InsecureSecretKeyAccess.get())));
+    PublicKeyVerify verifier = RsaSsaPkcs1VerifyJce.create(key.getPublicKey());
     PublicKeySign signer =
         new RsaSsaPkcs1SignJce(
             privateKey,
@@ -116,20 +112,14 @@ public final class RsaSsaPkcs1SignJce implements PublicKeySign {
             key.getOutputPrefix().toByteArray(),
             key.getParameters().getVariant().equals(RsaSsaPkcs1Parameters.Variant.LEGACY)
                 ? legacyMessageSuffix
-                : EMPTY);
-    PublicKeyVerify verify = RsaSsaPkcs1VerifyJce.create(key.getPublicKey());
-    try {
-      verify.verify(signer.sign(testData), testData);
-    } catch (GeneralSecurityException e) {
-      throw new GeneralSecurityException(
-          "RsaSsaPkcs1 signing with private key followed by verifying with public key failed."
-              + " The key may be corrupted.",
-          e);
-    }
+                : EMPTY,
+            verifier);
+    byte[] unused = signer.sign(testData);
     return signer;
   }
 
-  private byte[] noPrefixSign(final byte[] data) throws GeneralSecurityException {
+  @Override
+  public byte[] sign(final byte[] data) throws GeneralSecurityException {
     Signature signer = EngineFactory.SIGNATURE.getInstance(signatureAlgorithm);
     signer.initSign(privateKey);
     signer.update(data);
@@ -137,26 +127,14 @@ public final class RsaSsaPkcs1SignJce implements PublicKeySign {
       signer.update(messageSuffix);
     }
     byte[] signature = signer.sign();
-    // Verify the signature to prevent against faulty signature computation.
-    Signature verifier = EngineFactory.SIGNATURE.getInstance(signatureAlgorithm);
-    verifier.initVerify(publicKey);
-    verifier.update(data);
-    if (messageSuffix.length > 0) {
-      verifier.update(messageSuffix);
+    if (outputPrefix.length > 0) {
+      signature = Bytes.concat(outputPrefix, signature);
     }
-    if (!verifier.verify(signature)) {
-      throw new IllegalStateException("Security bug: RSA signature computation error");
+    try {
+      verifier.verify(signature, data);
+    } catch (GeneralSecurityException e) {
+      throw new IllegalStateException("RSA signature computation error", e);
     }
     return signature;
-  }
-
-  @Override
-  public byte[] sign(final byte[] data) throws GeneralSecurityException {
-    byte[] signature = noPrefixSign(data);
-    if (outputPrefix.length == 0) {
-      return signature;
-    } else {
-      return Bytes.concat(outputPrefix, signature);
-    }
   }
 }
