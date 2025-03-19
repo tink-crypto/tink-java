@@ -19,19 +19,15 @@ package com.google.crypto.tink.subtle;
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.PublicKeySign;
-import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
+import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
 import com.google.crypto.tink.subtle.Enums.HashType;
+import com.google.crypto.tink.util.SecretBigInteger;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
-import java.security.KeyFactory;
-import java.security.Signature;
 import java.security.interfaces.RSAPrivateCrtKey;
-import java.security.interfaces.RSAPublicKey;
-import java.security.spec.RSAPrivateCrtKeySpec;
-import java.security.spec.RSAPublicKeySpec;
 
 /**
  * RsaSsaPkcs1 (i.e. RSA Signature Schemes with Appendix (SSA) with PKCS1-v1_5 encoding) signing
@@ -42,113 +38,65 @@ public final class RsaSsaPkcs1SignJce implements PublicKeySign {
   public static final TinkFipsUtil.AlgorithmFipsCompatibility FIPS =
       TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_REQUIRES_BORINGCRYPTO;
 
-  private static final byte[] EMPTY = new byte[0];
-  private static final byte[] LEGACY_MESSAGE_SUFFIX = new byte[] {0};
-  private static final byte[] TEST_DATA = new byte[] {1, 2, 3};
-
   @SuppressWarnings("Immutable")
-  private final RSAPrivateCrtKey privateKey;
+  private final PublicKeySign signer;
 
-  @SuppressWarnings("Immutable")
-  private final RSAPublicKey publicKey;
-
-  private final String signatureAlgorithm;
-
-  @SuppressWarnings("Immutable")
-  private final byte[] outputPrefix;
-
-  @SuppressWarnings("Immutable")
-  private final byte[] messageSuffix;
-
-  private RsaSsaPkcs1SignJce(
-      final RSAPrivateCrtKey priv, HashType hash, byte[] outputPrefix, byte[] messageSuffix)
-      throws GeneralSecurityException {
-    if (!FIPS.isCompatible()) {
-      throw new GeneralSecurityException(
-          "Can not use RSA PKCS1.5 in FIPS-mode, as BoringCrypto module is not available.");
-    }
-
-    Validators.validateSignatureHash(hash);
-    Validators.validateRsaModulusSize(priv.getModulus().bitLength());
-    Validators.validateRsaPublicExponent(priv.getPublicExponent());
-    this.privateKey = priv;
-    this.signatureAlgorithm = SubtleUtil.toRsaSsaPkcs1Algo(hash);
-    KeyFactory kf = EngineFactory.KEY_FACTORY.getInstance("RSA");
-    this.publicKey =
-        (RSAPublicKey)
-            kf.generatePublic(new RSAPublicKeySpec(priv.getModulus(), priv.getPublicExponent()));
-    this.outputPrefix = outputPrefix;
-    this.messageSuffix = messageSuffix;
+  public static PublicKeySign create(RsaSsaPkcs1PrivateKey key) throws GeneralSecurityException {
+    return com.google.crypto.tink.signature.internal.RsaSsaPkcs1SignJce.create(key);
   }
 
-  public RsaSsaPkcs1SignJce(final RSAPrivateCrtKey priv, HashType hash)
-      throws GeneralSecurityException {
-    this(priv, hash, EMPTY, EMPTY);
+  private static RsaSsaPkcs1Parameters.HashType convertHashType(HashType hash) throws GeneralSecurityException {
+    switch (hash) {
+      case SHA256:
+        return RsaSsaPkcs1Parameters.HashType.SHA256;
+      case SHA384:
+        return RsaSsaPkcs1Parameters.HashType.SHA384;
+      case SHA512:
+        return RsaSsaPkcs1Parameters.HashType.SHA512;
+      default:
+        break;
+    }
+    throw new GeneralSecurityException("Unsupported hash: " + hash.name());
   }
 
   @AccessesPartialKey
-  public static PublicKeySign create(RsaSsaPkcs1PrivateKey key) throws GeneralSecurityException {
-    KeyFactory kf = EngineFactory.KEY_FACTORY.getInstance("RSA");
-    RSAPrivateCrtKey privateKey =
-        (RSAPrivateCrtKey)
-            kf.generatePrivate(
-                new RSAPrivateCrtKeySpec(
-                    key.getPublicKey().getModulus(),
-                    key.getParameters().getPublicExponent(),
-                    key.getPrivateExponent().getBigInteger(InsecureSecretKeyAccess.get()),
-                    key.getPrimeP().getBigInteger(InsecureSecretKeyAccess.get()),
-                    key.getPrimeQ().getBigInteger(InsecureSecretKeyAccess.get()),
-                    key.getPrimeExponentP().getBigInteger(InsecureSecretKeyAccess.get()),
-                    key.getPrimeExponentQ().getBigInteger(InsecureSecretKeyAccess.get()),
-                    key.getCrtCoefficient().getBigInteger(InsecureSecretKeyAccess.get())));
-    PublicKeySign signer =
-        new RsaSsaPkcs1SignJce(
-            privateKey,
-            RsaSsaPkcs1VerifyJce.HASH_TYPE_CONVERTER.toProtoEnum(key.getParameters().getHashType()),
-            key.getOutputPrefix().toByteArray(),
-            key.getParameters().getVariant().equals(RsaSsaPkcs1Parameters.Variant.LEGACY)
-                ? LEGACY_MESSAGE_SUFFIX
-                : EMPTY);
-    PublicKeyVerify verify = RsaSsaPkcs1VerifyJce.create(key.getPublicKey());
-    try {
-      verify.verify(signer.sign(TEST_DATA), TEST_DATA);
-    } catch (GeneralSecurityException e) {
-      throw new GeneralSecurityException(
-          "RsaSsaPkcs1 signing with private key followed by verifying with public key failed."
-              + " The key may be corrupted.",
-          e);
-    }
-    return signer;
+  private static PublicKeySign getSigner(RSAPrivateCrtKey privateKey, HashType hash)
+      throws GeneralSecurityException {
+    RsaSsaPkcs1Parameters parameters =
+        RsaSsaPkcs1Parameters.builder()
+            .setModulusSizeBits(privateKey.getModulus().bitLength())
+            .setPublicExponent(privateKey.getPublicExponent())
+            .setHashType(convertHashType(hash))
+            .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
+            .build();
+    RsaSsaPkcs1PublicKey publicKey =
+        RsaSsaPkcs1PublicKey.builder()
+            .setParameters(parameters)
+            .setModulus(privateKey.getModulus())
+            .build();
+    RsaSsaPkcs1PrivateKey key =
+        RsaSsaPkcs1PrivateKey.builder()
+            .setPublicKey(publicKey)
+            .setPrimes(
+                SecretBigInteger.fromBigInteger(privateKey.getPrimeP(), InsecureSecretKeyAccess.get()),
+                SecretBigInteger.fromBigInteger(privateKey.getPrimeQ(), InsecureSecretKeyAccess.get()))
+            .setPrivateExponent(SecretBigInteger.fromBigInteger(privateKey.getPrivateExponent(), InsecureSecretKeyAccess.get()))
+            .setPrimeExponents(
+                SecretBigInteger.fromBigInteger(privateKey.getPrimeExponentP(), InsecureSecretKeyAccess.get()),
+                SecretBigInteger.fromBigInteger(privateKey.getPrimeExponentQ(), InsecureSecretKeyAccess.get()))
+            .setCrtCoefficient(
+                SecretBigInteger.fromBigInteger(privateKey.getCrtCoefficient(), InsecureSecretKeyAccess.get()))
+            .build();
+    return com.google.crypto.tink.signature.internal.RsaSsaPkcs1SignJce.create(key);
   }
 
-  private byte[] noPrefixSign(final byte[] data) throws GeneralSecurityException {
-    Signature signer = EngineFactory.SIGNATURE.getInstance(signatureAlgorithm);
-    signer.initSign(privateKey);
-    signer.update(data);
-    if (messageSuffix.length > 0) {
-      signer.update(messageSuffix);
-    }
-    byte[] signature = signer.sign();
-    // Verify the signature to prevent against faulty signature computation.
-    Signature verifier = EngineFactory.SIGNATURE.getInstance(signatureAlgorithm);
-    verifier.initVerify(publicKey);
-    verifier.update(data);
-    if (messageSuffix.length > 0) {
-      verifier.update(messageSuffix);
-    }
-    if (!verifier.verify(signature)) {
-      throw new IllegalStateException("Security bug: RSA signature computation error");
-    }
-    return signature;
+  public RsaSsaPkcs1SignJce(final RSAPrivateCrtKey privateKey, HashType hash)
+      throws GeneralSecurityException {
+    this.signer = getSigner(privateKey, hash);
   }
 
   @Override
   public byte[] sign(final byte[] data) throws GeneralSecurityException {
-    byte[] signature = noPrefixSign(data);
-    if (outputPrefix.length == 0) {
-      return signature;
-    } else {
-      return Bytes.concat(outputPrefix, signature);
-    }
+    return signer.sign(data);
   }
 }
