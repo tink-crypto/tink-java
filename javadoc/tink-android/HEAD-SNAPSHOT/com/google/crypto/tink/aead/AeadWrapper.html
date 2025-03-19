@@ -179,7 +179,8 @@ implements <a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrap
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/AeadWrapper.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory-">wrap</a></span>(<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.html" title="class in com.google.crypto.tink.internal">PrimitiveSet</a>&lt;<a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a>&gt;&nbsp;pset,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/aead/AeadWrapper.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-com.google.crypto.tink.internal.MonitoringAnnotations-com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory-">wrap</a></span>(<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.html" title="class in com.google.crypto.tink.internal">PrimitiveSet</a>&lt;<a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a>&gt;&nbsp;pset,
+    <a href="../../../../../com/google/crypto/tink/internal/MonitoringAnnotations.html" title="class in com.google.crypto.tink.internal">MonitoringAnnotations</a>&nbsp;annotations,
     <a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.PrimitiveFactory.html" title="interface in com.google.crypto.tink.internal">PrimitiveWrapper.PrimitiveFactory</a>&lt;<a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a>&gt;&nbsp;factory)</code>
 <div class="block">Wraps a <code>PrimitiveSet</code> and returns a single instance.</div>
 </td>
@@ -206,16 +207,17 @@ implements <a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrap
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="wrap-com.google.crypto.tink.internal.PrimitiveSet-com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory-">
+<a name="wrap-com.google.crypto.tink.internal.PrimitiveSet-com.google.crypto.tink.internal.MonitoringAnnotations-com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>wrap</h4>
 <pre>public&nbsp;<a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a>&nbsp;wrap(<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.html" title="class in com.google.crypto.tink.internal">PrimitiveSet</a>&lt;<a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a>&gt;&nbsp;pset,
+                 <a href="../../../../../com/google/crypto/tink/internal/MonitoringAnnotations.html" title="class in com.google.crypto.tink.internal">MonitoringAnnotations</a>&nbsp;annotations,
                  <a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.PrimitiveFactory.html" title="interface in com.google.crypto.tink.internal">PrimitiveWrapper.PrimitiveFactory</a>&lt;<a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a>&gt;&nbsp;factory)
           throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory-">PrimitiveWrapper</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-com.google.crypto.tink.internal.MonitoringAnnotations-com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory-">PrimitiveWrapper</a></code></span></div>
 <div class="block">Wraps a <code>PrimitiveSet</code> and returns a single instance.
 
  <p>This method gets called when a new primitive is created. <code>primitiveSet</code> is immutable.
@@ -223,7 +225,7 @@ implements <a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrap
  <p>This has to be implemented when a new primitive type is added.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory-">wrap</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="interface in com.google.crypto.tink.internal">PrimitiveWrapper</a>&lt;<a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a>,<a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a>&gt;</code></dd>
+<dd><code><a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-com.google.crypto.tink.internal.MonitoringAnnotations-com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory-">wrap</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="interface in com.google.crypto.tink.internal">PrimitiveWrapper</a>&lt;<a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a>,<a href="../../../../../com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a>&gt;</code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
 </dl>
