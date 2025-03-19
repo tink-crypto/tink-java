@@ -49,7 +49,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Entry.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../../com/google/crypto/tink/internal/ProtoKeySerialization.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.PrimitiveFactory.html" title="interface in com.google.crypto.tink.internal"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../index.html?com/google/crypto/tink/internal/PrimitiveWrapper.html" target="_top">Frames</a></li>
@@ -73,7 +73,7 @@ var activeTableTab = "activeTableTab";
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
@@ -121,6 +121,27 @@ var activeTableTab = "activeTableTab";
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested.class.summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Nested Class Summary table, listing nested classes, and an explanation">
+<caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Interface and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static interface&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.PrimitiveFactory.html" title="interface in com.google.crypto.tink.internal">PrimitiveWrapper.PrimitiveFactory</a>&lt;<a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.PrimitiveFactory.html" title="type parameter in PrimitiveWrapper.PrimitiveFactory">B</a>&gt;</span></code>
+<div class="block">Creates a primitive from an entry.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
 <!-- ========== METHOD SUMMARY =========== -->
 <ul class="blockList">
 <li class="blockList"><a name="method.summary">
@@ -147,7 +168,8 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="type parameter in PrimitiveWrapper">P</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-">wrap</a></span>(<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.html" title="class in com.google.crypto.tink.internal">PrimitiveSet</a>&lt;<a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="type parameter in PrimitiveWrapper">B</a>&gt;&nbsp;primitiveSet)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory-">wrap</a></span>(<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.html" title="class in com.google.crypto.tink.internal">PrimitiveSet</a>&lt;<a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="type parameter in PrimitiveWrapper">B</a>&gt;&nbsp;primitiveSet,
+    <a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.PrimitiveFactory.html" title="interface in com.google.crypto.tink.internal">PrimitiveWrapper.PrimitiveFactory</a>&lt;<a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="type parameter in PrimitiveWrapper">B</a>&gt;&nbsp;primitiveFactory)</code>
 <div class="block">Wraps a <code>PrimitiveSet</code> and returns a single instance.</div>
 </td>
 </tr>
@@ -166,19 +188,20 @@ var activeTableTab = "activeTableTab";
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="wrap-com.google.crypto.tink.internal.PrimitiveSet-">
+<a name="wrap-com.google.crypto.tink.internal.PrimitiveSet-com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>wrap</h4>
-<pre><a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="type parameter in PrimitiveWrapper">P</a>&nbsp;wrap(<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.html" title="class in com.google.crypto.tink.internal">PrimitiveSet</a>&lt;<a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="type parameter in PrimitiveWrapper">B</a>&gt;&nbsp;primitiveSet)
+<pre><a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="type parameter in PrimitiveWrapper">P</a>&nbsp;wrap(<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.html" title="class in com.google.crypto.tink.internal">PrimitiveSet</a>&lt;<a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="type parameter in PrimitiveWrapper">B</a>&gt;&nbsp;primitiveSet,
+       <a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.PrimitiveFactory.html" title="interface in com.google.crypto.tink.internal">PrimitiveWrapper.PrimitiveFactory</a>&lt;<a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="type parameter in PrimitiveWrapper">B</a>&gt;&nbsp;primitiveFactory)
 throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
 <div class="block">Wraps a <code>PrimitiveSet</code> and returns a single instance.
 
- <p> This method gets called when a new primitive is created. <code>primitiveSet</code> is immutable.
+ <p>This method gets called when a new primitive is created. <code>primitiveSet</code> is immutable.
 
- This has to be implemented when a new primitive type is added.</div>
+ <p>This has to be implemented when a new primitive type is added.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
@@ -237,7 +260,7 @@ throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralS
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.Entry.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../../com/google/crypto/tink/internal/ProtoKeySerialization.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.PrimitiveFactory.html" title="interface in com.google.crypto.tink.internal"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../index.html?com/google/crypto/tink/internal/PrimitiveWrapper.html" target="_top">Frames</a></li>
@@ -261,7 +284,7 @@ throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralS
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
