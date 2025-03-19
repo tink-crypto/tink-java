@@ -69,45 +69,7 @@ public class RsaSsaPkcs1SignJceTest {
   }
 
   @Test
-  public void testConstructorExceptions() throws Exception {
-    Assume.assumeTrue(!TinkFips.useOnlyFips()); // Only 3072-bit modulus is supported in FIPS.
-
-    int keySize = 2048;
-    KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-    keyGen.initialize(keySize);
-
-    RSAPrivateCrtKey priv = (RSAPrivateCrtKey) keyGen.generateKeyPair().getPrivate();
-    GeneralSecurityException e =
-        assertThrows(
-            GeneralSecurityException.class, () -> new RsaSsaPkcs1SignJce(priv, HashType.SHA1));
-    TestUtil.assertExceptionContains(e, "Unsupported hash: SHA1");
-  }
-
-  @Test
-  public void testBasicAgainstJce() throws Exception {
-    Assume.assumeTrue(!TinkFips.useOnlyFips()); // Only 3072-bit modulus is supported in FIPS.
-
-    int keySize = 2048;
-    KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-    keyGen.initialize(keySize);
-    KeyPair keyPair = keyGen.generateKeyPair();
-    RSAPublicKey pub = (RSAPublicKey) keyPair.getPublic();
-    RSAPrivateCrtKey priv = (RSAPrivateCrtKey) keyPair.getPrivate();
-
-    // Sign with RsaSsaPkcs1SignJce.
-    String message = "Hello";
-    RsaSsaPkcs1SignJce signer = new RsaSsaPkcs1SignJce(priv, HashType.SHA256);
-    byte[] signature = signer.sign(message.getBytes(UTF_8));
-
-    // Verify with JCE's Signature.
-    Signature verifier = Signature.getInstance("SHA256withRSA");
-    verifier.initVerify(pub);
-    verifier.update(message.getBytes(UTF_8));
-    assertTrue(verifier.verify(signature));
-  }
-
-  @Test
-  public void testBasicAgainstJce3072() throws Exception {
+  public void constructor_worksWithAllSha2s() throws Exception {
     Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
 
     int keySize = 3072;
@@ -117,16 +79,46 @@ public class RsaSsaPkcs1SignJceTest {
     RSAPublicKey pub = (RSAPublicKey) keyPair.getPublic();
     RSAPrivateCrtKey priv = (RSAPrivateCrtKey) keyPair.getPrivate();
 
-    // Sign with RsaSsaPkcs1SignJce.
-    String message = "Hello";
-    RsaSsaPkcs1SignJce signer = new RsaSsaPkcs1SignJce(priv, HashType.SHA256);
-    byte[] signature = signer.sign(message.getBytes(UTF_8));
+    byte[] message = "Hello".getBytes(UTF_8);
 
-    // Verify with JCE's Signature.
-    Signature verifier = Signature.getInstance("SHA256withRSA");
-    verifier.initVerify(pub);
-    verifier.update(message.getBytes(UTF_8));
-    assertTrue(verifier.verify(signature));
+    {
+      // Sign with SHA256
+      RsaSsaPkcs1SignJce signer = new RsaSsaPkcs1SignJce(priv, HashType.SHA256);
+      byte[] signature = signer.sign(message);
+
+      // Verify with JCE
+      Signature verifier = Signature.getInstance("SHA256withRSA");
+      verifier.initVerify(pub);
+      verifier.update(message);
+      assertTrue(verifier.verify(signature));
+    }
+
+    {
+      // Sign with SHA384
+      RsaSsaPkcs1SignJce signer = new RsaSsaPkcs1SignJce(priv, HashType.SHA384);
+      byte[] signature = signer.sign(message);
+
+      // Verify with JCE
+      Signature verifier = Signature.getInstance("SHA384withRSA");
+      verifier.initVerify(pub);
+      verifier.update(message);
+      assertTrue(verifier.verify(signature));
+    }
+
+    {
+      // Sign with SHA512
+      RsaSsaPkcs1SignJce signer = new RsaSsaPkcs1SignJce(priv, HashType.SHA512);
+      byte[] signature = signer.sign(message);
+
+      // Verify with JCE
+      Signature verifier = Signature.getInstance("SHA512withRSA");
+      verifier.initVerify(pub);
+      verifier.update(message);
+      assertTrue(verifier.verify(signature));
+    }
+
+    // SHA1 is not supported.
+    assertThrows(GeneralSecurityException.class, () -> new RsaSsaPkcs1SignJce(priv, HashType.SHA1));
   }
 
   @Test
@@ -144,7 +136,7 @@ public class RsaSsaPkcs1SignJceTest {
     RSAPublicKey pub = (RSAPublicKey) keyPair.getPublic();
 
     byte[] msg = Random.randBytes(20);
-    TreeSet<String> allSignatures = new TreeSet<String>();
+    TreeSet<String> allSignatures = new TreeSet<>();
     RsaSsaPkcs1SignJce signer = new RsaSsaPkcs1SignJce(priv, HashType.SHA512);
     for (int i = 0; i < 100; i++) {
       byte[] sig = signer.sign(msg);
@@ -214,6 +206,6 @@ public class RsaSsaPkcs1SignJceTest {
   }
 
   @DataPoints("allTests")
-  public static final SignatureTestVector[] ALL_TEST_VECTORS =
+  public static final SignatureTestVector[] allTestVectors =
       RsaSsaPkcs1TestUtil.createRsaSsaPkcs1TestVectors();
 }
