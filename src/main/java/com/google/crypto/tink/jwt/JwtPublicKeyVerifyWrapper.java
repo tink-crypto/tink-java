@@ -17,6 +17,7 @@
 package com.google.crypto.tink.jwt;
 
 import com.google.crypto.tink.internal.KeysetHandleInterface;
+import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
@@ -86,6 +87,7 @@ class JwtPublicKeyVerifyWrapper
   @Override
   public JwtPublicKeyVerify wrap(
       final PrimitiveSet<JwtPublicKeyVerify> primitives,
+      MonitoringAnnotations annotations,
       PrimitiveFactory<JwtPublicKeyVerify> factory)
       throws GeneralSecurityException {
     KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
@@ -95,10 +97,9 @@ class JwtPublicKeyVerifyWrapper
       allVerifiers.add(new JwtPublicKeyVerifyWithId(factory.create(entry), entry.getId()));
     }
     MonitoringClient.Logger logger;
-    if (!primitives.getAnnotations().isEmpty()) {
+    if (!annotations.isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-      logger =
-          client.createLogger(keysetHandle, primitives.getAnnotations(), "jwtverify", "verify");
+      logger = client.createLogger(keysetHandle, annotations, "jwtverify", "verify");
     } else {
       logger = MonitoringUtil.DO_NOTHING_LOGGER;
     }

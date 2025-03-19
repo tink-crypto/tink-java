@@ -50,9 +50,13 @@ public final class RegistryConfiguration extends InternalConfiguration {
 
   @Override
   public <B, P> P wrap(
-      PrimitiveSet<B> primitiveSet, PrimitiveWrapper.PrimitiveFactory<B> factory, Class<P> clazz)
+      PrimitiveSet<B> primitiveSet,
+      MonitoringAnnotations annotations,
+      PrimitiveWrapper.PrimitiveFactory<B> factory,
+      Class<P> clazz)
       throws GeneralSecurityException {
-    return MutablePrimitiveRegistry.globalInstance().wrap(primitiveSet, factory, clazz);
+    return MutablePrimitiveRegistry.globalInstance()
+        .wrap(primitiveSet, annotations, factory, clazz);
   }
 
   @Override

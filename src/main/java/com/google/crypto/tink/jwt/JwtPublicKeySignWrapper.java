@@ -17,6 +17,7 @@
 package com.google.crypto.tink.jwt;
 
 import com.google.crypto.tink.internal.KeysetHandleInterface;
+import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
@@ -48,15 +49,16 @@ class JwtPublicKeySignWrapper implements PrimitiveWrapper<JwtPublicKeySign, JwtP
     private final MonitoringClient.Logger logger;
 
     public WrappedJwtPublicKeySign(
-        final PrimitiveSet<JwtPublicKeySign> primitives, PrimitiveFactory<JwtPublicKeySign> factory)
+        final PrimitiveSet<JwtPublicKeySign> primitives,
+        MonitoringAnnotations annotations,
+        PrimitiveFactory<JwtPublicKeySign> factory)
         throws GeneralSecurityException {
       KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
       this.primary = factory.create(keysetHandle.getPrimary());
       this.primaryKeyId = keysetHandle.getPrimary().getId();
-      if (!primitives.getAnnotations().isEmpty()) {
+      if (!annotations.isEmpty()) {
         MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-        this.logger =
-            client.createLogger(keysetHandle, primitives.getAnnotations(), "jwtsign", "sign");
+        this.logger = client.createLogger(keysetHandle, annotations, "jwtsign", "sign");
       } else {
         this.logger = MonitoringUtil.DO_NOTHING_LOGGER;
       }
@@ -77,9 +79,11 @@ class JwtPublicKeySignWrapper implements PrimitiveWrapper<JwtPublicKeySign, JwtP
 
   @Override
   public JwtPublicKeySign wrap(
-      final PrimitiveSet<JwtPublicKeySign> primitives, PrimitiveFactory<JwtPublicKeySign> factory)
+      final PrimitiveSet<JwtPublicKeySign> primitives,
+      MonitoringAnnotations annotations,
+      PrimitiveFactory<JwtPublicKeySign> factory)
       throws GeneralSecurityException {
-    return new WrappedJwtPublicKeySign(primitives, factory);
+    return new WrappedJwtPublicKeySign(primitives, annotations, factory);
   }
 
   @Override

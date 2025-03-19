@@ -39,7 +39,10 @@ public abstract class InternalConfiguration extends Configuration {
    *     class) is not registered
    */
   public abstract <B, P> P wrap(
-      PrimitiveSet<B> primitiveSet, PrimitiveWrapper.PrimitiveFactory<B> factory, Class<P> clazz)
+      PrimitiveSet<B> primitiveSet,
+      MonitoringAnnotations annotations,
+      PrimitiveWrapper.PrimitiveFactory<B> factory,
+      Class<P> clazz)
       throws GeneralSecurityException;
 
   /**
@@ -79,9 +82,12 @@ public abstract class InternalConfiguration extends Configuration {
 
     @Override
     public <B, P> P wrap(
-        PrimitiveSet<B> primitiveSet, PrimitiveWrapper.PrimitiveFactory<B> factory, Class<P> clazz)
+        PrimitiveSet<B> primitiveSet,
+        MonitoringAnnotations annotations,
+        PrimitiveWrapper.PrimitiveFactory<B> factory,
+        Class<P> clazz)
         throws GeneralSecurityException {
-      return registry.wrap(primitiveSet, factory, clazz);
+      return registry.wrap(primitiveSet, annotations, factory, clazz);
     }
   }
 }

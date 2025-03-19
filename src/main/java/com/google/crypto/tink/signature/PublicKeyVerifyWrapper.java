@@ -20,6 +20,7 @@ import com.google.crypto.tink.Key;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
+import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
@@ -106,7 +107,9 @@ public class PublicKeyVerifyWrapper implements PrimitiveWrapper<PublicKeyVerify,
 
   @Override
   public PublicKeyVerify wrap(
-      final PrimitiveSet<PublicKeyVerify> primitives, PrimitiveFactory<PublicKeyVerify> factory)
+      final PrimitiveSet<PublicKeyVerify> primitives,
+      MonitoringAnnotations annotations,
+      PrimitiveFactory<PublicKeyVerify> factory)
       throws GeneralSecurityException {
     PrefixMap.Builder<PublicKeyVerifyWithId> builder = new PrefixMap.Builder<>();
     KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
@@ -118,11 +121,9 @@ public class PublicKeyVerifyWrapper implements PrimitiveWrapper<PublicKeyVerify,
           new PublicKeyVerifyWithId(publicKeyVerify, entry.getId()));
     }
     MonitoringClient.Logger logger;
-    if (!primitives.getAnnotations().isEmpty()) {
+    if (!annotations.isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-      logger =
-          client.createLogger(
-              keysetHandle, primitives.getAnnotations(), "public_key_verify", "verify");
+      logger = client.createLogger(keysetHandle, annotations, "public_key_verify", "verify");
     } else {
       logger = MonitoringUtil.DO_NOTHING_LOGGER;
     }

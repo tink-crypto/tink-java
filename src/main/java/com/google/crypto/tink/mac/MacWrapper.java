@@ -20,6 +20,7 @@ import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Mac;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
+import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
@@ -121,7 +122,10 @@ public class MacWrapper implements PrimitiveWrapper<Mac, Mac> {
   MacWrapper() {}
 
   @Override
-  public Mac wrap(final PrimitiveSet<Mac> primitives, PrimitiveFactory<Mac> factory)
+  public Mac wrap(
+      final PrimitiveSet<Mac> primitives,
+      MonitoringAnnotations annotations,
+      PrimitiveFactory<Mac> factory)
       throws GeneralSecurityException {
     PrefixMap.Builder<MacWithId> builder = new PrefixMap.Builder<>();
     KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
@@ -132,12 +136,10 @@ public class MacWrapper implements PrimitiveWrapper<Mac, Mac> {
     }
     MonitoringClient.Logger computeLogger;
     MonitoringClient.Logger verifyLogger;
-    if (!primitives.getAnnotations().isEmpty()) {
+    if (!annotations.isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-      computeLogger =
-          client.createLogger(keysetHandle, primitives.getAnnotations(), "mac", "compute");
-      verifyLogger =
-          client.createLogger(keysetHandle, primitives.getAnnotations(), "mac", "verify");
+      computeLogger = client.createLogger(keysetHandle, annotations, "mac", "compute");
+      verifyLogger = client.createLogger(keysetHandle, annotations, "mac", "verify");
     } else {
       computeLogger = MonitoringUtil.DO_NOTHING_LOGGER;
       verifyLogger = MonitoringUtil.DO_NOTHING_LOGGER;

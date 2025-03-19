@@ -26,6 +26,7 @@ import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.EnumTypeProtoConverter;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
+import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveSet;
@@ -186,7 +187,10 @@ public class LegacyFullPrfIntegrationTest {
     }
 
     @Override
-    public PrfSet wrap(PrimitiveSet<Prf> primitiveSet, PrimitiveFactory<Prf> factory)
+    public PrfSet wrap(
+        PrimitiveSet<Prf> primitiveSet,
+        MonitoringAnnotations annotations,
+        PrimitiveFactory<Prf> factory)
         throws GeneralSecurityException {
       // This is a dummy test wrapper that act as a proxy to a single primitive object under test.
       return new WrappedPrfSet(primitiveSet, factory);

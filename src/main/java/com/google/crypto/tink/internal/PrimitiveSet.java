@@ -97,10 +97,6 @@ public final class PrimitiveSet<P> {
     entriesInKeysetOrder.add(entry);
   }
 
-  public MonitoringAnnotations getAnnotations() {
-    return annotations;
-  }
-
   /**
    * Implements KeysetHandle based on the information available in PrimitiveSet.
    *
@@ -142,16 +138,11 @@ public final class PrimitiveSet<P> {
 
   private final KeysetHandleInterface keysetHandle;
   private final Class<P> primitiveClass;
-  private final MonitoringAnnotations annotations;
 
   /** Creates an immutable PrimitiveSet. It is used by the Builder. */
-  private PrimitiveSet(
-      KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations annotations,
-      Class<P> primitiveClass) {
+  private PrimitiveSet(KeysetHandleInterface keysetHandle, Class<P> primitiveClass) {
     this.keysetHandle = keysetHandle;
     this.primitiveClass = primitiveClass;
-    this.annotations = annotations;
   }
 
   public Class<P> getPrimitiveClass() {
@@ -166,7 +157,6 @@ public final class PrimitiveSet<P> {
     // anymore.
     private List<KeysetHandleInterface.Entry> entriesInKeysetOrder = new ArrayList<>();
     private KeysetHandleInterface.Entry primary;
-    private MonitoringAnnotations annotations;
 
     @CanIgnoreReturnValue
     private Builder<P> addEntry(Key key, Keyset.Key protoKey, boolean asPrimary)
@@ -214,30 +204,19 @@ public final class PrimitiveSet<P> {
       return addEntry(key, protoKey, true);
     }
 
-    @CanIgnoreReturnValue
-    public Builder<P> setAnnotations(MonitoringAnnotations annotations) {
-      if (entriesInKeysetOrder == null) {
-        throw new IllegalStateException("setAnnotations cannot be called after build");
-      }
-      this.annotations = annotations;
-      return this;
-    }
-
     public PrimitiveSet<P> build() throws GeneralSecurityException {
       if (entriesInKeysetOrder == null) {
         throw new IllegalStateException("build cannot be called twice");
       }
       // Note that we currently don't enforce that primary must be set.
       PrimitiveSet<P> output =
-          new PrimitiveSet<P>(
-              new KeysetHandleImpl(entriesInKeysetOrder, primary), annotations, primitiveClass);
+          new PrimitiveSet<P>(new KeysetHandleImpl(entriesInKeysetOrder, primary), primitiveClass);
       this.entriesInKeysetOrder = null;
       return output;
     }
 
     private Builder(Class<P> primitiveClass) {
-        this.primitiveClass = primitiveClass;
-      this.annotations = MonitoringAnnotations.EMPTY;
+      this.primitiveClass = primitiveClass;
     }
   }
 

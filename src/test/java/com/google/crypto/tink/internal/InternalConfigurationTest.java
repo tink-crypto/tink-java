@@ -99,7 +99,9 @@ public class InternalConfigurationTest {
 
     @Override
     public TestPrimitiveA wrap(
-        final PrimitiveSet<TestPrimitiveA> primitives, PrimitiveFactory<TestPrimitiveA> factory) {
+        final PrimitiveSet<TestPrimitiveA> primitives,
+        MonitoringAnnotations annotations,
+        PrimitiveFactory<TestPrimitiveA> factory) {
       return new TestPrimitiveA();
     }
 
@@ -120,7 +122,9 @@ public class InternalConfigurationTest {
 
     @Override
     public TestPrimitiveB wrap(
-        final PrimitiveSet<TestPrimitiveB> primitives, PrimitiveFactory<TestPrimitiveB> factory) {
+        final PrimitiveSet<TestPrimitiveB> primitives,
+        MonitoringAnnotations annotations,
+        PrimitiveFactory<TestPrimitiveB> factory) {
       return new TestPrimitiveB();
     }
 
@@ -181,6 +185,7 @@ public class InternalConfigurationTest {
     TestPrimitiveA unused =
         configuration.wrap(
             PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+            MonitoringAnnotations.EMPTY,
             entry -> {
               throw new IllegalStateException("Should not be called.");
             },
@@ -246,6 +251,7 @@ public class InternalConfigurationTest {
     TestPrimitiveA unusedA =
         configuration.wrap(
             PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+            MonitoringAnnotations.EMPTY,
             entry -> {
               throw new IllegalStateException("Should not be called");
             },
@@ -253,6 +259,7 @@ public class InternalConfigurationTest {
     TestPrimitiveB unusedB =
         configuration.wrap(
             PrimitiveSet.newBuilder(TestPrimitiveB.class).build(),
+            MonitoringAnnotations.EMPTY,
             entry -> {
               throw new IllegalStateException("Should not be called");
             },
@@ -351,6 +358,7 @@ public class InternalConfigurationTest {
         () ->
             configuration.wrap(
                 PrimitiveSet.newBuilder(TestPrimitiveB.class).build(),
+                MonitoringAnnotations.EMPTY,
                 entry -> {
                   throw new IllegalStateException("Should not be called");
                 },
@@ -369,6 +377,7 @@ public class InternalConfigurationTest {
         () ->
             configuration.wrap(
                 PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+                MonitoringAnnotations.EMPTY,
                 entry -> {
                   throw new IllegalStateException("Should not be called");
                 },
@@ -404,6 +413,7 @@ public class InternalConfigurationTest {
         () ->
             configuration.wrap(
                 PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+                MonitoringAnnotations.EMPTY,
                 entry -> {
                   throw new IllegalStateException("Should not be called");
                 },

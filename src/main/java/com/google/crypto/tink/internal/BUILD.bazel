@@ -484,6 +484,7 @@ java_library(
     name = "primitive_registry",
     srcs = ["PrimitiveRegistry.java"],
     deps = [
+        ":monitoring_annotations",
         ":primitive_constructor",
         ":primitive_set",
         ":primitive_wrapper",
@@ -496,6 +497,7 @@ android_library(
     name = "primitive_registry-android",
     srcs = ["PrimitiveRegistry.java"],
     deps = [
+        ":monitoring_annotations-android",
         ":primitive_constructor-android",
         ":primitive_set-android",
         ":primitive_wrapper-android",
@@ -520,6 +522,7 @@ android_library(
     name = "mutable_primitive_registry-android",
     srcs = ["MutablePrimitiveRegistry.java"],
     deps = [
+        ":monitoring_annotations-android",
         ":primitive_constructor-android",
         ":primitive_registry-android",
         ":primitive_set-android",
@@ -532,6 +535,7 @@ java_library(
     name = "mutable_primitive_registry",
     srcs = ["MutablePrimitiveRegistry.java"],
     deps = [
+        ":monitoring_annotations",
         ":primitive_constructor",
         ":primitive_registry",
         ":primitive_set",
@@ -642,6 +646,7 @@ java_library(
     name = "internal_configuration",
     srcs = ["InternalConfiguration.java"],
     deps = [
+        ":monitoring_annotations",
         ":primitive_registry",
         ":primitive_set",
         ":primitive_wrapper",
@@ -654,6 +659,7 @@ android_library(
     name = "internal_configuration-android",
     srcs = ["InternalConfiguration.java"],
     deps = [
+        ":monitoring_annotations-android",
         ":primitive_registry-android",
         ":primitive_set-android",
         ":primitive_wrapper-android",
@@ -667,6 +673,7 @@ android_library(
     srcs = ["RegistryConfiguration.java"],
     deps = [
         ":internal_configuration-android",
+        ":monitoring_annotations-android",
         ":mutable_primitive_registry-android",
         ":primitive_registry-android",
         ":primitive_set-android",
@@ -683,6 +690,7 @@ java_library(
     srcs = ["RegistryConfiguration.java"],
     deps = [
         ":internal_configuration",
+        ":monitoring_annotations",
         ":mutable_primitive_registry",
         ":primitive_registry",
         ":primitive_set",
@@ -853,7 +861,6 @@ android_library(
     srcs = ["PrimitiveSet.java"],
     deps = [
         ":keyset_handle_interface-android",
-        ":monitoring_annotations-android",
         "//proto:tink_java_proto_lite",
         "//src/main/java/com/google/crypto/tink:key-android",
         "//src/main/java/com/google/crypto/tink:key_status-android",
@@ -868,7 +875,6 @@ java_library(
     srcs = ["PrimitiveSet.java"],
     deps = [
         ":keyset_handle_interface",
-        ":monitoring_annotations",
         "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink:key_status",
@@ -895,6 +901,7 @@ android_library(
     srcs = ["PrimitiveWrapper.java"],
     deps = [
         ":keyset_handle_interface-android",
+        ":monitoring_annotations-android",
         ":primitive_set-android",
     ],
 )
@@ -904,6 +911,7 @@ java_library(
     srcs = ["PrimitiveWrapper.java"],
     deps = [
         ":keyset_handle_interface",
+        ":monitoring_annotations",
         ":primitive_set",
     ],
 )

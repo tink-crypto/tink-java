@@ -35,7 +35,6 @@ import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.testing.TestUtil;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
-import java.util.HashMap;
 import javax.annotation.Nullable;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -223,23 +222,6 @@ public class PrimitiveSetTest {
     PrimitiveSet.Builder<Mac> builder = PrimitiveSet.newBuilder(Mac.class);
     assertThrows(
         GeneralSecurityException.class, () -> builder.add(getKeyFromProtoKey(protoKey), protoKey));
-  }
-
-  @Test
-  public void testWithAnnotations() throws Exception {
-    MonitoringAnnotations annotations =
-        MonitoringAnnotations.newBuilder().add("name", "value").build();
-    PrimitiveSet<Mac> pset = PrimitiveSet.newBuilder(Mac.class).setAnnotations(annotations).build();
-
-    HashMap<String, String> expected = new HashMap<>();
-    expected.put("name", "value");
-    assertThat(pset.getAnnotations().toMap()).containsExactlyEntriesIn(expected);
-  }
-
-  @Test
-  public void testGetEmptyAnnotations() throws Exception {
-    PrimitiveSet<Mac> pset = PrimitiveSet.newBuilder(Mac.class).build();
-    assertThat(pset.getAnnotations()).isEqualTo(MonitoringAnnotations.EMPTY);
   }
 
   @Test

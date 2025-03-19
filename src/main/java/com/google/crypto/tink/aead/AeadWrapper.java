@@ -21,6 +21,7 @@ import com.google.crypto.tink.Key;
 import com.google.crypto.tink.aead.internal.LegacyFullAead;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
+import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
@@ -122,7 +123,10 @@ public class AeadWrapper implements PrimitiveWrapper<Aead, Aead> {
   AeadWrapper() {}
 
   @Override
-  public Aead wrap(final PrimitiveSet<Aead> pset, PrimitiveFactory<Aead> factory)
+  public Aead wrap(
+      final PrimitiveSet<Aead> pset,
+      MonitoringAnnotations annotations,
+      PrimitiveFactory<Aead> factory)
       throws GeneralSecurityException {
     PrefixMap.Builder<AeadWithId> builder = new PrefixMap.Builder<>();
     KeysetHandleInterface keysetHandle = pset.getKeysetHandle();
@@ -133,10 +137,10 @@ public class AeadWrapper implements PrimitiveWrapper<Aead, Aead> {
     }
     MonitoringClient.Logger encLogger;
     MonitoringClient.Logger decLogger;
-    if (!pset.getAnnotations().isEmpty()) {
+    if (!annotations.isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-      encLogger = client.createLogger(keysetHandle, pset.getAnnotations(), "aead", "encrypt");
-      decLogger = client.createLogger(keysetHandle, pset.getAnnotations(), "aead", "decrypt");
+      encLogger = client.createLogger(keysetHandle, annotations, "aead", "encrypt");
+      decLogger = client.createLogger(keysetHandle, annotations, "aead", "decrypt");
     } else {
       encLogger = MonitoringUtil.DO_NOTHING_LOGGER;
       decLogger = MonitoringUtil.DO_NOTHING_LOGGER;

@@ -155,6 +155,7 @@ public class PrimitiveRegistry {
 
   public <InputPrimitiveT, WrapperPrimitiveT> WrapperPrimitiveT wrap(
       PrimitiveSet<InputPrimitiveT> primitives,
+      MonitoringAnnotations annotations,
       PrimitiveWrapper.PrimitiveFactory<InputPrimitiveT> factory,
       Class<WrapperPrimitiveT> wrapperClassObject)
       throws GeneralSecurityException {
@@ -175,7 +176,7 @@ public class PrimitiveRegistry {
     @SuppressWarnings("unchecked") // The check above ensured this.
     PrimitiveWrapper<InputPrimitiveT, WrapperPrimitiveT> typedWrapper =
         (PrimitiveWrapper<InputPrimitiveT, WrapperPrimitiveT>) wrapper;
-    return typedWrapper.wrap(primitives, factory);
+    return typedWrapper.wrap(primitives, annotations, factory);
   }
 
   private static final class PrimitiveConstructorIndex {

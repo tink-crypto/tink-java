@@ -110,7 +110,9 @@ public final class MutablePrimitiveRegistryTest {
 
     @Override
     public TestPrimitiveA wrap(
-        final PrimitiveSet<TestPrimitiveA> primitives, PrimitiveFactory<TestPrimitiveA> factory)
+        final PrimitiveSet<TestPrimitiveA> primitives,
+        MonitoringAnnotations annotations,
+        PrimitiveFactory<TestPrimitiveA> factory)
         throws GeneralSecurityException {
       return new TestPrimitiveA();
     }
@@ -132,7 +134,9 @@ public final class MutablePrimitiveRegistryTest {
 
     @Override
     public TestPrimitiveB wrap(
-        final PrimitiveSet<TestPrimitiveA> primitives, PrimitiveFactory<TestPrimitiveA> factory)
+        final PrimitiveSet<TestPrimitiveA> primitives,
+        MonitoringAnnotations annotations,
+        PrimitiveFactory<TestPrimitiveA> factory)
         throws GeneralSecurityException {
       return new TestPrimitiveB();
     }
@@ -204,6 +208,7 @@ public final class MutablePrimitiveRegistryTest {
         () ->
             registry.wrap(
                 PrimitiveSet.newBuilder(MutablePrimitiveRegistryTest.TestPrimitiveA.class).build(),
+                MonitoringAnnotations.EMPTY,
                 entry -> {
                   throw new IllegalStateException("Should never be called");
                 },
@@ -224,6 +229,7 @@ public final class MutablePrimitiveRegistryTest {
     assertThat(
             registry.wrap(
                 PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+                MonitoringAnnotations.EMPTY,
                 entry -> {
                   throw new IllegalStateException("Should not be called");
                 },
@@ -232,6 +238,7 @@ public final class MutablePrimitiveRegistryTest {
     assertThat(
             registry.wrap(
                 PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+                MonitoringAnnotations.EMPTY,
                 entry -> {
                   throw new IllegalStateException("Should not be called");
                 },

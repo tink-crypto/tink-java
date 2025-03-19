@@ -150,6 +150,7 @@ public class RegistryConfigurationTest {
                 PrimitiveSet.newBuilder(Mac.class)
                     .addPrimary(legacyProtoRawKey, rawKeysetKey)
                     .build(),
+                MonitoringAnnotations.EMPTY,
                 entry -> LegacyFullMac.create((LegacyProtoKey) entry.getKey()),
                 Mac.class);
 
@@ -191,6 +192,10 @@ public class RegistryConfigurationTest {
         GeneralSecurityException.class,
         () ->
             RegistryConfiguration.get()
-                .wrap(PrimitiveSet.newBuilder(Aead.class).build(), entry -> null, Aead.class));
+                .wrap(
+                    PrimitiveSet.newBuilder(Aead.class).build(),
+                    MonitoringAnnotations.EMPTY,
+                    entry -> null,
+                    Aead.class));
   }
 }

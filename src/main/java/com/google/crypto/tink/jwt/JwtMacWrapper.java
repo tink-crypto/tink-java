@@ -17,6 +17,7 @@
 package com.google.crypto.tink.jwt;
 
 import com.google.crypto.tink.internal.KeysetHandleInterface;
+import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
@@ -115,7 +116,10 @@ class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
   JwtMacWrapper() {}
 
   @Override
-  public JwtMac wrap(final PrimitiveSet<JwtMac> primitives, PrimitiveFactory<JwtMac> factory)
+  public JwtMac wrap(
+      final PrimitiveSet<JwtMac> primitives,
+      MonitoringAnnotations annotations,
+      PrimitiveFactory<JwtMac> factory)
       throws GeneralSecurityException {
     validate(primitives);
     KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
@@ -127,12 +131,10 @@ class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
     }
     MonitoringClient.Logger computeLogger;
     MonitoringClient.Logger verifyLogger;
-    if (!primitives.getAnnotations().isEmpty()) {
+    if (!annotations.isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-      computeLogger =
-          client.createLogger(keysetHandle, primitives.getAnnotations(), "jwtmac", "compute");
-      verifyLogger =
-          client.createLogger(keysetHandle, primitives.getAnnotations(), "jwtmac", "verify");
+      computeLogger = client.createLogger(keysetHandle, annotations, "jwtmac", "compute");
+      verifyLogger = client.createLogger(keysetHandle, annotations, "jwtmac", "verify");
     } else {
       computeLogger = MonitoringUtil.DO_NOTHING_LOGGER;
       verifyLogger = MonitoringUtil.DO_NOTHING_LOGGER;

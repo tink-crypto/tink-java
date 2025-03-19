@@ -19,6 +19,7 @@ import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.hybrid.internal.LegacyFullHybridEncrypt;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
+import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
@@ -84,15 +85,15 @@ public class HybridEncryptWrapper implements PrimitiveWrapper<HybridEncrypt, Hyb
 
   @Override
   public HybridEncrypt wrap(
-      final PrimitiveSet<HybridEncrypt> primitives, PrimitiveFactory<HybridEncrypt> factory)
+      final PrimitiveSet<HybridEncrypt> primitives,
+      MonitoringAnnotations annotations,
+      PrimitiveFactory<HybridEncrypt> factory)
       throws GeneralSecurityException {
     KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
     MonitoringClient.Logger encLogger;
-    if (!primitives.getAnnotations().isEmpty()) {
+    if (!annotations.isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-      encLogger =
-          client.createLogger(
-              keysetHandle, primitives.getAnnotations(), "hybrid_encrypt", "encrypt");
+      encLogger = client.createLogger(keysetHandle, annotations, "hybrid_encrypt", "encrypt");
     } else {
       encLogger = MonitoringUtil.DO_NOTHING_LOGGER;
     }

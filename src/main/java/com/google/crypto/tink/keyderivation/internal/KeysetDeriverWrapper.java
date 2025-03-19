@@ -19,6 +19,7 @@ package com.google.crypto.tink.keyderivation.internal;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
+import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
@@ -89,7 +90,9 @@ public final class KeysetDeriverWrapper implements PrimitiveWrapper<KeyDeriver, 
 
   @Override
   public KeysetDeriver wrap(
-      final PrimitiveSet<KeyDeriver> primitiveSet, PrimitiveFactory<KeyDeriver> factory)
+      final PrimitiveSet<KeyDeriver> primitiveSet,
+      MonitoringAnnotations annotations,
+      PrimitiveFactory<KeyDeriver> factory)
       throws GeneralSecurityException {
     validate(primitiveSet.getKeysetHandle());
     KeysetHandleInterface keysetHandle = primitiveSet.getKeysetHandle();

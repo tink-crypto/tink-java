@@ -1089,7 +1089,6 @@ public final class KeysetHandle implements KeysetHandleInterface {
       throws GeneralSecurityException {
     Util.validateKeyset(keyset);
     PrimitiveSet.Builder<B> builder = PrimitiveSet.newBuilder(inputPrimitiveClassObject);
-    builder.setAnnotations(annotations);
     for (int i = 0; i < size(); ++i) {
       Keyset.Key protoKey = keyset.getKey(i);
       if (protoKey.getStatus().equals(KeyStatusType.ENABLED)) {
@@ -1113,6 +1112,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
     }
     return config.wrap(
         builder.build(),
+        annotations,
         entry -> config.getPrimitive(entry.getKey(), inputPrimitiveClassObject),
         classObject);
   }

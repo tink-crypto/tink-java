@@ -31,6 +31,7 @@ import com.google.crypto.tink.aead.PredefinedAeadParameters;
 import com.google.crypto.tink.config.TinkConfig;
 import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
@@ -129,7 +130,8 @@ public class RegistryTest {
     public static final AeadToEncryptOnlyWrapper WRAPPER = new AeadToEncryptOnlyWrapper();
 
     @Override
-    public EncryptOnly wrap(PrimitiveSet<Aead> set, PrimitiveFactory<Aead> factory)
+    public EncryptOnly wrap(
+        PrimitiveSet<Aead> set, MonitoringAnnotations annotations, PrimitiveFactory<Aead> factory)
         throws GeneralSecurityException {
       return new EncryptOnly() {
         @Override
@@ -715,6 +717,7 @@ public class RegistryTest {
         MutablePrimitiveRegistry.globalInstance()
             .wrap(
                 createAeadPrimitiveSet(),
+                MonitoringAnnotations.EMPTY,
                 entry -> AesGcmJce.create((AesGcmKey) entry.getKey()),
                 Aead.class));
   }
@@ -730,6 +733,7 @@ public class RegistryTest {
                 MutablePrimitiveRegistry.globalInstance()
                     .wrap(
                         aeadSet,
+                        MonitoringAnnotations.EMPTY,
                         entry -> AesGcmJce.create((AesGcmKey) entry.getKey()),
                         Aead.class));
     assertExceptionContains(e, "No wrapper found");
@@ -742,6 +746,7 @@ public class RegistryTest {
         MutablePrimitiveRegistry.globalInstance()
             .wrap(
                 createAeadPrimitiveSet(),
+                MonitoringAnnotations.EMPTY,
                 entry -> AesGcmJce.create((AesGcmKey) entry.getKey()),
                 EncryptOnly.class);
     assertThat(encrypt).isNotNull();
@@ -757,7 +762,9 @@ public class RegistryTest {
                   new PrimitiveWrapper<Mac, EncryptOnly>() {
                     @Override
                     public EncryptOnly wrap(
-                        PrimitiveSet<Mac> primitiveSet, PrimitiveFactory<Mac> factory) {
+                        PrimitiveSet<Mac> primitiveSet,
+                        MonitoringAnnotations annotations,
+                        PrimitiveFactory<Mac> factory) {
                       return null;
                     }
 

@@ -44,7 +44,10 @@ public interface PrimitiveWrapper<B, P> {
    *
    * <p>This has to be implemented when a new primitive type is added.
    */
-  P wrap(PrimitiveSet<B> primitiveSet, PrimitiveFactory<B> primitiveFactory)
+  P wrap(
+      PrimitiveSet<B> primitiveSet,
+      MonitoringAnnotations annotations,
+      PrimitiveFactory<B> primitiveFactory)
       throws GeneralSecurityException;
 
   /**
