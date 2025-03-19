@@ -97,7 +97,7 @@ public final class PrimitiveRegistryTest {
 
     @Override
     public TestPrimitiveA wrap(
-        final PrimitiveSet<TestPrimitiveA> primitives,
+        KeysetHandleInterface keysetHandle,
         MonitoringAnnotations annotations,
         PrimitiveFactory<TestPrimitiveA> factory)
         throws GeneralSecurityException {
@@ -121,7 +121,7 @@ public final class PrimitiveRegistryTest {
 
     @Override
     public TestPrimitiveB wrap(
-        final PrimitiveSet<TestPrimitiveA> primitives,
+        KeysetHandleInterface keysetHandle,
         MonitoringAnnotations annotations,
         PrimitiveFactory<TestPrimitiveA> factory)
         throws GeneralSecurityException {

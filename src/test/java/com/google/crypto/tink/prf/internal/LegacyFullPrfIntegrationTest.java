@@ -29,7 +29,6 @@ import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
-import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.prf.HmacPrfKey;
 import com.google.crypto.tink.prf.HmacPrfParameters;
@@ -176,9 +175,9 @@ public class LegacyFullPrfIntegrationTest {
         return keyIdToPrfMap;
       }
 
-      private WrappedPrfSet(PrimitiveSet<Prf> primitiveSet, PrimitiveFactory<Prf> factory)
+      private WrappedPrfSet(KeysetHandleInterface keysetHandle, PrimitiveFactory<Prf> factory)
           throws GeneralSecurityException {
-        KeysetHandleInterface.Entry primary = primitiveSet.getKeysetHandle().getPrimary();
+        KeysetHandleInterface.Entry primary = keysetHandle.getPrimary();
         this.primaryKeyId = primary.getId();
         HashMap<Integer, Prf> keyIdToPrfMap = new HashMap<>();
         keyIdToPrfMap.put(this.primaryKeyId, factory.create(primary));
@@ -188,12 +187,12 @@ public class LegacyFullPrfIntegrationTest {
 
     @Override
     public PrfSet wrap(
-        PrimitiveSet<Prf> primitiveSet,
+        KeysetHandleInterface keysetHandle,
         MonitoringAnnotations annotations,
         PrimitiveFactory<Prf> factory)
         throws GeneralSecurityException {
       // This is a dummy test wrapper that act as a proxy to a single primitive object under test.
-      return new WrappedPrfSet(primitiveSet, factory);
+      return new WrappedPrfSet(keysetHandle, factory);
     }
 
     @Override

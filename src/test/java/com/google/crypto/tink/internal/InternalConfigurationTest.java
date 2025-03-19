@@ -99,7 +99,7 @@ public class InternalConfigurationTest {
 
     @Override
     public TestPrimitiveA wrap(
-        final PrimitiveSet<TestPrimitiveA> primitives,
+        KeysetHandleInterface keysetHandle,
         MonitoringAnnotations annotations,
         PrimitiveFactory<TestPrimitiveA> factory) {
       return new TestPrimitiveA();
@@ -122,7 +122,7 @@ public class InternalConfigurationTest {
 
     @Override
     public TestPrimitiveB wrap(
-        final PrimitiveSet<TestPrimitiveB> primitives,
+        KeysetHandleInterface keysetHandle,
         MonitoringAnnotations annotations,
         PrimitiveFactory<TestPrimitiveB> factory) {
       return new TestPrimitiveB();

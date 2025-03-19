@@ -22,7 +22,6 @@ import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
-import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
@@ -45,8 +44,8 @@ class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
 
   private static final JwtMacWrapper WRAPPER = new JwtMacWrapper();
 
-  private static void validate(PrimitiveSet<JwtMac> primitiveSet) throws GeneralSecurityException {
-    if (primitiveSet.getKeysetHandle().getPrimary() == null) {
+  private static void validate(KeysetHandleInterface keysetHandle) throws GeneralSecurityException {
+    if (keysetHandle.getPrimary() == null) {
       throw new GeneralSecurityException("Primitive set has no primary.");
     }
   }
@@ -117,12 +116,11 @@ class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
 
   @Override
   public JwtMac wrap(
-      final PrimitiveSet<JwtMac> primitives,
+      KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<JwtMac> factory)
       throws GeneralSecurityException {
-    validate(primitives);
-    KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
+    validate(keysetHandle);
     List<JwtMacWithId> allMacs = new ArrayList<>(keysetHandle.size());
     for (int i = 0; i < keysetHandle.size(); i++) {
       KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);

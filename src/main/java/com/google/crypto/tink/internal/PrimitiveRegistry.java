@@ -176,7 +176,7 @@ public class PrimitiveRegistry {
     @SuppressWarnings("unchecked") // The check above ensured this.
     PrimitiveWrapper<InputPrimitiveT, WrapperPrimitiveT> typedWrapper =
         (PrimitiveWrapper<InputPrimitiveT, WrapperPrimitiveT>) wrapper;
-    return typedWrapper.wrap(primitives, annotations, factory);
+    return typedWrapper.wrap(primitives.getKeysetHandle(), annotations, factory);
   }
 
   private static final class PrimitiveConstructorIndex {

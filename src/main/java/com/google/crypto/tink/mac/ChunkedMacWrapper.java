@@ -23,7 +23,6 @@ import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrefixMap;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
-import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
@@ -133,14 +132,10 @@ public class ChunkedMacWrapper implements PrimitiveWrapper<ChunkedMac, ChunkedMa
 
   @Override
   public ChunkedMac wrap(
-      final PrimitiveSet<ChunkedMac> primitives,
+      KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<ChunkedMac> factory)
       throws GeneralSecurityException {
-    if (primitives == null) {
-      throw new GeneralSecurityException("primitive set must be non-null");
-    }
-    KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
     KeysetHandleInterface.Entry primaryEntry = keysetHandle.getPrimary();
     if (primaryEntry == null) {
       throw new GeneralSecurityException("no primary in primitive set");

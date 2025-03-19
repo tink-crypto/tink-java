@@ -41,7 +41,6 @@ import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
-import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
@@ -116,24 +115,22 @@ public class KeysetHandleTest {
     private static class EncryptOnlyWithMonitoring implements EncryptOnly {
 
       private final MonitoringClient.Logger logger;
-      private final PrimitiveSet<Aead> primitiveSet;
+      private final KeysetHandleInterface keysetHandle;
       private final PrimitiveFactory<Aead> factory;
 
       EncryptOnlyWithMonitoring(
-          PrimitiveSet<Aead> primitiveSet,
+          KeysetHandleInterface keysetHandle,
           MonitoringAnnotations annotations,
           PrimitiveFactory<Aead> factory) {
-        this.primitiveSet = primitiveSet;
+        this.keysetHandle = keysetHandle;
         this.factory = factory;
         MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-        logger =
-            client.createLogger(
-                primitiveSet.getKeysetHandle(), annotations, "encrypt_only", "encrypt");
+        logger = client.createLogger(keysetHandle, annotations, "encrypt_only", "encrypt");
       }
 
       @Override
       public byte[] encrypt(final byte[] plaintext) throws GeneralSecurityException {
-        KeysetHandleInterface.Entry primary = primitiveSet.getKeysetHandle().getPrimary();
+        KeysetHandleInterface.Entry primary = keysetHandle.getPrimary();
         logger.log(primary.getId(), plaintext.length);
         return factory.create(primary).encrypt(plaintext, new byte[0]);
       }
@@ -141,9 +138,11 @@ public class KeysetHandleTest {
 
     @Override
     public EncryptOnly wrap(
-        PrimitiveSet<Aead> set, MonitoringAnnotations annotations, PrimitiveFactory<Aead> factory)
+        KeysetHandleInterface keysetHandle,
+        MonitoringAnnotations annotations,
+        PrimitiveFactory<Aead> factory)
         throws GeneralSecurityException {
-      return new EncryptOnlyWithMonitoring(set, annotations, factory);
+      return new EncryptOnlyWithMonitoring(keysetHandle, annotations, factory);
     }
 
     @Override
@@ -1655,7 +1654,7 @@ public class KeysetHandleTest {
 
     @Override
     public TestPrimitiveB wrap(
-        final PrimitiveSet<TestPrimitiveA> primitives,
+        KeysetHandleInterface keysetHandle,
         MonitoringAnnotations annotations,
         PrimitiveFactory<TestPrimitiveA> factory) {
       return new TestPrimitiveB();

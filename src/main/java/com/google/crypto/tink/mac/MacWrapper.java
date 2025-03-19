@@ -28,7 +28,6 @@ import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrefixMap;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
-import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.mac.internal.LegacyFullMac;
 import com.google.crypto.tink.util.Bytes;
@@ -123,12 +122,11 @@ public class MacWrapper implements PrimitiveWrapper<Mac, Mac> {
 
   @Override
   public Mac wrap(
-      final PrimitiveSet<Mac> primitives,
+      KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<Mac> factory)
       throws GeneralSecurityException {
     PrefixMap.Builder<MacWithId> builder = new PrefixMap.Builder<>();
-    KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
     for (int i = 0; i < keysetHandle.size(); i++) {
       KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
       Mac mac = factory.create(entry);

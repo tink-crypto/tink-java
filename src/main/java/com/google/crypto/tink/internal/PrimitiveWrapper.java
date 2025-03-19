@@ -40,12 +40,13 @@ public interface PrimitiveWrapper<B, P> {
   /**
    * Wraps a {@code PrimitiveSet} and returns a single instance.
    *
-   * <p>This method gets called when a new primitive is created. {@code primitiveSet} is immutable.
+   * <p>This method gets called when a new primitive is created.
    *
-   * <p>This has to be implemented when a new primitive type is added.
+   * <p>Note: the passed in {@code keysetHandle} only currently only contains active keys. This
+   * should change in the future.
    */
   P wrap(
-      PrimitiveSet<B> primitiveSet,
+      KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<B> primitiveFactory)
       throws GeneralSecurityException;

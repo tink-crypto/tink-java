@@ -902,7 +902,6 @@ android_library(
     deps = [
         ":keyset_handle_interface-android",
         ":monitoring_annotations-android",
-        ":primitive_set-android",
     ],
 )
 
@@ -912,7 +911,6 @@ java_library(
     deps = [
         ":keyset_handle_interface",
         ":monitoring_annotations",
-        ":primitive_set",
     ],
 )
 

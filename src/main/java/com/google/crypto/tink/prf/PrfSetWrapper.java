@@ -24,7 +24,6 @@ import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
-import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.prf.internal.LegacyFullPrf;
 import com.google.errorprone.annotations.Immutable;
@@ -98,9 +97,10 @@ public class PrfSetWrapper implements PrimitiveWrapper<Prf, PrfSet> {
 
   @Override
   public PrfSet wrap(
-      PrimitiveSet<Prf> set, MonitoringAnnotations annotations, PrimitiveFactory<Prf> factory)
+      KeysetHandleInterface keysetHandle,
+      MonitoringAnnotations annotations,
+      PrimitiveFactory<Prf> factory)
       throws GeneralSecurityException {
-    KeysetHandleInterface keysetHandle = set.getKeysetHandle();
     MonitoringClient.Logger logger;
     if (!annotations.isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();

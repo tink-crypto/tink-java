@@ -28,7 +28,6 @@ import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrefixMap;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
-import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.util.Bytes;
 import java.security.GeneralSecurityException;
@@ -105,12 +104,11 @@ public class HybridDecryptWrapper implements PrimitiveWrapper<HybridDecrypt, Hyb
 
   @Override
   public HybridDecrypt wrap(
-      final PrimitiveSet<HybridDecrypt> primitives,
+      KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<HybridDecrypt> factory)
       throws GeneralSecurityException {
     PrefixMap.Builder<HybridDecryptWithId> builder = new PrefixMap.Builder<>();
-    KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
     for (int i = 0; i < keysetHandle.size(); i++) {
       KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
       HybridDecrypt hybridDecrypt = factory.create(entry);

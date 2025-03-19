@@ -110,7 +110,7 @@ public final class MutablePrimitiveRegistryTest {
 
     @Override
     public TestPrimitiveA wrap(
-        final PrimitiveSet<TestPrimitiveA> primitives,
+        KeysetHandleInterface keysetHandle,
         MonitoringAnnotations annotations,
         PrimitiveFactory<TestPrimitiveA> factory)
         throws GeneralSecurityException {
@@ -134,7 +134,7 @@ public final class MutablePrimitiveRegistryTest {
 
     @Override
     public TestPrimitiveB wrap(
-        final PrimitiveSet<TestPrimitiveA> primitives,
+        KeysetHandleInterface keysetHandle,
         MonitoringAnnotations annotations,
         PrimitiveFactory<TestPrimitiveA> factory)
         throws GeneralSecurityException {

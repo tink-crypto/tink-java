@@ -29,7 +29,6 @@ import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrefixMap;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
-import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.util.Bytes;
 import java.security.GeneralSecurityException;
@@ -124,12 +123,11 @@ public class AeadWrapper implements PrimitiveWrapper<Aead, Aead> {
 
   @Override
   public Aead wrap(
-      final PrimitiveSet<Aead> pset,
+      KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<Aead> factory)
       throws GeneralSecurityException {
     PrefixMap.Builder<AeadWithId> builder = new PrefixMap.Builder<>();
-    KeysetHandleInterface keysetHandle = pset.getKeysetHandle();
     for (int i = 0; i < keysetHandle.size(); i++) {
       KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
       builder.put(

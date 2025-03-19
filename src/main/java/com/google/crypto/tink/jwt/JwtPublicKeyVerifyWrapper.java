@@ -22,7 +22,6 @@ import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
-import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
@@ -86,11 +85,10 @@ class JwtPublicKeyVerifyWrapper
 
   @Override
   public JwtPublicKeyVerify wrap(
-      final PrimitiveSet<JwtPublicKeyVerify> primitives,
+      KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<JwtPublicKeyVerify> factory)
       throws GeneralSecurityException {
-    KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
     List<JwtPublicKeyVerifyWithId> allVerifiers = new ArrayList<>(keysetHandle.size());
     for (int i = 0; i < keysetHandle.size(); i++) {
       KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);

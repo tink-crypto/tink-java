@@ -22,7 +22,6 @@ import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
-import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
@@ -49,11 +48,10 @@ class JwtPublicKeySignWrapper implements PrimitiveWrapper<JwtPublicKeySign, JwtP
     private final MonitoringClient.Logger logger;
 
     public WrappedJwtPublicKeySign(
-        final PrimitiveSet<JwtPublicKeySign> primitives,
+        KeysetHandleInterface keysetHandle,
         MonitoringAnnotations annotations,
         PrimitiveFactory<JwtPublicKeySign> factory)
         throws GeneralSecurityException {
-      KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
       this.primary = factory.create(keysetHandle.getPrimary());
       this.primaryKeyId = keysetHandle.getPrimary().getId();
       if (!annotations.isEmpty()) {
@@ -79,11 +77,11 @@ class JwtPublicKeySignWrapper implements PrimitiveWrapper<JwtPublicKeySign, JwtP
 
   @Override
   public JwtPublicKeySign wrap(
-      final PrimitiveSet<JwtPublicKeySign> primitives,
+      KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<JwtPublicKeySign> factory)
       throws GeneralSecurityException {
-    return new WrappedJwtPublicKeySign(primitives, annotations, factory);
+    return new WrappedJwtPublicKeySign(keysetHandle, annotations, factory);
   }
 
   @Override

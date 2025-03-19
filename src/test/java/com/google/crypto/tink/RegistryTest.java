@@ -31,6 +31,7 @@ import com.google.crypto.tink.aead.PredefinedAeadParameters;
 import com.google.crypto.tink.config.TinkConfig;
 import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveSet;
@@ -131,12 +132,14 @@ public class RegistryTest {
 
     @Override
     public EncryptOnly wrap(
-        PrimitiveSet<Aead> set, MonitoringAnnotations annotations, PrimitiveFactory<Aead> factory)
+        KeysetHandleInterface keysetHandle,
+        MonitoringAnnotations annotations,
+        PrimitiveFactory<Aead> factory)
         throws GeneralSecurityException {
       return new EncryptOnly() {
         @Override
         public byte[] encrypt(final byte[] plaintext) throws GeneralSecurityException {
-          return factory.create(set.getKeysetHandle().getPrimary()).encrypt(plaintext, new byte[0]);
+          return factory.create(keysetHandle.getPrimary()).encrypt(plaintext, new byte[0]);
         }
       };
     }
@@ -762,7 +765,7 @@ public class RegistryTest {
                   new PrimitiveWrapper<Mac, EncryptOnly>() {
                     @Override
                     public EncryptOnly wrap(
-                        PrimitiveSet<Mac> primitiveSet,
+                        KeysetHandleInterface keysetHandle,
                         MonitoringAnnotations annotations,
                         PrimitiveFactory<Mac> factory) {
                       return null;
