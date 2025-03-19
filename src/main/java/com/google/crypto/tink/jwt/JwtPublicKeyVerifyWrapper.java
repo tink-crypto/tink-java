@@ -84,14 +84,15 @@ class JwtPublicKeyVerifyWrapper
   }
 
   @Override
-  public JwtPublicKeyVerify wrap(final PrimitiveSet<JwtPublicKeyVerify> primitives)
+  public JwtPublicKeyVerify wrap(
+      final PrimitiveSet<JwtPublicKeyVerify> primitives,
+      PrimitiveFactory<JwtPublicKeyVerify> factory)
       throws GeneralSecurityException {
     KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
     List<JwtPublicKeyVerifyWithId> allVerifiers = new ArrayList<>(keysetHandle.size());
     for (int i = 0; i < keysetHandle.size(); i++) {
       KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
-      allVerifiers.add(
-          new JwtPublicKeyVerifyWithId(primitives.getPrimitiveForEntry(entry), entry.getId()));
+      allVerifiers.add(new JwtPublicKeyVerifyWithId(factory.create(entry), entry.getId()));
     }
     MonitoringClient.Logger logger;
     if (!primitives.getAnnotations().isEmpty()) {

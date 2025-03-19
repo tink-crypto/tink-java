@@ -21,11 +21,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
-import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.Mac;
-import com.google.crypto.tink.aead.XChaCha20Poly1305Key;
 import com.google.crypto.tink.mac.HmacKey;
 import com.google.crypto.tink.mac.HmacKeyManager;
 import com.google.crypto.tink.proto.HashType;
@@ -34,9 +32,7 @@ import com.google.crypto.tink.proto.KeyData;
 import com.google.crypto.tink.proto.KeyStatusType;
 import com.google.crypto.tink.proto.Keyset.Key;
 import com.google.crypto.tink.proto.OutputPrefixType;
-import com.google.crypto.tink.subtle.XChaCha20Poly1305;
 import com.google.crypto.tink.testing.TestUtil;
-import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
@@ -362,40 +358,5 @@ public class PrimitiveSetTest {
         GeneralSecurityException.class,
         () ->
             PrimitiveSet.newBuilder(Mac.class).addPrimary(getKeyFromProtoKey(key1), key1).build());
-  }
-
-  @Test
-  public void getPrimitiveCreator_works() throws Exception {
-    byte[] empty = new byte[] {};
-    XChaCha20Poly1305Key key1 = XChaCha20Poly1305Key.create(SecretBytes.randomBytes(32));
-    Aead key1Aead = XChaCha20Poly1305.create(key1);
-    XChaCha20Poly1305Key key2 = XChaCha20Poly1305Key.create(SecretBytes.randomBytes(32));
-    Aead key2Aead = XChaCha20Poly1305.create(key2);
-    PrimitiveSet<Aead> pset =
-        PrimitiveSet.newBuilder(Aead.class)
-            .add(
-                key1,
-                Key.newBuilder()
-                    .setKeyId(1)
-                    .setStatus(KeyStatusType.ENABLED)
-                    .setOutputPrefixType(OutputPrefixType.RAW)
-                    .build())
-            .addPrimary(
-                key2,
-                Key.newBuilder()
-                    .setKeyId(2)
-                    .setStatus(KeyStatusType.ENABLED)
-                    .setOutputPrefixType(OutputPrefixType.RAW)
-                    .build())
-            .addPrimitiveConstructor(key -> XChaCha20Poly1305.create((XChaCha20Poly1305Key) key))
-            .build();
-
-    assertThat(pset.getKeysetHandle().size()).isEqualTo(2);
-
-    Aead key1AeadPset = pset.getPrimitiveForEntry(pset.getKeysetHandle().getAt(0));
-    Aead key2AeadPset = pset.getPrimitiveForEntry(pset.getKeysetHandle().getAt(1));
-
-    assertThat(key1AeadPset.decrypt(key1Aead.encrypt(empty, empty), empty)).isEmpty();
-    assertThat(key2AeadPset.decrypt(key2Aead.encrypt(empty, empty), empty)).isEmpty();
   }
 }

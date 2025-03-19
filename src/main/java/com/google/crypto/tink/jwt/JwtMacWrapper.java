@@ -115,13 +115,14 @@ class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
   JwtMacWrapper() {}
 
   @Override
-  public JwtMac wrap(final PrimitiveSet<JwtMac> primitives) throws GeneralSecurityException {
+  public JwtMac wrap(final PrimitiveSet<JwtMac> primitives, PrimitiveFactory<JwtMac> factory)
+      throws GeneralSecurityException {
     validate(primitives);
     KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
     List<JwtMacWithId> allMacs = new ArrayList<>(keysetHandle.size());
     for (int i = 0; i < keysetHandle.size(); i++) {
       KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
-      JwtMac jwtMac = primitives.getPrimitiveForEntry(entry);
+      JwtMac jwtMac = factory.create(entry);
       allMacs.add(new JwtMacWithId(jwtMac, entry.getId()));
     }
     MonitoringClient.Logger computeLogger;
@@ -136,7 +137,7 @@ class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
       computeLogger = MonitoringUtil.DO_NOTHING_LOGGER;
       verifyLogger = MonitoringUtil.DO_NOTHING_LOGGER;
     }
-    JwtMac primaryMac = primitives.getPrimitiveForEntry(keysetHandle.getPrimary());
+    JwtMac primaryMac = factory.create(keysetHandle.getPrimary());
 
     return new WrappedJwtMac(
         new JwtMacWithId(primaryMac, keysetHandle.getPrimary().getId()),

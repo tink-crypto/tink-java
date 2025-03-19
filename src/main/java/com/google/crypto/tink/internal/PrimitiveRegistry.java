@@ -154,7 +154,9 @@ public class PrimitiveRegistry {
   }
 
   public <InputPrimitiveT, WrapperPrimitiveT> WrapperPrimitiveT wrap(
-      PrimitiveSet<InputPrimitiveT> primitives, Class<WrapperPrimitiveT> wrapperClassObject)
+      PrimitiveSet<InputPrimitiveT> primitives,
+      PrimitiveWrapper.PrimitiveFactory<InputPrimitiveT> factory,
+      Class<WrapperPrimitiveT> wrapperClassObject)
       throws GeneralSecurityException {
     if (!primitiveWrapperMap.containsKey(wrapperClassObject)) {
       throw new GeneralSecurityException(
@@ -173,7 +175,7 @@ public class PrimitiveRegistry {
     @SuppressWarnings("unchecked") // The check above ensured this.
     PrimitiveWrapper<InputPrimitiveT, WrapperPrimitiveT> typedWrapper =
         (PrimitiveWrapper<InputPrimitiveT, WrapperPrimitiveT>) wrapper;
-    return typedWrapper.wrap(primitives);
+    return typedWrapper.wrap(primitives, factory);
   }
 
   private static final class PrimitiveConstructorIndex {

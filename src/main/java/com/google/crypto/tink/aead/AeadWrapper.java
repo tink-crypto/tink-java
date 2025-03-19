@@ -122,14 +122,14 @@ public class AeadWrapper implements PrimitiveWrapper<Aead, Aead> {
   AeadWrapper() {}
 
   @Override
-  public Aead wrap(final PrimitiveSet<Aead> pset) throws GeneralSecurityException {
+  public Aead wrap(final PrimitiveSet<Aead> pset, PrimitiveFactory<Aead> factory)
+      throws GeneralSecurityException {
     PrefixMap.Builder<AeadWithId> builder = new PrefixMap.Builder<>();
     KeysetHandleInterface keysetHandle = pset.getKeysetHandle();
     for (int i = 0; i < keysetHandle.size(); i++) {
       KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
       builder.put(
-          getOutputPrefix(entry.getKey()),
-          new AeadWithId(pset.getPrimitiveForEntry(entry), entry.getId()));
+          getOutputPrefix(entry.getKey()), new AeadWithId(factory.create(entry), entry.getId()));
     }
     MonitoringClient.Logger encLogger;
     MonitoringClient.Logger decLogger;
@@ -143,8 +143,7 @@ public class AeadWrapper implements PrimitiveWrapper<Aead, Aead> {
     }
     return new WrappedAead(
         new AeadWithId(
-            pset.getPrimitiveForEntry(keysetHandle.getPrimary()),
-            keysetHandle.getPrimary().getId()),
+            factory.create(keysetHandle.getPrimary()), keysetHandle.getPrimary().getId()),
         builder.build(),
         encLogger,
         decLogger);

@@ -175,19 +175,21 @@ public class LegacyFullPrfIntegrationTest {
         return keyIdToPrfMap;
       }
 
-      private WrappedPrfSet(PrimitiveSet<Prf> primitiveSet) throws GeneralSecurityException {
+      private WrappedPrfSet(PrimitiveSet<Prf> primitiveSet, PrimitiveFactory<Prf> factory)
+          throws GeneralSecurityException {
         KeysetHandleInterface.Entry primary = primitiveSet.getKeysetHandle().getPrimary();
         this.primaryKeyId = primary.getId();
         HashMap<Integer, Prf> keyIdToPrfMap = new HashMap<>();
-        keyIdToPrfMap.put(this.primaryKeyId, primitiveSet.getPrimitiveForEntry(primary));
+        keyIdToPrfMap.put(this.primaryKeyId, factory.create(primary));
         this.keyIdToPrfMap = Collections.unmodifiableMap(keyIdToPrfMap);
       }
     }
 
     @Override
-    public PrfSet wrap(PrimitiveSet<Prf> primitiveSet) throws GeneralSecurityException {
+    public PrfSet wrap(PrimitiveSet<Prf> primitiveSet, PrimitiveFactory<Prf> factory)
+        throws GeneralSecurityException {
       // This is a dummy test wrapper that act as a proxy to a single primitive object under test.
-      return new WrappedPrfSet(primitiveSet);
+      return new WrappedPrfSet(primitiveSet, factory);
     }
 
     @Override

@@ -83,7 +83,8 @@ public class HybridEncryptWrapper implements PrimitiveWrapper<HybridEncrypt, Hyb
   HybridEncryptWrapper() {}
 
   @Override
-  public HybridEncrypt wrap(final PrimitiveSet<HybridEncrypt> primitives)
+  public HybridEncrypt wrap(
+      final PrimitiveSet<HybridEncrypt> primitives, PrimitiveFactory<HybridEncrypt> factory)
       throws GeneralSecurityException {
     KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
     MonitoringClient.Logger encLogger;
@@ -101,7 +102,7 @@ public class HybridEncryptWrapper implements PrimitiveWrapper<HybridEncrypt, Hyb
     // GeneralSecurityException) here, but I don't want to change behavior today.
     return new WrappedHybridEncrypt(
         new HybridEncryptWithId(
-            primary == null ? null : primitives.getPrimitiveForEntry(primary),
+            primary == null ? null : factory.create(primary),
             primary == null ? 0 : primary.getId()),
         encLogger);
   }

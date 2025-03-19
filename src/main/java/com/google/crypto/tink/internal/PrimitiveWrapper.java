@@ -32,13 +32,20 @@ import java.security.GeneralSecurityException;
  * but there may be many wrapping the same {@code B}.
  */
 public interface PrimitiveWrapper<B, P> {
+  /** Creates a primitive from an entry. */
+  public interface PrimitiveFactory<B> {
+    B create(KeysetHandleInterface.Entry k) throws GeneralSecurityException;
+  }
+
   /**
    * Wraps a {@code PrimitiveSet} and returns a single instance.
    *
-   * <p> This method gets called when a new primitive is created. {@code primitiveSet} is immutable.
+   * <p>This method gets called when a new primitive is created. {@code primitiveSet} is immutable.
    *
-   * This has to be implemented when a new primitive type is added. */
-  P wrap(PrimitiveSet<B> primitiveSet) throws GeneralSecurityException;
+   * <p>This has to be implemented when a new primitive type is added.
+   */
+  P wrap(PrimitiveSet<B> primitiveSet, PrimitiveFactory<B> primitiveFactory)
+      throws GeneralSecurityException;
 
   /**
    * Returns the primitive class object of the primitive managed. Used for internal management.

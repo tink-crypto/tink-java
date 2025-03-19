@@ -1111,9 +1111,10 @@ public final class KeysetHandle implements KeysetHandleInterface {
         }
       }
     }
-    builder.addPrimitiveConstructor(
-        givenKey -> config.getPrimitive(givenKey, inputPrimitiveClassObject));
-    return config.wrap(builder.build(), classObject);
+    return config.wrap(
+        builder.build(),
+        entry -> config.getPrimitive(entry.getKey(), inputPrimitiveClassObject),
+        classObject);
   }
 
   /**

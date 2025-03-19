@@ -117,9 +117,11 @@ public class KeysetHandleTest {
 
       private final MonitoringClient.Logger logger;
       private final PrimitiveSet<Aead> primitiveSet;
+      private final PrimitiveFactory<Aead> factory;
 
-      EncryptOnlyWithMonitoring(PrimitiveSet<Aead> primitiveSet) {
+      EncryptOnlyWithMonitoring(PrimitiveSet<Aead> primitiveSet, PrimitiveFactory<Aead> factory) {
         this.primitiveSet = primitiveSet;
+        this.factory = factory;
         MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
         logger =
             client.createLogger(
@@ -133,13 +135,14 @@ public class KeysetHandleTest {
       public byte[] encrypt(final byte[] plaintext) throws GeneralSecurityException {
         KeysetHandleInterface.Entry primary = primitiveSet.getKeysetHandle().getPrimary();
         logger.log(primary.getId(), plaintext.length);
-        return primitiveSet.getPrimitiveForEntry(primary).encrypt(plaintext, new byte[0]);
+        return factory.create(primary).encrypt(plaintext, new byte[0]);
       }
     }
 
     @Override
-    public EncryptOnly wrap(PrimitiveSet<Aead> set) throws GeneralSecurityException {
-      return new EncryptOnlyWithMonitoring(set);
+    public EncryptOnly wrap(PrimitiveSet<Aead> set, PrimitiveFactory<Aead> factory)
+        throws GeneralSecurityException {
+      return new EncryptOnlyWithMonitoring(set, factory);
     }
 
     @Override
@@ -1650,7 +1653,8 @@ public class KeysetHandleTest {
       implements PrimitiveWrapper<TestPrimitiveA, TestPrimitiveB> {
 
     @Override
-    public TestPrimitiveB wrap(final PrimitiveSet<TestPrimitiveA> primitives) {
+    public TestPrimitiveB wrap(
+        final PrimitiveSet<TestPrimitiveA> primitives, PrimitiveFactory<TestPrimitiveA> factory) {
       return new TestPrimitiveB();
     }
 

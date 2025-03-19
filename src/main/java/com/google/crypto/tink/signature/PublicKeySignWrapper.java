@@ -82,7 +82,8 @@ public class PublicKeySignWrapper implements PrimitiveWrapper<PublicKeySign, Pub
   PublicKeySignWrapper() {}
 
   @Override
-  public PublicKeySign wrap(final PrimitiveSet<PublicKeySign> primitives)
+  public PublicKeySign wrap(
+      final PrimitiveSet<PublicKeySign> primitives, PrimitiveFactory<PublicKeySign> factory)
       throws GeneralSecurityException {
     KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
     MonitoringClient.Logger logger;
@@ -95,8 +96,7 @@ public class PublicKeySignWrapper implements PrimitiveWrapper<PublicKeySign, Pub
     }
     return new WrappedPublicKeySign(
         new PublicKeySignWithId(
-            primitives.getPrimitiveForEntry(keysetHandle.getPrimary()),
-            keysetHandle.getPrimary().getId()),
+            factory.create(keysetHandle.getPrimary()), keysetHandle.getPrimary().getId()),
         logger);
   }
 

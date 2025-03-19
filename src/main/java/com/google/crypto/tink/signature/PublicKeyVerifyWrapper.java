@@ -105,13 +105,14 @@ public class PublicKeyVerifyWrapper implements PrimitiveWrapper<PublicKeyVerify,
   }
 
   @Override
-  public PublicKeyVerify wrap(final PrimitiveSet<PublicKeyVerify> primitives)
+  public PublicKeyVerify wrap(
+      final PrimitiveSet<PublicKeyVerify> primitives, PrimitiveFactory<PublicKeyVerify> factory)
       throws GeneralSecurityException {
     PrefixMap.Builder<PublicKeyVerifyWithId> builder = new PrefixMap.Builder<>();
     KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
     for (int i = 0; i < keysetHandle.size(); i++) {
       KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
-      PublicKeyVerify publicKeyVerify = primitives.getPrimitiveForEntry(entry);
+      PublicKeyVerify publicKeyVerify = factory.create(entry);
       builder.put(
           getOutputPrefix(entry.getKey()),
           new PublicKeyVerifyWithId(publicKeyVerify, entry.getId()));

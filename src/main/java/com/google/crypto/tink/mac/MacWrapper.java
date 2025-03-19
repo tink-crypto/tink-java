@@ -121,12 +121,13 @@ public class MacWrapper implements PrimitiveWrapper<Mac, Mac> {
   MacWrapper() {}
 
   @Override
-  public Mac wrap(final PrimitiveSet<Mac> primitives) throws GeneralSecurityException {
+  public Mac wrap(final PrimitiveSet<Mac> primitives, PrimitiveFactory<Mac> factory)
+      throws GeneralSecurityException {
     PrefixMap.Builder<MacWithId> builder = new PrefixMap.Builder<>();
     KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
     for (int i = 0; i < keysetHandle.size(); i++) {
       KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
-      Mac mac = primitives.getPrimitiveForEntry(entry);
+      Mac mac = factory.create(entry);
       builder.put(getOutputPrefix(entry.getKey()), new MacWithId(mac, entry.getId()));
     }
     MonitoringClient.Logger computeLogger;
@@ -141,7 +142,7 @@ public class MacWrapper implements PrimitiveWrapper<Mac, Mac> {
       computeLogger = MonitoringUtil.DO_NOTHING_LOGGER;
       verifyLogger = MonitoringUtil.DO_NOTHING_LOGGER;
     }
-    Mac primaryMac = primitives.getPrimitiveForEntry(keysetHandle.getPrimary());
+    Mac primaryMac = factory.create(keysetHandle.getPrimary());
     return new WrappedMac(
         new MacWithId(primaryMac, keysetHandle.getPrimary().getId()),
         builder.build(),

@@ -91,8 +91,10 @@ public final class MutablePrimitiveRegistry {
   }
 
   public <InputPrimitiveT, WrapperPrimitiveT> WrapperPrimitiveT wrap(
-      PrimitiveSet<InputPrimitiveT> primitives, Class<WrapperPrimitiveT> wrapperClassObject)
+      PrimitiveSet<InputPrimitiveT> primitives,
+      PrimitiveWrapper.PrimitiveFactory<InputPrimitiveT> factory,
+      Class<WrapperPrimitiveT> wrapperClassObject)
       throws GeneralSecurityException {
-    return registry.get().wrap(primitives, wrapperClassObject);
+    return registry.get().wrap(primitives, factory, wrapperClassObject);
   }
 }

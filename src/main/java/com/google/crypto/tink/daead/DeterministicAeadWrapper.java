@@ -125,13 +125,14 @@ public class DeterministicAeadWrapper
   DeterministicAeadWrapper() {}
 
   @Override
-  public DeterministicAead wrap(final PrimitiveSet<DeterministicAead> primitives)
+  public DeterministicAead wrap(
+      final PrimitiveSet<DeterministicAead> primitives, PrimitiveFactory<DeterministicAead> factory)
       throws GeneralSecurityException {
     PrefixMap.Builder<DeterministicAeadWithId> builder = new PrefixMap.Builder<>();
     KeysetHandleInterface handle = primitives.getKeysetHandle();
     for (int i = 0; i < handle.size(); i++) {
       KeysetHandleInterface.Entry entry = handle.getAt(i);
-      DeterministicAead deterministicAead = primitives.getPrimitiveForEntry(entry);
+      DeterministicAead deterministicAead = factory.create(entry);
       builder.put(
           getOutputPrefix(entry.getKey()),
           new DeterministicAeadWithId(deterministicAead, entry.getId()));
@@ -148,7 +149,7 @@ public class DeterministicAeadWrapper
     }
     return new WrappedDeterministicAead(
         new DeterministicAeadWithId(
-            primitives.getPrimitiveForEntry(handle.getPrimary()), handle.getPrimary().getId()),
+            factory.create(handle.getPrimary()), handle.getPrimary().getId()),
         builder.build(),
         encLogger,
         decLogger);

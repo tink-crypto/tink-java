@@ -52,20 +52,21 @@ public class StreamingAeadWrapper implements PrimitiveWrapper<StreamingAead, Str
    * @throws GeneralSecurityException
    */
   @Override
-  public StreamingAead wrap(final PrimitiveSet<StreamingAead> primitives)
+  public StreamingAead wrap(
+      final PrimitiveSet<StreamingAead> primitives, PrimitiveFactory<StreamingAead> factory)
       throws GeneralSecurityException {
     List<StreamingAead> allStreamingAeads = new ArrayList<>();
     KeysetHandleInterface handle = primitives.getKeysetHandle();
     for (int i = 0; i < handle.size(); i++) {
       KeysetHandleInterface.Entry entry = handle.getAt(i);
-      StreamingAead streamingAead = primitives.getPrimitiveForEntry(entry);
+      StreamingAead streamingAead = factory.create(entry);
       allStreamingAeads.add(streamingAead);
     }
     KeysetHandleInterface.Entry primaryEntry = handle.getPrimary();
     if (primaryEntry == null) {
       throw new GeneralSecurityException("No primary set");
     }
-    StreamingAead primaryStreamingAead = primitives.getPrimitiveForEntry(primaryEntry);
+    StreamingAead primaryStreamingAead = factory.create(primaryEntry);
     if (primaryStreamingAead == null) {
       throw new GeneralSecurityException("No primary set");
     }

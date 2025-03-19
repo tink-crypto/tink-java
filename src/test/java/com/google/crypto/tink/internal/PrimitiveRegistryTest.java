@@ -96,7 +96,8 @@ public final class PrimitiveRegistryTest {
       implements PrimitiveWrapper<TestPrimitiveA, TestPrimitiveA> {
 
     @Override
-    public TestPrimitiveA wrap(final PrimitiveSet<TestPrimitiveA> primitives)
+    public TestPrimitiveA wrap(
+        final PrimitiveSet<TestPrimitiveA> primitives, PrimitiveFactory<TestPrimitiveA> factory)
         throws GeneralSecurityException {
       return new TestPrimitiveA();
     }
@@ -117,7 +118,8 @@ public final class PrimitiveRegistryTest {
       implements PrimitiveWrapper<TestPrimitiveA, TestPrimitiveB> {
 
     @Override
-    public TestPrimitiveB wrap(final PrimitiveSet<TestPrimitiveA> primitives)
+    public TestPrimitiveB wrap(
+        final PrimitiveSet<TestPrimitiveA> primitives, PrimitiveFactory<TestPrimitiveA> factory)
         throws GeneralSecurityException {
       return new TestPrimitiveB();
     }
@@ -171,7 +173,11 @@ public final class PrimitiveRegistryTest {
         GeneralSecurityException.class,
         () ->
             registry.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(), TestPrimitiveA.class));
+                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+                entry -> {
+                  throw new IllegalStateException("Should not be called");
+                },
+                TestPrimitiveA.class));
     assertThrows(
         GeneralSecurityException.class,
         () -> registry.getInputPrimitiveClass(TestPrimitiveA.class));
@@ -269,7 +275,11 @@ public final class PrimitiveRegistryTest {
         PrimitiveRegistry.builder().registerPrimitiveWrapper(new TestWrapperA()).build();
     assertThat(
             registry.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(), TestPrimitiveA.class))
+                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+                entry -> {
+                  throw new IllegalStateException("Should not be called");
+                },
+                TestPrimitiveA.class))
         .isNotNull();
   }
 
@@ -313,11 +323,19 @@ public final class PrimitiveRegistryTest {
         .isEqualTo(TestPrimitiveA.class);
     assertThat(
             registry.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(), TestPrimitiveA.class))
+                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+                entry -> {
+                  throw new IllegalStateException("Should not be called");
+                },
+                TestPrimitiveA.class))
         .isInstanceOf(TestPrimitiveA.class);
     assertThat(
             registry.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(), TestPrimitiveB.class))
+                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+                entry -> {
+                  throw new IllegalStateException("Should not be called");
+                },
+                TestPrimitiveB.class))
         .isInstanceOf(TestPrimitiveB.class);
   }
 
@@ -336,7 +354,11 @@ public final class PrimitiveRegistryTest {
         .isInstanceOf(TestPrimitiveA.class);
     assertThat(
             registry2.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(), TestPrimitiveA.class))
+                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+                entry -> {
+                  throw new IllegalStateException("Should not be called");
+                },
+                TestPrimitiveA.class))
         .isInstanceOf(TestPrimitiveA.class);
     assertThat(registry2.getInputPrimitiveClass(TestPrimitiveA.class))
         .isEqualTo(TestPrimitiveA.class);
@@ -370,11 +392,19 @@ public final class PrimitiveRegistryTest {
         GeneralSecurityException.class,
         () ->
             registry1.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(), TestPrimitiveA.class));
+                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+                entry -> {
+                  throw new IllegalStateException("Should not be called");
+                },
+                TestPrimitiveA.class));
     assertThrows(
         GeneralSecurityException.class,
         () ->
             registry2.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(), TestPrimitiveA.class));
+                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+                entry -> {
+                  throw new IllegalStateException("Should not be called");
+                },
+                TestPrimitiveA.class));
   }
 }

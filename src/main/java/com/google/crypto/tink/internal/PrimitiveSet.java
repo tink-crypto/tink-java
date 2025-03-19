@@ -140,24 +140,16 @@ public final class PrimitiveSet<P> {
     return keysetHandle;
   }
 
-  public P getPrimitiveForEntry(KeysetHandleInterface.Entry entry) throws GeneralSecurityException {
-    return primitiveConstructionFunction.constructPrimitive(entry.getKey());
-  }
-
   private final KeysetHandleInterface keysetHandle;
   private final Class<P> primitiveClass;
   private final MonitoringAnnotations annotations;
-  private final PrimitiveConstructor.PrimitiveConstructionFunction<Key, P>
-      primitiveConstructionFunction;
 
   /** Creates an immutable PrimitiveSet. It is used by the Builder. */
   private PrimitiveSet(
       KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
-      PrimitiveConstructor.PrimitiveConstructionFunction<Key, P> primitiveConstructionFunction,
       Class<P> primitiveClass) {
     this.keysetHandle = keysetHandle;
-    this.primitiveConstructionFunction = primitiveConstructionFunction;
     this.primitiveClass = primitiveClass;
     this.annotations = annotations;
   }
@@ -175,11 +167,6 @@ public final class PrimitiveSet<P> {
     private List<KeysetHandleInterface.Entry> entriesInKeysetOrder = new ArrayList<>();
     private KeysetHandleInterface.Entry primary;
     private MonitoringAnnotations annotations;
-    private PrimitiveConstructor.PrimitiveConstructionFunction<Key, P>
-        primitiveConstructionFunction =
-            key -> {
-              throw new GeneralSecurityException("No PrimitiveConstructionFunction specified");
-            };
 
     @CanIgnoreReturnValue
     private Builder<P> addEntry(Key key, Keyset.Key protoKey, boolean asPrimary)
@@ -236,13 +223,6 @@ public final class PrimitiveSet<P> {
       return this;
     }
 
-    @CanIgnoreReturnValue
-    public Builder<P> addPrimitiveConstructor(
-        PrimitiveConstructor.PrimitiveConstructionFunction<Key, P> primitiveConstructionFunction) {
-      this.primitiveConstructionFunction = primitiveConstructionFunction;
-      return this;
-    }
-
     public PrimitiveSet<P> build() throws GeneralSecurityException {
       if (entriesInKeysetOrder == null) {
         throw new IllegalStateException("build cannot be called twice");
@@ -250,10 +230,7 @@ public final class PrimitiveSet<P> {
       // Note that we currently don't enforce that primary must be set.
       PrimitiveSet<P> output =
           new PrimitiveSet<P>(
-              new KeysetHandleImpl(entriesInKeysetOrder, primary),
-              annotations,
-              primitiveConstructionFunction,
-              primitiveClass);
+              new KeysetHandleImpl(entriesInKeysetOrder, primary), annotations, primitiveClass);
       this.entriesInKeysetOrder = null;
       return output;
     }

@@ -26,6 +26,7 @@ import static org.junit.Assert.fail;
 
 import com.google.crypto.tink.aead.AeadConfig;
 import com.google.crypto.tink.aead.AesEaxKeyManager;
+import com.google.crypto.tink.aead.AesGcmKey;
 import com.google.crypto.tink.aead.PredefinedAeadParameters;
 import com.google.crypto.tink.config.TinkConfig;
 import com.google.crypto.tink.config.TinkFips;
@@ -128,12 +129,12 @@ public class RegistryTest {
     public static final AeadToEncryptOnlyWrapper WRAPPER = new AeadToEncryptOnlyWrapper();
 
     @Override
-    public EncryptOnly wrap(PrimitiveSet<Aead> set) throws GeneralSecurityException {
+    public EncryptOnly wrap(PrimitiveSet<Aead> set, PrimitiveFactory<Aead> factory)
+        throws GeneralSecurityException {
       return new EncryptOnly() {
         @Override
         public byte[] encrypt(final byte[] plaintext) throws GeneralSecurityException {
-          return set.getPrimitiveForEntry(set.getKeysetHandle().getPrimary())
-              .encrypt(plaintext, new byte[0]);
+          return factory.create(set.getKeysetHandle().getPrimary()).encrypt(plaintext, new byte[0]);
         }
       };
     }
@@ -683,14 +684,14 @@ public class RegistryTest {
   private static final byte[] KEY2 = Hex.decode("100102030405060708090a0b0c0d0e0f");
 
   private static PrimitiveSet<Aead> createAeadPrimitiveSet() throws Exception {
-    com.google.crypto.tink.aead.AesGcmKey key1 =
-        com.google.crypto.tink.aead.AesGcmKey.builder()
+    AesGcmKey key1 =
+        AesGcmKey.builder()
             .setParameters(PredefinedAeadParameters.AES128_GCM)
             .setKeyBytes(SecretBytes.copyFrom(KEY, InsecureSecretKeyAccess.get()))
             .setIdRequirement(42)
             .build();
-    com.google.crypto.tink.aead.AesGcmKey key2 =
-        com.google.crypto.tink.aead.AesGcmKey.builder()
+    AesGcmKey key2 =
+        AesGcmKey.builder()
             .setParameters(PredefinedAeadParameters.AES128_GCM)
             .setKeyBytes(SecretBytes.copyFrom(KEY2, InsecureSecretKeyAccess.get()))
             .setIdRequirement(43)
@@ -705,15 +706,17 @@ public class RegistryTest {
     return PrimitiveSet.newBuilder(Aead.class)
         .addPrimary(key1, protoKey1)
         .add(key2, protoKey2)
-        .addPrimitiveConstructor(
-            key -> AesGcmJce.create((com.google.crypto.tink.aead.AesGcmKey) key))
         .build();
   }
 
   @Test
   public void testWrap_wrapperRegistered() throws Exception {
     assertNotNull(
-        MutablePrimitiveRegistry.globalInstance().wrap(createAeadPrimitiveSet(), Aead.class));
+        MutablePrimitiveRegistry.globalInstance()
+            .wrap(
+                createAeadPrimitiveSet(),
+                entry -> AesGcmJce.create((AesGcmKey) entry.getKey()),
+                Aead.class));
   }
 
   @Test
@@ -723,7 +726,12 @@ public class RegistryTest {
     GeneralSecurityException e =
         assertThrows(
             GeneralSecurityException.class,
-            () -> MutablePrimitiveRegistry.globalInstance().wrap(aeadSet, Aead.class));
+            () ->
+                MutablePrimitiveRegistry.globalInstance()
+                    .wrap(
+                        aeadSet,
+                        entry -> AesGcmJce.create((AesGcmKey) entry.getKey()),
+                        Aead.class));
     assertExceptionContains(e, "No wrapper found");
     assertExceptionContains(e, "Aead");
   }
@@ -731,7 +739,11 @@ public class RegistryTest {
   @Test
   public void testWrap_wrapAsEncryptOnly() throws Exception {
     EncryptOnly encrypt =
-        MutablePrimitiveRegistry.globalInstance().wrap(createAeadPrimitiveSet(), EncryptOnly.class);
+        MutablePrimitiveRegistry.globalInstance()
+            .wrap(
+                createAeadPrimitiveSet(),
+                entry -> AesGcmJce.create((AesGcmKey) entry.getKey()),
+                EncryptOnly.class);
     assertThat(encrypt).isNotNull();
   }
 
@@ -744,7 +756,8 @@ public class RegistryTest {
               .registerPrimitiveWrapper(
                   new PrimitiveWrapper<Mac, EncryptOnly>() {
                     @Override
-                    public EncryptOnly wrap(PrimitiveSet<Mac> primitiveSet) {
+                    public EncryptOnly wrap(
+                        PrimitiveSet<Mac> primitiveSet, PrimitiveFactory<Mac> factory) {
                       return null;
                     }
 

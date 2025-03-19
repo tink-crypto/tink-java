@@ -88,16 +88,15 @@ public final class KeysetDeriverWrapper implements PrimitiveWrapper<KeyDeriver, 
   KeysetDeriverWrapper() {}
 
   @Override
-  public KeysetDeriver wrap(final PrimitiveSet<KeyDeriver> primitiveSet)
+  public KeysetDeriver wrap(
+      final PrimitiveSet<KeyDeriver> primitiveSet, PrimitiveFactory<KeyDeriver> factory)
       throws GeneralSecurityException {
     validate(primitiveSet.getKeysetHandle());
     KeysetHandleInterface keysetHandle = primitiveSet.getKeysetHandle();
     List<DeriverWithId> derivers = new ArrayList<>(keysetHandle.size());
     for (int i = 0; i < keysetHandle.size(); i++) {
       KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
-      derivers.add(
-          new DeriverWithId(
-              primitiveSet.getPrimitiveForEntry(entry), entry.getId(), entry.isPrimary()));
+      derivers.add(new DeriverWithId(factory.create(entry), entry.getId(), entry.isPrimary()));
     }
 
     return new WrappedKeysetDeriver(derivers);

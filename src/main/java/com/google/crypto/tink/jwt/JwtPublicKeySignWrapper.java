@@ -47,10 +47,11 @@ class JwtPublicKeySignWrapper implements PrimitiveWrapper<JwtPublicKeySign, JwtP
     @SuppressWarnings("Immutable")
     private final MonitoringClient.Logger logger;
 
-    public WrappedJwtPublicKeySign(final PrimitiveSet<JwtPublicKeySign> primitives)
+    public WrappedJwtPublicKeySign(
+        final PrimitiveSet<JwtPublicKeySign> primitives, PrimitiveFactory<JwtPublicKeySign> factory)
         throws GeneralSecurityException {
       KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
-      this.primary = primitives.getPrimitiveForEntry(keysetHandle.getPrimary());
+      this.primary = factory.create(keysetHandle.getPrimary());
       this.primaryKeyId = keysetHandle.getPrimary().getId();
       if (!primitives.getAnnotations().isEmpty()) {
         MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
@@ -75,9 +76,10 @@ class JwtPublicKeySignWrapper implements PrimitiveWrapper<JwtPublicKeySign, JwtP
   }
 
   @Override
-  public JwtPublicKeySign wrap(final PrimitiveSet<JwtPublicKeySign> primitives)
+  public JwtPublicKeySign wrap(
+      final PrimitiveSet<JwtPublicKeySign> primitives, PrimitiveFactory<JwtPublicKeySign> factory)
       throws GeneralSecurityException {
-    return new WrappedJwtPublicKeySign(primitives);
+    return new WrappedJwtPublicKeySign(primitives, factory);
   }
 
   @Override

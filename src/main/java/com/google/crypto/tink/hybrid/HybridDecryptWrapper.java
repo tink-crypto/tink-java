@@ -103,13 +103,14 @@ public class HybridDecryptWrapper implements PrimitiveWrapper<HybridDecrypt, Hyb
   HybridDecryptWrapper() {}
 
   @Override
-  public HybridDecrypt wrap(final PrimitiveSet<HybridDecrypt> primitives)
+  public HybridDecrypt wrap(
+      final PrimitiveSet<HybridDecrypt> primitives, PrimitiveFactory<HybridDecrypt> factory)
       throws GeneralSecurityException {
     PrefixMap.Builder<HybridDecryptWithId> builder = new PrefixMap.Builder<>();
     KeysetHandleInterface keysetHandle = primitives.getKeysetHandle();
     for (int i = 0; i < keysetHandle.size(); i++) {
       KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
-      HybridDecrypt hybridDecrypt = primitives.getPrimitiveForEntry(entry);
+      HybridDecrypt hybridDecrypt = factory.create(entry);
       builder.put(
           getOutputPrefix(entry.getKey()), new HybridDecryptWithId(hybridDecrypt, entry.getId()));
     }

@@ -109,7 +109,8 @@ public final class MutablePrimitiveRegistryTest {
       implements PrimitiveWrapper<TestPrimitiveA, TestPrimitiveA> {
 
     @Override
-    public TestPrimitiveA wrap(final PrimitiveSet<TestPrimitiveA> primitives)
+    public TestPrimitiveA wrap(
+        final PrimitiveSet<TestPrimitiveA> primitives, PrimitiveFactory<TestPrimitiveA> factory)
         throws GeneralSecurityException {
       return new TestPrimitiveA();
     }
@@ -130,7 +131,8 @@ public final class MutablePrimitiveRegistryTest {
       implements PrimitiveWrapper<TestPrimitiveA, TestPrimitiveB> {
 
     @Override
-    public TestPrimitiveB wrap(final PrimitiveSet<TestPrimitiveA> primitives)
+    public TestPrimitiveB wrap(
+        final PrimitiveSet<TestPrimitiveA> primitives, PrimitiveFactory<TestPrimitiveA> factory)
         throws GeneralSecurityException {
       return new TestPrimitiveB();
     }
@@ -202,6 +204,9 @@ public final class MutablePrimitiveRegistryTest {
         () ->
             registry.wrap(
                 PrimitiveSet.newBuilder(MutablePrimitiveRegistryTest.TestPrimitiveA.class).build(),
+                entry -> {
+                  throw new IllegalStateException("Should never be called");
+                },
                 MutablePrimitiveRegistryTest.TestPrimitiveA.class));
   }
 
@@ -218,11 +223,19 @@ public final class MutablePrimitiveRegistryTest {
         .isEqualTo(TestPrimitiveA.class);
     assertThat(
             registry.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(), TestPrimitiveA.class))
+                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+                entry -> {
+                  throw new IllegalStateException("Should not be called");
+                },
+                TestPrimitiveA.class))
         .isInstanceOf(TestPrimitiveA.class);
     assertThat(
             registry.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(), TestPrimitiveB.class))
+                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+                entry -> {
+                  throw new IllegalStateException("Should not be called");
+                },
+                TestPrimitiveB.class))
         .isInstanceOf(TestPrimitiveB.class);
   }
 }

@@ -96,7 +96,8 @@ public class PrfSetWrapper implements PrimitiveWrapper<Prf, PrfSet> {
   }
 
   @Override
-  public PrfSet wrap(PrimitiveSet<Prf> set) throws GeneralSecurityException {
+  public PrfSet wrap(PrimitiveSet<Prf> set, PrimitiveFactory<Prf> factory)
+      throws GeneralSecurityException {
     KeysetHandleInterface keysetHandle = set.getKeysetHandle();
     MonitoringClient.Logger logger;
     if (!set.getAnnotations().isEmpty()) {
@@ -116,7 +117,7 @@ public class PrfSetWrapper implements PrimitiveWrapper<Prf, PrfSet> {
               "Cannot build PrfSet with keys with non-empty output prefix");
         }
       }
-      Prf prf = set.getPrimitiveForEntry(entry);
+      Prf prf = factory.create(entry);
       // Likewise, the key IDs of the PrfSet passed
       mutablePrfMap.put(
           entry.getId(), new WrappedPrfSet.PrfWithMonitoring(prf, entry.getId(), logger));

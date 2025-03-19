@@ -149,8 +149,8 @@ public class RegistryConfigurationTest {
             .wrap(
                 PrimitiveSet.newBuilder(Mac.class)
                     .addPrimary(legacyProtoRawKey, rawKeysetKey)
-                    .addPrimitiveConstructor(key -> LegacyFullMac.create((LegacyProtoKey) key))
                     .build(),
+                entry -> LegacyFullMac.create((LegacyProtoKey) entry.getKey()),
                 Mac.class);
 
     assertThat(wrappedConfigurationMac.computeMac(plaintext))
@@ -191,6 +191,6 @@ public class RegistryConfigurationTest {
         GeneralSecurityException.class,
         () ->
             RegistryConfiguration.get()
-                .wrap(PrimitiveSet.newBuilder(Aead.class).build(), Aead.class));
+                .wrap(PrimitiveSet.newBuilder(Aead.class).build(), entry -> null, Aead.class));
   }
 }

@@ -98,7 +98,8 @@ public class InternalConfigurationTest {
       implements PrimitiveWrapper<TestPrimitiveA, TestPrimitiveA> {
 
     @Override
-    public TestPrimitiveA wrap(final PrimitiveSet<TestPrimitiveA> primitives) {
+    public TestPrimitiveA wrap(
+        final PrimitiveSet<TestPrimitiveA> primitives, PrimitiveFactory<TestPrimitiveA> factory) {
       return new TestPrimitiveA();
     }
 
@@ -118,7 +119,8 @@ public class InternalConfigurationTest {
       implements PrimitiveWrapper<TestPrimitiveB, TestPrimitiveB> {
 
     @Override
-    public TestPrimitiveB wrap(final PrimitiveSet<TestPrimitiveB> primitives) {
+    public TestPrimitiveB wrap(
+        final PrimitiveSet<TestPrimitiveB> primitives, PrimitiveFactory<TestPrimitiveB> factory) {
       return new TestPrimitiveB();
     }
 
@@ -178,7 +180,11 @@ public class InternalConfigurationTest {
     // Check that the type is as expected.
     TestPrimitiveA unused =
         configuration.wrap(
-            PrimitiveSet.newBuilder(TestPrimitiveA.class).build(), TestPrimitiveA.class);
+            PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+            entry -> {
+              throw new IllegalStateException("Should not be called.");
+            },
+            TestPrimitiveA.class);
   }
 
   @Test
@@ -239,10 +245,18 @@ public class InternalConfigurationTest {
     // Check that the wrapped primitives are of the expected types.
     TestPrimitiveA unusedA =
         configuration.wrap(
-            PrimitiveSet.newBuilder(TestPrimitiveA.class).build(), TestPrimitiveA.class);
+            PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+            entry -> {
+              throw new IllegalStateException("Should not be called");
+            },
+            TestPrimitiveA.class);
     TestPrimitiveB unusedB =
         configuration.wrap(
-            PrimitiveSet.newBuilder(TestPrimitiveB.class).build(), TestPrimitiveB.class);
+            PrimitiveSet.newBuilder(TestPrimitiveB.class).build(),
+            entry -> {
+              throw new IllegalStateException("Should not be called");
+            },
+            TestPrimitiveB.class);
   }
 
   @Test
@@ -336,7 +350,11 @@ public class InternalConfigurationTest {
         GeneralSecurityException.class,
         () ->
             configuration.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveB.class).build(), TestPrimitiveA.class));
+                PrimitiveSet.newBuilder(TestPrimitiveB.class).build(),
+                entry -> {
+                  throw new IllegalStateException("Should not be called");
+                },
+                TestPrimitiveA.class));
   }
 
   @Test
@@ -350,7 +368,11 @@ public class InternalConfigurationTest {
         GeneralSecurityException.class,
         () ->
             configuration.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(), TestPrimitiveB.class));
+                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+                entry -> {
+                  throw new IllegalStateException("Should not be called");
+                },
+                TestPrimitiveB.class));
   }
 
   @Test
@@ -381,6 +403,10 @@ public class InternalConfigurationTest {
         GeneralSecurityException.class,
         () ->
             configuration.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(), TestPrimitiveA.class));
+                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+                entry -> {
+                  throw new IllegalStateException("Should not be called");
+                },
+                TestPrimitiveA.class));
   }
 }

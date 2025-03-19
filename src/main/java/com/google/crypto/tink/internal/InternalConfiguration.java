@@ -35,10 +35,11 @@ public abstract class InternalConfiguration extends Configuration {
   /**
    * Wraps the primitives in the primitive set into the provided class.
    *
-   * @throws GeneralSecurityException if the wrapper for the provided pair
-   * (input class, wrapped class) is not registered
+   * @throws GeneralSecurityException if the wrapper for the provided pair (input class, wrapped
+   *     class) is not registered
    */
-  public abstract <B, P> P wrap(PrimitiveSet<B> primitiveSet, Class<P> clazz)
+  public abstract <B, P> P wrap(
+      PrimitiveSet<B> primitiveSet, PrimitiveWrapper.PrimitiveFactory<B> factory, Class<P> clazz)
       throws GeneralSecurityException;
 
   /**
@@ -77,9 +78,10 @@ public abstract class InternalConfiguration extends Configuration {
     }
 
     @Override
-    public <B, P> P wrap(PrimitiveSet<B> primitiveSet, Class<P> clazz)
+    public <B, P> P wrap(
+        PrimitiveSet<B> primitiveSet, PrimitiveWrapper.PrimitiveFactory<B> factory, Class<P> clazz)
         throws GeneralSecurityException {
-      return registry.wrap(primitiveSet, clazz);
+      return registry.wrap(primitiveSet, factory, clazz);
     }
   }
 }
