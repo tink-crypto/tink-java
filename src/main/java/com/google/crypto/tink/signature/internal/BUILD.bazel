@@ -582,6 +582,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink/subtle:rsa_ssa_pkcs1_verify_jce-android",
         "//src/main/java/com/google/crypto/tink/subtle:subtle_util_cluster-android",
         "//src/main/java/com/google/crypto/tink/subtle:validators-android",
+        "@maven//:com_google_code_findbugs_jsr305",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
@@ -602,6 +603,7 @@ java_library(
         "//src/main/java/com/google/crypto/tink/subtle:rsa_ssa_pkcs1_verify_jce",
         "//src/main/java/com/google/crypto/tink/subtle:subtle_util_cluster",
         "//src/main/java/com/google/crypto/tink/subtle:validators",
+        "@maven//:com_google_code_findbugs_jsr305",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )

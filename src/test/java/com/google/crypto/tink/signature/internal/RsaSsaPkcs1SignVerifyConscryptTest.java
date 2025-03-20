@@ -19,9 +19,11 @@ package com.google.crypto.tink.signature.internal;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
+import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
+import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
 import com.google.crypto.tink.signature.internal.testing.RsaSsaPkcs1TestUtil;
 import com.google.crypto.tink.signature.internal.testing.SignatureTestVector;
@@ -40,9 +42,9 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
-/** Unit tests for RsaSsaPkcs1VerifyConscrypt. */
+/** Unit tests for RsaSsaPkcs1SignConscrypt RsaSsaPkcs1VerifyConscrypt. */
 @RunWith(Theories.class)
-public class RsaSsaPkcs1VerifyConscryptTest {
+public class RsaSsaPkcs1SignVerifyConscryptTest {
 
   @Before
   public void useConscrypt() throws Exception {
@@ -53,7 +55,7 @@ public class RsaSsaPkcs1VerifyConscryptTest {
   }
 
   @DataPoints("allTests")
-  public static final SignatureTestVector[] ALL_TEST_VECTORS =
+  public static final SignatureTestVector[] allTests =
       RsaSsaPkcs1TestUtil.createRsaSsaPkcs1TestVectors();
 
   @Theory
@@ -68,6 +70,16 @@ public class RsaSsaPkcs1VerifyConscryptTest {
         () -> verifier.verify(testVector.getSignature(), new byte[] {1, 2, 3}));
   }
 
+  @Theory
+  public void signWithKeysInTestVector_works(
+      @FromDataPoints("allTests") SignatureTestVector testVector) throws Exception {
+    PublicKeySign signer =
+        RsaSsaPkcs1SignJce.create((RsaSsaPkcs1PrivateKey) testVector.getPrivateKey());
+    byte[] signature = signer.sign(testVector.getMessage());
+    // RSA-SSA-PKCS1.5 signatures are deterministic.
+    assertThat(signature).isEqualTo(testVector.getSignature());
+  }
+
   private static RsaSsaPkcs1Parameters.HashType getHashType(String sha) {
     switch (sha) {
       case "SHA-256":
@@ -80,7 +92,7 @@ public class RsaSsaPkcs1VerifyConscryptTest {
   }
 
   @DataPoints("wycheproofTestVectorPaths")
-  public static final String[] WYCHEPROOF_TEST_VECTORS_PATHS =
+  public static final String[] wycheproofTestVectorPaths =
       new String[] {
         "../wycheproof/testvectors/rsa_signature_2048_sha256_test.json",
         "../wycheproof/testvectors/rsa_signature_3072_sha512_test.json",

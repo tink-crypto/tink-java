@@ -47,11 +47,11 @@ public final class RsaSsaPkcs1VerifyConscrypt implements PublicKeyVerify {
       TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_REQUIRES_BORINGCRYPTO;
 
   private static final byte[] EMPTY = new byte[0];
-  private static final byte[] LEGACY_MESSAGE_SUFFIX = new byte[] {0};
+  private static final byte[] legacyMessageSuffix = new byte[] {0};
 
   // TODO(b/182987934) Make the dependance on Conscrypt static.
   @Nullable
-  private static Provider conscryptProviderOrNull() {
+  static Provider conscryptProviderOrNull() {
     if (Util.isAndroid() && Util.getAndroidApiLevel() <= 21) {
       // On Android API level 21 or lower, there is a bug in Conscrypt, so we don't
       // want to use that version.
@@ -96,12 +96,17 @@ public final class RsaSsaPkcs1VerifyConscrypt implements PublicKeyVerify {
    * <p>If FIPS mode is enabled but BoringCrypto is not available, this will throw a
    * GeneralSecurityException.
    */
-  @AccessesPartialKey
   public static PublicKeyVerify create(RsaSsaPkcs1PublicKey key) throws GeneralSecurityException {
     Provider conscrypt = conscryptProviderOrNull();
     if (conscrypt == null) {
       throw new NoSuchProviderException("RSA-PKCS1.5 using Conscrypt is not supported.");
     }
+    return createWithConscryptProvider(key, conscrypt);
+  }
+
+  @AccessesPartialKey
+  static PublicKeyVerify createWithConscryptProvider(RsaSsaPkcs1PublicKey key, Provider conscrypt)
+      throws GeneralSecurityException {
     KeyFactory keyFactory = KeyFactory.getInstance("RSA", conscrypt);
     RSAPublicKey publicKey =
         (RSAPublicKey)
@@ -113,7 +118,7 @@ public final class RsaSsaPkcs1VerifyConscrypt implements PublicKeyVerify {
         key.getParameters().getHashType(),
         key.getOutputPrefix().toByteArray(),
         key.getParameters().getVariant().equals(RsaSsaPkcs1Parameters.Variant.LEGACY)
-            ? LEGACY_MESSAGE_SUFFIX
+            ? legacyMessageSuffix
             : EMPTY,
         conscrypt);
   }

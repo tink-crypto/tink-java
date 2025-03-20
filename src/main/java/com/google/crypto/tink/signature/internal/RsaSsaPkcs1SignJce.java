@@ -30,9 +30,11 @@ import com.google.crypto.tink.subtle.Validators;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
+import java.security.Provider;
 import java.security.Signature;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.spec.RSAPrivateCrtKeySpec;
+import javax.annotation.Nullable;
 
 /**
  * RsaSsaPkcs1 (i.e. RSA Signature Schemes with Appendix (SSA) with PKCS1-v1_5 encoding) signing
@@ -61,6 +63,10 @@ public final class RsaSsaPkcs1SignJce implements PublicKeySign {
   @SuppressWarnings("Immutable")
   private final PublicKeyVerify verifier;
 
+  @SuppressWarnings("Immutable")
+  @Nullable
+  Provider conscryptOrNull;
+
   private static void validateHash(RsaSsaPkcs1Parameters.HashType hash)
       throws GeneralSecurityException {
     if (hash == RsaSsaPkcs1Parameters.HashType.SHA256
@@ -72,7 +78,12 @@ public final class RsaSsaPkcs1SignJce implements PublicKeySign {
   }
 
   private RsaSsaPkcs1SignJce(
-      final RSAPrivateCrtKey privateKey, RsaSsaPkcs1Parameters.HashType hash, byte[] outputPrefix, byte[] messageSuffix, PublicKeyVerify verifier)
+      final RSAPrivateCrtKey privateKey,
+      RsaSsaPkcs1Parameters.HashType hash,
+      byte[] outputPrefix,
+      byte[] messageSuffix,
+      PublicKeyVerify verifier,
+      @Nullable Provider conscryptOrNull)
       throws GeneralSecurityException {
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException(
@@ -87,14 +98,21 @@ public final class RsaSsaPkcs1SignJce implements PublicKeySign {
     this.outputPrefix = outputPrefix;
     this.messageSuffix = messageSuffix;
     this.verifier = verifier;
+    this.conscryptOrNull = conscryptOrNull;
   }
 
   @AccessesPartialKey
   public static PublicKeySign create(RsaSsaPkcs1PrivateKey key) throws GeneralSecurityException {
-    KeyFactory kf = EngineFactory.KEY_FACTORY.getInstance("RSA");
+    Provider conscryptOrNull = RsaSsaPkcs1VerifyConscrypt.conscryptProviderOrNull();
+    KeyFactory keyFactory;
+    if (conscryptOrNull != null) {
+      keyFactory = KeyFactory.getInstance("RSA", conscryptOrNull);
+    } else {
+      keyFactory = EngineFactory.KEY_FACTORY.getInstance("RSA");
+    }
     RSAPrivateCrtKey privateKey =
         (RSAPrivateCrtKey)
-            kf.generatePrivate(
+            keyFactory.generatePrivate(
                 new RSAPrivateCrtKeySpec(
                     key.getPublicKey().getModulus(),
                     key.getParameters().getPublicExponent(),
@@ -104,7 +122,14 @@ public final class RsaSsaPkcs1SignJce implements PublicKeySign {
                     key.getPrimeExponentP().getBigInteger(InsecureSecretKeyAccess.get()),
                     key.getPrimeExponentQ().getBigInteger(InsecureSecretKeyAccess.get()),
                     key.getCrtCoefficient().getBigInteger(InsecureSecretKeyAccess.get())));
-    PublicKeyVerify verifier = RsaSsaPkcs1VerifyJce.create(key.getPublicKey());
+    PublicKeyVerify verifier;
+    if (conscryptOrNull != null) {
+      verifier =
+          RsaSsaPkcs1VerifyConscrypt.createWithConscryptProvider(
+              key.getPublicKey(), conscryptOrNull);
+    } else {
+      verifier = RsaSsaPkcs1VerifyJce.create(key.getPublicKey());
+    }
     PublicKeySign signer =
         new RsaSsaPkcs1SignJce(
             privateKey,
@@ -113,14 +138,22 @@ public final class RsaSsaPkcs1SignJce implements PublicKeySign {
             key.getParameters().getVariant().equals(RsaSsaPkcs1Parameters.Variant.LEGACY)
                 ? legacyMessageSuffix
                 : EMPTY,
-            verifier);
+            verifier,
+            conscryptOrNull);
     byte[] unused = signer.sign(testData);
     return signer;
   }
 
+  private Signature getSignature() throws GeneralSecurityException {
+    if (conscryptOrNull != null) {
+      return Signature.getInstance(signatureAlgorithm, conscryptOrNull);
+    }
+    return EngineFactory.SIGNATURE.getInstance(signatureAlgorithm);
+  }
+
   @Override
   public byte[] sign(final byte[] data) throws GeneralSecurityException {
-    Signature signer = EngineFactory.SIGNATURE.getInstance(signatureAlgorithm);
+    Signature signer = getSignature();
     signer.initSign(privateKey);
     signer.update(data);
     if (messageSuffix.length > 0) {

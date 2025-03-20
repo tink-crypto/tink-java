@@ -174,15 +174,18 @@ java_test(
 )
 
 java_test(
-    name = "RsaSsaPkcs1VerifyConscryptTest",
+    name = "RsaSsaPkcs1SignVerifyConscryptTest",
     size = "small",
-    srcs = ["RsaSsaPkcs1VerifyConscryptTest.java"],
+    srcs = ["RsaSsaPkcs1SignVerifyConscryptTest.java"],
     data = ["@wycheproof//testvectors:all"],
     deps = [
+        "//src/main/java/com/google/crypto/tink:public_key_sign",
         "//src/main/java/com/google/crypto/tink:public_key_verify",
         "//src/main/java/com/google/crypto/tink/internal:util",
         "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_private_key",
         "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_public_key",
+        "//src/main/java/com/google/crypto/tink/signature/internal:rsa_ssa_pkcs1_sign_jce",
         "//src/main/java/com/google/crypto/tink/signature/internal:rsa_ssa_pkcs1_verify_conscrypt",
         "//src/main/java/com/google/crypto/tink/signature/internal/testing:rsa_ssa_pkcs1_test_util",
         "//src/main/java/com/google/crypto/tink/signature/internal/testing:signature_test_vector",
@@ -196,17 +199,20 @@ java_test(
 )
 
 java_test(
-    name = "RsaSsaPkcs1VerifyConscryptFipsTest",
+    name = "RsaSsaPkcs1ConscryptFipsTest",
     size = "small",
-    srcs = ["RsaSsaPkcs1VerifyConscryptFipsTest.java"],
+    srcs = ["RsaSsaPkcs1ConscryptFipsTest.java"],
     tags = ["fips"],
     deps = [
         "//src/main/java/com/google/crypto/tink/config:tink_fips",
         "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
         "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_private_key",
         "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_public_key",
         "//src/main/java/com/google/crypto/tink/signature/internal:rsa_ssa_pkcs1_proto_serialization",
+        "//src/main/java/com/google/crypto/tink/signature/internal:rsa_ssa_pkcs1_sign_jce",
         "//src/main/java/com/google/crypto/tink/signature/internal:rsa_ssa_pkcs1_verify_conscrypt",
+        "//src/main/java/com/google/crypto/tink/signature/internal/testing:rsa_ssa_pkcs1_test_util",
         "//src/main/java/com/google/crypto/tink/subtle:base64",
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
