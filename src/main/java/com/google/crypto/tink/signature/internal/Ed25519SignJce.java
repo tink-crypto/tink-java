@@ -27,6 +27,7 @@ import com.google.crypto.tink.subtle.Bytes;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.Signature;
@@ -75,10 +76,10 @@ public final class Ed25519SignJce implements PublicKeySign {
   @SuppressWarnings("Immutable")
   private final Provider provider;
 
-  static Provider conscryptProvider() {
+  static Provider conscryptProvider() throws GeneralSecurityException {
     Provider provider = ConscryptUtil.providerOrNull();
     if (provider == null) {
-      throw new UnsupportedOperationException("Ed25519SignJce requires the Conscrypt provider.");
+      throw new NoSuchProviderException("Ed25519SignJce requires the Conscrypt provider.");
     }
     return provider;
   }
