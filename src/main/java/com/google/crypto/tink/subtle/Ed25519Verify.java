@@ -25,6 +25,7 @@ import com.google.crypto.tink.internal.Ed25519;
 import com.google.crypto.tink.internal.Field25519;
 import com.google.crypto.tink.signature.Ed25519Parameters;
 import com.google.crypto.tink.signature.Ed25519PublicKey;
+import com.google.crypto.tink.signature.internal.Ed25519VerifyJce;
 import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
@@ -70,6 +71,11 @@ public final class Ed25519Verify implements PublicKeyVerify {
   public static PublicKeyVerify create(Ed25519PublicKey key) throws GeneralSecurityException {
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException("Can not use Ed25519 in FIPS-mode.");
+    }
+    try {
+      return Ed25519VerifyJce.create(key);
+    } catch (GeneralSecurityException e) {
+      // ignore.
     }
     return new Ed25519Verify(
         key.getPublicKeyBytes().toByteArray(),

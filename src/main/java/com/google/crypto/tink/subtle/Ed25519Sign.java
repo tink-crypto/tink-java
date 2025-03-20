@@ -24,6 +24,7 @@ import com.google.crypto.tink.internal.Ed25519;
 import com.google.crypto.tink.internal.Field25519;
 import com.google.crypto.tink.signature.Ed25519Parameters;
 import com.google.crypto.tink.signature.Ed25519PrivateKey;
+import com.google.crypto.tink.signature.internal.Ed25519SignJce;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 
@@ -54,6 +55,14 @@ public final class Ed25519Sign implements PublicKeySign {
 
   @AccessesPartialKey
   public static PublicKeySign create(Ed25519PrivateKey key) throws GeneralSecurityException {
+    if (!FIPS.isCompatible()) {
+      throw new GeneralSecurityException("Can not use Ed25519 in FIPS-mode.");
+    }
+    try {
+      return Ed25519SignJce.create(key);
+    } catch (GeneralSecurityException e) {
+      // ignore.
+    }
     return new Ed25519Sign(
         key.getPrivateKeyBytes().toByteArray(InsecureSecretKeyAccess.get()),
         key.getOutputPrefix().toByteArray(),
