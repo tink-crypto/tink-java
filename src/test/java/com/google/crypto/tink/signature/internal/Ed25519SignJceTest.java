@@ -36,8 +36,11 @@ import com.google.crypto.tink.testing.WycheproofTestUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.security.GeneralSecurityException;
+import java.security.Security;
 import java.util.TreeSet;
+import org.conscrypt.Conscrypt;
 import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -45,6 +48,14 @@ import org.junit.runners.JUnit4;
 /** Unit tests for {@link Ed25519SignJce}. */
 @RunWith(JUnit4.class)
 public final class Ed25519SignJceTest {
+
+  @Before
+  public void useConscrypt() throws Exception {
+    if (!Util.isAndroid()) {
+      Conscrypt.checkAvailability();
+      Security.addProvider(Conscrypt.newProvider());
+    }
+  }
 
   @Test
   public void pkcs8EncodePrivateKey_works() throws Exception {
@@ -65,19 +76,13 @@ public final class Ed25519SignJceTest {
         () -> Ed25519SignJce.pkcs8EncodePrivateKey(privateKeyWithLeadingZero));
   }
 
-  boolean isJavaOneDotEight() {
-    return System.getProperty("java.version").startsWith("1.8");
-  }
-
   @Test
-  public void isSupported_returnsTrueExceptForJavaOneDotEight() throws Exception {
+  public void isSupported_notOnAndroid_doesNotThrow() throws Exception {
     Assume.assumeTrue(!TinkFips.useOnlyFips() && !Util.isAndroid());
 
-    if (isJavaOneDotEight()) {
-      assertThat(Ed25519SignJce.isSupported()).isFalse();
-    } else {
-      assertThat(Ed25519SignJce.isSupported()).isTrue();
-    }
+    // We still test with Conscrypt versions that don't support Ed25519.
+    // So we can't assert that it is true.
+    boolean unused = Ed25519SignJce.isSupported();
   }
 
   @Test

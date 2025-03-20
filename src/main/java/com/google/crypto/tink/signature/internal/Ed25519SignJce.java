@@ -20,19 +20,23 @@ import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.signature.Ed25519Parameters;
 import com.google.crypto.tink.signature.Ed25519PrivateKey;
 import com.google.crypto.tink.subtle.Bytes;
-import com.google.crypto.tink.subtle.EngineFactory;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.Signature;
 import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 
-/** Ed25519 signing using the JCE. */
+/** Ed25519 signing using the JCE.
+ *
+ * <p>Can currently only be used when the Conscrypt provider is available.
+ */
 @Immutable
 public final class Ed25519SignJce implements PublicKeySign {
   public static final TinkFipsUtil.AlgorithmFipsCompatibility FIPS =
@@ -42,7 +46,7 @@ public final class Ed25519SignJce implements PublicKeySign {
   public static final int SIGNATURE_LEN = 32 * 2;
   private static final String ALGORITHM_NAME = "Ed25519";
 
-  private static final byte[] ED25519_PKCS8_PREFIX =
+  private static final byte[] ed25519Pkcs8Prefix =
       new byte[] {
         0x30, 0x2e, // Sequence: 46 bytes
         0x02, 0x01, 0x00, // Integer: 0 (version)
@@ -56,7 +60,7 @@ public final class Ed25519SignJce implements PublicKeySign {
       throw new IllegalArgumentException(
           String.format("Given private key's length is not %s", SECRET_KEY_LEN));
     }
-    return Bytes.concat(ED25519_PKCS8_PREFIX, privateKey);
+    return Bytes.concat(ed25519Pkcs8Prefix, privateKey);
   }
 
   @SuppressWarnings("Immutable")
@@ -68,6 +72,17 @@ public final class Ed25519SignJce implements PublicKeySign {
   @SuppressWarnings("Immutable")
   private final PrivateKey privateKey;
 
+  @SuppressWarnings("Immutable")
+  private final Provider provider;
+
+  static Provider conscryptProvider() {
+    Provider provider = ConscryptUtil.providerOrNull();
+    if (provider == null) {
+      throw new UnsupportedOperationException("Ed25519SignJce requires the Conscrypt provider.");
+    }
+    return provider;
+  }
+
   @AccessesPartialKey
   public static PublicKeySign create(Ed25519PrivateKey key) throws GeneralSecurityException {
     return new Ed25519SignJce(
@@ -75,11 +90,15 @@ public final class Ed25519SignJce implements PublicKeySign {
         key.getOutputPrefix().toByteArray(),
         key.getParameters().getVariant().equals(Ed25519Parameters.Variant.LEGACY)
             ? new byte[] {0}
-            : new byte[0]);
+            : new byte[0],
+        conscryptProvider());
   }
 
   private Ed25519SignJce(
-      final byte[] privateKey, final byte[] outputPrefix, final byte[] messageSuffix)
+      final byte[] privateKey,
+      final byte[] outputPrefix,
+      final byte[] messageSuffix,
+      final Provider provider)
       throws GeneralSecurityException {
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException("Can not use Ed25519 in FIPS-mode.");
@@ -87,22 +106,27 @@ public final class Ed25519SignJce implements PublicKeySign {
 
     this.outputPrefix = outputPrefix;
     this.messageSuffix = messageSuffix;
+    this.provider = provider;
 
     KeySpec spec = new PKCS8EncodedKeySpec(pkcs8EncodePrivateKey(privateKey));
-    KeyFactory keyFactory = EngineFactory.KEY_FACTORY.getInstance(ALGORITHM_NAME);
+    KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM_NAME, provider);
     this.privateKey = keyFactory.generatePrivate(spec);
   }
 
   /** Constructs a Ed25519SignJce with the {@code privateKey}. */
   public Ed25519SignJce(final byte[] privateKey) throws GeneralSecurityException {
-    this(privateKey, new byte[0], new byte[0]);
+    this(privateKey, new byte[0], new byte[0], conscryptProvider());
   }
 
   /** Returns true if the JCE supports Ed25519. */
   public static boolean isSupported() {
+    Provider provider = ConscryptUtil.providerOrNull();
+    if (provider == null) {
+      return false;
+    }
     try {
-      KeyFactory unusedKeyFactory = EngineFactory.KEY_FACTORY.getInstance(ALGORITHM_NAME);
-      Signature unusedSignature = EngineFactory.SIGNATURE.getInstance(ALGORITHM_NAME);
+      KeyFactory unusedKeyFactory = KeyFactory.getInstance(ALGORITHM_NAME, provider);
+      Signature unusedSignature = Signature.getInstance(ALGORITHM_NAME, provider);
       return true;
     } catch (GeneralSecurityException e) {
       return false;
@@ -111,7 +135,7 @@ public final class Ed25519SignJce implements PublicKeySign {
 
   @Override
   public byte[] sign(final byte[] data) throws GeneralSecurityException {
-    Signature signer = EngineFactory.SIGNATURE.getInstance(ALGORITHM_NAME);
+    Signature signer = Signature.getInstance(ALGORITHM_NAME, provider);
     signer.initSign(privateKey);
     signer.update(data);
     signer.update(messageSuffix);

@@ -21,19 +21,23 @@ import static com.google.crypto.tink.internal.Util.isPrefix;
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.signature.Ed25519Parameters;
 import com.google.crypto.tink.signature.Ed25519PublicKey;
 import com.google.crypto.tink.subtle.Bytes;
-import com.google.crypto.tink.subtle.EngineFactory;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
+import java.security.Provider;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.spec.KeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
-/** Ed25519 verifying using the JCE. */
+/** Ed25519 verifying using the JCE.
+ *
+ * <p>Can currently only be used when the Conscrypt provider is available.
+ */
 @Immutable
 public final class Ed25519VerifyJce implements PublicKeyVerify {
   public static final TinkFipsUtil.AlgorithmFipsCompatibility FIPS =
@@ -43,7 +47,7 @@ public final class Ed25519VerifyJce implements PublicKeyVerify {
   private static final int SIGNATURE_LEN = 32 * 2;
   private static final String ALGORITHM_NAME = "Ed25519";
 
-  private static final byte[] ED25519_X509_PREFIX =
+  private static final byte[] ed25519X509Prefix =
       new byte[] {
         0x30, 0x2a, // Sequence: 42 bytes
         0x30, 0x05, // Sequence: 5 bytes
@@ -56,7 +60,7 @@ public final class Ed25519VerifyJce implements PublicKeyVerify {
       throw new IllegalArgumentException(
           String.format("Given public key's length is not %s.", PUBLIC_KEY_LEN));
     }
-    return Bytes.concat(ED25519_X509_PREFIX, publicKey);
+    return Bytes.concat(ed25519X509Prefix, publicKey);
   }
 
   @SuppressWarnings("Immutable")
@@ -68,6 +72,17 @@ public final class Ed25519VerifyJce implements PublicKeyVerify {
   @SuppressWarnings("Immutable")
   private final byte[] messageSuffix;
 
+  @SuppressWarnings("Immutable")
+  private final Provider provider;
+
+  static Provider conscryptProvider() {
+    Provider provider = ConscryptUtil.providerOrNull();
+    if (provider == null) {
+      throw new UnsupportedOperationException("Ed25519VerifyJce requires the Conscrypt provider.");
+    }
+    return provider;
+  }
+
   @AccessesPartialKey
   public static PublicKeyVerify create(Ed25519PublicKey key) throws GeneralSecurityException {
     if (!FIPS.isCompatible()) {
@@ -78,15 +93,19 @@ public final class Ed25519VerifyJce implements PublicKeyVerify {
         key.getOutputPrefix().toByteArray(),
         key.getParameters().getVariant().equals(Ed25519Parameters.Variant.LEGACY)
             ? new byte[] {0}
-            : new byte[0]);
+            : new byte[0],
+        conscryptProvider());
   }
 
   Ed25519VerifyJce(final byte[] publicKey) throws GeneralSecurityException {
-    this(publicKey, new byte[0], new byte[0]);
+    this(publicKey, new byte[0], new byte[0], conscryptProvider());
   }
 
   private Ed25519VerifyJce(
-      final byte[] publicKey, final byte[] outputPrefix, final byte[] messageSuffix)
+      final byte[] publicKey,
+      final byte[] outputPrefix,
+      final byte[] messageSuffix,
+      final Provider provider)
       throws GeneralSecurityException {
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException("Can not use Ed25519 in FIPS-mode.");
@@ -96,18 +115,23 @@ public final class Ed25519VerifyJce implements PublicKeyVerify {
     // x509EncodePublicKey.
     // Also, EdECPublicKeySpec is only available since Java 15 and Android API Level 33.
     KeySpec spec = new X509EncodedKeySpec(x509EncodePublicKey(publicKey));
-    KeyFactory keyFactory = EngineFactory.KEY_FACTORY.getInstance(ALGORITHM_NAME);
+    KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM_NAME, provider);
     this.publicKey = keyFactory.generatePublic(spec);
 
     this.outputPrefix = outputPrefix;
     this.messageSuffix = messageSuffix;
+    this.provider = provider;
   }
 
   /** Returns true if the JCE supports Ed25519. */
   public static boolean isSupported() {
+    Provider provider = ConscryptUtil.providerOrNull();
+    if (provider == null) {
+      return false;
+    }
     try {
-      KeyFactory unusedKeyFactory = EngineFactory.KEY_FACTORY.getInstance(ALGORITHM_NAME);
-      Signature unusedSignature = EngineFactory.SIGNATURE.getInstance(ALGORITHM_NAME);
+      KeyFactory unusedKeyFactory = KeyFactory.getInstance(ALGORITHM_NAME, provider);
+      Signature unusedSignature = Signature.getInstance(ALGORITHM_NAME, provider);
       return true;
     } catch (GeneralSecurityException e) {
       return false;
@@ -123,7 +147,7 @@ public final class Ed25519VerifyJce implements PublicKeyVerify {
     if (!isPrefix(outputPrefix, signature)) {
       throw new GeneralSecurityException("Invalid signature (output prefix mismatch)");
     }
-    Signature verifier = EngineFactory.SIGNATURE.getInstance(ALGORITHM_NAME);
+    Signature verifier = Signature.getInstance(ALGORITHM_NAME, provider);
     verifier.initVerify(publicKey);
     verifier.update(data);
     verifier.update(messageSuffix);
