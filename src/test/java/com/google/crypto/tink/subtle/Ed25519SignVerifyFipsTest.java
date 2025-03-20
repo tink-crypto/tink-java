@@ -89,7 +89,7 @@ public final class Ed25519SignVerifyFipsTest {
   @Test
   public void ed25519VerifyConstructor_throws() throws Exception {
     assertThrows(
-        GeneralSecurityException.class,
+        RuntimeException.class,
         () -> {
           Ed25519Verify unused = new Ed25519Verify(PUBLIC_KEY_BYTES.toByteArray());
         });
