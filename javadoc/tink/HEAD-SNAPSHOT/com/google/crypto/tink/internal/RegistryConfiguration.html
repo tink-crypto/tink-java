@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":10,"i3":10,"i4":10};
+var methods = {"i0":9,"i1":9,"i2":10,"i3":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -154,26 +154,18 @@ extends <a href="../../../../../com/google/crypto/tink/internal/InternalConfigur
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/RegistryConfiguration.html#get--">get</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/RegistryConfiguration.html#getInputPrimitiveClass-java.lang.Class-">getInputPrimitiveClass</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;wrapperClassObject)</code>
-<div class="block">Given the target class, reveals primitive set of what type should be provided to the
- <code>InternalConfiguration.wrap</code> method in order to get a wrapped object of the target class.</div>
-</td>
-</tr>
-<tr id="i3" class="rowColor">
 <td class="colFirst"><code>&lt;P&gt;&nbsp;P</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/RegistryConfiguration.html#getPrimitive-com.google.crypto.tink.Key-java.lang.Class-">getPrimitive</a></span>(<a href="../../../../../com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink">Key</a>&nbsp;key,
             <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;primitiveClass)</code>
 <div class="block">Given a key and a desired primitive class, creates the required primitive.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
-<td class="colFirst"><code>&lt;B,P&gt;&nbsp;P</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/RegistryConfiguration.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-com.google.crypto.tink.internal.MonitoringAnnotations-com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory-java.lang.Class-">wrap</a></span>(<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.html" title="class in com.google.crypto.tink.internal">PrimitiveSet</a>&lt;B&gt;&nbsp;primitiveSet,
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>&lt;P&gt;&nbsp;P</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/google/crypto/tink/internal/RegistryConfiguration.html#wrap-com.google.crypto.tink.internal.KeysetHandleInterface-com.google.crypto.tink.internal.MonitoringAnnotations-java.lang.Class-">wrap</a></span>(<a href="../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.html" title="interface in com.google.crypto.tink.internal">KeysetHandleInterface</a>&nbsp;keysetHandle,
     <a href="../../../../../com/google/crypto/tink/internal/MonitoringAnnotations.html" title="class in com.google.crypto.tink.internal">MonitoringAnnotations</a>&nbsp;annotations,
-    <a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.PrimitiveFactory.html" title="interface in com.google.crypto.tink.internal">PrimitiveWrapper.PrimitiveFactory</a>&lt;B&gt;&nbsp;factory,
     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;clazz)</code>
-<div class="block">Wraps the primitives in the primitive set into the provided class.</div>
+<div class="block">Creates a primitive from a KeysetHandle.</div>
 </td>
 </tr>
 </table>
@@ -226,42 +218,24 @@ extends <a href="../../../../../com/google/crypto/tink/internal/InternalConfigur
 </dl>
 </li>
 </ul>
-<a name="wrap-com.google.crypto.tink.internal.PrimitiveSet-com.google.crypto.tink.internal.MonitoringAnnotations-com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory-java.lang.Class-">
+<a name="wrap-com.google.crypto.tink.internal.KeysetHandleInterface-com.google.crypto.tink.internal.MonitoringAnnotations-java.lang.Class-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>wrap</h4>
-<pre>public&nbsp;&lt;B,P&gt;&nbsp;P&nbsp;wrap(<a href="../../../../../com/google/crypto/tink/internal/PrimitiveSet.html" title="class in com.google.crypto.tink.internal">PrimitiveSet</a>&lt;B&gt;&nbsp;primitiveSet,
-                    <a href="../../../../../com/google/crypto/tink/internal/MonitoringAnnotations.html" title="class in com.google.crypto.tink.internal">MonitoringAnnotations</a>&nbsp;annotations,
-                    <a href="../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.PrimitiveFactory.html" title="interface in com.google.crypto.tink.internal">PrimitiveWrapper.PrimitiveFactory</a>&lt;B&gt;&nbsp;factory,
-                    <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;clazz)
-             throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../com/google/crypto/tink/internal/InternalConfiguration.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-com.google.crypto.tink.internal.MonitoringAnnotations-com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory-java.lang.Class-">InternalConfiguration</a></code></span></div>
-<div class="block">Wraps the primitives in the primitive set into the provided class.</div>
+<pre>public&nbsp;&lt;P&gt;&nbsp;P&nbsp;wrap(<a href="../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.html" title="interface in com.google.crypto.tink.internal">KeysetHandleInterface</a>&nbsp;keysetHandle,
+                  <a href="../../../../../com/google/crypto/tink/internal/MonitoringAnnotations.html" title="class in com.google.crypto.tink.internal">MonitoringAnnotations</a>&nbsp;annotations,
+                  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;clazz)
+           throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../com/google/crypto/tink/internal/InternalConfiguration.html#wrap-com.google.crypto.tink.internal.KeysetHandleInterface-com.google.crypto.tink.internal.MonitoringAnnotations-java.lang.Class-">InternalConfiguration</a></code></span></div>
+<div class="block">Creates a primitive from a KeysetHandle.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/google/crypto/tink/internal/InternalConfiguration.html#wrap-com.google.crypto.tink.internal.PrimitiveSet-com.google.crypto.tink.internal.MonitoringAnnotations-com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory-java.lang.Class-">wrap</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/google/crypto/tink/internal/InternalConfiguration.html" title="class in com.google.crypto.tink.internal">InternalConfiguration</a></code></dd>
+<dd><code><a href="../../../../../com/google/crypto/tink/internal/InternalConfiguration.html#wrap-com.google.crypto.tink.internal.KeysetHandleInterface-com.google.crypto.tink.internal.MonitoringAnnotations-java.lang.Class-">wrap</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/google/crypto/tink/internal/InternalConfiguration.html" title="class in com.google.crypto.tink.internal">InternalConfiguration</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code> - if the wrapper for the provided pair (input class, wrapped
      class) is not registered</dd>
-</dl>
-</li>
-</ul>
-<a name="getInputPrimitiveClass-java.lang.Class-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getInputPrimitiveClass</h4>
-<pre><a href="https://docs.oracle.com/javase/8/docs/api/javax/annotation/Nullable.html?is-external=true" title="class or interface in javax.annotation">@Nullable</a>
-public&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;getInputPrimitiveClass(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;?&gt;&nbsp;wrapperClassObject)</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../com/google/crypto/tink/internal/InternalConfiguration.html#getInputPrimitiveClass-java.lang.Class-">InternalConfiguration</a></code></span></div>
-<div class="block">Given the target class, reveals primitive set of what type should be provided to the
- <code>InternalConfiguration.wrap</code> method in order to get a wrapped object of the target class.</div>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/google/crypto/tink/internal/InternalConfiguration.html#getInputPrimitiveClass-java.lang.Class-">getInputPrimitiveClass</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/google/crypto/tink/internal/InternalConfiguration.html" title="class in com.google.crypto.tink.internal">InternalConfiguration</a></code></dd>
 </dl>
 </li>
 </ul>
