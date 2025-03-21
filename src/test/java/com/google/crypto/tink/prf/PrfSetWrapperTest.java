@@ -31,7 +31,6 @@ import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
-import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
 import com.google.crypto.tink.prf.HkdfPrfParameters.HashType;
@@ -385,19 +384,5 @@ public class PrfSetWrapperTest {
     assertThrows(
         GeneralSecurityException.class,
         () -> keysetHandle.getPrimitive(RegistryConfiguration.get(), PrfSet.class));
-  }
-
-  @Test
-  public void registerToInternalPrimitiveRegistry_works() throws Exception {
-    PrimitiveRegistry.Builder initialBuilder = PrimitiveRegistry.builder();
-    PrimitiveRegistry initialRegistry = initialBuilder.build();
-    PrimitiveRegistry.Builder processedBuilder = PrimitiveRegistry.builder(initialRegistry);
-
-    PrfSetWrapper.registerToInternalPrimitiveRegistry(processedBuilder);
-    PrimitiveRegistry processedRegistry = processedBuilder.build();
-
-    assertThrows(
-        GeneralSecurityException.class, () -> initialRegistry.getInputPrimitiveClass(PrfSet.class));
-    assertThat(processedRegistry.getInputPrimitiveClass(PrfSet.class)).isEqualTo(Prf.class);
   }
 }

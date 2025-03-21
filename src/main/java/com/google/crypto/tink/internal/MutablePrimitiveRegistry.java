@@ -85,17 +85,11 @@ public final class MutablePrimitiveRegistry {
     return registry.get().getPrimitive(key, primitiveClass);
   }
 
-  public <WrapperPrimitiveT> Class<?> getInputPrimitiveClass(
-      Class<WrapperPrimitiveT> wrapperClassObject) throws GeneralSecurityException {
-    return registry.get().getInputPrimitiveClass(wrapperClassObject);
-  }
-
-  public <InputPrimitiveT, WrapperPrimitiveT> WrapperPrimitiveT wrap(
-      PrimitiveSet<InputPrimitiveT> primitives,
+  public <WrapperPrimitiveT> WrapperPrimitiveT wrap(
+      KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
-      PrimitiveWrapper.PrimitiveFactory<InputPrimitiveT> factory,
       Class<WrapperPrimitiveT> wrapperClassObject)
       throws GeneralSecurityException {
-    return registry.get().wrap(primitives, annotations, factory, wrapperClassObject);
+    return registry.get().wrap(keysetHandle, annotations, wrapperClassObject);
   }
 }

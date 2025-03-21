@@ -184,23 +184,9 @@ public class InternalConfigurationTest {
     // Check that the type is as expected.
     TestPrimitiveA unused =
         configuration.wrap(
-            PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+            PrimitiveSet.newBuilder().build().getKeysetHandle(),
             MonitoringAnnotations.EMPTY,
-            entry -> {
-              throw new IllegalStateException("Should not be called.");
-            },
             TestPrimitiveA.class);
-  }
-
-  @Test
-  public void getInputPrimitiveClass_works() throws Exception {
-    PrimitiveRegistry registry =
-        PrimitiveRegistry.builder().registerPrimitiveWrapper(new TestWrapperA()).build();
-    InternalConfiguration configuration =
-        InternalConfiguration.createFromPrimitiveRegistry(registry);
-
-    assertThat(configuration.getInputPrimitiveClass(TestPrimitiveA.class))
-        .isEqualTo(TestPrimitiveA.class);
   }
 
   @Test
@@ -250,36 +236,14 @@ public class InternalConfigurationTest {
     // Check that the wrapped primitives are of the expected types.
     TestPrimitiveA unusedA =
         configuration.wrap(
-            PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+            PrimitiveSet.newBuilder().build().getKeysetHandle(),
             MonitoringAnnotations.EMPTY,
-            entry -> {
-              throw new IllegalStateException("Should not be called");
-            },
             TestPrimitiveA.class);
     TestPrimitiveB unusedB =
         configuration.wrap(
-            PrimitiveSet.newBuilder(TestPrimitiveB.class).build(),
+            PrimitiveSet.newBuilder().build().getKeysetHandle(),
             MonitoringAnnotations.EMPTY,
-            entry -> {
-              throw new IllegalStateException("Should not be called");
-            },
             TestPrimitiveB.class);
-  }
-
-  @Test
-  public void getInputPrimitiveClass_dispatchWorks() throws Exception {
-    PrimitiveRegistry registry =
-        PrimitiveRegistry.builder()
-            .registerPrimitiveWrapper(new TestWrapperA())
-            .registerPrimitiveWrapper(new TestWrapperB())
-            .build();
-    InternalConfiguration configuration =
-        InternalConfiguration.createFromPrimitiveRegistry(registry);
-
-    assertThat(configuration.getInputPrimitiveClass(TestPrimitiveA.class))
-        .isEqualTo(TestPrimitiveA.class);
-    assertThat(configuration.getInputPrimitiveClass(TestPrimitiveB.class))
-        .isEqualTo(TestPrimitiveB.class);
   }
 
   @Test
@@ -347,25 +311,6 @@ public class InternalConfigurationTest {
   }
 
   @Test
-  public void wrap_wrongInputPrimitiveClassThrows() throws Exception {
-    PrimitiveRegistry registry =
-        PrimitiveRegistry.builder().registerPrimitiveWrapper(new TestWrapperA()).build();
-    InternalConfiguration configuration =
-        InternalConfiguration.createFromPrimitiveRegistry(registry);
-
-    assertThrows(
-        GeneralSecurityException.class,
-        () ->
-            configuration.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveB.class).build(),
-                MonitoringAnnotations.EMPTY,
-                entry -> {
-                  throw new IllegalStateException("Should not be called");
-                },
-                TestPrimitiveA.class));
-  }
-
-  @Test
   public void wrap_unregisteredWrapperClassThrows() throws Exception {
     PrimitiveRegistry registry =
         PrimitiveRegistry.builder().registerPrimitiveWrapper(new TestWrapperA()).build();
@@ -376,25 +321,11 @@ public class InternalConfigurationTest {
         GeneralSecurityException.class,
         () ->
             configuration.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+                PrimitiveSet.newBuilder().build().getKeysetHandle(),
                 MonitoringAnnotations.EMPTY,
-                entry -> {
-                  throw new IllegalStateException("Should not be called");
-                },
                 TestPrimitiveB.class));
   }
 
-  @Test
-  public void getInputPrimitiveClass_unregisteredWrapperClassThrows() throws Exception {
-    PrimitiveRegistry registry =
-        PrimitiveRegistry.builder().registerPrimitiveWrapper(new TestWrapperA()).build();
-    InternalConfiguration configuration =
-        InternalConfiguration.createFromPrimitiveRegistry(registry);
-
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> configuration.getInputPrimitiveClass(TestPrimitiveB.class));
-  }
 
   @Test
   public void emptyRegistry_throws() {
@@ -407,16 +338,10 @@ public class InternalConfigurationTest {
         () -> configuration.getPrimitive(new TestKey1(), TestPrimitiveA.class));
     assertThrows(
         GeneralSecurityException.class,
-        () -> configuration.getInputPrimitiveClass(TestPrimitiveA.class));
-    assertThrows(
-        GeneralSecurityException.class,
         () ->
             configuration.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+                PrimitiveSet.newBuilder().build().getKeysetHandle(),
                 MonitoringAnnotations.EMPTY,
-                entry -> {
-                  throw new IllegalStateException("Should not be called");
-                },
                 TestPrimitiveA.class));
   }
 }

@@ -30,7 +30,6 @@ import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
-import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
 import com.google.crypto.tink.proto.Keyset;
 import com.google.protobuf.ExtensionRegistryLite;
@@ -360,19 +359,4 @@ public class HybridEncryptWrapperTest {
     assertThat(signFailure.getAnnotations()).isEqualTo(annotations);
   }
 
-  @Test
-  public void registerToInternalPrimitiveRegistry_works() throws Exception {
-    PrimitiveRegistry.Builder initialBuilder = PrimitiveRegistry.builder();
-    PrimitiveRegistry initialRegistry = initialBuilder.build();
-    PrimitiveRegistry.Builder processedBuilder = PrimitiveRegistry.builder(initialRegistry);
-
-    HybridEncryptWrapper.registerToInternalPrimitiveRegistry(processedBuilder);
-    PrimitiveRegistry processedRegistry = processedBuilder.build();
-
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> initialRegistry.getInputPrimitiveClass(HybridEncrypt.class));
-    assertThat(processedRegistry.getInputPrimitiveClass(HybridEncrypt.class))
-        .isEqualTo(HybridEncrypt.class);
-  }
 }

@@ -48,7 +48,6 @@ import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.signature.SignatureKeyTemplates;
 import com.google.crypto.tink.subtle.AesEaxJce;
-import com.google.crypto.tink.subtle.AesGcmJce;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.subtle.PrfMac;
 import com.google.crypto.tink.testing.TestUtil;
@@ -437,12 +436,6 @@ public class RegistryTest {
   }
 
   @Test
-  public void testGetInputPrimitive_encryptOnly() throws Exception {
-    assertThat(Registry.getInputPrimitive(EncryptOnly.class)).isEqualTo(Aead.class);
-    assertThat(Registry.getInputPrimitive(Aead.class)).isEqualTo(Aead.class);
-  }
-
-  @Test
   public void testGetPrimitive_aesGcm_shouldWork() throws Exception {
     // Skip test if in FIPS mode, as EAX is not supported in FIPS mode.
     Assume.assumeFalse(TinkFips.useOnlyFips());
@@ -688,7 +681,7 @@ public class RegistryTest {
   private static final byte[] KEY = Hex.decode("000102030405060708090a0b0c0d0e0f");
   private static final byte[] KEY2 = Hex.decode("100102030405060708090a0b0c0d0e0f");
 
-  private static PrimitiveSet<Aead> createAeadPrimitiveSet() throws Exception {
+  private static PrimitiveSet createAeadPrimitiveSet() throws Exception {
     AesGcmKey key1 =
         AesGcmKey.builder()
             .setParameters(PredefinedAeadParameters.AES128_GCM)
@@ -708,10 +701,7 @@ public class RegistryTest {
     Keyset.Key protoKey2 =
         TestUtil.createKey(
             TestUtil.createAesGcmKeyData(KEY2), 43, KeyStatusType.ENABLED, OutputPrefixType.RAW);
-    return PrimitiveSet.newBuilder(Aead.class)
-        .addPrimary(key1, protoKey1)
-        .add(key2, protoKey2)
-        .build();
+    return PrimitiveSet.newBuilder().addPrimary(key1, protoKey1).add(key2, protoKey2).build();
   }
 
   @Test
@@ -719,26 +709,21 @@ public class RegistryTest {
     assertNotNull(
         MutablePrimitiveRegistry.globalInstance()
             .wrap(
-                createAeadPrimitiveSet(),
+                createAeadPrimitiveSet().getKeysetHandle(),
                 MonitoringAnnotations.EMPTY,
-                entry -> AesGcmJce.create((AesGcmKey) entry.getKey()),
                 Aead.class));
   }
 
   @Test
   public void testWrap_noWrapperRegistered_throws() throws Exception {
-    PrimitiveSet<Aead> aeadSet = createAeadPrimitiveSet();
+    PrimitiveSet aeadSet = createAeadPrimitiveSet();
     Registry.reset();
     GeneralSecurityException e =
         assertThrows(
             GeneralSecurityException.class,
             () ->
                 MutablePrimitiveRegistry.globalInstance()
-                    .wrap(
-                        aeadSet,
-                        MonitoringAnnotations.EMPTY,
-                        entry -> AesGcmJce.create((AesGcmKey) entry.getKey()),
-                        Aead.class));
+                    .wrap(aeadSet.getKeysetHandle(), MonitoringAnnotations.EMPTY, Aead.class));
     assertExceptionContains(e, "No wrapper found");
     assertExceptionContains(e, "Aead");
   }
@@ -748,9 +733,8 @@ public class RegistryTest {
     EncryptOnly encrypt =
         MutablePrimitiveRegistry.globalInstance()
             .wrap(
-                createAeadPrimitiveSet(),
+                createAeadPrimitiveSet().getKeysetHandle(),
                 MonitoringAnnotations.EMPTY,
-                entry -> AesGcmJce.create((AesGcmKey) entry.getKey()),
                 EncryptOnly.class);
     assertThat(encrypt).isNotNull();
   }

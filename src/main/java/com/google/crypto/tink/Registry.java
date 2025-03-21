@@ -35,7 +35,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Logger;
-import javax.annotation.Nullable;
 
 /**
  * A global container of key managers and catalogues.
@@ -482,22 +481,6 @@ public final class Registry {
    */
   public static synchronized List<String> keyTemplates() {
     return MutableParametersRegistry.globalInstance().getNames();
-  }
-
-  /**
-   * Returns the input primitive required when creating a {@code wrappedPrimitive}.
-   *
-   * <p>This returns the primitive class of the objects required when we want to create a wrapped
-   * primitive of type {@code wrappedPrimitive}. Returns {@code null} if no wrapper for this
-   * primitive has been registered.
-   */
-  @Nullable
-  public static Class<?> getInputPrimitive(Class<?> wrappedPrimitive) {
-    try {
-      return MutablePrimitiveRegistry.globalInstance().getInputPrimitiveClass(wrappedPrimitive);
-    } catch (GeneralSecurityException e) {
-      return null;
-    }
   }
 
   /**

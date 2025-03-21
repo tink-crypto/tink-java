@@ -17,10 +17,8 @@
 package com.google.crypto.tink.internal;
 
 import com.google.crypto.tink.Key;
-import com.google.crypto.tink.Registry;
 import com.google.errorprone.annotations.DoNotCall;
 import java.security.GeneralSecurityException;
-import javax.annotation.Nullable;
 
 /**
  * Represents the configuration as currently specified by the registry. That is, this configuration
@@ -49,20 +47,10 @@ public final class RegistryConfiguration extends InternalConfiguration {
   }
 
   @Override
-  public <B, P> P wrap(
-      PrimitiveSet<B> primitiveSet,
-      MonitoringAnnotations annotations,
-      PrimitiveWrapper.PrimitiveFactory<B> factory,
-      Class<P> clazz)
+  public <P> P wrap(
+      KeysetHandleInterface keysetHandle, MonitoringAnnotations annotations, Class<P> clazz)
       throws GeneralSecurityException {
-    return MutablePrimitiveRegistry.globalInstance()
-        .wrap(primitiveSet, annotations, factory, clazz);
-  }
-
-  @Override
-  @Nullable
-  public Class<?> getInputPrimitiveClass(Class<?> wrapperClassObject) {
-    return Registry.getInputPrimitive(wrapperClassObject);
+    return MutablePrimitiveRegistry.globalInstance().wrap(keysetHandle, annotations, clazz);
   }
 
   /**

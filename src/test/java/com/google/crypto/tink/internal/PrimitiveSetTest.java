@@ -23,7 +23,6 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyStatus;
-import com.google.crypto.tink.Mac;
 import com.google.crypto.tink.mac.HmacKey;
 import com.google.crypto.tink.mac.HmacKeyManager;
 import com.google.crypto.tink.proto.HashType;
@@ -86,8 +85,8 @@ public class PrimitiveSetTest {
             .setStatus(KeyStatusType.ENABLED)
             .setOutputPrefixType(OutputPrefixType.LEGACY)
             .build();
-    PrimitiveSet<Mac> pset =
-        PrimitiveSet.newBuilder(Mac.class)
+    PrimitiveSet pset =
+        PrimitiveSet.newBuilder()
             .add(getKeyFromProtoKey(key1), key1)
             .addPrimary(getKeyFromProtoKey(key2), key2)
             .add(getKeyFromProtoKey(key3), key3)
@@ -126,7 +125,7 @@ public class PrimitiveSetTest {
     assertThrows(
         IllegalStateException.class,
         () ->
-            PrimitiveSet.newBuilder(Mac.class)
+            PrimitiveSet.newBuilder()
                 .addPrimary(getKeyFromProtoKey(key1), key1)
                 .addPrimary(getKeyFromProtoKey(key2), key2)
                 .build());
@@ -140,8 +139,7 @@ public class PrimitiveSetTest {
             .setStatus(KeyStatusType.ENABLED)
             .setOutputPrefixType(OutputPrefixType.TINK)
             .build();
-    PrimitiveSet<Mac> pset =
-        PrimitiveSet.newBuilder(Mac.class).add(getKeyFromProtoKey(key), key).build();
+    PrimitiveSet pset = PrimitiveSet.newBuilder().add(getKeyFromProtoKey(key), key).build();
     assertThat(pset.getKeysetHandle().getPrimary()).isNull();
   }
 
@@ -155,15 +153,15 @@ public class PrimitiveSetTest {
             .setKeyData(KeyData.newBuilder().setTypeUrl("typeUrl1").build())
             .build();
 
-    PrimitiveSet<Mac> pset =
-        PrimitiveSet.newBuilder(Mac.class).addPrimary(getKeyFromProtoKey(key1), key1).build();
+    PrimitiveSet pset =
+        PrimitiveSet.newBuilder().addPrimary(getKeyFromProtoKey(key1), key1).build();
     assertThat(pset.getKeysetHandle().getAt(0).getKey().getParameters().toString())
         .isEqualTo("(typeUrl=typeUrl1, outputPrefixType=TINK)");
   }
 
   @Test
   public void getKeyWithoutParser_givesLegacyProtoKey() throws Exception {
-    PrimitiveSet.Builder<Mac> builder = PrimitiveSet.newBuilder(Mac.class);
+    PrimitiveSet.Builder builder = PrimitiveSet.newBuilder();
     Key key1 =
         Key.newBuilder()
             .setKeyId(1)
@@ -172,7 +170,7 @@ public class PrimitiveSetTest {
             .setKeyData(KeyData.newBuilder().setTypeUrl("typeUrl1").build())
             .build();
     builder.add(getKeyFromProtoKey(key1), key1);
-    PrimitiveSet<Mac> pset = builder.build();
+    PrimitiveSet pset = builder.build();
     com.google.crypto.tink.Key key = pset.getKeysetHandle().getAt(0).getKey();
 
     assertThat(key).isInstanceOf(LegacyProtoKey.class);
@@ -190,9 +188,9 @@ public class PrimitiveSetTest {
             /* keyId= */ 42,
             KeyStatusType.ENABLED,
             OutputPrefixType.TINK);
-    PrimitiveSet.Builder<Mac> builder = PrimitiveSet.newBuilder(Mac.class);
+    PrimitiveSet.Builder builder = PrimitiveSet.newBuilder();
     builder.add(getKeyFromProtoKey(protoKey), protoKey);
-    PrimitiveSet<Mac> pset = builder.build();
+    PrimitiveSet pset = builder.build();
 
     com.google.crypto.tink.Key key = pset.getKeysetHandle().getAt(0).getKey();
     assertThat(key).isInstanceOf(HmacKey.class);
@@ -219,7 +217,7 @@ public class PrimitiveSetTest {
             KeyStatusType.ENABLED,
             OutputPrefixType.TINK);
 
-    PrimitiveSet.Builder<Mac> builder = PrimitiveSet.newBuilder(Mac.class);
+    PrimitiveSet.Builder builder = PrimitiveSet.newBuilder();
     assertThrows(
         GeneralSecurityException.class, () -> builder.add(getKeyFromProtoKey(protoKey), protoKey));
   }
@@ -263,8 +261,8 @@ public class PrimitiveSetTest {
             .setOutputPrefixType(OutputPrefixType.RAW)
             .build();
 
-    PrimitiveSet<Mac> pset =
-        PrimitiveSet.newBuilder(Mac.class)
+    PrimitiveSet pset =
+        PrimitiveSet.newBuilder()
             .add(null, key1)
             .addPrimary(getKeyFromProtoKey(key2), key2)
             .add(getKeyFromProtoKey(key3), key3)
@@ -317,11 +315,10 @@ public class PrimitiveSetTest {
 
     assertThrows(
         GeneralSecurityException.class,
-        () -> PrimitiveSet.newBuilder(Mac.class).add(getKeyFromProtoKey(key1), key1).build());
+        () -> PrimitiveSet.newBuilder().add(getKeyFromProtoKey(key1), key1).build());
     assertThrows(
         GeneralSecurityException.class,
-        () ->
-            PrimitiveSet.newBuilder(Mac.class).addPrimary(getKeyFromProtoKey(key1), key1).build());
+        () -> PrimitiveSet.newBuilder().addPrimary(getKeyFromProtoKey(key1), key1).build());
   }
 
   @Test
@@ -335,10 +332,9 @@ public class PrimitiveSetTest {
 
     assertThrows(
         GeneralSecurityException.class,
-        () -> PrimitiveSet.newBuilder(Mac.class).add(getKeyFromProtoKey(key1), key1).build());
+        () -> PrimitiveSet.newBuilder().add(getKeyFromProtoKey(key1), key1).build());
     assertThrows(
         GeneralSecurityException.class,
-        () ->
-            PrimitiveSet.newBuilder(Mac.class).addPrimary(getKeyFromProtoKey(key1), key1).build());
+        () -> PrimitiveSet.newBuilder().addPrimary(getKeyFromProtoKey(key1), key1).build());
   }
 }

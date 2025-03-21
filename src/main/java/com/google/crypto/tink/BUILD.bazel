@@ -430,7 +430,6 @@ java_library(
         "//src/main/java/com/google/crypto/tink/internal:mutable_parameters_registry",
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry",
         "//src/main/java/com/google/crypto/tink/prf:prf_set",
-        "@maven//:com_google_code_findbugs_jsr305",
         "@maven//:com_google_protobuf_protobuf_java",
     ],
 )
@@ -459,7 +458,6 @@ android_library(
         "//src/main/java/com/google/crypto/tink/internal:mutable_parameters_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry-android",
         "//src/main/java/com/google/crypto/tink/prf:prf_set-android",
-        "@maven//:com_google_code_findbugs_jsr305",
         "@maven//:com_google_protobuf_protobuf_javalite",
     ],
 )

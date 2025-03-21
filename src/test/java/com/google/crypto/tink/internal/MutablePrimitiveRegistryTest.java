@@ -202,16 +202,10 @@ public final class MutablePrimitiveRegistryTest {
                 MutablePrimitiveRegistryTest.TestPrimitiveA.class));
     assertThrows(
         GeneralSecurityException.class,
-        () -> registry.getInputPrimitiveClass(MutablePrimitiveRegistryTest.TestPrimitiveA.class));
-    assertThrows(
-        GeneralSecurityException.class,
         () ->
             registry.wrap(
-                PrimitiveSet.newBuilder(MutablePrimitiveRegistryTest.TestPrimitiveA.class).build(),
+                PrimitiveSet.newBuilder().build().getKeysetHandle(),
                 MonitoringAnnotations.EMPTY,
-                entry -> {
-                  throw new IllegalStateException("Should never be called");
-                },
                 MutablePrimitiveRegistryTest.TestPrimitiveA.class));
   }
 
@@ -222,26 +216,16 @@ public final class MutablePrimitiveRegistryTest {
     registry.registerPrimitiveWrapper(new TestWrapperA());
     registry.registerPrimitiveWrapper(new TestWrapperB());
 
-    assertThat(registry.getInputPrimitiveClass(TestPrimitiveA.class))
-        .isEqualTo(TestPrimitiveA.class);
-    assertThat(registry.getInputPrimitiveClass(TestPrimitiveB.class))
-        .isEqualTo(TestPrimitiveA.class);
     assertThat(
             registry.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+                PrimitiveSet.newBuilder().build().getKeysetHandle(),
                 MonitoringAnnotations.EMPTY,
-                entry -> {
-                  throw new IllegalStateException("Should not be called");
-                },
                 TestPrimitiveA.class))
         .isInstanceOf(TestPrimitiveA.class);
     assertThat(
             registry.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+                PrimitiveSet.newBuilder().build().getKeysetHandle(),
                 MonitoringAnnotations.EMPTY,
-                entry -> {
-                  throw new IllegalStateException("Should not be called");
-                },
                 TestPrimitiveB.class))
         .isInstanceOf(TestPrimitiveB.class);
   }

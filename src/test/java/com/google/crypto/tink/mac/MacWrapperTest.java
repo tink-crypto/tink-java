@@ -30,7 +30,6 @@ import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
-import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
 import com.google.crypto.tink.mac.HmacParameters.HashType;
 import com.google.crypto.tink.mac.internal.AesCmacProtoSerialization;
@@ -594,19 +593,5 @@ public class MacWrapperTest {
     // 4 is tinkKey0's id.
     assertThat(verifyFailure2.getKeysetInfo().getPrimary().getId()).isEqualTo(4);
     assertThat(verifyFailure2.getAnnotations()).isEqualTo(annotations);
-  }
-
-  @Test
-  public void registerToInternalPrimitiveRegistry_works() throws Exception {
-    PrimitiveRegistry.Builder initialBuilder = PrimitiveRegistry.builder();
-    PrimitiveRegistry initialRegistry = initialBuilder.build();
-    PrimitiveRegistry.Builder processedBuilder = PrimitiveRegistry.builder(initialRegistry);
-
-    MacWrapper.registerToInternalPrimitiveRegistry(processedBuilder);
-    PrimitiveRegistry processedRegistry = processedBuilder.build();
-
-    assertThrows(
-        GeneralSecurityException.class, () -> initialRegistry.getInputPrimitiveClass(Mac.class));
-    assertThat(processedRegistry.getInputPrimitiveClass(Mac.class)).isEqualTo(Mac.class);
   }
 }

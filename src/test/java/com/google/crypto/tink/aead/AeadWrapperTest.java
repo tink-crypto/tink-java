@@ -31,7 +31,6 @@ import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
-import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
 import com.google.crypto.tink.proto.AesCtrHmacAeadKey;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
@@ -605,21 +604,5 @@ public class AeadWrapperTest {
     assertThat(decFailure.getApi()).isEqualTo("decrypt");
     assertThat(decFailure.getKeysetInfo().getPrimary().getId()).isEqualTo(42);
     assertThat(decFailure.getAnnotations()).isEqualTo(annotations);
-  }
-
-  @Test
-  public void registerToInternalPrimitiveRegistry_works() throws Exception {
-    PrimitiveRegistry.Builder initialBuilder = PrimitiveRegistry.builder();
-    PrimitiveRegistry initialRegistry = initialBuilder.build();
-    PrimitiveRegistry.Builder processedBuilder = PrimitiveRegistry.builder(initialRegistry);
-
-    AeadWrapper.registerToInternalPrimitiveRegistry(processedBuilder);
-    PrimitiveRegistry processedRegistry = processedBuilder.build();
-
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> initialRegistry.getInputPrimitiveClass(Aead.class));
-    assertThat(processedRegistry.getInputPrimitiveClass(Aead.class))
-        .isEqualTo(Aead.class);
   }
 }

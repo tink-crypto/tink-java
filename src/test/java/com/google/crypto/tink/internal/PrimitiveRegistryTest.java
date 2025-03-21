@@ -177,15 +177,9 @@ public final class PrimitiveRegistryTest {
         GeneralSecurityException.class,
         () ->
             registry.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+                PrimitiveSet.newBuilder().build().getKeysetHandle(),
                 MonitoringAnnotations.EMPTY,
-                entry -> {
-                  throw new IllegalStateException("Should not be called");
-                },
                 TestPrimitiveA.class));
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> registry.getInputPrimitiveClass(TestPrimitiveA.class));
   }
 
   @Test
@@ -280,11 +274,8 @@ public final class PrimitiveRegistryTest {
         PrimitiveRegistry.builder().registerPrimitiveWrapper(new TestWrapperA()).build();
     assertThat(
             registry.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+                PrimitiveSet.newBuilder().build().getKeysetHandle(),
                 MonitoringAnnotations.EMPTY,
-                entry -> {
-                  throw new IllegalStateException("Should not be called");
-                },
                 TestPrimitiveA.class))
         .isNotNull();
   }
@@ -323,26 +314,16 @@ public final class PrimitiveRegistryTest {
             .registerPrimitiveWrapper(new TestWrapperA())
             .registerPrimitiveWrapper(new TestWrapperB())
             .build();
-    assertThat(registry.getInputPrimitiveClass(TestPrimitiveA.class))
-        .isEqualTo(TestPrimitiveA.class);
-    assertThat(registry.getInputPrimitiveClass(TestPrimitiveB.class))
-        .isEqualTo(TestPrimitiveA.class);
     assertThat(
             registry.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+                PrimitiveSet.newBuilder().build().getKeysetHandle(),
                 MonitoringAnnotations.EMPTY,
-                entry -> {
-                  throw new IllegalStateException("Should not be called");
-                },
                 TestPrimitiveA.class))
         .isInstanceOf(TestPrimitiveA.class);
     assertThat(
             registry.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+                PrimitiveSet.newBuilder().build().getKeysetHandle(),
                 MonitoringAnnotations.EMPTY,
-                entry -> {
-                  throw new IllegalStateException("Should not be called");
-                },
                 TestPrimitiveB.class))
         .isInstanceOf(TestPrimitiveB.class);
   }
@@ -362,15 +343,10 @@ public final class PrimitiveRegistryTest {
         .isInstanceOf(TestPrimitiveA.class);
     assertThat(
             registry2.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+                PrimitiveSet.newBuilder().build().getKeysetHandle(),
                 MonitoringAnnotations.EMPTY,
-                entry -> {
-                  throw new IllegalStateException("Should not be called");
-                },
                 TestPrimitiveA.class))
         .isInstanceOf(TestPrimitiveA.class);
-    assertThat(registry2.getInputPrimitiveClass(TestPrimitiveA.class))
-        .isEqualTo(TestPrimitiveA.class);
   }
 
   @Test
@@ -393,29 +369,17 @@ public final class PrimitiveRegistryTest {
         () -> registry2.getPrimitive(new TestKey1(), TestPrimitiveA.class));
     assertThrows(
         GeneralSecurityException.class,
-        () -> registry1.getInputPrimitiveClass(TestPrimitiveA.class));
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> registry2.getInputPrimitiveClass(TestPrimitiveA.class));
-    assertThrows(
-        GeneralSecurityException.class,
         () ->
             registry1.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+                PrimitiveSet.newBuilder().build().getKeysetHandle(),
                 MonitoringAnnotations.EMPTY,
-                entry -> {
-                  throw new IllegalStateException("Should not be called");
-                },
                 TestPrimitiveA.class));
     assertThrows(
         GeneralSecurityException.class,
         () ->
             registry2.wrap(
-                PrimitiveSet.newBuilder(TestPrimitiveA.class).build(),
+                PrimitiveSet.newBuilder().build().getKeysetHandle(),
                 MonitoringAnnotations.EMPTY,
-                entry -> {
-                  throw new IllegalStateException("Should not be called");
-                },
                 TestPrimitiveA.class));
   }
 }

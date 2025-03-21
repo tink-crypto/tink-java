@@ -1083,12 +1083,10 @@ public final class KeysetHandle implements KeysetHandleInterface {
     }
   }
 
-  /** Allows us to have a name {@code B} for the base primitive. */
-  private <B, P> P getPrimitiveWithKnownInputPrimitive(
-      InternalConfiguration config, Class<P> classObject, Class<B> inputPrimitiveClassObject)
+  private <P> P getPrimitiveInternal(InternalConfiguration config, Class<P> classObject)
       throws GeneralSecurityException {
     Util.validateKeyset(keyset);
-    PrimitiveSet.Builder<B> builder = PrimitiveSet.newBuilder(inputPrimitiveClassObject);
+    PrimitiveSet.Builder builder = PrimitiveSet.newBuilder();
     for (int i = 0; i < size(); ++i) {
       Keyset.Key protoKey = keyset.getKey(i);
       if (protoKey.getStatus().equals(KeyStatusType.ENABLED)) {
@@ -1110,11 +1108,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
         }
       }
     }
-    return config.wrap(
-        builder.build(),
-        annotations,
-        entry -> config.getPrimitive(entry.getKey(), inputPrimitiveClassObject),
-        classObject);
+    return config.wrap(builder.build().getKeysetHandle(), annotations, classObject);
   }
 
   /**
@@ -1128,12 +1122,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
           "Currently only subclasses of InternalConfiguration are accepted");
     }
     InternalConfiguration internalConfig = (InternalConfiguration) configuration;
-    Class<?> inputPrimitiveClassObject = internalConfig.getInputPrimitiveClass(targetClassObject);
-    if (inputPrimitiveClassObject == null) {
-      throw new GeneralSecurityException("No wrapper found for " + targetClassObject.getName());
-    }
-    return getPrimitiveWithKnownInputPrimitive(
-        internalConfig, targetClassObject, inputPrimitiveClassObject);
+    return getPrimitiveInternal(internalConfig, targetClassObject);
   }
 
   /**

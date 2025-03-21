@@ -144,39 +144,30 @@ public class PrimitiveRegistry {
     return primitiveConstructor.constructPrimitive(key);
   }
 
-  public Class<?> getInputPrimitiveClass(Class<?> wrapperClassObject)
+  private <InnerPrimitiveT, WrappedPrimitiveT> WrappedPrimitiveT wrapWithPrimitiveWrapper(
+      KeysetHandleInterface keysetHandle,
+      MonitoringAnnotations annotations,
+      PrimitiveWrapper<InnerPrimitiveT, WrappedPrimitiveT> wrapper)
       throws GeneralSecurityException {
-    if (!primitiveWrapperMap.containsKey(wrapperClassObject)) {
-      throw new GeneralSecurityException(
-          "No input primitive class for " + wrapperClassObject + " available");
-    }
-    return primitiveWrapperMap.get(wrapperClassObject).getInputPrimitiveClass();
+    return wrapper.wrap(
+        keysetHandle,
+        annotations,
+        entry -> getPrimitive(entry.getKey(), wrapper.getInputPrimitiveClass()));
   }
 
-  public <InputPrimitiveT, WrapperPrimitiveT> WrapperPrimitiveT wrap(
-      PrimitiveSet<InputPrimitiveT> primitives,
+  public <WrappedPrimitiveT> WrappedPrimitiveT wrap(
+      KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
-      PrimitiveWrapper.PrimitiveFactory<InputPrimitiveT> factory,
-      Class<WrapperPrimitiveT> wrapperClassObject)
+      Class<WrappedPrimitiveT> wrapperClassObject)
       throws GeneralSecurityException {
     if (!primitiveWrapperMap.containsKey(wrapperClassObject)) {
       throw new GeneralSecurityException(
           "No wrapper found for " + wrapperClassObject);
     }
     @SuppressWarnings("unchecked") // We know this is how this map is organized.
-    PrimitiveWrapper<?, WrapperPrimitiveT> wrapper =
-        (PrimitiveWrapper<?, WrapperPrimitiveT>)
-            primitiveWrapperMap.get(wrapperClassObject);
-    if (!primitives.getPrimitiveClass().equals(wrapper.getInputPrimitiveClass())
-        || !wrapper.getInputPrimitiveClass().equals(primitives.getPrimitiveClass())) {
-      throw new GeneralSecurityException(
-          "Input primitive type of the wrapper doesn't match the type of primitives in the provided"
-              + " PrimitiveSet");
-    }
-    @SuppressWarnings("unchecked") // The check above ensured this.
-    PrimitiveWrapper<InputPrimitiveT, WrapperPrimitiveT> typedWrapper =
-        (PrimitiveWrapper<InputPrimitiveT, WrapperPrimitiveT>) wrapper;
-    return typedWrapper.wrap(primitives.getKeysetHandle(), annotations, factory);
+    PrimitiveWrapper<?, WrappedPrimitiveT> wrapper =
+        (PrimitiveWrapper<?, WrappedPrimitiveT>) primitiveWrapperMap.get(wrapperClassObject);
+    return wrapWithPrimitiveWrapper(keysetHandle, annotations, wrapper);
   }
 
   private static final class PrimitiveConstructorIndex {

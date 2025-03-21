@@ -196,7 +196,6 @@ java_test(
         "//src/main/java/com/google/crypto/tink/mac:predefined_mac_parameters",
         "//src/main/java/com/google/crypto/tink/signature:signature_key_templates",
         "//src/main/java/com/google/crypto/tink/subtle:aes_eax_jce",
-        "//src/main/java/com/google/crypto/tink/subtle:aes_gcm_jce",
         "//src/main/java/com/google/crypto/tink/subtle:hex",
         "//src/main/java/com/google/crypto/tink/subtle:prf_mac",
         "//src/main/java/com/google/crypto/tink/testing:test_util",

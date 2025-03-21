@@ -42,7 +42,7 @@ import javax.annotation.Nullable;
  * used, and upon decryption the ciphertext's prefix determines the id of the primitive from the
  * set.
  */
-public final class PrimitiveSet<P> {
+public final class PrimitiveSet {
 
   /**
    * A single entry in the set. In addition to the actual primitive it holds also some extra
@@ -137,21 +137,14 @@ public final class PrimitiveSet<P> {
   }
 
   private final KeysetHandleInterface keysetHandle;
-  private final Class<P> primitiveClass;
 
   /** Creates an immutable PrimitiveSet. It is used by the Builder. */
-  private PrimitiveSet(KeysetHandleInterface keysetHandle, Class<P> primitiveClass) {
+  private PrimitiveSet(KeysetHandleInterface keysetHandle) {
     this.keysetHandle = keysetHandle;
-    this.primitiveClass = primitiveClass;
-  }
-
-  public Class<P> getPrimitiveClass() {
-    return primitiveClass;
   }
 
   /** Builds an immutable PrimitiveSet. This is the prefered way to construct a PrimitiveSet. */
-  public static class Builder<P> {
-    private final Class<P> primitiveClass;
+  public static class Builder {
 
     // primitives == null indicates that build has been called and the builder can't be used
     // anymore.
@@ -159,7 +152,7 @@ public final class PrimitiveSet<P> {
     private KeysetHandleInterface.Entry primary;
 
     @CanIgnoreReturnValue
-    private Builder<P> addEntry(Key key, Keyset.Key protoKey, boolean asPrimary)
+    private Builder addEntry(Key key, Keyset.Key protoKey, boolean asPrimary)
         throws GeneralSecurityException {
       if (entriesInKeysetOrder == null) {
         throw new IllegalStateException("addEntry cannot be called after build");
@@ -189,7 +182,7 @@ public final class PrimitiveSet<P> {
      * from key, and that {@code protoKey} contains the same key as {@code fullPrimitive}.
      */
     @CanIgnoreReturnValue
-    public Builder<P> add(Key key, Keyset.Key protoKey) throws GeneralSecurityException {
+    public Builder add(Key key, Keyset.Key protoKey) throws GeneralSecurityException {
       return addEntry(key, protoKey, false);
     }
 
@@ -200,27 +193,24 @@ public final class PrimitiveSet<P> {
      * from key, and that {@code protoKey} contains the same key as {@code fullPrimitive}.
      */
     @CanIgnoreReturnValue
-    public Builder<P> addPrimary(Key key, Keyset.Key protoKey) throws GeneralSecurityException {
+    public Builder addPrimary(Key key, Keyset.Key protoKey) throws GeneralSecurityException {
       return addEntry(key, protoKey, true);
     }
 
-    public PrimitiveSet<P> build() throws GeneralSecurityException {
+    public PrimitiveSet build() throws GeneralSecurityException {
       if (entriesInKeysetOrder == null) {
         throw new IllegalStateException("build cannot be called twice");
       }
       // Note that we currently don't enforce that primary must be set.
-      PrimitiveSet<P> output =
-          new PrimitiveSet<P>(new KeysetHandleImpl(entriesInKeysetOrder, primary), primitiveClass);
+      PrimitiveSet output = new PrimitiveSet(new KeysetHandleImpl(entriesInKeysetOrder, primary));
       this.entriesInKeysetOrder = null;
       return output;
     }
 
-    private Builder(Class<P> primitiveClass) {
-      this.primitiveClass = primitiveClass;
-    }
+    private Builder() {}
   }
 
-  public static <P> Builder<P> newBuilder(Class<P> primitiveClass) {
-    return new Builder<P>(primitiveClass);
+  public static Builder newBuilder() {
+    return new Builder();
   }
 }

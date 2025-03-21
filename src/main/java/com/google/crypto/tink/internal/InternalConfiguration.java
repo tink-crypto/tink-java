@@ -33,23 +33,13 @@ public abstract class InternalConfiguration extends Configuration {
       throws GeneralSecurityException;
 
   /**
-   * Wraps the primitives in the primitive set into the provided class.
+   * Creates a primitive from a KeysetHandle.
    *
    * @throws GeneralSecurityException if the wrapper for the provided pair (input class, wrapped
    *     class) is not registered
    */
-  public abstract <B, P> P wrap(
-      PrimitiveSet<B> primitiveSet,
-      MonitoringAnnotations annotations,
-      PrimitiveWrapper.PrimitiveFactory<B> factory,
-      Class<P> clazz)
-      throws GeneralSecurityException;
-
-  /**
-   * Given the target class, reveals primitive set of what type should be provided to the
-   * {@link InternalConfiguration.wrap} method in order to get a wrapped object of the target class.
-   */
-  public abstract Class<?> getInputPrimitiveClass(Class<?> wrapperClassObject)
+  public abstract <P> P wrap(
+      KeysetHandleInterface keysetHandle, MonitoringAnnotations annotations, Class<P> clazz)
       throws GeneralSecurityException;
 
   public static InternalConfiguration createFromPrimitiveRegistry(PrimitiveRegistry registry) {
@@ -75,19 +65,10 @@ public abstract class InternalConfiguration extends Configuration {
     }
 
     @Override
-    public Class<?> getInputPrimitiveClass(Class<?> wrapperClassObject)
+    public <P> P wrap(
+        KeysetHandleInterface keysetHandle, MonitoringAnnotations annotations, Class<P> clazz)
         throws GeneralSecurityException {
-      return registry.getInputPrimitiveClass(wrapperClassObject);
-    }
-
-    @Override
-    public <B, P> P wrap(
-        PrimitiveSet<B> primitiveSet,
-        MonitoringAnnotations annotations,
-        PrimitiveWrapper.PrimitiveFactory<B> factory,
-        Class<P> clazz)
-        throws GeneralSecurityException {
-      return registry.wrap(primitiveSet, annotations, factory, clazz);
+      return registry.wrap(keysetHandle, annotations, clazz);
     }
   }
 }

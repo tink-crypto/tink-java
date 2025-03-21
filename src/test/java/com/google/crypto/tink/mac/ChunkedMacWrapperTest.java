@@ -23,7 +23,6 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.RegistryConfiguration;
-import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.mac.AesCmacParameters.Variant;
 import com.google.crypto.tink.mac.HmacParameters.HashType;
 import com.google.crypto.tink.mac.internal.AesCmacProtoSerialization;
@@ -449,21 +448,5 @@ public class ChunkedMacWrapperTest {
     macVerification.update(plaintext);
 
     macVerification.verifyMac();
-  }
-
-  @Test
-  public void registerToInternalPrimitiveRegistry_works() throws Exception {
-    PrimitiveRegistry.Builder initialBuilder = PrimitiveRegistry.builder();
-    PrimitiveRegistry initialRegistry = initialBuilder.build();
-    PrimitiveRegistry.Builder processedBuilder = PrimitiveRegistry.builder(initialRegistry);
-
-    ChunkedMacWrapper.registerToInternalPrimitiveRegistry(processedBuilder);
-    PrimitiveRegistry processedRegistry = processedBuilder.build();
-
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> initialRegistry.getInputPrimitiveClass(ChunkedMac.class));
-    assertThat(processedRegistry.getInputPrimitiveClass(ChunkedMac.class))
-        .isEqualTo(ChunkedMac.class);
   }
 }

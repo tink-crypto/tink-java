@@ -34,7 +34,6 @@ import com.google.crypto.tink.mac.HmacKey;
 import com.google.crypto.tink.mac.HmacParameters;
 import com.google.crypto.tink.mac.HmacParameters.HashType;
 import com.google.crypto.tink.mac.MacConfig;
-import com.google.crypto.tink.mac.internal.LegacyFullMac;
 import com.google.crypto.tink.proto.HmacParams;
 import com.google.crypto.tink.proto.KeyData;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
@@ -147,28 +146,17 @@ public class RegistryConfigurationTest {
     Mac wrappedConfigurationMac =
         RegistryConfiguration.get()
             .wrap(
-                PrimitiveSet.newBuilder(Mac.class)
+                PrimitiveSet.newBuilder()
                     .addPrimary(legacyProtoRawKey, rawKeysetKey)
-                    .build(),
+                    .build()
+                    .getKeysetHandle(),
                 MonitoringAnnotations.EMPTY,
-                entry -> LegacyFullMac.create((LegacyProtoKey) entry.getKey()),
                 Mac.class);
 
     assertThat(wrappedConfigurationMac.computeMac(plaintext))
         .isEqualTo(registryMac.computeMac(plaintext));
   }
 
-  @Test
-  public void getInputPrimitiveClass_matchesRegistry() throws Exception {
-    assertThat(RegistryConfiguration.get().getInputPrimitiveClass(ChunkedMac.class))
-        .isEqualTo(Registry.getInputPrimitive(ChunkedMac.class));
-  }
-
-  @Test
-  public void getInputPrimitiveClass_returnsNullOnUnregisteredPrimitive() throws Exception {
-    assertThat(RegistryConfiguration.get().getInputPrimitiveClass(Aead.class))
-        .isNull();
-  }
 
   @Test
   public void requestingUnregisteredPrimitives_throws() throws GeneralSecurityException {
@@ -193,9 +181,8 @@ public class RegistryConfigurationTest {
         () ->
             RegistryConfiguration.get()
                 .wrap(
-                    PrimitiveSet.newBuilder(Aead.class).build(),
+                    PrimitiveSet.newBuilder().build().getKeysetHandle(),
                     MonitoringAnnotations.EMPTY,
-                    entry -> null,
                     Aead.class));
   }
 }
