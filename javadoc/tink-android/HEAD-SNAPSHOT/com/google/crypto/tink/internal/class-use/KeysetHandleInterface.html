@@ -228,6 +228,10 @@
 <td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.html" title="interface in com.google.crypto.tink.internal">KeysetHandleInterface</a></code></td>
 <td class="colLast"><span class="typeNameLabel">PrimitiveSet.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/PrimitiveSet.html#getKeysetHandle--">getKeysetHandle</a></span>()</code>&nbsp;</td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.html" title="interface in com.google.crypto.tink.internal">KeysetHandleInterface</a></code></td>
+<td class="colLast"><span class="typeNameLabel">PrimitiveSet.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/PrimitiveSet.html#legacyRemoveNonEnabledKeys-com.google.crypto.tink.internal.KeysetHandleInterface-">legacyRemoveNonEnabledKeys</a></span>(<a href="../../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.html" title="interface in com.google.crypto.tink.internal">KeysetHandleInterface</a>&nbsp;input)</code>&nbsp;</td>
+</tr>
 </tbody>
 </table>
 <table class="useSummary" border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
@@ -247,6 +251,10 @@
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.html" title="interface in com.google.crypto.tink.internal">KeysetHandleInterface</a></code></td>
+<td class="colLast"><span class="typeNameLabel">PrimitiveSet.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/PrimitiveSet.html#legacyRemoveNonEnabledKeys-com.google.crypto.tink.internal.KeysetHandleInterface-">legacyRemoveNonEnabledKeys</a></span>(<a href="../../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.html" title="interface in com.google.crypto.tink.internal">KeysetHandleInterface</a>&nbsp;input)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>abstract &lt;P&gt;&nbsp;P</code></td>
 <td class="colLast"><span class="typeNameLabel">InternalConfiguration.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/InternalConfiguration.html#wrap-com.google.crypto.tink.internal.KeysetHandleInterface-com.google.crypto.tink.internal.MonitoringAnnotations-java.lang.Class-">wrap</a></span>(<a href="../../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.html" title="interface in com.google.crypto.tink.internal">KeysetHandleInterface</a>&nbsp;keysetHandle,
     <a href="../../../../../../com/google/crypto/tink/internal/MonitoringAnnotations.html" title="class in com.google.crypto.tink.internal">MonitoringAnnotations</a>&nbsp;annotations,
@@ -254,25 +262,25 @@
 <div class="block">Creates a primitive from a KeysetHandle.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>&lt;P&gt;&nbsp;P</code></td>
 <td class="colLast"><span class="typeNameLabel">RegistryConfiguration.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/RegistryConfiguration.html#wrap-com.google.crypto.tink.internal.KeysetHandleInterface-com.google.crypto.tink.internal.MonitoringAnnotations-java.lang.Class-">wrap</a></span>(<a href="../../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.html" title="interface in com.google.crypto.tink.internal">KeysetHandleInterface</a>&nbsp;keysetHandle,
     <a href="../../../../../../com/google/crypto/tink/internal/MonitoringAnnotations.html" title="class in com.google.crypto.tink.internal">MonitoringAnnotations</a>&nbsp;annotations,
     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;P&gt;&nbsp;clazz)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>&lt;WrappedPrimitiveT&gt;<br>WrappedPrimitiveT</code></td>
 <td class="colLast"><span class="typeNameLabel">PrimitiveRegistry.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/PrimitiveRegistry.html#wrap-com.google.crypto.tink.internal.KeysetHandleInterface-com.google.crypto.tink.internal.MonitoringAnnotations-java.lang.Class-">wrap</a></span>(<a href="../../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.html" title="interface in com.google.crypto.tink.internal">KeysetHandleInterface</a>&nbsp;keysetHandle,
     <a href="../../../../../../com/google/crypto/tink/internal/MonitoringAnnotations.html" title="class in com.google.crypto.tink.internal">MonitoringAnnotations</a>&nbsp;annotations,
     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;WrappedPrimitiveT&gt;&nbsp;wrapperClassObject)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>&lt;WrapperPrimitiveT&gt;<br>WrapperPrimitiveT</code></td>
 <td class="colLast"><span class="typeNameLabel">MutablePrimitiveRegistry.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/MutablePrimitiveRegistry.html#wrap-com.google.crypto.tink.internal.KeysetHandleInterface-com.google.crypto.tink.internal.MonitoringAnnotations-java.lang.Class-">wrap</a></span>(<a href="../../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.html" title="interface in com.google.crypto.tink.internal">KeysetHandleInterface</a>&nbsp;keysetHandle,
     <a href="../../../../../../com/google/crypto/tink/internal/MonitoringAnnotations.html" title="class in com.google.crypto.tink.internal">MonitoringAnnotations</a>&nbsp;annotations,
     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;WrapperPrimitiveT&gt;&nbsp;wrapperClassObject)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="type parameter in PrimitiveWrapper">P</a></code></td>
 <td class="colLast"><span class="typeNameLabel">PrimitiveWrapper.</span><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html#wrap-com.google.crypto.tink.internal.KeysetHandleInterface-com.google.crypto.tink.internal.MonitoringAnnotations-com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory-">wrap</a></span>(<a href="../../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.html" title="interface in com.google.crypto.tink.internal">KeysetHandleInterface</a>&nbsp;keysetHandle,
     <a href="../../../../../../com/google/crypto/tink/internal/MonitoringAnnotations.html" title="class in com.google.crypto.tink.internal">MonitoringAnnotations</a>&nbsp;annotations,
