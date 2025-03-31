@@ -23,15 +23,22 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyStatus;
+import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.TinkProtoKeysetFormat;
+import com.google.crypto.tink.aead.AeadConfig;
+import com.google.crypto.tink.aead.XChaCha20Poly1305Key;
 import com.google.crypto.tink.mac.HmacKey;
 import com.google.crypto.tink.mac.HmacKeyManager;
 import com.google.crypto.tink.proto.HashType;
 import com.google.crypto.tink.proto.HmacParams;
 import com.google.crypto.tink.proto.KeyData;
+import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.KeyStatusType;
+import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.proto.Keyset.Key;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.testing.TestUtil;
+import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import javax.annotation.Nullable;
@@ -46,6 +53,7 @@ public class PrimitiveSetTest {
 
   @BeforeClass
   public static void setUp() throws GeneralSecurityException {
+    AeadConfig.register();
     HmacKeyManager.register(true);
   }
 
@@ -336,5 +344,70 @@ public class PrimitiveSetTest {
     assertThrows(
         GeneralSecurityException.class,
         () -> PrimitiveSet.newBuilder().addPrimary(getKeyFromProtoKey(key1), key1).build());
+  }
+
+  @Test
+  public void legacyRemoveNonEnabledKeys_works() throws Exception {
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.importKey(XChaCha20Poly1305Key.create(SecretBytes.randomBytes(32)))
+                    .withFixedId(200)
+                    .setStatus(KeyStatus.DISABLED))
+            .addEntry(
+                KeysetHandle.importKey(XChaCha20Poly1305Key.create(SecretBytes.randomBytes(32)))
+                    .withFixedId(300)
+                    .setStatus(KeyStatus.ENABLED))
+            .addEntry(
+                KeysetHandle.importKey(XChaCha20Poly1305Key.create(SecretBytes.randomBytes(32)))
+                    .withFixedId(100)
+                    .makePrimary())
+            .addEntry(
+                KeysetHandle.importKey(XChaCha20Poly1305Key.create(SecretBytes.randomBytes(32)))
+                    .withFixedId(400)
+                    .setStatus(KeyStatus.DISABLED))
+            .build();
+    KeysetHandleInterface removed = PrimitiveSet.legacyRemoveNonEnabledKeys(keysetHandle);
+    assertThat(removed.size()).isEqualTo(2);
+    assertThat(removed.getAt(0).getKey().equalsKey(keysetHandle.getAt(1).getKey())).isTrue();
+    assertThat(removed.getAt(0).getStatus()).isEqualTo(keysetHandle.getAt(1).getStatus());
+    assertThat(removed.getAt(1).getKey().equalsKey(keysetHandle.getAt(2).getKey())).isTrue();
+    assertThat(removed.getAt(1).getStatus()).isEqualTo(keysetHandle.getAt(2).getStatus());
+    assertThat(removed.getAt(1).isPrimary()).isEqualTo(keysetHandle.getAt(2).isPrimary());
+  }
+
+  @Test
+  public void legacyRemoveNonEnabledKeys_primaryIsDisabled_doesSomething() throws Exception {
+    // We need to build the serialization manually since TinkProtoKeysetFormat.parseKeyset is
+    // the only API which allows creating keysets with disabled primary key. If
+    // TinkProtoKeysetFormat.parseKeyset is changed to throw in this case, this test can be
+    // deleted.
+    Keyset keysetProto =
+        Keyset.newBuilder()
+            .addKey(
+                Key.newBuilder()
+                    .setKeyData(
+                        KeyData.newBuilder()
+                            .setTypeUrl(
+                                "type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key")
+                            .setValue(
+                                com.google.crypto.tink.proto.XChaCha20Poly1305Key.newBuilder()
+                                    .setKeyValue(
+                                        ByteString.copyFrom(
+                                            "abcdefghijklmnopqrstuvwxyz012345".getBytes(UTF_8)))
+                                    .build()
+                                    .toByteString())
+                            .setKeyMaterialType(KeyMaterialType.SYMMETRIC))
+                    .setOutputPrefixType(OutputPrefixType.TINK)
+                    .setKeyId(101)
+                    .setStatus(KeyStatusType.DISABLED))
+            .setPrimaryKeyId(101)
+            .build();
+
+    KeysetHandle keysetHandle =
+        TinkProtoKeysetFormat.parseKeyset(keysetProto.toByteArray(), InsecureSecretKeyAccess.get());
+    KeysetHandleInterface removed = PrimitiveSet.legacyRemoveNonEnabledKeys(keysetHandle);
+    assertThat(removed.size()).isEqualTo(0);
+    assertThat(removed.getPrimary()).isNull();
   }
 }

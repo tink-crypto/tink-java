@@ -43,6 +43,17 @@ import javax.annotation.Nullable;
  * set.
  */
 public final class PrimitiveSet {
+  public static KeysetHandleInterface legacyRemoveNonEnabledKeys(KeysetHandleInterface input)
+      throws GeneralSecurityException {
+    PrimitiveSet.Builder builder = PrimitiveSet.newBuilder();
+    for (int i = 0; i < input.size(); ++i) {
+      KeysetHandleInterface.Entry entry = input.getAt(i);
+      if (entry.getStatus().equals(KeyStatus.ENABLED)) {
+        builder.addEntry(entry.getKey(), entry.getId(), entry.isPrimary());
+      }
+    }
+    return builder.build().getKeysetHandle();
+  }
 
   /**
    * A single entry in the set. In addition to the actual primitive it holds also some extra
@@ -152,19 +163,15 @@ public final class PrimitiveSet {
     private KeysetHandleInterface.Entry primary;
 
     @CanIgnoreReturnValue
-    private Builder addEntry(Key key, Keyset.Key protoKey, boolean asPrimary)
+    private Builder addEntry(Key key, int keyId, boolean asPrimary)
         throws GeneralSecurityException {
       if (entriesInKeysetOrder == null) {
         throw new IllegalStateException("addEntry cannot be called after build");
       }
-      if (protoKey.getStatus() != KeyStatusType.ENABLED) {
-        // Note: ENABLED is hard coded below.
-        throw new GeneralSecurityException("only ENABLED key is allowed");
-      }
       KeysetHandleInterface.Entry entry =
           new Entry(
-              // We just checked above that we allow only ENABLED.
-              KeyStatus.ENABLED, protoKey.getKeyId(), key, asPrimary);
+              // We checked before calling addEntry that we allow only ENABLED.
+              KeyStatus.ENABLED, keyId, key, asPrimary);
       storeEntryInPrimitiveSet(entry, entriesInKeysetOrder);
       if (asPrimary) {
         if (this.primary != null) {
@@ -174,7 +181,7 @@ public final class PrimitiveSet {
       }
       return this;
     }
-
+    
     /**
      * Adds a non-primary primitive.
      *
@@ -183,7 +190,11 @@ public final class PrimitiveSet {
      */
     @CanIgnoreReturnValue
     public Builder add(Key key, Keyset.Key protoKey) throws GeneralSecurityException {
-      return addEntry(key, protoKey, false);
+      if (protoKey.getStatus() != KeyStatusType.ENABLED) {
+        // Note: ENABLED is hard coded in addEntry.
+        throw new GeneralSecurityException("only ENABLED key is allowed");
+      }
+      return addEntry(key, protoKey.getKeyId(), false);
     }
 
     /**
@@ -194,7 +205,11 @@ public final class PrimitiveSet {
      */
     @CanIgnoreReturnValue
     public Builder addPrimary(Key key, Keyset.Key protoKey) throws GeneralSecurityException {
-      return addEntry(key, protoKey, true);
+      if (protoKey.getStatus() != KeyStatusType.ENABLED) {
+        // Note: ENABLED is hard coded in addEntry.
+        throw new GeneralSecurityException("only ENABLED key is allowed");
+      }
+      return addEntry(key, protoKey.getKeyId(), true);
     }
 
     public PrimitiveSet build() throws GeneralSecurityException {

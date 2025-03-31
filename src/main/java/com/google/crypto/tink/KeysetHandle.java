@@ -1086,29 +1086,18 @@ public final class KeysetHandle implements KeysetHandleInterface {
   private <P> P getPrimitiveInternal(InternalConfiguration config, Class<P> classObject)
       throws GeneralSecurityException {
     Util.validateKeyset(keyset);
-    PrimitiveSet.Builder builder = PrimitiveSet.newBuilder();
     for (int i = 0; i < size(); ++i) {
-      Keyset.Key protoKey = keyset.getKey(i);
-      if (protoKey.getStatus().equals(KeyStatusType.ENABLED)) {
-        KeysetHandle.Entry entry = entries.get(i);
-        // entry may be null (if the status is invalid in the proto, or parsing failed).
-        if (entry == null) {
-          throw new GeneralSecurityException(
-              "Key parsing of key with index "
-                  + i
-                  + " and type_url "
-                  + protoKey.getKeyData().getTypeUrl()
-                  + " failed, unable to get primitive");
-        }
-        Key key = entry.getKey();
-        if (protoKey.getKeyId() == keyset.getPrimaryKeyId()) {
-          builder.addPrimary(key, protoKey);
-        } else {
-          builder.add(key, protoKey);
-        }
+      if (entries.get(i) == null) {
+        Keyset.Key protoKey = keyset.getKey(i);
+        throw new GeneralSecurityException(
+            "Key parsing of key with index "
+                + i
+                + " and type_url "
+                + protoKey.getKeyData().getTypeUrl()
+                + " failed, unable to get primitive");
       }
     }
-    return config.wrap(builder.build().getKeysetHandle(), annotations, classObject);
+    return config.wrap(PrimitiveSet.legacyRemoveNonEnabledKeys(this), annotations, classObject);
   }
 
   /**
