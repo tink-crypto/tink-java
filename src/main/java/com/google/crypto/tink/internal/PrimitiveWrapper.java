@@ -42,10 +42,11 @@ public interface PrimitiveWrapper<B, P> {
    *
    * <p>This method gets called when a new primitive is created.
    *
-   * <p>Note: the passed in {@code keysetHandle} only currently only contains active keys. This
-   * should change in the future.
+   * <p>Note: this function has "legacy" in the name because the passed in {@code keysetHandle} only
+   * currently only contains active keys. We will introduce a function "wrap" without this property
+   * later.
    */
-  P wrap(
+  P legacyWrap(
       KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<B> primitiveFactory)

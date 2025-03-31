@@ -82,7 +82,7 @@ public class PublicKeySignWrapper implements PrimitiveWrapper<PublicKeySign, Pub
   PublicKeySignWrapper() {}
 
   @Override
-  public PublicKeySign wrap(
+  public PublicKeySign legacyWrap(
       KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<PublicKeySign> factory)

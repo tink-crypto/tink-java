@@ -115,7 +115,7 @@ class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
   JwtMacWrapper() {}
 
   @Override
-  public JwtMac wrap(
+  public JwtMac legacyWrap(
       KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<JwtMac> factory)

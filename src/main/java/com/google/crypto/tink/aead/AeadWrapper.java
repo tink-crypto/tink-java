@@ -122,7 +122,7 @@ public class AeadWrapper implements PrimitiveWrapper<Aead, Aead> {
   AeadWrapper() {}
 
   @Override
-  public Aead wrap(
+  public Aead legacyWrap(
       KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<Aead> factory)

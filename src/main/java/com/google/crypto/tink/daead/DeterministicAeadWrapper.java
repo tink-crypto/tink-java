@@ -125,7 +125,7 @@ public class DeterministicAeadWrapper
   DeterministicAeadWrapper() {}
 
   @Override
-  public DeterministicAead wrap(
+  public DeterministicAead legacyWrap(
       KeysetHandleInterface handle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<DeterministicAead> factory)

@@ -130,7 +130,7 @@ public class RegistryTest {
     public static final AeadToEncryptOnlyWrapper WRAPPER = new AeadToEncryptOnlyWrapper();
 
     @Override
-    public EncryptOnly wrap(
+    public EncryptOnly legacyWrap(
         KeysetHandleInterface keysetHandle,
         MonitoringAnnotations annotations,
         PrimitiveFactory<Aead> factory)
@@ -748,7 +748,7 @@ public class RegistryTest {
               .registerPrimitiveWrapper(
                   new PrimitiveWrapper<Mac, EncryptOnly>() {
                     @Override
-                    public EncryptOnly wrap(
+                    public EncryptOnly legacyWrap(
                         KeysetHandleInterface keysetHandle,
                         MonitoringAnnotations annotations,
                         PrimitiveFactory<Mac> factory) {

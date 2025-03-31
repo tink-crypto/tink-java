@@ -98,7 +98,7 @@ public class InternalConfigurationTest {
       implements PrimitiveWrapper<TestPrimitiveA, TestPrimitiveA> {
 
     @Override
-    public TestPrimitiveA wrap(
+    public TestPrimitiveA legacyWrap(
         KeysetHandleInterface keysetHandle,
         MonitoringAnnotations annotations,
         PrimitiveFactory<TestPrimitiveA> factory) {
@@ -121,7 +121,7 @@ public class InternalConfigurationTest {
       implements PrimitiveWrapper<TestPrimitiveB, TestPrimitiveB> {
 
     @Override
-    public TestPrimitiveB wrap(
+    public TestPrimitiveB legacyWrap(
         KeysetHandleInterface keysetHandle,
         MonitoringAnnotations annotations,
         PrimitiveFactory<TestPrimitiveB> factory) {

@@ -84,7 +84,7 @@ class JwtPublicKeyVerifyWrapper
   }
 
   @Override
-  public JwtPublicKeyVerify wrap(
+  public JwtPublicKeyVerify legacyWrap(
       KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<JwtPublicKeyVerify> factory)

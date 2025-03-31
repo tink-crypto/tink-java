@@ -109,7 +109,7 @@ public final class MutablePrimitiveRegistryTest {
       implements PrimitiveWrapper<TestPrimitiveA, TestPrimitiveA> {
 
     @Override
-    public TestPrimitiveA wrap(
+    public TestPrimitiveA legacyWrap(
         KeysetHandleInterface keysetHandle,
         MonitoringAnnotations annotations,
         PrimitiveFactory<TestPrimitiveA> factory)
@@ -133,7 +133,7 @@ public final class MutablePrimitiveRegistryTest {
       implements PrimitiveWrapper<TestPrimitiveA, TestPrimitiveB> {
 
     @Override
-    public TestPrimitiveB wrap(
+    public TestPrimitiveB legacyWrap(
         KeysetHandleInterface keysetHandle,
         MonitoringAnnotations annotations,
         PrimitiveFactory<TestPrimitiveA> factory)

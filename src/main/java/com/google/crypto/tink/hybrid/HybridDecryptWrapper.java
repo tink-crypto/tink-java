@@ -103,7 +103,7 @@ public class HybridDecryptWrapper implements PrimitiveWrapper<HybridDecrypt, Hyb
   HybridDecryptWrapper() {}
 
   @Override
-  public HybridDecrypt wrap(
+  public HybridDecrypt legacyWrap(
       KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<HybridDecrypt> factory)

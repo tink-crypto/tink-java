@@ -76,7 +76,7 @@ class JwtPublicKeySignWrapper implements PrimitiveWrapper<JwtPublicKeySign, JwtP
   }
 
   @Override
-  public JwtPublicKeySign wrap(
+  public JwtPublicKeySign legacyWrap(
       KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<JwtPublicKeySign> factory)

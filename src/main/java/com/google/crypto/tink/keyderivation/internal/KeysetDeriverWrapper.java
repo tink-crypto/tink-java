@@ -88,7 +88,7 @@ public final class KeysetDeriverWrapper implements PrimitiveWrapper<KeyDeriver, 
   KeysetDeriverWrapper() {}
 
   @Override
-  public KeysetDeriver wrap(
+  public KeysetDeriver legacyWrap(
       KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<KeyDeriver> factory)

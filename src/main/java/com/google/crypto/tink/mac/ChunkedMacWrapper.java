@@ -131,7 +131,7 @@ public class ChunkedMacWrapper implements PrimitiveWrapper<ChunkedMac, ChunkedMa
   private ChunkedMacWrapper() {}
 
   @Override
-  public ChunkedMac wrap(
+  public ChunkedMac legacyWrap(
       KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<ChunkedMac> factory)

@@ -52,7 +52,7 @@ public class StreamingAeadWrapper implements PrimitiveWrapper<StreamingAead, Str
    * @throws GeneralSecurityException
    */
   @Override
-  public StreamingAead wrap(
+  public StreamingAead legacyWrap(
       KeysetHandleInterface handle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<StreamingAead> factory)

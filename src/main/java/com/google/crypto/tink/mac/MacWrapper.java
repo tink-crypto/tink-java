@@ -121,7 +121,7 @@ public class MacWrapper implements PrimitiveWrapper<Mac, Mac> {
   MacWrapper() {}
 
   @Override
-  public Mac wrap(
+  public Mac legacyWrap(
       KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<Mac> factory)

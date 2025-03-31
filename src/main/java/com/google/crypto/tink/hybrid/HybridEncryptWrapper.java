@@ -83,7 +83,7 @@ public class HybridEncryptWrapper implements PrimitiveWrapper<HybridEncrypt, Hyb
   HybridEncryptWrapper() {}
 
   @Override
-  public HybridEncrypt wrap(
+  public HybridEncrypt legacyWrap(
       KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<HybridEncrypt> factory)

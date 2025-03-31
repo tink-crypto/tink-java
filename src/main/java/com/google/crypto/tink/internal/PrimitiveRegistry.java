@@ -149,7 +149,7 @@ public class PrimitiveRegistry {
       MonitoringAnnotations annotations,
       PrimitiveWrapper<InnerPrimitiveT, WrappedPrimitiveT> wrapper)
       throws GeneralSecurityException {
-    return wrapper.wrap(
+    return wrapper.legacyWrap(
         keysetHandle,
         annotations,
         entry -> getPrimitive(entry.getKey(), wrapper.getInputPrimitiveClass()));

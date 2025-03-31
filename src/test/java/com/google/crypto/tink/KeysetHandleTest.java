@@ -137,7 +137,7 @@ public class KeysetHandleTest {
     }
 
     @Override
-    public EncryptOnly wrap(
+    public EncryptOnly legacyWrap(
         KeysetHandleInterface keysetHandle,
         MonitoringAnnotations annotations,
         PrimitiveFactory<Aead> factory)
@@ -1653,7 +1653,7 @@ public class KeysetHandleTest {
       implements PrimitiveWrapper<TestPrimitiveA, TestPrimitiveB> {
 
     @Override
-    public TestPrimitiveB wrap(
+    public TestPrimitiveB legacyWrap(
         KeysetHandleInterface keysetHandle,
         MonitoringAnnotations annotations,
         PrimitiveFactory<TestPrimitiveA> factory) {

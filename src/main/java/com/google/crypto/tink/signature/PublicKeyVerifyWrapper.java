@@ -105,7 +105,7 @@ public class PublicKeyVerifyWrapper implements PrimitiveWrapper<PublicKeyVerify,
   }
 
   @Override
-  public PublicKeyVerify wrap(
+  public PublicKeyVerify legacyWrap(
       KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<PublicKeyVerify> factory)
