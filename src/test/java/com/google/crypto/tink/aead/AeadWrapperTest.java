@@ -22,6 +22,7 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
@@ -200,6 +201,34 @@ public class AeadWrapperTest {
 
     assertThat(ciphertextPrefix).isEqualTo(outputPrefix);
     assertThat(rawAead.decrypt(ciphertextWithoutPrefix, associatedData)).isEqualTo(plaintext);
+  }
+
+  @Test
+  public void disabedKey_doesNotDecrypt() throws Exception {
+    MutablePrimitiveRegistry.resetGlobalInstanceTestOnly();
+    AeadConfig.register();
+
+    byte[] plaintext = "plaintext".getBytes(UTF_8);
+    byte[] associatedData = "associatedData".getBytes(UTF_8);
+
+    // Create ciphertext with tinkFixedKey.
+    KeysetHandle handleWithFixedKey =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(tinkFixedKey).makePrimary())
+            .build();
+    Aead fixedKeyAead = handleWithFixedKey.getPrimitive(RegistryConfiguration.get(), Aead.class);
+    byte[] fixedKeyCiphertext = fixedKeyAead.encrypt(plaintext, associatedData);
+
+    // Create keyset with disabled tinkFixedKey.
+    KeysetHandle handleWithDisabledKey =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(tinkFixedKey).setStatus(KeyStatus.DISABLED))
+            .addEntry(KeysetHandle.importKey(rawKey0).withRandomId().makePrimary())
+            .build();
+    Aead aead = handleWithDisabledKey.getPrimitive(RegistryConfiguration.get(), Aead.class);
+
+    assertThrows(
+        GeneralSecurityException.class, () -> aead.decrypt(fixedKeyCiphertext, associatedData));
   }
 
   @Test
