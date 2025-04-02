@@ -21,6 +21,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
 import com.google.crypto.tink.Registry;
@@ -355,6 +356,29 @@ public class MacWrapperTest {
     byte[] tag = mac.computeMac(plaintext);
 
     mac.verifyMac(tag, plaintext);
+  }
+
+  @Test
+  public void disabledKey_isIgnored() throws Exception {
+    MutablePrimitiveRegistry.resetGlobalInstanceTestOnly();
+    MacConfig.register();
+
+    byte[] plaintext = "plaintext".getBytes(UTF_8);
+    Mac tinkKey0DisabledMac =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(rawKey1).withFixedId(1235).makePrimary())
+            .addEntry(KeysetHandle.importKey(tinkKey0).setStatus(KeyStatus.DISABLED))
+            .build()
+            .getPrimitive(RegistryConfiguration.get(), Mac.class);
+    Mac tinkKey0PrimaryMac =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(tinkKey0).makePrimary())
+            .build()
+            .getPrimitive(RegistryConfiguration.get(), Mac.class);
+    byte[] tinkKey0PrimaryTag = tinkKey0PrimaryMac.computeMac(plaintext);
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> tinkKey0DisabledMac.verifyMac(tinkKey0PrimaryTag, plaintext));
   }
 
   // ------------------------------------------------------------------------------ Monitoring tests

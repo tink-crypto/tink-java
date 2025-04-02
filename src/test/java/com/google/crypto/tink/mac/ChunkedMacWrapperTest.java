@@ -21,6 +21,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.mac.AesCmacParameters.Variant;
@@ -448,5 +449,29 @@ public class ChunkedMacWrapperTest {
     macVerification.update(plaintext);
 
     macVerification.verifyMac();
+  }
+
+  @Test
+  public void disabledKey_isIgnored() throws Exception {
+
+    byte[] plaintext = "plaintext".getBytes(UTF_8);
+    ChunkedMacComputation tinkKey0PrimaryMac =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(tinkKey0).makePrimary())
+            .build()
+            .getPrimitive(RegistryConfiguration.get(), ChunkedMac.class)
+            .createComputation();
+    tinkKey0PrimaryMac.update(ByteBuffer.wrap(plaintext));
+    byte[] tag = tinkKey0PrimaryMac.computeMac();
+
+    ChunkedMacVerification tinkKey0DisabledMac =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(rawKey1).withFixedId(1235).makePrimary())
+            .addEntry(KeysetHandle.importKey(tinkKey0).setStatus(KeyStatus.DISABLED))
+            .build()
+            .getPrimitive(RegistryConfiguration.get(), ChunkedMac.class)
+            .createVerification(tag);
+    tinkKey0DisabledMac.update(ByteBuffer.wrap(plaintext));
+    assertThrows(GeneralSecurityException.class, () -> tinkKey0DisabledMac.verifyMac());
   }
 }
