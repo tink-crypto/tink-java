@@ -62,6 +62,7 @@ java_test(
         "//proto:common_java_proto",
         "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink:key_status",
         "//src/main/java/com/google/crypto/tink:registry_cluster",
         "//src/main/java/com/google/crypto/tink:registry_configuration",
         "//src/main/java/com/google/crypto/tink:streaming_aead",

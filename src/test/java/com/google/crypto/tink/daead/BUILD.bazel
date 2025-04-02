@@ -8,6 +8,7 @@ java_test(
     srcs = ["DeterministicAeadWrapperTest.java"],
     deps = [
         "//src/main/java/com/google/crypto/tink:deterministic_aead",
+        "//src/main/java/com/google/crypto/tink:key_status",
         "//src/main/java/com/google/crypto/tink:registry_cluster",
         "//src/main/java/com/google/crypto/tink:registry_configuration",
         "//src/main/java/com/google/crypto/tink/daead:aes_siv_key",

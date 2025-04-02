@@ -19,6 +19,7 @@ package com.google.crypto.tink.streamingaead;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.StreamingAead;
@@ -292,5 +293,57 @@ public class StreamingAeadWrapperTest {
         keysetHandle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
 
     StreamingTestUtil.testEncryptionAndDecryption(streamingAead, streamingAead);
+  }
+
+  @Test
+  public void decryptIgnoresDisabledKeys() throws Exception {
+    AesGcmHkdfStreamingParameters aesGcmHkdfStreamingParameters =
+        AesGcmHkdfStreamingParameters.builder()
+            .setKeySizeBytes(32)
+            .setDerivedAesGcmKeySizeBytes(32)
+            .setHkdfHashType(AesGcmHkdfStreamingParameters.HashType.SHA256)
+            .setCiphertextSegmentSizeBytes(64)
+            .build();
+    AesGcmHkdfStreamingKey aesGcmHkdfStreamingKey =
+        AesGcmHkdfStreamingKey.create(
+            aesGcmHkdfStreamingParameters,
+            SecretBytes.copyFrom(
+                Hex.decode("abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd"),
+                InsecureSecretKeyAccess.get()));
+    AesCtrHmacStreamingParameters aesCtrHmacStreamingParameters =
+        AesCtrHmacStreamingParameters.builder()
+            .setKeySizeBytes(32)
+            .setDerivedKeySizeBytes(32)
+            .setHkdfHashType(AesCtrHmacStreamingParameters.HashType.SHA256)
+            .setHmacHashType(AesCtrHmacStreamingParameters.HashType.SHA256)
+            .setHmacTagSizeBytes(16)
+            .setCiphertextSegmentSizeBytes(64)
+            .build();
+    AesCtrHmacStreamingKey aesCtrHmacStreamingKey =
+        AesCtrHmacStreamingKey.create(
+            aesCtrHmacStreamingParameters,
+            SecretBytes.copyFrom(
+                Hex.decode("abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd"),
+                InsecureSecretKeyAccess.get()));
+    StreamingAead streamingAeadWithKeyDisabled =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.importKey(aesCtrHmacStreamingKey)
+                    .withFixedId(43)
+                    .setStatus(KeyStatus.DISABLED))
+            .addEntry(KeysetHandle.importKey(aesGcmHkdfStreamingKey).withFixedId(42).makePrimary())
+            .build()
+            .getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
+    StreamingAead streamingAeadWithKeyPrimary =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(aesCtrHmacStreamingKey).withFixedId(43).makePrimary())
+            .build()
+            .getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
+
+    assertThrows(
+        IOException.class,
+        () ->
+            StreamingTestUtil.testEncryptDecryptDifferentInstances(
+                streamingAeadWithKeyPrimary, streamingAeadWithKeyDisabled, 0, 20, 5));
   }
 }

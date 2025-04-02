@@ -23,6 +23,7 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
 
 import com.google.crypto.tink.DeterministicAead;
+import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.daead.internal.AesSivProtoSerialization;
@@ -245,6 +246,38 @@ public class DeterministicAeadWrapperTest {
     assertArrayEquals(ciphertext, ciphertext2);
     assertArrayEquals(plaintext, decrypted);
     assertArrayEquals(plaintext, decrypted2);
+  }
+
+  @Test
+  public void encryptDecrypt_disabledKeysAreIgnored() throws Exception {
+    MutablePrimitiveRegistry.resetGlobalInstanceTestOnly();
+    DeterministicAeadConfig.register();
+
+    byte[] plaintext = Random.randBytes(20);
+    byte[] associatedData = Random.randBytes(20);
+    AesSivKey tinkKey = createKey(AesSivParameters.Variant.TINK, 42);
+    AesSivKey rawKey = createKey(AesSivParameters.Variant.NO_PREFIX, null);
+
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(tinkKey).makePrimary())
+            .addEntry(KeysetHandle.importKey(rawKey).withFixedId(43).setStatus(KeyStatus.DISABLED))
+            .build();
+    DeterministicAead daeadWithKeyDisabled =
+        keysetHandle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
+
+    DeterministicAead deadWithKeyPrimary =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(rawKey).withFixedId(43).makePrimary())
+            .build()
+            .getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
+
+    // encrypt with RAW key (non-primary in the main keyset) and decrypt with the main keyset works
+    byte[] ciphertext = deadWithKeyPrimary.encryptDeterministically(plaintext, associatedData);
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> daeadWithKeyDisabled.decryptDeterministically(ciphertext, associatedData));
   }
 
   @Test
