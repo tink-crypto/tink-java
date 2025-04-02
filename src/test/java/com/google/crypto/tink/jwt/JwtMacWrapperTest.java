@@ -20,6 +20,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
@@ -235,6 +236,35 @@ public class JwtMacWrapperTest {
     String compact = jwtMac.computeMacAndEncode(rawJwt);
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
     assertThrows(JwtInvalidException.class, () -> jwtMac.verifyMacAndDecode(compact, validator));
+  }
+
+  @Test
+  public void disabledKey_isIgnored() throws Exception {
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.generateEntryFromParametersName("JWT_HS256_RAW")
+                    .withRandomId()
+                    .setStatus(KeyStatus.DISABLED))
+            .addEntry(
+                KeysetHandle.generateEntryFromParametersName("JWT_HS256_RAW")
+                    .withRandomId()
+                    .makePrimary())
+            .build();
+    JwtMac jwtMacWithKeyDisabled =
+        keysetHandle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
+    JwtMac jwtMacWithKeyPrimary =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.importKey(keysetHandle.getAt(0).getKey()).withRandomId().makePrimary())
+            .build()
+            .getPrimitive(RegistryConfiguration.get(), JwtMac.class);
+    RawJwt rawJwt = RawJwt.newBuilder().withoutExpiration().build();
+    String compact = jwtMacWithKeyPrimary.computeMacAndEncode(rawJwt);
+    JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> jwtMacWithKeyDisabled.verifyMacAndDecode(compact, validator));
   }
 
   @Test
