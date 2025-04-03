@@ -334,6 +334,41 @@ public final class KeysetDeriverWrapperTest {
     assertThat(derivedKeyset.equalsKeyset(expectedKeyset)).isTrue();
   }
 
+  @Test
+  public void testWithDisabledKey_disabledIsIgnored() throws Exception {
+    // We use the same base keys and expected keys as above.
+    PrfBasedKeyDerivationKey keyDerivationKey0 = getPrfBasedKeyDerivationKey0();
+    PrfBasedKeyDerivationKey keyDerivationKey1 = getPrfBasedKeyDerivationKey1();
+
+    KeysetHandle keyset =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.importKey(keyDerivationKey0)
+                    .withFixedId(558)
+                    .setStatus(KeyStatus.DISABLED))
+            .addEntry(KeysetHandle.importKey(keyDerivationKey1).withFixedId(557).makePrimary())
+            .build();
+    KeysetDeriver deriver = keyset.getPrimitive(RegistryConfiguration.get(), KeysetDeriver.class);
+    KeysetHandle derivedKeyset = deriver.deriveKeyset(new byte[] {1, 0, 1});
+
+    Key expectedKey1 =
+        AesGcmKey.builder()
+            .setParameters(
+                (AesGcmParameters) keyDerivationKey1.getParameters().getDerivedKeyParameters())
+            .setIdRequirement(557)
+            .setKeyBytes(
+                SecretBytes.copyFrom(
+                    Hex.decode("1245823cad59902bc88804d1ad53d251"), InsecureSecretKeyAccess.get()))
+            .build();
+
+    KeysetHandle expectedKeyset =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(expectedKey1).withFixedId(557).makePrimary())
+            .build();
+
+    assertThat(derivedKeyset.equalsKeyset(expectedKeyset)).isTrue();
+  }
+
   /**
    * A test vector: if we use prfKey in with derivedKeyParameters and salt Hex.decode(inputHex) we
    * get expectedKey.
