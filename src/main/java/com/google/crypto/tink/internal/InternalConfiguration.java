@@ -17,7 +17,6 @@
 package com.google.crypto.tink.internal;
 
 import com.google.crypto.tink.Configuration;
-import com.google.crypto.tink.Key;
 import java.security.GeneralSecurityException;
 
 /**
@@ -26,12 +25,6 @@ import java.security.GeneralSecurityException;
  * by internal KeysetHandle operations only.
  */
 public abstract class InternalConfiguration extends Configuration {
-  /**
-   * Given a key and a desired primitive class, creates the required primitive.
-   */
-  public abstract <P> P getPrimitive(Key key, Class<P> primitiveClass)
-      throws GeneralSecurityException;
-
   /**
    * Creates a primitive from a KeysetHandle.
    *
@@ -57,11 +50,6 @@ public abstract class InternalConfiguration extends Configuration {
 
     private InternalConfigurationImpl(PrimitiveRegistry registry) {
       this.registry = registry;
-    }
-
-    @Override
-    public <P> P getPrimitive(Key key, Class<P> primitiveClass) throws GeneralSecurityException {
-      return registry.getPrimitive(key, primitiveClass);
     }
 
     @Override

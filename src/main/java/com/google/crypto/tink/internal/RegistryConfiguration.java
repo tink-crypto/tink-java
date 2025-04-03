@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink.internal;
 
-import com.google.crypto.tink.Key;
 import com.google.errorprone.annotations.DoNotCall;
 import java.security.GeneralSecurityException;
 
@@ -36,15 +35,6 @@ public final class RegistryConfiguration extends InternalConfiguration {
   private static final RegistryConfiguration CONFIG = new RegistryConfiguration();
 
   private RegistryConfiguration() {}
-
-  @Override
-  public <P> P getPrimitive(Key key, Class<P> primitiveClass) throws GeneralSecurityException {
-    /* Here we call {@link MutablePrimitiveRegistry} directly and not through the global
-     * {@link com.google.crypto.tink.Registry} because the corresponding method
-     * {@link com.google.crypto.tink.Registry#getFullPrimitive} is package-private.
-     */
-    return MutablePrimitiveRegistry.globalInstance().getPrimitive(key, primitiveClass);
-  }
 
   @Override
   public <P> P wrap(

@@ -650,7 +650,6 @@ java_library(
         ":monitoring_annotations",
         ":primitive_registry",
         "//src/main/java/com/google/crypto/tink:configuration",
-        "//src/main/java/com/google/crypto/tink:key",
     ],
 )
 
@@ -662,7 +661,6 @@ android_library(
         ":monitoring_annotations-android",
         ":primitive_registry-android",
         "//src/main/java/com/google/crypto/tink:configuration-android",
-        "//src/main/java/com/google/crypto/tink:key-android",
     ],
 )
 
@@ -675,7 +673,6 @@ android_library(
         ":monitoring_annotations-android",
         ":mutable_primitive_registry-android",
         ":primitive_registry-android",
-        "//src/main/java/com/google/crypto/tink:key-android",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
@@ -689,7 +686,6 @@ java_library(
         ":monitoring_annotations",
         ":mutable_primitive_registry",
         ":primitive_registry",
-        "//src/main/java/com/google/crypto/tink:key",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )

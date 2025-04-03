@@ -25,11 +25,6 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
 import com.google.crypto.tink.Registry;
-import com.google.crypto.tink.aead.AesEaxKey;
-import com.google.crypto.tink.aead.AesEaxParameters;
-import com.google.crypto.tink.aead.AesEaxParameters.Variant;
-import com.google.crypto.tink.mac.ChunkedMac;
-import com.google.crypto.tink.mac.ChunkedMacComputation;
 import com.google.crypto.tink.mac.HmacKey;
 import com.google.crypto.tink.mac.HmacParameters;
 import com.google.crypto.tink.mac.HmacParameters.HashType;
@@ -42,7 +37,6 @@ import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
-import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import org.junit.Before;
 import org.junit.Test;
@@ -121,23 +115,6 @@ public class RegistryConfigurationTest {
   }
 
   @Test
-  public void getPrimitive_matchesRegistry() throws Exception {
-    byte[] plaintext = "plaintext".getBytes(UTF_8);
-
-    ChunkedMac configurationMac =
-        RegistryConfiguration.get().getPrimitive(rawKey, ChunkedMac.class);
-    ChunkedMacComputation configurationComputation = configurationMac.createComputation();
-    ChunkedMac registryMac =
-        MutablePrimitiveRegistry.globalInstance().getPrimitive(rawKey, ChunkedMac.class);
-    ChunkedMacComputation registryComputation = registryMac.createComputation();
-
-    configurationComputation.update(ByteBuffer.wrap(plaintext));
-    registryComputation.update(ByteBuffer.wrap(plaintext));
-
-    assertThat(configurationComputation.computeMac()).isEqualTo(registryComputation.computeMac());
-  }
-
-  @Test
   public void wrap_matchesRegistry() throws Exception {
     byte[] plaintext = "plaintext".getBytes(UTF_8);
 
@@ -157,25 +134,8 @@ public class RegistryConfigurationTest {
         .isEqualTo(registryMac.computeMac(plaintext));
   }
 
-
   @Test
   public void requestingUnregisteredPrimitives_throws() throws GeneralSecurityException {
-    AesEaxKey aesEaxKey =
-        AesEaxKey.builder()
-            .setKeyBytes(SecretBytes.randomBytes(32))
-            .setIdRequirement(1234)
-            .setParameters(
-                AesEaxParameters.builder()
-                    .setIvSizeBytes(16)
-                    .setTagSizeBytes(16)
-                    .setKeySizeBytes(32)
-                    .setVariant(Variant.TINK)
-                    .build())
-            .build();
-
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> RegistryConfiguration.get().getPrimitive(aesEaxKey, Aead.class));
     assertThrows(
         GeneralSecurityException.class,
         () ->
