@@ -20,6 +20,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
+import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
@@ -165,6 +166,36 @@ public class PublicKeyVerifyWrapperTest {
     verifier.verify(signer0.sign(data), data);
     verifier.verify(signer1.sign(data), data);
     verifier.verify(signer2.sign(data), data);
+  }
+
+  @Test
+  public void verifyIgnoresDisabledKeys_throws() throws Exception {
+    EcdsaParameters parameters =
+        EcdsaParameters.builder()
+            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.IEEE_P1363)
+            .setCurveType(EcdsaParameters.CurveType.NIST_P256)
+            .setHashType(EcdsaParameters.HashType.SHA256)
+            .setVariant(EcdsaParameters.Variant.NO_PREFIX)
+            .build();
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.generateEntryFromParameters(parameters)
+                    .withRandomId()
+                    .setStatus(KeyStatus.DISABLED))
+            .addEntry(
+                KeysetHandle.generateEntryFromParameters(parameters).withRandomId().makePrimary())
+            .build();
+    PublicKeySign signer0 = EcdsaSignJce.create((EcdsaPrivateKey) handle.getAt(0).getKey());
+    byte[] data = "data".getBytes(UTF_8);
+    byte[] signature = signer0.sign(data);
+
+    PublicKeyVerify verifier =
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
+
+    assertThrows(GeneralSecurityException.class, () -> verifier.verify(signature, data));
   }
 
   @Test

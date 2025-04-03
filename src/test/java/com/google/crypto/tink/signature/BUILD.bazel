@@ -89,6 +89,7 @@ java_test(
     size = "small",
     srcs = ["PublicKeyVerifyWrapperTest.java"],
     deps = [
+        "//src/main/java/com/google/crypto/tink:key_status",
         "//src/main/java/com/google/crypto/tink:public_key_sign",
         "//src/main/java/com/google/crypto/tink:public_key_verify",
         "//src/main/java/com/google/crypto/tink:registry_cluster",

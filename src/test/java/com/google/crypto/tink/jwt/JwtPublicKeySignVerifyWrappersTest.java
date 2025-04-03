@@ -20,6 +20,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
@@ -253,6 +254,38 @@ public class JwtPublicKeySignVerifyWrappersTest {
     assertThrows(
         GeneralSecurityException.class,
         () -> oldVerifier.verifyAndDecode(newSignedCompact, validator));
+  }
+
+  @Test
+  public void disabledKeyIgnoredWhenVerifying() throws Exception {
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.generateEntryFromParametersName("JWT_ES256_RAW")
+                    .withRandomId()
+                    .setStatus(KeyStatus.DISABLED))
+            .addEntry(
+                KeysetHandle.generateEntryFromParametersName("JWT_ES256_RAW")
+                    .withRandomId()
+                    .makePrimary())
+            .build();
+
+    JwtPublicKeySign signerForDisabledKey =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(handle.getAt(0).getKey()).withRandomId().makePrimary())
+            .build()
+            .getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
+    RawJwt rawToken = RawJwt.newBuilder().setJwtId("jwtId").withoutExpiration().build();
+    String signedCompact = signerForDisabledKey.signAndEncode(rawToken);
+
+    JwtPublicKeyVerify verifier =
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
+
+    JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
+    assertThrows(
+        GeneralSecurityException.class, () -> verifier.verifyAndDecode(signedCompact, validator));
   }
 
   // Note: we use Theory as a parametrized test -- different from what the Theory framework intends.
