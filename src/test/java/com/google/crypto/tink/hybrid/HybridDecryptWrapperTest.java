@@ -19,10 +19,12 @@ package com.google.crypto.tink.hybrid;
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.crypto.tink.internal.Util.isPrefix;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.aead.AesGcmParameters;
@@ -35,6 +37,7 @@ import com.google.crypto.tink.subtle.EciesAeadHkdfHybridDecrypt;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.util.SecretBigInteger;
 import java.math.BigInteger;
+import java.security.GeneralSecurityException;
 import java.security.spec.ECPoint;
 import java.util.List;
 import org.junit.Before;
@@ -168,6 +171,35 @@ public class HybridDecryptWrapperTest {
     assertThat(decrypter.decrypt(encrypter0.encrypt(message, context), context)).isEqualTo(message);
     assertThat(decrypter.decrypt(encrypter1.encrypt(message, context), context)).isEqualTo(message);
     assertThat(decrypter.decrypt(encrypter2.encrypt(message, context), context)).isEqualTo(message);
+  }
+
+  @Test
+  public void decrypt_ignoresDisabledKeys() throws Exception {
+    HpkeParameters parameters =
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.NO_PREFIX)
+            .setKemId(HpkeParameters.KemId.DHKEM_P256_HKDF_SHA256)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+            .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
+            .build();
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.generateEntryFromParameters(parameters)
+                    .withRandomId()
+                    .setStatus(KeyStatus.DISABLED))
+            .addEntry(
+                KeysetHandle.generateEntryFromParameters(parameters).withRandomId().makePrimary())
+            .build();
+    HybridEncrypt encrypter0 =
+        HpkeEncrypt.create((HpkePublicKey) handle.getPublicKeysetHandle().getAt(0).getKey());
+
+    byte[] message = "data".getBytes(UTF_8);
+    byte[] context = "context".getBytes(UTF_8);
+    byte[] ciphertext = encrypter0.encrypt(message, context);
+
+    HybridDecrypt decrypter = handle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
+    assertThrows(GeneralSecurityException.class, () -> decrypter.decrypt(ciphertext, context));
   }
 
   /**
