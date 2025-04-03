@@ -21,6 +21,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Registry;
 import com.google.crypto.tink.RegistryConfiguration;
@@ -160,7 +161,7 @@ public class PrfSetWrapperTest {
   }
 
   @Test
-  public void getPrfs_containsOnlyExistingKeys() throws Exception {
+  public void getPrfs_containsOnlyEnabledKeys() throws Exception {
     MutablePrimitiveRegistry.resetGlobalInstanceTestOnly();
     PrfConfig.register();
 
@@ -168,6 +169,10 @@ public class PrfSetWrapperTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(hkdfPrfKey0).withFixedId(42).makePrimary())
             .addEntry(KeysetHandle.importKey(hkdfPrfKey1).withFixedId(43))
+            .addEntry(
+                KeysetHandle.importKey(hkdfPrfKeyFixed)
+                    .withFixedId(44)
+                    .setStatus(KeyStatus.DISABLED))
             .build();
     PrfSet prfSet = keysetHandle.getPrimitive(RegistryConfiguration.get(), PrfSet.class);
 
