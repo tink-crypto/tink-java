@@ -18,12 +18,16 @@ package com.google.crypto.tink.aead;
 
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.Configuration;
+import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.Key;
 import com.google.crypto.tink.aead.internal.ChaCha20Poly1305Jce;
 import com.google.crypto.tink.aead.internal.XAesGcm;
 import com.google.crypto.tink.aead.internal.XChaCha20Poly1305Jce;
 import com.google.crypto.tink.aead.subtle.AesGcmSiv;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.InternalConfiguration;
+import com.google.crypto.tink.internal.LegacyProtoKey;
+import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.subtle.AesEaxJce;
@@ -43,6 +47,7 @@ import java.security.GeneralSecurityException;
  *   <li>AesEax
  *   <li>ChaCha20Poly1305
  *   <li>XChaCha20Poly1305
+ *   <li>XAesGcm
  * </ul>
  */
 /* Placeholder for internally public; DO NOT CHANGE. */ class AeadConfigurationV0 {
@@ -67,9 +72,7 @@ import java.security.GeneralSecurityException;
           PrimitiveConstructor.create(AesEaxJce::create, AesEaxKey.class, Aead.class));
       builder.registerPrimitiveConstructor(
           PrimitiveConstructor.create(
-              AeadConfigurationV0::createChaCha20Poly1305,
-              ChaCha20Poly1305Key.class,
-              Aead.class));
+              AeadConfigurationV0::createChaCha20Poly1305, ChaCha20Poly1305Key.class, Aead.class));
       builder.registerPrimitiveConstructor(
           PrimitiveConstructor.create(
               AeadConfigurationV0::createXChaCha20Poly1305,
@@ -77,6 +80,11 @@ import java.security.GeneralSecurityException;
               Aead.class));
       builder.registerPrimitiveConstructor(
           PrimitiveConstructor.create(XAesGcm::create, XAesGcmKey.class, Aead.class));
+      // This does not include XAesGcm since we don't expect the users of XAesGcm to use the legacy
+      // API.
+      builder.registerPrimitiveConstructor(
+          PrimitiveConstructor.create(
+              AeadConfigurationV0::createAeadFromLegacyProtoKey, LegacyProtoKey.class, Aead.class));
 
       return InternalConfiguration.createFromPrimitiveRegistry(builder.build());
     } catch (GeneralSecurityException e) {
@@ -107,5 +115,41 @@ import java.security.GeneralSecurityException;
       return XChaCha20Poly1305Jce.create(key);
     }
     return XChaCha20Poly1305.create(key);
+  }
+
+  private static Aead createAeadFromLegacyProtoKey(LegacyProtoKey key)
+      throws GeneralSecurityException {
+    try {
+      Key parsedKey =
+          MutableSerializationRegistry.globalInstance()
+              .parseKey(
+                  key.getSerialization(InsecureSecretKeyAccess.get()),
+                  InsecureSecretKeyAccess.get());
+      if (parsedKey instanceof AesCtrHmacAeadKey) {
+        return EncryptThenAuthenticate.create((AesCtrHmacAeadKey) parsedKey);
+      }
+      if (parsedKey instanceof AesEaxKey) {
+        return AesEaxJce.create((AesEaxKey) parsedKey);
+      }
+      if (parsedKey instanceof AesGcmKey) {
+        return AesGcmJce.create((AesGcmKey) parsedKey);
+      }
+      if (parsedKey instanceof AesGcmSivKey) {
+        return AesGcmSiv.create((AesGcmSivKey) parsedKey);
+      }
+      if (parsedKey instanceof ChaCha20Poly1305Key) {
+        return createChaCha20Poly1305((ChaCha20Poly1305Key) parsedKey);
+      }
+      if (parsedKey instanceof XChaCha20Poly1305Key) {
+        return createXChaCha20Poly1305((XChaCha20Poly1305Key) parsedKey);
+      }
+      throw new GeneralSecurityException(
+          "Failed to re-parse LegacyProtoKey for Aead: the parsed key type is"
+              + parsedKey.getClass().getName()
+              + ", expected one of: AesCtrHmacKey, AesEaxKey, AesGcmKey, AesGcmSivKey,"
+              + " ChaCha20Poly1305Key, XChaCha20Poly1305Key.");
+    } catch (GeneralSecurityException e) {
+      throw new GeneralSecurityException("Failed to re-parse LegacyProtoKey for Aead", e);
+    }
   }
 }

@@ -20,6 +20,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.Aead;
+import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.aead.internal.AesCtrHmacAeadProtoSerialization;
 import com.google.crypto.tink.aead.internal.AesEaxProtoSerialization;
@@ -29,7 +30,12 @@ import com.google.crypto.tink.aead.internal.ChaCha20Poly1305ProtoSerialization;
 import com.google.crypto.tink.aead.internal.XAesGcmProtoSerialization;
 import com.google.crypto.tink.aead.internal.XChaCha20Poly1305ProtoSerialization;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.LegacyProtoKey;
+import com.google.crypto.tink.internal.ProtoKeySerialization;
+import com.google.crypto.tink.proto.HashType;
+import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.util.SecretBytes;
+import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import org.junit.Assume;
 import org.junit.Test;
@@ -37,6 +43,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
+@SuppressWarnings("UnnecessarilyFullyQualified") // Fully specifying proto types is more readable
 public class AeadConfigurationV0Test {
   @Test
   public void config_throwsIfInFipsMode() throws Exception {
@@ -194,6 +201,252 @@ public class AeadConfigurationV0Test {
             42);
     KeysetHandle keysetHandle =
         KeysetHandle.newBuilder().addEntry(KeysetHandle.importKey(key).makePrimary()).build();
+
+    assertThat(keysetHandle.getPrimitive(AeadConfigurationV0.get(), Aead.class)).isNotNull();
+  }
+
+  private final ByteString random32ByteKeyValue =
+      ByteString.copyFrom(SecretBytes.randomBytes(32).toByteArray(InsecureSecretKeyAccess.get()));
+
+  @Test
+  public void config_handlesAesCtrHmacLegacyKeyForAead() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "type.googleapis.com/google.crypto.tink.AesCtrHmacAeadKey",
+            com.google.crypto.tink.proto.AesCtrHmacAeadKey.newBuilder()
+                .setAesCtrKey(
+                    com.google.crypto.tink.proto.AesCtrKey.newBuilder()
+                        .setParams(
+                            com.google.crypto.tink.proto.AesCtrParams.newBuilder()
+                                .setIvSize(12)
+                                .build())
+                        .setKeyValue(random32ByteKeyValue)
+                        .build())
+                .setHmacKey(
+                    com.google.crypto.tink.proto.HmacKey.newBuilder()
+                        .setParams(
+                            com.google.crypto.tink.proto.HmacParams.newBuilder()
+                                .setTagSize(16)
+                                .setHash(HashType.SHA256)
+                                .build())
+                        .setKeyValue(random32ByteKeyValue)
+                        .build())
+                .build()
+                .toByteString(),
+            KeyMaterialType.SYMMETRIC,
+            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            null);
+
+    LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
+            .build();
+
+    AesCtrHmacAeadProtoSerialization.register();
+
+    assertThat(keysetHandle.getPrimitive(AeadConfigurationV0.get(), Aead.class)).isNotNull();
+  }
+
+  private final ByteString random24ByteKeyValue =
+      ByteString.copyFrom(SecretBytes.randomBytes(24).toByteArray(InsecureSecretKeyAccess.get()));
+
+  @Test
+  public void config_disallows24ByteAesKeyForAesCtrHmacAeadWithLegacyKey() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "type.googleapis.com/google.crypto.tink.AesCtrHmacAeadKey",
+            com.google.crypto.tink.proto.AesCtrHmacAeadKey.newBuilder()
+                .setAesCtrKey(
+                    com.google.crypto.tink.proto.AesCtrKey.newBuilder()
+                        .setParams(
+                            com.google.crypto.tink.proto.AesCtrParams.newBuilder()
+                                .setIvSize(12)
+                                .build())
+                        .setKeyValue(random24ByteKeyValue)
+                        .build())
+                .setHmacKey(
+                    com.google.crypto.tink.proto.HmacKey.newBuilder()
+                        .setParams(
+                            com.google.crypto.tink.proto.HmacParams.newBuilder()
+                                .setTagSize(16)
+                                .setHash(HashType.SHA256)
+                                .build())
+                        .setKeyValue(random32ByteKeyValue)
+                        .build())
+                .build()
+                .toByteString(),
+            KeyMaterialType.SYMMETRIC,
+            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            null);
+
+    LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
+            .build();
+
+    AesCtrHmacAeadProtoSerialization.register();
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> keysetHandle.getPrimitive(AeadConfigurationV0.get(), Aead.class));
+  }
+
+  @Test
+  public void config_handlesAesGcmLegacyKeyForAead() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "type.googleapis.com/google.crypto.tink.AesGcmKey",
+            com.google.crypto.tink.proto.AesGcmKey.newBuilder()
+                .setKeyValue(random32ByteKeyValue)
+                .build()
+                .toByteString(),
+            KeyMaterialType.SYMMETRIC,
+            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            null);
+    LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
+            .build();
+
+    AesGcmProtoSerialization.register();
+
+    assertThat(keysetHandle.getPrimitive(AeadConfigurationV0.get(), Aead.class)).isNotNull();
+  }
+
+  @Test
+  public void config_disallows24ByteAesKeyForAesGcmAeadWithLegacyKey() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "type.googleapis.com/google.crypto.tink.AesGcmKey",
+            com.google.crypto.tink.proto.AesGcmKey.newBuilder()
+                .setKeyValue(random24ByteKeyValue)
+                .build()
+                .toByteString(),
+            KeyMaterialType.SYMMETRIC,
+            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            null);
+    LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
+            .build();
+
+    AesGcmProtoSerialization.register();
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> keysetHandle.getPrimitive(AeadConfigurationV0.get(), Aead.class));
+  }
+
+  @Test
+  public void config_handlesAesGcmSivLegacyKeyForAead() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "type.googleapis.com/google.crypto.tink.AesGcmSivKey",
+            com.google.crypto.tink.proto.AesGcmSivKey.newBuilder()
+                .setKeyValue(random32ByteKeyValue)
+                .build()
+                .toByteString(),
+            KeyMaterialType.SYMMETRIC,
+            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            null);
+    LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
+            .build();
+
+    AesGcmSivProtoSerialization.register();
+
+    assertThat(keysetHandle.getPrimitive(AeadConfigurationV0.get(), Aead.class)).isNotNull();
+  }
+
+  @Test
+  public void config_handlesAesEaxLegacyKeyForAead() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "type.googleapis.com/google.crypto.tink.AesEaxKey",
+            com.google.crypto.tink.proto.AesEaxKey.newBuilder()
+                .setParams(
+                    com.google.crypto.tink.proto.AesEaxParams.newBuilder().setIvSize(16).build())
+                .setKeyValue(random32ByteKeyValue)
+                .build()
+                .toByteString(),
+            KeyMaterialType.SYMMETRIC,
+            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            null);
+    LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
+            .build();
+
+    AesEaxProtoSerialization.register();
+
+    assertThat(keysetHandle.getPrimitive(AeadConfigurationV0.get(), Aead.class)).isNotNull();
+  }
+
+  @Test
+  public void config_handlesChaCha20Poly1305LegacyKeyForAead() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "type.googleapis.com/google.crypto.tink.ChaCha20Poly1305Key",
+            com.google.crypto.tink.proto.ChaCha20Poly1305Key.newBuilder()
+                .setKeyValue(random32ByteKeyValue)
+                .build()
+                .toByteString(),
+            KeyMaterialType.SYMMETRIC,
+            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            null);
+    LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
+            .build();
+
+    ChaCha20Poly1305ProtoSerialization.register();
+
+    assertThat(keysetHandle.getPrimitive(AeadConfigurationV0.get(), Aead.class)).isNotNull();
+  }
+
+  @Test
+  public void config_handlesXChaCha20Poly1305LegacyKeyForAead() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key",
+            com.google.crypto.tink.proto.XChaCha20Poly1305Key.newBuilder()
+                .setKeyValue(random32ByteKeyValue)
+                .build()
+                .toByteString(),
+            KeyMaterialType.SYMMETRIC,
+            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            null);
+    LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
+            .build();
+
+    XChaCha20Poly1305ProtoSerialization.register();
 
     assertThat(keysetHandle.getPrimitive(AeadConfigurationV0.get(), Aead.class)).isNotNull();
   }
