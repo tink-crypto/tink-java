@@ -18,6 +18,7 @@ package com.google.crypto.tink.aead;
 
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.Key;
+import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.aead.internal.LegacyFullAead;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
@@ -29,7 +30,6 @@ import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrefixMap;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
-import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.util.Bytes;
 import java.security.GeneralSecurityException;
@@ -128,19 +128,13 @@ public class AeadWrapper implements PrimitiveWrapper<Aead, Aead> {
       MonitoringAnnotations annotations,
       PrimitiveFactory<Aead> factory)
       throws GeneralSecurityException {
-    return legacyWrap(PrimitiveSet.legacyRemoveNonEnabledKeys(keysetHandle), annotations, factory);
-  }
-
-  private Aead legacyWrap(
-      KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations annotations,
-      PrimitiveFactory<Aead> factory)
-      throws GeneralSecurityException {
     PrefixMap.Builder<AeadWithId> builder = new PrefixMap.Builder<>();
     for (int i = 0; i < keysetHandle.size(); i++) {
       KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
-      builder.put(
-          getOutputPrefix(entry.getKey()), new AeadWithId(factory.create(entry), entry.getId()));
+      if (entry.getStatus().equals(KeyStatus.ENABLED)) {
+        builder.put(
+            getOutputPrefix(entry.getKey()), new AeadWithId(factory.create(entry), entry.getId()));
+      }
     }
     MonitoringClient.Logger encLogger;
     MonitoringClient.Logger decLogger;

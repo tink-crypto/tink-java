@@ -18,6 +18,7 @@ package com.google.crypto.tink.daead;
 
 import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.Key;
+import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.daead.internal.LegacyFullDeterministicAead;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
@@ -29,7 +30,6 @@ import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrefixMap;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
-import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.util.Bytes;
 import java.security.GeneralSecurityException;
@@ -127,14 +127,6 @@ public class DeterministicAeadWrapper
 
   @Override
   public DeterministicAead wrap(
-      KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations annotations,
-      PrimitiveFactory<DeterministicAead> factory)
-      throws GeneralSecurityException {
-    return legacyWrap(PrimitiveSet.legacyRemoveNonEnabledKeys(keysetHandle), annotations, factory);
-  }
-
-  private DeterministicAead legacyWrap(
       KeysetHandleInterface handle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<DeterministicAead> factory)
@@ -142,10 +134,12 @@ public class DeterministicAeadWrapper
     PrefixMap.Builder<DeterministicAeadWithId> builder = new PrefixMap.Builder<>();
     for (int i = 0; i < handle.size(); i++) {
       KeysetHandleInterface.Entry entry = handle.getAt(i);
-      DeterministicAead deterministicAead = factory.create(entry);
-      builder.put(
-          getOutputPrefix(entry.getKey()),
-          new DeterministicAeadWithId(deterministicAead, entry.getId()));
+      if (entry.getStatus().equals(KeyStatus.ENABLED)) {
+        DeterministicAead deterministicAead = factory.create(entry);
+        builder.put(
+            getOutputPrefix(entry.getKey()),
+            new DeterministicAeadWithId(deterministicAead, entry.getId()));
+      }
     }
     MonitoringClient.Logger encLogger;
     MonitoringClient.Logger decLogger;

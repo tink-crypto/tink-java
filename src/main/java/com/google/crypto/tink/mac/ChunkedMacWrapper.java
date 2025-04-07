@@ -17,13 +17,13 @@
 package com.google.crypto.tink.mac;
 
 import com.google.crypto.tink.Key;
+import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrefixMap;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
-import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
@@ -137,12 +137,6 @@ public class ChunkedMacWrapper implements PrimitiveWrapper<ChunkedMac, ChunkedMa
       MonitoringAnnotations annotations,
       PrimitiveFactory<ChunkedMac> factory)
       throws GeneralSecurityException {
-    return legacyWrap(PrimitiveSet.legacyRemoveNonEnabledKeys(keysetHandle), factory);
-  }
-
-  private ChunkedMac legacyWrap(
-      KeysetHandleInterface keysetHandle, PrimitiveFactory<ChunkedMac> factory)
-      throws GeneralSecurityException {
     KeysetHandleInterface.Entry primaryEntry = keysetHandle.getPrimary();
     if (primaryEntry == null) {
       throw new GeneralSecurityException("no primary in primitive set");
@@ -150,8 +144,10 @@ public class ChunkedMacWrapper implements PrimitiveWrapper<ChunkedMac, ChunkedMa
     PrefixMap.Builder<ChunkedMac> allChunkedMacsBuilder = new PrefixMap.Builder<ChunkedMac>();
     for (int i = 0; i < keysetHandle.size(); i++) {
       KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
-      ChunkedMac chunkedMac = factory.create(entry);
-      allChunkedMacsBuilder.put(getOutputPrefix(entry.getKey()), chunkedMac);
+      if (entry.getStatus().equals(KeyStatus.ENABLED)) {
+        ChunkedMac chunkedMac = factory.create(entry);
+        allChunkedMacsBuilder.put(getOutputPrefix(entry.getKey()), chunkedMac);
+      }
     }
     ChunkedMac primaryChunkedMac = factory.create(primaryEntry);
 
