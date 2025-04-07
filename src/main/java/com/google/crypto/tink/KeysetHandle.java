@@ -23,7 +23,6 @@ import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
 import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
-import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.proto.EncryptedKeyset;
 import com.google.crypto.tink.proto.KeyData;
@@ -1097,7 +1096,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
                 + " failed, unable to get primitive");
       }
     }
-    return config.wrap(PrimitiveSet.legacyRemoveNonEnabledKeys(this), annotations, classObject);
+    return config.wrap(this, annotations, classObject);
   }
 
   /**

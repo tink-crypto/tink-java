@@ -22,6 +22,7 @@ import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
+import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
@@ -115,7 +116,15 @@ class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
   JwtMacWrapper() {}
 
   @Override
-  public JwtMac legacyWrap(
+  public JwtMac wrap(
+      KeysetHandleInterface keysetHandle,
+      MonitoringAnnotations annotations,
+      PrimitiveFactory<JwtMac> factory)
+      throws GeneralSecurityException {
+    return legacyWrap(PrimitiveSet.legacyRemoveNonEnabledKeys(keysetHandle), annotations, factory);
+  }
+
+  private JwtMac legacyWrap(
       KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<JwtMac> factory)

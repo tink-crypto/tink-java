@@ -26,6 +26,7 @@ import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
+import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import java.security.GeneralSecurityException;
 
@@ -83,7 +84,15 @@ public class HybridEncryptWrapper implements PrimitiveWrapper<HybridEncrypt, Hyb
   HybridEncryptWrapper() {}
 
   @Override
-  public HybridEncrypt legacyWrap(
+  public HybridEncrypt wrap(
+      KeysetHandleInterface keysetHandle,
+      MonitoringAnnotations annotations,
+      PrimitiveFactory<HybridEncrypt> factory)
+      throws GeneralSecurityException {
+    return legacyWrap(PrimitiveSet.legacyRemoveNonEnabledKeys(keysetHandle), annotations, factory);
+  }
+
+  private HybridEncrypt legacyWrap(
       KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<HybridEncrypt> factory)

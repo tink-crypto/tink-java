@@ -186,7 +186,7 @@ public class LegacyFullPrfIntegrationTest {
     }
 
     @Override
-    public PrfSet legacyWrap(
+    public PrfSet wrap(
         KeysetHandleInterface keysetHandle,
         MonitoringAnnotations annotations,
         PrimitiveFactory<Prf> factory)

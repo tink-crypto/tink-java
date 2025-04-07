@@ -22,6 +22,7 @@ import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
+import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
@@ -76,7 +77,15 @@ class JwtPublicKeySignWrapper implements PrimitiveWrapper<JwtPublicKeySign, JwtP
   }
 
   @Override
-  public JwtPublicKeySign legacyWrap(
+  public JwtPublicKeySign wrap(
+      KeysetHandleInterface keysetHandle,
+      MonitoringAnnotations annotations,
+      PrimitiveFactory<JwtPublicKeySign> factory)
+      throws GeneralSecurityException {
+    return legacyWrap(PrimitiveSet.legacyRemoveNonEnabledKeys(keysetHandle), annotations, factory);
+  }
+
+  private JwtPublicKeySign legacyWrap(
       KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<JwtPublicKeySign> factory)

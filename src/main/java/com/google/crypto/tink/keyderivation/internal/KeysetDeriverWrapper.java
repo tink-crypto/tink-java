@@ -21,6 +21,7 @@ import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
+import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.keyderivation.KeysetDeriver;
 import com.google.errorprone.annotations.Immutable;
@@ -88,10 +89,16 @@ public final class KeysetDeriverWrapper implements PrimitiveWrapper<KeyDeriver, 
   KeysetDeriverWrapper() {}
 
   @Override
-  public KeysetDeriver legacyWrap(
+  public KeysetDeriver wrap(
       KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<KeyDeriver> factory)
+      throws GeneralSecurityException {
+    return legacyWrap(PrimitiveSet.legacyRemoveNonEnabledKeys(keysetHandle), factory);
+  }
+
+  private KeysetDeriver legacyWrap(
+      KeysetHandleInterface keysetHandle, PrimitiveFactory<KeyDeriver> factory)
       throws GeneralSecurityException {
     validate(keysetHandle);
     List<DeriverWithId> derivers = new ArrayList<>(keysetHandle.size());

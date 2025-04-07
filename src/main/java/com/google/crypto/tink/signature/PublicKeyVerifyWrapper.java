@@ -28,6 +28,7 @@ import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrefixMap;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
+import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.signature.internal.LegacyFullVerify;
 import com.google.crypto.tink.util.Bytes;
@@ -105,7 +106,15 @@ public class PublicKeyVerifyWrapper implements PrimitiveWrapper<PublicKeyVerify,
   }
 
   @Override
-  public PublicKeyVerify legacyWrap(
+  public PublicKeyVerify wrap(
+      KeysetHandleInterface keysetHandle,
+      MonitoringAnnotations annotations,
+      PrimitiveFactory<PublicKeyVerify> factory)
+      throws GeneralSecurityException {
+    return legacyWrap(PrimitiveSet.legacyRemoveNonEnabledKeys(keysetHandle), annotations, factory);
+  }
+
+  private PublicKeyVerify legacyWrap(
       KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<PublicKeyVerify> factory)

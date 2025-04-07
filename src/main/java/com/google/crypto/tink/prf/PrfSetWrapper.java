@@ -24,6 +24,7 @@ import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
+import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.prf.internal.LegacyFullPrf;
 import com.google.errorprone.annotations.Immutable;
@@ -96,7 +97,15 @@ public class PrfSetWrapper implements PrimitiveWrapper<Prf, PrfSet> {
   }
 
   @Override
-  public PrfSet legacyWrap(
+  public PrfSet wrap(
+      KeysetHandleInterface keysetHandle,
+      MonitoringAnnotations annotations,
+      PrimitiveFactory<Prf> factory)
+      throws GeneralSecurityException {
+    return legacyWrap(PrimitiveSet.legacyRemoveNonEnabledKeys(keysetHandle), annotations, factory);
+  }
+
+  private PrfSet legacyWrap(
       KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<Prf> factory)

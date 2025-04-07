@@ -41,12 +41,8 @@ public interface PrimitiveWrapper<B, P> {
    * Wraps a {@code PrimitiveSet} and returns a single instance.
    *
    * <p>This method gets called when a new primitive is created.
-   *
-   * <p>Note: this function has "legacy" in the name because the passed in {@code keysetHandle} only
-   * currently only contains active keys. We will introduce a function "wrap" without this property
-   * later.
    */
-  P legacyWrap(
+  P wrap(
       KeysetHandleInterface keysetHandle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<B> primitiveFactory)

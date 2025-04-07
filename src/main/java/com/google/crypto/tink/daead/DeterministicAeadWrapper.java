@@ -29,6 +29,7 @@ import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrefixMap;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
+import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.util.Bytes;
 import java.security.GeneralSecurityException;
@@ -125,7 +126,15 @@ public class DeterministicAeadWrapper
   DeterministicAeadWrapper() {}
 
   @Override
-  public DeterministicAead legacyWrap(
+  public DeterministicAead wrap(
+      KeysetHandleInterface keysetHandle,
+      MonitoringAnnotations annotations,
+      PrimitiveFactory<DeterministicAead> factory)
+      throws GeneralSecurityException {
+    return legacyWrap(PrimitiveSet.legacyRemoveNonEnabledKeys(keysetHandle), annotations, factory);
+  }
+
+  private DeterministicAead legacyWrap(
       KeysetHandleInterface handle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<DeterministicAead> factory)
