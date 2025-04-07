@@ -17,9 +17,13 @@
 package com.google.crypto.tink.mac;
 
 import com.google.crypto.tink.Configuration;
+import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Mac;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.InternalConfiguration;
+import com.google.crypto.tink.internal.LegacyProtoKey;
+import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.mac.internal.ChunkedAesCmacImpl;
@@ -57,7 +61,14 @@ import java.security.GeneralSecurityException;
               MacConfigurationV0::createChunkedAesCmac, AesCmacKey.class, ChunkedMac.class));
       builder.registerPrimitiveConstructor(
           PrimitiveConstructor.create(ChunkedHmacImpl::new, HmacKey.class, ChunkedMac.class));
-
+      builder.registerPrimitiveConstructor(
+          PrimitiveConstructor.create(
+              MacConfigurationV0::createMacFromLegacyProtoKey, LegacyProtoKey.class, Mac.class));
+      builder.registerPrimitiveConstructor(
+          PrimitiveConstructor.create(
+              MacConfigurationV0::createChunkedMacFromLegacyProtoKey,
+              LegacyProtoKey.class,
+              ChunkedMac.class));
       return InternalConfiguration.createFromPrimitiveRegistry(builder.build());
     } catch (GeneralSecurityException e) {
       throw new IllegalStateException(e);
@@ -87,5 +98,53 @@ import java.security.GeneralSecurityException;
       throw new GeneralSecurityException("AesCmac key size is not 32 bytes");
     }
     return PrfMac.create(key);
+  }
+
+  private static Mac createMacFromLegacyProtoKey(LegacyProtoKey key)
+      throws GeneralSecurityException {
+    Key parsedKey;
+    try {
+      parsedKey =
+          MutableSerializationRegistry.globalInstance()
+              .parseKey(
+                  key.getSerialization(InsecureSecretKeyAccess.get()),
+                  InsecureSecretKeyAccess.get());
+    } catch (GeneralSecurityException e) {
+      throw new GeneralSecurityException("Failed to re-parse LegacyProtoKey for Mac", e);
+    }
+    if (parsedKey instanceof AesCmacKey) {
+      return createAesCmac((AesCmacKey) parsedKey);
+    }
+    if (parsedKey instanceof HmacKey) {
+      return PrfMac.create((HmacKey) parsedKey);
+    }
+    throw new GeneralSecurityException(
+        "Failed to re-parse LegacyProtoKey for Mac: the parsed key type is"
+            + parsedKey.getClass().getName()
+            + ", expected HmacKey or AesCmacKey");
+  }
+
+  private static ChunkedMac createChunkedMacFromLegacyProtoKey(LegacyProtoKey key)
+      throws GeneralSecurityException {
+    Key parsedKey;
+    try {
+      parsedKey =
+          MutableSerializationRegistry.globalInstance()
+              .parseKey(
+                  key.getSerialization(InsecureSecretKeyAccess.get()),
+                  InsecureSecretKeyAccess.get());
+    } catch (GeneralSecurityException e) {
+      throw new GeneralSecurityException("Failed to re-parse LegacyProtoKey for ChunkedMac", e);
+    }
+    if (parsedKey instanceof AesCmacKey) {
+      return createChunkedAesCmac((AesCmacKey) parsedKey);
+    }
+    if (parsedKey instanceof HmacKey) {
+      return new ChunkedHmacImpl((HmacKey) parsedKey);
+    }
+    throw new GeneralSecurityException(
+        "Failed to re-parse LegacyProtoKey for ChunkedMac: the parsed key type is"
+            + parsedKey.getClass().getName()
+            + ", expected HmacKey or AesCmacKey");
   }
 }
