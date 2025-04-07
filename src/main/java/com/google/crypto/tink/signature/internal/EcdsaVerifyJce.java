@@ -43,6 +43,7 @@ import java.security.spec.ECPoint;
 import java.security.spec.ECPublicKeySpec;
 import java.security.spec.EllipticCurve;
 import java.util.Arrays;
+import javax.annotation.Nullable;
 
 /**
  * ECDSA verifying with JCE.
@@ -70,6 +71,7 @@ public final class EcdsaVerifyJce implements PublicKeyVerify {
   private final byte[] messageSuffix;
 
   @SuppressWarnings("Immutable")
+  @Nullable
   private final Provider provider;
 
   // This converter is not used with a proto but rather with an ordinary enum type.
@@ -92,10 +94,26 @@ public final class EcdsaVerifyJce implements PublicKeyVerify {
           .add(CurveType.NIST_P521, EcdsaParameters.CurveType.NIST_P521)
           .build();
 
-  @AccessesPartialKey
   public static PublicKeyVerify create(EcdsaPublicKey key) throws GeneralSecurityException {
     Provider provider = ConscryptUtil.providerOrNull();
+    return createWithProviderOrNull(key, provider);
+  }
 
+  /**
+   * Creates a {@link com.google.crypto.tink.PublicKeyVerify} using a {@link
+   * java.security.Provider}. The provider should be either the Conscrypt or the OpenJDK provider.
+   */
+  public static PublicKeyVerify createWithProvider(EcdsaPublicKey key, Provider provider)
+      throws GeneralSecurityException {
+    if (provider == null) {
+      throw new NullPointerException("provider must not be null");
+    }
+    return createWithProviderOrNull(key, provider);
+  }
+
+  @AccessesPartialKey
+  public static PublicKeyVerify createWithProviderOrNull(
+      EcdsaPublicKey key, @Nullable Provider provider) throws GeneralSecurityException {
     ECParameterSpec ecParams =
         EllipticCurves.getCurveSpec(
             CURVE_TYPE_CONVERTER.toProtoEnum(key.getParameters().getCurveType()));

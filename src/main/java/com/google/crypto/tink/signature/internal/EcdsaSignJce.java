@@ -39,6 +39,7 @@ import java.security.interfaces.ECPrivateKey;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPrivateKeySpec;
 import java.security.spec.EllipticCurve;
+import javax.annotation.Nullable;
 
 /**
  * ECDSA signing with JCE.
@@ -66,6 +67,7 @@ public final class EcdsaSignJce implements PublicKeySign {
   private final byte[] messageSuffix;
 
   @SuppressWarnings("Immutable")
+  @Nullable
   private final Provider provider;
 
   private EcdsaSignJce(
@@ -94,16 +96,32 @@ public final class EcdsaSignJce implements PublicKeySign {
     this(privateKey, hash, encoding, EMPTY, EMPTY, ConscryptUtil.providerOrNull());
   }
 
-  @AccessesPartialKey
   public static PublicKeySign create(EcdsaPrivateKey key) throws GeneralSecurityException {
+    Provider provider = ConscryptUtil.providerOrNull();
+    return createWithProviderOrNull(key, provider);
+  }
+
+  /**
+   * Creates a {@link com.google.crypto.tink.PublicKeySign} using a {@link java.security.Provider}.
+   * The provider should be either the Conscrypt or the OpenJDK provider.
+   */
+  public static PublicKeySign createWithProvider(EcdsaPrivateKey key, Provider provider)
+      throws GeneralSecurityException {
+    if (provider == null) {
+      throw new NullPointerException("provider must not be null");
+    }
+    return createWithProviderOrNull(key, provider);
+  }
+
+  @AccessesPartialKey
+  private static PublicKeySign createWithProviderOrNull(
+      EcdsaPrivateKey key, @Nullable Provider provider) throws GeneralSecurityException {
     HashType hashType =
         EcdsaVerifyJce.HASH_TYPE_CONVERTER.toProtoEnum(key.getParameters().getHashType());
     EcdsaEncoding ecdsaEncoding =
         EcdsaVerifyJce.ENCODING_CONVERTER.toProtoEnum(key.getParameters().getSignatureEncoding());
     CurveType curveType =
         EcdsaVerifyJce.CURVE_TYPE_CONVERTER.toProtoEnum(key.getParameters().getCurveType());
-
-    Provider provider = ConscryptUtil.providerOrNull();
     ECParameterSpec ecParams = EllipticCurves.getCurveSpec(curveType);
     ECPrivateKeySpec spec =
         new ECPrivateKeySpec(
