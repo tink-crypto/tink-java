@@ -321,3 +321,35 @@ java_library(
         "//src/main/java/com/google/crypto/tink/subtle:aes_siv",
     ],
 )
+
+android_library(
+    name = "deterministic_aead_configuration_v1-android",
+    srcs = ["DeterministicAeadConfigurationV1.java"],
+    deps = [
+        ":aes_siv_key-android",
+        ":deterministic_aead_wrapper-android",
+        "//src/main/java/com/google/crypto/tink:configuration-android",
+        "//src/main/java/com/google/crypto/tink:deterministic_aead-android",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util-android",
+        "//src/main/java/com/google/crypto/tink/internal:internal_configuration-android",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_constructor-android",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_registry-android",
+        "//src/main/java/com/google/crypto/tink/subtle:aes_siv-android",
+    ],
+)
+
+java_library(
+    name = "deterministic_aead_configuration_v1",
+    srcs = ["DeterministicAeadConfigurationV1.java"],
+    deps = [
+        ":aes_siv_key",
+        ":deterministic_aead_wrapper",
+        "//src/main/java/com/google/crypto/tink:configuration",
+        "//src/main/java/com/google/crypto/tink:deterministic_aead",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
+        "//src/main/java/com/google/crypto/tink/internal:internal_configuration",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_constructor",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_registry",
+        "//src/main/java/com/google/crypto/tink/subtle:aes_siv",
+    ],
+)
