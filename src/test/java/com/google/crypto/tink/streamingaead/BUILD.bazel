@@ -303,3 +303,24 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "StreamingAeadConfigurationV1Test",
+    size = "small",
+    srcs = ["StreamingAeadConfigurationV1Test.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:registry_cluster",
+        "//src/main/java/com/google/crypto/tink:streaming_aead",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
+        "//src/main/java/com/google/crypto/tink/streamingaead:aes_ctr_hmac_streaming_key",
+        "//src/main/java/com/google/crypto/tink/streamingaead:aes_ctr_hmac_streaming_parameters",
+        "//src/main/java/com/google/crypto/tink/streamingaead:aes_gcm_hkdf_streaming_key",
+        "//src/main/java/com/google/crypto/tink/streamingaead:aes_gcm_hkdf_streaming_parameters",
+        "//src/main/java/com/google/crypto/tink/streamingaead:streaming_aead_configuration_v1",
+        "//src/main/java/com/google/crypto/tink/streamingaead/internal:aes_ctr_hmac_streaming_proto_serialization",
+        "//src/main/java/com/google/crypto/tink/streamingaead/internal:aes_gcm_hkdf_streaming_proto_serialization",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
