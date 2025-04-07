@@ -46,7 +46,7 @@ import java.security.InvalidAlgorithmParameterException;
       DeterministicAeadWrapper.registerToInternalPrimitiveRegistry(builder);
       builder.registerPrimitiveConstructor(
           PrimitiveConstructor.create(
-              DeterministicAeadConfigurationV1::createDeterministicAead,
+              DeterministicAeadConfigurationV1::createAesSiv,
               AesSivKey.class,
               DeterministicAead.class));
 
@@ -67,7 +67,7 @@ import java.security.InvalidAlgorithmParameterException;
   // We only allow 64-byte keys for AesSiv.
   private static final int KEY_SIZE_IN_BYTES = 64;
 
-  private static DeterministicAead createDeterministicAead(AesSivKey key)
+  private static DeterministicAead createAesSiv(AesSivKey key)
       throws GeneralSecurityException {
     if (key.getParameters().getKeySizeBytes() != KEY_SIZE_IN_BYTES) {
       throw new InvalidAlgorithmParameterException(
