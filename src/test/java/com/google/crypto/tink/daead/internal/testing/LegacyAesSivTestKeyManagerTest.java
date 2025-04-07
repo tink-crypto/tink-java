@@ -21,10 +21,9 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.DeterministicAead;
-import com.google.crypto.tink.Registry;
+import com.google.crypto.tink.KeyManager;
+import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.proto.AesSivKey;
-import com.google.crypto.tink.proto.KeyData;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.subtle.AesSiv;
 import com.google.crypto.tink.subtle.Random;
 import com.google.protobuf.ByteString;
@@ -51,14 +50,11 @@ public class LegacyAesSivTestKeyManagerTest {
             .setKeyValue(ByteString.copyFrom(Random.randBytes(64)))
             .setVersion(0)
             .build();
-    KeyData keyData =
-        KeyData.newBuilder()
-            .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
-            .setTypeUrl(TYPE_URL)
-            .setValue(key.toByteString())
-            .build();
 
-    DeterministicAead daead = Registry.getPrimitive(keyData, DeterministicAead.class);
+    KeyManager<DeterministicAead> manager =
+        KeyManagerRegistry.globalInstance().getKeyManager(TYPE_URL, DeterministicAead.class);
+
+    DeterministicAead daead = manager.getPrimitive(key.toByteString());
 
     assertThat(daead).isNotNull();
     assertThat(daead).isInstanceOf(AesSiv.class);
@@ -71,14 +67,12 @@ public class LegacyAesSivTestKeyManagerTest {
             .setKeyValue(ByteString.copyFrom(Random.randBytes(64)))
             .setVersion(0)
             .build();
-    KeyData keyData =
-        KeyData.newBuilder()
-            .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
-            .setTypeUrl(TYPE_URL)
-            .setValue(key.toByteString())
-            .build();
 
-    DeterministicAead daead = Registry.getPrimitive(keyData, DeterministicAead.class);
+    KeyManager<DeterministicAead> manager =
+        KeyManagerRegistry.globalInstance().getKeyManager(TYPE_URL, DeterministicAead.class);
+
+    DeterministicAead daead = manager.getPrimitive(key.toByteString());
+
     byte[] plaintext = Random.randBytes(20);
     byte[] associatedData = Random.randBytes(20);
     byte[] ciphertext = daead.encryptDeterministically(plaintext, associatedData);
@@ -98,15 +92,9 @@ public class LegacyAesSivTestKeyManagerTest {
             .setKeyValue(ByteString.copyFrom(Random.randBytes(32)))
             .setVersion(0)
             .build();
-    KeyData keyData =
-        KeyData.newBuilder()
-            .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
-            .setTypeUrl(TYPE_URL)
-            .setValue(key.toByteString())
-            .build();
+    KeyManager<DeterministicAead> manager =
+        KeyManagerRegistry.globalInstance().getKeyManager(TYPE_URL, DeterministicAead.class);
 
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> Registry.getPrimitive(keyData, DeterministicAead.class));
+    assertThrows(GeneralSecurityException.class, () -> manager.getPrimitive(key.toByteString()));
   }
 }

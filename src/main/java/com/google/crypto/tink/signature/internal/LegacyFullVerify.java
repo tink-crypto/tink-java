@@ -19,12 +19,12 @@ package com.google.crypto.tink.signature.internal;
 import static com.google.crypto.tink.internal.Util.isPrefix;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.PublicKeyVerify;
-import com.google.crypto.tink.Registry;
+import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.OutputPrefixUtil;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
-import com.google.crypto.tink.proto.KeyData;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.subtle.Bytes;
 import com.google.errorprone.annotations.Immutable;
@@ -41,13 +41,11 @@ public final class LegacyFullVerify implements PublicKeyVerify {
   public static PublicKeyVerify create(LegacyProtoKey key) throws GeneralSecurityException {
     ProtoKeySerialization protoKeySerialization =
         key.getSerialization(InsecureSecretKeyAccess.get());
-    KeyData keyData =
-        KeyData.newBuilder()
-            .setTypeUrl(protoKeySerialization.getTypeUrl())
-            .setValue(protoKeySerialization.getValue())
-            .setKeyMaterialType(protoKeySerialization.getKeyMaterialType())
-            .build();
-    PublicKeyVerify rawVerifier = Registry.getPrimitive(keyData, PublicKeyVerify.class);
+    KeyManager<PublicKeyVerify> manager =
+        KeyManagerRegistry.globalInstance()
+            .getKeyManager(protoKeySerialization.getTypeUrl(), PublicKeyVerify.class);
+
+    PublicKeyVerify rawVerifier = manager.getPrimitive(protoKeySerialization.getValue());
     return new LegacyFullVerify(
         rawVerifier,
         getOutputPrefix(protoKeySerialization),

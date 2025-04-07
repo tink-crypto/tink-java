@@ -22,9 +22,9 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
-import com.google.crypto.tink.Registry;
 import com.google.crypto.tink.mac.HmacKey;
 import com.google.crypto.tink.mac.HmacParameters;
 import com.google.crypto.tink.mac.HmacParameters.HashType;
@@ -118,7 +118,11 @@ public class RegistryConfigurationTest {
   public void wrap_matchesRegistry() throws Exception {
     byte[] plaintext = "plaintext".getBytes(UTF_8);
 
-    Mac registryMac = Registry.getPrimitive(rawKeyData, Mac.class);
+    KeyManager<Mac> manager =
+        KeyManagerRegistry.globalInstance().getKeyManager(rawKeyData.getTypeUrl(), Mac.class);
+
+    Mac registryMac = manager.getPrimitive(rawKeyData.getValue());
+
     // The following relies on the fact that internally LegacyFullMac uses RegistryConfiguration.
     Mac wrappedConfigurationMac =
         RegistryConfiguration.get()

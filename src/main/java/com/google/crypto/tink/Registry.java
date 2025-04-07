@@ -433,7 +433,10 @@ public final class Registry {
    * KeyManager#getPrimitive} with {@code serialized} as the parameter.
    *
    * @return a new primitive
+   * @deprecated Use the standard API instead or file an issue on
+   *     https://github.com/tink-crypto/tink-java, explaining your use case.
    */
+  @Deprecated
   public static <P> P getPrimitive(
       String typeUrl, ByteString serializedKey, Class<P> primitiveClass)
       throws GeneralSecurityException {
@@ -449,8 +452,12 @@ public final class Registry {
    * KeyManager#getPrimitive} with {@code serialized} as the parameter.
    *
    * @return a new primitive
+   * @deprecated Use the standard API instead or file an issue on
+   *     https://github.com/tink-crypto/tink-java, explaining your use case.
    */
-  public static <P> P getPrimitive(String typeUrl, byte[] serializedKey, Class<P> primitiveClass)
+  @Deprecated
+  public static <P> P getPrimitive(
+      String typeUrl, byte[] serializedKey, Class<P> primitiveClass)
       throws GeneralSecurityException {
     return getPrimitive(typeUrl, ByteString.copyFrom(serializedKey), primitiveClass);
   }
@@ -462,7 +469,10 @@ public final class Registry {
    * KeyManager#getPrimitive} with {@code keyData.value} as the parameter.
    *
    * @return a new primitive
+   * @deprecated Use the standard API instead or file an issue on
+   *     https://github.com/tink-crypto/tink-java, explaining your use case.
    */
+  @Deprecated
   public static <P> P getPrimitive(KeyData keyData, Class<P> primitiveClass)
       throws GeneralSecurityException {
     return getPrimitive(keyData.getTypeUrl(), keyData.getValue(), primitiveClass);

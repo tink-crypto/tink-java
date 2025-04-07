@@ -17,11 +17,11 @@
 package com.google.crypto.tink.prf.internal;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.Registry;
+import com.google.crypto.tink.KeyManager;
+import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.prf.Prf;
-import com.google.crypto.tink.proto.KeyData;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 
@@ -41,13 +41,11 @@ public class LegacyFullPrf implements Prf {
   public static Prf create(LegacyProtoKey key) throws GeneralSecurityException {
     ProtoKeySerialization protoKeySerialization =
         key.getSerialization(InsecureSecretKeyAccess.get());
-    KeyData keyData =
-        KeyData.newBuilder()
-            .setTypeUrl(protoKeySerialization.getTypeUrl())
-            .setValue(protoKeySerialization.getValue())
-            .setKeyMaterialType(protoKeySerialization.getKeyMaterialType())
-            .build();
-    return new LegacyFullPrf(Registry.getPrimitive(keyData, Prf.class));
+    KeyManager<Prf> manager =
+        KeyManagerRegistry.globalInstance()
+            .getKeyManager(protoKeySerialization.getTypeUrl(), Prf.class);
+
+    return new LegacyFullPrf(manager.getPrimitive(protoKeySerialization.getValue()));
   }
 
   private LegacyFullPrf(Prf rawPrf) {

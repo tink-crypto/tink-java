@@ -21,11 +21,11 @@ import static com.google.crypto.tink.internal.Util.isPrefix;
 import com.google.crypto.tink.CryptoFormat;
 import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.Registry;
+import com.google.crypto.tink.KeyManager;
+import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.OutputPrefixUtil;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
-import com.google.crypto.tink.proto.KeyData;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.subtle.Bytes;
 import java.security.GeneralSecurityException;
@@ -48,14 +48,11 @@ public class LegacyFullDeterministicAead implements DeterministicAead {
   public static DeterministicAead create(LegacyProtoKey key) throws GeneralSecurityException {
     ProtoKeySerialization protoKeySerialization =
         key.getSerialization(InsecureSecretKeyAccess.get());
-    KeyData keyData =
-        KeyData.newBuilder()
-            .setTypeUrl(protoKeySerialization.getTypeUrl())
-            .setValue(protoKeySerialization.getValue())
-            .setKeyMaterialType(protoKeySerialization.getKeyMaterialType())
-            .build();
+    KeyManager<DeterministicAead> manager =
+        KeyManagerRegistry.globalInstance()
+            .getKeyManager(protoKeySerialization.getTypeUrl(), DeterministicAead.class);
 
-    DeterministicAead rawPrimitive = Registry.getPrimitive(keyData, DeterministicAead.class);
+    DeterministicAead rawPrimitive = manager.getPrimitive(protoKeySerialization.getValue());
 
     OutputPrefixType outputPrefixType = protoKeySerialization.getOutputPrefixType();
     byte[] identifier;

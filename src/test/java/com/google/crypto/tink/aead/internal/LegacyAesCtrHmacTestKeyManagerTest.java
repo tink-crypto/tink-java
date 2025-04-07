@@ -21,11 +21,12 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.Aead;
+import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.KeysetHandle;
-import com.google.crypto.tink.Registry;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoParametersFormat;
 import com.google.crypto.tink.aead.AeadWrapper;
+import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.proto.AesCtrHmacAeadKey;
 import com.google.crypto.tink.proto.AesCtrKey;
 import com.google.crypto.tink.proto.AesCtrParams;
@@ -122,14 +123,11 @@ public class LegacyAesCtrHmacTestKeyManagerTest {
             .build();
     AesCtrHmacAeadKey key =
         AesCtrHmacAeadKey.newBuilder().setAesCtrKey(aesCtrKey).setHmacKey(hmacKey).build();
-    KeyData keyData =
-        KeyData.newBuilder()
-            .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
-            .setTypeUrl(TYPE_URL)
-            .setValue(key.toByteString())
-            .build();
 
-    Aead aead = Registry.getPrimitive(keyData, Aead.class);
+    KeyManager<Aead> manager =
+        KeyManagerRegistry.globalInstance().getKeyManager(TYPE_URL, Aead.class);
+
+    Aead aead = manager.getPrimitive(key.toByteString());
 
     assertThat(aead).isNotNull();
     assertThat(aead).isInstanceOf(EncryptThenAuthenticate.class);
@@ -152,14 +150,11 @@ public class LegacyAesCtrHmacTestKeyManagerTest {
             .build();
     AesCtrHmacAeadKey key =
         AesCtrHmacAeadKey.newBuilder().setAesCtrKey(aesCtrKey).setHmacKey(hmacKey).build();
-    KeyData keyData =
-        KeyData.newBuilder()
-            .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
-            .setTypeUrl(TYPE_URL)
-            .setValue(key.toByteString())
-            .build();
 
-    assertThrows(GeneralSecurityException.class, () -> Registry.getPrimitive(keyData, Aead.class));
+    KeyManager<Aead> manager =
+        KeyManagerRegistry.globalInstance().getKeyManager(TYPE_URL, Aead.class);
+
+    assertThrows(GeneralSecurityException.class, () -> manager.getPrimitive(key.toByteString()));
   }
 
   @Theory
@@ -187,8 +182,10 @@ public class LegacyAesCtrHmacTestKeyManagerTest {
             .setValue(key.toByteString())
             .build();
 
-    Aead aead = Registry.getPrimitive(keyData, Aead.class);
+    KeyManager<Aead> manager =
+        KeyManagerRegistry.globalInstance().getKeyManager(TYPE_URL, Aead.class);
 
+    Aead aead = manager.getPrimitive(key.toByteString());
     assertThat(aead.decrypt(aead.encrypt(plaintext, aad), aad)).isEqualTo(plaintext);
   }
 }

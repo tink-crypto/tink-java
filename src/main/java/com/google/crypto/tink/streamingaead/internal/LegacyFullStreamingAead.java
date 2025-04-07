@@ -17,11 +17,11 @@
 package com.google.crypto.tink.streamingaead.internal;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.Registry;
+import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.StreamingAead;
+import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
-import com.google.crypto.tink.proto.KeyData;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -47,13 +47,11 @@ public class LegacyFullStreamingAead implements StreamingAead {
      * StreamingAeadWrapper / KeyTypeManager don't. */
     ProtoKeySerialization protoKeySerialization =
         key.getSerialization(InsecureSecretKeyAccess.get());
-    KeyData keyData =
-        KeyData.newBuilder()
-            .setTypeUrl(protoKeySerialization.getTypeUrl())
-            .setValue(protoKeySerialization.getValue())
-            .setKeyMaterialType(protoKeySerialization.getKeyMaterialType())
-            .build();
-    return new LegacyFullStreamingAead(Registry.getPrimitive(keyData, StreamingAead.class));
+    KeyManager<StreamingAead> manager =
+        KeyManagerRegistry.globalInstance()
+            .getKeyManager(protoKeySerialization.getTypeUrl(), StreamingAead.class);
+
+    return manager.getPrimitive(protoKeySerialization.getValue());
   }
 
   private LegacyFullStreamingAead(StreamingAead rawStreamingAead) {

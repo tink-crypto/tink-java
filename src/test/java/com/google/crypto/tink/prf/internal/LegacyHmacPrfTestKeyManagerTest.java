@@ -19,7 +19,8 @@ package com.google.crypto.tink.prf.internal;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
-import com.google.crypto.tink.Registry;
+import com.google.crypto.tink.KeyManager;
+import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.prf.Prf;
 import com.google.crypto.tink.proto.HashType;
 import com.google.crypto.tink.proto.HmacPrfKey;
@@ -55,14 +56,11 @@ public class LegacyHmacPrfTestKeyManagerTest {
             .setParams(params)
             .setVersion(0)
             .build();
-    KeyData keyData =
-        KeyData.newBuilder()
-            .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
-            .setTypeUrl(TYPE_URL)
-            .setValue(key.toByteString())
-            .build();
 
-    Prf prf = Registry.getPrimitive(keyData, Prf.class);
+    KeyManager<Prf> manager =
+        KeyManagerRegistry.globalInstance().getKeyManager(TYPE_URL, Prf.class);
+
+    Prf prf = manager.getPrimitive(key.toByteString());
 
     assertThat(Hex.encode(prf.compute(Hex.decode("abcdefabcdefabcd"), 16)))
         .isEqualTo("4bbb72a24f348513f9474e333975cea5");
@@ -79,14 +77,10 @@ public class LegacyHmacPrfTestKeyManagerTest {
             .setParams(params)
             .setVersion(0)
             .build();
-    KeyData keyData =
-        KeyData.newBuilder()
-            .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
-            .setTypeUrl(TYPE_URL)
-            .setValue(key.toByteString())
-            .build();
+    KeyManager<Prf> manager =
+        KeyManagerRegistry.globalInstance().getKeyManager(TYPE_URL, Prf.class);
 
-    Prf prf = Registry.getPrimitive(keyData, Prf.class);
+    Prf prf = manager.getPrimitive(key.toByteString());
 
     assertThat(Hex.encode(prf.compute(Hex.decode("abcdefabcdefabcd"), 16)))
         .isEqualTo("70d7e00fa8365ac54d59f5d66c711cdf");
@@ -109,8 +103,10 @@ public class LegacyHmacPrfTestKeyManagerTest {
             .setTypeUrl(TYPE_URL)
             .setValue(key.toByteString())
             .build();
+    KeyManager<Prf> manager =
+        KeyManagerRegistry.globalInstance().getKeyManager(TYPE_URL, Prf.class);
 
-    assertThrows(GeneralSecurityException.class, () -> Registry.getPrimitive(keyData, Prf.class));
+    assertThrows(GeneralSecurityException.class, () -> manager.getPrimitive(key.toByteString()));
   }
 
   @Test
@@ -122,14 +118,11 @@ public class LegacyHmacPrfTestKeyManagerTest {
             .setParams(params)
             .setVersion(0)
             .build();
-    KeyData keyData =
-        KeyData.newBuilder()
-            .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
-            .setTypeUrl(TYPE_URL)
-            .setValue(key.toByteString())
-            .build();
 
-    Prf prf = Registry.getPrimitive(keyData, Prf.class);
+    KeyManager<Prf> manager =
+        KeyManagerRegistry.globalInstance().getKeyManager(TYPE_URL, Prf.class);
+
+    Prf prf = manager.getPrimitive(key.toByteString());
 
     assertThat(Hex.encode(prf.compute(Hex.decode("abcdefabcdefabcd"), 16)))
         .isEqualTo("20e75989c99ee65f9ab62cdd642e5c64");
@@ -145,13 +138,9 @@ public class LegacyHmacPrfTestKeyManagerTest {
             .setParams(params)
             .setVersion(0)
             .build();
-    KeyData keyData =
-        KeyData.newBuilder()
-            .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
-            .setTypeUrl(TYPE_URL)
-            .setValue(key.toByteString())
-            .build();
+    KeyManager<Prf> manager =
+        KeyManagerRegistry.globalInstance().getKeyManager(TYPE_URL, Prf.class);
 
-    assertThrows(GeneralSecurityException.class, () -> Registry.getPrimitive(keyData, Prf.class));
+    assertThrows(GeneralSecurityException.class, () -> manager.getPrimitive(key.toByteString()));
   }
 }

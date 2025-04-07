@@ -18,11 +18,11 @@ package com.google.crypto.tink.hybrid.internal;
 
 import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.Registry;
+import com.google.crypto.tink.KeyManager;
+import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.OutputPrefixUtil;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
-import com.google.crypto.tink.proto.KeyData;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.subtle.Bytes;
 import com.google.errorprone.annotations.Immutable;
@@ -50,13 +50,11 @@ public final class LegacyFullHybridEncrypt implements HybridEncrypt {
   public static HybridEncrypt create(LegacyProtoKey key) throws GeneralSecurityException {
     ProtoKeySerialization protoKeySerialization =
         key.getSerialization(InsecureSecretKeyAccess.get());
-    KeyData keyData =
-        KeyData.newBuilder()
-            .setTypeUrl(protoKeySerialization.getTypeUrl())
-            .setValue(protoKeySerialization.getValue())
-            .setKeyMaterialType(protoKeySerialization.getKeyMaterialType())
-            .build();
-    HybridEncrypt rawPrimitive = Registry.getPrimitive(keyData, HybridEncrypt.class);
+    KeyManager<HybridEncrypt> manager =
+        KeyManagerRegistry.globalInstance()
+            .getKeyManager(protoKeySerialization.getTypeUrl(), HybridEncrypt.class);
+
+    HybridEncrypt rawPrimitive = manager.getPrimitive(protoKeySerialization.getValue());
 
     OutputPrefixType outputPrefixType = protoKeySerialization.getOutputPrefixType();
     byte[] outputPrefix;

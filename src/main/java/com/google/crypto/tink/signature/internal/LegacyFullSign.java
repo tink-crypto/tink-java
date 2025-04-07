@@ -17,11 +17,11 @@
 package com.google.crypto.tink.signature.internal;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.PublicKeySign;
-import com.google.crypto.tink.Registry;
+import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
-import com.google.crypto.tink.proto.KeyData;
 import com.google.crypto.tink.subtle.Bytes;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
@@ -36,13 +36,11 @@ public final class LegacyFullSign implements PublicKeySign {
   public static PublicKeySign create(LegacyProtoKey key) throws GeneralSecurityException {
     ProtoKeySerialization protoKeySerialization =
         key.getSerialization(InsecureSecretKeyAccess.get());
-    KeyData keyData =
-        KeyData.newBuilder()
-            .setTypeUrl(protoKeySerialization.getTypeUrl())
-            .setValue(protoKeySerialization.getValue())
-            .setKeyMaterialType(protoKeySerialization.getKeyMaterialType())
-            .build();
-    PublicKeySign rawSigner = Registry.getPrimitive(keyData, PublicKeySign.class);
+    KeyManager<PublicKeySign> manager =
+        KeyManagerRegistry.globalInstance()
+            .getKeyManager(protoKeySerialization.getTypeUrl(), PublicKeySign.class);
+
+    PublicKeySign rawSigner = manager.getPrimitive(protoKeySerialization.getValue());
 
     return new LegacyFullSign(
         rawSigner,

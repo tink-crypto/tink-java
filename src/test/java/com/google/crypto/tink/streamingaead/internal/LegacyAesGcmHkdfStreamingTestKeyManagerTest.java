@@ -19,13 +19,12 @@ package com.google.crypto.tink.streamingaead.internal;
 import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import com.google.crypto.tink.Registry;
+import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.StreamingAead;
+import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.proto.AesGcmHkdfStreamingKey;
 import com.google.crypto.tink.proto.AesGcmHkdfStreamingParams;
 import com.google.crypto.tink.proto.HashType;
-import com.google.crypto.tink.proto.KeyData;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.subtle.AesGcmHkdfStreaming;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.testing.StreamingTestUtil;
@@ -67,14 +66,11 @@ public class LegacyAesGcmHkdfStreamingTestKeyManagerTest {
                     Hex.decode("abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd")))
             .setParams(params)
             .build();
-    KeyData keyData =
-        KeyData.newBuilder()
-            .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
-            .setTypeUrl(TYPE_URL)
-            .setValue(key.toByteString())
-            .build();
 
-    StreamingAead streamingAead = Registry.getPrimitive(keyData, StreamingAead.class);
+    KeyManager<StreamingAead> manager =
+        KeyManagerRegistry.globalInstance().getKeyManager(TYPE_URL, StreamingAead.class);
+
+    StreamingAead streamingAead = manager.getPrimitive(key.toByteString());
 
     assertThat(streamingAead).isNotNull();
     assertThat(streamingAead).isInstanceOf(AesGcmHkdfStreaming.class);
@@ -95,14 +91,10 @@ public class LegacyAesGcmHkdfStreamingTestKeyManagerTest {
                     Hex.decode("abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd")))
             .setParams(params)
             .build();
-    KeyData keyData =
-        KeyData.newBuilder()
-            .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
-            .setTypeUrl(TYPE_URL)
-            .setValue(key.toByteString())
-            .build();
+    KeyManager<StreamingAead> manager =
+        KeyManagerRegistry.globalInstance().getKeyManager(TYPE_URL, StreamingAead.class);
 
-    StreamingAead streamingAead = Registry.getPrimitive(keyData, StreamingAead.class);
+    StreamingAead streamingAead = manager.getPrimitive(key.toByteString());
 
     StreamingTestUtil.testEncryptDecrypt(streamingAead, 0, 20, 5);
   }
@@ -122,12 +114,6 @@ public class LegacyAesGcmHkdfStreamingTestKeyManagerTest {
                     Hex.decode("abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd")))
             .setParams(params)
             .build();
-    KeyData keyData =
-        KeyData.newBuilder()
-            .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
-            .setTypeUrl(TYPE_URL)
-            .setValue(key.toByteString())
-            .build();
     byte[] associatedData = Hex.decode("abcdef0123456789");
     byte[] ciphertext =
         Hex.decode(
@@ -135,7 +121,11 @@ public class LegacyAesGcmHkdfStreamingTestKeyManagerTest {
                 + "164f6f240a1e9ed9b8d289ec3ddad4c221c0e60b7b143d63231aeeffca384241"
                 + "0d19f0613b690ee32796f2a2d3c19fc778");
 
-    StreamingAead streamingAead = Registry.getPrimitive(keyData, StreamingAead.class);
+    KeyManager<StreamingAead> manager =
+        KeyManagerRegistry.globalInstance().getKeyManager(TYPE_URL, StreamingAead.class);
+
+    StreamingAead streamingAead = manager.getPrimitive(key.toByteString());
+
     ReadableByteChannel plaintextChannel =
         streamingAead.newDecryptingChannel(
             new SeekableByteBufferChannel(ciphertext), associatedData);
@@ -161,12 +151,6 @@ public class LegacyAesGcmHkdfStreamingTestKeyManagerTest {
                     Hex.decode("abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd")))
             .setParams(params)
             .build();
-    KeyData keyData =
-        KeyData.newBuilder()
-            .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
-            .setTypeUrl(TYPE_URL)
-            .setValue(key.toByteString())
-            .build();
     byte[] associatedData = Hex.decode("abcdef0123456789");
     byte[] ciphertext =
         Hex.decode(
@@ -175,7 +159,11 @@ public class LegacyAesGcmHkdfStreamingTestKeyManagerTest {
                 + "7f8dc971ecef7cdb28c25aa19fbc4be30e");
     InputStream ciphertextStream = new ByteArrayInputStream(ciphertext);
 
-    StreamingAead streamingAead = Registry.getPrimitive(keyData, StreamingAead.class);
+    KeyManager<StreamingAead> manager =
+        KeyManagerRegistry.globalInstance().getKeyManager(TYPE_URL, StreamingAead.class);
+
+    StreamingAead streamingAead = manager.getPrimitive(key.toByteString());
+
     InputStream plaintextStream =
         streamingAead.newDecryptingStream(ciphertextStream, associatedData);
     byte[] plaintext = new byte[2 * "plaintext".getBytes(UTF_8).length];
