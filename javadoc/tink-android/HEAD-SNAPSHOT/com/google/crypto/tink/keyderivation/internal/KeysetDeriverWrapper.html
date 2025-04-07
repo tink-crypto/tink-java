@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":9};
+var methods = {"i0":10,"i1":10,"i2":9,"i3":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -162,17 +162,17 @@ implements <a href="../../../../../../com/google/crypto/tink/internal/PrimitiveW
 </td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/keyderivation/KeysetDeriver.html" title="interface in com.google.crypto.tink.keyderivation">KeysetDeriver</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/KeysetDeriverWrapper.html#legacyWrap-com.google.crypto.tink.internal.KeysetHandleInterface-com.google.crypto.tink.internal.MonitoringAnnotations-com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory-">legacyWrap</a></span>(<a href="../../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.html" title="interface in com.google.crypto.tink.internal">KeysetHandleInterface</a>&nbsp;keysetHandle,
-          <a href="../../../../../../com/google/crypto/tink/internal/MonitoringAnnotations.html" title="class in com.google.crypto.tink.internal">MonitoringAnnotations</a>&nbsp;annotations,
-          <a href="../../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.PrimitiveFactory.html" title="interface in com.google.crypto.tink.internal">PrimitiveWrapper.PrimitiveFactory</a>&lt;<a href="../../../../../../com/google/crypto/tink/keyderivation/internal/KeyDeriver.html" title="interface in com.google.crypto.tink.keyderivation.internal">KeyDeriver</a>&gt;&nbsp;factory)</code>
-<div class="block">Wraps a <code>PrimitiveSet</code> and returns a single instance.</div>
-</td>
-</tr>
-<tr id="i3" class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/KeysetDeriverWrapper.html#register--">register</a></span>()</code>
 <div class="block">Registers this wrapper with Tink, allowing to use the primitive.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code><a href="../../../../../../com/google/crypto/tink/keyderivation/KeysetDeriver.html" title="interface in com.google.crypto.tink.keyderivation">KeysetDeriver</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/keyderivation/internal/KeysetDeriverWrapper.html#wrap-com.google.crypto.tink.internal.KeysetHandleInterface-com.google.crypto.tink.internal.MonitoringAnnotations-com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory-">wrap</a></span>(<a href="../../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.html" title="interface in com.google.crypto.tink.internal">KeysetHandleInterface</a>&nbsp;keysetHandle,
+    <a href="../../../../../../com/google/crypto/tink/internal/MonitoringAnnotations.html" title="class in com.google.crypto.tink.internal">MonitoringAnnotations</a>&nbsp;annotations,
+    <a href="../../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.PrimitiveFactory.html" title="interface in com.google.crypto.tink.internal">PrimitiveWrapper.PrimitiveFactory</a>&lt;<a href="../../../../../../com/google/crypto/tink/keyderivation/internal/KeyDeriver.html" title="interface in com.google.crypto.tink.keyderivation.internal">KeyDeriver</a>&gt;&nbsp;factory)</code>
+<div class="block">Wraps a <code>PrimitiveSet</code> and returns a single instance.</div>
 </td>
 </tr>
 </table>
@@ -197,27 +197,23 @@ implements <a href="../../../../../../com/google/crypto/tink/internal/PrimitiveW
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="legacyWrap-com.google.crypto.tink.internal.KeysetHandleInterface-com.google.crypto.tink.internal.MonitoringAnnotations-com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory-">
+<a name="wrap-com.google.crypto.tink.internal.KeysetHandleInterface-com.google.crypto.tink.internal.MonitoringAnnotations-com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>legacyWrap</h4>
-<pre>public&nbsp;<a href="../../../../../../com/google/crypto/tink/keyderivation/KeysetDeriver.html" title="interface in com.google.crypto.tink.keyderivation">KeysetDeriver</a>&nbsp;legacyWrap(<a href="../../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.html" title="interface in com.google.crypto.tink.internal">KeysetHandleInterface</a>&nbsp;keysetHandle,
-                                <a href="../../../../../../com/google/crypto/tink/internal/MonitoringAnnotations.html" title="class in com.google.crypto.tink.internal">MonitoringAnnotations</a>&nbsp;annotations,
-                                <a href="../../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.PrimitiveFactory.html" title="interface in com.google.crypto.tink.internal">PrimitiveWrapper.PrimitiveFactory</a>&lt;<a href="../../../../../../com/google/crypto/tink/keyderivation/internal/KeyDeriver.html" title="interface in com.google.crypto.tink.keyderivation.internal">KeyDeriver</a>&gt;&nbsp;factory)
-                         throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html#legacyWrap-com.google.crypto.tink.internal.KeysetHandleInterface-com.google.crypto.tink.internal.MonitoringAnnotations-com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory-">PrimitiveWrapper</a></code></span></div>
+<h4>wrap</h4>
+<pre>public&nbsp;<a href="../../../../../../com/google/crypto/tink/keyderivation/KeysetDeriver.html" title="interface in com.google.crypto.tink.keyderivation">KeysetDeriver</a>&nbsp;wrap(<a href="../../../../../../com/google/crypto/tink/internal/KeysetHandleInterface.html" title="interface in com.google.crypto.tink.internal">KeysetHandleInterface</a>&nbsp;keysetHandle,
+                          <a href="../../../../../../com/google/crypto/tink/internal/MonitoringAnnotations.html" title="class in com.google.crypto.tink.internal">MonitoringAnnotations</a>&nbsp;annotations,
+                          <a href="../../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.PrimitiveFactory.html" title="interface in com.google.crypto.tink.internal">PrimitiveWrapper.PrimitiveFactory</a>&lt;<a href="../../../../../../com/google/crypto/tink/keyderivation/internal/KeyDeriver.html" title="interface in com.google.crypto.tink.keyderivation.internal">KeyDeriver</a>&gt;&nbsp;factory)
+                   throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html#wrap-com.google.crypto.tink.internal.KeysetHandleInterface-com.google.crypto.tink.internal.MonitoringAnnotations-com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory-">PrimitiveWrapper</a></code></span></div>
 <div class="block">Wraps a <code>PrimitiveSet</code> and returns a single instance.
 
- <p>This method gets called when a new primitive is created.
-
- <p>Note: this function has "legacy" in the name because the passed in <code>keysetHandle</code> only
- currently only contains active keys. We will introduce a function "wrap" without this property
- later.</div>
+ <p>This method gets called when a new primitive is created.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html#legacyWrap-com.google.crypto.tink.internal.KeysetHandleInterface-com.google.crypto.tink.internal.MonitoringAnnotations-com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory-">legacyWrap</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="interface in com.google.crypto.tink.internal">PrimitiveWrapper</a>&lt;<a href="../../../../../../com/google/crypto/tink/keyderivation/internal/KeyDeriver.html" title="interface in com.google.crypto.tink.keyderivation.internal">KeyDeriver</a>,<a href="../../../../../../com/google/crypto/tink/keyderivation/KeysetDeriver.html" title="interface in com.google.crypto.tink.keyderivation">KeysetDeriver</a>&gt;</code></dd>
+<dd><code><a href="../../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html#wrap-com.google.crypto.tink.internal.KeysetHandleInterface-com.google.crypto.tink.internal.MonitoringAnnotations-com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory-">wrap</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/google/crypto/tink/internal/PrimitiveWrapper.html" title="interface in com.google.crypto.tink.internal">PrimitiveWrapper</a>&lt;<a href="../../../../../../com/google/crypto/tink/keyderivation/internal/KeyDeriver.html" title="interface in com.google.crypto.tink.keyderivation.internal">KeyDeriver</a>,<a href="../../../../../../com/google/crypto/tink/keyderivation/KeysetDeriver.html" title="interface in com.google.crypto.tink.keyderivation">KeysetDeriver</a>&gt;</code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
 </dl>
