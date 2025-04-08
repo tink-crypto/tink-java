@@ -3809,6 +3809,10 @@
 <dd>
 <div class="block">Creates a <a href="com/google/crypto/tink/PublicKeyVerify.html" title="interface in com.google.crypto.tink"><code>PublicKeyVerify</code></a> using a <a href="https://docs.oracle.com/javase/8/docs/api/java/security/Provider.html?is-external=true" title="class or interface in java.security"><code>Provider</code></a>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/Ed25519SignJce.html#createWithProvider-com.google.crypto.tink.signature.Ed25519PrivateKey-java.security.Provider-">createWithProvider(Ed25519PrivateKey, Provider)</a></span> - Static method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/Ed25519SignJce.html" title="class in com.google.crypto.tink.signature.internal">Ed25519SignJce</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/Ed25519VerifyJce.html#createWithProvider-com.google.crypto.tink.signature.Ed25519PublicKey-java.security.Provider-">createWithProvider(Ed25519PublicKey, Provider)</a></span> - Static method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/Ed25519VerifyJce.html" title="class in com.google.crypto.tink.signature.internal">Ed25519VerifyJce</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/EcdsaVerifyJce.html#createWithProviderOrNull-com.google.crypto.tink.signature.EcdsaPublicKey-java.security.Provider-">createWithProviderOrNull(EcdsaPublicKey, Provider)</a></span> - Static method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/EcdsaVerifyJce.html" title="class in com.google.crypto.tink.signature.internal">EcdsaVerifyJce</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/Base64.html#CRLF">CRLF</a></span> - Static variable in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/Base64.html" title="class in com.google.crypto.tink.subtle">Base64</a></dt>
@@ -13929,7 +13933,7 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/Ed25519SignJce.html#isSupported--">isSupported()</a></span> - Static method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/Ed25519SignJce.html" title="class in com.google.crypto.tink.signature.internal">Ed25519SignJce</a></dt>
 <dd>
-<div class="block">Returns true if the JCE supports Ed25519.</div>
+<div class="block">Returns true if the Conscrypt is available and supports Ed25519.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/signature/internal/Ed25519VerifyJce.html#isSupported--">isSupported()</a></span> - Static method in class com.google.crypto.tink.signature.internal.<a href="com/google/crypto/tink/signature/internal/Ed25519VerifyJce.html" title="class in com.google.crypto.tink.signature.internal">Ed25519VerifyJce</a></dt>
 <dd>
