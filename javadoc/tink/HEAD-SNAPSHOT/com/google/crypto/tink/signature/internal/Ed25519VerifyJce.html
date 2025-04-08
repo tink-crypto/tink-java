@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":10};
+var methods = {"i0":9,"i1":9,"i2":9,"i3":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -161,12 +161,17 @@ implements <a href="../../../../../../com/google/crypto/tink/PublicKeyVerify.htm
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/signature/internal/Ed25519VerifyJce.html#create-com.google.crypto.tink.signature.Ed25519PublicKey-">create</a></span>(<a href="../../../../../../com/google/crypto/tink/signature/Ed25519PublicKey.html" title="class in com.google.crypto.tink.signature">Ed25519PublicKey</a>&nbsp;key)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../../../com/google/crypto/tink/PublicKeyVerify.html" title="interface in com.google.crypto.tink">PublicKeyVerify</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/signature/internal/Ed25519VerifyJce.html#createWithProvider-com.google.crypto.tink.signature.Ed25519PublicKey-java.security.Provider-">createWithProvider</a></span>(<a href="../../../../../../com/google/crypto/tink/signature/Ed25519PublicKey.html" title="class in com.google.crypto.tink.signature">Ed25519PublicKey</a>&nbsp;key,
+                  <a href="https://docs.oracle.com/javase/8/docs/api/java/security/Provider.html?is-external=true" title="class or interface in java.security">Provider</a>&nbsp;provider)</code>&nbsp;</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/signature/internal/Ed25519VerifyJce.html#isSupported--">isSupported</a></span>()</code>
 <div class="block">Returns true if the JCE supports Ed25519.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/google/crypto/tink/signature/internal/Ed25519VerifyJce.html#verify-byte:A-byte:A-">verify</a></span>(byte[]&nbsp;signature,
       byte[]&nbsp;data)</code>
@@ -220,6 +225,21 @@ implements <a href="../../../../../../com/google/crypto/tink/PublicKeyVerify.htm
 <h4>create</h4>
 <pre>public static&nbsp;<a href="../../../../../../com/google/crypto/tink/PublicKeyVerify.html" title="interface in com.google.crypto.tink">PublicKeyVerify</a>&nbsp;create(<a href="../../../../../../com/google/crypto/tink/signature/Ed25519PublicKey.html" title="class in com.google.crypto.tink.signature">Ed25519PublicKey</a>&nbsp;key)
                               throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="createWithProvider-com.google.crypto.tink.signature.Ed25519PublicKey-java.security.Provider-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createWithProvider</h4>
+<pre>public static&nbsp;<a href="../../../../../../com/google/crypto/tink/PublicKeyVerify.html" title="interface in com.google.crypto.tink">PublicKeyVerify</a>&nbsp;createWithProvider(<a href="../../../../../../com/google/crypto/tink/signature/Ed25519PublicKey.html" title="class in com.google.crypto.tink.signature">Ed25519PublicKey</a>&nbsp;key,
+                                                 <a href="https://docs.oracle.com/javase/8/docs/api/java/security/Provider.html?is-external=true" title="class or interface in java.security">Provider</a>&nbsp;provider)
+                                          throws <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
