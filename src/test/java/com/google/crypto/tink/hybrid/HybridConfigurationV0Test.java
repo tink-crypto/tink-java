@@ -38,12 +38,17 @@ import com.google.crypto.tink.hybrid.internal.testing.EciesAeadHkdfTestUtil;
 import com.google.crypto.tink.hybrid.internal.testing.HpkeTestUtil;
 import com.google.crypto.tink.hybrid.internal.testing.HybridTestVector;
 import com.google.crypto.tink.internal.BigIntegerEncoding;
+import com.google.crypto.tink.internal.LegacyProtoKey;
+import com.google.crypto.tink.internal.ProtoKeySerialization;
+import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
+import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.subtle.EllipticCurves;
 import com.google.crypto.tink.subtle.EllipticCurves.PointFormatType;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBigInteger;
 import com.google.crypto.tink.util.SecretBytes;
+import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.interfaces.ECPrivateKey;
@@ -61,6 +66,7 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
 @RunWith(Theories.class)
+@SuppressWarnings("UnnecessarilyFullyQualified") // Fully specifying proto types is more readable
 public class HybridConfigurationV0Test {
   @BeforeClass
   public static void setUp() throws Exception {
@@ -204,6 +210,222 @@ public class HybridConfigurationV0Test {
 
     assertThat(keysetHandle.getPrimitive(HybridConfigurationV0.get(), HybridDecrypt.class))
         .isNotNull();
+  }
+
+  private static final String AES_GCM_KEY_TYPE_URL =
+      "type.googleapis.com/google.crypto.tink.AesGcmKey";
+
+  @Test
+  public void config_handlesEciesAeadHkdfLegacyKeyForHybridEncrypt() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    com.google.crypto.tink.proto.EciesHkdfKemParams kemParams =
+        com.google.crypto.tink.proto.EciesHkdfKemParams.newBuilder()
+            .setCurveType(com.google.crypto.tink.proto.EllipticCurveType.NIST_P256)
+            .setHkdfHashType(com.google.crypto.tink.proto.HashType.SHA256)
+            .build();
+    com.google.crypto.tink.proto.EciesAeadDemParams demParams =
+        com.google.crypto.tink.proto.EciesAeadDemParams.newBuilder()
+            .setAeadDem(
+                com.google.crypto.tink.proto.KeyTemplate.newBuilder()
+                    .setTypeUrl(AES_GCM_KEY_TYPE_URL)
+                    .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.TINK)
+                    .setValue(
+                        KeyTemplate.newBuilder()
+                            .setTypeUrl(AES_GCM_KEY_TYPE_URL)
+                            .setValue(
+                                com.google.crypto.tink.proto.AesGcmKeyFormat.newBuilder()
+                                    .setKeySize(32)
+                                    .build()
+                                    .toByteString())
+                            .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
+                            .build()
+                            .getValue())
+                    .build())
+            .build();
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "type.googleapis.com/google.crypto.tink.EciesAeadHkdfPublicKey",
+            com.google.crypto.tink.proto.EciesAeadHkdfPublicKey.newBuilder()
+                .setVersion(0)
+                .setParams(
+                    com.google.crypto.tink.proto.EciesAeadHkdfParams.newBuilder()
+                        .setKemParams(kemParams)
+                        .setDemParams(demParams)
+                        .setEcPointFormat(com.google.crypto.tink.proto.EcPointFormat.COMPRESSED)
+                        .build())
+                .setX(
+                    ByteString.copyFrom(
+                        Hex.decode(
+                            "0060FED4BA255A9D31C961EB74C6356D68C049B8923B61FA6CE669622E60F29FB6")))
+                .setY(
+                    ByteString.copyFrom(
+                        Hex.decode(
+                            "007903FE1008B8BC99A41AE9E95628BC64F2F1B20C2D7E9F5177A3C294D4462299")))
+                .build()
+                .toByteString(),
+            KeyMaterialType.ASYMMETRIC_PUBLIC,
+            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            null);
+    LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
+            .build();
+
+    EciesProtoSerialization.register();
+
+    assertThat(keysetHandle.getPrimitive(HybridConfigurationV0.get(), HybridEncrypt.class)).isNotNull();
+  }
+
+  @Test
+  public void config_handlesEciesAeadHkdfLegacyKeyForHybridDecrypt() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    com.google.crypto.tink.proto.EciesHkdfKemParams kemParams =
+        com.google.crypto.tink.proto.EciesHkdfKemParams.newBuilder()
+            .setCurveType(com.google.crypto.tink.proto.EllipticCurveType.NIST_P256)
+            .setHkdfHashType(com.google.crypto.tink.proto.HashType.SHA256)
+            .build();
+    com.google.crypto.tink.proto.EciesAeadDemParams demParams =
+        com.google.crypto.tink.proto.EciesAeadDemParams.newBuilder()
+            .setAeadDem(
+                com.google.crypto.tink.proto.KeyTemplate.newBuilder()
+                    .setTypeUrl(AES_GCM_KEY_TYPE_URL)
+                    .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.TINK)
+                    .setValue(
+                        KeyTemplate.newBuilder()
+                            .setTypeUrl(AES_GCM_KEY_TYPE_URL)
+                            .setValue(
+                                com.google.crypto.tink.proto.AesGcmKeyFormat.newBuilder()
+                                    .setKeySize(32)
+                                    .build()
+                                    .toByteString())
+                            .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
+                            .build()
+                            .getValue())
+                    .build())
+            .build();
+    com.google.crypto.tink.proto.EciesAeadHkdfPublicKey protoPublicKey =
+        com.google.crypto.tink.proto.EciesAeadHkdfPublicKey.newBuilder()
+            .setVersion(0)
+            .setParams(
+                com.google.crypto.tink.proto.EciesAeadHkdfParams.newBuilder()
+                    .setKemParams(kemParams)
+                    .setDemParams(demParams)
+                    .setEcPointFormat(com.google.crypto.tink.proto.EcPointFormat.COMPRESSED)
+                    .build())
+            .setX(
+                ByteString.copyFrom(
+                    Hex.decode(
+                        "00" + "60FED4BA255A9D31C961EB74C6356D68C049B8923B61FA6CE669622E60F29FB6")))
+            .setY(
+                ByteString.copyFrom(
+                    Hex.decode(
+                        "00" + "7903FE1008B8BC99A41AE9E95628BC64F2F1B20C2D7E9F5177A3C294D4462299")))
+            .build();
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "type.googleapis.com/google.crypto.tink.EciesAeadHkdfPrivateKey",
+            com.google.crypto.tink.proto.EciesAeadHkdfPrivateKey.newBuilder()
+                .setVersion(0)
+                .setPublicKey(protoPublicKey)
+                .setKeyValue(
+                    ByteString.copyFrom(
+                        Hex.decode(
+                            "00C9AFA9D845BA75166B5C215767B1D6934E50C3DB36E89B127B8A622B120F6721")))
+                .build()
+                .toByteString(),
+            KeyMaterialType.ASYMMETRIC_PRIVATE,
+            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            null);
+    LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
+            .build();
+
+    EciesProtoSerialization.register();
+
+    assertThat(keysetHandle.getPrimitive(HybridConfigurationV0.get(), HybridDecrypt.class)).isNotNull();
+  }
+
+  @Test
+  public void config_handlesHpkeLegacyKeyForHybridEncrypt() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "type.googleapis.com/google.crypto.tink.HpkePublicKey",
+            com.google.crypto.tink.proto.HpkePublicKey.newBuilder()
+                .setVersion(0)
+                .setParams(
+                    com.google.crypto.tink.proto.HpkeParams.newBuilder()
+                        .setKem(com.google.crypto.tink.proto.HpkeKem.DHKEM_X25519_HKDF_SHA256)
+                        .setKdf(com.google.crypto.tink.proto.HpkeKdf.HKDF_SHA256)
+                        .setAead(com.google.crypto.tink.proto.HpkeAead.AES_128_GCM)
+                        .build())
+                .setPublicKey(
+                    ByteString.copyFrom(
+                        Hex.decode(
+                            "37fda3567bdbd628e88668c3c8d7e97d1d1253b6d4ea6d44c150f741f1bf4431")))
+                .build()
+                .toByteString(),
+            KeyMaterialType.ASYMMETRIC_PUBLIC,
+            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            null);
+    LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
+            .build();
+
+    HpkeProtoSerialization.register();
+
+    assertThat(keysetHandle.getPrimitive(HybridConfigurationV0.get(), HybridEncrypt.class)).isNotNull();
+  }
+
+  @Test
+  public void config_handlesHpkeLegacyKeyForHybridDecrypt() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    com.google.crypto.tink.proto.HpkePublicKey publicKey =
+        com.google.crypto.tink.proto.HpkePublicKey.newBuilder()
+            .setVersion(0)
+            .setParams(
+                com.google.crypto.tink.proto.HpkeParams.newBuilder()
+                    .setKem(com.google.crypto.tink.proto.HpkeKem.DHKEM_X25519_HKDF_SHA256)
+                    .setKdf(com.google.crypto.tink.proto.HpkeKdf.HKDF_SHA256)
+                    .setAead(com.google.crypto.tink.proto.HpkeAead.AES_128_GCM)
+                    .build())
+            .setPublicKey(
+                ByteString.copyFrom(
+                    Hex.decode("37fda3567bdbd628e88668c3c8d7e97d1d1253b6d4ea6d44c150f741f1bf4431")))
+            .build();
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "type.googleapis.com/google.crypto.tink.HpkePrivateKey",
+            com.google.crypto.tink.proto.HpkePrivateKey.newBuilder()
+                .setVersion(0)
+                .setPublicKey(publicKey)
+                .setPrivateKey(
+                    ByteString.copyFrom(
+                        Hex.decode(
+                            "52c4a758a802cd8b936eceea314432798d5baf2d7e9235dc084ab1b9cfa2f736")))
+                .build()
+                .toByteString(),
+            KeyMaterialType.ASYMMETRIC_PRIVATE,
+            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            null);
+    LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
+            .build();
+
+    HpkeProtoSerialization.register();
+
+    assertThat(keysetHandle.getPrimitive(HybridConfigurationV0.get(), HybridDecrypt.class)).isNotNull();
   }
 
   @Theory
