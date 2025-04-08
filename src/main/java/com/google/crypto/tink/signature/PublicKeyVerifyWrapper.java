@@ -17,6 +17,7 @@
 package com.google.crypto.tink.signature;
 
 import com.google.crypto.tink.Key;
+import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
@@ -28,7 +29,6 @@ import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrefixMap;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
-import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.signature.internal.LegacyFullVerify;
 import com.google.crypto.tink.util.Bytes;
@@ -111,21 +111,15 @@ public class PublicKeyVerifyWrapper implements PrimitiveWrapper<PublicKeyVerify,
       MonitoringAnnotations annotations,
       PrimitiveFactory<PublicKeyVerify> factory)
       throws GeneralSecurityException {
-    return legacyWrap(PrimitiveSet.legacyRemoveNonEnabledKeys(keysetHandle), annotations, factory);
-  }
-
-  private PublicKeyVerify legacyWrap(
-      KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations annotations,
-      PrimitiveFactory<PublicKeyVerify> factory)
-      throws GeneralSecurityException {
     PrefixMap.Builder<PublicKeyVerifyWithId> builder = new PrefixMap.Builder<>();
     for (int i = 0; i < keysetHandle.size(); i++) {
       KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
-      PublicKeyVerify publicKeyVerify = factory.create(entry);
-      builder.put(
-          getOutputPrefix(entry.getKey()),
-          new PublicKeyVerifyWithId(publicKeyVerify, entry.getId()));
+      if (entry.getStatus().equals(KeyStatus.ENABLED)) {
+        PublicKeyVerify publicKeyVerify = factory.create(entry);
+        builder.put(
+            getOutputPrefix(entry.getKey()),
+            new PublicKeyVerifyWithId(publicKeyVerify, entry.getId()));
+      }
     }
     MonitoringClient.Logger logger;
     if (!annotations.isEmpty()) {

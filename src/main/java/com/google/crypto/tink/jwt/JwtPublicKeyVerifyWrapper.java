@@ -16,13 +16,13 @@
 
 package com.google.crypto.tink.jwt;
 
+import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
-import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
@@ -90,18 +90,12 @@ class JwtPublicKeyVerifyWrapper
       MonitoringAnnotations annotations,
       PrimitiveFactory<JwtPublicKeyVerify> factory)
       throws GeneralSecurityException {
-    return legacyWrap(PrimitiveSet.legacyRemoveNonEnabledKeys(keysetHandle), annotations, factory);
-  }
-
-  private JwtPublicKeyVerify legacyWrap(
-      KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations annotations,
-      PrimitiveFactory<JwtPublicKeyVerify> factory)
-      throws GeneralSecurityException {
     List<JwtPublicKeyVerifyWithId> allVerifiers = new ArrayList<>(keysetHandle.size());
     for (int i = 0; i < keysetHandle.size(); i++) {
       KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
-      allVerifiers.add(new JwtPublicKeyVerifyWithId(factory.create(entry), entry.getId()));
+      if (entry.getStatus().equals(KeyStatus.ENABLED)) {
+        allVerifiers.add(new JwtPublicKeyVerifyWithId(factory.create(entry), entry.getId()));
+      }
     }
     MonitoringClient.Logger logger;
     if (!annotations.isEmpty()) {
