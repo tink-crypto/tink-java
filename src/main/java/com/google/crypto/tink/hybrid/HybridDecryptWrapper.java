@@ -17,6 +17,7 @@ package com.google.crypto.tink.hybrid;
 
 import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.Key;
+import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.hybrid.internal.LegacyFullHybridDecrypt;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
@@ -28,7 +29,6 @@ import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrefixMap;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
-import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.util.Bytes;
 import java.security.GeneralSecurityException;
@@ -109,20 +109,14 @@ public class HybridDecryptWrapper implements PrimitiveWrapper<HybridDecrypt, Hyb
       MonitoringAnnotations annotations,
       PrimitiveFactory<HybridDecrypt> factory)
       throws GeneralSecurityException {
-    return legacyWrap(PrimitiveSet.legacyRemoveNonEnabledKeys(keysetHandle), annotations, factory);
-  }
-
-  private HybridDecrypt legacyWrap(
-      KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations annotations,
-      PrimitiveFactory<HybridDecrypt> factory)
-      throws GeneralSecurityException {
     PrefixMap.Builder<HybridDecryptWithId> builder = new PrefixMap.Builder<>();
     for (int i = 0; i < keysetHandle.size(); i++) {
       KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
-      HybridDecrypt hybridDecrypt = factory.create(entry);
-      builder.put(
-          getOutputPrefix(entry.getKey()), new HybridDecryptWithId(hybridDecrypt, entry.getId()));
+      if (entry.getStatus().equals(KeyStatus.ENABLED)) {
+        HybridDecrypt hybridDecrypt = factory.create(entry);
+        builder.put(
+            getOutputPrefix(entry.getKey()), new HybridDecryptWithId(hybridDecrypt, entry.getId()));
+      }
     }
     MonitoringClient.Logger decLogger;
     if (!annotations.isEmpty()) {

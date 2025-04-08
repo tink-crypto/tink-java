@@ -15,6 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 package com.google.crypto.tink.prf;
 
+import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
@@ -24,7 +25,6 @@ import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
-import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.prf.internal.LegacyFullPrf;
 import com.google.errorprone.annotations.Immutable;
@@ -102,14 +102,6 @@ public class PrfSetWrapper implements PrimitiveWrapper<Prf, PrfSet> {
       MonitoringAnnotations annotations,
       PrimitiveFactory<Prf> factory)
       throws GeneralSecurityException {
-    return legacyWrap(PrimitiveSet.legacyRemoveNonEnabledKeys(keysetHandle), annotations, factory);
-  }
-
-  private PrfSet legacyWrap(
-      KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations annotations,
-      PrimitiveFactory<Prf> factory)
-      throws GeneralSecurityException {
     MonitoringClient.Logger logger;
     if (!annotations.isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
@@ -121,17 +113,19 @@ public class PrfSetWrapper implements PrimitiveWrapper<Prf, PrfSet> {
     Map<Integer, Prf> mutablePrfMap = new HashMap<>();
     for (int i = 0; i < keysetHandle.size(); i++) {
       KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
-      if (entry.getKey() instanceof LegacyProtoKey) {
-        LegacyProtoKey legacyProtoKey = (LegacyProtoKey) entry.getKey();
-        if (legacyProtoKey.getOutputPrefix().size() != 0) {
-          throw new GeneralSecurityException(
-              "Cannot build PrfSet with keys with non-empty output prefix");
+      if (entry.getStatus().equals(KeyStatus.ENABLED)) {
+        if (entry.getKey() instanceof LegacyProtoKey) {
+          LegacyProtoKey legacyProtoKey = (LegacyProtoKey) entry.getKey();
+          if (legacyProtoKey.getOutputPrefix().size() != 0) {
+            throw new GeneralSecurityException(
+                "Cannot build PrfSet with keys with non-empty output prefix");
+          }
         }
+        Prf prf = factory.create(entry);
+        // Likewise, the key IDs of the PrfSet passed
+        mutablePrfMap.put(
+            entry.getId(), new WrappedPrfSet.PrfWithMonitoring(prf, entry.getId(), logger));
       }
-      Prf prf = factory.create(entry);
-      // Likewise, the key IDs of the PrfSet passed
-      mutablePrfMap.put(
-          entry.getId(), new WrappedPrfSet.PrfWithMonitoring(prf, entry.getId(), logger));
     }
     return new WrappedPrfSet(mutablePrfMap, keysetHandle.getPrimary().getId());
   }

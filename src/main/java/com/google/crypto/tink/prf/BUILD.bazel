@@ -77,6 +77,7 @@ java_library(
     visibility = ["//visibility:public"],
     deps = [
         ":prf_set",
+        "//src/main/java/com/google/crypto/tink:key_status",
         "//src/main/java/com/google/crypto/tink/internal:keyset_handle_interface",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_annotations",
@@ -86,7 +87,6 @@ java_library(
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry",
         "//src/main/java/com/google/crypto/tink/internal:primitive_constructor",
         "//src/main/java/com/google/crypto/tink/internal:primitive_registry",
-        "//src/main/java/com/google/crypto/tink/internal:primitive_set",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper",
         "//src/main/java/com/google/crypto/tink/prf/internal:legacy_full_prf",
         "@maven//:com_google_errorprone_error_prone_annotations",
@@ -304,6 +304,7 @@ android_library(
     srcs = ["PrfSetWrapper.java"],
     deps = [
         ":prf_set-android",
+        "//src/main/java/com/google/crypto/tink:key_status-android",
         "//src/main/java/com/google/crypto/tink/internal:keyset_handle_interface-android",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key-android",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_annotations-android",
@@ -313,7 +314,6 @@ android_library(
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_constructor-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_registry-android",
-        "//src/main/java/com/google/crypto/tink/internal:primitive_set-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper-android",
         "//src/main/java/com/google/crypto/tink/prf/internal:legacy_full_prf-android",
         "@maven//:com_google_errorprone_error_prone_annotations",

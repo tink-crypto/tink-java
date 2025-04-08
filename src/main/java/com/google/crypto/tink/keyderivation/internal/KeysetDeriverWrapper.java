@@ -17,11 +17,11 @@
 package com.google.crypto.tink.keyderivation.internal;
 
 import com.google.crypto.tink.Key;
+import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
-import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.keyderivation.KeysetDeriver;
 import com.google.errorprone.annotations.Immutable;
@@ -94,17 +94,13 @@ public final class KeysetDeriverWrapper implements PrimitiveWrapper<KeyDeriver, 
       MonitoringAnnotations annotations,
       PrimitiveFactory<KeyDeriver> factory)
       throws GeneralSecurityException {
-    return legacyWrap(PrimitiveSet.legacyRemoveNonEnabledKeys(keysetHandle), factory);
-  }
-
-  private KeysetDeriver legacyWrap(
-      KeysetHandleInterface keysetHandle, PrimitiveFactory<KeyDeriver> factory)
-      throws GeneralSecurityException {
     validate(keysetHandle);
     List<DeriverWithId> derivers = new ArrayList<>(keysetHandle.size());
     for (int i = 0; i < keysetHandle.size(); i++) {
       KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
-      derivers.add(new DeriverWithId(factory.create(entry), entry.getId(), entry.isPrimary()));
+      if (entry.getStatus().equals(KeyStatus.ENABLED)) {
+        derivers.add(new DeriverWithId(factory.create(entry), entry.getId(), entry.isPrimary()));
+      }
     }
 
     return new WrappedKeysetDeriver(derivers);
