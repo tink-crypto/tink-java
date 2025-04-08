@@ -24,6 +24,7 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.TinkFips;
+import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.signature.Ed25519PrivateKey;
 import com.google.crypto.tink.signature.internal.testing.Ed25519TestUtil;
@@ -36,6 +37,7 @@ import com.google.crypto.tink.testing.WycheproofTestUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.security.GeneralSecurityException;
+import java.security.Provider;
 import java.security.Security;
 import java.util.TreeSet;
 import org.conscrypt.Conscrypt;
@@ -237,10 +239,9 @@ public final class Ed25519SignJceTest {
   }
 
   @Test
-  public void test_computeAndValidateFreshSignatureWithTestVector() throws Exception {
+  public void create_signAndVerifyWorksWithTestVector() throws Exception {
     Assume.assumeTrue(!TinkFips.useOnlyFips() && Ed25519SignJce.isSupported());
     // We are not using parameterized tests because the next line cannot be run if useOnlyFips.
-    SignatureTestVector[] testVectors = Ed25519TestUtil.createEd25519TestVectors();
     for (SignatureTestVector testVector : testVectors) {
       System.out.println(
           "Testing test_computeAndValidateFreshSignatureWithTestVector with parameters: "
@@ -252,4 +253,38 @@ public final class Ed25519SignJceTest {
       verifier.verify(signature, testVector.getMessage());
     }
   }
+
+  @Test
+  public void createWithProvider_nullProvider_throws() throws Exception {
+    SignatureTestVector testVector = testVectors[0];
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> Ed25519SignJce.createWithProvider((Ed25519PrivateKey) testVector.getPrivateKey(), null));
+  }
+
+  @Test
+  public void createWithProvider_worksWithConscryptIfSupported() throws Exception {
+    Assume.assumeTrue(!TinkFips.useOnlyFips());
+    Provider conscryptProvider = ConscryptUtil.providerOrNull();
+    if (conscryptProvider == null) {
+      return;
+    }
+    SignatureTestVector testVector = testVectors[0];
+    Ed25519PrivateKey privateKey = (Ed25519PrivateKey) testVector.getPrivateKey();
+
+    PublicKeySign signer;
+    try {
+      signer = Ed25519SignJce.createWithProvider(privateKey, conscryptProvider);
+    } catch (GeneralSecurityException e) {
+      // Version of Conscrypt that doesn't yet support Ed25519.
+      return;
+    }
+
+    byte[] signature = signer.sign(testVector.getMessage());
+    PublicKeyVerify verifier =
+        Ed25519VerifyJce.createWithProvider(privateKey.getPublicKey(), conscryptProvider);
+    verifier.verify(signature, testVector.getMessage());
+  }
+
+  public static final SignatureTestVector[] testVectors = Ed25519TestUtil.createEd25519TestVectors();
 }

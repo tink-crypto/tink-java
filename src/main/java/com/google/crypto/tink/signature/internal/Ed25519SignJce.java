@@ -86,13 +86,20 @@ public final class Ed25519SignJce implements PublicKeySign {
 
   @AccessesPartialKey
   public static PublicKeySign create(Ed25519PrivateKey key) throws GeneralSecurityException {
+    Provider provider = conscryptProvider();
+    return createWithProvider(key, provider);
+  }
+
+  @AccessesPartialKey
+  public static PublicKeySign createWithProvider(Ed25519PrivateKey key, Provider provider)
+      throws GeneralSecurityException {
     return new Ed25519SignJce(
         key.getPrivateKeyBytes().toByteArray(InsecureSecretKeyAccess.get()),
         key.getOutputPrefix().toByteArray(),
         key.getParameters().getVariant().equals(Ed25519Parameters.Variant.LEGACY)
             ? new byte[] {0}
             : new byte[0],
-        conscryptProvider());
+        provider);
   }
 
   private Ed25519SignJce(
@@ -119,7 +126,7 @@ public final class Ed25519SignJce implements PublicKeySign {
     this(privateKey, new byte[0], new byte[0], conscryptProvider());
   }
 
-  /** Returns true if the JCE supports Ed25519. */
+  /** Returns true if the Conscrypt is available and supports Ed25519. */
   public static boolean isSupported() {
     Provider provider = ConscryptUtil.providerOrNull();
     if (provider == null) {

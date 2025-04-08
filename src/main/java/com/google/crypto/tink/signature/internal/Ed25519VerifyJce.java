@@ -86,6 +86,13 @@ public final class Ed25519VerifyJce implements PublicKeyVerify {
 
   @AccessesPartialKey
   public static PublicKeyVerify create(Ed25519PublicKey key) throws GeneralSecurityException {
+    Provider provider = conscryptProvider();
+    return createWithProvider(key, provider);
+  }
+
+  @AccessesPartialKey
+  public static PublicKeyVerify createWithProvider(Ed25519PublicKey key, Provider provider)
+      throws GeneralSecurityException {
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException("Can not use Ed25519 in FIPS-mode.");
     }
@@ -95,7 +102,7 @@ public final class Ed25519VerifyJce implements PublicKeyVerify {
         key.getParameters().getVariant().equals(Ed25519Parameters.Variant.LEGACY)
             ? new byte[] {0}
             : new byte[0],
-        conscryptProvider());
+        provider);
   }
 
   Ed25519VerifyJce(final byte[] publicKey) throws GeneralSecurityException {

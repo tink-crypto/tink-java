@@ -21,8 +21,10 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.TinkFips;
+import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.signature.Ed25519PrivateKey;
+import com.google.crypto.tink.signature.Ed25519PublicKey;
 import com.google.crypto.tink.signature.internal.testing.Ed25519TestUtil;
 import com.google.crypto.tink.signature.internal.testing.SignatureTestVector;
 import com.google.crypto.tink.subtle.Base64;
@@ -32,6 +34,7 @@ import com.google.crypto.tink.testing.WycheproofTestUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.security.GeneralSecurityException;
+import java.security.Provider;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -162,12 +165,10 @@ public final class Ed25519VerifyJceTest {
    * Tests that the verifier can verify a the signature for the message and key in the test vector.
    */
   @Test
-  public void test_validateSignatureInTestVector() throws Exception {
+  public void create_verifyWorksWithTestVector() throws Exception {
     Assume.assumeTrue(!TinkFips.useOnlyFips() && Ed25519VerifyJce.isSupported());
     // We are not using parameterized tests because the next line cannot be run if useOnlyFips.
-    SignatureTestVector[] testVectors = Ed25519TestUtil.createEd25519TestVectors();
     for (SignatureTestVector testVector : testVectors) {
-
       Ed25519PrivateKey key = (Ed25519PrivateKey) testVector.getPrivateKey();
       PublicKeyVerify verifier = Ed25519VerifyJce.create(key.getPublicKey());
       verifier.verify(testVector.getSignature(), testVector.getMessage());
@@ -175,10 +176,39 @@ public final class Ed25519VerifyJceTest {
   }
 
   @Test
+  public void createWithProvider_nullProvider_throws() throws Exception {
+    SignatureTestVector testVector = testVectors[0];
+    Ed25519PublicKey publicKey = (Ed25519PublicKey) testVector.getPrivateKey().getPublicKey();
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> Ed25519VerifyJce.createWithProvider(publicKey, null));
+  }
+
+  @Test
+  public void createWithProvider_worksWithConscryptIfSupported() throws Exception {
+    Assume.assumeTrue(!TinkFips.useOnlyFips());
+    Provider conscryptProvider = ConscryptUtil.providerOrNull();
+    if (conscryptProvider == null) {
+      return;
+    }
+    SignatureTestVector testVector = testVectors[0];
+    Ed25519PrivateKey privateKey = (Ed25519PrivateKey) testVector.getPrivateKey();
+
+    PublicKeyVerify verifier;
+    try {
+      verifier = Ed25519VerifyJce.createWithProvider(privateKey.getPublicKey(), conscryptProvider);
+    } catch (GeneralSecurityException e) {
+      // Version of Conscrypt that doesn't yet support Ed25519.
+      return;
+    }
+
+    verifier.verify(testVector.getSignature(), testVector.getMessage());
+  }
+
+  @Test
   public void test_computeAndValidate_modifiedMessage_throws() throws Exception {
     Assume.assumeTrue(!TinkFips.useOnlyFips() && Ed25519VerifyJce.isSupported());
     // We are not using parameterized tests because the next line cannot be run if useOnlyFips.
-    SignatureTestVector[] testVectors = Ed25519TestUtil.createEd25519TestVectors();
     for (SignatureTestVector testVector : testVectors) {
       Ed25519PrivateKey key = (Ed25519PrivateKey) testVector.getPrivateKey();
       byte[] modifiedMessage = Bytes.concat(testVector.getMessage(), new byte[] {1});
@@ -194,7 +224,6 @@ public final class Ed25519VerifyJceTest {
   public void test_computeAndValidate_modifiedOutputPrefix_throws() throws Exception {
     Assume.assumeTrue(!TinkFips.useOnlyFips() && Ed25519VerifyJce.isSupported());
     // We are not using parameterized tests because the next line cannot be run if useOnlyFips.
-    SignatureTestVector[] testVectors = Ed25519TestUtil.createEd25519TestVectors();
     for (SignatureTestVector testVector : testVectors) {
       Ed25519PrivateKey key = (Ed25519PrivateKey) testVector.getPrivateKey();
       if (key.getOutputPrefix().size() == 0) {
@@ -211,4 +240,6 @@ public final class Ed25519VerifyJceTest {
                   testVector.getMessage()));
     }
   }
+
+  public static final SignatureTestVector[] testVectors = Ed25519TestUtil.createEd25519TestVectors();
 }
