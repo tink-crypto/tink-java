@@ -60,9 +60,14 @@ public final class RsaSsaPssSignConscrypt implements PublicKeySign {
   @SuppressWarnings("Immutable")
   private final Provider conscrypt;
 
-  @AccessesPartialKey
   public static PublicKeySign create(RsaSsaPssPrivateKey key) throws GeneralSecurityException {
     Provider conscrypt = RsaSsaPssVerifyConscrypt.conscryptProviderOrNull();
+    return createWithProvider(key, conscrypt);
+  }
+
+  @AccessesPartialKey
+  public static PublicKeySign createWithProvider(RsaSsaPssPrivateKey key, Provider conscrypt)
+      throws GeneralSecurityException {
     if (conscrypt == null) {
       throw new NoSuchProviderException("RSA SSA PSS using Conscrypt is not supported.");
     }

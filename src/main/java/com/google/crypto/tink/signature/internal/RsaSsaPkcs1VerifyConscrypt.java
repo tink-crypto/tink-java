@@ -49,7 +49,6 @@ public final class RsaSsaPkcs1VerifyConscrypt implements PublicKeyVerify {
   private static final byte[] EMPTY = new byte[0];
   private static final byte[] legacyMessageSuffix = new byte[] {0};
 
-  // TODO(b/182987934) Make the dependance on Conscrypt static.
   @Nullable
   static Provider conscryptProviderOrNull() {
     if (Util.isAndroid() && Util.getAndroidApiLevel() <= 21) {
@@ -101,11 +100,11 @@ public final class RsaSsaPkcs1VerifyConscrypt implements PublicKeyVerify {
     if (conscrypt == null) {
       throw new NoSuchProviderException("RSA-PKCS1.5 using Conscrypt is not supported.");
     }
-    return createWithConscryptProvider(key, conscrypt);
+    return createWithProvider(key, conscrypt);
   }
 
   @AccessesPartialKey
-  static PublicKeyVerify createWithConscryptProvider(RsaSsaPkcs1PublicKey key, Provider conscrypt)
+  public static PublicKeyVerify createWithProvider(RsaSsaPkcs1PublicKey key, Provider conscrypt)
       throws GeneralSecurityException {
     KeyFactory keyFactory = KeyFactory.getInstance("RSA", conscrypt);
     RSAPublicKey publicKey =

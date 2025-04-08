@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.signature.internal;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.PublicKeySign;
@@ -29,7 +30,9 @@ import com.google.crypto.tink.signature.internal.testing.SignatureTestVector;
 import com.google.crypto.tink.subtle.Bytes;
 import com.google.crypto.tink.subtle.RsaSsaPkcs1VerifyJce;
 import java.security.GeneralSecurityException;
+import java.security.Provider;
 import java.security.Security;
+import java.security.Signature;
 import org.conscrypt.Conscrypt;
 import org.junit.Assume;
 import org.junit.Before;
@@ -97,6 +100,29 @@ public class RsaSsaPkcs1SignJceTest {
     assertThrows(
         GeneralSecurityException.class,
         () -> verifier.verify(testVector.getSignature(), modifiedMessage));
+  }
+
+  @Theory
+  public void createWithProvider_nullProvider_throws() throws Exception {
+    SignatureTestVector testVector = allTestVectors[0];
+    assertThrows(
+        NullPointerException.class,
+        () ->
+            RsaSsaPkcs1SignJce.createWithProvider(
+                (RsaSsaPkcs1PrivateKey) testVector.getPrivateKey(), null));
+  }
+
+  @Theory
+  public void createWithProvider_worksWithDefaultProvider() throws Exception {
+    Provider defaultProvider = Signature.getInstance("SHA256withRSA").getProvider();
+    SignatureTestVector testVector = allTestVectors[0];
+
+    PublicKeySign signer =
+        RsaSsaPkcs1SignJce.createWithProvider(
+            (RsaSsaPkcs1PrivateKey) testVector.getPrivateKey(), defaultProvider);
+    byte[] signature = signer.sign(testVector.getMessage());
+    // RSA-SSA-PKCS1.5 signatures are deterministic.
+    assertThat(signature).isEqualTo(testVector.getSignature());
   }
 
   @DataPoints("allTests")

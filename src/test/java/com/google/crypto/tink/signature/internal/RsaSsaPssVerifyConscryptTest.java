@@ -20,6 +20,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.PublicKeyVerify;
+import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.signature.RsaSsaPssParameters;
 import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
@@ -32,6 +33,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
+import java.security.Provider;
 import java.security.Security;
 import java.util.Arrays;
 import org.conscrypt.Conscrypt;
@@ -55,15 +57,34 @@ public class RsaSsaPssVerifyConscryptTest {
   }
 
   @DataPoints("testVectors")
-  public static final SignatureTestVector[] TEST_VECTORS =
+  public static final SignatureTestVector[] testVectors =
       RsaSsaPssTestUtil.createRsaPssTestVectors();
 
   @Theory
-  public void verifySignatureInTestVector_works(
+  public void create_verifySignatureInTestVector_works(
       @FromDataPoints("testVectors") SignatureTestVector testVector) throws Exception {
     PublicKeyVerify verifier =
         RsaSsaPssVerifyConscrypt.create(
             (RsaSsaPssPublicKey) testVector.getPrivateKey().getPublicKey());
+    verifier.verify(testVector.getSignature(), testVector.getMessage());
+
+    // Test that verify fails when message is modified.
+    byte[] modifiedMessage = Bytes.concat(testVector.getMessage(), new byte[] {1});
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> verifier.verify(testVector.getSignature(), modifiedMessage));
+  }
+
+  @Theory
+  public void createWithProvider_worksWithConscrypt(
+      @FromDataPoints("testVectors") SignatureTestVector testVector) throws Exception {
+    Provider conscryptProvider = ConscryptUtil.providerOrNull();
+    if (conscryptProvider == null) {
+      return;
+    }
+    PublicKeyVerify verifier =
+        RsaSsaPssVerifyConscrypt.createWithProvider(
+            (RsaSsaPssPublicKey) testVector.getPrivateKey().getPublicKey(), conscryptProvider);
     verifier.verify(testVector.getSignature(), testVector.getMessage());
 
     // Test that verify fails when message is modified.
@@ -104,7 +125,7 @@ public class RsaSsaPssVerifyConscryptTest {
   }
 
   @DataPoints("wycheproofTestVectorPaths")
-  public static final String[] WYCHEPROOF_TEST_VECTORS_PATHS =
+  public static final String[] wycheproofTestVectorPaths =
       new String[] {
         "../wycheproof/testvectors/rsa_pss_2048_sha256_mgf1_0_test.json",
         "../wycheproof/testvectors/rsa_pss_2048_sha256_mgf1_32_test.json",

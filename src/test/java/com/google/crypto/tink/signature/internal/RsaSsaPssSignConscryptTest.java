@@ -18,11 +18,13 @@ package com.google.crypto.tink.signature.internal;
 
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
+import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
 import com.google.crypto.tink.signature.internal.testing.RsaSsaPssTestUtil;
 import com.google.crypto.tink.signature.internal.testing.SignatureTestVector;
+import java.security.Provider;
 import java.security.Security;
 import org.conscrypt.Conscrypt;
 import org.junit.Before;
@@ -45,14 +47,32 @@ public class RsaSsaPssSignConscryptTest {
   }
 
   @DataPoints("testVectors")
-  public static final SignatureTestVector[] ALL_TEST_VECTORS =
+  public static final SignatureTestVector[] testVectors =
       RsaSsaPssTestUtil.createRsaPssTestVectors();
 
   @Theory
-  public void signAndVerifySignatureInTestVector_works(
+  public void create_signAndVerifySignatureInTestVector_works(
       @FromDataPoints("testVectors") SignatureTestVector testVector) throws Exception {
     PublicKeySign signer =
         RsaSsaPssSignConscrypt.create((RsaSsaPssPrivateKey) testVector.getPrivateKey());
+    PublicKeyVerify verifier =
+        RsaSsaPssVerifyConscrypt.create(
+            (RsaSsaPssPublicKey) testVector.getPrivateKey().getPublicKey());
+    byte[] message = testVector.getMessage();
+    byte[] signature = signer.sign(message);
+    verifier.verify(signature, message);
+  }
+
+  @Theory
+  public void createWithProvider_worksWithConscrypt(
+      @FromDataPoints("testVectors") SignatureTestVector testVector) throws Exception {
+    Provider conscryptProvider = ConscryptUtil.providerOrNull();
+    if (conscryptProvider == null) {
+      return;
+    }
+    PublicKeySign signer =
+        RsaSsaPssSignConscrypt.createWithProvider(
+            (RsaSsaPssPrivateKey) testVector.getPrivateKey(), conscryptProvider);
     PublicKeyVerify verifier =
         RsaSsaPssVerifyConscrypt.create(
             (RsaSsaPssPublicKey) testVector.getPrivateKey().getPublicKey());

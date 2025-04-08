@@ -101,12 +101,30 @@ public final class RsaSsaPkcs1SignJce implements PublicKeySign {
     this.conscryptOrNull = conscryptOrNull;
   }
 
-  @AccessesPartialKey
   public static PublicKeySign create(RsaSsaPkcs1PrivateKey key) throws GeneralSecurityException {
     Provider conscryptOrNull = RsaSsaPkcs1VerifyConscrypt.conscryptProviderOrNull();
+    return createWithProviderOrNull(key, conscryptOrNull);
+  }
+
+  /**
+   * Creates a {@link com.google.crypto.tink.PublicKeySign} using a {@link
+   * java.security.Provider}. The provider should be either the Conscrypt or the OpenJDK provider.
+   */
+  public static PublicKeySign createWithProvider(RsaSsaPkcs1PrivateKey key, Provider provider)
+      throws GeneralSecurityException {
+    if (provider == null) {
+      throw new NullPointerException("provider must not be null");
+    }
+    return createWithProviderOrNull(key, provider);
+  }
+
+  @AccessesPartialKey
+  private static PublicKeySign createWithProviderOrNull(
+      RsaSsaPkcs1PrivateKey key, @Nullable Provider providerOrNull)
+      throws GeneralSecurityException {
     KeyFactory keyFactory;
-    if (conscryptOrNull != null) {
-      keyFactory = KeyFactory.getInstance("RSA", conscryptOrNull);
+    if (providerOrNull != null) {
+      keyFactory = KeyFactory.getInstance("RSA", providerOrNull);
     } else {
       keyFactory = EngineFactory.KEY_FACTORY.getInstance("RSA");
     }
@@ -123,10 +141,8 @@ public final class RsaSsaPkcs1SignJce implements PublicKeySign {
                     key.getPrimeExponentQ().getBigInteger(InsecureSecretKeyAccess.get()),
                     key.getCrtCoefficient().getBigInteger(InsecureSecretKeyAccess.get())));
     PublicKeyVerify verifier;
-    if (conscryptOrNull != null) {
-      verifier =
-          RsaSsaPkcs1VerifyConscrypt.createWithConscryptProvider(
-              key.getPublicKey(), conscryptOrNull);
+    if (providerOrNull != null) {
+      verifier = RsaSsaPkcs1VerifyConscrypt.createWithProvider(key.getPublicKey(), providerOrNull);
     } else {
       verifier = RsaSsaPkcs1VerifyJce.create(key.getPublicKey());
     }
@@ -139,7 +155,7 @@ public final class RsaSsaPkcs1SignJce implements PublicKeySign {
                 ? legacyMessageSuffix
                 : EMPTY,
             verifier,
-            conscryptOrNull);
+            providerOrNull);
     byte[] unused = signer.sign(testData);
     return signer;
   }

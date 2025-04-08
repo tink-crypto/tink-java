@@ -147,9 +147,14 @@ public final class RsaSsaPssVerifyConscrypt implements PublicKeyVerify {
     this.conscrypt = conscrypt;
   }
 
-  @AccessesPartialKey
   public static PublicKeyVerify create(RsaSsaPssPublicKey key) throws GeneralSecurityException {
     Provider conscrypt = conscryptProviderOrNull();
+    return createWithProvider(key, conscrypt);
+  }
+
+  @AccessesPartialKey
+  public static PublicKeyVerify createWithProvider(RsaSsaPssPublicKey key, Provider conscrypt)
+      throws GeneralSecurityException {
     if (conscrypt == null) {
       throw new NoSuchProviderException("RSA SSA PSS using Conscrypt is not supported.");
     }
