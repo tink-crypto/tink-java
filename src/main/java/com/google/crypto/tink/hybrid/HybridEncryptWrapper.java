@@ -26,7 +26,6 @@ import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
-import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import java.security.GeneralSecurityException;
 
@@ -89,14 +88,6 @@ public class HybridEncryptWrapper implements PrimitiveWrapper<HybridEncrypt, Hyb
       MonitoringAnnotations annotations,
       PrimitiveFactory<HybridEncrypt> factory)
       throws GeneralSecurityException {
-    return legacyWrap(PrimitiveSet.legacyRemoveNonEnabledKeys(keysetHandle), annotations, factory);
-  }
-
-  private HybridEncrypt legacyWrap(
-      KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations annotations,
-      PrimitiveFactory<HybridEncrypt> factory)
-      throws GeneralSecurityException {
     MonitoringClient.Logger encLogger;
     if (!annotations.isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
@@ -105,14 +96,8 @@ public class HybridEncryptWrapper implements PrimitiveWrapper<HybridEncrypt, Hyb
       encLogger = MonitoringUtil.DO_NOTHING_LOGGER;
     }
     KeysetHandleInterface.Entry primary = keysetHandle.getPrimary();
-
-    // It would actually be better to just throw a nullpointer exception (or maybe a
-    // GeneralSecurityException) here, but I don't want to change behavior today.
     return new WrappedHybridEncrypt(
-        new HybridEncryptWithId(
-            primary == null ? null : factory.create(primary),
-            primary == null ? 0 : primary.getId()),
-        encLogger);
+        new HybridEncryptWithId(factory.create(primary), primary.getId()), encLogger);
   }
 
   @Override

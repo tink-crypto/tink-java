@@ -156,13 +156,11 @@ public class HybridEncryptWrapperTest {
             TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle),
             ExtensionRegistryLite.getEmptyRegistry());
     Keyset keysetWithoutPrimary = keyset.toBuilder().clearPrimaryKeyId().build();
-    // TODO(b/228140127) This should throw at primitive creation time.
     assertThrows(
-        GeneralSecurityException.class,
+        IllegalStateException.class,
         () ->
             TinkProtoKeysetFormat.parseKeysetWithoutSecret(keysetWithoutPrimary.toByteArray())
-                .getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class)
-                .encrypt(new byte[0], new byte[0]));
+                .getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class));
   }
 
   @Test
