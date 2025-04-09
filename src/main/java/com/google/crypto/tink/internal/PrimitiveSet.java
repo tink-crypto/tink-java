@@ -28,41 +28,16 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 /**
- * A container class for a set of primitives -- implementations of cryptographic primitives offered
- * by Tink.
+ * A legacy class which can now create objects of type KeysetHandleInterface.
  *
- * <p>It provides also additional properties for the primitives it holds. In particular, one of the
- * primitives in the set can be distinguished as "the primary" one.
- *
- * <p>PrimitiveSet is an auxiliary class used for supporting key rotation: primitives in a set
- * correspond to keys in a keyset. Users will usually work with primitive instances, which
- * essentially wrap primitive sets. For example an instance of an Aead-primitive for a given keyset
- * holds a set of Aead-primitives corresponding to the keys in the keyset, and uses the set members
- * to do the actual crypto operations: to encrypt data the primary Aead-primitive from the set is
- * used, and upon decryption the ciphertext's prefix determines the id of the primitive from the
- * set.
+ * <p>PrimitiveSet used to be a class which contained the same information as a Keyset and
+ * primitives for each key. In a refactoring it was removed, and is now testonly. It should not be
+ * used in new code.
  */
 public final class PrimitiveSet {
-  public static KeysetHandleInterface legacyRemoveNonEnabledKeys(KeysetHandleInterface input)
-      throws GeneralSecurityException {
-    PrimitiveSet.Builder builder = PrimitiveSet.newBuilder();
-    for (int i = 0; i < input.size(); ++i) {
-      KeysetHandleInterface.Entry entry = input.getAt(i);
-      if (entry.getStatus().equals(KeyStatus.ENABLED)) {
-        builder.addEntry(entry.getKey(), entry.getId(), entry.isPrimary());
-      }
-    }
-    return builder.build().getKeysetHandle();
-  }
-
-  /**
-   * A single entry in the set. In addition to the actual primitive it holds also some extra
-   * information about the primitive.
-   */
+  /** A single entry in the set. */
   public static final class Entry implements KeysetHandleInterface.Entry {
-    // The status of the key represented by the primitive. Currently always equal to "ENABLED".
     private final KeyStatus status;
-    // The id of the key.
     private final int keyId;
     private final Key key;
     private final boolean isPrimary;
@@ -108,14 +83,7 @@ public final class PrimitiveSet {
     entriesInKeysetOrder.add(entry);
   }
 
-  /**
-   * Implements KeysetHandle based on the information available in PrimitiveSet.
-   *
-   * <p>Note: in the future we will simply pass in the actual KeysetHandle when constructing the
-   * primitive set, and not build a new one here.
-   *
-   * <p>Note: this class is not static, and hence always has a pointer to the primitive set.
-   */
+  /** Implements KeysetHandle. */
   private static class KeysetHandleImpl implements KeysetHandleInterface {
     private final List<KeysetHandleInterface.Entry> entriesInKeysetOrder;
     private final KeysetHandleInterface.Entry primary;
@@ -149,7 +117,6 @@ public final class PrimitiveSet {
 
   private final KeysetHandleInterface keysetHandle;
 
-  /** Creates an immutable PrimitiveSet. It is used by the Builder. */
   private PrimitiveSet(KeysetHandleInterface keysetHandle) {
     this.keysetHandle = keysetHandle;
   }
@@ -181,7 +148,7 @@ public final class PrimitiveSet {
       }
       return this;
     }
-    
+
     /**
      * Adds a non-primary primitive.
      *

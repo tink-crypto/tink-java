@@ -429,21 +429,13 @@ android_library(
 java_library(
     name = "monitoring_util",
     srcs = ["MonitoringUtil.java"],
-    deps = [
-        ":keyset_handle_interface",
-        ":monitoring_client",
-        ":primitive_set",
-    ],
+    deps = [":monitoring_client"],
 )
 
 android_library(
     name = "monitoring_util-android",
     srcs = ["MonitoringUtil.java"],
-    deps = [
-        ":keyset_handle_interface-android",
-        ":monitoring_client-android",
-        ":primitive_set-android",
-    ],
+    deps = [":monitoring_client-android"],
 )
 
 java_library(
@@ -846,6 +838,7 @@ java_library(
 
 android_library(
     name = "primitive_set-android",
+    testonly = 1,
     srcs = ["PrimitiveSet.java"],
     deps = [
         ":keyset_handle_interface-android",
@@ -860,6 +853,7 @@ android_library(
 
 java_library(
     name = "primitive_set",
+    testonly = 1,
     srcs = ["PrimitiveSet.java"],
     deps = [
         ":keyset_handle_interface",
