@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.streamingaead;
 
+import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.StreamingAead;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
@@ -23,7 +24,6 @@ import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
-import com.google.crypto.tink.internal.PrimitiveSet;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.streamingaead.internal.LegacyFullStreamingAead;
 import java.security.GeneralSecurityException;
@@ -50,18 +50,6 @@ public class StreamingAeadWrapper implements PrimitiveWrapper<StreamingAead, Str
 
   @Override
   public StreamingAead wrap(
-      KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations annotations,
-      PrimitiveFactory<StreamingAead> factory)
-      throws GeneralSecurityException {
-    return legacyWrap(PrimitiveSet.legacyRemoveNonEnabledKeys(keysetHandle), annotations, factory);
-  }
-
-  /**
-   * @return a StreamingAead primitive from a {@code keysetHandle}.
-   * @throws GeneralSecurityException
-   */
-  private StreamingAead legacyWrap(
       KeysetHandleInterface handle,
       MonitoringAnnotations annotations,
       PrimitiveFactory<StreamingAead> factory)
@@ -69,8 +57,10 @@ public class StreamingAeadWrapper implements PrimitiveWrapper<StreamingAead, Str
     List<StreamingAead> allStreamingAeads = new ArrayList<>();
     for (int i = 0; i < handle.size(); i++) {
       KeysetHandleInterface.Entry entry = handle.getAt(i);
-      StreamingAead streamingAead = factory.create(entry);
-      allStreamingAeads.add(streamingAead);
+      if (entry.getStatus().equals(KeyStatus.ENABLED)) {
+        StreamingAead streamingAead = factory.create(entry);
+        allStreamingAeads.add(streamingAead);
+      }
     }
     KeysetHandleInterface.Entry primaryEntry = handle.getPrimary();
     if (primaryEntry == null) {
