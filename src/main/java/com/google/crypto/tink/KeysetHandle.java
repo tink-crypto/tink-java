@@ -585,12 +585,6 @@ public final class KeysetHandle implements KeysetHandleInterface {
   private final List<Entry> entries;
   private final MonitoringAnnotations annotations;
 
-  private KeysetHandle(Keyset keyset, List<Entry> entries) {
-    this.keyset = keyset;
-    this.entries = entries;
-    this.annotations = MonitoringAnnotations.EMPTY;
-  }
-
   private KeysetHandle(
       Keyset keyset, List<Entry> entries, MonitoringAnnotations annotations) {
     this.keyset = keyset;
@@ -606,7 +600,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
     assertEnoughKeyMaterial(keyset);
     List<Entry> entries = getEntriesFromKeyset(keyset);
 
-    return new KeysetHandle(keyset, entries);
+    return new KeysetHandle(keyset, entries, MonitoringAnnotations.EMPTY);
   }
 
   /**
