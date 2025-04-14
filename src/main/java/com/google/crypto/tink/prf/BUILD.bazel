@@ -543,3 +543,47 @@ java_library(
         "//src/main/java/com/google/crypto/tink/subtle/prf:prf_impl",
     ],
 )
+
+android_library(
+    name = "prf_configuration_v1-android",
+    srcs = ["PrfConfigurationV1.java"],
+    deps = [
+        ":aes_cmac_prf_key-android",
+        ":hkdf_prf_key-android",
+        ":hkdf_prf_parameters-android",
+        ":hmac_prf_key-android",
+        ":prf_set-android",
+        ":prf_set_wrapper-android",
+        "//src/main/java/com/google/crypto/tink:configuration-android",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util-android",
+        "//src/main/java/com/google/crypto/tink/internal:internal_configuration-android",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_constructor-android",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_registry-android",
+        "//src/main/java/com/google/crypto/tink/subtle:prf_aes_cmac-android",
+        "//src/main/java/com/google/crypto/tink/subtle:prf_hmac_jce-android",
+        "//src/main/java/com/google/crypto/tink/subtle/prf:hkdf_streaming_prf-android",
+        "//src/main/java/com/google/crypto/tink/subtle/prf:prf_impl-android",
+    ],
+)
+
+java_library(
+    name = "prf_configuration_v1",
+    srcs = ["PrfConfigurationV1.java"],
+    deps = [
+        ":aes_cmac_prf_key",
+        ":hkdf_prf_key",
+        ":hkdf_prf_parameters",
+        ":hmac_prf_key",
+        ":prf_set",
+        ":prf_set_wrapper",
+        "//src/main/java/com/google/crypto/tink:configuration",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
+        "//src/main/java/com/google/crypto/tink/internal:internal_configuration",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_constructor",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_registry",
+        "//src/main/java/com/google/crypto/tink/subtle:prf_aes_cmac",
+        "//src/main/java/com/google/crypto/tink/subtle:prf_hmac_jce",
+        "//src/main/java/com/google/crypto/tink/subtle/prf:hkdf_streaming_prf",
+        "//src/main/java/com/google/crypto/tink/subtle/prf:prf_impl",
+    ],
+)

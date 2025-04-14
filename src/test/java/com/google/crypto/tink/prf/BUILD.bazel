@@ -322,3 +322,27 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "PrfConfigurationV1Test",
+    size = "small",
+    srcs = ["PrfConfigurationV1Test.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:registry_cluster",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
+        "//src/main/java/com/google/crypto/tink/prf:aes_cmac_prf_key",
+        "//src/main/java/com/google/crypto/tink/prf:aes_cmac_prf_parameters",
+        "//src/main/java/com/google/crypto/tink/prf:hkdf_prf_key",
+        "//src/main/java/com/google/crypto/tink/prf:hkdf_prf_parameters",
+        "//src/main/java/com/google/crypto/tink/prf:hmac_prf_key",
+        "//src/main/java/com/google/crypto/tink/prf:hmac_prf_parameters",
+        "//src/main/java/com/google/crypto/tink/prf:prf_configuration_v1",
+        "//src/main/java/com/google/crypto/tink/prf:prf_set",
+        "//src/main/java/com/google/crypto/tink/prf/internal:aes_cmac_prf_proto_serialization",
+        "//src/main/java/com/google/crypto/tink/prf/internal:hkdf_prf_proto_serialization",
+        "//src/main/java/com/google/crypto/tink/prf/internal:hmac_prf_proto_serialization",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
