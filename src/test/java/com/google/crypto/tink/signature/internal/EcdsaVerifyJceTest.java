@@ -74,6 +74,7 @@ public class EcdsaVerifyJceTest {
   public static class WycheproofTestCase {
     private final String fileName;
     private final EcdsaEncoding encoding;
+    private final int skippedTests;
 
     public String fileName() {
       return fileName;
@@ -83,9 +84,14 @@ public class EcdsaVerifyJceTest {
       return encoding;
     }
 
-    public WycheproofTestCase(String fileName, EcdsaEncoding encoding) {
+    public int skippedTests() {
+      return skippedTests;
+    }
+
+    public WycheproofTestCase(String fileName, EcdsaEncoding encoding, int skippedTests) {
       this.fileName = fileName;
       this.encoding = encoding;
+      this.skippedTests = skippedTests;
     }
   }
 
@@ -94,31 +100,31 @@ public class EcdsaVerifyJceTest {
       new WycheproofTestCase[] {
         new WycheproofTestCase(
             "../wycheproof/testvectors/ecdsa_secp256r1_sha256_test.json",
-            EcdsaEncoding.DER),
+            EcdsaEncoding.DER, 0),
         new WycheproofTestCase(
             "../wycheproof/testvectors/ecdsa_secp256r1_sha512_test.json",
-            EcdsaEncoding.DER),
+            EcdsaEncoding.DER, 0),
         new WycheproofTestCase(
             "../wycheproof/testvectors/ecdsa_secp384r1_sha384_test.json",
-            EcdsaEncoding.DER),
+            EcdsaEncoding.DER, 408),
         new WycheproofTestCase(
             "../wycheproof/testvectors/ecdsa_secp384r1_sha512_test.json",
-            EcdsaEncoding.DER),
+            EcdsaEncoding.DER, 0),
         new WycheproofTestCase(
             "../wycheproof/testvectors/ecdsa_secp521r1_sha512_test.json",
-            EcdsaEncoding.DER),
+            EcdsaEncoding.DER, 0),
         new WycheproofTestCase(
             "../wycheproof/testvectors/ecdsa_secp256r1_sha256_p1363_test.json",
-            EcdsaEncoding.IEEE_P1363),
+            EcdsaEncoding.IEEE_P1363, 0),
         new WycheproofTestCase(
             "../wycheproof/testvectors/ecdsa_secp384r1_sha384_p1363_test.json",
-            EcdsaEncoding.IEEE_P1363),
+            EcdsaEncoding.IEEE_P1363, 239),
         new WycheproofTestCase(
             "../wycheproof/testvectors/ecdsa_secp384r1_sha512_p1363_test.json",
-            EcdsaEncoding.IEEE_P1363),
+            EcdsaEncoding.IEEE_P1363, 0),
         new WycheproofTestCase(
             "../wycheproof/testvectors/ecdsa_secp521r1_sha512_p1363_test.json",
-            EcdsaEncoding.IEEE_P1363)
+            EcdsaEncoding.IEEE_P1363, 0)
       };
 
   @Theory
@@ -178,7 +184,7 @@ public class EcdsaVerifyJceTest {
         }
       }
     }
-    System.out.printf("Number of tests skipped: %d\n", cntSkippedTests);
+    assertEquals(testCase.skippedTests(), cntSkippedTests);
     assertEquals(0, errors);
   }
 
@@ -239,55 +245,42 @@ public class EcdsaVerifyJceTest {
   @Theory
   public void testAgainstJceSignatureInstance(@FromDataPoints("testCases") TestCase testCase)
       throws Exception {
-    int numSignatures = 100;
-    if (TestUtil.isTsan()) {
-      numSignatures = 5;
-    }
-    for (int i = 0; i < numSignatures; i++) {
-      KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
-      keyGen.initialize(testCase.paramSpec());
-      KeyPair keyPair = keyGen.generateKeyPair();
-      ECPublicKey pub = (ECPublicKey) keyPair.getPublic();
-      ECPrivateKey priv = (ECPrivateKey) keyPair.getPrivate();
+    KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
+    keyGen.initialize(testCase.paramSpec());
+    KeyPair keyPair = keyGen.generateKeyPair();
+    ECPublicKey pub = (ECPublicKey) keyPair.getPublic();
+    ECPrivateKey priv = (ECPrivateKey) keyPair.getPrivate();
+    byte[] message = "Hello".getBytes(UTF_8);
 
-      // Sign with JCE's Signature.
-      Signature signer = Signature.getInstance(SubtleUtil.toEcdsaAlgo(testCase.hash()));
-      signer.initSign(priv);
-      String message = "Hello";
-      signer.update(message.getBytes(UTF_8));
-      byte[] signature = signer.sign();
+    // Sign with JCE's Signature.
+    Signature signer = Signature.getInstance(SubtleUtil.toEcdsaAlgo(testCase.hash()));
+    signer.initSign(priv);
+    signer.update(message);
+    byte[] signature = signer.sign();
 
-      // Verify with EcdsaVerifyJce.
-      EcdsaVerifyJce verifier = new EcdsaVerifyJce(pub, testCase.hash(), EcdsaEncoding.DER);
-      verifier.verify(signature, message.getBytes(UTF_8));
-    }
+    // Verify with EcdsaVerifyJce.
+    EcdsaVerifyJce verifier = new EcdsaVerifyJce(pub, testCase.hash(), EcdsaEncoding.DER);
+    verifier.verify(signature, message);
   }
 
   @Theory
   public void testSignVerify(@FromDataPoints("testCases") TestCase testCase) throws Exception {
-    int numSignatures = 100;
-    if (TestUtil.isTsan()) {
-      numSignatures = 5;
-    }
-    for (int i = 0; i < numSignatures; i++) {
-      KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
-      keyGen.initialize(testCase.paramSpec());
-      KeyPair keyPair = keyGen.generateKeyPair();
-      ECPublicKey pub = (ECPublicKey) keyPair.getPublic();
-      ECPrivateKey priv = (ECPrivateKey) keyPair.getPrivate();
+    KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
+    keyGen.initialize(testCase.paramSpec());
+    KeyPair keyPair = keyGen.generateKeyPair();
+    ECPublicKey pub = (ECPublicKey) keyPair.getPublic();
+    ECPrivateKey priv = (ECPrivateKey) keyPair.getPrivate();
+    byte[] message = "Hello".getBytes(UTF_8);
 
-      EcdsaEncoding[] encodings = new EcdsaEncoding[] {EcdsaEncoding.IEEE_P1363, EcdsaEncoding.DER};
-      for (EcdsaEncoding encoding : encodings) {
-        // Sign with EcdsaSignJce
-        EcdsaSignJce signer = new EcdsaSignJce(priv, testCase.hash(), encoding);
+    EcdsaEncoding[] encodings = new EcdsaEncoding[] {EcdsaEncoding.IEEE_P1363, EcdsaEncoding.DER};
+    for (EcdsaEncoding encoding : encodings) {
+      // Sign with EcdsaSignJce
+      EcdsaSignJce signer = new EcdsaSignJce(priv, testCase.hash(), encoding);
+      byte[] signature = signer.sign(message);
 
-        byte[] message = "Hello".getBytes(UTF_8);
-        byte[] signature = signer.sign(message);
-
-        // Verify with EcdsaVerifyJce.
-        EcdsaVerifyJce verifier = new EcdsaVerifyJce(pub, testCase.hash(), encoding);
-        verifier.verify(signature, message);
-      }
+      // Verify with EcdsaVerifyJce.
+      EcdsaVerifyJce verifier = new EcdsaVerifyJce(pub, testCase.hash(), encoding);
+      verifier.verify(signature, message);
     }
   }
 
@@ -299,12 +292,12 @@ public class EcdsaVerifyJceTest {
     KeyPair keyPair = keyGen.generateKeyPair();
     ECPublicKey pub = (ECPublicKey) keyPair.getPublic();
     ECPrivateKey priv = (ECPrivateKey) keyPair.getPrivate();
+    byte[] message = "Hello".getBytes(UTF_8);
 
     EcdsaEncoding[] encodings = new EcdsaEncoding[] {EcdsaEncoding.IEEE_P1363, EcdsaEncoding.DER};
     for (EcdsaEncoding encoding : encodings) {
       // Sign with EcdsaSignJce
       EcdsaSignJce signer = new EcdsaSignJce(priv, HashType.SHA256, encoding);
-      byte[] message = "Hello".getBytes(UTF_8);
       byte[] signature = signer.sign(message);
 
       // Verify with EcdsaVerifyJce.
