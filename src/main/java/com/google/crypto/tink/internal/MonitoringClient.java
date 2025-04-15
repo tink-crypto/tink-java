@@ -37,6 +37,12 @@ public interface MonitoringClient {
     public void log(int keyId, long numBytesAsInput);
 
     public void logFailure();
+
+    /**
+     * Called when a key is potentially exported (e.g. by calling {@code
+     * KeysetHandle.getAt(i).getKey()}).
+     */
+    public default void logKeyExport(int keyId) {}
   }
 
   /** Function that creates Logger objects. It is called when a primitive is created. */
