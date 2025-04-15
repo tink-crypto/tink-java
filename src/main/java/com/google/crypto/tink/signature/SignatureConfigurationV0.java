@@ -17,10 +17,14 @@
 package com.google.crypto.tink.signature;
 
 import com.google.crypto.tink.Configuration;
+import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.Key;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.InternalConfiguration;
+import com.google.crypto.tink.internal.LegacyProtoKey;
+import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.subtle.EcdsaSignJce;
@@ -79,11 +83,84 @@ import java.security.GeneralSecurityException;
       builder.registerPrimitiveConstructor(
           PrimitiveConstructor.create(
               Ed25519Verify::create, Ed25519PublicKey.class, PublicKeyVerify.class));
+      builder.registerPrimitiveConstructor(
+          PrimitiveConstructor.create(
+              SignatureConfigurationV0::createPublicKeySignFromLegacyProtoKey,
+              LegacyProtoKey.class,
+              PublicKeySign.class));
+      builder.registerPrimitiveConstructor(
+          PrimitiveConstructor.create(
+              SignatureConfigurationV0::createPublicKeyVerifyFromLegacyProtoKey,
+              LegacyProtoKey.class,
+              PublicKeyVerify.class));
 
       return InternalConfiguration.createFromPrimitiveRegistry(builder.build());
     } catch (GeneralSecurityException e) {
       throw new IllegalStateException(e);
     }
+  }
+
+  private static PublicKeySign createPublicKeySignFromLegacyProtoKey(LegacyProtoKey key)
+      throws GeneralSecurityException {
+    Key parsedKey;
+    try {
+      parsedKey =
+          MutableSerializationRegistry.globalInstance()
+              .parseKey(
+                  key.getSerialization(InsecureSecretKeyAccess.get()),
+                  InsecureSecretKeyAccess.get());
+    } catch (GeneralSecurityException e) {
+      throw new GeneralSecurityException("Failed to re-parse LegacyProtoKey for PublicKeySign", e);
+    }
+    if (parsedKey instanceof EcdsaPrivateKey) {
+      return EcdsaSignJce.create((EcdsaPrivateKey) parsedKey);
+    }
+    if (parsedKey instanceof Ed25519PrivateKey) {
+      return Ed25519Sign.create((Ed25519PrivateKey) parsedKey);
+    }
+    if (parsedKey instanceof RsaSsaPkcs1PrivateKey) {
+      return RsaSsaPkcs1SignJce.create((RsaSsaPkcs1PrivateKey) parsedKey);
+    }
+    if (parsedKey instanceof RsaSsaPssPrivateKey) {
+      return RsaSsaPssSignJce.create((RsaSsaPssPrivateKey) parsedKey);
+    }
+    throw new GeneralSecurityException(
+        "Failed to re-parse LegacyProtoKey for PublicKeySign: the parsed key type is"
+            + parsedKey.getClass().getName()
+            + ", expected one of: EcdsaPrivateKey, Ed25519PrivateKey, RsaSsaPkcs1PrivateKey,"
+            + " RsaSsaPssPrivateKey.");
+  }
+
+  private static PublicKeyVerify createPublicKeyVerifyFromLegacyProtoKey(LegacyProtoKey key)
+      throws GeneralSecurityException {
+    Key parsedKey;
+    try {
+      parsedKey =
+          MutableSerializationRegistry.globalInstance()
+              .parseKey(
+                  key.getSerialization(InsecureSecretKeyAccess.get()),
+                  InsecureSecretKeyAccess.get());
+    } catch (GeneralSecurityException e) {
+      throw new GeneralSecurityException(
+          "Failed to re-parse LegacyProtoKey for PublicKeyVerify", e);
+    }
+    if (parsedKey instanceof EcdsaPublicKey) {
+      return EcdsaVerifyJce.create((EcdsaPublicKey) parsedKey);
+    }
+    if (parsedKey instanceof Ed25519PublicKey) {
+      return Ed25519Verify.create((Ed25519PublicKey) parsedKey);
+    }
+    if (parsedKey instanceof RsaSsaPkcs1PublicKey) {
+      return RsaSsaPkcs1VerifyJce.create((RsaSsaPkcs1PublicKey) parsedKey);
+    }
+    if (parsedKey instanceof RsaSsaPssPublicKey) {
+      return RsaSsaPssVerifyJce.create((RsaSsaPssPublicKey) parsedKey);
+    }
+    throw new GeneralSecurityException(
+        "Failed to re-parse LegacyProtoKey for PublicKeyVerify: the parsed key type is"
+            + parsedKey.getClass().getName()
+            + ", expected one of: EcdsaPublicKey, Ed25519PublicKey, RsaSsaPkcs1PublicKey,"
+            + " RsaSsaPssPublicKey.");
   }
 
   /** Returns an instance of the {@code SignatureConfigurationV0}. */
