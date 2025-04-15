@@ -19,12 +19,17 @@ package com.google.crypto.tink.prf;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
+import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.LegacyProtoKey;
+import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.prf.internal.AesCmacPrfProtoSerialization;
 import com.google.crypto.tink.prf.internal.HkdfPrfProtoSerialization;
 import com.google.crypto.tink.prf.internal.HmacPrfProtoSerialization;
+import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.util.SecretBytes;
+import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import org.junit.Assume;
 import org.junit.Test;
@@ -32,6 +37,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
+@SuppressWarnings("UnnecessarilyFullyQualified") // Fully specifying proto types is more readable
 public class PrfConfigurationV0Test {
   @Test
   public void config_throwsIfInFipsMode() throws Exception {
@@ -158,6 +164,192 @@ public class PrfConfigurationV0Test {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
             .build();
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> keysetHandle.getPrimitive(PrfConfigurationV0.get(), PrfSet.class));
+  }
+
+  private final ByteString random32ByteKeyValue =
+      ByteString.copyFrom(SecretBytes.randomBytes(32).toByteArray(InsecureSecretKeyAccess.get()));
+
+  @Test
+  public void config_handlesHmacPrfLegacyKeyForPrfSet() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "type.googleapis.com/google.crypto.tink.HmacPrfKey",
+            com.google.crypto.tink.proto.HmacPrfKey.newBuilder()
+                .setParams(
+                    com.google.crypto.tink.proto.HmacPrfParams.newBuilder()
+                        .setHash(com.google.crypto.tink.proto.HashType.SHA256)
+                        .build())
+                .setKeyValue(random32ByteKeyValue)
+                .build()
+                .toByteString(),
+            KeyMaterialType.SYMMETRIC,
+            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            null);
+    LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
+            .build();
+
+    HmacPrfProtoSerialization.register();
+
+    assertThat(keysetHandle.getPrimitive(PrfConfigurationV0.get(), PrfSet.class)).isNotNull();
+  }
+
+  private static final String HKDF_PRF_KEY_TYPE_URL =
+      "type.googleapis.com/google.crypto.tink.HkdfPrfKey";
+
+  @Test
+  public void config_handlesHkdfPrfLegacyKeyForPrfSet() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            HKDF_PRF_KEY_TYPE_URL,
+            com.google.crypto.tink.proto.HkdfPrfKey.newBuilder()
+                .setParams(
+                    com.google.crypto.tink.proto.HkdfPrfParams.newBuilder()
+                        .setHash(com.google.crypto.tink.proto.HashType.SHA256)
+                        .build())
+                .setKeyValue(random32ByteKeyValue)
+                .build()
+                .toByteString(),
+            KeyMaterialType.SYMMETRIC,
+            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            null);
+    LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
+            .build();
+
+    HkdfPrfProtoSerialization.register();
+
+    assertThat(keysetHandle.getPrimitive(PrfConfigurationV0.get(), PrfSet.class)).isNotNull();
+  }
+
+  @Test
+  public void config_disallowsSmallHkdfPrfKeyForPrfSetWithLegacyKey() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            HKDF_PRF_KEY_TYPE_URL,
+            com.google.crypto.tink.proto.HkdfPrfKey.newBuilder()
+                .setParams(
+                    com.google.crypto.tink.proto.HkdfPrfParams.newBuilder()
+                        .setHash(com.google.crypto.tink.proto.HashType.SHA256)
+                        .build())
+                .setKeyValue(
+                    ByteString.copyFrom(
+                        SecretBytes.randomBytes(24).toByteArray(InsecureSecretKeyAccess.get())))
+                .build()
+                .toByteString(),
+            KeyMaterialType.SYMMETRIC,
+            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            null);
+    LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
+            .build();
+
+    HkdfPrfProtoSerialization.register();
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> keysetHandle.getPrimitive(PrfConfigurationV0.get(), PrfSet.class));
+  }
+
+  @Test
+  public void config_disallowsNonSha256NonSha512HkdfPrfHashTypeForPrfSetWithLegacyKey()
+      throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            HKDF_PRF_KEY_TYPE_URL,
+            com.google.crypto.tink.proto.HkdfPrfKey.newBuilder()
+                .setParams(
+                    com.google.crypto.tink.proto.HkdfPrfParams.newBuilder()
+                        .setHash(com.google.crypto.tink.proto.HashType.SHA1)
+                        .build())
+                .setKeyValue(random32ByteKeyValue)
+                .build()
+                .toByteString(),
+            KeyMaterialType.SYMMETRIC,
+            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            null);
+    LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
+            .build();
+
+    HkdfPrfProtoSerialization.register();
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> keysetHandle.getPrimitive(PrfConfigurationV0.get(), PrfSet.class));
+  }
+
+  private static final String AES_CMAC_PRF_KEY_TYPE_URL =
+      "type.googleapis.com/google.crypto.tink.AesCmacPrfKey";
+
+  @Test
+  public void config_handlesAesCmacPrfLegacyKeyForPrfSet() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            AES_CMAC_PRF_KEY_TYPE_URL,
+            com.google.crypto.tink.proto.AesCmacPrfKey.newBuilder()
+                .setKeyValue(random32ByteKeyValue)
+                .build()
+                .toByteString(),
+            KeyMaterialType.SYMMETRIC,
+            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            null);
+    LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
+            .build();
+
+    AesCmacPrfProtoSerialization.register();
+
+    assertThat(keysetHandle.getPrimitive(PrfConfigurationV0.get(), PrfSet.class)).isNotNull();
+  }
+
+  @Test
+  public void config_disallows16ByteAesCmacPrfKeyForPrfSetWithLegacyKey() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            AES_CMAC_PRF_KEY_TYPE_URL,
+            com.google.crypto.tink.proto.AesCmacPrfKey.newBuilder()
+                .setKeyValue(
+                    ByteString.copyFrom(
+                        SecretBytes.randomBytes(16).toByteArray(InsecureSecretKeyAccess.get())))
+                .build()
+                .toByteString(),
+            KeyMaterialType.SYMMETRIC,
+            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            null);
+    LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
+            .build();
+
+    AesCmacPrfProtoSerialization.register();
 
     assertThrows(
         GeneralSecurityException.class,
