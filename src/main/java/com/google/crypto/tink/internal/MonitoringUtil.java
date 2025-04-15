@@ -20,15 +20,7 @@ package com.google.crypto.tink.internal;
 /** Some util functions needed to add monitoring to the Primitives. */
 public final class MonitoringUtil {
 
-  private static class DoNothingLogger implements MonitoringClient.Logger {
-    @Override
-    public void log(int keyId, long numBytesAsInput) {}
-
-    @Override
-    public void logFailure() {}
-  }
-
-  public static final MonitoringClient.Logger DO_NOTHING_LOGGER = new DoNothingLogger();
+  public static final MonitoringClient.Logger DO_NOTHING_LOGGER = new MonitoringClient.Logger() {};
 
   private MonitoringUtil() {}
 }

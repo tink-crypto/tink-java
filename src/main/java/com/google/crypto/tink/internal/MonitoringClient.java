@@ -34,9 +34,11 @@ public interface MonitoringClient {
 
   /** Interface that logs specific API calls of a specific primitive.*/
   public interface Logger {
-    public void log(int keyId, long numBytesAsInput);
+    /** Called on typical primitive APIs when an operation succeeds. */
+    public default void log(int keyId, long numBytesAsInput) {}
 
-    public void logFailure();
+    /** Called on typical primitive APIs when an operation fails. */
+    public default void logFailure() {}
 
     /**
      * Called when a key is potentially exported (e.g. by calling {@code
