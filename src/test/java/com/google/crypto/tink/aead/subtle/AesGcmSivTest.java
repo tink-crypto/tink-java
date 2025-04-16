@@ -18,8 +18,6 @@ package com.google.crypto.tink.aead.subtle;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.Aead;
@@ -43,24 +41,19 @@ import java.util.HashSet;
 import javax.annotation.Nullable;
 import org.conscrypt.Conscrypt;
 import org.junit.Assume;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-/** Unit tests for AesGcm. */
+/** Unit tests for AesGcmSiv. */
 @RunWith(JUnit4.class)
 public class AesGcmSivTest {
 
-  private Integer[] keySizeInBytes;
+  private static final Integer[] keySizeInBytes = new Integer[] {16, 32};
 
-  @Before
-  public void setUp() throws Exception {
-    keySizeInBytes = new Integer[] {16, 32};
-  }
-
-  @Before
-  public void setUpConscrypt() throws Exception {
+  @BeforeClass
+  public static void setUpConscrypt() throws Exception {
     if (TestUtil.isAndroid()) {
       return;
     }
@@ -74,8 +67,10 @@ public class AesGcmSivTest {
 
   @Test
   public void testEncryptDecrypt() throws Exception {
+    // Skip the test on Android API version 29 and older, because the security provider returns an
+    // AES GCM cipher instead of an AES GCM SIV cipher.
     @Nullable Integer apiLevel = Util.getAndroidApiLevel();
-    Assume.assumeTrue(apiLevel == null || apiLevel >= 30); // Run the test on java and android >= 30
+    Assume.assumeTrue(apiLevel == null || apiLevel >= 30);
 
     byte[] aad = new byte[] {1, 2, 3};
     for (int keySize : keySizeInBytes) {
@@ -93,10 +88,11 @@ public class AesGcmSivTest {
   @Test
   /* BC had a bug, where GCM failed for messages of size > 8192 */
   public void testLongMessages() throws Exception {
-    if (TestUtil.isAndroid()) {
-      System.out.println("testLongMessages doesn't work on Android, skipping");
-      return;
-    }
+    // Skip the test on Android API version 29 and older, because the security provider returns an
+    // AES GCM cipher instead of an AES GCM SIV cipher.
+    @Nullable Integer apiLevel = Util.getAndroidApiLevel();
+    Assume.assumeTrue(apiLevel == null || apiLevel >= 30);
+
     int dataSize = 16;
     while (dataSize <= (1 << 24)) {
       byte[] plaintext = Random.randBytes(dataSize);
@@ -114,8 +110,10 @@ public class AesGcmSivTest {
 
   @Test
   public void testModifyCiphertext() throws Exception {
+    // Skip the test on Android API version 29 and older, because the security provider returns an
+    // AES GCM cipher instead of an AES GCM SIV cipher.
     @Nullable Integer apiLevel = Util.getAndroidApiLevel();
-    Assume.assumeTrue(apiLevel == null || apiLevel >= 30); // Run the test on java and android >= 30
+    Assume.assumeTrue(apiLevel == null || apiLevel >= 30);
 
     byte[] aad = Random.randBytes(33);
     byte[] key = Random.randBytes(16);
@@ -151,22 +149,18 @@ public class AesGcmSivTest {
 
   @Test
   public void testWycheproofVectors() throws Exception {
+    // Skip the test on Android API version 29 and older, because the security provider returns an
+    // AES GCM cipher instead of an AES GCM SIV cipher.
     @Nullable Integer apiLevel = Util.getAndroidApiLevel();
-    Assume.assumeTrue(apiLevel == null || apiLevel >= 30); // Run the test on java and android >= 30
+    Assume.assumeTrue(apiLevel == null || apiLevel >= 30);
 
     JsonObject json =
         WycheproofTestUtil.readJson("../wycheproof/testvectors/aes_gcm_siv_test.json");
     int errors = 0;
-    int cntSkippedTests = 0;
     JsonArray testGroups = json.getAsJsonArray("testGroups");
     for (int i = 0; i < testGroups.size(); i++) {
       JsonObject group = testGroups.get(i).getAsJsonObject();
-      int keySize = group.get("keySize").getAsInt();
       JsonArray tests = group.getAsJsonArray("tests");
-      if (!Arrays.asList(keySizeInBytes).contains(keySize / 8)) {
-        cntSkippedTests += tests.size();
-        continue;
-      }
       for (int j = 0; j < tests.size(); j++) {
         JsonObject testcase = tests.get(j).getAsJsonObject();
         String tcId =
@@ -215,14 +209,15 @@ public class AesGcmSivTest {
         }
       }
     }
-    System.out.printf("Number of tests skipped: %d", cntSkippedTests);
-    assertEquals(0, errors);
+    assertThat(errors).isEqualTo(0);
   }
 
   @Test
   public void testNullPlaintextOrCiphertext() throws Exception {
+    // Skip the test on Android API version 29 and older, because the security provider returns an
+    // AES GCM cipher instead of an AES GCM SIV cipher.
     @Nullable Integer apiLevel = Util.getAndroidApiLevel();
-    Assume.assumeTrue(apiLevel == null || apiLevel >= 30); // Run the test on java and android >= 30
+    Assume.assumeTrue(apiLevel == null || apiLevel >= 30);
 
     for (int keySize : keySizeInBytes) {
       AesGcmSiv gcm = new AesGcmSiv(Random.randBytes(keySize));
@@ -252,8 +247,10 @@ public class AesGcmSivTest {
 
   @Test
   public void testEmptyAssociatedData() throws Exception {
+    // Skip the test on Android API version 29 and older, because the security provider returns an
+    // AES GCM cipher instead of an AES GCM SIV cipher.
     @Nullable Integer apiLevel = Util.getAndroidApiLevel();
-    Assume.assumeTrue(apiLevel == null || apiLevel >= 30); // Run the test on java and android >= 30
+    Assume.assumeTrue(apiLevel == null || apiLevel >= 30);
 
     byte[] aad = new byte[0];
     for (int keySize : keySizeInBytes) {
@@ -297,8 +294,10 @@ public class AesGcmSivTest {
    * multiple ciphertexts of the same message are distinct.
    */
   public void testRandomNonce() throws Exception {
+    // Skip the test on Android API version 29 and older, because the security provider returns an
+    // AES GCM cipher instead of an AES GCM SIV cipher.
     @Nullable Integer apiLevel = Util.getAndroidApiLevel();
-    Assume.assumeTrue(apiLevel == null || apiLevel >= 30); // Run the test on java and android >= 30
+    Assume.assumeTrue(apiLevel == null || apiLevel >= 30);
 
     final int samples = 1 << 17;
     byte[] key = Random.randBytes(16);
@@ -309,13 +308,15 @@ public class AesGcmSivTest {
     for (int i = 0; i < samples; i++) {
       byte[] ct = gcm.encrypt(message, aad);
       String ctHex = Hex.encode(ct);
-      assertFalse(ciphertexts.contains(ctHex));
+      assertThat(ciphertexts).doesNotContain(ctHex);
       ciphertexts.add(ctHex);
     }
   }
 
   @Test
   public void testCreate_encryptAndDecryptFailBeforeAndroid30() throws Exception {
+    // On Android API version 29 and older the security provider returns an
+    // AES GCM cipher instead of an AES GCM SIV cipher.
     @Nullable Integer apiLevel = Util.getAndroidApiLevel();
     Assume.assumeNotNull(apiLevel);
     Assume.assumeTrue(apiLevel < 30);
@@ -342,8 +343,10 @@ public class AesGcmSivTest {
 
   @Test
   public void testWithAesGcmSivKey_noPrefix_works() throws Exception {
+    // Skip the test on Android API version 29 and older, because the security provider returns an
+    // AES GCM cipher instead of an AES GCM SIV cipher.
     @Nullable Integer apiLevel = Util.getAndroidApiLevel();
-    Assume.assumeTrue(apiLevel == null || apiLevel >= 30); // Run the test on java and android >= 30
+    Assume.assumeTrue(apiLevel == null || apiLevel >= 30);
 
     // Test vector draft-irtf-cfrg-gcmsiv-09 in Wycheproof
     byte[] plaintext = Hex.decode("7a806c");
@@ -372,8 +375,10 @@ public class AesGcmSivTest {
 
   @Test
   public void testWithAesGcmSivKey_tinkPrefix_works() throws Exception {
+    // Skip the test on Android API version 29 and older, because the security provider returns an
+    // AES GCM cipher instead of an AES GCM SIV cipher.
     @Nullable Integer apiLevel = Util.getAndroidApiLevel();
-    Assume.assumeTrue(apiLevel == null || apiLevel >= 30); // Run the test on java and android >= 30
+    Assume.assumeTrue(apiLevel == null || apiLevel >= 30);
 
     // Test vector draft-irtf-cfrg-gcmsiv-09 in Wycheproof
     byte[] plaintext = Hex.decode("7a806c");
@@ -409,8 +414,10 @@ public class AesGcmSivTest {
 
   @Test
   public void testWithAesGcmSivKey_crunchyPrefix_works() throws Exception {
+    // Skip the test on Android API version 29 and older, because the security provider returns an
+    // AES GCM cipher instead of an AES GCM SIV cipher.
     @Nullable Integer apiLevel = Util.getAndroidApiLevel();
-    Assume.assumeTrue(apiLevel == null || apiLevel >= 30); // Run the test on java and android >= 30
+    Assume.assumeTrue(apiLevel == null || apiLevel >= 30);
 
     // Test vector draft-irtf-cfrg-gcmsiv-09 in Wycheproof
     byte[] plaintext = Hex.decode("7a806c");
