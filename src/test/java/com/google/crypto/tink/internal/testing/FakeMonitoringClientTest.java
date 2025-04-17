@@ -129,6 +129,50 @@ public final class FakeMonitoringClientTest {
   }
 
   @Test
+  public void logKeyExport() throws Exception {
+    FakeMonitoringClient client = new FakeMonitoringClient();
+    ChaCha20Poly1305Key key123 =
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 123);
+    ChaCha20Poly1305Key key234 =
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 234);
+    KeysetHandleInterface keysetInfo =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.importKey(key123)
+                    .setStatus(KeyStatus.ENABLED)
+                    .withFixedId(123)
+                    .makePrimary())
+            .addEntry(KeysetHandle.importKey(key234).setStatus(KeyStatus.ENABLED).withFixedId(234))
+            .build();
+    MonitoringClient.Logger encLogger =
+        client.createLogger(
+            keysetInfo,
+            MonitoringAnnotations.newBuilder().add("annotation_name", "annotation_value").build(),
+            "aead",
+            "encrypt");
+
+    assertThat(client.getLogKeyExportEntries()).isEmpty();
+    encLogger.logKeyExport(123);
+
+    List<FakeMonitoringClient.LogKeyExportEntry> logEntries = client.getLogKeyExportEntries();
+    assertThat(logEntries).hasSize(1);
+    FakeMonitoringClient.LogKeyExportEntry logEntry = logEntries.get(0);
+    assertThat(logEntry.getKeysetInfo()).isEqualTo(keysetInfo);
+    assertThat(logEntry.getKeyInfo()).isEqualTo(keysetInfo.getAt(0));
+    assertThat(logEntry.getPrimitive()).isEqualTo("aead");
+    assertThat(logEntry.getApi()).isEqualTo("encrypt");
+    assertThat(logEntry.getKeyId()).isEqualTo(123);
+    assertThat(logEntry.getAnnotations())
+        .isEqualTo(
+            MonitoringAnnotations.newBuilder().add("annotation_name", "annotation_value").build());
+
+    client.clear();
+    assertThat(client.getLogKeyExportEntries()).isEmpty();
+  }
+
+  @Test
   public void twoLoggers() throws Exception {
     FakeMonitoringClient client = new FakeMonitoringClient();
     ChaCha20Poly1305Key key123 =
@@ -191,5 +235,6 @@ public final class FakeMonitoringClientTest {
         client.createLogger(info, MonitoringAnnotations.EMPTY, "aead", "encrypt");
 
     assertThrows(IllegalStateException.class, () -> encLogger.log(1234, 42));
+    assertThrows(IllegalStateException.class, () -> encLogger.logKeyExport(1234));
   }
 }

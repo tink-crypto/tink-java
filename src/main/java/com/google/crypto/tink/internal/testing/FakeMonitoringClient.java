@@ -123,8 +123,58 @@ public final class FakeMonitoringClient implements MonitoringClient {
     }
   }
 
+  /** LogEntry */
+  public static final class LogKeyExportEntry {
+    private final KeysetHandleInterface keysetInfo;
+    private final KeysetHandleInterface.Entry keyInfo;
+    private final MonitoringAnnotations annotations;
+    private final String primitive;
+    private final String api;
+    private final int keyId;
+
+    private LogKeyExportEntry(
+        KeysetHandleInterface keysetInfo,
+        KeysetHandleInterface.Entry keyInfo,
+        MonitoringAnnotations annotations,
+        String primitive,
+        String api,
+        int keyId) {
+      this.keysetInfo = keysetInfo;
+      this.keyInfo = keyInfo;
+      this.annotations = annotations;
+      this.primitive = primitive;
+      this.api = api;
+      this.keyId = keyId;
+    }
+
+    public KeysetHandleInterface getKeysetInfo() {
+      return keysetInfo;
+    }
+
+    public KeysetHandleInterface.Entry getKeyInfo() {
+      return keyInfo;
+    }
+
+    public String getPrimitive() {
+      return primitive;
+    }
+
+    public String getApi() {
+      return api;
+    }
+
+    public int getKeyId() {
+      return keyId;
+    }
+
+    public MonitoringAnnotations getAnnotations() {
+      return annotations;
+    }
+  }
+
   private final List<LogEntry> logEntries = new ArrayList<>();
   private final List<LogFailureEntry> logFailureEntries = new ArrayList<>();
+  private final List<LogKeyExportEntry> logKeyExportEntries = new ArrayList<>();
 
   private synchronized void addLogEntry(LogEntry entry) {
     logEntries.add(entry);
@@ -132,6 +182,10 @@ public final class FakeMonitoringClient implements MonitoringClient {
 
   private synchronized void addLogFailureEntry(LogFailureEntry entry) {
     logFailureEntries.add(entry);
+  }
+
+  private synchronized void addLogKeyExportEntry(LogKeyExportEntry entry) {
+    logKeyExportEntries.add(entry);
   }
 
   private final class Logger implements MonitoringClient.Logger {
@@ -154,6 +208,16 @@ public final class FakeMonitoringClient implements MonitoringClient {
     @Override
     public void logFailure() {
       addLogFailureEntry(new LogFailureEntry(keysetInfo, annotations, primitive, api));
+    }
+
+    @Override
+    public void logKeyExport(int keyId) {
+      if (!entries.containsKey(keyId)) {
+        throw new IllegalStateException("keyId not found in keysetInfo: " + keyId);
+      }
+      addLogKeyExportEntry(
+          new LogKeyExportEntry(
+              keysetInfo, entries.get(keyId), annotations, primitive, api, keyId));
     }
 
     private Logger(
@@ -189,6 +253,7 @@ public final class FakeMonitoringClient implements MonitoringClient {
   public synchronized void clear() {
     logEntries.clear();
     logFailureEntries.clear();
+    logKeyExportEntries.clear();
   }
 
   /** Returns all log entries. */
@@ -199,5 +264,10 @@ public final class FakeMonitoringClient implements MonitoringClient {
   /** Returns all log failure entries. */
   public synchronized List<LogFailureEntry> getLogFailureEntries() {
     return Collections.unmodifiableList(logFailureEntries);
+  }
+
+  /** Returns all log key export entries. */
+  public synchronized List<LogKeyExportEntry> getLogKeyExportEntries() {
+    return Collections.unmodifiableList(logKeyExportEntries);
   }
 }
