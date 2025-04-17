@@ -220,4 +220,17 @@ public final class HpkeParameters extends HybridParameters {
   public int hashCode() {
     return Objects.hash(HpkeParameters.class, kem, kdf, aead, variant);
   }
+
+  @Override
+  public String toString() {
+    return "HPKE Parameters (Variant: "
+        + variant
+        + ", KemId: "
+        + kem
+        + ", KdfId: "
+        + kdf
+        + ", AeadId: "
+        + aead
+        + ")";
+  }
 }
