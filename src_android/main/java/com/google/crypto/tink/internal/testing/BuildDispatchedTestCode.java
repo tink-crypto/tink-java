@@ -25,13 +25,15 @@ import java.io.InputStream;
  * Java.
  *
  * <p>This is the Android version. The Java code can be found in
- * third_party/tink/java_src/src/main/java/com/google/crypto/tink/internal/testing/BuildDispatchedTestCode.java
+ * src/main/java/com/google/crypto/tink/internal/testing/BuildDispatchedTestCode.java
  */
-final class BuildDispatchedTestCode {
+public final class BuildDispatchedTestCode {
 
   private BuildDispatchedTestCode() {}
 
   public static InputStream openInputFile(String pathname) throws FileNotFoundException {
     return PlatformTestStorageRegistry.getInstance().openInputFile("google3/" + pathname);
   }
+
+  public static void disableFlagsStateCheckingForTests() {}
 }

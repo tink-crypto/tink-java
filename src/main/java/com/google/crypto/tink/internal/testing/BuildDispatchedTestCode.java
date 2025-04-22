@@ -26,13 +26,23 @@ import java.io.InputStream;
  * Java.
  *
  * <p>This is the Java version. The android code can be found in
- * third_party/tink/java_src/src_android/main/java/com/google/crypto/tink/internal/testing/BuildDispatchedTestCode.java
+ * src_android/main/java/com/google/crypto/tink/internal/testing/BuildDispatchedTestCode.java
  */
-final class BuildDispatchedTestCode {
+public final class BuildDispatchedTestCode {
 
   private BuildDispatchedTestCode() {}
 
   public static InputStream openInputFile(String pathname) throws FileNotFoundException {
     return new FileInputStream(new File(pathname));
+  }
+
+  /**
+   * Within Google, Tink uses the Guava flags library. To modify such flags in tests, this method
+   * has to be called first.
+   */
+  // UnnecessarilyFullyQualified makes it easier to comment out the the line below for OSS
+  @SuppressWarnings("UnnecessarilyFullyQualified")
+  public static void disableFlagsStateCheckingForTests() {
+    /* com.google.common.flags.Flags.disableStateCheckingForTest(); */
   }
 }

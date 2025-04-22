@@ -33,7 +33,6 @@ public final class GlobalTinkFlags {
    * <ul>
    *   <li>Introduced in: Tink 1.18.
    *   <li>Earliest change to {@code true}: Tink 2.0
-   *   <li>Earliest removal: Tink 3.0
    * </ul>
    */
   public static final TinkFlag validateKeysetsOnParsing = new TinkFlagImpl(false);

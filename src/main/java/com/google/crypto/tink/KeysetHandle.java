@@ -17,6 +17,7 @@
 package com.google.crypto.tink;
 
 import com.google.crypto.tink.annotations.Alpha;
+import com.google.crypto.tink.config.GlobalTinkFlags;
 import com.google.crypto.tink.internal.InternalConfiguration;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
@@ -513,7 +514,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
    * <p>If a status is unparseable or parsing of a key fails, there will be "null" in the
    * corresponding entry.
    */
-  private static List<Entry> getEntriesFromKeyset(Keyset keyset) {
+  private static List<Entry> getEntriesFromKeyset(Keyset keyset) throws GeneralSecurityException {
     List<Entry> result = new ArrayList<>(keyset.getKeyCount());
     for (Keyset.Key protoKey : keyset.getKeyList()) {
       int id = protoKey.getKeyId();
@@ -523,6 +524,12 @@ public final class KeysetHandle implements KeysetHandleInterface {
             new KeysetHandle.Entry(
                 key, parseStatus(protoKey.getStatus()), id, id == keyset.getPrimaryKeyId()));
       } catch (GeneralSecurityException e) {
+        if (GlobalTinkFlags.validateKeysetsOnParsing.getValue()) {
+          throw new GeneralSecurityException(
+              "Parsing of a single key failed (maybe wrong status?) and Tink is configured via"
+                  + " validateKeysetsOnParsing to reject such keysets.",
+              e);
+        }
         result.add(null);
       }
     }
@@ -585,11 +592,33 @@ public final class KeysetHandle implements KeysetHandleInterface {
   private final List<Entry> entries;
   private final MonitoringAnnotations annotations;
 
-  private KeysetHandle(
-      Keyset keyset, List<Entry> entries, MonitoringAnnotations annotations) {
+  private static void validateNoDuplicateIds(Keyset keyset) throws GeneralSecurityException {
+    Set<Integer> idsSoFar = new HashSet<>();
+    for (Keyset.Key k : keyset.getKeyList()) {
+      if (idsSoFar.contains(k.getKeyId())) {
+        throw new GeneralSecurityException(
+            "KeyID "
+                + k.getKeyId()
+                + " is duplicated in the keyset, and Tink is configured to reject such keysets with"
+                + " the flag validateKeysetsOnParsing.");
+      }
+      idsSoFar.add(k.getKeyId());
+    }
+    if (!idsSoFar.contains(keyset.getPrimaryKeyId())) {
+      throw new GeneralSecurityException(
+          "Primary key id not found in keyset, and Tink is configured to reject such keysets with"
+              + " the flag validateKeysetsOnParsing.");
+    }
+  }
+
+  private KeysetHandle(Keyset keyset, List<Entry> entries, MonitoringAnnotations annotations)
+      throws GeneralSecurityException {
     this.keyset = keyset;
     this.entries = entries;
     this.annotations = annotations;
+    if (GlobalTinkFlags.validateKeysetsOnParsing.getValue()) {
+      validateNoDuplicateIds(keyset);
+    }
   }
 
   /**

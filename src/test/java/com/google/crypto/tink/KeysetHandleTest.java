@@ -29,6 +29,7 @@ import com.google.crypto.tink.aead.AesEaxKeyManager;
 import com.google.crypto.tink.aead.PredefinedAeadParameters;
 import com.google.crypto.tink.aead.XChaCha20Poly1305Key;
 import com.google.crypto.tink.aead.XChaCha20Poly1305Parameters;
+import com.google.crypto.tink.config.GlobalTinkFlags;
 import com.google.crypto.tink.internal.InternalConfiguration;
 import com.google.crypto.tink.internal.KeyParser;
 import com.google.crypto.tink.internal.KeyStatusTypeProtoConverter;
@@ -43,6 +44,7 @@ import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
+import com.google.crypto.tink.internal.testing.BuildDispatchedTestCode;
 import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
 import com.google.crypto.tink.jwt.JwtSignatureConfig;
 import com.google.crypto.tink.mac.AesCmacKey;
@@ -174,6 +176,7 @@ public class KeysetHandleTest {
     AeadToEncryptOnlyWrapper.register();
 
     createTestKeys();
+    BuildDispatchedTestCode.disableFlagsStateCheckingForTests();
   }
 
   private static void createTestKeys() {
@@ -2137,5 +2140,124 @@ public class KeysetHandleTest {
     assertThrows(IllegalStateException.class, publicHandle::getPrimary);
     String publicJsonKeyset = TinkJsonProtoKeysetFormat.serializeKeysetWithoutSecret(publicHandle);
     assertThat(publicJsonKeyset).contains("EcdsaPublicKey");
+  }
+
+  @Test
+  public void parseKeysetWithoutPrimaryKey_throwsIfValidateKeysetsOnParsingEnabled()
+      throws Exception {
+    GlobalTinkFlags.validateKeysetsOnParsing.setValue(true);
+    EcdsaPrivateKey privateKeyProto =
+        TestUtil.createEcdsaPrivKey(
+            TestUtil.createEcdsaPubKey(
+                HashType.SHA256,
+                EllipticCurveType.NIST_P256,
+                EcdsaSignatureEncoding.DER,
+                Hex.decode("d4ce489428982ef343186eb90e6a04adf41366359a508fe7ac66b283f06641ae"),
+                Hex.decode("1ff5d6f8cd044273923012b9f726d94b0c0c50f1f5d4a32f7d925b30044319fc")),
+            Hex.decode("00B8BB628605AF1045C13593F805BA7D93B35587BC66257F1EA4D93537CE26E58F"));
+    KeyData keyData =
+        TestUtil.createKeyData(
+            privateKeyProto,
+            SignatureConfig.ECDSA_PRIVATE_KEY_TYPE_URL,
+            KeyMaterialType.ASYMMETRIC_PRIVATE);
+    Keyset validKeyset =
+        TestUtil.createKeyset(
+            TestUtil.createKey(
+                keyData,
+                123,
+                KeyStatusType.ENABLED,
+                com.google.crypto.tink.proto.OutputPrefixType.RAW));
+    GeneralSecurityException e =
+        assertThrows(
+            GeneralSecurityException.class,
+            () ->
+                TinkProtoKeysetFormat.parseKeyset(
+                    validKeyset.toBuilder().clearPrimaryKeyId().build().toByteArray(),
+                    InsecureSecretKeyAccess.get()));
+    assertThat(e).hasMessageThat().contains("validateKeysetsOnParsing");
+    assertThat(e).hasMessageThat().contains("Primary key id not found");
+    GlobalTinkFlags.validateKeysetsOnParsing.setValue(false);
+  }
+
+  @Test
+  public void parseKeysetWithDuplicateKey_throwsIfFlagEnabled() throws Exception {
+    GlobalTinkFlags.validateKeysetsOnParsing.setValue(true);
+    EcdsaPrivateKey privateKeyProto =
+        TestUtil.createEcdsaPrivKey(
+            TestUtil.createEcdsaPubKey(
+                HashType.SHA256,
+                EllipticCurveType.NIST_P256,
+                EcdsaSignatureEncoding.DER,
+                Hex.decode("d4ce489428982ef343186eb90e6a04adf41366359a508fe7ac66b283f06641ae"),
+                Hex.decode("1ff5d6f8cd044273923012b9f726d94b0c0c50f1f5d4a32f7d925b30044319fc")),
+            Hex.decode("00B8BB628605AF1045C13593F805BA7D93B35587BC66257F1EA4D93537CE26E58F"));
+    KeyData keyData =
+        TestUtil.createKeyData(
+            privateKeyProto,
+            SignatureConfig.ECDSA_PRIVATE_KEY_TYPE_URL,
+            KeyMaterialType.ASYMMETRIC_PRIVATE);
+    Keyset validKeyset =
+        TestUtil.createKeyset(
+            TestUtil.createKey(
+                keyData,
+                123, /* primary */
+                KeyStatusType.ENABLED,
+                com.google.crypto.tink.proto.OutputPrefixType.RAW),
+            TestUtil.createKey(
+                keyData,
+                124,
+                KeyStatusType.ENABLED,
+                com.google.crypto.tink.proto.OutputPrefixType.RAW),
+            TestUtil.createKey(
+                keyData,
+                124, /* duplicate */
+                KeyStatusType.ENABLED,
+                com.google.crypto.tink.proto.OutputPrefixType.RAW));
+    GeneralSecurityException e =
+        assertThrows(
+            GeneralSecurityException.class,
+            () ->
+                TinkProtoKeysetFormat.parseKeyset(
+                    validKeyset.toBuilder().clearPrimaryKeyId().build().toByteArray(),
+                    InsecureSecretKeyAccess.get()));
+    assertThat(e).hasMessageThat().contains("validateKeysetsOnParsing");
+    assertThat(e).hasMessageThat().contains("KeyID 124 is duplicated");
+    GlobalTinkFlags.validateKeysetsOnParsing.setValue(false);
+  }
+
+  @Test
+  public void parseKeysetWithInvalidStatus_throwsIfValidateKeysetsOnParsingEnabled()
+      throws Exception {
+    GlobalTinkFlags.validateKeysetsOnParsing.setValue(true);
+    EcdsaPrivateKey privateKeyProto =
+        TestUtil.createEcdsaPrivKey(
+            TestUtil.createEcdsaPubKey(
+                HashType.SHA256,
+                EllipticCurveType.NIST_P256,
+                EcdsaSignatureEncoding.DER,
+                Hex.decode("d4ce489428982ef343186eb90e6a04adf41366359a508fe7ac66b283f06641ae"),
+                Hex.decode("1ff5d6f8cd044273923012b9f726d94b0c0c50f1f5d4a32f7d925b30044319fc")),
+            Hex.decode("00B8BB628605AF1045C13593F805BA7D93B35587BC66257F1EA4D93537CE26E58F"));
+    KeyData keyData =
+        TestUtil.createKeyData(
+            privateKeyProto,
+            SignatureConfig.ECDSA_PRIVATE_KEY_TYPE_URL,
+            KeyMaterialType.ASYMMETRIC_PRIVATE);
+    Keyset badStatusKeyset =
+        TestUtil.createKeyset(
+            TestUtil.createKey(
+                keyData,
+                123,
+                KeyStatusType.UNKNOWN_STATUS,
+                com.google.crypto.tink.proto.OutputPrefixType.RAW));
+    GeneralSecurityException e =
+        assertThrows(
+            GeneralSecurityException.class,
+            () ->
+                TinkProtoKeysetFormat.parseKeyset(
+                    badStatusKeyset.toByteArray(), InsecureSecretKeyAccess.get()));
+    assertThat(e).hasMessageThat().contains("validateKeysetsOnParsing");
+    assertThat(e).hasMessageThat().contains("wrong status");
+    GlobalTinkFlags.validateKeysetsOnParsing.setValue(false);
   }
 }
