@@ -1,5 +1,5 @@
-load("@build_bazel_rules_android//android:rules.bzl", "android_library")
 load("@bazel_skylib//rules:common_settings.bzl", "bool_flag")
+load("@build_bazel_rules_android//android:rules.bzl", "android_library")
 
 licenses(["notice"])
 
@@ -60,4 +60,28 @@ android_library(
         "//src/main/java/com/google/crypto/tink:registry-android",
         "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util-android",
     ],
+)
+
+android_library(
+    name = "tink_flag-android",
+    srcs = ["TinkFlag.java"],
+    visibility = ["//visibility:public"],
+)
+
+java_library(
+    name = "tink_flag",
+    srcs = ["TinkFlag.java"],
+    visibility = ["//visibility:public"],
+)
+
+android_library(
+    name = "global_tink_flags-android",
+    srcs = ["GlobalTinkFlags.java"],
+    deps = [":tink_flag"],
+)
+
+java_library(
+    name = "global_tink_flags",
+    srcs = ["GlobalTinkFlags.java"],
+    deps = [":tink_flag"],
 )

@@ -30,3 +30,15 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "GlobalTinkFlagsTest",
+    size = "small",
+    srcs = ["GlobalTinkFlagsTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/config:global_tink_flags",
+        "//src/main/java/com/google/crypto/tink/config:tink_flag",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
