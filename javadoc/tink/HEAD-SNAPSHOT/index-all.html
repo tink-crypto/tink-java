@@ -1255,6 +1255,10 @@
 <dd>
 <div class="block">Methods to serialize and parse <a href="com/google/crypto/tink/aead/AesGcmKey.html" title="class in com.google.crypto.tink.aead"><code>AesGcmKey</code></a> objects and <a href="com/google/crypto/tink/aead/AesGcmParameters.html" title="class in com.google.crypto.tink.aead"><code>AesGcmParameters</code></a> objects</div>
 </dd>
+<dt><a href="com/google/crypto/tink/aead/internal/AesGcmSiv.html" title="class in com.google.crypto.tink.aead.internal"><span class="typeNameLink">AesGcmSiv</span></a> - Class in <a href="com/google/crypto/tink/aead/internal/package-summary.html">com.google.crypto.tink.aead.internal</a></dt>
+<dd>
+<div class="block">This primitive implements AES-GCM-SIV (as defined in RFC 8452) using JCE.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/aead/subtle/AesGcmSiv.html" title="class in com.google.crypto.tink.aead.subtle"><span class="typeNameLink">AesGcmSiv</span></a> - Class in <a href="com/google/crypto/tink/aead/subtle/package-summary.html">com.google.crypto.tink.aead.subtle</a></dt>
 <dd>
 <div class="block">This primitive implements AES-GCM-SIV (as defined in RFC 8452) using JCE.</div>
@@ -1263,6 +1267,10 @@
 <dd>&nbsp;</dd>
 <dt><a href="com/google/crypto/tink/proto/AesGcmSiv.html" title="class in com.google.crypto.tink.proto"><span class="typeNameLink">AesGcmSiv</span></a> - Class in <a href="com/google/crypto/tink/proto/package-summary.html">com.google.crypto.tink.proto</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/aead/internal/AesGcmSiv.ThrowingSupplier.html" title="interface in com.google.crypto.tink.aead.internal"><span class="typeNameLink">AesGcmSiv.ThrowingSupplier</span></a>&lt;<a href="com/google/crypto/tink/aead/internal/AesGcmSiv.ThrowingSupplier.html" title="type parameter in AesGcmSiv.ThrowingSupplier">T</a>&gt; - Interface in <a href="com/google/crypto/tink/aead/internal/package-summary.html">com.google.crypto.tink.aead.internal</a></dt>
+<dd>
+<div class="block">A supplier that can throw a <a href="https://docs.oracle.com/javase/8/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security"><code>GeneralSecurityException</code></a>.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/aead/AesGcmSivKey.html" title="class in com.google.crypto.tink.aead"><span class="typeNameLink">AesGcmSivKey</span></a> - Class in <a href="com/google/crypto/tink/aead/package-summary.html">com.google.crypto.tink.aead</a></dt>
 <dd>
 <div class="block">Represents an AES-GCM-SIV key used for computing AEAD.</div>
@@ -3941,6 +3949,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/ChaCha20Poly1305Parameters.html#create-com.google.crypto.tink.aead.ChaCha20Poly1305Parameters.Variant-">create(ChaCha20Poly1305Parameters.Variant)</a></span> - Static method in class com.google.crypto.tink.aead.<a href="com/google/crypto/tink/aead/ChaCha20Poly1305Parameters.html" title="class in com.google.crypto.tink.aead">ChaCha20Poly1305Parameters</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/AesGcmSiv.html#create-com.google.crypto.tink.aead.AesGcmSivKey-com.google.crypto.tink.aead.internal.AesGcmSiv.ThrowingSupplier-">create(AesGcmSivKey, AesGcmSiv.ThrowingSupplier&lt;Cipher&gt;)</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/AesGcmSiv.html" title="class in com.google.crypto.tink.aead.internal">AesGcmSiv</a></dt>
+<dd>
+<div class="block">Creates an Aead for AES GCM SIV.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/ChaCha20Poly1305Jce.html#create-com.google.crypto.tink.aead.ChaCha20Poly1305Key-">create(ChaCha20Poly1305Key)</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/ChaCha20Poly1305Jce.html" title="class in com.google.crypto.tink.aead.internal">ChaCha20Poly1305Jce</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/InsecureNonceChaCha20Poly1305Jce.html#create-byte:A-">create(byte[])</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/InsecureNonceChaCha20Poly1305Jce.html" title="class in com.google.crypto.tink.aead.internal">InsecureNonceChaCha20Poly1305Jce</a></dt>
@@ -4535,6 +4547,10 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/Aead.html#decrypt-byte:A-byte:A-">decrypt(byte[], byte[])</a></span> - Method in interface com.google.crypto.tink.<a href="com/google/crypto/tink/Aead.html" title="interface in com.google.crypto.tink">Aead</a></dt>
 <dd>
 <div class="block">Decrypts <code>ciphertext</code> with <code>associatedData</code> as associated authenticated data.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/AesGcmSiv.html#decrypt-byte:A-byte:A-">decrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/AesGcmSiv.html" title="class in com.google.crypto.tink.aead.internal">AesGcmSiv</a></dt>
+<dd>
+<div class="block">On Android KitKat (API level 19) this method does not support non null or non empty <code>associatedData</code>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/ChaCha20Poly1305Jce.html#decrypt-byte:A-byte:A-">decrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/ChaCha20Poly1305Jce.html" title="class in com.google.crypto.tink.aead.internal">ChaCha20Poly1305Jce</a></dt>
 <dd>&nbsp;</dd>
@@ -5509,6 +5525,10 @@
 <dd>
 <div class="block">Encrypts <code>plaintext</code> with <code>associatedData</code> as associated authenticated data.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/AesGcmSiv.html#encrypt-byte:A-byte:A-">encrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/AesGcmSiv.html" title="class in com.google.crypto.tink.aead.internal">AesGcmSiv</a></dt>
+<dd>
+<div class="block">On Android KitKat (API level 19) this method does not support non null or non empty <code>associatedData</code>.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/ChaCha20Poly1305Jce.html#encrypt-byte:A-byte:A-">encrypt(byte[], byte[])</a></span> - Method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/ChaCha20Poly1305Jce.html" title="class in com.google.crypto.tink.aead.internal">ChaCha20Poly1305Jce</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/InsecureNonceAesGcmJce.html#encrypt-byte:A-byte:A-byte:A-">encrypt(byte[], byte[], byte[])</a></span> - Method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/InsecureNonceAesGcmJce.html" title="class in com.google.crypto.tink.aead.internal">InsecureNonceAesGcmJce</a></dt>
@@ -6303,6 +6323,8 @@
 <dd>
 <div class="block">Returns a 32-byte private key for Curve25519.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/AesGcmSiv.ThrowingSupplier.html#get--">get()</a></span> - Method in interface com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/AesGcmSiv.ThrowingSupplier.html" title="interface in com.google.crypto.tink.aead.internal">AesGcmSiv.ThrowingSupplier</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/ConfigurationFips140v2.html#get--">get()</a></span> - Static method in class com.google.crypto.tink.<a href="com/google/crypto/tink/ConfigurationFips140v2.html" title="class in com.google.crypto.tink">ConfigurationFips140v2</a></dt>
 <dd>
 <div class="block">get returns a Configuration containing primitives that are FIPS 140-2 compiant.</div>
@@ -17597,6 +17619,10 @@
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/Bytes.html#intToByteArray-int-int-">intToByteArray(int, int)</a></span> - Static method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/Bytes.html" title="class in com.google.crypto.tink.subtle">Bytes</a></dt>
 <dd>
 <div class="block">Transforms a passed value to a LSB first byte array with the size of the specified capacity</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/aead/internal/AesGcmSiv.html#isAesGcmSivCipher-javax.crypto.Cipher-">isAesGcmSivCipher(Cipher)</a></span> - Static method in class com.google.crypto.tink.aead.internal.<a href="com/google/crypto/tink/aead/internal/AesGcmSiv.html" title="class in com.google.crypto.tink.aead.internal">AesGcmSiv</a></dt>
+<dd>
+<div class="block">Returns true if the cipher is an AES-GCM-SIV cipher.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/Util.html#isAndroid--">isAndroid()</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/Util.html" title="class in com.google.crypto.tink.internal">Util</a></dt>
 <dd>
