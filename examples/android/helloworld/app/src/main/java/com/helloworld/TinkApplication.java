@@ -34,13 +34,14 @@ import javax.crypto.BadPaddingException;
 public class TinkApplication extends Application {
   private static final String PREF_FILE_NAME = "hello_world_pref";
   private static final String TINK_KEYSET_NAME = "hello_world_keyset";
+  // The alias of the key encryption key (KEK) in Android Keystore.
+  private static final String KEY_ENCRYPTION_KEY_ALIAS = "hello_world_key_encryption_key";
 
-  // We use an empty string as associated data, because the master key is only
+  // We use an empty string as associated data, because the key encryption key is only
   // used to encrypt one keyset.
-  // If the same master key is used to encrypt multiple keysets, then each
+  // If the same KEK is used to encrypt multiple keysets, then each
   // keyset should have a different associated data.
   private static final byte[] TINK_KEYSET_ASSOCIATED_DATA = new byte[0];
-  private static final String MASTER_KEY_ALIAS = "hello_world_master_key";
   public Aead aead;
 
   @Override
@@ -83,7 +84,7 @@ public class TinkApplication extends Application {
   }
 
   /**
-   * Returns a keyset that is stored encrypted in the shared preferences. If the master key and the
+   * Returns a keyset that is stored encrypted in the shared preferences. If the KEK and the
    * encrypted keyset do not exist, they are created.
    *
    * <p>This function is not thread-safe.
@@ -92,18 +93,18 @@ public class TinkApplication extends Application {
     SharedPreferences sharedPreferences =
         getApplicationContext().getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
     boolean encryptedKeysetExists = sharedPreferences.contains(TINK_KEYSET_NAME);
-    boolean keysetEncryptionKeyExists = AndroidKeystore.hasKey(MASTER_KEY_ALIAS);
+    boolean keysetEncryptionKeyExists = AndroidKeystore.hasKey(KEY_ENCRYPTION_KEY_ALIAS);
     if (!keysetEncryptionKeyExists && encryptedKeysetExists) {
-      // The master key is missing. This may happen if the phone is restored from a backup.
-      // You need to decide how to handle this. You may recover from this by creating a new master
-      // key and a new encrypted keyset, but then you need to delete all data that had been
+      // The KEK is missing. This may happen if the phone is restored from a backup.
+      // You need to decide how to handle this. You may recover from this by creating a new KEK
+      // and a new encrypted keyset, but then you need to delete all data that had been
       // encrypted with the old key.
       throw new IllegalStateException(
           "There exists an encrypted keyset, but the key to decrypt it is missing.");
     }
     if (keysetEncryptionKeyExists && !encryptedKeysetExists) {
-      // The master key exists, but the encrypted keyset is missing. In this example we assume that
-      // the master key is only used to encrypt one keyset, so this should not happen.
+      // The KEK exists, but the encrypted keyset is missing. In this example we assume that
+      // the KEK is only used to encrypt one keyset, so this should not happen.
       // You need to decide how to handle this. You may recover from this by creating a new
       // encrypted keyset, but then you need to delete all data that had been encrypted with the old
       // key.
@@ -112,14 +113,16 @@ public class TinkApplication extends Application {
     }
     if (!keysetEncryptionKeyExists && !encryptedKeysetExists) {
       // First call.
-      // Create a new master key in Android Keystore.
-      AndroidKeystore.generateNewAes256GcmKey(MASTER_KEY_ALIAS);
+      // Create a new KEK in Android Keystore.
+      AndroidKeystore.generateNewAes256GcmKey(KEY_ENCRYPTION_KEY_ALIAS);
       // Create a new keyset. In this example, we create an AEAD key of type AES256_GCM.
       KeysetHandle handle = KeysetHandle.generateNew(PredefinedAeadParameters.AES256_GCM);
-      // Encrypt the keyset with the master key.
+      // Encrypt the keyset with the KEK.
       byte[] encryptedKeyset =
           TinkProtoKeysetFormat.serializeEncryptedKeyset(
-              handle, AndroidKeystore.getAead(MASTER_KEY_ALIAS), TINK_KEYSET_ASSOCIATED_DATA);
+              handle,
+              AndroidKeystore.getAead(KEY_ENCRYPTION_KEY_ALIAS),
+              TINK_KEYSET_ASSOCIATED_DATA);
       // In this example, we store the encrypted keyset in the shared preferences.
       sharedPreferences.edit().putString(TINK_KEYSET_NAME, Hex.encode(encryptedKeyset)).commit();
     }
@@ -127,11 +130,13 @@ public class TinkApplication extends Application {
       // Read the encrypted keyset from the shared preferences and decrypt it.
       byte[] encryptedKeyset = Hex.decode(sharedPreferences.getString(TINK_KEYSET_NAME, null));
       return TinkProtoKeysetFormat.parseEncryptedKeyset(
-          encryptedKeyset, AndroidKeystore.getAead(MASTER_KEY_ALIAS), TINK_KEYSET_ASSOCIATED_DATA);
+          encryptedKeyset,
+          AndroidKeystore.getAead(KEY_ENCRYPTION_KEY_ALIAS),
+          TINK_KEYSET_ASSOCIATED_DATA);
     } catch (BadPaddingException e) {
       // Note that {@link BadPaddingException} includes {@link AEADBadTagException}.
       // This may happen if the encrypted keyset is corrupted, or if it was encrypted
-      // with a different master key. You need to decide how to handle this. You may recover from
+      // with a different KEK. You need to decide how to handle this. You may recover from
       // this by creating a new encrypted keyset, but then you need to delete all data that had
       // been encrypted with the old key.
       throw new IllegalStateException("Failed to decrypt keyset", e);
