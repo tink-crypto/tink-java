@@ -10949,6 +10949,10 @@
 <div class="block"><span class="deprecationComment">KeyManagers should not be used directly. Use <code>newKeyData</code> or <code>getPrimitive</code> instead.</span></div>
 </div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/config/TinkFlag.html#getValue--">getValue()</a></span> - Method in interface com.google.crypto.tink.config.<a href="com/google/crypto/tink/config/TinkFlag.html" title="interface in com.google.crypto.tink.config">TinkFlag</a></dt>
+<dd>
+<div class="block">Returns the current value of this flag.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/ProtoKeySerialization.html#getValue--">getValue()</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/ProtoKeySerialization.html" title="class in com.google.crypto.tink.internal">ProtoKeySerialization</a></dt>
 <dd>
 <div class="block">The contents of the field value in the message com.google.crypto.tink.proto.KeyData.</div>
@@ -11958,6 +11962,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/MutableSerializationRegistry.html#globalInstance--">globalInstance()</a></span> - Static method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/MutableSerializationRegistry.html" title="class in com.google.crypto.tink.internal">MutableSerializationRegistry</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/google/crypto/tink/config/GlobalTinkFlags.html" title="class in com.google.crypto.tink.config"><span class="typeNameLink">GlobalTinkFlags</span></a> - Class in <a href="com/google/crypto/tink/config/package-summary.html">com.google.crypto.tink.config</a></dt>
+<dd>
+<div class="block">Contains Booleans which change Tink behavior globally.</div>
+</dd>
 </dl>
 <a name="I:H">
 <!--   -->
@@ -22508,6 +22516,10 @@
 <div class="block">
  Name of the key type.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/config/TinkFlag.html#setValue-boolean-">setValue(boolean)</a></span> - Method in interface com.google.crypto.tink.config.<a href="com/google/crypto/tink/config/TinkFlag.html" title="interface in com.google.crypto.tink.config">TinkFlag</a></dt>
+<dd>
+<div class="block">Overrides the value to <code>t</code> for this flag.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/proto/JwtEcdsaPublicKey.CustomKid.Builder.html#setValue-java.lang.String-">setValue(String)</a></span> - Method in class com.google.crypto.tink.proto.<a href="com/google/crypto/tink/proto/JwtEcdsaPublicKey.CustomKid.Builder.html" title="class in com.google.crypto.tink.proto">JwtEcdsaPublicKey.CustomKid.Builder</a></dt>
 <dd>
 <div class="block"><code>string value = 1;</code></div>
@@ -23309,6 +23321,10 @@
 <dd>
 <div class="block">The status of FIPS compatibility of an algorithm.</div>
 </dd>
+<dt><a href="com/google/crypto/tink/config/TinkFlag.html" title="interface in com.google.crypto.tink.config"><span class="typeNameLink">TinkFlag</span></a> - Interface in <a href="com/google/crypto/tink/config/package-summary.html">com.google.crypto.tink.config</a></dt>
+<dd>
+<div class="block">Describes a change to Tink behavior.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/TinkJsonProtoKeysetFormat.html" title="class in com.google.crypto.tink"><span class="typeNameLink">TinkJsonProtoKeysetFormat</span></a> - Class in <a href="com/google/crypto/tink/package-summary.html">com.google.crypto.tink</a></dt>
 <dd>
 <div class="block">Functions to parse and serialize Keyset in Tink's JSON format based on Protobufs.</div>
@@ -23704,6 +23720,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/Validators.html#validateExists-java.io.File-">validateExists(File)</a></span> - Static method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/Validators.html" title="class in com.google.crypto.tink.subtle">Validators</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/config/GlobalTinkFlags.html#validateKeysetsOnParsing">validateKeysetsOnParsing</a></span> - Static variable in class com.google.crypto.tink.config.<a href="com/google/crypto/tink/config/GlobalTinkFlags.html" title="class in com.google.crypto.tink.config">GlobalTinkFlags</a></dt>
+<dd>
+<div class="block">If true, Tink validates keysets when parsing a KeysetHandle.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/subtle/Validators.html#validateKmsKeyUriAndRemovePrefix-java.lang.String-java.lang.String-">validateKmsKeyUriAndRemovePrefix(String, String)</a></span> - Static method in class com.google.crypto.tink.subtle.<a href="com/google/crypto/tink/subtle/Validators.html" title="class in com.google.crypto.tink.subtle">Validators</a></dt>
 <dd>
 <div class="block">Validates that <code>kmsKeyUri</code> starts with <code>expectedPrefix</code>, and removes the prefix.</div>
