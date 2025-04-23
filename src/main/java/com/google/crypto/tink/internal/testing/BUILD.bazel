@@ -111,3 +111,23 @@ android_library(
     srcs = ["TestFiles.java"],
     deps = ["//src_android/main/java/com/google/crypto/tink/internal/testing:build_dispatched_test_code-android"],
 )
+
+android_library(
+    name = "set_tink_flag-android",
+    srcs = ["SetTinkFlag.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/config:tink_flag-android",
+        "//src_android/main/java/com/google/crypto/tink/internal/testing:build_dispatched_test_code-android",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_library(
+    name = "set_tink_flag",
+    srcs = ["SetTinkFlag.java"],
+    deps = [
+        ":build_dispatched_test_code",
+        "//src/main/java/com/google/crypto/tink/config:tink_flag",
+        "@maven//:junit_junit",
+    ],
+)

@@ -44,8 +44,8 @@ import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
-import com.google.crypto.tink.internal.testing.BuildDispatchedTestCode;
 import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
+import com.google.crypto.tink.internal.testing.SetTinkFlag;
 import com.google.crypto.tink.jwt.JwtSignatureConfig;
 import com.google.crypto.tink.mac.AesCmacKey;
 import com.google.crypto.tink.mac.AesCmacParameters;
@@ -167,6 +167,8 @@ public class KeysetHandleTest {
 
   private static HmacKey rawKey;
 
+  @Rule public SetTinkFlag setTinkFlag = new SetTinkFlag();
+
   @BeforeClass
   public static void setUp() throws GeneralSecurityException {
     MacConfig.register();
@@ -176,7 +178,6 @@ public class KeysetHandleTest {
     AeadToEncryptOnlyWrapper.register();
 
     createTestKeys();
-    BuildDispatchedTestCode.disableFlagsStateCheckingForTests();
   }
 
   private static void createTestKeys() {
@@ -309,6 +310,7 @@ public class KeysetHandleTest {
   @SuppressWarnings("deprecation")  // This is a test for the deprecated function
   @Test
   public void deprecated_createFromKey_shouldWork() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     KeyTemplate template = KeyTemplates.get("AES128_EAX");
     KeyHandle keyHandle = KeyHandle.generateNew(template);
     KeyAccess token = SecretKeyAccess.insecureSecretAccess();
@@ -785,6 +787,7 @@ public class KeysetHandleTest {
   @SuppressWarnings("deprecation")  // This is a test for the deprecated function
   @Test
   public void deprecated_primaryKey_primaryNotPresent_shouldThrow() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     Keyset keyset =
         TestUtil.createKeyset(
             TestUtil.createKey(
@@ -820,6 +823,7 @@ public class KeysetHandleTest {
   @Test
   public void getAt_invalidKeyWithRegisteredProtoSerialization_throwsIllegalStateException()
       throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     // HmacKey's proto serialization HmacProtoSerialization is registed in HmacKeyManager.
     com.google.crypto.tink.proto.HmacKey invalidProtoHmacKey =
         com.google.crypto.tink.proto.HmacKey.newBuilder()
@@ -936,6 +940,7 @@ public class KeysetHandleTest {
 
   @Test
   public void testGetPrimary_noPrimary_throws() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     Keyset.Key key1 =
         TestUtil.createKey(
             TestUtil.createHmacKeyData("01234567890123456".getBytes(UTF_8), 16),
@@ -951,6 +956,7 @@ public class KeysetHandleTest {
 
   @Test
   public void testGetPrimary_disabledPrimary_throws() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     Keyset.Key key1 =
         TestUtil.createKey(
             TestUtil.createHmacKeyData("01234567890123456".getBytes(UTF_8), 16),
@@ -980,6 +986,7 @@ public class KeysetHandleTest {
 
   @Test
   public void testGetAt_wrongStatus_throws() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     Keyset.Key key1 =
         TestUtil.createKey(
             TestUtil.createHmacKeyData("01234567890123456".getBytes(UTF_8), 16),
@@ -996,6 +1003,7 @@ public class KeysetHandleTest {
 
   @Test
   public void keysetWithNonAsciiTypeUrl_fromKeysetDoesNotThrowButGetAtThrows() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     Keyset keyset =
         Keyset.newBuilder()
             .addKey(
@@ -1434,6 +1442,7 @@ public class KeysetHandleTest {
 
   @Test
   public void testBuilder_copyKeyset_originalHasInvalidKey_throws() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     Keyset keyset =
         Keyset.newBuilder()
             .setPrimaryKeyId(1)
@@ -1456,6 +1465,7 @@ public class KeysetHandleTest {
 
   @Test
   public void testBuilder_copyKeyset_originalHasNoPrimary_throws() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     KeysetHandle original =
         KeysetHandle.newBuilder()
             .addEntry(
@@ -1966,6 +1976,7 @@ public class KeysetHandleTest {
 
   @Test
   public void keysetEquality_unparseableStatus_returnsFalse() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     Keyset.Key key1 =
         TestUtil.createKey(
             TestUtil.createHmacKeyData("01234567890123456".getBytes(UTF_8), 16),
@@ -1978,6 +1989,7 @@ public class KeysetHandleTest {
 
   @Test
   public void keysetEquality_noPrimary_returnsFalse() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     Keyset.Key key1 =
         TestUtil.createKey(
             TestUtil.createHmacKeyData("01234567890123456".getBytes(UTF_8), 16),
@@ -2038,6 +2050,7 @@ public class KeysetHandleTest {
 
   @Test
   public void getPublicKeysetHandle_keysetWithInvalidKey() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     // JwtSignatureConfig is not yet registered.
 
     // Because there is no parser for JwtEcdsaPrivateKey, the entries of privateHandle
@@ -2075,6 +2088,7 @@ public class KeysetHandleTest {
 
   @Test
   public void getPublicKeysetHandle_keysetWithUnknownStatus() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     EcdsaPrivateKey privateKeyProto =
         TestUtil.createEcdsaPrivKey(
             TestUtil.createEcdsaPubKey(
@@ -2110,6 +2124,7 @@ public class KeysetHandleTest {
 
   @Test
   public void getPublicKeysetHandle_keysetWithoutPrimaryKey() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     EcdsaPrivateKey privateKeyProto =
         TestUtil.createEcdsaPrivKey(
             TestUtil.createEcdsaPubKey(
@@ -2145,7 +2160,7 @@ public class KeysetHandleTest {
   @Test
   public void parseKeysetWithoutPrimaryKey_throwsIfValidateKeysetsOnParsingEnabled()
       throws Exception {
-    GlobalTinkFlags.validateKeysetsOnParsing.setValue(true);
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, true);
     EcdsaPrivateKey privateKeyProto =
         TestUtil.createEcdsaPrivKey(
             TestUtil.createEcdsaPubKey(
@@ -2176,12 +2191,11 @@ public class KeysetHandleTest {
                     InsecureSecretKeyAccess.get()));
     assertThat(e).hasMessageThat().contains("validateKeysetsOnParsing");
     assertThat(e).hasMessageThat().contains("Primary key id not found");
-    GlobalTinkFlags.validateKeysetsOnParsing.setValue(false);
   }
 
   @Test
   public void parseKeysetWithDuplicateKey_throwsIfFlagEnabled() throws Exception {
-    GlobalTinkFlags.validateKeysetsOnParsing.setValue(true);
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, true);
     EcdsaPrivateKey privateKeyProto =
         TestUtil.createEcdsaPrivKey(
             TestUtil.createEcdsaPubKey(
@@ -2222,13 +2236,12 @@ public class KeysetHandleTest {
                     InsecureSecretKeyAccess.get()));
     assertThat(e).hasMessageThat().contains("validateKeysetsOnParsing");
     assertThat(e).hasMessageThat().contains("KeyID 124 is duplicated");
-    GlobalTinkFlags.validateKeysetsOnParsing.setValue(false);
   }
 
   @Test
   public void parseKeysetWithInvalidStatus_throwsIfValidateKeysetsOnParsingEnabled()
       throws Exception {
-    GlobalTinkFlags.validateKeysetsOnParsing.setValue(true);
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, true);
     EcdsaPrivateKey privateKeyProto =
         TestUtil.createEcdsaPrivKey(
             TestUtil.createEcdsaPubKey(
@@ -2258,6 +2271,5 @@ public class KeysetHandleTest {
                     badStatusKeyset.toByteArray(), InsecureSecretKeyAccess.get()));
     assertThat(e).hasMessageThat().contains("validateKeysetsOnParsing");
     assertThat(e).hasMessageThat().contains("wrong status");
-    GlobalTinkFlags.validateKeysetsOnParsing.setValue(false);
   }
 }

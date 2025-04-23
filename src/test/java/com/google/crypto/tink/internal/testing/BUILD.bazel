@@ -79,3 +79,15 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "SetTinkFlagTest",
+    size = "small",
+    srcs = ["SetTinkFlagTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/config:tink_flag",
+        "//src/main/java/com/google/crypto/tink/internal/testing:set_tink_flag",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
