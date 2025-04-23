@@ -25,17 +25,20 @@ import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
+import com.google.crypto.tink.config.GlobalTinkFlags;
 import com.google.crypto.tink.hybrid.internal.HpkeDecrypt;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
+import com.google.crypto.tink.internal.testing.SetTinkFlag;
 import com.google.crypto.tink.proto.Keyset;
 import com.google.protobuf.ExtensionRegistryLite;
 import java.security.GeneralSecurityException;
 import java.util.List;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -43,6 +46,9 @@ import org.junit.runners.JUnit4;
 /** Tests for HybridEncryptWrapper. */
 @RunWith(JUnit4.class)
 public class HybridEncryptWrapperTest {
+
+  @Rule public SetTinkFlag setTinkFlag = new SetTinkFlag();
+
   @Before
   public void setUp() throws Exception {
     MutablePrimitiveRegistry.resetGlobalInstanceTestOnly();
@@ -142,6 +148,7 @@ public class HybridEncryptWrapperTest {
 
   @Test
   public void getPrimitiveNoPrimary_throwsNullPointerException() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     HpkeParameters parameters =
         HpkeParameters.builder()
             .setVariant(HpkeParameters.Variant.NO_PREFIX)

@@ -22,6 +22,8 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.aead.AeadConfig;
 import com.google.crypto.tink.aead.AesGcmParameters;
+import com.google.crypto.tink.config.GlobalTinkFlags;
+import com.google.crypto.tink.internal.testing.SetTinkFlag;
 import com.google.crypto.tink.mac.MacConfig;
 import com.google.crypto.tink.proto.KeyData;
 import com.google.crypto.tink.proto.KeyStatusType;
@@ -33,12 +35,15 @@ import com.google.protobuf.ByteString;
 import java.io.ByteArrayOutputStream;
 import java.security.GeneralSecurityException;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public final class TinkProtoKeysetFormatTest {
+
+  @Rule public SetTinkFlag setTinkFlag = new SetTinkFlag();
 
   @BeforeClass
   public static void setUp() throws GeneralSecurityException {
@@ -143,6 +148,7 @@ public final class TinkProtoKeysetFormatTest {
 
   @Test
   public void parsingKeysetWithUnknownStatus_doesNotThrowButGetAtThrows() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     Keyset keyset =
         Keyset.newBuilder()
             .addKey(
@@ -169,6 +175,7 @@ public final class TinkProtoKeysetFormatTest {
 
   @Test
   public void parsingKeysetWithNonAsciiTypeUrl_doesNotThrowButGetAtThrows() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     Keyset keyset =
         Keyset.newBuilder()
             .addKey(

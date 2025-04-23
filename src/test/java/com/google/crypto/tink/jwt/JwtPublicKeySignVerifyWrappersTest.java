@@ -28,9 +28,11 @@ import com.google.crypto.tink.KeysetManager;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
+import com.google.crypto.tink.config.GlobalTinkFlags;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
+import com.google.crypto.tink.internal.testing.SetTinkFlag;
 import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.testing.TestUtil;
@@ -41,6 +43,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -51,6 +54,7 @@ import org.junit.runner.RunWith;
 /** Tests for JwtSignKeyverifyWrapper. */
 @RunWith(Theories.class)
 public class JwtPublicKeySignVerifyWrappersTest {
+  @Rule public SetTinkFlag setTinkFlag = new SetTinkFlag();
 
   @DataPoints("templateNames")
   public static final String[] TEMPLATE_NAMES =
@@ -78,6 +82,7 @@ public class JwtPublicKeySignVerifyWrappersTest {
 
   @Test
   public void test_noPrimary_getSignPrimitive_fails() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     // The old KeysetManager API allows keysets without primary key.
     // The KeysetHandle.Builder does not allow this and can't be used in this test.
     KeyTemplate template = KeyTemplates.get("JWT_ES256");
@@ -104,6 +109,7 @@ public class JwtPublicKeySignVerifyWrappersTest {
 
   @Test
   public void test_wrapLegacy_throws() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get("JWT_ES256_RAW"));
     Keyset keyset =
         Keyset.parseFrom(
@@ -376,6 +382,7 @@ public class JwtPublicKeySignVerifyWrappersTest {
   /* TODO: b/252792776. All keysets without primary should be rejected in every case. */
   @Test
   public void test_verifyWithoutPrimary_works() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     Parameters parameters = KeyTemplates.get("JWT_ES256").toParameters();
     KeysetHandle handle =
         KeysetHandle.newBuilder()

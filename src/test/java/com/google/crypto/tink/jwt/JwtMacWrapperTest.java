@@ -27,9 +27,11 @@ import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.KeysetManager;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
+import com.google.crypto.tink.config.GlobalTinkFlags;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
+import com.google.crypto.tink.internal.testing.SetTinkFlag;
 import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.protobuf.ExtensionRegistryLite;
@@ -39,6 +41,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -46,6 +49,7 @@ import org.junit.runners.JUnit4;
 /** Tests for JwtMacWrapper. */
 @RunWith(JUnit4.class)
 public class JwtMacWrapperTest {
+  @Rule public SetTinkFlag setTinkFlag = new SetTinkFlag();
 
   @Before
   public void setUp() throws GeneralSecurityException {
@@ -54,6 +58,7 @@ public class JwtMacWrapperTest {
 
   @Test
   public void test_wrapNoPrimary_throws() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     // The old KeysetManager API allows keysets without primary key.
     // The KeysetHandle.Builder does not allow this and can't be used in this test.
     KeyTemplate template = KeyTemplates.get("JWT_HS256");
@@ -66,6 +71,7 @@ public class JwtMacWrapperTest {
 
   @Test
   public void test_wrapLegacy_throws() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     KeyTemplate rawTemplate = KeyTemplates.get("JWT_HS256_RAW");
     // Convert the normal, raw template into a template with output prefix type LEGACY
     KeysetHandle handle = KeysetHandle.generateNew(rawTemplate);

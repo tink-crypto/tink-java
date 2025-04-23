@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc.
+// Copyright 2017 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,9 @@ import static org.junit.Assert.fail;
 
 import com.google.common.truth.Expect;
 import com.google.crypto.tink.aead.AesGcmKeyManager;
+import com.google.crypto.tink.config.GlobalTinkFlags;
 import com.google.crypto.tink.config.TinkConfig;
+import com.google.crypto.tink.internal.testing.SetTinkFlag;
 import com.google.crypto.tink.mac.PredefinedMacParameters;
 import com.google.crypto.tink.proto.KeyStatusType;
 import com.google.crypto.tink.proto.Keyset;
@@ -50,6 +52,7 @@ import org.junit.runners.JUnit4;
 public class KeysetManagerTest {
 
   @Rule public final Expect expect = Expect.create();
+  @Rule public SetTinkFlag setTinkFlag = new SetTinkFlag();
 
   @BeforeClass
   public static void setUp() throws GeneralSecurityException {
@@ -74,6 +77,7 @@ public class KeysetManagerTest {
 
   @Test
   public void testEnable_shouldEnableKey() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     int keyId = 42;
     KeysetHandle handle = KeysetHandle.fromKeyset(TestUtil.createKeyset(createDisabledKey(keyId)));
 
@@ -87,6 +91,7 @@ public class KeysetManagerTest {
 
   @Test
   public void testEnable_unknownStatus_shouldThrowException() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     int keyId = 42;
     KeysetHandle handle =
         KeysetHandle.fromKeyset(TestUtil.createKeyset(createUnknownStatusKey(keyId)));
@@ -100,6 +105,7 @@ public class KeysetManagerTest {
 
   @Test
   public void testEnable_keyDestroyed_shouldThrowException() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     int keyId = 42;
     KeysetHandle handle = KeysetHandle.fromKeyset(TestUtil.createKeyset(createDestroyedKey(keyId)));
 
@@ -112,6 +118,7 @@ public class KeysetManagerTest {
 
   @Test
   public void testEnable_keyNotFound_shouldThrowException() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     int keyId = 42;
     KeysetHandle handle = KeysetHandle.fromKeyset(TestUtil.createKeyset(createDisabledKey(keyId)));
 
@@ -192,6 +199,7 @@ public class KeysetManagerTest {
 
   @Test
   public void testSetPrimary_keyDestroyed_shouldThrowException() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     int primaryKeyId = 42;
     int newPrimaryKeyId = 43;
     KeysetHandle handle =
@@ -207,6 +215,7 @@ public class KeysetManagerTest {
 
   @Test
   public void testSetPrimary_keyUnknownStatus_shouldThrowException() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     int primaryKeyId = 42;
     int newPrimaryKeyId = 43;
     KeysetHandle handle =
@@ -290,6 +299,7 @@ public class KeysetManagerTest {
 
   @Test
   public void testPromote_keyDestroyed_shouldThrowException() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     int primaryKeyId = 42;
     int newPrimaryKeyId = 43;
     KeysetHandle handle =
@@ -305,6 +315,7 @@ public class KeysetManagerTest {
 
   @Test
   public void testPromote_keyUnknownStatus_shouldThrowException() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     int primaryKeyId = 42;
     int newPrimaryKeyId = 43;
     KeysetHandle handle =
@@ -367,6 +378,7 @@ public class KeysetManagerTest {
 
   @Test
   public void testDisable_keyDestroyed_shouldThrowException() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     int primaryKeyId = 42;
     int otherKeyId = 43;
     KeysetHandle handle =
@@ -451,6 +463,7 @@ public class KeysetManagerTest {
 
   @Test
   public void testDestroy_keyUnknownStatus_shouldThrowException() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     int primaryKeyId = 42;
     int otherKeyId = 43;
     KeysetHandle handle =
@@ -470,6 +483,7 @@ public class KeysetManagerTest {
 
   @Test
   public void testDestroy_keyNotFound_shouldThrowException() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     int keyId = 42;
     KeysetHandle handle = KeysetHandle.fromKeyset(TestUtil.createKeyset(createDisabledKey(keyId)));
 
@@ -592,6 +606,7 @@ public class KeysetManagerTest {
 
   @Test
   public void testAdd_shouldAddNewKey() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     KeyTemplate kt = KeyTemplates.get("AES128_GCM");
     KeysetHandle keyset = KeysetManager.withEmptyKeyset().add(kt).getKeysetHandle();
 
@@ -604,6 +619,7 @@ public class KeysetManagerTest {
 
   @Test
   public void testAdd_shouldAddNewKey_proto() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     // Create a keyset that contains a single HmacKey.
     KeyTemplate template = KeyTemplates.get("HMAC_SHA256_128BITTAG");
     KeysetHandle keyset = KeysetManager.withEmptyKeyset().add(template).getKeysetHandle();
@@ -650,6 +666,7 @@ public class KeysetManagerTest {
 
   @Test
   public void testAdd_existingKeySet_shouldAddNewKey() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     KeyTemplate kt1 = AesGcmKeyManager.aes128GcmTemplate();
     KeysetHandle existing = KeysetManager.withEmptyKeyset().add(kt1).getKeysetHandle();
     KeyTemplate kt2 = AesGcmKeyManager.aes256GcmTemplate();
@@ -692,6 +709,7 @@ public class KeysetManagerTest {
 
   @Test
   public void addKeyHandle_newKeyset_shouldAddKey() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     KeyTemplate keyTemplate = KeyTemplates.get("AES256_GCM");
     KeyHandle keyHandle = KeyHandle.generateNew(keyTemplate);
     KeysetManager keysetManager = KeysetManager.withEmptyKeyset();
@@ -733,6 +751,7 @@ public class KeysetManagerTest {
 
   @Test
   public void addKeyHandle_fromKeysetWithDisabledKey_shouldCopyStatusCorrectly() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     KeyTemplate keyTemplate = KeyTemplates.get("AES128_GCM_RAW");
     KeysetManager keysetManager = KeysetManager.withEmptyKeyset();
     for (int i = 0; i < 3; i++) {
@@ -795,6 +814,7 @@ public class KeysetManagerTest {
 
   @Test
   public void addKeyHandleWithKeyAccess_newKeyset_shouldAddKey() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     KeyTemplate keyTemplate = KeyTemplates.get("AES128_GCM");
     KeyHandle keyHandle = KeyHandle.generateNew(keyTemplate);
     KeyAccess keyAccess = SecretKeyAccess.insecureSecretAccess();
@@ -813,6 +833,7 @@ public class KeysetManagerTest {
 
   @Test
   public void addKeyHandleWithKeyAccess_existingKeyset_shouldAddKey() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     KeyTemplate keyTemplate1 = KeyTemplates.get("AES128_GCM");
     KeysetManager keysetManager = KeysetManager.withEmptyKeyset().add(keyTemplate1);
     KeyTemplate keyTemplate2 = KeyTemplates.get("AES256_GCM");
@@ -986,6 +1007,7 @@ public class KeysetManagerTest {
 
   @Test
   public void testThreadSafety_enableSetPrimaryKey_shouldWork() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     final int primaryKeyId = 42;
     final int keyId2 = 43;
     final int keyId3 = 44;
@@ -1047,6 +1069,7 @@ public class KeysetManagerTest {
 
   @Test
   public void testThreadSafety_disableEnableSetPrimaryKey_shouldWork() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     final int primaryKeyId = 42;
     final int keyId2 = 43;
     final int keyId3 = 44;
@@ -1098,6 +1121,7 @@ public class KeysetManagerTest {
 
   @Test
   public void testThreadSafety_enableDisableDeleteKey_shouldWork() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     final int primaryKeyId = 42;
     final int keyId2 = 43;
     final int keyId3 = 44;

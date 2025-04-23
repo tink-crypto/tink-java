@@ -26,6 +26,8 @@ import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
+import com.google.crypto.tink.config.GlobalTinkFlags;
+import com.google.crypto.tink.internal.testing.SetTinkFlag;
 import com.google.crypto.tink.proto.KeyData;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.KeyStatusType;
@@ -39,6 +41,7 @@ import com.google.gson.JsonParser;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -49,6 +52,7 @@ import org.junit.runner.RunWith;
 /** Unit tests for JwkSetConverter */
 @RunWith(Theories.class)
 public final class JwkSetConverterTest {
+  @Rule public SetTinkFlag setTinkFlag = new SetTinkFlag();
 
   @Before
   public void setup() throws Exception {
@@ -683,6 +687,7 @@ public final class JwkSetConverterTest {
 
   @Test
   public void fromPublicKeysetHandle_throwsOnInvalidKeysetHandle() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     Keyset keyset =
         Keyset.newBuilder()
             .setPrimaryKeyId(1)
