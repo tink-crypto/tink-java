@@ -95,6 +95,10 @@ public final class AesGcmSiv implements Aead {
   @AccessesPartialKey
   public static Aead create(AesGcmSivKey key, ThrowingSupplier<Cipher> cipherSupplier)
       throws GeneralSecurityException {
+    // Check that cipherSupplier works as expected.
+    if (!isAesGcmSivCipher(cipherSupplier.get())) {
+      throw new IllegalStateException("Cipher does not implement AES GCM SIV.");
+    }
     return new AesGcmSiv(
         key.getKeyBytes().toByteArray(InsecureSecretKeyAccess.get()),
         key.getOutputPrefix().toByteArray(),

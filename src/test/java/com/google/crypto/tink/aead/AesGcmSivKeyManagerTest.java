@@ -191,7 +191,7 @@ public class AesGcmSivKeyManagerTest {
         };
     AesGcmSivParameters parameters =
         (AesGcmSivParameters) KeyTemplates.get(templateName).toParameters();
-    com.google.crypto.tink.aead.AesGcmSivKey key =
+    AesGcmSivKey key =
         AesGcmSivKeyManager.createAesGcmSivKeyFromRandomness(
             parameters,
             new ByteArrayInputStream(keyMaterial),
@@ -199,7 +199,7 @@ public class AesGcmSivKeyManagerTest {
             InsecureSecretKeyAccess.get());
     byte[] truncatedKeyMaterial = Arrays.copyOf(keyMaterial, parameters.getKeySizeBytes());
     Key expectedKey =
-        com.google.crypto.tink.aead.AesGcmSivKey.builder()
+        AesGcmSivKey.builder()
             .setParameters(parameters)
             .setIdRequirement(parameters.hasIdRequirement() ? 123 : null)
             .setKeyBytes(SecretBytes.copyFrom(truncatedKeyMaterial, InsecureSecretKeyAccess.get()))
@@ -219,7 +219,7 @@ public class AesGcmSivKeyManagerTest {
           0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
           25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35
         };
-    com.google.crypto.tink.aead.AesGcmSivKey key =
+    AesGcmSivKey key =
         AesGcmSivKeyManager.createAesGcmSivKeyFromRandomness(
             parameters,
             SlowInputStream.copyFrom(keyMaterial),
@@ -227,7 +227,7 @@ public class AesGcmSivKeyManagerTest {
             InsecureSecretKeyAccess.get());
     byte[] truncatedKeyMaterial = Arrays.copyOf(keyMaterial, parameters.getKeySizeBytes());
     Key expectedKey =
-        com.google.crypto.tink.aead.AesGcmSivKey.builder()
+        AesGcmSivKey.builder()
             .setParameters(parameters)
             .setIdRequirement(parameters.hasIdRequirement() ? 123 : null)
             .setKeyBytes(SecretBytes.copyFrom(truncatedKeyMaterial, InsecureSecretKeyAccess.get()))
@@ -277,8 +277,8 @@ public class AesGcmSivKeyManagerTest {
             .setKeySizeBytes(16)
             .setVariant(AesGcmSivParameters.Variant.NO_PREFIX)
             .build();
-    com.google.crypto.tink.aead.AesGcmSivKey key =
-        com.google.crypto.tink.aead.AesGcmSivKey.builder()
+    AesGcmSivKey key =
+        AesGcmSivKey.builder()
             .setParameters(parameters)
             .setKeyBytes(SecretBytes.copyFrom(keyBytes, InsecureSecretKeyAccess.get()))
             .build();
@@ -287,12 +287,9 @@ public class AesGcmSivKeyManagerTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
             .build();
-    Aead aead = keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
-
-    assertThrows(GeneralSecurityException.class, () -> aead.encrypt(new byte[] {}, new byte[] {}));
-    byte[] fixedCiphertext = Hex.decode("c3561ce7f48b8a6b9b8d5ef957d2e512368f7da837bcf2aeebe176e3");
     assertThrows(
-        GeneralSecurityException.class, () -> aead.decrypt(fixedCiphertext, new byte[] {}));
+        GeneralSecurityException.class,
+        () -> keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class));
   }
 
   // This test shows how ciphertexts created with older versions of Tink on older versions of

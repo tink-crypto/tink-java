@@ -31,7 +31,6 @@ import com.google.crypto.tink.daead.AesSivParameters;
 import com.google.crypto.tink.daead.PredefinedDeterministicAeadParameters;
 import com.google.crypto.tink.hybrid.EciesParameters;
 import com.google.crypto.tink.hybrid.HpkeParameters;
-import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.jwt.JwtEcdsaParameters;
 import com.google.crypto.tink.jwt.JwtHmacParameters;
 import com.google.crypto.tink.jwt.JwtMacConfig;
@@ -421,37 +420,34 @@ public final class KeyTemplatesAsParametersTest {
         new Pair(
             "RSA_SSA_PSS_4096_SHA512_SHA512_64_F4",
             PredefinedSignatureParameters.RSA_SSA_PSS_4096_SHA512_SHA512_64_F4));
-
-    if (Util.isAndroid()) {
-      result.add(
-          new Pair(
-              "AES128_GCM_SIV",
-              AesGcmSivParameters.builder()
-                  .setKeySizeBytes(16)
-                  .setVariant(AesGcmSivParameters.Variant.TINK)
-                  .build()));
-      result.add(
-          new Pair(
-              "AES128_GCM_SIV_RAW",
-              AesGcmSivParameters.builder()
-                  .setKeySizeBytes(16)
-                  .setVariant(AesGcmSivParameters.Variant.NO_PREFIX)
-                  .build()));
-      result.add(
-          new Pair(
-              "AES256_GCM_SIV",
-              AesGcmSivParameters.builder()
-                  .setKeySizeBytes(32)
-                  .setVariant(AesGcmSivParameters.Variant.TINK)
-                  .build()));
-      result.add(
-          new Pair(
-              "AES256_GCM_SIV_RAW",
-              AesGcmSivParameters.builder()
-                  .setKeySizeBytes(32)
-                  .setVariant(AesGcmSivParameters.Variant.NO_PREFIX)
-                  .build()));
-    }
+    result.add(
+        new Pair(
+            "AES128_GCM_SIV",
+            AesGcmSivParameters.builder()
+                .setKeySizeBytes(16)
+                .setVariant(AesGcmSivParameters.Variant.TINK)
+                .build()));
+    result.add(
+        new Pair(
+            "AES128_GCM_SIV_RAW",
+            AesGcmSivParameters.builder()
+                .setKeySizeBytes(16)
+                .setVariant(AesGcmSivParameters.Variant.NO_PREFIX)
+                .build()));
+    result.add(
+        new Pair(
+            "AES256_GCM_SIV",
+            AesGcmSivParameters.builder()
+                .setKeySizeBytes(32)
+                .setVariant(AesGcmSivParameters.Variant.TINK)
+                .build()));
+    result.add(
+        new Pair(
+            "AES256_GCM_SIV_RAW",
+            AesGcmSivParameters.builder()
+                .setKeySizeBytes(32)
+                .setVariant(AesGcmSivParameters.Variant.NO_PREFIX)
+                .build()));
     // Hybrid
     result.add(
         new Pair(

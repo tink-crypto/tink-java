@@ -49,6 +49,7 @@ import com.google.crypto.tink.hybrid.HpkeProtoSerialization;
 import com.google.crypto.tink.hybrid.HpkePublicKey;
 import com.google.crypto.tink.hybrid.internal.EciesProtoSerialization;
 import com.google.crypto.tink.internal.BigIntegerEncoding;
+import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.mac.AesCmacKey;
 import com.google.crypto.tink.mac.AesCmacParameters;
 import com.google.crypto.tink.mac.ChunkedMac;
@@ -97,16 +98,26 @@ import com.google.crypto.tink.util.SecretBytes;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
+import java.security.Security;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECPoint;
+import org.conscrypt.Conscrypt;
 import org.junit.Assume;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public class ConfigurationV0Test {
+
+  @BeforeClass
+  public static void setUp() throws Exception {
+    if (!Util.isAndroid()) {
+      Security.addProvider(Conscrypt.newProvider());
+    }
+  }
 
   @Test
   public void config_throwsIfInFipsMode() throws Exception {
@@ -395,6 +406,13 @@ public class ConfigurationV0Test {
             .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
             .build();
 
+    if (Util.isAndroid() && Util.getAndroidApiLevel() < 30) {
+      // Must fail because Android's AES-GCM-SIV Cipher is invalid prior to Android 30.
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> keysetHandle.getPrimitive(ConfigurationV0.get(), Aead.class));
+      return;
+    }
     assertThat(keysetHandle.getPrimitive(ConfigurationV0.get(), Aead.class)).isNotNull();
   }
 

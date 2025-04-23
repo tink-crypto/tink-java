@@ -333,12 +333,7 @@ public class AesGcmSivTest {
             .setParameters(parameters)
             .setKeyBytes(SecretBytes.copyFrom(keyBytes, InsecureSecretKeyAccess.get()))
             .build();
-    Aead aead = AesGcmSiv.create(key);
-
-    assertThrows(GeneralSecurityException.class, () -> aead.encrypt(new byte[] {}, new byte[] {}));
-    byte[] fixedCiphertext = Hex.decode("c3561ce7f48b8a6b9b8d5ef957d2e512368f7da837bcf2aeebe176e3");
-    assertThrows(
-        GeneralSecurityException.class, () -> aead.decrypt(fixedCiphertext, new byte[] {}));
+    assertThrows(GeneralSecurityException.class, () -> AesGcmSiv.create(key));
   }
 
   @Test

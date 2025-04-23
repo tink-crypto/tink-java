@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc.
+// Copyright 2017 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,13 +39,10 @@ import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.util.SecretBytes;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nullable;
-import javax.crypto.Cipher;
-import javax.crypto.NoSuchPaddingException;
 
 /**
  * This key manager generates new {@code AesGcmSivKey} keys and produces new instances of {@code
@@ -128,32 +125,17 @@ public final class AesGcmSivKeyManager {
     return Collections.unmodifiableMap(result);
   }
 
-  private static boolean canUseAesGcmSive() {
-    try {
-      Cipher.getInstance("AES/GCM-SIV/NoPadding");
-      return true;
-    } catch (NoSuchAlgorithmException | NoSuchPaddingException ex) {
-      return false;
-    }
-  }
-
   public static void register(boolean newKeyAllowed) throws GeneralSecurityException {
     if (!TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS.isCompatible()) {
       throw new GeneralSecurityException("Registering AES GCM SIV is not supported in FIPS mode");
     }
-    // We want to register key proto serialization even when AES-GCM-SIV is unavailable via the
-    // Java Cryptographic Extension framework (and thus via Tink) to enable operations that don't
-    // depend on the actual cryptographic primitive - for example, exporting keys to key management
-    // systems.
     AesGcmSivProtoSerialization.register();
-    if (canUseAesGcmSive()) {
-      MutablePrimitiveRegistry.globalInstance()
-          .registerPrimitiveConstructor(AES_GCM_SIV_PRIMITIVE_CONSTRUCTOR);
-      MutableParametersRegistry.globalInstance().putAll(namedParameters());
+    MutableParametersRegistry.globalInstance().putAll(namedParameters());
       MutableKeyDerivationRegistry.globalInstance().add(KEY_DERIVER, AesGcmSivParameters.class);
-      MutableKeyCreationRegistry.globalInstance().add(KEY_CREATOR, AesGcmSivParameters.class);
-      KeyManagerRegistry.globalInstance().registerKeyManager(legacyKeyManager, newKeyAllowed);
-    }
+    MutableKeyCreationRegistry.globalInstance().add(KEY_CREATOR, AesGcmSivParameters.class);
+    MutablePrimitiveRegistry.globalInstance()
+        .registerPrimitiveConstructor(AES_GCM_SIV_PRIMITIVE_CONSTRUCTOR);
+    KeyManagerRegistry.globalInstance().registerKeyManager(legacyKeyManager, newKeyAllowed);
   }
 
   /**

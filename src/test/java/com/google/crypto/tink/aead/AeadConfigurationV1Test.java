@@ -29,15 +29,27 @@ import com.google.crypto.tink.aead.internal.ChaCha20Poly1305ProtoSerialization;
 import com.google.crypto.tink.aead.internal.XAesGcmProtoSerialization;
 import com.google.crypto.tink.aead.internal.XChaCha20Poly1305ProtoSerialization;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
+import java.security.Security;
+import org.conscrypt.Conscrypt;
 import org.junit.Assume;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public class AeadConfigurationV1Test {
+
+  @BeforeClass
+  public static void setUp() throws Exception {
+    if (!Util.isAndroid()) {
+      Security.addProvider(Conscrypt.newProvider());
+    }
+  }
+
   @Test
   public void config_throwsIfInFipsMode() throws Exception {
     Assume.assumeTrue(TinkFipsUtil.useOnlyFips());
@@ -121,6 +133,13 @@ public class AeadConfigurationV1Test {
             .addEntry(KeysetHandle.importKey(key).withFixedId(42).makePrimary())
             .build();
 
+    if (Util.isAndroid() && Util.getAndroidApiLevel() < 30) {
+      // Must fail because Android's AES-GCM-SIV Cipher is invalid prior to Android 30.
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> keysetHandle.getPrimitive(AeadConfigurationV1.get(), Aead.class));
+      return;
+    }
     assertThat(keysetHandle.getPrimitive(AeadConfigurationV1.get(), Aead.class)).isNotNull();
   }
 

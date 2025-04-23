@@ -548,7 +548,6 @@ java_test(
         "//src/main/java/com/google/crypto/tink/hybrid:ecies_parameters",
         "//src/main/java/com/google/crypto/tink/hybrid:hpke_parameters",
         "//src/main/java/com/google/crypto/tink/internal:tink_bug_exception",
-        "//src/main/java/com/google/crypto/tink/internal:util",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_ecdsa_parameters",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_hmac_parameters",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_mac_config",
@@ -712,6 +711,7 @@ java_test(
         "//src/main/java/com/google/crypto/tink/hybrid:hpke_public_key",
         "//src/main/java/com/google/crypto/tink/hybrid/internal:ecies_proto_serialization",
         "//src/main/java/com/google/crypto/tink/internal:big_integer_encoding",
+        "//src/main/java/com/google/crypto/tink/internal:util",
         "//src/main/java/com/google/crypto/tink/mac:aes_cmac_key",
         "//src/main/java/com/google/crypto/tink/mac:aes_cmac_parameters",
         "//src/main/java/com/google/crypto/tink/mac:chunked_mac",
@@ -758,6 +758,7 @@ java_test(
         "//src/main/java/com/google/crypto/tink/util:secret_bytes",
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
+        "@maven//:org_conscrypt_conscrypt_openjdk_uber",
     ],
 )
 
