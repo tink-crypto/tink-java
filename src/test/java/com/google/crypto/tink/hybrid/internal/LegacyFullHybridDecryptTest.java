@@ -67,15 +67,15 @@ public final class LegacyFullHybridDecryptTest {
 
   // Testvector for HPKE taken from
   // src/main/java/com/google/crypto/tink/hybrid/internal/testing/HpkeTestUtil.java.
-  // FIXED_CIPHERTEXT with FIXED_AAD decrypts to FIXED_MESSAGE under the key given by
+  // fixedCiphertext with fixedAad decrypts to fixedMessage under the key given by
   // getPrivateP256Value (corresponding to getP256PublicPointAsBytes) when used with
   // DHKEM_P256_HKDF_SHA256, HKDF_SHA256, AES_128_GCM.
-  private static final byte[] FIXED_CIPHERTEXT =
+  private static final byte[] fixedCiphertext =
       Hex.decode(
           "c202f5f26a59c446531b9e4e880f8730ff0aed444699cb1cd69a2c60e07aba42d77a29b62c7af6b2cfda9c"
               + "1529bb8d23c8");
-  private static final byte[] FIXED_AAD = Hex.decode("02");
-  private static final byte[] FIXED_MESSAGE = Hex.decode("01");
+  private static final byte[] fixedAad = Hex.decode("02");
+  private static final byte[] fixedMessage = Hex.decode("01");
 
   private static LegacyProtoKey getFixedProtoPrivateKey(
       OutputPrefixType outputPrefixType, @Nullable Integer idRequirement)
@@ -108,40 +108,39 @@ public final class LegacyFullHybridDecryptTest {
     LegacyProtoKey protoKey = getFixedProtoPrivateKey(OutputPrefixType.RAW, null);
     HybridDecrypt hybridDecrypt = LegacyFullHybridDecrypt.create(protoKey);
 
-    assertThat(hybridDecrypt.decrypt(FIXED_CIPHERTEXT, FIXED_AAD)).isEqualTo(FIXED_MESSAGE);
+    assertThat(hybridDecrypt.decrypt(fixedCiphertext, fixedAad)).isEqualTo(fixedMessage);
   }
 
   @Test
   public void tinkTestVectorKey_decrypts() throws Exception {
     LegacyProtoKey protoKey = getFixedProtoPrivateKey(OutputPrefixType.TINK, 0x66778899);
     HybridDecrypt hybridDecrypt = LegacyFullHybridDecrypt.create(protoKey);
-    byte[] ciphertext = Bytes.concat(Hex.decode("0166778899"), FIXED_CIPHERTEXT);
-    assertThat(hybridDecrypt.decrypt(ciphertext, FIXED_AAD)).isEqualTo(FIXED_MESSAGE);
+    byte[] ciphertext = Bytes.concat(Hex.decode("0166778899"), fixedCiphertext);
+    assertThat(hybridDecrypt.decrypt(ciphertext, fixedAad)).isEqualTo(fixedMessage);
   }
 
   @Test
   public void crunchyTestVectorKey_decrypts() throws Exception {
     LegacyProtoKey protoKey = getFixedProtoPrivateKey(OutputPrefixType.CRUNCHY, 0x66778899);
     HybridDecrypt hybridDecrypt = LegacyFullHybridDecrypt.create(protoKey);
-    byte[] ciphertext = Bytes.concat(Hex.decode("0066778899"), FIXED_CIPHERTEXT);
-    assertThat(hybridDecrypt.decrypt(ciphertext, FIXED_AAD)).isEqualTo(FIXED_MESSAGE);
+    byte[] ciphertext = Bytes.concat(Hex.decode("0066778899"), fixedCiphertext);
+    assertThat(hybridDecrypt.decrypt(ciphertext, fixedAad)).isEqualTo(fixedMessage);
   }
 
   @Test
   public void legacyTestVectorKey_decrypts() throws Exception {
     LegacyProtoKey protoKey = getFixedProtoPrivateKey(OutputPrefixType.LEGACY, 0x66778899);
     HybridDecrypt hybridDecrypt = LegacyFullHybridDecrypt.create(protoKey);
-    byte[] ciphertext = Bytes.concat(Hex.decode("0066778899"), FIXED_CIPHERTEXT);
-    assertThat(hybridDecrypt.decrypt(ciphertext, FIXED_AAD)).isEqualTo(FIXED_MESSAGE);
+    byte[] ciphertext = Bytes.concat(Hex.decode("0066778899"), fixedCiphertext);
+    assertThat(hybridDecrypt.decrypt(ciphertext, fixedAad)).isEqualTo(fixedMessage);
   }
 
   @Test
   public void rawTestVectorKey_wrongCiphertext_fails() throws Exception {
     LegacyProtoKey protoKey = getFixedProtoPrivateKey(OutputPrefixType.RAW, null);
     HybridDecrypt hybridDecrypt = LegacyFullHybridDecrypt.create(protoKey);
-    byte[] ciphertext = Bytes.concat(FIXED_CIPHERTEXT, Hex.decode("00"));
-    assertThrows(
-        GeneralSecurityException.class, () -> hybridDecrypt.decrypt(ciphertext, FIXED_AAD));
+    byte[] ciphertext = Bytes.concat(fixedCiphertext, Hex.decode("00"));
+    assertThrows(GeneralSecurityException.class, () -> hybridDecrypt.decrypt(ciphertext, fixedAad));
   }
 
   @Test
@@ -149,9 +148,8 @@ public final class LegacyFullHybridDecryptTest {
     LegacyProtoKey protoKey = getFixedProtoPrivateKey(OutputPrefixType.TINK, 0x66778899);
     HybridDecrypt hybridDecrypt = LegacyFullHybridDecrypt.create(protoKey);
     // Note: first byte is expected to be 01.
-    byte[] ciphertext = Bytes.concat(Hex.decode("0066778899"), FIXED_CIPHERTEXT);
-    assertThrows(
-        GeneralSecurityException.class, () -> hybridDecrypt.decrypt(ciphertext, FIXED_AAD));
+    byte[] ciphertext = Bytes.concat(Hex.decode("0066778899"), fixedCiphertext);
+    assertThrows(GeneralSecurityException.class, () -> hybridDecrypt.decrypt(ciphertext, fixedAad));
   }
 
   @Test
@@ -159,8 +157,7 @@ public final class LegacyFullHybridDecryptTest {
     LegacyProtoKey protoKey = getFixedProtoPrivateKey(OutputPrefixType.TINK, 0x66778899);
     HybridDecrypt hybridDecrypt = LegacyFullHybridDecrypt.create(protoKey);
     // Note: last byte is expected to be 99.
-    byte[] ciphertext = Bytes.concat(Hex.decode("0166778898"), FIXED_CIPHERTEXT);
-    assertThrows(
-        GeneralSecurityException.class, () -> hybridDecrypt.decrypt(ciphertext, FIXED_AAD));
+    byte[] ciphertext = Bytes.concat(Hex.decode("0166778898"), fixedCiphertext);
+    assertThrows(GeneralSecurityException.class, () -> hybridDecrypt.decrypt(ciphertext, fixedAad));
   }
 }

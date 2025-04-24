@@ -54,7 +54,7 @@ import org.junit.runner.RunWith;
 @RunWith(Theories.class)
 public final class KeyManagerIntegrationTest {
   private static final String TYPE_URL = "type.googleapis.com/custom.AesSivKey";
-  private static final byte[] KEY_BYTES = Random.randBytes(64);
+  private static final byte[] keyBytes = Random.randBytes(64);
   private static final int KEY_ID = 0x23456789;
   private static final EnumTypeProtoConverter<OutputPrefixType, AesSivParameters.Variant>
       OUTPUT_PREFIX_TYPE_CONVERTER =
@@ -78,7 +78,7 @@ public final class KeyManagerIntegrationTest {
   @Test
   public void parseFromKeyset_works() throws Exception {
     AesSivKey protoKey =
-        AesSivKey.newBuilder().setVersion(0).setKeyValue(ByteString.copyFrom(KEY_BYTES)).build();
+        AesSivKey.newBuilder().setVersion(0).setKeyValue(ByteString.copyFrom(keyBytes)).build();
     KeysetHandle handle = getKeysetHandleFromProtoKey(protoKey, OutputPrefixType.TINK);
 
     Keyset keyset =
@@ -119,7 +119,7 @@ public final class KeyManagerIntegrationTest {
     byte[] plaintext = Random.randBytes(20);
     byte[] associatedData = Random.randBytes(20);
     AesSivKey protoKey =
-        AesSivKey.newBuilder().setVersion(0).setKeyValue(ByteString.copyFrom(KEY_BYTES)).build();
+        AesSivKey.newBuilder().setVersion(0).setKeyValue(ByteString.copyFrom(keyBytes)).build();
     KeysetHandle handle = getKeysetHandleFromProtoKey(protoKey, outputPrefixType);
 
     DeterministicAead customDaead =
@@ -149,7 +149,7 @@ public final class KeyManagerIntegrationTest {
     byte[] ciphertext = tinkDaead.encryptDeterministically(plaintext, associatedData);
     byte[] ciphertext2 = tinkDaead.encryptDeterministically(plaintext, associatedData);
     AesSivKey protoKey =
-        AesSivKey.newBuilder().setVersion(0).setKeyValue(ByteString.copyFrom(KEY_BYTES)).build();
+        AesSivKey.newBuilder().setVersion(0).setKeyValue(ByteString.copyFrom(keyBytes)).build();
     KeysetHandle handle = getKeysetHandleFromProtoKey(protoKey, outputPrefixType);
     DeterministicAead customDaead =
         handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
@@ -192,7 +192,7 @@ public final class KeyManagerIntegrationTest {
                 .setKeySizeBytes(64)
                 .setVariant(OUTPUT_PREFIX_TYPE_CONVERTER.fromProtoEnum(outputPrefixType))
                 .build())
-        .setKeyBytes(SecretBytes.copyFrom(KEY_BYTES, InsecureSecretKeyAccess.get()))
+        .setKeyBytes(SecretBytes.copyFrom(keyBytes, InsecureSecretKeyAccess.get()))
         .setIdRequirement(outputPrefixType == OutputPrefixType.RAW ? null : KEY_ID)
         .build();
   }

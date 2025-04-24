@@ -60,7 +60,7 @@ public class ChunkedAesCmacTest {
   }
 
   // Test data from https://tools.ietf.org/html/rfc4493#section-4.
-  private static final AesCmacTestVector[] CMAC_TEST_VECTORS_FROM_RFC =
+  private static final AesCmacTestVector[] cmacTestVectorsFromRfc =
       new AesCmacTestVector[] {
         AesCmacTestUtil.RFC_TEST_VECTOR_0,
         AesCmacTestUtil.RFC_TEST_VECTOR_1,
@@ -81,11 +81,11 @@ public class ChunkedAesCmacTest {
         AesCmacTestUtil.LONG_KEY_TEST_VECTOR,
       };
 
-  private static final AesCmacTestVector[]
-      CMAC_VERIFICATION_FAIL_FAST_TEST_VECTORS = new AesCmacTestVector[] {
-          AesCmacTestUtil.WRONG_PREFIX_TAG_LEGACY,
-          AesCmacTestUtil.WRONG_PREFIX_TAG_TINK,
-          AesCmacTestUtil.TAG_TOO_SHORT
+  private static final AesCmacTestVector[] cmacVerificationFailFastTestVectors =
+      new AesCmacTestVector[] {
+        AesCmacTestUtil.WRONG_PREFIX_TAG_LEGACY,
+        AesCmacTestUtil.WRONG_PREFIX_TAG_TINK,
+        AesCmacTestUtil.TAG_TOO_SHORT
       };
 
   @DataPoints("parameters")
@@ -153,7 +153,7 @@ public class ChunkedAesCmacTest {
   @Test
   public void testTagTruncation() throws Exception {
     assumeFalse(TinkFips.useOnlyFips());
-    for (AesCmacTestVector t : CMAC_TEST_VECTORS_FROM_RFC) {
+    for (AesCmacTestVector t : cmacTestVectorsFromRfc) {
       ChunkedMac mac = new ChunkedAesCmacImpl(t.key);
 
       for (int j = 1; j < t.tag.length; j++) {
@@ -165,7 +165,7 @@ public class ChunkedAesCmacTest {
     }
 
     // Test with random keys.
-    for (AesCmacTestVector t : CMAC_TEST_VECTORS_FROM_RFC) {
+    for (AesCmacTestVector t : cmacTestVectorsFromRfc) {
       AesCmacKey key =
           AesCmacKey.builder()
               .setParameters(AesCmacTestUtil.createAesCmacParameters(16, 16, Variant.NO_PREFIX))
@@ -184,7 +184,7 @@ public class ChunkedAesCmacTest {
   @Test
   public void testBitFlipMessage() throws Exception {
     assumeFalse(TinkFips.useOnlyFips());
-    for (AesCmacTestVector t : CMAC_TEST_VECTORS_FROM_RFC) {
+    for (AesCmacTestVector t : cmacTestVectorsFromRfc) {
       ChunkedMac mac = new ChunkedAesCmacImpl(t.key);
       for (int b = 0; b < t.message.length; b++) {
         for (int bit = 0; bit < 8; bit++) {
@@ -197,7 +197,7 @@ public class ChunkedAesCmacTest {
       }
     }
     // Test with random keys.
-    for (AesCmacTestVector t : CMAC_TEST_VECTORS_FROM_RFC) {
+    for (AesCmacTestVector t : cmacTestVectorsFromRfc) {
       AesCmacKey key =
           AesCmacKey.builder()
               .setParameters(AesCmacTestUtil.createAesCmacParameters(16, 16, Variant.NO_PREFIX))
@@ -219,7 +219,7 @@ public class ChunkedAesCmacTest {
   @Test
   public void testBitFlipTag() throws Exception {
     assumeFalse(TinkFips.useOnlyFips());
-    for (AesCmacTestVector t : CMAC_TEST_VECTORS_FROM_RFC) {
+    for (AesCmacTestVector t : cmacTestVectorsFromRfc) {
       ChunkedMac mac = new ChunkedAesCmacImpl(t.key);
       for (int b = 0; b < t.tag.length; b++) {
         for (int bit = 0; bit < 8; bit++) {
@@ -232,7 +232,7 @@ public class ChunkedAesCmacTest {
       }
     }
     // Test with random keys.
-    for (AesCmacTestVector t : CMAC_TEST_VECTORS_FROM_RFC) {
+    for (AesCmacTestVector t : cmacTestVectorsFromRfc) {
       AesCmacKey key =
           AesCmacKey.builder()
               .setParameters(AesCmacTestUtil.createAesCmacParameters(16, 16, Variant.NO_PREFIX))
@@ -345,7 +345,7 @@ public class ChunkedAesCmacTest {
   @Test
   public void testCreateVerificationFailsFast() throws Exception {
     assumeFalse(TinkFips.useOnlyFips());
-    for (AesCmacTestVector t : CMAC_VERIFICATION_FAIL_FAST_TEST_VECTORS) {
+    for (AesCmacTestVector t : cmacVerificationFailFastTestVectors) {
       ChunkedMac mac = new ChunkedAesCmacImpl(t.key);
       assertThrows(GeneralSecurityException.class, () -> mac.createVerification(t.tag));
     }
@@ -379,7 +379,7 @@ public class ChunkedAesCmacTest {
   @Test
   public void testMacTestVectors() throws Exception {
     assumeFalse(TinkFips.useOnlyFips());
-    for (AesCmacTestVector t : CMAC_TEST_VECTORS_FROM_RFC) {
+    for (AesCmacTestVector t : cmacTestVectorsFromRfc) {
       ChunkedMac mac = new ChunkedAesCmacImpl(t.key);
 
       try {
@@ -404,7 +404,7 @@ public class ChunkedAesCmacTest {
   @Test
   public void testMacTestVectorsReadOnlyBuffer() throws Exception {
     assumeFalse(TinkFips.useOnlyFips());
-    for (AesCmacTestVector t : CMAC_TEST_VECTORS_FROM_RFC) {
+    for (AesCmacTestVector t : cmacTestVectorsFromRfc) {
       ChunkedMac mac = new ChunkedAesCmacImpl(t.key);
 
       try {
@@ -563,7 +563,7 @@ public class ChunkedAesCmacTest {
   @Test
   public void testRandomizedDataChunking() throws Exception {
     assumeFalse(TinkFips.useOnlyFips());
-    for (AesCmacTestVector t : CMAC_TEST_VECTORS_FROM_RFC) {
+    for (AesCmacTestVector t : cmacTestVectorsFromRfc) {
       testRandomized(t);
     }
     for (AesCmacTestVector t : CMAC_IMPLEMENTATION_DETAIL_TEST_VECTORS) {

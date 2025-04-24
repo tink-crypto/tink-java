@@ -47,7 +47,7 @@ public final class RsaSsaPssSignJce implements PublicKeySign {
       TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_REQUIRES_BORINGCRYPTO;
 
   private static final byte[] EMPTY = new byte[0];
-  private static final byte[] LEGACY_MESSAGE_SUFFIX = new byte[] {0};
+  private static final byte[] legacyMessageSuffix = new byte[] {0};
 
   /**
    * InternalImpl is an implementation of the RSA SSA PSS signature signing that only uses the JCE
@@ -235,7 +235,7 @@ public final class RsaSsaPssSignJce implements PublicKeySign {
         params.getSaltLengthBytes(),
         key.getOutputPrefix().toByteArray(),
         key.getParameters().getVariant().equals(RsaSsaPssParameters.Variant.LEGACY)
-            ? LEGACY_MESSAGE_SUFFIX
+            ? legacyMessageSuffix
             : EMPTY);
   }
 

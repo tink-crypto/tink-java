@@ -42,7 +42,7 @@ import org.junit.runners.JUnit4;
 /** Unit tests for {@link X25519HpkeKem}. */
 @RunWith(JUnit4.class)
 public final class X25519HpkeKemTest {
-  private static final byte[] EXPORT_ONLY_AEAD_ID = HpkeUtil.intToByteArray(2, 0xffff);
+  private static final byte[] exportOnlyAeadId = HpkeUtil.intToByteArray(2, 0xffff);
   private static final String MAC_ALGORITHM = "HmacSha256";
 
   private static Map<HpkeTestId, HpkeTestVector> testVectors;
@@ -184,7 +184,7 @@ public final class X25519HpkeKemTest {
         HpkeUtil.BASE_MODE,
         HpkeUtil.X25519_HKDF_SHA256_KEM_ID,
         HpkeUtil.HKDF_SHA256_KDF_ID,
-        EXPORT_ONLY_AEAD_ID);
+        exportOnlyAeadId);
   }
 
   @Test
@@ -194,7 +194,7 @@ public final class X25519HpkeKemTest {
         HpkeUtil.AUTH_MODE,
         HpkeUtil.X25519_HKDF_SHA256_KEM_ID,
         HpkeUtil.HKDF_SHA256_KDF_ID,
-        EXPORT_ONLY_AEAD_ID);
+        exportOnlyAeadId);
   }
 
   @Test
@@ -304,7 +304,7 @@ public final class X25519HpkeKemTest {
         HpkeUtil.BASE_MODE,
         HpkeUtil.X25519_HKDF_SHA256_KEM_ID,
         HpkeUtil.HKDF_SHA256_KDF_ID,
-        EXPORT_ONLY_AEAD_ID);
+        exportOnlyAeadId);
   }
 
   @Test
@@ -314,7 +314,7 @@ public final class X25519HpkeKemTest {
         HpkeUtil.AUTH_MODE,
         HpkeUtil.X25519_HKDF_SHA256_KEM_ID,
         HpkeUtil.HKDF_SHA256_KDF_ID,
-        EXPORT_ONLY_AEAD_ID);
+        exportOnlyAeadId);
   }
 
   @Test

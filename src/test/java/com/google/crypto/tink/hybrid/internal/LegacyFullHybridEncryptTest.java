@@ -111,8 +111,8 @@ public final class LegacyFullHybridEncryptTest {
     return new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
   }
 
-  private static final byte[] FIXED_AAD = Hex.decode("abcdef");
-  private static final byte[] FIXED_MESSAGE = Hex.decode("07");
+  private static final byte[] fixedAad = Hex.decode("abcdef");
+  private static final byte[] fixedMessage = Hex.decode("07");
 
   @Test
   public void rawTestVectorKey_decrypts() throws Exception {
@@ -121,8 +121,8 @@ public final class LegacyFullHybridEncryptTest {
     HybridDecrypt hybridDecrypt =
         LegacyFullHybridDecrypt.create(getFixedProtoPrivateKey(OutputPrefixType.RAW, null));
 
-    assertThat(hybridDecrypt.decrypt(hybridEncrypt.encrypt(FIXED_MESSAGE, FIXED_AAD), FIXED_AAD))
-        .isEqualTo(FIXED_MESSAGE);
+    assertThat(hybridDecrypt.decrypt(hybridEncrypt.encrypt(fixedMessage, fixedAad), fixedAad))
+        .isEqualTo(fixedMessage);
   }
 
   @Test
@@ -132,8 +132,8 @@ public final class LegacyFullHybridEncryptTest {
     HybridDecrypt hybridDecrypt =
         LegacyFullHybridDecrypt.create(getFixedProtoPrivateKey(OutputPrefixType.TINK, 0x22334455));
 
-    assertThat(hybridDecrypt.decrypt(hybridEncrypt.encrypt(FIXED_MESSAGE, FIXED_AAD), FIXED_AAD))
-        .isEqualTo(FIXED_MESSAGE);
+    assertThat(hybridDecrypt.decrypt(hybridEncrypt.encrypt(fixedMessage, fixedAad), fixedAad))
+        .isEqualTo(fixedMessage);
   }
 
   @Test
@@ -145,8 +145,8 @@ public final class LegacyFullHybridEncryptTest {
         LegacyFullHybridDecrypt.create(
             getFixedProtoPrivateKey(OutputPrefixType.CRUNCHY, 0x22334455));
 
-    assertThat(hybridDecrypt.decrypt(hybridEncrypt.encrypt(FIXED_MESSAGE, FIXED_AAD), FIXED_AAD))
-        .isEqualTo(FIXED_MESSAGE);
+    assertThat(hybridDecrypt.decrypt(hybridEncrypt.encrypt(fixedMessage, fixedAad), fixedAad))
+        .isEqualTo(fixedMessage);
   }
 
   @Test
@@ -157,7 +157,7 @@ public final class LegacyFullHybridEncryptTest {
         LegacyFullHybridDecrypt.create(
             getFixedProtoPrivateKey(OutputPrefixType.LEGACY, 0x66778899));
 
-    assertThat(hybridDecrypt.decrypt(hybridEncrypt.encrypt(FIXED_MESSAGE, FIXED_AAD), FIXED_AAD))
-        .isEqualTo(FIXED_MESSAGE);
+    assertThat(hybridDecrypt.decrypt(hybridEncrypt.encrypt(fixedMessage, fixedAad), fixedAad))
+        .isEqualTo(fixedMessage);
   }
 }

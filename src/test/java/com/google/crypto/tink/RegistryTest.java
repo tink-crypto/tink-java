@@ -674,20 +674,20 @@ public class RegistryTest {
     assertThat(count).isEqualTo(2);
   }
 
-  private static final byte[] KEY = Hex.decode("000102030405060708090a0b0c0d0e0f");
-  private static final byte[] KEY2 = Hex.decode("100102030405060708090a0b0c0d0e0f");
+  private static final byte[] key = Hex.decode("000102030405060708090a0b0c0d0e0f");
+  private static final byte[] key2 = Hex.decode("100102030405060708090a0b0c0d0e0f");
 
   private static KeysetHandle createAeadKeyset() throws Exception {
     AesGcmKey key1 =
         AesGcmKey.builder()
             .setParameters(PredefinedAeadParameters.AES128_GCM)
-            .setKeyBytes(SecretBytes.copyFrom(KEY, InsecureSecretKeyAccess.get()))
+            .setKeyBytes(SecretBytes.copyFrom(key, InsecureSecretKeyAccess.get()))
             .setIdRequirement(42)
             .build();
     AesGcmKey key2 =
         AesGcmKey.builder()
             .setParameters(PredefinedAeadParameters.AES128_GCM)
-            .setKeyBytes(SecretBytes.copyFrom(KEY2, InsecureSecretKeyAccess.get()))
+            .setKeyBytes(SecretBytes.copyFrom(RegistryTest.key2, InsecureSecretKeyAccess.get()))
             .setIdRequirement(43)
             .build();
     return KeysetHandle.newBuilder()
