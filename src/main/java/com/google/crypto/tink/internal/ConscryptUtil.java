@@ -25,12 +25,12 @@ import javax.annotation.Nullable;
 /** Utility functions for Conscrypt. */
 public final class ConscryptUtil {
 
-  private static final String[] CONSCRYPT_PROVIDER_NAMES =
+  private static final String[] conscryptProviderNames =
       new String[] {"GmsCore_OpenSSL", "AndroidOpenSSL", "Conscrypt"};
 
   @Nullable
   public static Provider providerOrNull() {
-    for (String providerName : CONSCRYPT_PROVIDER_NAMES) {
+    for (String providerName : conscryptProviderNames) {
       Provider provider = Security.getProvider(providerName);
       if (provider != null) {
         return provider;

@@ -56,23 +56,23 @@ public final class ChaCha20Poly1305Jce implements Aead {
   private static final String CIPHER_NAME = "ChaCha20-Poly1305";
   private static final String KEY_NAME = "ChaCha20";
 
-  private static final byte[] TEST_KEY =
+  private static final byte[] testKey =
       Hex.decode("808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9f");
-  private static final byte[] TEST_NONCE = Hex.decode("070000004041424344454647");
-  private static final byte[] TEST_CIPHERTEXT_OF_EMPTY =
+  private static final byte[] testNonce = Hex.decode("070000004041424344454647");
+  private static final byte[] testCiphertextOfEmpty =
       Hex.decode("a0784d7a4716f3feb4f64e7f4b39bf04");
 
   private static boolean isValid(Cipher cipher) {
     try {
-      AlgorithmParameterSpec params = new IvParameterSpec(TEST_NONCE);
-      cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(TEST_KEY, KEY_NAME), params);
-      byte[] output = cipher.doFinal(TEST_CIPHERTEXT_OF_EMPTY);
+      AlgorithmParameterSpec params = new IvParameterSpec(testNonce);
+      cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(testKey, KEY_NAME), params);
+      byte[] output = cipher.doFinal(testCiphertextOfEmpty);
       if (output.length != 0) {
         return false;
       }
       // Decrypt a 2nd time. This fails on OpenJDK11 because of a bug.
-      cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(TEST_KEY, KEY_NAME), params);
-      byte[] output2 = cipher.doFinal(TEST_CIPHERTEXT_OF_EMPTY);
+      cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(testKey, KEY_NAME), params);
+      byte[] output2 = cipher.doFinal(testCiphertextOfEmpty);
       if (output2.length != 0) {
         return false;
       }

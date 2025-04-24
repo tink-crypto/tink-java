@@ -31,7 +31,7 @@ final class ChaCha20Util {
   // First four words of the initial state (in little-endian order):
   // 0x61707865, 0x3320646e, 0x79622d32, 0x6b206574.
   // See also https://datatracker.ietf.org/doc/html/rfc7539#section-2.3.
-  private static final int[] SIGMA =
+  private static final int[] sigma =
       toIntArray(
           new byte[] {
             'e', 'x', 'p', 'a', 'n', 'd', ' ', '3', '2', '-', 'b', 'y', 't', 'e', ' ', 'k'
@@ -42,8 +42,8 @@ final class ChaCha20Util {
    * https://datatracker.ietf.org/doc/html/rfc7539#section-2.3.
    */
   static void setSigmaAndKey(int[] state, final int[] key) {
-    System.arraycopy(SIGMA, 0, state, 0, SIGMA.length); // 4 words
-    System.arraycopy(key, 0, state, SIGMA.length, KEY_SIZE_IN_INTS); // 8 words
+    System.arraycopy(sigma, 0, state, 0, sigma.length); // 4 words
+    System.arraycopy(key, 0, state, sigma.length, KEY_SIZE_IN_INTS); // 8 words
   }
 
   /**
