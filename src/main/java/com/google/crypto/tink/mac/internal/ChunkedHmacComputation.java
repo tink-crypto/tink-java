@@ -35,7 +35,7 @@ import javax.crypto.spec.SecretKeySpec;
  */
 @AccessesPartialKey
 final class ChunkedHmacComputation implements ChunkedMacComputation {
-  private static final byte[] FORMAT_VERSION = new byte[] {0};
+  private static final byte[] formatVersion = new byte[] {0};
 
   private final Mac mac;
   private final HmacKey key;
@@ -66,7 +66,7 @@ final class ChunkedHmacComputation implements ChunkedMacComputation {
           "Cannot compute after already computing the MAC tag. Please create a new object.");
     }
     if (key.getParameters().getVariant() == Variant.LEGACY) {
-      update(ByteBuffer.wrap(FORMAT_VERSION));
+      update(ByteBuffer.wrap(formatVersion));
     }
     finalized = true;
     return Bytes.concat(

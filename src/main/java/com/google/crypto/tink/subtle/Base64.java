@@ -168,7 +168,7 @@ public final class Base64 {
 
   /* package */ static class Decoder extends Coder {
     /** Lookup table for turning bytes into their position in the Base64 alphabet. */
-    private static final int[] DECODE = {
+    private static final int[] decode = {
       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
@@ -191,7 +191,7 @@ public final class Base64 {
      * Decode lookup table for the "web safe" variant (RFC 3548 sec. 4) where - and _ replace + and
      * /.
      */
-    private static final int[] DECODE_WEBSAFE = {
+    private static final int[] decodeWebsafe = {
       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1,
@@ -210,7 +210,7 @@ public final class Base64 {
       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     };
 
-    /** Non-data values in the DECODE arrays. */
+    /** Non-data values in the decode arrays. */
     private static final int SKIP = -1;
 
     private static final int EQUALS = -2;
@@ -230,7 +230,7 @@ public final class Base64 {
     public Decoder(int flags, byte[] output) {
       this.output = output;
 
-      alphabet = ((flags & URL_SAFE) == 0) ? DECODE : DECODE_WEBSAFE;
+      alphabet = ((flags & URL_SAFE) == 0) ? decode : decodeWebsafe;
       state = 0;
       value = 0;
     }
@@ -537,7 +537,7 @@ public final class Base64 {
     public static final int LINE_GROUPS = 19;
 
     /** Lookup table for turning Base64 alphabet positions (6 bits) into output bytes. */
-    private static final byte[] ENCODE = {
+    private static final byte[] encode = {
       'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
       'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
       'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
@@ -545,7 +545,7 @@ public final class Base64 {
     };
 
     /** Lookup table for turning Base64 alphabet positions (6 bits) into output bytes. */
-    private static final byte[] ENCODE_WEBSAFE = {
+    private static final byte[] encodeWebsafe = {
       'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
       'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
       'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
@@ -567,7 +567,7 @@ public final class Base64 {
       doPadding = (flags & NO_PADDING) == 0;
       doNewline = (flags & NO_WRAP) == 0;
       doCr = (flags & CRLF) != 0;
-      alphabet = ((flags & URL_SAFE) == 0) ? ENCODE : ENCODE_WEBSAFE;
+      alphabet = ((flags & URL_SAFE) == 0) ? encode : encodeWebsafe;
 
       tail = new byte[2];
       tailLen = 0;

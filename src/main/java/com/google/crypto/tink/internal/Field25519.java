@@ -62,10 +62,10 @@ public final class Field25519 {
   private static final long TWO_TO_25 = 1 << 25;
   private static final long TWO_TO_26 = TWO_TO_25 << 1;
 
-  private static final int[] EXPAND_START = {0, 3, 6, 9, 12, 16, 19, 22, 25, 28};
-  private static final int[] EXPAND_SHIFT = {0, 2, 3, 5, 6, 0, 1, 3, 4, 6};
-  private static final int[] MASK = {0x3ffffff, 0x1ffffff};
-  private static final int[] SHIFT = {26, 25};
+  private static final int[] expandStart = {0, 3, 6, 9, 12, 16, 19, 22, 25, 28};
+  private static final int[] expandShift = {0, 2, 3, 5, 6, 0, 1, 3, 4, 6};
+  private static final int[] mask = {0x3ffffff, 0x1ffffff};
+  private static final int[] shift = {26, 25};
 
   /**
    * Sums two numbers: output = in1 + in2
@@ -374,12 +374,12 @@ public final class Field25519 {
     long[] output = new long[LIMB_CNT];
     for (int i = 0; i < LIMB_CNT; i++) {
       output[i] =
-          ((((long) (input[EXPAND_START[i]] & 0xff))
-                      | ((long) (input[EXPAND_START[i] + 1] & 0xff)) << 8
-                      | ((long) (input[EXPAND_START[i] + 2] & 0xff)) << 16
-                      | ((long) (input[EXPAND_START[i] + 3] & 0xff)) << 24)
-                  >> EXPAND_SHIFT[i])
-              & MASK[i & 1];
+          ((((long) (input[expandStart[i]] & 0xff))
+                      | ((long) (input[expandStart[i] + 1] & 0xff)) << 8
+                      | ((long) (input[expandStart[i] + 2] & 0xff)) << 16
+                      | ((long) (input[expandStart[i] + 3] & 0xff)) << 24)
+                  >> expandShift[i])
+              & mask[i & 1];
     }
     return output;
   }
@@ -397,8 +397,8 @@ public final class Field25519 {
       for (int i = 0; i < 9; i++) {
         // This calculation is a time-invariant way to make input[i] non-negative by borrowing
         // from the next-larger limb.
-        int carry = -(int) ((input[i] & (input[i] >> 31)) >> SHIFT[i & 1]);
-        input[i] = input[i] + (carry << SHIFT[i & 1]);
+        int carry = -(int) ((input[i] & (input[i] >> 31)) >> shift[i & 1]);
+        input[i] = input[i] + (carry << shift[i & 1]);
         input[i + 1] -= carry;
       }
 
@@ -435,8 +435,8 @@ public final class Field25519 {
     // limb which is, nominally, 25 bits wide.
     for (int j = 0; j < 2; j++) {
       for (int i = 0; i < 9; i++) {
-        int carry = (int) (input[i] >> SHIFT[i & 1]);
-        input[i] &= MASK[i & 1];
+        int carry = (int) (input[i] >> shift[i & 1]);
+        input[i] &= Field25519.mask[i & 1];
         input[i + 1] += carry;
       }
     }
@@ -459,7 +459,7 @@ public final class Field25519 {
     // which is 0x3ffffed.
     int mask = gte((int) input[0], 0x3ffffed);
     for (int i = 1; i < LIMB_CNT; i++) {
-      mask &= eq((int) input[i], MASK[i & 1]);
+      mask &= eq((int) input[i], Field25519.mask[i & 1]);
     }
 
     // mask is either 0xffffffff (if input >= 2^255-19) and zero otherwise. Thus this conditionally
@@ -472,14 +472,14 @@ public final class Field25519 {
     }
 
     for (int i = 0; i < LIMB_CNT; i++) {
-      input[i] <<= EXPAND_SHIFT[i];
+      input[i] <<= expandShift[i];
     }
     byte[] output = new byte[FIELD_LEN];
     for (int i = 0; i < LIMB_CNT; i++) {
-      output[EXPAND_START[i]] |= input[i] & 0xff;
-      output[EXPAND_START[i] + 1] |= (input[i] >> 8) & 0xff;
-      output[EXPAND_START[i] + 2] |= (input[i] >> 16) & 0xff;
-      output[EXPAND_START[i] + 3] |= (input[i] >> 24) & 0xff;
+      output[expandStart[i]] |= input[i] & 0xff;
+      output[expandStart[i] + 1] |= (input[i] >> 8) & 0xff;
+      output[expandStart[i] + 2] |= (input[i] >> 16) & 0xff;
+      output[expandStart[i] + 3] |= (input[i] >> 24) & 0xff;
     }
     return output;
   }

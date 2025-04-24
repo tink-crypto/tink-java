@@ -46,7 +46,7 @@ public final class RsaSsaPkcs1VerifyJce implements PublicKeyVerify {
       TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_REQUIRES_BORINGCRYPTO;
 
   private static final byte[] EMPTY = new byte[0];
-  private static final byte[] LEGACY_MESSAGE_SUFFIX = new byte[] {0};
+  private static final byte[] legacyMessageSuffix = new byte[] {0};
 
   // This converter is not used with a proto but rather with an ordinary enum type.
   static final EnumTypeProtoConverter<HashType, RsaSsaPkcs1Parameters.HashType>
@@ -203,7 +203,7 @@ public final class RsaSsaPkcs1VerifyJce implements PublicKeyVerify {
         HASH_TYPE_CONVERTER.toProtoEnum(key.getParameters().getHashType()),
         key.getOutputPrefix().toByteArray(),
         key.getParameters().getVariant().equals(RsaSsaPkcs1Parameters.Variant.LEGACY)
-            ? LEGACY_MESSAGE_SUFFIX
+            ? legacyMessageSuffix
             : EMPTY);
   }
 

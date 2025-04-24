@@ -37,7 +37,7 @@ import javax.crypto.spec.SecretKeySpec;
 @AccessesPartialKey
 public class PrfMac implements Mac {
   // A single byte to be added to the plaintext for the legacy key type.
-  private static final byte[] FORMAT_VERSION = new byte[] {0};
+  private static final byte[] formatVersion = new byte[] {0};
   static final int MIN_TAG_SIZE_IN_BYTES = 10;
 
   private final Prf wrappedPrf;
@@ -75,7 +75,7 @@ public class PrfMac implements Mac {
     tagSize = key.getParameters().getCryptographicTagSizeBytes();
     outputPrefix = key.getOutputPrefix().toByteArray();
     if (key.getParameters().getVariant().equals(Variant.LEGACY)) {
-      plaintextLegacySuffix = Arrays.copyOf(FORMAT_VERSION, FORMAT_VERSION.length);
+      plaintextLegacySuffix = Arrays.copyOf(formatVersion, formatVersion.length);
     } else {
       plaintextLegacySuffix = new byte[0];
     }
@@ -94,7 +94,7 @@ public class PrfMac implements Mac {
     tagSize = key.getParameters().getCryptographicTagSizeBytes();
     outputPrefix = key.getOutputPrefix().toByteArray();
     if (key.getParameters().getVariant().equals(HmacParameters.Variant.LEGACY)) {
-      plaintextLegacySuffix = Arrays.copyOf(FORMAT_VERSION, FORMAT_VERSION.length);
+      plaintextLegacySuffix = Arrays.copyOf(formatVersion, formatVersion.length);
     } else {
       plaintextLegacySuffix = new byte[0];
     }

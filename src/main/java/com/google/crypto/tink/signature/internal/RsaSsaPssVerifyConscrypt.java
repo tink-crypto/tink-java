@@ -45,7 +45,7 @@ public final class RsaSsaPssVerifyConscrypt implements PublicKeyVerify {
       TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_REQUIRES_BORINGCRYPTO;
 
   private static final byte[] EMPTY = new byte[0];
-  private static final byte[] LEGACY_MESSAGE_SUFFIX = new byte[] {0};
+  private static final byte[] legacyMessageSuffix = new byte[] {0};
 
   private static final String MGF_1 = "MGF1";
 
@@ -171,7 +171,7 @@ public final class RsaSsaPssVerifyConscrypt implements PublicKeyVerify {
         params.getSaltLengthBytes(),
         key.getOutputPrefix().toByteArray(),
         key.getParameters().getVariant().equals(RsaSsaPssParameters.Variant.LEGACY)
-            ? LEGACY_MESSAGE_SUFFIX
+            ? legacyMessageSuffix
             : EMPTY,
         conscrypt);
   }

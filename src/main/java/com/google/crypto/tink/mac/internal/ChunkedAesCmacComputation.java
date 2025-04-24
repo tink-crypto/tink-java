@@ -39,7 +39,7 @@ import javax.crypto.spec.SecretKeySpec;
 @AccessesPartialKey
 final class ChunkedAesCmacComputation implements ChunkedMacComputation {
   // A single byte to be added to the plaintext for the legacy key type.
-  private static final byte[] FORMAT_VERSION = new byte[] {0};
+  private static final byte[] formatVersion = new byte[] {0};
 
   private final Cipher aes;
   private final AesCmacKey key;
@@ -133,7 +133,7 @@ final class ChunkedAesCmacComputation implements ChunkedMacComputation {
           "Can not compute after computing the MAC tag. Please create a new object.");
     }
     if (key.getParameters().getVariant() == Variant.LEGACY) {
-      update(ByteBuffer.wrap(FORMAT_VERSION));
+      update(ByteBuffer.wrap(formatVersion));
     }
     finalized = true;
 

@@ -41,7 +41,7 @@ public final class RsaSsaPssSignConscrypt implements PublicKeySign {
       TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_REQUIRES_BORINGCRYPTO;
 
   private static final byte[] EMPTY = new byte[0];
-  private static final byte[] LEGACY_MESSAGE_SUFFIX = new byte[] {0};
+  private static final byte[] legacyMessageSuffix = new byte[] {0};
 
   @SuppressWarnings("Immutable")
   private final RSAPrivateCrtKey privateKey;
@@ -92,7 +92,7 @@ public final class RsaSsaPssSignConscrypt implements PublicKeySign {
         params.getSaltLengthBytes(),
         key.getOutputPrefix().toByteArray(),
         params.getVariant().equals(RsaSsaPssParameters.Variant.LEGACY)
-            ? LEGACY_MESSAGE_SUFFIX
+            ? legacyMessageSuffix
             : EMPTY,
         conscrypt);
   }

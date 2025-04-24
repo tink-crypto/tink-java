@@ -37,7 +37,7 @@ import java.util.Arrays;
  */
 public final class LegacyFullMac implements Mac {
   // A single byte to be added to the plaintext for the legacy key type.
-  private static final byte[] FORMAT_VERSION = new byte[] {0};
+  private static final byte[] formatVersion = new byte[] {0};
   static final int MIN_TAG_SIZE_IN_BYTES = 10;
 
   private final Mac rawMac;
@@ -85,7 +85,7 @@ public final class LegacyFullMac implements Mac {
   public byte[] computeMac(byte[] data) throws GeneralSecurityException {
     byte[] data2 = data;
     if (outputPrefixType.equals(OutputPrefixType.LEGACY)) {
-      data2 = Bytes.concat(data, FORMAT_VERSION);
+      data2 = Bytes.concat(data, formatVersion);
     }
     return Bytes.concat(identifier, rawMac.computeMac(data2));
   }
@@ -98,7 +98,7 @@ public final class LegacyFullMac implements Mac {
 
     byte[] data2 = data;
     if (outputPrefixType.equals(OutputPrefixType.LEGACY)) {
-      data2 = Bytes.concat(data, FORMAT_VERSION);
+      data2 = Bytes.concat(data, formatVersion);
     }
 
     byte[] prefix = new byte[0];
