@@ -90,14 +90,14 @@ public final class LegacyFullSignTest {
         Bytes.copyFrom(getPublicValue().toByteArray()));
   }
 
-  private static final byte[] FIXED_MESSAGE = Hex.decode("01");
+  private static final byte[] fixedMessage = Hex.decode("01");
 
   @Test
   public void rawKey_verifyWorksCorrectly() throws Exception {
     LegacyProtoKey protoKey = getFixedProtoPrivateKey(OutputPrefixType.RAW, null);
     PublicKeySign publicKeySign = LegacyFullSign.create(protoKey);
     PublicKeyVerify publicKeyVerify = Ed25519Verify.create(publicKeyNoPrefix());
-    publicKeyVerify.verify(publicKeySign.sign(FIXED_MESSAGE), FIXED_MESSAGE);
+    publicKeyVerify.verify(publicKeySign.sign(fixedMessage), fixedMessage);
   }
 
   @Test
@@ -105,11 +105,11 @@ public final class LegacyFullSignTest {
     LegacyProtoKey protoKey = getFixedProtoPrivateKey(OutputPrefixType.TINK, 0x22662288);
     PublicKeySign publicKeySign = LegacyFullSign.create(protoKey);
 
-    byte[] signature = publicKeySign.sign(FIXED_MESSAGE);
+    byte[] signature = publicKeySign.sign(fixedMessage);
     assertThat(Arrays.copyOf(signature, 5)).isEqualTo(Hex.decode("0122662288"));
     byte[] signatureNoPrefix = Arrays.copyOfRange(signature, 5, signature.length);
     PublicKeyVerify publicKeyVerify = Ed25519Verify.create(publicKeyNoPrefix());
-    publicKeyVerify.verify(signatureNoPrefix, FIXED_MESSAGE);
+    publicKeyVerify.verify(signatureNoPrefix, fixedMessage);
   }
 
   @Test
@@ -117,11 +117,11 @@ public final class LegacyFullSignTest {
     LegacyProtoKey protoKey = getFixedProtoPrivateKey(OutputPrefixType.CRUNCHY, 0x22662288);
     PublicKeySign publicKeySign = LegacyFullSign.create(protoKey);
 
-    byte[] signature = publicKeySign.sign(FIXED_MESSAGE);
+    byte[] signature = publicKeySign.sign(fixedMessage);
     assertThat(Arrays.copyOf(signature, 5)).isEqualTo(Hex.decode("0022662288"));
     byte[] signatureNoPrefix = Arrays.copyOfRange(signature, 5, signature.length);
     PublicKeyVerify publicKeyVerify = Ed25519Verify.create(publicKeyNoPrefix());
-    publicKeyVerify.verify(signatureNoPrefix, FIXED_MESSAGE);
+    publicKeyVerify.verify(signatureNoPrefix, fixedMessage);
   }
 
   @Test
@@ -129,12 +129,12 @@ public final class LegacyFullSignTest {
     LegacyProtoKey protoKey = getFixedProtoPrivateKey(OutputPrefixType.LEGACY, 0x22662288);
     PublicKeySign publicKeySign = LegacyFullSign.create(protoKey);
 
-    byte[] signature = publicKeySign.sign(FIXED_MESSAGE);
+    byte[] signature = publicKeySign.sign(fixedMessage);
     assertThat(Arrays.copyOf(signature, 5)).isEqualTo(Hex.decode("0022662288"));
     byte[] signatureNoPrefix = Arrays.copyOfRange(signature, 5, signature.length);
     PublicKeyVerify publicKeyVerify = Ed25519Verify.create(publicKeyNoPrefix());
     publicKeyVerify.verify(
         signatureNoPrefix,
-        com.google.crypto.tink.subtle.Bytes.concat(FIXED_MESSAGE, Hex.decode("00")));
+        com.google.crypto.tink.subtle.Bytes.concat(fixedMessage, Hex.decode("00")));
   }
 }

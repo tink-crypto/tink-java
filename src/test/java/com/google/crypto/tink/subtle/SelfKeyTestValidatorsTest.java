@@ -44,7 +44,7 @@ public class SelfKeyTestValidatorsTest {
   // These are keys only used for testing, generated with openssl CLI.
   // openssl genrsa -out private-key4096.pem 4096
   // openssl rsa -in private-key4096.pem -text -noout
-  private static final String[] RSAKEY_2048 = {
+  private static final String[] rsakey2048 = {
     // N
     "00a5af78921b98763aa4578fd75b7aeb13f7bd7694e5fcf0e25d0c01424374d5cf1c2429c2d94ec1aea4782c0b34dfc63165daabd2573aa90ef6ef5176c985af467d06e68bfb24632f353e650895205777c368fe01593a705d0d300c90b7b7fe09c5012eb07cec76726567f5dfa3c0e73e7d50524e15cc7fac9c47c5d94729b56f0a604485a426716d9e29f43d1c08e4967878ae230f074a97a4e8d17d37dfc6ced5c59485a0640b3b1b6c77816c9123490e49813f43847588689d4c4989d653a92069a8bac5c4fa13abc95b3a27bb0a1a5097e97fd4dd3575656a057715c2a7f3a70058f8f6e7f1ca957cf45f1b748a0f8c2ccd2a51cda862ee25e9346daedd67",
     // D
@@ -61,7 +61,7 @@ public class SelfKeyTestValidatorsTest {
     "008ca975a95b86bb7e98e58dccb8b7f26d80cd47e389e898f0dc7281f97283981ad748be97ba335ea867ea126197f9f4df1ea33bc383375ce13b08d346ba54f11ccaa71f3314451db255275f090a88a266007b1ea27b762d2ba37e454e7c4f13d798af6f537348b583b13ddfbfd90997d118df8d5d9c369ec28230c415a71c1bf3",
   };
 
-  private static final String[] RSAKEY_3072 = {
+  private static final String[] rsakey3072 = {
     // N
     "00d3764ebdb48112dfefee52feaad8c89f6b8be358780f77808838ed8565099c0c3c0217543ca8cacd4d9de52c6c1264f3ca3c648671e8b336e9560ea28f7830b775402d8224f3c8b5645958d389dcef47f35c20a65c0a2ece6b68bdcbfabb30a92ba2b59b5022ba50accc16113d6d30053bb079685169c454a93f492d6f17d4c7e770b20e7175577284f3505789d127013ada0c44aac2167c47d8a4de377ab9408cf7d5319218ed666b317d459c829133e70906d05bb3138bc593ce7b025705aae3244bb634eaa70047204ed8b13c9ce9fbc4fa0277afe5831897cc838c7fe92a8eaadc1961a70c95254b363efea78dfcdba9683b4105c2e19384fdec569d6c04c89e7f3eac198c05c906e523e5a63e047f45295f3fa7ec3801b7f1d52064218551052753973f184ff85a5e8938ac621adfcbcffe8f3cb936263b026a2e09fcd88510dc37f31d3acf49046d3ea44c453414c70c0cae341411825fc38edfe4d6743dfaafa0b1b4a2f37775c7c75c40f76f1bf01e9be123820da1e34c59e4700fdf",
     // D
@@ -78,7 +78,7 @@ public class SelfKeyTestValidatorsTest {
     "00abe67e2e70a261aa1f489bcb6237f06f7d9c650f40bdc60570ec624d1914300339c2fe4dbc14b03e839007e09fc52c060bf94179e87e505b993ceff03e67c542769e035a8f7607ad88b65214fd4c702c7a4e469be64b5562e5ce8ffda2ce2b720ade8b9ea6c750678239f3c136fee1970d3c88db26cdec535b6376237f09ce1ab655822f6f78ce98b869116711a002fbb6046c2ec192224600d06b6eb46a5912353f61860d1ed5cd2d01b4fc7d17a4a7771137b427868100ef2b417fc003341b",
   };
 
-  private static final String[] RSAKEY_4096 = {
+  private static final String[] rsakey4096 = {
     // N
     "00b81c5e5753c233a3cdf8a1d928122b2f2c489af9e05167f481b1dd420ddf4eb57dc2da0541ff2403ec5302c4c44edaac046de4b94658146f4705ca60ce8de9f58eb4b0c660062c16c0600a3e5988c09d0aaf4607a62cae34ffd88db9bb1d1110c01a0117db0b233eeaa66621638fcfff548a778fec609b5adfa336f51eb1c63128affee1cfd4657bb6aac4fe3b08f642e2dc49cf4138f6335a230994ab12522c6d4e909f0f44cd430f0cc95b8d05dc89ded0a0dd1ba83206ed37d1223efaddc4b7ae373f05af1e00d2edde29e30f5152e270d2f50eb305b90d4c8825d6901fdbaf7df561a017a9a49221cba49a51efb88ebfe2639183eeae81f40a008cb9eb9045fb402863a82f7d41a691098d4d9cb8dcd44001b1956727f5f515cd1fb718d3c70fa70ebd5a92a6e2f1fd53d0abfa2c840fdf2f34a43ba6f7ab58d8e055e5684a631c08773d5b85469ca3d7d3137f358ff483e1d99c97d62d7a620488cd2bd963a3e97c5385123ed41f781c57a8456f32c80f096dcf8b823a18a289853d2b19411dded7d91c59380b883907c63e8f3fc75c2836ed6c4dfe04a8f919342b63278c8b5285e4706fda095f5a3286aa70e5cdd074f99358c98f53a9921270b44114824b9d89de39a0cffb6d496589798b55a629350422a84f2acf59a94e02d280beb75d439da4264791c7ef5efcd7bb5c4a8f129fce3c61a47e8601af9799490dc5",
     // D
@@ -102,7 +102,7 @@ public class SelfKeyTestValidatorsTest {
   //  03 means there is a compression and select y as positive
   //  02 means there is a compression and select y as negative
 
-  private static final byte[][] ECDSAKEY_256 = {
+  private static final byte[][] ecdsakey256 = {
     // pubX
     {
       (byte) 0x52, (byte) 0x46, (byte) 0x92, (byte) 0x45, (byte) 0x30, (byte) 0x2b, (byte) 0x25,
@@ -134,7 +134,7 @@ public class SelfKeyTestValidatorsTest {
       (byte) 0x24, (byte) 0x71
     }
   };
-  private static final byte[][] ECDSAKEY_384 = {
+  private static final byte[][] ecdsakey384 = {
     // pubX
     {
       (byte) 0x70,
@@ -289,7 +289,7 @@ public class SelfKeyTestValidatorsTest {
       (byte) 0x58
     }
   };
-  private static final byte[][] ECDSAKEY_521 = {
+  private static final byte[][] ecdsakey521 = {
     // pubX
     {
       (byte) 0x01,
@@ -587,12 +587,12 @@ public class SelfKeyTestValidatorsTest {
   public static final String[] getRsaKeyInfo(int keySize) throws Exception {
     switch (keySize) {
       case 2048:
-        return RSAKEY_2048;
+        return rsakey2048;
       case 3072:
-        return RSAKEY_3072;
+        return rsakey3072;
       case 4096:
       default:
-        return RSAKEY_4096;
+        return rsakey4096;
     }
   }
 
@@ -682,11 +682,11 @@ public class SelfKeyTestValidatorsTest {
       throws Exception {
     switch (curveType) {
       case NIST_P256:
-        return ECDSAKEY_256;
+        return ecdsakey256;
       case NIST_P384:
-        return ECDSAKEY_384;
+        return ecdsakey384;
       case NIST_P521:
-        return ECDSAKEY_521;
+        return ecdsakey521;
     }
 
     throw new Exception("invalid curve. Should never happen.");

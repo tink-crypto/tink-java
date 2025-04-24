@@ -70,21 +70,21 @@ public final class LegacyFullVerifyTest {
 
   // Testvector for HPKE taken from
   // src/main/java/com/google/crypto/tink/signature/internal/testing/Ed25519TestUtil.java
-  // FIXED_SIGNATURE is a valid signature for FIXED_MESSAGE under the key given by
+  // fixedSignature is a valid signature for fixedMessage under the key given by
   // getPrivateValue (corresponding to getPublicValue) when used with
   // DHKEM_P256_HKDF_SHA256, HKDF_SHA256, AES_128_GCM.
-  private static final byte[] FIXED_SIGNATURE =
+  private static final byte[] fixedSignature =
       Hex.decode(
           "3431985050f48157551262d591d0f1f25b9c6808fce4345066cb8216d48fcd9feafa4b24949a7f8c"
               + "abdc16a51030a19d7514c9685c221475bf3cfc363472ee0a");
-  private static final byte[] FIXED_MESSAGE = Hex.decode("aa");
+  private static final byte[] fixedMessage = Hex.decode("aa");
 
   @Test
   public void testVectorKey_raw_verifyWorks() throws Exception {
     LegacyProtoKey protoKey = getFixedProtoPublicKey(OutputPrefixType.RAW, null);
     PublicKeyVerify publicKeyVerify = LegacyFullVerify.create(protoKey);
 
-    publicKeyVerify.verify(FIXED_SIGNATURE, FIXED_MESSAGE);
+    publicKeyVerify.verify(fixedSignature, fixedMessage);
   }
 
   @Test
@@ -94,8 +94,7 @@ public final class LegacyFullVerifyTest {
 
     assertThrows(
         GeneralSecurityException.class,
-        () ->
-            publicKeyVerify.verify(Bytes.concat(FIXED_SIGNATURE, Hex.decode("00")), FIXED_MESSAGE));
+        () -> publicKeyVerify.verify(Bytes.concat(fixedSignature, Hex.decode("00")), fixedMessage));
   }
 
   @Test
@@ -103,7 +102,7 @@ public final class LegacyFullVerifyTest {
     LegacyProtoKey protoKey = getFixedProtoPublicKey(OutputPrefixType.TINK, 0x55885577);
     PublicKeyVerify publicKeyVerify = LegacyFullVerify.create(protoKey);
 
-    publicKeyVerify.verify(Bytes.concat(Hex.decode("0155885577"), FIXED_SIGNATURE), FIXED_MESSAGE);
+    publicKeyVerify.verify(Bytes.concat(Hex.decode("0155885577"), fixedSignature), fixedMessage);
   }
 
   @Test
@@ -115,7 +114,7 @@ public final class LegacyFullVerifyTest {
         GeneralSecurityException.class,
         () ->
             publicKeyVerify.verify(
-                Bytes.concat(Hex.decode("0055885577"), FIXED_SIGNATURE), FIXED_MESSAGE));
+                Bytes.concat(Hex.decode("0055885577"), fixedSignature), fixedMessage));
   }
 
   @Test
@@ -123,7 +122,7 @@ public final class LegacyFullVerifyTest {
     LegacyProtoKey protoKey = getFixedProtoPublicKey(OutputPrefixType.CRUNCHY, 0x55885577);
     PublicKeyVerify publicKeyVerify = LegacyFullVerify.create(protoKey);
 
-    publicKeyVerify.verify(Bytes.concat(Hex.decode("0055885577"), FIXED_SIGNATURE), FIXED_MESSAGE);
+    publicKeyVerify.verify(Bytes.concat(Hex.decode("0055885577"), fixedSignature), fixedMessage);
   }
 
   @Test
@@ -135,7 +134,7 @@ public final class LegacyFullVerifyTest {
         GeneralSecurityException.class,
         () ->
             publicKeyVerify.verify(
-                Bytes.concat(Hex.decode("0055885577"), FIXED_SIGNATURE), FIXED_MESSAGE));
+                Bytes.concat(Hex.decode("0055885577"), fixedSignature), fixedMessage));
   }
 
   @Test
@@ -148,7 +147,7 @@ public final class LegacyFullVerifyTest {
             "0055885577"
                 + "e828586415b1226c118617a2b56b923b6717e83c4d265fcb4e2cdf3cb902ce7b9b1ecd840"
                 + "5cb4e6a8e248ef5478891b5b6f80f737df16594f88662595d8f140e"),
-        FIXED_MESSAGE);
+        fixedMessage);
   }
 
   @Test
@@ -164,6 +163,6 @@ public final class LegacyFullVerifyTest {
                     "0055885577"
                         + "e828586415b1226c118617a2b56b923b6717e83c4d265fcb4e2cdf3cb902ce7b9b1ecd8"
                         + "405cb4e6a8e248ef5478891b5b6f80f737df16594f88662595d8f140e"),
-                FIXED_MESSAGE));
+                fixedMessage));
   }
 }

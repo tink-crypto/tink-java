@@ -32,14 +32,14 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public final class Ed25519PrivateKeyTest {
   // Test case from https://www.rfc-editor.org/rfc/rfc8032#page-24
-  private static final byte[] SECRET_KEY =
+  private static final byte[] secretKey =
       Hex.decode("9d61b19deffd5a60ba844af492ec2cc44449c5697b326919703bac031cae7f60");
-  private static final byte[] PUBLIC_KEY =
+  private static final byte[] publicKey =
       Hex.decode("d75a980182b10ab7d54bfed3c964073a0ee172f3daa62325af021a68f707511a");
 
   private static final SecretBytes PRIVATE_KEY_BYTES =
-      SecretBytes.copyFrom(SECRET_KEY, InsecureSecretKeyAccess.get());
-  private static final Bytes PUBLIC_KEY_BYTES = Bytes.copyFrom(PUBLIC_KEY);
+      SecretBytes.copyFrom(secretKey, InsecureSecretKeyAccess.get());
+  private static final Bytes PUBLIC_KEY_BYTES = Bytes.copyFrom(publicKey);
 
   @Test
   public void createNoPrefixVariantAndGetProperties() throws Exception {

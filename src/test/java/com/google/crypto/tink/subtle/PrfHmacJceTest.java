@@ -66,7 +66,7 @@ public class PrfHmacJceTest {
 
   // Test data from http://csrc.nist.gov/groups/STM/cavp/message-authentication.html#testing
   // and https://tools.ietf.org/html/rfc4231.
-  private static final MacTestVector[] HMAC_TEST_VECTORS = {
+  private static final MacTestVector[] hmacTestVectors = {
     new MacTestVector(
         "HMACSHA1",
         "816aa4c3ee066310ac1e6666cf830c375355c3c8ba18cfe1f50a48c988b46272",
@@ -115,7 +115,7 @@ public class PrfHmacJceTest {
   public void testMacTestVectors() throws Exception {
     Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
 
-    for (MacTestVector t : HMAC_TEST_VECTORS) {
+    for (MacTestVector t : hmacTestVectors) {
       Mac mac =
           new PrfMac(new PrfHmacJce(t.algName, new SecretKeySpec(t.key, "HMAC")), t.tag.length);
       assertArrayEquals(t.tag, mac.computeMac(t.message));
@@ -131,7 +131,7 @@ public class PrfHmacJceTest {
   public void testPrfUniformity() throws GeneralSecurityException {
     Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
 
-    for (MacTestVector t : HMAC_TEST_VECTORS) {
+    for (MacTestVector t : hmacTestVectors) {
       Prf prf = new PrfHmacJce(t.algName, new SecretKeySpec(t.key, "HMAC"));
       // We need a string of bytes identical in size to the tag output size for the given algorithm
       // so we can test cross correlation. We're not actually validating the output contents of the
@@ -147,7 +147,7 @@ public class PrfHmacJceTest {
   public void testPrfPrefixOfMac() throws Exception {
     Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
 
-    for (MacTestVector t : HMAC_TEST_VECTORS) {
+    for (MacTestVector t : hmacTestVectors) {
       Prf prf = new PrfHmacJce(t.algName, new SecretKeySpec(t.key, "HMAC"));
       Mac mac = new PrfMac(prf, t.tag.length);
       byte[] prBytes = prf.compute(t.message, t.tag.length - 1);
@@ -162,7 +162,7 @@ public class PrfHmacJceTest {
   public void testTagTruncation() throws Exception {
     Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
 
-    for (MacTestVector t : HMAC_TEST_VECTORS) {
+    for (MacTestVector t : hmacTestVectors) {
       Mac mac =
           new PrfMac(new PrfHmacJce(t.algName, new SecretKeySpec(t.key, "HMAC")), t.tag.length);
       for (int j = 1; j < t.tag.length; j++) {
@@ -171,7 +171,7 @@ public class PrfHmacJceTest {
       }
     }
     // Test with random keys.
-    for (MacTestVector t : HMAC_TEST_VECTORS) {
+    for (MacTestVector t : hmacTestVectors) {
       Mac mac =
           new PrfMac(
               new PrfHmacJce(t.algName, new SecretKeySpec(Random.randBytes(t.key.length), "HMAC")),
@@ -187,7 +187,7 @@ public class PrfHmacJceTest {
   public void testBitFlipMessage() throws Exception {
     Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
 
-    for (MacTestVector t : HMAC_TEST_VECTORS) {
+    for (MacTestVector t : hmacTestVectors) {
       Mac mac =
           new PrfMac(new PrfHmacJce(t.algName, new SecretKeySpec(t.key, "HMAC")), t.tag.length);
       for (int b = 0; b < t.message.length; b++) {
@@ -199,7 +199,7 @@ public class PrfHmacJceTest {
       }
     }
     // Test with random keys.
-    for (MacTestVector t : HMAC_TEST_VECTORS) {
+    for (MacTestVector t : hmacTestVectors) {
       Mac mac =
           new PrfMac(
               new PrfHmacJce(t.algName, new SecretKeySpec(Random.randBytes(t.key.length), "HMAC")),
@@ -215,7 +215,7 @@ public class PrfHmacJceTest {
   public void testBitFlipTag() throws Exception {
     Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
 
-    for (MacTestVector t : HMAC_TEST_VECTORS) {
+    for (MacTestVector t : hmacTestVectors) {
       Mac mac =
           new PrfMac(new PrfHmacJce(t.algName, new SecretKeySpec(t.key, "HMAC")), t.tag.length);
       for (int b = 0; b < t.tag.length; b++) {
@@ -227,7 +227,7 @@ public class PrfHmacJceTest {
       }
     }
     // Test with random keys.
-    for (MacTestVector t : HMAC_TEST_VECTORS) {
+    for (MacTestVector t : hmacTestVectors) {
       Mac mac =
           new PrfMac(
               new PrfHmacJce(t.algName, new SecretKeySpec(Random.randBytes(t.key.length), "HMAC")),
@@ -339,7 +339,7 @@ public class PrfHmacJceTest {
   @Test
   public void createWithHmacPrfKey_equivalentToByteArray() throws Exception {
     Assume.assumeFalse(TinkFips.useOnlyFips());
-    for (MacTestVector t : HMAC_TEST_VECTORS) {
+    for (MacTestVector t : hmacTestVectors) {
       HmacPrfParameters.HashType hashType;
       switch (t.algName) {
         case "HMACSHA1":
