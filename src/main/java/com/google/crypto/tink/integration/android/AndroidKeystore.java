@@ -152,8 +152,11 @@ public final class AndroidKeystore {
       Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
       cipher.init(Cipher.ENCRYPT_MODE, key);
       cipher.updateAAD(associatedData);
-      int unusedWritten =
+      int bytesWritten =
           cipher.doFinal(plaintext, 0, plaintext.length, ciphertext, IV_SIZE_IN_BYTES);
+      if (bytesWritten != plaintext.length + TAG_SIZE_IN_BYTES) {
+        throw new GeneralSecurityException("encryption failed: bytesWritten is wrong");
+      }
       byte[] iv = cipher.getIV();
       if (iv.length != IV_SIZE_IN_BYTES) {
         throw new GeneralSecurityException("IV has unexpected length");
