@@ -20,7 +20,14 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertThrows;
 
+import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.prf.HkdfPrfKey;
+import com.google.crypto.tink.prf.HkdfPrfParameters;
 import com.google.crypto.tink.subtle.Enums.HashType;
+import com.google.crypto.tink.subtle.Hkdf;
+import com.google.crypto.tink.subtle.Random;
+import com.google.crypto.tink.util.Bytes;
+import com.google.crypto.tink.util.SecretBytes;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
@@ -48,6 +55,68 @@ public class PrfImplTest {
     byte[] out = prf.compute("input".getBytes(UTF_8), 12);
 
     assertThat(out).hasLength(12);
+  }
+
+  @Test
+  public void computePrf_returnsExpectedValue() throws Exception {
+    byte[] secret = Random.randBytes(32);
+    byte[] salt = Random.randBytes(5);
+    byte[] info = "cloudSharingId".getBytes(UTF_8);
+    int outputSize = 32;
+    byte[] expected =
+        Hkdf.computeHkdf(
+            /* macAlgorithm= */ "HMACSHA256",
+            /* ikm= */ secret,
+            /* salt= */ salt,
+            /* info= */ info,
+            /* size= */ outputSize);
+
+    HkdfPrfKey key =
+        HkdfPrfKey.builder()
+            .setParameters(
+                HkdfPrfParameters.builder()
+                    .setHashType(HkdfPrfParameters.HashType.SHA256)
+                    .setKeySizeBytes(secret.length)
+                    .setSalt(Bytes.copyFrom(salt))
+                    .build())
+            .setKeyBytes(SecretBytes.copyFrom(secret, InsecureSecretKeyAccess.get()))
+            .build();
+    PrfImpl prf = PrfImpl.wrap(HkdfStreamingPrf.create(key));
+
+    byte[] output = prf.compute(info, outputSize);
+
+    assertThat(output).isEqualTo(expected);
+  }
+
+
+  @Test
+  public void computePrfWithoutSalt_returnsExpectedValue() throws Exception {
+    byte[] secret = Random.randBytes(32);
+    byte[] info = "cloudSharingId".getBytes(UTF_8);
+    int outputSize = 32;
+    byte[] expected =
+        Hkdf.computeHkdf(
+            /* macAlgorithm= */ "HMACSHA256",
+            /* ikm= */ secret,
+            /* salt= */ null,
+            /* info= */ info,
+            /* size= */ outputSize);
+
+    HkdfPrfKey key =
+        HkdfPrfKey.builder()
+            .setParameters(
+                HkdfPrfParameters.builder()
+                    .setHashType(HkdfPrfParameters.HashType.SHA256)
+                    .setSalt(Bytes.copyFrom(new byte[0]))
+                    .setKeySizeBytes(secret.length)
+                    .build())
+            .setKeyBytes(SecretBytes.copyFrom(secret, InsecureSecretKeyAccess.get()))
+            .build();
+    PrfImpl prf = PrfImpl.wrap(HkdfStreamingPrf.create(key));
+
+    byte[] output = prf.compute(info, outputSize);
+
+    assertThat(output).isEqualTo(expected);
   }
 
   @Test
