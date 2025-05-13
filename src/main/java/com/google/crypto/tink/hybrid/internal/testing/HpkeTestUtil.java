@@ -108,6 +108,17 @@ public final class HpkeTestUtil {
         InsecureSecretKeyAccess.get());
   }
 
+  private static Bytes getX25519PublicKeyAsBytes() throws GeneralSecurityException {
+    return Bytes.copyFrom(
+                Hex.decode("37fda3567bdbd628e88668c3c8d7e97d1d1253b6d4ea6d44c150f741f1bf4431"));
+  }
+
+  private static SecretBytes getX25519PrivateKeyAsBytes() {
+    return SecretBytes.copyFrom(
+        Hex.decode("52c4a758a802cd8b936eceea314432798d5baf2d7e9235dc084ab1b9cfa2f736"),
+        InsecureSecretKeyAccess.get());
+  }
+
   private static HybridTestVector createTestVector0() throws GeneralSecurityException {
     HpkeParameters params =
         HpkeParameters.builder()
@@ -192,16 +203,13 @@ public final class HpkeTestUtil {
     HpkePublicKey publicKey =
         HpkePublicKey.create(
             params,
-            Bytes.copyFrom(
-                Hex.decode("37fda3567bdbd628e88668c3c8d7e97d1d1253b6d4ea6d44c150f741f1bf4431")),
+            getX25519PublicKeyAsBytes(),
             /* idRequirement= */ null);
 
     HpkePrivateKey privateKey =
         HpkePrivateKey.create(
             publicKey,
-            SecretBytes.copyFrom(
-                Hex.decode("52c4a758a802cd8b936eceea314432798d5baf2d7e9235dc084ab1b9cfa2f736"),
-                InsecureSecretKeyAccess.get()));
+            getX25519PrivateKeyAsBytes());
 
     return new HybridTestVector(
         privateKey,
@@ -358,6 +366,60 @@ public final class HpkeTestUtil {
                 + "6e22"));
   }
 
+  // DHKEM_X25519_HKDF_SHA256 + AES_256_GCM
+  private static HybridTestVector createTestVector10() throws GeneralSecurityException {
+    HpkeParameters params =
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.NO_PREFIX)
+            .setKemId(HpkeParameters.KemId.DHKEM_X25519_HKDF_SHA256)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+            .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
+            .build();
+    HpkePublicKey publicKey =
+        HpkePublicKey.create(
+            params,
+            getX25519PublicKeyAsBytes(),
+            /* idRequirement= */ null);
+    HpkePrivateKey privateKey =
+        HpkePrivateKey.create(
+            publicKey,
+            getX25519PrivateKeyAsBytes());
+    return new HybridTestVector(
+        privateKey,
+        new byte[] {0x01},
+        new byte[] {0x02},
+        Hex.decode(
+            "e97b19fa6c773cf938c56fdb3bf409e18a194409c6711ae06dac91c5d4d12001d1938cce296aaa40f74"
+                + "69904c24d801c64"));
+  }
+
+  // DHKEM_X25519_HKDF_SHA256 + CHACHA20_POLY1305
+  private static HybridTestVector createTestVector11() throws GeneralSecurityException {
+    HpkeParameters params =
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.NO_PREFIX)
+            .setKemId(HpkeParameters.KemId.DHKEM_X25519_HKDF_SHA256)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+            .setAeadId(HpkeParameters.AeadId.CHACHA20_POLY1305)
+            .build();
+    HpkePublicKey publicKey =
+        HpkePublicKey.create(
+            params,
+            getX25519PublicKeyAsBytes(),
+            /* idRequirement= */ null);
+    HpkePrivateKey privateKey =
+        HpkePrivateKey.create(
+            publicKey,
+            getX25519PrivateKeyAsBytes());
+    return new HybridTestVector(
+        privateKey,
+        new byte[] {0x01},
+        new byte[] {0x02},
+        Hex.decode(
+            "274a9ea09a7356645377ebfddd618b97206b0787d8eb14ffbd7c05594edc0d7c2057c8cbdf160e780c"
+                + "2786f33f0b19bf14"));
+  }
+
   public static HybridTestVector[] createHpkeTestVectors() {
     return exceptionIsBug(
         () ->
@@ -372,6 +434,8 @@ public final class HpkeTestUtil {
               createTestVector7(),
               createTestVector8(),
               createTestVector9(),
+              createTestVector10(),
+              createTestVector11()
             });
   }
 }
