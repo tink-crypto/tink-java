@@ -14,11 +14,11 @@
 # limitations under the License.
 ################################################################################
 
-# Utility script to optionally run a command optionally in a new container.
+# Utility script to run a command in a new docker container.
 #
 # This script must be run from inside the Tink library to run the command for.
 #
-# NOTE: When running in a new container, this sctips mounts the parent folder of
+# NOTE: When running in a new container, this script mounts the parent folder of
 # `pwd`. Other dependencies, if any, are assumed to be located there. For
 # example, if running tink-py tests, this script assumes:
 #   - pwd => /path/to/parent/tink-py

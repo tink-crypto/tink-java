@@ -83,4 +83,4 @@ cleanup() {
   rm -rf /tmp/env_variables.txt
 }
 
-./kokoro/testutils/run_command.sh "${RUN_COMMAND_ARGS[@]}" ./_do_run_test.sh
+./kokoro/testutils/docker_execute.sh "${RUN_COMMAND_ARGS[@]}" ./_do_run_test.sh

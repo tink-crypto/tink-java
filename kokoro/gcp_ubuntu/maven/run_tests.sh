@@ -103,7 +103,7 @@ cleanup() {
   rm -rf _do_run_test.sh "${ENV_VARIABLES_FILE}"
 }
 
-./kokoro/testutils/run_command.sh "${RUN_COMMAND_ARGS[@]}" ./_do_run_test.sh
+./kokoro/testutils/docker_execute.sh "${RUN_COMMAND_ARGS[@]}" ./_do_run_test.sh
 
 readonly GITHUB_JOB_NAME="tink/github/java/gcp_ubuntu/maven/continuous"
 
@@ -126,10 +126,10 @@ EOF
   fi
   readonly MAVEN_DEPLOY_LIBRARY_OPTS
 
-  ./kokoro/testutils/run_command.sh "${RUN_COMMAND_ARGS[@]}" \
+  ./kokoro/testutils/docker_execute.sh "${RUN_COMMAND_ARGS[@]}" \
     ./maven/maven_deploy_library.sh "${MAVEN_DEPLOY_LIBRARY_OPTS[@]}" snapshot \
     tink maven/tink-java.pom.xml HEAD
-  ./kokoro/testutils/run_command.sh "${RUN_COMMAND_ARGS[@]}" \
+  ./kokoro/testutils/docker_execute.sh "${RUN_COMMAND_ARGS[@]}" \
     ./maven/maven_deploy_library.sh "${MAVEN_DEPLOY_LIBRARY_OPTS[@]}" snapshot \
     tink-android maven/tink-java-android.pom.xml HEAD
 fi
