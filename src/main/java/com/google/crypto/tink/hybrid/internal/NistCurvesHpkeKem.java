@@ -50,7 +50,7 @@ final class NistCurvesHpkeKem implements HpkeKem {
     this.curve = curve;
   }
 
-  private byte[] deriveKemSharedSecret(
+  byte[] deriveKemSharedSecret(
       byte[] dhSharedSecret, byte[] senderEphemeralPublicKey, byte[] recipientPublicKey)
       throws GeneralSecurityException {
     byte[] kemContext = Bytes.concat(senderEphemeralPublicKey, recipientPublicKey);
