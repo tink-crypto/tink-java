@@ -854,7 +854,7 @@ public final class EllipticCurves {
     Object unused = computeY(x, true /* lsb, doesn't matter here */, privateKeyCurve);
   }
 
-  /* Generates the DH shared secret using {@code myPrivateKey} and {@code peerPublicKey} */
+  /** Generates the DH shared secret using {@code myPrivateKey} and {@code peerPublicKey} */
   public static byte[] computeSharedSecret(ECPrivateKey myPrivateKey, ECPublicKey peerPublicKey)
       throws GeneralSecurityException {
     validatePublicKeySpec(peerPublicKey, myPrivateKey);

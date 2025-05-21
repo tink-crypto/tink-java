@@ -149,7 +149,7 @@ public final class Validators {
     }
   }
 
-  /*
+  /**
    * @throws IOException if {@code f} exists.
    */
   public static void validateNotExists(File f) throws IOException {
