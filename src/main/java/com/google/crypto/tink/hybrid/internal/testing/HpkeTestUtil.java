@@ -119,7 +119,7 @@ public final class HpkeTestUtil {
         InsecureSecretKeyAccess.get());
   }
 
-  private static HybridTestVector createTestVector0() throws GeneralSecurityException {
+  public static HybridTestVector createTestVector0() throws GeneralSecurityException {
     HpkeParameters params =
         HpkeParameters.builder()
             .setVariant(HpkeParameters.Variant.NO_PREFIX)

@@ -20,7 +20,10 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.hybrid.HpkeParameters;
+import com.google.crypto.tink.hybrid.HpkePrivateKey;
 import com.google.crypto.tink.hybrid.HpkePublicKey;
+import com.google.crypto.tink.hybrid.internal.testing.HpkeTestUtil;
+import com.google.crypto.tink.hybrid.internal.testing.HybridTestVector;
 import com.google.crypto.tink.subtle.EllipticCurves;
 import com.google.crypto.tink.subtle.EllipticCurves.CurveType;
 import com.google.crypto.tink.subtle.EllipticCurves.PointFormatType;
@@ -29,6 +32,7 @@ import com.google.crypto.tink.util.Bytes;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.spec.ECPoint;
+import java.util.Arrays;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -38,6 +42,32 @@ public final class HpkeHelperForAndroidKeystoreTest {
 
   @Test
   public void decryptUnauthenticatedWithEncapsulatedKeyAndP256SharedSecret_success()
+      throws Exception {
+    HybridTestVector vector = HpkeTestUtil.createTestVector0();
+    HpkePrivateKey privateKey = (HpkePrivateKey) vector.getPrivateKey();
+    // The shared secret is needed for decryption with
+    // decryptUnauthenticatedWithEncapsulatedKeyAndP256SharedSecret  -- we logged it to enable this
+    // code.
+    byte[] dhSharedSecret =
+        Hex.decode("c47e13b026cac2b065b83c5985cc03f683382ed027448b3432fa51d34e54f7e6");
+
+    // Variant NO_PREFIX, DHKEM_P256_HKDF_SHA256 -> the first 65 bytes are the encapsulated key.
+    byte[] encapsulatedKey = Arrays.copyOf(vector.getCiphertext(), 65);
+    HpkeHelperForAndroidKeystore helper =
+        HpkeHelperForAndroidKeystore.create(privateKey.getPublicKey());
+    assertThat(
+            helper.decryptUnauthenticatedWithEncapsulatedKeyAndP256SharedSecret(
+                encapsulatedKey,
+                dhSharedSecret,
+                vector.getCiphertext(),
+                65,
+                vector.getContextInfo()))
+        .isEqualTo(vector.getPlaintext());
+  }
+
+  /** A second test with a test vector. Here only due to history (and it doesn't seem to hurt). */
+  @Test
+  public void decryptUnauthenticatedWithEncapsulatedKeyAndP256SharedSecret_testVector2_success()
       throws Exception {
     HpkeParameters params =
         HpkeParameters.builder()
