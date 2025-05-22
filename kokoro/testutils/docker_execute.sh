@@ -33,6 +33,7 @@ Usage:  $0 [-c <container image>] [-k <service key file path>] <command>
   -c: [Optional] Container image to run the command on.
   -k: [Optional] Service key file path for pulling the image from the Google Artifact Registry (https://cloud.google.com/artifact-registry).
   -e: [Optional] File containing a list of environment variables to pass to Docker using --env-file (see https://docs.docker.com/engine/reference/commandline/run/#env).
+  -m: [Optional] Additional --mount argument to pass to the Docker command (see https://docs.docker.com/reference/cli/docker/container/run/#mount).
   -h: Help. Print this usage information.
 EOF
   exit 1
@@ -45,17 +46,19 @@ COMMAND=
 CONTAINER_IMAGE_NAME=
 GCR_SERVICE_KEY_PATH=
 DOCKER_ENV_FILE=
+DOCKER_MOUNT_ARG=
 
 #######################################
 # Process command line arguments.
 #######################################
 process_args() {
   # Parse options.
-  while getopts "hc:k:e:" opt; do
+  while getopts "hc:k:e:m:" opt; do
     case "${opt}" in
       c) CONTAINER_IMAGE_NAME="${OPTARG}" ;;
       k) GCR_SERVICE_KEY_PATH="${OPTARG}" ;;
       e) DOCKER_ENV_FILE="${OPTARG}" ;;
+      m) DOCKER_MOUNT_ARG="${OPTARG}" ;;
       *) usage ;;
     esac
   done
@@ -63,6 +66,7 @@ process_args() {
   readonly CONTAINER_IMAGE_NAME
   readonly GCR_SERVICE_KEY_PATH
   readonly DOCKER_ENV_FILE
+  readonly DOCKER_MOUNT_ARG
   readonly COMMAND=("$@")
 }
 
@@ -92,6 +96,9 @@ main() {
     )
     if [[ -n "${DOCKER_ENV_FILE}" ]]; then
       docker_opts+=( --env-file="${DOCKER_ENV_FILE}" )
+    fi
+    if [[ -n ${DOCKER_MOUNT_ARG} ]] ; then
+      docker_opts+=( --mount "${DOCKER_MOUNT_ARG}" )
     fi
     readonly docker_opts
     time docker run "${docker_opts[@]}" "${CONTAINER_IMAGE_NAME}" \
