@@ -741,3 +741,43 @@ java_library(
         "//src/main/java/com/google/crypto/tink/subtle:elliptic_curves",
     ],
 )
+
+android_library(
+    name = "auth_hpke_helper_for_android_keystore-android",
+    srcs = ["AuthHpkeHelperForAndroidKeystore.java"],
+    deps = [
+        ":hpke_aead-android",
+        ":hpke_context-android",
+        ":hpke_kdf-android",
+        ":hpke_kem-android",
+        ":hpke_primitive_factory-android",
+        ":hpke_util-android",
+        ":nist_curves_hpke_kem-android",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
+        "//src/main/java/com/google/crypto/tink/hybrid:hpke_parameters-android",
+        "//src/main/java/com/google/crypto/tink/hybrid:hpke_public_key-android",
+        "//src/main/java/com/google/crypto/tink/subtle:bytes-android",
+        "//src/main/java/com/google/crypto/tink/subtle:elliptic_curves-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "auth_hpke_helper_for_android_keystore",
+    srcs = ["AuthHpkeHelperForAndroidKeystore.java"],
+    deps = [
+        ":hpke_aead",
+        ":hpke_context",
+        ":hpke_kdf",
+        ":hpke_kem",
+        ":hpke_primitive_factory",
+        ":hpke_util",
+        ":nist_curves_hpke_kem",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink/hybrid:hpke_parameters",
+        "//src/main/java/com/google/crypto/tink/hybrid:hpke_public_key",
+        "//src/main/java/com/google/crypto/tink/subtle:bytes",
+        "//src/main/java/com/google/crypto/tink/subtle:elliptic_curves",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)

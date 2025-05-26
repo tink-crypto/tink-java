@@ -57,7 +57,7 @@ final class NistCurvesHpkeKem implements HpkeKem {
     return extractAndExpand(dhSharedSecret, kemContext);
   }
 
-  private byte[] deriveKemSharedSecret(
+  byte[] deriveKemSharedSecret(
       byte[] dhSharedSecret,
       byte[] senderEphemeralPublicKey,
       byte[] recipientPublicKey,

@@ -374,3 +374,19 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "AuthHpkeHelperForAndroidKeystoreTest",
+    size = "small",
+    srcs = ["AuthHpkeHelperForAndroidKeystoreTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/hybrid:hpke_parameters",
+        "//src/main/java/com/google/crypto/tink/hybrid:hpke_public_key",
+        "//src/main/java/com/google/crypto/tink/hybrid/internal:auth_hpke_helper_for_android_keystore",
+        "//src/main/java/com/google/crypto/tink/subtle:elliptic_curves",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
