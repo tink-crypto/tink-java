@@ -123,13 +123,8 @@ public final class AuthHpkeHelperForAndroidKeystore {
       byte[] dhSharedSecret2,
       byte[] ciphertext,
       int ciphertextOffset,
-      byte[] contextInfo)
+      byte[] info)
       throws GeneralSecurityException {
-
-    byte[] info = contextInfo;
-    if (info == null) {
-      info = new byte[0];
-    }
     byte[] dhSharedSecret = Bytes.concat(dhSharedSecret1, dhSharedSecret2);
     byte[] derivedSharedSecret =
         NistCurvesHpkeKem.fromCurve(EllipticCurves.CurveType.NIST_P256)
