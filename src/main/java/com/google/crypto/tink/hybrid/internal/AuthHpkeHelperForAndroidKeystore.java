@@ -21,8 +21,10 @@ import com.google.crypto.tink.hybrid.HpkeParameters;
 import com.google.crypto.tink.hybrid.HpkePublicKey;
 import com.google.crypto.tink.subtle.Bytes;
 import com.google.crypto.tink.subtle.EllipticCurves;
+import com.google.crypto.tink.subtle.EllipticCurves.PointFormatType;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
+import java.security.spec.ECPoint;
 
 /**
  * A class with functions helping for HPKE implementations based on Android Keystore.
@@ -115,7 +117,7 @@ public final class AuthHpkeHelperForAndroidKeystore {
    * <p>The ciphertext must have been encrypted with the public key used to create this helper
    * object. The encapsulated key must be in encapsulatedKey. dhSharedSecret1 must be the
    * Diffie-Hellman shared secrets computed between the receiver and encapsulated key,
-   * dhSharedSecret2 must be the Diffie-Hellman secret between the reciever and the sender key.
+   * dhSharedSecret2 must be the Diffie-Hellman secret between the receiver and the sender key.
    */
   public byte[] decryptAuthenticatedWithEncapsulatedKeyAndP256SharedSecret(
       byte[] encapsulatedKey,
@@ -134,5 +136,45 @@ public final class AuthHpkeHelperForAndroidKeystore {
         HpkeContext.createContext(
             HpkeUtil.AUTH_MODE, encapsulatedKey, derivedSharedSecret, kem, kdf, aead, info);
     return context.open(ciphertext, ciphertextOffset, EMPTY_ASSOCIATED_DATA);
+  }
+
+  /**
+   * Encrypts a message.
+   *
+   * <p>The message will be encrypted for `theirPublicKeyByteArray` and authenticated with
+   * `ourPublicKey`. The value in emphemeralPublicKey must contain the public key piont of an
+   * ephemerally generated key. dhSharedSecret1 must be the Diffie-Hellman shared secrets computed
+   * between the receiver and emphemeralKey. dhSharedSecret2 must be the Diffie-Hellman secret
+   * between the receiver and the sender key.
+   */
+  public byte[] encryptAuthenticatedWithEncapsulatedKeyAndP256SharedSecret(
+      ECPoint emphemeralPublicKey,
+      byte[] dhSharedSecret1,
+      byte[] dhSharedSecret2,
+      byte[] plaintext,
+      byte[] contextInfo)
+      throws GeneralSecurityException {
+    byte[] emphemeralPublicKeyByteArray =
+        EllipticCurves.pointEncode(
+            EllipticCurves.CurveType.NIST_P256, PointFormatType.UNCOMPRESSED, emphemeralPublicKey);
+    byte[] dhSharedSecret = Bytes.concat(dhSharedSecret1, dhSharedSecret2);
+    byte[] derivedSharedSecret =
+        NistCurvesHpkeKem.fromCurve(EllipticCurves.CurveType.NIST_P256)
+            .deriveKemSharedSecret(
+                dhSharedSecret,
+                emphemeralPublicKeyByteArray,
+                theirPublicKeyByteArray,
+                ourPublicKeyByteArray);
+    HpkeContext context =
+        HpkeContext.createContext(
+            HpkeUtil.AUTH_MODE,
+            emphemeralPublicKeyByteArray,
+            derivedSharedSecret,
+            kem,
+            kdf,
+            aead,
+            contextInfo);
+    return Bytes.concat(
+        emphemeralPublicKeyByteArray, context.seal(plaintext, EMPTY_ASSOCIATED_DATA));
   }
 }
