@@ -20,11 +20,13 @@ import com.google.crypto.tink.annotations.Alpha;
 import com.google.crypto.tink.config.GlobalTinkFlags;
 import com.google.crypto.tink.internal.InternalConfiguration;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
+import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
 import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
+import com.google.crypto.tink.internal.TinkBugException;
 import com.google.crypto.tink.proto.EncryptedKeyset;
 import com.google.crypto.tink.proto.KeyData;
 import com.google.crypto.tink.proto.KeyStatusType;
@@ -376,16 +378,26 @@ public final class KeysetHandle implements KeysetHandleInterface {
         if (builderEntry.key != null) {
           handleEntry =
               new KeysetHandle.Entry(
-                  builderEntry.key, builderEntry.keyStatus, id, builderEntry.isPrimary);
-          keysetKey = createKeysetKey(builderEntry.key, builderEntry.keyStatus, id);
+                  builderEntry.key,
+                  serializeStatus(builderEntry.keyStatus),
+                  id,
+                  builderEntry.isPrimary,
+                  /* keyParsingFailed= */ false);
+          keysetKey =
+              createKeysetKey(builderEntry.key, serializeStatus(builderEntry.keyStatus), id);
         } else {
           Integer idRequirement = builderEntry.parameters.hasIdRequirement() ? id : null;
           Key key =
               MutableKeyCreationRegistry.globalInstance()
                   .createKey(builderEntry.parameters, idRequirement);
           handleEntry =
-              new KeysetHandle.Entry(key, builderEntry.keyStatus, id, builderEntry.isPrimary);
-          keysetKey = createKeysetKey(key, builderEntry.keyStatus, id);
+              new KeysetHandle.Entry(
+                  key,
+                  serializeStatus(builderEntry.keyStatus),
+                  id,
+                  builderEntry.isPrimary,
+                  /* keyParsingFailed= */ false);
+          keysetKey = createKeysetKey(key, serializeStatus(builderEntry.keyStatus), id);
         }
         keysetBuilder.addKey(keysetKey);
         if (builderEntry.isPrimary) {
@@ -422,17 +434,26 @@ public final class KeysetHandle implements KeysetHandleInterface {
    */
   @Immutable
   public static final class Entry implements KeysetHandleInterface.Entry {
-    private Entry(Key key, KeyStatus keyStatus, int id, boolean isPrimary) {
+    private Entry(
+        Key key, KeyStatusType keyStatusType, int id, boolean isPrimary, boolean keyParsingFailed) {
       this.key = key;
-      this.keyStatus = keyStatus;
+      this.keyStatusType = keyStatusType;
+      this.keyStatus = parseStatusWithDisabledFallback(keyStatusType);
       this.id = id;
       this.isPrimary = isPrimary;
+      this.keyParsingFailed = keyParsingFailed;
     }
 
     private final Key key;
+    // We store KeyStatysType instead of KeyStatus to preserve legacy behavior:
+    // For example, this preserves DESTROYED as a status when parsing and serializing again.
+    // This difference goes away once GlobalTinkFlags.validateKeysetsOnParsing is rolled out, since
+    // then the correct subset is accepted.
+    private final KeyStatusType keyStatusType;
     private final KeyStatus keyStatus;
     private final int id;
     private final boolean isPrimary;
+    private final boolean keyParsingFailed;
 
     /**
      * May return an internal class {@link com.google.crypto.tink.internal.LegacyProtoKey} in case
@@ -469,7 +490,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
       if (other.isPrimary != isPrimary) {
         return false;
       }
-      if (!other.keyStatus.equals(keyStatus)) {
+      if (!other.keyStatusType.equals(keyStatusType)) {
         return false;
       }
       if (other.id != id) {
@@ -482,16 +503,26 @@ public final class KeysetHandle implements KeysetHandleInterface {
     }
   }
 
-  private static KeyStatus parseStatus(KeyStatusType in) throws GeneralSecurityException {
+  private static KeyStatus parseStatusWithDisabledFallback(KeyStatusType in) {
     switch (in) {
       case ENABLED:
         return KeyStatus.ENABLED;
-      case DISABLED:
-        return KeyStatus.DISABLED;
       case DESTROYED:
         return KeyStatus.DESTROYED;
+      case DISABLED:
       default:
-        throw new GeneralSecurityException("Unknown key status");
+        return KeyStatus.DISABLED;
+    }
+  }
+
+  private static boolean isValidKeyStatusType(KeyStatusType in) {
+    switch (in) {
+      case ENABLED:
+      case DESTROYED:
+      case DISABLED:
+        return true;
+      default:
+        return false;
     }
   }
 
@@ -518,30 +549,42 @@ public final class KeysetHandle implements KeysetHandleInterface {
     List<Entry> result = new ArrayList<>(keyset.getKeyCount());
     for (Keyset.Key protoKey : keyset.getKeyList()) {
       int id = protoKey.getKeyId();
+      Key key;
+      boolean keyParsingFailed;
       try {
-        Key key = toKey(protoKey);
-        result.add(
-            new KeysetHandle.Entry(
-                key, parseStatus(protoKey.getStatus()), id, id == keyset.getPrimaryKeyId()));
+        key = toKey(protoKey);
+        keyParsingFailed = false;
       } catch (GeneralSecurityException e) {
         if (GlobalTinkFlags.validateKeysetsOnParsing.getValue()) {
-          throw new GeneralSecurityException(
-              "Parsing of a single key failed (maybe wrong status?) and Tink is configured via"
-                  + " validateKeysetsOnParsing to reject such keysets.",
-              e);
+          throw e;
+        } else {
+          // toKey(.) can throw if a parser is available *and* parsing fails. Legacy behavior
+          // is to ignore the error and just keep the proto key.
+          key =
+              new LegacyProtoKey(toProtoKeySerialization(protoKey), InsecureSecretKeyAccess.get());
+          keyParsingFailed = true;
         }
-        result.add(null);
       }
+      if (GlobalTinkFlags.validateKeysetsOnParsing.getValue()
+          && !isValidKeyStatusType(protoKey.getStatus())) {
+        throw new GeneralSecurityException(
+            "Parsing of a single key failed (wrong status) and Tink is configured via"
+                + " validateKeysetsOnParsing to reject such keysets.");
+      }
+      result.add(
+          new KeysetHandle.Entry(
+              key, protoKey.getStatus(), id, id == keyset.getPrimaryKeyId(), keyParsingFailed));
     }
     return Collections.unmodifiableList(result);
   }
 
   private KeysetHandle.Entry entryByIndex(int i) {
-    if (entries.get(i) == null) {
-      // This may happen if a keyset without status makes it here; or if a key has a parser
-      // registered but parsing fails. We should reject such keysets earlier instead.
-      throw new IllegalStateException(
-          "Keyset-Entry at position " + i + " has wrong status or key parsing failed");
+    KeysetHandle.Entry entry = entries.get(i);
+    if (!isValidKeyStatusType(entry.keyStatusType)) {
+      throw new IllegalStateException("Keyset-Entry at position " + i + " has wrong status");
+    }
+    if (entry.keyParsingFailed) {
+      throw new IllegalStateException("Keyset-Entry at position " + i + " didn't parse correctly");
     }
     return entries.get(i);
   }
@@ -583,12 +626,6 @@ public final class KeysetHandle implements KeysetHandleInterface {
     return new KeysetHandle.Builder.Entry(parameters);
   }
 
-  private final Keyset keyset;
-  /* Note: this should be List<@Nullable Entry>; but since we use the Nullable annotation from
-   * javax.annotation it is not possible to do this.
-   *
-   * Contains all entries; but if either parsing the status or the key failed, contains null.
-   */
   private final List<Entry> entries;
   private final MonitoringAnnotations annotations;
 
@@ -613,7 +650,6 @@ public final class KeysetHandle implements KeysetHandleInterface {
 
   private KeysetHandle(Keyset keyset, List<Entry> entries, MonitoringAnnotations annotations)
       throws GeneralSecurityException {
-    this.keyset = keyset;
     this.entries = entries;
     this.annotations = annotations;
     if (GlobalTinkFlags.validateKeysetsOnParsing.getValue()) {
@@ -645,7 +681,19 @@ public final class KeysetHandle implements KeysetHandleInterface {
 
   /** Returns the actual keyset data. */
   Keyset getKeyset() {
-    return keyset;
+    try {
+      Keyset.Builder builder = Keyset.newBuilder();
+      for (Entry entry : entries) {
+        Keyset.Key protoKey = createKeysetKey(entry.getKey(), entry.keyStatusType, entry.getId());
+        builder.addKey(protoKey);
+        if (entry.isPrimary()) {
+          builder.setPrimaryKeyId(entry.getId());
+        }
+      }
+      return builder.build();
+    } catch (GeneralSecurityException e) {
+      throw new TinkBugException(e);
+    }
   }
 
   /** Creates a new builder. */
@@ -657,14 +705,16 @@ public final class KeysetHandle implements KeysetHandleInterface {
   public static Builder newBuilder(KeysetHandle handle) {
     Builder builder = new Builder();
     for (int i = 0; i < handle.size(); ++i) {
-      // Currently, this can be null (as old APIs do not check validity e.g. in {@link #fromKeyset})
-      @Nullable KeysetHandle.Entry entry = handle.entries.get(i);
-      if (entry == null) {
+      KeysetHandle.Entry entry;
+      try {
+        entry = handle.getAt(i);
+      } catch (IllegalStateException e) {
         builder.setErrorToThrow(
             new GeneralSecurityException(
                 "Keyset-Entry in original keyset at position "
                     + i
-                    + " has wrong status or key parsing failed"));
+                    + " has wrong status or key parsing failed",
+                e));
         break;
       }
 
@@ -738,6 +788,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
   @Deprecated
   public List<KeyHandle> getKeys() {
     ArrayList<KeyHandle> result = new ArrayList<>();
+    Keyset keyset = getKeyset();
     for (Keyset.Key key : keyset.getKeyList()) {
       KeyData keyData = key.getKeyData();
       result.add(
@@ -759,6 +810,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
    */
   @Deprecated
   public KeysetInfo getKeysetInfo() {
+    Keyset keyset = getKeyset();
     return Util.getKeysetInfo(keyset);
   }
 
@@ -945,6 +997,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
   public void writeWithAssociatedData(
       KeysetWriter keysetWriter, Aead masterKey, byte[] associatedData)
       throws GeneralSecurityException, IOException {
+    Keyset keyset = getKeyset();
     EncryptedKeyset encryptedKeyset = encrypt(keyset, masterKey, associatedData);
     keysetWriter.write(encryptedKeyset);
   }
@@ -961,6 +1014,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
    */
   @Deprecated /* b/372397203 */
   public void writeNoSecret(KeysetWriter writer) throws GeneralSecurityException, IOException {
+    Keyset keyset = getKeyset();
     assertNoSecretKeyMaterial(keyset);
     writer.write(keyset);
   }
@@ -1001,10 +1055,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
    *     non-private keys.
    */
   public KeysetHandle getPublicKeysetHandle() throws GeneralSecurityException {
-    if (keyset == null) {
-      throw new GeneralSecurityException("cleartext keyset is not available");
-    }
-
+    Keyset keyset = getKeyset();
     Keyset.Builder publicKeysetBuilder = Keyset.newBuilder();
     List<KeysetHandle.Entry> publicEntries = new ArrayList<>(entries.size());
 
@@ -1013,27 +1064,43 @@ public final class KeysetHandle implements KeysetHandleInterface {
       KeysetHandle.Entry publicEntry;
       Keyset.Key publicProtoKey;
 
-      if (entry != null && entry.getKey() instanceof PrivateKey) {
+      if (entry.getKey() instanceof PrivateKey) {
         Key publicKey = ((PrivateKey) entry.getKey()).getPublicKey();
         publicEntry =
-            new KeysetHandle.Entry(publicKey, entry.getStatus(), entry.getId(), entry.isPrimary());
-        publicProtoKey = createKeysetKey(publicKey, entry.getStatus(), entry.getId());
+            new KeysetHandle.Entry(
+                publicKey,
+                entry.keyStatusType,
+                entry.getId(),
+                entry.isPrimary(),
+                /* keyParsingFailed= */ false);
+        publicProtoKey = createKeysetKey(publicKey, entry.keyStatusType, entry.getId());
       } else {
         Keyset.Key protoKey = keyset.getKey(i);
         KeyData keyData = getPublicKeyDataFromRegistry(protoKey.getKeyData());
         publicProtoKey = protoKey.toBuilder().setKeyData(keyData).build();
+        Key publicKey;
+        boolean keyParsingFailed;
         try {
-          Key publicKey = toKey(publicProtoKey);
-          int id = publicProtoKey.getKeyId();
-          publicEntry =
-              new KeysetHandle.Entry(
-                  publicKey,
-                  parseStatus(publicProtoKey.getStatus()),
-                  id,
-                  id == keyset.getPrimaryKeyId());
+          publicKey = toKey(publicProtoKey);
+          keyParsingFailed = false;
         } catch (GeneralSecurityException e) {
-          publicEntry = null;
+          if (GlobalTinkFlags.validateKeysetsOnParsing.getValue()) {
+            throw e;
+          } else {
+            publicKey =
+                new LegacyProtoKey(
+                    toProtoKeySerialization(publicProtoKey), InsecureSecretKeyAccess.get());
+            keyParsingFailed = true;
+          }
         }
+        int id = publicProtoKey.getKeyId();
+        publicEntry =
+            new KeysetHandle.Entry(
+                publicKey,
+                entry.keyStatusType,
+                id,
+                id == keyset.getPrimaryKeyId(),
+                keyParsingFailed);
       }
 
       publicKeysetBuilder.addKey(publicProtoKey);
@@ -1107,9 +1174,10 @@ public final class KeysetHandle implements KeysetHandleInterface {
 
   private <P> P getPrimitiveInternal(InternalConfiguration config, Class<P> classObject)
       throws GeneralSecurityException {
+    Keyset keyset = getKeyset();
     Util.validateKeyset(keyset);
     for (int i = 0; i < size(); ++i) {
-      if (entries.get(i) == null) {
+      if (entries.get(i).keyParsingFailed || !isValidKeyStatusType(entries.get(i).keyStatusType)) {
         Keyset.Key protoKey = keyset.getKey(i);
         throw new GeneralSecurityException(
             "Key parsing of key with index "
@@ -1163,6 +1231,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
    */
   @Deprecated
   public KeyHandle primaryKey() throws GeneralSecurityException {
+    Keyset keyset = getKeyset();
     int primaryKeyId = keyset.getPrimaryKeyId();
     for (Keyset.Key key : keyset.getKeyList()) {
       if (key.getKeyId() == primaryKeyId) {
@@ -1191,12 +1260,16 @@ public final class KeysetHandle implements KeysetHandleInterface {
     for (int i = 0; i < size(); ++i) {
       Entry thisEntry = entries.get(i);
       Entry otherEntry = other.entries.get(i);
-      if (thisEntry == null) {
-        // Can only happen for invalid keyset
+      if (thisEntry.keyParsingFailed) {
         return false;
       }
-      if (otherEntry == null) {
-        // Can only happen for invalid keyset
+      if (otherEntry.keyParsingFailed) {
+        return false;
+      }
+      if (!isValidKeyStatusType(thisEntry.keyStatusType)) {
+        return false;
+      }
+      if (!isValidKeyStatusType(otherEntry.keyStatusType)) {
         return false;
       }
       if (!thisEntry.equalsEntry(otherEntry)) {
@@ -1243,7 +1316,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
         .build();
   }
 
-  private static Keyset.Key createKeysetKey(Key key, KeyStatus keyStatus, int id)
+  private static Keyset.Key createKeysetKey(Key key, KeyStatusType keyStatus, int id)
       throws GeneralSecurityException {
     ProtoKeySerialization serializedKey =
         MutableSerializationRegistry.globalInstance()
@@ -1252,6 +1325,6 @@ public final class KeysetHandle implements KeysetHandleInterface {
     if (idRequirement != null && idRequirement != id) {
       throw new GeneralSecurityException("Wrong ID set for key with ID requirement");
     }
-    return toKeysetKey(id, serializeStatus(keyStatus), serializedKey);
+    return toKeysetKey(id, keyStatus, serializedKey);
   }
 }

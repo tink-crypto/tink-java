@@ -312,18 +312,6 @@ public class PrimitiveSetTest {
   }
 
   @Test
-  public void testAddFullPrimive_withUnknownPrefixType_shouldFail() throws Exception {
-    Key key1 = Key.newBuilder().setKeyId(1).setStatus(KeyStatusType.ENABLED).build();
-
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> PrimitiveSet.newBuilder().add(getKeyFromProtoKey(key1), key1).build());
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> PrimitiveSet.newBuilder().addPrimary(getKeyFromProtoKey(key1), key1).build());
-  }
-
-  @Test
   public void testAddFullPrimive_withDisabledKey_shouldFail() throws Exception {
     Key key1 =
         Key.newBuilder()

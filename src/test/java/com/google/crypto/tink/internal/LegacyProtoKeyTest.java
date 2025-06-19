@@ -48,6 +48,36 @@ public final class LegacyProtoKeyTest {
   }
 
   @Test
+  public void testLegacyProtoKeyCreate_withIdRequirement() throws Exception {
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "myTypeUrl",
+            ByteString.copyFrom(new byte[] {}),
+            KeyMaterialType.SYMMETRIC,
+            OutputPrefixType.WITH_ID_REQUIREMENT,
+            /* idRequirement= */ 0x12345678);
+    LegacyProtoKey key = new LegacyProtoKey(serialization, ACCESS);
+    assertThat(key.getSerialization(ACCESS)).isSameInstanceAs(serialization);
+  }
+
+  @Test
+  public void testLegacyProtoKeyCreate_withNullIdRequirement_getOutputPrefixThrows()
+      throws Exception {
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "myTypeUrl",
+            ByteString.copyFrom(new byte[] {}),
+            KeyMaterialType.SYMMETRIC,
+            OutputPrefixType.WITH_ID_REQUIREMENT,
+            /* idRequirement= */ 0x12345678);
+    LegacyProtoKey key = new LegacyProtoKey(serialization, ACCESS);
+    // Keys with WITH_ID_REQUIREMENT do not have a generic way to get an "OutputPrefix". Hence, this
+    // should not be called (instead, parsing should succeed and the key class should have a
+    // "getOutputPrefix() or something similar)
+    assertThrows(GeneralSecurityException.class, () -> key.getOutputPrefix());
+  }
+
+  @Test
   public void testLegacyProtoKey_getParameters() throws Exception {
     ProtoKeySerialization serialization =
         ProtoKeySerialization.create(

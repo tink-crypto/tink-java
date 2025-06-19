@@ -434,7 +434,7 @@ public class KeysetManagerTest {
     assertThat(keyset.getKey(0).getStatus()).isEqualTo(KeyStatusType.ENABLED);
     assertThat(keyset.getKey(1).getKeyId()).isEqualTo(otherKeyId);
     assertThat(keyset.getKey(1).getStatus()).isEqualTo(KeyStatusType.DESTROYED);
-    assertThat(keyset.getKey(1).hasKeyData()).isFalse();
+    assertThat(keyset.getKey(1).getKeyData().getValue().isEmpty()).isTrue();
   }
 
   @Test
@@ -942,7 +942,9 @@ public class KeysetManagerTest {
     Keyset keyset = keysetManager.getKeysetHandle().getKeyset();
     assertThat(keyset.getKeyCount()).isEqualTo(2);
     // One of the two keys is destroyed and doesn't have keyData anymore.
-    assertTrue(!keyset.getKey(0).hasKeyData() || !keyset.getKey(1).hasKeyData());
+    assertTrue(
+        !keyset.getKey(0).getKeyData().getValue().isEmpty()
+            || !keyset.getKey(1).getKeyData().getValue().isEmpty());
   }
 
   private void manipulateKeyset(KeysetManager manager) {

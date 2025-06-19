@@ -192,12 +192,10 @@ public final class TinkProtoKeysetFormatTest {
                     .build())
             .setPrimaryKeyId(123)
             .build();
-    KeysetHandle handle =
-        TinkProtoKeysetFormat.parseKeyset(keyset.toByteArray(), InsecureSecretKeyAccess.get());
-    assertThrows(IllegalStateException.class, () -> handle.getAt(0));
-
-    // re-parse the KeysetHandle, as suggested in documentation of getAt.
-    assertThrows(GeneralSecurityException.class, () -> KeysetHandle.newBuilder(handle).build());
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            TinkProtoKeysetFormat.parseKeyset(keyset.toByteArray(), InsecureSecretKeyAccess.get()));
   }
 
   @Test

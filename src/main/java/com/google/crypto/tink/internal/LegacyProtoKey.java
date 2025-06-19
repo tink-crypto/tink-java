@@ -77,7 +77,6 @@ public final class LegacyProtoKey extends Key {
   }
 
   private final ProtoKeySerialization serialization;
-  private final Bytes outputPrefix;
 
   private static void throwIfMissingAccess(
       ProtoKeySerialization protoKeySerialization, @Nullable SecretKeyAccess access)
@@ -115,7 +114,6 @@ public final class LegacyProtoKey extends Key {
       throws GeneralSecurityException {
     throwIfMissingAccess(serialization, access);
     this.serialization = serialization;
-    this.outputPrefix = computeOutputPrefix(serialization);
   }
 
   /**
@@ -182,7 +180,7 @@ public final class LegacyProtoKey extends Key {
         serialization.getTypeUrl(), serialization.getOutputPrefixType());
   }
 
-  public Bytes getOutputPrefix() {
-    return outputPrefix;
+  public Bytes getOutputPrefix() throws GeneralSecurityException {
+    return computeOutputPrefix(serialization);
   }
 }
