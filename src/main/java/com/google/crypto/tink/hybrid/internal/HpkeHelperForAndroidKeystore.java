@@ -78,9 +78,10 @@ public final class HpkeHelperForAndroidKeystore {
       throw new GeneralSecurityException(
           "HpkeHelperForAndroidKeystore currently only supports HKDF_SHA256.");
     }
-    if (!parameters.getAeadId().equals(HpkeParameters.AeadId.AES_128_GCM)) {
+    if (!parameters.getAeadId().equals(HpkeParameters.AeadId.AES_128_GCM)
+        && !parameters.getAeadId().equals(HpkeParameters.AeadId.AES_256_GCM)) {
       throw new GeneralSecurityException(
-          "HpkeHelperForAndroidKeystore currently only supports AES_128_GCM.");
+          "HpkeHelperForAndroidKeystore currently only supports AES_128_GCM and AES_256_GCM.");
     }
     if (!parameters.getVariant().equals(HpkeParameters.Variant.NO_PREFIX)) {
       throw new GeneralSecurityException(

@@ -86,6 +86,58 @@ public final class AuthHpkeHelperForAndroidKeystoreTest {
         .isEqualTo("92b2058b295b7746202d");
   }
 
+  /** Another test vector using AES-256-GCM. */
+  @Test
+  public void decryptAuthenticatedWithEncapsulatedKeyAndP256SharedSecret_testVector2_success()
+      throws Exception {
+    HpkeParameters params =
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.NO_PREFIX)
+            .setKemId(HpkeParameters.KemId.DHKEM_P256_HKDF_SHA256)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+            .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
+            .build();
+    // We use a manually generated test vector; we cannot use those from RFC 9180 since they
+    // all have a non-empty AAD for the Aead.
+    byte[] ourPublicKeyMaterial =
+        Hex.decode(
+            "04db4aef7b0a93d19450648ea3c9e1f81b8687515782ad178b8914175d72039bd7986e66c96bad1a3b9baf"
+                + "cfd435e15795559a9a87f309a18da86b24902c3d8ec1");
+    byte[] theirPublicKeyMaterial =
+        Hex.decode(
+            "048b9f6c5fce20909c79cb712bf1036cea9cabe3242e1f34828714eff711ef768a304862def203913fd665"
+                + "c2a9bd8145bc0b8d5966642582ae5c46ce5ce56f64f7");
+    byte[] encapsulatedKey =
+        Hex.decode(
+            "04c09ad3adfa295fa740bd504172aef9e76bdd7dcce5c38d343e82671955347773c313df518a828078abce"
+                + "5a1879733aa5d842db4b629479a9cb6e47c5014e13cc");
+    byte[] dhSharedSecret1 =
+        Hex.decode("ca74d5462edde9fbde378ca88628244b7205d0242e2f881004e83e0f37a4c68f");
+    byte[] dhSharedSecret2 =
+        Hex.decode("640b59d3ee95d4935373b4ebefced3a8f713bac41c6687903f9d888edc8190ac");
+    byte[] ciphertextStartingFromByte7 =
+        Hex.decode("000000000000001cfbdf20428821237f169725cc4496f556150142e9189056cd7c");
+    byte[] contextInfo = Hex.decode("3c1a9c66c329db3f4a89");
+    HpkePublicKey theirPublicKey =
+        HpkePublicKey.create(
+            params, Bytes.copyFrom(theirPublicKeyMaterial), /* idRequirement= */ null);
+    HpkePublicKey ourPublicKey =
+        HpkePublicKey.create(
+            params, Bytes.copyFrom(ourPublicKeyMaterial), /* idRequirement= */ null);
+    AuthHpkeHelperForAndroidKeystore helper =
+        AuthHpkeHelperForAndroidKeystore.create(ourPublicKey, theirPublicKey);
+    assertThat(
+            Hex.encode(
+                helper.decryptAuthenticatedWithEncapsulatedKeyAndP256SharedSecret(
+                    encapsulatedKey,
+                    dhSharedSecret1,
+                    dhSharedSecret2,
+                    ciphertextStartingFromByte7,
+                    7,
+                    contextInfo)))
+        .isEqualTo("f2a13692ea90170104cd");
+  }
+
   @Test
   public void invalidParamsBadVariant_create_throws() throws Exception {
     HpkeParameters params =
@@ -153,7 +205,7 @@ public final class AuthHpkeHelperForAndroidKeystoreTest {
             .setVariant(HpkeParameters.Variant.NO_PREFIX)
             .setKemId(HpkeParameters.KemId.DHKEM_P256_HKDF_SHA256)
             .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
-            .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
+            .setAeadId(HpkeParameters.AeadId.CHACHA20_POLY1305)
             .build();
     byte[] ourPublicKeyMaterial =
         Hex.decode(
@@ -173,7 +225,9 @@ public final class AuthHpkeHelperForAndroidKeystoreTest {
         assertThrows(
             GeneralSecurityException.class,
             () -> AuthHpkeHelperForAndroidKeystore.create(ourPublicKey, theirPublicKey));
-    assertThat(e).hasMessageThat().contains("only supports AeadId.AES_128_GCM.");
+    assertThat(e)
+        .hasMessageThat()
+        .contains("only supports AeadId.AES_128_GCM and AeadId.AES_256_GCM.");
   }
 
   private static Bytes getP384PublicPointAsBytes() throws GeneralSecurityException {
@@ -249,6 +303,10 @@ public final class AuthHpkeHelperForAndroidKeystoreTest {
     assertThat(e).hasMessageThat().contains("must be equal");
   }
 
+  /**
+   * The reversed test of
+   * decryptAuthenticatedWithEncapsulatedKeyAndP256SharedSecret_testVector_success.
+   */
   @Test
   public void encryptAuthenticatedWithEncapsulatedKeyAndP256SharedSecret_testVector_success()
       throws Exception {
@@ -300,5 +358,62 @@ public final class AuthHpkeHelperForAndroidKeystoreTest {
             "04721adb65bc9d99aeabb5e2b2705979c9c4bc4110a252f784bf7190527625d34021c3338e59c8b86720e3"
                 + "fecb2475ba538ebeb1a5b0eef729ec8add7c7fba96349f7c248adec683db2e4140ef3d0c201e146b"
                 + "96439042402a6b3d");
+  }
+
+  /**
+   * The reversed test of
+   * decryptAuthenticatedWithEncapsulatedKeyAndP256SharedSecret_testVector2_success.
+   */
+  @Test
+  public void encryptAuthenticatedWithEncapsulatedKeyAndP256SharedSecret_testVector2_success()
+      throws Exception {
+    HpkeParameters params =
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.NO_PREFIX)
+            .setKemId(HpkeParameters.KemId.DHKEM_P256_HKDF_SHA256)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+            .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
+            .build();
+    // The same test vector as above, but we now encrypt, so ourPublicKeyMaterial is now theirs.
+    byte[] ourPublicKeyMaterial =
+        Hex.decode(
+            "048b9f6c5fce20909c79cb712bf1036cea9cabe3242e1f34828714eff711ef768a304862def203913fd665"
+                + "c2a9bd8145bc0b8d5966642582ae5c46ce5ce56f64f7");
+    byte[] theirPublicKeyMaterial =
+        Hex.decode(
+            "04db4aef7b0a93d19450648ea3c9e1f81b8687515782ad178b8914175d72039bd7986e66c96bad1a3b9baf"
+                + "cfd435e15795559a9a87f309a18da86b24902c3d8ec1");
+    byte[] encapsulatedKey =
+        Hex.decode(
+            "04c09ad3adfa295fa740bd504172aef9e76bdd7dcce5c38d343e82671955347773c313df518a828078abce"
+                + "5a1879733aa5d842db4b629479a9cb6e47c5014e13cc");
+    ECPoint encapsulatedKeyAsObject =
+        EllipticCurves.pointDecode(
+            EllipticCurves.CurveType.NIST_P256, PointFormatType.UNCOMPRESSED, encapsulatedKey);
+    byte[] dhSharedSecret1 =
+        Hex.decode("ca74d5462edde9fbde378ca88628244b7205d0242e2f881004e83e0f37a4c68f");
+    byte[] dhSharedSecret2 =
+        Hex.decode("640b59d3ee95d4935373b4ebefced3a8f713bac41c6687903f9d888edc8190ac");
+    byte[] contextInfo = Hex.decode("3c1a9c66c329db3f4a89");
+    HpkePublicKey theirPublicKey =
+        HpkePublicKey.create(
+            params, Bytes.copyFrom(theirPublicKeyMaterial), /* idRequirement= */ null);
+    HpkePublicKey ourPublicKey =
+        HpkePublicKey.create(
+            params, Bytes.copyFrom(ourPublicKeyMaterial), /* idRequirement= */ null);
+    AuthHpkeHelperForAndroidKeystore helper =
+        AuthHpkeHelperForAndroidKeystore.create(ourPublicKey, theirPublicKey);
+    assertThat(
+            Hex.encode(
+                helper.encryptAuthenticatedWithEncapsulatedKeyAndP256SharedSecret(
+                    encapsulatedKeyAsObject,
+                    dhSharedSecret1,
+                    dhSharedSecret2,
+                    Hex.decode("f2a13692ea90170104cd"),
+                    contextInfo)))
+        .isEqualTo(
+            "04c09ad3adfa295fa740bd504172aef9e76bdd7dcce5c38d343e82671955347773c313df518a828078abce"
+                + "5a1879733aa5d842db4b629479a9cb6e47c5014e13cc1cfbdf20428821237f169725cc4496f55615"
+                + "0142e9189056cd7c");
   }
 }

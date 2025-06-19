@@ -103,6 +103,32 @@ public final class HpkeHelperForAndroidKeystoreTest {
         .isEqualTo("046d8bbadebab832ec27e7a32f5c37b35b8eb9a452234095d98f8f94e2e5");
   }
 
+  /** Another test with a different Aead configuration. */
+  @Test
+  public void decryptUnauthenticatedWithEncapsulatedKeyAndP256SharedSecret_success_aes256()
+      throws Exception {
+    HybridTestVector vector = HpkeTestUtil.createTestVector6();
+    HpkePrivateKey privateKey = (HpkePrivateKey) vector.getPrivateKey();
+    // The shared secret is needed for decryption with
+    // decryptUnauthenticatedWithEncapsulatedKeyAndP256SharedSecret  -- we logged it to enable this
+    // code.
+    byte[] dhSharedSecret =
+        Hex.decode("f44ecab240f71f445d29277289d4952871b503972d5105db61deba5c1f3aaae2");
+
+    // Variant NO_PREFIX, DHKEM_P256_HKDF_SHA256 -> the first 65 bytes are the encapsulated key.
+    byte[] encapsulatedKey = Arrays.copyOf(vector.getCiphertext(), 65);
+    HpkeHelperForAndroidKeystore helper =
+        HpkeHelperForAndroidKeystore.create(privateKey.getPublicKey());
+    assertThat(
+            helper.decryptUnauthenticatedWithEncapsulatedKeyAndP256SharedSecret(
+                encapsulatedKey,
+                dhSharedSecret,
+                vector.getCiphertext(),
+                65,
+                vector.getContextInfo()))
+        .isEqualTo(vector.getPlaintext());
+  }
+
   @Test
   public void invalidParamsBadVariant_create_throws() throws Exception {
     HpkeParameters params =
@@ -189,7 +215,7 @@ public final class HpkeHelperForAndroidKeystoreTest {
             .setVariant(HpkeParameters.Variant.NO_PREFIX)
             .setKemId(HpkeParameters.KemId.DHKEM_P256_HKDF_SHA256)
             .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
-            .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
+            .setAeadId(HpkeParameters.AeadId.CHACHA20_POLY1305)
             .build();
     byte[] receiverPublicKey =
         Hex.decode(

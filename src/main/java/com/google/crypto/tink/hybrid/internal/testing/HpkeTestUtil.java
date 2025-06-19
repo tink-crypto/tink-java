@@ -269,7 +269,7 @@ public final class HpkeTestUtil {
   }
 
   // AES_256_GCM
-  private static HybridTestVector createTestVector6() throws GeneralSecurityException {
+  public static HybridTestVector createTestVector6() throws GeneralSecurityException {
     HpkeParameters params =
         HpkeParameters.builder()
             .setVariant(HpkeParameters.Variant.NO_PREFIX)
