@@ -21,6 +21,7 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.prf.AesCmacPrfKey;
 import com.google.crypto.tink.prf.AesCmacPrfParameters;
 import com.google.crypto.tink.prf.Prf;
+import com.google.crypto.tink.prf.internal.PrfAesCmacConscrypt;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
@@ -52,8 +53,41 @@ public final class PrfAesCmac implements Prf {
     this(createAesCmacPrfKey(key));
   }
 
+  /* Uses two different PRF implementations for small and large data.*/
+  @Immutable
+  private static class PrfImplementation implements Prf {
+    final Prf small;
+    final Prf large;
+
+    private static final int SMALL_DATA_SIZE = 64;
+
+    @Override
+    public byte[] compute(final byte[] data, int outputLength) throws GeneralSecurityException {
+      if (data.length <= SMALL_DATA_SIZE) {
+        return small.compute(data, outputLength);
+      }
+      return large.compute(data, outputLength);
+    }
+
+    private PrfImplementation(Prf small, Prf large) {
+      this.small = small;
+      this.large = large;
+    }
+  }
+
   public static Prf create(AesCmacPrfKey key) throws GeneralSecurityException {
-    return com.google.crypto.tink.prf.internal.PrfAesCmac.create(key);
+    Prf prf = com.google.crypto.tink.prf.internal.PrfAesCmac.create(key);
+    try {
+      Prf conscryptPrf = PrfAesCmacConscrypt.create(key);
+      // PrfAesCmacConscrypt is currently slower for small data. And it requires a global lock.
+      // So we prefer not to use it for small data. But for large data, it is 10x faster
+      // than PrfAesCmac.
+      // TODO(b/380222885): Remove this once PrfAesCmacConscrypt is faster for small data.
+      return new PrfImplementation(prf, conscryptPrf);
+    } catch (GeneralSecurityException e) {
+      // Fall back to this implementation if Conscrypt is not available.
+      return prf;
+    }
   }
 
   @Override
