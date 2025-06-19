@@ -14,15 +14,19 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package com.google.crypto.tink.subtle;
+package com.google.crypto.tink.prf.internal;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.prf.AesCmacPrfKey;
+import com.google.crypto.tink.prf.AesCmacPrfParameters;
 import com.google.crypto.tink.prf.Prf;
-import com.google.crypto.tink.prf.internal.AesCmacPrfTestUtil;
-import com.google.crypto.tink.prf.internal.AesCmacPrfWycheproofTestUtil;
+import com.google.crypto.tink.subtle.Hex;
+import com.google.crypto.tink.subtle.Random;
+import com.google.crypto.tink.util.SecretBytes;
+import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.util.Arrays;
 import java.util.List;
@@ -47,13 +51,25 @@ public class PrfAesCmacTest {
       AesCmacPrfWycheproofTestUtil.readTestVectors();
 
   @Theory
-  public void compute_isCorrect(
-      @FromDataPoints("AesCmacPrfTestVectors") AesCmacPrfTestUtil.TestVector testVector)
-      throws Exception {
-    Prf prf =
-        new PrfAesCmac(testVector.key().getKeyBytes().toByteArray(InsecureSecretKeyAccess.get()));
+  public void calcN_returnsNumberOfAesBlocks() throws Exception {
+    // AES block size is 16 bytes.
+    assertThat(PrfAesCmac.calcN(0)).isEqualTo(1);
+    assertThat(PrfAesCmac.calcN(1)).isEqualTo(1);
+    assertThat(PrfAesCmac.calcN(16)).isEqualTo(1);
+    assertThat(PrfAesCmac.calcN(17)).isEqualTo(2);
+    assertThat(PrfAesCmac.calcN(32)).isEqualTo(2);
+    assertThat(PrfAesCmac.calcN(33)).isEqualTo(3);
+    assertThat(PrfAesCmac.calcN(48)).isEqualTo(3);
+    assertThat(PrfAesCmac.calcN(49)).isEqualTo(4);
+    assertThat(PrfAesCmac.calcN(0x7FFFFFF0)).isEqualTo(0x07FFFFFF);
+    assertThat(PrfAesCmac.calcN(0x7FFFFFF1)).isEqualTo(0x08000000);
+    assertThat(PrfAesCmac.calcN(Integer.MAX_VALUE)).isEqualTo(0x08000000);
+  }
 
-    assertThat(prf.compute(testVector.data(), testVector.outputLength())).isEqualTo(testVector.output());
+  private static AesCmacPrfKey createKey(byte[] key) throws GeneralSecurityException {
+    return AesCmacPrfKey.create(
+        AesCmacPrfParameters.create(key.length),
+        SecretBytes.copyFrom(key, InsecureSecretKeyAccess.get()));
   }
 
   @Theory
@@ -77,7 +93,7 @@ public class PrfAesCmacTest {
 
   @Theory
   public void compute_outputLengthTooLarge_throws() throws Exception {
-    Prf prf = new PrfAesCmac(Hex.decode("2b7e151628aed2a6abf7158809cf4f3c"));
+    Prf prf = PrfAesCmac.create(createKey(Hex.decode("2b7e151628aed2a6abf7158809cf4f3c")));
     byte[] message = new byte[0];
 
     assertThrows(InvalidAlgorithmParameterException.class, () -> prf.compute(message, 17));
@@ -86,7 +102,7 @@ public class PrfAesCmacTest {
   @Theory
   public void compute_bitFlipInMessage_outputIsDifferent() throws Exception {
     byte[] key = Random.randBytes(KEY_SIZE);
-    Prf prf = new PrfAesCmac(key);
+    Prf prf = PrfAesCmac.create(createKey(key));
     byte[] message = Random.randBytes(20);
     int outputLength = 16;
 

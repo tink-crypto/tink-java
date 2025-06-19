@@ -23,6 +23,8 @@ import com.google.crypto.tink.mac.AesCmacKey;
 import com.google.crypto.tink.mac.AesCmacParameters.Variant;
 import com.google.crypto.tink.mac.HmacKey;
 import com.google.crypto.tink.mac.HmacParameters;
+import com.google.crypto.tink.prf.AesCmacPrfKey;
+import com.google.crypto.tink.prf.AesCmacPrfParameters;
 import com.google.crypto.tink.prf.Prf;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
@@ -69,7 +71,7 @@ public class PrfMac implements Mac {
   }
 
   private PrfMac(AesCmacKey key) throws GeneralSecurityException {
-    wrappedPrf = new PrfAesCmac(key.getAesKey().toByteArray(InsecureSecretKeyAccess.get()));
+    wrappedPrf = createPrf(key);
     // Due to the correctness checks during AesCmacKey creation, there is no need to perform
     // additional tag size checks here.
     tagSize = key.getParameters().getCryptographicTagSizeBytes();
@@ -125,4 +127,13 @@ public class PrfMac implements Mac {
       throw new GeneralSecurityException("invalid MAC");
     }
   }
+
+  @AccessesPartialKey
+  private static Prf createPrf(AesCmacKey key) throws GeneralSecurityException {
+    return PrfAesCmac.create(
+        AesCmacPrfKey.create(
+                AesCmacPrfParameters.create(key.getParameters().getKeySizeBytes()),
+                key.getAesKey()));
+  }
+
 }

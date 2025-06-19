@@ -22,10 +22,13 @@ import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.aead.XAesGcmKey;
+import com.google.crypto.tink.prf.AesCmacPrfKey;
+import com.google.crypto.tink.prf.AesCmacPrfParameters;
 import com.google.crypto.tink.prf.Prf;
 import com.google.crypto.tink.subtle.PrfAesCmac;
 import com.google.crypto.tink.subtle.Random;
 import com.google.crypto.tink.util.Bytes;
+import com.google.crypto.tink.util.SecretBytes;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
@@ -52,9 +55,17 @@ public final class XAesGcm implements Aead {
 
   private final Prf cmac;
 
+  @AccessesPartialKey
+  private static Prf createCmac(byte[] key) throws GeneralSecurityException {
+    return PrfAesCmac.create(
+        AesCmacPrfKey.create(
+            AesCmacPrfParameters.create(key.length),
+            SecretBytes.copyFrom(key, InsecureSecretKeyAccess.get())));
+  }
+
   private XAesGcm(final byte[] key, Bytes outputPrefix, int saltSize)
       throws GeneralSecurityException {
-    this.cmac = new PrfAesCmac(key);
+    this.cmac = createCmac(key);
     this.outputPrefix = outputPrefix.toByteArray();
     this.saltSize = saltSize;
   }

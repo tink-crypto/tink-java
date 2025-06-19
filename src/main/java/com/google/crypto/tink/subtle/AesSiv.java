@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc.
+// Copyright 2017 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,11 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.daead.AesSivKey;
 import com.google.crypto.tink.mac.internal.AesUtil;
+import com.google.crypto.tink.prf.AesCmacPrfKey;
+import com.google.crypto.tink.prf.AesCmacPrfParameters;
+import com.google.crypto.tink.prf.Prf;
 import com.google.crypto.tink.util.Bytes;
+import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.util.Arrays;
@@ -56,7 +60,7 @@ public final class AesSiv implements DeterministicAead {
   };
 
   /** The internal AesCmac object for S2V */
-  private final PrfAesCmac cmacForS2V;
+  private final Prf cmacForS2V;
 
   /** The key used for the CTR encryption */
   private final byte[] aesCtrKey;
@@ -81,6 +85,14 @@ public final class AesSiv implements DeterministicAead {
         }
       };
 
+  @AccessesPartialKey
+  private static Prf createCmac(byte[] key) throws GeneralSecurityException {
+    return PrfAesCmac.create(
+        AesCmacPrfKey.create(
+            AesCmacPrfParameters.create(key.length),
+            SecretBytes.copyFrom(key, InsecureSecretKeyAccess.get())));
+  }
+
   private AesSiv(final byte[] key, Bytes outputPrefix) throws GeneralSecurityException {
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException(
@@ -94,7 +106,7 @@ public final class AesSiv implements DeterministicAead {
 
     byte[] k1 = Arrays.copyOfRange(key, 0, key.length / 2);
     this.aesCtrKey = Arrays.copyOfRange(key, key.length / 2, key.length);
-    this.cmacForS2V = new PrfAesCmac(k1);
+    this.cmacForS2V = createCmac(k1);
     this.outputPrefix = outputPrefix.toByteArray();
   }
 

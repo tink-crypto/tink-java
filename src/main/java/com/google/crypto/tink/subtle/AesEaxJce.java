@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc.
+// Copyright 2017 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,10 @@ import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.aead.AesEaxKey;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.prf.AesCmacPrfKey;
+import com.google.crypto.tink.prf.AesCmacPrfParameters;
 import com.google.crypto.tink.prf.Prf;
+import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import javax.crypto.AEADBadTagException;
@@ -89,7 +92,10 @@ public final class AesEaxJce implements Aead {
 
   @AccessesPartialKey
   private static Prf createCmac(byte[] key) throws GeneralSecurityException {
-    return new PrfAesCmac(key);
+    return PrfAesCmac.create(
+        AesCmacPrfKey.create(
+            AesCmacPrfParameters.create(key.length),
+            SecretBytes.copyFrom(key, InsecureSecretKeyAccess.get())));
   }
 
   private AesEaxJce(final byte[] key, int ivSizeInBytes, byte[] outputPrefix)
