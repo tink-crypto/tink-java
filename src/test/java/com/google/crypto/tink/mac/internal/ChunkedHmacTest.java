@@ -114,8 +114,7 @@ public class ChunkedHmacTest {
     }
 
     try {
-      ChunkedHmacVerification chunkedHmacVerification =
-          (ChunkedHmacVerification) chunkedHmacImpl.createVerification(t.tag);
+      ChunkedMacVerification chunkedHmacVerification = chunkedHmacImpl.createVerification(t.tag);
       chunkedHmacVerification.update(ByteBuffer.wrap(t.message));
       chunkedHmacVerification.verifyMac();
     } catch (GeneralSecurityException e) {
@@ -147,8 +146,7 @@ public class ChunkedHmacTest {
     }
 
     try {
-      ChunkedHmacVerification chunkedHmacVerification =
-          (ChunkedHmacVerification) chunkedHmacImpl.createVerification(t.tag);
+      ChunkedMacVerification chunkedHmacVerification = chunkedHmacImpl.createVerification(t.tag);
       chunkedHmacVerification.update(ByteBuffer.wrap(t.message));
       chunkedHmacVerification.verifyMac();
     } catch (GeneralSecurityException e) {

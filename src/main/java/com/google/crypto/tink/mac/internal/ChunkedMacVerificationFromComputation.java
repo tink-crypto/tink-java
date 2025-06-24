@@ -1,4 +1,4 @@
-// Copyright 2022 Google Inc.
+// Copyright 2022 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,37 +16,38 @@
 
 package com.google.crypto.tink.mac.internal;
 
+import com.google.crypto.tink.mac.ChunkedMacComputation;
 import com.google.crypto.tink.mac.ChunkedMacVerification;
-import com.google.crypto.tink.mac.HmacKey;
 import com.google.crypto.tink.util.Bytes;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 
-/**
- * An implementation of streaming HMAC verification. Uses ChunkedHmacComputation implementation
- * under the hood. Not thread-safe, thread safety must be ensured by the caller if objects of this
- * class are accessed concurrently.
- */
-final class ChunkedHmacVerification implements ChunkedMacVerification {
+/** Implements chunked MAC verification from chunked MAC computation. */
+final class ChunkedMacVerificationFromComputation implements ChunkedMacVerification {
   private final Bytes tag;
-  private final ChunkedHmacComputation hmacComputation;
+  private final ChunkedMacComputation macComputation;
 
-  ChunkedHmacVerification(HmacKey key, byte[] tag) throws GeneralSecurityException {
-    hmacComputation = new ChunkedHmacComputation(key);
+  private ChunkedMacVerificationFromComputation(ChunkedMacComputation macComputation, byte[] tag) {
+    // Checks regarding tag and key sizes, as well as FIPS-compatibility
+    // need to be performed by the caller.
+    this.macComputation = macComputation;
     this.tag = Bytes.copyFrom(tag);
   }
 
   @Override
-  public void update(ByteBuffer data) {
-    // No need to check state since the ChunkedHmacComputation already does this.
-    hmacComputation.update(data);
+  public void update(ByteBuffer data) throws GeneralSecurityException {
+    macComputation.update(data);
   }
 
   @Override
   public void verifyMac() throws GeneralSecurityException {
-    byte[] other = hmacComputation.computeMac();
+    byte[] other = macComputation.computeMac();
     if (!tag.equals(Bytes.copyFrom(other))) {
       throw new GeneralSecurityException("invalid MAC");
     }
+  }
+
+  static ChunkedMacVerification create(ChunkedMacComputation macComputation, byte[] tag) {
+    return new ChunkedMacVerificationFromComputation(macComputation, tag);
   }
 }

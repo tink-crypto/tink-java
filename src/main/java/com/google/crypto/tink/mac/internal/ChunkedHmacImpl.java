@@ -56,6 +56,6 @@ public final class ChunkedHmacImpl implements ChunkedMac {
     if (!key.getOutputPrefix().equals(Bytes.copyFrom(tag, 0, key.getOutputPrefix().size()))) {
       throw new GeneralSecurityException("Wrong tag prefix");
     }
-    return new ChunkedHmacVerification(key, tag);
+    return ChunkedMacVerificationFromComputation.create(new ChunkedHmacComputation(key), tag);
   }
 }
