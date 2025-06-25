@@ -69,6 +69,7 @@ import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.KeyStatusType;
 import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.proto.OutputPrefixType;
+import com.google.crypto.tink.signature.PredefinedSignatureParameters;
 import com.google.crypto.tink.signature.SignatureConfig;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.subtle.Random;
@@ -86,6 +87,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -2267,5 +2269,155 @@ public class KeysetHandleTest {
                     badStatusKeyset.toByteArray(), InsecureSecretKeyAccess.get()));
     assertThat(e).hasMessageThat().contains("validateKeysetsOnParsing");
     assertThat(e).hasMessageThat().contains("wrong status");
+  }
+
+  @Test
+  public void getKey_monitoringWorks() throws Exception {
+    MonitoringAnnotations annotations =
+        MonitoringAnnotations.newBuilder().add("annotation_name", "annotation_value").build();
+
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.importKey(XChaCha20Poly1305Key.create(SecretBytes.randomBytes(32)))
+                    .withFixedId(100))
+            .addEntry(
+                KeysetHandle.importKey(XChaCha20Poly1305Key.create(SecretBytes.randomBytes(32)))
+                    .withFixedId(101))
+            .addEntry(
+                KeysetHandle.importKey(XChaCha20Poly1305Key.create(SecretBytes.randomBytes(32)))
+                    .withFixedId(102)
+                    .makePrimary())
+            .setMonitoringAnnotations(annotations)
+            .build();
+    FakeMonitoringClient fakeMonitoringClient = new FakeMonitoringClient();
+    MutableMonitoringRegistry.globalInstance().clear();
+    MutableMonitoringRegistry.globalInstance().registerMonitoringClient(fakeMonitoringClient);
+
+    // Only "getKey" is monitored, not getAt();
+    KeysetHandle.Entry keysetHandleEntry = keysetHandle.getAt(1);
+    assertThat(fakeMonitoringClient.getLogKeyExportEntries()).isEmpty();
+    Key unusedKey = keysetHandleEntry.getKey();
+    List<FakeMonitoringClient.LogKeyExportEntry> exports =
+        fakeMonitoringClient.getLogKeyExportEntries();
+    assertThat(exports).hasSize(1);
+    FakeMonitoringClient.LogKeyExportEntry entry = exports.get(0);
+    assertThat(keysetHandle.getAt(0).getKey().equalsKey(entry.getKeysetInfo().getAt(0).getKey()))
+        .isTrue();
+    assertThat(keysetHandle.getAt(1).getKey().equalsKey(entry.getKeysetInfo().getAt(1).getKey()))
+        .isTrue();
+    assertThat(keysetHandle.getAt(2).getKey().equalsKey(entry.getKeysetInfo().getAt(2).getKey()))
+        .isTrue();
+    assertThat(entry.getKeyInfo().getKey().equalsKey(keysetHandle.getAt(1).getKey())).isTrue();
+    assertThat(entry.getAnnotations()).isEqualTo(annotations);
+    assertThat(entry.getPrimitive()).isEqualTo("keyset_handle");
+    assertThat(entry.getApi()).isEqualTo("get_key");
+    assertThat(entry.getKeyId()).isEqualTo(101);
+  }
+
+  @Test
+  public void ifConstructedFromSerialization_isMonitored() throws Exception {
+    // CleartextKeysetHandle.read currently uses a different path then the builder; we check
+    // that the monitoring happens correctly on that path as well.
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.importKey(XChaCha20Poly1305Key.create(SecretBytes.randomBytes(32)))
+                    .withFixedId(100))
+            .addEntry(
+                KeysetHandle.importKey(XChaCha20Poly1305Key.create(SecretBytes.randomBytes(32)))
+                    .withFixedId(101))
+            .addEntry(
+                KeysetHandle.importKey(XChaCha20Poly1305Key.create(SecretBytes.randomBytes(32)))
+                    .withFixedId(102)
+                    .makePrimary())
+            .build();
+    byte[] serializedKeyset =
+        TinkProtoKeysetFormat.serializeKeyset(keysetHandle, InsecureSecretKeyAccess.get());
+    ByteArrayInputStream inputStream2 = new ByteArrayInputStream(serializedKeyset);
+    KeysetReader reader2 = BinaryKeysetReader.withInputStream(inputStream2);
+    HashMap<String, String> annotationsMap = new HashMap<>();
+    annotationsMap.put("annotation_name", "annotation_value");
+
+    FakeMonitoringClient fakeMonitoringClient = new FakeMonitoringClient();
+    MutableMonitoringRegistry.globalInstance().clear();
+    MutableMonitoringRegistry.globalInstance().registerMonitoringClient(fakeMonitoringClient);
+
+    KeysetHandle monitoredHandle = CleartextKeysetHandle.read(reader2, annotationsMap);
+    Key unusedKey = monitoredHandle.getAt(1).getKey();
+    List<FakeMonitoringClient.LogKeyExportEntry> exports =
+        fakeMonitoringClient.getLogKeyExportEntries();
+    assertThat(exports).hasSize(1);
+    FakeMonitoringClient.LogKeyExportEntry entry = exports.get(0);
+    assertThat(keysetHandle.getAt(0).getKey().equalsKey(entry.getKeysetInfo().getAt(0).getKey()))
+        .isTrue();
+    assertThat(keysetHandle.getAt(1).getKey().equalsKey(entry.getKeysetInfo().getAt(1).getKey()))
+        .isTrue();
+    assertThat(keysetHandle.getAt(2).getKey().equalsKey(entry.getKeysetInfo().getAt(2).getKey()))
+        .isTrue();
+    assertThat(entry.getKeyInfo().getKey().equalsKey(keysetHandle.getAt(1).getKey())).isTrue();
+    assertThat(entry.getPrimitive()).isEqualTo("keyset_handle");
+    assertThat(entry.getApi()).isEqualTo("get_key");
+    assertThat(entry.getKeyId()).isEqualTo(101);
+  }
+
+  @Test
+  public void getPublicKeyset_isMonitored() throws Exception {
+    MonitoringAnnotations annotations =
+        MonitoringAnnotations.newBuilder().add("annotation_name", "annotation_value").build();
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.generateEntryFromParameters(PredefinedSignatureParameters.ECDSA_P256)
+                    .withFixedId(100)
+                    .makePrimary())
+            .setMonitoringAnnotations(annotations)
+            .build();
+    KeysetHandle publicKeysetHandle = keysetHandle.getPublicKeysetHandle();
+
+    FakeMonitoringClient fakeMonitoringClient = new FakeMonitoringClient();
+    MutableMonitoringRegistry.globalInstance().clear();
+    MutableMonitoringRegistry.globalInstance().registerMonitoringClient(fakeMonitoringClient);
+    Key unusedKey = publicKeysetHandle.getAt(0).getKey();
+    List<FakeMonitoringClient.LogKeyExportEntry> exports =
+        fakeMonitoringClient.getLogKeyExportEntries();
+    assertThat(exports).hasSize(1);
+    FakeMonitoringClient.LogKeyExportEntry entry = exports.get(0);
+    assertThat(
+            publicKeysetHandle.getAt(0).getKey().equalsKey(entry.getKeysetInfo().getAt(0).getKey()))
+        .isTrue();
+    assertThat(entry.getKeyInfo().getKey().equalsKey(publicKeysetHandle.getAt(0).getKey()))
+        .isTrue();
+    assertThat(entry.getAnnotations()).isEqualTo(annotations);
+    assertThat(entry.getPrimitive()).isEqualTo("keyset_handle");
+    assertThat(entry.getApi()).isEqualTo("get_key");
+    assertThat(entry.getKeyId()).isEqualTo(100);
+  }
+
+  @Test
+  public void ifEmptyAnnotationsThenNoMonitoring() throws Exception {
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.importKey(XChaCha20Poly1305Key.create(SecretBytes.randomBytes(32)))
+                    .withFixedId(100))
+            .addEntry(
+                KeysetHandle.importKey(XChaCha20Poly1305Key.create(SecretBytes.randomBytes(32)))
+                    .withFixedId(101))
+            .addEntry(
+                KeysetHandle.importKey(XChaCha20Poly1305Key.create(SecretBytes.randomBytes(32)))
+                    .withFixedId(102)
+                    .makePrimary())
+            .build();
+    FakeMonitoringClient fakeMonitoringClient = new FakeMonitoringClient();
+    MutableMonitoringRegistry.globalInstance().clear();
+    MutableMonitoringRegistry.globalInstance().registerMonitoringClient(fakeMonitoringClient);
+
+    assertThat(fakeMonitoringClient.getLogKeyExportEntries()).isEmpty();
+    KeysetHandle.Entry unusedEntry = keysetHandle.getAt(1);
+    unusedEntry = keysetHandle.getPrimary();
+    List<FakeMonitoringClient.LogKeyExportEntry> exports =
+        fakeMonitoringClient.getLogKeyExportEntries();
+    assertThat(exports).isEmpty();
   }
 }

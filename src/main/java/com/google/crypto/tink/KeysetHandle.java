@@ -22,7 +22,9 @@ import com.google.crypto.tink.internal.InternalConfiguration;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
+import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
+import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
@@ -382,7 +384,8 @@ public final class KeysetHandle implements KeysetHandleInterface {
                   serializeStatus(builderEntry.keyStatus),
                   id,
                   builderEntry.isPrimary,
-                  /* keyParsingFailed= */ false);
+                  /* keyParsingFailed= */ false,
+                  KeysetHandle.Entry.NO_LOGGING);
           keysetKey =
               createKeysetKey(builderEntry.key, serializeStatus(builderEntry.keyStatus), id);
         } else {
@@ -396,7 +399,8 @@ public final class KeysetHandle implements KeysetHandleInterface {
                   serializeStatus(builderEntry.keyStatus),
                   id,
                   builderEntry.isPrimary,
-                  /* keyParsingFailed= */ false);
+                  /* keyParsingFailed= */ false,
+                  KeysetHandle.Entry.NO_LOGGING);
           keysetKey = createKeysetKey(key, serializeStatus(builderEntry.keyStatus), id);
         }
         keysetBuilder.addKey(keysetKey);
@@ -417,7 +421,8 @@ public final class KeysetHandle implements KeysetHandleInterface {
       keysetBuilder.setPrimaryKeyId(primaryId);
       Keyset keyset = keysetBuilder.build();
       assertEnoughKeyMaterial(keyset);
-      return new KeysetHandle(keyset, handleEntries, annotations);
+      KeysetHandle unmonitoredKeyset = new KeysetHandle(keyset, handleEntries, annotations);
+      return addMonitoringIfNeeded(unmonitoredKeyset);
     }
   }
 
@@ -434,14 +439,28 @@ public final class KeysetHandle implements KeysetHandleInterface {
    */
   @Immutable
   public static final class Entry implements KeysetHandleInterface.Entry {
+    /** The same as {@code java.util.function.Consumer<Entry>}, but supported on Android 23. */
+    @Immutable
+    private static interface EntryConsumer {
+      void accept(KeysetHandle.Entry entry);
+    }
+
+    private static final EntryConsumer NO_LOGGING = (KeysetHandle.Entry e) -> {};
+
     private Entry(
-        Key key, KeyStatusType keyStatusType, int id, boolean isPrimary, boolean keyParsingFailed) {
+        Key key,
+        KeyStatusType keyStatusType,
+        int id,
+        boolean isPrimary,
+        boolean keyParsingFailed,
+        Entry.EntryConsumer keyExportLogger) {
       this.key = key;
       this.keyStatusType = keyStatusType;
       this.keyStatus = parseStatusWithDisabledFallback(keyStatusType);
       this.id = id;
       this.isPrimary = isPrimary;
       this.keyParsingFailed = keyParsingFailed;
+      this.keyExportLogger = keyExportLogger;
     }
 
     private final Key key;
@@ -454,6 +473,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
     private final int id;
     private final boolean isPrimary;
     private final boolean keyParsingFailed;
+    private final EntryConsumer keyExportLogger;
 
     /**
      * May return an internal class {@link com.google.crypto.tink.internal.LegacyProtoKey} in case
@@ -461,6 +481,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
      */
     @Override
     public Key getKey() {
+      keyExportLogger.accept(this);
       return key;
     }
 
@@ -573,7 +594,12 @@ public final class KeysetHandle implements KeysetHandleInterface {
       }
       result.add(
           new KeysetHandle.Entry(
-              key, protoKey.getStatus(), id, id == keyset.getPrimaryKeyId(), keyParsingFailed));
+              key,
+              protoKey.getStatus(),
+              id,
+              id == keyset.getPrimaryKeyId(),
+              keyParsingFailed,
+              Entry.NO_LOGGING));
     }
     return Collections.unmodifiableList(result);
   }
@@ -657,6 +683,35 @@ public final class KeysetHandle implements KeysetHandleInterface {
     }
   }
 
+  private KeysetHandle(List<Entry> entries, MonitoringAnnotations annotations) {
+    this.entries = entries;
+    this.annotations = annotations;
+  }
+
+  private static KeysetHandle addMonitoringIfNeeded(KeysetHandle unmonitoredHandle) {
+    MonitoringAnnotations annotations = unmonitoredHandle.annotations;
+    if (annotations.isEmpty()) {
+      return unmonitoredHandle;
+    }
+    @SuppressWarnings("Immutable") // KeysetHandle is not annotated with immutable
+    KeysetHandle.Entry.EntryConsumer keyExportLogger =
+        (KeysetHandle.Entry entryToLog) -> {
+          MonitoringClient client =
+              MutableMonitoringRegistry.globalInstance().getMonitoringClient();
+          client
+              .createLogger(unmonitoredHandle, annotations, "keyset_handle", "get_key")
+              .logKeyExport(entryToLog.getId());
+        };
+
+    List<Entry> monitoredEntries = new ArrayList<>(unmonitoredHandle.entries.size());
+    for (Entry e : unmonitoredHandle.entries) {
+      monitoredEntries.add(
+          new Entry(
+              e.key, e.keyStatusType, e.id, e.isPrimary, e.keyParsingFailed, keyExportLogger));
+    }
+    return new KeysetHandle(monitoredEntries, annotations);
+  }
+
   /**
    * @return a new {@link KeysetHandle} from a {@code keyset}.
    * @throws GeneralSecurityException if the keyset is null or empty.
@@ -676,7 +731,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
       Keyset keyset, MonitoringAnnotations annotations) throws GeneralSecurityException {
     assertEnoughKeyMaterial(keyset);
     List<Entry> entries = getEntriesFromKeyset(keyset);
-    return new KeysetHandle(keyset, entries, annotations);
+    return addMonitoringIfNeeded(new KeysetHandle(keyset, entries, annotations));
   }
 
   /** Returns the actual keyset data. */
@@ -1072,7 +1127,8 @@ public final class KeysetHandle implements KeysetHandleInterface {
                 entry.keyStatusType,
                 entry.getId(),
                 entry.isPrimary(),
-                /* keyParsingFailed= */ false);
+                /* keyParsingFailed= */ false,
+                Entry.NO_LOGGING);
         publicProtoKey = createKeysetKey(publicKey, entry.keyStatusType, entry.getId());
       } else {
         Keyset.Key protoKey = keyset.getKey(i);
@@ -1100,7 +1156,8 @@ public final class KeysetHandle implements KeysetHandleInterface {
                 entry.keyStatusType,
                 id,
                 id == keyset.getPrimaryKeyId(),
-                keyParsingFailed);
+                keyParsingFailed,
+                Entry.NO_LOGGING);
       }
 
       publicKeysetBuilder.addKey(publicProtoKey);
@@ -1108,7 +1165,8 @@ public final class KeysetHandle implements KeysetHandleInterface {
       i++;
     }
     publicKeysetBuilder.setPrimaryKeyId(keyset.getPrimaryKeyId());
-    return new KeysetHandle(publicKeysetBuilder.build(), publicEntries, annotations);
+    return addMonitoringIfNeeded(
+        new KeysetHandle(publicKeysetBuilder.build(), publicEntries, annotations));
   }
 
   private static KeyData getPublicKeyDataFromRegistry(KeyData privateKeyData)
