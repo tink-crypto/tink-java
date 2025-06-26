@@ -328,7 +328,7 @@ public class ConfigurationV0 {
     if (key.getParameters().getKeySizeBytes() != AES_CMAC_KEY_SIZE_BYTES) {
       throw new GeneralSecurityException("AesCmac key size is not 32 bytes");
     }
-    return new ChunkedAesCmacImpl(key);
+    return ChunkedAesCmacImpl.create(key);
   }
 
   private static Mac createAesCmac(AesCmacKey key) throws GeneralSecurityException {

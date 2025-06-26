@@ -21,7 +21,6 @@ java_test(
         "//src/main/java/com/google/crypto/tink:mac",
         "//src/main/java/com/google/crypto/tink:registry_cluster",
         "//src/main/java/com/google/crypto/tink:registry_configuration",
-        "//src/main/java/com/google/crypto/tink/config:tink_fips",
         "//src/main/java/com/google/crypto/tink/mac:aes_cmac_key",
         "//src/main/java/com/google/crypto/tink/mac:aes_cmac_parameters",
         "//src/main/java/com/google/crypto/tink/mac:chunked_mac",
@@ -166,6 +165,19 @@ java_test(
         "@maven//:com_google_code_findbugs_jsr305",
         "@maven//:com_google_protobuf_protobuf_java",
         "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
+    name = "ChunkedAesCmacFipsTest",
+    size = "small",
+    srcs = ["ChunkedAesCmacFipsTest.java"],
+    tags = ["fips"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/config:tink_fips",
+        "//src/main/java/com/google/crypto/tink/mac/internal:aes_cmac_test_util",
+        "//src/main/java/com/google/crypto/tink/mac/internal:chunked_aes_cmac_impl",
         "@maven//:junit_junit",
     ],
 )

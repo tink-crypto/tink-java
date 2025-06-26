@@ -18,14 +18,11 @@ package com.google.crypto.tink.mac.internal;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
-import static org.junit.Assume.assumeFalse;
-import static org.junit.Assume.assumeTrue;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
 import com.google.crypto.tink.RegistryConfiguration;
-import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.mac.AesCmacKey;
 import com.google.crypto.tink.mac.AesCmacParameters;
 import com.google.crypto.tink.mac.AesCmacParameters.Variant;
@@ -132,7 +129,7 @@ public class ChunkedAesCmacTest {
             .build();
     Mac mac = keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
     AesCmacKey key = (AesCmacKey) keysetHandle.getAt(0).getKey();
-    ChunkedMac chunkedMac = new ChunkedAesCmacImpl(key);
+    ChunkedMac chunkedMac = ChunkedAesCmacImpl.create(key);
     ChunkedMacComputation chunkedMacComputation = chunkedMac.createComputation();
 
     byte[] testData = new byte[] {1, 2, 3, 4, 5, 6, 7, 8};
@@ -141,20 +138,9 @@ public class ChunkedAesCmacTest {
   }
 
   @Test
-  public void testFipsCompatibility() {
-    assumeTrue(TinkFips.useOnlyFips());
-
-    // In FIPS-mode we expect that creating a ChunkedAesCmacImpl fails.
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> new ChunkedAesCmacImpl(AesCmacTestUtil.RFC_TEST_VECTOR_0.key));
-  }
-
-  @Test
   public void testTagTruncation() throws Exception {
-    assumeFalse(TinkFips.useOnlyFips());
     for (AesCmacTestVector t : cmacTestVectorsFromRfc) {
-      ChunkedMac mac = new ChunkedAesCmacImpl(t.key);
+      ChunkedMac mac = ChunkedAesCmacImpl.create(t.key);
 
       for (int j = 1; j < t.tag.length; j++) {
         byte[] modifiedTag = Arrays.copyOf(t.tag, t.tag.length - j);
@@ -171,7 +157,7 @@ public class ChunkedAesCmacTest {
               .setParameters(AesCmacTestUtil.createAesCmacParameters(16, 16, Variant.NO_PREFIX))
               .setAesKeyBytes(SecretBytes.randomBytes(16))
               .build();
-      ChunkedMac mac = new ChunkedAesCmacImpl(key);
+      ChunkedMac mac = ChunkedAesCmacImpl.create(key);
       for (int j = 1; j < t.tag.length; j++) {
         byte[] modifiedTag = Arrays.copyOf(t.tag, t.tag.length - j);
         ChunkedMacVerification macVerification = mac.createVerification(modifiedTag);
@@ -183,9 +169,8 @@ public class ChunkedAesCmacTest {
 
   @Test
   public void testBitFlipMessage() throws Exception {
-    assumeFalse(TinkFips.useOnlyFips());
     for (AesCmacTestVector t : cmacTestVectorsFromRfc) {
-      ChunkedMac mac = new ChunkedAesCmacImpl(t.key);
+      ChunkedMac mac = ChunkedAesCmacImpl.create(t.key);
       for (int b = 0; b < t.message.length; b++) {
         for (int bit = 0; bit < 8; bit++) {
           byte[] modifiedMessage = Arrays.copyOf(t.message, t.message.length);
@@ -203,7 +188,7 @@ public class ChunkedAesCmacTest {
               .setParameters(AesCmacTestUtil.createAesCmacParameters(16, 16, Variant.NO_PREFIX))
               .setAesKeyBytes(SecretBytes.randomBytes(16))
               .build();
-      ChunkedMac mac = new ChunkedAesCmacImpl(key);
+      ChunkedMac mac = ChunkedAesCmacImpl.create(key);
       for (int b = 0; b < t.message.length; b++) {
         for (int bit = 0; bit < 8; bit++) {
           byte[] modifiedMessage = Arrays.copyOf(t.message, t.message.length);
@@ -218,9 +203,8 @@ public class ChunkedAesCmacTest {
 
   @Test
   public void testBitFlipTag() throws Exception {
-    assumeFalse(TinkFips.useOnlyFips());
     for (AesCmacTestVector t : cmacTestVectorsFromRfc) {
-      ChunkedMac mac = new ChunkedAesCmacImpl(t.key);
+      ChunkedMac mac = ChunkedAesCmacImpl.create(t.key);
       for (int b = 0; b < t.tag.length; b++) {
         for (int bit = 0; bit < 8; bit++) {
           byte[] modifiedTag = Arrays.copyOf(t.tag, t.tag.length);
@@ -238,7 +222,7 @@ public class ChunkedAesCmacTest {
               .setParameters(AesCmacTestUtil.createAesCmacParameters(16, 16, Variant.NO_PREFIX))
               .setAesKeyBytes(SecretBytes.randomBytes(16))
               .build();
-      ChunkedMac mac = new ChunkedAesCmacImpl(key);
+      ChunkedMac mac = ChunkedAesCmacImpl.create(key);
       for (int b = 0; b < t.tag.length; b++) {
         for (int bit = 0; bit < 8; bit++) {
           byte[] modifiedTag = Arrays.copyOf(t.tag, t.tag.length);
@@ -253,8 +237,7 @@ public class ChunkedAesCmacTest {
 
   @Test
   public void testThrowExceptionUpdateAfterFinalize() throws Exception {
-    assumeFalse(TinkFips.useOnlyFips());
-    ChunkedMac mac = new ChunkedAesCmacImpl(AesCmacTestUtil.RFC_TEST_VECTOR_0.key);
+    ChunkedMac mac = ChunkedAesCmacImpl.create(AesCmacTestUtil.RFC_TEST_VECTOR_0.key);
 
     ChunkedMacComputation macComputation = mac.createComputation();
     macComputation.update(ByteBuffer.wrap(AesCmacTestUtil.RFC_TEST_VECTOR_0.message));
@@ -316,7 +299,7 @@ public class ChunkedAesCmacTest {
                   .setAesKeyBytes(SecretBytes.copyFrom(key, InsecureSecretKeyAccess.get()))
                   .setParameters(noPrefixParameters).build();
 
-          ChunkedMac mac = new ChunkedAesCmacImpl(aesCmacKey);
+          ChunkedMac mac = ChunkedAesCmacImpl.create(aesCmacKey);
 
           ChunkedMacComputation macComputation = mac.createComputation();
           macComputation.update(ByteBuffer.wrap(msg));
@@ -344,9 +327,8 @@ public class ChunkedAesCmacTest {
 
   @Test
   public void testCreateVerificationFailsFast() throws Exception {
-    assumeFalse(TinkFips.useOnlyFips());
     for (AesCmacTestVector t : cmacVerificationFailFastTestVectors) {
-      ChunkedMac mac = new ChunkedAesCmacImpl(t.key);
+      ChunkedMac mac = ChunkedAesCmacImpl.create(t.key);
       assertThrows(GeneralSecurityException.class, () -> mac.createVerification(t.tag));
     }
   }
@@ -378,9 +360,8 @@ public class ChunkedAesCmacTest {
   /* ## 0, 2, 3 */
   @Test
   public void testMacTestVectors() throws Exception {
-    assumeFalse(TinkFips.useOnlyFips());
     for (AesCmacTestVector t : cmacTestVectorsFromRfc) {
-      ChunkedMac mac = new ChunkedAesCmacImpl(t.key);
+      ChunkedMac mac = ChunkedAesCmacImpl.create(t.key);
 
       try {
         ChunkedMacComputation macComputation = mac.createComputation();
@@ -403,9 +384,8 @@ public class ChunkedAesCmacTest {
   /* ## 0, 2, 3 */
   @Test
   public void testMacTestVectorsReadOnlyBuffer() throws Exception {
-    assumeFalse(TinkFips.useOnlyFips());
     for (AesCmacTestVector t : cmacTestVectorsFromRfc) {
-      ChunkedMac mac = new ChunkedAesCmacImpl(t.key);
+      ChunkedMac mac = ChunkedAesCmacImpl.create(t.key);
 
       try {
         ChunkedMacComputation macComputation = mac.createComputation();
@@ -428,9 +408,8 @@ public class ChunkedAesCmacTest {
   /* ## 1, 2, 3 */
   @Test
   public void testImplementationTestVectors() throws Exception {
-    assumeFalse(TinkFips.useOnlyFips());
     for (AesCmacTestVector t : CMAC_IMPLEMENTATION_DETAIL_TEST_VECTORS) {
-      ChunkedMac mac = new ChunkedAesCmacImpl(t.key);
+      ChunkedMac mac = ChunkedAesCmacImpl.create(t.key);
 
       try {
         ChunkedMacComputation macComputation = mac.createComputation();
@@ -453,8 +432,7 @@ public class ChunkedAesCmacTest {
   /* # 0 */
   @Test
   public void testMultipleEmptyUpdates() throws Exception {
-    assumeFalse(TinkFips.useOnlyFips());
-    ChunkedMac mac = new ChunkedAesCmacImpl(AesCmacTestUtil.RFC_TEST_VECTOR_0.key);
+    ChunkedMac mac = ChunkedAesCmacImpl.create(AesCmacTestUtil.RFC_TEST_VECTOR_0.key);
 
     ChunkedMacComputation macComputation = mac.createComputation();
     macComputation.update(ByteBuffer.wrap(AesCmacTestUtil.RFC_TEST_VECTOR_0.message));
@@ -477,9 +455,8 @@ public class ChunkedAesCmacTest {
   /* ## 0, 1, 5, 6, 10  */
   @Test
   public void testSmallUpdates() throws Exception {
-    assumeFalse(TinkFips.useOnlyFips());
     for (AesCmacTestVector t : CMAC_IMPLEMENTATION_DETAIL_TEST_VECTORS) {
-      ChunkedMac mac = new ChunkedAesCmacImpl(t.key);
+      ChunkedMac mac = ChunkedAesCmacImpl.create(t.key);
 
       ChunkedMacComputation macComputation = mac.createComputation();
       for (byte b : t.message) {
@@ -500,8 +477,7 @@ public class ChunkedAesCmacTest {
   /* # 8, 9 */
   @Test
   public void testEmptyLastUpdateWithFullStash() throws Exception {
-    assumeFalse(TinkFips.useOnlyFips());
-    ChunkedMac mac = new ChunkedAesCmacImpl(AesCmacTestUtil.FILL_UP_EXACTLY_INTERNAL_STATE.key);
+    ChunkedMac mac = ChunkedAesCmacImpl.create(AesCmacTestUtil.FILL_UP_EXACTLY_INTERNAL_STATE.key);
 
     ChunkedMacComputation macComputation = mac.createComputation();
     macComputation.update(ByteBuffer.wrap(AesCmacTestUtil.FILL_UP_EXACTLY_INTERNAL_STATE.message));
@@ -519,8 +495,7 @@ public class ChunkedAesCmacTest {
   /* ## 1, 4, 5, 6, 7, 8, 9, 11 */
   @Test
   public void testMultipleUpdatesDifferentSizes() throws Exception {
-    assumeFalse(TinkFips.useOnlyFips());
-    ChunkedMac mac = new ChunkedAesCmacImpl(AesCmacTestUtil.RFC_TEST_VECTOR_1.key);
+    ChunkedMac mac = ChunkedAesCmacImpl.create(AesCmacTestUtil.RFC_TEST_VECTOR_1.key);
 
     ChunkedMacComputation macComputation = mac.createComputation();
     macComputation.update(
@@ -562,7 +537,6 @@ public class ChunkedAesCmacTest {
    */
   @Test
   public void testRandomizedDataChunking() throws Exception {
-    assumeFalse(TinkFips.useOnlyFips());
     for (AesCmacTestVector t : cmacTestVectorsFromRfc) {
       testRandomized(t);
     }
@@ -608,7 +582,7 @@ public class ChunkedAesCmacTest {
   }
 
   private void testRandomized(AesCmacTestVector t) throws Exception {
-    ChunkedMac mac = new ChunkedAesCmacImpl(t.key);
+    ChunkedMac mac = ChunkedAesCmacImpl.create(t.key);
     ChunkedMacComputation macComputation = mac.createComputation();
 
     int read = 0;
@@ -645,9 +619,7 @@ public class ChunkedAesCmacTest {
   public void testTagModificationAfterCreateVerification(
       @FromDataPoints("implementationTestVectors") AesCmacTestVector t)
       throws Exception {
-    assumeFalse(TinkFips.useOnlyFips());
-
-    ChunkedMac mac = new ChunkedAesCmacImpl(t.key);
+    ChunkedMac mac = ChunkedAesCmacImpl.create(t.key);
 
     byte[] mutableTag = Arrays.copyOf(t.tag, t.tag.length);
     ChunkedMacVerification macVerification = mac.createVerification(mutableTag);

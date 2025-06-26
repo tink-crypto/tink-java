@@ -71,7 +71,7 @@ public final class AesCmacKeyManager {
 
   private static ChunkedMac createChunkedMac(AesCmacKey key) throws GeneralSecurityException {
     validateParameters(key.getParameters());
-    return new ChunkedAesCmacImpl(key);
+    return ChunkedAesCmacImpl.create(key);
   }
 
   private static Mac createMac(AesCmacKey key) throws GeneralSecurityException {

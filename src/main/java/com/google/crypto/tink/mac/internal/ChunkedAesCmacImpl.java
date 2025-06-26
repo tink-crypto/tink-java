@@ -34,10 +34,7 @@ public final class ChunkedAesCmacImpl implements ChunkedMac {
   @SuppressWarnings("Immutable") // We never change the key.
   private final AesCmacKey key;
 
-  public ChunkedAesCmacImpl(AesCmacKey key) throws GeneralSecurityException {
-    if (!FIPS.isCompatible()) {
-      throw new GeneralSecurityException("Can not use AES-CMAC in FIPS-mode.");
-    }
+  private ChunkedAesCmacImpl(AesCmacKey key) {
     this.key = key;
   }
 
@@ -56,5 +53,13 @@ public final class ChunkedAesCmacImpl implements ChunkedMac {
       throw new GeneralSecurityException("Wrong tag prefix");
     }
     return ChunkedMacVerificationFromComputation.create(new ChunkedAesCmacComputation(key), tag);
+  }
+
+  /** Creates a {@link ChunkedMac} implementation for AES-CMAC. */
+  public static ChunkedMac create(AesCmacKey key) throws GeneralSecurityException {
+    if (!FIPS.isCompatible()) {
+      throw new GeneralSecurityException("Cannot use AES-CMAC in FIPS-mode.");
+    }
+    return new ChunkedAesCmacImpl(key);
   }
 }
