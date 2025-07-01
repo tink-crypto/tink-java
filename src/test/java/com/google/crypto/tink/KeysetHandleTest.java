@@ -2316,6 +2316,31 @@ public class KeysetHandleTest {
   }
 
   @Test
+  public void getPrimitive_doesNotMonitor() throws Exception {
+    // Checks that "getPrimitive()" does not invoke key export monitoring.
+    MonitoringAnnotations annotations =
+        MonitoringAnnotations.newBuilder().add("annotation_name", "annotation_value").build();
+
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.importKey(XChaCha20Poly1305Key.create(SecretBytes.randomBytes(32)))
+                    .withFixedId(102)
+                    .makePrimary())
+            .setMonitoringAnnotations(annotations)
+            .build();
+    FakeMonitoringClient fakeMonitoringClient = new FakeMonitoringClient();
+    MutableMonitoringRegistry.globalInstance().clear();
+    MutableMonitoringRegistry.globalInstance().registerMonitoringClient(fakeMonitoringClient);
+
+    // getPrimitive is not monitored;
+    Object unused = keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
+    List<FakeMonitoringClient.LogKeyExportEntry> exports =
+        fakeMonitoringClient.getLogKeyExportEntries();
+    assertThat(exports).isEmpty();
+  }
+
+  @Test
   public void ifConstructedFromSerialization_isMonitored() throws Exception {
     // CleartextKeysetHandle.read currently uses a different path then the builder; we check
     // that the monitoring happens correctly on that path as well.

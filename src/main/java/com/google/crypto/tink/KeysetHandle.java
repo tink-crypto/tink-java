@@ -655,6 +655,17 @@ public final class KeysetHandle implements KeysetHandleInterface {
   private final List<Entry> entries;
   private final MonitoringAnnotations annotations;
 
+  /**
+   * A version of this keyset handle in which "getKey" is not monitored. If "this" is already
+   * unmonitored, then equal to null. Use `getUnmonitoredHandle` to get a guaranteed unmonitored
+   * version of the current keyset.
+   */
+  @Nullable private final KeysetHandle unmonitoredHandle;
+
+  private KeysetHandle getUnmonitoredHandle() {
+    return unmonitoredHandle == null ? this : unmonitoredHandle;
+  }
+
   private static void validateNoDuplicateIds(Keyset keyset) throws GeneralSecurityException {
     Set<Integer> idsSoFar = new HashSet<>();
     for (Keyset.Key k : keyset.getKeyList()) {
@@ -681,11 +692,14 @@ public final class KeysetHandle implements KeysetHandleInterface {
     if (GlobalTinkFlags.validateKeysetsOnParsing.getValue()) {
       validateNoDuplicateIds(keyset);
     }
+    this.unmonitoredHandle = null;
   }
 
-  private KeysetHandle(List<Entry> entries, MonitoringAnnotations annotations) {
+  private KeysetHandle(
+      List<Entry> entries, MonitoringAnnotations annotations, KeysetHandle unmonitoredHandle) {
     this.entries = entries;
     this.annotations = annotations;
+    this.unmonitoredHandle = unmonitoredHandle;
   }
 
   private static KeysetHandle addMonitoringIfNeeded(KeysetHandle unmonitoredHandle) {
@@ -709,7 +723,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
           new Entry(
               e.key, e.keyStatusType, e.id, e.isPrimary, e.keyParsingFailed, keyExportLogger));
     }
-    return new KeysetHandle(monitoredEntries, annotations);
+    return new KeysetHandle(monitoredEntries, annotations, unmonitoredHandle);
   }
 
   /**
@@ -1232,7 +1246,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
 
   private <P> P getPrimitiveInternal(InternalConfiguration config, Class<P> classObject)
       throws GeneralSecurityException {
-    Keyset keyset = getKeyset();
+    Keyset keyset = getUnmonitoredHandle().getKeyset();
     Util.validateKeyset(keyset);
     for (int i = 0; i < size(); ++i) {
       if (entries.get(i).keyParsingFailed || !isValidKeyStatusType(entries.get(i).keyStatusType)) {
@@ -1245,7 +1259,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
                 + " failed, unable to get primitive");
       }
     }
-    return config.wrap(this, annotations, classObject);
+    return config.wrap(getUnmonitoredHandle(), annotations, classObject);
   }
 
   /**
