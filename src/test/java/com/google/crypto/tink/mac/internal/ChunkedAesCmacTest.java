@@ -39,6 +39,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -65,7 +66,7 @@ public class ChunkedAesCmacTest {
       };
 
   @DataPoints("implementationTestVectors")
-  public static final AesCmacTestVector[] CMAC_IMPLEMENTATION_DETAIL_TEST_VECTORS =
+  public static final AesCmacTestVector[] cmacImplementationDetailTestVectors =
       new AesCmacTestVector[] {
         AesCmacTestUtil.NOT_OVERFLOWING_INTERNAL_STATE,
         AesCmacTestUtil.FILL_UP_EXACTLY_INTERNAL_STATE,
@@ -86,7 +87,7 @@ public class ChunkedAesCmacTest {
       };
 
   @DataPoints("parameters")
-  public static final AesCmacParameters[] PARAMETERS = {
+  public static final AesCmacParameters[] parameters = {
     AesCmacTestUtil.createAesCmacParameters(32, 10, Variant.LEGACY),
     AesCmacTestUtil.createAesCmacParameters(32, 11, Variant.LEGACY),
     AesCmacTestUtil.createAesCmacParameters(32, 12, Variant.LEGACY),
@@ -258,10 +259,10 @@ public class ChunkedAesCmacTest {
   }
 
   @Test
-  public void testWycheproofVectors() throws Exception {
+  public void computeAndVerifyMac_withWycheproofVectors_works() throws Exception {
     JsonObject json =
         WycheproofTestUtil.readJson("../wycheproof/testvectors/aes_cmac_test.json");
-    int errors = 0;
+    ArrayList<String> errors = new ArrayList<>();
     JsonArray testGroups = json.getAsJsonArray("testGroups");
     for (int i = 0; i < testGroups.size(); i++) {
       JsonObject group = testGroups.get(i).getAsJsonObject();
@@ -269,7 +270,8 @@ public class ChunkedAesCmacTest {
 
       int tagSize = group.get("tagSize").getAsInt();
       int keySize = group.get("keySize").getAsInt();
-      if (!Arrays.asList(16, 32).contains(keySize / 8)) {
+      if (keySize == 192) {
+        // Our implementation does not support 192-bit keys.
         continue;
       }
 
@@ -288,6 +290,9 @@ public class ChunkedAesCmacTest {
         // "acceptable" are test vectors with weak parameters or legacy formats, but there are no
         // "acceptable" tests cases for Aes Cmac.
         String result = testCase.get("result").getAsString();
+        if (!result.equals("valid") && !result.equals("invalid")) {
+          errors.add("FAIL " + tcId + ": result is not valid or invalid");
+        }
 
         try {
           AesCmacParameters noPrefixParameters =
@@ -303,7 +308,7 @@ public class ChunkedAesCmacTest {
 
           ChunkedMacComputation macComputation = mac.createComputation();
           macComputation.update(ByteBuffer.wrap(msg));
-          assertThat(tag).isEqualTo(macComputation.computeMac());
+          assertThat(macComputation.computeMac()).isEqualTo(tag);
 
           ChunkedMacVerification macVerification = mac.createVerification(tag);
           macVerification.update(ByteBuffer.wrap(msg));
@@ -311,18 +316,16 @@ public class ChunkedAesCmacTest {
 
           // If the test is "invalid" but no exception is thrown, it's an error.
           if (result.equals("invalid")) {
-            System.out.printf("FAIL %s: invalid Wycheproof test did not fail%n", tcId);
-            errors++;
+            errors.add("FAIL " + tcId + ": invalid Wycheproof test did not fail");
           }
         } catch (GeneralSecurityException | AssertionError ex) {
           if (result.equals("valid")) {
-            System.out.printf("FAIL %s: Wycheproof test failed, exception %s%n", tcId, ex);
-            errors++;
+            errors.add("FAIL " + tcId + ": Wycheproof test failed, exception " + ex);
           }
         }
       }
     }
-    assertThat(errors).isEqualTo(0);
+    assertThat(errors).isEmpty();
   }
 
   @Test
@@ -408,7 +411,7 @@ public class ChunkedAesCmacTest {
   /* ## 1, 2, 3 */
   @Test
   public void testImplementationTestVectors() throws Exception {
-    for (AesCmacTestVector t : CMAC_IMPLEMENTATION_DETAIL_TEST_VECTORS) {
+    for (AesCmacTestVector t : cmacImplementationDetailTestVectors) {
       ChunkedMac mac = ChunkedAesCmacImpl.create(t.key);
 
       try {
@@ -455,7 +458,7 @@ public class ChunkedAesCmacTest {
   /* ## 0, 1, 5, 6, 10  */
   @Test
   public void testSmallUpdates() throws Exception {
-    for (AesCmacTestVector t : CMAC_IMPLEMENTATION_DETAIL_TEST_VECTORS) {
+    for (AesCmacTestVector t : cmacImplementationDetailTestVectors) {
       ChunkedMac mac = ChunkedAesCmacImpl.create(t.key);
 
       ChunkedMacComputation macComputation = mac.createComputation();
@@ -540,7 +543,7 @@ public class ChunkedAesCmacTest {
     for (AesCmacTestVector t : cmacTestVectorsFromRfc) {
       testRandomized(t);
     }
-    for (AesCmacTestVector t : CMAC_IMPLEMENTATION_DETAIL_TEST_VECTORS) {
+    for (AesCmacTestVector t : cmacImplementationDetailTestVectors) {
       testRandomized(t);
     }
 
