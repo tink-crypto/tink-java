@@ -17,6 +17,7 @@
 package com.google.crypto.tink.mac.internal;
 
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.mac.AesCmacKey;
 import com.google.crypto.tink.mac.ChunkedMac;
 import com.google.crypto.tink.mac.ChunkedMacComputation;
@@ -24,6 +25,7 @@ import com.google.crypto.tink.mac.ChunkedMacVerification;
 import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
+import java.security.Provider;
 
 /** AES-CMAC implementation of the ChunkedMac interface. */
 @Immutable
@@ -34,7 +36,8 @@ public final class ChunkedAesCmacImpl implements ChunkedMac {
   @SuppressWarnings("Immutable") // We never change the key.
   private final AesCmacKey key;
 
-  private ChunkedAesCmacImpl(AesCmacKey key) {
+  // Visible for testing.
+  public ChunkedAesCmacImpl(AesCmacKey key) {
     this.key = key;
   }
 
@@ -59,6 +62,15 @@ public final class ChunkedAesCmacImpl implements ChunkedMac {
   public static ChunkedMac create(AesCmacKey key) throws GeneralSecurityException {
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException("Cannot use AES-CMAC in FIPS-mode.");
+    }
+    Provider conscrypt = ConscryptUtil.providerOrNull();
+    if (conscrypt != null) {
+      try {
+        // If available, we prefer to use Conscrypt's implementation of AES-CMAC.
+        return ChunkedAesCmacConscrypt.create(key, conscrypt);
+      } catch (GeneralSecurityException e) {
+        // Fall back to the default implementation.
+      }
     }
     return new ChunkedAesCmacImpl(key);
   }
