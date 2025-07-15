@@ -127,10 +127,9 @@ public class RegistryConfigurationTest {
     Mac wrappedConfigurationMac =
         RegistryConfiguration.get()
             .wrap(
-                PrimitiveSet.newBuilder()
-                    .addPrimary(legacyProtoRawKey, rawKeysetKey)
-                    .build()
-                    .getKeysetHandle(),
+                KeysetHandle.newBuilder()
+                    .addEntry(KeysetHandle.importKey(rawKey).withRandomId().makePrimary())
+                    .build(),
                 MonitoringAnnotations.EMPTY,
                 Mac.class);
 
@@ -145,7 +144,7 @@ public class RegistryConfigurationTest {
         () ->
             RegistryConfiguration.get()
                 .wrap(
-                    PrimitiveSet.newBuilder().build().getKeysetHandle(),
+                    KeysetHandle.generateNew(rawKey.getParameters()),
                     MonitoringAnnotations.EMPTY,
                     Aead.class));
   }
