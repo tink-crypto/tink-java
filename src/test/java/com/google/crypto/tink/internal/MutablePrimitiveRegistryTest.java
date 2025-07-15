@@ -20,10 +20,14 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.Key;
+import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.aead.AeadConfig;
+import com.google.crypto.tink.aead.PredefinedAeadParameters;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import javax.annotation.Nullable;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -36,6 +40,14 @@ import org.junit.runners.JUnit4;
  */
 @RunWith(JUnit4.class)
 public final class MutablePrimitiveRegistryTest {
+  private static KeysetHandle arbitraryKeyset;
+
+  @BeforeClass
+  public static void setUpKeyset() throws Exception {
+    AeadConfig.register();
+    arbitraryKeyset = KeysetHandle.generateNew(PredefinedAeadParameters.AES128_GCM);
+  }
+
   @Immutable
   private static final class TestKey1 extends Key {
     @Override
@@ -204,7 +216,7 @@ public final class MutablePrimitiveRegistryTest {
         GeneralSecurityException.class,
         () ->
             registry.wrap(
-                PrimitiveSet.newBuilder().build().getKeysetHandle(),
+                arbitraryKeyset,
                 MonitoringAnnotations.EMPTY,
                 MutablePrimitiveRegistryTest.TestPrimitiveA.class));
   }
@@ -216,17 +228,9 @@ public final class MutablePrimitiveRegistryTest {
     registry.registerPrimitiveWrapper(new TestWrapperA());
     registry.registerPrimitiveWrapper(new TestWrapperB());
 
-    assertThat(
-            registry.wrap(
-                PrimitiveSet.newBuilder().build().getKeysetHandle(),
-                MonitoringAnnotations.EMPTY,
-                TestPrimitiveA.class))
+    assertThat(registry.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveA.class))
         .isInstanceOf(TestPrimitiveA.class);
-    assertThat(
-            registry.wrap(
-                PrimitiveSet.newBuilder().build().getKeysetHandle(),
-                MonitoringAnnotations.EMPTY,
-                TestPrimitiveB.class))
+    assertThat(registry.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveB.class))
         .isInstanceOf(TestPrimitiveB.class);
   }
 }
