@@ -20,10 +20,14 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.Key;
+import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.aead.AeadConfig;
+import com.google.crypto.tink.aead.PredefinedAeadParameters;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import javax.annotation.Nullable;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -31,6 +35,14 @@ import org.junit.runners.JUnit4;
 /** Unit tests for {@link PrimitiveRegistry}. */
 @RunWith(JUnit4.class)
 public final class PrimitiveRegistryTest {
+  private static KeysetHandle arbitraryKeyset;
+
+  @BeforeClass
+  public static void setUpKeyset() throws Exception {
+    AeadConfig.register();
+    arbitraryKeyset = KeysetHandle.generateNew(PredefinedAeadParameters.AES128_GCM);
+  }
+
   // ===============================================================================================
   // SETUP:
   // We create 2 different key classes (TestKey1, TestKey2) and two different primitive classes
@@ -175,11 +187,7 @@ public final class PrimitiveRegistryTest {
         () -> registry.getPrimitive(new TestKey1(), TestPrimitiveA.class));
     assertThrows(
         GeneralSecurityException.class,
-        () ->
-            registry.wrap(
-                PrimitiveSet.newBuilder().build().getKeysetHandle(),
-                MonitoringAnnotations.EMPTY,
-                TestPrimitiveA.class));
+        () -> registry.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveA.class));
   }
 
   @Test
@@ -272,11 +280,7 @@ public final class PrimitiveRegistryTest {
   public void test_registerWrapperAndGet() throws Exception {
     PrimitiveRegistry registry =
         PrimitiveRegistry.builder().registerPrimitiveWrapper(new TestWrapperA()).build();
-    assertThat(
-            registry.wrap(
-                PrimitiveSet.newBuilder().build().getKeysetHandle(),
-                MonitoringAnnotations.EMPTY,
-                TestPrimitiveA.class))
+    assertThat(registry.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveA.class))
         .isNotNull();
   }
 
@@ -314,17 +318,9 @@ public final class PrimitiveRegistryTest {
             .registerPrimitiveWrapper(new TestWrapperA())
             .registerPrimitiveWrapper(new TestWrapperB())
             .build();
-    assertThat(
-            registry.wrap(
-                PrimitiveSet.newBuilder().build().getKeysetHandle(),
-                MonitoringAnnotations.EMPTY,
-                TestPrimitiveA.class))
+    assertThat(registry.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveA.class))
         .isInstanceOf(TestPrimitiveA.class);
-    assertThat(
-            registry.wrap(
-                PrimitiveSet.newBuilder().build().getKeysetHandle(),
-                MonitoringAnnotations.EMPTY,
-                TestPrimitiveB.class))
+    assertThat(registry.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveB.class))
         .isInstanceOf(TestPrimitiveB.class);
   }
 
@@ -341,11 +337,7 @@ public final class PrimitiveRegistryTest {
     PrimitiveRegistry registry2 = PrimitiveRegistry.builder(registry).build();
     assertThat(registry2.getPrimitive(new TestKey1(), TestPrimitiveA.class))
         .isInstanceOf(TestPrimitiveA.class);
-    assertThat(
-            registry2.wrap(
-                PrimitiveSet.newBuilder().build().getKeysetHandle(),
-                MonitoringAnnotations.EMPTY,
-                TestPrimitiveA.class))
+    assertThat(registry2.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveA.class))
         .isInstanceOf(TestPrimitiveA.class);
   }
 
@@ -369,17 +361,9 @@ public final class PrimitiveRegistryTest {
         () -> registry2.getPrimitive(new TestKey1(), TestPrimitiveA.class));
     assertThrows(
         GeneralSecurityException.class,
-        () ->
-            registry1.wrap(
-                PrimitiveSet.newBuilder().build().getKeysetHandle(),
-                MonitoringAnnotations.EMPTY,
-                TestPrimitiveA.class));
+        () -> registry1.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveA.class));
     assertThrows(
         GeneralSecurityException.class,
-        () ->
-            registry2.wrap(
-                PrimitiveSet.newBuilder().build().getKeysetHandle(),
-                MonitoringAnnotations.EMPTY,
-                TestPrimitiveA.class));
+        () -> registry2.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveA.class));
   }
 }
