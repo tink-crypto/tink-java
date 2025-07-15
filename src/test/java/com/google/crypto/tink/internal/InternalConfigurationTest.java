@@ -18,8 +18,12 @@ package com.google.crypto.tink.internal;
 
 import static org.junit.Assert.assertThrows;
 
+import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.aead.AeadConfig;
+import com.google.crypto.tink.aead.PredefinedAeadParameters;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -27,6 +31,14 @@ import org.junit.runners.JUnit4;
 /** Unit tests for {@link InternalConfiguration}. */
 @RunWith(JUnit4.class)
 public class InternalConfigurationTest {
+
+  private static KeysetHandle arbitraryKeyset;
+
+  @BeforeClass
+  public static void setUpKeyset() throws Exception {
+    AeadConfig.register();
+    arbitraryKeyset = KeysetHandle.generateNew(PredefinedAeadParameters.AES128_GCM);
+  }
 
   @Immutable
   private static final class TestPrimitiveA {
@@ -93,10 +105,7 @@ public class InternalConfigurationTest {
 
     // Check that the type is as expected.
     TestPrimitiveA unused =
-        configuration.wrap(
-            PrimitiveSet.newBuilder().build().getKeysetHandle(),
-            MonitoringAnnotations.EMPTY,
-            TestPrimitiveA.class);
+        configuration.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveA.class);
   }
 
   @Test
@@ -111,15 +120,9 @@ public class InternalConfigurationTest {
 
     // Check that the wrapped primitives are of the expected types.
     TestPrimitiveA unusedA =
-        configuration.wrap(
-            PrimitiveSet.newBuilder().build().getKeysetHandle(),
-            MonitoringAnnotations.EMPTY,
-            TestPrimitiveA.class);
+        configuration.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveA.class);
     TestPrimitiveB unusedB =
-        configuration.wrap(
-            PrimitiveSet.newBuilder().build().getKeysetHandle(),
-            MonitoringAnnotations.EMPTY,
-            TestPrimitiveB.class);
+        configuration.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveB.class);
   }
 
   @Test
@@ -132,10 +135,7 @@ public class InternalConfigurationTest {
     assertThrows(
         GeneralSecurityException.class,
         () ->
-            configuration.wrap(
-                PrimitiveSet.newBuilder().build().getKeysetHandle(),
-                MonitoringAnnotations.EMPTY,
-                TestPrimitiveB.class));
+            configuration.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveB.class));
   }
 
 
@@ -147,9 +147,6 @@ public class InternalConfigurationTest {
     assertThrows(
         GeneralSecurityException.class,
         () ->
-            configuration.wrap(
-                PrimitiveSet.newBuilder().build().getKeysetHandle(),
-                MonitoringAnnotations.EMPTY,
-                TestPrimitiveA.class));
+            configuration.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveA.class));
   }
 }
