@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.signature.internal;
 
+import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
@@ -43,6 +44,7 @@ import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
 import java.util.Arrays;
 import org.conscrypt.Conscrypt;
 import org.junit.Before;
@@ -132,7 +134,7 @@ public class EcdsaVerifyJceTest {
       @FromDataPoints("wycheproofTestCases") WycheproofTestCase testCase) throws Exception {
     JsonObject jsonObj = WycheproofTestUtil.readJson(testCase.fileName());
 
-    int errors = 0;
+    ArrayList<String> errors = new ArrayList<>();
     int cntSkippedTests = 0;
     JsonArray testGroups = jsonObj.getAsJsonArray("testGroups");
     for (int i = 0; i < testGroups.size(); i++) {
@@ -152,7 +154,6 @@ public class EcdsaVerifyJceTest {
                 testcase.get("tcId").getAsInt(), testcase.get("comment").getAsString());
 
         if (signatureAlgorithm.isEmpty()) {
-          System.out.printf("Skipping %s because signature algorithm is empty\n", tcId);
           cntSkippedTests++;
           continue;
         }
@@ -162,8 +163,6 @@ public class EcdsaVerifyJceTest {
           HashType hash = WycheproofTestUtil.getHashType(sha);
           verifier = new EcdsaVerifyJce(pubKey, hash, testCase.encoding());
         } catch (GeneralSecurityException ignored) {
-          // Invalid or unsupported public key.
-          System.out.printf("Skipping %s, exception: %s\n", tcId, ignored);
           cntSkippedTests++;
           continue;
         }
@@ -173,19 +172,17 @@ public class EcdsaVerifyJceTest {
         try {
           verifier.verify(sig, msg);
           if (result.equals("invalid")) {
-            System.out.printf("FAIL %s: accepting invalid signature\n", tcId);
-            errors++;
+            errors.add("FAIL " + tcId + ": accepting invalid signature");
           }
         } catch (GeneralSecurityException ex) {
           if (result.equals("valid")) {
-            System.out.printf("FAIL %s: rejecting valid signature, exception: %s\n", tcId, ex);
-            errors++;
+            errors.add("FAIL " + tcId + ": rejecting valid signature, exception: " + ex);
           }
         }
       }
     }
     assertEquals(testCase.skippedTests(), cntSkippedTests);
-    assertEquals(0, errors);
+    assertThat(errors).isEmpty();
   }
 
   private static byte[] getMessage(JsonObject testcase) throws Exception {

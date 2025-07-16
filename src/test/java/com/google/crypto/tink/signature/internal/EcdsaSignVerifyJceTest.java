@@ -16,13 +16,16 @@
 
 package com.google.crypto.tink.signature.internal;
 
-import static org.junit.Assert.assertEquals;
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.subtle.EllipticCurves;
 import com.google.crypto.tink.subtle.EllipticCurves.EcdsaEncoding;
 import com.google.crypto.tink.subtle.Enums.HashType;
+import com.google.crypto.tink.subtle.Hex;
+import com.google.crypto.tink.subtle.SubtleUtil;
 import com.google.crypto.tink.testing.TestUtil;
 import com.google.crypto.tink.testing.TestUtil.BytesMutation;
 import com.google.crypto.tink.testing.WycheproofTestUtil;
@@ -38,6 +41,7 @@ import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
 import java.util.Arrays;
 import org.conscrypt.Conscrypt;
 import org.junit.Assume;
@@ -46,9 +50,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-/** Unit tests for EcdsaVerifyJce. */
+/** Unit tests for EcdsaSignJce and EcdsaVerifyJce. */
 @RunWith(JUnit4.class)
-public class EcdsaVerifyJceTest {
+public class EcdsaSignVerifyJceTest {
 
   @Before
   public void useConscrypt() throws Exception {
@@ -69,27 +73,27 @@ public class EcdsaVerifyJceTest {
     Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
 
     testWycheproofVectors(
-        "../wycheproof/testvectors/ecdsa_secp256r1_sha256_test.json", EcdsaEncoding.DER);
+        "../wycheproof/testvectors/ecdsa_secp256r1_sha256_test.json", EcdsaEncoding.DER, 0);
     testWycheproofVectors(
-        "../wycheproof/testvectors/ecdsa_secp384r1_sha512_test.json", EcdsaEncoding.DER);
+        "../wycheproof/testvectors/ecdsa_secp384r1_sha512_test.json", EcdsaEncoding.DER, 0);
     testWycheproofVectors(
-        "../wycheproof/testvectors/ecdsa_secp521r1_sha512_test.json", EcdsaEncoding.DER);
+        "../wycheproof/testvectors/ecdsa_secp521r1_sha512_test.json", EcdsaEncoding.DER, 0);
     testWycheproofVectors(
         "../wycheproof/testvectors/ecdsa_secp256r1_sha256_p1363_test.json",
-        EcdsaEncoding.IEEE_P1363);
+        EcdsaEncoding.IEEE_P1363, 0);
     testWycheproofVectors(
         "../wycheproof/testvectors/ecdsa_secp384r1_sha512_p1363_test.json",
-        EcdsaEncoding.IEEE_P1363);
+        EcdsaEncoding.IEEE_P1363, 0);
     testWycheproofVectors(
         "../wycheproof/testvectors/ecdsa_secp521r1_sha512_p1363_test.json",
-        EcdsaEncoding.IEEE_P1363);
+        EcdsaEncoding.IEEE_P1363, 0);
   }
 
-  private static void testWycheproofVectors(String fileName, EcdsaEncoding encoding)
+  private static void testWycheproofVectors(String fileName, EcdsaEncoding encoding, int expectedSkippedTests)
       throws Exception {
     JsonObject jsonObj = WycheproofTestUtil.readJson(fileName);
 
-    int errors = 0;
+    ArrayList<String> errors = new ArrayList<>();
     int cntSkippedTests = 0;
     JsonArray testGroups = jsonObj.getAsJsonArray("testGroups");
     for (int i = 0; i < testGroups.size(); i++) {
@@ -109,7 +113,6 @@ public class EcdsaVerifyJceTest {
                 testcase.get("tcId").getAsInt(), testcase.get("comment").getAsString());
 
         if (signatureAlgorithm.isEmpty()) {
-          System.out.printf("Skipping %s because signature algorithm is empty\n", tcId);
           cntSkippedTests++;
           continue;
         }
@@ -119,8 +122,6 @@ public class EcdsaVerifyJceTest {
           HashType hash = WycheproofTestUtil.getHashType(sha);
           verifier = new EcdsaVerifyJce(pubKey, hash, encoding);
         } catch (GeneralSecurityException ignored) {
-          // Invalid or unsupported public key.
-          System.out.printf("Skipping %s, exception: %s\n", tcId, ignored);
           cntSkippedTests++;
           continue;
         }
@@ -130,19 +131,17 @@ public class EcdsaVerifyJceTest {
         try {
           verifier.verify(sig, msg);
           if (result.equals("invalid")) {
-            System.out.printf("FAIL %s: accepting invalid signature\n", tcId);
-            errors++;
+            errors.add("FAIL " + tcId + ": accepting invalid signature");
           }
         } catch (GeneralSecurityException ex) {
           if (result.equals("valid")) {
-            System.out.printf("FAIL %s: rejecting valid signature, exception: %s\n", tcId, ex);
-            errors++;
+            errors.add("FAIL " + tcId + ": rejecting valid signature, exception: " + ex);
           }
         }
       }
     }
-    System.out.printf("Number of tests skipped: %d\n", cntSkippedTests);
-    assertEquals(0, errors);
+    assertThat(cntSkippedTests).isEqualTo(expectedSkippedTests);
+    assertThat(errors).isEmpty();
   }
 
   private static byte[] getMessage(JsonObject testcase) throws Exception {
