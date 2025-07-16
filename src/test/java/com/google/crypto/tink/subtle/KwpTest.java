@@ -16,8 +16,8 @@
 
 package com.google.crypto.tink.subtle;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.KeyWrap;
@@ -26,8 +26,7 @@ import com.google.crypto.tink.testing.WycheproofTestUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.security.GeneralSecurityException;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.ArrayList;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -79,13 +78,12 @@ public class KwpTest {
     final String expectedVersion = "0.6";
     JsonObject json =
         WycheproofTestUtil.readJson("../wycheproof/testvectors/kwp_test.json");
-    Set<String> exceptions = new TreeSet<String>();
     String generatorVersion = json.get("generatorVersion").getAsString();
     if (!generatorVersion.equals(expectedVersion)) {
       System.out.printf("Expecting test vectors with version %s found version %s.\n",
                         expectedVersion, generatorVersion);
     }
-    int errors = 0;
+    ArrayList<String> errors = new ArrayList<>();
     JsonArray testGroups = json.getAsJsonArray("testGroups");
     for (int i = 0; i < testGroups.size(); i++) {
       JsonObject group = testGroups.get(i).getAsJsonObject();
@@ -110,9 +108,7 @@ public class KwpTest {
         } catch (GeneralSecurityException ex) {
           // tink restrict the key sizes to 128 or 256 bits.
           if (key.length == 16 || key.length == 32) {
-            System.out.printf("Rejected valid key:%s\n", tc);
-            System.out.println(ex.toString());
-            errors++;
+            errors.add("FAIL " + tc + ": Rejected valid key, exception: " + ex);
           }
           continue;
         }
@@ -121,26 +117,19 @@ public class KwpTest {
           boolean eq = TestUtil.arrayEquals(expected, wrapped);
           if (result.equals("invalid")) {
             if (eq) {
-              // Some test vectors use invalid parameters that should be rejected.
-              System.out.printf("Wrapped test case:%s\n", tc);
-              errors++;
+              errors.add("FAIL " + tc + ": Accepted invalid parameters");
             }
           } else {
             if (!eq) {
-              System.out.printf("Incorrect wrapping for test case:%s wrapped bytes:%s\n",
-                                tc, Hex.encode(wrapped));
-              errors++;
+              errors.add("FAIL " + tc + ": Incorrect wrapping:" + Hex.encode(wrapped));
             }
           }
         } catch (GeneralSecurityException ex) {
           if (result.equals("valid")) {
-            System.out.printf("Failed to wrap test case:%s\n", tc);
-            errors++;
+            errors.add("FAIL " + tc + ": rejected valid test case, exception: "+ ex);
           }
         } catch (Exception ex) {
-          // Other exceptions are violating the interface.
-          System.out.printf("Test case %s throws %s.\n", tc, ex);
-          errors++;
+          errors.add("FAIL " + tc + " throws unexpected exception: " + ex);
         }
 
         // Test unwrapping
@@ -152,39 +141,31 @@ public class KwpTest {
           byte[] unwrapped = wrapper.unwrap(expected);
           boolean eq = TestUtil.arrayEquals(data, unwrapped);
           if (result.equals("invalid")) {
-            System.out.printf("Unwrapped invalid test case:%s unwrapped:%s\n", tc,
-                              Hex.encode(unwrapped));
-            errors++;
+            errors.add(
+                "FAIL "
+                    + tc
+                    + ": Invalid test case unwrapped with output: "
+                    + Hex.encode(unwrapped));
           } else {
             if (!eq) {
-              System.out.printf("Incorrect unwrap. Excepted:%s actual:%s\n",
-                                Hex.encode(data), Hex.encode(unwrapped));
-              errors++;
+              errors.add(
+                  "FAIL "
+                      + tc
+                      + ": Incorrect unwrap. Excepted:"
+                      + Hex.encode(data)
+                      + " actual:"
+                      + Hex.encode(unwrapped));
             }
           }
         } catch (GeneralSecurityException ex) {
-          // Trying to unwrap an invalid key should always result in a GeneralSecurityException
-          // or a subclass of it.
-          exceptions.add(ex.toString());
           if (result.equals("valid")) {
-            System.out.printf("Failed to unwrap:%s\n", tc);
-            errors++;
+            errors.add("FAIL " + tc + ": failed with valid test case, exception: " + ex);
           }
         } catch (Exception ex) {
-          // Other exceptions indicate a programming error.
-          System.out.printf("Test case:%s throws %s\n", tc, ex);
-          exceptions.add(ex.toString());
-          errors++;
+          errors.add("FAIL " + tc + ": throws unexpected exception: " + ex);
         }
       }
     }
-    // Even though strong pseudorandomness implies that information about incorrectly formatted
-    // ciphertexts is not helpful to an attacker, we still don't want to do this and expect
-    // exceptions that do not carry information about the unwrapped data.
-    System.out.printf("Number of distinct exceptions:%d\n", exceptions.size());
-    for (String ex : exceptions) {
-      System.out.println(ex);
-    }
-    assertEquals(0, errors);
+    assertThat(errors).isEmpty();
   }
 }

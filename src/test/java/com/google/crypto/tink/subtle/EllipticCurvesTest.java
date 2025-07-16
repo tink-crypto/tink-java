@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 
+import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.testing.TestUtil;
 import com.google.crypto.tink.testing.WycheproofTestUtil;
 import com.google.gson.JsonArray;
@@ -34,6 +35,7 @@ import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECPoint;
 import java.security.spec.EllipticCurve;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -511,7 +513,9 @@ public class EllipticCurvesTest {
     //   encoded bitsequence.
     JsonObject json =
         WycheproofTestUtil.readJson("../wycheproof/testvectors/ecdh_test.json");
-    int errors = 0;
+    ArrayList<String> errors = new ArrayList<>();
+    ArrayList<String> warnings = new ArrayList<>();
+
     JsonArray testGroups = json.get("testGroups").getAsJsonArray();
     for (int i = 0; i < testGroups.size(); i++) {
       JsonObject group = testGroups.get(i).getAsJsonObject();
@@ -546,39 +550,37 @@ public class EllipticCurvesTest {
             if (expectedSharedSecret.equals(sharedSecret)
                 && WycheproofTestUtil.checkFlags(
                     testcase, "WrongOrder", "WeakPublicKey", "UnnamedCurve")) {
-              System.out.println(
-                  tcId + " accepted invalid parameters but shared secret is correct.");
+              warnings.add(
+                  "WARNING " + tcId + " accepted invalid parameters but shared secret is correct.");
             } else {
-              System.out.println(
+              errors.add(
                   "FAIL " + tcId + " accepted invalid parameters, shared secret: " + sharedSecret);
-              errors++;
             }
           } else if (!expectedSharedSecret.equals(sharedSecret)) {
-            System.out.println(
+            errors.add(
                 "FAIL "
                     + tcId
                     + " incorrect shared secret, computed: "
                     + sharedSecret
                     + " expected: "
                     + expectedSharedSecret);
-            errors++;
           }
         } catch (GeneralSecurityException ex) {
-          System.out.println(tcId + " threw exception: " + ex.toString());
           if (result.equals("valid")) {
-            System.out.println("FAIL " + tcId + " exception: " + ex.toString());
-            ex.printStackTrace();
-            errors++;
+            errors.add("FAIL " + tcId + " is valid but threw exception: " + ex);
           }
         } catch (Exception ex) {
-          // Other exceptions typically indicate that something is wrong with the implementation.
-          System.out.println("FAIL " + tcId + " exception: " + ex.toString());
-          ex.printStackTrace();
-          errors++;
+          errors.add("FAIL " + tcId + " threw unexpected exception: " + ex);
         }
       }
     }
-    assertEquals(0, errors);
+    assertThat(errors).isEmpty();
+
+    // Newer versions Android should not produce any warnings.
+    if (Util.isAndroid() && Util.getAndroidApiLevel() > 25) {
+      assertThat(warnings).isEmpty();
+    }
+    // For older versions and the default Java provider, we allow some warnings.
   }
 
   @Test
