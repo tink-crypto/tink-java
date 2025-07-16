@@ -36,6 +36,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.security.GeneralSecurityException;
 import java.security.Provider;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import javax.annotation.Nullable;
@@ -181,7 +182,7 @@ public class AesGcmSivTest {
 
     JsonObject json =
         WycheproofTestUtil.readJson("../wycheproof/testvectors/aes_gcm_siv_test.json");
-    int errors = 0;
+    ArrayList<String> errors = new ArrayList<>();
     JsonArray testGroups = json.getAsJsonArray("testGroups");
     for (int i = 0; i < testGroups.size(); i++) {
       JsonObject group = testGroups.get(i).getAsJsonObject();
@@ -214,27 +215,32 @@ public class AesGcmSivTest {
           byte[] decrypted = aesGcmSiv.decrypt(ciphertext, aad);
           boolean eq = TestUtil.arrayEquals(decrypted, msg);
           if (result.equals("invalid")) {
-            System.out.printf(
-                "FAIL %s: accepting invalid ciphertext, cleartext: %s, decrypted: %s%n",
-                tcId, Hex.encode(msg), Hex.encode(decrypted));
-            errors++;
+            errors.add(
+                "FAIL "
+                    + tcId
+                    + ": accepting invalid ciphertext, cleartext: "
+                    + Hex.encode(msg)
+                    + ", decrypted: "
+                    + Hex.encode(decrypted));
           } else {
             if (!eq) {
-              System.out.printf(
-                  "FAIL %s: incorrect decryption, result: %s, expected: %s%n",
-                  tcId, Hex.encode(decrypted), Hex.encode(msg));
-              errors++;
+              errors.add(
+                  "FAIL "
+                      + tcId
+                      + ": incorrect decryption, result: "
+                      + Hex.encode(decrypted)
+                      + ", expected: "
+                      + Hex.encode(msg));
             }
           }
         } catch (GeneralSecurityException ex) {
           if (result.equals("valid")) {
-            System.out.printf("FAIL %s: cannot decrypt, exception %s%n", tcId, ex);
-            errors++;
+            errors.add("FAIL " + tcId + ": cannot decrypt, exception: " + ex);
           }
         }
       }
     }
-    assertThat(errors).isEqualTo(0);
+    assertThat(errors).isEmpty();
   }
 
   @Test

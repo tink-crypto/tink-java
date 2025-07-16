@@ -18,7 +18,6 @@ package com.google.crypto.tink.aead.internal;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.config.TinkFips;
@@ -33,6 +32,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import javax.crypto.AEADBadTagException;
@@ -299,7 +299,7 @@ public class InsecureNonceChaCha20Poly1305JceTest {
     JsonObject json =
         WycheproofTestUtil.readJson(
             "../wycheproof/testvectors/chacha20_poly1305_test.json");
-    int errors = 0;
+    ArrayList<String> errors = new ArrayList<>();
     JsonArray testGroups = json.getAsJsonArray("testGroups");
     for (int i = 0; i < testGroups.size(); i++) {
       JsonObject group = testGroups.get(i).getAsJsonObject();
@@ -334,36 +334,44 @@ public class InsecureNonceChaCha20Poly1305JceTest {
           byte[] encrypted = cipher.encrypt(iv, msg, aad);
           boolean ciphertextMatches = TestUtil.arrayEquals(encrypted, ciphertext);
           if (result.equals("valid") && !ciphertextMatches) {
-            System.err.printf(
-                "FAIL %s: incorrect encryption, result: %s, expected: %s%n",
-                tcId, Hex.encode(encrypted), Hex.encode(ciphertext));
-            errors++;
+            errors.add(
+                "FAIL "
+                    + tcId
+                    + ": incorrect encryption, result: "
+                    + Hex.encode(encrypted)
+                    + ", expected: "
+                    + Hex.encode(ciphertext));
           }
           // Decryption.
           byte[] decrypted = cipher.decrypt(iv, ciphertext, aad);
           boolean plaintextMatches = TestUtil.arrayEquals(decrypted, msg);
           if (result.equals("invalid")) {
-            System.out.printf(
-                "FAIL %s: accepting invalid ciphertext, cleartext: %s, decrypted: %s%n",
-                tcId, Hex.encode(msg), Hex.encode(decrypted));
-            errors++;
+            errors.add(
+                "FAIL "
+                    + tcId
+                    + ": accepting invalid ciphertext, cleartext: "
+                    + Hex.encode(msg)
+                    + ", decrypted: "
+                    + Hex.encode(decrypted));
           } else {
             if (!plaintextMatches) {
-              System.out.printf(
-                  "FAIL %s: incorrect decryption, result: %s, expected: %s%n",
-                  tcId, Hex.encode(decrypted), Hex.encode(msg));
-              errors++;
+              errors.add(
+                  "FAIL "
+                      + tcId
+                      + ": incorrect decryption, result: "
+                      + Hex.encode(decrypted)
+                      + ", expected: "
+                      + Hex.encode(msg));
             }
           }
         } catch (GeneralSecurityException ex) {
           if (result.equals("valid")) {
-            System.out.printf("FAIL %s: cannot decrypt, exception %s%n", tcId, ex);
-            errors++;
+            errors.add("FAIL " + tcId + ": cannot decrypt, exception: " + ex);
           }
         }
       }
     }
-    assertEquals(0, errors);
+    assertThat(errors).isEmpty();
   }
 
   @Test

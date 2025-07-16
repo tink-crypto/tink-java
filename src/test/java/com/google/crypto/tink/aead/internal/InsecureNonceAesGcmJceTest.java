@@ -18,9 +18,7 @@ package com.google.crypto.tink.aead.internal;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.fail;
 
 import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
@@ -35,6 +33,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.security.GeneralSecurityException;
 import java.security.Security;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import javax.annotation.Nullable;
@@ -209,7 +208,7 @@ public class InsecureNonceAesGcmJceTest {
 
     JsonObject json =
         WycheproofTestUtil.readJson("../wycheproof/testvectors/aes_gcm_test.json");
-    int errors = 0;
+    ArrayList<String> errors = new ArrayList<>();
     int cntSkippedTests = 0;
     JsonArray testGroups = json.get("testGroups").getAsJsonArray();
     for (int i = 0; i < testGroups.size(); i++) {
@@ -253,37 +252,45 @@ public class InsecureNonceAesGcmJceTest {
           byte[] encrypted = gcm.encrypt(iv, msg, associatedData);
           boolean ciphertextMatches = TestUtil.arrayEquals(encrypted, ciphertext);
           if (result.equals("valid") && !ciphertextMatches) {
-            System.out.printf(
-                "FAIL %s: incorrect encryption, result: %s, expected: %s%n",
-                tcId, Hex.encode(encrypted), Hex.encode(ciphertext));
-            errors++;
+            errors.add(
+                "FAIL "
+                    + tcId
+                    + ": incorrect encryption, result: "
+                    + Hex.encode(encrypted)
+                    + ", expected: "
+                    + Hex.encode(ciphertext));
           }
           // Decryption.
           byte[] decrypted = gcm.decrypt(iv, ciphertext, associatedData);
           boolean plaintextMatches = TestUtil.arrayEquals(decrypted, msg);
           if (result.equals("invalid")) {
-            System.out.printf(
-                "FAIL %s: accepting invalid ciphertext, cleartext: %s, decrypted: %s%n",
-                tcId, Hex.encode(msg), Hex.encode(decrypted));
-            errors++;
+            errors.add(
+                "FAIL "
+                    + tcId
+                    + ": accepting invalid ciphertext, cleartext: "
+                    + Hex.encode(msg)
+                    + ", decrypted: "
+                    + Hex.encode(decrypted));
           } else {
             if (!plaintextMatches) {
-              System.out.printf(
-                  "FAIL %s: incorrect decryption, result: %s, expected: %s%n",
-                  tcId, Hex.encode(decrypted), Hex.encode(msg));
-              errors++;
+              errors.add(
+                  "FAIL "
+                      + tcId
+                      + ": incorrect decryption, result: "
+                      + Hex.encode(decrypted)
+                      + ", expected: "
+                      + Hex.encode(msg));
             }
           }
         } catch (GeneralSecurityException ex) {
           if (result.equals("valid")) {
-            System.out.printf("FAIL %s: cannot decrypt, exception %s%n", tcId, ex);
-            errors++;
+            errors.add("FAIL " + tcId + ": cannot decrypt, exception: " + ex);
           }
         }
       }
     }
-    System.out.printf("Number of tests skipped: %d", cntSkippedTests);
-    assertEquals(0, errors);
+    assertThat(cntSkippedTests).isEqualTo(83);
+    assertThat(errors).isEmpty();
   }
 
   @Test
@@ -335,16 +342,10 @@ public class InsecureNonceAesGcmJceTest {
           assertArrayEquals(message, decrypted);
           byte[] decrypted2 = gcm.decrypt(iv, ciphertext, null);
           assertArrayEquals(message, decrypted2);
-          try {
-            byte[] badAad = new byte[] {1, 2, 3};
-            byte[] unused = gcm.decrypt(iv, ciphertext, badAad);
-            fail("Decrypting with modified associatedData should fail");
-          } catch (GeneralSecurityException ex) {
-            // This is expected.
-            // This could be a AeadBadTagException when the tag verification
-            // fails or some not yet specified Exception when the ciphertext is too short.
-            // In all cases a GeneralSecurityException or a subclass of it must be thrown.
-          }
+          byte[] badAad = new byte[] {1, 2, 3};
+          assertThrows(
+              GeneralSecurityException.class,
+              () -> gcm.decrypt(iv, ciphertext, badAad));
         }
         { // encrypting with associatedData equal to null
           byte[] iv = Random.randBytes(InsecureNonceAesGcmJce.IV_SIZE_IN_BYTES);
@@ -353,16 +354,10 @@ public class InsecureNonceAesGcmJceTest {
           assertArrayEquals(message, decrypted);
           byte[] decrypted2 = gcm.decrypt(iv, ciphertext, null);
           assertArrayEquals(message, decrypted2);
-          try {
-            byte[] badAad = new byte[] {1, 2, 3};
-            byte[] unused = gcm.decrypt(iv, ciphertext, badAad);
-            fail("Decrypting with modified associatedData should fail");
-          } catch (GeneralSecurityException ex) {
-            // This is expected.
-            // This could be a AeadBadTagException when the tag verification
-            // fails or some not yet specified Exception when the ciphertext is too short.
-            // In all cases a GeneralSecurityException or a subclass of it must be thrown.
-          }
+          byte[] badAad = new byte[] {1, 2, 3};
+          assertThrows(
+              GeneralSecurityException.class,
+              () -> gcm.decrypt(iv, ciphertext, badAad));
         }
       }
     }
