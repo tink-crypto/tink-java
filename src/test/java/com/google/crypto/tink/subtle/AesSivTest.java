@@ -96,7 +96,7 @@ public class AesSivTest {
         }
       }
     }
-    System.out.printf("Number of tests skipped: %d", cntSkippedTests);
+    assertThat(cntSkippedTests).isEqualTo(295);
   }
 
   @Test
@@ -151,7 +151,7 @@ public class AesSivTest {
         }
       }
     }
-    System.out.printf("Number of tests skipped: %d", cntSkippedTests);
+    assertThat(cntSkippedTests).isEqualTo(295);
   }
 
   @Test
