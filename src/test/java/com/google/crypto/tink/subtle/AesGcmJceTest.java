@@ -28,7 +28,6 @@ import com.google.crypto.tink.aead.AesGcmKey;
 import com.google.crypto.tink.aead.AesGcmParameters;
 import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
-import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.testing.TestUtil;
 import com.google.crypto.tink.testing.TestUtil.BytesMutation;
 import com.google.crypto.tink.testing.WycheproofTestUtil;
@@ -40,7 +39,6 @@ import java.security.Security;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import javax.annotation.Nullable;
 import org.conscrypt.Conscrypt;
 import org.junit.Assume;
 import org.junit.Before;
@@ -272,11 +270,6 @@ public class AesGcmJceTest {
         byte[] key = Hex.decode(testcase.get("key").getAsString());
         byte[] msg = Hex.decode(testcase.get("msg").getAsString());
         byte[] aad = Hex.decode(testcase.get("aad").getAsString());
-        @Nullable Integer apiLevel = Util.getAndroidApiLevel();
-        if (apiLevel != null && apiLevel <= 19 && aad.length != 0) {
-          cntSkippedTests++;
-          continue;
-        }
         byte[] ct = Hex.decode(testcase.get("ct").getAsString());
         byte[] tag = Hex.decode(testcase.get("tag").getAsString());
         byte[] ciphertext = Bytes.concat(iv, ct, tag);

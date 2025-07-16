@@ -22,7 +22,6 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
-import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.subtle.Bytes;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.subtle.Random;
@@ -36,7 +35,6 @@ import java.security.Security;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import javax.annotation.Nullable;
 import org.conscrypt.Conscrypt;
 import org.junit.Assume;
 import org.junit.Before;
@@ -228,11 +226,6 @@ public class InsecureNonceAesGcmJceTest {
         byte[] key = Hex.decode(testcase.get("key").getAsString());
         byte[] msg = Hex.decode(testcase.get("msg").getAsString());
         byte[] associatedData = Hex.decode(testcase.get("aad").getAsString());
-        @Nullable Integer androidApiLevel = Util.getAndroidApiLevel();
-        if (androidApiLevel != null && androidApiLevel <= 19 && associatedData.length != 0) {
-          cntSkippedTests++;
-          continue;
-        }
         byte[] ct = Hex.decode(testcase.get("ct").getAsString());
         byte[] tag = Hex.decode(testcase.get("tag").getAsString());
         byte[] ciphertext = Bytes.concat(ct, tag);
