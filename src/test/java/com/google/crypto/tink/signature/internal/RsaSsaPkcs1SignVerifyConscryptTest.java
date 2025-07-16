@@ -36,6 +36,7 @@ import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.Provider;
 import java.security.Security;
+import java.util.ArrayList;
 import org.conscrypt.Conscrypt;
 import org.junit.Before;
 import org.junit.experimental.theories.DataPoints;
@@ -145,7 +146,7 @@ public class RsaSsaPkcs1SignVerifyConscryptTest {
       throws Exception {
     JsonObject jsonObj = WycheproofTestUtil.readJson(path);
 
-    int errors = 0;
+    ArrayList<String> errors = new ArrayList<>();
     JsonArray testGroups = jsonObj.getAsJsonArray("testGroups");
     for (int i = 0; i < testGroups.size(); i++) {
       JsonObject group = testGroups.get(i).getAsJsonObject();
@@ -179,18 +180,16 @@ public class RsaSsaPkcs1SignVerifyConscryptTest {
         try {
           verifier.verify(sig, msg);
           if (result.equals("invalid")) {
-            System.out.printf("FAIL %s: accepting invalid signature%n", tcId);
-            errors++;
+            errors.add("FAIL " + tcId + ": accepting invalid signature");
           }
         } catch (GeneralSecurityException ex) {
           if (result.equals("valid")) {
-            System.out.printf("FAIL %s: rejecting valid signature, exception: %s%n", tcId, ex);
-            errors++;
+            errors.add("FAIL " + tcId + ": rejecting valid signature, exception: " + ex);
           }
         }
       }
     }
-    assertThat(errors).isEqualTo(0);
+    assertThat(errors).isEmpty();
   }
 
   private static byte[] getMessage(JsonObject testcase) {

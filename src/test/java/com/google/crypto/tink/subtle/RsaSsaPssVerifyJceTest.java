@@ -36,6 +36,7 @@ import java.security.Provider;
 import java.security.Security;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPublicKeySpec;
+import java.util.ArrayList;
 import java.util.Arrays;
 import org.conscrypt.Conscrypt;
 import org.junit.Assume;
@@ -51,7 +52,7 @@ import org.junit.runner.RunWith;
 public class RsaSsaPssVerifyJceTest {
 
   @DataPoints("testVectors")
-  public static final SignatureTestVector[] TEST_VECTORS =
+  public static final SignatureTestVector[] testVectors =
       RsaSsaPssTestUtil.createRsaPssTestVectors();
 
   @Theory
@@ -113,7 +114,7 @@ public class RsaSsaPssVerifyJceTest {
 
   @Test
   public void constructorValidatesHashType() throws Exception {
-    SignatureTestVector testVector = TEST_VECTORS[0];
+    SignatureTestVector testVector = testVectors[0];
     RsaSsaPssPublicKey testPublicKey =
         (RsaSsaPssPublicKey) testVector.getPrivateKey().getPublicKey();
     KeyFactory keyFactory = EngineFactory.KEY_FACTORY.getInstance("RSA");
@@ -179,7 +180,7 @@ public class RsaSsaPssVerifyJceTest {
       throws Exception {
     JsonObject jsonObj = WycheproofTestUtil.readJson(path);
 
-    int errors = 0;
+    ArrayList<String> errors = new ArrayList<>();
     JsonArray testGroups = jsonObj.getAsJsonArray("testGroups");
     for (int i = 0; i < testGroups.size(); i++) {
       JsonObject group = testGroups.get(i).getAsJsonObject();
@@ -214,18 +215,16 @@ public class RsaSsaPssVerifyJceTest {
         try {
           verifier.verify(sig, msg);
           if (result.equals("invalid")) {
-            System.out.printf("FAIL %s: accepting invalid signature%n", tcId);
-            errors++;
+            errors.add("FAIL " + tcId + ": accepting invalid signature");
           }
         } catch (GeneralSecurityException ex) {
           if (result.equals("valid")) {
-            System.out.printf("FAIL %s: rejecting valid signature, exception: %s%n", tcId, ex);
-            errors++;
+            errors.add("FAIL " + tcId + ": rejecting valid signature, exception: " + ex);
           }
         }
       }
     }
-    assertThat(errors).isEqualTo(0);
+    assertThat(errors).isEmpty();
   }
 
   private static byte[] getMessage(JsonObject testcase) {
@@ -241,7 +240,7 @@ public class RsaSsaPssVerifyJceTest {
   public void usesConscryptImplementationIfInstalled() throws Exception {
     Assume.assumeFalse(Util.isAndroid());
 
-    SignatureTestVector testVector = TEST_VECTORS[0];
+    SignatureTestVector testVector = testVectors[0];
     RsaSsaPssPublicKey testPublicKey =
         (RsaSsaPssPublicKey) testVector.getPrivateKey().getPublicKey();
 

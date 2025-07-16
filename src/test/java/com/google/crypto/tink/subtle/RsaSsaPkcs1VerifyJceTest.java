@@ -37,6 +37,7 @@ import java.security.Provider;
 import java.security.Security;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPublicKeySpec;
+import java.util.ArrayList;
 import org.conscrypt.Conscrypt;
 import org.junit.Assume;
 import org.junit.Before;
@@ -52,7 +53,7 @@ import org.junit.runner.RunWith;
 public class RsaSsaPkcs1VerifyJceTest {
 
   @DataPoints("allTests")
-  public static final SignatureTestVector[] ALL_TEST_VECTORS =
+  public static final SignatureTestVector[] allTestVectors =
       RsaSsaPkcs1TestUtil.createRsaSsaPkcs1TestVectors();
 
   private static HashType getSubtleHashType(RsaSsaPkcs1Parameters.HashType hash)
@@ -116,7 +117,7 @@ public class RsaSsaPkcs1VerifyJceTest {
   @Test
   public void sha1IsNotSupported() throws Exception {
     RsaSsaPkcs1PublicKey testPublicKey =
-        (RsaSsaPkcs1PublicKey) ALL_TEST_VECTORS[0].getPrivateKey().getPublicKey();
+        (RsaSsaPkcs1PublicKey) allTestVectors[0].getPrivateKey().getPublicKey();
     KeyFactory keyFactory = EngineFactory.KEY_FACTORY.getInstance("RSA");
     RSAPublicKey publicKey =
         (RSAPublicKey)
@@ -130,7 +131,7 @@ public class RsaSsaPkcs1VerifyJceTest {
   @Test
   public void constructorWithSmallExponent_throws() throws Exception {
     RsaSsaPkcs1PublicKey testPublicKey =
-        (RsaSsaPkcs1PublicKey) ALL_TEST_VECTORS[0].getPrivateKey().getPublicKey();
+        (RsaSsaPkcs1PublicKey) allTestVectors[0].getPrivateKey().getPublicKey();
     KeyFactory keyFactory = EngineFactory.KEY_FACTORY.getInstance("RSA");
     RSAPublicKey publicKey =
         (RSAPublicKey)
@@ -165,7 +166,7 @@ public class RsaSsaPkcs1VerifyJceTest {
       throws Exception {
     JsonObject jsonObj = WycheproofTestUtil.readJson(path);
 
-    int errors = 0;
+    ArrayList<String> errors = new ArrayList<>();
     JsonArray testGroups = jsonObj.getAsJsonArray("testGroups");
     for (int i = 0; i < testGroups.size(); i++) {
       JsonObject group = testGroups.get(i).getAsJsonObject();
@@ -199,18 +200,16 @@ public class RsaSsaPkcs1VerifyJceTest {
         try {
           verifier.verify(sig, msg);
           if (result.equals("invalid")) {
-            System.out.printf("FAIL %s: accepting invalid signature%n", tcId);
-            errors++;
+            errors.add("FAIL " + tcId + ": accepting invalid signature");
           }
         } catch (GeneralSecurityException ex) {
           if (result.equals("valid")) {
-            System.out.printf("FAIL %s: rejecting valid signature, exception: %s%n", tcId, ex);
-            errors++;
+            errors.add("FAIL " + tcId + ": rejecting valid signature, exception: " + ex);
           }
         }
       }
     }
-    assertThat(errors).isEqualTo(0);
+    assertThat(errors).isEmpty();
   }
 
   private static byte[] getMessage(JsonObject testcase) {
@@ -227,7 +226,7 @@ public class RsaSsaPkcs1VerifyJceTest {
     Assume.assumeFalse(Util.isAndroid());
 
     RsaSsaPkcs1PublicKey testPublicKey =
-        (RsaSsaPkcs1PublicKey) ALL_TEST_VECTORS[0].getPrivateKey().getPublicKey();
+        (RsaSsaPkcs1PublicKey) allTestVectors[0].getPrivateKey().getPublicKey();
 
     // Conscrypt is already installed, so RsaSsaPkcs1VerifyConscrypt is used.
     PublicKeyVerify verifier = RsaSsaPkcs1VerifyJce.create(testPublicKey);
