@@ -205,10 +205,6 @@ public class AesGcmSivTest {
         // "invalid" are test vectors with invalid parameters or invalid ciphertext and tag.
         // "acceptable" are test vectors with weak parameters or legacy formats.
         String result = testcase.get("result").getAsString();
-        // Tink only supports 12-byte iv.
-        if (iv.length != 12) {
-          result = "invalid";
-        }
 
         try {
           Aead aesGcmSiv = createFromRawKey(key);
