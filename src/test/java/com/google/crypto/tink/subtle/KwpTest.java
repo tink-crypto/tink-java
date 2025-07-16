@@ -75,14 +75,8 @@ public class KwpTest {
 
   @Test
   public void testWycheproof() throws Exception {
-    final String expectedVersion = "0.6";
     JsonObject json =
         WycheproofTestUtil.readJson("../wycheproof/testvectors/kwp_test.json");
-    String generatorVersion = json.get("generatorVersion").getAsString();
-    if (!generatorVersion.equals(expectedVersion)) {
-      System.out.printf("Expecting test vectors with version %s found version %s.\n",
-                        expectedVersion, generatorVersion);
-    }
     ArrayList<String> errors = new ArrayList<>();
     JsonArray testGroups = json.getAsJsonArray("testGroups");
     for (int i = 0; i < testGroups.size(); i++) {
