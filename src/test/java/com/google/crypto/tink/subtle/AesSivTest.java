@@ -19,7 +19,6 @@ package com.google.crypto.tink.subtle;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.fail;
 
 import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
@@ -36,7 +35,6 @@ import java.security.InvalidKeyException;
 import java.util.Arrays;
 import javax.crypto.AEADBadTagException;
 import org.junit.Assume;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -45,12 +43,7 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class AesSivTest {
 
-  private Integer[] keySizeInBytes;
-
-  @Before
-  public void setUp() throws Exception {
-      keySizeInBytes = new Integer[] {64};
-  }
+  private static final int KEY_SIZE_IN_BYTES = 64;
 
   @Test
   public void testWycheproofVectors() throws Exception {
@@ -64,7 +57,7 @@ public class AesSivTest {
       JsonObject group = testGroups.get(i).getAsJsonObject();
       int keySize = group.get("keySize").getAsInt();
       JsonArray tests = group.getAsJsonArray("tests");
-      if (!Arrays.asList(keySizeInBytes).contains(keySize / 8)) {
+      if (keySize != KEY_SIZE_IN_BYTES * 8) {
         cntSkippedTests += tests.size();
         continue;
       }
@@ -111,7 +104,7 @@ public class AesSivTest {
       JsonObject group = testGroups.get(i).getAsJsonObject();
       int keySize = group.get("keySize").getAsInt();
       JsonArray tests = group.getAsJsonArray("tests");
-      if (!Arrays.asList(keySizeInBytes).contains(keySize / 8)) {
+      if (keySize != KEY_SIZE_IN_BYTES * 8) {
         cntSkippedTests += tests.size();
         continue;
       }
@@ -157,17 +150,14 @@ public class AesSivTest {
   @Test
   public void testEncryptDecryptWithEmptyPlaintext() throws GeneralSecurityException {
     Assume.assumeFalse(TinkFips.useOnlyFips());
-
-    for (int keySize : keySizeInBytes) {
-      DeterministicAead dead = new AesSiv(Random.randBytes(keySize));
-      for (int triesPlaintext = 0; triesPlaintext < 100; triesPlaintext++) {
-        byte[] plaintext = new byte[0];
-        byte[] aad = Random.randBytes(Random.randInt(128) + 1);
-        byte[] ciphertext = dead.encryptDeterministically(plaintext, aad);
-        byte[] rebuiltPlaintext = dead.decryptDeterministically(ciphertext, aad);
-        assertThat(ciphertext).hasLength(AesUtil.BLOCK_SIZE);
-        assertEquals(Hex.encode(plaintext), Hex.encode(rebuiltPlaintext));
-      }
+    DeterministicAead dead = new AesSiv(Random.randBytes(KEY_SIZE_IN_BYTES));
+    for (int triesPlaintext = 0; triesPlaintext < 100; triesPlaintext++) {
+      byte[] plaintext = new byte[0];
+      byte[] aad = Random.randBytes(Random.randInt(128) + 1);
+      byte[] ciphertext = dead.encryptDeterministically(plaintext, aad);
+      byte[] rebuiltPlaintext = dead.decryptDeterministically(ciphertext, aad);
+      assertThat(ciphertext).hasLength(AesUtil.BLOCK_SIZE);
+      assertEquals(Hex.encode(plaintext), Hex.encode(rebuiltPlaintext));
     }
   }
 
@@ -175,15 +165,13 @@ public class AesSivTest {
   public void testEncryptDecryptWithEmptyAssociatedData() throws GeneralSecurityException {
     Assume.assumeFalse(TinkFips.useOnlyFips());
 
-    for (int keySize : keySizeInBytes) {
-      DeterministicAead dead = new AesSiv(Random.randBytes(keySize));
-      for (int triesPlaintext = 0; triesPlaintext < 100; triesPlaintext++) {
-        byte[] plaintext = Random.randBytes(Random.randInt(1024) + 1);
-        byte[] aad = new byte[0];
-        byte[] rebuiltPlaintext =
-            dead.decryptDeterministically(dead.encryptDeterministically(plaintext, aad), aad);
-        assertEquals(Hex.encode(plaintext), Hex.encode(rebuiltPlaintext));
-      }
+    DeterministicAead dead = new AesSiv(Random.randBytes(KEY_SIZE_IN_BYTES));
+    for (int triesPlaintext = 0; triesPlaintext < 100; triesPlaintext++) {
+      byte[] plaintext = Random.randBytes(Random.randInt(1024) + 1);
+      byte[] aad = new byte[0];
+      byte[] rebuiltPlaintext =
+          dead.decryptDeterministically(dead.encryptDeterministically(plaintext, aad), aad);
+      assertEquals(Hex.encode(plaintext), Hex.encode(rebuiltPlaintext));
     }
   }
 
@@ -192,15 +180,13 @@ public class AesSivTest {
       throws GeneralSecurityException {
     Assume.assumeFalse(TinkFips.useOnlyFips());
 
-    for (int keySize : keySizeInBytes) {
-      DeterministicAead dead = new AesSiv(Random.randBytes(keySize));
-      for (int triesPlaintext = 0; triesPlaintext < 100; triesPlaintext++) {
-        byte[] plaintext = new byte[0];
-        byte[] aad = new byte[0];
-        byte[] rebuiltPlaintext =
-            dead.decryptDeterministically(dead.encryptDeterministically(plaintext, aad), aad);
-        assertEquals(Hex.encode(plaintext), Hex.encode(rebuiltPlaintext));
-      }
+    DeterministicAead dead = new AesSiv(Random.randBytes(KEY_SIZE_IN_BYTES));
+    for (int triesPlaintext = 0; triesPlaintext < 100; triesPlaintext++) {
+      byte[] plaintext = new byte[0];
+      byte[] aad = new byte[0];
+      byte[] rebuiltPlaintext =
+          dead.decryptDeterministically(dead.encryptDeterministically(plaintext, aad), aad);
+      assertEquals(Hex.encode(plaintext), Hex.encode(rebuiltPlaintext));
     }
   }
 
@@ -208,14 +194,12 @@ public class AesSivTest {
   public void testEncryptDecryptWithNullAssociatedData() throws GeneralSecurityException {
     Assume.assumeFalse(TinkFips.useOnlyFips());
 
-    for (int keySize : keySizeInBytes) {
-      DeterministicAead dead = new AesSiv(Random.randBytes(keySize));
-      for (int triesPlaintext = 0; triesPlaintext < 100; triesPlaintext++) {
-        byte[] plaintext = Random.randBytes(Random.randInt(1024) + 1);
-        byte[] rebuiltPlaintext =
-            dead.decryptDeterministically(dead.encryptDeterministically(plaintext, null), null);
-        assertEquals(Hex.encode(plaintext), Hex.encode(rebuiltPlaintext));
-      }
+    DeterministicAead dead = new AesSiv(Random.randBytes(KEY_SIZE_IN_BYTES));
+    for (int triesPlaintext = 0; triesPlaintext < 100; triesPlaintext++) {
+      byte[] plaintext = Random.randBytes(Random.randInt(1024) + 1);
+      byte[] rebuiltPlaintext =
+          dead.decryptDeterministically(dead.encryptDeterministically(plaintext, null), null);
+      assertEquals(Hex.encode(plaintext), Hex.encode(rebuiltPlaintext));
     }
   }
 
@@ -224,23 +208,19 @@ public class AesSivTest {
       throws GeneralSecurityException {
     Assume.assumeFalse(TinkFips.useOnlyFips());
 
-    for (int keySize : keySizeInBytes) {
-      DeterministicAead dead = new AesSiv(Random.randBytes(keySize));
-      for (int triesPlaintext = 0; triesPlaintext < 100; triesPlaintext++) {
-        byte[] plaintext = Random.randBytes(Random.randInt(1024) + 1);
-        byte[] emptyAad = new byte[0];
-        byte[] emptyAadCiphertext = dead.encryptDeterministically(plaintext, emptyAad);
-        byte[] emptyAadRebuiltPlaintext =
-                dead.decryptDeterministically(emptyAadCiphertext, emptyAad);
+    DeterministicAead dead = new AesSiv(Random.randBytes(KEY_SIZE_IN_BYTES));
+    for (int triesPlaintext = 0; triesPlaintext < 100; triesPlaintext++) {
+      byte[] plaintext = Random.randBytes(Random.randInt(1024) + 1);
+      byte[] emptyAad = new byte[0];
+      byte[] emptyAadCiphertext = dead.encryptDeterministically(plaintext, emptyAad);
+      byte[] emptyAadRebuiltPlaintext = dead.decryptDeterministically(emptyAadCiphertext, emptyAad);
 
-        byte[] nullAadCipherText = dead.encryptDeterministically(plaintext, null);
-        byte[] nullAadRebuiltPlaintext =
-                dead.decryptDeterministically(nullAadCipherText, null);
+      byte[] nullAadCipherText = dead.encryptDeterministically(plaintext, null);
+      byte[] nullAadRebuiltPlaintext = dead.decryptDeterministically(nullAadCipherText, null);
 
-        assertEquals(Hex.encode(plaintext), Hex.encode(emptyAadRebuiltPlaintext));
-        assertEquals(Hex.encode(plaintext), Hex.encode(nullAadRebuiltPlaintext));
-        assertEquals(Hex.encode(emptyAadCiphertext), Hex.encode(nullAadCipherText));
-      }
+      assertEquals(Hex.encode(plaintext), Hex.encode(emptyAadRebuiltPlaintext));
+      assertEquals(Hex.encode(plaintext), Hex.encode(nullAadRebuiltPlaintext));
+      assertEquals(Hex.encode(emptyAadCiphertext), Hex.encode(nullAadCipherText));
     }
   }
 
@@ -249,14 +229,12 @@ public class AesSivTest {
       throws GeneralSecurityException {
     Assume.assumeFalse(TinkFips.useOnlyFips());
 
-    for (int keySize : keySizeInBytes) {
-      DeterministicAead dead = new AesSiv(Random.randBytes(keySize));
-      for (int triesPlaintext = 0; triesPlaintext < 100; triesPlaintext++) {
-        byte[] plaintext = new byte[0];
-        byte[] rebuiltPlaintext =
-                dead.decryptDeterministically(dead.encryptDeterministically(plaintext, null), null);
-        assertEquals(Hex.encode(plaintext), Hex.encode(rebuiltPlaintext));
-      }
+    DeterministicAead dead = new AesSiv(Random.randBytes(KEY_SIZE_IN_BYTES));
+    for (int triesPlaintext = 0; triesPlaintext < 100; triesPlaintext++) {
+      byte[] plaintext = new byte[0];
+      byte[] rebuiltPlaintext =
+          dead.decryptDeterministically(dead.encryptDeterministically(plaintext, null), null);
+      assertEquals(Hex.encode(plaintext), Hex.encode(rebuiltPlaintext));
     }
   }
 
@@ -264,23 +242,22 @@ public class AesSivTest {
   public void testEncryptDecrypt() throws GeneralSecurityException {
     Assume.assumeFalse(TinkFips.useOnlyFips());
 
-    for (int keySize : keySizeInBytes) {
-      DeterministicAead dead = new AesSiv(Random.randBytes(keySize));
+    DeterministicAead dead = new AesSiv(Random.randBytes(KEY_SIZE_IN_BYTES));
 
-      for (int triesPlaintext = 0; triesPlaintext < 100; triesPlaintext++) {
-        byte[] plaintext = Random.randBytes(Random.randInt(1024) + 1);
-        byte[] aad = Random.randBytes(Random.randInt(128) + 1);
-        byte[] rebuiltPlaintext =
-            dead.decryptDeterministically(dead.encryptDeterministically(plaintext, aad), aad);
-        assertEquals(Hex.encode(plaintext), Hex.encode(rebuiltPlaintext));
-      }
+    for (int triesPlaintext = 0; triesPlaintext < 100; triesPlaintext++) {
+      byte[] plaintext = Random.randBytes(Random.randInt(1024) + 1);
+      byte[] aad = Random.randBytes(Random.randInt(128) + 1);
+      byte[] rebuiltPlaintext =
+          dead.decryptDeterministically(dead.encryptDeterministically(plaintext, aad), aad);
+      assertEquals(Hex.encode(plaintext), Hex.encode(rebuiltPlaintext));
     }
   }
 
-  private static void testModifiedCiphertext(int keySize) throws GeneralSecurityException {
+  @Test
+  public void testModifiedCiphertext() throws GeneralSecurityException {
     Assume.assumeFalse(TinkFips.useOnlyFips());
 
-    byte[] key = Random.randBytes(keySize);
+    byte[] key = Random.randBytes(KEY_SIZE_IN_BYTES);
     DeterministicAead crypter = new AesSiv(key);
     byte[] plaintext = Random.randBytes(10);
     byte[] aad = Random.randBytes(10);
@@ -290,43 +267,24 @@ public class AesSivTest {
       for (int bit = 0; bit < 8; bit++) {
         byte[] modified = Arrays.copyOf(ciphertext, ciphertext.length);
         modified[b] ^= (byte) (1 << bit);
-        try {
-          byte[] unused = crypter.decryptDeterministically(modified, aad);
-          fail("Decrypting modified ciphertext should fail");
-        } catch (AEADBadTagException ex) {
-          // This is expected.
-        }
+        assertThrows(
+            AEADBadTagException.class, () -> crypter.decryptDeterministically(modified, aad));
       }
     }
 
     // Truncate the message.
     for (int length = 0; length < ciphertext.length; length++) {
       byte[] modified = Arrays.copyOf(ciphertext, length);
-      try {
-        byte[] unused = crypter.decryptDeterministically(modified, aad);
-        fail("Decrypting modified ciphertext should fail");
-      } catch (GeneralSecurityException ex) {
-        // This is expected.
-        // This could be a AeadBadTagException when the tag verification
-        // fails or some not yet specified Exception when the ciphertext is too short.
-        // In all cases a GeneralSecurityException or a subclass of it must be thrown.
-      }
+      assertThrows(
+          GeneralSecurityException.class, () -> crypter.decryptDeterministically(modified, aad));
     }
   }
 
   @Test
-  public void testModifiedCiphertext() throws GeneralSecurityException {
+  public void testModifiedAssociatedData() throws GeneralSecurityException {
     Assume.assumeFalse(TinkFips.useOnlyFips());
 
-    for (int keySize : keySizeInBytes) {
-      testModifiedCiphertext(keySize);
-    }
-  }
-
-  private static void testModifiedAssociatedData(int keySize) throws GeneralSecurityException {
-    Assume.assumeFalse(TinkFips.useOnlyFips());
-
-    byte[] key = Random.randBytes(keySize);
+    byte[] key = Random.randBytes(KEY_SIZE_IN_BYTES);
     DeterministicAead crypter = new AesSiv(key);
     byte[] plaintext = Random.randBytes(10);
     byte[] aad = Random.randBytes(10);
@@ -336,22 +294,10 @@ public class AesSivTest {
       for (int bit = 0; bit < 8; bit++) {
         byte[] modified = Arrays.copyOf(aad, aad.length);
         modified[b] ^= (byte) (1 << bit);
-        try {
-          byte[] unused = crypter.decryptDeterministically(ciphertext, modified);
-          fail("Decrypting modified aad should fail");
-        } catch (AEADBadTagException ex) {
-          // This is expected.
-        }
+        assertThrows(
+            AEADBadTagException.class,
+            () -> crypter.decryptDeterministically(ciphertext, modified));
       }
-    }
-  }
-
-  @Test
-  public void testModifiedAssociatedData() throws GeneralSecurityException {
-    Assume.assumeFalse(TinkFips.useOnlyFips());
-
-    for (int keySize : keySizeInBytes) {
-      testModifiedAssociatedData(keySize);
     }
   }
 
@@ -363,7 +309,7 @@ public class AesSivTest {
 
     for (int i = 0; i < 100; i++) {
       final int j = i;
-      if (j == 48 || j == 64) {
+      if (j == KEY_SIZE_IN_BYTES) {
         continue;
       }
 
