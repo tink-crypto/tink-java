@@ -35,7 +35,7 @@ fi
 
 mkdir -p "${ANDROID_HOME}"
 time curl -LsS "${ANDROID_COMMANDLINETOOLS_URL}" -o cmdline-tools.zip
-echo "${ANDROID_COMMANDLINETOOLS_SHA256} cmdline-tools.zip" | sha256sum -c
+echo "${ANDROID_COMMANDLINETOOLS_SHA256} cmdline-tools.zip" | sha256sum -c -
 unzip cmdline-tools.zip -d "${ANDROID_HOME}"
 # Discard STDOUT due to noisy progress bar which can't be silenced.
 (yes || true) | "${ANDROID_HOME}/cmdline-tools/bin/sdkmanager" \
