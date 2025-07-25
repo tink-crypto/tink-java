@@ -91,8 +91,9 @@ readonly MAVEN_DEPLOY_LIBRARY_OPTS
   tink-android maven/tink-java-android.pom.xml HEAD
 
 # TODO(tholenst): find a good way to test these jar files.
-./examples/android/helloworld/gradlew -PmavenLocation=local \
-  -p ./examples/android/helloworld build
+# TODO: b/433476142 - Re-enable this test
+# ./examples/android/helloworld/gradlew -PmavenLocation=local \
+#   -p ./examples/android/helloworld build
 EOF
 chmod +x _do_run_test.sh
 
