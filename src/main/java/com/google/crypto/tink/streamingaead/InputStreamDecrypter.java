@@ -165,7 +165,6 @@ final class InputStreamDecrypter extends InputStream {
           // Try another key.
           // IOException is thrown e.g. when MAC is incorrect, but also in case
           // of I/O failures.
-          // TODO(b/66098906): Use a subclass of IOException.
           rewind();
           continue;
         } catch (GeneralSecurityException e) {
