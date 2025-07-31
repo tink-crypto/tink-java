@@ -19,7 +19,7 @@ set -euo pipefail
 if [[ -n "${KOKORO_ROOT:-}" ]] ; then
   readonly TINK_BASE_DIR="$(echo "${KOKORO_ARTIFACTS_DIR}"/git*)"
   cd "${TINK_BASE_DIR}/tink_java"
-  export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-8-latest/Contents/Home
+  export JAVA_HOME=$(/usr/libexec/java_home -v1.8)
   export XCODE_VERSION="14.1"
   export DEVELOPER_DIR="/Applications/Xcode.app/Contents/Developer"
 fi
