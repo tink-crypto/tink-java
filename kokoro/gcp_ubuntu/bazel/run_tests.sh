@@ -14,47 +14,59 @@
 # limitations under the License.
 ################################################################################
 
-# By default when run locally this script runs the command below directly on the
-# host. The CONTAINER_IMAGE variable can be set to run on a custom container
-# image for local testing. E.g.:
+# TESTING LOCALLY:
+# First install Docker (go/installdocker). We need sudoless Docker.
+# Next, the following commands install tink-java into a new temporary directory
+# and set TINK_BASE_DIR to tell the script which directory to use:
+# $ export TINK_BASE_DIR="$(mktemp -d)"
+# $ cd ${TINK_BASE_DIR}
+# $ git clone "rpc://ise-crypto-internal/tink-java" "${TINK_BASE_DIR}/tink_java"
+# You can also patch a CL/PR with the command you find in the top right of the
+# GOB review page.
 #
-# CONTAINER_IMAGE="us-docker.pkg.dev/tink-test-infrastructure/tink-ci-images/linux-tink-java-base:latest" \
-#  sh ./kokoro/gcp_ubuntu/bazel/run_tests.sh
-#
-# The user may specify TINK_BASE_DIR as the folder where to look for
-# tink-java. That is ${TINK_BASE_DIR}/tink_java.
+# Next, set the container image to the one you want to use.
+# $ export CONTAINER_IMAGE="us-docker.pkg.dev/tink-test-infrastructure/tink-ci-images/linux-tink-java-base:latest"
+# If you want to try with a new docker image, you can build it with
+# $ docker buildx build <full path for folder containing Dockerfile>
+# This outputs a hash you can use:
+# $ export CONTAINER_IMAGE="sha256:<hash>".
+# Run the script:
+# $ sh tink_java/kokoro/gcp_ubuntu/bazel/run_tests.sh
 set -eEuo pipefail
 
-RUN_COMMAND_ARGS=()
-if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]] ; then
+if [[ ! -v TINK_BASE_DIR ]] ; then
   TINK_BASE_DIR="$(echo "${KOKORO_ARTIFACTS_DIR}"/git*)"
+fi
+readonly TINK_BASE_DIR
+echo "TINK_BASE_DIR is ${TINK_BASE_DIR}"
+if [[ ! -v CONTAINER_IMAGE ]] ; then
   source \
     "${TINK_BASE_DIR}/tink_java/kokoro/testutils/java_test_container_images.sh"
   CONTAINER_IMAGE="${TINK_JAVA_BASE_IMAGE}"
-  RUN_COMMAND_ARGS+=( -k "${TINK_GCR_SERVICE_KEY}" )
 fi
-: "${TINK_BASE_DIR:=$(cd .. && pwd)}"
-readonly TINK_BASE_DIR
 readonly CONTAINER_IMAGE
-
-if [[ -n "${CONTAINER_IMAGE}" ]]; then
-  RUN_COMMAND_ARGS+=( -c "${CONTAINER_IMAGE}" )
-fi
+echo "CONTAINER_IMAGE is ${CONTAINER_IMAGE}"
 
 cd "${TINK_BASE_DIR}/tink_java"
 
-if [[ -n "${TINK_REMOTE_BAZEL_CACHE_GCS_BUCKET:-}" ]]; then
+if [[ -v TINK_REMOTE_BAZEL_CACHE_GCS_BUCKET ]]; then
   cp "${TINK_REMOTE_BAZEL_CACHE_SERVICE_KEY}" ./cache_key
   cat <<EOF > /tmp/env_variables.txt
 BAZEL_REMOTE_CACHE_NAME=${TINK_REMOTE_BAZEL_CACHE_GCS_BUCKET}/bazel/${TINK_JAVA_BASE_IMAGE_HASH}
 EOF
-  RUN_COMMAND_ARGS+=( -e /tmp/env_variables.txt )
+else
+  touch /tmp/env_variables.txt
 fi
-
-readonly RUN_COMMAND_ARGS
 
 cat <<'EOF' > _do_run_test.sh
 set -euo pipefail
+
+echo "Running tests!"
+
+cp -r /tink_orig_dir/tink_java /tink_build_dir
+chown --recursive tinkuser:tinkgroup /tink_build_dir
+su tinkuser
+cd /tink_build_dir/tink_java
 
 ./tools/create_maven_build_file.sh -o BUILD.bazel.temp
 if ! cmp -s BUILD.bazel BUILD.bazel.temp; then
@@ -65,12 +77,23 @@ fi
 
 CACHE_FLAGS=()
 if [[ -n "${BAZEL_REMOTE_CACHE_NAME:-}" ]]; then
-  CACHE_FLAGS+=( -c "${BAZEL_REMOTE_CACHE_NAME}" )
+  CACHE_FLAGS+=("--remote_cache=https://storage.googleapis.com/${BAZEL_REMOTE_CACHE_NAME}")
+  CACHE_FLAGS+=("--google_credentials=$(realpath ./cache_key)")
 fi
 readonly CACHE_FLAGS
 
-./kokoro/testutils/run_bazel_tests.sh "${CACHE_FLAGS[@]}" .
-./kokoro/testutils/run_bazel_tests.sh "${CACHE_FLAGS[@]}" examples
+echo "---------- BUILDING MAIN"
+time bazelisk build "${CACHE_FLAGS[@]}" -- ...
+echo "---------- TESTING MAIN"
+time bazelisk test "${CACHE_FLAGS[@]}" -- ...
+
+cd examples
+
+echo "---------- BUILDING EXAMPLES"
+time bazelisk build "${CACHE_FLAGS[@]}" -- ...
+echo "---------- TESTING EXAMPLES"
+time bazelisk test "${CACHE_FLAGS[@]}" -- ...
+
 EOF
 chmod +x _do_run_test.sh
 
@@ -83,4 +106,21 @@ cleanup() {
   rm -rf /tmp/env_variables.txt
 }
 
-./kokoro/testutils/docker_execute.sh "${RUN_COMMAND_ARGS[@]}" ./_do_run_test.sh
+if [[ ! -z "${TINK_GCR_SERVICE_KEY:-}" ]]; then
+  gcloud auth activate-service-account --key-file="${TINK_GCR_SERVICE_KEY}"
+  gcloud config set project tink-test-infrastructure
+  gcloud auth configure-docker us-docker.pkg.dev --quiet
+fi
+
+echo "-- PULLING DOCKER IMAGE"
+time docker pull "${CONTAINER_IMAGE}"
+
+echo "-- RUNNING DOCKER"
+time docker run \
+  --network="host" \
+  --mount type=bind,src="${TINK_BASE_DIR}",dst=/tink_orig_dir \
+  --env-file /tmp/env_variables.txt \
+  --rm \
+  "${CONTAINER_IMAGE}" \
+  bash -c "/tink_orig_dir/tink_java/_do_run_test.sh"
+
