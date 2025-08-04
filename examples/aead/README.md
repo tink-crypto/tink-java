@@ -18,8 +18,8 @@ tinkey create-keyset --key-template AES128_GCM --out-format JSON \
 ### Bazel
 
 ```shell
-git clone https://github.com/google/tink
-cd tink/examples/java_src
+git clone https://github.com/tink-crypto/tink-java
+cd tink-java/examples
 bazel build ...
 ```
 
