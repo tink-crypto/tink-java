@@ -28,7 +28,7 @@ import java.security.GeneralSecurityException;
  * by a specific run-time environment enable control of Tink setup via JSON-formatted config files
  * that determine which key types are supported, and provide a mechanism for deprecation of
  * obsolete/outdated cryptographic schemes (see <a
- * href="https://github.com/google/tink/blob/master/proto/config.proto">config.proto</a> for more
+ * href="https://github.com/tink-crypto/tink-java/blob/main/proto/config.proto">config.proto</a> for more
  * info).
  *
  * <h3>Usage</h3>
