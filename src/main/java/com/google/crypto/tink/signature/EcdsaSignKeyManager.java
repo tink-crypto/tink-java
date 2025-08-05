@@ -198,7 +198,7 @@ public final class EcdsaSignKeyManager {
    *     <ul>
    *       <li>Hash function: SHA256
    *       <li>Curve: NIST P-256
-   *       <li>Signature encoding: DER (this is the encoding that Java uses).
+   *       <li>Signature encoding: IEEE_P1363 (this is the encoding that JWS and WebCrypto use).
    *       <li>Prefix type: RAW (no prefix).
    *     </ul>
    *     Keys generated from this template create raw signatures of exactly 64 bytes. It is
