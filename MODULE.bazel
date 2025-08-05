@@ -1,0 +1,28 @@
+"""Tink Java Bazel Module definition."""
+
+module(name = "tink_java", version = "1.18.0")
+
+bazel_dep(name = "rules_jvm_external", version = "6.3")
+bazel_dep(name = "rules_license", version = "1.0.0")
+
+maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
+
+maven.install(
+    artifacts = [
+        "com.google.api-client:google-api-client:2.2.0",
+        "com.google.protobuf:protobuf-java:4.28.2",
+        "com.google.protobuf:protobuf-javalite:4.28.2",
+        "com.google.http-client:google-http-client:1.43.3",
+        "androidx.annotation:annotation:1.8.2",
+        "org.conscrypt:conscrypt-openjdk-uber:2.5.2",
+        "org.pantsbuild:jarjar:1.7.2",
+        "org.ow2.asm:asm-commons:7.0",
+        "androidx.test:monitor:1.7.2",
+    ],
+    repositories = [
+        "https://maven.google.com",
+        "https://repo1.maven.org/maven2",
+    ],
+)
+
+use_repo(maven, "maven")

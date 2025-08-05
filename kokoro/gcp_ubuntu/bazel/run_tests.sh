@@ -58,16 +58,13 @@ else
   touch /tmp/env_variables.txt
 fi
 
+### =========================================== EMBEDDED SCRIPT: _do_run_test.sh
+### The _do_run_test.sh script will run as "tinkuser"
 cat <<'EOF' > _do_run_test.sh
+#!/bin/bash
 set -euo pipefail
 
-echo "Running tests!"
-
-cp -r /tink_orig_dir/tink_java /tink_build_dir
-chown --recursive tinkuser:tinkgroup /tink_build_dir
-su tinkuser
-cd /tink_build_dir/tink_java
-
+cd /home/tinkuser/tink_java/
 ./tools/create_maven_build_file.sh -o BUILD.bazel.temp
 if ! cmp -s BUILD.bazel BUILD.bazel.temp; then
   echo "ERROR: Update your BUILD.bazel file using ./tools/create_maven_build_file.sh" >&2
@@ -94,17 +91,38 @@ time bazelisk build "${CACHE_FLAGS[@]}" -- ...
 echo "---------- TESTING EXAMPLES"
 time bazelisk test "${CACHE_FLAGS[@]}" -- ...
 
+echo "---------- TURNING ON BAZELMOD"
+cd ..
+sed -i "s/always --noenable_bzlmod//g" .bazelrc
+
+echo "---------- BUILDING MAIN"
+time bazelisk build "${CACHE_FLAGS[@]}" -- ...
+echo "---------- TESTING MAIN"
+time bazelisk test "${CACHE_FLAGS[@]}" -- ...
+
 EOF
+### ======================================================= END: _do_run_test.sh
+
 chmod +x _do_run_test.sh
 
-# Run cleanup on EXIT.
-trap cleanup EXIT
+### ======================================== EMBEDDED SCRIPT: _cp_then_switch.sh
+### The _cp_then_switch.sh script will cp the build tree to a
+### directory readable for tinkuser then execute _do_run_test.sh.
+cat <<'EOF' > _cp_then_switch.sh
+set -euo pipefail
 
-cleanup() {
-  rm -rf _do_run_test.sh
-  rm -rf BUILD.bazel.temp
-  rm -rf /tmp/env_variables.txt
-}
+echo "=== COPYING /tink_orig_dir to /home/tinkuser"
+
+cp -r /tink_orig_dir/tink_java /home/tinkuser
+chown --recursive tinkuser:tinkgroup /home/tinkuser/tink_java
+
+which bash
+su tinkuser /usr/bin/bash -c "/home/tinkuser/tink_java/_do_run_test.sh"
+exit
+EOF
+### ==================================================== END: _cp_then_switch.sh
+
+chmod +x _cp_then_switch.sh
 
 if [[ ! -z "${TINK_GCR_SERVICE_KEY:-}" ]]; then
   gcloud auth activate-service-account --key-file="${TINK_GCR_SERVICE_KEY}"
@@ -122,5 +140,5 @@ time docker run \
   --env-file /tmp/env_variables.txt \
   --rm \
   "${CONTAINER_IMAGE}" \
-  bash -c "/tink_orig_dir/tink_java/_do_run_test.sh"
+  bash -c "/tink_orig_dir/tink_java/_cp_then_switch.sh"
 
