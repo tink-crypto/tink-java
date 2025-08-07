@@ -19,6 +19,7 @@ package com.google.crypto.tink.subtle;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 
@@ -33,6 +34,15 @@ class StreamingAeadEncryptingStream extends FilterOutputStream {
   ByteBuffer ctBuffer; // used for the ciphertext (does not buffer anything).
   boolean open;
 
+  // We cast to Buffer before calling position()/mark()/clear()/flip()/reset()/limit() to force
+  // the compiler to use the older methods from Buffer, which are Java 8 compatible . Java 9
+  // introduced overloads for these functions, but right now we want to produce byte code when
+  // compiling, which calls these functions directly on Buffer. This increases the chances to
+  // maintain compatibility with Java 8.
+  private static Buffer toBuffer(ByteBuffer b) {
+    return b;
+  }
+
   public StreamingAeadEncryptingStream(
       NonceBasedStreamingAead streamAead, OutputStream ciphertextChannel, byte[] associatedData)
       throws GeneralSecurityException, IOException {
@@ -41,7 +51,7 @@ class StreamingAeadEncryptingStream extends FilterOutputStream {
     plaintextSegmentSize = streamAead.getPlaintextSegmentSize();
     ptBuffer = ByteBuffer.allocate(plaintextSegmentSize);
     ctBuffer = ByteBuffer.allocate(streamAead.getCiphertextSegmentSize());
-    ptBuffer.limit(plaintextSegmentSize - streamAead.getCiphertextOffset());
+    toBuffer(ptBuffer).limit(plaintextSegmentSize - streamAead.getCiphertextOffset());
     ByteBuffer header = encrypter.getHeader();
     byte[] headerBytes = new byte[header.remaining()];
     header.get(headerBytes);
@@ -75,16 +85,16 @@ class StreamingAeadEncryptingStream extends FilterOutputStream {
       startPosition += sliceSize;
       remaining -= sliceSize;
       try {
-        ptBuffer.flip();
-        ctBuffer.clear();
+        toBuffer(ptBuffer).flip();
+        toBuffer(ctBuffer).clear();
         encrypter.encryptSegment(ptBuffer, slice, false, ctBuffer);
       } catch (GeneralSecurityException ex) {
         throw new IOException(ex);
       }
-      ctBuffer.flip();
-      out.write(ctBuffer.array(), ctBuffer.position(), ctBuffer.remaining());
-      ptBuffer.clear();
-      ptBuffer.limit(plaintextSegmentSize);
+      toBuffer(ctBuffer).flip();
+      out.write(ctBuffer.array(), toBuffer(ctBuffer).position(), ctBuffer.remaining());
+      toBuffer(ptBuffer).clear();
+      toBuffer(ptBuffer).limit(plaintextSegmentSize);
     }
     ptBuffer.put(pt, startPosition, remaining);
   }
@@ -95,8 +105,8 @@ class StreamingAeadEncryptingStream extends FilterOutputStream {
       return;
     }
     try {
-      ptBuffer.flip();
-      ctBuffer.clear();
+      toBuffer(ptBuffer).flip();
+      toBuffer(ctBuffer).clear();
       encrypter.encryptSegment(ptBuffer, true, ctBuffer);
     } catch (GeneralSecurityException ex) {
       // TODO(bleichen): define the state of this. E.g. open = false;
@@ -107,7 +117,7 @@ class StreamingAeadEncryptingStream extends FilterOutputStream {
               + ctBuffer.remaining(),
           ex);
     }
-    ctBuffer.flip();
+    toBuffer(ctBuffer).flip();
     out.write(ctBuffer.array(), ctBuffer.position(), ctBuffer.remaining());
     open = false;
     super.close();

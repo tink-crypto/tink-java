@@ -22,6 +22,7 @@ import com.google.crypto.tink.StreamingAead;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.streamingaead.AesCtrHmacStreamingKey;
 import com.google.crypto.tink.streamingaead.AesCtrHmacStreamingParameters.HashType;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.security.GeneralSecurityException;
@@ -87,6 +88,15 @@ public final class AesCtrHmacStreaming extends NonceBasedStreamingAead {
   private final int firstSegmentOffset;
   private final String hkdfAlgo;
   private final byte[] ikm;
+
+  // We cast to Buffer before calling position()/mark()/clear()/flip()/reset()/limit() to force
+  // the compiler to use the older methods from Buffer, which are Java 8 compatible . Java 9
+  // introduced overloads for these functions, but right now we want to produce byte code when
+  // compiling, which calls these functions directly on Buffer. This increases the chances to
+  // maintain compatibility with Java 8.
+  private static Buffer toBuffer(ByteBuffer b) {
+    return b;
+  }
 
   /**
    * Initializes a streaming primitive with a key derivation key and encryption parameters.
@@ -324,7 +334,7 @@ public final class AesCtrHmacStreaming extends NonceBasedStreamingAead {
       header.put((byte) getHeaderLength());
       header.put(salt);
       header.put(noncePrefix);
-      header.flip();
+      toBuffer(header).flip();
       byte[] keymaterial = deriveKeyMaterial(salt, aad);
       keySpec = deriveKeySpec(keymaterial);
       hmacKeySpec = deriveHmacKeySpec(keymaterial);
@@ -343,14 +353,14 @@ public final class AesCtrHmacStreaming extends NonceBasedStreamingAead {
     public synchronized void encryptSegment(
         ByteBuffer plaintext, boolean isLastSegment, ByteBuffer ciphertext)
         throws GeneralSecurityException {
-      int position = ciphertext.position();
+      int position = toBuffer(ciphertext).position();
       byte[] nonce = nonceForSegment(noncePrefix, encryptedSegments, isLastSegment);
       cipher.init(Cipher.ENCRYPT_MODE, keySpec, new IvParameterSpec(nonce));
       encryptedSegments++;
       cipher.doFinal(plaintext, ciphertext);
       ByteBuffer ctCopy = ciphertext.duplicate();
-      ctCopy.flip();
-      ctCopy.position(position);
+      toBuffer(ctCopy).flip();
+      toBuffer(ctCopy).position(position);
       mac.init(hmacKeySpec);
       mac.update(nonce);
       mac.update(ctCopy);
@@ -366,15 +376,15 @@ public final class AesCtrHmacStreaming extends NonceBasedStreamingAead {
     public synchronized void encryptSegment(
         ByteBuffer part1, ByteBuffer part2, boolean isLastSegment, ByteBuffer ciphertext)
         throws GeneralSecurityException {
-      int position = ciphertext.position();
+      int position = toBuffer(ciphertext).position();
       byte[] nonce = nonceForSegment(noncePrefix, encryptedSegments, isLastSegment);
       cipher.init(Cipher.ENCRYPT_MODE, keySpec, new IvParameterSpec(nonce));
       encryptedSegments++;
       cipher.update(part1, ciphertext);
       cipher.doFinal(part2, ciphertext);
       ByteBuffer ctCopy = ciphertext.duplicate();
-      ctCopy.flip();
-      ctCopy.position(position);
+      toBuffer(ctCopy).flip();
+      toBuffer(ctCopy).position(position);
       mac.init(hmacKeySpec);
       mac.update(nonce);
       mac.update(ctCopy);
@@ -420,7 +430,7 @@ public final class AesCtrHmacStreaming extends NonceBasedStreamingAead {
     public synchronized void decryptSegment(
         ByteBuffer ciphertext, int segmentNr, boolean isLastSegment, ByteBuffer plaintext)
         throws GeneralSecurityException {
-      int position = ciphertext.position();
+      int position = toBuffer(ciphertext).position();
       byte[] nonce = nonceForSegment(noncePrefix, segmentNr, isLastSegment);
       int ctLength = ciphertext.remaining();
       if (ctLength < tagSizeInBytes) {
@@ -429,9 +439,9 @@ public final class AesCtrHmacStreaming extends NonceBasedStreamingAead {
       int ptLength = ctLength - tagSizeInBytes;
       int startOfTag = position + ptLength;
       ByteBuffer ct = ciphertext.duplicate();
-      ct.limit(startOfTag);
+      toBuffer(ct).limit(startOfTag);
       ByteBuffer tagBuffer = ciphertext.duplicate();
-      tagBuffer.position(startOfTag);
+      toBuffer(tagBuffer).position(startOfTag);
 
       assert mac != null;
       assert hmacKeySpec != null;
@@ -448,7 +458,7 @@ public final class AesCtrHmacStreaming extends NonceBasedStreamingAead {
         throw new GeneralSecurityException("Tag mismatch");
       }
 
-      ciphertext.limit(startOfTag);
+      toBuffer(ciphertext).limit(startOfTag);
       cipher.init(Cipher.ENCRYPT_MODE, keySpec, new IvParameterSpec(nonce));
       cipher.doFinal(ciphertext, plaintext);
     }

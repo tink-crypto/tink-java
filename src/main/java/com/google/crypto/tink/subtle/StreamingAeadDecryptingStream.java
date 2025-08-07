@@ -21,6 +21,7 @@ import static java.lang.Math.min;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
@@ -78,6 +79,15 @@ class StreamingAeadDecryptingStream extends FilterInputStream {
   private final int ciphertextSegmentSize;
   private final int firstCiphertextSegmentSize;
 
+  // We cast to Buffer before calling position()/mark()/clear()/flip()/reset()/limit() to force
+  // the compiler to use the older methods from Buffer, which are Java 8 compatible . Java 9
+  // introduced overloads for these functions, but right now we want to produce byte code when
+  // compiling, which calls these functions directly on Buffer. This increases the chances to
+  // maintain compatibility with Java 8.
+  private static Buffer toBuffer(ByteBuffer b) {
+    return b;
+  }
+
   public StreamingAeadDecryptingStream(
       NonceBasedStreamingAead streamAead, InputStream ciphertextStream, byte[] associatedData)
       throws GeneralSecurityException, IOException {
@@ -90,11 +100,11 @@ class StreamingAeadDecryptingStream extends FilterInputStream {
     // stream.
     ciphertextSegmentSize = streamAead.getCiphertextSegmentSize();
     ciphertextSegment = ByteBuffer.allocate(ciphertextSegmentSize + 1);
-    ciphertextSegment.limit(0);
+    toBuffer(ciphertextSegment).limit(0);
     firstCiphertextSegmentSize = ciphertextSegmentSize - streamAead.getCiphertextOffset();
     plaintextSegment = ByteBuffer.allocate(streamAead.getPlaintextSegmentSize()
         + PLAINTEXT_SEGMENT_EXTRA_SIZE);
-    plaintextSegment.limit(0);
+    toBuffer(plaintextSegment).limit(0);
     headerRead = false;
     endOfCiphertext = false;
     endOfPlaintext = false;
@@ -115,7 +125,7 @@ class StreamingAeadDecryptingStream extends FilterInputStream {
     }
     ByteBuffer header = ByteBuffer.allocate(headerLength);
     while (header.remaining() > 0) {
-      int read = in.read(header.array(), header.position(), header.remaining());
+      int read = in.read(header.array(), toBuffer(header).position(), header.remaining());
       if (read == -1) {
         setDecryptionErrorOccured();
         throw new IOException("Ciphertext is too short");
@@ -123,9 +133,9 @@ class StreamingAeadDecryptingStream extends FilterInputStream {
       if (read == 0) {
         throw new IOException("Could not read bytes from the ciphertext stream");
       }
-      header.position(header.position() + read);
+      toBuffer(header).position(toBuffer(header).position() + read);
     }
-    header.flip();
+    toBuffer(header).flip();
     try {
       decrypter.init(header, aad);
     } catch (GeneralSecurityException ex) {
@@ -136,7 +146,7 @@ class StreamingAeadDecryptingStream extends FilterInputStream {
 
   private void setDecryptionErrorOccured() {
     decryptionErrorOccured = true;
-    plaintextSegment.limit(0);
+    toBuffer(plaintextSegment).limit(0);
   }
 
   /** Loads the next plaintext segment. */
@@ -149,7 +159,7 @@ class StreamingAeadDecryptingStream extends FilterInputStream {
               ciphertextSegment.position(),
               ciphertextSegment.remaining());
       if (read > 0) {
-        ciphertextSegment.position(ciphertextSegment.position() + read);
+        toBuffer(ciphertextSegment).position(toBuffer(ciphertextSegment).position() + read);
       } else if (read == -1) {
         endOfCiphertext = true;
       } else if (read == 0) {
@@ -159,11 +169,11 @@ class StreamingAeadDecryptingStream extends FilterInputStream {
     }
     byte lastByte = 0;
     if (!endOfCiphertext) {
-      lastByte = ciphertextSegment.get(ciphertextSegment.position() - 1);
-      ciphertextSegment.position(ciphertextSegment.position() - 1);
+      lastByte = ciphertextSegment.get(toBuffer(ciphertextSegment).position() - 1);
+      toBuffer(ciphertextSegment).position(toBuffer(ciphertextSegment).position() - 1);
     }
-    ciphertextSegment.flip();
-    plaintextSegment.clear();
+    toBuffer(ciphertextSegment).flip();
+    toBuffer(plaintextSegment).clear();
     try {
       decrypter.decryptSegment(ciphertextSegment, segmentNr, endOfCiphertext, plaintextSegment);
     } catch (GeneralSecurityException ex) {
@@ -181,11 +191,11 @@ class StreamingAeadDecryptingStream extends FilterInputStream {
           ex);
     }
     segmentNr += 1;
-    plaintextSegment.flip();
-    ciphertextSegment.clear();
+    toBuffer(plaintextSegment).flip();
+    toBuffer(ciphertextSegment).clear();
     if (!endOfCiphertext) {
-      ciphertextSegment.clear();
-      ciphertextSegment.limit(ciphertextSegmentSize + 1);
+      toBuffer(ciphertextSegment).clear();
+      toBuffer(ciphertextSegment).limit(ciphertextSegmentSize + 1);
       ciphertextSegment.put(lastByte);
     }
   }
@@ -215,8 +225,8 @@ class StreamingAeadDecryptingStream extends FilterInputStream {
     }
     if (!headerRead) {
       readHeader();
-      ciphertextSegment.clear();
-      ciphertextSegment.limit(firstCiphertextSegmentSize + 1);
+      toBuffer(ciphertextSegment).clear();
+      toBuffer(ciphertextSegment).limit(firstCiphertextSegmentSize + 1);
     }
     if (endOfPlaintext) {
       return -1;

@@ -21,6 +21,7 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.StreamingAead;
 import com.google.crypto.tink.streamingaead.AesGcmHkdfStreamingKey;
 import com.google.crypto.tink.streamingaead.AesGcmHkdfStreamingParameters.HashType;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.security.GeneralSecurityException;
@@ -84,6 +85,15 @@ public final class AesGcmHkdfStreaming extends NonceBasedStreamingAead {
   private final int firstSegmentOffset;
   private final String hkdfAlg;
   private final byte[] ikm;
+
+  // We cast to Buffer before calling position()/mark()/clear()/flip()/reset()/limit() to force
+  // the compiler to use the older metoods from Buffer, which are Java 8 compatible . Java 9
+  // introduced overloads for these functions, but right now we want to produce byte code when
+  // compiling, which calls these functions directly on Buffer. This increases the chances to
+  // maintain compatibility with Java 8.
+  private static Buffer toBuffer(ByteBuffer b) {
+    return b;
+  }
 
   /**
    * Initializes a streaming primitive with a key derivation key and encryption parameters.
@@ -247,7 +257,7 @@ public final class AesGcmHkdfStreaming extends NonceBasedStreamingAead {
       header.put((byte) getHeaderLength());
       header.put(salt);
       header.put(noncePrefix);
-      header.flip();
+      toBuffer(header).flip();
       keySpec = deriveKeySpec(salt, aad);
     }
 

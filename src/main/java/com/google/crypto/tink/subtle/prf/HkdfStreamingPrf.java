@@ -30,6 +30,7 @@ import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
@@ -64,6 +65,15 @@ public class HkdfStreamingPrf implements StreamingPrf {
         throw new GeneralSecurityException(
             "No getJavaxHmacName for given hash " + hashType + " known");
     }
+  }
+
+  // We cast to Buffer before calling position()/mark()/clear()/flip()/reset()/limit() to force
+  // the compiler to use the older methods from Buffer, which are Java 8 compatible . Java 9
+  // introduced overloads for these functions, but right now we want to produce byte code when
+  // compiling, which calls these functions directly on Buffer. This increases the chances to
+  // maintain compatibility with Java 8.
+  private static Buffer toBuffer(ByteBuffer b) {
+    return b;
   }
 
   public HkdfStreamingPrf(final HashType hashType, final byte[] ikm, final byte[] salt) {
@@ -113,7 +123,7 @@ public class HkdfStreamingPrf implements StreamingPrf {
       mac.update(ikm);
       prk = mac.doFinal();
       buffer = ByteBuffer.allocate(0);
-      buffer.mark();
+      toBuffer(buffer).mark();
       ctr = 0;
     }
 
@@ -121,13 +131,13 @@ public class HkdfStreamingPrf implements StreamingPrf {
     // T(i+1) = HMAC-Hash(PRK, T(i) | info | 0x<i+1>)
     private void updateBuffer() throws GeneralSecurityException, IOException {
       mac.init(new SecretKeySpec(prk, getJavaxHmacName(hashType)));
-      buffer.reset();
+      toBuffer(buffer).reset();
       mac.update(buffer);
       mac.update(input);
       ctr = ctr + 1;
       mac.update((byte) ctr);
       buffer = ByteBuffer.wrap(mac.doFinal());
-      buffer.mark();
+      toBuffer(buffer).mark();
     }
 
     @Override
