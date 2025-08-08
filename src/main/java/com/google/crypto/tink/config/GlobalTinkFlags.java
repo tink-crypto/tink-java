@@ -21,8 +21,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * Contains Booleans which change Tink behavior globally.
  *
- * <p>Note: within Google, except for Android, Tink uses a different version of this file which uses
- * a Google-only flag mechanism.
+ * <p>Note: within Google Tink uses a different version of this file which uses a Google-only flag
+ * mechanism.
  */
 public final class GlobalTinkFlags {
   /**
