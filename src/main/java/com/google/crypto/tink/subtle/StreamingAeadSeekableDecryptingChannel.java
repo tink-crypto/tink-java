@@ -127,7 +127,7 @@ class StreamingAeadSeekableDecryptingChannel implements SeekableByteChannel {
        .append("\nplaintextPosition:").append(plaintextPosition)
        .append("\nHeader")
        .append(" position:").append(header.position())
-       .append(" limit:").append(header.position())
+       .append(" limit:").append(header.limit())
        .append("\ncurrentSegmentNr:").append(currentSegmentNr)
        .append("\nciphertextSgement")
        .append(" position:").append(ciphertextSegment.position())
@@ -170,7 +170,21 @@ class StreamingAeadSeekableDecryptingChannel implements SeekableByteChannel {
    */
   private boolean tryReadHeader() throws IOException {
     ciphertextChannel.position(header.position() + firstSegmentOffset);
-    ciphertextChannel.read(header);
+    int headerSize = header.remaining();
+    int numBytesRead = ciphertextChannel.read(header);
+    if (numBytesRead == -1) {
+      throw new IOException(
+          "Unexpected end-of-stream: ciphertextChannel.read(header) returned -1");
+    }
+    if (numBytesRead != headerSize - header.remaining()) {
+      throw new IOException(
+          "Unexpected return value from ciphertextChannel.read(header). headerSize = "
+              + headerSize
+              + ", header.remaining() = "
+              + header.remaining()
+              + ", but read returned "
+              + numBytesRead);
+    }
     if (header.remaining() > 0) {
       return false;
     } else {
@@ -226,7 +240,22 @@ class StreamingAeadSeekableDecryptingChannel implements SeekableByteChannel {
       isCurrentSegmentDecrypted = false;
     }
     if (ciphertextSegment.remaining() > 0) {
-      ciphertextChannel.read(ciphertextSegment);
+      int remainingDataBeforeRead = ciphertextSegment.remaining();
+      int numBytesRead = ciphertextChannel.read(ciphertextSegment);
+      if (numBytesRead == -1) {
+        throw new IOException(
+            "Unexpected end-of-stream: ciphertextChannel.read(ciphertextSegment) returned -1");
+      }
+      if (numBytesRead != remainingDataBeforeRead - ciphertextSegment.remaining()) {
+        throw new IOException(
+            "Unexpected return value from ciphertextChannel.read(ciphertextSegment)."
+                + " remainingDataBeforeRead = "
+                + remainingDataBeforeRead
+                + ", ciphertextSegment.remaining() = "
+                + ciphertextSegment.remaining()
+                + ", but read returned "
+                + numBytesRead);
+      }
     }
     if (ciphertextSegment.remaining() > 0) {
       return false;
