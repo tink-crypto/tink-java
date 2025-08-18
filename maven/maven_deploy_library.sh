@@ -15,8 +15,6 @@
 # limitations under the License.
 ################################################################################
 
-# Deploys a Maven library.
-#
 # NOTE:
 #   - This must be run from the root of the library workspace.
 
@@ -24,7 +22,7 @@ usage() {
   cat <<EOF
 Usage: $0 [-dh] [-n jars_name_prefix] [-u github_url] [-c bazel_cache_name]
           <action (install|snapshot|release)> <library name>
-          <pom file> <version>"
+          <pom template> <version>"
   -d: Dry run. Only execute idempotent commands (default: false).
   -n: JARs name prefix. Prefix to apply to JAR names (default: <library name>).
   -u: GitHub URL. GitHub URL for Javadoc publishing; it is mandatory when
@@ -32,6 +30,18 @@ Usage: $0 [-dh] [-n jars_name_prefix] [-u github_url] [-c bazel_cache_name]
   -c: Bazel cache to use; credentials are expected to be in the file
       ./cache_key.
   -h: Help. Print this usage information.
+
+Builds an Apache Maven archive using Bazel and performs an action on them.
+  * snapshot: Builds the artifact, uploads it to the snapshot server. Also
+              uploads javadoc to the given GitHub URL (branch gh-pages).
+  * release:  Builds the artifact, then uploads it to the actual release server.
+              Also uploads javadoc to the given GitHub URL (branch gh-pages).
+  * install:  Creates the artifact with Bazel, then installs the result locally.
+              This emulates the effect of the user later installing the uploaded
+              artefact.
+
+The POM template must be a normal POM file, but with VERSION_PLACEHOLDER instead
+of the actual version. The version must be of the form xx.xx.xx (e.g., 1.18.0).
 EOF
   exit 1
 }
