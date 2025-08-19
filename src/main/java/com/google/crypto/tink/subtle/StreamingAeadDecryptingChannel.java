@@ -119,6 +119,9 @@ class StreamingAeadDecryptingChannel implements ReadableByteChannel {
     do {
       read = ciphertextChannel.read(buffer);
     } while (read > 0 && buffer.remaining() > 0);
+    if (read < -1) {
+      throw new IOException("Unexpected return value from ciphertextChannel.read");
+    }
     if (read == -1) {
       endOfCiphertext = true;
     }

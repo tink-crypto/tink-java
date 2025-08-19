@@ -126,7 +126,7 @@ class StreamingAeadDecryptingStream extends FilterInputStream {
     ByteBuffer header = ByteBuffer.allocate(headerLength);
     while (header.remaining() > 0) {
       int read = in.read(header.array(), toBuffer(header).position(), header.remaining());
-      if (read == -1) {
+      if (read < 0) {
         setDecryptionErrorOccured();
         throw new IOException("Ciphertext is too short");
       }
@@ -165,6 +165,8 @@ class StreamingAeadDecryptingStream extends FilterInputStream {
       } else if (read == 0) {
         // We expect that read returns at least one byte.
         throw new IOException("Could not read bytes from the ciphertext stream");
+      } else {
+        throw new IOException("Unexpected return value from in.read");
       }
     }
     byte lastByte = 0;
