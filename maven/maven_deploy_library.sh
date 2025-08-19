@@ -24,7 +24,9 @@ Usage: $0 [-dh] [-n jars_name_prefix] [-u github_url] [-c bazel_cache_name]
           <action (install|snapshot|release)> <library name>
           <pom template> <version>"
   -d: Dry run. Only execute idempotent commands (default: false).
-  -n: JARs name prefix. Prefix to apply to JAR names (default: <library name>).
+  -n: gen_maven_jar_rules target name (with slash). The Bazel target name with
+      which the gen_maven_jar_rules was declared (e.g. paymentmethodtoken/maven)
+      for the target "//paymentmethodtoken:maven" (default: <library name>).
   -u: GitHub URL. GitHub URL for Javadoc publishing; it is mandatory when
       <action> is "snaphot" or "release".
   -c: Bazel cache to use; credentials are expected to be in the file
