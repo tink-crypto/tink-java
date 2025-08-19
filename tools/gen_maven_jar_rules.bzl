@@ -14,9 +14,9 @@
 
 """ Definition of gen_maven_jar_rules. """
 
+load("//tools:javadoc.bzl", "javadoc_library")
 load("//tools:jar_jar.bzl", "jar_jar")
 load("//tools:java_single_jar.bzl", "java_single_jar")
-load("//tools:javadoc.bzl", "javadoc_library")
 
 _EXTERNAL_JAVADOC_LINKS = [
     "https://docs.oracle.com/javase/8/docs/api/",
@@ -107,4 +107,8 @@ def gen_maven_jar_rules(
         android_api_level = android_api_level,
         bottom_text = bottom_text,
         external_javadoc_links = external_javadoc_links,
+        # Requires network because javadoc -linkoffline URL1 URL2 requires
+        # network access to URL2 (the idea being that one downloads URL2 first...)
+        # (https://docs.oracle.com/en/java/javase/17/docs/specs/man/javadoc.html)
+        tags = ["requires-network"],
     )
