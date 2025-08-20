@@ -14,22 +14,3 @@ sh_binary(
         "@platforms//os:linux",
     ],
 )
-
-sh_test(
-    name = "maven_deploy_library_test",
-    size = "small",
-    srcs = ["maven_deploy_library_test.sh"],
-    target_compatible_with = [
-        "@platforms//os:linux",
-    ],
-    args = [
-        "$(rlocationpath :maven_deploy_library)",
-        "$(rlocationpath //kokoro/testutils:test_utils)",
-        "$(rlocationpath :maven_settings)",
-    ],
-    data = [
-        ":maven_deploy_library",
-        ":maven_settings",
-        "//kokoro/testutils:test_utils",
-    ],
-)

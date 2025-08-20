@@ -24,7 +24,13 @@
 # The user may specify TINK_BASE_DIR as the folder where to look for
 # tink-java. That is:
 #   ${TINK_BASE_DIR}/tink_java
-set -eEuo pipefail
+
+# Generated with openssl rand -hex 10
+echo "================================================================================"
+echo "Tink Script ID: c1c976bfe50c1d810225 (to quickly find the script from logs)"
+echo "================================================================================"
+
+set -eEuox pipefail
 
 IS_KOKORO="false"
 if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]] ; then

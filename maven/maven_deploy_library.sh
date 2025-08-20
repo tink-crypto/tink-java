@@ -59,10 +59,11 @@ to_absolute_path() {
   echo "$(cd "$(dirname "${path}")" && pwd)/$(basename "${path}")"
 }
 
+set -eox
+
 # Options.
 DRY_RUN="false"
 GIT_URL=
-JAR_NAME_PREFIX=
 
 # Positional arguments.
 LIBRARY_NAME=
@@ -70,7 +71,6 @@ POM_FILE=
 ARTIFACT_VERSION=
 
 # Other.
-BAZEL_CMD="bazel"
 MAVEN_ARGS=()
 CACHE_FLAGS=()
 
@@ -79,7 +79,7 @@ parse_args() {
   while getopts "dhn::u::c:" opt; do
     case "${opt}" in
       d) DRY_RUN="true" ;;
-      n) JAR_NAME_PREFIX="${OPTARG}" ;;
+      n) BAZEL_TARGET="${OPTARG}" ;;
       u) GIT_URL="${OPTARG}" ;;
       c) CACHE_FLAGS=(
            "--remote_cache=https://storage.googleapis.com/${OPTARG}"
@@ -91,7 +91,7 @@ parse_args() {
   shift $((OPTIND - 1))
 
   readonly DRY_RUN
-  readonly JAR_NAME_PREFIX
+  readonly BAZEL_TARGET
   readonly GIT_URL
   readonly CACHE_FLAGS
 
@@ -104,6 +104,13 @@ parse_args() {
   POM_FILE="$3"
   ARTIFACT_VERSION="$4"
 
+  BAZEL_BIN_JAR="${BAZEL_TARGET:-${LIBRARY_NAME}}.jar"
+  BAZEL_SRC_JAR="${BAZEL_TARGET:-${LIBRARY_NAME}}-src.jar"
+  BAZEL_DOC_JAR="${BAZEL_TARGET:-${LIBRARY_NAME}}-javadoc.jar"
+  readonly BAZEL_BIN_JAR
+  readonly BAZEL_SRC_JAR
+  readonly BAZEL_DOC_JAR
+
   # Make sure the version has the correct format.
   if [[ ! "${ARTIFACT_VERSION}" =~ (^HEAD$|^[0-9]+\.[0-9]+\.[0-9]$) ]]; then
     usage
@@ -115,70 +122,12 @@ parse_args() {
   fi
 
   local -r maven_scripts_dir="$(cd "$(dirname "${POM_FILE}")" && pwd)"
-  case "${ACTION}" in
-    install)
-      MAVEN_ARGS+=( "install:install-file" )
-      ARTIFACT_VERSION="${ARTIFACT_VERSION}-SNAPSHOT"
-      ;;
-    snapshot)
-      if [[ -z "${GIT_URL}" ]]; then
-        usage
-      fi
-      MAVEN_ARGS+=(
-        "deploy:deploy-file"
-        "-DrepositoryId=ossrh"
-        "-Durl=https://oss.sonatype.org/content/repositories/snapshots"
-        "--settings=${maven_scripts_dir}/settings.xml"
-      )
-      ARTIFACT_VERSION="${ARTIFACT_VERSION}-SNAPSHOT"
-      ;;
-    release)
-      if [[ -z "${GIT_URL}" ]]; then
-        usage
-      fi
-      MAVEN_ARGS+=(
-        "gpg:sign-and-deploy-file"
-        "-DrepositoryId=ossrh"
-        "-Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-        "-Dgpg.keyname=tink-dev@google.com"
-        "--settings=${maven_scripts_dir}/settings.xml"
-      )
-      ;;
-    *)
-      usage
-      ;;
-  esac
-
-  if command -v "bazelisk" &> /dev/null; then
-    BAZEL_CMD="bazelisk"
-  fi
-  readonly BAZEL_CMD
 
   readonly ACTION
   readonly LIBRARY_NAME
   readonly POM_FILE
   readonly ARTIFACT_VERSION
   readonly MAVEN_ARGS
-}
-
-do_run_command() {
-  if ! "$@"; then
-    echo "*** Failed executing command. ***"
-    echo "Failed command: $@"
-    exit 1
-  fi
-  return $?
-}
-
-print_command() {
-  printf '%q ' '+' "$@"
-  echo
-}
-
-print_and_do() {
-  print_command "$@"
-  do_run_command "$@"
-  return $?
 }
 
 #######################################
@@ -230,30 +179,25 @@ echo_output_file() {
 #   javadoc: Javadoc library name.
 #######################################
 publish_javadoc_to_github_pages() {
-  if [[ "${ACTION}" == "install" ]]; then
-    echo "Local deployment, skipping publishing javadoc to GitHub Pages..."
-    return 0
-  fi
-
   local workspace_dir="$1"
   local javadoc="$2"
 
   local -r javadoc_file="$(echo_output_file "${workspace_dir}" "${javadoc}")"
 
-  print_and_do rm -rf gh-pages
-  print_and_do git "${GIT_ARGS[@]}" clone \
+  rm -rf gh-pages
+  git "${GIT_ARGS[@]}" clone \
     --quiet --branch=gh-pages "${GIT_URL}" gh-pages > /dev/null
   (
-    print_and_do cd gh-pages
+    cd gh-pages
     if [ -d "javadoc/${LIBRARY_NAME}/${ARTIFACT_VERSION}" ]; then
-      print_and_do git "${GIT_ARGS[@]}" rm -rf \
+      git "${GIT_ARGS[@]}" rm -rf \
           "javadoc/${LIBRARY_NAME}/${ARTIFACT_VERSION}"
     fi
-    print_and_do mkdir -p "javadoc/${LIBRARY_NAME}/${ARTIFACT_VERSION}"
-    print_and_do unzip "${javadoc_file}" \
+    mkdir -p "javadoc/${LIBRARY_NAME}/${ARTIFACT_VERSION}"
+    unzip "${javadoc_file}" \
       -d "javadoc/${LIBRARY_NAME}/${ARTIFACT_VERSION}"
-    print_and_do rm -rf "javadoc/${LIBRARY_NAME}/${ARTIFACT_VERSION}/META-INF/"
-    print_and_do git "${GIT_ARGS[@]}" add \
+    rm -rf "javadoc/${LIBRARY_NAME}/${ARTIFACT_VERSION}/META-INF/"
+    git "${GIT_ARGS[@]}" add \
       -f "javadoc/${LIBRARY_NAME}/${ARTIFACT_VERSION}"
     if [[ "$(git "${GIT_ARGS[@]}" status --porcelain)" ]]; then
       # Changes exist.
@@ -271,34 +215,112 @@ publish_javadoc_to_github_pages() {
   )
 }
 
+###################################
+# Adds signatures and hashes for all files in a directory.
+#
+# "add_signatures_and_hashes /some/directory/some_file" adds
+# /some/directory/some_file.md5, sha1, and so on, as required by Maven.
+# In case $ACTION == "release", also uses gpg to create the signature.
+###################################
+add_signatures_and_hashes() {
+  local filename="$1"
+
+  md5sum "${filename}" > "${filename}.md5"
+  sha1sum "${filename}" > "${filename}.sha1"
+  sha256sum "${filename}" > "${filename}.sha256"
+  sha512sum "${filename}" > "${filename}.sha512"
+
+  if [[ "${ACTION}" == "release" ]]; then
+    gpg -ab "${filename}" > "${filename}.asc"
+  fi
+}
+
+###################################
+# Renames files in a directory and adds files with hashes.
+#
+# "package_maven_bundle /tmp/directory 1.2.3" renames all files in /tmp/dir from
+# 'filename.ext' to 'filename-1.2.3.ext'
+# Then, it adds files
+#   'filename-1.2.3.ext.md5'
+#   'filename-1.2.3.ext.sha1'
+#   'filename-1.2.3.ext.sha256'
+#   'filename-1.2.3.ext.sha512'
+#   'filename-1.2.3.ext.asc' (in case $ACTION == "release")
+# Globals:
+#   $ACTION
+###################################
+rename_and_add_hashes() {
+  local directory="$1"
+  local version="$2"
+  for filename in "${directory}/"*; do
+    filename_no_dir=$(basename -- "${filename}")
+    # https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html
+    base="${filename_no_dir%.*}"
+    ext="${filename_no_dir##*.}"
+    mv "${directory}/${base}.${ext}" "${directory}/${base}-${version}.${ext}"
+    add_signatures_and_hashes "${directory}/${base}-${version}.${ext}"
+  done
+}
+
+
+##############
+# Creates a file "maven_bundle.zip" in the current directory.
+##############
+build_maven_bundle() {
+  local -r build_dir=$(mktemp -d)
+  local -r version="${ARTIFACT_VERSION}"
+
+  local -r jars_name_prefix="tink"
+  # The zip file we create will contain files in this directory.
+  local -r inner_zip_dir="com/google/crypto/tink/${LIBRARY_NAME}/${version}"
+  mkdir -p "${build_dir}/${inner_zip_dir}"
+
+  local -r lib_jar="${build_dir}/${inner_zip_dir}/${LIBRARY_NAME}.jar"
+  local -r src_jar="${build_dir}/${inner_zip_dir}/${LIBRARY_NAME}-sources.jar"
+  local -r doc_jar="${build_dir}/${inner_zip_dir}/${LIBRARY_NAME}-javadoc.jar"
+  local -r pomfile="${build_dir}/${inner_zip_dir}/${LIBRARY_NAME}.pom"
+
+  sed "s/VERSION_PLACEHOLDER/${version}/" "${POM_FILE}" > "${pomfile}"
+
+  cp "bazel-bin/${BAZEL_BIN_JAR}" "${lib_jar}"
+  cp "bazel-bin/${BAZEL_SRC_JAR}" "${src_jar}"
+  cp "bazel-bin/${BAZEL_DOC_JAR}" "${doc_jar}"
+
+  rename_and_add_hashes "${build_dir}/${inner_zip_dir}" ${version}
+  (
+    cd "${build_dir}"
+    zip -r maven_bundle.zip "${inner_zip_dir}"
+  )
+  mv "${build_dir}/maven_bundle.zip" .
+  rm -rf "${build_dir}"
+}
+
 main() {
   parse_args "$@"
 
-  local -r jars_name_prefix="${JAR_NAME_PREFIX:-${LIBRARY_NAME}}"
-  local -r library="${jars_name_prefix}.jar"
-  local -r src_jar="${jars_name_prefix}-src.jar"
-  local -r javadoc="${jars_name_prefix}-javadoc.jar"
+  # Creates the JAR files which we expect in the following.
+  bazelisk build "${CACHE_FLAGS[@]}" "${BAZEL_BIN_JAR}" "${BAZEL_SRC_JAR}" "${BAZEL_DOC_JAR}"
+  if [[ "${ACTION}" == "install" ]]; then
+    sed "s/VERSION_PLACEHOLDER/${ARTIFACT_VERSION}/" "${POM_FILE}" > pom_for_install.xml
+    cat pom_for_install.xml
+    mvn install:install-file \
+      "-Dfile=bazel-bin/${BAZEL_BIN_JAR}" \
+      "-Dsources=bazel-bin/${BAZEL_SRC_JAR}" \
+      "-Djavadoc=bazel-bin/${BAZEL_DOC_JAR}" \
+      -DpomFile=pom_for_install.xml
+    exit
+  fi;
 
-  local -r workspace_dir="$(pwd)"
+  build_maven_bundle
+  zipinfo maven_bundle.zip
 
-  print_and_do "${BAZEL_CMD}" build "${CACHE_FLAGS[@]}" "${library}" \
-    "${src_jar}" "${javadoc}"
+  if [[ "${ACTION}" == "release" ]]; then
+    echo "release not yet implemented"
+  fi
 
-  local -r library_file="$(echo_output_file "${workspace_dir}" "${library}")"
-  local -r src_jar_file="$(echo_output_file "${workspace_dir}" "${src_jar}")"
-  local -r javadoc_file="$(echo_output_file "${workspace_dir}" "${javadoc}")"
-
-  # Update the version in the POM file.
-  do_run_if_not_dry_run sed -i \
-    's/VERSION_PLACEHOLDER/'"${ARTIFACT_VERSION}"'/' "${POM_FILE}"
-
-  do_run_if_not_dry_run mvn "${MAVEN_ARGS[@]}" -Dfile="${library_file}" \
-    -Dsources="${src_jar_file}" -Djavadoc="${javadoc_file}" \
-    -DpomFile="${POM_FILE}"
-
-  # Add the placeholder back in the POM file.
-  do_run_if_not_dry_run sed -i \
-    's/'"${ARTIFACT_VERSION}"'/VERSION_PLACEHOLDER/' "${POM_FILE}"
+  if [[ "${ACTION}" == "snapshot" ]]; then
+    echo "snapshot not yet implemented"
+  fi
 
   publish_javadoc_to_github_pages "${workspace_dir}" "${javadoc}"
 }
