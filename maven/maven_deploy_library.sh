@@ -321,8 +321,8 @@ main() {
   if [[ "${ACTION}" == "snapshot" ]]; then
     echo "snapshot not yet implemented"
   fi
-
-  publish_javadoc_to_github_pages "${workspace_dir}" "${javadoc}"
+  # TODO - b/433476142: Redo this.
+  # publish_javadoc_to_github_pages "${workspace_dir}" "${javadoc}"
 }
 
 main "$@"
