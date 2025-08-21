@@ -116,6 +116,9 @@ readonly GITHUB_JOB_NAME="tink/github/java/gcp_ubuntu/maven/continuous"
 
 if [[ "${IS_KOKORO}" == "true" \
       && "${KOKORO_JOB_NAME}" == "${GITHUB_JOB_NAME}" ]]; then
+  # Disable logging of commands when accessing key material.
+  set +x
+  echo "Currently handling key material. Command logging temporarily disabled"
   # GITHUB_ACCESS_TOKEN is populated by Kokoro.
   readonly GIT_CREDENTIALS="ise-crypto:${GITHUB_ACCESS_TOKEN}"
   readonly GITHUB_URL="https://${GIT_CREDENTIALS}@github.com/tink-crypto/tink-java.git"
@@ -127,6 +130,7 @@ SONATYPE_USERNAME
 SONATYPE_PASSWORD
 EOF
 
+  set -x
   MAVEN_DEPLOY_LIBRARY_OPTS=( -u "${GITHUB_URL}" )
   if [[ -n "${BAZEL_REMOTE_CACHE_NAME:-}" ]]; then
     MAVEN_DEPLOY_LIBRARY_OPTS+=( -c "${BAZEL_REMOTE_CACHE_NAME}" )
