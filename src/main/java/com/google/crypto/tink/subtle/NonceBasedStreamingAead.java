@@ -35,7 +35,7 @@ abstract class NonceBasedStreamingAead implements StreamingAead {
   // Abstract methods that the subclass has to implement.
   public abstract StreamSegmentEncrypter newStreamSegmentEncrypter(byte[] associatedData)
       throws GeneralSecurityException;
-  // TODO(bleichen): Consider to pass aad here too.
+
   public abstract StreamSegmentDecrypter newStreamSegmentDecrypter()
       throws GeneralSecurityException;
 
