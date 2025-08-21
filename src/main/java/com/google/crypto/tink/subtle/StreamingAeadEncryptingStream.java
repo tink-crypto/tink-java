@@ -69,9 +69,6 @@ class StreamingAeadEncryptingStream extends FilterOutputStream {
     write(b, 0, b.length);
   }
 
-  // TODO(bleichen): Mabye implement write(ByteBuffer) so that
-  //   there are no surprises if the underlying class is extended.
-
   @Override
   public synchronized void write(byte[] pt, int offset, int length) throws IOException {
     if (!open) {
@@ -109,7 +106,6 @@ class StreamingAeadEncryptingStream extends FilterOutputStream {
       toBuffer(ctBuffer).clear();
       encrypter.encryptSegment(ptBuffer, true, ctBuffer);
     } catch (GeneralSecurityException ex) {
-      // TODO(bleichen): define the state of this. E.g. open = false;
       throw new IOException(
           "ptBuffer.remaining():"
               + ptBuffer.remaining()
