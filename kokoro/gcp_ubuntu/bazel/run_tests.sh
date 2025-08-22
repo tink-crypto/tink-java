@@ -32,6 +32,12 @@
 # $ export CONTAINER_IMAGE="sha256:<hash>".
 # Run the script:
 # $ sh tink_java/kokoro/gcp_ubuntu/bazel/run_tests.sh
+
+# Generated with openssl rand -hex 10
+echo "==========================================================================="
+echo "Tink Script ID: 78c820a65342bcbdad03 (to quickly find the script from logs)"
+echo "==========================================================================="
+
 set -eEuo pipefail
 
 if [[ ! -v TINK_BASE_DIR ]] ; then
