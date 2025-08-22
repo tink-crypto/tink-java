@@ -14,14 +14,9 @@
 
 """ Definition of gen_maven_jar_rules. """
 
-load("//tools:javadoc.bzl", "javadoc_library")
+load("@rules_jvm_external//:defs.bzl", "javadoc")
 load("//tools:jar_jar.bzl", "jar_jar")
 load("//tools:java_single_jar.bzl", "java_single_jar")
-
-_EXTERNAL_JAVADOC_LINKS = [
-    "https://docs.oracle.com/javase/8/docs/api/",
-    "https://developer.android.com/reference/",
-]
 
 _TINK_PACKAGES = [
     "com.google.crypto.tink",
@@ -35,10 +30,7 @@ def gen_maven_jar_rules(
         shaded_packages = [],
         shading_rules = "",
         exclude_packages = [],
-        doctitle = "",
-        android_api_level = 23,
-        bottom_text = "",
-        external_javadoc_links = _EXTERNAL_JAVADOC_LINKS,
+        additional_javadoc_dependencies = [],
         manifest_lines = []):
     """
     Generates rules that generate Maven jars for a given package.
@@ -57,10 +49,7 @@ def gen_maven_jar_rules(
       shading_rules: The shading rules, must specified when shaded_packages is present.
         Rules file format can be found at https://github.com/bazelbuild/bazel/blob/master/third_party/jarjar/java/com/tonicsystems/jarjar/help.txt.
       exclude_packages: See javadoc_library
-      doctitle: See javadoc_library
-      android_api_level: See javadoc_library
-      bottom_text: See javadoc_library
-      external_javadoc_links: See javadoc_library
+      additional_javadoc_dependencies: Additional dependencies to give javadoc
       manifest_lines: lines to put in the output manifest file (manifest
         files in the input jars are ignored)
     """
@@ -97,18 +86,7 @@ def gen_maven_jar_rules(
     )
 
     javadoc_name = name + "-javadoc"
-    javadoc_library(
+    javadoc(
         name = javadoc_name,
-        deps = deps,
-        root_packages = root_packages,
-        srcs = [":%s" % source_jar_name],
-        doctitle = doctitle,
-        exclude_packages = exclude_packages,
-        android_api_level = android_api_level,
-        bottom_text = bottom_text,
-        external_javadoc_links = external_javadoc_links,
-        # Requires network because javadoc -linkoffline URL1 URL2 requires
-        # network access to URL2 (the idea being that one downloads URL2 first...)
-        # (https://docs.oracle.com/en/java/javase/17/docs/specs/man/javadoc.html)
-        tags = ["requires-network"],
+        deps = deps + additional_javadoc_dependencies,
     )

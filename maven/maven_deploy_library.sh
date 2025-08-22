@@ -106,10 +106,12 @@ parse_args() {
 
   BAZEL_BIN_JAR="${BAZEL_TARGET:-${LIBRARY_NAME}}.jar"
   BAZEL_SRC_JAR="${BAZEL_TARGET:-${LIBRARY_NAME}}-src.jar"
-  BAZEL_DOC_JAR="${BAZEL_TARGET:-${LIBRARY_NAME}}-javadoc.jar"
+  # For javadoc, the target and the produced file have different name. We
+  # remember the target name.
+  BAZEL_DOC_TGT="${BAZEL_TARGET:-${LIBRARY_NAME}}-javadoc"
   readonly BAZEL_BIN_JAR
   readonly BAZEL_SRC_JAR
-  readonly BAZEL_DOC_JAR
+  readonly BAZEL_DOC_TGT
 
   # Make sure the version has the correct format.
   if [[ ! "${ARTIFACT_VERSION}" =~ (^HEAD$|^[0-9]+\.[0-9]+\.[0-9]$) ]]; then
@@ -284,7 +286,7 @@ build_maven_bundle() {
 
   cp "bazel-bin/${BAZEL_BIN_JAR}" "${lib_jar}"
   cp "bazel-bin/${BAZEL_SRC_JAR}" "${src_jar}"
-  cp "bazel-bin/${BAZEL_DOC_JAR}" "${doc_jar}"
+  cp "bazel-bin/${BAZEL_DOC_TGT}".jar "${doc_jar}"
 
   rename_and_add_hashes "${build_dir}/${inner_zip_dir}" ${version}
   (
@@ -299,14 +301,14 @@ main() {
   parse_args "$@"
 
   # Creates the JAR files which we expect in the following.
-  bazelisk build "${CACHE_FLAGS[@]}" "${BAZEL_BIN_JAR}" "${BAZEL_SRC_JAR}" "${BAZEL_DOC_JAR}"
+  bazelisk build "${CACHE_FLAGS[@]}" "${BAZEL_BIN_JAR}" "${BAZEL_SRC_JAR}" "${BAZEL_DOC_TGT}"
   if [[ "${ACTION}" == "install" ]]; then
     sed "s/VERSION_PLACEHOLDER/${ARTIFACT_VERSION}/" "${POM_FILE}" > pom_for_install.xml
     cat pom_for_install.xml
     mvn install:install-file \
       "-Dfile=bazel-bin/${BAZEL_BIN_JAR}" \
       "-Dsources=bazel-bin/${BAZEL_SRC_JAR}" \
-      "-Djavadoc=bazel-bin/${BAZEL_DOC_JAR}" \
+      "-Djavadoc=bazel-bin/${BAZEL_DOC_TGT}".jar \
       -DpomFile=pom_for_install.xml
     exit
   fi;
