@@ -16,7 +16,7 @@
 
 # Generated with openssl rand -hex 10
 echo "================================================================================"
-echo "Tink Script ID: 4a363fc2739fb5ffa0dc (to quickly find the script from logs)"
+echo "Tink Script ID: 5d260c8726d4a26dad8a (to quickly find the script from logs)"
 echo "================================================================================"
 
 set -euo pipefail
@@ -29,13 +29,35 @@ if [[ -n "${KOKORO_ROOT:-}" ]] ; then
   export DEVELOPER_DIR="/Applications/Xcode.app/Contents/Developer"
 fi
 
-CACHE_FLAGS=""
+CACHE_FLAGS=()
 if [[ -n "${TINK_REMOTE_BAZEL_CACHE_GCS_BUCKET:-}" ]]; then
   cp "${TINK_REMOTE_BAZEL_CACHE_SERVICE_KEY}" ./cache_key
-  CACHE_FLAGS="-c ${TINK_REMOTE_BAZEL_CACHE_GCS_BUCKET}/bazel/java-macos"
+  CACHE_FLAGS+=("--remote_cache=https://storage.googleapis.com/${TINK_REMOTE_BAZEL_CACHE_GCS_BUCKET}/bazel/java-macos")
+  CACHE_FLAGS+=("--google_credentials=$(realpath ./cache_key)")
 fi
 readonly CACHE_FLAGS
 
+echo "------------- Installing Android SDK"
 source ./kokoro/testutils/update_android_sdk.sh
-./kokoro/testutils/run_bazel_tests.sh ${CACHE_FLAGS} .
-./kokoro/testutils/run_bazel_tests.sh ${CACHE_FLAGS} "examples"
+
+echo "---------- BUILDING MAIN"
+time bazelisk build "${CACHE_FLAGS[@]}" -- ...
+echo "---------- TESTING MAIN"
+time bazelisk test "${CACHE_FLAGS[@]}" -- ...
+
+cd examples
+
+echo "---------- BUILDING EXAMPLES"
+time bazelisk build "${CACHE_FLAGS[@]}" -- ...
+echo "---------- TESTING EXAMPLES"
+time bazelisk test "${CACHE_FLAGS[@]}" -- ...
+
+# TODO: b/428261485 -- enable this.
+# echo "---------- TURNING ON BAZELMOD"
+# cd ..
+# sed -i.bak "s/always --noenable_bzlmod//g" .bazelrc
+#
+# echo "---------- BUILDING MAIN (bzlmod)"
+# time bazelisk build "${CACHE_FLAGS[@]}" -- ...
+# echo "---------- TESTING MAIN (bzlmod)"
+# time bazelisk test "${CACHE_FLAGS[@]}" -- ...
