@@ -177,14 +177,10 @@ echo_output_file() {
 #   LIBRARY_NAME
 #   ARTIFACT_VERSION
 # Arguments:
-#   workspace_dir: Workspace directory for the library.
-#   javadoc: Javadoc library name.
+#   javadoc_file: JAR file containing the javadoc.
 #######################################
 publish_javadoc_to_github_pages() {
-  local workspace_dir="$1"
-  local javadoc="$2"
-
-  local -r javadoc_file="$(echo_output_file "${workspace_dir}" "${javadoc}")"
+  local -r javadoc_file="$1"
 
   rm -rf gh-pages
   git "${GIT_ARGS[@]}" clone \
@@ -307,7 +303,7 @@ main() {
     mvn install:install-file \
       "-Dfile=bazel-bin/${BAZEL_BIN_JAR}" \
       "-Dsources=bazel-bin/${BAZEL_SRC_JAR}" \
-      "-Djavadoc=bazel-bin/${BAZEL_DOC_TGT}".jar \
+      "-Djavadoc=bazel-bin/${BAZEL_DOC_TGT}.jar" \
       -DpomFile=pom_for_install.xml
     exit
   fi;
@@ -322,8 +318,7 @@ main() {
   if [[ "${ACTION}" == "snapshot" ]]; then
     echo "snapshot not yet implemented"
   fi
-  # TODO - b/433476142: Redo this.
-  # publish_javadoc_to_github_pages "${workspace_dir}" "${javadoc}"
+  publish_javadoc_to_github_pages "bazel-bin/${BAZEL_DOC_TGT}.jar"
 }
 
 main "$@"
