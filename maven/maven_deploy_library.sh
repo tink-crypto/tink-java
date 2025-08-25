@@ -20,7 +20,7 @@
 
 usage() {
   cat <<EOF
-Usage: $0 [-dh] [-n jars_name_prefix] [-u github_url] [-c bazel_cache_name]
+Usage: $0 [-dh] [-n target name] [-u github_url] [-c bazel_cache_name]
           <action (install|snapshot|release)> <library name>
           <pom template> <version>"
   -d: Dry run. Only execute idempotent commands (default: false).
@@ -272,7 +272,6 @@ build_maven_bundle() {
   local -r build_dir=$(mktemp -d)
   local -r version="${ARTIFACT_VERSION}"
 
-  local -r jars_name_prefix="tink"
   # The zip file we create will contain files in this directory.
   local -r inner_zip_dir="com/google/crypto/tink/${LIBRARY_NAME}/${version}"
   mkdir -p "${build_dir}/${inner_zip_dir}"
@@ -291,9 +290,9 @@ build_maven_bundle() {
   rename_and_add_hashes "${build_dir}/${inner_zip_dir}" ${version}
   (
     cd "${build_dir}"
-    zip -r maven_bundle.zip "${inner_zip_dir}"
+    zip -r maven_bundle_${LIBRARY_NAME}.zip "${inner_zip_dir}"
   )
-  mv "${build_dir}/maven_bundle.zip" .
+  mv "${build_dir}/maven_bundle_${LIBRARY_NAME}.zip" .
   rm -rf "${build_dir}"
 }
 
@@ -314,7 +313,7 @@ main() {
   fi;
 
   build_maven_bundle
-  zipinfo maven_bundle.zip
+  zipinfo "maven_bundle_${LIBRARY_NAME}.zip"
 
   if [[ "${ACTION}" == "release" ]]; then
     echo "release not yet implemented"
