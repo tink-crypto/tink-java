@@ -20,10 +20,9 @@
 
 usage() {
   cat <<EOF
-Usage: $0 [-dh] [-n target name] [-u github_url] [-c bazel_cache_name]
+Usage: $0 [-h] [-n target name] [-u github_url] [-c bazel_cache_name]
           <action (install|snapshot|release)> <library name>
           <pom template> <version>"
-  -d: Dry run. Only execute idempotent commands (default: false).
   -n: gen_maven_jar_rules target name (with slash). The Bazel target name with
       which the gen_maven_jar_rules was declared (e.g. paymentmethodtoken/maven)
       for the target "//paymentmethodtoken:maven" (default: <library name>).
@@ -62,7 +61,6 @@ to_absolute_path() {
 set -eox
 
 # Options.
-DRY_RUN="false"
 GIT_URL=
 
 # Positional arguments.
@@ -76,9 +74,8 @@ CACHE_FLAGS=()
 
 parse_args() {
   # Parse options.
-  while getopts "dhn::u::c:" opt; do
+  while getopts "hn::u::c:" opt; do
     case "${opt}" in
-      d) DRY_RUN="true" ;;
       n) BAZEL_TARGET="${OPTARG}" ;;
       u) GIT_URL="${OPTARG}" ;;
       c) CACHE_FLAGS=(
@@ -90,7 +87,6 @@ parse_args() {
   done
   shift $((OPTIND - 1))
 
-  readonly DRY_RUN
   readonly BAZEL_TARGET
   readonly GIT_URL
   readonly CACHE_FLAGS
@@ -130,23 +126,6 @@ parse_args() {
   readonly POM_FILE
   readonly ARTIFACT_VERSION
   readonly MAVEN_ARGS
-}
-
-#######################################
-# Runs a given command if DRY_RUN isn't true.
-# Globals:
-#   DRY_RUN
-# Arguments:
-#   The command to run and its arguments.
-#######################################
-do_run_if_not_dry_run() {
-  print_command "$@"
-  if [[ "${DRY_RUN}" == "true" ]]; then
-    echo "  *** Dry run, command not executed. ***"
-    return 0
-  fi
-  do_run_command "$@"
-  return $?
 }
 
 echo_output_file() {
@@ -198,12 +177,10 @@ publish_javadoc_to_github_pages() {
       -f "javadoc/${LIBRARY_NAME}/${ARTIFACT_VERSION}"
     if [[ "$(git "${GIT_ARGS[@]}" status --porcelain)" ]]; then
       # Changes exist.
-      do_run_if_not_dry_run \
-        git "${GIT_ARGS[@]}" commit \
+      git "${GIT_ARGS[@]}" commit \
         -m "${LIBRARY_NAME}-${ARTIFACT_VERSION} Javadoc auto-pushed to gh-pages"
 
-      do_run_if_not_dry_run \
-        git "${GIT_ARGS[@]}" push -fq origin gh-pages > /dev/null
+      git "${GIT_ARGS[@]}" push -fq origin gh-pages > /dev/null
       echo -e "Published Javadoc to gh-pages.\n"
     else
       # No changes exist.

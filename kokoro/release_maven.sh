@@ -59,9 +59,6 @@ create_maven_release() {
   local -r github_url="${gitub_protocol_and_auth}@${TINK_JAVA_GITHUB_URL}"
 
   local maven_deploy_library_options=( -u "${github_url}" )
-  if [[ "${DO_MAKE_RELEASE}" == "false" ]]; then
-    maven_deploy_library_options+=( -d )
-  fi
   readonly maven_deploy_library_options
 
   if [[ "${IS_KOKORO}" == "true" ]]; then
