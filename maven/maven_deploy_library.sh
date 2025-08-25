@@ -180,8 +180,7 @@ echo_output_file() {
 #   javadoc_file: JAR file containing the javadoc.
 #######################################
 publish_javadoc_to_github_pages() {
-  local -r javadoc_file="$1"
-
+  local -r javadoc_file="$(realpath $1)"
   rm -rf gh-pages
   git "${GIT_ARGS[@]}" clone \
     --quiet --branch=gh-pages "${GIT_URL}" gh-pages > /dev/null
