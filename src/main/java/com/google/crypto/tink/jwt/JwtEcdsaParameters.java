@@ -110,7 +110,7 @@ public final class JwtEcdsaParameters extends JwtSignatureParameters {
       return name;
     }
 
-    ECParameterSpec getECParameterSpec() {
+    public ECParameterSpec getECParameterSpec() {
       return ecParameterSpec;
     }
   }
