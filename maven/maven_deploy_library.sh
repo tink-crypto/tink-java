@@ -114,6 +114,20 @@ parse_args() {
     usage
   fi
 
+  case "${ACTION}" in
+    install)
+      ARTIFACT_VERSION="${ARTIFACT_VERSION}-SNAPSHOT"
+      ;;
+    snapshot)
+      ARTIFACT_VERSION="${ARTIFACT_VERSION}-SNAPSHOT"
+      ;;
+    release)
+      ;;
+    *)
+      usage
+      ;;
+  esac
+
   if [[ ! -f "${POM_FILE}" ]]; then
     echo "ERROR: The POM file doesn't exist: ${POM_FILE}" >&2
     usage
