@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.subtle;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
@@ -34,6 +35,31 @@ class StreamingAeadEncryptingChannel implements WritableByteChannel {
   private int plaintextSegmentSize;
   boolean open = true;
 
+  /**
+   * Writes src to dst, and checks that the number of bytes written is valid, and that
+   * src.remaining() has the correct value.
+   */
+  @CanIgnoreReturnValue
+  private int writeWithCheck(WritableByteChannel dst, ByteBuffer src) throws IOException {
+    int r = src.remaining();
+    int n = dst.write(src);
+    if (n < 0 || n > r) {
+      throw new IOException(
+          "Invalid return value from dst.write: n = " + n + ", r = " + r);
+    }
+    if (src.remaining() != r - n) {
+      throw new IOException(
+          "Unexpected state after of src after writing to dst: "
+              + " src.remaining() = "
+              + src.remaining()
+              + " != r - n = "
+              + r
+              + " - "
+              + n);
+    }
+    return n;
+  }
+
   public StreamingAeadEncryptingChannel(
       NonceBasedStreamingAead streamAead,
       WritableByteChannel ciphertextChannel,
@@ -49,7 +75,7 @@ class StreamingAeadEncryptingChannel implements WritableByteChannel {
     // ciphertextChannel is possible.
     ctBuffer.put(encrypter.getHeader());
     ctBuffer.flip();
-    ciphertextChannel.write(ctBuffer);
+    writeWithCheck(ciphertextChannel, ctBuffer);
   }
 
   @Override
@@ -58,7 +84,7 @@ class StreamingAeadEncryptingChannel implements WritableByteChannel {
       throw new ClosedChannelException();
     }
     if (ctBuffer.remaining() > 0) {
-      ciphertextChannel.write(ctBuffer);
+      writeWithCheck(ciphertextChannel, ctBuffer);
     }
     int startPosition = pt.position();
     while (pt.remaining() > ptBuffer.remaining()) {
@@ -81,7 +107,7 @@ class StreamingAeadEncryptingChannel implements WritableByteChannel {
         throw new IOException(ex);
       }
       ctBuffer.flip();
-      ciphertextChannel.write(ctBuffer);
+      writeWithCheck(ciphertextChannel, ctBuffer);
       ptBuffer.clear();
       ptBuffer.limit(plaintextSegmentSize);
     }
@@ -94,11 +120,10 @@ class StreamingAeadEncryptingChannel implements WritableByteChannel {
     if (!open) {
       return;
     }
-    // TODO(bleichen): Is there a way to fully write the remaining ciphertext?
-    //   The following is the strategy from java.nio.channels.Channels.writeFullyImpl
-    //   I.e. try writing as long as at least one byte is written.
+    // The following is the strategy from java.nio.channels.Channels.writeFullyImpl
+    // I.e. try writing as long as at least one byte is written.
     while (ctBuffer.remaining() > 0) {
-      int n = ciphertextChannel.write(ctBuffer);
+      int n = writeWithCheck(ciphertextChannel, ctBuffer);
       if (n <= 0) {
         throw new IOException("Failed to write ciphertext before closing");
       }
@@ -108,12 +133,11 @@ class StreamingAeadEncryptingChannel implements WritableByteChannel {
       ptBuffer.flip();
       encrypter.encryptSegment(ptBuffer, true, ctBuffer);
     } catch (GeneralSecurityException ex) {
-      // TODO(bleichen): define the state of this. E.g. open = false;
       throw new IOException(ex);
     }
     ctBuffer.flip();
     while (ctBuffer.remaining() > 0) {
-      int n = ciphertextChannel.write(ctBuffer);
+      int n = writeWithCheck(ciphertextChannel, ctBuffer);
       if (n <= 0) {
         throw new IOException("Failed to write ciphertext before closing");
       }
