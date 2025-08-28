@@ -54,7 +54,7 @@ public final class StreamingAeadTest {
   }
 
   @DataPoints("templates")
-  public static final String[] TEMPLATES =
+  public static final String[] templates =
       new String[] {
         "AES128_GCM_HKDF_4KB",
         "AES128_GCM_HKDF_1MB",
@@ -82,7 +82,12 @@ public final class StreamingAeadTest {
     ByteBuffer buffer = ByteBuffer.allocate(bytesToRead);
     int bytesRead = 0;
     while (bytesRead < bytesToRead) {
-      bytesRead += readableChannel.read(buffer);
+      int n = readableChannel.read(buffer);
+      if (n == -1) {
+        throw new IOException(
+            "Unexpected end of stream, bytesRead: " + bytesRead + ", bytesToRead: " + bytesToRead);
+      }
+      bytesRead += n;
     }
     return buffer.array();
   }
