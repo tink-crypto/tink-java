@@ -76,8 +76,8 @@ public final class StreamingAeadTest {
     }
   }
 
-  /** Reads {@code bytesToRead} bytes from {@code readableChannel}.*/
-  private byte[] readFromChannel(ReadableByteChannel readableChannel, int bytesToRead)
+  /** Reads all bytes from a {@code readableChannel} of size {@code bytesToRead}.*/
+  private byte[] readAllFromChannel(ReadableByteChannel readableChannel, int bytesToRead)
       throws IOException {
     ByteBuffer buffer = ByteBuffer.allocate(bytesToRead);
     int bytesRead = 0;
@@ -88,6 +88,20 @@ public final class StreamingAeadTest {
             "Unexpected end of stream, bytesRead: " + bytesRead + ", bytesToRead: " + bytesToRead);
       }
       bytesRead += n;
+    }
+    {
+      // buffer is now full,  so calling read(buffer) may return 0 or -1.
+      int n = readableChannel.read(buffer);
+      if (n != 0 && n != -1) {
+        throw new IOException("Unexpected return value from read(buffer): " + n);
+      }
+    }
+    {
+      ByteBuffer b = ByteBuffer.allocate(16);
+      int n = readableChannel.read(b);
+      if (n != -1) {
+        throw new IOException("Unexpected return value from read at end of stream: " + n);
+      }
     }
     return buffer.array();
   }
@@ -117,7 +131,7 @@ public final class StreamingAeadTest {
         Channels.newChannel(new ByteArrayInputStream(ciphertext));
     try (ReadableByteChannel decryptingChannel =
         streamingAead.newDecryptingChannel(ciphertextSource, associatedData)) {
-      decrypted = readFromChannel(decryptingChannel, plaintext.length);
+      decrypted = readAllFromChannel(decryptingChannel, plaintext.length);
     }
     assertThat(decrypted).isEqualTo(plaintext);
 
@@ -176,7 +190,7 @@ public final class StreamingAeadTest {
         Channels.newChannel(new ByteArrayInputStream(ciphertext));
     try (ReadableByteChannel decryptingChannel =
         streamingAead.newDecryptingChannel(ciphertextSource, associatedData)) {
-      decrypted = readFromChannel(decryptingChannel, plaintext.length);
+      decrypted = readAllFromChannel(decryptingChannel, plaintext.length);
     }
     assertThat(decrypted).isEqualTo(plaintext);
   }
@@ -249,7 +263,7 @@ public final class StreamingAeadTest {
         Channels.newChannel(new ByteArrayInputStream(ciphertext));
     try (ReadableByteChannel decryptingChannel =
         streamingAead.newDecryptingChannel(ciphertextSource, associatedData)) {
-      decrypted = readFromChannel(decryptingChannel, plaintext.length);
+      decrypted = readAllFromChannel(decryptingChannel, plaintext.length);
     }
     assertThat(decrypted).isEqualTo(plaintext);
   }
