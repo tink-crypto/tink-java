@@ -306,7 +306,8 @@ main() {
   fi
 
   if [[ "${ACTION}" == "snapshot" ]]; then
-    echo "snapshot not yet implemented"
+    mkdir -p kokoro_upload_dir/release/
+    cp "maven_bundle_${LIBRARY_NAME}.zip" kokoro_upload_dir/release
   fi
   publish_javadoc_to_github_pages "bazel-bin/${BAZEL_DOC_TGT}.jar"
 }
