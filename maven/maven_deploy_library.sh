@@ -33,9 +33,11 @@ Usage: $0 [-h] [-n target name] [-u github_url] [-c bazel_cache_name]
   -h: Help. Print this usage information.
 
 Builds an Apache Maven archive using Bazel and performs an action on them.
-  * snapshot: Builds the artifact, uploads it to the snapshot server. Also
-              uploads javadoc to the given GitHub URL (branch gh-pages).
-  * release:  Builds the artifact, then uploads it to the actual release server.
+  * snapshot: Builds the artifact with suffix "SNAPSHOT" and copies it to
+              ${KOKORO_ARTIFACTS_DIR}/kokoro_upload_dir/release/.
+              Also uploads javadoc to the given GitHub URL (branch gh-pages).
+  * release: Builds the artifact and copies it to
+              ${KOKORO_ARTIFACTS_DIR}/kokoro_upload_dir/release/.
               Also uploads javadoc to the given GitHub URL (branch gh-pages).
   * install:  Creates the artifact with Bazel, then installs the result locally.
               This emulates the effect of the user later installing the uploaded
@@ -302,12 +304,13 @@ main() {
   zipinfo "maven_bundle_${LIBRARY_NAME}.zip"
 
   if [[ "${ACTION}" == "release" ]]; then
-    echo "release not yet implemented"
+    mkdir -p  "${KOKORO_ARTIFACTS_DIR}/kokoro_upload_dir/release"
+    cp "maven_bundle_${LIBRARY_NAME}.zip" "${KOKORO_ARTIFACTS_DIR}/kokoro_upload_dir/release"
   fi
 
   if [[ "${ACTION}" == "snapshot" ]]; then
-    mkdir -p kokoro_upload_dir/release/
-    cp "maven_bundle_${LIBRARY_NAME}.zip" kokoro_upload_dir/release
+    mkdir -p  "${KOKORO_ARTIFACTS_DIR}/kokoro_upload_dir/release"
+    cp "maven_bundle_${LIBRARY_NAME}.zip" "${KOKORO_ARTIFACTS_DIR}/kokoro_upload_dir/release"
   fi
   publish_javadoc_to_github_pages "bazel-bin/${BAZEL_DOC_TGT}.jar"
 }
