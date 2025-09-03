@@ -100,6 +100,4 @@ public final class RegistryMultithreadTest {
       futures.get(i).get(); // This will throw an exception if the thread threw an exception.
     }
   }
-
-  // TODO(tholenst): Epxand the test coverage for primitive wrappers and catalogues.
 }
