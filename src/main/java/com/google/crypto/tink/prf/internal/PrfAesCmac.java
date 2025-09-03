@@ -108,7 +108,6 @@ public final class PrfAesCmac implements Prf {
     // n is the number of blocks (including partial blocks) into which the data
     // is divided. Empty data is divided into 1 empty block.
     // Step 2: n = ceil(length / blocksize)
-    // TODO(b/68969256): Adding a test that computes a CMAC of length 2**31-1.
     int n = calcN(data.length);
 
     // Step 3
