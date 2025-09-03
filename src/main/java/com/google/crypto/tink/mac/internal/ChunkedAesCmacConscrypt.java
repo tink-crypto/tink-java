@@ -39,7 +39,7 @@ import javax.crypto.spec.SecretKeySpec;
 /** AES-CMAC implementation of {@link ChunkedMac}, using Conscrypt's native implementation. */
 @Immutable
 public final class ChunkedAesCmacConscrypt implements ChunkedMac {
-  // TODO(b/380222885): Consider changing this to ALGORITHM_REQUIRES_BORINGCRYPTO.
+  // The algorithm AES-CMAC is FIPS-compliant, but Conscrypt's implementation is not yet validated.
   private static final TinkFipsUtil.AlgorithmFipsCompatibility FIPS =
       TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS;
 

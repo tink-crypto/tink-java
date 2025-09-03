@@ -43,7 +43,7 @@ import javax.crypto.spec.SecretKeySpec;
 @Immutable
 @AccessesPartialKey
 public final class PrfAesCmacConscrypt implements Prf {
-  // TODO(b/380222885): Consider changing this to ALGORITHM_REQUIRES_BORINGCRYPTO.
+  // The algorithm AES-CMAC is FIPS-compliant, but Conscrypt's implementation is not yet validated.
   private static final TinkFipsUtil.AlgorithmFipsCompatibility FIPS =
       TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS;
 

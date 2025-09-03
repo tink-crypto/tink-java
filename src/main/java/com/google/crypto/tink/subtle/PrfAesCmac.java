@@ -82,7 +82,6 @@ public final class PrfAesCmac implements Prf {
       // PrfAesCmacConscrypt is currently slower for small data. And it requires a global lock.
       // So we prefer not to use it for small data. But for large data, it is 10x faster
       // than PrfAesCmac.
-      // TODO(b/380222885): Remove this once PrfAesCmacConscrypt is faster for small data.
       return new PrfImplementation(prf, conscryptPrf);
     } catch (GeneralSecurityException e) {
       // Fall back to this implementation if Conscrypt is not available.
