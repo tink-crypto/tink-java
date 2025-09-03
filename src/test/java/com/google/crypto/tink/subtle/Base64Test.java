@@ -17,6 +17,7 @@
 package com.google.crypto.tink.subtle;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.assertThrows;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -131,5 +132,79 @@ public final class Base64Test {
         .isEqualTo(longByteArray);
   }
 
-  // TODO(b/238096965) Add more tests.
+  @Test
+  public void decode_invalidCharacters_areIgnored() {
+    assertThat(Base64.decode("AAA-")).isEqualTo(Base64.decode("AAA"));
+    assertThat(Base64.decode("AAA_")).isEqualTo(Base64.decode("AAA"));
+    assertThat(Base64.decode("AAA!")).isEqualTo(Base64.decode("AAA"));
+    assertThat(Base64.decode("A-A_A!.")).isEqualTo(Base64.decode("AAA"));
+    assertThat(Base64.decode("AAA\n.\n")).isEqualTo(Base64.decode("AAA"));
+    assertThat(Base64.decode("AAA..=.\n")).isEqualTo(Base64.decode("AAA="));
+    assertThat(Base64.decode("AA.=.=.\n")).isEqualTo(Base64.decode("AA=="));
+  }
+
+  @Test
+  public void decode_invalidLength_throws() {
+    // An encoding cannot have length % 4 == 1.
+    assertThrows(IllegalArgumentException.class, () -> Base64.decode("A"));
+    assertThrows(IllegalArgumentException.class, () -> Base64.decode("AAAAB"));
+    assertThrows(IllegalArgumentException.class, () -> Base64.decode("AAAABBBBC"));
+    assertThrows(IllegalArgumentException.class, () -> Base64.decode("AAAAB="));
+    assertThrows(IllegalArgumentException.class, () -> Base64.decode("AAAAB=="));
+    assertThrows(IllegalArgumentException.class, () -> Base64.decode("AAAAB==="));
+  }
+
+  @Test
+  public void decode_validLengthWithoutPadding_works() {
+    assertThat(Base64.decode("AA")).isEqualTo(new byte[] {0});
+    assertThat(Base64.decode("AAA")).isEqualTo(new byte[] {0, 0});
+    assertThat(Base64.decode("AAAA")).isEqualTo(new byte[] {0, 0, 0});
+    assertThat(Base64.decode("AAAAAA")).isEqualTo(new byte[] {0, 0, 0, 0});
+  }
+
+  @Test
+  public void decode_invalidPadding_throws() {
+    assertThrows(IllegalArgumentException.class, () -> Base64.decode("AA="));
+    assertThrows(IllegalArgumentException.class, () -> Base64.decode("AA==="));
+    assertThrows(IllegalArgumentException.class, () -> Base64.decode("AA==A"));
+    assertThrows(IllegalArgumentException.class, () -> Base64.decode("AAA=A"));
+  }
+
+  @Test
+  public void urlSafeDecode_invalidCharacters_areIgnored() {
+    assertThat(Base64.urlSafeDecode("AAA+")).isEqualTo(Base64.decode("AAA"));
+    assertThat(Base64.urlSafeDecode("AAA/")).isEqualTo(Base64.decode("AAA"));
+    assertThat(Base64.urlSafeDecode("AAA!")).isEqualTo(Base64.decode("AAA"));
+    assertThat(Base64.urlSafeDecode("A+A/A!.")).isEqualTo(Base64.decode("AAA"));
+    assertThat(Base64.urlSafeDecode("AAA\n.\n")).isEqualTo(Base64.decode("AAA"));
+    assertThat(Base64.urlSafeDecode("AAA..=.\n")).isEqualTo(Base64.decode("AAA="));
+    assertThat(Base64.urlSafeDecode("AA.=.=.\n")).isEqualTo(Base64.decode("AA=="));
+  }
+
+  @Test
+  public void urlSafeDecode_invalidLength_throws() {
+    // An encoding cannot have length % 4 == 1.
+    assertThrows(IllegalArgumentException.class, () -> Base64.urlSafeDecode("A"));
+    assertThrows(IllegalArgumentException.class, () -> Base64.urlSafeDecode("AAAAB"));
+    assertThrows(IllegalArgumentException.class, () -> Base64.urlSafeDecode("AAAABBBBC"));
+    assertThrows(IllegalArgumentException.class, () -> Base64.urlSafeDecode("AAAAB="));
+    assertThrows(IllegalArgumentException.class, () -> Base64.urlSafeDecode("AAAAB=="));
+    assertThrows(IllegalArgumentException.class, () -> Base64.urlSafeDecode("AAAAB==="));
+  }
+
+  @Test
+  public void urlSafeDecode_validLengthWithoutPadding_works() {
+    assertThat(Base64.urlSafeDecode("AA")).isEqualTo(new byte[] {0});
+    assertThat(Base64.urlSafeDecode("AAA")).isEqualTo(new byte[] {0, 0});
+    assertThat(Base64.urlSafeDecode("AAAA")).isEqualTo(new byte[] {0, 0, 0});
+    assertThat(Base64.urlSafeDecode("AAAAAA")).isEqualTo(new byte[] {0, 0, 0, 0});
+  }
+
+  @Test
+  public void urlSafeDecode_invalidPadding_throws() {
+    assertThrows(IllegalArgumentException.class, () -> Base64.urlSafeDecode("AA="));
+    assertThrows(IllegalArgumentException.class, () -> Base64.urlSafeDecode("AA==="));
+    assertThrows(IllegalArgumentException.class, () -> Base64.urlSafeDecode("AA==A"));
+    assertThrows(IllegalArgumentException.class, () -> Base64.urlSafeDecode("AAA=A"));
+  }
 }
