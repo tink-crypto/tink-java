@@ -333,3 +333,18 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "SlowStreamingAeadTest",
+    size = "small",
+    srcs = ["SlowStreamingAeadTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:key_templates",
+        "//src/main/java/com/google/crypto/tink:registry_cluster",
+        "//src/main/java/com/google/crypto/tink:streaming_aead",
+        "//src/main/java/com/google/crypto/tink/streamingaead:streaming_aead_config",
+        "//src/main/java/com/google/crypto/tink/streamingaead:streaming_aead_configuration_v1",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
