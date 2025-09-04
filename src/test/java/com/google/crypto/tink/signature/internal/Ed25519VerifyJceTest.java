@@ -40,7 +40,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import org.conscrypt.Conscrypt;
 import org.junit.Assume;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -49,8 +49,8 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public final class Ed25519VerifyJceTest {
 
-  @Before
-  public void useConscrypt() throws Exception {
+  @BeforeClass
+  public static void useConscrypt() throws Exception {
     if (!Util.isAndroid()) {
       Conscrypt.checkAvailability();
       Security.addProvider(Conscrypt.newProvider());

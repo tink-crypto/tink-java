@@ -27,7 +27,7 @@ import com.google.crypto.tink.signature.internal.testing.SignatureTestVector;
 import java.security.Provider;
 import java.security.Security;
 import org.conscrypt.Conscrypt;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
 import org.junit.experimental.theories.Theories;
@@ -38,8 +38,8 @@ import org.junit.runner.RunWith;
 @RunWith(Theories.class)
 public class RsaSsaPssSignConscryptTest {
 
-  @Before
-  public void useConscrypt() throws Exception {
+  @BeforeClass
+  public static void useConscrypt() throws Exception {
     if (!Util.isAndroid()) {
       Conscrypt.checkAvailability();
       Security.addProvider(Conscrypt.newProvider());

@@ -41,7 +41,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import org.conscrypt.Conscrypt;
 import org.junit.Assume;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -53,15 +53,15 @@ import org.junit.runner.RunWith;
 @RunWith(Theories.class)
 public class AesGcmJceTest {
 
-  private Integer[] keySizeInBytes;
+  private static Integer[] keySizeInBytes;
 
-  @Before
-  public void setUp() throws Exception {
+  @BeforeClass
+  public static void setUp() throws Exception {
     keySizeInBytes = new Integer[] {16, 32};
   }
 
-  @Before
-  public void useConscrypt() throws Exception {
+  @BeforeClass
+  public static void useConscrypt() throws Exception {
     // If Tink is build in FIPS-only mode, then we register Conscrypt for the tests.
     if (TinkFips.useOnlyFips()) {
       try {

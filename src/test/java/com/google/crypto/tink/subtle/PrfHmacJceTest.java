@@ -39,7 +39,7 @@ import java.util.Arrays;
 import javax.crypto.spec.SecretKeySpec;
 import org.conscrypt.Conscrypt;
 import org.junit.Assume;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -97,8 +97,8 @@ public class PrfHmacJceTest {
         "bd3d2df6f9d284b421a43e5f9cb94bc4ff88a88243f1f0133bad0fb1791f6569"),
   };
 
-  @Before
-  public void useConscrypt() throws Exception {
+  @BeforeClass
+  public static void useConscrypt() throws Exception {
     // If Tink is build in FIPS-only mode, then we register Conscrypt for the tests.
     if (TinkFips.useOnlyFips()) {
       try {

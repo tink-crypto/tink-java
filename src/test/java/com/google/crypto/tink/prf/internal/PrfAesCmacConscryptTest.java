@@ -34,7 +34,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.crypto.Mac;
 import org.conscrypt.Conscrypt;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -54,8 +54,8 @@ public class PrfAesCmacConscryptTest {
   public static final List<AesCmacPrfTestUtil.TestVector> wycheproofTestVectors =
       AesCmacPrfWycheproofTestUtil.readTestVectors();
 
-  @Before
-  public void useConscrypt() throws Exception {
+  @BeforeClass
+  public static void useConscrypt() throws Exception {
     if (!Util.isAndroid()) {
       Conscrypt.checkAvailability();
       Security.addProvider(Conscrypt.newProvider());

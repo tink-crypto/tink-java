@@ -40,7 +40,7 @@ import java.security.spec.RSAPublicKeySpec;
 import java.util.ArrayList;
 import org.conscrypt.Conscrypt;
 import org.junit.Assume;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -69,8 +69,8 @@ public class RsaSsaPkcs1VerifyJceTest {
     }
   }
 
-  @Before
-  public void useConscrypt() throws Exception {
+  @BeforeClass
+  public static void useConscrypt() throws Exception {
     if (!Util.isAndroid()) {
       Conscrypt.checkAvailability();
       Security.addProvider(Conscrypt.newProvider());

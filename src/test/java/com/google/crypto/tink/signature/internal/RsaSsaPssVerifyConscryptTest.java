@@ -38,7 +38,7 @@ import java.security.Security;
 import java.util.ArrayList;
 import java.util.Arrays;
 import org.conscrypt.Conscrypt;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
 import org.junit.experimental.theories.Theories;
@@ -49,8 +49,8 @@ import org.junit.runner.RunWith;
 @RunWith(Theories.class)
 public class RsaSsaPssVerifyConscryptTest {
 
-  @Before
-  public void useConscrypt() throws Exception {
+  @BeforeClass
+  public static void useConscrypt() throws Exception {
     if (!Util.isAndroid()) {
       Conscrypt.checkAvailability();
       Security.addProvider(Conscrypt.newProvider());
