@@ -25,6 +25,7 @@ import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.PublicKeySign;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.aead.XChaCha20Poly1305Key;
 import com.google.crypto.tink.aead.internal.XChaCha20Poly1305ProtoSerialization;
 import com.google.crypto.tink.config.TinkFips;
@@ -32,7 +33,8 @@ import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.signature.EcdsaParameters;
 import com.google.crypto.tink.signature.EcdsaPrivateKey;
 import com.google.crypto.tink.signature.EcdsaPublicKey;
-import com.google.crypto.tink.signature.SignatureConfigurationV1;
+import com.google.crypto.tink.signature.EcdsaSignKeyManager;
+import com.google.crypto.tink.signature.PublicKeySignWrapper;
 import com.google.crypto.tink.signature.internal.EcdsaProtoSerialization;
 import com.google.crypto.tink.subtle.Base64;
 import com.google.crypto.tink.util.SecretBigInteger;
@@ -332,6 +334,10 @@ public class JwtSignatureConfigurationV0Test {
     JwtEcdsaProtoSerialization.register();
     EcdsaProtoSerialization.register();
     XChaCha20Poly1305ProtoSerialization.register();
+
+    // Needed until we replaced RegistryConfiguration with SignatureConfiguration.
+    PublicKeySignWrapper.register();
+    EcdsaSignKeyManager.registerPair(false);
   }
 
   @Test
@@ -618,7 +624,7 @@ public class JwtSignatureConfigurationV0Test {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(nonJwtPrivateKey).withRandomId().makePrimary())
             .build()
-            .getPrimitive(SignatureConfigurationV1.get(), PublicKeySign.class);
+            .getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
 
     JsonObject payload = new JsonObject();
     payload.addProperty("jid", "jwtId");
@@ -709,7 +715,7 @@ public class JwtSignatureConfigurationV0Test {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(nonJwtPrivateKey).withRandomId().makePrimary())
             .build()
-            .getPrimitive(SignatureConfigurationV1.get(), PublicKeySign.class);
+            .getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
 
     String kid = jwtEcdsaPrivateKey.getPublicKey().getKid().get();
 
