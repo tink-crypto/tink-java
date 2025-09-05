@@ -37,6 +37,7 @@ import com.google.crypto.tink.signature.EcdsaSignKeyManager;
 import com.google.crypto.tink.signature.PublicKeySignWrapper;
 import com.google.crypto.tink.signature.internal.EcdsaProtoSerialization;
 import com.google.crypto.tink.subtle.Base64;
+import com.google.crypto.tink.testing.TestUtil;
 import com.google.crypto.tink.util.SecretBigInteger;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.gson.JsonObject;
@@ -486,6 +487,10 @@ public class JwtSignatureConfigurationV0Test {
   @Theory
   public void getPrimitive_signVerifyRawBitFlipped_throws(
       @FromDataPoints("jwtPrivateKeys") JwtSignaturePrivateKey key) throws Exception {
+    // Skip the test under TSAN, it is too slow.
+    if (TestUtil.isTsan()) {
+      return;
+    }
     KeysetHandle keysetHandle =
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(key).withFixedId(123).makePrimary())
@@ -517,6 +522,10 @@ public class JwtSignatureConfigurationV0Test {
   @Theory
   public void getPrimitive_signVerifyBitFlipped_throws(
       @FromDataPoints("jwtPrivateKeys") JwtSignaturePrivateKey key) throws Exception {
+    // Skip the test under TSAN, it is too slow.
+    if (TestUtil.isTsan()) {
+      return;
+    }
     KeysetHandle keysetHandle =
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(key).withFixedId(123).makePrimary())
