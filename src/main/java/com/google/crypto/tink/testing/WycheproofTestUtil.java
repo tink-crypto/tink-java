@@ -95,12 +95,10 @@ public final class WycheproofTestUtil {
       result = JsonParser.parseString(new String(readAll(inputStream), UTF_8)).getAsJsonObject();
     }
     String algorithm = result.get("algorithm").getAsString();
-    String generatorVersion = result.get("generatorVersion").getAsString();
     int numTests = result.get("numberOfTests").getAsInt();
     System.out.println(
         String.format(
-            "Read from %s total %d test cases for algorithm %s with generator version %s",
-            path, numTests, algorithm, generatorVersion));
+            "Read from %s total %d test cases for algorithm %s", path, numTests, algorithm));
     return result;
   }
   /**
