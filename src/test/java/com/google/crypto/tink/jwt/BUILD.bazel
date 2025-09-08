@@ -704,7 +704,6 @@ java_test(
 
 java_test(
     name = "JwtSignatureConfigurationV0Test",
-    size = "small",
     srcs = ["JwtSignatureConfigurationV0Test.java"],
     deps = [
         "//src/main/java/com/google/crypto/tink:aead",
