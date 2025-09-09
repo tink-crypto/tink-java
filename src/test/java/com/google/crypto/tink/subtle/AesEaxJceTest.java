@@ -50,14 +50,14 @@ import org.junit.runner.RunWith;
 public class AesEaxJceTest {
   private static final int KEY_SIZE = 16;
   private static final int IV_SIZE = 16;
-  private Integer[] keySizeInBytes;
-  private Integer[] ivSizeInBytes;
+  private Integer[] validKeySizesInBytes;
+  private Integer[] validIvSizesInBytes;
 
   @Before
   public void setUp() throws Exception {
 
-    keySizeInBytes = new Integer[] {16, 32};
-    ivSizeInBytes = new Integer[] {12, 16};
+    validKeySizesInBytes = new Integer[] {16, 32};
+    validIvSizesInBytes = new Integer[] {12, 16};
   }
 
   @Test
@@ -67,18 +67,14 @@ public class AesEaxJceTest {
     JsonObject json =
         WycheproofTestUtil.readJson("../wycheproof/testvectors/aes_eax_test.json");
     ArrayList<String> errors = new ArrayList<>();
-    int cntSkippedTests = 0;
     JsonArray testGroups = json.getAsJsonArray("testGroups");
     for (int i = 0; i < testGroups.size(); i++) {
       JsonObject group = testGroups.get(i).getAsJsonObject();
-      int keySize = group.get("keySize").getAsInt();
-      int ivSize = group.get("ivSize").getAsInt();
+      int keySizeInBits = group.get("keySize").getAsInt();
+      assertThat(keySizeInBits).isAnyOf(128, 192, 256);
+      int ivSizeInBits = group.get("ivSize").getAsInt();
+      assertThat(ivSizeInBits).isAnyOf(0, 32, 64, 96, 128, 160, 256, 512, 1024, 2056);
       JsonArray tests = group.getAsJsonArray("tests");
-      if (!Arrays.asList(keySizeInBytes).contains(keySize / 8)
-          || !Arrays.asList(ivSizeInBytes).contains(ivSize / 8)) {
-        cntSkippedTests += tests.size();
-        continue;
-      }
       for (int j = 0; j < tests.size(); j++) {
         JsonObject testcase = tests.get(j).getAsJsonObject();
         String tcId =
@@ -87,12 +83,24 @@ public class AesEaxJceTest {
                 testcase.get("tcId").getAsInt(), testcase.get("comment").getAsString());
         byte[] iv = Hex.decode(testcase.get("iv").getAsString());
         byte[] key = Hex.decode(testcase.get("key").getAsString());
+        assertThat(key).hasLength(keySizeInBits / 8);
+        assertThat(iv).hasLength(ivSizeInBits / 8);
         byte[] msg = Hex.decode(testcase.get("msg").getAsString());
         byte[] aad = Hex.decode(testcase.get("aad").getAsString());
         byte[] ct = Hex.decode(testcase.get("ct").getAsString());
         byte[] tag = Hex.decode(testcase.get("tag").getAsString());
         byte[] ciphertext = Bytes.concat(iv, ct, tag);
         String result = testcase.get("result").getAsString();
+        if (ivSizeInBits != 96 && ivSizeInBits != 128) {
+          // Only 96-bit and 128-bit iv sizes are considered valid.
+          assertThrows(IllegalArgumentException.class, () -> new AesEaxJce(key, iv.length));
+          continue;
+        }
+        if (keySizeInBits == 192) {
+          // This key size is currently not supported.
+          assertThrows(GeneralSecurityException.class, () -> new AesEaxJce(key, iv.length));
+          continue;
+        }
         try {
           AesEaxJce eax = new AesEaxJce(key, iv.length);
           byte[] decrypted = eax.decrypt(ciphertext, aad);
@@ -123,7 +131,6 @@ public class AesEaxJceTest {
         }
       }
     }
-    assertThat(cntSkippedTests).isEqualTo(69);
     assertThat(errors).isEmpty();
   }
 
@@ -132,13 +139,17 @@ public class AesEaxJceTest {
     Assume.assumeFalse(TinkFips.useOnlyFips());
 
     byte[] aad = new byte[] {1, 2, 3};
-    byte[] key = Random.randBytes(KEY_SIZE);
-    AesEaxJce eax = new AesEaxJce(key, IV_SIZE);
-    for (int messageSize = 0; messageSize < 75; messageSize++) {
-      byte[] message = Random.randBytes(messageSize);
-      byte[] ciphertext = eax.encrypt(message, aad);
-      byte[] decrypted = eax.decrypt(ciphertext, aad);
-      assertArrayEquals(message, decrypted);
+    for (Integer keySizeInBytes : validKeySizesInBytes) {
+      for (Integer ivSizeInBytes : validIvSizesInBytes) {
+        byte[] key = Random.randBytes(keySizeInBytes);
+        AesEaxJce eax = new AesEaxJce(key, ivSizeInBytes);
+        for (int messageSize = 0; messageSize < 75; messageSize++) {
+          byte[] message = Random.randBytes(messageSize);
+          byte[] ciphertext = eax.encrypt(message, aad);
+          byte[] decrypted = eax.decrypt(ciphertext, aad);
+          assertArrayEquals(message, decrypted);
+        }
+      }
     }
   }
 
@@ -146,10 +157,11 @@ public class AesEaxJceTest {
   public void testModifyCiphertext() throws Exception {
     Assume.assumeFalse(TinkFips.useOnlyFips());
 
-    testModifyCiphertext(16, 16);
-    testModifyCiphertext(16, 12);
-    testModifyCiphertext(32, 16);
-    testModifyCiphertext(32, 12);
+    for (Integer keySizeInBytes : validKeySizesInBytes) {
+      for (Integer ivSizeInBytes : validIvSizesInBytes) {
+        testModifyCiphertext(keySizeInBytes, ivSizeInBytes);
+      }
+    }
   }
 
   public void testModifyCiphertext(int keySizeInBytes, int ivSizeInBytes) throws Exception {

@@ -207,16 +207,12 @@ public class InsecureNonceAesGcmJceTest {
     JsonObject json =
         WycheproofTestUtil.readJson("../wycheproof/testvectors/aes_gcm_test.json");
     ArrayList<String> errors = new ArrayList<>();
-    int cntSkippedTests = 0;
     JsonArray testGroups = json.get("testGroups").getAsJsonArray();
     for (int i = 0; i < testGroups.size(); i++) {
       JsonObject group = testGroups.get(i).getAsJsonObject();
-      int keySize = group.get("keySize").getAsInt();
+      int keySizeInBits = group.get("keySize").getAsInt();
+      assertThat(keySizeInBits).isAnyOf(128, 192, 256);
       JsonArray tests = group.get("tests").getAsJsonArray();
-      if (!Arrays.asList(keySizeInBytes).contains(keySize / 8)) {
-        cntSkippedTests += tests.size();
-        continue;
-      }
       for (int j = 0; j < tests.size(); j++) {
         JsonObject testcase = tests.get(j).getAsJsonObject();
         String tcId =
@@ -224,6 +220,7 @@ public class InsecureNonceAesGcmJceTest {
                 testcase.get("tcId").getAsInt(), testcase.get("comment").getAsString());
         byte[] iv = Hex.decode(testcase.get("iv").getAsString());
         byte[] key = Hex.decode(testcase.get("key").getAsString());
+        assertThat(key).hasLength(keySizeInBits / 8);
         byte[] msg = Hex.decode(testcase.get("msg").getAsString());
         byte[] associatedData = Hex.decode(testcase.get("aad").getAsString());
         byte[] ct = Hex.decode(testcase.get("ct").getAsString());
@@ -238,7 +235,11 @@ public class InsecureNonceAesGcmJceTest {
         if (iv.length != 12) {
           result = "invalid";
         }
-
+        if (keySizeInBits == 192) {
+          // This key size is currently not supported.
+          assertThrows(GeneralSecurityException.class, () -> new InsecureNonceAesGcmJce(key));
+          continue;
+        }
         try {
           InsecureNonceAesGcmJce gcm = new InsecureNonceAesGcmJce(key);
           // Encryption.
@@ -282,7 +283,6 @@ public class InsecureNonceAesGcmJceTest {
         }
       }
     }
-    assertThat(cntSkippedTests).isEqualTo(83);
     assertThat(errors).isEmpty();
   }
 

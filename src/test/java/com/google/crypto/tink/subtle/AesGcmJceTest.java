@@ -251,16 +251,12 @@ public class AesGcmJceTest {
     JsonObject json =
         WycheproofTestUtil.readJson("../wycheproof/testvectors/aes_gcm_test.json");
     ArrayList<String> errors = new ArrayList<>();
-    int cntSkippedTests = 0;
     JsonArray testGroups = json.get("testGroups").getAsJsonArray();
     for (int i = 0; i < testGroups.size(); i++) {
       JsonObject group = testGroups.get(i).getAsJsonObject();
-      int keySize = group.get("keySize").getAsInt();
+      int keySizeInBits = group.get("keySize").getAsInt();
+      assertThat(keySizeInBits).isAnyOf(128, 192, 256);
       JsonArray tests = group.get("tests").getAsJsonArray();
-      if (!Arrays.asList(keySizeInBytes).contains(keySize / 8)) {
-        cntSkippedTests += tests.size();
-        continue;
-      }
       for (int j = 0; j < tests.size(); j++) {
         JsonObject testcase = tests.get(j).getAsJsonObject();
         String tcId =
@@ -268,6 +264,12 @@ public class AesGcmJceTest {
                 testcase.get("tcId").getAsInt(), testcase.get("comment").getAsString());
         byte[] iv = Hex.decode(testcase.get("iv").getAsString());
         byte[] key = Hex.decode(testcase.get("key").getAsString());
+        assertThat(key).hasLength(keySizeInBits / 8);
+        if (keySizeInBits == 192) {
+          // This key size is not supported. So creating a primitive must fail.
+          assertThrows(GeneralSecurityException.class, () -> new AesGcmJce(key));
+          continue;
+        }
         byte[] msg = Hex.decode(testcase.get("msg").getAsString());
         byte[] aad = Hex.decode(testcase.get("aad").getAsString());
         byte[] ct = Hex.decode(testcase.get("ct").getAsString());
@@ -282,7 +284,6 @@ public class AesGcmJceTest {
         if (iv.length != 12) {
           result = "invalid";
         }
-
         try {
           AesGcmJce gcm = new AesGcmJce(key);
           byte[] decrypted = gcm.decrypt(ciphertext, aad);
@@ -313,7 +314,6 @@ public class AesGcmJceTest {
         }
       }
     }
-    assertThat(cntSkippedTests).isEqualTo(83);
     assertThat(errors).isEmpty();
   }
 

@@ -52,15 +52,11 @@ public class AesSivTest {
     JsonObject json =
         WycheproofTestUtil.readJson("../wycheproof/testvectors/aes_siv_cmac_test.json");
     JsonArray testGroups = json.getAsJsonArray("testGroups");
-    int cntSkippedTests = 0;
     for (int i = 0; i < testGroups.size(); i++) {
       JsonObject group = testGroups.get(i).getAsJsonObject();
-      int keySize = group.get("keySize").getAsInt();
+      int keySizeInBits = group.get("keySize").getAsInt();
+      assertThat(keySizeInBits).isAnyOf(256, 384, 512);
       JsonArray tests = group.getAsJsonArray("tests");
-      if (keySize != KEY_SIZE_IN_BYTES * 8) {
-        cntSkippedTests += tests.size();
-        continue;
-      }
       for (int j = 0; j < tests.size(); j++) {
         JsonObject testcase = tests.get(j).getAsJsonObject();
         String tcId =
@@ -68,6 +64,12 @@ public class AesSivTest {
                 "testcase %d (%s)",
                 testcase.get("tcId").getAsInt(), testcase.get("comment").getAsString());
         byte[] key = Hex.decode(testcase.get("key").getAsString());
+        assertThat(key).hasLength(keySizeInBits / 8);
+        if (keySizeInBits == 256 || keySizeInBits == 384) {
+          // These key sizes are currently not supported.
+          assertThrows(InvalidKeyException.class, () -> new AesSiv(key));
+          continue;
+        }
         byte[] msg = Hex.decode(testcase.get("msg").getAsString());
         byte[] aad = Hex.decode(testcase.get("aad").getAsString());
         byte[] ct = Hex.decode(testcase.get("ct").getAsString());
@@ -89,7 +91,6 @@ public class AesSivTest {
         }
       }
     }
-    assertThat(cntSkippedTests).isEqualTo(295);
   }
 
   @Test
@@ -99,15 +100,11 @@ public class AesSivTest {
     JsonObject json =
         WycheproofTestUtil.readJson("../wycheproof/testvectors/aes_siv_cmac_test.json");
     JsonArray testGroups = json.getAsJsonArray("testGroups");
-    int cntSkippedTests = 0;
     for (int i = 0; i < testGroups.size(); i++) {
       JsonObject group = testGroups.get(i).getAsJsonObject();
-      int keySize = group.get("keySize").getAsInt();
+      int keySizeInBits = group.get("keySize").getAsInt();
+      assertThat(keySizeInBits).isAnyOf(256, 384, 512);
       JsonArray tests = group.getAsJsonArray("tests");
-      if (keySize != KEY_SIZE_IN_BYTES * 8) {
-        cntSkippedTests += tests.size();
-        continue;
-      }
       for (int j = 0; j < tests.size(); j++) {
         JsonObject testcase = tests.get(j).getAsJsonObject();
         String tcId =
@@ -122,14 +119,20 @@ public class AesSivTest {
         // "valid" are test vectors with matching plaintext and ciphertext.
         // "invalid" are test vectors with invalid parameters or invalid ciphertext.
         String result = testcase.get("result").getAsString();
+        assertThat(key).hasLength(keySizeInBits / 8);
         AesSivParameters parameters =
             AesSivParameters.builder()
-                .setKeySizeBytes(64)
+                .setKeySizeBytes(keySizeInBits / 8)
                 .setVariant(AesSivParameters.Variant.NO_PREFIX)
                 .build();
         SecretBytes keyBytes = SecretBytes.copyFrom(key, InsecureSecretKeyAccess.get());
         AesSivKey aesSivKey =
             AesSivKey.builder().setParameters(parameters).setKeyBytes(keyBytes).build();
+        if (keySizeInBits == 256 || keySizeInBits == 384) {
+          // These key sizes are currently not supported.
+          assertThrows(InvalidKeyException.class, () -> AesSiv.create(aesSivKey));
+          continue;
+        }
         DeterministicAead daead = AesSiv.create(aesSivKey);
         if (result.equals("valid")) {
           byte[] ciphertext = daead.encryptDeterministically(msg, aad);
@@ -144,7 +147,6 @@ public class AesSivTest {
         }
       }
     }
-    assertThat(cntSkippedTests).isEqualTo(295);
   }
 
   @Test
