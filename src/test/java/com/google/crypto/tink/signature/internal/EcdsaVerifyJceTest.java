@@ -18,7 +18,6 @@ package com.google.crypto.tink.signature.internal;
 
 import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.config.TinkFips;
@@ -76,7 +75,6 @@ public class EcdsaVerifyJceTest {
   public static class WycheproofTestCase {
     private final String fileName;
     private final EcdsaEncoding encoding;
-    private final int skippedTests;
 
     public String fileName() {
       return fileName;
@@ -86,14 +84,9 @@ public class EcdsaVerifyJceTest {
       return encoding;
     }
 
-    public int skippedTests() {
-      return skippedTests;
-    }
-
-    public WycheproofTestCase(String fileName, EcdsaEncoding encoding, int skippedTests) {
+    public WycheproofTestCase(String fileName, EcdsaEncoding encoding) {
       this.fileName = fileName;
       this.encoding = encoding;
-      this.skippedTests = skippedTests;
     }
   }
 
@@ -102,31 +95,31 @@ public class EcdsaVerifyJceTest {
       new WycheproofTestCase[] {
         new WycheproofTestCase(
             "../wycheproof/testvectors/ecdsa_secp256r1_sha256_test.json",
-            EcdsaEncoding.DER, 0),
+            EcdsaEncoding.DER),
         new WycheproofTestCase(
             "../wycheproof/testvectors/ecdsa_secp256r1_sha512_test.json",
-            EcdsaEncoding.DER, 0),
+            EcdsaEncoding.DER),
         new WycheproofTestCase(
             "../wycheproof/testvectors/ecdsa_secp384r1_sha384_test.json",
-            EcdsaEncoding.DER, 408),
+            EcdsaEncoding.DER),
         new WycheproofTestCase(
             "../wycheproof/testvectors/ecdsa_secp384r1_sha512_test.json",
-            EcdsaEncoding.DER, 0),
+            EcdsaEncoding.DER),
         new WycheproofTestCase(
             "../wycheproof/testvectors/ecdsa_secp521r1_sha512_test.json",
-            EcdsaEncoding.DER, 0),
+            EcdsaEncoding.DER),
         new WycheproofTestCase(
             "../wycheproof/testvectors/ecdsa_secp256r1_sha256_p1363_test.json",
-            EcdsaEncoding.IEEE_P1363, 0),
+            EcdsaEncoding.IEEE_P1363),
         new WycheproofTestCase(
             "../wycheproof/testvectors/ecdsa_secp384r1_sha384_p1363_test.json",
-            EcdsaEncoding.IEEE_P1363, 239),
+            EcdsaEncoding.IEEE_P1363),
         new WycheproofTestCase(
             "../wycheproof/testvectors/ecdsa_secp384r1_sha512_p1363_test.json",
-            EcdsaEncoding.IEEE_P1363, 0),
+            EcdsaEncoding.IEEE_P1363),
         new WycheproofTestCase(
             "../wycheproof/testvectors/ecdsa_secp521r1_sha512_p1363_test.json",
-            EcdsaEncoding.IEEE_P1363, 0)
+            EcdsaEncoding.IEEE_P1363)
       };
 
   @Theory
@@ -135,7 +128,6 @@ public class EcdsaVerifyJceTest {
     JsonObject jsonObj = WycheproofTestUtil.readJson(testCase.fileName());
 
     ArrayList<String> errors = new ArrayList<>();
-    int cntSkippedTests = 0;
     JsonArray testGroups = jsonObj.getAsJsonArray("testGroups");
     for (int i = 0; i < testGroups.size(); i++) {
       JsonObject group = testGroups.get(i).getAsJsonObject();
@@ -145,27 +137,17 @@ public class EcdsaVerifyJceTest {
       X509EncodedKeySpec x509keySpec = new X509EncodedKeySpec(encodedPubKey);
       String sha = group.get("sha").getAsString();
       String signatureAlgorithm = WycheproofTestUtil.getSignatureAlgorithmName(sha, "ECDSA");
-
+      assertThat(signatureAlgorithm).isNotEmpty();
       JsonArray tests = group.getAsJsonArray("tests");
       for (int j = 0; j < tests.size(); j++) {
         JsonObject testcase = tests.get(j).getAsJsonObject();
         String tcId =
             String.format("testcase %d (%s)",
                 testcase.get("tcId").getAsInt(), testcase.get("comment").getAsString());
+        ECPublicKey pubKey = (ECPublicKey) kf.generatePublic(x509keySpec);
+        HashType hash = WycheproofTestUtil.getHashType(sha);
+        EcdsaVerifyJce verifier = new EcdsaVerifyJce(pubKey, hash, testCase.encoding());
 
-        if (signatureAlgorithm.isEmpty()) {
-          cntSkippedTests++;
-          continue;
-        }
-        EcdsaVerifyJce verifier;
-        try {
-          ECPublicKey pubKey = (ECPublicKey) kf.generatePublic(x509keySpec);
-          HashType hash = WycheproofTestUtil.getHashType(sha);
-          verifier = new EcdsaVerifyJce(pubKey, hash, testCase.encoding());
-        } catch (GeneralSecurityException ignored) {
-          cntSkippedTests++;
-          continue;
-        }
         byte[] msg = getMessage(testcase);
         byte[] sig = Hex.decode(testcase.get("sig").getAsString());
         String result = testcase.get("result").getAsString();
@@ -181,7 +163,6 @@ public class EcdsaVerifyJceTest {
         }
       }
     }
-    assertEquals(testCase.skippedTests(), cntSkippedTests);
     assertThat(errors).isEmpty();
   }
 

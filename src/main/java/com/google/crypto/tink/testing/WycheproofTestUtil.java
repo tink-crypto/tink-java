@@ -43,6 +43,8 @@ public final class WycheproofTestUtil {
     switch (md) {
       case "SHA-256":
         return HashType.SHA256;
+      case "SHA-384":
+        return HashType.SHA384;
       case "SHA-512":
         return HashType.SHA512;
       case "SHA-1":
@@ -65,14 +67,17 @@ public final class WycheproofTestUtil {
    * @return the algorithm name for the signature scheme with the given hash.
    */
   public static String getSignatureAlgorithmName(String md, String signatureAlgorithm) {
-    if (md.equals("SHA-256")) {
-      md = "SHA256";
-    } else if (md.equals("SHA-512")) {
-      md = "SHA512";
-    } else {
-      return "";
+    switch (md) {
+      case "SHA-256":
+        return "SHA256WITH" + signatureAlgorithm;
+      case "SHA-384":
+        return "SHA384WITH" + signatureAlgorithm;
+      case "SHA-512":
+        return "SHA512WITH" + signatureAlgorithm;
+      default:
+        // TODO(b/238096965): Throw an exception instead of returning an empty string.
+        return "";
     }
-    return md + "WITH" + signatureAlgorithm;
   }
 
   /**
