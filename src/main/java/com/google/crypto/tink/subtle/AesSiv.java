@@ -32,7 +32,6 @@ import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.util.Arrays;
-import java.util.Collection;
 import javax.crypto.AEADBadTagException;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -53,7 +52,7 @@ public final class AesSiv implements DeterministicAead {
 
   // Do not support 128-bit keys because it might not provide 128-bit security level in
   // multi-user setting.
-  private static final Collection<Integer> KEY_SIZES = Arrays.asList(64);
+  private static final int KEY_SIZE_IN_BYTES = 64;
   private static final byte[] BLOCK_ZERO = new byte[AesUtil.BLOCK_SIZE];
   private static final byte[] BLOCK_ONE = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (byte) 0x01
@@ -99,7 +98,7 @@ public final class AesSiv implements DeterministicAead {
           "Can not use AES-SIV in FIPS-mode.");
     }
 
-    if (!KEY_SIZES.contains(key.length)) {
+    if (key.length != KEY_SIZE_IN_BYTES) {
       throw new InvalidKeyException(
           "invalid key size: " + key.length + " bytes; key must have 64 bytes");
     }
