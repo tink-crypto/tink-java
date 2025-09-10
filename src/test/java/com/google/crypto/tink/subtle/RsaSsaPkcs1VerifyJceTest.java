@@ -145,6 +145,8 @@ public class RsaSsaPkcs1VerifyJceTest {
     switch (sha) {
       case "SHA-256":
         return RsaSsaPkcs1Parameters.HashType.SHA256;
+      case "SHA-384":
+        return RsaSsaPkcs1Parameters.HashType.SHA384;
       case "SHA-512":
         return RsaSsaPkcs1Parameters.HashType.SHA512;
       default:
@@ -153,10 +155,15 @@ public class RsaSsaPkcs1VerifyJceTest {
   }
 
   @DataPoints("wycheproofTestVectorPaths")
-  public static final String[] WYCHEPROOF_TEST_VECTORS_PATHS =
+  public static final String[] wycheproofTestVectorPaths =
       new String[] {
         "../wycheproof/testvectors/rsa_signature_2048_sha256_test.json",
+        "../wycheproof/testvectors/rsa_signature_2048_sha384_test.json",
+        "../wycheproof/testvectors/rsa_signature_2048_sha512_test.json",
+        "../wycheproof/testvectors/rsa_signature_3072_sha256_test.json",
+        "../wycheproof/testvectors/rsa_signature_3072_sha384_test.json",
         "../wycheproof/testvectors/rsa_signature_3072_sha512_test.json",
+        "../wycheproof/testvectors/rsa_signature_4096_sha384_test.json",
         "../wycheproof/testvectors/rsa_signature_4096_sha512_test.json"
       };
 
