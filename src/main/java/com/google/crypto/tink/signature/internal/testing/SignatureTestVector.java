@@ -44,4 +44,11 @@ public final class SignatureTestVector {
   public byte[] getMessage() {
     return message.toByteArray();
   }
+
+  @Override
+  public String toString() {
+    return String.format(
+        "SignatureTestVector(%s, signature=%s, message=%s)",
+        privateKey.getParameters(), signature, message);
+  }
 }
