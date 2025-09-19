@@ -472,7 +472,19 @@ java_test(
     srcs = ["MlDsaArithmeticUtilTest.java"],
     deps = [
         "//src/main/java/com/google/crypto/tink/signature/internal:ml_dsa_arithmetic_util",
+        "//src/main/java/com/google/crypto/tink/signature/internal:ml_dsa_constants",
         "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
+    name = "MlDsaConstantsTest",
+    size = "small",
+    srcs = ["MlDsaConstantsTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_parameters",
+        "//src/main/java/com/google/crypto/tink/signature/internal:ml_dsa_constants",
         "@maven//:junit_junit",
     ],
 )

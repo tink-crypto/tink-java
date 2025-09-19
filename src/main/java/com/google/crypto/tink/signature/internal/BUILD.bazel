@@ -617,9 +617,24 @@ java_library(
 java_library(
     name = "ml_dsa_arithmetic_util",
     srcs = ["MlDsaArithmeticUtil.java"],
+    deps = [":ml_dsa_constants"],
 )
 
 android_library(
     name = "ml_dsa_arithmetic_util-android",
     srcs = ["MlDsaArithmeticUtil.java"],
+    deps = [":ml_dsa_constants-android"],
 )
+
+android_library(
+    name = "ml_dsa_constants-android",
+    srcs = ["MlDsaConstants.java"],
+    deps = ["//src/main/java/com/google/crypto/tink/signature:ml_dsa_parameters-android"],
+)
+
+java_library(
+    name = "ml_dsa_constants",
+    srcs = ["MlDsaConstants.java"],
+    deps = ["//src/main/java/com/google/crypto/tink/signature:ml_dsa_parameters"],
+)
+

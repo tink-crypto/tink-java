@@ -151,7 +151,7 @@ public class MlDsaArithmeticUtilTest {
     RingZq r0 = pair.r0;
     assertThat(r1.r).isEqualTo(151);
     assertThat(r0.r).isEqualTo(8377992);
-    assertThat(r1.multiply(new RingZq(1 << MlDsaArithmeticUtil.D)).plus(r0)).isEqualTo(a);
+    assertThat(r1.multiply(new RingZq(1 << MlDsaConstants.D)).plus(r0).r).isEqualTo(a.r);
   }
 
   @Test
@@ -161,7 +161,7 @@ public class MlDsaArithmeticUtilTest {
       MlDsaArithmeticUtil.RingZqPair pair = a.power2Round();
       RingZq r1 = pair.r1;
       RingZq r0 = pair.r0;
-      assertThat(r1.multiply(new RingZq(1 << MlDsaArithmeticUtil.D)).plus(r0)).isEqualTo(a);
+      assertThat(r1.multiply(new RingZq(1 << MlDsaConstants.D)).plus(r0)).isEqualTo(a);
     }
   }
 
@@ -176,7 +176,7 @@ public class MlDsaArithmeticUtilTest {
 
     RingTq c = a.plus(b);
 
-    for (int i = 0; i < MlDsaArithmeticUtil.DEGREE; i++) {
+    for (int i = 0; i < MlDsaConstants.DEGREE; i++) {
       assertThat(c.vector[i].r)
           .isEqualTo((1110 * i * i + 1110 * i + 1110) % MlDsaArithmeticUtil.RingZq.Q);
     }
@@ -293,7 +293,7 @@ public class MlDsaArithmeticUtilTest {
 
     PolyRq c = a.plus(b);
 
-    for (int i = 0; i < MlDsaArithmeticUtil.DEGREE; i++) {
+    for (int i = 0; i < MlDsaConstants.DEGREE; i++) {
       assertThat(c.polynomial[i].r)
           .isEqualTo((1110 * i * i + 1110 * i + 1110) % MlDsaArithmeticUtil.RingZq.Q);
     }

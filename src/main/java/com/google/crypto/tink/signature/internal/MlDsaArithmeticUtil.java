@@ -21,22 +21,13 @@ import java.util.Arrays;
 
 final class MlDsaArithmeticUtil {
 
-  private static final int ML_DSA_65_K = 6;
-  private static final int ML_DSA_65_L = 5;
-  private static final int ML_DSA_87_K = 8;
-  private static final int ML_DSA_87_L = 7;
-
-  static final int DEGREE = 256;
-  // Number of bits dropped from t
-  static final int D = 13;
-
   private MlDsaArithmeticUtil() {}
 
   static final class MatrixTq {
     final RingTq[][] matrix;
 
     MatrixTq(int k, int l) throws GeneralSecurityException {
-      if (!((k == ML_DSA_65_K && l == ML_DSA_65_L) || (k == ML_DSA_87_K && l == ML_DSA_87_L))) {
+      if (!((k == MlDsaConstants.ML_DSA_65_K && l == MlDsaConstants.ML_DSA_65_L) || (k == MlDsaConstants.ML_DSA_87_K && l == MlDsaConstants.ML_DSA_87_L))) {
         throw new GeneralSecurityException("Wrong size of the ML-DSA matrix: k=" + k + ", l=" + l);
       }
       matrix = new RingTq[k][l];
@@ -85,22 +76,22 @@ final class MlDsaArithmeticUtil {
     final RingZq[] vector;
 
     RingTq() {
-      vector = new RingZq[DEGREE];
-      for (int i = 0; i < DEGREE; i++) {
+      vector = new RingZq[MlDsaConstants.DEGREE];
+      for (int i = 0; i < MlDsaConstants.DEGREE; i++) {
         vector[i] = new RingZq(0);
       }
     }
 
     static RingTq copyFromPolynomial(PolyRq polynomial) {
       RingTq result = new RingTq();
-      System.arraycopy(polynomial.polynomial, 0, result.vector, 0, DEGREE);
+      System.arraycopy(polynomial.polynomial, 0, result.vector, 0, MlDsaConstants.DEGREE);
       return result;
     }
 
     // Algorithm 44 (AddNTT)
     RingTq plus(RingTq other) {
       RingTq result = new RingTq();
-      for (int i = 0; i < DEGREE; i++) {
+      for (int i = 0; i < MlDsaConstants.DEGREE; i++) {
         result.vector[i] = vector[i].plus(other.vector[i]);
       }
       return result;
@@ -109,7 +100,7 @@ final class MlDsaArithmeticUtil {
     // Algorithm 45 (MultiplyNTT)
     RingTq multiply(RingTq other) {
       RingTq result = new RingTq();
-      for (int i = 0; i < DEGREE; i++) {
+      for (int i = 0; i < MlDsaConstants.DEGREE; i++) {
         result.vector[i] = vector[i].multiply(other.vector[i]);
       }
       return result;
@@ -170,20 +161,20 @@ final class MlDsaArithmeticUtil {
 
     static PolyRq copyFromVector(RingTq vector) {
       PolyRq result = new PolyRq();
-      System.arraycopy(vector.vector, 0, result.polynomial, 0, DEGREE);
+      System.arraycopy(vector.vector, 0, result.polynomial, 0, MlDsaConstants.DEGREE);
       return result;
     }
 
     PolyRq() {
-      polynomial = new RingZq[DEGREE];
-      for (int i = 0; i < DEGREE; i++) {
+      polynomial = new RingZq[MlDsaConstants.DEGREE];
+      for (int i = 0; i < MlDsaConstants.DEGREE; i++) {
         polynomial[i] = new RingZq(0);
       }
     }
 
     PolyRq plus(PolyRq other) {
       PolyRq result = new PolyRq();
-      for (int i = 0; i < DEGREE; i++) {
+      for (int i = 0; i < MlDsaConstants.DEGREE; i++) {
         result.polynomial[i] = polynomial[i].plus(other.polynomial[i]);
       }
       return result;
@@ -194,7 +185,7 @@ final class MlDsaArithmeticUtil {
       PolyRq t1Bold = new PolyRq();
       PolyRq t0Bold = new PolyRq();
       RingZqPair result;
-      for (int i = 0; i < DEGREE; i++) {
+      for (int i = 0; i < MlDsaConstants.DEGREE; i++) {
         result = polynomial[i].power2Round();
         t1Bold.polynomial[i] = result.r1;
         t0Bold.polynomial[i] = result.r0;
@@ -233,8 +224,8 @@ final class MlDsaArithmeticUtil {
   // Ring of (23-bit long) integers modulo q = 2^23 - 2^13 + 1 = 8380417.
   static final class RingZq {
 
-    private static final int TWO_POW_D_MINUS_ONE = (1 << (D - 1));
-    private static final int TWO_POW_D = (1 << D);
+    private static final int TWO_POW_D_MINUS_ONE = (1 << (MlDsaConstants.D - 1));
+    private static final int TWO_POW_D = (1 << MlDsaConstants.D);
 
     static final RingZq INVALID = new RingZq(-1);
     static final int Q = 8380417;
@@ -269,7 +260,7 @@ final class MlDsaArithmeticUtil {
     RingZqPair power2Round() {
       int rPlus = r % Q;
       int rZero = (((rPlus + TWO_POW_D_MINUS_ONE - 1) & (TWO_POW_D - 1)) - (TWO_POW_D_MINUS_ONE - 1) + Q) % Q;
-      int rOne = ((rPlus - rZero + Q) % Q) >> D;
+      int rOne = ((rPlus - rZero + Q) % Q) >> MlDsaConstants.D;
       return new RingZqPair(rOne, rZero);
     }
 
