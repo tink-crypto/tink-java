@@ -465,3 +465,15 @@ java_test(
         "@maven//:org_conscrypt_conscrypt_openjdk_uber",
     ],
 )
+
+java_test(
+    name = "MlDsaArithmeticUtilTest",
+    size = "small",
+    srcs = ["MlDsaArithmeticUtilTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/signature/internal:ml_dsa_arithmetic_util",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+

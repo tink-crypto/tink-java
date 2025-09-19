@@ -613,3 +613,13 @@ java_library(
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
+
+java_library(
+    name = "ml_dsa_arithmetic_util",
+    srcs = ["MlDsaArithmeticUtil.java"],
+)
+
+android_library(
+    name = "ml_dsa_arithmetic_util-android",
+    srcs = ["MlDsaArithmeticUtil.java"],
+)
