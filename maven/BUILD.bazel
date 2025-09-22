@@ -14,3 +14,5 @@ sh_binary(
         "@platforms//os:linux",
     ],
 )
+
+exports_files(["tink-java.pom.xml"])

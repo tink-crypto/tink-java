@@ -31,7 +31,9 @@ def gen_maven_jar_rules(
         shading_rules = "",
         exclude_packages = [],
         additional_javadoc_dependencies = [],
-        manifest_lines = []):
+        manifest_lines = [],
+        create_snapshot_bundle = False,
+        pom_template_for_snapshot_bundle = None):
     """
     Generates rules that generate Maven jars for a given package.
 
@@ -52,6 +54,9 @@ def gen_maven_jar_rules(
       additional_javadoc_dependencies: Additional dependencies to give javadoc
       manifest_lines: lines to put in the output manifest file (manifest
         files in the input jars are ignored)
+      create_snapshot_bundle: If true, creates a target <name>-maven-bundle which provides a
+        snapshot maven_bundle.zip file.
+      pom_template_for_snapshot_bundle: The pom file to use for the bundle.
     """
 
     if shaded_packages:
@@ -90,3 +95,49 @@ def gen_maven_jar_rules(
         name = javadoc_name,
         deps = deps + additional_javadoc_dependencies,
     )
+
+    if create_snapshot_bundle:
+        if not pom_template_for_snapshot_bundle:
+            fail("If create_snapshot_bundle is True, pom_template_for_snapshot_bundle must be specified.")
+
+        bundle_name = name + "-maven-bundle"
+        native.genrule(
+            name = bundle_name,
+            srcs = [
+                ":" + name,
+                ":" + source_jar_name,
+                ":" + javadoc_name,
+                pom_template_for_snapshot_bundle,
+            ],
+            tags = ["manual"],
+            outs = [bundle_name + ".zip"],
+            cmd = """
+                set -e
+                ZIP_ROOT=$$(mktemp -d)
+                INNER_DIR="$$ZIP_ROOT/com/google/crypto/tink/{name}/{version_for_bundle}"
+                mkdir -p "$$INNER_DIR"
+                # Copy files and substitute version in POM
+                cp "$(location :{name})" "$$INNER_DIR/{name}-{version_for_bundle}.jar"
+                cp "$(location :{source_jar_name})" "$$INNER_DIR/{name}-{version_for_bundle}-sources.jar"
+                cp "$(location :{javadoc_name})" "$$INNER_DIR/{name}-{version_for_bundle}-javadoc.jar"
+                sed "s/VERSION_PLACEHOLDER/{version_for_bundle}/" \
+                   "$(location {pom_template_for_snapshot_bundle})" > \
+                   "$$INNER_DIR/{name}-{version_for_bundle}.pom"
+                # Generate checksums
+                for f in "$$INNER_DIR"/*; do
+                  md5sum "$$f" > "$$f.md5"
+                  sha1sum "$$f" > "$$f.sha1"
+                  sha256sum "$$f" > "$$f.sha256"
+                  sha512sum "$$f" > "$$f.sha512"
+                done
+                # Zip the contents and clean up
+                cd "$$ZIP_ROOT" && zip -r $$OLDPWD/$(location {bundle_name}.zip) .
+            """.format(
+                name = name,
+                version_for_bundle = "HEAD-SNAPSHOT",
+                source_jar_name = source_jar_name,
+                javadoc_name = javadoc_name,
+                pom_template_for_snapshot_bundle = pom_template_for_snapshot_bundle,
+                bundle_name = bundle_name,
+            ),
+        )
