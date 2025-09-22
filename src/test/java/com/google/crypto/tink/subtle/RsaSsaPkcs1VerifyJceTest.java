@@ -40,7 +40,6 @@ import java.security.spec.RSAPublicKeySpec;
 import java.util.ArrayList;
 import org.conscrypt.Conscrypt;
 import org.junit.Assume;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -66,14 +65,6 @@ public class RsaSsaPkcs1VerifyJceTest {
       return HashType.SHA512;
     } else {
       throw new GeneralSecurityException("Unsupported hash: " + hash);
-    }
-  }
-
-  @BeforeClass
-  public static void useConscrypt() throws Exception {
-    if (!Util.isAndroid()) {
-      Conscrypt.checkAvailability();
-      Security.addProvider(Conscrypt.newProvider());
     }
   }
 
@@ -235,16 +226,16 @@ public class RsaSsaPkcs1VerifyJceTest {
     RsaSsaPkcs1PublicKey testPublicKey =
         (RsaSsaPkcs1PublicKey) allTestVectors[0].getPrivateKey().getPublicKey();
 
-    // Conscrypt is already installed, so RsaSsaPkcs1VerifyConscrypt is used.
+    // Conscrypt is not installed, so InternalJavaImpl is used.
     PublicKeyVerify verifier = RsaSsaPkcs1VerifyJce.create(testPublicKey);
-    assertThat(verifier.getClass().getSimpleName()).isEqualTo("RsaSsaPkcs1VerifyConscrypt");
+    assertThat(verifier.getClass().getSimpleName()).isEqualTo("InternalJavaImpl");
 
     Provider conscrypt = Conscrypt.newProvider();
-    Security.removeProvider(conscrypt.getName());
+    Security.addProvider(conscrypt);
 
     PublicKeyVerify verifier2 = RsaSsaPkcs1VerifyJce.create(testPublicKey);
-    assertThat(verifier2.getClass().getSimpleName()).isEqualTo("InternalJavaImpl");
+    assertThat(verifier2.getClass().getSimpleName()).isEqualTo("RsaSsaPkcs1VerifyConscrypt");
 
-    Security.addProvider(conscrypt);
+    Security.removeProvider(conscrypt.getName());
   }
 }
