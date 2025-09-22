@@ -23,6 +23,7 @@ import com.google.crypto.tink.signature.internal.MlDsaArithmeticUtil.PolyRq;
 import com.google.crypto.tink.signature.internal.MlDsaArithmeticUtil.RingTq;
 import com.google.crypto.tink.signature.internal.MlDsaArithmeticUtil.RingZq;
 import com.google.crypto.tink.signature.internal.MlDsaArithmeticUtil.VectorTq;
+import com.google.crypto.tink.testing.TestUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -155,7 +156,10 @@ public class MlDsaArithmeticUtilTest {
   }
 
   @Test
-  public void ringZq_power2Round_equasionHolds() throws Exception {
+  public void ringZq_power2Round_equationHolds() throws Exception {
+    if (TestUtil.isTsan()) {
+      return;
+    }
     for (int i = 0; i < RingZq.Q; i++) {
       RingZq a = new RingZq(i);
       MlDsaArithmeticUtil.RingZqPair pair = a.power2Round();
