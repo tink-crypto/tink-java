@@ -31,9 +31,7 @@ def gen_maven_jar_rules(
         shading_rules = "",
         exclude_packages = [],
         additional_javadoc_dependencies = [],
-        manifest_lines = [],
-        create_snapshot_bundle = False,
-        pom_template_for_snapshot_bundle = None):
+        manifest_lines = []):
     """
     Generates rules that generate Maven jars for a given package.
 
@@ -54,9 +52,6 @@ def gen_maven_jar_rules(
       additional_javadoc_dependencies: Additional dependencies to give javadoc
       manifest_lines: lines to put in the output manifest file (manifest
         files in the input jars are ignored)
-      create_snapshot_bundle: If true, creates a target <name>-maven-bundle which provides a
-        snapshot maven_bundle.zip file.
-      pom_template_for_snapshot_bundle: The pom file to use for the bundle.
     """
 
     if shaded_packages:
@@ -96,48 +91,127 @@ def gen_maven_jar_rules(
         deps = deps + additional_javadoc_dependencies,
     )
 
-    if create_snapshot_bundle:
-        if not pom_template_for_snapshot_bundle:
-            fail("If create_snapshot_bundle is True, pom_template_for_snapshot_bundle must be specified.")
+def maven_bundle(
+        name,
+        lib_name,
+        pom_template,
+        lib_version,
+        maven_jar_rules_target,
+        gpg_secret_key_file,
+        gpg_pin_file,
+        tags = []):
+    """Creates a Maven bundle.
 
-        bundle_name = name + "-maven-bundle"
-        native.genrule(
-            name = bundle_name,
-            srcs = [
-                ":" + name,
-                ":" + source_jar_name,
-                ":" + javadoc_name,
-                pom_template_for_snapshot_bundle,
-            ],
-            tags = ["manual"],
-            outs = [bundle_name + ".zip"],
-            cmd = """
-                set -e
-                ZIP_ROOT=$$(mktemp -d)
-                INNER_DIR="$$ZIP_ROOT/com/google/crypto/tink/{name}/{version_for_bundle}"
-                mkdir -p "$$INNER_DIR"
-                # Copy files and substitute version in POM
-                cp "$(location :{name})" "$$INNER_DIR/{name}-{version_for_bundle}.jar"
-                cp "$(location :{source_jar_name})" "$$INNER_DIR/{name}-{version_for_bundle}-sources.jar"
-                cp "$(location :{javadoc_name})" "$$INNER_DIR/{name}-{version_for_bundle}-javadoc.jar"
-                sed "s/VERSION_PLACEHOLDER/{version_for_bundle}/" \
-                   "$(location {pom_template_for_snapshot_bundle})" > \
-                   "$$INNER_DIR/{name}-{version_for_bundle}.pom"
-                # Generate checksums
-                for f in "$$INNER_DIR"/*; do
-                  md5sum "$$f" > "$$f.md5"
-                  sha1sum "$$f" > "$$f.sha1"
-                  sha256sum "$$f" > "$$f.sha256"
-                  sha512sum "$$f" > "$$f.sha512"
-                done
-                # Zip the contents and clean up
-                cd "$$ZIP_ROOT" && zip -r $$OLDPWD/$(location {bundle_name}.zip) .
-            """.format(
-                name = name,
-                version_for_bundle = "HEAD-SNAPSHOT",
-                source_jar_name = source_jar_name,
-                javadoc_name = javadoc_name,
-                pom_template_for_snapshot_bundle = pom_template_for_snapshot_bundle,
-                bundle_name = bundle_name,
-            ),
-        )
+    A maven bundle is a zip file containing data ready to upload to maven. For example, for
+    Tink 1.19.0, the zip file contains the directory
+    com/google/crypto/tink/tink/1.19.0 which in turn contains the files:
+        tink-1.19.0-javadoc.jar
+        tink-1.19.0-javadoc.jar.{asc,md5,sha1,sha256,sha512}
+        tink-1.19.0-sources.jar
+        tink-1.19.0-sources.jar.{asc,md5,sha1,sha256,sha512}
+        tink-1.19.0.jar
+        tink-1.19.0.jar.{asc,md5,sha1,sha256,sha512}
+        tink-1.19.0.pom
+        tink-1.19.0.pom.{asc,md5,sha1,sha256,sha512}
+    The .asc files are GPG signatures.
+
+    To create GPG signatures, a key file and a file containing a pin are needed. To create these
+    two files (e.g. for testing):
+        openssl rand -hex 20 > gpg_pin.txt
+    Then, create a keygen.conf file with the following contents (spaces in the beginning of lines
+    are ignored and can hence be kept):
+        %echo Generating a basic RSA 2048 key
+        Key-Type: RSA
+        Key-Length: 2048
+        Subkey-Type: RSA
+        Subkey-Length: 2048
+        Expire-Date: 1y
+        Name-Real: Key For Testing
+        Name-Email: non_existent_email@tink_google_crypto.com
+        Name-Comment: Key for Testing
+        %commit
+        %echo Done
+
+    Then, run GPG:
+        export GNUPGHOME=$(mktemp -d)
+        gpg --full-generate-key --batch \
+            --passphrase-fd 0 \
+            --passphrase-file gpg_pin.txt \
+            --pinentry-mode loopback \
+            keygen.conf
+        gpg --export-secret-keys --batch \
+            --passphrase-fd 0 \
+            --pinentry-mode loopback \
+            --passphrase-file gpg_pin.txt \
+            --armor > gpg_key.asc
+
+    Args:
+        name: The name of the rule
+        lib_name: Use to create the directory in the zip file and the names.
+          For example, the main jar file in the bundle will be:
+          com/google/crypto/tink/<lib_name>/<lib_version>/<lib_name>-<lib_version>.jar
+        pom_template: The pom file, but instead of version it should
+          contain the string VERSION_PLACEHOLDER
+        lib_version: The version which will be used in the filenames
+          and in VERSION_PLACEHOLDER in pom_template
+        maven_jar_rules_target: The name of the gen_maven_jar_rules target.
+        gpg_secret_key_file: A file containing a gpg secret key. See above
+          for how to generate this.
+        gpg_pin_file: A file containing a gpg pin. See above for how to
+          generate.
+        tags: Tags to pass to native.genrule
+        """
+
+    jar_target = maven_jar_rules_target
+    source_jar_target = maven_jar_rules_target + "-src"
+    javadoc_jar_target = maven_jar_rules_target + "-javadoc"
+    native.genrule(
+        name = name,
+        srcs = [
+            jar_target,
+            source_jar_target,
+            javadoc_jar_target,
+            pom_template,
+            gpg_pin_file,
+            gpg_secret_key_file,
+        ],
+        tags = tags,
+        outs = [name + ".zip"],
+        cmd = """
+            set -e
+            export GNUPGHOME=$$(mktemp -d)
+            gpg --batch --yes --import {gpg_secret_key_file}
+            ZIP_ROOT=$$(mktemp -d)
+            INNER_DIR="$$ZIP_ROOT/com/google/crypto/tink/{lib_name}/{lib_version}"
+            mkdir -p "$$INNER_DIR"
+            # Copy files and substitute version in POM
+            cp "$(location {jar_target})" "$$INNER_DIR/{lib_name}-{lib_version}.jar"
+            cp "$(location {source_jar_target})" "$$INNER_DIR/{lib_name}-{lib_version}-sources.jar"
+            cp "$(location {javadoc_jar_target})" "$$INNER_DIR/{lib_name}-{lib_version}-javadoc.jar"
+            sed "s/VERSION_PLACEHOLDER/{lib_version}/" \
+                "$(location {pom_template})" > \
+                "$$INNER_DIR/{lib_name}-{lib_version}.pom"
+            # Generate checksums
+            for f in "$$INNER_DIR"/*; do
+              md5sum "$$f" > "$$f.md5"
+              sha1sum "$$f" > "$$f.sha1"
+              sha256sum "$$f" > "$$f.sha256"
+              sha512sum "$$f" > "$$f.sha512"
+              gpg --pinentry-mode loopback --batch --yes \
+                  --passphrase-file {gpg_pin_file} \
+                  --output "$$f.asc" --detach-sign "$$f"
+            done
+            # Zip the contents and clean up
+            cd "$$ZIP_ROOT" && zip -r $$OLDPWD/$(location {name}.zip) .
+        """.format(
+            name = name,
+            lib_name = lib_name,
+            lib_version = lib_version,
+            jar_target = jar_target,
+            source_jar_target = source_jar_target,
+            javadoc_jar_target = javadoc_jar_target,
+            pom_template = pom_template,
+            gpg_secret_key_file = gpg_secret_key_file if gpg_secret_key_file else jar_target,
+            gpg_pin_file = gpg_pin_file if gpg_pin_file else jar_target,
+        ),
+    )
