@@ -39,9 +39,7 @@ public final class EngineFactoryFipsTest {
 
   @BeforeClass
   public static void setUpClass() throws Exception {
-    if (!SubtleUtil.isAndroid()) {
-      // Register conscrypt
-      Conscrypt.checkAvailability();
+    if (!SubtleUtil.isAndroid() && Conscrypt.isAvailable()) {
       conscrypt = Conscrypt.newProvider();
       Security.addProvider(conscrypt);
     }
@@ -49,8 +47,8 @@ public final class EngineFactoryFipsTest {
 
   @Before
   public void setUp() throws Exception {
-    // All tests here require that Tink is build in FIPS-mode.
-    Assume.assumeTrue(TinkFips.useOnlyFips());
+    // All tests here require that Tink is build in FIPS-mode, and Conscrypt is available.
+    Assume.assumeTrue(TinkFips.useOnlyFips() && Conscrypt.isAvailable());
   }
 
   @Test

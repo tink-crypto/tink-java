@@ -22,6 +22,7 @@ import com.google.crypto.tink.testing.TestUtil;
 import java.security.Security;
 import java.util.ArrayList;
 import org.conscrypt.Conscrypt;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,6 +46,8 @@ public final class RandomTest {
 
   @Test
   public void validateUsesConscrypt_doesNotThrowIfConscryptProviderIsAdded() throws Exception {
+    Assume.assumeTrue(TestUtil.isAndroid() || Conscrypt.isAvailable());
+
     if (TestUtil.isAndroid()) {
       // Android uses Conscrypt by default, but trying to add it manually fails.
       assertThat(conscryptProviderAdded).isFalse();

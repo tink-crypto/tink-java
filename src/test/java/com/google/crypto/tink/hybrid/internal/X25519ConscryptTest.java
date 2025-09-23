@@ -42,8 +42,7 @@ public final class X25519ConscryptTest {
 
   @BeforeClass
   public static void addConscrypt() throws Exception {
-    if (!Util.isAndroid()) {
-      Conscrypt.checkAvailability();
+    if (!Util.isAndroid() && Conscrypt.isAvailable()) {
       Security.addProvider(Conscrypt.newProvider());
     }
   }

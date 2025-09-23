@@ -45,7 +45,7 @@ public class AeadConfigurationV1Test {
 
   @BeforeClass
   public static void setUp() throws Exception {
-    if (!Util.isAndroid()) {
+    if (!Util.isAndroid() && Conscrypt.isAvailable()) {
       Security.addProvider(Conscrypt.newProvider());
     }
   }
@@ -112,6 +112,14 @@ public class AeadConfigurationV1Test {
     assertThat(keysetHandle.getPrimitive(AeadConfigurationV1.get(), Aead.class)).isNotNull();
   }
 
+  boolean shouldSupportAesGcmSiv() {
+    if (Util.isAndroid()) {
+      // Must fail because Android's AES-GCM-SIV Cipher is invalid prior to Android 30.
+      return Util.getAndroidApiLevel() >= 30;
+    }
+    return Conscrypt.isAvailable();
+  }
+
   @Test
   public void config_containsAesGcmSivAead() throws Exception {
     Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
@@ -133,14 +141,13 @@ public class AeadConfigurationV1Test {
             .addEntry(KeysetHandle.importKey(key).withFixedId(42).makePrimary())
             .build();
 
-    if (Util.isAndroid() && Util.getAndroidApiLevel() < 30) {
-      // Must fail because Android's AES-GCM-SIV Cipher is invalid prior to Android 30.
+    if (shouldSupportAesGcmSiv()) {
+      assertThat(keysetHandle.getPrimitive(AeadConfigurationV1.get(), Aead.class)).isNotNull();
+    } else {
       assertThrows(
           GeneralSecurityException.class,
           () -> keysetHandle.getPrimitive(AeadConfigurationV1.get(), Aead.class));
-      return;
     }
-    assertThat(keysetHandle.getPrimitive(AeadConfigurationV1.get(), Aead.class)).isNotNull();
   }
 
   @Test

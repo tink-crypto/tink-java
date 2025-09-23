@@ -37,9 +37,7 @@ public class EngineFactoryTest {
 
   @BeforeClass
   public static void setUp() throws Exception {
-    if (!SubtleUtil.isAndroid()) {
-      // Add Conscrypt as an additional provider.
-      Conscrypt.checkAvailability();
+    if (!SubtleUtil.isAndroid() && Conscrypt.isAvailable()) {
       conscrypt = Conscrypt.newProvider();
       Security.addProvider(conscrypt);
     }
@@ -62,6 +60,7 @@ public class EngineFactoryTest {
   @Test
   public void testDefaultPolicyStillPrefersDefaultProviders() throws Exception {
     Assume.assumeFalse(SubtleUtil.isAndroid());
+    Assume.assumeTrue(Conscrypt.isAvailable());
 
     String conscryptName = conscrypt.getName();
 
@@ -73,16 +72,13 @@ public class EngineFactoryTest {
   @Test
   public void testDefaultPolicyRespectsPreferredProviders() throws Exception {
     Assume.assumeFalse(SubtleUtil.isAndroid());
+    Assume.assumeTrue(Conscrypt.isAvailable());
 
-    // Add Conscrypt as an additional provider.
-    Conscrypt.checkAvailability();
-    Provider p = Conscrypt.newProvider();
-    Security.addProvider(p);
-    String conscryptName = p.getName();
+    String conscryptName = conscrypt.getName();
     List<Provider> preferredProviders = EngineFactory.toProviderList(conscryptName);
 
     // Check if Conscrypt can provide this cipher.
-    assertThat(Cipher.getInstance("AES/GCM/NoPadding", p)).isNotNull();
+    assertThat(Cipher.getInstance("AES/GCM/NoPadding", conscrypt)).isNotNull();
 
     // We expect that our preferred provider is picked.
     assertThat(

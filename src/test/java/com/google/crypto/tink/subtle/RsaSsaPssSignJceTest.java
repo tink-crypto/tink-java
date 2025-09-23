@@ -77,7 +77,7 @@ public class RsaSsaPssSignJceTest {
 
   @Test
   public void constructorValidatesHashType() throws Exception {
-    SignatureTestVector testVector = SIGNATURE_TEST_VECTORS[0];
+    SignatureTestVector testVector = testVectors[0];
     RsaSsaPssPrivateKey key = (RsaSsaPssPrivateKey) testVector.getPrivateKey();
     RSAPrivateCrtKey priv = toRsaPrivateCrtKey(key);
 
@@ -132,14 +132,15 @@ public class RsaSsaPssSignJceTest {
   }
 
   @DataPoints("testVectors")
-  public static final SignatureTestVector[] SIGNATURE_TEST_VECTORS =
+  public static final SignatureTestVector[] testVectors =
       RsaSsaPssTestUtil.createRsaPssTestVectors();
 
   @Test
   public void usesConscryptImplementationIfInstalled() throws Exception {
     Assume.assumeFalse(Util.isAndroid());
+    Assume.assumeTrue(Conscrypt.isAvailable());
 
-    SignatureTestVector testVector = SIGNATURE_TEST_VECTORS[0];
+    SignatureTestVector testVector = testVectors[0];
     RsaSsaPssPrivateKey key = (RsaSsaPssPrivateKey) testVector.getPrivateKey();
 
     PublicKeySign signer = RsaSsaPssSignJce.create(key);

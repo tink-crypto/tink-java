@@ -58,12 +58,9 @@ public class AesGcmSivTest {
     if (TestUtil.isAndroid()) {
       return;
     }
-    try {
-      Conscrypt.checkAvailability();
-      Security.addProvider(Conscrypt.newProvider());
-    } catch (Throwable cause) {
-      throw new IllegalStateException("Cannot test AesGcmSiv without Conscrypt Provider", cause);
-    }
+    // If Conscrypt is not available, we skip all tests.
+    Assume.assumeTrue(Conscrypt.isAvailable());
+    Security.addProvider(Conscrypt.newProvider());
   }
 
   @Test

@@ -54,7 +54,7 @@ public class EllipticCurvesConscryptTest {
 
   @Before
   public void setUpConscrypt() throws Exception {
-    if (!Util.isAndroid()) {
+    if (!Util.isAndroid() && Conscrypt.isAvailable()) {
       Security.insertProviderAt(Conscrypt.newProvider(), 1);
     }
   }

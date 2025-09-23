@@ -62,12 +62,9 @@ public class AesGcmSivTest {
       conscrypt = Cipher.getInstance("AES/GCM-SIV/NoPadding").getProvider();
       return;
     }
-    try {
-      Conscrypt.checkAvailability();
-      conscrypt = Conscrypt.newProvider();
-    } catch (Throwable cause) {
-      throw new IllegalStateException("Cannot test AesGcmSiv without Conscrypt Provider", cause);
-    }
+    // If Conscrypt is not available, we skip all tests.
+    Assume.assumeTrue(Conscrypt.isAvailable());
+    conscrypt = Conscrypt.newProvider();
   }
 
   public static Cipher conscryptCipherSupplier() throws GeneralSecurityException {

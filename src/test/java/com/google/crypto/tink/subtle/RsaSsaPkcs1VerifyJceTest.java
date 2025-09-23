@@ -222,6 +222,7 @@ public class RsaSsaPkcs1VerifyJceTest {
   @Test
   public void usesConscryptImplementationIfInstalled() throws Exception {
     Assume.assumeFalse(Util.isAndroid());
+    Assume.assumeTrue(Conscrypt.isAvailable());
 
     RsaSsaPkcs1PublicKey testPublicKey =
         (RsaSsaPkcs1PublicKey) allTestVectors[0].getPrivateKey().getPublicKey();

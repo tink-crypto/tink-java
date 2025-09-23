@@ -239,6 +239,7 @@ public class RsaSsaPssVerifyJceTest {
   @Test
   public void usesConscryptImplementationIfInstalled() throws Exception {
     Assume.assumeFalse(Util.isAndroid());
+    Assume.assumeTrue(Conscrypt.isAvailable());
 
     SignatureTestVector testVector = testVectors[0];
     RsaSsaPssPublicKey testPublicKey =

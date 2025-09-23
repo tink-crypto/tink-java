@@ -32,8 +32,7 @@ public final class ConscryptUtilTest {
 
   @BeforeClass
   public static void setUp() {
-    if (!TestUtil.isAndroid()) {
-      Conscrypt.checkAvailability();
+    if (!TestUtil.isAndroid() && Conscrypt.isAvailable()) {
       Security.addProvider(Conscrypt.newProvider());
     }
   }

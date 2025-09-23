@@ -51,8 +51,7 @@ public class RsaSsaPkcs1SignVerifyConscryptTest {
 
   @Before
   public void useConscrypt() throws Exception {
-    if (!Util.isAndroid()) {
-      Conscrypt.checkAvailability();
+    if (!Util.isAndroid() && Conscrypt.isAvailable()) {
       Security.addProvider(Conscrypt.newProvider());
     }
   }

@@ -62,6 +62,7 @@ import java.security.GeneralSecurityException;
 import java.security.Security;
 import javax.annotation.Nullable;
 import org.conscrypt.Conscrypt;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -87,7 +88,7 @@ public final class PrfBasedKeyDeriverTest {
 
   @BeforeClass
   public static void registerAll() throws Exception {
-    if (!Util.isAndroid()) {
+    if (!Util.isAndroid() && Conscrypt.isAvailable()) {
       Security.addProvider(Conscrypt.newProvider());
     }
     TinkConfig.register();
@@ -312,21 +313,6 @@ public final class PrfBasedKeyDeriverTest {
               .build()),
       new TestVector(
           FIXED_PRF_KEY,
-          AesGcmSivParameters.builder()
-              .setKeySizeBytes(16)
-              .setVariant(AesGcmSivParameters.Variant.NO_PREFIX)
-              .build(),
-          "000102",
-          AesGcmSivKey.builder()
-              .setParameters(
-                  AesGcmSivParameters.builder()
-                      .setKeySizeBytes(16)
-                      .setVariant(AesGcmSivParameters.Variant.NO_PREFIX)
-                      .build())
-              .setKeyBytes(secretBytesFromHex("94e397d674deda6e965295698491a3fe"))
-              .build()),
-      new TestVector(
-          FIXED_PRF_KEY,
           XChaCha20Poly1305Parameters.create(XChaCha20Poly1305Parameters.Variant.TINK),
           "000102",
           XChaCha20Poly1305Key.create(
@@ -409,6 +395,46 @@ public final class PrfBasedKeyDeriverTest {
 
   @Theory
   public void deriveKeyset_isAsExpected(@FromDataPoints("allTests") TestVector t) throws Exception {
+    PrfBasedKeyDerivationParameters derivationParameters =
+        PrfBasedKeyDerivationParameters.builder()
+            .setDerivedKeyParameters(t.derivedKeyParameters)
+            .setPrfParameters(t.prfKey.getParameters())
+            .build();
+
+    @Nullable Integer idRequirement = t.expectedKey.getIdRequirementOrNull();
+    PrfBasedKeyDerivationKey keyDerivationKey =
+        PrfBasedKeyDerivationKey.create(derivationParameters, t.prfKey, idRequirement);
+    KeyDeriver deriver = PrfBasedKeyDeriver.create(keyDerivationKey);
+
+    Key derivedKey = deriver.deriveKey(Hex.decode(t.inputHex));
+
+    // The only thing which we need to test is equalsKey(), but we first test other things to make
+    // test failures have nicer messages.
+    assertThat(derivedKey.getParameters()).isEqualTo(t.derivedKeyParameters);
+    assertTrue(derivedKey.equalsKey(t.expectedKey));
+  }
+
+  @Test
+  public void deriveAesGcmSivKey_isAsExpected() throws Exception {
+    Assume.assumeTrue(Conscrypt.isAvailable());
+
+    TestVector t =
+        new TestVector(
+            FIXED_PRF_KEY,
+            AesGcmSivParameters.builder()
+                .setKeySizeBytes(16)
+                .setVariant(AesGcmSivParameters.Variant.NO_PREFIX)
+                .build(),
+            "000102",
+            AesGcmSivKey.builder()
+                .setParameters(
+                    AesGcmSivParameters.builder()
+                        .setKeySizeBytes(16)
+                        .setVariant(AesGcmSivParameters.Variant.NO_PREFIX)
+                        .build())
+                .setKeyBytes(secretBytesFromHex("94e397d674deda6e965295698491a3fe"))
+                .build());
+
     PrfBasedKeyDerivationParameters derivationParameters =
         PrfBasedKeyDerivationParameters.builder()
             .setDerivedKeyParameters(t.derivedKeyParameters)

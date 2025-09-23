@@ -51,8 +51,7 @@ public final class Ed25519VerifyJceTest {
 
   @BeforeClass
   public static void useConscrypt() throws Exception {
-    if (!Util.isAndroid()) {
-      Conscrypt.checkAvailability();
+    if (!Util.isAndroid() && Conscrypt.isAvailable()) {
       Security.addProvider(Conscrypt.newProvider());
     }
   }

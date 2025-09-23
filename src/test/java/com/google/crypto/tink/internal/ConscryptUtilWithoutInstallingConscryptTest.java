@@ -21,6 +21,7 @@ import static com.google.common.truth.Truth.assertThat;
 import com.google.crypto.tink.testing.TestUtil;
 import java.security.Provider;
 import org.conscrypt.Conscrypt;
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -44,6 +45,8 @@ public final class ConscryptUtilWithoutInstallingConscryptTest {
 
   @Test
   public void providerWithReflectionOrNull_returnsProviderIfNotOnAndroid() throws Exception {
+    Assume.assumeFalse(TestUtil.isAndroid() || Conscrypt.isAvailable());
+
     if (TestUtil.isAndroid()) {
       // providerWithReflectionOrNull does not work on Android
       Provider provider = ConscryptUtil.providerWithReflectionOrNull();
