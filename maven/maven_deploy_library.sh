@@ -49,12 +49,6 @@ EOF
   exit 1
 }
 
-# Arguments to use for all git invocations.
-readonly GIT_ARGS=(
-  -c user.email=noreply@google.com
-  -c user.name="Tink Team"
-)
-
 to_absolute_path() {
   local -r path="$1"
   echo "$(cd "$(dirname "${path}")" && pwd)/$(basename "${path}")"
@@ -159,49 +153,6 @@ echo_output_file() {
       exit 1
     fi
     echo -n "${workspace_dir}/${file}"
-  )
-}
-
-#######################################
-# Pusblishes Javadoc to GitHub pages.
-#
-# Globals:
-#   ACTION
-#   GIT_ARGS
-#   GIT_URL
-#   LIBRARY_NAME
-#   ARTIFACT_VERSION
-# Arguments:
-#   javadoc_file: JAR file containing the javadoc.
-#######################################
-publish_javadoc_to_github_pages() {
-  local -r javadoc_file="$(realpath $1)"
-  rm -rf gh-pages
-  git "${GIT_ARGS[@]}" clone \
-    --quiet --branch=gh-pages "${GIT_URL}" gh-pages > /dev/null
-  (
-    cd gh-pages
-    if [ -d "javadoc/${LIBRARY_NAME}/${ARTIFACT_VERSION}" ]; then
-      git "${GIT_ARGS[@]}" rm -rf \
-          "javadoc/${LIBRARY_NAME}/${ARTIFACT_VERSION}"
-    fi
-    mkdir -p "javadoc/${LIBRARY_NAME}/${ARTIFACT_VERSION}"
-    unzip "${javadoc_file}" \
-      -d "javadoc/${LIBRARY_NAME}/${ARTIFACT_VERSION}"
-    rm -rf "javadoc/${LIBRARY_NAME}/${ARTIFACT_VERSION}/META-INF/"
-    git "${GIT_ARGS[@]}" add \
-      -f "javadoc/${LIBRARY_NAME}/${ARTIFACT_VERSION}"
-    if [[ "$(git "${GIT_ARGS[@]}" status --porcelain)" ]]; then
-      # Changes exist.
-      git "${GIT_ARGS[@]}" commit \
-        -m "${LIBRARY_NAME}-${ARTIFACT_VERSION} Javadoc auto-pushed to gh-pages"
-
-      git "${GIT_ARGS[@]}" push -fq origin gh-pages > /dev/null
-      echo -e "Published Javadoc to gh-pages.\n"
-    else
-      # No changes exist.
-      echo -e "No changes in ${LIBRARY_NAME}-${ARTIFACT_VERSION} Javadoc.\n"
-    fi
   )
 }
 
@@ -312,7 +263,13 @@ main() {
     mkdir -p  "${KOKORO_ARTIFACTS_DIR}/kokoro_upload_dir/release"
     cp "maven_bundle_${LIBRARY_NAME}.zip" "${KOKORO_ARTIFACTS_DIR}/kokoro_upload_dir/release"
   fi
-  publish_javadoc_to_github_pages "bazel-bin/${BAZEL_DOC_TGT}.jar"
+  git config user.email=noreply@google.com
+  git config user.name="Tink Team"
+  ./publish_javadoc_to_github_pages \
+    "${GIT_URL}" \
+    "${LIBRARY_NAME}"\
+    "${ARTIFACT_VERSION}" \
+    "bazel-bin/${BAZEL_DOC_TGT}.jar"
 }
 
 main "$@"
