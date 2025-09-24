@@ -106,7 +106,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Annotates methods and classes which access parts of keys.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/MutableKeyCreationRegistry.html#add(com.google.crypto.tink.internal.MutableKeyCreationRegistry.KeyCreator,java.lang.Class)">add(MutableKeyCreationRegistry.KeyCreator&lt;ParametersT&gt;, Class&lt;ParametersT&gt;)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/MutableKeyCreationRegistry.html" title="class in com.google.crypto.tink.internal">MutableKeyCreationRegistry</a></dt>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/MutableKeyCreationRegistry.html#add(com.google.crypto.tink.internal.KeyCreator,java.lang.Class)">add(KeyCreator&lt;ParametersT&gt;, Class&lt;ParametersT&gt;)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/MutableKeyCreationRegistry.html" title="class in com.google.crypto.tink.internal">MutableKeyCreationRegistry</a></dt>
 <dd>
 <div class="block">Adds a new "InsecureKeyCreator" to the instance.</div>
 </dd>
@@ -2146,7 +2146,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Creates a <a href="com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink"><code>Key</code></a> from a given <a href="com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink"><code>Parameters</code></a> object.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/MutableKeyCreationRegistry.KeyCreator.html#createKey(ParametersT,java.lang.Integer)">createKey(ParametersT, Integer)</a></span> - Method in interface com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/MutableKeyCreationRegistry.KeyCreator.html" title="interface in com.google.crypto.tink.internal">MutableKeyCreationRegistry.KeyCreator</a></dt>
+<dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/KeyCreator.html#createKey(ParametersT,java.lang.Integer)">createKey(ParametersT, Integer)</a></span> - Method in interface com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/KeyCreator.html" title="interface in com.google.crypto.tink.internal">KeyCreator</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/MutableKeyDerivationRegistry.html#createKeyFromRandomness(com.google.crypto.tink.Parameters,java.io.InputStream,java.lang.Integer,com.google.crypto.tink.SecretKeyAccess)">createKeyFromRandomness(Parameters, InputStream, Integer, SecretKeyAccess)</a></span> - Method in class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/MutableKeyDerivationRegistry.html" title="class in com.google.crypto.tink.internal">MutableKeyDerivationRegistry</a></dt>
 <dd>
@@ -6514,6 +6514,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">An access token for <code>TinkKey</code>.</div>
 </dd>
+<dt><a href="com/google/crypto/tink/internal/KeyCreator.html" title="interface in com.google.crypto.tink.internal"><span class="typeNameLink">KeyCreator</span></a>&lt;<a href="com/google/crypto/tink/internal/KeyCreator.html" title="type parameter in KeyCreator">ParametersT</a> extends <a href="com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a>&gt; - Interface in <a href="com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></dt>
+<dd>
+<div class="block">A class to create key objects from parameters.</div>
+</dd>
 <dt><a href="com/google/crypto/tink/keyderivation/KeyDerivationConfig.html" title="class in com.google.crypto.tink.keyderivation"><span class="typeNameLink">KeyDerivationConfig</span></a> - Class in <a href="com/google/crypto/tink/keyderivation/package-summary.html">com.google.crypto.tink.keyderivation</a></dt>
 <dd>
 <div class="block">Static methods and constants for registering with the <a href="com/google/crypto/tink/Registry.html" title="class in com.google.crypto.tink"><code>Registry</code></a> all
@@ -7037,10 +7041,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="com/google/crypto/tink/internal/MutableKeyCreationRegistry.html#%3Cinit%3E()">MutableKeyCreationRegistry()</a></span> - Constructor for class com.google.crypto.tink.internal.<a href="com/google/crypto/tink/internal/MutableKeyCreationRegistry.html" title="class in com.google.crypto.tink.internal">MutableKeyCreationRegistry</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/google/crypto/tink/internal/MutableKeyCreationRegistry.KeyCreator.html" title="interface in com.google.crypto.tink.internal"><span class="typeNameLink">MutableKeyCreationRegistry.KeyCreator</span></a>&lt;<a href="com/google/crypto/tink/internal/MutableKeyCreationRegistry.KeyCreator.html" title="type parameter in MutableKeyCreationRegistry.KeyCreator">ParametersT</a> extends <a href="com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink">Parameters</a>&gt; - Interface in <a href="com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></dt>
-<dd>
-<div class="block">A class to create key objects from parameters with given randomness.</div>
-</dd>
 <dt><a href="com/google/crypto/tink/internal/MutableKeyDerivationRegistry.html" title="class in com.google.crypto.tink.internal"><span class="typeNameLink">MutableKeyDerivationRegistry</span></a> - Class in <a href="com/google/crypto/tink/internal/package-summary.html">com.google.crypto.tink.internal</a></dt>
 <dd>
 <div class="block">Stores methods to create <a href="com/google/crypto/tink/Key.html" title="class in com.google.crypto.tink"><code>Key</code></a> objects from <a href="com/google/crypto/tink/Parameters.html" title="class in com.google.crypto.tink"><code>Parameters</code></a> with fixed randomness.</div>
