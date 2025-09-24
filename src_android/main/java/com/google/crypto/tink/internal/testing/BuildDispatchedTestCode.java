@@ -16,7 +16,7 @@
 
 package com.google.crypto.tink.internal.testing;
 
-import androidx.test.platform.io.PlatformTestStorageRegistry;
+//import androidx.test.platform.io.PlatformTestStorageRegistry;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
@@ -32,7 +32,7 @@ public final class BuildDispatchedTestCode {
   private BuildDispatchedTestCode() {}
 
   public static InputStream openInputFile(String pathname) throws FileNotFoundException {
-    return PlatformTestStorageRegistry.getInstance().openInputFile("google3/" + pathname);
+    throw new UnsupportedOperationException("Not supported on OSS Android.");
   }
 
   public static void disableFlagsStateCheckingForTests() {}

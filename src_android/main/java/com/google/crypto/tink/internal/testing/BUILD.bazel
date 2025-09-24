@@ -11,5 +11,5 @@ android_library(
     name = "build_dispatched_test_code-android",
     testonly = 1,
     srcs = ["BuildDispatchedTestCode.java"],
-    deps = ["@maven//:androidx_test_monitor"],
+    deps = [],
 )
