@@ -263,7 +263,7 @@ main() {
     mkdir -p  "${KOKORO_ARTIFACTS_DIR}/kokoro_upload_dir/release"
     cp "maven_bundle_${LIBRARY_NAME}.zip" "${KOKORO_ARTIFACTS_DIR}/kokoro_upload_dir/release"
   fi
-  ./publish_javadoc_to_github_pages \
+  ./maven/publish_javadoc_to_github_pages \
     "${GIT_URL}" \
     "${LIBRARY_NAME}"\
     "${ARTIFACT_VERSION}" \
