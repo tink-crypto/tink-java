@@ -24,6 +24,7 @@ import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.Mac;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.KeyCreator;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyKeyManagerImpl;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
@@ -79,7 +80,7 @@ public final class AesCmacKeyManager {
     return PrfMac.create(key);
   }
 
-  private static final MutableKeyCreationRegistry.KeyCreator<AesCmacParameters> KEY_CREATOR =
+  private static final KeyCreator<AesCmacParameters> KEY_CREATOR =
       AesCmacKeyManager::createAesCmacKey;
   private static final PrimitiveConstructor<AesCmacKey, ChunkedMac>
       CHUNKED_MAC_PRIMITIVE_CONSTRUCTOR =

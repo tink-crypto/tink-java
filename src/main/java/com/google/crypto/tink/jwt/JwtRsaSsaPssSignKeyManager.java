@@ -24,6 +24,7 @@ import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.PrivateKeyManager;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.KeyCreator;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyKeyManagerImpl;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
@@ -106,7 +107,7 @@ public final class JwtRsaSsaPssSignKeyManager {
   }
 
   @SuppressWarnings("InlineLambdaConstant") // We need a correct Object#equals in registration.
-  private static final MutableKeyCreationRegistry.KeyCreator<JwtRsaSsaPssParameters> KEY_CREATOR =
+  private static final KeyCreator<JwtRsaSsaPssParameters> KEY_CREATOR =
       JwtRsaSsaPssSignKeyManager::createKey;
 
   @AccessesPartialKey

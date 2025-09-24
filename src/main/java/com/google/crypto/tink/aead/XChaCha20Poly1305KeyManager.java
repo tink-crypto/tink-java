@@ -27,6 +27,7 @@ import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.aead.internal.XChaCha20Poly1305Jce;
 import com.google.crypto.tink.aead.internal.XChaCha20Poly1305ProtoSerialization;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.KeyCreator;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyKeyManagerImpl;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
@@ -94,8 +95,8 @@ public final class XChaCha20Poly1305KeyManager {
   }
 
   @SuppressWarnings("InlineLambdaConstant") // We need a correct Object#equals in registration.
-  private static final MutableKeyCreationRegistry.KeyCreator<XChaCha20Poly1305Parameters>
-      KEY_CREATOR = XChaCha20Poly1305KeyManager::createXChaChaKey;
+  private static final KeyCreator<XChaCha20Poly1305Parameters> KEY_CREATOR =
+      XChaCha20Poly1305KeyManager::createXChaChaKey;
 
   @AccessesPartialKey
   static com.google.crypto.tink.aead.XChaCha20Poly1305Key createXChaChaKey(

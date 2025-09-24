@@ -24,6 +24,7 @@ import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.KeyCreator;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyKeyManagerImpl;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
@@ -74,7 +75,7 @@ public final class HmacPrfKeyManager {
   }
 
   @SuppressWarnings("InlineLambdaConstant") // We need a correct Object#equals in registration.
-  private static final MutableKeyCreationRegistry.KeyCreator<HmacPrfParameters> KEY_CREATOR =
+  private static final KeyCreator<HmacPrfParameters> KEY_CREATOR =
       HmacPrfKeyManager::newKey;
 
   static String getKeyType() {

@@ -75,13 +75,13 @@ public final class MutableKeyCreationRegistryTest {
         .build();
   }
 
-  private static final MutableKeyCreationRegistry.KeyCreator<AesGcmParameters> AES_GCM_CREATOR =
+  private static final KeyCreator<AesGcmParameters> AES_GCM_CREATOR =
       MutableKeyCreationRegistryTest::createAesGcmKey;
 
-  private static final MutableKeyCreationRegistry.KeyCreator<AesGcmParameters> AES_GCM_CREATOR2 =
+  private static final KeyCreator<AesGcmParameters> AES_GCM_CREATOR2 =
       MutableKeyCreationRegistryTest::createAesGcmKey2;
 
-  private static final MutableKeyCreationRegistry.KeyCreator<AesEaxParameters> AES_EAX_CREATOR =
+  private static final KeyCreator<AesEaxParameters> AES_EAX_CREATOR =
       MutableKeyCreationRegistryTest::createAesEaxKey;
 
   @BeforeClass

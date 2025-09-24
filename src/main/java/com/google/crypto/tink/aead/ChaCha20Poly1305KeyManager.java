@@ -26,6 +26,7 @@ import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.aead.internal.ChaCha20Poly1305Jce;
 import com.google.crypto.tink.aead.internal.ChaCha20Poly1305ProtoSerialization;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.KeyCreator;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyKeyManagerImpl;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
@@ -62,7 +63,7 @@ public final class ChaCha20Poly1305KeyManager {
   private static final int KEY_SIZE_IN_BYTES = 32;
 
   @SuppressWarnings("InlineLambdaConstant") // We need a correct Object#equals in registration.
-  private static final MutableKeyCreationRegistry.KeyCreator<ChaCha20Poly1305Parameters>
+  private static final KeyCreator<ChaCha20Poly1305Parameters>
       KEY_CREATOR = ChaCha20Poly1305KeyManager::createChaChaKey;
 
   private static final KeyManager<Aead> legacyKeyManager =

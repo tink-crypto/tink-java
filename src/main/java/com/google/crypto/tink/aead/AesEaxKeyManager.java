@@ -25,6 +25,7 @@ import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.aead.internal.AesEaxProtoSerialization;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.KeyCreator;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyKeyManagerImpl;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
@@ -90,7 +91,7 @@ public final class AesEaxKeyManager {
   }
 
   @SuppressWarnings("InlineLambdaConstant") // We need a correct Object#equals in registration.
-  private static final MutableKeyCreationRegistry.KeyCreator<AesEaxParameters> KEY_CREATOR =
+  private static final KeyCreator<AesEaxParameters> KEY_CREATOR =
       AesEaxKeyManager::createAesEaxKey;
 
   @AccessesPartialKey

@@ -26,6 +26,7 @@ import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.daead.internal.AesSivProtoSerialization;
+import com.google.crypto.tink.internal.KeyCreator;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyKeyManagerImpl;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
@@ -106,7 +107,7 @@ public final class AesSivKeyManager {
   }
 
   @SuppressWarnings("InlineLambdaConstant") // We need a correct Object#equals in registration.
-  private static final MutableKeyCreationRegistry.KeyCreator<AesSivParameters> KEY_CREATOR =
+  private static final KeyCreator<AesSivParameters> KEY_CREATOR =
       AesSivKeyManager::newKey;
 
   @AccessesPartialKey

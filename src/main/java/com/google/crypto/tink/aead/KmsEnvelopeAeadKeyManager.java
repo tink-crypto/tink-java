@@ -24,6 +24,7 @@ import com.google.crypto.tink.KmsClients;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.aead.internal.LegacyFullAead;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.KeyCreator;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyKeyManagerImpl;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
@@ -68,7 +69,7 @@ public class KmsEnvelopeAeadKeyManager {
   }
 
   @SuppressWarnings("InlineLambdaConstant") // We need a correct Object#equals in registration.
-  private static final MutableKeyCreationRegistry.KeyCreator<LegacyKmsEnvelopeAeadParameters>
+  private static final KeyCreator<LegacyKmsEnvelopeAeadParameters>
       KEY_CREATOR = KmsEnvelopeAeadKeyManager::newKey;
 
   @AccessesPartialKey

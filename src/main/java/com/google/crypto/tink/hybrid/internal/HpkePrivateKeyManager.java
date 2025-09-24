@@ -29,6 +29,7 @@ import com.google.crypto.tink.hybrid.HpkePrivateKey;
 import com.google.crypto.tink.hybrid.HpkeProtoSerialization;
 import com.google.crypto.tink.hybrid.HpkePublicKey;
 import com.google.crypto.tink.internal.BigIntegerEncoding;
+import com.google.crypto.tink.internal.KeyCreator;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyKeyManagerImpl;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
@@ -110,7 +111,7 @@ public final class HpkePrivateKeyManager {
   }
 
   @SuppressWarnings("InlineLambdaConstant") // We need a correct Object#equals in registration.
-  private static final MutableKeyCreationRegistry.KeyCreator<HpkeParameters> KEY_CREATOR =
+  private static final KeyCreator<HpkeParameters> KEY_CREATOR =
       HpkePrivateKeyManager::createKey;
 
   /**

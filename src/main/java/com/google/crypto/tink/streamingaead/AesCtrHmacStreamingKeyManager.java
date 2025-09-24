@@ -24,6 +24,7 @@ import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.StreamingAead;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.KeyCreator;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyKeyManagerImpl;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
@@ -55,7 +56,7 @@ public final class AesCtrHmacStreamingKeyManager {
               StreamingAead.class);
 
   @SuppressWarnings("InlineLambdaConstant") // We need a correct Object#equals in registration.
-  private static final MutableKeyCreationRegistry.KeyCreator<AesCtrHmacStreamingParameters>
+  private static final KeyCreator<AesCtrHmacStreamingParameters>
       KEY_CREATOR = AesCtrHmacStreamingKeyManager::createAesCtrHmacStreamingKey;
 
   @AccessesPartialKey

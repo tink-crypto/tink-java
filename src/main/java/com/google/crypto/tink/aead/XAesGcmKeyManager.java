@@ -21,6 +21,7 @@ import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.aead.internal.XAesGcm;
 import com.google.crypto.tink.aead.internal.XAesGcmProtoSerialization;
+import com.google.crypto.tink.internal.KeyCreator;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
 import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
@@ -36,7 +37,7 @@ import javax.annotation.Nullable;
 public final class XAesGcmKeyManager {
 
   @SuppressWarnings("InlineLambdaConstant")
-  private static final MutableKeyCreationRegistry.KeyCreator<XAesGcmParameters> KEY_CREATOR =
+  private static final KeyCreator<XAesGcmParameters> KEY_CREATOR =
       XAesGcmKeyManager::createXAesGcmKey;
 
   private static final PrimitiveConstructor<XAesGcmKey, Aead> X_AES_GCM_PRIMITVE_CONSTRUCTOR =

@@ -32,12 +32,6 @@ public final class MutableKeyCreationRegistry {
   private final Map<Class<? extends Parameters>, KeyCreator<? extends Parameters>> creators =
       new HashMap<>();
 
-  /** A class to create key objects from parameters with given randomness. */
-  public static interface KeyCreator<ParametersT extends Parameters> {
-    public Key createKey(ParametersT parameters, @Nullable Integer idRequirement)
-        throws GeneralSecurityException;
-  }
-
   private static LegacyProtoKey createProtoKeyFromProtoParameters(
       LegacyProtoParameters parameters, @Nullable Integer idRequirement)
       throws GeneralSecurityException {
@@ -59,7 +53,7 @@ public final class MutableKeyCreationRegistry {
   }
 
   @SuppressWarnings("InlineLambdaConstant") // We need a correct Object#equals in registration.
-  private static final MutableKeyCreationRegistry.KeyCreator<LegacyProtoParameters>
+  private static final KeyCreator<LegacyProtoParameters>
       LEGACY_PROTO_KEY_CREATOR = MutableKeyCreationRegistry::createProtoKeyFromProtoParameters;
 
   private static MutableKeyCreationRegistry newRegistryWithLegacyFallback() {

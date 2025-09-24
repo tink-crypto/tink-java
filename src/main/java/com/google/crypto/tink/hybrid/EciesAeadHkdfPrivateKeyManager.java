@@ -31,6 +31,7 @@ import com.google.crypto.tink.aead.AesGcmParameters;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.hybrid.internal.EciesProtoSerialization;
 import com.google.crypto.tink.internal.EllipticCurvesUtil;
+import com.google.crypto.tink.internal.KeyCreator;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyKeyManagerImpl;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
@@ -110,7 +111,7 @@ public final class EciesAeadHkdfPrivateKeyManager {
   }
 
   @SuppressWarnings("InlineLambdaConstant") // We need a correct Object#equals in registration.
-  private static final MutableKeyCreationRegistry.KeyCreator<EciesParameters> KEY_CREATOR =
+  private static final KeyCreator<EciesParameters> KEY_CREATOR =
       EciesAeadHkdfPrivateKeyManager::createKey;
 
   static String getKeyType() {

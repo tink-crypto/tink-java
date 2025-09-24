@@ -22,6 +22,7 @@ import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.KeyCreator;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyKeyManagerImpl;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
@@ -92,7 +93,7 @@ public class HkdfPrfKeyManager {
   }
 
   @SuppressWarnings("InlineLambdaConstant") // We need a correct Object#equals in registration.
-  static final MutableKeyCreationRegistry.KeyCreator<HkdfPrfParameters> KEY_CREATOR =
+  static final KeyCreator<HkdfPrfParameters> KEY_CREATOR =
       HkdfPrfKeyManager::newKey;
 
   static String getKeyType() {

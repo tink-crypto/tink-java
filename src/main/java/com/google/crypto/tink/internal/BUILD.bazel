@@ -748,6 +748,7 @@ android_library(
     name = "mutable_key_creation_registry-android",
     srcs = ["MutableKeyCreationRegistry.java"],
     deps = [
+        ":key_creator-android",
         ":key_manager_registry-android",
         ":legacy_proto_key-android",
         ":legacy_proto_parameters-android",
@@ -765,6 +766,7 @@ java_library(
     name = "mutable_key_creation_registry",
     srcs = ["MutableKeyCreationRegistry.java"],
     deps = [
+        ":key_creator",
         ":key_manager_registry",
         ":legacy_proto_key",
         ":legacy_proto_parameters",
@@ -950,5 +952,25 @@ java_library(
     deps = [
         "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink:key_status",
+    ],
+)
+
+android_library(
+    name = "key_creator-android",
+    srcs = ["KeyCreator.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:key-android",
+        "//src/main/java/com/google/crypto/tink:parameters-android",
+        "@maven//:com_google_code_findbugs_jsr305",
+    ],
+)
+
+java_library(
+    name = "key_creator",
+    srcs = ["KeyCreator.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:key",
+        "//src/main/java/com/google/crypto/tink:parameters",
+        "@maven//:com_google_code_findbugs_jsr305",
     ],
 )

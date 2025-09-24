@@ -21,6 +21,7 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.internal.KeyCreator;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
@@ -94,7 +95,7 @@ public final class PrfBasedDeriverKeyManager implements KeyManager<Void> {
   }
 
   @SuppressWarnings("InlineLambdaConstant") // We need a correct Object#equals in registration.
-  private static final MutableKeyCreationRegistry.KeyCreator<PrfBasedKeyDerivationParameters>
+  private static final KeyCreator<PrfBasedKeyDerivationParameters>
       KEY_CREATOR = PrfBasedDeriverKeyManager::createNewKey;
 
   private static final String TYPE_URL =

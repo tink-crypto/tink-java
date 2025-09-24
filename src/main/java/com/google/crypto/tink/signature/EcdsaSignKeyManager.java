@@ -27,6 +27,7 @@ import com.google.crypto.tink.PrivateKeyManager;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.KeyCreator;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyKeyManagerImpl;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
@@ -100,7 +101,7 @@ public final class EcdsaSignKeyManager {
   }
 
   @SuppressWarnings("InlineLambdaConstant") // We need a correct Object#equals in registration.
-  private static final MutableKeyCreationRegistry.KeyCreator<EcdsaParameters> KEY_CREATOR =
+  private static final KeyCreator<EcdsaParameters> KEY_CREATOR =
       EcdsaSignKeyManager::createKey;
 
   private static Map<String, Parameters> namedParameters() throws GeneralSecurityException {

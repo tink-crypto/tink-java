@@ -27,6 +27,7 @@ import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.aead.internal.AesGcmSivProtoSerialization;
 import com.google.crypto.tink.aead.subtle.AesGcmSiv;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.KeyCreator;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyKeyManagerImpl;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
@@ -55,7 +56,7 @@ public final class AesGcmSivKeyManager {
               AesGcmSiv::create, com.google.crypto.tink.aead.AesGcmSivKey.class, Aead.class);
 
   @SuppressWarnings("InlineLambdaConstant") // We need a correct Object#equals in registration.
-  private static final MutableKeyCreationRegistry.KeyCreator<AesGcmSivParameters> KEY_CREATOR =
+  private static final KeyCreator<AesGcmSivParameters> KEY_CREATOR =
       AesGcmSivKeyManager::createAesGcmSivKey;
 
   @SuppressWarnings("InlineLambdaConstant") // We need a correct Object#equals in registration.
