@@ -27,7 +27,7 @@
 #
 # The pushed Javadoc can be looked at on the gh_pages branch in the github
 # repo (ex: https://github.com/tink-crypto/tink-java/tree/gh-pages) or on
-# javadoc.io (ex: https://javadoc.io/doc/com.google.crypto.tink/)
+# javadoc.io (ex: https://javadoc.io/doc/com.google.crypto.tink/).
 #
 # This uses a fixed name and email.
 #
