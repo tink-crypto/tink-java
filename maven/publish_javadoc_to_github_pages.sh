@@ -17,7 +17,6 @@
 #######################################
 # Publishes the javadoc which can be found in `javadoc_file` into
 # "<git_url>/tree/gh_pages/javadoc/<library_name>/<artifact_version>"
-# git must have been previously configured with the correct user name and email.
 # The git_url typically contains the credentials.
 # Example usage:
 #   publish_javadoc_to_github_pages \
@@ -30,12 +29,20 @@
 # repo (ex: https://github.com/tink-crypto/tink-java/tree/gh-pages) or on
 # javadoc.io (ex: https://javadoc.io/doc/com.google.crypto.tink/)
 #
+# This uses a fixed name and email.
+#
 # Arguments:
 #   git_url: The git URL.
 #   library_name: The name of the library
 #   artifact_version: The version
 #   javadoc_file: JAR file containing the javadoc.
 #######################################
+
+readonly GIT_ARGS=(
+  -c user.email=noreply@google.com
+  -c user.name="Tink Team"
+)
+
 main() {
   local -r git_url=$1
   local -r library_name=$2
@@ -43,24 +50,24 @@ main() {
   local -r javadoc_file="$(realpath $4)"
 
   rm -rf gh-pages
-  git clone \
+  git "${GIT_ARGS[@]}" clone \
     --quiet --branch=gh-pages "${git_url}" gh-pages > /dev/null
   (
     cd gh-pages
     if [ -d "javadoc/${library_name}/${artifact_version}" ]; then
-      git rm -rf "javadoc/${library_name}/${artifact_version}"
+      git "${GIT_ARGS[@]}" rm -rf "javadoc/${library_name}/${artifact_version}"
     fi
     mkdir -p "javadoc/${library_name}/${artifact_version}"
     unzip "${javadoc_file}" \
       -d "javadoc/${library_name}/${artifact_version}"
     rm -rf "javadoc/${library_name}/${artifact_version}/META-INF/"
-    git add -f "javadoc/${library_name}/${artifact_version}"
+    git "${GIT_ARGS[@]}" add -f "javadoc/${library_name}/${artifact_version}"
     if [[ "$(git status --porcelain)" ]]; then
       # Changes exist.
-      git commit \
+      git "${GIT_ARGS[@]}" commit \
         -m "${library_name}-${artifact_version} Javadoc auto-pushed to gh-pages"
 
-      git push -fq origin gh-pages > /dev/null
+      git "${GIT_ARGS[@]}" push -fq origin gh-pages > /dev/null
       echo -e "Published Javadoc to gh-pages.\n"
     else
       # No changes exist.

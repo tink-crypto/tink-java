@@ -263,8 +263,6 @@ main() {
     mkdir -p  "${KOKORO_ARTIFACTS_DIR}/kokoro_upload_dir/release"
     cp "maven_bundle_${LIBRARY_NAME}.zip" "${KOKORO_ARTIFACTS_DIR}/kokoro_upload_dir/release"
   fi
-  git config user.email=noreply@google.com
-  git config user.name="Tink Team"
   ./publish_javadoc_to_github_pages \
     "${GIT_URL}" \
     "${LIBRARY_NAME}"\
