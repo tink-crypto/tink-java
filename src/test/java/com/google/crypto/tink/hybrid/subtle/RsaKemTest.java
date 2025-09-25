@@ -33,43 +33,6 @@ public final class RsaKemTest {
   private static final Charset UTF_8 = Charset.forName("UTF-8");
 
   @Test
-  public void bigIntToByteArray_approximate() throws Exception {
-    int expectedSize = 2048;
-    BigInteger bigInt = new BigInteger(2048, new Random());
-    byte[] bigIntBytes = RsaKem.bigIntToByteArray(bigInt, expectedSize);
-
-    assertThat(bigIntBytes).hasLength(expectedSize);
-    assertThat(new BigInteger(1, bigIntBytes)).isEqualTo(bigInt);
-  }
-
-  @Test
-  public void bigIntToByteArray_withALeadingZero() throws Exception {
-    int expectedSize = 2048;
-    BigInteger bigIntWithALeadingZero;
-    while (true) {
-      bigIntWithALeadingZero = new BigInteger(2048, new Random());
-      byte[] r = bigIntWithALeadingZero.toByteArray();
-      if (r[0] == 0) {
-        break;
-      }
-    }
-
-    byte[] modBytes = RsaKem.bigIntToByteArray(bigIntWithALeadingZero, expectedSize);
-    assertThat(modBytes).hasLength(expectedSize);
-    assertThat(new BigInteger(1, modBytes)).isEqualTo(bigIntWithALeadingZero);
-  }
-
-  @Test
-  public void bigIntToByteArray_small() throws Exception {
-    int expectedSize = 2048;
-    BigInteger smallInt = BigInteger.valueOf(42L);
-    byte[] smallIntBytes = RsaKem.bigIntToByteArray(smallInt, expectedSize);
-
-    assertThat(smallIntBytes).hasLength(expectedSize);
-    assertThat(new BigInteger(1, smallIntBytes)).isEqualTo(smallInt);
-  }
-
-  @Test
   public void generateSecret() throws Exception {
     BigInteger max = new BigInteger(2048, new Random());
     int maxSizeInBytes = RsaKem.bigIntSizeInBytes(max);
