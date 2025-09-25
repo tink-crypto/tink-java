@@ -6,6 +6,7 @@ java_test(
     srcs = ["RsaKemTest.java"],
     deps = [
         "//src/main/java/com/google/crypto/tink/hybrid/subtle:rsa_kem",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
     ],

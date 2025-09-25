@@ -24,7 +24,6 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.security.interfaces.RSAPublicKey;
-import javax.crypto.Cipher;
 
 /**
  * Hybrid encryption with RSA-KEM as defined in Shoup's ISO standard proposal as KEM, and AEAD as
@@ -59,9 +58,7 @@ public final class RsaKemHybridEncrypt implements HybridEncrypt {
     byte[] sharedSecret = RsaKem.generateSecret(mod);
 
     // KEM: encrypt the shared secret using the public key.
-    Cipher rsaCipher = Cipher.getInstance("RSA/ECB/NoPadding");
-    rsaCipher.init(Cipher.ENCRYPT_MODE, recipientPublicKey);
-    byte[] token = rsaCipher.doFinal(sharedSecret);
+    byte[] token = RsaKem.rsaEncrypt(recipientPublicKey, sharedSecret);
 
     // KDF: derive a DEM key from the shared secret, salt, and contextInfo.
     byte[] demKey =

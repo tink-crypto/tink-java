@@ -23,7 +23,6 @@ import com.google.crypto.tink.subtle.Hkdf;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.security.interfaces.RSAPrivateKey;
-import javax.crypto.Cipher;
 
 /**
  * Hybrid encryption with RSA-KEM as defined in Shoup's ISO standard proposal as KEM, and AEAD as
@@ -61,13 +60,13 @@ public final class RsaKemHybridDecrypt implements HybridDecrypt {
               modSizeInBytes, ciphertext.length));
     }
 
-    // Decrypt the token to obtain the raw shared secret.
+    // Get the first modSizeInBytes bytes of ciphertext.
     ByteBuffer cipherBuffer = ByteBuffer.wrap(ciphertext);
     byte[] token = new byte[modSizeInBytes];
     cipherBuffer.get(token);
-    Cipher rsaCipher = Cipher.getInstance("RSA/ECB/NoPadding");
-    rsaCipher.init(Cipher.DECRYPT_MODE, recipientPrivateKey);
-    byte[] sharedSecret = rsaCipher.doFinal(token);
+
+    // Decrypt the token to obtain the raw shared secret.
+    byte[] sharedSecret = RsaKem.rsaDecrypt(recipientPrivateKey, token);
 
     // KDF: derive a DEM key from the shared secret, salt, and contextInfo.
     byte[] demKey =

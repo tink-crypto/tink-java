@@ -22,8 +22,11 @@ import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.util.Random;
+import javax.crypto.Cipher;
 
 class RsaKem {
   static final byte[] EMPTY_AAD = new byte[0];
@@ -42,6 +45,30 @@ class RsaKem {
 
   static int bigIntSizeInBytes(BigInteger mod) {
     return (mod.bitLength() + 7) / 8;
+  }
+
+  /**
+   * This implements RsaTransform from https://www.shoup.net/iso/std6.pdf, 11.2,
+   * where alpha is the public exponent e from the public key.
+   */
+  static byte[] rsaEncrypt(
+      PublicKey publicKey,
+      byte[] x) throws GeneralSecurityException {
+    Cipher rsaCipher = Cipher.getInstance("RSA/ECB/NoPadding");
+    rsaCipher.init(Cipher.ENCRYPT_MODE, publicKey);
+    return rsaCipher.doFinal(x);
+  }
+
+  /**
+   * This implements RsaTransform from https://www.shoup.net/iso/std6.pdf, 11.2,
+   * where alpha is the private exponent d from the private key.
+   */
+  static byte[] rsaDecrypt(
+      PrivateKey privateKey,
+      byte[] x) throws GeneralSecurityException {
+    Cipher rsaCipher = Cipher.getInstance("RSA/ECB/NoPadding");
+    rsaCipher.init(Cipher.ENCRYPT_MODE, privateKey);
+    return rsaCipher.doFinal(x);
   }
 
   /**
