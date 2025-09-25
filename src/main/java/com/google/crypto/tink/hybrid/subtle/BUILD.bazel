@@ -19,6 +19,7 @@ java_library(
 java_library(
     name = "rsa_kem",
     srcs = ["RsaKem.java"],
+    deps = ["//src/main/java/com/google/crypto/tink/internal:big_integer_encoding"],
 )
 
 java_library(
@@ -36,6 +37,7 @@ java_library(
 android_library(
     name = "rsa_kem-android",
     srcs = ["RsaKem.java"],
+    deps = ["//src/main/java/com/google/crypto/tink/internal:big_integer_encoding-android"],
 )
 
 android_library(

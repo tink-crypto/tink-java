@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.hybrid.subtle;
 
+import com.google.crypto.tink.internal.BigIntegerEncoding;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
@@ -47,28 +48,9 @@ class RsaKem {
    * Converts {@code bigInt} to a fixed-size byte array, by taking away at most one leading zero
    * (the sign byte), or adding leading zeros.
    */
-  static byte[] bigIntToByteArray(BigInteger bigInt, int size) {
-    byte[] value = bigInt.toByteArray();
-    if (value.length == size) {
-      return value;
-    }
-
-    byte[] result = new byte[size];
-    if (value.length == result.length + 1) {
-      if (value[0] != 0) {
-        throw new IllegalArgumentException(
-            "Value is one-byte longer than the expected size, but its first byte is not 0");
-      }
-      System.arraycopy(value, 1, result, 0, result.length);
-    } else if (value.length < result.length) {
-      System.arraycopy(value, 0, result, result.length - value.length, value.length);
-    } else {
-      throw new IllegalArgumentException(
-          String.format(
-              "Value has invalid length, must be of length at most (%d + 1), but" + " got %d",
-              size, value.length));
-    }
-    return result;
+  // TODO(juerg): Inline this function and remove its tests.
+  static byte[] bigIntToByteArray(BigInteger bigInt, int size) throws GeneralSecurityException {
+    return BigIntegerEncoding.toBigEndianBytesOfFixedLength(bigInt, size);
   }
 
   /**
@@ -82,8 +64,12 @@ class RsaKem {
     do {
       r = new BigInteger(max.bitLength(), rand);
     } while (r.signum() <= 0 || r.compareTo(max) >= 0);
-
-    return bigIntToByteArray(r, maxSizeInBytes);
+    try {
+      return bigIntToByteArray(r, maxSizeInBytes);
+    } catch (GeneralSecurityException e) {
+      // This can only happen if maxSizeInBytes is too small for r, which is impossible here.
+      throw new IllegalStateException("Unable to convert BigInteger to byte array", e);
+    }
   }
 
   static KeyPair generateRsaKeyPair(int keySize) {
