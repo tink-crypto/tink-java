@@ -666,19 +666,23 @@ public final class KeysetHandle implements KeysetHandleInterface {
     return unmonitoredHandle == null ? this : unmonitoredHandle;
   }
 
-  private static void validateNoDuplicateIds(Keyset keyset) throws GeneralSecurityException {
+  private static void validateNoDuplicateIds(List<Entry> entries) throws GeneralSecurityException {
     Set<Integer> idsSoFar = new HashSet<>();
-    for (Keyset.Key k : keyset.getKeyList()) {
-      if (idsSoFar.contains(k.getKeyId())) {
+    boolean foundPrimary = false;
+    for (Entry e : entries) {
+      if (idsSoFar.contains(e.getId())) {
         throw new GeneralSecurityException(
             "KeyID "
-                + k.getKeyId()
+                + e.getId()
                 + " is duplicated in the keyset, and Tink is configured to reject such keysets with"
                 + " the flag validateKeysetsOnParsing.");
       }
-      idsSoFar.add(k.getKeyId());
+      idsSoFar.add(e.getId());
+      if (e.isPrimary()) {
+        foundPrimary = true;
+      }
     }
-    if (!idsSoFar.contains(keyset.getPrimaryKeyId())) {
+    if (!foundPrimary) {
       throw new GeneralSecurityException(
           "Primary key id not found in keyset, and Tink is configured to reject such keysets with"
               + " the flag validateKeysetsOnParsing.");
@@ -690,7 +694,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
     this.entries = entries;
     this.annotations = annotations;
     if (GlobalTinkFlags.validateKeysetsOnParsing.getValue()) {
-      validateNoDuplicateIds(keyset);
+      validateNoDuplicateIds(entries);
     }
     this.unmonitoredHandle = null;
   }
