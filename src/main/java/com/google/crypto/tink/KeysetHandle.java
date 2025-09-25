@@ -358,7 +358,6 @@ public final class KeysetHandle implements KeysetHandleInterface {
         throw new GeneralSecurityException("KeysetHandle.Builder#build must only be called once");
       }
       buildCalled = true;
-      Keyset.Builder keysetBuilder = Keyset.newBuilder();
       List<KeysetHandle.Entry> handleEntries = new ArrayList<>(entries.size());
       Integer primaryId = null;
 
@@ -374,10 +373,10 @@ public final class KeysetHandle implements KeysetHandleInterface {
         }
         idsSoFar.add(id);
 
-        Keyset.Key keysetKey;
         @Nullable KeysetHandle.Entry handleEntry;
 
         if (builderEntry.key != null) {
+          validateKeyId(builderEntry.key, id);
           handleEntry =
               new KeysetHandle.Entry(
                   builderEntry.key,
@@ -386,8 +385,6 @@ public final class KeysetHandle implements KeysetHandleInterface {
                   builderEntry.isPrimary,
                   /* keyParsingFailed= */ false,
                   KeysetHandle.Entry.NO_LOGGING);
-          keysetKey =
-              createKeysetKey(builderEntry.key, serializeStatus(builderEntry.keyStatus), id);
         } else {
           Integer idRequirement = builderEntry.parameters.hasIdRequirement() ? id : null;
           Key key =
@@ -401,9 +398,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
                   builderEntry.isPrimary,
                   /* keyParsingFailed= */ false,
                   KeysetHandle.Entry.NO_LOGGING);
-          keysetKey = createKeysetKey(key, serializeStatus(builderEntry.keyStatus), id);
         }
-        keysetBuilder.addKey(keysetKey);
         if (builderEntry.isPrimary) {
           if (primaryId != null) {
             throw new GeneralSecurityException("Two primaries were set");
@@ -418,10 +413,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
       if (primaryId == null) {
         throw new GeneralSecurityException("No primary was set");
       }
-      keysetBuilder.setPrimaryKeyId(primaryId);
-      Keyset keyset = keysetBuilder.build();
-      assertEnoughKeyMaterial(keyset);
-      KeysetHandle unmonitoredKeyset = new KeysetHandle(keyset, handleEntries, annotations);
+      KeysetHandle unmonitoredKeyset = new KeysetHandle(handleEntries, annotations);
       return addMonitoringIfNeeded(unmonitoredKeyset);
     }
   }
@@ -689,7 +681,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
     }
   }
 
-  private KeysetHandle(Keyset keyset, List<Entry> entries, MonitoringAnnotations annotations)
+  private KeysetHandle(List<Entry> entries, MonitoringAnnotations annotations)
       throws GeneralSecurityException {
     this.entries = entries;
     this.annotations = annotations;
@@ -738,7 +730,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
     assertEnoughKeyMaterial(keyset);
     List<Entry> entries = getEntriesFromKeyset(keyset);
 
-    return new KeysetHandle(keyset, entries, MonitoringAnnotations.EMPTY);
+    return new KeysetHandle(entries, MonitoringAnnotations.EMPTY);
   }
 
   /**
@@ -749,7 +741,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
       Keyset keyset, MonitoringAnnotations annotations) throws GeneralSecurityException {
     assertEnoughKeyMaterial(keyset);
     List<Entry> entries = getEntriesFromKeyset(keyset);
-    return addMonitoringIfNeeded(new KeysetHandle(keyset, entries, annotations));
+    return addMonitoringIfNeeded(new KeysetHandle(entries, annotations));
   }
 
   /** Returns the actual keyset data. */
@@ -1129,13 +1121,11 @@ public final class KeysetHandle implements KeysetHandleInterface {
    */
   public KeysetHandle getPublicKeysetHandle() throws GeneralSecurityException {
     Keyset keyset = getKeyset();
-    Keyset.Builder publicKeysetBuilder = Keyset.newBuilder();
     List<KeysetHandle.Entry> publicEntries = new ArrayList<>(entries.size());
 
     int i = 0;
     for (KeysetHandle.Entry entry : entries) {
       KeysetHandle.Entry publicEntry;
-      Keyset.Key publicProtoKey;
 
       if (entry.getKey() instanceof PrivateKey) {
         Key publicKey = ((PrivateKey) entry.getKey()).getPublicKey();
@@ -1147,11 +1137,12 @@ public final class KeysetHandle implements KeysetHandleInterface {
                 entry.isPrimary(),
                 /* keyParsingFailed= */ false,
                 Entry.NO_LOGGING);
-        publicProtoKey = createKeysetKey(publicKey, entry.keyStatusType, entry.getId());
+        validateKeyId(publicKey, entry.getId());
+
       } else {
         Keyset.Key protoKey = keyset.getKey(i);
         KeyData keyData = getPublicKeyDataFromRegistry(protoKey.getKeyData());
-        publicProtoKey = protoKey.toBuilder().setKeyData(keyData).build();
+        Keyset.Key publicProtoKey = protoKey.toBuilder().setKeyData(keyData).build();
         Key publicKey;
         boolean keyParsingFailed;
         try {
@@ -1178,13 +1169,10 @@ public final class KeysetHandle implements KeysetHandleInterface {
                 Entry.NO_LOGGING);
       }
 
-      publicKeysetBuilder.addKey(publicProtoKey);
       publicEntries.add(publicEntry);
       i++;
     }
-    publicKeysetBuilder.setPrimaryKeyId(keyset.getPrimaryKeyId());
-    return addMonitoringIfNeeded(
-        new KeysetHandle(publicKeysetBuilder.build(), publicEntries, annotations));
+    return addMonitoringIfNeeded(new KeysetHandle(publicEntries, annotations));
   }
 
   private static KeyData getPublicKeyDataFromRegistry(KeyData privateKeyData)
@@ -1392,15 +1380,19 @@ public final class KeysetHandle implements KeysetHandleInterface {
         .build();
   }
 
+  private static void validateKeyId(Key key, int id) throws GeneralSecurityException {
+    @Nullable Integer idRequirement = key.getIdRequirementOrNull();
+    if (idRequirement != null && idRequirement != id) {
+      throw new GeneralSecurityException("Wrong ID set for key with ID requirement");
+    }
+  }
+
   private static Keyset.Key createKeysetKey(Key key, KeyStatusType keyStatus, int id)
       throws GeneralSecurityException {
     ProtoKeySerialization serializedKey =
         MutableSerializationRegistry.globalInstance()
             .serializeKey(key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
-    @Nullable Integer idRequirement = serializedKey.getIdRequirementOrNull();
-    if (idRequirement != null && idRequirement != id) {
-      throw new GeneralSecurityException("Wrong ID set for key with ID requirement");
-    }
+    validateKeyId(key, id);
     return toKeysetKey(id, keyStatus, serializedKey);
   }
 }

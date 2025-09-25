@@ -2272,6 +2272,30 @@ public class KeysetHandleTest {
   }
 
   @Test
+  public void addKeyDoesNotRequireSerialization() throws Exception {
+    KeysetHandle unused =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.importKey(
+                        new Key() {
+                          public boolean equalsKey(Key k) {
+                            return false;
+                          }
+
+                          public Integer getIdRequirementOrNull() {
+                            return null;
+                          }
+
+                          public Parameters getParameters() {
+                            return null;
+                          }
+                        })
+                    .withFixedId(100)
+                    .makePrimary())
+            .build();
+  }
+
+  @Test
   public void getKey_monitoringWorks() throws Exception {
     MonitoringAnnotations annotations =
         MonitoringAnnotations.newBuilder().add("annotation_name", "annotation_value").build();
