@@ -2,17 +2,23 @@
 
 module(name = "tink_java", version = "1.18.0")
 
-bazel_dep(name = "rules_jvm_external", version = "6.3")
+bazel_dep(name = "bazel_skylib", version = "1.8.1")
+bazel_dep(name = "rules_java", version = "8.16.1")
+bazel_dep(name = "rules_jvm_external", version = "6.7")
 bazel_dep(name = "rules_license", version = "1.0.0")
+bazel_dep(name = "rules_android", version = "0.6.6", repo_name = "build_bazel_rules_android")
+bazel_dep(name = "platforms", version = "1.0.0")
 
 maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
 
 maven.install(
     artifacts = [
         "com.google.api-client:google-api-client:2.2.0",
+        "com.google.code.gson:gson:2.13.2",
+        "com.google.errorprone:error_prone_annotations:2.28.0",
+        "com.google.http-client:google-http-client:1.43.3",
         "com.google.protobuf:protobuf-java:4.28.2",
         "com.google.protobuf:protobuf-javalite:4.28.2",
-        "com.google.http-client:google-http-client:1.43.3",
         "androidx.annotation:annotation:1.8.2",
         "org.conscrypt:conscrypt-openjdk-uber:2.5.2",
         "org.pantsbuild:jarjar:1.7.2",
@@ -26,3 +32,24 @@ maven.install(
 )
 
 use_repo(maven, "maven")
+
+remote_android_extensions = use_extension(
+    "@build_bazel_rules_android//bzlmod_extensions:android_extensions.bzl",
+    "remote_android_tools_extensions",
+)
+use_repo(remote_android_extensions, "android_tools")
+
+android_sdk_repository_extension = use_extension("@build_bazel_rules_android//rules/android_sdk_repository:rule.bzl", "android_sdk_repository_extension")
+use_repo(android_sdk_repository_extension, "androidsdk")
+
+# TODO - b/447329832: Switch to API level 24.
+android_sdk_repository_extension.configure(build_tools_version = "30.0.3", api_level = 30, path = "/android-sdk-30")
+
+register_toolchains("@androidsdk//:sdk-toolchain", "@androidsdk//:all")
+
+wycheproof_extension = use_extension(
+    "//:extensions.bzl",
+    "wycheproof_extension",
+    dev_dependency = True,
+)
+use_repo(wycheproof_extension, "wycheproof")

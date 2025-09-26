@@ -50,7 +50,6 @@ fi
 : "${TINK_BASE_DIR:=$(cd .. && pwd)}"
 readonly TINK_BASE_DIR
 readonly CONTAINER_IMAGE
-
 # If running from the tink_java folder this has no effect.
 cd "${TINK_BASE_DIR}/tink_java"
 
@@ -71,6 +70,8 @@ fi
 
 cat <<'EOF' > _do_run_test.sh
 set -euo pipefail
+
+export ANDROID_HOME=/android-sdk-30
 
 # Compare the dependencies of the ":tink" target with the declared dependencies.
 # These should match the dependencies declared in tink-java.pom.xml, since

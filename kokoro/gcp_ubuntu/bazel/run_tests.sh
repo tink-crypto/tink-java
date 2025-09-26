@@ -85,6 +85,8 @@ if [[ -n "${BAZEL_REMOTE_CACHE_NAME:-}" ]]; then
 fi
 readonly CACHE_FLAGS
 
+export ANDROID_HOME=/android-sdk-30
+
 echo "---------- BUILDING MAIN"
 time bazelisk build "${CACHE_FLAGS[@]}" -- ...
 echo "---------- TESTING MAIN"
@@ -99,12 +101,21 @@ time bazelisk test "${CACHE_FLAGS[@]}" -- ...
 
 echo "---------- TURNING ON BAZELMOD"
 cd ..
-sed -i "s/always --noenable_bzlmod//g" .bazelrc
+sed -i "s/always --noenable_bzlmod/always --enable_bzlmod/g" .bazelrc
+sed -i "s/always --enable_workspace/always --noenable_workspace/g" .bazelrc
+
+echo "--- .bazelrc start"
+cat .bazelrc
+echo "--- .bazelrc end"
+
+bazelisk clean
 
 echo "---------- BUILDING MAIN"
 time bazelisk build "${CACHE_FLAGS[@]}" -- ...
 echo "---------- TESTING MAIN"
-time bazelisk test "${CACHE_FLAGS[@]}" -- ...
+
+# TODO - b/243631737: Reenable all tests (currently, Wycheproof tests fail due to wrong paths)
+time bazelisk test "${CACHE_FLAGS[@]}" -- //src/test/java/com/google/crypto/tink/signature:EcdsaVerifyKeyManagerTest
 
 EOF
 ### ======================================================= END: _do_run_test.sh

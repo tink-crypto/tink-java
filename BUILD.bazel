@@ -522,9 +522,10 @@ maven_bundle(
     tags = ["manual"],
 )
 
+# TODO - b/447329832: Switch to API level 24.
 java_import(
     name = "android_jar_needed_for_javadoc",
-    jars = ["@androidsdk//:platforms/android-23/android.jar"],
+    jars = ["@androidsdk//:platforms/android-30/android.jar"],
 )
 
 gen_maven_jar_rules(

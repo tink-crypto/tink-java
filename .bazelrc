@@ -1,4 +1,5 @@
 always --noenable_bzlmod
+always --enable_workspace
 
 # Minumum C++ version. Override it building this project with
 # `bazel build --cxxopt='-std=c++<XY>' --host_cxxopt='c++<XY>' ...`
