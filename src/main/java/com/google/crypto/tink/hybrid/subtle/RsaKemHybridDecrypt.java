@@ -22,6 +22,7 @@ import com.google.crypto.tink.aead.subtle.AeadFactory;
 import com.google.crypto.tink.subtle.Hkdf;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.PrivateKey;
 import java.security.interfaces.RSAKey;
 import java.security.interfaces.RSAPrivateKey;
@@ -39,8 +40,7 @@ public final class RsaKemHybridDecrypt implements HybridDecrypt {
   private final byte[] hkdfSalt;
   private final AeadFactory aeadFactory;
 
-  // AndroidKeyStoreRSAPrivateKey does not implement RSAPrivateKey, so accept `PrivateKey & RSAKey`.
-  public RsaKemHybridDecrypt(
+  private RsaKemHybridDecrypt(
       final PrivateKey recipientPrivateKey,
       String hkdfHmacAlgo,
       final byte[] hkdfSalt,
@@ -53,7 +53,6 @@ public final class RsaKemHybridDecrypt implements HybridDecrypt {
     this.aeadFactory = aeadFactory;
   }
 
-  // Kept for binary compatibility
   public RsaKemHybridDecrypt(
       final RSAPrivateKey recipientPrivateKey,
       String hkdfHmacAlgo,
@@ -61,6 +60,23 @@ public final class RsaKemHybridDecrypt implements HybridDecrypt {
       AeadFactory aeadFactory)
       throws GeneralSecurityException {
     this((PrivateKey) recipientPrivateKey, hkdfHmacAlgo, hkdfSalt, aeadFactory);
+  }
+
+  /**
+   * Use alternative factory method is for use with Android KeyStore, whose RSA private key class
+   * does not implement RSAPrivateKey, so we accept `PrivateKey & RSAKey` to support it.
+   */
+  public static <KeyT extends PrivateKey & RSAKey> RsaKemHybridDecrypt create(
+          final KeyT recipientPrivateKey,
+          String hkdfHmacAlgo,
+          final byte[] hkdfSalt,
+          AeadFactory aeadFactory
+  ) throws GeneralSecurityException {
+      // Just in case of unchecked casting and type erasure.
+      if (!(recipientPrivateKey instanceof PrivateKey) || !(recipientPrivateKey instanceof RSAKey)) {
+          throw new InvalidKeyException("Must be an RSA private key");
+      }
+      return new RsaKemHybridDecrypt((PrivateKey) recipientPrivateKey, hkdfHmacAlgo, hkdfSalt, aeadFactory);
   }
 
   @Override
