@@ -63,20 +63,21 @@ public final class RsaKemHybridDecrypt implements HybridDecrypt {
   }
 
   /**
-   * Use alternative factory method is for use with Android KeyStore, whose RSA private key class
-   * does not implement RSAPrivateKey, so we accept `PrivateKey & RSAKey` to support it.
+   * This alternate factory method is to support Android KeyStore, whose RSA private key class
+   * does not implement RSAPrivateKey.
+   *
+   * @param recipientPrivateKey should implement both PrivateKey and RSAKey.
    */
-  public static <KeyT extends PrivateKey & RSAKey> RsaKemHybridDecrypt create(
-          final KeyT recipientPrivateKey,
+  public static RsaKemHybridDecrypt create(
+          final PrivateKey recipientPrivateKey,
           String hkdfHmacAlgo,
           final byte[] hkdfSalt,
           AeadFactory aeadFactory
   ) throws GeneralSecurityException {
-      // Just in case of unchecked casting and type erasure.
-      if (!(recipientPrivateKey instanceof PrivateKey) || !(recipientPrivateKey instanceof RSAKey)) {
+      if (!(recipientPrivateKey instanceof RSAKey)) {
           throw new InvalidKeyException("Must be an RSA private key");
       }
-      return new RsaKemHybridDecrypt((PrivateKey) recipientPrivateKey, hkdfHmacAlgo, hkdfSalt, aeadFactory);
+      return new RsaKemHybridDecrypt(recipientPrivateKey, hkdfHmacAlgo, hkdfSalt, aeadFactory);
   }
 
   @Override
