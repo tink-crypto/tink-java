@@ -48,27 +48,39 @@ class RsaKem {
   }
 
   /**
-   * This implements RsaTransform from https://www.shoup.net/iso/std6.pdf, 11.2,
-   * where alpha is the public exponent e from the public key.
+   * This implements RsaTransform from https://www.shoup.net/iso/std6.pdf, 11.2, where alpha is the
+   * public exponent e from the public key.
+   *
+   * <p>Throws {@link GeneralSecurityException} if the input is too large.
    */
-  static byte[] rsaEncrypt(
-      PublicKey publicKey,
-      byte[] x) throws GeneralSecurityException {
+  static byte[] rsaEncrypt(PublicKey publicKey, byte[] x) throws GeneralSecurityException {
     Cipher rsaCipher = Cipher.getInstance("RSA/ECB/NoPadding");
     rsaCipher.init(Cipher.ENCRYPT_MODE, publicKey);
-    return rsaCipher.doFinal(x);
+    try {
+      return rsaCipher.doFinal(x);
+    } catch (RuntimeException e) {
+      // On Android API version 27, inputs of the correct size but larger than the modulus may
+      // throw a RuntimeException, but they should instead throw a GeneralSecurityException.
+      throw new GeneralSecurityException(e);
+    }
   }
 
   /**
-   * This implements RsaTransform from https://www.shoup.net/iso/std6.pdf, 11.2,
-   * where alpha is the private exponent d from the private key.
+   * This implements RsaTransform from https://www.shoup.net/iso/std6.pdf, 11.2, where alpha is the
+   * private exponent d from the private key.
+   *
+   * <p>Throws {@link GeneralSecurityException} if the input is too large.
    */
-  static byte[] rsaDecrypt(
-      PrivateKey privateKey,
-      byte[] x) throws GeneralSecurityException {
+  static byte[] rsaDecrypt(PrivateKey privateKey, byte[] x) throws GeneralSecurityException {
     Cipher rsaCipher = Cipher.getInstance("RSA/ECB/NoPadding");
     rsaCipher.init(Cipher.ENCRYPT_MODE, privateKey);
-    return rsaCipher.doFinal(x);
+    try {
+      return rsaCipher.doFinal(x);
+    } catch (RuntimeException e) {
+      // On Android API version 27, inputs of the correct size but larger than the modulus may
+      // throw a RuntimeException, but they should instead throw a GeneralSecurityException.
+      throw new GeneralSecurityException(e);
+    }
   }
 
   /**

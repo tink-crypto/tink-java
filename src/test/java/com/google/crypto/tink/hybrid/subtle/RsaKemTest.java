@@ -17,10 +17,12 @@
 package com.google.crypto.tink.hybrid.subtle;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.subtle.Hex;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
+import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -88,5 +90,72 @@ public final class RsaKemTest {
 
     assertThat(encrypted).isEqualTo(c0);
     assertThat(decrypted).isEqualTo(r);
+  }
+
+  @Test
+  public void rsaEncrypt_inputTooLarge_throws() throws Exception {
+    BigInteger n =
+        new BigInteger(
+            "58881133325026912517619364310092848849666407571798023374905464783262"
+                + "38537107326596800820237597139824869184990638749556269785797065508097"
+                + "452399642780486933");
+    BigInteger e = new BigInteger("65537");
+
+    KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+    PublicKey publicKey = keyFactory.generatePublic(new RSAPublicKeySpec(n, e));
+
+    // This input has 65 bytes, but only 64 bits are valid.
+    byte[] inputTooLarge =
+        Hex.decode(
+            "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f"
+                + "202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f"
+                + "40");
+    // This throws an IllegalBlockSizeException
+    assertThrows(GeneralSecurityException.class, () -> RsaKem.rsaEncrypt(publicKey, inputTooLarge));
+
+    // This input has 64 bytes, but it is larger than the modulus.
+    byte[] inputTooLarge2 =
+        Hex.decode(
+            "ffff02030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f"
+                + "202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f");
+    // this sometimes throws SignatureException, sometimes BadPaddingException.
+    assertThrows(
+        GeneralSecurityException.class, () -> RsaKem.rsaEncrypt(publicKey, inputTooLarge2));
+  }
+
+  @Test
+  public void rsaDecrypt_inputTooLarge_throws() throws Exception {
+    BigInteger n =
+        new BigInteger(
+            "58881133325026912517619364310092848849666407571798023374905464783262"
+                + "38537107326596800820237597139824869184990638749556269785797065508097"
+                + "452399642780486933");
+    BigInteger d =
+        new BigInteger(
+            "32023135558599481863153745244741739956797835803921402370443497280464"
+                + "79396037520308981353808895461806395564474639124525446044708705259675"
+                + "840210989546479265");
+
+    KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+    PrivateKey privateKey = keyFactory.generatePrivate(new RSAPrivateKeySpec(n, d));
+
+    // This input has 65 bytes, but only 64 bits are valid.
+    byte[] inputTooLarge =
+        Hex.decode(
+            "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f"
+                + "202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f"
+                + "40");
+    // This throws an IllegalBlockSizeException
+    assertThrows(
+        GeneralSecurityException.class, () -> RsaKem.rsaDecrypt(privateKey, inputTooLarge));
+
+    // This input has 64 bytes, but it is larger than the modulus.
+    byte[] inputTooLarge2 =
+        Hex.decode(
+            "ffff02030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f"
+                + "202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f");
+    // this sometimes throws SignatureException, sometimes BadPaddingException.
+    assertThrows(
+        GeneralSecurityException.class, () -> RsaKem.rsaDecrypt(privateKey, inputTooLarge2));
   }
 }
