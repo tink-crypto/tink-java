@@ -215,7 +215,7 @@ public final class JwtEcdsaPrivateKeyTest {
     SecretBigInteger privateValuePlusOrder =
         SecretBigInteger.fromBigInteger(
             P256_PRIVATE_VALUE.add(
-                JwtEcdsaParameters.Algorithm.ES256.getECParameterSpec().getOrder()),
+                JwtEcdsaParameters.Algorithm.ES256.getEcParameterSpec().getOrder()),
             InsecureSecretKeyAccess.get());
     assertThrows(
         GeneralSecurityException.class,
@@ -223,7 +223,7 @@ public final class JwtEcdsaPrivateKeyTest {
     SecretBigInteger privateValueMinusOrder =
         SecretBigInteger.fromBigInteger(
             P256_PRIVATE_VALUE.subtract(
-                JwtEcdsaParameters.Algorithm.ES256.getECParameterSpec().getOrder()),
+                JwtEcdsaParameters.Algorithm.ES256.getEcParameterSpec().getOrder()),
             InsecureSecretKeyAccess.get());
     assertThrows(
         GeneralSecurityException.class,
@@ -247,7 +247,7 @@ public final class JwtEcdsaPrivateKeyTest {
     JwtEcdsaPublicKey kidStrategyIgnoredPublicKeyForOne =
         JwtEcdsaPublicKey.builder()
             .setParameters(parameters)
-            .setPublicPoint(parameters.getAlgorithm().getECParameterSpec().getGenerator())
+            .setPublicPoint(parameters.getAlgorithm().getEcParameterSpec().getGenerator())
             .build();
 
     JwtEcdsaPublicKey kidStrategyBase64PublicKey =

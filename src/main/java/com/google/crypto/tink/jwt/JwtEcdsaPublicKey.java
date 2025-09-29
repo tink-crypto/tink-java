@@ -108,7 +108,7 @@ public final class JwtEcdsaPublicKey extends JwtSignaturePublicKey {
         throw new GeneralSecurityException("Cannot build without public point");
       }
       EllipticCurvesUtil.checkPointOnCurve(
-          publicPoint.get(), parameters.get().getAlgorithm().getECParameterSpec().getCurve());
+          publicPoint.get(), parameters.get().getAlgorithm().getEcParameterSpec().getCurve());
       if (parameters.get().hasIdRequirement() && !idRequirement.isPresent()) {
         throw new GeneralSecurityException(
             "Cannot create key without ID requirement with parameters with ID requirement");

@@ -40,12 +40,12 @@ public final class JwtEcdsaPrivateKey extends JwtSignaturePrivateKey {
   private static void validatePrivateValue(
       BigInteger privateValue, ECPoint publicPoint, JwtEcdsaParameters.Algorithm algorithm)
       throws GeneralSecurityException {
-    BigInteger order = algorithm.getECParameterSpec().getOrder();
+    BigInteger order = algorithm.getEcParameterSpec().getOrder();
     if ((privateValue.signum() <= 0) || (privateValue.compareTo(order) >= 0)) {
       throw new GeneralSecurityException("Invalid private value");
     }
     ECPoint p =
-        EllipticCurvesUtil.multiplyByGenerator(privateValue, algorithm.getECParameterSpec());
+        EllipticCurvesUtil.multiplyByGenerator(privateValue, algorithm.getEcParameterSpec());
     if (!p.equals(publicPoint)) {
       throw new GeneralSecurityException("Invalid private value");
     }

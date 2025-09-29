@@ -141,11 +141,11 @@ public final class JwtEcdsaParametersTest {
 
   @Test
   public void testAlgorithmGetEcParamtersSpec() throws Exception {
-    assertThat(JwtEcdsaParameters.Algorithm.ES256.getECParameterSpec())
+    assertThat(JwtEcdsaParameters.Algorithm.ES256.getEcParameterSpec())
         .isEqualTo(EllipticCurvesUtil.NIST_P256_PARAMS);
-    assertThat(JwtEcdsaParameters.Algorithm.ES384.getECParameterSpec())
+    assertThat(JwtEcdsaParameters.Algorithm.ES384.getEcParameterSpec())
         .isEqualTo(EllipticCurvesUtil.NIST_P384_PARAMS);
-    assertThat(JwtEcdsaParameters.Algorithm.ES512.getECParameterSpec())
+    assertThat(JwtEcdsaParameters.Algorithm.ES512.getEcParameterSpec())
         .isEqualTo(EllipticCurvesUtil.NIST_P521_PARAMS);
   }
 }

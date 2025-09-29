@@ -100,7 +100,7 @@ public final class JwtEcdsaSignKeyManager {
       JwtEcdsaParameters parameters, @Nullable Integer idRequirement)
       throws GeneralSecurityException {
     KeyPair keyPair =
-        EllipticCurves.generateKeyPair(parameters.getAlgorithm().getECParameterSpec());
+        EllipticCurves.generateKeyPair(parameters.getAlgorithm().getEcParameterSpec());
     ECPublicKey pubKey = (ECPublicKey) keyPair.getPublic();
     ECPrivateKey privKey = (ECPrivateKey) keyPair.getPrivate();
 
