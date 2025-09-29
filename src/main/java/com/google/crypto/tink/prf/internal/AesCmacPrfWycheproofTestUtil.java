@@ -33,7 +33,7 @@ public final class AesCmacPrfWycheproofTestUtil {
     JsonObject json;
     try{
       json =
-        WycheproofTestUtil.readJson("../wycheproof/testvectors/aes_cmac_test.json");
+        WycheproofTestUtil.readJson("testvectors/aes_cmac_test.json");
     } catch (IOException e) {
       throw new IllegalStateException("Failed to read Wycheproof test vectors", e);
     }

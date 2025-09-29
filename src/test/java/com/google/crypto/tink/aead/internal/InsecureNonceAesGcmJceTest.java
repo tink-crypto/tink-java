@@ -205,7 +205,7 @@ public class InsecureNonceAesGcmJceTest {
     Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
 
     JsonObject json =
-        WycheproofTestUtil.readJson("../wycheproof/testvectors/aes_gcm_test.json");
+        WycheproofTestUtil.readJson("testvectors/aes_gcm_test.json");
     ArrayList<String> errors = new ArrayList<>();
     JsonArray testGroups = json.get("testGroups").getAsJsonArray();
     for (int i = 0; i < testGroups.size(); i++) {

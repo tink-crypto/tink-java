@@ -341,7 +341,7 @@ java_test(
     name = "X25519ConscryptTest",
     size = "small",
     srcs = ["X25519ConscryptTest.java"],
-    data = ["@wycheproof//testvectors:all"],
+    data = ["//testvectors:all"],
     deps = [
         "//src/main/java/com/google/crypto/tink/hybrid/internal:x25519",
         "//src/main/java/com/google/crypto/tink/hybrid/internal:x25519_conscrypt",

@@ -113,9 +113,7 @@ bazelisk clean
 echo "---------- BUILDING MAIN"
 time bazelisk build "${CACHE_FLAGS[@]}" -- ...
 echo "---------- TESTING MAIN"
-
-# TODO - b/243631737: Reenable all tests (currently, Wycheproof tests fail due to wrong paths)
-time bazelisk test "${CACHE_FLAGS[@]}" -- //src/test/java/com/google/crypto/tink/signature:EcdsaVerifyKeyManagerTest
+time bazelisk test "${CACHE_FLAGS[@]}" -- ...
 
 EOF
 ### ======================================================= END: _do_run_test.sh

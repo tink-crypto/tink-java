@@ -1,0 +1,46 @@
+package(
+    default_testonly = 1,
+    default_visibility = ["//:__subpackages__"],
+)
+
+licenses(["notice"])
+
+genrule(
+    name = "all",
+    srcs = ["@wycheproof//testvectors:all"],
+    outs = [
+        "aes_cmac_test.json",
+        "aes_eax_test.json",
+        "aes_gcm_test.json",
+        "aes_gcm_siv_test.json",
+        "aes_siv_cmac_test.json",
+        "chacha20_poly1305_test.json",
+        "ecdh_test.json",
+        "ecdsa_secp256r1_sha256_test.json",
+        "ecdsa_secp256r1_sha256_p1363_test.json",
+        "ecdsa_secp256r1_sha512_test.json",
+        "ecdsa_secp384r1_sha384_test.json",
+        "ecdsa_secp384r1_sha384_p1363_test.json",
+        "ecdsa_secp384r1_sha512_p1363_test.json",
+        "ecdsa_secp384r1_sha512_test.json",
+        "ecdsa_secp521r1_sha512_test.json",
+        "ecdsa_secp521r1_sha512_p1363_test.json",
+        "eddsa_test.json",
+        "rsa_pss_2048_sha256_mgf1_0_test.json",
+        "rsa_pss_2048_sha256_mgf1_32_test.json",
+        "rsa_pss_3072_sha256_mgf1_32_test.json",
+        "rsa_pss_4096_sha256_mgf1_32_test.json",
+        "rsa_pss_4096_sha512_mgf1_32_test.json",
+        "rsa_signature_2048_sha256_test.json",
+        "rsa_signature_2048_sha384_test.json",
+        "rsa_signature_2048_sha512_test.json",
+        "rsa_signature_3072_sha256_test.json",
+        "rsa_signature_3072_sha384_test.json",
+        "rsa_signature_3072_sha512_test.json",
+        "rsa_signature_4096_sha384_test.json",
+        "rsa_signature_4096_sha512_test.json",
+        "kwp_test.json",
+        "x25519_test.json",
+    ],
+    cmd = "cp $(SRCS) $(@D)/",
+)

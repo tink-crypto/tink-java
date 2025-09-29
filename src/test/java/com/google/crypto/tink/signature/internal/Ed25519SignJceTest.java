@@ -201,7 +201,7 @@ public final class Ed25519SignJceTest {
     Assume.assumeTrue(!TinkFips.useOnlyFips() && Ed25519SignJce.isSupported());
 
     JsonObject json =
-        WycheproofTestUtil.readJson("../wycheproof/testvectors/eddsa_test.json");
+        WycheproofTestUtil.readJson("testvectors/eddsa_test.json");
     int errors = 0;
     JsonArray testGroups = json.get("testGroups").getAsJsonArray();
     for (int i = 0; i < testGroups.size(); i++) {

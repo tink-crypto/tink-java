@@ -137,14 +137,14 @@ public class RsaSsaPkcs1SignVerifyConscryptTest {
   @DataPoints("wycheproofTestVectorPaths")
   public static final String[] wycheproofTestVectorPaths =
       new String[] {
-        "../wycheproof/testvectors/rsa_signature_2048_sha256_test.json",
-        "../wycheproof/testvectors/rsa_signature_2048_sha384_test.json",
-        "../wycheproof/testvectors/rsa_signature_2048_sha512_test.json",
-        "../wycheproof/testvectors/rsa_signature_3072_sha256_test.json",
-        "../wycheproof/testvectors/rsa_signature_3072_sha384_test.json",
-        "../wycheproof/testvectors/rsa_signature_3072_sha512_test.json",
-        "../wycheproof/testvectors/rsa_signature_4096_sha384_test.json",
-        "../wycheproof/testvectors/rsa_signature_4096_sha512_test.json"
+        "testvectors/rsa_signature_2048_sha256_test.json",
+        "testvectors/rsa_signature_2048_sha384_test.json",
+        "testvectors/rsa_signature_2048_sha512_test.json",
+        "testvectors/rsa_signature_3072_sha256_test.json",
+        "testvectors/rsa_signature_3072_sha384_test.json",
+        "testvectors/rsa_signature_3072_sha512_test.json",
+        "testvectors/rsa_signature_4096_sha384_test.json",
+        "testvectors/rsa_signature_4096_sha512_test.json"
       };
 
   @Theory

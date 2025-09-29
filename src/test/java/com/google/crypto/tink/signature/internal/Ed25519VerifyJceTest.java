@@ -120,7 +120,7 @@ public final class Ed25519VerifyJceTest {
     Assume.assumeTrue(!TinkFips.useOnlyFips() && Ed25519VerifyJce.isSupported());
 
     JsonObject json =
-        WycheproofTestUtil.readJson("../wycheproof/testvectors/eddsa_test.json");
+        WycheproofTestUtil.readJson("testvectors/eddsa_test.json");
     ArrayList<String> errors = new ArrayList<>();
     JsonArray testGroups = json.get("testGroups").getAsJsonArray();
     for (int i = 0; i < testGroups.size(); i++) {

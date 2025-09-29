@@ -286,7 +286,7 @@ public class ChunkedAesCmacConscryptTest {
     assumeTrue(supportsAesCmac(CONSCRYPT));
 
     JsonObject json =
-        WycheproofTestUtil.readJson("../wycheproof/testvectors/aes_cmac_test.json");
+        WycheproofTestUtil.readJson("testvectors/aes_cmac_test.json");
     ArrayList<String> errors = new ArrayList<>();
     JsonArray testGroups = json.getAsJsonArray("testGroups");
     for (int i = 0; i < testGroups.size(); i++) {

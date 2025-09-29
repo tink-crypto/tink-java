@@ -76,7 +76,7 @@ public class KwpTest {
   @Test
   public void testWycheproof() throws Exception {
     JsonObject json =
-        WycheproofTestUtil.readJson("../wycheproof/testvectors/kwp_test.json");
+        WycheproofTestUtil.readJson("testvectors/kwp_test.json");
     ArrayList<String> errors = new ArrayList<>();
     JsonArray testGroups = json.getAsJsonArray("testGroups");
     for (int i = 0; i < testGroups.size(); i++) {

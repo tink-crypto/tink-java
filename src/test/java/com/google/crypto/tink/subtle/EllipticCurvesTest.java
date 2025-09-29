@@ -512,7 +512,7 @@ public class EllipticCurvesTest {
     //   files ecdh_<curve>_ecpoint.json, which encode the public key point just as DER
     //   encoded bitsequence.
     JsonObject json =
-        WycheproofTestUtil.readJson("../wycheproof/testvectors/ecdh_test.json");
+        WycheproofTestUtil.readJson("testvectors/ecdh_test.json");
     ArrayList<String> errors = new ArrayList<>();
     ArrayList<String> warnings = new ArrayList<>();
 

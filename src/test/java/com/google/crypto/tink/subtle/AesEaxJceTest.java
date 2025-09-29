@@ -65,7 +65,7 @@ public class AesEaxJceTest {
     Assume.assumeFalse(TinkFips.useOnlyFips());
 
     JsonObject json =
-        WycheproofTestUtil.readJson("../wycheproof/testvectors/aes_eax_test.json");
+        WycheproofTestUtil.readJson("testvectors/aes_eax_test.json");
     ArrayList<String> errors = new ArrayList<>();
     JsonArray testGroups = json.getAsJsonArray("testGroups");
     for (int i = 0; i < testGroups.size(); i++) {

@@ -127,11 +127,11 @@ public class RsaSsaPssVerifyConscryptTest {
   @DataPoints("wycheproofTestVectorPaths")
   public static final String[] wycheproofTestVectorPaths =
       new String[] {
-        "../wycheproof/testvectors/rsa_pss_2048_sha256_mgf1_0_test.json",
-        "../wycheproof/testvectors/rsa_pss_2048_sha256_mgf1_32_test.json",
-        "../wycheproof/testvectors/rsa_pss_3072_sha256_mgf1_32_test.json",
-        "../wycheproof/testvectors/rsa_pss_4096_sha256_mgf1_32_test.json",
-        "../wycheproof/testvectors/rsa_pss_4096_sha512_mgf1_32_test.json"
+        "testvectors/rsa_pss_2048_sha256_mgf1_0_test.json",
+        "testvectors/rsa_pss_2048_sha256_mgf1_32_test.json",
+        "testvectors/rsa_pss_3072_sha256_mgf1_32_test.json",
+        "testvectors/rsa_pss_4096_sha256_mgf1_32_test.json",
+        "testvectors/rsa_pss_4096_sha512_mgf1_32_test.json"
       };
 
   @Theory

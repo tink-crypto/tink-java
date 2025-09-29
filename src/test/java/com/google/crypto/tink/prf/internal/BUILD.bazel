@@ -153,7 +153,7 @@ java_test(
     name = "AesCmacPrfWycheproofTestUtilTest",
     size = "small",
     srcs = ["AesCmacPrfWycheproofTestUtilTest.java"],
-    data = ["@wycheproof//testvectors:aes_cmac"],
+    data = ["//testvectors:all"],
     deps = [
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink/prf:aes_cmac_prf_key",
@@ -171,7 +171,7 @@ java_test(
     name = "PrfAesCmacConscryptTest",
     size = "small",
     srcs = ["PrfAesCmacConscryptTest.java"],
-    data = ["@wycheproof//testvectors:all"],
+    data = ["//testvectors:all"],
     deps = [
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink/internal:util",
@@ -211,7 +211,7 @@ java_test(
     name = "PrfAesCmacTest",
     size = "small",
     srcs = ["PrfAesCmacTest.java"],
-    data = ["@wycheproof//testvectors:aes_cmac"],
+    data = ["//testvectors:all"],
     deps = [
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink/prf:aes_cmac_prf_key",

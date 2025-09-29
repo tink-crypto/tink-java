@@ -280,7 +280,7 @@ public final class X25519ConscryptTest {
     X25519 x25519Conscrypt = X25519Conscrypt.create();
 
     JsonObject json =
-        WycheproofTestUtil.readJson("../wycheproof/testvectors/x25519_test.json");
+        WycheproofTestUtil.readJson("testvectors/x25519_test.json");
     ArrayList<String> errors = new ArrayList<>();
     JsonArray testGroups = json.getAsJsonArray("testGroups");
     for (int i = 0; i < testGroups.size(); i++) {

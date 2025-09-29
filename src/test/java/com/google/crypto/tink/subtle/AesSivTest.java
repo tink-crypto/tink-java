@@ -50,7 +50,7 @@ public class AesSivTest {
     Assume.assumeFalse(TinkFips.useOnlyFips());
 
     JsonObject json =
-        WycheproofTestUtil.readJson("../wycheproof/testvectors/aes_siv_cmac_test.json");
+        WycheproofTestUtil.readJson("testvectors/aes_siv_cmac_test.json");
     JsonArray testGroups = json.getAsJsonArray("testGroups");
     for (int i = 0; i < testGroups.size(); i++) {
       JsonObject group = testGroups.get(i).getAsJsonObject();
@@ -98,7 +98,7 @@ public class AesSivTest {
     Assume.assumeFalse(TinkFips.useOnlyFips());
 
     JsonObject json =
-        WycheproofTestUtil.readJson("../wycheproof/testvectors/aes_siv_cmac_test.json");
+        WycheproofTestUtil.readJson("testvectors/aes_siv_cmac_test.json");
     JsonArray testGroups = json.getAsJsonArray("testGroups");
     for (int i = 0; i < testGroups.size(); i++) {
       JsonObject group = testGroups.get(i).getAsJsonObject();
