@@ -224,9 +224,6 @@ final class MlDsaArithmeticUtil {
   // Ring of (23-bit long) integers modulo q = 2^23 - 2^13 + 1 = 8380417.
   static final class RingZq {
 
-    private static final int TWO_POW_D_MINUS_ONE = (1 << (MlDsaConstants.D - 1));
-    private static final int TWO_POW_D = (1 << MlDsaConstants.D);
-
     static final RingZq INVALID = new RingZq(-1);
     static final int Q = 8380417;
 
@@ -259,7 +256,11 @@ final class MlDsaArithmeticUtil {
     // Algorithm 35 (Power2Round)
     RingZqPair power2Round() {
       int rPlus = r % Q;
-      int rZero = (((rPlus + TWO_POW_D_MINUS_ONE - 1) & (TWO_POW_D - 1)) - (TWO_POW_D_MINUS_ONE - 1) + Q) % Q;
+      int rZero =
+          (((rPlus + MlDsaConstants.TWO_POW_D_MINUS_ONE - 1) & (MlDsaConstants.TWO_POW_D - 1))
+                  - (MlDsaConstants.TWO_POW_D_MINUS_ONE - 1)
+                  + Q)
+              % Q;
       int rOne = ((rPlus - rZero + Q) % Q) >> MlDsaConstants.D;
       return new RingZqPair(rOne, rZero);
     }

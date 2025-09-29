@@ -632,9 +632,30 @@ android_library(
     deps = ["//src/main/java/com/google/crypto/tink/signature:ml_dsa_parameters-android"],
 )
 
+android_library(
+    name = "ml_dsa_marshal_util-android",
+    srcs = ["MlDsaMarshalUtil.java"],
+    deps = [
+        ":ml_dsa_arithmetic_util-android",
+        ":ml_dsa_constants-android",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access-android",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes-android",
+    ],
+)
+
 java_library(
     name = "ml_dsa_constants",
     srcs = ["MlDsaConstants.java"],
     deps = ["//src/main/java/com/google/crypto/tink/signature:ml_dsa_parameters"],
 )
 
+java_library(
+    name = "ml_dsa_marshal_util",
+    srcs = ["MlDsaMarshalUtil.java"],
+    deps = [
+        ":ml_dsa_arithmetic_util",
+        ":ml_dsa_constants",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
+    ],
+)

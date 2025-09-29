@@ -22,11 +22,15 @@ final class MlDsaConstants {
 
   static final int ML_DSA_65_K = 6;
   static final int ML_DSA_65_L = 5;
+  static final int ML_DSA_65_ETA = 4;
   static final int ML_DSA_87_K = 8;
   static final int ML_DSA_87_L = 7;
+  static final int ML_DSA_87_ETA = 2;
   static final int DEGREE = 256;
   // Number of bits dropped from t
   static final int D = 13;
+  static final int TWO_POW_D = (1 << D);
+  static final int TWO_POW_D_MINUS_ONE = (1 << (D - 1));
   // bitlen(Q - 1) - d
   static final int COMPRESSED_PK_BIT_LENGTH = 10;
   static final int RHO_LENGTH = 32;
