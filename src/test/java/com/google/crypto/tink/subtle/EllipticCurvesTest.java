@@ -17,10 +17,12 @@
 package com.google.crypto.tink.subtle;
 
 import static com.google.common.truth.Truth.assertThat;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.testing.TestUtil;
@@ -32,16 +34,20 @@ import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
+import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
 import java.security.spec.EllipticCurve;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import org.junit.Test;
+import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.FromDataPoints;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /** Unit tests for {@link com.google.crypto.tink.subtle.EllipticCurves}. */
-@RunWith(JUnit4.class)
+@RunWith(Theories.class)
 public class EllipticCurvesTest {
   // The tests are from
   // http://google.github.io/end-to-end/api/source/src/javascript/crypto/e2e/ecc/ecdh_testdata.js.src.html.
@@ -69,9 +75,21 @@ public class EllipticCurvesTest {
       this.x = new BigInteger(x);
       this.y = new BigInteger(y);
     }
+
+    @Override
+    public String toString() {
+      return "(curve = "
+          + curve
+          + ", format = "
+          + format
+          + ", encoded = "
+          + Hex.encode(encoded)
+          + ")";
+    }
   }
 
-  protected static final TestVector2[] testVectors2 = {
+  @DataPoints("testCases")
+  public static final TestVector2[] testVectors2 = {
     // NIST_P256
     new TestVector2(
         EllipticCurves.CurveType.NIST_P256,
@@ -377,6 +395,86 @@ public class EllipticCurvesTest {
       byte[] encoded = EllipticCurves.pointEncode(curve, test.format, p);
       assertEquals(Hex.encode(encoded), Hex.encode(test.encoded));
     }
+  }
+
+  @Theory
+  public void getECPublicKey_WithCurveType_works(@FromDataPoints("testCases") TestVector2 test)
+      throws Exception {
+    ECParameterSpec expectedSpec = EllipticCurves.getCurveSpec(test.curve);
+
+    ECPublicKey key = EllipticCurves.getEcPublicKey(test.curve, test.format, test.encoded);
+
+    assertEquals(key.getW().getAffineX(), test.x);
+    assertEquals(key.getW().getAffineY(), test.y);
+    assertTrue(key.getParams().getCurve().equals(expectedSpec.getCurve()));
+  }
+
+  @Theory
+  public void getECPublicKey_WithCurveSpec_works(@FromDataPoints("testCases") TestVector2 test)
+      throws Exception {
+    ECParameterSpec spec = EllipticCurves.getCurveSpec(test.curve);
+
+    ECPublicKey key = EllipticCurves.getEcPublicKey(spec, test.format, test.encoded);
+
+    assertEquals(key.getW().getAffineX(), test.x);
+    assertEquals(key.getW().getAffineY(), test.y);
+    assertEquals(key.getParams().getCurve(), spec.getCurve());
+  }
+
+  @Theory
+  public void getECPublicKey_WithXAndY_works(@FromDataPoints("testCases") TestVector2 test)
+      throws Exception {
+    ECParameterSpec spec = EllipticCurves.getCurveSpec(test.curve);
+
+    ECPublicKey key =
+        EllipticCurves.getEcPublicKey(test.curve, test.x.toByteArray(), test.y.toByteArray());
+
+    assertEquals(key.getW().getAffineX(), test.x);
+    assertEquals(key.getW().getAffineY(), test.y);
+    assertEquals(key.getParams().getCurve(), spec.getCurve());
+  }
+
+  @Theory
+  public void getECPublicKey_WithX509Encoding_works(@FromDataPoints("testCases") TestVector2 test)
+      throws Exception {
+    if (Util.isAndroid()
+        && Util.getAndroidApiLevel() <= 27
+        && test.curve == EllipticCurves.CurveType.NIST_P521) {
+      // There was a bug in older versions of Android, so we skip these tests.
+      return;
+    }
+    ECPublicKey p = EllipticCurves.getEcPublicKey(test.curve, test.format, test.encoded);
+    byte[] x509Encoded = p.getEncoded();
+    ECParameterSpec spec = p.getParams();
+
+    ECPublicKey key = EllipticCurves.getEcPublicKey(x509Encoded);
+
+    assertEquals(key.getW().getAffineX(), test.x);
+    assertEquals(key.getW().getAffineY(), test.y);
+    assertTrue(key.getParams().getCurve().equals(spec.getCurve()));
+  }
+
+  @Theory
+  public void getECPublicKey_invalidKey_throws(@FromDataPoints("testCases") TestVector2 test)
+      throws Exception {
+    byte[] invalidValue = "invalid".getBytes(UTF_8);
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> EllipticCurves.getEcPublicKey(test.curve, test.format, invalidValue));
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            EllipticCurves.getEcPublicKey(
+                EllipticCurves.getCurveSpec(test.curve), test.format, invalidValue));
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> EllipticCurves.getEcPublicKey(test.curve, test.x.toByteArray(), invalidValue));
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> EllipticCurves.getEcPublicKey(test.curve, invalidValue, test.y.toByteArray()));
   }
 
   @Test
