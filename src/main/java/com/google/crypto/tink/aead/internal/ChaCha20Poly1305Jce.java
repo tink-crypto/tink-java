@@ -29,9 +29,9 @@ import com.google.crypto.tink.subtle.Random;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
+import java.security.Provider;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.Arrays;
-import javax.annotation.Nullable;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
@@ -82,64 +82,68 @@ public final class ChaCha20Poly1305Jce implements Aead {
     }
   }
 
-  // A thread-local instance of the ChaCha20Poly1305, or null if ChaCha20Poly1305 is not supported.
-  private static final ThreadLocal<Cipher> localCipher =
-      new ThreadLocal<Cipher>() {
-        @Nullable
-        @Override
-        protected Cipher initialValue() {
-          try {
-            Cipher cipher = EngineFactory.CIPHER.getInstance(CIPHER_NAME);
-            if (!isValid(cipher)) {
-              return null;
-            }
-            return cipher;
-          } catch (GeneralSecurityException ex) {
-            // ChaCha20Poly1305 is not supported.
-            return null;
-          }
-        }
-      };
-
   @SuppressWarnings("Immutable")
   private final SecretKey keySpec;
 
   @SuppressWarnings("Immutable")
   private final byte[] outputPrefix;
 
-  private ChaCha20Poly1305Jce(final byte[] key, final byte[] outputPrefix)
+  @SuppressWarnings("Immutable")
+  private final Provider provider;
+
+  private ChaCha20Poly1305Jce(final byte[] key, final byte[] outputPrefix, Provider provider)
       throws GeneralSecurityException {
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException("Can not use ChaCha20Poly1305 in FIPS-mode.");
-    }
-    if (!isSupported()) {
-      throw new GeneralSecurityException("JCE does not support algorithm: " + CIPHER_NAME);
     }
     if (key.length != KEY_SIZE_IN_BYTES) {
       throw new InvalidKeyException("The key length in bytes must be 32.");
     }
     this.keySpec = new SecretKeySpec(key, KEY_NAME);
     this.outputPrefix = outputPrefix;
+    this.provider = provider;
   }
 
   @AccessesPartialKey
   public static Aead create(ChaCha20Poly1305Key key) throws GeneralSecurityException {
+    // create a cipher instance to test that they are valid, and to get the provider.
+    Cipher cipher = getValidCipherInstance();
     return new ChaCha20Poly1305Jce(
         key.getKeyBytes().toByteArray(InsecureSecretKeyAccess.get()),
-        key.getOutputPrefix().toByteArray());
+        key.getOutputPrefix().toByteArray(),
+        cipher.getProvider());
   }
 
   /**
-   * Returns a thread-local instance of the ChaCha20Poly1305, or null if ChaCha20Poly1305 is
-   * not supported.
+   * Returns a valid Cipher instance, or throws an exception if the JCE does not support the
+   * algorithm.
    */
-  @Nullable
-  static Cipher getThreadLocalCipherOrNull() {
-    return localCipher.get();
+  @SuppressWarnings("InsecureCryptoUsage")
+  static Cipher getValidCipherInstance() throws GeneralSecurityException {
+    Cipher cipher = EngineFactory.CIPHER.getInstance(CIPHER_NAME);
+    if (!isValid(cipher)) {
+      throw new GeneralSecurityException("JCE does not support algorithm: " + CIPHER_NAME);
+    }
+    return cipher;
+  }
+
+  /**
+   * Returns a Cipher instance.
+   *
+   * <p>Should only be called with a provider that is known to provide valid instances.
+   */
+  @SuppressWarnings("InsecureCryptoUsage")
+  static Cipher getCipherInstance(Provider provider) throws GeneralSecurityException {
+    return Cipher.getInstance(CIPHER_NAME, provider);
   }
 
   public static boolean isSupported() {
-    return localCipher.get() != null;
+    try {
+      Cipher unused = getValidCipherInstance();
+      return true;
+    } catch (GeneralSecurityException ex) {
+      return false;
+    }
   }
 
   @Override
@@ -150,7 +154,7 @@ public final class ChaCha20Poly1305Jce implements Aead {
     }
     byte[] nonce = Random.randBytes(NONCE_SIZE_IN_BYTES);
     AlgorithmParameterSpec params = new IvParameterSpec(nonce);
-    Cipher cipher = localCipher.get();
+    Cipher cipher = getCipherInstance(provider);
     cipher.init(Cipher.ENCRYPT_MODE, keySpec, params);
     if (associatedData != null && associatedData.length != 0) {
       cipher.updateAAD(associatedData);
@@ -198,7 +202,7 @@ public final class ChaCha20Poly1305Jce implements Aead {
         /* length= */ NONCE_SIZE_IN_BYTES);
     AlgorithmParameterSpec params = new IvParameterSpec(nonce);
 
-    Cipher cipher = localCipher.get();
+    Cipher cipher = getCipherInstance(provider);
     cipher.init(Cipher.DECRYPT_MODE, keySpec, params);
     if (associatedData != null && associatedData.length != 0) {
       cipher.updateAAD(associatedData);

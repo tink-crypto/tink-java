@@ -27,6 +27,7 @@ import com.google.crypto.tink.subtle.Random;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
+import java.security.Provider;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.Arrays;
 import javax.crypto.Cipher;
@@ -49,7 +50,6 @@ public final class XChaCha20Poly1305Jce implements Aead {
   private static final int TAG_SIZE_IN_BYTES = 16;
   private static final int KEY_SIZE_IN_BYTES = 32;
 
-  private static final String CIPHER_NAME = "ChaCha20-Poly1305";
   private static final String KEY_NAME = "ChaCha20";
 
   @SuppressWarnings("Immutable")
@@ -58,30 +58,34 @@ public final class XChaCha20Poly1305Jce implements Aead {
   @SuppressWarnings("Immutable")
   private final byte[] outputPrefix;
 
-  private XChaCha20Poly1305Jce(final byte[] key, final byte[] outputPrefix)
+  @SuppressWarnings("Immutable")
+  private final Provider provider;
+
+  private XChaCha20Poly1305Jce(final byte[] key, final byte[] outputPrefix, Provider provider)
       throws GeneralSecurityException {
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException("Can not use ChaCha20Poly1305 in FIPS-mode.");
-    }
-    if (!isSupported()) {
-      throw new GeneralSecurityException("JCE does not support algorithm: " + CIPHER_NAME);
     }
     if (key.length != KEY_SIZE_IN_BYTES) {
       throw new InvalidKeyException("The key length in bytes must be 32.");
     }
     this.key = key;
     this.outputPrefix = outputPrefix;
+    this.provider = provider;
   }
 
   @AccessesPartialKey
   public static Aead create(XChaCha20Poly1305Key key) throws GeneralSecurityException {
+    // create a cipher instance to test that they are valid, and to get the provider.
+    Cipher cipher = ChaCha20Poly1305Jce.getValidCipherInstance();
     return new XChaCha20Poly1305Jce(
         key.getKeyBytes().toByteArray(InsecureSecretKeyAccess.get()),
-        key.getOutputPrefix().toByteArray());
+        key.getOutputPrefix().toByteArray(),
+        cipher.getProvider());
   }
 
   public static boolean isSupported() {
-    return ChaCha20Poly1305Jce.getThreadLocalCipherOrNull() != null;
+    return ChaCha20Poly1305Jce.isSupported();
   }
 
   @Override
@@ -94,7 +98,7 @@ public final class XChaCha20Poly1305Jce implements Aead {
     byte[] subkey = ChaCha20Util.hChaCha20(key, nonce);
     SecretKeySpec keySpec = new SecretKeySpec(subkey, KEY_NAME);
     AlgorithmParameterSpec params = new IvParameterSpec(getChaCha20Nonce(nonce));
-    Cipher cipher = ChaCha20Poly1305Jce.getThreadLocalCipherOrNull();
+    Cipher cipher = ChaCha20Poly1305Jce.getCipherInstance(provider);
     cipher.init(Cipher.ENCRYPT_MODE, keySpec, params);
     if (associatedData != null && associatedData.length != 0) {
       cipher.updateAAD(associatedData);
@@ -142,7 +146,7 @@ public final class XChaCha20Poly1305Jce implements Aead {
     byte[] subkey = ChaCha20Util.hChaCha20(key, nonce);
     SecretKeySpec keySpec = new SecretKeySpec(subkey, KEY_NAME);
     AlgorithmParameterSpec params = new IvParameterSpec(getChaCha20Nonce(nonce));
-    Cipher cipher = ChaCha20Poly1305Jce.getThreadLocalCipherOrNull();
+    Cipher cipher = ChaCha20Poly1305Jce.getCipherInstance(provider);
     cipher.init(Cipher.DECRYPT_MODE, keySpec, params);
     if (associatedData != null && associatedData.length != 0) {
       cipher.updateAAD(associatedData);

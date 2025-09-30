@@ -21,6 +21,7 @@ import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
+import java.security.Provider;
 import java.security.spec.AlgorithmParameterSpec;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -46,33 +47,34 @@ public final class InsecureNonceChaCha20Poly1305Jce {
   private static final int TAG_SIZE_IN_BYTES = 16;
   private static final int KEY_SIZE_IN_BYTES = 32;
 
-  private static final String CIPHER_NAME = "ChaCha20-Poly1305";
   private static final String KEY_NAME = "ChaCha20";
 
   @SuppressWarnings("Immutable")
   private final SecretKey keySpec;
 
-  private InsecureNonceChaCha20Poly1305Jce(final byte[] key) throws GeneralSecurityException {
+  @SuppressWarnings("Immutable")
+  private final Provider provider;
+
+  private InsecureNonceChaCha20Poly1305Jce(final byte[] key, Provider provider) throws GeneralSecurityException {
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException("Can not use ChaCha20Poly1305 in FIPS-mode.");
-    }
-    if (!isSupported()) {
-      throw new GeneralSecurityException("JCE does not support algorithm: " + CIPHER_NAME);
     }
     if (key.length != KEY_SIZE_IN_BYTES) {
       throw new InvalidKeyException("The key length in bytes must be 32.");
     }
     this.keySpec = new SecretKeySpec(key, KEY_NAME);
+    this.provider = provider;
   }
 
   @AccessesPartialKey
   public static InsecureNonceChaCha20Poly1305Jce create(final byte[] key)
       throws GeneralSecurityException {
-    return new InsecureNonceChaCha20Poly1305Jce(key);
+    Cipher cipher = ChaCha20Poly1305Jce.getValidCipherInstance();
+    return new InsecureNonceChaCha20Poly1305Jce(key, cipher.getProvider());
   }
 
   public static boolean isSupported() {
-    return ChaCha20Poly1305Jce.getThreadLocalCipherOrNull() != null;
+    return ChaCha20Poly1305Jce.isSupported();
   }
 
   /** Encrypts {@code plaintext} with {@code nonce} and {@code associatedData}. */
@@ -97,7 +99,7 @@ public final class InsecureNonceChaCha20Poly1305Jce {
       throw new GeneralSecurityException("nonce length must be " + NONCE_SIZE_IN_BYTES + " bytes.");
     }
     AlgorithmParameterSpec params = new IvParameterSpec(nonce);
-    Cipher cipher = ChaCha20Poly1305Jce.getThreadLocalCipherOrNull();
+    Cipher cipher = ChaCha20Poly1305Jce.getCipherInstance(provider);
     cipher.init(Cipher.ENCRYPT_MODE, keySpec, params);
     if (associatedData != null && associatedData.length != 0) {
       cipher.updateAAD(associatedData);
@@ -144,7 +146,7 @@ public final class InsecureNonceChaCha20Poly1305Jce {
     }
     AlgorithmParameterSpec params = new IvParameterSpec(nonce);
 
-    Cipher cipher = ChaCha20Poly1305Jce.getThreadLocalCipherOrNull();
+    Cipher cipher = ChaCha20Poly1305Jce.getCipherInstance(provider);
     cipher.init(Cipher.DECRYPT_MODE, keySpec, params);
     if (associatedData != null && associatedData.length != 0) {
       cipher.updateAAD(associatedData);
