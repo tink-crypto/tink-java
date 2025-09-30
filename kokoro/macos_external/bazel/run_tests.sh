@@ -24,7 +24,7 @@ set -euo pipefail
 if [[ -n "${KOKORO_ROOT:-}" ]] ; then
   readonly TINK_BASE_DIR="$(echo "${KOKORO_ARTIFACTS_DIR}"/git*)"
   cd "${TINK_BASE_DIR}/tink_java"
-  export JAVA_HOME=$(/usr/libexec/java_home -v1.8)
+  export JAVA_HOME=$(/usr/libexec/java_home -v11)
   export XCODE_VERSION="14.1"
   export DEVELOPER_DIR="/Applications/Xcode.app/Contents/Developer"
 fi
@@ -37,29 +37,42 @@ if [[ -n "${TINK_REMOTE_BAZEL_CACHE_GCS_BUCKET:-}" ]]; then
 fi
 readonly CACHE_FLAGS
 
-
 echo "------------- Installing Android SDK"
 source ./kokoro/testutils/update_android_sdk.sh
 export ANDROID_HOME=/tmp/android-sdk-30
 
-echo "---------- BUILDING MAIN"
-time bazelisk build "${CACHE_FLAGS[@]}" -- ...
-echo "---------- TESTING MAIN"
-time bazelisk test "${CACHE_FLAGS[@]}" -- ...
+echo "Java home: ${JAVA_HOME}"
 
-cd examples
-
-echo "---------- BUILDING EXAMPLES"
-time bazelisk build "${CACHE_FLAGS[@]}" -- ...
-echo "---------- TESTING EXAMPLES"
-time bazelisk test "${CACHE_FLAGS[@]}" -- ...
-
-# TODO: b/428261485 -- enable this.
-# echo "---------- TURNING ON BAZELMOD"
-# cd ..
-# sed -i.bak "s/always --noenable_bzlmod//g" .bazelrc
+## We only test MacOS with bzlmod. We can then update to Java 11 properly.
+cat > .bazelmod << EOF
+always --noenable_bzlmod
+always --enable_workspace
+# Minumum C++ version. Override it building this project with
+# `bazel build --cxxopt='-std=c++<XY>' --host_cxxopt='c++<XY>' ...`
+# (Both -std and --host_cxxopt must be set to force the desired version.)
+build --cxxopt='-std=c++17' --host_cxxopt='-std=c++17'
+build --java_language_version=11
+build --java_runtime_version=remotejdk_11
+# Silence all C/C++ warnings in external code.
 #
-# echo "---------- BUILDING MAIN (bzlmod)"
-# time bazelisk build "${CACHE_FLAGS[@]}" -- ...
-# echo "---------- TESTING MAIN (bzlmod)"
-# time bazelisk test "${CACHE_FLAGS[@]}" -- ...
+# Note that this will not silence warnings from external headers included
+# in project code.
+build --per_file_copt=external/.*@-w
+build --host_per_file_copt=external/.*@-w
+test --test_output=errors
+EOF
+
+sed -i.bak "sXandroid-sdk-30Xtmp/android-sdk-30Xg" MODULE.bazel
+
+echo ">>>> .bazelrc"
+cat .bazelrc
+echo "<<<<"
+
+echo ">>>> MODULE.bazel"
+cat MODULE.bazel
+echo "<<<<"
+
+echo "---------- BUILDING MAIN (bzlmod)"
+time bazelisk build "${CACHE_FLAGS[@]}" -- ...
+echo "---------- TESTING MAIN (bzlmod)"
+time bazelisk test "${CACHE_FLAGS[@]}" -- ...
