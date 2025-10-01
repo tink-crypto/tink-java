@@ -27,7 +27,7 @@ import java.security.GeneralSecurityException;
  * <h3>Warning</h3>
  *
  * <p>Unlike {@link Aead}, implementations of this interface are not semantically secure, because
- * encrypting the same plaintex always yields the same ciphertext.
+ * encrypting the same plaintext always yields the same ciphertext.
  *
  * <h3>Security guarantees</h3>
  *
