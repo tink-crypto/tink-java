@@ -18,11 +18,7 @@ package com.google.crypto.tink.subtle;
 
 import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
 
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.testing.TestUtil;
@@ -58,6 +54,7 @@ public class EllipticCurvesTest {
    */
   protected static class TestVector2 {
     protected EllipticCurves.CurveType curve;
+    protected ECParameterSpec curveSpec;
     protected EllipticCurves.PointFormatType format;
     protected byte[] encoded;
     BigInteger x;
@@ -65,11 +62,13 @@ public class EllipticCurvesTest {
 
     protected TestVector2(
         EllipticCurves.CurveType curve,
+        ECParameterSpec curveSpec,
         EllipticCurves.PointFormatType format,
         String encodedHex,
         String x,
         String y) {
       this.curve = curve;
+      this.curveSpec = curveSpec;
       this.format = format;
       this.encoded = Hex.decode(encodedHex);
       this.x = new BigInteger(x);
@@ -93,6 +92,7 @@ public class EllipticCurvesTest {
     // NIST_P256
     new TestVector2(
         EllipticCurves.CurveType.NIST_P256,
+        EllipticCurves.getNistP256Params(),
         EllipticCurves.PointFormatType.UNCOMPRESSED,
         "04"
             + "b0cfc7bc02fc980d858077552947ffb449b10df8949dee4e56fe21e016dcb25a"
@@ -101,6 +101,7 @@ public class EllipticCurvesTest {
         "11093679777528052772423074391650378811758820120351664471899251711300542565879"),
     new TestVector2(
         EllipticCurves.CurveType.NIST_P256,
+        EllipticCurves.getNistP256Params(),
         EllipticCurves.PointFormatType.DO_NOT_USE_CRUNCHY_UNCOMPRESSED,
         "b0cfc7bc02fc980d858077552947ffb449b10df8949dee4e56fe21e016dcb25a"
             + "1886ccdca5487a6772f9401888203f90587cc00a730e2b83d5c6f89b3b568df7",
@@ -108,6 +109,7 @@ public class EllipticCurvesTest {
         "11093679777528052772423074391650378811758820120351664471899251711300542565879"),
     new TestVector2(
         EllipticCurves.CurveType.NIST_P256,
+        EllipticCurves.getNistP256Params(),
         EllipticCurves.PointFormatType.COMPRESSED,
         "03b0cfc7bc02fc980d858077552947ffb449b10df8949dee4e56fe21e016dcb25a",
         "79974177209371530366349631093481213364328002500948308276357601809416549347930",
@@ -115,6 +117,7 @@ public class EllipticCurvesTest {
     // Exceptional point: x==0
     new TestVector2(
         EllipticCurves.CurveType.NIST_P256,
+        EllipticCurves.getNistP256Params(),
         EllipticCurves.PointFormatType.UNCOMPRESSED,
         "04"
             + "0000000000000000000000000000000000000000000000000000000000000000"
@@ -123,6 +126,7 @@ public class EllipticCurvesTest {
         "46263761741508638697010950048709651021688891777877937875096931459006746039284"),
     new TestVector2(
         EllipticCurves.CurveType.NIST_P256,
+        EllipticCurves.getNistP256Params(),
         EllipticCurves.PointFormatType.DO_NOT_USE_CRUNCHY_UNCOMPRESSED,
         "0000000000000000000000000000000000000000000000000000000000000000"
             + "66485c780e2f83d72433bd5d84a06bb6541c2af31dae871728bf856a174f93f4",
@@ -130,6 +134,7 @@ public class EllipticCurvesTest {
         "46263761741508638697010950048709651021688891777877937875096931459006746039284"),
     new TestVector2(
         EllipticCurves.CurveType.NIST_P256,
+        EllipticCurves.getNistP256Params(),
         EllipticCurves.PointFormatType.COMPRESSED,
         "020000000000000000000000000000000000000000000000000000000000000000",
         "0",
@@ -137,6 +142,7 @@ public class EllipticCurvesTest {
     // Exceptional point: x==-3
     new TestVector2(
         EllipticCurves.CurveType.NIST_P256,
+        EllipticCurves.getNistP256Params(),
         EllipticCurves.PointFormatType.UNCOMPRESSED,
         "04"
             + "ffffffff00000001000000000000000000000000fffffffffffffffffffffffc"
@@ -145,6 +151,7 @@ public class EllipticCurvesTest {
         "11508551065151498768481026661199445482476508121209842448718573150489103679777"),
     new TestVector2(
         EllipticCurves.CurveType.NIST_P256,
+        EllipticCurves.getNistP256Params(),
         EllipticCurves.PointFormatType.DO_NOT_USE_CRUNCHY_UNCOMPRESSED,
         "ffffffff00000001000000000000000000000000fffffffffffffffffffffffc"
             + "19719bebf6aea13f25c96dfd7c71f5225d4c8fc09eb5a0ab9f39e9178e55c121",
@@ -152,6 +159,7 @@ public class EllipticCurvesTest {
         "11508551065151498768481026661199445482476508121209842448718573150489103679777"),
     new TestVector2(
         EllipticCurves.CurveType.NIST_P256,
+        EllipticCurves.getNistP256Params(),
         EllipticCurves.PointFormatType.COMPRESSED,
         "03ffffffff00000001000000000000000000000000fffffffffffffffffffffffc",
         "115792089210356248762697446949407573530086143415290314195533631308867097853948",
@@ -159,6 +167,7 @@ public class EllipticCurvesTest {
     // NIST_P384
     new TestVector2(
         EllipticCurves.CurveType.NIST_P384,
+        EllipticCurves.getNistP384Params(),
         EllipticCurves.PointFormatType.UNCOMPRESSED,
         "04aa87ca22be8b05378eb1c71ef320ad746e1d3b628ba79b9859f741e082542a"
             + "385502f25dbf55296c3a545e3872760ab73617de4a96262c6f5d9e98bf9292dc"
@@ -170,6 +179,7 @@ public class EllipticCurvesTest {
             + "480503199884419224438643760392947333078086511627871"),
     new TestVector2(
         EllipticCurves.CurveType.NIST_P384,
+        EllipticCurves.getNistP384Params(),
         EllipticCurves.PointFormatType.COMPRESSED,
         "03aa87ca22be8b05378eb1c71ef320ad746e1d3b628ba79b9859f741e082542a"
             + "385502f25dbf55296c3a545e3872760ab7",
@@ -180,6 +190,7 @@ public class EllipticCurvesTest {
     // x = 0
     new TestVector2(
         EllipticCurves.CurveType.NIST_P384,
+        EllipticCurves.getNistP384Params(),
         EllipticCurves.PointFormatType.UNCOMPRESSED,
         "0400000000000000000000000000000000000000000000000000000000000000"
             + "00000000000000000000000000000000003cf99ef04f51a5ea630ba3f9f960dd"
@@ -190,6 +201,7 @@ public class EllipticCurvesTest {
             + "652610803541482195894618304099771370981414591681054"),
     new TestVector2(
         EllipticCurves.CurveType.NIST_P384,
+        EllipticCurves.getNistP384Params(),
         EllipticCurves.PointFormatType.COMPRESSED,
         "0200000000000000000000000000000000000000000000000000000000000000"
             + "0000000000000000000000000000000000",
@@ -199,6 +211,7 @@ public class EllipticCurvesTest {
     // x = 2
     new TestVector2(
         EllipticCurves.CurveType.NIST_P384,
+        EllipticCurves.getNistP384Params(),
         EllipticCurves.PointFormatType.UNCOMPRESSED,
         "0400000000000000000000000000000000000000000000000000000000000000"
             + "0000000000000000000000000000000002732152442fb6ee5c3e6ce1d920c059"
@@ -209,6 +222,7 @@ public class EllipticCurvesTest {
             + "4887974043472116432532980617621641492831213601947059"),
     new TestVector2(
         EllipticCurves.CurveType.NIST_P384,
+        EllipticCurves.getNistP384Params(),
         EllipticCurves.PointFormatType.COMPRESSED,
         "0300000000000000000000000000000000000000000000000000000000000000"
             + "0000000000000000000000000000000002",
@@ -218,6 +232,7 @@ public class EllipticCurvesTest {
     // x = -3
     new TestVector2(
         EllipticCurves.CurveType.NIST_P384,
+        EllipticCurves.getNistP384Params(),
         EllipticCurves.PointFormatType.UNCOMPRESSED,
         "04ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
             + "feffffffff0000000000000000fffffffc2de9de09a95b74e6b2c430363e1afb"
@@ -229,6 +244,7 @@ public class EllipticCurvesTest {
             + "582071247913794644254895122656050391930754095909911"),
     new TestVector2(
         EllipticCurves.CurveType.NIST_P384,
+        EllipticCurves.getNistP384Params(),
         EllipticCurves.PointFormatType.COMPRESSED,
         "03ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
             + "feffffffff0000000000000000fffffffc",
@@ -239,6 +255,7 @@ public class EllipticCurvesTest {
     // NIST_P521
     new TestVector2(
         EllipticCurves.CurveType.NIST_P521,
+        EllipticCurves.getNistP521Params(),
         EllipticCurves.PointFormatType.UNCOMPRESSED,
         "0400c6858e06b70404e9cd9e3ecb662395b4429c648139053fb521f828af606b"
             + "4d3dbaa14b5e77efe75928fe1dc127a2ffa8de3348b3c1856a429bf97e7e31c2"
@@ -253,6 +270,7 @@ public class EllipticCurvesTest {
             + "29196580810124344277578376784"),
     new TestVector2(
         EllipticCurves.CurveType.NIST_P521,
+        EllipticCurves.getNistP521Params(),
         EllipticCurves.PointFormatType.COMPRESSED,
         "0200c6858e06b70404e9cd9e3ecb662395b4429c648139053fb521f828af606b"
             + "4d3dbaa14b5e77efe75928fe1dc127a2ffa8de3348b3c1856a429bf97e7e31c2"
@@ -266,6 +284,7 @@ public class EllipticCurvesTest {
     // x = 0
     new TestVector2(
         EllipticCurves.CurveType.NIST_P521,
+        EllipticCurves.getNistP521Params(),
         EllipticCurves.PointFormatType.UNCOMPRESSED,
         "0400000000000000000000000000000000000000000000000000000000000000"
             + "0000000000000000000000000000000000000000000000000000000000000000"
@@ -278,6 +297,7 @@ public class EllipticCurvesTest {
             + "30035588176689756661142736775"),
     new TestVector2(
         EllipticCurves.CurveType.NIST_P521,
+        EllipticCurves.getNistP521Params(),
         EllipticCurves.PointFormatType.COMPRESSED,
         "0300000000000000000000000000000000000000000000000000000000000000"
             + "0000000000000000000000000000000000000000000000000000000000000000"
@@ -289,6 +309,7 @@ public class EllipticCurvesTest {
     // x = 1
     new TestVector2(
         EllipticCurves.CurveType.NIST_P521,
+        EllipticCurves.getNistP521Params(),
         EllipticCurves.PointFormatType.UNCOMPRESSED,
         "0400000000000000000000000000000000000000000000000000000000000000"
             + "0000000000000000000000000000000000000000000000000000000000000000"
@@ -301,6 +322,7 @@ public class EllipticCurvesTest {
             + "9570407113457901669103973732"),
     new TestVector2(
         EllipticCurves.CurveType.NIST_P521,
+        EllipticCurves.getNistP521Params(),
         EllipticCurves.PointFormatType.COMPRESSED,
         "0200000000000000000000000000000000000000000000000000000000000000"
             + "0000000000000000000000000000000000000000000000000000000000000000"
@@ -312,6 +334,7 @@ public class EllipticCurvesTest {
     // x = 2
     new TestVector2(
         EllipticCurves.CurveType.NIST_P521,
+        EllipticCurves.getNistP521Params(),
         EllipticCurves.PointFormatType.UNCOMPRESSED,
         "0400000000000000000000000000000000000000000000000000000000000000"
             + "0000000000000000000000000000000000000000000000000000000000000000"
@@ -324,6 +347,7 @@ public class EllipticCurvesTest {
             + "10134103604091376779754756815"),
     new TestVector2(
         EllipticCurves.CurveType.NIST_P521,
+        EllipticCurves.getNistP521Params(),
         EllipticCurves.PointFormatType.COMPRESSED,
         "0300000000000000000000000000000000000000000000000000000000000000"
             + "0000000000000000000000000000000000000000000000000000000000000000"
@@ -335,6 +359,7 @@ public class EllipticCurvesTest {
     // x = -2
     new TestVector2(
         EllipticCurves.CurveType.NIST_P521,
+        EllipticCurves.getNistP521Params(),
         EllipticCurves.PointFormatType.UNCOMPRESSED,
         "0401ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
             + "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
@@ -349,6 +374,7 @@ public class EllipticCurvesTest {
             + "9570407113457901669103973732"),
     new TestVector2(
         EllipticCurves.CurveType.NIST_P521,
+        EllipticCurves.getNistP521Params(),
         EllipticCurves.PointFormatType.COMPRESSED,
         "0201ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
             + "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
@@ -380,58 +406,60 @@ public class EllipticCurvesTest {
   @Test
   public void testPointDecode() throws Exception {
     for (TestVector2 test : testVectors2) {
-      EllipticCurve curve = EllipticCurves.getCurveSpec(test.curve).getCurve();
+      EllipticCurve curve = test.curveSpec.getCurve();
       ECPoint p = EllipticCurves.pointDecode(curve, test.format, test.encoded);
-      assertEquals(p.getAffineX(), test.x);
-      assertEquals(p.getAffineY(), test.y);
+      assertThat(p.getAffineX()).isEqualTo(test.x);
+      assertThat(p.getAffineY()).isEqualTo(test.y);
     }
   }
 
   @Test
   public void testPointEncode() throws Exception {
     for (TestVector2 test : testVectors2) {
-      EllipticCurve curve = EllipticCurves.getCurveSpec(test.curve).getCurve();
+      EllipticCurve curve = test.curveSpec.getCurve();
       ECPoint p = new ECPoint(test.x, test.y);
       byte[] encoded = EllipticCurves.pointEncode(curve, test.format, p);
-      assertEquals(Hex.encode(encoded), Hex.encode(test.encoded));
+      assertThat(encoded).isEqualTo(test.encoded);
     }
+  }
+
+  @Theory
+  public void getCurveSpec_works(@FromDataPoints("testCases") TestVector2 test)
+      throws Exception {
+    ECParameterSpec curveSpec = EllipticCurves.getCurveSpec(test.curve);
+
+    assertThat(curveSpec.getCurve()).isEqualTo(test.curveSpec.getCurve());
   }
 
   @Theory
   public void getECPublicKey_WithCurveType_works(@FromDataPoints("testCases") TestVector2 test)
       throws Exception {
-    ECParameterSpec expectedSpec = EllipticCurves.getCurveSpec(test.curve);
-
     ECPublicKey key = EllipticCurves.getEcPublicKey(test.curve, test.format, test.encoded);
 
-    assertEquals(key.getW().getAffineX(), test.x);
-    assertEquals(key.getW().getAffineY(), test.y);
-    assertTrue(key.getParams().getCurve().equals(expectedSpec.getCurve()));
+    assertThat(key.getW().getAffineX()).isEqualTo(test.x);
+    assertThat(key.getW().getAffineY()).isEqualTo(test.y);
+    assertThat(key.getParams().getCurve()).isEqualTo(test.curveSpec.getCurve());
   }
 
   @Theory
   public void getECPublicKey_WithCurveSpec_works(@FromDataPoints("testCases") TestVector2 test)
       throws Exception {
-    ECParameterSpec spec = EllipticCurves.getCurveSpec(test.curve);
+    ECPublicKey key = EllipticCurves.getEcPublicKey(test.curveSpec, test.format, test.encoded);
 
-    ECPublicKey key = EllipticCurves.getEcPublicKey(spec, test.format, test.encoded);
-
-    assertEquals(key.getW().getAffineX(), test.x);
-    assertEquals(key.getW().getAffineY(), test.y);
-    assertEquals(key.getParams().getCurve(), spec.getCurve());
+    assertThat(key.getW().getAffineX()).isEqualTo(test.x);
+    assertThat(key.getW().getAffineY()).isEqualTo(test.y);
+    assertThat(key.getParams().getCurve()).isEqualTo(test.curveSpec.getCurve());
   }
 
   @Theory
   public void getECPublicKey_WithXAndY_works(@FromDataPoints("testCases") TestVector2 test)
       throws Exception {
-    ECParameterSpec spec = EllipticCurves.getCurveSpec(test.curve);
-
     ECPublicKey key =
         EllipticCurves.getEcPublicKey(test.curve, test.x.toByteArray(), test.y.toByteArray());
 
-    assertEquals(key.getW().getAffineX(), test.x);
-    assertEquals(key.getW().getAffineY(), test.y);
-    assertEquals(key.getParams().getCurve(), spec.getCurve());
+    assertThat(key.getW().getAffineX()).isEqualTo(test.x);
+    assertThat(key.getW().getAffineY()).isEqualTo(test.y);
+    assertThat(key.getParams().getCurve()).isEqualTo(test.curveSpec.getCurve());
   }
 
   @Theory
@@ -443,15 +471,14 @@ public class EllipticCurvesTest {
       // There was a bug in older versions of Android, so we skip these tests.
       return;
     }
-    ECPublicKey p = EllipticCurves.getEcPublicKey(test.curve, test.format, test.encoded);
+    ECPublicKey p = EllipticCurves.getEcPublicKey(test.curveSpec, test.format, test.encoded);
     byte[] x509Encoded = p.getEncoded();
-    ECParameterSpec spec = p.getParams();
 
     ECPublicKey key = EllipticCurves.getEcPublicKey(x509Encoded);
 
-    assertEquals(key.getW().getAffineX(), test.x);
-    assertEquals(key.getW().getAffineY(), test.y);
-    assertTrue(key.getParams().getCurve().equals(spec.getCurve()));
+    assertThat(key.getW().getAffineX()).isEqualTo(test.x);
+    assertThat(key.getW().getAffineY()).isEqualTo(test.y);
+    assertThat(key.getParams().getCurve()).isEqualTo(test.curveSpec.getCurve());
   }
 
   @Theory
@@ -466,7 +493,7 @@ public class EllipticCurvesTest {
         GeneralSecurityException.class,
         () ->
             EllipticCurves.getEcPublicKey(
-                EllipticCurves.getCurveSpec(test.curve), test.format, invalidValue));
+                test.curveSpec, test.format, invalidValue));
 
     assertThrows(
         GeneralSecurityException.class,
@@ -566,17 +593,16 @@ public class EllipticCurvesTest {
   @Test
   public void testEcdsaIeee2Der() throws Exception {
     for (EcdsaIeeeDer test : ieeeDerTestVector) {
-      assertArrayEquals(
-          Hex.decode(test.hexDer), EllipticCurves.ecdsaIeee2Der(Hex.decode(test.hexIeee)));
+      assertThat(EllipticCurves.ecdsaIeee2Der(Hex.decode(test.hexIeee)))
+          .isEqualTo(Hex.decode(test.hexDer));
     }
   }
 
   @Test
   public void testEcdsaDer2Ieee() throws Exception {
     for (EcdsaIeeeDer test : ieeeDerTestVector) {
-      assertArrayEquals(
-          Hex.decode(test.hexIeee),
-          EllipticCurves.ecdsaDer2Ieee(Hex.decode(test.hexDer), test.hexIeee.length() / 2));
+      assertThat(EllipticCurves.ecdsaDer2Ieee(Hex.decode(test.hexDer), test.hexIeee.length() / 2))
+          .isEqualTo(Hex.decode(test.hexIeee));
     }
   }
 
@@ -596,7 +622,7 @@ public class EllipticCurvesTest {
   @Test
   public void testIsValidDerEncoding() throws Exception {
     for (String der : invalidEcdsaDers) {
-      assertFalse(EllipticCurves.isValidDerEncoding(Hex.decode(der)));
+      assertThat(EllipticCurves.isValidDerEncoding(Hex.decode(der))).isFalse();
     }
   }
 
