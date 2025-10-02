@@ -2,7 +2,7 @@
 
 This directory contains a simple example Maven project which uses Tink.
 
-One can build this by running `mvn package`.
+One can build this by running `mvn package` and run all tests with `mvn test`.
 
 Assuming that we have the `tink-1.18.0.jar` and `protobuf-java-4.32.1.jar`
 available, we can then run it using:
