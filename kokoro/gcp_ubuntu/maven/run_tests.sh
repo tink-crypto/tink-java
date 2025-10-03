@@ -73,3 +73,7 @@ docker run \
   --rm \
   "${CONTAINER_IMAGE}" \
   bash -c "/tink_orig_dir/tink_java/kokoro/testutils/build_maven_bundle.sh"
+
+cd "${KOKORO_ARTIFACTS_DIR}"
+mkdir -p kokoro_upload_dir/release
+cp "${TINK_BASE_DIR}"/kokoro_upload_dir/* kokoro_upload_dir/release
