@@ -117,8 +117,12 @@ bazelisk build :tink-android-snapshot-bundle
 cp bazel-bin/tink-android-snapshot-bundle.zip exported_bundles
 
 # If the file gpg_pin.txt exist then we assume that gpg_key.asc also exists.
-# The build will fail otherwise which is fine.
+# If gpg_key.asc does not exist the build will fail anyhow.
 if [[ -f "gpg_pin.txt" ]]; then
+  # We are doing an actual relase.  Hence run the tests once more in this
+  # case (otherwise we save ourselves the time)
+  bazelisk test ...
+
   bazelisk build :tink-release-bundle
   cp bazel-bin/tink-release-bundle.zip exported_bundles
   bazelisk build :tink-android-release-bundle
