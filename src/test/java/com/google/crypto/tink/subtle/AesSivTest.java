@@ -25,10 +25,8 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.daead.AesSivKey;
 import com.google.crypto.tink.daead.AesSivParameters;
-import com.google.crypto.tink.daead.subtle.DeterministicAeads;
 import com.google.crypto.tink.mac.internal.AesUtil;
 import com.google.crypto.tink.testing.WycheproofTestUtil;
-import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -38,14 +36,11 @@ import java.util.Arrays;
 import javax.crypto.AEADBadTagException;
 import org.junit.Assume;
 import org.junit.Test;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.FromDataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /** Tests for AesSiv */
-@RunWith(Theories.class)
+@RunWith(JUnit4.class)
 public class AesSivTest {
 
   private static final int KEY_SIZE_IN_BYTES = 64;
@@ -367,18 +362,15 @@ public class AesSivTest {
                 "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f"
                     + "202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f"),
             InsecureSecretKeyAccess.get());
+
     AesSivKey key = AesSivKey.builder().setParameters(parameters).setKeyBytes(keyBytes).build();
-    byte[] plaintext = Hex.decode("");
-    byte[] aad = Hex.decode("FF");
-    byte[] ciphertext = Hex.decode("1BC49C6A894EF5744A0A01D46608CBCC");
-
-    DeterministicAeads daead = AesSiv.create(key);
-    assertThat(daead.encryptDeterministically(plaintext, aad)).isEqualTo(ciphertext);
-    assertThat(daead.decryptDeterministically(ciphertext, aad)).isEqualTo(plaintext);
-
-    // also test the DeterministicAeads interface
-    assertThat(daead.encryptDeterministically(plaintext, new byte[][] {aad})).isEqualTo(ciphertext);
-    assertThat(daead.decryptDeterministically(ciphertext, new byte[][] {aad})).isEqualTo(plaintext);
+    DeterministicAead daead = AesSiv.create(key);
+    assertThat(daead.encryptDeterministically(Hex.decode(""), Hex.decode("FF")))
+        .isEqualTo(Hex.decode("1BC49C6A894EF5744A0A01D46608CBCC"));
+    assertThat(
+            daead.decryptDeterministically(
+                Hex.decode("1BC49C6A894EF5744A0A01D46608CBCC"), Hex.decode("FF")))
+        .isEqualTo(Hex.decode(""));
   }
 
   @Test
@@ -490,106 +482,5 @@ public class AesSivTest {
             InsecureSecretKeyAccess.get());
     AesSivKey key = AesSivKey.builder().setParameters(parameters).setKeyBytes(keyBytes).build();
     assertThrows(GeneralSecurityException.class, () -> AesSiv.create(key));
-  }
-
-  protected static class TestVector {
-    protected byte[] key;
-    protected byte[][] aads;
-    protected byte[] tag;
-    protected byte[] plaintext;
-    protected byte[] ciphertext;
-
-    protected TestVector(
-        String keyHex, String[] aadsHex, String tagHex, String plaintextHex, String ciphertextHex) {
-      this.key = Hex.decode(keyHex);
-      this.aads = new byte[aadsHex.length][];
-      for (int i = 0; i < aadsHex.length; i++) {
-        this.aads[i] = Hex.decode(aadsHex[i]);
-      }
-      this.plaintext = Hex.decode(plaintextHex);
-      // Tink's ciphertext is the concatenation of the tag and the ciphertext.
-      this.ciphertext = Hex.decode(tagHex + ciphertextHex);
-    }
-  }
-
-  // These test vectors are from:
-  // https://github.com/openssl/openssl/blob/master/test/recipes/30-test_evp_data/evpciph_aes_siv.txt
-
-  @DataPoints("testCases")
-  public static final TestVector[] testVectors = {
-    new TestVector(
-        "fffefdfcfbfaf9f8f7f6f5f4f3f2f1f0f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff",
-        new String[] {"101112131415161718191a1b1c1d1e1f2021222324252627"},
-        "85632d07c6e8f37f950acd320a2ecc93",
-        "112233445566778899aabbccddee",
-        "40c02b9690c4dc04daef7f6afe5c"),
-    new TestVector(
-        "fffefdfcfbfaf9f8f7f6f5f4f3f2f1f0f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff",
-        new String[] {},
-        "f1c5fdeac1f15a26779c1501f9fb7588",
-        "112233445566778899aabbccddee",
-        "27e946c669088ab06da58c5c831c"),
-    new TestVector(
-        "fffefdfcfbfaf9f8f7f6f5f4f3f2f1f0f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff",
-        new String[] {""},
-        "d1022f5b3664e5a4dfaf90f85be6f28a",
-        "112233445566778899aabbccddee",
-        "b66cff6b8eca0b79f083b39a0901"),
-    new TestVector(
-        "7f7e7d7c7b7a79787776757473727170404142434445464748494a4b4c4d4e4f",
-        new String[] {
-          "00112233445566778899aabbccddeeffdeaddadadeaddadaffeeddccbbaa99887766554433221100",
-          "102030405060708090a0",
-          "09f911029d74e35bd84156c5635688c0"
-        },
-        "7bdb6e3b432667eb06f4d14bff2fbd0f",
-        "7468697320697320736f6d6520706c61696e7465787420746f20656e6372797074207573696e67205349562d414553",
-        "cb900f2fddbe404326601965c889bf17dba77ceb094fa663b7a3f748ba8af829ea64ad544a272e9c485b62a3fd5c0d"),
-    new TestVector(
-        "7f7e7d7c7b7a79787776757473727170404142434445464748494a4b4c4d4e4f",
-        new String[] {
-          "00112233445566778899aabbccddeeffdeaddadadeaddadaffeeddccbbaa99887766554433221100",
-          "",
-          "09f911029d74e35bd84156c5635688c0"
-        },
-        "83ce6593a8fa67eb6fcd2819cedfc011",
-        "7468697320697320736f6d6520706c61696e7465787420746f20656e6372797074207573696e67205349562d414553",
-        "30d937b42f71f71f93fc2d8d702d3eac8dc7651eefcd81120081ff29d626f97f3de17f2969b691c91b69b652bf3a6d"),
-    new TestVector(
-        "7f7e7d7c7b7a79787776757473727170404142434445464748494a4b4c4d4e4f",
-        new String[] {
-          "",
-          "00112233445566778899aabbccddeeffdeaddadadeaddadaffeeddccbbaa99887766554433221100",
-          "09f911029d74e35bd84156c5635688c0"
-        },
-        "77dd4a44f5a6b41302121ee7f378de25",
-        "7468697320697320736f6d6520706c61696e7465787420746f20656e6372797074207573696e67205349562d414553",
-        "0fcd664c922464c88939d71fad7aefb864e501b0848a07d39201c1067a7288f3dadf0131a823a0bc3d588e8564a5fe"),
-    new TestVector(
-        "fffefdfcfbfaf9f8f7f6f5f4f3f2f1f0f0f1f2f3f4f5f6f7f8f9fafbfcfdfefff0f1f2f3f4f5f6f7f8f9fafbfcfdfefffffefdfcfbfaf9f8f7f6f5f4f3f2f1f0",
-        new String[] {"101112131415161718191a1b1c1d1e1f2021222324252627"},
-        "724dfb2eaf94dbb19b0ba3a299a0801e",
-        "112233445566778899aabbccddee",
-        "f3b05a55498ec2552690b89810e4"),
-  };
-
-  @Theory
-  public void testvector_works(@FromDataPoints("testCases") TestVector test)
-      throws GeneralSecurityException {
-    if (TinkFips.useOnlyFips()) {
-      // We can't run these tests in FIPS mode.
-      // And we can't use Assume.assumeFalse here, because that would make all test
-      // cases be skipped, and the framework doesn't like that. So we skip the test
-      // by returning.
-      return;
-    }
-
-    Bytes emptyOutputPrefix = Bytes.copyFrom(new byte[0]);
-    AesSiv aesSiv = new AesSiv(test.key, emptyOutputPrefix);
-
-    assertThat(aesSiv.encryptDeterministically(test.plaintext, test.aads))
-        .isEqualTo(test.ciphertext);
-    assertThat(aesSiv.decryptDeterministically(test.ciphertext, test.aads))
-        .isEqualTo(test.plaintext);
   }
 }
