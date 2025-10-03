@@ -99,6 +99,20 @@ mkdir exported_bundles
 bazelisk build :tink-snapshot-bundle
 cp bazel-bin/tink-snapshot-bundle.zip exported_bundles
 
+# Run tests in https://github.com/tink-crypto/tink-java/tree/main/examples/maven
+{
+  TMP_JAR_DIR=$(mktemp -d)
+  unzip bazel-bin/tink-snapshot-bundle.zip -d "${TMP_JAR_DIR}"
+  mvn install:install-file \
+        "-Dfile=${TMP_JAR_DIR}/com/google/crypto/tink/tink/HEAD-SNAPSHOT/tink-HEAD-SNAPSHOT.jar" \
+        "-Dsources=${TMP_JAR_DIR}/com/google/crypto/tink/tink/HEAD-SNAPSHOT/tink-HEAD-SNAPSHOT-sources.jar" \
+        "-Djavadoc=${TMP_JAR_DIR}/com/google/crypto/tink/tink/HEAD-SNAPSHOT/tink-HEAD-SNAPSHOT-javadoc.jar" \
+        "-DpomFile=${TMP_JAR_DIR}/com/google/crypto/tink/tink/HEAD-SNAPSHOT/tink-HEAD-SNAPSHOT.pom"
+  pushd examples/maven
+  mvn -f pom-for-tink-snapshot.xml test
+  popd
+}
+
 bazelisk build :tink-android-snapshot-bundle
 cp bazel-bin/tink-android-snapshot-bundle.zip exported_bundles
 

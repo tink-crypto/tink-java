@@ -18,7 +18,7 @@
     <dependency>
       <groupId>com.google.crypto.tink</groupId>
       <artifactId>tink</artifactId>
-      <version>LATEST</version> <!-- We use latest here to automatically update our tests, but please use a fixed version in prod usage. -->
+      <version>HEAD-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
