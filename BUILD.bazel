@@ -1036,8 +1036,8 @@ maven_bundle(
     gpg_secret_key_file = "gpg_test_key.asc",
     lib_name = "tink",
     lib_version = "HEAD-SNAPSHOT",
-    maven_jar_rules_target = ":tink",
-    pom_template = "//maven:tink-java.pom.xml",
+    maven_jar_rules_target = ":tink-android",
+    pom_template = "//maven:tink-java-android.pom.xml",
     tags = ["manual"],
 )
 
@@ -1048,7 +1048,7 @@ maven_bundle(
     gpg_secret_key_file = "gpg_key.asc",
     lib_name = "tink",
     lib_version = TINK_VERSION_LABEL,
-    maven_jar_rules_target = ":tink",
-    pom_template = "//maven:tink-java.pom.xml",
+    maven_jar_rules_target = ":tink-android",
+    pom_template = "//maven:tink-java-android.pom.xml",
     tags = ["manual"],
 )
