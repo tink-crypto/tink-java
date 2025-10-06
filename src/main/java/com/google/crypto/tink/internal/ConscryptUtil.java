@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink.internal;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.Provider;
 import java.security.Security;
@@ -52,11 +51,7 @@ public final class ConscryptUtil {
       Class<?> conscrypt = Class.forName("org.conscrypt.Conscrypt");
       Method getProvider = conscrypt.getMethod("newProvider");
       return (Provider) getProvider.invoke(null);
-    } catch (ClassNotFoundException
-        | NoSuchMethodException
-        | IllegalArgumentException
-        | InvocationTargetException
-        | IllegalAccessException e) {
+    } catch (Throwable e) {
       return null;
     }
   }

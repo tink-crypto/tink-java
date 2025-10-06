@@ -30,24 +30,40 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public final class ConscryptUtilTest {
 
+  private static boolean conscryptIsAvailable() {
+    try {
+      return Conscrypt.isAvailable();
+    } catch (Throwable e) {
+      return false;
+    }
+  }
+
   @BeforeClass
   public static void setUp() {
-    if (!TestUtil.isAndroid() && Conscrypt.isAvailable()) {
+    if (!TestUtil.isAndroid() && conscryptIsAvailable()) {
       Security.addProvider(Conscrypt.newProvider());
     }
   }
 
   @Test
-  public void providerOrNull_returnsConscryptProvider() throws Exception {
+  public void providerOrNull_returnsConscryptProviderIfAvailable() throws Exception {
+    if (!TestUtil.isAndroid() && !conscryptIsAvailable()) {
+      assertThat(ConscryptUtil.providerOrNull()).isNull();
+      return;
+    }
     Provider provider = ConscryptUtil.providerOrNull();
     assertThat(provider).isNotNull();
     assertThat(ConscryptUtil.isConscryptProvider(provider)).isTrue();
   }
 
   @Test
-  public void providerWithReflectionOrNull_returnsConscryptProvider() throws Exception {
+  public void providerWithReflectionOrNull_returnsConscryptProviderIfNotOnAndroidAndAvailable()
+      throws Exception {
     if (TestUtil.isAndroid()) {
       // providerWithReflectionOrNull does not work on Android
+      Provider provider = ConscryptUtil.providerWithReflectionOrNull();
+      assertThat(provider).isNull();
+    } else if (!conscryptIsAvailable()) {
       Provider provider = ConscryptUtil.providerWithReflectionOrNull();
       assertThat(provider).isNull();
     } else {
@@ -59,7 +75,7 @@ public final class ConscryptUtilTest {
 
   @Test
   public void isConscryptProviderWithDifferentName_returnsFalse() throws Exception {
-    if (TestUtil.isAndroid()) {
+    if (TestUtil.isAndroid() || !conscryptIsAvailable()) {
       return;
     }
     // isConscryptProvider uses the name of the provider to determine if it is Conscrypt.

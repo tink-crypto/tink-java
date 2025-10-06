@@ -29,6 +29,14 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public final class ConscryptUtilWithoutInstallingConscryptTest {
 
+  private static boolean conscryptIsAvailable() {
+    try {
+      return Conscrypt.isAvailable();
+    } catch (Throwable e) {
+      return false;
+    }
+  }
+
   @Test
   public void providerOrNull_returnsProviderOnlyOnAndroid() throws Exception {
     if (TestUtil.isAndroid()) {
@@ -44,8 +52,9 @@ public final class ConscryptUtilWithoutInstallingConscryptTest {
   }
 
   @Test
-  public void providerWithReflectionOrNull_returnsProviderIfNotOnAndroid() throws Exception {
-    Assume.assumeFalse(TestUtil.isAndroid() || Conscrypt.isAvailable());
+  public void providerWithReflectionOrNull_returnsProviderIfNotOnAndroidAndConscryptIsAvailable()
+      throws Exception {
+    Assume.assumeFalse(TestUtil.isAndroid() || conscryptIsAvailable());
 
     if (TestUtil.isAndroid()) {
       // providerWithReflectionOrNull does not work on Android
