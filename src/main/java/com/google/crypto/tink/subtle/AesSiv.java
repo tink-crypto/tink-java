@@ -60,6 +60,9 @@ public final class AesSiv implements DeterministicAead, DeterministicAeads {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (byte) 0x01
   };
 
+  // See https://datatracker.ietf.org/doc/html/rfc5297#section-7
+  private static final int MAX_NUM_ASSOCIATED_DATA = 126;
+
   /** The internal AesCmac object for S2V */
   private final Prf cmacForS2V;
 
@@ -162,8 +165,17 @@ public final class AesSiv implements DeterministicAead, DeterministicAeads {
     return cmacForS2V.compute(result, AesUtil.BLOCK_SIZE);
   }
 
+  private void validateAssociatedDataLength(final int associatedDataLength)
+      throws GeneralSecurityException {
+    if (associatedDataLength > MAX_NUM_ASSOCIATED_DATA) {
+      throw new GeneralSecurityException(
+          "Too many associated datas: " + associatedDataLength + " > " + MAX_NUM_ASSOCIATED_DATA);
+    }
+  }
+
   private byte[] encryptInternal(
       final byte[] plaintext, final byte[]... associatedDatas) throws GeneralSecurityException {
+    validateAssociatedDataLength(associatedDatas.length);
     if (plaintext.length > Integer.MAX_VALUE - outputPrefix.length - AesUtil.BLOCK_SIZE) {
       throw new GeneralSecurityException("plaintext too long");
     }
@@ -212,6 +224,7 @@ public final class AesSiv implements DeterministicAead, DeterministicAeads {
 
   private byte[] decryptInternal(
       final byte[] ciphertext, final byte[]... associatedDatas) throws GeneralSecurityException {
+    validateAssociatedDataLength(associatedDatas.length);
     if (ciphertext.length < AesUtil.BLOCK_SIZE + outputPrefix.length) {
       throw new GeneralSecurityException("Ciphertext too short.");
     }

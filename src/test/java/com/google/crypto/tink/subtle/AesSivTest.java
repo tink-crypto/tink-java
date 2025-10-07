@@ -309,6 +309,21 @@ public class AesSivTest {
   }
 
   @Test
+  public void tooManyAssociatedDatas_throws() throws GeneralSecurityException {
+    Assume.assumeFalse(TinkFips.useOnlyFips());
+
+    byte[] key = Random.randBytes(KEY_SIZE_IN_BYTES);
+    byte[] plaintext = new byte[127];
+    byte[][] ads = new byte[127][127];
+
+    DeterministicAeads crypter = new AesSiv(key);
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> crypter.encryptDeterministicallyWithAssociatedDatas(plaintext, ads));
+  }
+
+  @Test
   public void testInvalidKeySizes() throws GeneralSecurityException {
     Assume.assumeFalse(TinkFips.useOnlyFips());
 
