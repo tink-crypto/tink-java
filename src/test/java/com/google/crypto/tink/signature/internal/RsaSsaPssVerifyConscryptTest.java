@@ -49,9 +49,17 @@ import org.junit.runner.RunWith;
 @RunWith(Theories.class)
 public class RsaSsaPssVerifyConscryptTest {
 
+  private static boolean conscryptIsAvailable() {
+    try {
+      return Conscrypt.isAvailable();
+    } catch (Throwable e) {
+      return false;
+    }
+  }
+
   @BeforeClass
   public static void useConscrypt() throws Exception {
-    if (!Util.isAndroid() && Conscrypt.isAvailable()) {
+    if (!Util.isAndroid() && conscryptIsAvailable()) {
       Security.addProvider(Conscrypt.newProvider());
     }
   }
@@ -63,6 +71,14 @@ public class RsaSsaPssVerifyConscryptTest {
   @Theory
   public void create_verifySignatureInTestVector_works(
       @FromDataPoints("testVectors") SignatureTestVector testVector) throws Exception {
+    if (!Util.isAndroid() && !conscryptIsAvailable()) {
+      assertThrows(
+          GeneralSecurityException.class,
+          () ->
+              RsaSsaPssVerifyConscrypt.create(
+                  (RsaSsaPssPublicKey) testVector.getPrivateKey().getPublicKey()));
+      return;
+    }
     PublicKeyVerify verifier =
         RsaSsaPssVerifyConscrypt.create(
             (RsaSsaPssPublicKey) testVector.getPrivateKey().getPublicKey());
@@ -104,6 +120,11 @@ public class RsaSsaPssVerifyConscryptTest {
     }
     byte[] modifiedSignature = testVector.getSignature();
     modifiedSignature[1] ^= 0x01;
+    if (!Util.isAndroid() && !conscryptIsAvailable()) {
+      assertThrows(
+          GeneralSecurityException.class, () -> RsaSsaPssVerifyConscrypt.create(testPublicKey));
+      return;
+    }
     PublicKeyVerify verifier = RsaSsaPssVerifyConscrypt.create(testPublicKey);
     assertThrows(
         GeneralSecurityException.class,
@@ -137,6 +158,9 @@ public class RsaSsaPssVerifyConscryptTest {
   @Theory
   public void wycheproofVectors(@FromDataPoints("wycheproofTestVectorPaths") String path)
       throws Exception {
+    if (!Util.isAndroid() && !conscryptIsAvailable()) {
+      return;
+    }
     JsonObject jsonObj = WycheproofTestUtil.readJson(path);
 
     ArrayList<String> errors = new ArrayList<>();

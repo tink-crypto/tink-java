@@ -49,9 +49,17 @@ import org.junit.runner.RunWith;
 @RunWith(Theories.class)
 public class RsaSsaPkcs1SignVerifyConscryptTest {
 
+  private static boolean conscryptIsAvailable() {
+    try {
+      return Conscrypt.isAvailable();
+    } catch (Throwable e) {
+      return false;
+    }
+  }
+
   @Before
   public void useConscrypt() throws Exception {
-    if (!Util.isAndroid() && Conscrypt.isAvailable()) {
+    if (!Util.isAndroid() && conscryptIsAvailable()) {
       Security.addProvider(Conscrypt.newProvider());
     }
   }
@@ -63,6 +71,14 @@ public class RsaSsaPkcs1SignVerifyConscryptTest {
   @Theory
   public void create_verifySignatureInTestVector_works(
       @FromDataPoints("allTests") SignatureTestVector testVector) throws Exception {
+    if (!Util.isAndroid() && !conscryptIsAvailable()) {
+      assertThrows(
+          GeneralSecurityException.class,
+          () ->
+              RsaSsaPkcs1VerifyConscrypt.create(
+                  (RsaSsaPkcs1PublicKey) testVector.getPrivateKey().getPublicKey()));
+      return;
+    }
     PublicKeyVerify verifier =
         RsaSsaPkcs1VerifyConscrypt.create(
             (RsaSsaPkcs1PublicKey) testVector.getPrivateKey().getPublicKey());
@@ -150,6 +166,9 @@ public class RsaSsaPkcs1SignVerifyConscryptTest {
   @Theory
   public void wycheproofVectors(@FromDataPoints("wycheproofTestVectorPaths") String path)
       throws Exception {
+    if (!Util.isAndroid() && !conscryptIsAvailable()) {
+      return;
+    }
     JsonObject jsonObj = WycheproofTestUtil.readJson(path);
 
     ArrayList<String> errors = new ArrayList<>();
