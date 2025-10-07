@@ -50,9 +50,17 @@ import org.junit.runners.JUnit4;
 @SuppressWarnings("UnnecessarilyFullyQualified") // Fully specifying proto types is more readable
 public class AeadConfigurationV0Test {
 
+  private static boolean conscryptIsAvailable() {
+    try {
+      return Conscrypt.isAvailable();
+    } catch (Throwable e) {
+      return false;
+    }
+  }
+
   @BeforeClass
   public static void setUp() throws Exception {
-    if (!Util.isAndroid() && Conscrypt.isAvailable()) {
+    if (!Util.isAndroid() && conscryptIsAvailable()) {
       Security.addProvider(Conscrypt.newProvider());
     }
   }
@@ -124,7 +132,7 @@ public class AeadConfigurationV0Test {
       // Must fail because Android's AES-GCM-SIV Cipher is invalid prior to Android 30.
       return Util.getAndroidApiLevel() >= 30;
     }
-    return Conscrypt.isAvailable();
+    return conscryptIsAvailable();
   }
 
   @Test
@@ -397,7 +405,7 @@ public class AeadConfigurationV0Test {
 
     AesGcmSivProtoSerialization.register();
 
-    if (Util.isAndroid() && Util.getAndroidApiLevel() < 30) {
+    if (!shouldSupportAesGcmSiv()) {
       // Must fail because Android's AES-GCM-SIV Cipher is invalid prior to Android 30.
       assertThrows(
           GeneralSecurityException.class,

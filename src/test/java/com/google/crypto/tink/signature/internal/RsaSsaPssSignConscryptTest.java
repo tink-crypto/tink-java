@@ -16,6 +16,8 @@
 
 package com.google.crypto.tink.signature.internal;
 
+import static org.junit.Assert.assertThrows;
+
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.internal.ConscryptUtil;
@@ -24,6 +26,7 @@ import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
 import com.google.crypto.tink.signature.internal.testing.RsaSsaPssTestUtil;
 import com.google.crypto.tink.signature.internal.testing.SignatureTestVector;
+import java.security.GeneralSecurityException;
 import java.security.Provider;
 import java.security.Security;
 import org.conscrypt.Conscrypt;
@@ -38,9 +41,17 @@ import org.junit.runner.RunWith;
 @RunWith(Theories.class)
 public class RsaSsaPssSignConscryptTest {
 
+  private static boolean conscryptIsAvailable() {
+    try {
+      return Conscrypt.isAvailable();
+    } catch (Throwable e) {
+      return false;
+    }
+  }
+
   @BeforeClass
   public static void useConscrypt() throws Exception {
-    if (!Util.isAndroid() && Conscrypt.isAvailable()) {
+    if (!Util.isAndroid() && conscryptIsAvailable()) {
       Security.addProvider(Conscrypt.newProvider());
     }
   }
@@ -50,8 +61,19 @@ public class RsaSsaPssSignConscryptTest {
       RsaSsaPssTestUtil.createRsaPssTestVectors();
 
   @Theory
-  public void create_signAndVerifySignatureInTestVector_works(
+  public void create_signAndVerifySignatureInTestVector_worksIfConscryptIsAvailable(
       @FromDataPoints("testVectors") SignatureTestVector testVector) throws Exception {
+    if (!Util.isAndroid() &&!conscryptIsAvailable()) {
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> RsaSsaPssSignConscrypt.create((RsaSsaPssPrivateKey) testVector.getPrivateKey()));
+      assertThrows(
+          GeneralSecurityException.class,
+          () ->
+              RsaSsaPssVerifyConscrypt.create(
+                  (RsaSsaPssPublicKey) testVector.getPrivateKey().getPublicKey()));
+      return;
+    }
     PublicKeySign signer =
         RsaSsaPssSignConscrypt.create((RsaSsaPssPrivateKey) testVector.getPrivateKey());
     PublicKeyVerify verifier =
