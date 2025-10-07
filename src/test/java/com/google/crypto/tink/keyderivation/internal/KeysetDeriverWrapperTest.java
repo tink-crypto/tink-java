@@ -100,9 +100,17 @@ public final class KeysetDeriverWrapperTest {
 
   private static final KeysetDeriverWrapper KEYSET_DERIVER_WRAPPER = new KeysetDeriverWrapper();
 
+  private static boolean conscryptIsAvailable() {
+    try {
+      return Conscrypt.isAvailable();
+    } catch (Throwable e) {
+      return false;
+    }
+  }
+
   @BeforeClass
   public static void setUp() throws Exception {
-    if (!Util.isAndroid()) {
+    if (!Util.isAndroid() && conscryptIsAvailable()) {
       Security.addProvider(Conscrypt.newProvider());
     }
     AeadConfig.register();

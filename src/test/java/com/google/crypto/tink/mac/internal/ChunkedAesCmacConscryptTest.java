@@ -63,11 +63,23 @@ public class ChunkedAesCmacConscryptTest {
     MacConfig.register();
   }
 
+  private static boolean conscryptIsAvailable() {
+    try {
+      return Conscrypt.isAvailable();
+    } catch (Throwable e) {
+      return false;
+    }
+  }
+
   @Nullable private static final Provider CONSCRYPT = getConscryptProviderOrNull();
 
+  @Nullable
   private static Provider getConscryptProviderOrNull() {
     if (Util.isAndroid()) {
       return ConscryptUtil.providerOrNull();
+    }
+    if (!conscryptIsAvailable()) {
+      return null;
     }
     return Conscrypt.newProvider();
   }
