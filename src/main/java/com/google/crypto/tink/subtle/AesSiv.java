@@ -23,12 +23,14 @@ import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.daead.AesSivKey;
+import com.google.crypto.tink.daead.subtle.DeterministicAeads;
 import com.google.crypto.tink.mac.internal.AesUtil;
 import com.google.crypto.tink.prf.AesCmacPrfKey;
 import com.google.crypto.tink.prf.AesCmacPrfParameters;
 import com.google.crypto.tink.prf.Prf;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.util.Arrays;
@@ -46,15 +48,15 @@ import javax.crypto.spec.SecretKeySpec;
  *
  * @since 1.1.0
  */
-public final class AesSiv implements DeterministicAead {
+public final class AesSiv implements DeterministicAead, DeterministicAeads {
   public static final TinkFipsUtil.AlgorithmFipsCompatibility FIPS =
       TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS;
 
   // Do not support 128-bit keys because it might not provide 128-bit security level in
   // multi-user setting.
   private static final int KEY_SIZE_IN_BYTES = 64;
-  private static final byte[] BLOCK_ZERO = new byte[AesUtil.BLOCK_SIZE];
-  private static final byte[] BLOCK_ONE = {
+  private static final byte[] blockZero = new byte[AesUtil.BLOCK_SIZE];
+  private static final byte[] blockOne = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (byte) 0x01
   };
 
@@ -67,9 +69,10 @@ public final class AesSiv implements DeterministicAead {
   private final byte[] outputPrefix;
 
   @AccessesPartialKey
-  public static DeterministicAead create(AesSivKey key) throws GeneralSecurityException {
+  public static DeterministicAeads create(AesSivKey key) throws GeneralSecurityException {
     return new AesSiv(
-        key.getKeyBytes().toByteArray(InsecureSecretKeyAccess.get()), key.getOutputPrefix());
+        validateKey(key.getKeyBytes().toByteArray(InsecureSecretKeyAccess.get())),
+        key.getOutputPrefix());
   }
 
   private static final ThreadLocal<Cipher> localAesCtrCipher =
@@ -92,15 +95,26 @@ public final class AesSiv implements DeterministicAead {
             SecretBytes.copyFrom(key, InsecureSecretKeyAccess.get())));
   }
 
-  private AesSiv(final byte[] key, Bytes outputPrefix) throws GeneralSecurityException {
+  @CanIgnoreReturnValue
+  private static byte[] validateKey(final byte[] key) throws GeneralSecurityException {
+    if (key.length != KEY_SIZE_IN_BYTES) {
+      throw new InvalidKeyException(
+          "invalid key size: " + key.length + " bytes; key must have 64 bytes");
+    }
+    return key;
+  }
+
+  // Visible for testing.
+  AesSiv(final byte[] key, Bytes outputPrefix) throws GeneralSecurityException {
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException(
           "Can not use AES-SIV in FIPS-mode.");
     }
 
-    if (key.length != KEY_SIZE_IN_BYTES) {
+    // allow 32-byte keys for tests.
+    if (key.length != 32 && key.length != KEY_SIZE_IN_BYTES) {
       throw new InvalidKeyException(
-          "invalid key size: " + key.length + " bytes; key must have 64 bytes");
+          "invalid key size: " + key.length + " bytes; key must have 32 or 64 bytes");
     }
 
     byte[] k1 = Arrays.copyOfRange(key, 0, key.length / 2);
@@ -110,7 +124,7 @@ public final class AesSiv implements DeterministicAead {
   }
 
   public AesSiv(final byte[] key) throws GeneralSecurityException {
-    this(key, Bytes.copyFrom(new byte[] {}));
+    this(validateKey(key), Bytes.copyFrom(new byte[] {}));
   }
 
   /**
@@ -123,10 +137,10 @@ public final class AesSiv implements DeterministicAead {
   private byte[] s2v(final byte[]... s) throws GeneralSecurityException {
     if (s.length == 0) {
       // Should never happen with AES-SIV, but we include this for completeness.
-      return cmacForS2V.compute(BLOCK_ONE, AesUtil.BLOCK_SIZE);
+      return cmacForS2V.compute(blockOne, AesUtil.BLOCK_SIZE);
     }
 
-    byte[] result = cmacForS2V.compute(BLOCK_ZERO, AesUtil.BLOCK_SIZE);
+    byte[] result = cmacForS2V.compute(blockZero, AesUtil.BLOCK_SIZE);
     for (int i = 0; i < s.length - 1; i++) {
       final byte[] currBlock;
       if (s[i] == null) {
@@ -148,15 +162,16 @@ public final class AesSiv implements DeterministicAead {
     return cmacForS2V.compute(result, AesUtil.BLOCK_SIZE);
   }
 
-  @Override
-  public byte[] encryptDeterministically(final byte[] plaintext, final byte[] associatedData)
-      throws GeneralSecurityException {
+  private byte[] encryptInternal(
+      final byte[] plaintext, final byte[]... associatedDatas) throws GeneralSecurityException {
     if (plaintext.length > Integer.MAX_VALUE - outputPrefix.length - AesUtil.BLOCK_SIZE) {
       throw new GeneralSecurityException("plaintext too long");
     }
 
     Cipher aesCtr = localAesCtrCipher.get();
-    byte[] computedIv = s2v(associatedData, plaintext);
+    byte[][] s = Arrays.copyOf(associatedDatas, associatedDatas.length + 1);
+    s[associatedDatas.length] = plaintext;
+    byte[] computedIv = s2v(s);
     byte[] ivForJavaCrypto = computedIv.clone();
     ivForJavaCrypto[8] &= (byte) 0x7F; // 63th bit from the right
     ivForJavaCrypto[12] &= (byte) 0x7F; // 31st bit from the right
@@ -184,8 +199,19 @@ public final class AesSiv implements DeterministicAead {
   }
 
   @Override
-  public byte[] decryptDeterministically(final byte[] ciphertext, final byte[] associatedData)
+  public byte[] encryptDeterministicallyWithAssociatedDatas(
+      final byte[] plaintext, final byte[]... associatedDatas) throws GeneralSecurityException {
+      return encryptInternal(plaintext, associatedDatas);
+  }
+
+  @Override
+  public byte[] encryptDeterministically(final byte[] plaintext, final byte[] associatedData)
       throws GeneralSecurityException {
+    return encryptInternal(plaintext, associatedData);
+  }
+
+  private byte[] decryptInternal(
+      final byte[] ciphertext, final byte[]... associatedDatas) throws GeneralSecurityException {
     if (ciphertext.length < AesUtil.BLOCK_SIZE + outputPrefix.length) {
       throw new GeneralSecurityException("Ciphertext too short.");
     }
@@ -217,12 +243,27 @@ public final class AesSiv implements DeterministicAead {
       // is safe because if the plaintext is not empty, the next integrity check would reject it.
       decryptedPt = new byte[0];
     }
-    byte[] computedIv = s2v(associatedData, decryptedPt);
+
+    byte[][] s = Arrays.copyOf(associatedDatas, associatedDatas.length + 1);
+    s[associatedDatas.length] = decryptedPt;
+    byte[] computedIv = s2v(s);
 
     if (com.google.crypto.tink.subtle.Bytes.equal(expectedIv, computedIv)) {
       return decryptedPt;
     } else {
       throw new AEADBadTagException("Integrity check failed.");
     }
+  }
+
+  @Override
+  public byte[] decryptDeterministicallyWithAssociatedDatas(
+      final byte[] ciphertext, final byte[]... associatedDatas) throws GeneralSecurityException {
+      return decryptInternal(ciphertext, associatedDatas);
+  }
+
+  @Override
+  public byte[] decryptDeterministically(final byte[] ciphertext, final byte[] associatedData)
+      throws GeneralSecurityException {
+    return decryptInternal(ciphertext, associatedData);
   }
 }

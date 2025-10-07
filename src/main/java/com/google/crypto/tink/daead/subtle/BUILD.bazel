@@ -1,0 +1,17 @@
+load("@build_bazel_rules_android//android:rules.bzl", "android_library")
+
+licenses(["notice"])
+
+package(default_visibility = ["//visibility:public"])
+
+android_library(
+    name = "deterministic_aeads-android",
+    srcs = ["DeterministicAeads.java"],
+    deps = ["//src/main/java/com/google/crypto/tink:deterministic_aead-android"],
+)
+
+java_library(
+    name = "deterministic_aeads",
+    srcs = ["DeterministicAeads.java"],
+    deps = ["//src/main/java/com/google/crypto/tink:deterministic_aead"],
+)
