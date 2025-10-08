@@ -84,9 +84,8 @@ process_params() {
   readonly ACTION
 
   VERSION="$2"
-  if [[ ! "${VERSION}" =~ ^[0-9]+.[0-9]+.[0-9]+$ ]]; then
-    echo "ERROR: Invalid version format: expected MAJOR.MINOR.PATCH, got \
-${VERSION}" >&2
+  if [[ ! "${VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9a-z]*)?$ ]]; then
+    echo "ERROR: Invalid version format: expected MAJOR.MINOR.PATCH or MAJOR.MINOR.PATCH-pre, got \${VERSION}" >&2
     usage
   fi
   readonly VERSION
