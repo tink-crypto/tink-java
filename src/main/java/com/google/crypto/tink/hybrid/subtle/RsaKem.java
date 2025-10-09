@@ -73,7 +73,7 @@ class RsaKem {
    */
   static byte[] rsaDecrypt(PrivateKey privateKey, byte[] x) throws GeneralSecurityException {
     Cipher rsaCipher = Cipher.getInstance("RSA/ECB/NoPadding");
-    rsaCipher.init(Cipher.ENCRYPT_MODE, privateKey);
+    rsaCipher.init(Cipher.DECRYPT_MODE, privateKey);
     try {
       return rsaCipher.doFinal(x);
     } catch (RuntimeException e) {
