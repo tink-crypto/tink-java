@@ -20,6 +20,7 @@ import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.aead.subtle.AeadFactory;
 import com.google.crypto.tink.subtle.Hkdf;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
@@ -38,6 +39,7 @@ public final class RsaKemHybridDecrypt implements HybridDecrypt {
   private final String hkdfHmacAlgo;
   private final byte[] hkdfSalt;
   private final AeadFactory aeadFactory;
+  private final int modSizeInBytes;
 
   private RsaKemHybridDecrypt(
       final PrivateKey recipientPrivateKey,
@@ -45,11 +47,14 @@ public final class RsaKemHybridDecrypt implements HybridDecrypt {
       final byte[] hkdfSalt,
       AeadFactory aeadFactory)
       throws GeneralSecurityException {
-    RsaKem.validateRsaModulus(((RSAKey) recipientPrivateKey).getModulus());
+    BigInteger mod = ((RSAKey) recipientPrivateKey).getModulus();
+    RsaKem.validateRsaModulus(mod);
+
     this.recipientPrivateKey = recipientPrivateKey;
     this.hkdfSalt = hkdfSalt;
     this.hkdfHmacAlgo = hkdfHmacAlgo;
     this.aeadFactory = aeadFactory;
+    this.modSizeInBytes = RsaKem.bigIntSizeInBytes(mod);
   }
 
   public RsaKemHybridDecrypt(
@@ -62,27 +67,26 @@ public final class RsaKemHybridDecrypt implements HybridDecrypt {
   }
 
   /**
-   * This alternate factory method is to support Android KeyStore, whose RSA private key class
-   * does not implement RSAPrivateKey.
+   * This alternate factory method is to support Android KeyStore, whose RSA private key class does
+   * not implement RSAPrivateKey.
    *
    * @param recipientPrivateKey should implement both PrivateKey and RSAKey.
    */
   public static RsaKemHybridDecrypt create(
-          final PrivateKey recipientPrivateKey,
-          String hkdfHmacAlgo,
-          final byte[] hkdfSalt,
-          AeadFactory aeadFactory
-  ) throws GeneralSecurityException {
-      if (!(recipientPrivateKey instanceof RSAKey)) {
-          throw new InvalidKeyException("Must be an RSA private key");
-      }
-      return new RsaKemHybridDecrypt(recipientPrivateKey, hkdfHmacAlgo, hkdfSalt, aeadFactory);
+      final PrivateKey recipientPrivateKey,
+      String hkdfHmacAlgo,
+      final byte[] hkdfSalt,
+      AeadFactory aeadFactory)
+      throws GeneralSecurityException {
+    if (!(recipientPrivateKey instanceof RSAKey)) {
+      throw new InvalidKeyException("Must be an RSA private key");
+    }
+    return new RsaKemHybridDecrypt(recipientPrivateKey, hkdfHmacAlgo, hkdfSalt, aeadFactory);
   }
 
   @Override
   public byte[] decrypt(final byte[] ciphertext, final byte[] contextInfo)
       throws GeneralSecurityException {
-    int modSizeInBytes = RsaKem.bigIntSizeInBytes(((RSAKey) recipientPrivateKey).getModulus());
     if (ciphertext.length < modSizeInBytes) {
       throw new GeneralSecurityException(
           String.format(
