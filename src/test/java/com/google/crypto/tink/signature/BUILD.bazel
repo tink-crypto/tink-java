@@ -727,3 +727,35 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "MlDsaPrivateKeyTest",
+    size = "small",
+    srcs = ["MlDsaPrivateKeyTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_private_key",
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_public_key",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
+    name = "MlDsaPublicKeyTest",
+    size = "small",
+    srcs = ["MlDsaPublicKeyTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_public_key",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
