@@ -88,5 +88,25 @@ cd "${KOKORO_ARTIFACTS_DIR}"
 mkdir -p kokoro_upload_dir/release
 cp "${TINK_BASE_DIR}"/kokoro_upload_dir/* kokoro_upload_dir/release
 
-# TODO: Upload the correct release artifacts from kokoro_upload_dir/release/
-# by using https://central.sonatype.org/publish/publish-portal-api/
+RELEASE_KEY="${KOKORO_KEYSTORE_DIR}/70968_tink_tinkey_release_wrapping_key"
+
+readonly BASE64TOKENFILE="$(mktemp)"
+"${KOKORO_BLAZE_DIR}/GoTools/blaze-bin/third_party/tink/integration/go/kokorotools/hybrid_encryption" \
+  --tink_key_file="${RELEASE_KEY}" \
+  --source_file=third_party/tink/java_src/tools/maven_central_tokens/encrypted_password \
+  --dest_file="${BASE64TOKENFILE}" \
+  --context=MavenCentralPublishing \
+  --mode=decrypt
+
+readonly BASE64TOKEN="$(cat "${BASE64TOKENFILE}")"
+curl --request POST \
+  --verbose \
+  --header "Authorization: Bearer ${BASE64TOKEN}" \
+  --form bundle=@kokoro_upload_dir/release/tink-release-bundle.zip \
+  https://central.sonatype.com/api/v1/publisher/upload
+
+curl --request POST \
+  --verbose \
+  --header "Authorization: Bearer ${BASE64TOKEN}" \
+  --form bundle=@kokoro_upload_dir/release/tink-android-release-bundle.zip \
+  https://central.sonatype.com/api/v1/publisher/upload
