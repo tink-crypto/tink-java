@@ -88,7 +88,7 @@ cd "${KOKORO_ARTIFACTS_DIR}"
 mkdir -p kokoro_upload_dir/release
 cp "${TINK_BASE_DIR}"/kokoro_upload_dir/* kokoro_upload_dir/release
 
-RELEASE_KEY="${KOKORO_KEYSTORE_DIR}/70968_tink_tinkey_release_wrapping_key"
+RELEASE_KEY="${KOKORO_KEYSTORE_DIR}/70968_tink_tinkey_release_wrapping_key.pb"
 
 readonly BASE64TOKENFILE="$(mktemp)"
 "${KOKORO_BLAZE_DIR}/GoTools/blaze-bin/third_party/tink/integration/go/kokorotools/hybrid_encryption" \
