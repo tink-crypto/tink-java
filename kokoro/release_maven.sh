@@ -93,7 +93,7 @@ RELEASE_KEY="${KOKORO_KEYSTORE_DIR}/70968_tink_tinkey_release_wrapping_key.pb"
 readonly BASE64TOKENFILE="$(mktemp)"
 "${KOKORO_BLAZE_DIR}/GoTools/blaze-bin/third_party/tink/integration/go/kokorotools/hybrid_encryption" \
   --tink_key_file="${RELEASE_KEY}" \
-  --source_file=third_party/tink/java_src/tools/maven_central_tokens/encrypted_password \
+  --source_file=/tink_orig_dir/tink_java/tools/maven_central_tokens/encrypted_password \
   --dest_file="${BASE64TOKENFILE}" \
   --context=MavenCentralPublishing \
   --mode=decrypt
