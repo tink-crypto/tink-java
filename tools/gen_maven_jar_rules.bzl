@@ -193,10 +193,10 @@ def maven_bundle(
                 "$$INNER_DIR/{lib_name}-{lib_version}.pom"
             # Generate checksums
             for f in "$$INNER_DIR"/*; do
-              md5sum "$$f" > "$$f.md5"
-              sha1sum "$$f" > "$$f.sha1"
-              sha256sum "$$f" > "$$f.sha256"
-              sha512sum "$$f" > "$$f.sha512"
+              md5sum "$$f" | cut -d' ' -f1 > "$$f.md5"
+              sha1sum "$$f" | cut -d' ' -f1 > "$$f.sha1"
+              sha256sum "$$f" | cut -d' ' -f1 > "$$f.sha256"
+              sha512sum "$$f" | cut -d' ' -f1 > "$$f.sha512"
               gpg --pinentry-mode loopback --batch --yes \
                   --passphrase-file {gpg_pin_file} \
                   --output "$$f.asc" --detach-sign "$$f"
