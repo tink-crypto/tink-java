@@ -130,7 +130,7 @@ $(cat "${tink_android_deps}" | sed 's/^/        "/' | sed 's/$/",/')
 ## Note: before building this target you need to add files with the key and pin. See the documentation of maven_bundle for how to create these.
 maven_bundle(
     name = "tink-android-snapshot-bundle",
-    lib_name = "tink",
+    lib_name = "tink-android",
     lib_version = "HEAD-SNAPSHOT",
     pom_template = "//maven:tink-java-android.pom.xml",
     maven_jar_rules_target = ":tink-android",
@@ -142,7 +142,7 @@ maven_bundle(
 ## Note: before building this target you need to add files with the key and pin. See the documentation of maven_bundle for how to create these.
 maven_bundle(
     name = "tink-android-release-bundle",
-    lib_name = "tink",
+    lib_name = "tink-android",
     lib_version = TINK_VERSION_LABEL,
     pom_template = "//maven:tink-java-android.pom.xml",
     maven_jar_rules_target = ":tink-android",
