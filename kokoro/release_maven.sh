@@ -100,13 +100,11 @@ readonly BASE64TOKENFILE="$(mktemp)"
 
 readonly BASE64TOKEN="$(cat "${BASE64TOKENFILE}")"
 curl --request POST \
-  --verbose \
   --header "Authorization: Bearer ${BASE64TOKEN}" \
   --form bundle=@kokoro_upload_dir/release/tink-release-bundle.zip \
   https://central.sonatype.com/api/v1/publisher/upload
 
 curl --request POST \
-  --verbose \
   --header "Authorization: Bearer ${BASE64TOKEN}" \
   --form bundle=@kokoro_upload_dir/release/tink-android-release-bundle.zip \
   https://central.sonatype.com/api/v1/publisher/upload
