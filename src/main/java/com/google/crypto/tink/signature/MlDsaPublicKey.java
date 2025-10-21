@@ -140,7 +140,7 @@ public class MlDsaPublicKey extends SignaturePublicKey {
   }
 
   @Override
-  public SignatureParameters getParameters() {
+  public MlDsaParameters getParameters() {
     return parameters;
   }
 

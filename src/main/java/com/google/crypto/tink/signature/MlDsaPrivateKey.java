@@ -85,6 +85,10 @@ public class MlDsaPrivateKey extends SignaturePrivateKey {
   }
 
   @Override
+  public MlDsaParameters getParameters() {
+    return publicKey.getParameters();
+  }
+  @Override
   public MlDsaPublicKey getPublicKey() {
     return publicKey;
   }
