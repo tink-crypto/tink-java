@@ -4,8 +4,8 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
 
 TINK_MAVEN_ARTIFACTS = [
-    "com.google.protobuf:protobuf-java:4.32.1",
-    "com.google.protobuf:protobuf-javalite:4.32.1",
+    "com.google.protobuf:protobuf-java:4.33.0",
+    "com.google.protobuf:protobuf-javalite:4.33.0",
     "androidx.annotation:annotation:1.8.2",
     "androidx.test:monitor:1.7.2",
     "com.google.api-client:google-api-client:2.2.0",
