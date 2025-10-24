@@ -43,7 +43,8 @@ android_sdk_repository_extension = use_extension("@build_bazel_rules_android//ru
 use_repo(android_sdk_repository_extension, "androidsdk")
 
 # TODO - b/447329832: Switch to API level 24.
-android_sdk_repository_extension.configure(build_tools_version = "30.0.3", api_level = 30, path = "/android-sdk-30")
+# This will search in ANDROID_HOME.
+android_sdk_repository_extension.configure(build_tools_version = "30.0.3", api_level = 30)
 
 register_toolchains("@androidsdk//:sdk-toolchain", "@androidsdk//:all")
 
