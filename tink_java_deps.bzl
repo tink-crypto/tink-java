@@ -75,13 +75,15 @@ def tink_java_deps():
     # -------------------------------------------------------------------------
     # Wycheproof.
     # -------------------------------------------------------------------------
-    # Commit from 2019-12-17
+    # Commit from 2025-09-01.
+    # Corresponds to wycheproof-v0-vectors tag.
     maybe(
         http_archive,
         name = "wycheproof",
-        strip_prefix = "wycheproof-d8ed1ba95ac4c551db67f410c06131c3bc00a97c",
-        url = "https://github.com/google/wycheproof/archive/d8ed1ba95ac4c551db67f410c06131c3bc00a97c.zip",
-        sha256 = "eb1d558071acf1aa6d677d7f1cabec2328d1cf8381496c17185bd92b52ce7545",
+        strip_prefix = "wycheproof-b51abcfb8dafa5316791e57cf48512a2147d9671",
+        url = "https://github.com/c2sp/wycheproof/archive/b51abcfb8dafa5316791e57cf48512a2147d9671.zip",
+        sha256 = "56ba9f3deba06b1cc33430a770a9b6bd6ddc8af69188ea0b46d10bda60176978",
+        build_file = "@//testvectors:wycheproof.BUILD.bazel",
     )
 
     # -------------------------------------------------------------------------

@@ -5,9 +5,11 @@ package(
 
 licenses(["notice"])
 
+exports_files(["wycheproof.BUILD.bazel"])
+
 genrule(
     name = "all",
-    srcs = ["@wycheproof//testvectors:all"],
+    srcs = ["@wycheproof//:testvectors"],
     outs = [
         "aes_cmac_test.json",
         "aes_eax_test.json",

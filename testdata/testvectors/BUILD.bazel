@@ -16,7 +16,7 @@ filegroup(
 genrule(
     name = "aes_cmac",
     testonly = 1,
-    srcs = ["@wycheproof//testvectors:aes_cmac"],
+    srcs = ["@wycheproof//:testvectors"],
     outs = ["aes_cmac_test.json"],
     cmd = "cp $(SRCS) $(@D)/",
 )
@@ -24,7 +24,7 @@ genrule(
 genrule(
     name = "aes_gcm",
     testonly = 1,
-    srcs = ["@wycheproof//testvectors:aes_gcm"],
+    srcs = ["@wycheproof//:testvectors"],
     outs = ["aes_gcm_test.json"],
     cmd = "cp $(SRCS) $(@D)/",
 )
@@ -32,7 +32,7 @@ genrule(
 genrule(
     name = "aes_gcm_siv",
     testonly = 1,
-    srcs = ["@wycheproof//testvectors:aes_gcm_siv"],
+    srcs = ["@wycheproof//:testvectors"],
     outs = ["aes_gcm_siv_test.json"],
     cmd = "cp $(SRCS) $(@D)/",
 )
@@ -40,7 +40,7 @@ genrule(
 genrule(
     name = "aes_eax",
     testonly = 1,
-    srcs = ["@wycheproof//testvectors:aes_eax"],
+    srcs = ["@wycheproof//:testvectors"],
     outs = ["aes_eax_test.json"],
     cmd = "cp $(SRCS) $(@D)/",
 )
@@ -48,7 +48,7 @@ genrule(
 genrule(
     name = "aes_siv_cmac",
     testonly = 1,
-    srcs = ["@wycheproof//testvectors:aes_siv_cmac"],
+    srcs = ["@wycheproof//:testvectors"],
     outs = [
         "aead_aes_siv_cmac_test.json",
         "aes_siv_cmac_test.json",
@@ -59,7 +59,7 @@ genrule(
 genrule(
     name = "chacha20_poly1305",
     testonly = 1,
-    srcs = ["@wycheproof//testvectors:chacha20_poly1305"],
+    srcs = ["@wycheproof//:testvectors"],
     outs = [
         "chacha20_poly1305_test.json",
         "xchacha20_poly1305_test.json",
@@ -70,7 +70,7 @@ genrule(
 genrule(
     name = "hmac",
     testonly = 1,
-    srcs = ["@wycheproof//testvectors:hmac"],
+    srcs = ["@wycheproof//:testvectors"],
     outs = [
         "hmac_sha1_test.json",
         "hmac_sha224_test.json",
@@ -88,7 +88,7 @@ genrule(
 genrule(
     name = "rsa_pss",
     testonly = 1,
-    srcs = ["@wycheproof//testvectors:all"],
+    srcs = ["@wycheproof//:testvectors"],
     outs = [
         "rsa_pss_2048_sha1_mgf1_20_test.json",
         "rsa_pss_2048_sha256_mgf1_0_test.json",
@@ -106,7 +106,7 @@ genrule(
 genrule(
     name = "rsa_signature",
     testonly = 1,
-    srcs = ["@wycheproof//testvectors:rsa_signature"],
+    srcs = ["@wycheproof//:testvectors"],
     outs = [
         # Signature verification
         "rsa_signature_2048_sha224_test.json",
@@ -134,7 +134,7 @@ genrule(
 genrule(
     name = "ecdsa_webcrypto",
     testonly = 1,
-    srcs = ["@wycheproof//testvectors:ecdsa_webcrypto"],
+    srcs = ["@wycheproof//:testvectors"],
     outs = ["ecdsa_webcrypto_test.json"],
     cmd = "cp $(SRCS) $(@D)/",
 )
@@ -142,7 +142,7 @@ genrule(
 genrule(
     name = "ecdsa",
     testonly = 1,
-    srcs = ["@wycheproof//testvectors:all"],
+    srcs = ["@wycheproof//:testvectors"],
     outs = [
         "ecdsa_brainpoolP224r1_sha224_test.json",
         "ecdsa_brainpoolP256r1_sha256_test.json",
@@ -180,7 +180,7 @@ genrule(
 genrule(
     name = "eddsa",
     testonly = 1,
-    srcs = ["@wycheproof//testvectors:eddsa"],
+    srcs = ["@wycheproof//:testvectors"],
     outs = [
         "ed448_test.json",
         "eddsa_test.json",
@@ -191,7 +191,7 @@ genrule(
 genrule(
     name = "ecdh",
     testonly = 1,
-    srcs = ["@wycheproof//testvectors:ecdh"],
+    srcs = ["@wycheproof//:testvectors"],
     outs = [
         "ecdh_brainpoolP224r1_test.json",
         "ecdh_brainpoolP256r1_test.json",
@@ -211,7 +211,7 @@ genrule(
 genrule(
     name = "ecdh_ecpoint",
     testonly = 1,
-    srcs = ["@wycheproof//testvectors:ecdh_ecpoint"],
+    srcs = ["@wycheproof//:testvectors"],
     outs = [
         "ecdh_secp224r1_ecpoint_test.json",
         "ecdh_secp256r1_ecpoint_test.json",
@@ -224,7 +224,7 @@ genrule(
 genrule(
     name = "keywrap",
     testonly = 1,
-    srcs = ["@wycheproof//testvectors:keywrap"],
+    srcs = ["@wycheproof//:testvectors"],
     outs = [
         "kw_test.json",
         "kwp_test.json",
@@ -235,7 +235,7 @@ genrule(
 genrule(
     name = "kdf",
     testonly = 1,
-    srcs = ["@wycheproof//testvectors:kdf"],
+    srcs = ["@wycheproof//:testvectors"],
     outs = [
         "hkdf_sha1_test.json",
         "hkdf_sha256_test.json",
@@ -248,7 +248,7 @@ genrule(
 genrule(
     name = "xdh",
     testonly = 1,
-    srcs = ["@wycheproof//testvectors:xdh"],
+    srcs = ["@wycheproof//:testvectors"],
     outs = [
         "x25519_asn_test.json",
         "x25519_jwk_test.json",

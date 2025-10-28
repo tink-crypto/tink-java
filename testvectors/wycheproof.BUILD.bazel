@@ -1,0 +1,11 @@
+package(default_visibility = ["//visibility:public"])
+
+filegroup(
+    name = "testvectors",
+    srcs = glob(["testvectors/*.json"]),
+)
+
+filegroup(
+    name = "testvectors_v1",
+    srcs = glob(["testvectors_v1/*.json"]),
+)
