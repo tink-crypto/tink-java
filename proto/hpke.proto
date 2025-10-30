@@ -31,6 +31,12 @@ enum HpkeKem {
   // X-Wing KEM as defined in
   // https://www.ietf.org/archive/id/draft-connolly-cfrg-xwing-kem-09.html
   X_WING = 5;
+  // ML-KEM-768 as defined in
+  // https://www.ietf.org/archive/id/draft-ietf-hpke-pq-01.html
+  ML_KEM768 = 6;
+  // ML-KEM-1024 as defined in
+  // https://www.ietf.org/archive/id/draft-ietf-hpke-pq-01.html
+  ML_KEM1024 = 7;
 }
 
 enum HpkeKdf {
