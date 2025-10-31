@@ -279,7 +279,6 @@ java_library(
     deps = [
         ":jwt_ecdsa_parameters",
         ":jwt_ecdsa_private_key",
-        ":jwt_ecdsa_proto_serialization",
         ":jwt_ecdsa_public_key",
         ":jwt_ecdsa_verify_key_manager",
         ":jwt_format",
@@ -301,6 +300,7 @@ java_library(
         "//src/main/java/com/google/crypto/tink/internal:mutable_parameters_registry",
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry",
         "//src/main/java/com/google/crypto/tink/internal:primitive_constructor",
+        "//src/main/java/com/google/crypto/tink/jwt/internal:jwt_ecdsa_proto_serialization",
         "//src/main/java/com/google/crypto/tink/signature:ecdsa_private_key",
         "//src/main/java/com/google/crypto/tink/subtle:ecdsa_sign_jce",
         "//src/main/java/com/google/crypto/tink/subtle:elliptic_curves",
@@ -315,7 +315,6 @@ android_library(
     deps = [
         ":jwt_ecdsa_parameters-android",
         ":jwt_ecdsa_private_key-android",
-        ":jwt_ecdsa_proto_serialization-android",
         ":jwt_ecdsa_public_key-android",
         ":jwt_ecdsa_verify_key_manager-android",
         ":jwt_format-android",
@@ -337,6 +336,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink/internal:mutable_parameters_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_constructor-android",
+        "//src/main/java/com/google/crypto/tink/jwt/internal:jwt_ecdsa_proto_serialization-android",
         "//src/main/java/com/google/crypto/tink/signature:ecdsa_private_key-android",
         "//src/main/java/com/google/crypto/tink/subtle:ecdsa_sign_jce-android",
         "//src/main/java/com/google/crypto/tink/subtle:elliptic_curves-android",
@@ -477,7 +477,6 @@ java_library(
         ":jwt_rsa_ssa_pss_sign_key_manager",
         ":jwt_rsa_ssa_pss_verify_key_manager",
         "//proto:config_java_proto",
-        "//src/main/java/com/google/crypto/tink/config:tink_fips",
     ],
 )
 
@@ -494,7 +493,6 @@ android_library(
         ":jwt_rsa_ssa_pss_sign_key_manager-android",
         ":jwt_rsa_ssa_pss_verify_key_manager-android",
         "//proto:config_java_proto_lite",
-        "//src/main/java/com/google/crypto/tink/config:tink_fips-android",
     ],
 )
 
@@ -1151,60 +1149,6 @@ java_library(
         "//src/main/java/com/google/crypto/tink/internal:elliptic_curves_util",
         "//src/main/java/com/google/crypto/tink/util:secret_big_integer",
         "@maven//:com_google_errorprone_error_prone_annotations",
-    ],
-)
-
-android_library(
-    name = "jwt_ecdsa_proto_serialization-android",
-    srcs = ["JwtEcdsaProtoSerialization.java"],
-    deps = [
-        ":jwt_ecdsa_parameters-android",
-        ":jwt_ecdsa_private_key-android",
-        ":jwt_ecdsa_public_key-android",
-        "//proto:jwt_ecdsa_java_proto_lite",
-        "//proto:tink_java_proto_lite",
-        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
-        "//src/main/java/com/google/crypto/tink:secret_key_access-android",
-        "//src/main/java/com/google/crypto/tink/internal:big_integer_encoding-android",
-        "//src/main/java/com/google/crypto/tink/internal:key_parser-android",
-        "//src/main/java/com/google/crypto/tink/internal:key_serializer-android",
-        "//src/main/java/com/google/crypto/tink/internal:mutable_serialization_registry-android",
-        "//src/main/java/com/google/crypto/tink/internal:parameters_parser-android",
-        "//src/main/java/com/google/crypto/tink/internal:parameters_serializer-android",
-        "//src/main/java/com/google/crypto/tink/internal:proto_key_serialization-android",
-        "//src/main/java/com/google/crypto/tink/internal:proto_parameters_serialization-android",
-        "//src/main/java/com/google/crypto/tink/internal:util-android",
-        "//src/main/java/com/google/crypto/tink/util:bytes-android",
-        "//src/main/java/com/google/crypto/tink/util:secret_big_integer-android",
-        "@maven//:com_google_code_findbugs_jsr305",
-        "@maven//:com_google_protobuf_protobuf_javalite",
-    ],
-)
-
-java_library(
-    name = "jwt_ecdsa_proto_serialization",
-    srcs = ["JwtEcdsaProtoSerialization.java"],
-    deps = [
-        ":jwt_ecdsa_parameters",
-        ":jwt_ecdsa_private_key",
-        ":jwt_ecdsa_public_key",
-        "//proto:jwt_ecdsa_java_proto",
-        "//proto:tink_java_proto",
-        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
-        "//src/main/java/com/google/crypto/tink:secret_key_access",
-        "//src/main/java/com/google/crypto/tink/internal:big_integer_encoding",
-        "//src/main/java/com/google/crypto/tink/internal:key_parser",
-        "//src/main/java/com/google/crypto/tink/internal:key_serializer",
-        "//src/main/java/com/google/crypto/tink/internal:mutable_serialization_registry",
-        "//src/main/java/com/google/crypto/tink/internal:parameters_parser",
-        "//src/main/java/com/google/crypto/tink/internal:parameters_serializer",
-        "//src/main/java/com/google/crypto/tink/internal:proto_key_serialization",
-        "//src/main/java/com/google/crypto/tink/internal:proto_parameters_serialization",
-        "//src/main/java/com/google/crypto/tink/internal:util",
-        "//src/main/java/com/google/crypto/tink/util:bytes",
-        "//src/main/java/com/google/crypto/tink/util:secret_big_integer",
-        "@maven//:com_google_code_findbugs_jsr305",
-        "@maven//:com_google_protobuf_protobuf_java",
     ],
 )
 

@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package com.google.crypto.tink.jwt;
+package com.google.crypto.tink.jwt.internal;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.crypto.tink.internal.testing.Asserts.assertEqualWhenValueParsed;
@@ -27,6 +27,9 @@ import com.google.crypto.tink.internal.BigIntegerEncoding;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
+import com.google.crypto.tink.jwt.JwtEcdsaParameters;
+import com.google.crypto.tink.jwt.JwtEcdsaPrivateKey;
+import com.google.crypto.tink.jwt.JwtEcdsaPublicKey;
 import com.google.crypto.tink.proto.JwtEcdsaAlgorithm;
 import com.google.crypto.tink.proto.JwtEcdsaPublicKey.CustomKid;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
