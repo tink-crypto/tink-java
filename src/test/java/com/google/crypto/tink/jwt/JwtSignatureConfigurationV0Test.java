@@ -39,8 +39,13 @@ import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
 import com.google.crypto.tink.signature.RsaSsaPkcs1SignKeyManager;
+import com.google.crypto.tink.signature.RsaSsaPssParameters;
+import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
+import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
+import com.google.crypto.tink.signature.RsaSsaPssSignKeyManager;
 import com.google.crypto.tink.signature.internal.EcdsaProtoSerialization;
 import com.google.crypto.tink.signature.internal.RsaSsaPkcs1ProtoSerialization;
+import com.google.crypto.tink.signature.internal.RsaSsaPssProtoSerialization;
 import com.google.crypto.tink.subtle.Base64;
 import com.google.crypto.tink.testing.TestUtil;
 import com.google.crypto.tink.util.SecretBigInteger;
@@ -734,6 +739,252 @@ public class JwtSignatureConfigurationV0Test {
                   SecretBigInteger.fromBigInteger(Q_INV_4096, InsecureSecretKeyAccess.get()))
               .build();
 
+      JwtRsaSsaPssParameters jwtRsaSsaPssRaw2048Parameters =
+          JwtRsaSsaPssParameters.builder()
+              .setModulusSizeBits(2048)
+              .setPublicExponent(JwtRsaSsaPssParameters.F4)
+              .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.IGNORED)
+              .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
+              .build();
+      JwtRsaSsaPssPublicKey jwtRsaSsaPssRaw2048PublicKey =
+          JwtRsaSsaPssPublicKey.builder()
+              .setParameters(jwtRsaSsaPssRaw2048Parameters)
+              .setModulus(MODULUS)
+              .build();
+      JwtRsaSsaPssPrivateKey jwtRsaSsaPssRaw2048PrivateKey =
+          JwtRsaSsaPssPrivateKey.builder()
+              .setPublicKey(jwtRsaSsaPssRaw2048PublicKey)
+              .setPrimes(
+                  SecretBigInteger.fromBigInteger(P, InsecureSecretKeyAccess.get()),
+                  SecretBigInteger.fromBigInteger(Q, InsecureSecretKeyAccess.get()))
+              .setPrivateExponent(SecretBigInteger.fromBigInteger(D, InsecureSecretKeyAccess.get()))
+              .setPrimeExponents(
+                  SecretBigInteger.fromBigInteger(DP, InsecureSecretKeyAccess.get()),
+                  SecretBigInteger.fromBigInteger(DQ, InsecureSecretKeyAccess.get()))
+              .setCrtCoefficient(
+                  SecretBigInteger.fromBigInteger(Q_INV, InsecureSecretKeyAccess.get()))
+              .build();
+
+      JwtRsaSsaPssParameters jwtRsaSsaPssKid2048Parameters =
+          JwtRsaSsaPssParameters.builder()
+              .setModulusSizeBits(2048)
+              .setPublicExponent(JwtRsaSsaPssParameters.F4)
+              .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+              .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
+              .build();
+      JwtRsaSsaPssPublicKey jwtRsaSsaPssKid2048PublicKey =
+          JwtRsaSsaPssPublicKey.builder()
+              .setParameters(jwtRsaSsaPssKid2048Parameters)
+              .setModulus(MODULUS)
+              .setIdRequirement(123)
+              .build();
+      JwtRsaSsaPssPrivateKey jwtRsaSsaPssKid2048PrivateKey =
+          JwtRsaSsaPssPrivateKey.builder()
+              .setPublicKey(jwtRsaSsaPssKid2048PublicKey)
+              .setPrimes(
+                  SecretBigInteger.fromBigInteger(P, InsecureSecretKeyAccess.get()),
+                  SecretBigInteger.fromBigInteger(Q, InsecureSecretKeyAccess.get()))
+              .setPrivateExponent(SecretBigInteger.fromBigInteger(D, InsecureSecretKeyAccess.get()))
+              .setPrimeExponents(
+                  SecretBigInteger.fromBigInteger(DP, InsecureSecretKeyAccess.get()),
+                  SecretBigInteger.fromBigInteger(DQ, InsecureSecretKeyAccess.get()))
+              .setCrtCoefficient(
+                  SecretBigInteger.fromBigInteger(Q_INV, InsecureSecretKeyAccess.get()))
+              .build();
+
+      JwtRsaSsaPssParameters jwtRsaSsaPssCustomKid2048Parameters =
+          JwtRsaSsaPssParameters.builder()
+              .setModulusSizeBits(2048)
+              .setPublicExponent(JwtRsaSsaPssParameters.F4)
+              .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.CUSTOM)
+              .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
+              .build();
+      JwtRsaSsaPssPublicKey jwtRsaSsaPssCustomKid2048PublicKey =
+          JwtRsaSsaPssPublicKey.builder()
+              .setParameters(jwtRsaSsaPssCustomKid2048Parameters)
+              .setCustomKid(CUSTOM_KID_VALUE)
+              .setModulus(MODULUS)
+              .build();
+      JwtRsaSsaPssPrivateKey jwtRsaSsaPssCustomKid2048PrivateKey =
+          JwtRsaSsaPssPrivateKey.builder()
+              .setPublicKey(jwtRsaSsaPssCustomKid2048PublicKey)
+              .setPrimes(
+                  SecretBigInteger.fromBigInteger(P, InsecureSecretKeyAccess.get()),
+                  SecretBigInteger.fromBigInteger(Q, InsecureSecretKeyAccess.get()))
+              .setPrivateExponent(SecretBigInteger.fromBigInteger(D, InsecureSecretKeyAccess.get()))
+              .setPrimeExponents(
+                  SecretBigInteger.fromBigInteger(DP, InsecureSecretKeyAccess.get()),
+                  SecretBigInteger.fromBigInteger(DQ, InsecureSecretKeyAccess.get()))
+              .setCrtCoefficient(
+                  SecretBigInteger.fromBigInteger(Q_INV, InsecureSecretKeyAccess.get()))
+              .build();
+
+      JwtRsaSsaPssParameters jwtRsaSsaPssRaw3072Parameters =
+          JwtRsaSsaPssParameters.builder()
+              .setModulusSizeBits(3072)
+              .setPublicExponent(JwtRsaSsaPssParameters.F4)
+              .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.IGNORED)
+              .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS384)
+              .build();
+      JwtRsaSsaPssPublicKey jwtRsaSsaPssRaw3072PublicKey =
+          JwtRsaSsaPssPublicKey.builder()
+              .setParameters(jwtRsaSsaPssRaw3072Parameters)
+              .setModulus(MODULUS_3072)
+              .build();
+      JwtRsaSsaPssPrivateKey jwtRsaSsaPssRaw3072PrivateKey =
+          JwtRsaSsaPssPrivateKey.builder()
+              .setPublicKey(jwtRsaSsaPssRaw3072PublicKey)
+              .setPrimes(
+                  SecretBigInteger.fromBigInteger(P_3072, InsecureSecretKeyAccess.get()),
+                  SecretBigInteger.fromBigInteger(Q_3072, InsecureSecretKeyAccess.get()))
+              .setPrivateExponent(
+                  SecretBigInteger.fromBigInteger(D_3072, InsecureSecretKeyAccess.get()))
+              .setPrimeExponents(
+                  SecretBigInteger.fromBigInteger(DP_3072, InsecureSecretKeyAccess.get()),
+                  SecretBigInteger.fromBigInteger(DQ_3072, InsecureSecretKeyAccess.get()))
+              .setCrtCoefficient(
+                  SecretBigInteger.fromBigInteger(Q_INV_3072, InsecureSecretKeyAccess.get()))
+              .build();
+
+      JwtRsaSsaPssParameters jwtRsaSsaPssKid3072Parameters =
+          JwtRsaSsaPssParameters.builder()
+              .setModulusSizeBits(3072)
+              .setPublicExponent(JwtRsaSsaPssParameters.F4)
+              .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+              .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS384)
+              .build();
+      JwtRsaSsaPssPublicKey jwtRsaSsaPssKid3072PublicKey =
+          JwtRsaSsaPssPublicKey.builder()
+              .setParameters(jwtRsaSsaPssKid3072Parameters)
+              .setModulus(MODULUS_3072)
+              .setIdRequirement(123)
+              .build();
+      JwtRsaSsaPssPrivateKey jwtRsaSsaPssKid3072PrivateKey =
+          JwtRsaSsaPssPrivateKey.builder()
+              .setPublicKey(jwtRsaSsaPssKid3072PublicKey)
+              .setPrimes(
+                  SecretBigInteger.fromBigInteger(P_3072, InsecureSecretKeyAccess.get()),
+                  SecretBigInteger.fromBigInteger(Q_3072, InsecureSecretKeyAccess.get()))
+              .setPrivateExponent(
+                  SecretBigInteger.fromBigInteger(D_3072, InsecureSecretKeyAccess.get()))
+              .setPrimeExponents(
+                  SecretBigInteger.fromBigInteger(DP_3072, InsecureSecretKeyAccess.get()),
+                  SecretBigInteger.fromBigInteger(DQ_3072, InsecureSecretKeyAccess.get()))
+              .setCrtCoefficient(
+                  SecretBigInteger.fromBigInteger(Q_INV_3072, InsecureSecretKeyAccess.get()))
+              .build();
+
+      JwtRsaSsaPssParameters jwtRsaSsaPssCustomKid3072Parameters =
+          JwtRsaSsaPssParameters.builder()
+              .setModulusSizeBits(3072)
+              .setPublicExponent(JwtRsaSsaPssParameters.F4)
+              .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.CUSTOM)
+              .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS384)
+              .build();
+      JwtRsaSsaPssPublicKey jwtRsaSsaPssCustomKid3072PublicKey =
+          JwtRsaSsaPssPublicKey.builder()
+              .setParameters(jwtRsaSsaPssCustomKid3072Parameters)
+              .setCustomKid(CUSTOM_KID_VALUE)
+              .setModulus(MODULUS_3072)
+              .build();
+      JwtRsaSsaPssPrivateKey jwtRsaSsaPssCustomKid3072PrivateKey =
+          JwtRsaSsaPssPrivateKey.builder()
+              .setPublicKey(jwtRsaSsaPssCustomKid3072PublicKey)
+              .setPrimes(
+                  SecretBigInteger.fromBigInteger(P_3072, InsecureSecretKeyAccess.get()),
+                  SecretBigInteger.fromBigInteger(Q_3072, InsecureSecretKeyAccess.get()))
+              .setPrivateExponent(
+                  SecretBigInteger.fromBigInteger(D_3072, InsecureSecretKeyAccess.get()))
+              .setPrimeExponents(
+                  SecretBigInteger.fromBigInteger(DP_3072, InsecureSecretKeyAccess.get()),
+                  SecretBigInteger.fromBigInteger(DQ_3072, InsecureSecretKeyAccess.get()))
+              .setCrtCoefficient(
+                  SecretBigInteger.fromBigInteger(Q_INV_3072, InsecureSecretKeyAccess.get()))
+              .build();
+
+      JwtRsaSsaPssParameters jwtRsaSsaPssRaw4096Parameters =
+          JwtRsaSsaPssParameters.builder()
+              .setModulusSizeBits(4096)
+              .setPublicExponent(JwtRsaSsaPssParameters.F4)
+              .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.IGNORED)
+              .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS512)
+              .build();
+      JwtRsaSsaPssPublicKey jwtRsaSsaPssRaw4096PublicKey =
+          JwtRsaSsaPssPublicKey.builder()
+              .setParameters(jwtRsaSsaPssRaw4096Parameters)
+              .setModulus(MODULUS_4096)
+              .build();
+      JwtRsaSsaPssPrivateKey jwtRsaSsaPssRaw4096PrivateKey =
+          JwtRsaSsaPssPrivateKey.builder()
+              .setPublicKey(jwtRsaSsaPssRaw4096PublicKey)
+              .setPrimes(
+                  SecretBigInteger.fromBigInteger(P_4096, InsecureSecretKeyAccess.get()),
+                  SecretBigInteger.fromBigInteger(Q_4096, InsecureSecretKeyAccess.get()))
+              .setPrivateExponent(
+                  SecretBigInteger.fromBigInteger(D_4096, InsecureSecretKeyAccess.get()))
+              .setPrimeExponents(
+                  SecretBigInteger.fromBigInteger(DP_4096, InsecureSecretKeyAccess.get()),
+                  SecretBigInteger.fromBigInteger(DQ_4096, InsecureSecretKeyAccess.get()))
+              .setCrtCoefficient(
+                  SecretBigInteger.fromBigInteger(Q_INV_4096, InsecureSecretKeyAccess.get()))
+              .build();
+
+      JwtRsaSsaPssParameters jwtRsaSsaPssKid4096Parameters =
+          JwtRsaSsaPssParameters.builder()
+              .setModulusSizeBits(4096)
+              .setPublicExponent(JwtRsaSsaPssParameters.F4)
+              .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+              .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS512)
+              .build();
+      JwtRsaSsaPssPublicKey jwtRsaSsaPssKid4096PublicKey =
+          JwtRsaSsaPssPublicKey.builder()
+              .setParameters(jwtRsaSsaPssKid4096Parameters)
+              .setModulus(MODULUS_4096)
+              .setIdRequirement(123)
+              .build();
+      JwtRsaSsaPssPrivateKey jwtRsaSsaPssKid4096PrivateKey =
+          JwtRsaSsaPssPrivateKey.builder()
+              .setPublicKey(jwtRsaSsaPssKid4096PublicKey)
+              .setPrimes(
+                  SecretBigInteger.fromBigInteger(P_4096, InsecureSecretKeyAccess.get()),
+                  SecretBigInteger.fromBigInteger(Q_4096, InsecureSecretKeyAccess.get()))
+              .setPrivateExponent(
+                  SecretBigInteger.fromBigInteger(D_4096, InsecureSecretKeyAccess.get()))
+              .setPrimeExponents(
+                  SecretBigInteger.fromBigInteger(DP_4096, InsecureSecretKeyAccess.get()),
+                  SecretBigInteger.fromBigInteger(DQ_4096, InsecureSecretKeyAccess.get()))
+              .setCrtCoefficient(
+                  SecretBigInteger.fromBigInteger(Q_INV_4096, InsecureSecretKeyAccess.get()))
+              .build();
+
+      JwtRsaSsaPssParameters jwtRsaSsaPssCustomKid4096Parameters =
+          JwtRsaSsaPssParameters.builder()
+              .setModulusSizeBits(4096)
+              .setPublicExponent(JwtRsaSsaPssParameters.F4)
+              .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.CUSTOM)
+              .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS512)
+              .build();
+      JwtRsaSsaPssPublicKey jwtRsaSsaPssCustomKid4096PublicKey =
+          JwtRsaSsaPssPublicKey.builder()
+              .setParameters(jwtRsaSsaPssCustomKid4096Parameters)
+              .setCustomKid(CUSTOM_KID_VALUE)
+              .setModulus(MODULUS_4096)
+              .build();
+      JwtRsaSsaPssPrivateKey jwtRsaSsaPssCustomKid4096PrivateKey =
+          JwtRsaSsaPssPrivateKey.builder()
+              .setPublicKey(jwtRsaSsaPssCustomKid4096PublicKey)
+              .setPrimes(
+                  SecretBigInteger.fromBigInteger(P_4096, InsecureSecretKeyAccess.get()),
+                  SecretBigInteger.fromBigInteger(Q_4096, InsecureSecretKeyAccess.get()))
+              .setPrivateExponent(
+                  SecretBigInteger.fromBigInteger(D_4096, InsecureSecretKeyAccess.get()))
+              .setPrimeExponents(
+                  SecretBigInteger.fromBigInteger(DP_4096, InsecureSecretKeyAccess.get()),
+                  SecretBigInteger.fromBigInteger(DQ_4096, InsecureSecretKeyAccess.get()))
+              .setCrtCoefficient(
+                  SecretBigInteger.fromBigInteger(Q_INV_4096, InsecureSecretKeyAccess.get()))
+              .build();
+
       jwtPrivateKeys =
           new JwtSignaturePrivateKey[] {
             jwtEcdsaEs256RawPrivateKey,
@@ -751,6 +1002,15 @@ public class JwtSignatureConfigurationV0Test {
             jwtRsaSsaPkcs1Raw4096PrivateKey,
             jwtRsaSsaPkcs1Kid4096PrivateKey,
             jwtRsaSsaPkcs1CustomKid4096PrivateKey,
+            jwtRsaSsaPssRaw2048PrivateKey,
+            jwtRsaSsaPssKid2048PrivateKey,
+            jwtRsaSsaPssCustomKid2048PrivateKey,
+            jwtRsaSsaPssRaw3072PrivateKey,
+            jwtRsaSsaPssKid3072PrivateKey,
+            jwtRsaSsaPssCustomKid3072PrivateKey,
+            jwtRsaSsaPssRaw4096PrivateKey,
+            jwtRsaSsaPssKid4096PrivateKey,
+            jwtRsaSsaPssCustomKid4096PrivateKey,
           };
 
       jwtPrivateKeyPairs =
@@ -772,6 +1032,15 @@ public class JwtSignatureConfigurationV0Test {
             },
             new JwtSignaturePrivateKey[] {
               jwtRsaSsaPkcs1Raw4096PrivateKey, jwtRsaSsaPkcs1CustomKid4096PrivateKey,
+            },
+            new JwtSignaturePrivateKey[] {
+              jwtRsaSsaPssRaw2048PrivateKey, jwtRsaSsaPssCustomKid2048PrivateKey,
+            },
+            new JwtSignaturePrivateKey[] {
+              jwtRsaSsaPssRaw3072PrivateKey, jwtRsaSsaPssCustomKid3072PrivateKey,
+            },
+            new JwtSignaturePrivateKey[] {
+              jwtRsaSsaPssRaw4096PrivateKey, jwtRsaSsaPssCustomKid4096PrivateKey,
             },
           };
 
@@ -804,6 +1073,24 @@ public class JwtSignatureConfigurationV0Test {
             new JwtSignaturePrivateKey[] {
               jwtRsaSsaPkcs1CustomKid4096PrivateKey, jwtRsaSsaPkcs1Kid4096PrivateKey
             },
+            new JwtSignaturePrivateKey[] {
+              jwtRsaSsaPssRaw2048PrivateKey, jwtRsaSsaPssKid2048PrivateKey
+            },
+            new JwtSignaturePrivateKey[] {
+              jwtRsaSsaPssRaw3072PrivateKey, jwtRsaSsaPssKid3072PrivateKey
+            },
+            new JwtSignaturePrivateKey[] {
+              jwtRsaSsaPssRaw4096PrivateKey, jwtRsaSsaPssKid4096PrivateKey
+            },
+            new JwtSignaturePrivateKey[] {
+              jwtRsaSsaPssCustomKid2048PrivateKey, jwtRsaSsaPssKid2048PrivateKey
+            },
+            new JwtSignaturePrivateKey[] {
+              jwtRsaSsaPssCustomKid3072PrivateKey, jwtRsaSsaPssKid3072PrivateKey
+            },
+            new JwtSignaturePrivateKey[] {
+              jwtRsaSsaPssCustomKid4096PrivateKey, jwtRsaSsaPssKid4096PrivateKey
+            },
           };
     } catch (GeneralSecurityException e) {
       throw new RuntimeException(e);
@@ -830,12 +1117,15 @@ public class JwtSignatureConfigurationV0Test {
     EcdsaProtoSerialization.register();
     JwtRsaSsaPkcs1ProtoSerialization.register();
     RsaSsaPkcs1ProtoSerialization.register();
+    JwtRsaSsaPssProtoSerialization.register();
+    RsaSsaPssProtoSerialization.register();
     XChaCha20Poly1305ProtoSerialization.register();
 
     // Needed until we replaced RegistryConfiguration with SignatureConfiguration.
     PublicKeySignWrapper.register();
     EcdsaSignKeyManager.registerPair(false);
     RsaSsaPkcs1SignKeyManager.registerPair(false);
+    RsaSsaPssSignKeyManager.registerPair(false);
   }
 
   @Test
@@ -860,6 +1150,12 @@ public class JwtSignatureConfigurationV0Test {
   @Theory
   public void getPrimitive_signVerify_works(
       @FromDataPoints("jwtPrivateKeys") JwtSignaturePrivateKey key) throws Exception {
+    if (TestUtil.isTsan()) {
+      // This test takes a long time under TSan.
+      // TODO(b/456486048): don't skip this test under TSan once it's been refactored.
+      return;
+    }
+
     KeysetHandle keysetHandle =
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(key).withFixedId(123).makePrimary())
@@ -957,6 +1253,12 @@ public class JwtSignatureConfigurationV0Test {
   @Theory
   public void getPrimitive_signVerifyPayloadModification_throws(
       @FromDataPoints("jwtPrivateKeys") JwtSignaturePrivateKey key) throws Exception {
+    if (TestUtil.isTsan()) {
+      // This test takes a long time under TSan.
+      // TODO(b/456486048): don't skip this test under TSan once it's been refactored.
+      return;
+    }
+
     KeysetHandle keysetHandle =
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(key).withFixedId(123).makePrimary())
@@ -979,81 +1281,6 @@ public class JwtSignatureConfigurationV0Test {
 
     assertThrows(
         GeneralSecurityException.class, () -> verifier.verifyAndDecode(modifiedCompact, validator));
-  }
-
-  @Theory
-  public void getPrimitive_signVerifyRawBitFlipped_throws(
-      @FromDataPoints("jwtPrivateKeys") JwtSignaturePrivateKey key) throws Exception {
-    // Skip the test under TSAN, it is too slow.
-    if (TestUtil.isTsan()) {
-      return;
-    }
-    KeysetHandle keysetHandle =
-        KeysetHandle.newBuilder()
-            .addEntry(KeysetHandle.importKey(key).withFixedId(123).makePrimary())
-            .build();
-    JwtPublicKeySign signer =
-        keysetHandle.getPrimitive(JwtSignatureConfigurationV0.get(), JwtPublicKeySign.class);
-    JwtPublicKeyVerify verifier =
-        keysetHandle
-            .getPublicKeysetHandle()
-            .getPrimitive(JwtSignatureConfigurationV0.get(), JwtPublicKeyVerify.class);
-    JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
-
-    RawJwt rawToken = RawJwt.newBuilder().setJwtId("jwtId").withoutExpiration().build();
-    String signedCompact = signer.signAndEncode(rawToken);
-    // We ignore the last byte because the bas64 decoder ignores some of the bits.
-    for (int i = 0; i < signedCompact.length() - 1; i++) {
-      for (int b = 0; b < 8; b++) {
-        StringBuilder stringBuilder = new StringBuilder(signedCompact);
-        stringBuilder.setCharAt(i, (char) (signedCompact.charAt(i) ^ (1 << b)));
-        String alteredCompact = stringBuilder.toString();
-
-        assertThrows(
-            GeneralSecurityException.class,
-            () -> verifier.verifyAndDecode(alteredCompact, validator));
-      }
-    }
-  }
-
-  @Theory
-  public void getPrimitive_signVerifyBitFlipped_throws(
-      @FromDataPoints("jwtPrivateKeys") JwtSignaturePrivateKey key) throws Exception {
-    // Skip the test under TSAN, it is too slow.
-    if (TestUtil.isTsan()) {
-      return;
-    }
-    KeysetHandle keysetHandle =
-        KeysetHandle.newBuilder()
-            .addEntry(KeysetHandle.importKey(key).withFixedId(123).makePrimary())
-            .build();
-    JwtPublicKeySign signer =
-        keysetHandle.getPrimitive(JwtSignatureConfigurationV0.get(), JwtPublicKeySign.class);
-    JwtPublicKeyVerify verifier =
-        keysetHandle
-            .getPublicKeysetHandle()
-            .getPrimitive(JwtSignatureConfigurationV0.get(), JwtPublicKeyVerify.class);
-
-    RawJwt rawTokenWithType =
-        RawJwt.newBuilder().setTypeHeader("typeHeader").withoutExpiration().build();
-    String signedCompactWithType = signer.signAndEncode(rawTokenWithType);
-    for (int i = 0; i < signedCompactWithType.length() - 1; i++) {
-      for (int b = 0; b < 8; b++) {
-        StringBuilder stringBuilder = new StringBuilder(signedCompactWithType);
-        stringBuilder.setCharAt(i, (char) (signedCompactWithType.charAt(i) ^ (1 << b)));
-        String alteredCompactWithType = stringBuilder.toString();
-
-        assertThrows(
-            GeneralSecurityException.class,
-            () ->
-                verifier.verifyAndDecode(
-                    alteredCompactWithType,
-                    JwtValidator.newBuilder()
-                        .allowMissingExpiration()
-                        .expectTypeHeader("typeHeader")
-                        .build()));
-      }
-    }
   }
 
   private static String generateSignedCompact(
@@ -1102,6 +1329,11 @@ public class JwtSignatureConfigurationV0Test {
         key instanceof JwtEcdsaPrivateKey
             && ((JwtEcdsaPrivateKey) key).getParameters().getKidStrategy()
                 == JwtEcdsaParameters.KidStrategy.IGNORED);
+    if (TestUtil.isTsan()) {
+      // creating keys is too slow in Tsan.
+      // We do not use assume because Theories expects to find something which is not skipped.
+      return;
+    }
     JwtEcdsaPrivateKey jwtEcdsaPrivateKey = (JwtEcdsaPrivateKey) key;
 
     KeysetHandle keysetHandle =
@@ -1193,6 +1425,11 @@ public class JwtSignatureConfigurationV0Test {
         key instanceof JwtEcdsaPrivateKey
             && ((JwtEcdsaPrivateKey) key).getParameters().getKidStrategy()
                 != JwtEcdsaParameters.KidStrategy.IGNORED);
+    if (TestUtil.isTsan()) {
+      // creating keys is too slow in Tsan.
+      // We do not use assume because Theories expects to find something which is not skipped.
+      return;
+    }
     JwtEcdsaPrivateKey jwtEcdsaPrivateKey = (JwtEcdsaPrivateKey) key;
 
     KeysetHandle keysetHandle =
@@ -1492,6 +1729,244 @@ public class JwtSignatureConfigurationV0Test {
         () -> verifier.verifyAndDecode(tokenWithUnknownKid, validator));
   }
 
+  // RsaSsaPkcs1-specific tests.
+  private static RsaSsaPssParameters.HashType getRsaSsaPssHash(JwtRsaSsaPssParameters parameters)
+      throws GeneralSecurityException {
+    if (parameters.getAlgorithm().equals(JwtRsaSsaPssParameters.Algorithm.PS256)) {
+      return RsaSsaPssParameters.HashType.SHA256;
+    }
+    if (parameters.getAlgorithm().equals(JwtRsaSsaPssParameters.Algorithm.PS384)) {
+      return RsaSsaPssParameters.HashType.SHA384;
+    }
+    if (parameters.getAlgorithm().equals(JwtRsaSsaPssParameters.Algorithm.PS512)) {
+      return RsaSsaPssParameters.HashType.SHA512;
+    }
+    throw new GeneralSecurityException("unknown algorithm in parameters: " + parameters);
+  }
+
+  private static String getRsaSsaPssAlg(JwtRsaSsaPssParameters parameters)
+      throws GeneralSecurityException {
+    if (parameters.getAlgorithm().equals(JwtRsaSsaPssParameters.Algorithm.PS256)) {
+      return "PS256";
+    }
+    if (parameters.getAlgorithm().equals(JwtRsaSsaPssParameters.Algorithm.PS384)) {
+      return "PS384";
+    }
+    if (parameters.getAlgorithm().equals(JwtRsaSsaPssParameters.Algorithm.PS512)) {
+      return "PS512";
+    }
+    throw new GeneralSecurityException("unknown algorithm in parameters: " + parameters);
+  }
+
+  private static int saltLengthForPssAlgorithm(JwtRsaSsaPssParameters.Algorithm algorithm)
+      throws GeneralSecurityException {
+    if (algorithm.equals(JwtRsaSsaPssParameters.Algorithm.PS256)) {
+      return 32;
+    }
+    if (algorithm.equals(JwtRsaSsaPssParameters.Algorithm.PS384)) {
+      return 48;
+    }
+    if (algorithm.equals(JwtRsaSsaPssParameters.Algorithm.PS512)) {
+      return 64;
+    }
+    throw new GeneralSecurityException("unknown algorithm " + algorithm);
+  }
+
+  @Theory
+  public void getPrimitive_signVerifyRsaSsaPssDifferentHeaders(
+      @FromDataPoints("jwtPrivateKeys") JwtSignaturePrivateKey key) throws Exception {
+    assumeTrue(
+        key instanceof JwtRsaSsaPssPrivateKey
+            && ((JwtRsaSsaPssPrivateKey) key).getParameters().getKidStrategy()
+                == JwtRsaSsaPssParameters.KidStrategy.IGNORED);
+    if (TestUtil.isTsan()) {
+      // creating keys is too slow in Tsan.
+      // We do not use assume because Theories expects to find something which is not skipped.
+      return;
+    }
+    JwtRsaSsaPssPrivateKey jwtRsaSsaPssPrivateKey = (JwtRsaSsaPssPrivateKey) key;
+
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(jwtRsaSsaPssPrivateKey).withFixedId(123).makePrimary())
+            .build();
+    RsaSsaPssParameters nonJwtParameters =
+        RsaSsaPssParameters.builder()
+            .setSigHashType(getRsaSsaPssHash(jwtRsaSsaPssPrivateKey.getParameters()))
+            .setMgf1HashType(getRsaSsaPssHash(jwtRsaSsaPssPrivateKey.getParameters()))
+            .setSaltLengthBytes(
+                saltLengthForPssAlgorithm(jwtRsaSsaPssPrivateKey.getParameters().getAlgorithm()))
+            .setModulusSizeBits(jwtRsaSsaPssPrivateKey.getParameters().getModulusSizeBits())
+            .setPublicExponent(RsaSsaPssParameters.F4)
+            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+            .build();
+    RsaSsaPssPublicKey nonJwtPublicKey =
+        RsaSsaPssPublicKey.builder()
+            .setParameters(nonJwtParameters)
+            .setModulus(jwtRsaSsaPssPrivateKey.getPublicKey().getModulus())
+            .build();
+    RsaSsaPssPrivateKey nonJwtPrivateKey =
+        RsaSsaPssPrivateKey.builder()
+            .setPublicKey(nonJwtPublicKey)
+            .setPrimes(jwtRsaSsaPssPrivateKey.getPrimeP(), jwtRsaSsaPssPrivateKey.getPrimeQ())
+            .setPrivateExponent(jwtRsaSsaPssPrivateKey.getPrivateExponent())
+            .setPrimeExponents(
+                jwtRsaSsaPssPrivateKey.getPrimeExponentP(),
+                jwtRsaSsaPssPrivateKey.getPrimeExponentQ())
+            .setCrtCoefficient(jwtRsaSsaPssPrivateKey.getCrtCoefficient())
+            .build();
+
+    // This nonJwtSigner computes signatures in the same way as one obtained from handle -- except
+    // that it doesn't do any of the JWT stuff.
+    PublicKeySign nonJwtSigner =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(nonJwtPrivateKey).makePrimary().withRandomId())
+            .build()
+            .getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
+
+    JwtPublicKeyVerify verifier =
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(JwtSignatureConfigurationV0.get(), JwtPublicKeyVerify.class);
+    JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
+
+    JsonObject payload = new JsonObject();
+    payload.addProperty("jti", "jwtId");
+
+    // valid token, with "typ" set in the header
+    JsonObject goodHeader = new JsonObject();
+    goodHeader.addProperty("alg", getRsaSsaPssAlg(jwtRsaSsaPssPrivateKey.getParameters()));
+    goodHeader.addProperty("typ", "typeHeader");
+    String goodSignedCompact = generateSignedCompact(nonJwtSigner, goodHeader, payload);
+    Object unused =
+        verifier.verifyAndDecode(
+            goodSignedCompact,
+            JwtValidator.newBuilder()
+                .expectTypeHeader("typeHeader")
+                .allowMissingExpiration()
+                .build());
+
+    // invalid token with an empty header
+    JsonObject emptyHeader = new JsonObject();
+    String emptyHeaderSignedCompact = generateSignedCompact(nonJwtSigner, emptyHeader, payload);
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> verifier.verifyAndDecode(emptyHeaderSignedCompact, validator));
+
+    // invalid token with a valid but incorrect algorithm in the header
+    JsonObject badAlgoHeader = new JsonObject();
+    badAlgoHeader.addProperty("alg", "RS256");
+    String badAlgoSignedCompact = generateSignedCompact(nonJwtSigner, badAlgoHeader, payload);
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> verifier.verifyAndDecode(badAlgoSignedCompact, validator));
+
+    // token with an unknown "kid" in the header is valid
+    JsonObject unknownKidHeader = new JsonObject();
+    unknownKidHeader.addProperty("alg", getRsaSsaPssAlg(jwtRsaSsaPssPrivateKey.getParameters()));
+    unknownKidHeader.addProperty("kid", "unknown");
+    String unknownKidSignedCompact = generateSignedCompact(nonJwtSigner, unknownKidHeader, payload);
+    unused = verifier.verifyAndDecode(unknownKidSignedCompact, validator);
+  }
+
+  @Theory
+  public void getPrimitive_signVerifyRsaSsaPssTinkDifferentHeaders(
+      @FromDataPoints("jwtPrivateKeys") JwtSignaturePrivateKey key) throws Exception {
+    assumeTrue(key instanceof JwtRsaSsaPssPrivateKey && !key.getParameters().allowKidAbsent());
+    if (TestUtil.isTsan()) {
+      // creating keys is too slow in Tsan.
+      // We do not use assume because Theories expects to find something which is not skipped.
+      return;
+    }
+    JwtRsaSsaPssPrivateKey jwtRsaSsaPssPrivateKey = (JwtRsaSsaPssPrivateKey) key;
+
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(jwtRsaSsaPssPrivateKey).withFixedId(123).makePrimary())
+            .build();
+    RsaSsaPssParameters nonJwtParameters =
+        RsaSsaPssParameters.builder()
+            .setSigHashType(getRsaSsaPssHash(jwtRsaSsaPssPrivateKey.getParameters()))
+            .setMgf1HashType(getRsaSsaPssHash(jwtRsaSsaPssPrivateKey.getParameters()))
+            .setSaltLengthBytes(
+                saltLengthForPssAlgorithm(jwtRsaSsaPssPrivateKey.getParameters().getAlgorithm()))
+            .setModulusSizeBits(jwtRsaSsaPssPrivateKey.getParameters().getModulusSizeBits())
+            .setPublicExponent(RsaSsaPssParameters.F4)
+            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+            .build();
+    RsaSsaPssPublicKey nonJwtPublicKey =
+        RsaSsaPssPublicKey.builder()
+            .setParameters(nonJwtParameters)
+            .setModulus(jwtRsaSsaPssPrivateKey.getPublicKey().getModulus())
+            .build();
+    RsaSsaPssPrivateKey nonJwtPrivateKey =
+        RsaSsaPssPrivateKey.builder()
+            .setPublicKey(nonJwtPublicKey)
+            .setPrimes(jwtRsaSsaPssPrivateKey.getPrimeP(), jwtRsaSsaPssPrivateKey.getPrimeQ())
+            .setPrivateExponent(jwtRsaSsaPssPrivateKey.getPrivateExponent())
+            .setPrimeExponents(
+                jwtRsaSsaPssPrivateKey.getPrimeExponentP(),
+                jwtRsaSsaPssPrivateKey.getPrimeExponentQ())
+            .setCrtCoefficient(jwtRsaSsaPssPrivateKey.getCrtCoefficient())
+            .build();
+    // This nonJwtSigner computes signatures in the same way as one obtained from handle -- except
+    // that it doesn't do any of the JWT stuff.
+    PublicKeySign nonJwtSigner =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(nonJwtPrivateKey).makePrimary().withRandomId())
+            .build()
+            .getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
+
+    JwtPublicKeyVerify verifier =
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(JwtSignatureConfigurationV0.get(), JwtPublicKeyVerify.class);
+    JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
+    String kid = jwtRsaSsaPssPrivateKey.getKid().get();
+
+    JsonObject payload = new JsonObject();
+    payload.addProperty("jti", "jwtId");
+
+    // normal, valid token
+    JsonObject normalHeader = new JsonObject();
+    normalHeader.addProperty("alg", getRsaSsaPssAlg(jwtRsaSsaPssPrivateKey.getParameters()));
+    normalHeader.addProperty("kid", kid);
+    String validToken = generateSignedCompact(nonJwtSigner, normalHeader, payload);
+    Object unused = verifier.verifyAndDecode(validToken, validator);
+
+    // token without kid are rejected, even if they are valid.
+    JsonObject headerWithoutKid = new JsonObject();
+    headerWithoutKid.addProperty("alg", getRsaSsaPssAlg(jwtRsaSsaPssPrivateKey.getParameters()));
+    String tokenWithoutKid = generateSignedCompact(nonJwtSigner, headerWithoutKid, payload);
+    assertThrows(
+        GeneralSecurityException.class, () -> verifier.verifyAndDecode(tokenWithoutKid, validator));
+
+    // token without algorithm in header
+    JsonObject headerWithoutAlg = new JsonObject();
+    headerWithoutAlg.addProperty("kid", kid);
+    String tokenWithoutAlg = generateSignedCompact(nonJwtSigner, headerWithoutAlg, payload);
+    assertThrows(
+        GeneralSecurityException.class, () -> verifier.verifyAndDecode(tokenWithoutAlg, validator));
+
+    // invalid token with an incorrect algorithm in the header
+    JsonObject headerWithBadAlg = new JsonObject();
+    headerWithBadAlg.addProperty("alg", "RS256");
+    headerWithBadAlg.addProperty("kid", kid);
+    String tokenWithBadAlg = generateSignedCompact(nonJwtSigner, headerWithBadAlg, payload);
+    assertThrows(
+        GeneralSecurityException.class, () -> verifier.verifyAndDecode(tokenWithBadAlg, validator));
+
+    // token with an unknown "kid" in the header is invalid
+    JsonObject headerWithUnknownKid = new JsonObject();
+    headerWithUnknownKid.addProperty(
+        "alg", getRsaSsaPssAlg(jwtRsaSsaPssPrivateKey.getParameters()));
+    headerWithUnknownKid.addProperty("kid", "unknown");
+    String tokenWithUnknownKid = generateSignedCompact(nonJwtSigner, headerWithUnknownKid, payload);
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> verifier.verifyAndDecode(tokenWithUnknownKid, validator));
+  }
+
   // End of algorithm-specific tests.
 
   @SuppressWarnings("AvoidObjectArrays")
@@ -1550,6 +2025,12 @@ public class JwtSignatureConfigurationV0Test {
   public void getPrimitive_signVerifyWithWrongCustomKid_throws(
       @FromDataPoints("jwtPrivateKeyPairsDifferentKids") JwtSignaturePrivateKey[] keys)
       throws Exception {
+    if (TestUtil.isTsan()) {
+      // This test takes a long time under TSan. Similar functionality is tested in the other tests.
+      // TODO(b/456486048): don't skip this test under TSan once it's been refactored.
+      return;
+    }
+
     KeysetHandle keysetHandleWithCustomKid =
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(keys[0]).withFixedId(123).makePrimary())
