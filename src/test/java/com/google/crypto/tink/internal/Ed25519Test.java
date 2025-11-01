@@ -58,7 +58,7 @@ public class Ed25519Test {
     }
   }
 
-  /** Test for https://github.com/google/tink/issues/224. */
+  /** Test for https://github.com/tink-crypto/tink/issues/224. */
   @Test
   public void testScalarMultWithBase() throws Exception {
     byte[] scalar = Hex.decode("521784c403e6fb32d48e0da85969a82f5952856bde4471a42b3fa56fd8b96c0d");

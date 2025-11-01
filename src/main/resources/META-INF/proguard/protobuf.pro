@@ -5,7 +5,7 @@
 # - https://developer.android.com/studio/build/shrink-code#configuration-files
 # - https://docs.bazel.build/versions/master/be/java.html#java_library.resources
 # See also:
-# - https://github.com/google/tink/issues/361
+# - https://github.com/tink-crypto/tink/issues/361
 # - https://github.com/protocolbuffers/protobuf/issues/6463
 # WARNING: the shaded package name com.google.crypto.tink.shaded.protobuf must
 # be kept in sync with jar_jar_rules.txt.

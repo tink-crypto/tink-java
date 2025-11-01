@@ -296,7 +296,7 @@ public final class AesGcmHkdfStreaming extends NonceBasedStreamingAead {
           paramsForSegment(noncePrefix, encryptedSegments, isLastSegment));
       encryptedSegments++;
       // `update(nonEmpty)`, `doFinal(empty)` is known to cause problems on Android 23.
-      // See https://github.com/google/tink/issues/229
+      // See https://github.com/tink-crypto/tink/issues/229
       if (part2.hasRemaining()) {
         cipher.update(part1, ciphertext);
         cipher.doFinal(part2, ciphertext);
