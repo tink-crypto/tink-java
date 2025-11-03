@@ -1153,7 +1153,6 @@ public class JwtSignatureConfigurationV0Test {
       @FromDataPoints("jwtPrivateKeys") JwtSignaturePrivateKey key) throws Exception {
     if (TestUtil.isTsan()) {
       // This test takes a long time under TSan.
-      // TODO(b/456486048): don't skip this test under TSan once it's been refactored.
       return;
     }
 
@@ -1192,6 +1191,11 @@ public class JwtSignatureConfigurationV0Test {
   @Theory
   public void getPrimitive_signVerifyDifferentKey_throws(
       @FromDataPoints("jwtPrivateKeys") JwtSignaturePrivateKey key) throws Exception {
+    if (TestUtil.isTsan()) {
+      // This test takes a long time under TSan.
+      return;
+    }
+
     KeysetHandle keysetHandle =
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(key).withFixedId(123).makePrimary())
@@ -1227,6 +1231,11 @@ public class JwtSignatureConfigurationV0Test {
   @Theory
   public void getPrimitive_signVerifyHeaderModification_throws(
       @FromDataPoints("jwtPrivateKeys") JwtSignaturePrivateKey key) throws Exception {
+    if (TestUtil.isTsan()) {
+      // This test takes a long time under TSan.
+      return;
+    }
+
     KeysetHandle keysetHandle =
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(key).withFixedId(123).makePrimary())
@@ -1256,7 +1265,6 @@ public class JwtSignatureConfigurationV0Test {
       @FromDataPoints("jwtPrivateKeys") JwtSignaturePrivateKey key) throws Exception {
     if (TestUtil.isTsan()) {
       // This test takes a long time under TSan.
-      // TODO(b/456486048): don't skip this test under TSan once it's been refactored.
       return;
     }
 
@@ -2028,7 +2036,6 @@ public class JwtSignatureConfigurationV0Test {
       throws Exception {
     if (TestUtil.isTsan()) {
       // This test takes a long time under TSan. Similar functionality is tested in the other tests.
-      // TODO(b/456486048): don't skip this test under TSan once it's been refactored.
       return;
     }
 
