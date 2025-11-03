@@ -14,7 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package com.google.crypto.tink.jwt;
+package com.google.crypto.tink.jwt.internal;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.crypto.tink.internal.testing.Asserts.assertEqualWhenValueParsed;
@@ -28,6 +28,10 @@ import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.internal.testing.BigIntegerTestUtil;
+import com.google.crypto.tink.jwt.JwtRsaSsaPssParameters;
+import com.google.crypto.tink.jwt.JwtRsaSsaPssParameters.Algorithm;
+import com.google.crypto.tink.jwt.JwtRsaSsaPssPrivateKey;
+import com.google.crypto.tink.jwt.JwtRsaSsaPssPublicKey;
 import com.google.crypto.tink.proto.JwtRsaSsaPssAlgorithm;
 import com.google.crypto.tink.proto.JwtRsaSsaPssKeyFormat;
 import com.google.crypto.tink.proto.JwtRsaSsaPssPublicKey.CustomKid;
@@ -114,11 +118,10 @@ public final class JwtRsaSsaPssProtoSerializationTest {
   private static final MutableSerializationRegistry registry = new MutableSerializationRegistry();
 
   private static final class AlgorithmTuple {
-    final JwtRsaSsaPssParameters.Algorithm algorithm;
+    final Algorithm algorithm;
     final JwtRsaSsaPssAlgorithm protoAlgorithm;
 
-    AlgorithmTuple(
-        JwtRsaSsaPssParameters.Algorithm algorithm, JwtRsaSsaPssAlgorithm protoAlgorithm) {
+    AlgorithmTuple(Algorithm algorithm, JwtRsaSsaPssAlgorithm protoAlgorithm) {
       this.algorithm = algorithm;
       this.protoAlgorithm = protoAlgorithm;
     }
