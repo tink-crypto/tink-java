@@ -37,9 +37,11 @@ import com.google.crypto.tink.signature.internal.testing.RsaSsaPkcs1TestUtil;
 import com.google.crypto.tink.signature.internal.testing.RsaSsaPssTestUtil;
 import com.google.crypto.tink.signature.internal.testing.SignatureTestVector;
 import java.security.GeneralSecurityException;
+import java.security.Security;
 import java.util.Arrays;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
+import org.conscrypt.Conscrypt;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -50,7 +52,7 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
 @RunWith(Theories.class)
-public class SignatureConfigurationV1Test {
+public class SignatureConfigurationV1ConscryptTest {
   @BeforeClass
   public static void setUp() throws Exception {
     EcdsaProtoSerialization.register();
@@ -58,6 +60,10 @@ public class SignatureConfigurationV1Test {
     RsaSsaPkcs1ProtoSerialization.register();
     Ed25519ProtoSerialization.register();
     MlDsaProtoSerialization.register();
+
+    if (!Util.isAndroid() && Conscrypt.isAvailable()) {
+      Security.addProvider(Conscrypt.newProvider());
+    }
   }
 
   @Test
@@ -70,7 +76,7 @@ public class SignatureConfigurationV1Test {
   /**
    * Tests that when using the public API of Tink, signatures in the test vector can be verified.
    * This additionally ensures that all the expected algorithms (Ecdsa, RsaSsaPss, RsaSsaPkcs1,
-   * Ed25519 for {@code PublicKeyVerify}, MlDsa if Conscrypt is available and has support) are
+   * Ed25519 for {@code PublicKeyVerify}, MlDsa is Conscrypt is available and has support) are
    * present in the SignatureConfigurationV1.
    */
   @Theory
@@ -136,8 +142,8 @@ public class SignatureConfigurationV1Test {
     if (testVector.getPrivateKey() instanceof MlDsaPrivateKey
         && !MlDsaVerifyConscrypt.isSupported()) {
       // ML-DSA requires Conscrypt to be available. This also captures cases where ML-DSA is not
-      // available even with Conscrypt installed, since 1) an older version of Conscrypt
-      // may be in use and 2) Conscrypt on Android does not support ML-DSA yet.
+      // available even with Conscrypt installed, since 1) an older version of Conscrypt may be in
+      // use and 2) Conscrypt on Android does not support ML-DSA yet.
       assertThrows(
           GeneralSecurityException.class,
           () -> handle.getPrimitive(SignatureConfigurationV1.get(), PublicKeySign.class));
@@ -149,6 +155,7 @@ public class SignatureConfigurationV1Test {
                   .getPrimitive(SignatureConfigurationV1.get(), PublicKeyVerify.class));
       return;
     }
+
 
     PublicKeySign signer = handle.getPrimitive(SignatureConfigurationV1.get(), PublicKeySign.class);
     byte[] signature = signer.sign(testVector.getMessage());

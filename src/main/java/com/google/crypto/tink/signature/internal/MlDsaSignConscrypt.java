@@ -111,6 +111,11 @@ public final class MlDsaSignConscrypt implements PublicKeySign {
         provider);
   }
 
+  /** Returns true if the Conscrypt is available and supports ML-DSA-65. */
+  public static boolean isSupported() {
+    return MlDsaVerifyConscrypt.isSupported();
+  }
+
   @Override
   public byte[] sign(final byte[] data) throws GeneralSecurityException {
     return signInternal(data, outputPrefix, privateKey, algorithm, signatureLength, provider);

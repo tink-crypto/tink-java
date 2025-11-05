@@ -112,6 +112,21 @@ public final class MlDsaVerifyConscrypt implements PublicKeyVerify {
     }
   }
 
+  /** Returns true if the Conscrypt is available and supports ML-DSA-65. */
+  public static boolean isSupported() {
+    Provider provider = ConscryptUtil.providerOrNull();
+    if (provider == null) {
+      return false;
+    }
+    try {
+      KeyFactory unusedKeyFactory = KeyFactory.getInstance(ML_DSA_65_ALGORITHM, provider);
+      Signature unusedSignature = Signature.getInstance(ML_DSA_65_ALGORITHM, provider);
+      return true;
+    } catch (GeneralSecurityException e) {
+      return false;
+    }
+  }
+
   static final class RawKeySpec extends EncodedKeySpec {
     RawKeySpec(byte[] encoded) {
       super(encoded);

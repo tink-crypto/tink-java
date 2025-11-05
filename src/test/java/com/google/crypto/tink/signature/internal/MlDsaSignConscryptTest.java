@@ -27,6 +27,7 @@ import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.ConscryptUtil;
+import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.signature.MlDsaParameters;
 import com.google.crypto.tink.signature.MlDsaParameters.MlDsaInstance;
 import com.google.crypto.tink.signature.MlDsaPrivateKey;
@@ -103,6 +104,26 @@ public final class MlDsaSignConscryptTest {
     tinkPrivateKey =
         MlDsaPrivateKey.createWithoutVerification(
             tinkPublicKey, SecretBytes.copyFrom(privateKeySeed, InsecureSecretKeyAccess.get()));
+  }
+
+  @Test
+  public void isSupported_conscryptNotAvailable_isFalse() throws Exception {
+    Assume.assumeTrue(ConscryptUtil.providerOrNull() == null);
+
+    assertTrue(MlDsaSignConscrypt.isSupported());
+    assertTrue(MlDsaVerifyConscrypt.isSupported());
+  }
+
+  @Test
+  public void isSupported_conscryptAvailable_onAndroid_returnsFalse() throws Exception {
+    // Currently Android doesn't support ML-DSA. This will change in the future. Once it's changed,
+    // this test would need to be changed, as well as the SignatureConfigurationV1ConscryptTest
+    // where the extra if's related to availability of Conscrypt for ML-DSA will become
+    // unnecessary.
+    Assume.assumeTrue(ConscryptUtil.providerOrNull() != null && Util.isAndroid());
+
+    assertFalse(MlDsaSignConscrypt.isSupported());
+    assertFalse(MlDsaVerifyConscrypt.isSupported());
   }
 
   @Test
@@ -224,6 +245,7 @@ public final class MlDsaSignConscryptTest {
   }
 
   private static final class MlDsaWycheproofTestVector {
+    @SuppressWarnings("unused") // provides better readability
     private final String name;
     private final byte[] publicKeyBytes;
     private final boolean isValidPublicKey;
@@ -260,10 +282,6 @@ public final class MlDsaSignConscryptTest {
           Hex.decode(msgHex),
           Hex.decode(sigHex),
           isValidSignature);
-    }
-
-    String getName() {
-      return name;
     }
 
     byte[] getPublicKeyBytes() {

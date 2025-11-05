@@ -23,6 +23,8 @@ import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.InternalConfiguration;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
+import com.google.crypto.tink.signature.internal.MlDsaSignConscrypt;
+import com.google.crypto.tink.signature.internal.MlDsaVerifyConscrypt;
 import com.google.crypto.tink.subtle.EcdsaSignJce;
 import com.google.crypto.tink.subtle.EcdsaVerifyJce;
 import com.google.crypto.tink.subtle.Ed25519Sign;
@@ -41,6 +43,7 @@ import java.security.GeneralSecurityException;
  *   <li>RsaSsaPss
  *   <li>RsaSsaPkcs1
  *   <li>Ed25519
+ *   <li>MlDsa65
  * </ul>
  */
 /* Placeholder for internally public; DO NOT CHANGE. */ class SignatureConfigurationV1 {
@@ -79,6 +82,12 @@ import java.security.GeneralSecurityException;
       builder.registerPrimitiveConstructor(
           PrimitiveConstructor.create(
               Ed25519Verify::create, Ed25519PublicKey.class, PublicKeyVerify.class));
+      builder.registerPrimitiveConstructor(
+          PrimitiveConstructor.create(
+              MlDsaSignConscrypt::create, MlDsaPrivateKey.class, PublicKeySign.class));
+      builder.registerPrimitiveConstructor(
+          PrimitiveConstructor.create(
+              MlDsaVerifyConscrypt::create, MlDsaPublicKey.class, PublicKeyVerify.class));
 
       return InternalConfiguration.createFromPrimitiveRegistry(builder.build());
     } catch (GeneralSecurityException e) {
