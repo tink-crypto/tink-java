@@ -18,7 +18,8 @@ package com.google.crypto.tink.jwt;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.Key;
-import com.google.crypto.tink.internal.EllipticCurvesUtil;
+import com.google.crypto.tink.signature.EcdsaParameters;
+import com.google.crypto.tink.signature.EcdsaPublicKey;
 import com.google.crypto.tink.subtle.Base64;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Immutable;
@@ -34,13 +35,12 @@ import javax.annotation.Nullable;
 public final class JwtEcdsaPublicKey extends JwtSignaturePublicKey {
   private final JwtEcdsaParameters parameters;
 
-  @SuppressWarnings("Immutable") // ECPoint is immutable
-  private final ECPoint publicPoint;
+  private final EcdsaPublicKey ecdsaPublicKey;
 
   private final Optional<String> kid;
   private final Optional<Integer> idRequirement;
 
-  /** Builder for EcdsaPublicKey. */
+  /** Builder for JwtEcdsaPublicKey. */
   public static class Builder {
     private Optional<JwtEcdsaParameters> parameters = Optional.empty();
     private Optional<ECPoint> publicPoint = Optional.empty();
@@ -100,6 +100,35 @@ public final class JwtEcdsaPublicKey extends JwtSignaturePublicKey {
       throw new IllegalStateException("Unknown kid strategy");
     }
 
+    private static EcdsaParameters.CurveType getCurveType(JwtEcdsaParameters parameters)
+        throws GeneralSecurityException {
+      if (parameters.getAlgorithm().equals(JwtEcdsaParameters.Algorithm.ES256)) {
+        return EcdsaParameters.CurveType.NIST_P256;
+      }
+      if (parameters.getAlgorithm().equals(JwtEcdsaParameters.Algorithm.ES384)) {
+        return EcdsaParameters.CurveType.NIST_P384;
+      }
+      if (parameters.getAlgorithm().equals(JwtEcdsaParameters.Algorithm.ES512)) {
+        return EcdsaParameters.CurveType.NIST_P521;
+      }
+      throw new GeneralSecurityException("unknown algorithm in parameters: " + parameters);
+    }
+
+    private static EcdsaParameters.HashType getHashType(JwtEcdsaParameters parameters)
+        throws GeneralSecurityException {
+      if (parameters.getAlgorithm().equals(JwtEcdsaParameters.Algorithm.ES256)) {
+        return EcdsaParameters.HashType.SHA256;
+      }
+      if (parameters.getAlgorithm().equals(JwtEcdsaParameters.Algorithm.ES384)) {
+        return EcdsaParameters.HashType.SHA384;
+      }
+      if (parameters.getAlgorithm().equals(JwtEcdsaParameters.Algorithm.ES512)) {
+        return EcdsaParameters.HashType.SHA512;
+      }
+      throw new GeneralSecurityException("unknown algorithm in parameters: " + parameters);
+    }
+
+    @AccessesPartialKey
     public JwtEcdsaPublicKey build() throws GeneralSecurityException {
       if (!parameters.isPresent()) {
         throw new GeneralSecurityException("Cannot build without parameters");
@@ -107,8 +136,6 @@ public final class JwtEcdsaPublicKey extends JwtSignaturePublicKey {
       if (!publicPoint.isPresent()) {
         throw new GeneralSecurityException("Cannot build without public point");
       }
-      EllipticCurvesUtil.checkPointOnCurve(
-          publicPoint.get(), parameters.get().getAlgorithm().getEcParameterSpec().getCurve());
       if (parameters.get().hasIdRequirement() && !idRequirement.isPresent()) {
         throw new GeneralSecurityException(
             "Cannot create key without ID requirement with parameters with ID requirement");
@@ -117,18 +144,29 @@ public final class JwtEcdsaPublicKey extends JwtSignaturePublicKey {
         throw new GeneralSecurityException(
             "Cannot create key with ID requirement with parameters without ID requirement");
       }
-      return new JwtEcdsaPublicKey(
-          parameters.get(), publicPoint.get(), computeKid(), idRequirement);
+
+      EcdsaParameters ecdsaParameters =
+          EcdsaParameters.builder()
+              .setSignatureEncoding(EcdsaParameters.SignatureEncoding.IEEE_P1363)
+              .setCurveType(getCurveType(parameters.get()))
+              .setHashType(getHashType(parameters.get()))
+              .build();
+      EcdsaPublicKey ecdsaPublicKey =
+          EcdsaPublicKey.builder()
+              .setParameters(ecdsaParameters)
+              .setPublicPoint(publicPoint.get())
+              .build();
+      return new JwtEcdsaPublicKey(parameters.get(), ecdsaPublicKey, computeKid(), idRequirement);
     }
   }
 
   private JwtEcdsaPublicKey(
       JwtEcdsaParameters parameters,
-      ECPoint publicPoint,
+      EcdsaPublicKey ecdsaPublicKey,
       Optional<String> kid,
       Optional<Integer> idRequirement) {
     this.parameters = parameters;
-    this.publicPoint = publicPoint;
+    this.ecdsaPublicKey = ecdsaPublicKey;
     this.kid = kid;
     this.idRequirement = idRequirement;
   }
@@ -147,8 +185,9 @@ public final class JwtEcdsaPublicKey extends JwtSignaturePublicKey {
       link = "https://developers.google.com/tink/design/access_control#accessing_partial_keys",
       allowedOnPath = ".*Test\\.java",
       allowlistAnnotations = {AccessesPartialKey.class})
+  @AccessesPartialKey
   public ECPoint getPublicPoint() {
-    return publicPoint;
+    return ecdsaPublicKey.getPublicPoint();
   }
 
   @Override
@@ -174,7 +213,16 @@ public final class JwtEcdsaPublicKey extends JwtSignaturePublicKey {
     }
     JwtEcdsaPublicKey that = (JwtEcdsaPublicKey) o;
     return that.parameters.equals(parameters)
-        && that.publicPoint.equals(publicPoint)
+        && that.ecdsaPublicKey.equalsKey(ecdsaPublicKey)
         && that.kid.equals(kid);
+  }
+
+  @RestrictedApi(
+      explanation = "Accessing parts of keys can produce unexpected incompatibilities, annotate the function with @AccessesPartialKey",
+      link = "https://developers.google.com/tink/design/access_control#accessing_partial_keys",
+      allowedOnPath = ".*Test\\.java",
+      allowlistAnnotations = {AccessesPartialKey.class})
+  EcdsaPublicKey getEcdsaPublicKey() {
+    return ecdsaPublicKey;
   }
 }

@@ -34,7 +34,6 @@ import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.jwt.internal.JwtRsaSsaPkcs1ProtoSerialization;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
-import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
 import com.google.crypto.tink.subtle.EngineFactory;
 import com.google.crypto.tink.subtle.RsaSsaPkcs1SignJce;
 import com.google.crypto.tink.util.SecretBigInteger;
@@ -69,15 +68,7 @@ public final class JwtRsaSsaPkcs1SignKeyManager {
   @AccessesPartialKey
   static RsaSsaPkcs1PrivateKey toRsaSsaPkcs1PrivateKey(JwtRsaSsaPkcs1PrivateKey privateKey)
       throws GeneralSecurityException {
-    RsaSsaPkcs1PublicKey publicKey =
-        JwtRsaSsaPkcs1VerifyKeyManager.toRsaSsaPkcs1PublicKey(privateKey.getPublicKey());
-    return RsaSsaPkcs1PrivateKey.builder()
-        .setPublicKey(publicKey)
-        .setPrimes(privateKey.getPrimeP(), privateKey.getPrimeQ())
-        .setPrivateExponent(privateKey.getPrivateExponent())
-        .setPrimeExponents(privateKey.getPrimeExponentP(), privateKey.getPrimeExponentQ())
-        .setCrtCoefficient(privateKey.getCrtCoefficient())
-        .build();
+    return privateKey.getRsaSsaPkcs1PrivateKey();
   }
 
   @SuppressWarnings("Immutable") // RsaSsaPkcs1SignJce.create returns an immutable signer.

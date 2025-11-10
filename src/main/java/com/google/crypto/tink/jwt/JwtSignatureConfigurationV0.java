@@ -26,13 +26,10 @@ import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.InternalConfiguration;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
-import com.google.crypto.tink.signature.EcdsaParameters;
 import com.google.crypto.tink.signature.EcdsaPrivateKey;
 import com.google.crypto.tink.signature.EcdsaPublicKey;
-import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
-import com.google.crypto.tink.signature.RsaSsaPssParameters;
 import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
 import com.google.crypto.tink.subtle.EcdsaSignJce;
@@ -107,59 +104,15 @@ import java.security.GeneralSecurityException;
     }
   }
 
-
-  // The following utility functions are copied from
-  // src/main/java/com/google/crypto/tink/jwt/JwtEcdsaSignKeyManager.java.
-  private static EcdsaParameters.CurveType getCurveType(JwtEcdsaParameters parameters)
-      throws GeneralSecurityException {
-    if (parameters.getAlgorithm().equals(JwtEcdsaParameters.Algorithm.ES256)) {
-      return EcdsaParameters.CurveType.NIST_P256;
-    }
-    if (parameters.getAlgorithm().equals(JwtEcdsaParameters.Algorithm.ES384)) {
-      return EcdsaParameters.CurveType.NIST_P384;
-    }
-    if (parameters.getAlgorithm().equals(JwtEcdsaParameters.Algorithm.ES512)) {
-      return EcdsaParameters.CurveType.NIST_P521;
-    }
-    throw new GeneralSecurityException("unknown algorithm in parameters: " + parameters);
-  }
-
-  private static EcdsaParameters.HashType getHash(JwtEcdsaParameters parameters)
-      throws GeneralSecurityException {
-    if (parameters.getAlgorithm().equals(JwtEcdsaParameters.Algorithm.ES256)) {
-      return EcdsaParameters.HashType.SHA256;
-    }
-    if (parameters.getAlgorithm().equals(JwtEcdsaParameters.Algorithm.ES384)) {
-      return EcdsaParameters.HashType.SHA384;
-    }
-    if (parameters.getAlgorithm().equals(JwtEcdsaParameters.Algorithm.ES512)) {
-      return EcdsaParameters.HashType.SHA512;
-    }
-    throw new GeneralSecurityException("unknown algorithm in parameters: " + parameters);
-  }
-
   @AccessesPartialKey
-  private static EcdsaPublicKey toEcdsaPublicKey(JwtEcdsaPublicKey publicKey)
-      throws GeneralSecurityException {
-    EcdsaParameters ecdsaParameters =
-        EcdsaParameters.builder()
-            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.IEEE_P1363)
-            .setCurveType(getCurveType(publicKey.getParameters()))
-            .setHashType(getHash(publicKey.getParameters()))
-            .build();
-    return EcdsaPublicKey.builder()
-        .setParameters(ecdsaParameters)
-        .setPublicPoint(publicKey.getPublicPoint())
-        .build();
+  private static EcdsaPublicKey toEcdsaPublicKey(JwtEcdsaPublicKey publicKey) {
+    return publicKey.getEcdsaPublicKey();
   }
 
   @AccessesPartialKey
   private static EcdsaPrivateKey toEcdsaPrivateKey(JwtEcdsaPrivateKey privateKey)
       throws GeneralSecurityException {
-    return EcdsaPrivateKey.builder()
-        .setPublicKey(toEcdsaPublicKey(privateKey.getPublicKey()))
-        .setPrivateValue(privateKey.getPrivateValue())
-        .build();
+    return privateKey.getEcdsaPrivateKey();
   }
 
   @SuppressWarnings("Immutable") // EcdsaVerifyJce.create returns an immutable verifier.
@@ -177,17 +130,9 @@ import java.security.GeneralSecurityException;
   }
 
   @AccessesPartialKey
-  private static RsaSsaPkcs1PrivateKey toRsaSsaPkcs1PrivateKey(JwtRsaSsaPkcs1PrivateKey privateKey)
-      throws GeneralSecurityException {
-    RsaSsaPkcs1PublicKey publicKey =
-        toRsaSsaPkcs1PublicKey(privateKey.getPublicKey());
-    return RsaSsaPkcs1PrivateKey.builder()
-        .setPublicKey(publicKey)
-        .setPrimes(privateKey.getPrimeP(), privateKey.getPrimeQ())
-        .setPrivateExponent(privateKey.getPrivateExponent())
-        .setPrimeExponents(privateKey.getPrimeExponentP(), privateKey.getPrimeExponentQ())
-        .setCrtCoefficient(privateKey.getCrtCoefficient())
-        .build();
+  private static RsaSsaPkcs1PrivateKey toRsaSsaPkcs1PrivateKey(
+      JwtRsaSsaPkcs1PrivateKey privateKey) {
+    return privateKey.getRsaSsaPkcs1PrivateKey();
   }
 
   @SuppressWarnings("Immutable") // RsaSsaPkcs1SignJce.create returns an immutable signer.
@@ -205,16 +150,10 @@ import java.security.GeneralSecurityException;
   }
 
   @AccessesPartialKey
-  private static RsaSsaPssPrivateKey toRsaSsaPssPrivateKey(JwtRsaSsaPssPrivateKey privateKey)
-      throws GeneralSecurityException {
-    return RsaSsaPssPrivateKey.builder()
-        .setPublicKey(toRsaSsaPssPublicKey(privateKey.getPublicKey()))
-        .setPrimes(privateKey.getPrimeP(), privateKey.getPrimeQ())
-        .setPrivateExponent(privateKey.getPrivateExponent())
-        .setPrimeExponents(privateKey.getPrimeExponentP(), privateKey.getPrimeExponentQ())
-        .setCrtCoefficient(privateKey.getCrtCoefficient())
-        .build();
+  private static RsaSsaPssPrivateKey toRsaSsaPssPrivateKey(JwtRsaSsaPssPrivateKey privateKey) {
+    return privateKey.getRsaSsaPssPrivateKey();
   }
+
 
   @SuppressWarnings("Immutable") // RsaSsaPssVerifyJce.create returns an immutable verifier.
   private static JwtPublicKeySign createJwtRsaSsaPssSign(JwtRsaSsaPssPrivateKey privateKey)
@@ -250,38 +189,9 @@ import java.security.GeneralSecurityException;
     };
   }
 
-  // Note: each algorithm defines not just the modulo size, but also the
-  // hash length and salt length to use.
-  // See https://www.rfc-editor.org/rfc/rfc7518.html#section-3.5
-  private static RsaSsaPkcs1Parameters.HashType hashTypeForJwtRsaSsaPkcs1Algorithm(
-      JwtRsaSsaPkcs1Parameters.Algorithm algorithm) throws GeneralSecurityException {
-    if (algorithm.equals(JwtRsaSsaPkcs1Parameters.Algorithm.RS256)) {
-      return RsaSsaPkcs1Parameters.HashType.SHA256;
-    }
-    if (algorithm.equals(JwtRsaSsaPkcs1Parameters.Algorithm.RS384)) {
-      return RsaSsaPkcs1Parameters.HashType.SHA384;
-    }
-    if (algorithm.equals(JwtRsaSsaPkcs1Parameters.Algorithm.RS512)) {
-      return RsaSsaPkcs1Parameters.HashType.SHA512;
-    }
-    throw new GeneralSecurityException("unknown algorithm " + algorithm);
-  }
-
   @AccessesPartialKey
-  private static RsaSsaPkcs1PublicKey toRsaSsaPkcs1PublicKey(JwtRsaSsaPkcs1PublicKey publicKey)
-      throws GeneralSecurityException {
-    RsaSsaPkcs1Parameters rsaSsaPkcs1Parameters =
-        RsaSsaPkcs1Parameters.builder()
-            .setModulusSizeBits(publicKey.getParameters().getModulusSizeBits())
-            .setPublicExponent(publicKey.getParameters().getPublicExponent())
-            .setHashType(
-                hashTypeForJwtRsaSsaPkcs1Algorithm(publicKey.getParameters().getAlgorithm()))
-            .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
-            .build();
-    return RsaSsaPkcs1PublicKey.builder()
-        .setParameters(rsaSsaPkcs1Parameters)
-        .setModulus(publicKey.getModulus())
-        .build();
+  private static RsaSsaPkcs1PublicKey toRsaSsaPkcs1PublicKey(JwtRsaSsaPkcs1PublicKey publicKey) {
+    return publicKey.getRsaSsaPkcs1PublicKey();
   }
 
   @SuppressWarnings("Immutable") // RsaSsaPkcs1VerifyJce.create is immutable.
@@ -304,52 +214,9 @@ import java.security.GeneralSecurityException;
     };
   }
 
-  private static RsaSsaPssParameters.HashType hashTypeForJwtRsaSsaPssAlgorithm(
-      JwtRsaSsaPssParameters.Algorithm algorithm) throws GeneralSecurityException {
-    if (algorithm.equals(JwtRsaSsaPssParameters.Algorithm.PS256)) {
-      return RsaSsaPssParameters.HashType.SHA256;
-    }
-    if (algorithm.equals(JwtRsaSsaPssParameters.Algorithm.PS384)) {
-      return RsaSsaPssParameters.HashType.SHA384;
-    }
-    if (algorithm.equals(JwtRsaSsaPssParameters.Algorithm.PS512)) {
-      return RsaSsaPssParameters.HashType.SHA512;
-    }
-    throw new GeneralSecurityException("unknown algorithm " + algorithm);
-  }
-
-  private static int saltLengthForPssAlgorithm(JwtRsaSsaPssParameters.Algorithm algorithm)
-      throws GeneralSecurityException {
-    if (algorithm.equals(JwtRsaSsaPssParameters.Algorithm.PS256)) {
-      return 32;
-    }
-    if (algorithm.equals(JwtRsaSsaPssParameters.Algorithm.PS384)) {
-      return 48;
-    }
-    if (algorithm.equals(JwtRsaSsaPssParameters.Algorithm.PS512)) {
-      return 64;
-    }
-    throw new GeneralSecurityException("unknown algorithm " + algorithm);
-  }
-
   @AccessesPartialKey
-  private static RsaSsaPssPublicKey toRsaSsaPssPublicKey(JwtRsaSsaPssPublicKey publicKey)
-      throws GeneralSecurityException {
-    RsaSsaPssParameters rsaSsaPssParameters =
-        RsaSsaPssParameters.builder()
-            .setModulusSizeBits(publicKey.getParameters().getModulusSizeBits())
-            .setPublicExponent(publicKey.getParameters().getPublicExponent())
-            .setSigHashType(
-                hashTypeForJwtRsaSsaPssAlgorithm(publicKey.getParameters().getAlgorithm()))
-            .setMgf1HashType(
-                hashTypeForJwtRsaSsaPssAlgorithm(publicKey.getParameters().getAlgorithm()))
-            .setSaltLengthBytes(saltLengthForPssAlgorithm(publicKey.getParameters().getAlgorithm()))
-            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
-            .build();
-    return RsaSsaPssPublicKey.builder()
-        .setParameters(rsaSsaPssParameters)
-        .setModulus(publicKey.getModulus())
-        .build();
+  private static RsaSsaPssPublicKey toRsaSsaPssPublicKey(JwtRsaSsaPssPublicKey publicKey) {
+    return publicKey.getRsaSsaPssPublicKey();
   }
 
   @SuppressWarnings("Immutable") // RsaSsaPssVerifyJce.create returns an immutable verifier.

@@ -20,7 +20,6 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
-import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
 import com.google.crypto.tink.subtle.RsaSsaPkcs1VerifyJce;
 import com.google.gson.JsonObject;
@@ -31,37 +30,10 @@ import java.security.GeneralSecurityException;
  * generation.
  */
 final class JwtRsaSsaPkcs1VerifyKeyManager {
-  // Note: each algorithm defines not just the modulo size, but also the
-  // hash length and salt length to use.
-  // See https://www.rfc-editor.org/rfc/rfc7518.html#section-3.5
-  private static RsaSsaPkcs1Parameters.HashType hashTypeForAlgorithm(
-      JwtRsaSsaPkcs1Parameters.Algorithm algorithm) throws GeneralSecurityException {
-    if (algorithm.equals(JwtRsaSsaPkcs1Parameters.Algorithm.RS256)) {
-      return RsaSsaPkcs1Parameters.HashType.SHA256;
-    }
-    if (algorithm.equals(JwtRsaSsaPkcs1Parameters.Algorithm.RS384)) {
-      return RsaSsaPkcs1Parameters.HashType.SHA384;
-    }
-    if (algorithm.equals(JwtRsaSsaPkcs1Parameters.Algorithm.RS512)) {
-      return RsaSsaPkcs1Parameters.HashType.SHA512;
-    }
-    throw new GeneralSecurityException("unknown algorithm " + algorithm);
-  }
 
   @AccessesPartialKey
-  static RsaSsaPkcs1PublicKey toRsaSsaPkcs1PublicKey(JwtRsaSsaPkcs1PublicKey publicKey)
-      throws GeneralSecurityException {
-    RsaSsaPkcs1Parameters rsaSsaPkcs1Parameters =
-        RsaSsaPkcs1Parameters.builder()
-            .setModulusSizeBits(publicKey.getParameters().getModulusSizeBits())
-            .setPublicExponent(publicKey.getParameters().getPublicExponent())
-            .setHashType(hashTypeForAlgorithm(publicKey.getParameters().getAlgorithm()))
-            .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
-            .build();
-    return RsaSsaPkcs1PublicKey.builder()
-        .setParameters(rsaSsaPkcs1Parameters)
-        .setModulus(publicKey.getModulus())
-        .build();
+  static RsaSsaPkcs1PublicKey toRsaSsaPkcs1PublicKey(JwtRsaSsaPkcs1PublicKey publicKey) {
+    return publicKey.getRsaSsaPkcs1PublicKey();
   }
 
   @SuppressWarnings("Immutable") // RsaSsaPkcs1VerifyJce.create is immutable.

@@ -21,7 +21,6 @@ import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.proto.JwtEcdsaAlgorithm;
-import com.google.crypto.tink.signature.EcdsaParameters;
 import com.google.crypto.tink.signature.EcdsaPublicKey;
 import com.google.crypto.tink.subtle.EcdsaVerifyJce;
 import com.google.crypto.tink.subtle.EllipticCurves;
@@ -34,47 +33,12 @@ import java.security.GeneralSecurityException;
  * generation.
  */
 class JwtEcdsaVerifyKeyManager {
-  static EcdsaParameters.CurveType getCurveType(JwtEcdsaParameters parameters)
-      throws GeneralSecurityException {
-    if (parameters.getAlgorithm().equals(JwtEcdsaParameters.Algorithm.ES256)) {
-      return EcdsaParameters.CurveType.NIST_P256;
-    }
-    if (parameters.getAlgorithm().equals(JwtEcdsaParameters.Algorithm.ES384)) {
-      return EcdsaParameters.CurveType.NIST_P384;
-    }
-    if (parameters.getAlgorithm().equals(JwtEcdsaParameters.Algorithm.ES512)) {
-      return EcdsaParameters.CurveType.NIST_P521;
-    }
-    throw new GeneralSecurityException("unknown algorithm in parameters: " + parameters);
-  }
 
-  static EcdsaParameters.HashType getHash(JwtEcdsaParameters parameters)
-      throws GeneralSecurityException {
-    if (parameters.getAlgorithm().equals(JwtEcdsaParameters.Algorithm.ES256)) {
-      return EcdsaParameters.HashType.SHA256;
-    }
-    if (parameters.getAlgorithm().equals(JwtEcdsaParameters.Algorithm.ES384)) {
-      return EcdsaParameters.HashType.SHA384;
-    }
-    if (parameters.getAlgorithm().equals(JwtEcdsaParameters.Algorithm.ES512)) {
-      return EcdsaParameters.HashType.SHA512;
-    }
-    throw new GeneralSecurityException("unknown algorithm in parameters: " + parameters);
-  }
 
   @AccessesPartialKey
   static EcdsaPublicKey toEcdsaPublicKey(com.google.crypto.tink.jwt.JwtEcdsaPublicKey publicKey)
       throws GeneralSecurityException {
-    EcdsaParameters ecdsaParameters =
-        EcdsaParameters.builder()
-            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.IEEE_P1363)
-            .setCurveType(getCurveType(publicKey.getParameters()))
-            .setHashType(getHash(publicKey.getParameters()))
-            .build();
-    return EcdsaPublicKey.builder()
-        .setParameters(ecdsaParameters)
-        .setPublicPoint(publicKey.getPublicPoint())
-        .build();
+    return publicKey.getEcdsaPublicKey();
   }
 
   @SuppressWarnings("Immutable") // EcdsaVerifyJce.create returns an immutable verifier.

@@ -18,6 +18,8 @@ package com.google.crypto.tink.jwt;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.Key;
+import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
+import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
 import com.google.crypto.tink.subtle.Base64;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.RestrictedApi;
@@ -34,9 +36,39 @@ import javax.annotation.Nullable;
  */
 public final class JwtRsaSsaPkcs1PublicKey extends JwtSignaturePublicKey {
   private final JwtRsaSsaPkcs1Parameters parameters;
-  private final BigInteger modulus;
+  private final RsaSsaPkcs1PublicKey rsaSsaPkcs1PublicKey;
   private final Optional<Integer> idRequirement;
   private final Optional<String> kid;
+
+  private static RsaSsaPkcs1Parameters.HashType getHashType(
+      JwtRsaSsaPkcs1Parameters.Algorithm algorithm) throws GeneralSecurityException {
+    if (algorithm.equals(JwtRsaSsaPkcs1Parameters.Algorithm.RS256)) {
+      return RsaSsaPkcs1Parameters.HashType.SHA256;
+    }
+    if (algorithm.equals(JwtRsaSsaPkcs1Parameters.Algorithm.RS384)) {
+      return RsaSsaPkcs1Parameters.HashType.SHA384;
+    }
+    if (algorithm.equals(JwtRsaSsaPkcs1Parameters.Algorithm.RS512)) {
+      return RsaSsaPkcs1Parameters.HashType.SHA512;
+    }
+    throw new GeneralSecurityException("unknown algorithm " + algorithm);
+  }
+
+  @AccessesPartialKey
+  private static RsaSsaPkcs1PublicKey toRsaSsaPkcs1PublicKey(
+      JwtRsaSsaPkcs1Parameters parameters, BigInteger modulus) throws GeneralSecurityException {
+    RsaSsaPkcs1Parameters rsaSsaPkcs1Parameters =
+        RsaSsaPkcs1Parameters.builder()
+            .setModulusSizeBits(parameters.getModulusSizeBits())
+            .setPublicExponent(parameters.getPublicExponent())
+            .setHashType(getHashType(parameters.getAlgorithm()))
+            .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
+            .build();
+    return RsaSsaPkcs1PublicKey.builder()
+        .setParameters(rsaSsaPkcs1Parameters)
+        .setModulus(modulus)
+        .build();
+  }
 
   /** Builder for JwtRsaSsaPkcs1PublicKey. */
   public static class Builder {
@@ -106,17 +138,8 @@ public final class JwtRsaSsaPkcs1PublicKey extends JwtSignaturePublicKey {
       if (!modulus.isPresent()) {
         throw new GeneralSecurityException("Cannot build without modulus");
       }
-      int modulusSize = modulus.get().bitLength();
-      int paramModulusSize = parameters.get().getModulusSizeBits();
-      // https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-4.pdf, B.3 requires p and q
-      // to be chosen such that 2^(paramModulusSize-1) < modulus < 2^paramModulusSize.
-      if (modulusSize != paramModulusSize) {
-        throw new GeneralSecurityException(
-            "Got modulus size "
-                + modulusSize
-                + ", but parameters requires modulus size "
-                + paramModulusSize);
-      }
+      RsaSsaPkcs1PublicKey rsaSsaPkcs1PublicKey =
+          toRsaSsaPkcs1PublicKey(parameters.get(), modulus.get());
 
       if (parameters.get().hasIdRequirement() && !idRequirement.isPresent()) {
         throw new GeneralSecurityException(
@@ -129,17 +152,17 @@ public final class JwtRsaSsaPkcs1PublicKey extends JwtSignaturePublicKey {
       }
 
       return new JwtRsaSsaPkcs1PublicKey(
-          parameters.get(), modulus.get(), idRequirement, computeKid());
+          parameters.get(), rsaSsaPkcs1PublicKey, idRequirement, computeKid());
     }
   }
 
   private JwtRsaSsaPkcs1PublicKey(
       JwtRsaSsaPkcs1Parameters parameters,
-      BigInteger modulus,
+      RsaSsaPkcs1PublicKey rsaSsaPkcs1PublicKey,
       Optional<Integer> idRequirement,
       Optional<String> kid) {
     this.parameters = parameters;
-    this.modulus = modulus;
+    this.rsaSsaPkcs1PublicKey = rsaSsaPkcs1PublicKey;
     this.idRequirement = idRequirement;
     this.kid = kid;
   }
@@ -159,8 +182,9 @@ public final class JwtRsaSsaPkcs1PublicKey extends JwtSignaturePublicKey {
       link = "https://developers.google.com/tink/design/access_control#accessing_partial_keys",
       allowedOnPath = ".*Test\\.java",
       allowlistAnnotations = {AccessesPartialKey.class})
+  @AccessesPartialKey
   public BigInteger getModulus() {
-    return modulus;
+    return rsaSsaPkcs1PublicKey.getModulus();
   }
 
   /**
@@ -195,8 +219,17 @@ public final class JwtRsaSsaPkcs1PublicKey extends JwtSignaturePublicKey {
     }
     JwtRsaSsaPkcs1PublicKey that = (JwtRsaSsaPkcs1PublicKey) o;
     return that.parameters.equals(parameters)
-        && that.modulus.equals(modulus)
+        && that.rsaSsaPkcs1PublicKey.equalsKey(rsaSsaPkcs1PublicKey)
         && that.kid.equals(kid)
         && that.idRequirement.equals(idRequirement);
+  }
+
+  @RestrictedApi(
+      explanation = "Accessing parts of keys can produce unexpected incompatibilities, annotate the function with @AccessesPartialKey",
+      link = "https://developers.google.com/tink/design/access_control#accessing_partial_keys",
+      allowedOnPath = ".*Test\\.java",
+      allowlistAnnotations = {AccessesPartialKey.class})
+  RsaSsaPkcs1PublicKey getRsaSsaPkcs1PublicKey() {
+    return rsaSsaPkcs1PublicKey;
   }
 }

@@ -17,12 +17,11 @@
 package com.google.crypto.tink.jwt;
 
 import com.google.crypto.tink.AccessesPartialKey;
-import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
+import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
 import com.google.crypto.tink.util.SecretBigInteger;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.RestrictedApi;
-import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.util.Optional;
 
@@ -33,12 +32,7 @@ import java.util.Optional;
  */
 public final class JwtRsaSsaPssPrivateKey extends JwtSignaturePrivateKey {
   private final JwtRsaSsaPssPublicKey publicKey;
-  private final SecretBigInteger d;
-  private final SecretBigInteger p;
-  private final SecretBigInteger q;
-  private final SecretBigInteger dP;
-  private final SecretBigInteger dQ;
-  private final SecretBigInteger qInv;
+  private final RsaSsaPssPrivateKey rsaSsaPssPrivateKey;
 
   /** Builder for JwtRsaSsaPssPrivateKey. */
   public static class Builder {
@@ -117,13 +111,12 @@ public final class JwtRsaSsaPssPrivateKey extends JwtSignaturePrivateKey {
       return this;
     }
 
-    private static final int PRIME_CERTAINTY = 10;
-
     @AccessesPartialKey
     public JwtRsaSsaPssPrivateKey build() throws GeneralSecurityException {
       if (!publicKey.isPresent()) {
         throw new GeneralSecurityException("Cannot build without a RSA SSA PSS public key");
       }
+
       if (!p.isPresent() || !q.isPresent()) {
         throw new GeneralSecurityException("Cannot build without prime factors");
       }
@@ -136,62 +129,22 @@ public final class JwtRsaSsaPssPrivateKey extends JwtSignaturePrivateKey {
       if (!qInv.isPresent()) {
         throw new GeneralSecurityException("Cannot build without CRT coefficient");
       }
-      BigInteger e = publicKey.get().getParameters().getPublicExponent();
-      BigInteger n = publicKey.get().getModulus();
-
-      BigInteger ip = this.p.get().getBigInteger(InsecureSecretKeyAccess.get());
-      BigInteger iq = this.q.get().getBigInteger(InsecureSecretKeyAccess.get());
-      BigInteger id = this.d.get().getBigInteger(InsecureSecretKeyAccess.get());
-      BigInteger idP = this.dP.get().getBigInteger(InsecureSecretKeyAccess.get());
-      BigInteger idQ = this.dQ.get().getBigInteger(InsecureSecretKeyAccess.get());
-      BigInteger iqInv = this.qInv.get().getBigInteger(InsecureSecretKeyAccess.get());
-
-      if (!ip.isProbablePrime(PRIME_CERTAINTY)) {
-        throw new GeneralSecurityException("p is not a prime");
-      }
-      if (!iq.isProbablePrime(PRIME_CERTAINTY)) {
-        throw new GeneralSecurityException("q is not a prime");
-      }
-      if (!ip.multiply(iq).equals(n)) {
-        throw new GeneralSecurityException(
-            "Prime p times prime q is not equal to the public key's modulus");
-      }
-      // lambda = LCM(p-1, q-1)
-      BigInteger pMinusOne = ip.subtract(BigInteger.ONE);
-      BigInteger qMinusOne = iq.subtract(BigInteger.ONE);
-      BigInteger lambda = pMinusOne.divide(pMinusOne.gcd(qMinusOne)).multiply(qMinusOne);
-      if (!e.multiply(id).mod(lambda).equals(BigInteger.ONE)) {
-        throw new GeneralSecurityException("D is invalid.");
-      }
-      if (!e.multiply(idP).mod(pMinusOne).equals(BigInteger.ONE)) {
-        throw new GeneralSecurityException("dP is invalid.");
-      }
-      if (!e.multiply(idQ).mod(qMinusOne).equals(BigInteger.ONE)) {
-        throw new GeneralSecurityException("dQ is invalid.");
-      }
-      if (!iq.multiply(iqInv).mod(ip).equals(BigInteger.ONE)) {
-        throw new GeneralSecurityException("qInv is invalid.");
-      }
-      return new JwtRsaSsaPssPrivateKey(
-          publicKey.get(), p.get(), q.get(), d.get(), dP.get(), dQ.get(), qInv.get());
+      RsaSsaPssPrivateKey rsaSsaPssPrivateKey =
+          RsaSsaPssPrivateKey.builder()
+              .setPublicKey(publicKey.get().getRsaSsaPssPublicKey())
+              .setPrimes(p.get(), q.get())
+              .setPrivateExponent(d.get())
+              .setPrimeExponents(dP.get(), dQ.get())
+              .setCrtCoefficient(qInv.get())
+              .build();
+      return new JwtRsaSsaPssPrivateKey(publicKey.get(), rsaSsaPssPrivateKey);
     }
   }
 
   private JwtRsaSsaPssPrivateKey(
-      JwtRsaSsaPssPublicKey publicKey,
-      SecretBigInteger p,
-      SecretBigInteger q,
-      SecretBigInteger d,
-      SecretBigInteger dP,
-      SecretBigInteger dQ,
-      SecretBigInteger qInv) {
+      JwtRsaSsaPssPublicKey publicKey, RsaSsaPssPrivateKey rsaSsaPssPrivateKey) {
     this.publicKey = publicKey;
-    this.p = p;
-    this.q = q;
-    this.d = d;
-    this.dP = dP;
-    this.dQ = dQ;
-    this.qInv = qInv;
+    this.rsaSsaPssPrivateKey = rsaSsaPssPrivateKey;
   }
 
   @RestrictedApi(
@@ -221,8 +174,9 @@ public final class JwtRsaSsaPssPrivateKey extends JwtSignaturePrivateKey {
       link = "https://developers.google.com/tink/design/access_control#accessing_partial_keys",
       allowedOnPath = ".*Test\\.java",
       allowlistAnnotations = {AccessesPartialKey.class})
+  @AccessesPartialKey
   public SecretBigInteger getPrimeP() {
-    return p;
+    return rsaSsaPssPrivateKey.getPrimeP();
   }
 
   /** Returns the prime factor q. */
@@ -231,28 +185,33 @@ public final class JwtRsaSsaPssPrivateKey extends JwtSignaturePrivateKey {
       link = "https://developers.google.com/tink/design/access_control#accessing_partial_keys",
       allowedOnPath = ".*Test\\.java",
       allowlistAnnotations = {AccessesPartialKey.class})
+  @AccessesPartialKey
   public SecretBigInteger getPrimeQ() {
-    return q;
+    return rsaSsaPssPrivateKey.getPrimeQ();
   }
 
   /** Returns the private exponent d. */
+  @AccessesPartialKey
   public SecretBigInteger getPrivateExponent() {
-    return d;
+    return rsaSsaPssPrivateKey.getPrivateExponent();
   }
 
   /** Returns the prime exponent dP. */
+  @AccessesPartialKey
   public SecretBigInteger getPrimeExponentP() {
-    return dP;
+    return rsaSsaPssPrivateKey.getPrimeExponentP();
   }
 
   /** Returns the prime exponent dQ. */
+  @AccessesPartialKey
   public SecretBigInteger getPrimeExponentQ() {
-    return dQ;
+    return rsaSsaPssPrivateKey.getPrimeExponentQ();
   }
 
   /** Returns the CRT coefficient qInv. */
+  @AccessesPartialKey
   public SecretBigInteger getCrtCoefficient() {
-    return qInv;
+    return rsaSsaPssPrivateKey.getCrtCoefficient();
   }
 
   @Override
@@ -262,11 +221,15 @@ public final class JwtRsaSsaPssPrivateKey extends JwtSignaturePrivateKey {
     }
     JwtRsaSsaPssPrivateKey that = (JwtRsaSsaPssPrivateKey) o;
     return that.publicKey.equalsKey(publicKey)
-        && p.equalsSecretBigInteger(that.p)
-        && q.equalsSecretBigInteger(that.q)
-        && d.equalsSecretBigInteger(that.d)
-        && dP.equalsSecretBigInteger(that.dP)
-        && dQ.equalsSecretBigInteger(that.dQ)
-        && qInv.equalsSecretBigInteger(that.qInv);
+        && that.rsaSsaPssPrivateKey.equalsKey(rsaSsaPssPrivateKey);
+  }
+
+  @RestrictedApi(
+      explanation = "Accessing parts of keys can produce unexpected incompatibilities, annotate the function with @AccessesPartialKey",
+      link = "https://developers.google.com/tink/design/access_control#accessing_partial_keys",
+      allowedOnPath = ".*Test\\.java",
+      allowlistAnnotations = {AccessesPartialKey.class})
+  RsaSsaPssPrivateKey getRsaSsaPssPrivateKey() {
+    return rsaSsaPssPrivateKey;
   }
 }

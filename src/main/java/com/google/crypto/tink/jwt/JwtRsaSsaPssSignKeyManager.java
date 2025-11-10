@@ -79,7 +79,6 @@ public final class JwtRsaSsaPssSignKeyManager {
     RSAPublicKey pubKey = (RSAPublicKey) keyPair.getPublic();
     RSAPrivateCrtKey privKey = (RSAPrivateCrtKey) keyPair.getPrivate();
 
-    // Creates JwtRsaSsaPssPublicKey.
     JwtRsaSsaPssPublicKey.Builder jwtRsaSsaPssPublicKeyBuilder =
         JwtRsaSsaPssPublicKey.builder().setParameters(parameters).setModulus(pubKey.getModulus());
     if (idRequirement != null) {
@@ -87,7 +86,6 @@ public final class JwtRsaSsaPssSignKeyManager {
     }
     JwtRsaSsaPssPublicKey jwtRsaSsaPssPublicKey = jwtRsaSsaPssPublicKeyBuilder.build();
 
-    // Creates RsaSsaPssPrivateKey.
     return JwtRsaSsaPssPrivateKey.builder()
         .setPublicKey(jwtRsaSsaPssPublicKey)
         .setPrimes(
@@ -113,15 +111,8 @@ public final class JwtRsaSsaPssSignKeyManager {
 
   @AccessesPartialKey
   private static RsaSsaPssPrivateKey toRsaSsaPssPrivateKey(
-      com.google.crypto.tink.jwt.JwtRsaSsaPssPrivateKey privateKey)
-      throws GeneralSecurityException {
-    return RsaSsaPssPrivateKey.builder()
-        .setPublicKey(JwtRsaSsaPssVerifyKeyManager.toRsaSsaPssPublicKey(privateKey.getPublicKey()))
-        .setPrimes(privateKey.getPrimeP(), privateKey.getPrimeQ())
-        .setPrivateExponent(privateKey.getPrivateExponent())
-        .setPrimeExponents(privateKey.getPrimeExponentP(), privateKey.getPrimeExponentQ())
-        .setCrtCoefficient(privateKey.getCrtCoefficient())
-        .build();
+      com.google.crypto.tink.jwt.JwtRsaSsaPssPrivateKey privateKey) {
+    return privateKey.getRsaSsaPssPrivateKey();
   }
 
   @SuppressWarnings("Immutable") // RsaSsaPssVerifyJce.create returns an immutable verifier.

@@ -17,15 +17,12 @@
 package com.google.crypto.tink.jwt;
 
 import com.google.crypto.tink.AccessesPartialKey;
-import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
-import com.google.crypto.tink.internal.EllipticCurvesUtil;
+import com.google.crypto.tink.signature.EcdsaPrivateKey;
 import com.google.crypto.tink.util.SecretBigInteger;
 import com.google.errorprone.annotations.Immutable;
 import com.google.errorprone.annotations.RestrictedApi;
-import java.math.BigInteger;
 import java.security.GeneralSecurityException;
-import java.security.spec.ECPoint;
 
 /**
  * Represents a key for computing JWT ECDSA signatures (ES256, ES384, ES512).
@@ -35,21 +32,7 @@ import java.security.spec.ECPoint;
 @Immutable
 public final class JwtEcdsaPrivateKey extends JwtSignaturePrivateKey {
   public final JwtEcdsaPublicKey publicKey;
-  public final SecretBigInteger privateKeyValue;
-
-  private static void validatePrivateValue(
-      BigInteger privateValue, ECPoint publicPoint, JwtEcdsaParameters.Algorithm algorithm)
-      throws GeneralSecurityException {
-    BigInteger order = algorithm.getEcParameterSpec().getOrder();
-    if ((privateValue.signum() <= 0) || (privateValue.compareTo(order) >= 0)) {
-      throw new GeneralSecurityException("Invalid private value");
-    }
-    ECPoint p =
-        EllipticCurvesUtil.multiplyByGenerator(privateValue, algorithm.getEcParameterSpec());
-    if (!p.equals(publicPoint)) {
-      throw new GeneralSecurityException("Invalid private value");
-    }
-  }
+  private final EcdsaPrivateKey ecdsaPrivateKey;
 
   @RestrictedApi(
       explanation = "Accessing parts of keys can produce unexpected incompatibilities, annotate the function with @AccessesPartialKey",
@@ -59,16 +42,17 @@ public final class JwtEcdsaPrivateKey extends JwtSignaturePrivateKey {
   @AccessesPartialKey
   public static JwtEcdsaPrivateKey create(
       JwtEcdsaPublicKey publicKey, SecretBigInteger privateValue) throws GeneralSecurityException {
-    validatePrivateValue(
-        privateValue.getBigInteger(InsecureSecretKeyAccess.get()),
-        publicKey.getPublicPoint(),
-        publicKey.getParameters().getAlgorithm());
-    return new JwtEcdsaPrivateKey(publicKey, privateValue);
+    EcdsaPrivateKey ecdsaPrivateKey =
+        EcdsaPrivateKey.builder()
+            .setPublicKey(publicKey.getEcdsaPublicKey())
+            .setPrivateValue(privateValue)
+            .build();
+    return new JwtEcdsaPrivateKey(publicKey, ecdsaPrivateKey);
   }
 
-  private JwtEcdsaPrivateKey(JwtEcdsaPublicKey publicKey, SecretBigInteger privateKeyValue) {
+  private JwtEcdsaPrivateKey(JwtEcdsaPublicKey publicKey, EcdsaPrivateKey ecdsaPrivateKey) {
     this.publicKey = publicKey;
-    this.privateKeyValue = privateKeyValue;
+    this.ecdsaPrivateKey = ecdsaPrivateKey;
   }
 
   @RestrictedApi(
@@ -76,8 +60,9 @@ public final class JwtEcdsaPrivateKey extends JwtSignaturePrivateKey {
       link = "https://developers.google.com/tink/design/access_control#accessing_partial_keys",
       allowedOnPath = ".*Test\\.java",
       allowlistAnnotations = {AccessesPartialKey.class})
+  @AccessesPartialKey
   public SecretBigInteger getPrivateValue() {
-    return privateKeyValue;
+    return ecdsaPrivateKey.getPrivateValue();
   }
 
   @Override
@@ -96,7 +81,15 @@ public final class JwtEcdsaPrivateKey extends JwtSignaturePrivateKey {
       return false;
     }
     JwtEcdsaPrivateKey that = (JwtEcdsaPrivateKey) o;
-    return that.publicKey.equalsKey(publicKey)
-        && privateKeyValue.equalsSecretBigInteger(that.privateKeyValue);
+    return that.publicKey.equalsKey(publicKey) && ecdsaPrivateKey.equalsKey(that.ecdsaPrivateKey);
+  }
+
+  @RestrictedApi(
+      explanation = "Accessing parts of keys can produce unexpected incompatibilities, annotate the function with @AccessesPartialKey",
+      link = "https://developers.google.com/tink/design/access_control#accessing_partial_keys",
+      allowedOnPath = ".*Test\\.java",
+      allowlistAnnotations = {AccessesPartialKey.class})
+  EcdsaPrivateKey getEcdsaPrivateKey() {
+    return ecdsaPrivateKey;
   }
 }

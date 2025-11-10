@@ -65,10 +65,7 @@ public final class JwtEcdsaSignKeyManager {
   @AccessesPartialKey
   private static EcdsaPrivateKey toEcdsaPrivateKey(
       com.google.crypto.tink.jwt.JwtEcdsaPrivateKey privateKey) throws GeneralSecurityException {
-    return EcdsaPrivateKey.builder()
-        .setPublicKey(JwtEcdsaVerifyKeyManager.toEcdsaPublicKey(privateKey.getPublicKey()))
-        .setPrivateValue(privateKey.getPrivateValue())
-        .build();
+    return privateKey.getEcdsaPrivateKey();
   }
 
   @SuppressWarnings("Immutable") // EcdsaVerifyJce.create returns an immutable verifier.
