@@ -22,6 +22,8 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.aead.ChaCha20Poly1305Key;
 import com.google.crypto.tink.internal.KeyTester;
+import com.google.crypto.tink.signature.EcdsaParameters;
+import com.google.crypto.tink.signature.EcdsaPrivateKey;
 import com.google.crypto.tink.util.SecretBigInteger;
 import com.google.crypto.tink.util.SecretBytes;
 import java.math.BigInteger;
@@ -85,6 +87,19 @@ public final class JwtEcdsaPrivateKeyTest {
         .isEqualTo(P256_PRIVATE_VALUE);
     assertThat(privateKey.getKid()).isEqualTo(Optional.empty());
     assertThat(privateKey.getIdRequirementOrNull()).isNull();
+
+    EcdsaPrivateKey ecdsaPrivateKey = privateKey.getEcdsaPrivateKey();
+    assertThat(ecdsaPrivateKey.getPublicKey()).isEqualTo(publicKey.getEcdsaPublicKey());
+    assertThat(ecdsaPrivateKey.getPrivateValue().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(P256_PRIVATE_VALUE);
+    assertThat(ecdsaPrivateKey.getParameters())
+        .isEqualTo(
+            EcdsaParameters.builder()
+                .setVariant(EcdsaParameters.Variant.NO_PREFIX)
+                .setHashType(EcdsaParameters.HashType.SHA256)
+                .setSignatureEncoding(EcdsaParameters.SignatureEncoding.IEEE_P1363)
+                .setCurveType(EcdsaParameters.CurveType.NIST_P256)
+                .build());
   }
 
   @Test
@@ -109,6 +124,19 @@ public final class JwtEcdsaPrivateKeyTest {
         .isEqualTo(P521_PRIVATE_VALUE);
     assertThat(privateKey.getKid()).isEqualTo(Optional.empty());
     assertThat(privateKey.getIdRequirementOrNull()).isNull();
+
+    EcdsaPrivateKey ecdsaPrivateKey = privateKey.getEcdsaPrivateKey();
+    assertThat(ecdsaPrivateKey.getPublicKey()).isEqualTo(publicKey.getEcdsaPublicKey());
+    assertThat(ecdsaPrivateKey.getPrivateValue().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(P521_PRIVATE_VALUE);
+    assertThat(ecdsaPrivateKey.getParameters())
+        .isEqualTo(
+            EcdsaParameters.builder()
+                .setVariant(EcdsaParameters.Variant.NO_PREFIX)
+                .setHashType(EcdsaParameters.HashType.SHA512)
+                .setSignatureEncoding(EcdsaParameters.SignatureEncoding.IEEE_P1363)
+                .setCurveType(EcdsaParameters.CurveType.NIST_P521)
+                .build());
   }
 
   @Test
@@ -134,6 +162,19 @@ public final class JwtEcdsaPrivateKeyTest {
         .isEqualTo(P256_PRIVATE_VALUE);
     assertThat(privateKey.getKid()).isEqualTo(Optional.of("Funny Custom KID"));
     assertThat(privateKey.getIdRequirementOrNull()).isNull();
+
+    EcdsaPrivateKey ecdsaPrivateKey = privateKey.getEcdsaPrivateKey();
+    assertThat(ecdsaPrivateKey.getPublicKey()).isEqualTo(publicKey.getEcdsaPublicKey());
+    assertThat(ecdsaPrivateKey.getPrivateValue().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(P256_PRIVATE_VALUE);
+    assertThat(ecdsaPrivateKey.getParameters())
+        .isEqualTo(
+            EcdsaParameters.builder()
+                .setVariant(EcdsaParameters.Variant.NO_PREFIX)
+                .setHashType(EcdsaParameters.HashType.SHA256)
+                .setSignatureEncoding(EcdsaParameters.SignatureEncoding.IEEE_P1363)
+                .setCurveType(EcdsaParameters.CurveType.NIST_P256)
+                .build());
   }
 
   @Test
@@ -160,6 +201,19 @@ public final class JwtEcdsaPrivateKeyTest {
     // See JwtFormatTest.getKidFromTinkOutputPrefixType_success
     assertThat(privateKey.getKid()).isEqualTo(Optional.of("GsapRA"));
     assertThat(privateKey.getIdRequirementOrNull()).isEqualTo(0x1ac6a944);
+
+    EcdsaPrivateKey ecdsaPrivateKey = privateKey.getEcdsaPrivateKey();
+    assertThat(ecdsaPrivateKey.getPublicKey()).isEqualTo(publicKey.getEcdsaPublicKey());
+    assertThat(ecdsaPrivateKey.getPrivateValue().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(P256_PRIVATE_VALUE);
+    assertThat(ecdsaPrivateKey.getParameters())
+        .isEqualTo(
+            EcdsaParameters.builder()
+                .setVariant(EcdsaParameters.Variant.NO_PREFIX)
+                .setHashType(EcdsaParameters.HashType.SHA256)
+                .setSignatureEncoding(EcdsaParameters.SignatureEncoding.IEEE_P1363)
+                .setCurveType(EcdsaParameters.CurveType.NIST_P256)
+                .build());
   }
 
   @Test

@@ -22,6 +22,8 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.aead.ChaCha20Poly1305Key;
 import com.google.crypto.tink.internal.KeyTester;
+import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
+import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
 import com.google.crypto.tink.subtle.Base64;
 import com.google.crypto.tink.util.SecretBigInteger;
 import com.google.crypto.tink.util.SecretBytes;
@@ -132,6 +134,32 @@ public final class JwtRsaSsaPkcs1PrivateKeyTest {
 
     assertThat(privateKey.getKid()).isEqualTo(Optional.empty());
     assertThat(privateKey.getIdRequirementOrNull()).isNull();
+
+    RsaSsaPkcs1PrivateKey rsaSsaPkcs1PrivateKey = privateKey.getRsaSsaPkcs1PrivateKey();
+    assertThat(rsaSsaPkcs1PrivateKey.getPublicKey()).isEqualTo(publicKey.getRsaSsaPkcs1PublicKey());
+    assertThat(rsaSsaPkcs1PrivateKey.getPrimeP().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(P);
+    assertThat(rsaSsaPkcs1PrivateKey.getPrimeQ().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(Q);
+    assertThat(
+            rsaSsaPkcs1PrivateKey.getPrimeExponentP().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(DP);
+    assertThat(
+            rsaSsaPkcs1PrivateKey.getPrimeExponentQ().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(DQ);
+    assertThat(
+            rsaSsaPkcs1PrivateKey.getCrtCoefficient().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(Q_INV);
+    assertThat(
+            rsaSsaPkcs1PrivateKey.getPrivateExponent().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(D);
+    assertThat(rsaSsaPkcs1PrivateKey.getParameters())
+        .isEqualTo(
+            RsaSsaPkcs1Parameters.builder()
+                .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
+                .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
+                .setModulusSizeBits(2048)
+                .build());
   }
 
   @Test
@@ -167,6 +195,32 @@ public final class JwtRsaSsaPkcs1PrivateKeyTest {
 
     assertThat(privateKey.getKid().get()).isEqualTo("customKid777");
     assertThat(privateKey.getIdRequirementOrNull()).isNull();
+
+    RsaSsaPkcs1PrivateKey rsaSsaPkcs1PrivateKey = privateKey.getRsaSsaPkcs1PrivateKey();
+    assertThat(rsaSsaPkcs1PrivateKey.getPublicKey()).isEqualTo(publicKey.getRsaSsaPkcs1PublicKey());
+    assertThat(rsaSsaPkcs1PrivateKey.getPrimeP().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(P);
+    assertThat(rsaSsaPkcs1PrivateKey.getPrimeQ().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(Q);
+    assertThat(
+            rsaSsaPkcs1PrivateKey.getPrimeExponentP().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(DP);
+    assertThat(
+            rsaSsaPkcs1PrivateKey.getPrimeExponentQ().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(DQ);
+    assertThat(
+            rsaSsaPkcs1PrivateKey.getCrtCoefficient().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(Q_INV);
+    assertThat(
+            rsaSsaPkcs1PrivateKey.getPrivateExponent().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(D);
+    assertThat(rsaSsaPkcs1PrivateKey.getParameters())
+        .isEqualTo(
+            RsaSsaPkcs1Parameters.builder()
+                .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
+                .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
+                .setModulusSizeBits(2048)
+                .build());
   }
 
   @Test
@@ -202,6 +256,32 @@ public final class JwtRsaSsaPkcs1PrivateKeyTest {
 
     assertThat(privateKey.getKid().get()).isEqualTo("GsapRA");
     assertThat(privateKey.getIdRequirementOrNull()).isEqualTo(0x1ac6a944);
+
+    RsaSsaPkcs1PrivateKey rsaSsaPkcs1PrivateKey = privateKey.getRsaSsaPkcs1PrivateKey();
+    assertThat(rsaSsaPkcs1PrivateKey.getPublicKey()).isEqualTo(publicKey.getRsaSsaPkcs1PublicKey());
+    assertThat(rsaSsaPkcs1PrivateKey.getPrimeP().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(P);
+    assertThat(rsaSsaPkcs1PrivateKey.getPrimeQ().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(Q);
+    assertThat(
+            rsaSsaPkcs1PrivateKey.getPrimeExponentP().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(DP);
+    assertThat(
+            rsaSsaPkcs1PrivateKey.getPrimeExponentQ().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(DQ);
+    assertThat(
+            rsaSsaPkcs1PrivateKey.getCrtCoefficient().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(Q_INV);
+    assertThat(
+            rsaSsaPkcs1PrivateKey.getPrivateExponent().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(D);
+    assertThat(rsaSsaPkcs1PrivateKey.getParameters())
+        .isEqualTo(
+            RsaSsaPkcs1Parameters.builder()
+                .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
+                .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
+                .setModulusSizeBits(2048)
+                .build());
   }
 
   @Test

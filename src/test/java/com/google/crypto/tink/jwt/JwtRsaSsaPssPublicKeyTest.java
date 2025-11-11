@@ -20,6 +20,8 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.internal.KeyTester;
+import com.google.crypto.tink.signature.RsaSsaPssParameters;
+import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
 import com.google.crypto.tink.subtle.Base64;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
@@ -58,6 +60,18 @@ public final class JwtRsaSsaPssPublicKeyTest {
     assertThat(key.getModulus()).isEqualTo(MODULUS);
     assertThat(key.getKid()).isEqualTo(Optional.empty());
     assertThat(key.getIdRequirementOrNull()).isNull();
+
+    RsaSsaPssPublicKey rsaSsaPssPublicKey = key.getRsaSsaPssPublicKey();
+    assertThat(rsaSsaPssPublicKey.getModulus()).isEqualTo(MODULUS);
+    assertThat(rsaSsaPssPublicKey.getParameters())
+        .isEqualTo(
+            RsaSsaPssParameters.builder()
+                .setModulusSizeBits(2048)
+                .setPublicExponent(BigInteger.valueOf(65537))
+                .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
+                .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
+                .setSaltLengthBytes(32)
+                .build());
   }
 
   @Test
@@ -113,6 +127,18 @@ public final class JwtRsaSsaPssPublicKeyTest {
     assertThat(key.getModulus()).isEqualTo(MODULUS);
     assertThat(key.getKid().get()).isEqualTo("customKid777");
     assertThat(key.getIdRequirementOrNull()).isNull();
+
+    RsaSsaPssPublicKey rsaSsaPssPublicKey = key.getRsaSsaPssPublicKey();
+    assertThat(rsaSsaPssPublicKey.getModulus()).isEqualTo(MODULUS);
+    assertThat(rsaSsaPssPublicKey.getParameters())
+        .isEqualTo(
+            RsaSsaPssParameters.builder()
+                .setModulusSizeBits(2048)
+                .setPublicExponent(BigInteger.valueOf(65537))
+                .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
+                .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
+                .setSaltLengthBytes(32)
+                .build());
   }
 
   @Test

@@ -20,6 +20,8 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.internal.KeyTester;
+import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
+import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
 import com.google.crypto.tink.subtle.Base64;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
@@ -58,6 +60,16 @@ public final class JwtRsaSsaPkcs1PublicKeyTest {
     assertThat(key.getModulus()).isEqualTo(MODULUS);
     assertThat(key.getKid()).isEqualTo(Optional.empty());
     assertThat(key.getIdRequirementOrNull()).isNull();
+
+    RsaSsaPkcs1PublicKey rsaSsaPkcs1PublicKey = key.getRsaSsaPkcs1PublicKey();
+    assertThat(rsaSsaPkcs1PublicKey.getModulus()).isEqualTo(MODULUS);
+    assertThat(rsaSsaPkcs1PublicKey.getParameters())
+        .isEqualTo(
+            RsaSsaPkcs1Parameters.builder()
+                .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
+                .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
+                .setModulusSizeBits(2048)
+                .build());
   }
 
   @Test
@@ -113,6 +125,16 @@ public final class JwtRsaSsaPkcs1PublicKeyTest {
     assertThat(key.getModulus()).isEqualTo(MODULUS);
     assertThat(key.getKid().get()).isEqualTo("customKid777");
     assertThat(key.getIdRequirementOrNull()).isNull();
+
+    RsaSsaPkcs1PublicKey rsaSsaPkcs1PublicKey = key.getRsaSsaPkcs1PublicKey();
+    assertThat(rsaSsaPkcs1PublicKey.getModulus()).isEqualTo(MODULUS);
+    assertThat(rsaSsaPkcs1PublicKey.getParameters())
+        .isEqualTo(
+            RsaSsaPkcs1Parameters.builder()
+                .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
+                .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
+                .setModulusSizeBits(2048)
+                .build());
   }
 
   @Test
@@ -166,6 +188,16 @@ public final class JwtRsaSsaPkcs1PublicKeyTest {
     assertThat(key.getIdRequirementOrNull()).isEqualTo(0x1ac6a944);
     // See JwtFormatTest.getKidFromTinkOutputPrefixType_success
     assertThat(key.getKid()).isEqualTo(Optional.of("GsapRA"));
+
+    RsaSsaPkcs1PublicKey rsaSsaPkcs1PublicKey = key.getRsaSsaPkcs1PublicKey();
+    assertThat(rsaSsaPkcs1PublicKey.getModulus()).isEqualTo(MODULUS);
+    assertThat(rsaSsaPkcs1PublicKey.getParameters())
+        .isEqualTo(
+            RsaSsaPkcs1Parameters.builder()
+                .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
+                .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
+                .setModulusSizeBits(2048)
+                .build());
   }
 
   @Test
