@@ -56,7 +56,6 @@ export ANDROID_HOME=/android-sdk-30
   -e com.google.protobuf:protobuf-javalite \
   "//:tink-android-unshaded" "maven/tink-java-android.pom.xml"
 
-
 echo "Creating GPG key and GPG pin for testing"
 echo "========================================"
 openssl rand -hex 20 > gpg_test_pin.txt
@@ -89,13 +88,10 @@ gpg --export-secret-keys --batch \
 echo "Done creating GPG key and GPG pin"
 echo "================================="
 
-sed -i "s/always --noenable_bzlmod/always --enable_bzlmod/g" .bazelrc
-sed -i "s/always --enable_workspace/always --noenable_workspace/g" .bazelrc
-
-cat .bazelrc
-
 mkdir exported_bundles
 
+echo "Building tink-snapshot-bundle"
+echo "========================================"
 bazelisk build :tink-snapshot-bundle
 cp bazel-bin/tink-snapshot-bundle.zip exported_bundles
 
@@ -112,6 +108,9 @@ cp bazel-bin/tink-snapshot-bundle.zip exported_bundles
   mvn -f pom-for-tink-snapshot.xml test
   popd
 }
+
+echo "Building tink-android-snapshot-bundle"
+echo "========================================"
 
 bazelisk build :tink-android-snapshot-bundle
 cp bazel-bin/tink-android-snapshot-bundle.zip exported_bundles

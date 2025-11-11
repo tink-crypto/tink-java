@@ -1,0 +1,22 @@
+module(name = "examples")
+
+bazel_dep(name = "tink_java")
+local_path_override(
+    module_name = "tink_java",
+    path = "../",
+)
+bazel_dep(name = "rules_jvm_external", version = "6.7")
+
+maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
+
+maven.install(
+    artifacts = [
+        "args4j:args4j:2.33",
+    ],
+    repositories = [
+        "https://maven.google.com",
+        "https://repo1.maven.org/maven2",
+    ],
+)
+
+use_repo(maven, "maven")

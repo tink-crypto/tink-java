@@ -15,7 +15,7 @@ maven.install(
     artifacts = [
         "com.google.api-client:google-api-client:2.2.0",
         "com.google.code.gson:gson:2.13.2",
-        "com.google.errorprone:error_prone_annotations:2.28.0",
+        "com.google.errorprone:error_prone_annotations:2.41.0",
         "com.google.http-client:google-http-client:1.43.3",
         "com.google.protobuf:protobuf-java:4.33.0",
         "com.google.protobuf:protobuf-javalite:4.33.0",
