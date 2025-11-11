@@ -794,3 +794,38 @@ java_test(
         "@maven//:org_conscrypt_conscrypt_openjdk_uber",
     ],
 )
+
+java_test(
+    name = "MlDsaSignKeyManagerConscryptTest",
+    size = "small",
+    srcs = ["MlDsaSignKeyManagerConscryptTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:key_templates",
+        "//src/main/java/com/google/crypto/tink:public_key_sign",
+        "//src/main/java/com/google/crypto/tink:public_key_verify",
+        "//src/main/java/com/google/crypto/tink:registry_cluster",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
+        "//src/main/java/com/google/crypto/tink/internal:util",
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_private_key",
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_sign_key_manager",
+        "//src/main/java/com/google/crypto/tink/signature:signature_configuration_v1",
+        "//src/main/java/com/google/crypto/tink/signature/internal:ml_dsa_verify_conscrypt",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+        "@maven//:org_conscrypt_conscrypt_openjdk_uber",
+    ],
+)
+
+java_test(
+    name = "MlDsaSignKeyManagerTest",
+    size = "small",
+    srcs = ["MlDsaSignKeyManagerTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
+        "//src/main/java/com/google/crypto/tink/internal:conscrypt_util",
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_sign_key_manager",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)

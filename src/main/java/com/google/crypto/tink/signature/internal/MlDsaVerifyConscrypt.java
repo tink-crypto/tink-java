@@ -127,8 +127,9 @@ public final class MlDsaVerifyConscrypt implements PublicKeyVerify {
     }
   }
 
-  static final class RawKeySpec extends EncodedKeySpec {
-    RawKeySpec(byte[] encoded) {
+  /** Representation of the raw keys for interoperability with Conscrypt. */
+  public static final class RawKeySpec extends EncodedKeySpec {
+    public RawKeySpec(byte[] encoded) {
       super(encoded);
     }
 
