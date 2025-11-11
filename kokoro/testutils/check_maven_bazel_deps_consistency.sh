@@ -30,13 +30,6 @@ usage() {
   exit 1
 }
 
-BAZEL_CMD="bazel"
-# Prefer using Bazelisk if available.
-if command -v "bazelisk" &> /dev/null; then
-  BAZEL_CMD="bazelisk"
-fi
-readonly BAZEL_CMD
-
 BAZEL_TARGET=
 POM_FILE=
 IGNORED_MAVEN_PACKAGE=
@@ -71,10 +64,11 @@ POM_FILE_DEPS="$(cat "${MAVEN_DIRECT_DEPS}" \
   | grep compile | cut -d: -f1,2,4 | sed -E 's/^\s+//' | sort)"
 
 echo " === Obtaining Bazel dependencies"
-
-BAZEL_MAVEN_DEPS="$("${BAZEL_CMD}" query --output=build \
-  'attr(tags, .*,filter(@maven, deps('"${BAZEL_TARGET}"', 2)))' \
-    | grep maven_coordinates | cut -d'"' -f2 | cut -d'=' -f2 | sort)"
+BAZEL_MAVEN_DEPS="$(bazelisk query --output=build \
+  'deps('"${BAZEL_TARGET}"', 2)' \
+    | grep "maven_coordinates=" \
+    | cut -d"\"" -f2 | cut -d'=' -f2 \
+    | sort)"
 
 if [[ ! -z "${IGNORED_MAVEN_PACKAGE}" ]]; then
   BAZEL_MAVEN_DEPS=$(echo "${BAZEL_MAVEN_DEPS}" | grep -v -F "${IGNORED_MAVEN_PACKAGE}":)
