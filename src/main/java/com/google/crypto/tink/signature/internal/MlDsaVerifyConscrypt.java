@@ -112,12 +112,17 @@ public final class MlDsaVerifyConscrypt implements PublicKeyVerify {
     }
   }
 
-  /** Returns true if the Conscrypt is available and supports ML-DSA-65. */
+  /** Returns true if we're not in FIPS, and Conscrypt is available and supports ML-DSA-65. */
   public static boolean isSupported() {
+    if (!FIPS.isCompatible()) {
+      return false;
+    }
+
     Provider provider = ConscryptUtil.providerOrNull();
     if (provider == null) {
       return false;
     }
+
     try {
       KeyFactory unusedKeyFactory = KeyFactory.getInstance(ML_DSA_65_ALGORITHM, provider);
       Signature unusedSignature = Signature.getInstance(ML_DSA_65_ALGORITHM, provider);
@@ -127,8 +132,9 @@ public final class MlDsaVerifyConscrypt implements PublicKeyVerify {
     }
   }
 
-  static final class RawKeySpec extends EncodedKeySpec {
-    RawKeySpec(byte[] encoded) {
+  /** Representation of the raw keys for interoperability with Conscrypt. */
+  public static final class RawKeySpec extends EncodedKeySpec {
+    public RawKeySpec(byte[] encoded) {
       super(encoded);
     }
 
