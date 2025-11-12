@@ -28,7 +28,6 @@ import com.google.crypto.tink.daead.AesSivParameters;
 import com.google.crypto.tink.daead.subtle.DeterministicAeads;
 import com.google.crypto.tink.mac.internal.AesUtil;
 import com.google.crypto.tink.testing.WycheproofTestUtil;
-import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -70,7 +69,7 @@ public class AesSivTest {
                 testcase.get("tcId").getAsInt(), testcase.get("comment").getAsString());
         byte[] key = Hex.decode(testcase.get("key").getAsString());
         assertThat(key).hasLength(keySizeInBits / 8);
-        if (keySizeInBits == 256 || keySizeInBits == 384) {
+        if (keySizeInBits == 384) {
           // These key sizes are currently not supported.
           assertThrows(InvalidKeyException.class, () -> new AesSiv(key));
           continue;
@@ -133,7 +132,7 @@ public class AesSivTest {
         SecretBytes keyBytes = SecretBytes.copyFrom(key, InsecureSecretKeyAccess.get());
         AesSivKey aesSivKey =
             AesSivKey.builder().setParameters(parameters).setKeyBytes(keyBytes).build();
-        if (keySizeInBits == 256 || keySizeInBits == 384) {
+        if (keySizeInBits == 384) {
           // These key sizes are currently not supported.
           assertThrows(InvalidKeyException.class, () -> AesSiv.create(aesSivKey));
           continue;
@@ -327,11 +326,9 @@ public class AesSivTest {
   public void testInvalidKeySizes() throws GeneralSecurityException {
     Assume.assumeFalse(TinkFips.useOnlyFips());
 
-    assertThrows(InvalidKeyException.class, () -> new AesSiv(Random.randBytes(32)));
-
     for (int i = 0; i < 100; i++) {
       final int j = i;
-      if (j == KEY_SIZE_IN_BYTES) {
+      if (j == 32 || j == 64) {
         continue;
       }
 
@@ -459,7 +456,9 @@ public class AesSivTest {
   }
 
   @Test
-  public void testKeySize32_throws() throws GeneralSecurityException {
+  public void keySize32_works() throws GeneralSecurityException {
+    Assume.assumeFalse(TinkFips.useOnlyFips());
+
     AesSivParameters parameters =
         AesSivParameters.builder()
             .setKeySizeBytes(32)
@@ -473,7 +472,10 @@ public class AesSivTest {
             .setKeyBytes(keyBytes)
             .setIdRequirement(0x44556677)
             .build();
-    assertThrows(GeneralSecurityException.class, () -> AesSiv.create(key));
+    DeterministicAead daead = AesSiv.create(key);
+    byte[] ciphertext = daead.encryptDeterministically(Hex.decode(""), Hex.decode("FF"));
+    assertThat(daead.decryptDeterministically(ciphertext, Hex.decode("FF")))
+        .isEqualTo(Hex.decode(""));
   }
 
   @Test
@@ -601,8 +603,7 @@ public class AesSivTest {
       return;
     }
 
-    Bytes emptyOutputPrefix = Bytes.copyFrom(new byte[0]);
-    AesSiv aesSiv = new AesSiv(test.key, emptyOutputPrefix);
+    AesSiv aesSiv = new AesSiv(test.key);
 
     assertThat(aesSiv.encryptDeterministicallyWithAssociatedDatas(test.plaintext, test.aads))
         .isEqualTo(test.ciphertext);

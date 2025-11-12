@@ -30,7 +30,6 @@ import com.google.crypto.tink.prf.AesCmacPrfParameters;
 import com.google.crypto.tink.prf.Prf;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.util.Arrays;
@@ -52,9 +51,6 @@ public final class AesSiv implements DeterministicAead, DeterministicAeads {
   public static final TinkFipsUtil.AlgorithmFipsCompatibility FIPS =
       TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS;
 
-  // Do not support 128-bit keys because it might not provide 128-bit security level in
-  // multi-user setting.
-  private static final int KEY_SIZE_IN_BYTES = 64;
   private static final byte[] blockZero = new byte[AesUtil.BLOCK_SIZE];
   private static final byte[] blockOne = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (byte) 0x01
@@ -74,8 +70,7 @@ public final class AesSiv implements DeterministicAead, DeterministicAeads {
   @AccessesPartialKey
   public static DeterministicAeads create(AesSivKey key) throws GeneralSecurityException {
     return new AesSiv(
-        validateKey(key.getKeyBytes().toByteArray(InsecureSecretKeyAccess.get())),
-        key.getOutputPrefix());
+        key.getKeyBytes().toByteArray(InsecureSecretKeyAccess.get()), key.getOutputPrefix());
   }
 
   private static final ThreadLocal<Cipher> localAesCtrCipher =
@@ -98,28 +93,21 @@ public final class AesSiv implements DeterministicAead, DeterministicAeads {
             SecretBytes.copyFrom(key, InsecureSecretKeyAccess.get())));
   }
 
-  @CanIgnoreReturnValue
-  private static byte[] validateKey(final byte[] key) throws GeneralSecurityException {
-    if (key.length != KEY_SIZE_IN_BYTES) {
-      throw new InvalidKeyException(
-          "invalid key size: " + key.length + " bytes; key must have 64 bytes");
-    }
-    return key;
-  }
-
-  // Visible for testing.
-  AesSiv(final byte[] key, Bytes outputPrefix) throws GeneralSecurityException {
+  private AesSiv(final byte[] key, Bytes outputPrefix) throws GeneralSecurityException {
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException(
           "Can not use AES-SIV in FIPS-mode.");
     }
 
-    // allow 32-byte keys for tests.
-    if (key.length != 32 && key.length != KEY_SIZE_IN_BYTES) {
+    // We allow both 32 and 64 byte keys.
+    // It is however preferable to use a 64-byte key, because 32-byte keys might not provide 128-bit
+    // security level in multi-user setting.
+    if (key.length != 32 && key.length != 64) {
       throw new InvalidKeyException(
           "invalid key size: " + key.length + " bytes; key must have 32 or 64 bytes");
     }
 
+    // split key into its two subkeys.
     byte[] k1 = Arrays.copyOfRange(key, 0, key.length / 2);
     this.aesCtrKey = Arrays.copyOfRange(key, key.length / 2, key.length);
     this.cmacForS2V = createCmac(k1);
@@ -127,7 +115,7 @@ public final class AesSiv implements DeterministicAead, DeterministicAeads {
   }
 
   public AesSiv(final byte[] key) throws GeneralSecurityException {
-    this(validateKey(key), Bytes.copyFrom(new byte[] {}));
+    this(key, Bytes.copyFrom(new byte[] {}));
   }
 
   /**

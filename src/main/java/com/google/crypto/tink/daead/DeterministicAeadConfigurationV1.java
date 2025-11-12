@@ -64,7 +64,8 @@ import java.security.InvalidAlgorithmParameterException;
     return INTERNAL_CONFIGURATION;
   }
 
-  // We only allow 64-byte keys for AesSiv.
+  // We only allow 64-byte keys for AesSiv, because 32-byte keys might not provide 128-bit security
+  // level in multi-user setting.
   private static final int KEY_SIZE_IN_BYTES = 64;
 
   private static DeterministicAead createAesSiv(AesSivKey key)
