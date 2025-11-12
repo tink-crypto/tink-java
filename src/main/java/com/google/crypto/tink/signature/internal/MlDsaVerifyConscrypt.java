@@ -21,6 +21,7 @@ import static com.google.crypto.tink.internal.Util.isPrefix;
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.config.internal.TinkFipsUtil.AlgorithmFipsCompatibility;
 import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.signature.MlDsaParameters.MlDsaInstance;
 import com.google.crypto.tink.signature.MlDsaPublicKey;
@@ -36,7 +37,7 @@ import java.security.spec.EncodedKeySpec;
 @Immutable
 public final class MlDsaVerifyConscrypt implements PublicKeyVerify {
   public static final TinkFipsUtil.AlgorithmFipsCompatibility FIPS =
-      TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_REQUIRES_BORINGCRYPTO;
+      AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS;
   static final int ML_DSA_65_SIG_LENGTH = 3309;
   static final String ML_DSA_65_ALGORITHM = "ML-DSA-65";
 
@@ -70,7 +71,7 @@ public final class MlDsaVerifyConscrypt implements PublicKeyVerify {
       throws GeneralSecurityException {
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException(
-          "Can not use ML-DSA in FIPS-mode, as BoringCrypto is not available.");
+          "Can not use ML-DSA in FIPS-mode, as it is not yet certified in Conscrypt.");
     }
 
     Provider provider = ConscryptUtil.providerOrNull();

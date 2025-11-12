@@ -24,6 +24,7 @@ import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.config.internal.TinkFipsUtil.AlgorithmFipsCompatibility;
 import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.signature.MlDsaParameters.MlDsaInstance;
 import com.google.crypto.tink.signature.MlDsaPrivateKey;
@@ -39,7 +40,7 @@ import java.security.Signature;
 @Immutable
 public final class MlDsaSignConscrypt implements PublicKeySign {
   public static final TinkFipsUtil.AlgorithmFipsCompatibility FIPS =
-      TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_REQUIRES_BORINGCRYPTO;
+      AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS;
 
   private static final String TEST_WORKLOAD = "test workload";
 
@@ -70,7 +71,7 @@ public final class MlDsaSignConscrypt implements PublicKeySign {
       throws GeneralSecurityException {
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException(
-          "Can not use ML-DSA in FIPS-mode, as BoringCrypto is not available.");
+          "Can not use ML-DSA in FIPS-mode, as it is not yet certified in Conscrypt.");
     }
     Provider provider = ConscryptUtil.providerOrNull();
     if (provider == null) {

@@ -120,7 +120,7 @@ public final class MlDsaSignConscryptTest {
 
   @Test
   public void signAndVerify_noPrefix() throws Exception {
-    Assume.assumeTrue(TinkFipsUtil.fipsModuleAvailable());
+    Assume.assumeTrue(MlDsaVerifyConscrypt.isSupported());
 
     PublicKeySign signer = MlDsaSignConscrypt.create(noPrefixPrivateKey);
     PublicKeyVerify verifier = MlDsaVerifyConscrypt.create(noPrefixPublicKey);
@@ -133,7 +133,7 @@ public final class MlDsaSignConscryptTest {
 
   @Test
   public void signAndVerify_tinkPrefix() throws Exception {
-    Assume.assumeTrue(TinkFipsUtil.fipsModuleAvailable());
+    Assume.assumeTrue(MlDsaVerifyConscrypt.isSupported());
 
     PublicKeySign signer = MlDsaSignConscrypt.create(tinkPrivateKey);
     PublicKeyVerify verifier = MlDsaVerifyConscrypt.create(tinkPublicKey);
@@ -148,7 +148,7 @@ public final class MlDsaSignConscryptTest {
 
   @Test
   public void verify_goldenTestNoPrefix() throws Exception {
-    Assume.assumeTrue(TinkFipsUtil.fipsModuleAvailable());
+    Assume.assumeTrue(MlDsaVerifyConscrypt.isSupported());
 
     PublicKeyVerify verifier = MlDsaVerifyConscrypt.create(noPrefixPublicKey);
     verifier.verify(noPrefixSignature, message);
@@ -156,7 +156,7 @@ public final class MlDsaSignConscryptTest {
 
   @Test
   public void verify_goldenTestTink() throws Exception {
-    Assume.assumeTrue(TinkFipsUtil.fipsModuleAvailable());
+    Assume.assumeTrue(MlDsaVerifyConscrypt.isSupported());
 
     PublicKeyVerify verifier = MlDsaVerifyConscrypt.create(tinkPublicKey);
     verifier.verify(tinkSignature, message);
@@ -164,7 +164,7 @@ public final class MlDsaSignConscryptTest {
 
   @Test
   public void verify_invalidSignature_fails() throws Exception {
-    Assume.assumeTrue(TinkFipsUtil.fipsModuleAvailable());
+    Assume.assumeTrue(MlDsaVerifyConscrypt.isSupported());
 
     PublicKeySign signer = MlDsaSignConscrypt.create(noPrefixPrivateKey);
     PublicKeyVerify verifier = MlDsaVerifyConscrypt.create(noPrefixPublicKey);
@@ -177,7 +177,7 @@ public final class MlDsaSignConscryptTest {
 
   @Test
   public void verify_wrongOutputPrefix_fails() throws Exception {
-    Assume.assumeTrue(TinkFipsUtil.fipsModuleAvailable());
+    Assume.assumeTrue(MlDsaVerifyConscrypt.isSupported());
 
     PublicKeySign signer = MlDsaSignConscrypt.create(tinkPrivateKey);
     PublicKeyVerify verifier = MlDsaVerifyConscrypt.create(tinkPublicKey);
@@ -190,7 +190,7 @@ public final class MlDsaSignConscryptTest {
 
   @Test
   public void verify_wrongSignatureLength_fails() throws Exception {
-    Assume.assumeTrue(TinkFipsUtil.fipsModuleAvailable());
+    Assume.assumeTrue(MlDsaVerifyConscrypt.isSupported());
 
     PublicKeySign signer = MlDsaSignConscrypt.create(tinkPrivateKey);
     PublicKeyVerify verifier = MlDsaVerifyConscrypt.create(tinkPublicKey);
@@ -203,7 +203,7 @@ public final class MlDsaSignConscryptTest {
 
   @Test
   public void create_unsupportedInstance_fails() throws Exception {
-    Assume.assumeTrue(TinkFipsUtil.fipsModuleAvailable());
+    Assume.assumeTrue(MlDsaVerifyConscrypt.isSupported());
 
     MlDsaParameters mlDsa87Params =
         MlDsaParameters.create(MlDsaInstance.ML_DSA_87, MlDsaParameters.Variant.NO_PREFIX);
@@ -220,7 +220,7 @@ public final class MlDsaSignConscryptTest {
 
   @Test
   public void create_unmatchedKeys_fails() throws Exception {
-    Assume.assumeTrue(TinkFipsUtil.fipsModuleAvailable());
+    Assume.assumeTrue(MlDsaVerifyConscrypt.isSupported());
 
     byte[] wrongPublicKeyBytes = Arrays.copyOf(publicKey, publicKey.length);
     wrongPublicKeyBytes[0] ^= 0xFF;
@@ -357,7 +357,7 @@ public final class MlDsaSignConscryptTest {
       @FromDataPoints("testVectors") MlDsaWycheproofTestVector testVector) throws Exception {
     // In order to avoid the "Never found parameters that satisfied method assumptions" error, here
     // we use an if instead of an assumption.
-    if (!TinkFipsUtil.fipsModuleAvailable()) {
+    if (!MlDsaVerifyConscrypt.isSupported()) {
       return;
     }
 
@@ -386,16 +386,18 @@ public final class MlDsaSignConscryptTest {
   }
 
   @Test
-  public void noConscryptFips_primitiveCreationFails() throws Exception {
-    Assume.assumeFalse(!TinkFipsUtil.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
+  public void fips_primitiveCreationFails() throws Exception {
+    Assume.assumeTrue(TinkFipsUtil.useOnlyFips());
 
     assertThrows(GeneralSecurityException.class, () -> MlDsaSignConscrypt.create(tinkPrivateKey));
     assertThrows(GeneralSecurityException.class, () -> MlDsaVerifyConscrypt.create(tinkPublicKey));
   }
 
   @Test
-  public void noConscrypt_primitiveCreationFails() throws Exception {
-    Assume.assumeTrue(ConscryptUtil.providerOrNull() == null);
+  public void noConscryptSupport_primitiveCreationFails() throws Exception {
+    // TODO(b/458349867): change to plain Conscrypt abailability verification once this bug and also
+    //  b/458047608 are resolved.
+    Assume.assumeFalse(MlDsaVerifyConscrypt.isSupported());
 
     assertThrows(GeneralSecurityException.class, () -> MlDsaSignConscrypt.create(tinkPrivateKey));
     assertThrows(GeneralSecurityException.class, () -> MlDsaVerifyConscrypt.create(tinkPublicKey));
