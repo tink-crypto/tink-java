@@ -15,7 +15,4 @@ sh_binary(
     ],
 )
 
-exports_files([
-    "tink-java.pom.xml",
-    "tink-java-android.pom.xml",
-])
+exports_files(glob(["*.pom.xml"]))
