@@ -305,5 +305,20 @@ public final class PredefinedSignatureParameters {
                   .setVariant(RsaSsaPssParameters.Variant.TINK)
                   .build());
 
+  /**
+   * A {@link Parameters} object that generates new instances of {@link MlDsaPrivateKey} objects
+   * with the following parameters:
+   *
+   * <ul>
+   *   <li>ML-DSA instance: ML-DSA-65
+   *   <li>Prefix type: {@link OutputPrefixType.TINK}
+   * </ul>
+   */
+  public static final MlDsaParameters ML_DSA_65 =
+      exceptionIsBug(
+          () ->
+              MlDsaParameters.create(
+                  MlDsaParameters.MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.TINK));
+
   private PredefinedSignatureParameters() {}
 }

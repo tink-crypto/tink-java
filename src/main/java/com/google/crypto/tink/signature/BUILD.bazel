@@ -1012,6 +1012,7 @@ android_library(
     deps = [
         ":ecdsa_parameters-android",
         ":ed25519_parameters-android",
+        ":ml_dsa_parameters-android",
         ":rsa_ssa_pkcs1_parameters-android",
         ":rsa_ssa_pss_parameters-android",
         "//src/main/java/com/google/crypto/tink/internal:tink_bug_exception-android",
@@ -1024,6 +1025,7 @@ java_library(
     deps = [
         ":ecdsa_parameters",
         ":ed25519_parameters",
+        ":ml_dsa_parameters",
         ":rsa_ssa_pkcs1_parameters",
         ":rsa_ssa_pss_parameters",
         "//src/main/java/com/google/crypto/tink/internal:tink_bug_exception",
