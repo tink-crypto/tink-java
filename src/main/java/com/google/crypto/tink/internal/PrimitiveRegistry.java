@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.internal;
 
+import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.security.GeneralSecurityException;
@@ -30,12 +31,15 @@ import java.util.Objects;
 public class PrimitiveRegistry {
   private final Map<PrimitiveConstructorIndex, PrimitiveConstructor<?, ?>> primitiveConstructorMap;
   private final Map<Class<?>, PrimitiveWrapper<?, ?>> primitiveWrapperMap;
+  private final boolean reparseLegacyKeys;
 
   /** Allows building PrimitiveRegistry objects. */
   public static final class Builder {
     private final Map<PrimitiveConstructorIndex, PrimitiveConstructor<?, ?>>
         primitiveConstructorMap;
     private final Map<Class<?>, PrimitiveWrapper<?, ?>> primitiveWrapperMap;
+
+    private boolean reparseLegacyKeys = false;
 
     private Builder() {
       primitiveConstructorMap = new HashMap<>();
@@ -104,6 +108,12 @@ public class PrimitiveRegistry {
       return this;
     }
 
+    @CanIgnoreReturnValue
+    public Builder allowReparsingLegacyKeys() {
+      this.reparseLegacyKeys = true;
+      return this;
+    }
+
     public PrimitiveRegistry build() {
       return new PrimitiveRegistry(this);
     }
@@ -120,6 +130,7 @@ public class PrimitiveRegistry {
   private PrimitiveRegistry(Builder builder) {
     primitiveConstructorMap = new HashMap<>(builder.primitiveConstructorMap);
     primitiveWrapperMap = new HashMap<>(builder.primitiveWrapperMap);
+    reparseLegacyKeys = builder.reparseLegacyKeys;
   }
 
   /**
@@ -130,6 +141,19 @@ public class PrimitiveRegistry {
    * requested primitive. Throws on a failed lookup, or if the primitive construction threw.
    */
   public <KeyT extends Key, PrimitiveT> PrimitiveT getPrimitive(
+      KeyT key, Class<PrimitiveT> primitiveClass) throws GeneralSecurityException {
+    if (reparseLegacyKeys && key instanceof LegacyProtoKey) {
+      Key reparsedKey =
+          MutableSerializationRegistry.globalInstance()
+              .parseKey(
+                  ((LegacyProtoKey) key).getSerialization(InsecureSecretKeyAccess.get()),
+                  InsecureSecretKeyAccess.get());
+      return getPrimitiveWithoutReparsing(reparsedKey, primitiveClass);
+    }
+    return getPrimitiveWithoutReparsing(key, primitiveClass);
+  }
+
+  private <KeyT extends Key, PrimitiveT> PrimitiveT getPrimitiveWithoutReparsing(
       KeyT key, Class<PrimitiveT> primitiveClass) throws GeneralSecurityException {
     PrimitiveConstructorIndex index = new PrimitiveConstructorIndex(key.getClass(), primitiveClass);
     if (!primitiveConstructorMap.containsKey(index)) {

@@ -259,7 +259,8 @@ public class ConfigurationV0 {
         PrimitiveConstructor.create(
             RsaSsaPssVerifyJce::create, RsaSsaPssPublicKey.class, PublicKeyVerify.class));
 
-    return InternalConfiguration.createFromPrimitiveRegistry(builder.build());
+    return InternalConfiguration.createFromPrimitiveRegistry(
+        builder.allowReparsingLegacyKeys().build());
   }
 
   // For compatibility reasons, and on some versions of Android for correctness reasons,

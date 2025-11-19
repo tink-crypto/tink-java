@@ -19,12 +19,19 @@ package com.google.crypto.tink.internal;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
+import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.Mac;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.aead.AeadConfig;
 import com.google.crypto.tink.aead.PredefinedAeadParameters;
+import com.google.crypto.tink.mac.AesCmacKey;
+import com.google.crypto.tink.mac.internal.AesCmacProtoSerialization;
+import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
+import com.google.crypto.tink.subtle.PrfMac;
 import com.google.errorprone.annotations.Immutable;
+import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import javax.annotation.Nullable;
 import org.junit.BeforeClass;
@@ -33,6 +40,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 /** Unit tests for {@link PrimitiveRegistry}. */
+@SuppressWarnings("UnnecessarilyFullyQualified") // Fully specifying proto types is more readable.
 @RunWith(JUnit4.class)
 public final class PrimitiveRegistryTest {
   private static KeysetHandle arbitraryKeyset;
@@ -322,6 +330,63 @@ public final class PrimitiveRegistryTest {
         .isInstanceOf(TestPrimitiveA.class);
     assertThat(registry.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveB.class))
         .isInstanceOf(TestPrimitiveB.class);
+  }
+
+  @Test
+  public void test_noReparsingIfNotAllowed() throws Exception {
+    AesCmacProtoSerialization.register();
+
+    com.google.crypto.tink.proto.AesCmacParams protoParams =
+        com.google.crypto.tink.proto.AesCmacParams.newBuilder().setTagSize(16).build();
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "type.googleapis.com/google.crypto.tink.AesCmacKey",
+            com.google.crypto.tink.proto.AesCmacKey.newBuilder()
+                .setParams(protoParams)
+                .setKeyValue(ByteString.copyFrom(Random.randBytes(32)))
+                .build()
+                .toByteString(),
+            KeyMaterialType.SYMMETRIC,
+            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            null);
+    LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
+
+    PrimitiveRegistry registry =
+        PrimitiveRegistry.builder()
+            .registerPrimitiveConstructor(
+                PrimitiveConstructor.create(PrfMac::create, AesCmacKey.class, Mac.class))
+            .build();
+
+    assertThrows(GeneralSecurityException.class, () -> registry.getPrimitive(key, Mac.class));
+  }
+
+  @Test
+  public void test_reparsesIfAllowed() throws Exception {
+    AesCmacProtoSerialization.register();
+
+    com.google.crypto.tink.proto.AesCmacParams protoParams =
+        com.google.crypto.tink.proto.AesCmacParams.newBuilder().setTagSize(16).build();
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "type.googleapis.com/google.crypto.tink.AesCmacKey",
+            com.google.crypto.tink.proto.AesCmacKey.newBuilder()
+                .setParams(protoParams)
+                .setKeyValue(ByteString.copyFrom(Random.randBytes(32)))
+                .build()
+                .toByteString(),
+            KeyMaterialType.SYMMETRIC,
+            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            null);
+    LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
+
+    PrimitiveRegistry registry =
+        PrimitiveRegistry.builder()
+            .registerPrimitiveConstructor(
+                PrimitiveConstructor.create(PrfMac::create, AesCmacKey.class, Mac.class))
+            .allowReparsingLegacyKeys()
+            .build();
+
+    assertThat(registry.getPrimitive(key, Mac.class)).isNotNull();
   }
 
   /** Test general functionality. */

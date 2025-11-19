@@ -49,6 +49,8 @@ import com.google.crypto.tink.hybrid.HpkeProtoSerialization;
 import com.google.crypto.tink.hybrid.HpkePublicKey;
 import com.google.crypto.tink.hybrid.internal.EciesProtoSerialization;
 import com.google.crypto.tink.internal.BigIntegerEncoding;
+import com.google.crypto.tink.internal.LegacyProtoKey;
+import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.mac.AesCmacKey;
 import com.google.crypto.tink.mac.AesCmacParameters;
@@ -67,6 +69,7 @@ import com.google.crypto.tink.prf.PrfSet;
 import com.google.crypto.tink.prf.internal.AesCmacPrfProtoSerialization;
 import com.google.crypto.tink.prf.internal.HkdfPrfProtoSerialization;
 import com.google.crypto.tink.prf.internal.HmacPrfProtoSerialization;
+import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.signature.EcdsaParameters;
 import com.google.crypto.tink.signature.EcdsaPrivateKey;
 import com.google.crypto.tink.signature.EcdsaPublicKey;
@@ -92,9 +95,11 @@ import com.google.crypto.tink.subtle.Base64;
 import com.google.crypto.tink.subtle.EllipticCurves;
 import com.google.crypto.tink.subtle.EllipticCurves.PointFormatType;
 import com.google.crypto.tink.subtle.Hex;
+import com.google.crypto.tink.subtle.Random;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBigInteger;
 import com.google.crypto.tink.util.SecretBytes;
+import com.google.protobuf.ByteString;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
@@ -109,6 +114,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+@SuppressWarnings("UnnecessarilyFullyQualified") // Fully specifying proto types is more readable
 @RunWith(JUnit4.class)
 public class ConfigurationV0Test {
 
@@ -1276,6 +1282,31 @@ public class ConfigurationV0Test {
     assertThrows(
         GeneralSecurityException.class,
         () -> keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class));
+  }
+
+  @Test
+  public void config_handlesAesGcmLegacyProtoKeyForAead() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "type.googleapis.com/google.crypto.tink.AesGcmKey",
+            com.google.crypto.tink.proto.AesGcmKey.newBuilder()
+                .setKeyValue(ByteString.copyFrom(Random.randBytes(32)))
+                .build()
+                .toByteString(),
+            KeyMaterialType.SYMMETRIC,
+            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            null);
+    LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
+            .build();
+
+    AesGcmProtoSerialization.register();
+
+    assertThat(keysetHandle.getPrimitive(ConfigurationV0.get(), Aead.class)).isNotNull();
   }
 
   // Point from https://www.ietf.org/rfc/rfc6979.txt, A.2.5
