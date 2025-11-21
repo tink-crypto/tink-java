@@ -29,7 +29,6 @@ def gen_maven_jar_rules(
         root_packages = _TINK_PACKAGES,
         shaded_packages = [],
         shading_rules = "",
-        exclude_packages = [],
         additional_javadoc_dependencies = [],
         manifest_lines = []):
     """
@@ -48,7 +47,6 @@ def gen_maven_jar_rules(
         specified in shading_rules.
       shading_rules: The shading rules, must specified when shaded_packages is present.
         Rules file format can be found at https://github.com/bazelbuild/bazel/blob/master/third_party/jarjar/java/com/tonicsystems/jarjar/help.txt.
-      exclude_packages: See javadoc_library
       additional_javadoc_dependencies: Additional dependencies to give javadoc
       manifest_lines: lines to put in the output manifest file (manifest
         files in the input jars are ignored)
@@ -162,9 +160,16 @@ def maven_bundle(
         tags: Tags to pass to native.genrule
         """
 
+    if not gpg_secret_key_file:
+        fail("gpg_secret_key_file must be provided.")
+
+    if not gpg_pin_file:
+        fail("gpg_pin_file must be provided.")
+
     jar_target = maven_jar_rules_target
     source_jar_target = maven_jar_rules_target + "-src"
     javadoc_jar_target = maven_jar_rules_target + "-javadoc"
+
     native.genrule(
         name = name,
         srcs = [
@@ -180,7 +185,7 @@ def maven_bundle(
         cmd = """
             set -e
             export GNUPGHOME=$$(mktemp -d)
-            gpg --batch --yes --import {gpg_secret_key_file}
+            gpg --batch --yes --import $(location {gpg_secret_key_file})
             ZIP_ROOT=$$(mktemp -d)
             INNER_DIR="$$ZIP_ROOT/com/google/crypto/tink/{lib_name}/{lib_version}"
             mkdir -p "$$INNER_DIR"
@@ -198,7 +203,7 @@ def maven_bundle(
               sha256sum "$$f" | cut -d' ' -f1 > "$$f.sha256"
               sha512sum "$$f" | cut -d' ' -f1 > "$$f.sha512"
               gpg --pinentry-mode loopback --batch --yes \
-                  --passphrase-file {gpg_pin_file} \
+                  --passphrase-file $(location {gpg_pin_file}) \
                   --output "$$f.asc" --detach-sign "$$f"
             done
             # Zip the contents and clean up
@@ -211,7 +216,7 @@ def maven_bundle(
             source_jar_target = source_jar_target,
             javadoc_jar_target = javadoc_jar_target,
             pom_template = pom_template,
-            gpg_secret_key_file = gpg_secret_key_file if gpg_secret_key_file else jar_target,
-            gpg_pin_file = gpg_pin_file if gpg_pin_file else jar_target,
+            gpg_secret_key_file = gpg_secret_key_file,
+            gpg_pin_file = gpg_pin_file,
         ),
     )
