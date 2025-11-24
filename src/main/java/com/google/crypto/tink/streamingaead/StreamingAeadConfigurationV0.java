@@ -17,13 +17,9 @@
 package com.google.crypto.tink.streamingaead;
 
 import com.google.crypto.tink.Configuration;
-import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.Key;
 import com.google.crypto.tink.StreamingAead;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.InternalConfiguration;
-import com.google.crypto.tink.internal.LegacyProtoKey;
-import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.subtle.AesCtrHmacStreaming;
@@ -55,40 +51,12 @@ import java.security.GeneralSecurityException;
       builder.registerPrimitiveConstructor(
           PrimitiveConstructor.create(
               AesCtrHmacStreaming::create, AesCtrHmacStreamingKey.class, StreamingAead.class));
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              StreamingAeadConfigurationV0::createStreamingAeadFromLegacyProtoKey,
-              LegacyProtoKey.class,
-              StreamingAead.class));
 
-      return InternalConfiguration.createFromPrimitiveRegistry(builder.build());
+      return InternalConfiguration.createFromPrimitiveRegistry(
+          builder.allowReparsingLegacyKeys().build());
     } catch (GeneralSecurityException e) {
       throw new IllegalStateException(e);
     }
-  }
-
-  private static StreamingAead createStreamingAeadFromLegacyProtoKey(LegacyProtoKey key)
-      throws GeneralSecurityException {
-    Key parsedKey;
-    try {
-      parsedKey =
-          MutableSerializationRegistry.globalInstance()
-              .parseKey(
-                  key.getSerialization(InsecureSecretKeyAccess.get()),
-                  InsecureSecretKeyAccess.get());
-    } catch (GeneralSecurityException e) {
-      throw new GeneralSecurityException("Failed to re-parse LegacyProtoKey for StreamingAead", e);
-    }
-    if (parsedKey instanceof AesCtrHmacStreamingKey) {
-      return AesCtrHmacStreaming.create((AesCtrHmacStreamingKey) parsedKey);
-    }
-    if (parsedKey instanceof AesGcmHkdfStreamingKey) {
-      return AesGcmHkdfStreaming.create((AesGcmHkdfStreamingKey) parsedKey);
-    }
-    throw new GeneralSecurityException(
-        "Failed to re-parse LegacyProtoKey for StreamingAead: the parsed key type is"
-            + parsedKey.getClass().getName()
-            + ", expected one of: AesCtrHmacStreamingKey, AesGcmHkdfStreamingKey.");
   }
 
   /** Returns an instance of the {@code StreamingAeadConfigurationV0}. */

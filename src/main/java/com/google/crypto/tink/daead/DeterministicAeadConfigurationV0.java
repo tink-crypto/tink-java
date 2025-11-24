@@ -18,12 +18,8 @@ package com.google.crypto.tink.daead;
 
 import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.DeterministicAead;
-import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.Key;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.InternalConfiguration;
-import com.google.crypto.tink.internal.LegacyProtoKey;
-import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.subtle.AesSiv;
@@ -53,13 +49,9 @@ import java.security.InvalidAlgorithmParameterException;
               DeterministicAeadConfigurationV0::createAesSiv,
               AesSivKey.class,
               DeterministicAead.class));
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              DeterministicAeadConfigurationV0::createDeterministicAeadFromLegacyProtoKey,
-              LegacyProtoKey.class,
-              DeterministicAead.class));
 
-      return InternalConfiguration.createFromPrimitiveRegistry(builder.build());
+      return InternalConfiguration.createFromPrimitiveRegistry(
+          builder.allowReparsingLegacyKeys().build());
     } catch (GeneralSecurityException e) {
       throw new IllegalStateException(e);
     }
@@ -88,27 +80,5 @@ import java.security.InvalidAlgorithmParameterException;
               + " bytes.");
     }
     return AesSiv.create(key);
-  }
-
-  private static DeterministicAead createDeterministicAeadFromLegacyProtoKey(LegacyProtoKey key)
-      throws GeneralSecurityException {
-    Key parsedKey;
-    try {
-      parsedKey =
-          MutableSerializationRegistry.globalInstance()
-              .parseKey(
-                  key.getSerialization(InsecureSecretKeyAccess.get()),
-                  InsecureSecretKeyAccess.get());
-      if (parsedKey instanceof AesSivKey) {
-        return createAesSiv((AesSivKey) parsedKey);
-      }
-      throw new GeneralSecurityException(
-          "Failed to re-parse LegacyProtoKey for DeterministicAead: the parsed key type is"
-              + parsedKey.getClass().getName()
-              + ", expected AesSivKey.");
-    } catch (GeneralSecurityException e) {
-      throw new GeneralSecurityException(
-          "Failed to re-parse LegacyProtoKey for DeterministicAead", e);
-    }
   }
 }

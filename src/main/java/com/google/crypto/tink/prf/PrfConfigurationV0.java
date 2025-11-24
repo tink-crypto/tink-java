@@ -17,12 +17,8 @@
 package com.google.crypto.tink.prf;
 
 import com.google.crypto.tink.Configuration;
-import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.Key;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.InternalConfiguration;
-import com.google.crypto.tink.internal.LegacyProtoKey;
-import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.subtle.PrfAesCmac;
@@ -59,11 +55,9 @@ import java.security.GeneralSecurityException;
       builder.registerPrimitiveConstructor(
           PrimitiveConstructor.create(
               PrfConfigurationV0::createAesCmacPrf, AesCmacPrfKey.class, Prf.class));
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              PrfConfigurationV0::createPrfFromLegacyProtoKey, LegacyProtoKey.class, Prf.class));
 
-      return InternalConfiguration.createFromPrimitiveRegistry(builder.build());
+      return InternalConfiguration.createFromPrimitiveRegistry(
+          builder.allowReparsingLegacyKeys().build());
     } catch (GeneralSecurityException e) {
       throw new IllegalStateException(e);
     }
@@ -100,32 +94,5 @@ import java.security.GeneralSecurityException;
       throw new GeneralSecurityException("AesCmacPrf key size must be 32 bytes");
     }
     return PrfAesCmac.create(key);
-  }
-
-  private static Prf createPrfFromLegacyProtoKey(LegacyProtoKey key)
-      throws GeneralSecurityException {
-    Key parsedKey;
-    try {
-      parsedKey =
-          MutableSerializationRegistry.globalInstance()
-              .parseKey(
-                  key.getSerialization(InsecureSecretKeyAccess.get()),
-                  InsecureSecretKeyAccess.get());
-    } catch (GeneralSecurityException e) {
-      throw new GeneralSecurityException("Failed to re-parse LegacyProtoKey for Prf", e);
-    }
-    if (parsedKey instanceof AesCmacPrfKey) {
-      return createAesCmacPrf((AesCmacPrfKey) parsedKey);
-    }
-    if (parsedKey instanceof HkdfPrfKey) {
-      return createHkdfPrf((HkdfPrfKey) parsedKey);
-    }
-    if (parsedKey instanceof HmacPrfKey) {
-      return PrfHmacJce.create((HmacPrfKey) parsedKey);
-    }
-    throw new GeneralSecurityException(
-        "Failed to re-parse LegacyProtoKey for Prf: the parsed key type is"
-            + parsedKey.getClass().getName()
-            + ", expected one of: AesCmacPrfKey, HkdfPrfKey, HmacPrfKey.");
   }
 }
