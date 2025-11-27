@@ -22,6 +22,7 @@ import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
+import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.keyderivation.KeysetDeriver;
 import com.google.errorprone.annotations.Immutable;
@@ -119,5 +120,15 @@ public final class KeysetDeriverWrapper implements PrimitiveWrapper<KeyDeriver, 
   /** Registers this wrapper with Tink, allowing to use the primitive. */
   public static void register() throws GeneralSecurityException {
     MutablePrimitiveRegistry.globalInstance().registerPrimitiveWrapper(WRAPPER);
+  }
+
+  /**
+   * registerToInternalPrimitiveRegistry is a non-public method (it takes an argument of an
+   * internal-only type) registering an instance of {@code KeysetDeriverWrapper} to the provided
+   * {@code PrimitiveRegistry.Builder}.
+   */
+  public static void registerToInternalPrimitiveRegistry(
+      PrimitiveRegistry.Builder primitiveRegistryBuilder) throws GeneralSecurityException {
+    primitiveRegistryBuilder.registerPrimitiveWrapper(WRAPPER);
   }
 }
