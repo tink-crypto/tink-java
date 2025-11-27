@@ -51,7 +51,7 @@ import javax.annotation.Nullable;
  * Methods to serialize and parse {@link PrfBasedKeyDerivationKey} and {@link
  * PrfBasedKeyDerivationParameters} objects.
  */
-final class PrfBasedKeyDerivationKeyProtoSerialization {
+public final class PrfBasedKeyDerivationKeyProtoSerialization {
   private static final String TYPE_URL =
       "type.googleapis.com/google.crypto.tink.PrfBasedDeriverKey";
   private static final Bytes TYPE_URL_BYTES = toBytesFromPrintableAscii(TYPE_URL);
