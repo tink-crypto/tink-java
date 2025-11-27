@@ -21,6 +21,7 @@ import static com.google.crypto.tink.internal.TinkBugException.exceptionIsBug;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
+import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
@@ -35,6 +36,8 @@ import com.google.crypto.tink.aead.XChaCha20Poly1305Parameters;
 import com.google.crypto.tink.config.TinkConfig;
 import com.google.crypto.tink.daead.AesSivKey;
 import com.google.crypto.tink.daead.PredefinedDeterministicAeadParameters;
+import com.google.crypto.tink.internal.PrimitiveConstructor;
+import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.jwt.JwtMacConfig;
 import com.google.crypto.tink.jwt.JwtSignatureConfig;
@@ -55,9 +58,14 @@ import com.google.crypto.tink.signature.Ed25519PublicKey;
 import com.google.crypto.tink.signature.PredefinedSignatureParameters;
 import com.google.crypto.tink.streamingaead.AesGcmHkdfStreamingKey;
 import com.google.crypto.tink.streamingaead.PredefinedStreamingAeadParameters;
+import com.google.crypto.tink.subtle.AesGcmJce;
 import com.google.crypto.tink.subtle.Hex;
+import com.google.crypto.tink.subtle.prf.StreamingPrf;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
+import com.google.errorprone.annotations.Immutable;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.Security;
 import javax.annotation.Nullable;
@@ -452,5 +460,60 @@ public final class PrfBasedKeyDeriverTest {
     // test failures have nicer messages.
     assertThat(derivedKey.getParameters()).isEqualTo(t.derivedKeyParameters);
     assertTrue(derivedKey.equalsKey(t.expectedKey));
+  }
+
+  @Immutable
+  private static final class TestStreamingPrf implements StreamingPrf {
+
+    @Override
+    public InputStream computePrf(byte[] input) {
+      return new ByteArrayInputStream(new byte[64]);
+    }
+
+    TestStreamingPrf(HkdfPrfKey prfKey) {}
+  }
+
+  @Theory
+  public void createWithPrfPrimitiveRegistry_works(@FromDataPoints("allTests") TestVector t)
+      throws Exception {
+    PrimitiveRegistry prfRegistry =
+        PrimitiveRegistry.builder()
+            .registerPrimitiveConstructor(
+                PrimitiveConstructor.create(
+                    TestStreamingPrf::new, HkdfPrfKey.class, StreamingPrf.class))
+            .build();
+    PrfBasedKeyDerivationParameters derivationParameters =
+        PrfBasedKeyDerivationParameters.builder()
+            .setDerivedKeyParameters(t.derivedKeyParameters)
+            .setPrfParameters(t.prfKey.getParameters())
+            .build();
+    @Nullable Integer idRequirement = t.expectedKey.getIdRequirementOrNull();
+    PrfBasedKeyDerivationKey keyDerivationKey =
+        PrfBasedKeyDerivationKey.create(derivationParameters, t.prfKey, idRequirement);
+
+    assertThat(PrfBasedKeyDeriver.createWithPrfPrimitiveRegistry(prfRegistry, keyDerivationKey))
+        .isNotNull();
+  }
+
+  @Test
+  public void createWithPrfPrimitiveRegistry_wrongRegistryThrows() throws Exception {
+    PrimitiveRegistry wrongRegistry =
+        PrimitiveRegistry.builder()
+            .registerPrimitiveConstructor(
+                PrimitiveConstructor.create(AesGcmJce::create, AesGcmKey.class, Aead.class))
+            .build();
+    TestVector t = ALL_TEST_VECTORS[0];
+    PrfBasedKeyDerivationParameters derivationParameters =
+        PrfBasedKeyDerivationParameters.builder()
+            .setDerivedKeyParameters(t.derivedKeyParameters)
+            .setPrfParameters(t.prfKey.getParameters())
+            .build();
+    @Nullable Integer idRequirement = t.expectedKey.getIdRequirementOrNull();
+    PrfBasedKeyDerivationKey keyDerivationKey =
+        PrfBasedKeyDerivationKey.create(derivationParameters, t.prfKey, idRequirement);
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> PrfBasedKeyDeriver.createWithPrfPrimitiveRegistry(wrongRegistry, keyDerivationKey));
   }
 }
