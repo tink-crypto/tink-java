@@ -829,3 +829,14 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "SlhDsaParametersTest",
+    size = "small",
+    srcs = ["SlhDsaParametersTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/signature:slh_dsa_parameters",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
