@@ -67,16 +67,14 @@ public final class MlDsaVerifyConscrypt implements PublicKeyVerify {
   }
 
   @AccessesPartialKey
-  public static PublicKeyVerify create(MlDsaPublicKey mlDsaPublicKey)
+  public static PublicKeyVerify createWithProvider(MlDsaPublicKey mlDsaPublicKey, Provider provider)
       throws GeneralSecurityException {
+    if (provider == null) {
+      throw new NullPointerException("provider must not be null");
+    }
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException(
           "Can not use ML-DSA in FIPS-mode, as it is not yet certified in Conscrypt.");
-    }
-
-    Provider provider = ConscryptUtil.providerOrNull();
-    if (provider == null) {
-      throw new GeneralSecurityException("Obtaining Conscrypt provider failed");
     }
 
     MlDsaInstance mlDsaInstance = mlDsaPublicKey.getParameters().getMlDsaInstance();
@@ -95,6 +93,20 @@ public final class MlDsaVerifyConscrypt implements PublicKeyVerify {
         ML_DSA_65_ALGORITHM,
         ML_DSA_65_SIG_LENGTH,
         provider);
+  }
+
+  @AccessesPartialKey
+  public static PublicKeyVerify create(MlDsaPublicKey mlDsaPublicKey)
+      throws GeneralSecurityException {
+    if (!FIPS.isCompatible()) {
+      throw new GeneralSecurityException(
+          "Can not use ML-DSA in FIPS-mode, as it is not yet certified in Conscrypt.");
+    }
+    Provider provider = ConscryptUtil.providerOrNull();
+    if (provider == null) {
+      throw new GeneralSecurityException("Obtaining Conscrypt provider failed");
+    }
+    return createWithProvider(mlDsaPublicKey, provider);
   }
 
   @Override

@@ -19,6 +19,7 @@ package com.google.crypto.tink.signature.internal;
 import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
@@ -36,6 +37,7 @@ import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
+import java.security.Provider;
 import java.security.Security;
 import java.util.Arrays;
 import java.util.List;
@@ -401,5 +403,34 @@ public final class MlDsaSignConscryptTest {
 
     assertThrows(GeneralSecurityException.class, () -> MlDsaSignConscrypt.create(tinkPrivateKey));
     assertThrows(GeneralSecurityException.class, () -> MlDsaVerifyConscrypt.create(tinkPublicKey));
+  }
+
+  @Test
+  public void createWithProvider_works() throws Exception {
+    Assume.assumeTrue(MlDsaVerifyConscrypt.isSupported());
+
+    Provider provider = ConscryptUtil.providerOrNull();
+
+    assertNotNull(provider);
+
+    PublicKeySign signer = MlDsaSignConscrypt.createWithProvider(noPrefixPrivateKey, provider);
+    PublicKeyVerify verifier = MlDsaVerifyConscrypt.createWithProvider(noPrefixPublicKey, provider);
+
+    byte[] signature = signer.sign(testData);
+
+    assertThat(signature).hasLength(MLDSA_SIGNATURE_BYTES);
+    verifier.verify(signature, testData);
+  }
+
+
+  @Test
+  public void createWithProvider_providerIsNull_throws() throws Exception {
+    Provider nullProvider = null;
+    assertThrows(
+        NullPointerException.class,
+        () -> MlDsaSignConscrypt.createWithProvider(noPrefixPrivateKey, nullProvider));
+    assertThrows(
+        NullPointerException.class,
+        () -> MlDsaVerifyConscrypt.createWithProvider(noPrefixPublicKey, nullProvider));
   }
 }

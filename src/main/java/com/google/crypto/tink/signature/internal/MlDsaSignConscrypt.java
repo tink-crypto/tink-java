@@ -67,15 +67,14 @@ public final class MlDsaSignConscrypt implements PublicKeySign {
   }
 
   @AccessesPartialKey
-  public static PublicKeySign create(MlDsaPrivateKey mlDsaPrivateKey)
+  public static PublicKeySign createWithProvider(MlDsaPrivateKey mlDsaPrivateKey, Provider provider)
       throws GeneralSecurityException {
+    if (provider == null) {
+      throw new NullPointerException("provider must not be null");
+    }
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException(
           "Can not use ML-DSA in FIPS-mode, as it is not yet certified in Conscrypt.");
-    }
-    Provider provider = ConscryptUtil.providerOrNull();
-    if (provider == null) {
-      throw new GeneralSecurityException("Obtaining Conscrypt provider failed");
     }
     MlDsaInstance mlDsaInstance = mlDsaPrivateKey.getPublicKey().getParameters().getMlDsaInstance();
     if (mlDsaInstance != MlDsaInstance.ML_DSA_65) {
@@ -100,7 +99,8 @@ public final class MlDsaSignConscrypt implements PublicKeySign {
             ML_DSA_65_SIG_LENGTH,
             provider);
     MlDsaVerifyConscrypt verifier =
-        (MlDsaVerifyConscrypt) MlDsaVerifyConscrypt.create(mlDsaPrivateKey.getPublicKey());
+        (MlDsaVerifyConscrypt)
+            MlDsaVerifyConscrypt.createWithProvider(mlDsaPrivateKey.getPublicKey(), provider);
     verifier.verify(testSignature, TEST_WORKLOAD.getBytes(UTF_8));
 
     // If verified successfully, proceed with the primitive creation.
@@ -110,6 +110,20 @@ public final class MlDsaSignConscrypt implements PublicKeySign {
         ML_DSA_65_ALGORITHM,
         ML_DSA_65_SIG_LENGTH,
         provider);
+  }
+
+  @AccessesPartialKey
+  public static PublicKeySign create(MlDsaPrivateKey mlDsaPrivateKey)
+      throws GeneralSecurityException {
+    if (!FIPS.isCompatible()) {
+      throw new GeneralSecurityException(
+          "Can not use ML-DSA in FIPS-mode, as it is not yet certified in Conscrypt.");
+    }
+    Provider provider = ConscryptUtil.providerOrNull();
+    if (provider == null) {
+      throw new GeneralSecurityException("Obtaining Conscrypt provider failed");
+    }
+    return createWithProvider(mlDsaPrivateKey, provider);
   }
 
   /** Returns true if the Conscrypt is available and supports ML-DSA-65. */
