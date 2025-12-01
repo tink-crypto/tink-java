@@ -1320,6 +1320,20 @@ android_library(
 )
 
 android_library(
+    name = "slh_dsa_private_key-android",
+    srcs = ["SlhDsaPrivateKey.java"],
+    deps = [
+        ":signature_private_key-android",
+        ":slh_dsa_parameters-android",
+        ":slh_dsa_public_key-android",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
+        "//src/main/java/com/google/crypto/tink:key-android",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
     name = "slh_dsa_public_key-android",
     srcs = ["SlhDsaPublicKey.java"],
     deps = [
@@ -1339,6 +1353,20 @@ java_library(
     srcs = ["SlhDsaParameters.java"],
     deps = [
         ":signature_parameters",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "slh_dsa_private_key",
+    srcs = ["SlhDsaPrivateKey.java"],
+    deps = [
+        ":signature_private_key",
+        ":slh_dsa_parameters",
+        ":slh_dsa_public_key",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:key",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
