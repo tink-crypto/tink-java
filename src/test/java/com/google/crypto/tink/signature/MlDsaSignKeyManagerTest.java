@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.junit.experimental.theories.Theories;
 import org.junit.runner.RunWith;
 
-// Test the key creation functionality of MlDsaSignKeyManager that should work regardless of the
+// Test the functionality of MlDsaSignKeyManager that should work regardless of the
 // Conscrypt's presence.
 @RunWith(Theories.class)
 public class MlDsaSignKeyManagerTest {

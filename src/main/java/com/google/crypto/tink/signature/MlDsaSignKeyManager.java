@@ -39,8 +39,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 /**
- * This key manager generates new {@code MlDsaPrivateKey} keys and produces new instances of {@code
- * MlDsaSignConscrypt}.
+ * This key manager generates new {@code MlDsaPrivateKey} keys and some named parameters.
  */
 /* Placeholder for internally public; DO NOT CHANGE. */ final class MlDsaSignKeyManager {
   // TODO(b/458349867): make OSS-public once ML-DSA is available in OSS Conscrypt (or we get the
