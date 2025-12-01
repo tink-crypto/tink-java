@@ -840,3 +840,18 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "SlhDsaPublicKeyTest",
+    size = "small",
+    srcs = ["SlhDsaPublicKeyTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink/signature:slh_dsa_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:slh_dsa_public_key",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
