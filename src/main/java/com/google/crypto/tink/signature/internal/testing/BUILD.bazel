@@ -268,3 +268,35 @@ java_library(
         "//src/main/java/com/google/crypto/tink/util:secret_bytes",
     ],
 )
+
+java_library(
+    name = "slh_dsa_test_util",
+    srcs = ["SlhDsaTestUtil.java"],
+    deps = [
+        ":signature_test_vector",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink/signature:slh_dsa_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:slh_dsa_private_key",
+        "//src/main/java/com/google/crypto/tink/signature:slh_dsa_public_key",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
+    ],
+)
+
+android_library(
+    name = "slh_dsa_test_util-android",
+    srcs = ["SlhDsaTestUtil.java"],
+    deps = [
+        ":signature_test_vector-android",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access-android",
+        "//src/main/java/com/google/crypto/tink/signature:slh_dsa_parameters-android",
+        "//src/main/java/com/google/crypto/tink/signature:slh_dsa_private_key-android",
+        "//src/main/java/com/google/crypto/tink/signature:slh_dsa_public_key-android",
+        "//src/main/java/com/google/crypto/tink/subtle:hex-android",
+        "//src/main/java/com/google/crypto/tink/util:bytes-android",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes-android",
+    ],
+)

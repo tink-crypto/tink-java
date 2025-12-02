@@ -25,6 +25,8 @@ import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.signature.internal.MlDsaSignConscrypt;
 import com.google.crypto.tink.signature.internal.MlDsaVerifyConscrypt;
+import com.google.crypto.tink.signature.internal.SlhDsaSignConscrypt;
+import com.google.crypto.tink.signature.internal.SlhDsaVerifyConscrypt;
 import com.google.crypto.tink.subtle.EcdsaSignJce;
 import com.google.crypto.tink.subtle.EcdsaVerifyJce;
 import com.google.crypto.tink.subtle.Ed25519Sign;
@@ -88,6 +90,12 @@ import java.security.GeneralSecurityException;
       builder.registerPrimitiveConstructor(
           PrimitiveConstructor.create(
               MlDsaVerifyConscrypt::create, MlDsaPublicKey.class, PublicKeyVerify.class));
+      builder.registerPrimitiveConstructor(
+          PrimitiveConstructor.create(
+              SlhDsaSignConscrypt::create, SlhDsaPrivateKey.class, PublicKeySign.class));
+      builder.registerPrimitiveConstructor(
+          PrimitiveConstructor.create(
+              SlhDsaVerifyConscrypt::create, SlhDsaPublicKey.class, PublicKeyVerify.class));
 
       return InternalConfiguration.createFromPrimitiveRegistry(builder.build());
     } catch (GeneralSecurityException e) {

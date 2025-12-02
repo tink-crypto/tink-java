@@ -30,12 +30,15 @@ import com.google.crypto.tink.signature.internal.MlDsaProtoSerialization;
 import com.google.crypto.tink.signature.internal.MlDsaVerifyConscrypt;
 import com.google.crypto.tink.signature.internal.RsaSsaPkcs1ProtoSerialization;
 import com.google.crypto.tink.signature.internal.RsaSsaPssProtoSerialization;
+import com.google.crypto.tink.signature.internal.SlhDsaProtoSerialization;
+import com.google.crypto.tink.signature.internal.SlhDsaVerifyConscrypt;
 import com.google.crypto.tink.signature.internal.testing.EcdsaTestUtil;
 import com.google.crypto.tink.signature.internal.testing.Ed25519TestUtil;
 import com.google.crypto.tink.signature.internal.testing.MlDsaTestUtil;
 import com.google.crypto.tink.signature.internal.testing.RsaSsaPkcs1TestUtil;
 import com.google.crypto.tink.signature.internal.testing.RsaSsaPssTestUtil;
 import com.google.crypto.tink.signature.internal.testing.SignatureTestVector;
+import com.google.crypto.tink.signature.internal.testing.SlhDsaTestUtil;
 import java.security.GeneralSecurityException;
 import java.security.Security;
 import java.util.Arrays;
@@ -60,6 +63,7 @@ public class SignatureConfigurationV1ConscryptTest {
     RsaSsaPkcs1ProtoSerialization.register();
     Ed25519ProtoSerialization.register();
     MlDsaProtoSerialization.register();
+    SlhDsaProtoSerialization.register();
 
     if (!Util.isAndroid() && Conscrypt.isAvailable()) {
       Security.addProvider(Conscrypt.newProvider());
@@ -76,8 +80,8 @@ public class SignatureConfigurationV1ConscryptTest {
   /**
    * Tests that when using the public API of Tink, signatures in the test vector can be verified.
    * This additionally ensures that all the expected algorithms (Ecdsa, RsaSsaPss, RsaSsaPkcs1,
-   * Ed25519 for {@code PublicKeyVerify}, MlDsa is Conscrypt is available and has support) are
-   * present in the SignatureConfigurationV1.
+   * Ed25519 for {@code PublicKeyVerify}, as well as MlDsa and SlhDsa is Conscrypt is available and
+   * has support) are present in the SignatureConfigurationV1.
    */
   @Theory
   public void test_validateSignatureInTestVector(
@@ -88,10 +92,14 @@ public class SignatureConfigurationV1ConscryptTest {
       // Android API 19 is slower than the others in this.
       return;
     }
-    if (testVector.getPrivateKey() instanceof MlDsaPrivateKey && !MlDsaVerifyConscrypt.isSupported()) {
-      // ML-DSA requires Conscrypt to be available. This also captures cases where ML-DSA is not
+    if ((testVector.getPrivateKey() instanceof MlDsaPrivateKey
+            && !MlDsaVerifyConscrypt.isSupported())
+        || (testVector.getPrivateKey() instanceof SlhDsaPrivateKey
+            && !SlhDsaVerifyConscrypt.isSupported())) {
+      // ML-DSA/SLH-DSA requires Conscrypt to be available. This also captures cases where
+      // ML-DSA/SLH-DSA is not
       // available even with Conscrypt installed, since 1) an older version of Conscrypt may be in
-      // use and 2) Conscrypt on Android does not support ML-DSA yet.
+      // use and 2) Conscrypt on Android does not support ML-DSA/SLH-DSA yet.
       return;
     }
 
@@ -139,11 +147,14 @@ public class SignatureConfigurationV1ConscryptTest {
     }
     KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
 
-    if (testVector.getPrivateKey() instanceof MlDsaPrivateKey
-        && !MlDsaVerifyConscrypt.isSupported()) {
-      // ML-DSA requires Conscrypt to be available. This also captures cases where ML-DSA is not
+    if ((testVector.getPrivateKey() instanceof MlDsaPrivateKey
+            && !MlDsaVerifyConscrypt.isSupported())
+        || (testVector.getPrivateKey() instanceof SlhDsaPrivateKey
+            && !SlhDsaVerifyConscrypt.isSupported())) {
+      // ML-DSA/SLH-DSA requires Conscrypt to be available. This also captures cases where
+      // ML-DSA/SLH-DSA is not
       // available even with Conscrypt installed, since 1) an older version of Conscrypt may be in
-      // use and 2) Conscrypt on Android does not support ML-DSA yet.
+      // use and 2) Conscrypt on Android does not support ML-DSA/SLH-DSA yet.
       assertThrows(
           GeneralSecurityException.class,
           () -> handle.getPrimitive(SignatureConfigurationV1.get(), PublicKeySign.class));
@@ -189,10 +200,14 @@ public class SignatureConfigurationV1ConscryptTest {
       // Android API 19 is slower than the others in this.
       return;
     }
-    if (testVector.getPrivateKey() instanceof MlDsaPrivateKey && !MlDsaVerifyConscrypt.isSupported()) {
-      // ML-DSA requires Conscrypt to be available. This also captures cases where ML-DSA is not
+    if ((testVector.getPrivateKey() instanceof MlDsaPrivateKey
+            && !MlDsaVerifyConscrypt.isSupported())
+        || (testVector.getPrivateKey() instanceof SlhDsaPrivateKey
+            && !SlhDsaVerifyConscrypt.isSupported())) {
+      // ML-DSA/SLH-DSA requires Conscrypt to be available. This also captures cases where
+      // ML-DSA/SLH-DSA is not
       // available even with Conscrypt installed, since 1) an older version of Conscrypt may be in
-      // use and 2) Conscrypt on Android does not support ML-DSA yet.
+      // use and 2) Conscrypt on Android does not support ML-DSA/SLH-DSA yet.
       return;
     }
 
@@ -228,6 +243,8 @@ public class SignatureConfigurationV1ConscryptTest {
                   Stream.concat(
                       stream(RsaSsaPkcs1TestUtil.createRsaSsaPkcs1TestVectors()),
                       stream(Ed25519TestUtil.createEd25519TestVectors()))),
-              MlDsaTestUtil.createMlDsa65ValidSignatureTestVectors())
+              Stream.concat(
+                  MlDsaTestUtil.createMlDsa65ValidSignatureTestVectors(),
+                  SlhDsaTestUtil.createSlhDsaValidSignatureTestVectors()))
           .toArray(SignatureTestVector[]::new);
 }
