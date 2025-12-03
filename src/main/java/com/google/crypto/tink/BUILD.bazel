@@ -1184,3 +1184,13 @@ java_library(
     name = "key_gen_configuration",
     srcs = ["KeyGenConfiguration.java"],
 )
+
+android_library(
+    name = "low_level_crypto_caller-android",
+    srcs = ["LowLevelCryptoCaller.java"],
+)
+
+java_library(
+    name = "low_level_crypto_caller",
+    srcs = ["LowLevelCryptoCaller.java"],
+)
