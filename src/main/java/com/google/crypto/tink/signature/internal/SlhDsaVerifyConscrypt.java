@@ -70,18 +70,15 @@ public class SlhDsaVerifyConscrypt implements PublicKeyVerify {
   }
 
   @AccessesPartialKey
-  public static PublicKeyVerify create(SlhDsaPublicKey slhDsaPublicKey)
+  public static PublicKeyVerify createWithProvider(SlhDsaPublicKey slhDsaPublicKey, Provider provider)
       throws GeneralSecurityException {
+    if (provider == null) {
+      throw new NullPointerException("provider must not be null");
+    }
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException(
-          "Can not use ML-DSA in FIPS-mode, as it is not yet certified in Conscrypt.");
+          "Can not use SLH-DSA in FIPS-mode, as it is not yet certified in Conscrypt.");
     }
-
-    Provider provider = ConscryptUtil.providerOrNull();
-    if (provider == null) {
-      throw new GeneralSecurityException("Obtaining Conscrypt provider failed");
-    }
-
     SlhDsaParameters parameters = slhDsaPublicKey.getParameters();
     if (parameters.getPrivateKeySize() != SlhDsaParameters.SLH_DSA_128_PRIVATE_KEY_SIZE_BYTES
         || parameters.getHashType() != HashType.SHA2
@@ -99,6 +96,21 @@ public class SlhDsaVerifyConscrypt implements PublicKeyVerify {
         SLH_DSA_SHA2_128S_ALGORITHM,
         SLH_DSA_SHA2_128S_SIG_LENGTH,
         provider);
+  }
+
+  @AccessesPartialKey
+  public static PublicKeyVerify create(SlhDsaPublicKey slhDsaPublicKey)
+      throws GeneralSecurityException {
+    if (!FIPS.isCompatible()) {
+      throw new GeneralSecurityException(
+          "Can not use SLH-DSA in FIPS-mode, as it is not yet certified in Conscrypt.");
+    }
+
+    Provider provider = ConscryptUtil.providerOrNull();
+    if (provider == null) {
+      throw new GeneralSecurityException("Obtaining Conscrypt provider failed");
+    }
+    return createWithProvider(slhDsaPublicKey, provider);
   }
 
   @Override

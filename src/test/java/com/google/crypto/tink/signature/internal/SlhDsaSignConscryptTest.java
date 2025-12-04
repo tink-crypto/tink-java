@@ -19,6 +19,7 @@ package com.google.crypto.tink.signature.internal;
 import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.AccessesPartialKey;
@@ -35,6 +36,7 @@ import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
+import java.security.Provider;
 import java.security.Security;
 import java.util.Arrays;
 import org.conscrypt.Conscrypt;
@@ -259,5 +261,34 @@ public final class SlhDsaSignConscryptTest {
 
     assertFalse(SlhDsaSignConscrypt.isSupported());
     assertFalse(SlhDsaVerifyConscrypt.isSupported());
+  }
+
+@Test
+  public void createWithProvider_works() throws Exception {
+    Assume.assumeTrue(SlhDsaVerifyConscrypt.isSupported());
+
+    Provider provider = ConscryptUtil.providerOrNull();
+
+    assertNotNull(provider);
+
+    PublicKeySign signer = SlhDsaSignConscrypt.createWithProvider(noPrefixPrivateKey, provider);
+    PublicKeyVerify verifier = SlhDsaVerifyConscrypt.createWithProvider(noPrefixPublicKey, provider);
+
+    byte[] signature = signer.sign(testData);
+
+    assertThat(signature).hasLength(7856);
+    verifier.verify(signature, testData);
+  }
+
+
+  @Test
+  public void createWithProvider_providerIsNull_throws() throws Exception {
+    Provider nullProvider = null;
+    assertThrows(
+        NullPointerException.class,
+        () -> SlhDsaSignConscrypt.createWithProvider(noPrefixPrivateKey, nullProvider));
+    assertThrows(
+        NullPointerException.class,
+        () -> SlhDsaVerifyConscrypt.createWithProvider(noPrefixPublicKey, nullProvider));
   }
 }

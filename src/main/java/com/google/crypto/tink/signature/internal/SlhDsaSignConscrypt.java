@@ -72,16 +72,14 @@ public class SlhDsaSignConscrypt implements PublicKeySign {
   }
 
   @AccessesPartialKey
-  public static PublicKeySign create(SlhDsaPrivateKey slhDsaPrivateKey)
+  public static PublicKeySign createWithProvider(SlhDsaPrivateKey slhDsaPrivateKey, Provider provider)
       throws GeneralSecurityException {
+    if (provider == null) {
+      throw new NullPointerException("provider must not be null");
+    }
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException(
           "Can not use SLH-DSA in FIPS-mode, as it is not yet certified in Conscrypt.");
-    }
-
-    Provider provider = ConscryptUtil.providerOrNull();
-    if (provider == null) {
-      throw new GeneralSecurityException("Obtaining Conscrypt provider failed");
     }
 
     SlhDsaParameters parameters = slhDsaPrivateKey.getParameters();
@@ -111,7 +109,7 @@ public class SlhDsaSignConscrypt implements PublicKeySign {
             SLH_DSA_SHA2_128S_SIG_LENGTH,
             provider);
     SlhDsaVerifyConscrypt verifier =
-        (SlhDsaVerifyConscrypt) SlhDsaVerifyConscrypt.create(slhDsaPrivateKey.getPublicKey());
+        (SlhDsaVerifyConscrypt) SlhDsaVerifyConscrypt.createWithProvider(slhDsaPrivateKey.getPublicKey(), provider);
     verifier.verify(testSignature, TEST_WORKLOAD.getBytes(UTF_8));
 
     // If verified successfully, proceed with the primitive creation.
@@ -122,6 +120,22 @@ public class SlhDsaSignConscrypt implements PublicKeySign {
         SLH_DSA_SHA2_128S_SIG_LENGTH,
         provider);
   }
+
+
+  @AccessesPartialKey
+  public static PublicKeySign create(SlhDsaPrivateKey slhDsaPrivateKey)
+      throws GeneralSecurityException {
+    if (!FIPS.isCompatible()) {
+      throw new GeneralSecurityException(
+          "Can not use SLH-DSA in FIPS-mode, as it is not yet certified in Conscrypt.");
+    }
+    Provider provider = ConscryptUtil.providerOrNull();
+    if (provider == null) {
+      throw new GeneralSecurityException("Obtaining Conscrypt provider failed");
+    }
+    return createWithProvider(slhDsaPrivateKey, provider);
+  }
+
 
   /** Returns true if the Conscrypt is available and supports SLH-DSA-SHA2-128S. */
   public static boolean isSupported() {
