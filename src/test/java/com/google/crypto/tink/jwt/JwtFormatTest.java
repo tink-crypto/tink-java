@@ -20,6 +20,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
+import com.google.crypto.tink.jwt.internal.JsonUtil;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.subtle.Base64;
 import com.google.gson.JsonObject;

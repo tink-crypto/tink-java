@@ -82,3 +82,16 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "JsonUtilTest",
+    size = "small",
+    srcs = ["JsonUtilTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_invalid_exception",
+        "//src/main/java/com/google/crypto/tink/jwt/internal:json_util",
+        "@maven//:com_google_code_gson_gson",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)

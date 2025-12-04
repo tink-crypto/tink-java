@@ -30,6 +30,7 @@ import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
+import com.google.crypto.tink.jwt.internal.JsonUtil;
 import com.google.crypto.tink.proto.JwtHmacKey;
 import com.google.crypto.tink.proto.JwtHmacKey.CustomKid;
 import com.google.crypto.tink.proto.KeyData;

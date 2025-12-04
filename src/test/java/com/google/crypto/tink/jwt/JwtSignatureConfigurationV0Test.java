@@ -30,6 +30,7 @@ import com.google.crypto.tink.aead.XChaCha20Poly1305Key;
 import com.google.crypto.tink.aead.internal.XChaCha20Poly1305ProtoSerialization;
 import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.jwt.internal.JsonUtil;
 import com.google.crypto.tink.jwt.internal.JwtEcdsaProtoSerialization;
 import com.google.crypto.tink.jwt.internal.JwtRsaSsaPkcs1ProtoSerialization;
 import com.google.crypto.tink.jwt.internal.JwtRsaSsaPssProtoSerialization;

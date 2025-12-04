@@ -29,6 +29,7 @@ import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
+import com.google.crypto.tink.jwt.internal.JsonUtil;
 import com.google.crypto.tink.signature.RsaSsaPssParameters;
 import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPssPublicKey;

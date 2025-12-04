@@ -169,3 +169,23 @@ java_library(
         "@maven//:com_google_protobuf_protobuf_java",
     ],
 )
+
+android_library(
+    name = "json_util-android",
+    srcs = ["JsonUtil.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/internal:json_parser-android",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_invalid_exception-android",
+        "@maven//:com_google_code_gson_gson",
+    ],
+)
+
+java_library(
+    name = "json_util",
+    srcs = ["JsonUtil.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/internal:json_parser",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_invalid_exception",
+        "@maven//:com_google_code_gson_gson",
+    ],
+)

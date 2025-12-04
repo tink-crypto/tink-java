@@ -14,33 +14,31 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package com.google.crypto.tink.jwt;
+package com.google.crypto.tink.jwt.internal;
 
 import com.google.crypto.tink.internal.JsonParser;
+import com.google.crypto.tink.jwt.JwtInvalidException;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import java.io.IOException;
 
-/**
- * Helper functions to parse JSON strings, and validate strings.
- * */
-final class JsonUtil {
+/** Helper functions to parse JSON strings, and validate strings. */
+public final class JsonUtil {
 
-  static boolean isValidString(String s) {
+  public static boolean isValidString(String s) {
     return JsonParser.isValidString(s);
   }
 
-
-  static JsonObject parseJson(String jsonString) throws JwtInvalidException {
+  public static JsonObject parseJson(String jsonString) throws JwtInvalidException {
     try {
       return JsonParser.parse(jsonString).getAsJsonObject();
-    } catch (IllegalStateException | JsonParseException  | IOException ex) {
+    } catch (IllegalStateException | JsonParseException | IOException ex) {
       throw new JwtInvalidException("invalid JSON: " + ex);
     }
   }
 
-  static JsonArray parseJsonArray(String jsonString) throws JwtInvalidException {
+  public static JsonArray parseJsonArray(String jsonString) throws JwtInvalidException {
     try {
       return JsonParser.parse(jsonString).getAsJsonArray();
     } catch (IllegalStateException | JsonParseException | IOException ex) {

@@ -20,6 +20,7 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
+import com.google.crypto.tink.jwt.internal.JsonUtil;
 import com.google.crypto.tink.proto.JwtEcdsaAlgorithm;
 import com.google.crypto.tink.signature.EcdsaPublicKey;
 import com.google.crypto.tink.subtle.EcdsaVerifyJce;

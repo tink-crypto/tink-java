@@ -14,11 +14,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package com.google.crypto.tink.jwt;
+package com.google.crypto.tink.jwt.internal;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
+import com.google.crypto.tink.jwt.JwtInvalidException;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.junit.Test;
