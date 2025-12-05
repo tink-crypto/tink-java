@@ -189,3 +189,13 @@ java_library(
         "@maven//:com_google_code_gson_gson",
     ],
 )
+
+android_library(
+    name = "jwt_names-android",
+    srcs = ["JwtNames.java"],
+)
+
+java_library(
+    name = "jwt_names",
+    srcs = ["JwtNames.java"],
+)

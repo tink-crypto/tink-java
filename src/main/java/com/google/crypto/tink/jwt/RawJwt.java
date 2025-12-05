@@ -17,6 +17,7 @@
 package com.google.crypto.tink.jwt;
 
 import com.google.crypto.tink.jwt.internal.JsonUtil;
+import com.google.crypto.tink.jwt.internal.JwtNames;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Immutable;
 import com.google.gson.JsonArray;

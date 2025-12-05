@@ -14,32 +14,33 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package com.google.crypto.tink.jwt;
+package com.google.crypto.tink.jwt.internal;
 
-final class JwtNames {
+/** Static utilities for dealing with claim names. */
+public final class JwtNames {
   /**
    * Registered claim names, as defined in https://tools.ietf.org/html/rfc7519#section-4.1. If
    * update, please update validateClaim().
    */
-  static final String CLAIM_ISSUER = "iss";
+  public static final String CLAIM_ISSUER = "iss";
 
-  static final String CLAIM_SUBJECT = "sub";
-  static final String CLAIM_AUDIENCE = "aud";
-  static final String CLAIM_EXPIRATION = "exp";
-  static final String CLAIM_NOT_BEFORE = "nbf";
-  static final String CLAIM_ISSUED_AT = "iat";
-  static final String CLAIM_JWT_ID = "jti";
+  public static final String CLAIM_SUBJECT = "sub";
+  public static final String CLAIM_AUDIENCE = "aud";
+  public static final String CLAIM_EXPIRATION = "exp";
+  public static final String CLAIM_NOT_BEFORE = "nbf";
+  public static final String CLAIM_ISSUED_AT = "iat";
+  public static final String CLAIM_JWT_ID = "jti";
 
   /**
    * Supported protected headers, as described in https://tools.ietf.org/html/rfc7515#section-4.1
    */
-  static final String HEADER_ALGORITHM = "alg";
+  public static final String HEADER_ALGORITHM = "alg";
 
-  static final String HEADER_KEY_ID = "kid";
-  static final String HEADER_TYPE = "typ";
-  static final String HEADER_CRITICAL = "crit";
+  public static final String HEADER_KEY_ID = "kid";
+  public static final String HEADER_TYPE = "typ";
+  public static final String HEADER_CRITICAL = "crit";
 
-  static void validate(String name) {
+  public static void validate(String name) {
     if (isRegisteredName(name)) {
       throw new IllegalArgumentException(
           String.format(
@@ -49,7 +50,7 @@ final class JwtNames {
     }
   }
 
-  static boolean isRegisteredName(String name) {
+  public static boolean isRegisteredName(String name) {
     return name.equals(CLAIM_ISSUER)
         || name.equals(CLAIM_SUBJECT)
         || name.equals(CLAIM_AUDIENCE)

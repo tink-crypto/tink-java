@@ -18,6 +18,7 @@ package com.google.crypto.tink.jwt;
 
 import static com.google.crypto.tink.internal.Util.UTF_8;
 
+import com.google.crypto.tink.jwt.internal.JwtNames;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.subtle.Base64;
 import com.google.gson.JsonObject;
