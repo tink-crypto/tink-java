@@ -48,7 +48,7 @@ import javax.annotation.Nullable;
 public final class AesEaxKeyManager {
   private static final void validate(AesEaxParameters parameters) throws GeneralSecurityException {
     if (parameters.getKeySizeBytes() == 24) {
-      throw new GeneralSecurityException("192 bit AES GCM Parameters are not valid");
+      throw new GeneralSecurityException("192 bit AES EAX Parameters are not valid");
     }
   }
 

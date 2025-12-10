@@ -19,7 +19,7 @@ package com.google.crypto.tink.aead;
 import com.google.errorprone.annotations.Immutable;
 import java.util.Objects;
 
-/** Describes the parameters of an {@link XChaChaPoly1305Key}. */
+/** Describes the parameters of an {@link XChaCha20Poly1305Key}. */
 public final class XChaCha20Poly1305Parameters extends AeadParameters {
   /**
    * Describes how the prefix is computed. For AEAD there are three main possibilities: NO_PREFIX

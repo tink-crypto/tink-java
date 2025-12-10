@@ -36,7 +36,7 @@ import javax.crypto.Cipher;
  * AES-GCM-SIV on the other hand has been designed to avoid this vulnerability.
  *
  * <p>This encryption requires a JCE provider that supports the <code>AES/GCM-SIV/NoPadding</code>
- * transformation such as <a href="https://conscrypt.org">Conscrypt</a>. using JCE.
+ * transformation such as <a href="https://conscrypt.org">Conscrypt</a>.
  */
 @Alpha
 public final class AesGcmSiv implements Aead {

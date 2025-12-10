@@ -199,7 +199,7 @@ public final class AesEaxProtoSerialization {
           .setIdRequirement(serialization.getIdRequirementOrNull())
           .build();
     } catch (InvalidProtocolBufferException e) {
-      throw new GeneralSecurityException("Parsing AesEaxcKey failed");
+      throw new GeneralSecurityException("Parsing AesEaxKey failed");
     }
   }
 

@@ -159,7 +159,7 @@ public final class AesGcmSivKeyManager {
   }
 
   /**
-   * Creates and returns a {@link KeyTemplate} that generates new instances of AES-GCM with the
+   * Creates and returns a {@link KeyTemplate} that generates new instances of AES-GCM-SIV with the
    * following parameters:
    *
    * <ul>
