@@ -23,7 +23,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.util.Objects;
 import javax.annotation.Nullable;
 
-/** Describes the parameters of an {@link AesGcmSivSivKey} */
+/** Describes the parameters of an {@link AesGcmSivKey} */
 public final class AesGcmSivParameters extends AeadParameters {
   /**
    * Describes how the prefix is computed. For AEAD there are three main possibilities: NO_PREFIX
