@@ -54,7 +54,7 @@ create_build_file() {
   cat <<EOF > "${OUT_FILE}"
 # Build file for generating tink and tink-android Maven artifacts.
 
-load("//:tink_version.bzl", "TINK_VERSION_LABEL")
+load("//:tink_version.bzl", "get_tink_version_label")
 load("//tools:gen_maven_jar_rules.bzl", "gen_maven_jar_rules", "maven_bundle")
 
 package(default_visibility = ["//visibility:public"])
@@ -93,7 +93,7 @@ maven_bundle(
 maven_bundle(
     name = "tink-release-bundle",
     lib_name = "tink",
-    lib_version = TINK_VERSION_LABEL,
+    lib_version = get_tink_version_label(name = "version_label_name"),
     pom_template = "//maven:tink-java.pom.xml",
     maven_jar_rules_target = ":tink",
     gpg_secret_key_file = "gpg_key.asc",
@@ -143,7 +143,7 @@ maven_bundle(
 maven_bundle(
     name = "tink-android-release-bundle",
     lib_name = "tink-android",
-    lib_version = TINK_VERSION_LABEL,
+    lib_version = get_tink_version_label(name = "android_version_label_name"),
     pom_template = "//maven:tink-java-android.pom.xml",
     maven_jar_rules_target = ":tink-android",
     gpg_secret_key_file = "gpg_key.asc",

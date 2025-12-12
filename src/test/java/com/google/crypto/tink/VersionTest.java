@@ -35,6 +35,9 @@ public class VersionTest {
     //   1.2.3-beta
     //   1.2.3-RC1
     String versionRegex = "[0-9]+[.][0-9]+[.][0-9]+(-[A-Za-z0-9]+)?";
+    if (Version.TINK_VERSION.equals("HEAD")) {
+      return;
+    }
     assertThat(Version.TINK_VERSION).matches(versionRegex);
   }
 }
