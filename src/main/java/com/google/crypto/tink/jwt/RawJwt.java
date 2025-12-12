@@ -419,14 +419,14 @@ public final class RawJwt {
     return payload.toString();
   }
 
-  boolean hasBooleanClaim(String name) {
+  public boolean hasBooleanClaim(String name) {
     JwtNames.validate(name);
     return (payload.has(name)
         && payload.get(name).isJsonPrimitive()
         && payload.get(name).getAsJsonPrimitive().isBoolean());
   }
 
-  Boolean getBooleanClaim(String name) throws JwtInvalidException {
+  public Boolean getBooleanClaim(String name) throws JwtInvalidException {
     JwtNames.validate(name);
     if (!payload.has(name)) {
       throw new JwtInvalidException("claim " + name + " does not exist");
@@ -438,14 +438,14 @@ public final class RawJwt {
     return payload.get(name).getAsBoolean();
   }
 
-  boolean hasNumberClaim(String name) {
+  public boolean hasNumberClaim(String name) {
     JwtNames.validate(name);
     return (payload.has(name)
         && payload.get(name).isJsonPrimitive()
         && payload.get(name).getAsJsonPrimitive().isNumber());
   }
 
-  Double getNumberClaim(String name) throws JwtInvalidException {
+  public Double getNumberClaim(String name) throws JwtInvalidException {
     JwtNames.validate(name);
     if (!payload.has(name)) {
       throw new JwtInvalidException("claim " + name + " does not exist");
@@ -457,14 +457,14 @@ public final class RawJwt {
     return payload.get(name).getAsDouble();
   }
 
-  boolean hasStringClaim(String name) {
+  public boolean hasStringClaim(String name) {
     JwtNames.validate(name);
     return (payload.has(name)
         && payload.get(name).isJsonPrimitive()
         && payload.get(name).getAsJsonPrimitive().isString());
   }
 
-  String getStringClaim(String name) throws JwtInvalidException {
+  public String getStringClaim(String name) throws JwtInvalidException {
     JwtNames.validate(name);
     return getStringClaimInternal(name);
   }
@@ -480,7 +480,7 @@ public final class RawJwt {
     return payload.get(name).getAsString();
   }
 
-  boolean isNullClaim(String name) {
+  public boolean isNullClaim(String name) {
     JwtNames.validate(name);
     try {
       return JsonNull.INSTANCE.equals(payload.get(name));
@@ -489,12 +489,12 @@ public final class RawJwt {
     }
   }
 
-  boolean hasJsonObjectClaim(String name) {
+  public boolean hasJsonObjectClaim(String name) {
     JwtNames.validate(name);
     return (payload.has(name) && payload.get(name).isJsonObject());
   }
 
-  String getJsonObjectClaim(String name) throws JwtInvalidException {
+  public String getJsonObjectClaim(String name) throws JwtInvalidException {
     JwtNames.validate(name);
     if (!payload.has(name)) {
       throw new JwtInvalidException("claim " + name + " does not exist");
@@ -505,12 +505,12 @@ public final class RawJwt {
     return payload.get(name).getAsJsonObject().toString();
   }
 
-  boolean hasJsonArrayClaim(String name) {
+  public boolean hasJsonArrayClaim(String name) {
     JwtNames.validate(name);
     return (payload.has(name) && payload.get(name).isJsonArray());
   }
 
-  String getJsonArrayClaim(String name) throws JwtInvalidException {
+  public String getJsonArrayClaim(String name) throws JwtInvalidException {
     JwtNames.validate(name);
     if (!payload.has(name)) {
       throw new JwtInvalidException("claim " + name + " does not exist");
@@ -521,47 +521,47 @@ public final class RawJwt {
     return payload.get(name).getAsJsonArray().toString();
   }
 
-  boolean hasTypeHeader() {
+  public boolean hasTypeHeader() {
     return typeHeader.isPresent();
   }
 
-  String getTypeHeader() throws JwtInvalidException {
+  public String getTypeHeader() throws JwtInvalidException {
     if (!typeHeader.isPresent()) {
       throw new JwtInvalidException("type header is not set");
     }
     return typeHeader.get();
   }
 
-  boolean hasIssuer() {
+  public boolean hasIssuer() {
     return payload.has(JwtNames.CLAIM_ISSUER);
   }
 
-  String getIssuer() throws JwtInvalidException {
+  public String getIssuer() throws JwtInvalidException {
     return getStringClaimInternal(JwtNames.CLAIM_ISSUER);
   }
 
-  boolean hasSubject() {
+  public boolean hasSubject() {
     return payload.has(JwtNames.CLAIM_SUBJECT);
   }
 
-  String getSubject() throws JwtInvalidException {
+  public String getSubject() throws JwtInvalidException {
     return getStringClaimInternal(JwtNames.CLAIM_SUBJECT);
   }
 
-  boolean hasJwtId() {
+  public boolean hasJwtId() {
     return payload.has(JwtNames.CLAIM_JWT_ID);
   }
 
-  String getJwtId() throws JwtInvalidException {
+  public String getJwtId() throws JwtInvalidException {
     return getStringClaimInternal(JwtNames.CLAIM_JWT_ID);
   }
 
-  boolean hasAudiences() {
+  public boolean hasAudiences() {
     // If an audience claim is present, it is always a JsonArray with length > 0.
     return payload.has(JwtNames.CLAIM_AUDIENCE);
   }
 
-  List<String> getAudiences() throws JwtInvalidException {
+  public List<String> getAudiences() throws JwtInvalidException {
     if (!hasAudiences()) {
       throw new JwtInvalidException("claim aud does not exist");
     }
@@ -608,32 +608,32 @@ public final class RawJwt {
     }
   }
 
-  boolean hasExpiration() {
+  public boolean hasExpiration() {
     return payload.has(JwtNames.CLAIM_EXPIRATION);
   }
 
-  Instant getExpiration() throws JwtInvalidException {
+  public Instant getExpiration() throws JwtInvalidException {
     return getInstant(JwtNames.CLAIM_EXPIRATION);
   }
 
-  boolean hasNotBefore() {
+  public boolean hasNotBefore() {
     return payload.has(JwtNames.CLAIM_NOT_BEFORE);
   }
 
-  Instant getNotBefore() throws JwtInvalidException {
+  public Instant getNotBefore() throws JwtInvalidException {
     return getInstant(JwtNames.CLAIM_NOT_BEFORE);
   }
 
-  boolean hasIssuedAt() {
+  public boolean hasIssuedAt() {
     return payload.has(JwtNames.CLAIM_ISSUED_AT);
   }
 
-  Instant getIssuedAt() throws JwtInvalidException {
+  public Instant getIssuedAt() throws JwtInvalidException {
     return getInstant(JwtNames.CLAIM_ISSUED_AT);
   }
 
   /** Returns all custom claim names. */
-  Set<String> customClaimNames() {
+  public Set<String> customClaimNames() {
     HashSet<String> names = new HashSet<>();
     for (String name : this.payload.keySet()) {
       if (!JwtNames.isRegisteredName(name)) {
