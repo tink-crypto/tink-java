@@ -27,6 +27,7 @@ import com.google.crypto.tink.internal.InternalConfiguration;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.jwt.internal.JsonUtil;
+import com.google.crypto.tink.jwt.internal.JwtFormat;
 import com.google.crypto.tink.signature.EcdsaPrivateKey;
 import com.google.crypto.tink.signature.EcdsaPublicKey;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;

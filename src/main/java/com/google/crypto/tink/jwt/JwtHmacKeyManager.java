@@ -33,6 +33,7 @@ import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.jwt.internal.JsonUtil;
+import com.google.crypto.tink.jwt.internal.JwtFormat;
 import com.google.crypto.tink.mac.HmacKey;
 import com.google.crypto.tink.mac.HmacParameters;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;

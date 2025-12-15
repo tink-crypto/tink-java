@@ -21,6 +21,7 @@ import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.jwt.internal.JsonUtil;
+import com.google.crypto.tink.jwt.internal.JwtFormat;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
 import com.google.crypto.tink.subtle.RsaSsaPkcs1VerifyJce;
 import com.google.gson.JsonObject;

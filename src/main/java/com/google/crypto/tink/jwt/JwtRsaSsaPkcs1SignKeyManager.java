@@ -31,6 +31,7 @@ import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
 import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
+import com.google.crypto.tink.jwt.internal.JwtFormat;
 import com.google.crypto.tink.jwt.internal.JwtRsaSsaPkcs1ProtoSerialization;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;

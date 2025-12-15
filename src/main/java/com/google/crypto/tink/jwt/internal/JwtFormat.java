@@ -14,11 +14,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package com.google.crypto.tink.jwt;
+package com.google.crypto.tink.jwt.internal;
 
 import static com.google.crypto.tink.internal.Util.UTF_8;
 
-import com.google.crypto.tink.jwt.internal.JwtNames;
+import com.google.crypto.tink.jwt.JwtInvalidException;
+import com.google.crypto.tink.jwt.RawJwt;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.subtle.Base64;
 import com.google.gson.JsonObject;
@@ -29,17 +30,18 @@ import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.util.Optional;
 
-final class JwtFormat {
+/** Helper functions to format JWT objects */
+public final class JwtFormat {
 
-  static class Parts {
+  /** Encodes the parts of a JWT. */
+  public static class Parts {
 
-    String unsignedCompact;
-    byte[] signatureOrMac;
-    String header;
-    String payload;
+    public String unsignedCompact;
+    public byte[] signatureOrMac;
+    public String header;
+    public String payload;
 
-    Parts(
-        String unsignedCompact, byte[] signatureOrMac, String header, String payload) {
+    public Parts(String unsignedCompact, byte[] signatureOrMac, String header, String payload) {
       this.unsignedCompact = unsignedCompact;
       this.signatureOrMac = signatureOrMac;
       this.header = header;
@@ -49,8 +51,7 @@ final class JwtFormat {
 
   private JwtFormat() {}
 
-
-  static boolean isValidUrlsafeBase64Char(char c) {
+  public static boolean isValidUrlsafeBase64Char(char c) {
     return (((c >= 'a') && (c <= 'z'))
         || ((c >= 'A') && (c <= 'Z'))
         || ((c >= '0') && (c <= '9'))
@@ -58,7 +59,7 @@ final class JwtFormat {
   }
 
   // We need this validation, since String(data, UTF_8) ignores invalid characters.
-  static void validateUtf8(byte[] data) throws JwtInvalidException {
+  public static void validateUtf8(byte[] data) throws JwtInvalidException {
     CharsetDecoder decoder = UTF_8.newDecoder();
     try {
       decoder.decode(ByteBuffer.wrap(data));
@@ -67,7 +68,7 @@ final class JwtFormat {
     }
   }
 
-  static byte[] strictUrlSafeDecode(String encodedData) throws JwtInvalidException {
+  public static byte[] strictUrlSafeDecode(String encodedData) throws JwtInvalidException {
     for (int i = 0; i < encodedData.length(); i++) {
       char c = encodedData.charAt(i);
       if (!isValidUrlsafeBase64Char(c)) {
@@ -101,7 +102,8 @@ final class JwtFormat {
     }
   }
 
-  static String createHeader(String algorithm, Optional<String> typeHeader, Optional<String> kid)
+  public static String createHeader(
+      String algorithm, Optional<String> typeHeader, Optional<String> kid)
       throws InvalidAlgorithmParameterException {
     validateAlgorithm(algorithm);
     JsonObject header = new JsonObject();
@@ -123,7 +125,7 @@ final class JwtFormat {
     }
   }
 
-  static void validateHeader(
+  public static void validateHeader(
       JsonObject parsedHeader,
       String algorithmFromKey,
       Optional<String> kidFromKey,
@@ -160,10 +162,10 @@ final class JwtFormat {
   /**
    * Validates the parsed header.
    *
-   * tinkKid should only be set for keys with output prefix type TINK. customKid should only
-   * be set for keys with output prefix type RAW. They should not be set at the same time.
+   * <p>tinkKid should only be set for keys with output prefix type TINK. customKid should only be
+   * set for keys with output prefix type RAW. They should not be set at the same time.
    */
-  static void validateHeader(
+  public static void validateHeader(
       String expectedAlgorithm,
       Optional<String> tinkKid,
       Optional<String> customKid,
@@ -197,14 +199,14 @@ final class JwtFormat {
     // Ignore all other headers
   }
 
-  static Optional<String> getTypeHeader(JsonObject header) throws JwtInvalidException {
+  public static Optional<String> getTypeHeader(JsonObject header) throws JwtInvalidException {
     if (header.has(JwtNames.HEADER_TYPE)) {
       return Optional.of(getStringHeader(header, JwtNames.HEADER_TYPE));
     }
     return Optional.empty();
   }
 
-  static String getStringHeader(JsonObject header, String name) throws JwtInvalidException {
+  public static String getStringHeader(JsonObject header, String name) throws JwtInvalidException {
     if (!header.has(name)) {
       throw new JwtInvalidException("header " + name + " does not exist");
     }
@@ -214,31 +216,32 @@ final class JwtFormat {
     return header.get(name).getAsString();
   }
 
-  static String decodeHeader(String headerStr) throws JwtInvalidException {
+  public static String decodeHeader(String headerStr) throws JwtInvalidException {
     byte[] data = strictUrlSafeDecode(headerStr);
     validateUtf8(data);
     return new String(data, UTF_8);
   }
 
-  static String encodePayload(String jsonPayload) {
+  public static String encodePayload(String jsonPayload) {
     return Base64.urlSafeEncode(jsonPayload.getBytes(UTF_8));
   }
 
-  static String decodePayload(String payloadStr) throws JwtInvalidException {
+  public static String decodePayload(String payloadStr) throws JwtInvalidException {
     byte[] data = strictUrlSafeDecode(payloadStr);
     validateUtf8(data);
     return new String(data, UTF_8);
   }
 
-  static String encodeSignature(byte[] signature) {
+  public static String encodeSignature(byte[] signature) {
     return Base64.urlSafeEncode(signature);
   }
 
-  static byte[] decodeSignature(String signatureStr) throws JwtInvalidException {
+  public static byte[] decodeSignature(String signatureStr) throws JwtInvalidException {
     return strictUrlSafeDecode(signatureStr);
   }
 
-  static Optional<String> getKid(int keyId, OutputPrefixType prefix) throws JwtInvalidException {
+  public static Optional<String> getKid(int keyId, OutputPrefixType prefix)
+      throws JwtInvalidException {
     if (prefix == OutputPrefixType.RAW) {
       return Optional.empty();
     }
@@ -249,7 +252,7 @@ final class JwtFormat {
     throw new JwtInvalidException("unsupported output prefix type");
   }
 
-  static Optional<Integer> getKeyId(String kid) {
+  public static Optional<Integer> getKeyId(String kid) {
     byte[] encodedKeyId = Base64.urlSafeDecode(kid);
     if (encodedKeyId.length != 4) {
       return Optional.empty();
@@ -257,7 +260,7 @@ final class JwtFormat {
     return Optional.of(ByteBuffer.wrap(encodedKeyId).getInt());
   }
 
-  static Parts splitSignedCompact(String signedCompact) throws JwtInvalidException {
+  public static Parts splitSignedCompact(String signedCompact) throws JwtInvalidException {
       validateASCII(signedCompact);
       int sigPos = signedCompact.lastIndexOf('.');
       if (sigPos < 0) {
@@ -283,7 +286,7 @@ final class JwtFormat {
       return new Parts(unsignedCompact, mac, header, payload);
   }
 
-  static String createUnsignedCompact(String algorithm, Optional<String> kid, RawJwt rawJwt)
+  public static String createUnsignedCompact(String algorithm, Optional<String> kid, RawJwt rawJwt)
       throws InvalidAlgorithmParameterException, JwtInvalidException {
     String jsonPayload = rawJwt.getJsonPayload();
     Optional<String> typeHeader =
@@ -291,11 +294,11 @@ final class JwtFormat {
     return createHeader(algorithm, typeHeader, kid) + "." + encodePayload(jsonPayload);
   }
 
-  static String createSignedCompact(String unsignedCompact, byte[] signature) {
+  public static String createSignedCompact(String unsignedCompact, byte[] signature) {
     return unsignedCompact + "." + encodeSignature(signature);
   }
 
-  static void validateASCII(String data) throws JwtInvalidException {
+  public static void validateASCII(String data) throws JwtInvalidException {
     for (int i = 0; i < data.length(); i++) {
       char c = data.charAt(i);
       if ((c & 0x80) > 0) {

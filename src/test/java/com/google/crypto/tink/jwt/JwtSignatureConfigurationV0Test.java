@@ -32,6 +32,7 @@ import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.jwt.internal.JsonUtil;
 import com.google.crypto.tink.jwt.internal.JwtEcdsaProtoSerialization;
+import com.google.crypto.tink.jwt.internal.JwtFormat;
 import com.google.crypto.tink.jwt.internal.JwtRsaSsaPkcs1ProtoSerialization;
 import com.google.crypto.tink.jwt.internal.JwtRsaSsaPssProtoSerialization;
 import com.google.crypto.tink.signature.EcdsaParameters;

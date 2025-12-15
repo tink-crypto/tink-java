@@ -32,6 +32,7 @@ import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.jwt.internal.JwtEcdsaProtoSerialization;
+import com.google.crypto.tink.jwt.internal.JwtFormat;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.signature.EcdsaPrivateKey;
 import com.google.crypto.tink.subtle.EcdsaSignJce;
