@@ -35,18 +35,12 @@ import com.google.crypto.tink.jwt.internal.JwtEcdsaProtoSerialization;
 import com.google.crypto.tink.jwt.internal.JwtFormat;
 import com.google.crypto.tink.jwt.internal.JwtRsaSsaPkcs1ProtoSerialization;
 import com.google.crypto.tink.jwt.internal.JwtRsaSsaPssProtoSerialization;
-import com.google.crypto.tink.signature.EcdsaParameters;
 import com.google.crypto.tink.signature.EcdsaPrivateKey;
-import com.google.crypto.tink.signature.EcdsaPublicKey;
 import com.google.crypto.tink.signature.EcdsaSignKeyManager;
 import com.google.crypto.tink.signature.PublicKeySignWrapper;
-import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
-import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
 import com.google.crypto.tink.signature.RsaSsaPkcs1SignKeyManager;
-import com.google.crypto.tink.signature.RsaSsaPssParameters;
 import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
-import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
 import com.google.crypto.tink.signature.RsaSsaPssSignKeyManager;
 import com.google.crypto.tink.signature.internal.EcdsaProtoSerialization;
 import com.google.crypto.tink.signature.internal.RsaSsaPkcs1ProtoSerialization;
@@ -1306,35 +1300,6 @@ public class JwtSignatureConfigurationV0Test {
     return unsignedCompact + "." + signature;
   }
 
-  // Ecdsa-specific tests
-  private static EcdsaParameters.CurveType getCurveType(JwtEcdsaParameters parameters)
-      throws GeneralSecurityException {
-    if (parameters.getAlgorithm().equals(JwtEcdsaParameters.Algorithm.ES256)) {
-      return EcdsaParameters.CurveType.NIST_P256;
-    }
-    if (parameters.getAlgorithm().equals(JwtEcdsaParameters.Algorithm.ES384)) {
-      return EcdsaParameters.CurveType.NIST_P384;
-    }
-    if (parameters.getAlgorithm().equals(JwtEcdsaParameters.Algorithm.ES512)) {
-      return EcdsaParameters.CurveType.NIST_P521;
-    }
-    throw new GeneralSecurityException("unknown algorithm in parameters: " + parameters);
-  }
-
-  private static EcdsaParameters.HashType getEcdsaHash(JwtEcdsaParameters parameters)
-      throws GeneralSecurityException {
-    if (parameters.getAlgorithm().equals(JwtEcdsaParameters.Algorithm.ES256)) {
-      return EcdsaParameters.HashType.SHA256;
-    }
-    if (parameters.getAlgorithm().equals(JwtEcdsaParameters.Algorithm.ES384)) {
-      return EcdsaParameters.HashType.SHA384;
-    }
-    if (parameters.getAlgorithm().equals(JwtEcdsaParameters.Algorithm.ES512)) {
-      return EcdsaParameters.HashType.SHA512;
-    }
-    throw new GeneralSecurityException("unknown algorithm in parameters: " + parameters);
-  }
-
   @Theory
   public void getPrimitive_signVerifyEcdsaRawDifferentHeaders(
       @FromDataPoints("jwtPrivateKeys") JwtSignaturePrivateKey key) throws Exception {
@@ -1353,23 +1318,7 @@ public class JwtSignatureConfigurationV0Test {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(jwtEcdsaPrivateKey).withFixedId(123).makePrimary())
             .build();
-    EcdsaParameters nonJwtParameters =
-        EcdsaParameters.builder()
-            // JWT uses IEEE_P1363
-            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.IEEE_P1363)
-            .setCurveType(getCurveType(jwtEcdsaPrivateKey.getParameters()))
-            .setHashType(getEcdsaHash(jwtEcdsaPrivateKey.getParameters()))
-            .build();
-    EcdsaPublicKey nonJwtPublicKey =
-        EcdsaPublicKey.builder()
-            .setParameters(nonJwtParameters)
-            .setPublicPoint(jwtEcdsaPrivateKey.getPublicKey().getPublicPoint())
-            .build();
-    EcdsaPrivateKey nonJwtPrivateKey =
-        EcdsaPrivateKey.builder()
-            .setPublicKey(nonJwtPublicKey)
-            .setPrivateValue(jwtEcdsaPrivateKey.getPrivateValue())
-            .build();
+    EcdsaPrivateKey nonJwtPrivateKey = jwtEcdsaPrivateKey.getEcdsaPrivateKey();
     // This nonJwtSigner computes signatures in the same way as one obtained from handle -- except
     // that it doesn't do any of the JWT stuff.
     PublicKeySign nonJwtSigner =
@@ -1449,23 +1398,7 @@ public class JwtSignatureConfigurationV0Test {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(jwtEcdsaPrivateKey).withFixedId(123).makePrimary())
             .build();
-    EcdsaParameters nonJwtParameters =
-        EcdsaParameters.builder()
-            // JWT uses IEEE_P1363
-            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.IEEE_P1363)
-            .setCurveType(getCurveType(jwtEcdsaPrivateKey.getParameters()))
-            .setHashType(getEcdsaHash(jwtEcdsaPrivateKey.getParameters()))
-            .build();
-    EcdsaPublicKey nonJwtPublicKey =
-        EcdsaPublicKey.builder()
-            .setParameters(nonJwtParameters)
-            .setPublicPoint(jwtEcdsaPrivateKey.getPublicKey().getPublicPoint())
-            .build();
-    EcdsaPrivateKey nonJwtPrivateKey =
-        EcdsaPrivateKey.builder()
-            .setPublicKey(nonJwtPublicKey)
-            .setPrivateValue(jwtEcdsaPrivateKey.getPrivateValue())
-            .build();
+    EcdsaPrivateKey nonJwtPrivateKey = jwtEcdsaPrivateKey.getEcdsaPrivateKey();
     // This nonJwtSigner computes signatures in the same way as one obtained from handle -- except
     // that it doesn't do any of the JWT stuff.
     PublicKeySign nonJwtSigner =
@@ -1521,21 +1454,6 @@ public class JwtSignatureConfigurationV0Test {
         GeneralSecurityException.class, () -> verifier.verifyAndDecode(badAlgToken, validator));
   }
 
-  // RsaSsaPkcs1-specific tests.
-  private static RsaSsaPkcs1Parameters.HashType getRsaSsaPkcs1Hash(
-      JwtRsaSsaPkcs1Parameters parameters) throws GeneralSecurityException {
-    if (parameters.getModulusSizeBits() == 2048) {
-      return RsaSsaPkcs1Parameters.HashType.SHA256;
-    }
-    if (parameters.getModulusSizeBits() == 3072) {
-      return RsaSsaPkcs1Parameters.HashType.SHA384;
-    }
-    if (parameters.getModulusSizeBits() == 4096) {
-      return RsaSsaPkcs1Parameters.HashType.SHA512;
-    }
-    throw new GeneralSecurityException("unknown algorithm in parameters: " + parameters);
-  }
-
   private static String getRsaSsaPkcs1Alg(JwtRsaSsaPkcs1Parameters parameters)
       throws GeneralSecurityException {
     if (parameters.getModulusSizeBits() == 2048) {
@@ -1569,29 +1487,7 @@ public class JwtSignatureConfigurationV0Test {
             .addEntry(
                 KeysetHandle.importKey(jwtRsaSsaPkcs1PrivateKey).withFixedId(123).makePrimary())
             .build();
-    RsaSsaPkcs1Parameters nonJwtParameters =
-        RsaSsaPkcs1Parameters.builder()
-            .setHashType(getRsaSsaPkcs1Hash(jwtRsaSsaPkcs1PrivateKey.getParameters()))
-            .setModulusSizeBits(jwtRsaSsaPkcs1PrivateKey.getParameters().getModulusSizeBits())
-            .setPublicExponent(RsaSsaPkcs1Parameters.F4)
-            .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
-            .build();
-    RsaSsaPkcs1PublicKey nonJwtPublicKey =
-        RsaSsaPkcs1PublicKey.builder()
-            .setParameters(nonJwtParameters)
-            .setModulus(jwtRsaSsaPkcs1PrivateKey.getPublicKey().getModulus())
-            .build();
-    RsaSsaPkcs1PrivateKey nonJwtPrivateKey =
-        RsaSsaPkcs1PrivateKey.builder()
-            .setPublicKey(nonJwtPublicKey)
-            .setPrimes(jwtRsaSsaPkcs1PrivateKey.getPrimeP(), jwtRsaSsaPkcs1PrivateKey.getPrimeQ())
-            .setPrivateExponent(jwtRsaSsaPkcs1PrivateKey.getPrivateExponent())
-            .setPrimeExponents(
-                jwtRsaSsaPkcs1PrivateKey.getPrimeExponentP(),
-                jwtRsaSsaPkcs1PrivateKey.getPrimeExponentQ())
-            .setCrtCoefficient(jwtRsaSsaPkcs1PrivateKey.getCrtCoefficient())
-            .build();
-
+    RsaSsaPkcs1PrivateKey nonJwtPrivateKey = jwtRsaSsaPkcs1PrivateKey.getRsaSsaPkcs1PrivateKey();
     // This nonJwtSigner computes signatures in the same way as one obtained from handle -- except
     // that it doesn't do any of the JWT stuff.
     PublicKeySign nonJwtSigner =
@@ -1661,28 +1557,7 @@ public class JwtSignatureConfigurationV0Test {
             .addEntry(
                 KeysetHandle.importKey(jwtRsaSsaPkcs1PrivateKey).withFixedId(123).makePrimary())
             .build();
-    RsaSsaPkcs1Parameters nonJwtParameters =
-        RsaSsaPkcs1Parameters.builder()
-            .setHashType(getRsaSsaPkcs1Hash(jwtRsaSsaPkcs1PrivateKey.getParameters()))
-            .setModulusSizeBits(jwtRsaSsaPkcs1PrivateKey.getParameters().getModulusSizeBits())
-            .setPublicExponent(RsaSsaPkcs1Parameters.F4)
-            .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
-            .build();
-    RsaSsaPkcs1PublicKey nonJwtPublicKey =
-        RsaSsaPkcs1PublicKey.builder()
-            .setParameters(nonJwtParameters)
-            .setModulus(jwtRsaSsaPkcs1PrivateKey.getPublicKey().getModulus())
-            .build();
-    RsaSsaPkcs1PrivateKey nonJwtPrivateKey =
-        RsaSsaPkcs1PrivateKey.builder()
-            .setPublicKey(nonJwtPublicKey)
-            .setPrimes(jwtRsaSsaPkcs1PrivateKey.getPrimeP(), jwtRsaSsaPkcs1PrivateKey.getPrimeQ())
-            .setPrivateExponent(jwtRsaSsaPkcs1PrivateKey.getPrivateExponent())
-            .setPrimeExponents(
-                jwtRsaSsaPkcs1PrivateKey.getPrimeExponentP(),
-                jwtRsaSsaPkcs1PrivateKey.getPrimeExponentQ())
-            .setCrtCoefficient(jwtRsaSsaPkcs1PrivateKey.getCrtCoefficient())
-            .build();
+    RsaSsaPkcs1PrivateKey nonJwtPrivateKey = jwtRsaSsaPkcs1PrivateKey.getRsaSsaPkcs1PrivateKey();
     // This nonJwtSigner computes signatures in the same way as one obtained from handle -- except
     // that it doesn't do any of the JWT stuff.
     PublicKeySign nonJwtSigner =
@@ -1742,21 +1617,6 @@ public class JwtSignatureConfigurationV0Test {
         () -> verifier.verifyAndDecode(tokenWithUnknownKid, validator));
   }
 
-  // RsaSsaPkcs1-specific tests.
-  private static RsaSsaPssParameters.HashType getRsaSsaPssHash(JwtRsaSsaPssParameters parameters)
-      throws GeneralSecurityException {
-    if (parameters.getAlgorithm().equals(JwtRsaSsaPssParameters.Algorithm.PS256)) {
-      return RsaSsaPssParameters.HashType.SHA256;
-    }
-    if (parameters.getAlgorithm().equals(JwtRsaSsaPssParameters.Algorithm.PS384)) {
-      return RsaSsaPssParameters.HashType.SHA384;
-    }
-    if (parameters.getAlgorithm().equals(JwtRsaSsaPssParameters.Algorithm.PS512)) {
-      return RsaSsaPssParameters.HashType.SHA512;
-    }
-    throw new GeneralSecurityException("unknown algorithm in parameters: " + parameters);
-  }
-
   private static String getRsaSsaPssAlg(JwtRsaSsaPssParameters parameters)
       throws GeneralSecurityException {
     if (parameters.getAlgorithm().equals(JwtRsaSsaPssParameters.Algorithm.PS256)) {
@@ -1769,20 +1629,6 @@ public class JwtSignatureConfigurationV0Test {
       return "PS512";
     }
     throw new GeneralSecurityException("unknown algorithm in parameters: " + parameters);
-  }
-
-  private static int saltLengthForPssAlgorithm(JwtRsaSsaPssParameters.Algorithm algorithm)
-      throws GeneralSecurityException {
-    if (algorithm.equals(JwtRsaSsaPssParameters.Algorithm.PS256)) {
-      return 32;
-    }
-    if (algorithm.equals(JwtRsaSsaPssParameters.Algorithm.PS384)) {
-      return 48;
-    }
-    if (algorithm.equals(JwtRsaSsaPssParameters.Algorithm.PS512)) {
-      return 64;
-    }
-    throw new GeneralSecurityException("unknown algorithm " + algorithm);
   }
 
   @Theory
@@ -1803,32 +1649,7 @@ public class JwtSignatureConfigurationV0Test {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(jwtRsaSsaPssPrivateKey).withFixedId(123).makePrimary())
             .build();
-    RsaSsaPssParameters nonJwtParameters =
-        RsaSsaPssParameters.builder()
-            .setSigHashType(getRsaSsaPssHash(jwtRsaSsaPssPrivateKey.getParameters()))
-            .setMgf1HashType(getRsaSsaPssHash(jwtRsaSsaPssPrivateKey.getParameters()))
-            .setSaltLengthBytes(
-                saltLengthForPssAlgorithm(jwtRsaSsaPssPrivateKey.getParameters().getAlgorithm()))
-            .setModulusSizeBits(jwtRsaSsaPssPrivateKey.getParameters().getModulusSizeBits())
-            .setPublicExponent(RsaSsaPssParameters.F4)
-            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
-            .build();
-    RsaSsaPssPublicKey nonJwtPublicKey =
-        RsaSsaPssPublicKey.builder()
-            .setParameters(nonJwtParameters)
-            .setModulus(jwtRsaSsaPssPrivateKey.getPublicKey().getModulus())
-            .build();
-    RsaSsaPssPrivateKey nonJwtPrivateKey =
-        RsaSsaPssPrivateKey.builder()
-            .setPublicKey(nonJwtPublicKey)
-            .setPrimes(jwtRsaSsaPssPrivateKey.getPrimeP(), jwtRsaSsaPssPrivateKey.getPrimeQ())
-            .setPrivateExponent(jwtRsaSsaPssPrivateKey.getPrivateExponent())
-            .setPrimeExponents(
-                jwtRsaSsaPssPrivateKey.getPrimeExponentP(),
-                jwtRsaSsaPssPrivateKey.getPrimeExponentQ())
-            .setCrtCoefficient(jwtRsaSsaPssPrivateKey.getCrtCoefficient())
-            .build();
-
+    RsaSsaPssPrivateKey nonJwtPrivateKey = jwtRsaSsaPssPrivateKey.getRsaSsaPssPrivateKey();
     // This nonJwtSigner computes signatures in the same way as one obtained from handle -- except
     // that it doesn't do any of the JWT stuff.
     PublicKeySign nonJwtSigner =
@@ -1897,31 +1718,7 @@ public class JwtSignatureConfigurationV0Test {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(jwtRsaSsaPssPrivateKey).withFixedId(123).makePrimary())
             .build();
-    RsaSsaPssParameters nonJwtParameters =
-        RsaSsaPssParameters.builder()
-            .setSigHashType(getRsaSsaPssHash(jwtRsaSsaPssPrivateKey.getParameters()))
-            .setMgf1HashType(getRsaSsaPssHash(jwtRsaSsaPssPrivateKey.getParameters()))
-            .setSaltLengthBytes(
-                saltLengthForPssAlgorithm(jwtRsaSsaPssPrivateKey.getParameters().getAlgorithm()))
-            .setModulusSizeBits(jwtRsaSsaPssPrivateKey.getParameters().getModulusSizeBits())
-            .setPublicExponent(RsaSsaPssParameters.F4)
-            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
-            .build();
-    RsaSsaPssPublicKey nonJwtPublicKey =
-        RsaSsaPssPublicKey.builder()
-            .setParameters(nonJwtParameters)
-            .setModulus(jwtRsaSsaPssPrivateKey.getPublicKey().getModulus())
-            .build();
-    RsaSsaPssPrivateKey nonJwtPrivateKey =
-        RsaSsaPssPrivateKey.builder()
-            .setPublicKey(nonJwtPublicKey)
-            .setPrimes(jwtRsaSsaPssPrivateKey.getPrimeP(), jwtRsaSsaPssPrivateKey.getPrimeQ())
-            .setPrivateExponent(jwtRsaSsaPssPrivateKey.getPrivateExponent())
-            .setPrimeExponents(
-                jwtRsaSsaPssPrivateKey.getPrimeExponentP(),
-                jwtRsaSsaPssPrivateKey.getPrimeExponentQ())
-            .setCrtCoefficient(jwtRsaSsaPssPrivateKey.getCrtCoefficient())
-            .build();
+    RsaSsaPssPrivateKey nonJwtPrivateKey = jwtRsaSsaPssPrivateKey.getRsaSsaPssPrivateKey();
     // This nonJwtSigner computes signatures in the same way as one obtained from handle -- except
     // that it doesn't do any of the JWT stuff.
     PublicKeySign nonJwtSigner =
