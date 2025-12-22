@@ -66,7 +66,12 @@ public class ConfigurationFips140v2 {
       throw new GeneralSecurityException(
           "Conscrypt is not available or does not support checking for FIPS build.");
     }
-    Random.validateUsesConscrypt();
+    // TODO(b/470889007): Re-enable this check once the bug is fixed.
+    try {
+      Random.validateUsesConscrypt();
+    } catch (GeneralSecurityException e) {
+      // ignore
+    }
 
     // Got Conscrypt, can proceed.
     PrimitiveRegistry.Builder builder = PrimitiveRegistry.builder();

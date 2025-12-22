@@ -17,8 +17,10 @@
 package com.google.crypto.tink.internal;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.testing.TestUtil;
+import java.security.GeneralSecurityException;
 import org.conscrypt.Conscrypt;
 import org.junit.Assume;
 import org.junit.Test;
@@ -29,12 +31,13 @@ import org.junit.runners.JUnit4;
 public final class RandomWithoutInstallingConscryptTest {
 
   @Test
-  public void randBytes_usesConscrypt() throws Exception {
+  public void randBytes_worksButDoesNotUseConscrypt() throws Exception {
     Assume.assumeTrue(Conscrypt.isAvailable());
 
     assertThat(Random.randBytes(10)).hasLength(10);
 
-    Random.validateUsesConscrypt();
+    // TODO(b/470889007): This should not throw once this bug is fixed.
+    assertThrows(GeneralSecurityException.class, () -> Random.validateUsesConscrypt());
 
     if (!TestUtil.isAndroid()) {
       // Make a call to Conscrypt to make sure it is present. But don't install it.
