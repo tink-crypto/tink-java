@@ -60,12 +60,7 @@ public final class TinkFipsUtil {
       throw new GeneralSecurityException(
           "Conscrypt is not available or does not support checking for FIPS build.");
     }
-    // TODO(b/470889007): Re-enable this check once the bug is fixed.
-    try {
-      Random.validateUsesConscrypt();
-    } catch (GeneralSecurityException e) {
-      // ignore
-    }
+    Random.validateUsesConscrypt();
     isRestrictedToFips.set(true);
   }
 
