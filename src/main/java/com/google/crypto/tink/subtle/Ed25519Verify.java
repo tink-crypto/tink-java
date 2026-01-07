@@ -26,7 +26,6 @@ import com.google.crypto.tink.internal.Field25519;
 import com.google.crypto.tink.signature.Ed25519Parameters;
 import com.google.crypto.tink.signature.Ed25519PublicKey;
 import com.google.crypto.tink.signature.internal.Ed25519VerifyJce;
-import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
@@ -59,14 +58,6 @@ public final class Ed25519Verify implements PublicKeyVerify {
   public static final int PUBLIC_KEY_LEN = Field25519.FIELD_LEN;
   public static final int SIGNATURE_LEN = Field25519.FIELD_LEN * 2;
 
-  private final Bytes publicKey;
-
-  @SuppressWarnings("Immutable")
-  private final byte[] outputPrefix;
-
-  @SuppressWarnings("Immutable")
-  private final byte[] messageSuffix;
-
   @AccessesPartialKey
   public static PublicKeyVerify create(Ed25519PublicKey key) throws GeneralSecurityException {
     if (!FIPS.isCompatible()) {
@@ -77,7 +68,7 @@ public final class Ed25519Verify implements PublicKeyVerify {
     } catch (GeneralSecurityException e) {
       // ignore.
     }
-    return new Ed25519Verify(
+    return new PureJavaImpl(
         key.getPublicKeyBytes().toByteArray(),
         key.getOutputPrefix().toByteArray(),
         key.getParameters().getVariant().equals(Ed25519Parameters.Variant.LEGACY)
@@ -85,54 +76,80 @@ public final class Ed25519Verify implements PublicKeyVerify {
             : new byte[0]);
   }
 
+  @SuppressWarnings("Immutable")
+  private final PublicKeyVerify impl;
+
   public Ed25519Verify(final byte[] publicKey) {
-    this(publicKey, new byte[0], new byte[0]);
-  }
-
-  private Ed25519Verify(
-      final byte[] publicKey, final byte[] outputPrefix, final byte[] messageSuffix) {
-    if (!FIPS.isCompatible()) {
-      // This should be a GenericSecurityException, however as external users rely on this
-      // constructor not throwing a GenericSecurityException we use a runtime exception here
-      // instead.
-      throw new IllegalStateException(
-          new GeneralSecurityException("Can not use Ed25519 in FIPS-mode."));
-    }
-
-    if (publicKey.length != PUBLIC_KEY_LEN) {
-      throw new IllegalArgumentException(
-          String.format("Given public key's length is not %s.", PUBLIC_KEY_LEN));
-    }
-    this.publicKey = Bytes.copyFrom(publicKey);
-    this.outputPrefix = outputPrefix;
-    this.messageSuffix = messageSuffix;
-    Ed25519.init();
-  }
-
-  private void noPrefixVerify(byte[] signature, byte[] data) throws GeneralSecurityException {
-    if (signature.length != SIGNATURE_LEN) {
-      throw new GeneralSecurityException(
-          String.format("The length of the signature is not %s.", SIGNATURE_LEN));
-    }
-    if (!Ed25519.verify(data, signature, publicKey.toByteArray())) {
-      throw new GeneralSecurityException("Signature check failed.");
-    }
+    this.impl = new PureJavaImpl(publicKey, new byte[0], new byte[0]);
   }
 
   @Override
   public void verify(final byte[] signature, final byte[] data) throws GeneralSecurityException {
-    if (outputPrefix.length == 0 && messageSuffix.length == 0) {
-      noPrefixVerify(signature, data);
-      return;
+    impl.verify(signature, data);
+  }
+
+  /**
+   * Implementation of Ed25519's {@link PublicKeyVerify} using Tink's pure Java implementation.
+   *
+   * <p>It does not use the JCE.
+   */
+  @Immutable
+  private static final class PureJavaImpl implements PublicKeyVerify {
+
+    @SuppressWarnings("Immutable")
+    private final byte[] publicKey;
+
+    @SuppressWarnings("Immutable")
+    private final byte[] outputPrefix;
+
+    @SuppressWarnings("Immutable")
+    private final byte[] messageSuffix;
+
+    private PureJavaImpl(
+        final byte[] publicKey, final byte[] outputPrefix, final byte[] messageSuffix) {
+      if (!FIPS.isCompatible()) {
+        // This should be a GenericSecurityException, however as external users rely on this
+        // constructor not throwing a GenericSecurityException we use a runtime exception here
+        // instead.
+        throw new IllegalStateException(
+            new GeneralSecurityException("Can not use Ed25519 in FIPS-mode."));
+      }
+
+      if (publicKey.length != PUBLIC_KEY_LEN) {
+        throw new IllegalArgumentException(
+            String.format("Given public key's length is not %s.", PUBLIC_KEY_LEN));
+      }
+      this.publicKey = publicKey.clone();
+      this.outputPrefix = outputPrefix;
+      this.messageSuffix = messageSuffix;
+      Ed25519.init();
     }
-    if (!isPrefix(outputPrefix, signature)) {
-      throw new GeneralSecurityException("Invalid signature (output prefix mismatch)");
+
+    private void noPrefixVerify(byte[] signature, byte[] data) throws GeneralSecurityException {
+      if (signature.length != SIGNATURE_LEN) {
+        throw new GeneralSecurityException(
+            String.format("The length of the signature is not %s.", SIGNATURE_LEN));
+      }
+      if (!Ed25519.verify(data, signature, publicKey)) {
+        throw new GeneralSecurityException("Signature check failed.");
+      }
     }
-    byte[] dataCopy = data;
-    if (messageSuffix.length != 0) {
-      dataCopy = com.google.crypto.tink.subtle.Bytes.concat(data, messageSuffix);
+
+    @Override
+    public void verify(final byte[] signature, final byte[] data) throws GeneralSecurityException {
+      if (outputPrefix.length == 0 && messageSuffix.length == 0) {
+        noPrefixVerify(signature, data);
+        return;
+      }
+      if (!isPrefix(outputPrefix, signature)) {
+        throw new GeneralSecurityException("Invalid signature (output prefix mismatch)");
+      }
+      byte[] dataCopy = data;
+      if (messageSuffix.length != 0) {
+        dataCopy = Bytes.concat(data, messageSuffix);
+      }
+      byte[] signatureNoPrefix = Arrays.copyOfRange(signature, outputPrefix.length, signature.length);
+      noPrefixVerify(signatureNoPrefix, dataCopy);
     }
-    byte[] signatureNoPrefix = Arrays.copyOfRange(signature, outputPrefix.length, signature.length);
-    noPrefixVerify(signatureNoPrefix, dataCopy);
   }
 }

@@ -410,7 +410,6 @@ java_library(
         "//src/main/java/com/google/crypto/tink/signature:ed25519_parameters",
         "//src/main/java/com/google/crypto/tink/signature:ed25519_public_key",
         "//src/main/java/com/google/crypto/tink/signature/internal:ed25519_verify_jce",
-        "//src/main/java/com/google/crypto/tink/util:bytes",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
@@ -871,7 +870,6 @@ android_library(
         "//src/main/java/com/google/crypto/tink/signature:ed25519_parameters-android",
         "//src/main/java/com/google/crypto/tink/signature:ed25519_public_key-android",
         "//src/main/java/com/google/crypto/tink/signature/internal:ed25519_verify_jce-android",
-        "//src/main/java/com/google/crypto/tink/util:bytes-android",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
