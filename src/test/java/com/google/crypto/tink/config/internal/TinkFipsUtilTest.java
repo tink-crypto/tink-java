@@ -19,10 +19,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import java.security.GeneralSecurityException;
-import java.security.Security;
-import org.conscrypt.Conscrypt;
 import org.junit.Assume;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -35,15 +32,6 @@ import org.junit.runners.JUnit4;
  */
 @RunWith(JUnit4.class)
 public final class TinkFipsUtilTest {
-
-  @BeforeClass
-  public static void setUp() {
-    try {
-      Security.addProvider(Conscrypt.newProvider());
-    } catch (RuntimeException e) {
-      // ignore
-    }
-  }
 
   @Test
   public void testFipsOnlyModeDisabledAlgorithmCompatibility() {

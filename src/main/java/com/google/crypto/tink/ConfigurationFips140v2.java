@@ -55,8 +55,6 @@ import java.security.GeneralSecurityException;
 /**
  * ConfigurationFips140v2 contains Tink primitives that are compliant with <a
  * href="https://csrc.nist.gov/pubs/fips/140-2/upd2/final">FIPS 140-2</a>.
- *
- * <p>This configuration requires Conscrypt to be installed as a security provider.
  */
 public class ConfigurationFips140v2 {
   private ConfigurationFips140v2() {}
@@ -68,7 +66,12 @@ public class ConfigurationFips140v2 {
       throw new GeneralSecurityException(
           "Conscrypt is not available or does not support checking for FIPS build.");
     }
-    Random.validateUsesConscrypt();
+    // TODO(b/470889007): Re-enable this check once the bug is fixed.
+    try {
+      Random.validateUsesConscrypt();
+    } catch (GeneralSecurityException e) {
+      // ignore
+    }
 
     // Got Conscrypt, can proceed.
     PrimitiveRegistry.Builder builder = PrimitiveRegistry.builder();
