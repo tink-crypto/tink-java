@@ -432,6 +432,27 @@ public final class SignaturePemKeysetReaderTest {
   }
 
   @Test
+  public void buildTwice_worksButOnlyOneReaderCanRead() throws Exception {
+    String pem =
+        "-----BEGIN PUBLIC KEY-----\n"
+            + "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7BiT5K5pivl4Qfrt9hRhRREMUzj/\n"
+            + "8suEJ7GlMxZfvdcpbi/GhYPuJi8Gn2H1NaMJZcLZo5MLPKyyGT5u3u1VBQ==\n"
+            + "-----END PUBLIC KEY-----\n";
+    SignaturePemKeysetReader.Builder builder =
+        SignaturePemKeysetReader.newBuilder().addPem(pem, PemKeyType.ECDSA_P256_SHA256);
+
+    KeysetReader keysetReader1 = builder.build();
+    KeysetReader keysetReader2 = builder.build();
+
+    // Building twice works, but it leaves the readers in a shared state. Only one can be read.
+    // The other will throw an exception. It doesn't matter which readers was built first.
+    Keyset ks = keysetReader2.read();
+    assertThat(ks.getKeyCount()).isEqualTo(1);
+
+    assertThrows(IOException.class, keysetReader1::read);
+  }
+
+  @Test
   public void readerWithInvalidKeys_invalidKeysAreIgnored() throws Exception {
     String ecPublicKeyPem =
         "-----BEGIN PUBLIC KEY-----\n"
