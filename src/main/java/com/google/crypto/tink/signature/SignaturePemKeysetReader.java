@@ -67,7 +67,8 @@ public final class SignaturePemKeysetReader implements KeysetReader {
   private List<PemKey> pemKeys;
 
   SignaturePemKeysetReader(List<PemKey> pemKeys) {
-    this.pemKeys = pemKeys;
+    // Make a copy to avoid modifications by the caller.
+    this.pemKeys = new ArrayList<>(pemKeys);
   }
 
   /** Returns a {@link Builder} for {@link SignaturePemKeysetReader}. */
@@ -96,7 +97,7 @@ public final class SignaturePemKeysetReader implements KeysetReader {
     @CanIgnoreReturnValue
     public Builder addPem(String pem, PemKeyType keyType) {
       PemKey pemKey = new PemKey();
-      pemKey.reader = new BufferedReader(new StringReader(pem));
+      pemKey.pem = pem;
       pemKey.type = keyType;
       pemKeys.add(pemKey);
       return this;
@@ -104,7 +105,7 @@ public final class SignaturePemKeysetReader implements KeysetReader {
   }
 
   private static final class PemKey {
-    BufferedReader reader;
+    String pem;
     PemKeyType type;
   }
 
@@ -112,9 +113,10 @@ public final class SignaturePemKeysetReader implements KeysetReader {
   public Keyset read() throws IOException {
     Keyset.Builder keyset = Keyset.newBuilder();
     for (PemKey pemKey : pemKeys) {
-      for (Keyset.Key key = readKey(pemKey.reader, pemKey.type);
+      BufferedReader reader = new BufferedReader(new StringReader(pemKey.pem));
+      for (Keyset.Key key = readKey(reader, pemKey.type);
           key != null;
-          key = readKey(pemKey.reader, pemKey.type)) {
+          key = readKey(reader, pemKey.type)) {
         keyset.addKey(key);
       }
     }

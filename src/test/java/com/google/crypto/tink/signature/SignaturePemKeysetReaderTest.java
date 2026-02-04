@@ -416,7 +416,7 @@ public final class SignaturePemKeysetReaderTest {
   }
 
   @Test
-  public void readSecondTime_throwsIOException() throws Exception {
+  public void readTwice_works() throws Exception {
     String pem =
         "-----BEGIN PUBLIC KEY-----\n"
             + "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7BiT5K5pivl4Qfrt9hRhRREMUzj/\n"
@@ -425,10 +425,11 @@ public final class SignaturePemKeysetReaderTest {
 
     KeysetReader keysetReader =
         SignaturePemKeysetReader.newBuilder().addPem(pem, PemKeyType.ECDSA_P256_SHA256).build();
-    Keyset ks = keysetReader.read();
-    assertThat(ks.getKeyCount()).isEqualTo(1);
+    Keyset ks1 = keysetReader.read();
+    Keyset ks2 = keysetReader.read();
 
-    assertThrows(IOException.class, keysetReader::read);
+    assertThat(ks1.getKeyCount()).isEqualTo(1);
+    assertThat(ks2.getKeyCount()).isEqualTo(1);
   }
 
   @Test
@@ -444,12 +445,34 @@ public final class SignaturePemKeysetReaderTest {
     KeysetReader keysetReader1 = builder.build();
     KeysetReader keysetReader2 = builder.build();
 
-    // Building twice works, but it leaves the readers in a shared state. Only one can be read.
-    // The other will throw an exception. It doesn't matter which readers was built first.
-    Keyset ks = keysetReader2.read();
-    assertThat(ks.getKeyCount()).isEqualTo(1);
+    Keyset ks1 = keysetReader1.read();
+    Keyset ks2 = keysetReader2.read();
 
-    assertThrows(IOException.class, keysetReader1::read);
+    assertThat(ks1.getKeyCount()).isEqualTo(1);
+    assertThat(ks2.getKeyCount()).isEqualTo(1);
+  }
+
+  @Test
+  public void addAfterBuild_doesNotAffectExistingReader() throws Exception {
+    String pem =
+        "-----BEGIN PUBLIC KEY-----\n"
+            + "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7BiT5K5pivl4Qfrt9hRhRREMUzj/\n"
+            + "8suEJ7GlMxZfvdcpbi/GhYPuJi8Gn2H1NaMJZcLZo5MLPKyyGT5u3u1VBQ==\n"
+            + "-----END PUBLIC KEY-----\n";
+
+    SignaturePemKeysetReader.Builder builder =
+        SignaturePemKeysetReader.newBuilder().addPem(pem, PemKeyType.ECDSA_P256_SHA256);
+    KeysetReader keysetReader1 = builder.build();
+
+    builder.addPem(pem, PemKeyType.ECDSA_P256_SHA256);
+
+    Keyset ks1 = keysetReader1.read();
+
+    KeysetReader keysetReader2 = builder.build();
+    Keyset ks2 = keysetReader2.read();
+
+    assertThat(ks1.getKeyCount()).isEqualTo(1);
+    assertThat(ks2.getKeyCount()).isEqualTo(2);
   }
 
   @Test
