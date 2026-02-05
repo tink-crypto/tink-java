@@ -153,6 +153,46 @@ public final class SignaturePemKeysetReaderTest {
         .isEqualTo(Hex.decode("D4CE489428982EF343186EB90E6A04ADF41366359A508FE7AC66B283F06641AE"));
   }
 
+@Test
+  public void rsaSizeMismatch_shouldIgnore() throws Exception {
+    String rsa2048Pem =
+        "-----BEGIN PUBLIC KEY-----\n"
+            + "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAv90Xf/NN1lRGBofJQzJf\n"
+            + "lHvo6GAf25GGQGaMmD9T1ZP71CCbJ69lGIS/6akFBg6ECEHGM2EZ4WFLCdr5byUq\n"
+            + "GCf4mY4WuOn+AcwzwAoDz9ASIFcQOoPclO7JYdfo2SOaumumdb5S/7FkKJ70TGYW\n"
+            + "j9aTOYWsCcaojbjGDY/JEXz3BSRIngcgOvXBmV1JokcJ/LsrJD263WE9iUknZDhB\n"
+            + "K7y4ChjHNqL8yJcw/D8xLNiJtIyuxiZ00p/lOVUInr8C/a2C1UGCgEGuXZAEGAdO\n"
+            + "NVez52n5TLvQP3hRd4MTi7YvfhezRcA4aXyIDOv+TYi4p+OVTYQ+FMbkgoWBm5bq\n"
+            + "wQIDAQAB\n"
+            + "-----END PUBLIC KEY-----\n";
+
+    KeysetReader keysetReader =
+        SignaturePemKeysetReader.newBuilder()
+            .addPem(rsa2048Pem, PemKeyType.RSA_SIGN_PKCS1_2048_SHA256)
+            .addPem(rsa2048Pem, PemKeyType.RSA_SIGN_PKCS1_3072_SHA256)  // is ignored.
+            .build();
+    Keyset ks = keysetReader.read();
+    assertThat(ks.getKeyCount()).isEqualTo(1);
+  }
+
+
+@Test
+  public void ecWrongCurve_shouldIgnore() throws Exception {
+    String p256Pem =
+        "-----BEGIN PUBLIC KEY-----\n"
+            + "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7BiT5K5pivl4Qfrt9hRhRREMUzj/\n"
+            + "8suEJ7GlMxZfvdcpbi/GhYPuJi8Gn2H1NaMJZcLZo5MLPKyyGT5u3u1VBQ==\n"
+            + "-----END PUBLIC KEY-----\n";
+
+    KeysetReader keysetReader =
+        SignaturePemKeysetReader.newBuilder()
+            .addPem(p256Pem, PemKeyType.ECDSA_P256_SHA256)
+            .addPem(p256Pem, PemKeyType.ECDSA_P384_SHA384)  // is ignored.
+            .build();
+    Keyset ks = keysetReader.read();
+    assertThat(ks.getKeyCount()).isEqualTo(1);
+  }
+
   @Test
   public void read_onePEM_twoRSAPublicKeys_shouldWork() throws Exception {
     String pem =
