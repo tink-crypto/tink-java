@@ -18,6 +18,7 @@ package com.google.crypto.tink.signature;
 
 import com.google.crypto.tink.KeysetReader;
 import com.google.crypto.tink.PemKeyType;
+import com.google.crypto.tink.internal.PemUtil;
 import com.google.crypto.tink.proto.EcdsaParams;
 import com.google.crypto.tink.proto.EcdsaPublicKey;
 import com.google.crypto.tink.proto.EcdsaSignatureEncoding;
@@ -33,14 +34,20 @@ import com.google.crypto.tink.proto.RsaSsaPkcs1PublicKey;
 import com.google.crypto.tink.proto.RsaSsaPssParams;
 import com.google.crypto.tink.proto.RsaSsaPssPublicKey;
 import com.google.crypto.tink.signature.internal.SigUtil;
+import com.google.crypto.tink.subtle.EllipticCurves;
+import com.google.crypto.tink.subtle.EngineFactory;
 import com.google.crypto.tink.subtle.Random;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.security.Key;
+import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.ECParameterSpec;
+import java.security.spec.EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -134,23 +141,78 @@ public final class SignaturePemKeysetReader implements KeysetReader {
     throw new UnsupportedOperationException();
   }
 
+  @Nullable
+  private static RSAPublicKey parseRsaPublicKey(X509EncodedKeySpec keySpec, int keySizeInBits) {
+    try {
+      KeyFactory rsaKeyFactory = EngineFactory.KEY_FACTORY.getInstance("RSA");
+      RSAPublicKey rsaKey = (RSAPublicKey) rsaKeyFactory.generatePublic(keySpec);
+      int foundKeySizeInBits = rsaKey.getModulus().bitLength();
+      if (foundKeySizeInBits != keySizeInBits) {
+        return null;
+      }
+      return rsaKey;
+    } catch (GeneralSecurityException e) {
+      return null;
+    }
+  }
+
+  @Nullable
+  private static ECPublicKey parseEcPublicKey(X509EncodedKeySpec keySpec, int keySizeInBits) {
+    try {
+      KeyFactory ecKeyFactory = EngineFactory.KEY_FACTORY.getInstance("EC");
+      ECPublicKey ecKey = (ECPublicKey) ecKeyFactory.generatePublic(keySpec);
+
+      ECParameterSpec ecParams = ecKey.getParams();
+      if (!EllipticCurves.isNistEcParameterSpec(ecParams)) {
+        return null;
+      }
+      int foundKeySizeInBits = EllipticCurves.fieldSizeInBits(ecParams.getCurve());
+      if (foundKeySizeInBits != keySizeInBits) {
+        return null;
+      }
+      return ecKey;
+    } catch (GeneralSecurityException e) {
+      return null;
+    }
+  }
+
   /** Reads a single PEM key from {@code reader}. Invalid or unparsable PEM would be ignored */
   @Nullable
   private static Keyset.Key readKey(BufferedReader reader, PemKeyType pemKeyType)
       throws IOException {
-    Key key = pemKeyType.readKey(reader);
-    if (key == null) {
+    EncodedKeySpec keySpec = PemUtil.parsePemToKeySpec(reader);
+    if (!(keySpec instanceof X509EncodedKeySpec)) {
       return null;
     }
+    X509EncodedKeySpec x509KeySpec = (X509EncodedKeySpec) keySpec;
 
     KeyData keyData;
-    if (key instanceof RSAPublicKey) {
-      keyData = convertRsaPublicKey(pemKeyType, (RSAPublicKey) key);
-    } else if (key instanceof ECPublicKey) {
-      keyData = convertEcPublicKey(pemKeyType, (ECPublicKey) key);
-    } else {
-      // Private keys are ignored.
-      return null;
+    switch (pemKeyType) {
+      case RSA_SIGN_PKCS1_2048_SHA256:
+      case RSA_SIGN_PKCS1_3072_SHA256:
+      case RSA_SIGN_PKCS1_4096_SHA256:
+      case RSA_SIGN_PKCS1_4096_SHA512:
+      case RSA_PSS_2048_SHA256:
+      case RSA_PSS_3072_SHA256:
+      case RSA_PSS_4096_SHA256:
+      case RSA_PSS_4096_SHA512:
+        RSAPublicKey rsaKey = parseRsaPublicKey(x509KeySpec, pemKeyType.keySizeInBits);
+        if (rsaKey == null) {
+          return null;
+        }
+        keyData = convertRsaPublicKey(pemKeyType, rsaKey);
+        break;
+      case ECDSA_P256_SHA256:
+      case ECDSA_P384_SHA384:
+      case ECDSA_P521_SHA512:
+        ECPublicKey eckey = parseEcPublicKey(x509KeySpec, pemKeyType.keySizeInBits);
+        if (eckey == null) {
+          return null;
+        }
+        keyData = convertEcPublicKey(pemKeyType, eckey);
+        break;
+      default:
+        return null;
     }
 
     return Keyset.Key.newBuilder()
