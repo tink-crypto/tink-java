@@ -980,3 +980,21 @@ java_library(
         "@maven//:com_google_code_findbugs_jsr305",
     ],
 )
+
+java_library(
+    name = "pem_util",
+    srcs = ["PemUtil.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/subtle:base64",
+        "@maven//:com_google_code_findbugs_jsr305",
+    ],
+)
+
+android_library(
+    name = "pem_util-android",
+    srcs = ["PemUtil.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/subtle:base64-android",
+        "@maven//:com_google_code_findbugs_jsr305",
+    ],
+)

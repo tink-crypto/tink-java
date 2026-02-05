@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc.
+// Copyright 2017 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.google.crypto.tink;
 
-import com.google.crypto.tink.subtle.Base64;
+import com.google.crypto.tink.internal.PemUtil;
 import com.google.crypto.tink.subtle.EllipticCurves;
 import com.google.crypto.tink.subtle.EngineFactory;
 import com.google.crypto.tink.subtle.Enums.HashType;
@@ -29,6 +29,7 @@ import java.security.KeyFactory;
 import java.security.interfaces.ECKey;
 import java.security.interfaces.RSAKey;
 import java.security.spec.ECParameterSpec;
+import java.security.spec.EncodedKeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import javax.annotation.Nullable;
@@ -72,12 +73,6 @@ public enum PemKeyType {
     this.hash = hash;
   }
 
-  private static final String PUBLIC_KEY = "PUBLIC KEY";
-  private static final String PRIVATE_KEY = "PRIVATE KEY";
-  private static final String BEGIN = "-----BEGIN ";
-  private static final String END = "-----END ";
-  private static final String MARKER = "-----";
-
   /**
    * Reads a single key from {@code reader}.
    *
@@ -85,39 +80,15 @@ public enum PemKeyType {
    */
   @Nullable
   public Key readKey(BufferedReader reader) throws IOException {
-    String line = reader.readLine();
-    while (line != null && !line.startsWith(BEGIN)) {
-      line = reader.readLine();
-    }
-    if (line == null) {
+    EncodedKeySpec keySpec = PemUtil.parsePemToKeySpec(reader);
+    if (keySpec == null) {
       return null;
-    }
-
-    line = line.trim().substring(BEGIN.length());
-    int index = line.indexOf(MARKER);
-    if (index < 0) {
-      return null;
-    }
-    String type = line.substring(0, index);
-    String endMarker = END + type + MARKER;
-    StringBuilder base64key = new StringBuilder();
-
-    while ((line = reader.readLine()) != null) {
-      if (line.indexOf(":") > 0) {
-        // header, ignore
-        continue;
-      }
-      if (line.contains(endMarker)) {
-        break;
-      }
-      base64key.append(line);
     }
     try {
-      byte[] key = Base64.decode(base64key.toString(), Base64.DEFAULT);
-      if (type.contains(PUBLIC_KEY)) {
-        return getPublicKey(key);
-      } else if (type.contains(PRIVATE_KEY)) {
-        return getPrivateKey(key);
+      if (keySpec instanceof X509EncodedKeySpec) {
+        return getPublicKey(keySpec.getEncoded());
+      } else if (keySpec instanceof PKCS8EncodedKeySpec) {
+        return getPrivateKey(keySpec.getEncoded());
       }
     } catch (GeneralSecurityException | IllegalArgumentException ex) {
       return null;

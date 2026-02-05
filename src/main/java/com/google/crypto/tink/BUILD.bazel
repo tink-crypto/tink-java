@@ -562,7 +562,7 @@ java_library(
     name = "pem_key_type",
     srcs = ["PemKeyType.java"],
     deps = [
-        "//src/main/java/com/google/crypto/tink/subtle:base64",
+        "//src/main/java/com/google/crypto/tink/internal:pem_util",
         "//src/main/java/com/google/crypto/tink/subtle:elliptic_curves",
         "//src/main/java/com/google/crypto/tink/subtle:enums",
         "//src/main/java/com/google/crypto/tink/subtle:subtle_util_cluster",
@@ -575,7 +575,7 @@ android_library(
     name = "pem_key_type-android",
     srcs = ["PemKeyType.java"],
     deps = [
-        "//src/main/java/com/google/crypto/tink/subtle:base64-android",
+        "//src/main/java/com/google/crypto/tink/internal:pem_util-android",
         "//src/main/java/com/google/crypto/tink/subtle:elliptic_curves-android",
         "//src/main/java/com/google/crypto/tink/subtle:enums-android",
         "//src/main/java/com/google/crypto/tink/subtle:subtle_util_cluster-android",
