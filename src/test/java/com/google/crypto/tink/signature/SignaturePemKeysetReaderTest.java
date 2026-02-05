@@ -23,6 +23,7 @@ import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.KeysetReader;
 import com.google.crypto.tink.LegacyKeysetSerialization;
 import com.google.crypto.tink.PemKeyType;
+import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.internal.BigIntegerEncoding;
 import com.google.crypto.tink.proto.EcdsaPublicKey;
 import com.google.crypto.tink.proto.EcdsaSignatureEncoding;
@@ -40,11 +41,14 @@ import com.google.protobuf.ExtensionRegistryLite;
 import java.io.IOException;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.FromDataPoints;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /** Unit tests for SignaturePemKeysetReader */
-@RunWith(JUnit4.class)
+@RunWith(Theories.class)
 public final class SignaturePemKeysetReaderTest {
 
   @BeforeClass
@@ -567,5 +571,90 @@ public final class SignaturePemKeysetReaderTest {
     assertThat(keyset.getKeyCount()).isEqualTo(1);
     assertThat(keyset.getKey(0).getKeyData().getKeyMaterialType())
         .isEqualTo(KeyMaterialType.ASYMMETRIC_PUBLIC);
+  }
+
+  public static final class PemTestVector {
+    public PemTestVector(String pem, PemKeyType pemKeyType, byte[] message, byte[] signature) {
+      this.pem = pem;
+      this.pemKeyType = pemKeyType;
+      this.message = message;
+      this.signature = signature;
+    }
+
+    public final String pem;
+    public final PemKeyType pemKeyType;
+    public final byte[] message;
+    public final byte[] signature;
+  }
+
+  @DataPoints("pemTestVectors")
+  public static final PemTestVector[] pemTestVectors = {
+    // from wycheproof/testvectors_v1/rsa_pkcs1_2048_sig_gen_test.json,
+    new PemTestVector(
+        "-----BEGIN PUBLIC KEY-----\n"
+            + "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAorRRoH0KpfluRVZxUTVQ\n"
+            + "UUqKW0YuvvcXCU+h/ugiJOY3+XRtP3yv0xh42AMltu9aFwD2WQO0aUKeidbqyIRQ\n"
+            + "l7WrOTGJ25JRLtincRoSU/rNIPecFegkfz0+QuRuSMmOJUov6XZTE6A+/48X4aAp\n"
+            + "OXofomqNzib0kO2BKZYV2YFMItphBCjgnH2WWFlCZvXAIdD87KCNlFoSvoLeTR7O\n"
+            + "a0wDFFtdNJXU7VQR64eNrwX9evw+Ca2g8RJkIvWQl1oZaYFvSGmLy7obTZyuedRg\n"
+            + "2Pn4Xnl1AF2bwixOWsD3waRdElaaYoB9O5oC5aUw53MGb0U9H1tMLpz3ggKD90K5\n"
+            + "1QIDAQAB\n"
+            + "-----END PUBLIC KEY-----",
+        PemKeyType.RSA_SIGN_PKCS1_2048_SHA256,
+        Hex.decode("54657374"),
+        Hex.decode(
+            "264491e844c119f14e425c03282139a558dcdaeb82a4628173cd407fd319f9076eaebc0dd87a1c22e4d17839096886d58a9d5b7f7aeb63efec56c45ac7bead4203b6886e1faa90e028ec0ae094d46bf3f97efdd19045cfbc25a1abda2432639f9876405c0d68f8edbf047c12a454f7681d5d5a2b54bd3723d193dbad4338baad753264006e2d08931c4b8bb79aa1c9cad10eb6605f87c5831f6e2b08e002f9c6f21141f5841d92727dd3e1d99c36bc560da3c9067df99fcaf818941f72588be33032bad22caf6704223bb114d575b6d02d9d222b580005d930e8f40cce9f672eebb634a20177d84351627964b83f2053d736a84ab1a005f63bd5ba943de6205c")),
+    // from wycheproof/testvectors_v1/rsa_pss_2048_sha256_mgf1_32_test.json
+    new PemTestVector(
+        "-----BEGIN PUBLIC KEY-----\n"
+            + "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAorRRoH0KpfluRVZxUTVQ\n"
+            + "UUqKW0YuvvcXCU+h/ugiJOY3+XRtP3yv0xh42AMltu9aFwD2WQO0aUKeidbqyIRQ\n"
+            + "l7WrOTGJ25JRLtincRoSU/rNIPecFegkfz0+QuRuSMmOJUov6XZTE6A+/48X4aAp\n"
+            + "OXofomqNzib0kO2BKZYV2YFMItphBCjgnH2WWFlCZvXAIdD87KCNlFoSvoLeTR7O\n"
+            + "a0wDFFtdNJXU7VQR64eNrwX9evw+Ca2g8RJkIvWQl1oZaYFvSGmLy7obTZyuedRg\n"
+            + "2Pn4Xnl1AF2bwixOWsD3waRdElaaYoB9O5oC5aUw53MGb0U9H1tMLpz3ggKD90K5\n"
+            + "1QIDAQAB\n"
+            + "-----END PUBLIC KEY-----\n",
+        PemKeyType.RSA_PSS_2048_SHA256,
+        Hex.decode("54657374"),
+        Hex.decode(
+            "401eb03cdb47ca88033e3030f6bdecbac8f5c8fc1dd6a13d23d379ed9a2b309891d13d74fea9d21d159b9e6d8f37efa2489962e24555f56dd434ff1d31ce4f9f5abd3f22cbea8b691d6a11e44efb83e2bca155e6a164325e0fde2a8865afd5c9f51161a9d615f62af7ec2e31b3e5ab649c164490d31d88cfae35b84aea7925690f929a144b6d2f48e8fb894a52deecd1b9a6496990c4ecf1588699a42cacd10c53af350514e4291ea9a058e77f101e32c1c0cefa61d945f7bc931f8bd19e7ba3169358a60e5a8b0123bc3199b9fdcafe8e519c41ba675491a27b85e44ef2d77277c10fe107293c8290186913bc9a99b640d8da041b64f31eab1d35920985f4a5")),
+    // from wycheproof/testvectors_v1/ecdsa_secp256r1_sha256_test.json
+    new PemTestVector(
+        "-----BEGIN PUBLIC KEY-----\n"
+            + "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEBKrsc2NXJvIT+4qeZNo7hjLkFJWp\n"
+            + "RNAEW1IuunJA+tWH2TFXmKqjpboBd1eHztBeqve04J/IHW0apUboNl1SXQ==\n"
+            + "-----END PUBLIC KEY-----\n",
+        PemKeyType.ECDSA_P256_SHA256,
+        Hex.decode("4d7367"),
+        Hex.decode(
+            "30450220530bd6b0c9af2d69ba897f6b5fb59695cfbf33afe66dbadcf5b8d2a2a6538e23022100d85e489cb7a161fd55ededcedbf4cc0c0987e3e3f0f242cae934c72caa3f43e9")),
+    // from wycheproof/testvectors_v1/ecdsa_secp384r1_sha384_test.json
+    new PemTestVector(
+        "-----BEGIN PUBLIC KEY-----\n"
+            + "MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEKb23bV+nQb/XAjPLOmbMfUS+s7BmPZKo\n"
+            + "E2ZQR4vO+2HvGC4VWlQ0Wl6OXojwZOW8mlJat/dk2tPa4UaMK0GfO2K5upF9XoxP\n"
+            + "sexHQEo/x2R0snEwgb6dtMAOBDran8Sj\n"
+            + "-----END PUBLIC KEY-----\n",
+        PemKeyType.ECDSA_P384_SHA384,
+        Hex.decode("4d7367"),
+        Hex.decode(
+            "3066023100d7143a836608b25599a7f28dec6635494c2992ad1e2bbeecb7ef601a9c01746e710ce0d9c48accb38a79ede5b9638f3402310080f9e165e8c61035bf8aa7b5533960e46dd0e211c904a064edb6de41f797c0eae4e327612ee3f816f4157272bb4fabc9"))
+  };
+
+  @Theory
+  public void verifyWithPemTestVector_succeeds(
+      @FromDataPoints("pemTestVectors") PemTestVector pemTestVector) throws Exception {
+    KeysetReader keysetReader =
+        SignaturePemKeysetReader.newBuilder()
+            .addPem(pemTestVector.pem, pemTestVector.pemKeyType)
+            .build();
+    KeysetHandle handle = LegacyKeysetSerialization.parseKeysetWithoutSecret(keysetReader);
+    assertThat(handle.size()).isEqualTo(1);
+
+    PublicKeyVerify verifier =
+        handle.getPrimitive(SignatureConfigurationV1.get(), PublicKeyVerify.class);
+
+    verifier.verify(pemTestVector.signature, pemTestVector.message);
   }
 }
