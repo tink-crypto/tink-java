@@ -16,28 +16,19 @@
 
 package com.google.crypto.tink.signature;
 
+import com.google.crypto.tink.AccessesPartialKey;
+import com.google.crypto.tink.Key;
+import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.KeysetReader;
 import com.google.crypto.tink.PemKeyType;
+import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.PemUtil;
-import com.google.crypto.tink.proto.EcdsaParams;
-import com.google.crypto.tink.proto.EcdsaPublicKey;
-import com.google.crypto.tink.proto.EcdsaSignatureEncoding;
-import com.google.crypto.tink.proto.EllipticCurveType;
 import com.google.crypto.tink.proto.EncryptedKeyset;
-import com.google.crypto.tink.proto.HashType;
-import com.google.crypto.tink.proto.KeyData;
-import com.google.crypto.tink.proto.KeyStatusType;
 import com.google.crypto.tink.proto.Keyset;
-import com.google.crypto.tink.proto.OutputPrefixType;
-import com.google.crypto.tink.proto.RsaSsaPkcs1Params;
-import com.google.crypto.tink.proto.RsaSsaPkcs1PublicKey;
-import com.google.crypto.tink.proto.RsaSsaPssParams;
-import com.google.crypto.tink.proto.RsaSsaPssPublicKey;
-import com.google.crypto.tink.signature.internal.SigUtil;
 import com.google.crypto.tink.subtle.EllipticCurves;
 import com.google.crypto.tink.subtle.EngineFactory;
-import com.google.crypto.tink.subtle.Random;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.google.protobuf.ExtensionRegistryLite;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -118,22 +109,26 @@ public final class SignaturePemKeysetReader implements KeysetReader {
 
   @Override
   public Keyset read() throws IOException {
-    Keyset.Builder keyset = Keyset.newBuilder();
-    for (PemKey pemKey : pemKeys) {
-      BufferedReader reader = new BufferedReader(new StringReader(pemKey.pem));
-      for (Keyset.Key key = readKey(reader, pemKey.type);
-          key != null;
-          key = readKey(reader, pemKey.type)) {
-        keyset.addKey(key);
+    try{
+      KeysetHandle.Builder builder = KeysetHandle.newBuilder();
+      for (PemKey pemKey : pemKeys) {
+        BufferedReader reader = new BufferedReader(new StringReader(pemKey.pem));
+        for (Key key = readKey(reader, pemKey.type);
+            key != null;
+            key = readKey(reader, pemKey.type)) {
+          builder.addEntry(KeysetHandle.importKey(key).withRandomId());
+        }
       }
+      if (builder.size() == 0) {
+        throw new IOException("cannot find any key");
+      }
+      builder.getAt(0).makePrimary();
+      KeysetHandle handle = builder.build();
+      byte[] bytes = TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle);
+      return Keyset.parseFrom(bytes, ExtensionRegistryLite.getEmptyRegistry());
+    } catch (GeneralSecurityException e) {
+      throw new IOException(e);
     }
-
-    if (keyset.getKeyCount() == 0) {
-      throw new IOException("cannot find any key");
-    }
-    // Use the first key as the primary key id.
-    keyset.setPrimaryKeyId(keyset.getKey(0).getKeyId());
-    return keyset.build();
   }
 
   @Override
@@ -178,157 +173,181 @@ public final class SignaturePemKeysetReader implements KeysetReader {
 
   /** Reads a single PEM key from {@code reader}. Invalid or unparsable PEM would be ignored */
   @Nullable
-  private static Keyset.Key readKey(BufferedReader reader, PemKeyType pemKeyType)
-      throws IOException {
+  private static Key readKey(BufferedReader reader, PemKeyType pemKeyType)
+      throws GeneralSecurityException, IOException {
     EncodedKeySpec keySpec = PemUtil.parsePemToKeySpec(reader);
     if (!(keySpec instanceof X509EncodedKeySpec)) {
       return null;
     }
     X509EncodedKeySpec x509KeySpec = (X509EncodedKeySpec) keySpec;
 
-    KeyData keyData;
     switch (pemKeyType) {
       case RSA_SIGN_PKCS1_2048_SHA256:
       case RSA_SIGN_PKCS1_3072_SHA256:
       case RSA_SIGN_PKCS1_4096_SHA256:
       case RSA_SIGN_PKCS1_4096_SHA512:
+        return convertRsaSsaPkcs1PublicKey(pemKeyType, x509KeySpec);
       case RSA_PSS_2048_SHA256:
       case RSA_PSS_3072_SHA256:
       case RSA_PSS_4096_SHA256:
       case RSA_PSS_4096_SHA512:
-        RSAPublicKey rsaKey = parseRsaPublicKey(x509KeySpec, pemKeyType.keySizeInBits);
-        if (rsaKey == null) {
-          return null;
-        }
-        keyData = convertRsaPublicKey(pemKeyType, rsaKey);
-        break;
+        return convertRsaSsaPssPublicKey(pemKeyType, x509KeySpec);
       case ECDSA_P256_SHA256:
       case ECDSA_P384_SHA384:
       case ECDSA_P521_SHA512:
-        ECPublicKey eckey = parseEcPublicKey(x509KeySpec, pemKeyType.keySizeInBits);
-        if (eckey == null) {
-          return null;
-        }
-        keyData = convertEcPublicKey(pemKeyType, eckey);
-        break;
+        return convertEcdsaPublicKey(pemKeyType, x509KeySpec);
       default:
-        return null;
+        throw new GeneralSecurityException("unsupported key type: " + pemKeyType);
     }
+      }
 
-    return Keyset.Key.newBuilder()
-        .setKeyData(keyData)
-        .setStatus(KeyStatusType.ENABLED)
-        .setOutputPrefixType(OutputPrefixType.RAW) // PEM keys don't add any prefix to signatures
-        .setKeyId(Random.randInt())
+    private static RsaSsaPkcs1Parameters getRsaPkcs1Parameters(PemKeyType pemKeyType)
+      throws GeneralSecurityException {
+    switch (pemKeyType) {
+      case RSA_SIGN_PKCS1_2048_SHA256:
+        return RsaSsaPkcs1Parameters.builder()
+            .setModulusSizeBits(2048)
+            .setPublicExponent(RsaSsaPkcs1Parameters.F4)
+            .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
+            .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
+            .build();
+      case RSA_SIGN_PKCS1_3072_SHA256:
+        return RsaSsaPkcs1Parameters.builder()
+            .setModulusSizeBits(3072)
+            .setPublicExponent(RsaSsaPkcs1Parameters.F4)
+            .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
+            .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
+            .build();
+      case RSA_SIGN_PKCS1_4096_SHA256:
+        return RsaSsaPkcs1Parameters.builder()
+            .setModulusSizeBits(4096)
+            .setPublicExponent(RsaSsaPkcs1Parameters.F4)
+            .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
+            .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
+            .build();
+      case RSA_SIGN_PKCS1_4096_SHA512:
+        return RsaSsaPkcs1Parameters.builder()
+            .setModulusSizeBits(4096)
+            .setPublicExponent(RsaSsaPkcs1Parameters.F4)
+            .setHashType(RsaSsaPkcs1Parameters.HashType.SHA512)
+            .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
+            .build();
+      default:
+        throw new IllegalArgumentException("unsupported RSA PKCS1 key type: " + pemKeyType);
+    }
+  }
+
+  @AccessesPartialKey
+  @Nullable
+  private static Key convertRsaSsaPkcs1PublicKey(PemKeyType pemKeyType, X509EncodedKeySpec keySpec)
+      throws GeneralSecurityException {
+    RSAPublicKey key = parseRsaPublicKey(keySpec, pemKeyType.keySizeInBits);
+    if (key == null) {
+      return null;
+    }
+    return RsaSsaPkcs1PublicKey.builder()
+        .setParameters(getRsaPkcs1Parameters(pemKeyType))
+        .setModulus(key.getModulus())
         .build();
   }
 
-  private static KeyData convertRsaPublicKey(PemKeyType pemKeyType, RSAPublicKey key)
-      throws IOException {
-    if (pemKeyType.algorithm.equals("RSASSA-PKCS1-v1_5")) {
-      RsaSsaPkcs1Params params =
-          RsaSsaPkcs1Params.newBuilder().setHashType(getHashType(pemKeyType)).build();
-      RsaSsaPkcs1PublicKey pkcs1PubKey =
-          RsaSsaPkcs1PublicKey.newBuilder()
-              .setVersion(0)
-              .setParams(params)
-              .setE(SigUtil.toUnsignedIntByteString(key.getPublicExponent()))
-              .setN(SigUtil.toUnsignedIntByteString(key.getModulus()))
-              .build();
-      return KeyData.newBuilder()
-          .setTypeUrl(RsaSsaPkcs1VerifyKeyManager.getKeyType())
-          .setValue(pkcs1PubKey.toByteString())
-          .setKeyMaterialType(KeyData.KeyMaterialType.ASYMMETRIC_PUBLIC)
-          .build();
-    } else if (pemKeyType.algorithm.equals("RSASSA-PSS")) {
-      RsaSsaPssParams params =
-          RsaSsaPssParams.newBuilder()
-              .setSigHash(getHashType(pemKeyType))
-              .setMgf1Hash(getHashType(pemKeyType))
-              .setSaltLength(getDigestSizeInBytes(pemKeyType))
-              .build();
-      RsaSsaPssPublicKey pssPubKey =
-          RsaSsaPssPublicKey.newBuilder()
-              .setVersion(0)
-              .setParams(params)
-              .setE(SigUtil.toUnsignedIntByteString(key.getPublicExponent()))
-              .setN(SigUtil.toUnsignedIntByteString(key.getModulus()))
-              .build();
-      return KeyData.newBuilder()
-          .setTypeUrl(RsaSsaPssVerifyKeyManager.getKeyType())
-          .setValue(pssPubKey.toByteString())
-          .setKeyMaterialType(KeyData.KeyMaterialType.ASYMMETRIC_PUBLIC)
-          .build();
-    }
-    throw new IOException("unsupported RSA signature algorithm: " + pemKeyType.algorithm);
-  }
-
-  private static KeyData convertEcPublicKey(PemKeyType pemKeyType, ECPublicKey key)
-      throws IOException {
-    if (pemKeyType.algorithm.equals("ECDSA")) {
-      EcdsaParams params =
-          EcdsaParams.newBuilder()
-              .setHashType(getHashType(pemKeyType))
-              .setCurve(getCurveType(pemKeyType))
-              .setEncoding(EcdsaSignatureEncoding.DER)
-              .build();
-      EcdsaPublicKey ecdsaPubKey =
-          EcdsaPublicKey.newBuilder()
-              .setVersion(0)
-              .setParams(params)
-              .setX(SigUtil.toUnsignedIntByteString(key.getW().getAffineX()))
-              .setY(SigUtil.toUnsignedIntByteString(key.getW().getAffineY()))
-              .build();
-
-      return KeyData.newBuilder()
-          .setTypeUrl(EcdsaVerifyKeyManager.getKeyType())
-          .setValue(ecdsaPubKey.toByteString())
-          .setKeyMaterialType(KeyData.KeyMaterialType.ASYMMETRIC_PUBLIC)
-          .build();
-    }
-    throw new IOException("unsupported EC signature algorithm: " + pemKeyType.algorithm);
-  }
-
-  private static HashType getHashType(PemKeyType pemKeyType) {
-    switch (pemKeyType.hash) {
-      case SHA256:
-        return HashType.SHA256;
-      case SHA384:
-        return HashType.SHA384;
-      case SHA512:
-        return HashType.SHA512;
+  private static RsaSsaPssParameters getRsaPssParameters(PemKeyType pemKeyType)
+      throws GeneralSecurityException {
+    switch (pemKeyType) {
+      case RSA_PSS_2048_SHA256:
+        return RsaSsaPssParameters.builder()
+            .setModulusSizeBits(2048)
+            .setPublicExponent(RsaSsaPssParameters.F4)
+            .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
+            .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
+            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+            .setSaltLengthBytes(32)
+            .build();
+      case RSA_PSS_3072_SHA256:
+        return RsaSsaPssParameters.builder()
+            .setModulusSizeBits(3072)
+            .setPublicExponent(RsaSsaPssParameters.F4)
+            .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
+            .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
+            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+            .setSaltLengthBytes(32)
+            .build();
+      case RSA_PSS_4096_SHA256:
+        return RsaSsaPssParameters.builder()
+            .setModulusSizeBits(4096)
+            .setPublicExponent(RsaSsaPssParameters.F4)
+            .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
+            .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
+            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+            .setSaltLengthBytes(32)
+            .build();
+      case RSA_PSS_4096_SHA512:
+        return RsaSsaPssParameters.builder()
+            .setModulusSizeBits(4096)
+            .setPublicExponent(RsaSsaPssParameters.F4)
+            .setSigHashType(RsaSsaPssParameters.HashType.SHA512)
+            .setMgf1HashType(RsaSsaPssParameters.HashType.SHA512)
+            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+            .setSaltLengthBytes(64)
+            .build();
       default:
-        break;
+        throw new IllegalArgumentException("unsupported RSA PSS key type: " + pemKeyType);
     }
-    throw new IllegalArgumentException("unsupported hash type: " + pemKeyType.hash.name());
   }
 
-  private static int getDigestSizeInBytes(PemKeyType pemKeyType) {
-    switch (pemKeyType.hash) {
-      case SHA256:
-        return 32;
-      case SHA384:
-        return 48;
-      case SHA512:
-        return 64;
-      default:
-        break;
+  @AccessesPartialKey
+  @Nullable
+  private static Key convertRsaSsaPssPublicKey(PemKeyType pemKeyType, X509EncodedKeySpec keySpec)
+      throws GeneralSecurityException {
+    RSAPublicKey key = parseRsaPublicKey(keySpec, pemKeyType.keySizeInBits);
+    if (key == null) {
+      return null;
     }
-    throw new IllegalArgumentException("unsupported hash type: " + pemKeyType.hash.name());
+    return RsaSsaPssPublicKey.builder()
+        .setParameters(getRsaPssParameters(pemKeyType))
+        .setModulus(key.getModulus())
+        .build();
   }
 
-  private static EllipticCurveType getCurveType(PemKeyType pemKeyType) {
-    switch (pemKeyType.keySizeInBits) {
-      case 256:
-        return EllipticCurveType.NIST_P256;
-      case 384:
-        return EllipticCurveType.NIST_P384;
-      case 521:
-        return EllipticCurveType.NIST_P521;
+  private static EcdsaParameters getEcdsaParameters(PemKeyType pemKeyType) throws GeneralSecurityException {
+    switch (pemKeyType) {
+      case ECDSA_P256_SHA256:
+        return
+            EcdsaParameters.builder()
+            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
+            .setCurveType(EcdsaParameters.CurveType.NIST_P256)
+            .setHashType(EcdsaParameters.HashType.SHA256)
+            .setVariant(EcdsaParameters.Variant.NO_PREFIX)
+            .build();
+      case ECDSA_P384_SHA384:
+        return EcdsaParameters.builder()
+            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
+            .setCurveType(EcdsaParameters.CurveType.NIST_P384)
+            .setHashType(EcdsaParameters.HashType.SHA384)
+            .setVariant(EcdsaParameters.Variant.NO_PREFIX)
+            .build();
+      case ECDSA_P521_SHA512:
+        return EcdsaParameters.builder()
+            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
+            .setCurveType(EcdsaParameters.CurveType.NIST_P521)
+            .setHashType(EcdsaParameters.HashType.SHA512)
+            .build();
       default:
-        break;
+        throw new IllegalArgumentException("unsupported EC key type: " + pemKeyType);
     }
-    throw new IllegalArgumentException(
-        "unsupported curve for key size: " + pemKeyType.keySizeInBits);
+  }
+
+  @Nullable
+  @AccessesPartialKey
+  private static Key convertEcdsaPublicKey(PemKeyType pemKeyType, X509EncodedKeySpec keySpec)
+      throws GeneralSecurityException {
+    ECPublicKey key = parseEcPublicKey(keySpec, pemKeyType.keySizeInBits);
+    if (key == null) {
+      return null;
+    }
+    return EcdsaPublicKey.builder()
+          .setParameters(getEcdsaParameters(pemKeyType))
+          .setPublicPoint(key.getW())
+          .build();
   }
 }

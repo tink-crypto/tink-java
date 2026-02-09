@@ -36,9 +36,11 @@ import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.proto.RsaSsaPssPublicKey;
 import com.google.crypto.tink.subtle.Base64;
+import com.google.crypto.tink.subtle.Bytes;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.protobuf.ExtensionRegistryLite;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -54,6 +56,10 @@ public final class SignaturePemKeysetReaderTest {
   @BeforeClass
   public static void setUp() throws Exception {
     SignatureConfig.register();
+  }
+
+  byte[] addZeroPrefix(byte[] data) throws GeneralSecurityException {
+    return Bytes.concat(new byte[] {0x00}, data);
   }
 
   @Test
@@ -95,7 +101,7 @@ public final class SignaturePemKeysetReaderTest {
     assertThat(publicKeyProto.getParams().getMgf1Hash()).isEqualTo(HashType.SHA256);
     assertThat(publicKeyProto.getParams().getSaltLength()).isEqualTo(32);
     assertThat(publicKeyProto.getN().toByteArray())
-        .isEqualTo(Base64.urlSafeDecode(expectedModulusBase64));
+        .isEqualTo(addZeroPrefix(Base64.urlSafeDecode(expectedModulusBase64)));
     assertThat(publicKeyProto.getE().toByteArray()).isEqualTo(Hex.decode("010001"));
   }
 
@@ -128,9 +134,9 @@ public final class SignaturePemKeysetReaderTest {
     assertThat(publicKeyProto.getParams().getCurve()).isEqualTo(EllipticCurveType.NIST_P256);
     assertThat(publicKeyProto.getParams().getEncoding()).isEqualTo(EcdsaSignatureEncoding.DER);
     assertThat(publicKeyProto.getX().toByteArray())
-        .isEqualTo(Base64.urlSafeDecode(expectedXBase64));
+        .isEqualTo(addZeroPrefix(Base64.urlSafeDecode(expectedXBase64)));
     assertThat(publicKeyProto.getY().toByteArray())
-        .isEqualTo(Base64.urlSafeDecode(expectedYBase64));
+        .isEqualTo(addZeroPrefix(Base64.urlSafeDecode(expectedYBase64)));
   }
 
   @Test
@@ -150,7 +156,7 @@ public final class SignaturePemKeysetReaderTest {
     EcdsaPublicKey publicKeyProto =
         EcdsaPublicKey.parseFrom(keyData.getValue(), ExtensionRegistryLite.getEmptyRegistry());
     assertThat(publicKeyProto.getX().toByteArray())
-        .isEqualTo(Hex.decode("D4CE489428982EF343186EB90E6A04ADF41366359A508FE7AC66B283F06641AE"));
+        .isEqualTo(Hex.decode("00D4CE489428982EF343186EB90E6A04ADF41366359A508FE7AC66B283F06641AE"));
   }
 
 @Test
@@ -242,7 +248,7 @@ public final class SignaturePemKeysetReaderTest {
     assertThat(publicKeyProto.getParams().getMgf1Hash()).isEqualTo(HashType.SHA256);
     assertThat(publicKeyProto.getParams().getSaltLength()).isEqualTo(32);
     assertThat(publicKeyProto.getN().toByteArray())
-        .isEqualTo(Base64.urlSafeDecode(expectedModulusKey1Base64));
+        .isEqualTo(addZeroPrefix(Base64.urlSafeDecode(expectedModulusKey1Base64)));
     assertThat(publicKeyProto.getE().toByteArray()).isEqualTo(Hex.decode("010001"));
 
     keyData = secondKey.getKeyData();
@@ -303,7 +309,7 @@ public final class SignaturePemKeysetReaderTest {
     assertThat(publicKeyProto.getParams().getMgf1Hash()).isEqualTo(HashType.SHA256);
     assertThat(publicKeyProto.getParams().getSaltLength()).isEqualTo(32);
     assertThat(publicKeyProto.getN().toByteArray())
-        .isEqualTo(Base64.urlSafeDecode(expectedModulusKey1Base64));
+        .isEqualTo(addZeroPrefix(Base64.urlSafeDecode(expectedModulusKey1Base64)));
     assertThat(publicKeyProto.getE().toByteArray()).isEqualTo(Hex.decode("010001"));
   }
 
@@ -357,7 +363,7 @@ public final class SignaturePemKeysetReaderTest {
     assertThat(rsaPublicKeyProto.getParams().getMgf1Hash()).isEqualTo(HashType.SHA256);
     assertThat(rsaPublicKeyProto.getParams().getSaltLength()).isEqualTo(32);
     assertThat(rsaPublicKeyProto.getN().toByteArray())
-        .isEqualTo(Base64.urlSafeDecode(expectedModulusBase64));
+        .isEqualTo(addZeroPrefix(Base64.urlSafeDecode(expectedModulusBase64)));
     assertThat(rsaPublicKeyProto.getE().toByteArray()).isEqualTo(Hex.decode("010001"));
 
     Keyset.Key secondKey = ks.getKey(1);
@@ -372,9 +378,9 @@ public final class SignaturePemKeysetReaderTest {
     assertThat(ecPublicKeyProto.getParams().getCurve()).isEqualTo(EllipticCurveType.NIST_P256);
     assertThat(ecPublicKeyProto.getParams().getEncoding()).isEqualTo(EcdsaSignatureEncoding.DER);
     assertThat(ecPublicKeyProto.getX().toByteArray())
-        .isEqualTo(Base64.urlSafeDecode(expectedXBase64));
+        .isEqualTo(addZeroPrefix(Base64.urlSafeDecode(expectedXBase64)));
     assertThat(ecPublicKeyProto.getY().toByteArray())
-        .isEqualTo(Base64.urlSafeDecode(expectedYBase64));
+        .isEqualTo(addZeroPrefix(Base64.urlSafeDecode(expectedYBase64)));
   }
 
   @Test
