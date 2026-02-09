@@ -17,6 +17,7 @@
 package com.google.crypto.tink;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.assertThrows;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
@@ -207,5 +208,11 @@ public final class PemKeyTypeTest {
     BufferedReader reader = new BufferedReader(new StringReader(pem));
     Key key = PemKeyType.ECDSA_P256_SHA256.readKey(reader);
     assertThat(key).isNull();
+  }
+
+  @Test
+  public void readKey_mlDsa65PublicKey_shouldThrowUnsupportedOperationException() throws Exception {
+    BufferedReader reader = new BufferedReader(new StringReader("input"));
+    assertThrows(UnsupportedOperationException.class, () -> PemKeyType.ML_DSA_65.readKey(reader));
   }
 }

@@ -23,10 +23,13 @@ import com.google.crypto.tink.KeysetReader;
 import com.google.crypto.tink.PemKeyType;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.PemUtil;
+import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.proto.EncryptedKeyset;
 import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.subtle.EllipticCurves;
 import com.google.crypto.tink.subtle.EngineFactory;
+import com.google.crypto.tink.subtle.Hex;
+import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.protobuf.ExtensionRegistryLite;
 import java.io.BufferedReader;
@@ -40,6 +43,7 @@ import java.security.spec.ECParameterSpec;
 import java.security.spec.EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Nullable;
 
@@ -196,12 +200,14 @@ public final class SignaturePemKeysetReader implements KeysetReader {
       case ECDSA_P384_SHA384:
       case ECDSA_P521_SHA512:
         return convertEcdsaPublicKey(pemKeyType, x509KeySpec);
+      case ML_DSA_65:
+        return convertMlDsa65PublicKey(x509KeySpec);
       default:
         throw new GeneralSecurityException("unsupported key type: " + pemKeyType);
     }
-      }
+  }
 
-    private static RsaSsaPkcs1Parameters getRsaPkcs1Parameters(PemKeyType pemKeyType)
+  private static RsaSsaPkcs1Parameters getRsaPkcs1Parameters(PemKeyType pemKeyType)
       throws GeneralSecurityException {
     switch (pemKeyType) {
       case RSA_SIGN_PKCS1_2048_SHA256:
@@ -349,5 +355,32 @@ public final class SignaturePemKeysetReader implements KeysetReader {
           .setParameters(getEcdsaParameters(pemKeyType))
           .setPublicPoint(key.getW())
           .build();
+  }
+
+  private static final MlDsaParameters ML_DSA_65_PARAMS =
+      MlDsaParameters.create(
+          MlDsaParameters.MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.NO_PREFIX);
+
+  // RFC 9881 defines the ML-DSA-65 x509 public key encoding. This encoding always has the same
+  // preamble, followed by the raw public key value.
+  private static final byte[] x509PreambleMlDsa65 =
+      Hex.decode("308207b2300b0609608648016503040312038207a100");
+
+  @Nullable
+  @AccessesPartialKey
+  static MlDsaPublicKey convertMlDsa65PublicKey(X509EncodedKeySpec keySpec)
+      throws GeneralSecurityException {
+    byte[] encodedKey = keySpec.getEncoded();
+    if (!Util.isPrefix(x509PreambleMlDsa65, encodedKey)) {
+      return null;
+    }
+    byte[] keyValue = Arrays.copyOfRange(encodedKey, x509PreambleMlDsa65.length, encodedKey.length);
+    if (keyValue.length != 1952) {
+      return null;
+    }
+    return MlDsaPublicKey.builder()
+        .setParameters(ML_DSA_65_PARAMS)
+        .setSerializedPublicKey(Bytes.copyFrom(keyValue))
+        .build();
   }
 }

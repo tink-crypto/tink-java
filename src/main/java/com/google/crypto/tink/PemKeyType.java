@@ -59,7 +59,11 @@ public enum PemKeyType {
   // ECDSA on the NIST P-384 curve with a SHA384 digest and SignatureEncoding DER.
   ECDSA_P384_SHA384("EC", "ECDSA", 384, HashType.SHA384),
   // ECDSA on the NIST P-521 curve with a SHA512 digest and SignatureEncoding DER.
-  ECDSA_P521_SHA512("EC", "ECDSA", 521, HashType.SHA512);
+  ECDSA_P521_SHA512("EC", "ECDSA", 521, HashType.SHA512),
+
+  // ML-DSA (without pre-hashing)
+  // keySizeInBits is the public key size in bits
+  ML_DSA_65("ML-DSA", "ML-DSA", 15616); // 1952 * 8 = 15616
 
   public final String keyType;
   public final String algorithm;
@@ -73,6 +77,10 @@ public enum PemKeyType {
     this.hash = hash;
   }
 
+  PemKeyType(String keyType, String algorithm, int keySizeInBits) {
+    this(keyType, algorithm, keySizeInBits, null);
+  }
+
   /**
    * Reads a single key from {@code reader}.
    *
@@ -80,6 +88,9 @@ public enum PemKeyType {
    */
   @Nullable
   public Key readKey(BufferedReader reader) throws IOException {
+    if (this.keyType.equals("ML-DSA")) {
+      throw new UnsupportedOperationException("readKey is not supported for ML-DSA.");
+    }
     EncodedKeySpec keySpec = PemUtil.parsePemToKeySpec(reader);
     if (keySpec == null) {
       return null;
