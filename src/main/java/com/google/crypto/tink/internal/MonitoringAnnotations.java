@@ -30,7 +30,7 @@ import java.util.Map;
  */
 @Immutable
 @Alpha
-public final class MonitoringAnnotations {
+public final class MonitoringAnnotations implements com.google.crypto.tink.MonitoringAnnotations {
 
   public static final MonitoringAnnotations EMPTY = newBuilder().build();
 

@@ -1194,3 +1194,13 @@ java_library(
     name = "low_level_crypto_caller",
     srcs = ["LowLevelCryptoCaller.java"],
 )
+
+java_library(
+    name = "monitoring_annotations",
+    srcs = ["MonitoringAnnotations.java"],
+)
+
+android_library(
+    name = "monitoring_annotations-android",
+    srcs = ["MonitoringAnnotations.java"],
+)
