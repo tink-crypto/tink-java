@@ -35,13 +35,13 @@ import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.KeyStatusType;
 import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.proto.OutputPrefixType;
-import com.google.crypto.tink.proto.RsaSsaPssPublicKey;
 import com.google.crypto.tink.signature.internal.MlDsaProtoSerialization;
 import com.google.crypto.tink.subtle.Base64;
 import com.google.crypto.tink.subtle.Bytes;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.protobuf.ExtensionRegistryLite;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.Security;
 import org.conscrypt.Conscrypt;
@@ -93,33 +93,28 @@ public final class SignaturePemKeysetReaderTest {
             + "-----END PUBLIC KEY-----\n";
 
     // Extracted after converting the PEM to JWK.
-    String expectedModulusBase64 =
+    BigInteger expectedModulus = new BigInteger(1, Base64.urlSafeDecode(
         "v90Xf_NN1lRGBofJQzJflHvo6GAf25GGQGaMmD9T1ZP71CCbJ69lGIS_6akFBg6ECEHGM2EZ4WFLCdr5byUqGC"
         + "f4mY4WuOn-AcwzwAoDz9ASIFcQOoPclO7JYdfo2SOaumumdb5S_7FkKJ70TGYWj9aTOYWsCcaojbjGDY_JEX"
         + "z3BSRIngcgOvXBmV1JokcJ_LsrJD263WE9iUknZDhBK7y4ChjHNqL8yJcw_D8xLNiJtIyuxiZ00p_lOVUInr"
         + "8C_a2C1UGCgEGuXZAEGAdONVez52n5TLvQP3hRd4MTi7YvfhezRcA4aXyIDOv-TYi4p-OVTYQ-FMbkgoWBm5"
-        + "bqwQ";
+        + "bqwQ"));
 
-    KeysetReader keysetReader =
-        SignaturePemKeysetReader.newBuilder().addPem(pem, PemKeyType.RSA_PSS_2048_SHA256).build();
-    Keyset ks = keysetReader.read();
-    Keyset.Key key = ks.getKey(0);
-    KeyData keyData = key.getKeyData();
-    RsaSsaPssPublicKey publicKeyProto =
-        RsaSsaPssPublicKey.parseFrom(keyData.getValue(), ExtensionRegistryLite.getEmptyRegistry());
+    KeysetHandle handle = LegacyKeysetSerialization.parseKeysetWithoutSecret(
+        SignaturePemKeysetReader.newBuilder().addPem(pem, PemKeyType.RSA_PSS_2048_SHA256).build());
 
-    assertThat(ks.getKeyCount()).isEqualTo(1);
-    assertThat(ks.getPrimaryKeyId()).isEqualTo(key.getKeyId());
-    assertThat(key.getStatus()).isEqualTo(KeyStatusType.ENABLED);
-    assertThat(key.getOutputPrefixType()).isEqualTo(OutputPrefixType.RAW);
-    assertThat(keyData.getTypeUrl()).isEqualTo(RsaSsaPssVerifyKeyManager.getKeyType());
-    assertThat(keyData.getKeyMaterialType()).isEqualTo(KeyMaterialType.ASYMMETRIC_PUBLIC);
-    assertThat(publicKeyProto.getParams().getSigHash()).isEqualTo(HashType.SHA256);
-    assertThat(publicKeyProto.getParams().getMgf1Hash()).isEqualTo(HashType.SHA256);
-    assertThat(publicKeyProto.getParams().getSaltLength()).isEqualTo(32);
-    assertThat(publicKeyProto.getN().toByteArray())
-        .isEqualTo(addZeroPrefix(Base64.urlSafeDecode(expectedModulusBase64)));
-    assertThat(publicKeyProto.getE().toByteArray()).isEqualTo(Hex.decode("010001"));
+    assertThat(handle.size()).isEqualTo(1);
+    RsaSsaPssPublicKey key = (RsaSsaPssPublicKey) handle.getAt(0).getKey();
+
+    assertThat(key.getParameters()).isEqualTo(RsaSsaPssParameters.builder()
+            .setModulusSizeBits(2048)
+            .setPublicExponent(RsaSsaPssParameters.F4)
+            .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
+            .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
+            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+            .setSaltLengthBytes(32)
+            .build());
+    assertThat(key.getModulus()).isEqualTo(expectedModulus);
   }
 
   @Test
@@ -240,45 +235,39 @@ public final class SignaturePemKeysetReaderTest {
             + "-----END PUBLIC KEY-----\n";
 
     // Extracted after converting the PEM to JWK.
-    String expectedModulusKey1Base64 =
+    BigInteger expectedModulus = new BigInteger(1, Base64.urlSafeDecode(
         "v90Xf_NN1lRGBofJQzJflHvo6GAf25GGQGaMmD9T1ZP71CCbJ69lGIS_6akFBg6ECEHGM2EZ4WFLCdr5byUqGC"
         + "f4mY4WuOn-AcwzwAoDz9ASIFcQOoPclO7JYdfo2SOaumumdb5S_7FkKJ70TGYWj9aTOYWsCcaojbjGDY_JEX"
         + "z3BSRIngcgOvXBmV1JokcJ_LsrJD263WE9iUknZDhBK7y4ChjHNqL8yJcw_D8xLNiJtIyuxiZ00p_lOVUInr"
         + "8C_a2C1UGCgEGuXZAEGAdONVez52n5TLvQP3hRd4MTi7YvfhezRcA4aXyIDOv-TYi4p-OVTYQ-FMbkgoWBm5"
-        + "bqwQ";
+        + "bqwQ"));
 
-    KeysetReader keysetReader =
-        SignaturePemKeysetReader.newBuilder().addPem(pem, PemKeyType.RSA_PSS_2048_SHA256).build();
-    Keyset ks = keysetReader.read();
-    Keyset.Key firstKey = ks.getKey(0);
-    Keyset.Key secondKey = ks.getKey(1);
-    assertThat(ks.getKeyCount()).isEqualTo(2);
-    assertThat(ks.getPrimaryKeyId()).isEqualTo(firstKey.getKeyId());
+    KeysetHandle handle =
+        LegacyKeysetSerialization.parseKeysetWithoutSecret(
+            SignaturePemKeysetReader.newBuilder()
+                .addPem(pem, PemKeyType.RSA_PSS_2048_SHA256)
+                .build());
 
-    KeyData keyData = firstKey.getKeyData();
-    RsaSsaPssPublicKey publicKeyProto =
-        RsaSsaPssPublicKey.parseFrom(keyData.getValue(), ExtensionRegistryLite.getEmptyRegistry());
-    assertThat(firstKey.getStatus()).isEqualTo(KeyStatusType.ENABLED);
-    assertThat(firstKey.getOutputPrefixType()).isEqualTo(OutputPrefixType.RAW);
-    assertThat(keyData.getTypeUrl()).isEqualTo(RsaSsaPssVerifyKeyManager.getKeyType());
-    assertThat(keyData.getKeyMaterialType()).isEqualTo(KeyMaterialType.ASYMMETRIC_PUBLIC);
-    assertThat(publicKeyProto.getParams().getSigHash()).isEqualTo(HashType.SHA256);
-    assertThat(publicKeyProto.getParams().getMgf1Hash()).isEqualTo(HashType.SHA256);
-    assertThat(publicKeyProto.getParams().getSaltLength()).isEqualTo(32);
-    assertThat(publicKeyProto.getN().toByteArray())
-        .isEqualTo(addZeroPrefix(Base64.urlSafeDecode(expectedModulusKey1Base64)));
-    assertThat(publicKeyProto.getE().toByteArray()).isEqualTo(Hex.decode("010001"));
+    // Test that both handles have the same keys. Because the key ids are chosen at random,
+    // they are not exactly the same keysets.
+    assertThat(handle.size()).isEqualTo(2);
+    assertThat(handle.getAt(0).isPrimary()).isTrue();
 
-    keyData = secondKey.getKeyData();
-    publicKeyProto =
-        RsaSsaPssPublicKey.parseFrom(keyData.getValue(), ExtensionRegistryLite.getEmptyRegistry());
-    assertThat(secondKey.getStatus()).isEqualTo(KeyStatusType.ENABLED);
-    assertThat(secondKey.getOutputPrefixType()).isEqualTo(OutputPrefixType.RAW);
-    assertThat(keyData.getTypeUrl()).isEqualTo(RsaSsaPssVerifyKeyManager.getKeyType());
-    assertThat(keyData.getKeyMaterialType()).isEqualTo(KeyMaterialType.ASYMMETRIC_PUBLIC);
-    assertThat(publicKeyProto.getParams().getSigHash()).isEqualTo(HashType.SHA256);
-    assertThat(publicKeyProto.getParams().getMgf1Hash()).isEqualTo(HashType.SHA256);
-    assertThat(publicKeyProto.getParams().getSaltLength()).isEqualTo(32);
+    RsaSsaPssPublicKey firstKey = (RsaSsaPssPublicKey) handle.getAt(0).getKey();
+    RsaSsaPssPublicKey secondKey = (RsaSsaPssPublicKey) handle.getAt(1).getKey();
+
+    RsaSsaPssParameters expectedParams = RsaSsaPssParameters.builder()
+            .setModulusSizeBits(2048)
+            .setPublicExponent(RsaSsaPssParameters.F4)
+            .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
+            .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
+            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+            .setSaltLengthBytes(32)
+            .build();
+    assertThat(firstKey.getParameters()).isEqualTo(expectedParams);
+    assertThat(firstKey.getModulus()).isEqualTo(expectedModulus);
+    assertThat(secondKey.getParameters()).isEqualTo(expectedParams);
+
   }
 
   @Test
@@ -300,35 +289,32 @@ public final class SignaturePemKeysetReaderTest {
             + "-----END PUBLIC KEY-----\n";
 
     // Extracted after converting the PEM to JWK.
-    String expectedModulusKey1Base64 =
+    BigInteger expectedModulus = new BigInteger(1, Base64.urlSafeDecode(
         "v90Xf_NN1lRGBofJQzJflHvo6GAf25GGQGaMmD9T1ZP71CCbJ69lGIS_6akFBg6ECEHGM2EZ4WFLCdr5byUqGC"
         + "f4mY4WuOn-AcwzwAoDz9ASIFcQOoPclO7JYdfo2SOaumumdb5S_7FkKJ70TGYWj9aTOYWsCcaojbjGDY_JEX"
         + "z3BSRIngcgOvXBmV1JokcJ_LsrJD263WE9iUknZDhBK7y4ChjHNqL8yJcw_D8xLNiJtIyuxiZ00p_lOVUInr"
         + "8C_a2C1UGCgEGuXZAEGAdONVez52n5TLvQP3hRd4MTi7YvfhezRcA4aXyIDOv-TYi4p-OVTYQ-FMbkgoWBm5"
-        + "bqwQ";
+        + "bqwQ"));
 
-    KeysetReader keysetReader =
-        SignaturePemKeysetReader.newBuilder().addPem(pem, PemKeyType.RSA_PSS_2048_SHA256).build();
-    Keyset ks = keysetReader.read();
+    KeysetHandle handle =
+        LegacyKeysetSerialization.parseKeysetWithoutSecret(
+            SignaturePemKeysetReader.newBuilder()
+                .addPem(pem, PemKeyType.RSA_PSS_2048_SHA256)
+                .build());
+
     // The EC public key is ignored because it has the wrong type. It is not a RSA_PSS_2048_SHA256
     // key.
-    Keyset.Key key = ks.getKey(0);
-    KeyData keyData = key.getKeyData();
-    RsaSsaPssPublicKey publicKeyProto =
-        RsaSsaPssPublicKey.parseFrom(keyData.getValue(), ExtensionRegistryLite.getEmptyRegistry());
-
-    assertThat(ks.getKeyCount()).isEqualTo(1);
-    assertThat(ks.getPrimaryKeyId()).isEqualTo(key.getKeyId());
-    assertThat(key.getStatus()).isEqualTo(KeyStatusType.ENABLED);
-    assertThat(key.getOutputPrefixType()).isEqualTo(OutputPrefixType.RAW);
-    assertThat(keyData.getTypeUrl()).isEqualTo(RsaSsaPssVerifyKeyManager.getKeyType());
-    assertThat(keyData.getKeyMaterialType()).isEqualTo(KeyMaterialType.ASYMMETRIC_PUBLIC);
-    assertThat(publicKeyProto.getParams().getSigHash()).isEqualTo(HashType.SHA256);
-    assertThat(publicKeyProto.getParams().getMgf1Hash()).isEqualTo(HashType.SHA256);
-    assertThat(publicKeyProto.getParams().getSaltLength()).isEqualTo(32);
-    assertThat(publicKeyProto.getN().toByteArray())
-        .isEqualTo(addZeroPrefix(Base64.urlSafeDecode(expectedModulusKey1Base64)));
-    assertThat(publicKeyProto.getE().toByteArray()).isEqualTo(Hex.decode("010001"));
+    assertThat(handle.size()).isEqualTo(1);
+    RsaSsaPssPublicKey key = (RsaSsaPssPublicKey) handle.getAt(0).getKey();
+    assertThat(key.getParameters()).isEqualTo(RsaSsaPssParameters.builder()
+            .setModulusSizeBits(2048)
+            .setPublicExponent(RsaSsaPssParameters.F4)
+            .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
+            .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
+            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+            .setSaltLengthBytes(32)
+            .build());
+    assertThat(key.getModulus()).isEqualTo(expectedModulus);
   }
 
   @Test
@@ -371,8 +357,8 @@ public final class SignaturePemKeysetReaderTest {
     Keyset.Key firstKey = ks.getKey(0);
     assertThat(ks.getPrimaryKeyId()).isEqualTo(firstKey.getKeyId());
     KeyData keyData = firstKey.getKeyData();
-    RsaSsaPssPublicKey rsaPublicKeyProto =
-        RsaSsaPssPublicKey.parseFrom(keyData.getValue(), ExtensionRegistryLite.getEmptyRegistry());
+    com.google.crypto.tink.proto.RsaSsaPssPublicKey rsaPublicKeyProto =
+        com.google.crypto.tink.proto.RsaSsaPssPublicKey.parseFrom(keyData.getValue(), ExtensionRegistryLite.getEmptyRegistry());
     assertThat(firstKey.getStatus()).isEqualTo(KeyStatusType.ENABLED);
     assertThat(firstKey.getOutputPrefixType()).isEqualTo(OutputPrefixType.RAW);
     assertThat(keyData.getTypeUrl()).isEqualTo(RsaSsaPssVerifyKeyManager.getKeyType());
@@ -420,12 +406,12 @@ public final class SignaturePemKeysetReaderTest {
             + "-----END PUBLIC KEY-----\n";
 
     // Extracted after converting the PEM to JWK.
-    String expectedModulusBase64 =
+    BigInteger expectedModulus = new BigInteger(1, Base64.urlSafeDecode(
         "v90Xf_NN1lRGBofJQzJflHvo6GAf25GGQGaMmD9T1ZP71CCbJ69lGIS_6akFBg6ECEHGM2EZ4WFLCdr5byUqGC"
         + "f4mY4WuOn-AcwzwAoDz9ASIFcQOoPclO7JYdfo2SOaumumdb5S_7FkKJ70TGYWj9aTOYWsCcaojbjGDY_JEX"
         + "z3BSRIngcgOvXBmV1JokcJ_LsrJD263WE9iUknZDhBK7y4ChjHNqL8yJcw_D8xLNiJtIyuxiZ00p_lOVUInr"
         + "8C_a2C1UGCgEGuXZAEGAdONVez52n5TLvQP3hRd4MTi7YvfhezRcA4aXyIDOv-TYi4p-OVTYQ-FMbkgoWBm5"
-        + "bqwQ";
+        + "bqwQ"));
     String expectedXBase64 = "7BiT5K5pivl4Qfrt9hRhRREMUzj_8suEJ7GlMxZfvdc";
     String expectedYBase64 = "KW4vxoWD7iYvBp9h9TWjCWXC2aOTCzysshk-bt7tVQU";
 
@@ -438,8 +424,7 @@ public final class SignaturePemKeysetReaderTest {
     KeysetHandle handle = LegacyKeysetSerialization.parseKeysetWithoutSecret(keysetReader);
 
     assertThat(handle.size()).isEqualTo(3);
-    com.google.crypto.tink.signature.RsaSsaPssPublicKey rsaPssKey =
-        (com.google.crypto.tink.signature.RsaSsaPssPublicKey) handle.getAt(0).getKey();
+    RsaSsaPssPublicKey rsaPssKey = (RsaSsaPssPublicKey) handle.getAt(0).getKey();
     assertThat(rsaPssKey.getParameters()).isEqualTo(RsaSsaPssParameters.builder()
             .setModulusSizeBits(2048)
             .setPublicExponent(RsaSsaPssParameters.F4)
@@ -448,8 +433,7 @@ public final class SignaturePemKeysetReaderTest {
             .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
             .setSaltLengthBytes(32)
             .build());
-    assertThat(BigIntegerEncoding.toUnsignedBigEndianBytes(rsaPssKey.getModulus()))
-        .isEqualTo(Base64.urlSafeDecode(expectedModulusBase64));
+    assertThat(rsaPssKey.getModulus()).isEqualTo(expectedModulus);
 
     RsaSsaPkcs1PublicKey rsaPkcs1Key =
         (RsaSsaPkcs1PublicKey) handle.getAt(1).getKey();
@@ -459,8 +443,7 @@ public final class SignaturePemKeysetReaderTest {
             .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
             .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
             .build());
-    assertThat(BigIntegerEncoding.toUnsignedBigEndianBytes(rsaPkcs1Key.getModulus()))
-        .isEqualTo(Base64.urlSafeDecode(expectedModulusBase64));
+    assertThat(rsaPkcs1Key.getModulus()).isEqualTo(expectedModulus);
 
     com.google.crypto.tink.signature.EcdsaPublicKey ecdsaKey =
         (com.google.crypto.tink.signature.EcdsaPublicKey) handle.getAt(2).getKey();
@@ -1028,9 +1011,4 @@ public final class SignaturePemKeysetReaderTest {
       // ignore
     }
   }
-
-    // Created using Conscrypt with the private key
-    // Hex.decode("000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f")
-
-
 }
