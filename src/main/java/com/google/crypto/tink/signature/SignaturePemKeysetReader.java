@@ -66,11 +66,21 @@ import javax.annotation.Nullable;
  * }</pre>
  */
 public final class SignaturePemKeysetReader implements KeysetReader {
-  private List<PemKey> pemKeys;
+  // Exactly one of these two fields will be non-null.
+  @Nullable 
+  private final Keyset keyset;
+  @Nullable
+  private final IOException exception;
 
-  SignaturePemKeysetReader(List<PemKey> pemKeys) {
-    // Make a copy to avoid modifications by the caller.
-    this.pemKeys = new ArrayList<>(pemKeys);
+  private SignaturePemKeysetReader(Keyset keyset, IOException exception) {
+    if (keyset == null && exception == null) {
+      throw new IllegalArgumentException("Exactly one of keyset and exception must be non-null.");
+    }
+    if (keyset != null && exception != null) {
+      throw new IllegalArgumentException("Exactly one of keyset and exception must be non-null.");
+    }
+    this.keyset = keyset;
+    this.exception = exception;
   }
 
   /** Returns a {@link Builder} for {@link SignaturePemKeysetReader}. */
@@ -84,8 +94,37 @@ public final class SignaturePemKeysetReader implements KeysetReader {
 
     Builder() {}
 
+    // TODO(b/470859537): Make this public.
+    private KeysetHandle buildKeysetHandle() throws GeneralSecurityException {
+      KeysetHandle.Builder builder = KeysetHandle.newBuilder();
+      for (PemKey pemKey : pemKeys) {
+        BufferedReader reader = new BufferedReader(new StringReader(pemKey.pem));
+        for (Key key = readKey(reader, pemKey.type);
+            key != null;
+            key = readKey(reader, pemKey.type)) {
+          builder.addEntry(KeysetHandle.importKey(key).withRandomId());
+        }
+      }
+      if (builder.size() == 0) {
+        throw new GeneralSecurityException("cannot find any key");
+      }
+      builder.getAt(0).makePrimary();
+      return builder.build();
+    }
+
     public KeysetReader build() {
-      return new SignaturePemKeysetReader(pemKeys);
+      Keyset keyset = null;
+      IOException exception = null;
+      try {
+        KeysetHandle handle = buildKeysetHandle();
+        byte[] bytes = TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle);
+        keyset = Keyset.parseFrom(bytes, ExtensionRegistryLite.getEmptyRegistry());
+      } catch (GeneralSecurityException e) {
+        exception = new IOException(e);
+      } catch (IOException e) {
+        exception = e;
+      }
+      return new SignaturePemKeysetReader(keyset, exception);
     }
 
     /**
@@ -113,26 +152,10 @@ public final class SignaturePemKeysetReader implements KeysetReader {
 
   @Override
   public Keyset read() throws IOException {
-    try{
-      KeysetHandle.Builder builder = KeysetHandle.newBuilder();
-      for (PemKey pemKey : pemKeys) {
-        BufferedReader reader = new BufferedReader(new StringReader(pemKey.pem));
-        for (Key key = readKey(reader, pemKey.type);
-            key != null;
-            key = readKey(reader, pemKey.type)) {
-          builder.addEntry(KeysetHandle.importKey(key).withRandomId());
-        }
-      }
-      if (builder.size() == 0) {
-        throw new IOException("cannot find any key");
-      }
-      builder.getAt(0).makePrimary();
-      KeysetHandle handle = builder.build();
-      byte[] bytes = TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle);
-      return Keyset.parseFrom(bytes, ExtensionRegistryLite.getEmptyRegistry());
-    } catch (GeneralSecurityException e) {
-      throw new IOException(e);
+    if (exception != null) {
+      throw exception;
     }
+    return keyset;
   }
 
   @Override
@@ -178,8 +201,13 @@ public final class SignaturePemKeysetReader implements KeysetReader {
   /** Reads a single PEM key from {@code reader}. Invalid or unparsable PEM would be ignored */
   @Nullable
   private static Key readKey(BufferedReader reader, PemKeyType pemKeyType)
-      throws GeneralSecurityException, IOException {
-    EncodedKeySpec keySpec = PemUtil.parsePemToKeySpec(reader);
+      throws GeneralSecurityException {
+    EncodedKeySpec keySpec;
+    try {
+      keySpec = PemUtil.parsePemToKeySpec(reader);
+    } catch (IOException e) {
+      throw new GeneralSecurityException("Failed to parse PEM key", e);
+    }
     if (!(keySpec instanceof X509EncodedKeySpec)) {
       return null;
     }
