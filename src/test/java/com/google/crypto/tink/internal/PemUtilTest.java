@@ -68,6 +68,42 @@ public final class PemUtilTest {
   }
 
   @Test
+  public void parsePublicKey_withStuffBeforeMarker_works() throws Exception {
+    String ecPublicKeyPem =
+        "some stuff\nbefore\nmarker\n-----BEGIN PUBLIC KEY-----\n"
+            + "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7BiT5K5pivl4Qfrt9hRhRREMUzj/\n"
+            + "8suEJ7GlMxZfvdcpbi/GhYPuJi8Gn2H1NaMJZcLZo5MLPKyyGT5u3u1VBQ==\n"
+            + "-----END PUBLIC KEY-----\n";
+    BufferedReader reader = new BufferedReader(new StringReader(ecPublicKeyPem));
+    EncodedKeySpec keySpec = PemUtil.parsePemToKeySpec(reader);
+    assertThat(keySpec).isInstanceOf(X509EncodedKeySpec.class);
+    assertThat(keySpec.getEncoded())
+        .isEqualTo(
+            Base64.decode(
+                "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7BiT5K5pivl4Qfrt9hRhRREMUzj/\n"
+                    + "8suEJ7GlMxZfvdcpbi/GhYPuJi8Gn2H1NaMJZcLZo5MLPKyyGT5u3u1VBQ=="));
+  }
+
+  @Test
+  public void parsePublicKey_withHeaders_shouldIgnoreHeaderAndReturnKey() throws Exception {
+    String ecPublicKeyPem =
+        "-----BEGIN PUBLIC KEY-----\n"
+            + "attribute: value\n"
+            + "attribute2: value2\n"
+            + "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7BiT5K5pivl4Qfrt9hRhRREMUzj/\n"
+            + "8suEJ7GlMxZfvdcpbi/GhYPuJi8Gn2H1NaMJZcLZo5MLPKyyGT5u3u1VBQ==\n"
+            + "-----END PUBLIC KEY-----\n";
+    BufferedReader reader = new BufferedReader(new StringReader(ecPublicKeyPem));
+    EncodedKeySpec keySpec = PemUtil.parsePemToKeySpec(reader);
+    assertThat(keySpec).isInstanceOf(X509EncodedKeySpec.class);
+    assertThat(keySpec.getEncoded())
+        .isEqualTo(
+            Base64.decode(
+                "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7BiT5K5pivl4Qfrt9hRhRREMUzj/\n"
+                    + "8suEJ7GlMxZfvdcpbi/GhYPuJi8Gn2H1NaMJZcLZo5MLPKyyGT5u3u1VBQ=="));
+  }
+
+  @Test
   public void parsePrivateKeyWithPrefix_shouldWork() throws Exception {
     String ecPrivateKeyPem =
         "-----BEGIN MY KEY TYPE PRIVATE KEY-----\n"
@@ -103,6 +139,19 @@ public final class PemUtilTest {
                 "MHcCAQEEIBZJ/P6e1I/nQiBnQxx9aYDPAjwUtbV9Nffuzfubyuw8oAoGCCqGSM49"
                     + "AwEHoUQDQgAEKSPVJGELbULai+viQc3Zz95+x2NiFvjsDlqmh6rDNeiVuwiwdf5l"
                     + "lyZ0gbLJ/vheUAwtcA2z0csWU60MfBup3Q=="));
+  }
+
+  @Test
+  public void parsePublicKey_withIncorrectMarker_shouldReturnNull() throws Exception {
+    // This uses four "-" instead of five, which is incorrect.
+    String pemWithIncorrectMarker =
+        "----BEGIN PUBLIC KEY----\n"
+            + "some-header: some value\n"
+            + "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7BiT5K5pivl4Qfrt9hRhRREMUzj/\n"
+            + "8suEJ7GlMxZfvdcpbi/GhYPuJi8Gn2H1NaMJZcLZo5MLPKyyGT5u3u1VBQ==\n"
+            + "----END PUBLIC KEY----\n";
+    BufferedReader reader = new BufferedReader(new StringReader(pemWithIncorrectMarker));
+    assertThat(PemUtil.parsePemToKeySpec(reader)).isNull();
   }
 
   @Test
