@@ -20,6 +20,7 @@ def _jar_jar_impl(ctx):
     ctx.actions.run(
         inputs = [ctx.file.rules, ctx.file.input_jar],
         outputs = [ctx.outputs.jar],
+        mnemonic = "TinkJarJar",
         executable = ctx.executable._jarjar,
         progress_message = "jarjar %s" % ctx.label,
         arguments = ["process", ctx.file.rules.path, ctx.file.input_jar.path, ctx.outputs.jar.path],
