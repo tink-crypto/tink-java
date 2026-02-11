@@ -583,6 +583,65 @@ public final class SignaturePemKeysetReaderTest {
         .isEqualTo(KeyMaterialType.ASYMMETRIC_PUBLIC);
   }
 
+  @Test
+  public void readEd25519PublicKey_works() throws Exception {
+    // from RFC 8410, Section 10.1
+    String ed25519PublicKeyPem =
+        "-----BEGIN PUBLIC KEY-----\n"
+         + "MCowBQYDK2VwAyEAGb9ECWmEzf6FQbrBZ9w7lshQhqowtrbLDFw4rXAxZuE=\n"
+         + "-----END PUBLIC KEY-----\n";
+    byte[] expectedKeyBytes = Hex.decode(
+        "19bf44096984cdfe8541bac167dc3b96c85086aa30b6b6cb0c5c38ad703166e1");
+
+    KeysetHandle handle = LegacyKeysetSerialization.parseKeysetWithoutSecret(
+        SignaturePemKeysetReader.newBuilder()
+            .addPem(ed25519PublicKeyPem, PemKeyType.ED25519)
+            .build());
+
+    assertThat(handle.size()).isEqualTo(1);
+    Ed25519PublicKey publicKey = (Ed25519PublicKey) handle.getAt(0).getKey();
+    assertThat(publicKey.getPublicKeyBytes().toByteArray()).isEqualTo(expectedKeyBytes);
+  }
+
+  @Test
+  public void ed25519_wrongPem_isIgnored() throws Exception {
+    String ecPublicKeyPem =
+        "-----BEGIN PUBLIC KEY-----\n"
+            + "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7BiT5K5pivl4Qfrt9hRhRREMUzj/\n"
+            + "8suEJ7GlMxZfvdcpbi/GhYPuJi8Gn2H1NaMJZcLZo5MLPKyyGT5u3u1VBQ==\n"
+            + "-----END PUBLIC KEY-----\n";
+    String ed25519PublicKeyPem =
+        "-----BEGIN PUBLIC KEY-----\n"
+         + "MCowBQYDK2VwAyEAGb9ECWmEzf6FQbrBZ9w7lshQhqowtrbLDFw4rXAxZuE=\n"
+         + "-----END PUBLIC KEY-----\n";
+
+    KeysetHandle handle = LegacyKeysetSerialization.parseKeysetWithoutSecret(
+        SignaturePemKeysetReader.newBuilder()
+            .addPem(ecPublicKeyPem, PemKeyType.ED25519)  // wrong PEM format. Is ignored.
+            .addPem(ed25519PublicKeyPem, PemKeyType.ED25519)
+            .build());
+    assertThat(handle.size()).isEqualTo(1);
+  }
+
+  @Test
+  public void ed25519_invalidPem_isIgnored() throws Exception {
+    String ed25519PublicKeyPem =
+        "-----BEGIN PUBLIC KEY-----\n"
+         + "MCowBQYDK2VwAyEAGb9ECWmEzf6FQbrBZ9w7lshQhqowtrbLDFw4rXAxZuE=\n"
+         + "-----END PUBLIC KEY-----\n";
+    String invalidEd25519Pem =
+        "-----BEGIN PUBLIC KEY-----\n"
+         + "MCowBQYDK2VwAyEAGb9ECWmEzf6FQbrBZ9w7lshQhqowtrbL\n"
+         + "-----END PUBLIC KEY-----\n";
+
+    KeysetHandle handle = LegacyKeysetSerialization.parseKeysetWithoutSecret(
+        SignaturePemKeysetReader.newBuilder()
+            .addPem(invalidEd25519Pem, PemKeyType.ED25519) // invalid PEM. Is ignored.
+            .addPem(ed25519PublicKeyPem, PemKeyType.ED25519)
+            .build());
+    assertThat(handle.size()).isEqualTo(1);
+  }
+
   // From:
   // https://datatracker.ietf.org/doc/html/rfc9881#name-example-public-keys
   private static final String ML_DSA_65_PUBLIC_KEY_PEM =
@@ -926,7 +985,16 @@ public final class SignaturePemKeysetReaderTest {
         PemKeyType.ECDSA_P521_SHA512,
         Hex.decode("4d7367"),
         Hex.decode(
-            "30818602415adc833cbc1d6141ced457bab2b01b0814054d7a28fa8bb2925d1e7525b7cf7d5c938a17abfb33426dcc05ce8d44db02f53a75ea04017dca51e1fbb14ce3311b1402415f69b2a6de129147a8437b79c72315d35173d88c2d6119085c90dae8ec05c55e067e7dfa4f681035e3dccab099291c0ecf4428332a9cb0736d16e79111ac76d766"))
+            "30818602415adc833cbc1d6141ced457bab2b01b0814054d7a28fa8bb2925d1e7525b7cf7d5c938a17abfb33426dcc05ce8d44db02f53a75ea04017dca51e1fbb14ce3311b1402415f69b2a6de129147a8437b79c72315d35173d88c2d6119085c90dae8ec05c55e067e7dfa4f681035e3dccab099291c0ecf4428332a9cb0736d16e79111ac76d766")),
+    // from wycheproof/testvectors_v1/ed25519_test.json
+    new PemTestVector(
+        "-----BEGIN PUBLIC KEY-----\n"
+            + "MCowBQYDK2VwAyEA11qYAYKxCrfVS/7TyWQHOg7hcvPapiMlrwIaaPcHURo=\n"
+            + "-----END PUBLIC KEY-----\n",
+        PemKeyType.ED25519,
+        Hex.decode(""),
+        Hex.decode("e5564300c360ac729086e2cc806e828a84877f1eb8e5d974d873e06522490155"
+                        + "5fb8821590a33bacc61e39701cf9b46bd25bf5f0595bbe24655141438e7a100b"))
   };
 
   @Theory

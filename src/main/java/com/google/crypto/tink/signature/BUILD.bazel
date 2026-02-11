@@ -26,6 +26,7 @@ java_library(
     deps = [
         ":ecdsa_parameters",
         ":ecdsa_public_key",
+        ":ed25519_public_key",
         ":ml_dsa_parameters",
         ":ml_dsa_public_key",
         ":rsa_ssa_pkcs1_parameters",
@@ -538,6 +539,7 @@ android_library(
     deps = [
         ":ecdsa_parameters-android",
         ":ecdsa_public_key-android",
+        ":ed25519_public_key-android",
         ":ml_dsa_parameters-android",
         ":ml_dsa_public_key-android",
         ":rsa_ssa_pkcs1_parameters-android",

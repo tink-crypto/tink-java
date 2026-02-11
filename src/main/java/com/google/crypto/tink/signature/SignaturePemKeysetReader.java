@@ -67,7 +67,7 @@ import javax.annotation.Nullable;
  */
 public final class SignaturePemKeysetReader implements KeysetReader {
   // Exactly one of these two fields will be non-null.
-  @Nullable 
+  @Nullable
   private final Keyset keyset;
   @Nullable
   private final IOException exception;
@@ -223,6 +223,8 @@ public final class SignaturePemKeysetReader implements KeysetReader {
       case ECDSA_P384_SHA384:
       case ECDSA_P521_SHA512:
         return convertEcdsaPublicKey(pemKeyType, x509KeySpec);
+      case ED25519:
+        return convertEd25519PublicKey(x509KeySpec);
       case ML_DSA_65:
         return convertMlDsa65PublicKey(x509KeySpec);
       default:
@@ -378,6 +380,25 @@ public final class SignaturePemKeysetReader implements KeysetReader {
           .setParameters(getEcdsaParameters(pemKeyType))
           .setPublicPoint(key.getW())
           .build();
+  }
+
+  // RFC 8410 defines the Ed25519 x509 public key encoding. This encoding always has the same
+  // preamble, followed by the raw public key value.
+  private static final byte[] x509PreambleEd25519 = Hex.decode("302a300506032b6570032100");
+
+  @Nullable
+  @AccessesPartialKey
+  private static Key convertEd25519PublicKey(X509EncodedKeySpec keySpec)
+      throws GeneralSecurityException {
+    byte[] encodedKey = keySpec.getEncoded();
+    if (!Util.isPrefix(x509PreambleEd25519, encodedKey)) {
+      return null;
+    }
+    byte[] keyValue = Arrays.copyOfRange(encodedKey, x509PreambleEd25519.length, encodedKey.length);
+    if (keyValue.length != 32) {
+      return null;
+    }
+    return Ed25519PublicKey.create(Bytes.copyFrom(keyValue));
   }
 
   private static final MlDsaParameters ML_DSA_65_PARAMS =
