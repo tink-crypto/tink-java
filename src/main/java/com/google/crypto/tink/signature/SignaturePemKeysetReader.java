@@ -202,12 +202,7 @@ public final class SignaturePemKeysetReader implements KeysetReader {
   @Nullable
   private static Key readKey(BufferedReader reader, PemKeyType pemKeyType)
       throws GeneralSecurityException {
-    EncodedKeySpec keySpec;
-    try {
-      keySpec = PemUtil.parsePemToKeySpec(reader);
-    } catch (IOException e) {
-      throw new GeneralSecurityException("Failed to parse PEM key", e);
-    }
+    EncodedKeySpec keySpec = PemUtil.parsePemToKeySpec(reader);
     if (!(keySpec instanceof X509EncodedKeySpec)) {
       return null;
     }

@@ -40,41 +40,46 @@ public final class PemUtil {
    * X509EncodedKeySpec.
    */
   @Nullable
-  public static EncodedKeySpec parsePemToKeySpec(BufferedReader reader) throws IOException {
-    String line = reader.readLine();
-    while (line != null && !line.startsWith(BEGIN)) {
-      line = reader.readLine();
-    }
-    if (line == null) {
+  public static EncodedKeySpec parsePemToKeySpec(BufferedReader reader) {
+    try{
+      String line = reader.readLine();
+      while (line != null && !line.startsWith(BEGIN)) {
+        line = reader.readLine();
+      }
+      if (line == null) {
+        return null;
+      }
+
+      line = line.trim().substring(BEGIN.length());
+      int index = line.indexOf(MARKER);
+      if (index < 0) {
+        return null;
+      }
+      String type = line.substring(0, index);
+      String endMarker = END + type + MARKER;
+      StringBuilder base64key = new StringBuilder();
+
+      while ((line = reader.readLine()) != null) {
+        if (line.indexOf(":") > 0) {
+          // header, ignore
+          continue;
+        }
+        if (line.contains(endMarker)) {
+          break;
+        }
+        base64key.append(line);
+      }
+      byte[] key = Base64.decode(base64key.toString(), Base64.DEFAULT);
+      if (type.contains(PUBLIC_KEY)) {
+        return new X509EncodedKeySpec(key);
+      } else if (type.contains(PRIVATE_KEY)) {
+        return new PKCS8EncodedKeySpec(key);
+      }
+      return null;
+    } catch (IOException e) {
+      // reader.readLine() failed. Probably never happens.
       return null;
     }
-
-    line = line.trim().substring(BEGIN.length());
-    int index = line.indexOf(MARKER);
-    if (index < 0) {
-      return null;
-    }
-    String type = line.substring(0, index);
-    String endMarker = END + type + MARKER;
-    StringBuilder base64key = new StringBuilder();
-
-    while ((line = reader.readLine()) != null) {
-      if (line.indexOf(":") > 0) {
-        // header, ignore
-        continue;
-      }
-      if (line.contains(endMarker)) {
-        break;
-      }
-      base64key.append(line);
-    }
-    byte[] key = Base64.decode(base64key.toString(), Base64.DEFAULT);
-    if (type.contains(PUBLIC_KEY)) {
-      return new X509EncodedKeySpec(key);
-    } else if (type.contains(PRIVATE_KEY)) {
-      return new PKCS8EncodedKeySpec(key);
-    }
-    return null;
   }
 
   private PemUtil() {}
