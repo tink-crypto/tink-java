@@ -50,6 +50,20 @@ public final class JwtEcdsaPrivateKey extends JwtSignaturePrivateKey {
     return new JwtEcdsaPrivateKey(publicKey, ecdsaPrivateKey);
   }
 
+  @RestrictedApi(
+      explanation = "Accessing parts of keys can produce unexpected incompatibilities, annotate the function with @AccessesPartialKey",
+      link = "https://developers.google.com/tink/design/access_control#accessing_partial_keys",
+      allowedOnPath = ".*Test\\.java",
+      allowlistAnnotations = {AccessesPartialKey.class})
+  @AccessesPartialKey
+  static JwtEcdsaPrivateKey create(JwtEcdsaPublicKey publicKey, EcdsaPrivateKey ecdsaPrivateKey)
+      throws GeneralSecurityException {
+    if (!ecdsaPrivateKey.getPublicKey().equalsKey(publicKey.getEcdsaPublicKey())) {
+      throw new GeneralSecurityException("public key does not match the private key");
+    }
+    return new JwtEcdsaPrivateKey(publicKey, ecdsaPrivateKey);
+  }
+
   private JwtEcdsaPrivateKey(JwtEcdsaPublicKey publicKey, EcdsaPrivateKey ecdsaPrivateKey) {
     this.publicKey = publicKey;
     this.ecdsaPrivateKey = ecdsaPrivateKey;

@@ -328,10 +328,15 @@ public class JwtSignatureConfigurationV0Test {
               .setParameters(jwtEcdsaEs256RawParameters)
               .setPublicPoint(P256_PUBLIC_POINT)
               .build();
+      EcdsaPrivateKey ecdsaEs256PrivateKey =
+          EcdsaPrivateKey.builder()
+              .setPublicKey(jwtEcdsaEs256RawPublicKey.getEcdsaPublicKey())
+              .setPrivateValue(
+                  SecretBigInteger.fromBigInteger(
+                      P256_PRIVATE_VALUE, InsecureSecretKeyAccess.get()))
+              .build();
       JwtEcdsaPrivateKey jwtEcdsaEs256RawPrivateKey =
-          JwtEcdsaPrivateKey.create(
-              jwtEcdsaEs256RawPublicKey,
-              SecretBigInteger.fromBigInteger(P256_PRIVATE_VALUE, InsecureSecretKeyAccess.get()));
+          JwtEcdsaPrivateKey.create(jwtEcdsaEs256RawPublicKey, ecdsaEs256PrivateKey);
 
       JwtEcdsaParameters jwtEcdsaEs256Parameters =
           JwtEcdsaParameters.builder()
@@ -345,9 +350,7 @@ public class JwtSignatureConfigurationV0Test {
               .setIdRequirement(123)
               .build();
       JwtEcdsaPrivateKey jwtEcdsaEs256PrivateKey =
-          JwtEcdsaPrivateKey.create(
-              jwtEcdsaEs256PublicKey,
-              SecretBigInteger.fromBigInteger(P256_PRIVATE_VALUE, InsecureSecretKeyAccess.get()));
+          JwtEcdsaPrivateKey.create(jwtEcdsaEs256PublicKey, ecdsaEs256PrivateKey);
 
       JwtEcdsaParameters jwtEcdsaEs256CustomKidParameters =
           JwtEcdsaParameters.builder()
@@ -361,9 +364,7 @@ public class JwtSignatureConfigurationV0Test {
               .setCustomKid(CUSTOM_KID_VALUE)
               .build();
       JwtEcdsaPrivateKey jwtEcdsaEs256CustomKidPrivateKey =
-          JwtEcdsaPrivateKey.create(
-              jwtEcdsaEs256CustomKidPublicKey,
-              SecretBigInteger.fromBigInteger(P256_PRIVATE_VALUE, InsecureSecretKeyAccess.get()));
+          JwtEcdsaPrivateKey.create(jwtEcdsaEs256CustomKidPublicKey, ecdsaEs256PrivateKey);
 
       JwtEcdsaPublicKey jwtEcdsaEs256WrongKidPublicKey =
           JwtEcdsaPublicKey.builder()
@@ -372,9 +373,7 @@ public class JwtSignatureConfigurationV0Test {
               .setCustomKid("wrong")
               .build();
       JwtEcdsaPrivateKey jwtEcdsaEs256WrongKidPrivateKey =
-          JwtEcdsaPrivateKey.create(
-              jwtEcdsaEs256WrongKidPublicKey,
-              SecretBigInteger.fromBigInteger(P256_PRIVATE_VALUE, InsecureSecretKeyAccess.get()));
+          JwtEcdsaPrivateKey.create(jwtEcdsaEs256WrongKidPublicKey, ecdsaEs256PrivateKey);
 
       JwtEcdsaParameters jwtEcdsaEs512RawParameters =
           JwtEcdsaParameters.builder()
@@ -386,10 +385,15 @@ public class JwtSignatureConfigurationV0Test {
               .setParameters(jwtEcdsaEs512RawParameters)
               .setPublicPoint(P521_PUBLIC_POINT)
               .build();
+      EcdsaPrivateKey ecdsaEs512PrivateKey =
+          EcdsaPrivateKey.builder()
+              .setPublicKey(jwtEcdsaEs512RawPublicKey.getEcdsaPublicKey())
+              .setPrivateValue(
+                  SecretBigInteger.fromBigInteger(
+                      P521_PRIVATE_VALUE, InsecureSecretKeyAccess.get()))
+              .build();
       JwtEcdsaPrivateKey jwtEcdsaEs512RawPrivateKey =
-          JwtEcdsaPrivateKey.create(
-              jwtEcdsaEs512RawPublicKey,
-              SecretBigInteger.fromBigInteger(P521_PRIVATE_VALUE, InsecureSecretKeyAccess.get()));
+          JwtEcdsaPrivateKey.create(jwtEcdsaEs512RawPublicKey, ecdsaEs512PrivateKey);
 
       JwtEcdsaParameters jwtEcdsaEs512Parameters =
           JwtEcdsaParameters.builder()
@@ -403,9 +407,7 @@ public class JwtSignatureConfigurationV0Test {
               .setIdRequirement(123)
               .build();
       JwtEcdsaPrivateKey jwtEcdsaEs512PrivateKey =
-          JwtEcdsaPrivateKey.create(
-              jwtEcdsaEs512PublicKey,
-              SecretBigInteger.fromBigInteger(P521_PRIVATE_VALUE, InsecureSecretKeyAccess.get()));
+          JwtEcdsaPrivateKey.create(jwtEcdsaEs512PublicKey, ecdsaEs512PrivateKey);
 
       JwtEcdsaParameters jwtEcdsaEs512CustomKidParameters =
           JwtEcdsaParameters.builder()
@@ -419,9 +421,7 @@ public class JwtSignatureConfigurationV0Test {
               .setCustomKid(CUSTOM_KID_VALUE)
               .build();
       JwtEcdsaPrivateKey jwtEcdsaEs512CustomKidPrivateKey =
-          JwtEcdsaPrivateKey.create(
-              jwtEcdsaEs512CustomKidPublicKey,
-              SecretBigInteger.fromBigInteger(P521_PRIVATE_VALUE, InsecureSecretKeyAccess.get()));
+          JwtEcdsaPrivateKey.create(jwtEcdsaEs512CustomKidPublicKey, ecdsaEs512PrivateKey);
 
       JwtEcdsaPublicKey jwtEcdsaEs512WrongKidPublicKey =
           JwtEcdsaPublicKey.builder()
@@ -430,9 +430,7 @@ public class JwtSignatureConfigurationV0Test {
               .setCustomKid("wrong")
               .build();
       JwtEcdsaPrivateKey jwtEcdsaEs512WrongKidPrivateKey =
-          JwtEcdsaPrivateKey.create(
-              jwtEcdsaEs512WrongKidPublicKey,
-              SecretBigInteger.fromBigInteger(P521_PRIVATE_VALUE, InsecureSecretKeyAccess.get()));
+          JwtEcdsaPrivateKey.create(jwtEcdsaEs512WrongKidPublicKey, ecdsaEs512PrivateKey);
 
       JwtEcdsaParameters jwtEcdsaEs384RawParameters =
           JwtEcdsaParameters.builder()
@@ -444,10 +442,15 @@ public class JwtSignatureConfigurationV0Test {
               .setParameters(jwtEcdsaEs384RawParameters)
               .setPublicPoint(P384_PUBLIC_POINT)
               .build();
+      EcdsaPrivateKey ecdsaEs384PrivateKey =
+          EcdsaPrivateKey.builder()
+              .setPublicKey(jwtEcdsaEs384RawPublicKey.getEcdsaPublicKey())
+              .setPrivateValue(
+                  SecretBigInteger.fromBigInteger(
+                      P384_PRIVATE_VALUE, InsecureSecretKeyAccess.get()))
+              .build();
       JwtEcdsaPrivateKey jwtEcdsaEs384RawPrivateKey =
-          JwtEcdsaPrivateKey.create(
-              jwtEcdsaEs384RawPublicKey,
-              SecretBigInteger.fromBigInteger(P384_PRIVATE_VALUE, InsecureSecretKeyAccess.get()));
+          JwtEcdsaPrivateKey.create(jwtEcdsaEs384RawPublicKey, ecdsaEs384PrivateKey);
 
       JwtEcdsaParameters jwtEcdsaEs384Parameters =
           JwtEcdsaParameters.builder()
@@ -461,9 +464,7 @@ public class JwtSignatureConfigurationV0Test {
               .setIdRequirement(123)
               .build();
       JwtEcdsaPrivateKey jwtEcdsaEs384PrivateKey =
-          JwtEcdsaPrivateKey.create(
-              jwtEcdsaEs384PublicKey,
-              SecretBigInteger.fromBigInteger(P384_PRIVATE_VALUE, InsecureSecretKeyAccess.get()));
+          JwtEcdsaPrivateKey.create(jwtEcdsaEs384PublicKey, ecdsaEs384PrivateKey);
 
       JwtEcdsaParameters jwtEcdsaEs384CustomKidParameters =
           JwtEcdsaParameters.builder()
@@ -477,9 +478,7 @@ public class JwtSignatureConfigurationV0Test {
               .setCustomKid(CUSTOM_KID_VALUE)
               .build();
       JwtEcdsaPrivateKey jwtEcdsaEs384CustomKidPrivateKey =
-          JwtEcdsaPrivateKey.create(
-              jwtEcdsaEs384CustomKidPublicKey,
-              SecretBigInteger.fromBigInteger(P384_PRIVATE_VALUE, InsecureSecretKeyAccess.get()));
+          JwtEcdsaPrivateKey.create(jwtEcdsaEs384CustomKidPublicKey, ecdsaEs384PrivateKey);
 
       JwtEcdsaPublicKey jwtEcdsaEs384WrongKidPublicKey =
           JwtEcdsaPublicKey.builder()
@@ -488,9 +487,7 @@ public class JwtSignatureConfigurationV0Test {
               .setCustomKid("wrong")
               .build();
       JwtEcdsaPrivateKey jwtEcdsaEs384WrongKidPrivateKey =
-          JwtEcdsaPrivateKey.create(
-              jwtEcdsaEs384WrongKidPublicKey,
-              SecretBigInteger.fromBigInteger(P384_PRIVATE_VALUE, InsecureSecretKeyAccess.get()));
+          JwtEcdsaPrivateKey.create(jwtEcdsaEs384WrongKidPublicKey, ecdsaEs384PrivateKey);
 
       JwtRsaSsaPkcs1Parameters jwtRsaSsaPkcs1Raw2048Parameters =
           JwtRsaSsaPkcs1Parameters.builder()
@@ -504,9 +501,9 @@ public class JwtSignatureConfigurationV0Test {
               .setParameters(jwtRsaSsaPkcs1Raw2048Parameters)
               .setModulus(MODULUS)
               .build();
-      JwtRsaSsaPkcs1PrivateKey jwtRsaSsaPkcs1Raw2048PrivateKey =
-          JwtRsaSsaPkcs1PrivateKey.builder()
-              .setPublicKey(jwtRsaSsaPkcs1Raw2048PublicKey)
+      RsaSsaPkcs1PrivateKey rsaSsaPkcs12048PrivateKey =
+          RsaSsaPkcs1PrivateKey.builder()
+              .setPublicKey(jwtRsaSsaPkcs1Raw2048PublicKey.getRsaSsaPkcs1PublicKey())
               .setPrimes(
                   SecretBigInteger.fromBigInteger(P, InsecureSecretKeyAccess.get()),
                   SecretBigInteger.fromBigInteger(Q, InsecureSecretKeyAccess.get()))
@@ -516,6 +513,11 @@ public class JwtSignatureConfigurationV0Test {
                   SecretBigInteger.fromBigInteger(DQ, InsecureSecretKeyAccess.get()))
               .setCrtCoefficient(
                   SecretBigInteger.fromBigInteger(Q_INV, InsecureSecretKeyAccess.get()))
+              .build();
+      JwtRsaSsaPkcs1PrivateKey jwtRsaSsaPkcs1Raw2048PrivateKey =
+          JwtRsaSsaPkcs1PrivateKey.builder()
+              .setPublicKey(jwtRsaSsaPkcs1Raw2048PublicKey)
+              .setRsaSsaPkcs1PrivateKey(rsaSsaPkcs12048PrivateKey)
               .build();
 
       JwtRsaSsaPkcs1Parameters jwtRsaSsaPkcs1Kid2048Parameters =
@@ -534,15 +536,7 @@ public class JwtSignatureConfigurationV0Test {
       JwtRsaSsaPkcs1PrivateKey jwtRsaSsaPkcs1Kid2048PrivateKey =
           JwtRsaSsaPkcs1PrivateKey.builder()
               .setPublicKey(jwtRsaSsaPkcs1Kid2048PublicKey)
-              .setPrimes(
-                  SecretBigInteger.fromBigInteger(P, InsecureSecretKeyAccess.get()),
-                  SecretBigInteger.fromBigInteger(Q, InsecureSecretKeyAccess.get()))
-              .setPrivateExponent(SecretBigInteger.fromBigInteger(D, InsecureSecretKeyAccess.get()))
-              .setPrimeExponents(
-                  SecretBigInteger.fromBigInteger(DP, InsecureSecretKeyAccess.get()),
-                  SecretBigInteger.fromBigInteger(DQ, InsecureSecretKeyAccess.get()))
-              .setCrtCoefficient(
-                  SecretBigInteger.fromBigInteger(Q_INV, InsecureSecretKeyAccess.get()))
+              .setRsaSsaPkcs1PrivateKey(rsaSsaPkcs12048PrivateKey)
               .build();
 
       JwtRsaSsaPkcs1Parameters jwtRsaSsaPkcs1CustomKid2048Parameters =
@@ -561,15 +555,7 @@ public class JwtSignatureConfigurationV0Test {
       JwtRsaSsaPkcs1PrivateKey jwtRsaSsaPkcs1CustomKid2048PrivateKey =
           JwtRsaSsaPkcs1PrivateKey.builder()
               .setPublicKey(jwtRsaSsaPkcs1CustomKid2048PublicKey)
-              .setPrimes(
-                  SecretBigInteger.fromBigInteger(P, InsecureSecretKeyAccess.get()),
-                  SecretBigInteger.fromBigInteger(Q, InsecureSecretKeyAccess.get()))
-              .setPrivateExponent(SecretBigInteger.fromBigInteger(D, InsecureSecretKeyAccess.get()))
-              .setPrimeExponents(
-                  SecretBigInteger.fromBigInteger(DP, InsecureSecretKeyAccess.get()),
-                  SecretBigInteger.fromBigInteger(DQ, InsecureSecretKeyAccess.get()))
-              .setCrtCoefficient(
-                  SecretBigInteger.fromBigInteger(Q_INV, InsecureSecretKeyAccess.get()))
+              .setRsaSsaPkcs1PrivateKey(rsaSsaPkcs12048PrivateKey)
               .build();
 
       JwtRsaSsaPkcs1Parameters jwtRsaSsaPkcs1Raw3072Parameters =
@@ -584,9 +570,9 @@ public class JwtSignatureConfigurationV0Test {
               .setParameters(jwtRsaSsaPkcs1Raw3072Parameters)
               .setModulus(MODULUS_3072)
               .build();
-      JwtRsaSsaPkcs1PrivateKey jwtRsaSsaPkcs1Raw3072PrivateKey =
-          JwtRsaSsaPkcs1PrivateKey.builder()
-              .setPublicKey(jwtRsaSsaPkcs1Raw3072PublicKey)
+      RsaSsaPkcs1PrivateKey rsaSsaPkcs13072PrivateKey =
+          RsaSsaPkcs1PrivateKey.builder()
+              .setPublicKey(jwtRsaSsaPkcs1Raw3072PublicKey.getRsaSsaPkcs1PublicKey())
               .setPrimes(
                   SecretBigInteger.fromBigInteger(P_3072, InsecureSecretKeyAccess.get()),
                   SecretBigInteger.fromBigInteger(Q_3072, InsecureSecretKeyAccess.get()))
@@ -597,6 +583,11 @@ public class JwtSignatureConfigurationV0Test {
                   SecretBigInteger.fromBigInteger(DQ_3072, InsecureSecretKeyAccess.get()))
               .setCrtCoefficient(
                   SecretBigInteger.fromBigInteger(Q_INV_3072, InsecureSecretKeyAccess.get()))
+              .build();
+      JwtRsaSsaPkcs1PrivateKey jwtRsaSsaPkcs1Raw3072PrivateKey =
+          JwtRsaSsaPkcs1PrivateKey.builder()
+              .setPublicKey(jwtRsaSsaPkcs1Raw3072PublicKey)
+              .setRsaSsaPkcs1PrivateKey(rsaSsaPkcs13072PrivateKey)
               .build();
 
       JwtRsaSsaPkcs1Parameters jwtRsaSsaPkcs1Kid3072Parameters =
@@ -615,16 +606,7 @@ public class JwtSignatureConfigurationV0Test {
       JwtRsaSsaPkcs1PrivateKey jwtRsaSsaPkcs1Kid3072PrivateKey =
           JwtRsaSsaPkcs1PrivateKey.builder()
               .setPublicKey(jwtRsaSsaPkcs1Kid3072PublicKey)
-              .setPrimes(
-                  SecretBigInteger.fromBigInteger(P_3072, InsecureSecretKeyAccess.get()),
-                  SecretBigInteger.fromBigInteger(Q_3072, InsecureSecretKeyAccess.get()))
-              .setPrivateExponent(
-                  SecretBigInteger.fromBigInteger(D_3072, InsecureSecretKeyAccess.get()))
-              .setPrimeExponents(
-                  SecretBigInteger.fromBigInteger(DP_3072, InsecureSecretKeyAccess.get()),
-                  SecretBigInteger.fromBigInteger(DQ_3072, InsecureSecretKeyAccess.get()))
-              .setCrtCoefficient(
-                  SecretBigInteger.fromBigInteger(Q_INV_3072, InsecureSecretKeyAccess.get()))
+              .setRsaSsaPkcs1PrivateKey(rsaSsaPkcs13072PrivateKey)
               .build();
 
       JwtRsaSsaPkcs1Parameters jwtRsaSsaPkcs1CustomKid3072Parameters =
@@ -643,16 +625,7 @@ public class JwtSignatureConfigurationV0Test {
       JwtRsaSsaPkcs1PrivateKey jwtRsaSsaPkcs1CustomKid3072PrivateKey =
           JwtRsaSsaPkcs1PrivateKey.builder()
               .setPublicKey(jwtRsaSsaPkcs1CustomKid3072PublicKey)
-              .setPrimes(
-                  SecretBigInteger.fromBigInteger(P_3072, InsecureSecretKeyAccess.get()),
-                  SecretBigInteger.fromBigInteger(Q_3072, InsecureSecretKeyAccess.get()))
-              .setPrivateExponent(
-                  SecretBigInteger.fromBigInteger(D_3072, InsecureSecretKeyAccess.get()))
-              .setPrimeExponents(
-                  SecretBigInteger.fromBigInteger(DP_3072, InsecureSecretKeyAccess.get()),
-                  SecretBigInteger.fromBigInteger(DQ_3072, InsecureSecretKeyAccess.get()))
-              .setCrtCoefficient(
-                  SecretBigInteger.fromBigInteger(Q_INV_3072, InsecureSecretKeyAccess.get()))
+              .setRsaSsaPkcs1PrivateKey(rsaSsaPkcs13072PrivateKey)
               .build();
 
       JwtRsaSsaPkcs1Parameters jwtRsaSsaPkcs1Raw4096Parameters =
@@ -667,9 +640,9 @@ public class JwtSignatureConfigurationV0Test {
               .setParameters(jwtRsaSsaPkcs1Raw4096Parameters)
               .setModulus(MODULUS_4096)
               .build();
-      JwtRsaSsaPkcs1PrivateKey jwtRsaSsaPkcs1Raw4096PrivateKey =
-          JwtRsaSsaPkcs1PrivateKey.builder()
-              .setPublicKey(jwtRsaSsaPkcs1Raw4096PublicKey)
+      RsaSsaPkcs1PrivateKey rsaSsaPkcs14096PrivateKey =
+          RsaSsaPkcs1PrivateKey.builder()
+              .setPublicKey(jwtRsaSsaPkcs1Raw4096PublicKey.getRsaSsaPkcs1PublicKey())
               .setPrimes(
                   SecretBigInteger.fromBigInteger(P_4096, InsecureSecretKeyAccess.get()),
                   SecretBigInteger.fromBigInteger(Q_4096, InsecureSecretKeyAccess.get()))
@@ -680,6 +653,11 @@ public class JwtSignatureConfigurationV0Test {
                   SecretBigInteger.fromBigInteger(DQ_4096, InsecureSecretKeyAccess.get()))
               .setCrtCoefficient(
                   SecretBigInteger.fromBigInteger(Q_INV_4096, InsecureSecretKeyAccess.get()))
+              .build();
+      JwtRsaSsaPkcs1PrivateKey jwtRsaSsaPkcs1Raw4096PrivateKey =
+          JwtRsaSsaPkcs1PrivateKey.builder()
+              .setPublicKey(jwtRsaSsaPkcs1Raw4096PublicKey)
+              .setRsaSsaPkcs1PrivateKey(rsaSsaPkcs14096PrivateKey)
               .build();
 
       JwtRsaSsaPkcs1Parameters jwtRsaSsaPkcs1Kid4096Parameters =
@@ -698,16 +676,7 @@ public class JwtSignatureConfigurationV0Test {
       JwtRsaSsaPkcs1PrivateKey jwtRsaSsaPkcs1Kid4096PrivateKey =
           JwtRsaSsaPkcs1PrivateKey.builder()
               .setPublicKey(jwtRsaSsaPkcs1Kid4096PublicKey)
-              .setPrimes(
-                  SecretBigInteger.fromBigInteger(P_4096, InsecureSecretKeyAccess.get()),
-                  SecretBigInteger.fromBigInteger(Q_4096, InsecureSecretKeyAccess.get()))
-              .setPrivateExponent(
-                  SecretBigInteger.fromBigInteger(D_4096, InsecureSecretKeyAccess.get()))
-              .setPrimeExponents(
-                  SecretBigInteger.fromBigInteger(DP_4096, InsecureSecretKeyAccess.get()),
-                  SecretBigInteger.fromBigInteger(DQ_4096, InsecureSecretKeyAccess.get()))
-              .setCrtCoefficient(
-                  SecretBigInteger.fromBigInteger(Q_INV_4096, InsecureSecretKeyAccess.get()))
+              .setRsaSsaPkcs1PrivateKey(rsaSsaPkcs14096PrivateKey)
               .build();
 
       JwtRsaSsaPkcs1Parameters jwtRsaSsaPkcs1CustomKid4096Parameters =
@@ -726,16 +695,7 @@ public class JwtSignatureConfigurationV0Test {
       JwtRsaSsaPkcs1PrivateKey jwtRsaSsaPkcs1CustomKid4096PrivateKey =
           JwtRsaSsaPkcs1PrivateKey.builder()
               .setPublicKey(jwtRsaSsaPkcs1CustomKid4096PublicKey)
-              .setPrimes(
-                  SecretBigInteger.fromBigInteger(P_4096, InsecureSecretKeyAccess.get()),
-                  SecretBigInteger.fromBigInteger(Q_4096, InsecureSecretKeyAccess.get()))
-              .setPrivateExponent(
-                  SecretBigInteger.fromBigInteger(D_4096, InsecureSecretKeyAccess.get()))
-              .setPrimeExponents(
-                  SecretBigInteger.fromBigInteger(DP_4096, InsecureSecretKeyAccess.get()),
-                  SecretBigInteger.fromBigInteger(DQ_4096, InsecureSecretKeyAccess.get()))
-              .setCrtCoefficient(
-                  SecretBigInteger.fromBigInteger(Q_INV_4096, InsecureSecretKeyAccess.get()))
+              .setRsaSsaPkcs1PrivateKey(rsaSsaPkcs14096PrivateKey)
               .build();
 
       JwtRsaSsaPssParameters jwtRsaSsaPssRaw2048Parameters =
@@ -750,9 +710,9 @@ public class JwtSignatureConfigurationV0Test {
               .setParameters(jwtRsaSsaPssRaw2048Parameters)
               .setModulus(MODULUS)
               .build();
-      JwtRsaSsaPssPrivateKey jwtRsaSsaPssRaw2048PrivateKey =
-          JwtRsaSsaPssPrivateKey.builder()
-              .setPublicKey(jwtRsaSsaPssRaw2048PublicKey)
+      RsaSsaPssPrivateKey rsaSsaPss2048PrivateKey =
+          RsaSsaPssPrivateKey.builder()
+              .setPublicKey(jwtRsaSsaPssRaw2048PublicKey.getRsaSsaPssPublicKey())
               .setPrimes(
                   SecretBigInteger.fromBigInteger(P, InsecureSecretKeyAccess.get()),
                   SecretBigInteger.fromBigInteger(Q, InsecureSecretKeyAccess.get()))
@@ -762,6 +722,11 @@ public class JwtSignatureConfigurationV0Test {
                   SecretBigInteger.fromBigInteger(DQ, InsecureSecretKeyAccess.get()))
               .setCrtCoefficient(
                   SecretBigInteger.fromBigInteger(Q_INV, InsecureSecretKeyAccess.get()))
+              .build();
+      JwtRsaSsaPssPrivateKey jwtRsaSsaPssRaw2048PrivateKey =
+          JwtRsaSsaPssPrivateKey.builder()
+              .setPublicKey(jwtRsaSsaPssRaw2048PublicKey)
+              .setRsaSsaPssPrivateKey(rsaSsaPss2048PrivateKey)
               .build();
 
       JwtRsaSsaPssParameters jwtRsaSsaPssKid2048Parameters =
@@ -780,15 +745,7 @@ public class JwtSignatureConfigurationV0Test {
       JwtRsaSsaPssPrivateKey jwtRsaSsaPssKid2048PrivateKey =
           JwtRsaSsaPssPrivateKey.builder()
               .setPublicKey(jwtRsaSsaPssKid2048PublicKey)
-              .setPrimes(
-                  SecretBigInteger.fromBigInteger(P, InsecureSecretKeyAccess.get()),
-                  SecretBigInteger.fromBigInteger(Q, InsecureSecretKeyAccess.get()))
-              .setPrivateExponent(SecretBigInteger.fromBigInteger(D, InsecureSecretKeyAccess.get()))
-              .setPrimeExponents(
-                  SecretBigInteger.fromBigInteger(DP, InsecureSecretKeyAccess.get()),
-                  SecretBigInteger.fromBigInteger(DQ, InsecureSecretKeyAccess.get()))
-              .setCrtCoefficient(
-                  SecretBigInteger.fromBigInteger(Q_INV, InsecureSecretKeyAccess.get()))
+              .setRsaSsaPssPrivateKey(rsaSsaPss2048PrivateKey)
               .build();
 
       JwtRsaSsaPssParameters jwtRsaSsaPssCustomKid2048Parameters =
@@ -807,15 +764,7 @@ public class JwtSignatureConfigurationV0Test {
       JwtRsaSsaPssPrivateKey jwtRsaSsaPssCustomKid2048PrivateKey =
           JwtRsaSsaPssPrivateKey.builder()
               .setPublicKey(jwtRsaSsaPssCustomKid2048PublicKey)
-              .setPrimes(
-                  SecretBigInteger.fromBigInteger(P, InsecureSecretKeyAccess.get()),
-                  SecretBigInteger.fromBigInteger(Q, InsecureSecretKeyAccess.get()))
-              .setPrivateExponent(SecretBigInteger.fromBigInteger(D, InsecureSecretKeyAccess.get()))
-              .setPrimeExponents(
-                  SecretBigInteger.fromBigInteger(DP, InsecureSecretKeyAccess.get()),
-                  SecretBigInteger.fromBigInteger(DQ, InsecureSecretKeyAccess.get()))
-              .setCrtCoefficient(
-                  SecretBigInteger.fromBigInteger(Q_INV, InsecureSecretKeyAccess.get()))
+              .setRsaSsaPssPrivateKey(rsaSsaPss2048PrivateKey)
               .build();
 
       JwtRsaSsaPssParameters jwtRsaSsaPssRaw3072Parameters =
@@ -830,9 +779,9 @@ public class JwtSignatureConfigurationV0Test {
               .setParameters(jwtRsaSsaPssRaw3072Parameters)
               .setModulus(MODULUS_3072)
               .build();
-      JwtRsaSsaPssPrivateKey jwtRsaSsaPssRaw3072PrivateKey =
-          JwtRsaSsaPssPrivateKey.builder()
-              .setPublicKey(jwtRsaSsaPssRaw3072PublicKey)
+      RsaSsaPssPrivateKey rsaSsaPss3072PrivateKey =
+          RsaSsaPssPrivateKey.builder()
+              .setPublicKey(jwtRsaSsaPssRaw3072PublicKey.getRsaSsaPssPublicKey())
               .setPrimes(
                   SecretBigInteger.fromBigInteger(P_3072, InsecureSecretKeyAccess.get()),
                   SecretBigInteger.fromBigInteger(Q_3072, InsecureSecretKeyAccess.get()))
@@ -843,6 +792,11 @@ public class JwtSignatureConfigurationV0Test {
                   SecretBigInteger.fromBigInteger(DQ_3072, InsecureSecretKeyAccess.get()))
               .setCrtCoefficient(
                   SecretBigInteger.fromBigInteger(Q_INV_3072, InsecureSecretKeyAccess.get()))
+              .build();
+      JwtRsaSsaPssPrivateKey jwtRsaSsaPssRaw3072PrivateKey =
+          JwtRsaSsaPssPrivateKey.builder()
+              .setPublicKey(jwtRsaSsaPssRaw3072PublicKey)
+              .setRsaSsaPssPrivateKey(rsaSsaPss3072PrivateKey)
               .build();
 
       JwtRsaSsaPssParameters jwtRsaSsaPssKid3072Parameters =
@@ -861,16 +815,7 @@ public class JwtSignatureConfigurationV0Test {
       JwtRsaSsaPssPrivateKey jwtRsaSsaPssKid3072PrivateKey =
           JwtRsaSsaPssPrivateKey.builder()
               .setPublicKey(jwtRsaSsaPssKid3072PublicKey)
-              .setPrimes(
-                  SecretBigInteger.fromBigInteger(P_3072, InsecureSecretKeyAccess.get()),
-                  SecretBigInteger.fromBigInteger(Q_3072, InsecureSecretKeyAccess.get()))
-              .setPrivateExponent(
-                  SecretBigInteger.fromBigInteger(D_3072, InsecureSecretKeyAccess.get()))
-              .setPrimeExponents(
-                  SecretBigInteger.fromBigInteger(DP_3072, InsecureSecretKeyAccess.get()),
-                  SecretBigInteger.fromBigInteger(DQ_3072, InsecureSecretKeyAccess.get()))
-              .setCrtCoefficient(
-                  SecretBigInteger.fromBigInteger(Q_INV_3072, InsecureSecretKeyAccess.get()))
+              .setRsaSsaPssPrivateKey(rsaSsaPss3072PrivateKey)
               .build();
 
       JwtRsaSsaPssParameters jwtRsaSsaPssCustomKid3072Parameters =
@@ -889,16 +834,7 @@ public class JwtSignatureConfigurationV0Test {
       JwtRsaSsaPssPrivateKey jwtRsaSsaPssCustomKid3072PrivateKey =
           JwtRsaSsaPssPrivateKey.builder()
               .setPublicKey(jwtRsaSsaPssCustomKid3072PublicKey)
-              .setPrimes(
-                  SecretBigInteger.fromBigInteger(P_3072, InsecureSecretKeyAccess.get()),
-                  SecretBigInteger.fromBigInteger(Q_3072, InsecureSecretKeyAccess.get()))
-              .setPrivateExponent(
-                  SecretBigInteger.fromBigInteger(D_3072, InsecureSecretKeyAccess.get()))
-              .setPrimeExponents(
-                  SecretBigInteger.fromBigInteger(DP_3072, InsecureSecretKeyAccess.get()),
-                  SecretBigInteger.fromBigInteger(DQ_3072, InsecureSecretKeyAccess.get()))
-              .setCrtCoefficient(
-                  SecretBigInteger.fromBigInteger(Q_INV_3072, InsecureSecretKeyAccess.get()))
+              .setRsaSsaPssPrivateKey(rsaSsaPss3072PrivateKey)
               .build();
 
       JwtRsaSsaPssParameters jwtRsaSsaPssRaw4096Parameters =
@@ -913,9 +849,9 @@ public class JwtSignatureConfigurationV0Test {
               .setParameters(jwtRsaSsaPssRaw4096Parameters)
               .setModulus(MODULUS_4096)
               .build();
-      JwtRsaSsaPssPrivateKey jwtRsaSsaPssRaw4096PrivateKey =
-          JwtRsaSsaPssPrivateKey.builder()
-              .setPublicKey(jwtRsaSsaPssRaw4096PublicKey)
+      RsaSsaPssPrivateKey rsaSsaPss4096PrivateKey =
+          RsaSsaPssPrivateKey.builder()
+              .setPublicKey(jwtRsaSsaPssRaw4096PublicKey.getRsaSsaPssPublicKey())
               .setPrimes(
                   SecretBigInteger.fromBigInteger(P_4096, InsecureSecretKeyAccess.get()),
                   SecretBigInteger.fromBigInteger(Q_4096, InsecureSecretKeyAccess.get()))
@@ -926,6 +862,11 @@ public class JwtSignatureConfigurationV0Test {
                   SecretBigInteger.fromBigInteger(DQ_4096, InsecureSecretKeyAccess.get()))
               .setCrtCoefficient(
                   SecretBigInteger.fromBigInteger(Q_INV_4096, InsecureSecretKeyAccess.get()))
+              .build();
+      JwtRsaSsaPssPrivateKey jwtRsaSsaPssRaw4096PrivateKey =
+          JwtRsaSsaPssPrivateKey.builder()
+              .setPublicKey(jwtRsaSsaPssRaw4096PublicKey)
+              .setRsaSsaPssPrivateKey(rsaSsaPss4096PrivateKey)
               .build();
 
       JwtRsaSsaPssParameters jwtRsaSsaPssKid4096Parameters =
@@ -944,16 +885,7 @@ public class JwtSignatureConfigurationV0Test {
       JwtRsaSsaPssPrivateKey jwtRsaSsaPssKid4096PrivateKey =
           JwtRsaSsaPssPrivateKey.builder()
               .setPublicKey(jwtRsaSsaPssKid4096PublicKey)
-              .setPrimes(
-                  SecretBigInteger.fromBigInteger(P_4096, InsecureSecretKeyAccess.get()),
-                  SecretBigInteger.fromBigInteger(Q_4096, InsecureSecretKeyAccess.get()))
-              .setPrivateExponent(
-                  SecretBigInteger.fromBigInteger(D_4096, InsecureSecretKeyAccess.get()))
-              .setPrimeExponents(
-                  SecretBigInteger.fromBigInteger(DP_4096, InsecureSecretKeyAccess.get()),
-                  SecretBigInteger.fromBigInteger(DQ_4096, InsecureSecretKeyAccess.get()))
-              .setCrtCoefficient(
-                  SecretBigInteger.fromBigInteger(Q_INV_4096, InsecureSecretKeyAccess.get()))
+              .setRsaSsaPssPrivateKey(rsaSsaPss4096PrivateKey)
               .build();
 
       JwtRsaSsaPssParameters jwtRsaSsaPssCustomKid4096Parameters =
@@ -972,16 +904,7 @@ public class JwtSignatureConfigurationV0Test {
       JwtRsaSsaPssPrivateKey jwtRsaSsaPssCustomKid4096PrivateKey =
           JwtRsaSsaPssPrivateKey.builder()
               .setPublicKey(jwtRsaSsaPssCustomKid4096PublicKey)
-              .setPrimes(
-                  SecretBigInteger.fromBigInteger(P_4096, InsecureSecretKeyAccess.get()),
-                  SecretBigInteger.fromBigInteger(Q_4096, InsecureSecretKeyAccess.get()))
-              .setPrivateExponent(
-                  SecretBigInteger.fromBigInteger(D_4096, InsecureSecretKeyAccess.get()))
-              .setPrimeExponents(
-                  SecretBigInteger.fromBigInteger(DP_4096, InsecureSecretKeyAccess.get()),
-                  SecretBigInteger.fromBigInteger(DQ_4096, InsecureSecretKeyAccess.get()))
-              .setCrtCoefficient(
-                  SecretBigInteger.fromBigInteger(Q_INV_4096, InsecureSecretKeyAccess.get()))
+              .setRsaSsaPssPrivateKey(rsaSsaPss4096PrivateKey)
               .build();
 
       jwtPrivateKeys =

@@ -24,6 +24,7 @@ import com.google.crypto.tink.aead.ChaCha20Poly1305Key;
 import com.google.crypto.tink.internal.KeyTester;
 import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
+import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
 import com.google.crypto.tink.subtle.Base64;
 import com.google.crypto.tink.util.SecretBigInteger;
 import com.google.crypto.tink.util.SecretBytes;
@@ -503,6 +504,138 @@ public final class JwtRsaSsaPkcs1PrivateKeyTest {
                 .setCrtCoefficient(
                     SecretBigInteger.fromBigInteger(
                         Q_INV.add(BigInteger.ONE), InsecureSecretKeyAccess.get()))
+                .build());
+  }
+
+  @Test
+  public void buildWithRsaSsaPkcs1PrivateKey_works() throws Exception {
+    JwtRsaSsaPkcs1Parameters parameters =
+        JwtRsaSsaPkcs1Parameters.builder()
+            .setModulusSizeBits(2048)
+            .setPublicExponent(JwtRsaSsaPkcs1Parameters.F4)
+            .setKidStrategy(JwtRsaSsaPkcs1Parameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+            .setAlgorithm(JwtRsaSsaPkcs1Parameters.Algorithm.RS256)
+            .build();
+    JwtRsaSsaPkcs1PublicKey publicKey =
+        JwtRsaSsaPkcs1PublicKey.builder()
+            .setParameters(parameters)
+            .setModulus(MODULUS)
+            .setIdRequirement(0x1ac6a944)
+            .build();
+    RsaSsaPkcs1PrivateKey rsaSsaPkcs1PrivateKey =
+        RsaSsaPkcs1PrivateKey.builder()
+            .setPublicKey(
+                RsaSsaPkcs1PublicKey.builder()
+                    .setParameters(
+                        RsaSsaPkcs1Parameters.builder()
+                            .setModulusSizeBits(2048)
+                            .setPublicExponent(JwtRsaSsaPkcs1Parameters.F4)
+                            .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
+                            .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
+                            .build())
+                    .setModulus(MODULUS)
+                    .build())
+            .setPrimes(
+                SecretBigInteger.fromBigInteger(P, InsecureSecretKeyAccess.get()),
+                SecretBigInteger.fromBigInteger(Q, InsecureSecretKeyAccess.get()))
+            .setPrivateExponent(SecretBigInteger.fromBigInteger(D, InsecureSecretKeyAccess.get()))
+            .setPrimeExponents(
+                SecretBigInteger.fromBigInteger(DP, InsecureSecretKeyAccess.get()),
+                SecretBigInteger.fromBigInteger(DQ, InsecureSecretKeyAccess.get()))
+            .setCrtCoefficient(
+                SecretBigInteger.fromBigInteger(Q_INV, InsecureSecretKeyAccess.get()))
+            .build();
+    JwtRsaSsaPkcs1PrivateKey expectedPrivateKey =
+        JwtRsaSsaPkcs1PrivateKey.builder()
+            .setPublicKey(publicKey)
+            .setPrimes(
+                SecretBigInteger.fromBigInteger(P, InsecureSecretKeyAccess.get()),
+                SecretBigInteger.fromBigInteger(Q, InsecureSecretKeyAccess.get()))
+            .setPrivateExponent(SecretBigInteger.fromBigInteger(D, InsecureSecretKeyAccess.get()))
+            .setPrimeExponents(
+                SecretBigInteger.fromBigInteger(DP, InsecureSecretKeyAccess.get()),
+                SecretBigInteger.fromBigInteger(DQ, InsecureSecretKeyAccess.get()))
+            .setCrtCoefficient(
+                SecretBigInteger.fromBigInteger(Q_INV, InsecureSecretKeyAccess.get()))
+            .build();
+
+    JwtRsaSsaPkcs1PrivateKey privateKey =
+        JwtRsaSsaPkcs1PrivateKey.builder()
+            .setPublicKey(publicKey)
+            .setRsaSsaPkcs1PrivateKey(rsaSsaPkcs1PrivateKey)
+            .build();
+
+    assertThat(privateKey.equalsKey(expectedPrivateKey)).isTrue();
+  }
+
+  @Test
+  public void buildWithRsaSsaPkcs1PublicKey_validates() throws Exception {
+    RsaSsaPkcs1PrivateKey rsaSsaPkcs1PrivateKey =
+        RsaSsaPkcs1PrivateKey.builder()
+            .setPublicKey(
+                RsaSsaPkcs1PublicKey.builder()
+                    .setParameters(
+                        RsaSsaPkcs1Parameters.builder()
+                            .setModulusSizeBits(2048)
+                            .setPublicExponent(RsaSsaPkcs1Parameters.F4)
+                            .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
+                            .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
+                            .build())
+                    .setModulus(MODULUS)
+                    .build())
+            .setPrimes(
+                SecretBigInteger.fromBigInteger(P, InsecureSecretKeyAccess.get()),
+                SecretBigInteger.fromBigInteger(Q, InsecureSecretKeyAccess.get()))
+            .setPrivateExponent(SecretBigInteger.fromBigInteger(D, InsecureSecretKeyAccess.get()))
+            .setPrimeExponents(
+                SecretBigInteger.fromBigInteger(DP, InsecureSecretKeyAccess.get()),
+                SecretBigInteger.fromBigInteger(DQ, InsecureSecretKeyAccess.get()))
+            .setCrtCoefficient(
+                SecretBigInteger.fromBigInteger(Q_INV, InsecureSecretKeyAccess.get()))
+            .build();
+
+    JwtRsaSsaPkcs1PublicKey publicKeyWithDifferentModulus =
+        JwtRsaSsaPkcs1PublicKey.builder()
+            .setParameters(
+                JwtRsaSsaPkcs1Parameters.builder()
+                    .setModulusSizeBits(2048)
+                    .setPublicExponent(JwtRsaSsaPkcs1Parameters.F4)
+                    .setKidStrategy(JwtRsaSsaPkcs1Parameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .setAlgorithm(JwtRsaSsaPkcs1Parameters.Algorithm.RS256)
+                    .build())
+            .setModulus(MODULUS.add(BigInteger.ONE))
+            .setIdRequirement(0x1ac6a944)
+            .build();
+
+    // Modulus doesn't match
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            JwtRsaSsaPkcs1PrivateKey.builder()
+                .setPublicKey(publicKeyWithDifferentModulus)
+                .setRsaSsaPkcs1PrivateKey(rsaSsaPkcs1PrivateKey)
+                .build());
+
+    JwtRsaSsaPkcs1PublicKey publicKeyWithSha384 =
+        JwtRsaSsaPkcs1PublicKey.builder()
+            .setParameters(
+                JwtRsaSsaPkcs1Parameters.builder()
+                    .setModulusSizeBits(2048)
+                    .setPublicExponent(JwtRsaSsaPkcs1Parameters.F4)
+                    .setKidStrategy(JwtRsaSsaPkcs1Parameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .setAlgorithm(JwtRsaSsaPkcs1Parameters.Algorithm.RS384)
+                    .build())
+            .setModulus(MODULUS)
+            .setIdRequirement(0x1ac6a944)
+            .build();
+
+    // Hash type doesn't match
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            JwtRsaSsaPkcs1PrivateKey.builder()
+                .setPublicKey(publicKeyWithSha384)
+                .setRsaSsaPkcs1PrivateKey(rsaSsaPkcs1PrivateKey)
                 .build());
   }
 

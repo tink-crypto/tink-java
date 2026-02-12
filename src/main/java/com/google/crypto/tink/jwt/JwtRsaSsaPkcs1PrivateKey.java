@@ -43,6 +43,7 @@ public final class JwtRsaSsaPkcs1PrivateKey extends JwtSignaturePrivateKey {
     private Optional<SecretBigInteger> dP = Optional.empty();
     private Optional<SecretBigInteger> dQ = Optional.empty();
     private Optional<SecretBigInteger> qInv = Optional.empty();
+    private Optional<RsaSsaPkcs1PrivateKey> rsaSsaPkcs1PrivateKey = Optional.empty();
 
     private Builder() {}
 
@@ -54,6 +55,12 @@ public final class JwtRsaSsaPkcs1PrivateKey extends JwtSignaturePrivateKey {
     @CanIgnoreReturnValue
     public Builder setPublicKey(JwtRsaSsaPkcs1PublicKey publicKey) {
       this.publicKey = Optional.of(publicKey);
+      return this;
+    }
+
+    @CanIgnoreReturnValue
+    Builder setRsaSsaPkcs1PrivateKey(RsaSsaPkcs1PrivateKey rsaSsaPkcs1PrivateKey) {
+      this.rsaSsaPkcs1PrivateKey = Optional.of(rsaSsaPkcs1PrivateKey);
       return this;
     }
 
@@ -116,6 +123,24 @@ public final class JwtRsaSsaPkcs1PrivateKey extends JwtSignaturePrivateKey {
       if (!publicKey.isPresent()) {
         throw new GeneralSecurityException("Cannot build without a RSA SSA PKCS1 public key");
       }
+      if (rsaSsaPkcs1PrivateKey.isPresent()) {
+        if (p.isPresent()
+            || q.isPresent()
+            || d.isPresent()
+            || dP.isPresent()
+            || dQ.isPresent()
+            || qInv.isPresent()) {
+          throw new GeneralSecurityException(
+              "Cannot build with a RSA SSA PKCS1 private key and other private key components");
+        }
+        if (!rsaSsaPkcs1PrivateKey
+            .get()
+            .getPublicKey()
+            .equalsKey(publicKey.get().getRsaSsaPkcs1PublicKey())) {
+          throw new GeneralSecurityException("public key does not match the private key");
+        }
+        return new JwtRsaSsaPkcs1PrivateKey(publicKey.get(), rsaSsaPkcs1PrivateKey.get());
+      }
       if (!p.isPresent() || !q.isPresent()) {
         throw new GeneralSecurityException("Cannot build without prime factors");
       }
@@ -129,15 +154,15 @@ public final class JwtRsaSsaPkcs1PrivateKey extends JwtSignaturePrivateKey {
         throw new GeneralSecurityException("Cannot build without CRT coefficient");
       }
 
-      RsaSsaPkcs1PrivateKey rsaSsaPkcs1PrivateKey =
+      return new JwtRsaSsaPkcs1PrivateKey(
+          publicKey.get(),
           RsaSsaPkcs1PrivateKey.builder()
               .setPublicKey(publicKey.get().getRsaSsaPkcs1PublicKey())
               .setPrimes(p.get(), q.get())
               .setPrivateExponent(d.get())
               .setPrimeExponents(dP.get(), dQ.get())
               .setCrtCoefficient(qInv.get())
-              .build();
-      return new JwtRsaSsaPkcs1PrivateKey(publicKey.get(), rsaSsaPkcs1PrivateKey);
+              .build());
     }
   }
 

@@ -43,6 +43,7 @@ public final class JwtRsaSsaPssPrivateKey extends JwtSignaturePrivateKey {
     private Optional<SecretBigInteger> dP = Optional.empty();
     private Optional<SecretBigInteger> dQ = Optional.empty();
     private Optional<SecretBigInteger> qInv = Optional.empty();
+    private Optional<RsaSsaPssPrivateKey> rsaSsaPssPrivateKey = Optional.empty();
 
     private Builder() {}
 
@@ -111,10 +112,34 @@ public final class JwtRsaSsaPssPrivateKey extends JwtSignaturePrivateKey {
       return this;
     }
 
+    @CanIgnoreReturnValue
+    Builder setRsaSsaPssPrivateKey(RsaSsaPssPrivateKey rsaSsaPssPrivateKey) {
+      this.rsaSsaPssPrivateKey = Optional.of(rsaSsaPssPrivateKey);
+      return this;
+    }
+
     @AccessesPartialKey
     public JwtRsaSsaPssPrivateKey build() throws GeneralSecurityException {
       if (!publicKey.isPresent()) {
         throw new GeneralSecurityException("Cannot build without a RSA SSA PSS public key");
+      }
+      if (rsaSsaPssPrivateKey.isPresent()) {
+        if (p.isPresent()
+            || q.isPresent()
+            || d.isPresent()
+            || dP.isPresent()
+            || dQ.isPresent()
+            || qInv.isPresent()) {
+          throw new GeneralSecurityException(
+              "Cannot build with a RSA SSA PSS private key and other private key components");
+        }
+        if (!rsaSsaPssPrivateKey
+            .get()
+            .getPublicKey()
+            .equalsKey(publicKey.get().getRsaSsaPssPublicKey())) {
+          throw new GeneralSecurityException("public key does not match the private key");
+        }
+        return new JwtRsaSsaPssPrivateKey(publicKey.get(), rsaSsaPssPrivateKey.get());
       }
 
       if (!p.isPresent() || !q.isPresent()) {
@@ -129,15 +154,15 @@ public final class JwtRsaSsaPssPrivateKey extends JwtSignaturePrivateKey {
       if (!qInv.isPresent()) {
         throw new GeneralSecurityException("Cannot build without CRT coefficient");
       }
-      RsaSsaPssPrivateKey rsaSsaPssPrivateKey =
+      return new JwtRsaSsaPssPrivateKey(
+          publicKey.get(),
           RsaSsaPssPrivateKey.builder()
               .setPublicKey(publicKey.get().getRsaSsaPssPublicKey())
               .setPrimes(p.get(), q.get())
               .setPrivateExponent(d.get())
               .setPrimeExponents(dP.get(), dQ.get())
               .setCrtCoefficient(qInv.get())
-              .build();
-      return new JwtRsaSsaPssPrivateKey(publicKey.get(), rsaSsaPssPrivateKey);
+              .build());
     }
   }
 

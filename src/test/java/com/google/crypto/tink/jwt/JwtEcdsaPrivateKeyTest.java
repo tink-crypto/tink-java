@@ -24,6 +24,7 @@ import com.google.crypto.tink.aead.ChaCha20Poly1305Key;
 import com.google.crypto.tink.internal.KeyTester;
 import com.google.crypto.tink.signature.EcdsaParameters;
 import com.google.crypto.tink.signature.EcdsaPrivateKey;
+import com.google.crypto.tink.signature.EcdsaPublicKey;
 import com.google.crypto.tink.util.SecretBigInteger;
 import com.google.crypto.tink.util.SecretBytes;
 import java.math.BigInteger;
@@ -252,6 +253,85 @@ public final class JwtEcdsaPrivateKeyTest {
         SecretBigInteger.fromBigInteger(new BigInteger("-1"), InsecureSecretKeyAccess.get());
     assertThrows(
         GeneralSecurityException.class, () -> JwtEcdsaPrivateKey.create(publicKey, minusOne));
+  }
+
+  @Test
+  public void buildWithEcdsaPrivateKey_works() throws Exception {
+    JwtEcdsaParameters parameters =
+        JwtEcdsaParameters.builder()
+            .setKidStrategy(JwtEcdsaParameters.KidStrategy.IGNORED)
+            .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
+            .build();
+    JwtEcdsaPublicKey publicKey =
+        JwtEcdsaPublicKey.builder()
+            .setParameters(parameters)
+            .setPublicPoint(P256_PUBLIC_POINT)
+            .build();
+    EcdsaPrivateKey ecdsaPrivateKey =
+        EcdsaPrivateKey.builder()
+            .setPublicKey(publicKey.getEcdsaPublicKey())
+            .setPrivateValue(
+                SecretBigInteger.fromBigInteger(P256_PRIVATE_VALUE, InsecureSecretKeyAccess.get()))
+            .build();
+    JwtEcdsaPrivateKey privateKey = JwtEcdsaPrivateKey.create(publicKey, ecdsaPrivateKey);
+
+    assertThat(privateKey.getPrivateValue().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(P256_PRIVATE_VALUE);
+  }
+
+  @Test
+  public void buildWithEcdsaPrivateKey_validates() throws Exception {
+    JwtEcdsaPublicKey publicKey =
+        JwtEcdsaPublicKey.builder()
+            .setParameters(
+                JwtEcdsaParameters.builder()
+                    .setKidStrategy(JwtEcdsaParameters.KidStrategy.IGNORED)
+                    .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
+                    .build())
+            .setPublicPoint(P256_PUBLIC_POINT)
+            .build();
+    ECPoint otherPublicPoint =
+        new ECPoint(
+            new BigInteger("9031a2a43467ed31a8de8e2b28861c0ca5605ff4443c3dbea0bd47ebb65a02ae", 16),
+            new BigInteger("8d094fc9fa9b328ca3060802045d5c5f6b0a51a432a844a7f0f3dbf9de039f43", 16));
+    BigInteger otherPrivateValue =
+        new BigInteger("0a11c3c4ed77aa0d6fc34ee0f91d5970ff22619cc2583cf51bc5654ec9400d", 16);
+    EcdsaPrivateKey otherEcdsaPrivateKey =
+        EcdsaPrivateKey.builder()
+            .setPublicKey(
+                EcdsaPublicKey.builder()
+                    .setParameters(publicKey.getEcdsaPublicKey().getParameters())
+                    .setPublicPoint(otherPublicPoint)
+                    .build())
+            .setPrivateValue(
+                SecretBigInteger.fromBigInteger(otherPrivateValue, InsecureSecretKeyAccess.get()))
+            .build();
+
+    // private values don't match
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> JwtEcdsaPrivateKey.create(publicKey, otherEcdsaPrivateKey));
+
+    EcdsaPrivateKey privateKeyWithWrongSignatureEncoding =
+        EcdsaPrivateKey.builder()
+            .setPublicKey(
+                EcdsaPublicKey.builder()
+                    .setParameters(
+                        EcdsaParameters.builder()
+                            .setVariant(EcdsaParameters.Variant.NO_PREFIX)
+                            .setHashType(EcdsaParameters.HashType.SHA256)
+                            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
+                            .setCurveType(EcdsaParameters.CurveType.NIST_P256)
+                            .build())
+                    .setPublicPoint(P256_PUBLIC_POINT)
+                    .build())
+            .setPrivateValue(
+                SecretBigInteger.fromBigInteger(P256_PRIVATE_VALUE, InsecureSecretKeyAccess.get()))
+            .build();
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> JwtEcdsaPrivateKey.create(publicKey, privateKeyWithWrongSignatureEncoding));
   }
 
   @Test
