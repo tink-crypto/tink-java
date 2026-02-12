@@ -41,7 +41,15 @@ public final class Random {
         // ignore
       }
     }
-    // TODO(b/470889007): Call ConscryptUtil.providerWithReflectionOrNull once this bug is fixed.
+    // Conscrypt might be present in the binary, but not (yet) installed.
+    Provider conscryptProviderWithReflection = ConscryptUtil.providerWithReflectionOrNull();
+    if (conscryptProviderWithReflection != null) {
+      try {
+        return SecureRandom.getInstance("SHA1PRNG", conscryptProviderWithReflection);
+      } catch (GeneralSecurityException e) {
+        // ignore
+      }
+    }
     return new SecureRandom();
   }
 
