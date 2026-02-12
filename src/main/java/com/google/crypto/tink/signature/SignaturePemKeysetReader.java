@@ -163,48 +163,50 @@ public final class SignaturePemKeysetReader implements KeysetReader {
     throw new UnsupportedOperationException();
   }
 
+  private static RSAPublicKey parseRsaPublicKey(X509EncodedKeySpec keySpec, int keySizeInBits) throws GeneralSecurityException  {
+    KeyFactory rsaKeyFactory = EngineFactory.KEY_FACTORY.getInstance("RSA");
+    RSAPublicKey rsaKey = (RSAPublicKey) rsaKeyFactory.generatePublic(keySpec);
+    int foundKeySizeInBits = rsaKey.getModulus().bitLength();
+    if (foundKeySizeInBits != keySizeInBits) {
+      throw new GeneralSecurityException("wrong key size");
+    }
+    return rsaKey;
+  }
+
+  private static ECPublicKey parseEcPublicKey(X509EncodedKeySpec keySpec, int keySizeInBits) throws GeneralSecurityException {
+    KeyFactory ecKeyFactory = EngineFactory.KEY_FACTORY.getInstance("EC");
+    ECPublicKey ecKey = (ECPublicKey) ecKeyFactory.generatePublic(keySpec);
+
+    ECParameterSpec ecParams = ecKey.getParams();
+    if (!EllipticCurves.isNistEcParameterSpec(ecParams)) {
+      throw new GeneralSecurityException("EC key is not a NIST curve");
+    }
+    int foundKeySizeInBits = EllipticCurves.fieldSizeInBits(ecParams.getCurve());
+    if (foundKeySizeInBits != keySizeInBits) {
+      throw new GeneralSecurityException("wrong key size");
+    }
+    return ecKey;
+  }
+
+  /** Reads a single PEM key from {@code reader}. Invalid or unparsable PEM are ignored. */
   @Nullable
-  private static RSAPublicKey parseRsaPublicKey(X509EncodedKeySpec keySpec, int keySizeInBits) {
+  private static Key readKey(BufferedReader reader, PemKeyType pemKeyType) {
     try {
-      KeyFactory rsaKeyFactory = EngineFactory.KEY_FACTORY.getInstance("RSA");
-      RSAPublicKey rsaKey = (RSAPublicKey) rsaKeyFactory.generatePublic(keySpec);
-      int foundKeySizeInBits = rsaKey.getModulus().bitLength();
-      if (foundKeySizeInBits != keySizeInBits) {
-        return null;
-      }
-      return rsaKey;
+      return readKeyWithExceptions(reader, pemKeyType);
     } catch (GeneralSecurityException e) {
       return null;
     }
   }
 
-  @Nullable
-  private static ECPublicKey parseEcPublicKey(X509EncodedKeySpec keySpec, int keySizeInBits) {
-    try {
-      KeyFactory ecKeyFactory = EngineFactory.KEY_FACTORY.getInstance("EC");
-      ECPublicKey ecKey = (ECPublicKey) ecKeyFactory.generatePublic(keySpec);
-
-      ECParameterSpec ecParams = ecKey.getParams();
-      if (!EllipticCurves.isNistEcParameterSpec(ecParams)) {
-        return null;
-      }
-      int foundKeySizeInBits = EllipticCurves.fieldSizeInBits(ecParams.getCurve());
-      if (foundKeySizeInBits != keySizeInBits) {
-        return null;
-      }
-      return ecKey;
-    } catch (GeneralSecurityException e) {
-      return null;
-    }
-  }
-
-  /** Reads a single PEM key from {@code reader}. Invalid or unparsable PEM would be ignored */
-  @Nullable
-  private static Key readKey(BufferedReader reader, PemKeyType pemKeyType)
+  /** Reads a single PEM key from {@code reader}. Throws an exception if parsing fails. */
+  private static Key readKeyWithExceptions(BufferedReader reader, PemKeyType pemKeyType)
       throws GeneralSecurityException {
     EncodedKeySpec keySpec = PemUtil.parsePemToKeySpec(reader);
+    if (keySpec == null) {
+      throw new GeneralSecurityException("cannot parse PEM key");
+    }
     if (!(keySpec instanceof X509EncodedKeySpec)) {
-      return null;
+      throw new GeneralSecurityException("PEM key is not a public key");
     }
     X509EncodedKeySpec x509KeySpec = (X509EncodedKeySpec) keySpec;
 
@@ -228,7 +230,7 @@ public final class SignaturePemKeysetReader implements KeysetReader {
       case ML_DSA_65:
         return convertMlDsa65PublicKey(x509KeySpec);
       default:
-        throw new GeneralSecurityException("unsupported key type: " + pemKeyType);
+        throw new IllegalArgumentException("unsupported key type: " + pemKeyType);
     }
   }
 
@@ -269,13 +271,9 @@ public final class SignaturePemKeysetReader implements KeysetReader {
   }
 
   @AccessesPartialKey
-  @Nullable
   private static Key convertRsaSsaPkcs1PublicKey(PemKeyType pemKeyType, X509EncodedKeySpec keySpec)
       throws GeneralSecurityException {
     RSAPublicKey key = parseRsaPublicKey(keySpec, pemKeyType.keySizeInBits);
-    if (key == null) {
-      return null;
-    }
     return RsaSsaPkcs1PublicKey.builder()
         .setParameters(getRsaPkcs1Parameters(pemKeyType))
         .setModulus(key.getModulus())
@@ -327,13 +325,9 @@ public final class SignaturePemKeysetReader implements KeysetReader {
   }
 
   @AccessesPartialKey
-  @Nullable
   private static Key convertRsaSsaPssPublicKey(PemKeyType pemKeyType, X509EncodedKeySpec keySpec)
       throws GeneralSecurityException {
     RSAPublicKey key = parseRsaPublicKey(keySpec, pemKeyType.keySizeInBits);
-    if (key == null) {
-      return null;
-    }
     return RsaSsaPssPublicKey.builder()
         .setParameters(getRsaPssParameters(pemKeyType))
         .setModulus(key.getModulus())
@@ -368,14 +362,10 @@ public final class SignaturePemKeysetReader implements KeysetReader {
     }
   }
 
-  @Nullable
   @AccessesPartialKey
   private static Key convertEcdsaPublicKey(PemKeyType pemKeyType, X509EncodedKeySpec keySpec)
       throws GeneralSecurityException {
     ECPublicKey key = parseEcPublicKey(keySpec, pemKeyType.keySizeInBits);
-    if (key == null) {
-      return null;
-    }
     return EcdsaPublicKey.builder()
           .setParameters(getEcdsaParameters(pemKeyType))
           .setPublicPoint(key.getW())
@@ -416,11 +406,11 @@ public final class SignaturePemKeysetReader implements KeysetReader {
       throws GeneralSecurityException {
     byte[] encodedKey = keySpec.getEncoded();
     if (!Util.isPrefix(x509PreambleMlDsa65, encodedKey)) {
-      return null;
+      throw new GeneralSecurityException("is not a ML-DSA-65 public key");
     }
     byte[] keyValue = Arrays.copyOfRange(encodedKey, x509PreambleMlDsa65.length, encodedKey.length);
     if (keyValue.length != 1952) {
-      return null;
+      throw new GeneralSecurityException("wrong key length");
     }
     return MlDsaPublicKey.builder()
         .setParameters(ML_DSA_65_PARAMS)
