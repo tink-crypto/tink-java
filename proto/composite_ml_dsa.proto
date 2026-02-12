@@ -1,0 +1,84 @@
+// Copyright 2026 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+////////////////////////////////////////////////////////////////////////////////
+
+// Protos for Composite Module-Lattice Digital Signature Algorithm (Composite
+// ML-DSA). See
+// https://datatracker.ietf.org/doc/html/draft-ietf-lamps-pq-composite-sigs-14.
+syntax = "proto3";
+
+package google.crypto.tink;
+
+import "proto/ml_dsa.proto";
+import "proto/tink.proto";
+
+option java_package = "com.google.crypto.tink.proto";
+option java_multiple_files = true;
+option go_package = "github.com/tink-crypto/tink-go/v2/proto/composite_ml_dsa_go_proto";
+
+enum CompositeMlDsaClassicalAlgorithm {
+  CLASSICAL_ALGORITHM_UNKNOWN = 0;
+  CLASSICAL_ALGORITHM_ED25519 = 1;
+  CLASSICAL_ALGORITHM_ECDSA_P256 = 2;
+  CLASSICAL_ALGORITHM_ECDSA_P384 = 3;
+  CLASSICAL_ALGORITHM_ECDSA_P521 = 4;
+  CLASSICAL_ALGORITHM_RSA3072_PSS = 5;
+  CLASSICAL_ALGORITHM_RSA4096_PSS = 6;
+  CLASSICAL_ALGORITHM_RSA3072_PKCS1 = 7;
+  CLASSICAL_ALGORITHM_RSA4096_PKCS1 = 8;
+}
+
+message CompositeMlDsaKeyFormat {
+  // Required.
+  uint32 version = 1;
+  // Required.
+  CompositeMlDsaParams params = 2;
+}
+
+// See
+// https://datatracker.ietf.org/doc/html/draft-ietf-lamps-pq-composite-sigs-14#section-6
+// for allowed combinations/OIDs.
+message CompositeMlDsaParams {
+  // Required.
+  MlDsaInstance ml_dsa_instance = 1;
+  // Required.
+  CompositeMlDsaClassicalAlgorithm classical_algorithm = 2;
+}
+
+message CompositeMlDsaPublicKey {
+  // Required.
+  uint32 version = 1;
+  // Required.
+  KeyData ml_dsa_public_key = 2;
+  // Required.
+  // Contains one of EcdsaPublicKey, Ed25519PublicKey, RsaSsaPssPublicKey, or
+  // RsaSsaPkcs1PublicKey.
+  KeyData classical_public_key = 3;
+  // Required.
+  CompositeMlDsaParams params = 4;
+}
+
+message CompositeMlDsaPrivateKey {
+  // Required.
+  uint32 version = 1;
+  // Required.
+  KeyData ml_dsa_private_key = 2;
+  // Required.
+  // Contains one of EcdsaPrivateKey, Ed25519PrivateKey, RsaSsaPssPrivateKey,
+  // or RsaSsaPkcs1PrivateKey.
+  KeyData classical_private_key = 3;
+  // Required.
+  CompositeMlDsaParams params = 4;
+}
