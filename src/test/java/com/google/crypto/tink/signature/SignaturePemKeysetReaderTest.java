@@ -24,13 +24,11 @@ import com.google.crypto.tink.KeysetReader;
 import com.google.crypto.tink.LegacyKeysetSerialization;
 import com.google.crypto.tink.PemKeyType;
 import com.google.crypto.tink.PublicKeyVerify;
-import com.google.crypto.tink.internal.BigIntegerEncoding;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.signature.internal.MlDsaProtoSerialization;
 import com.google.crypto.tink.subtle.Base64;
-import com.google.crypto.tink.subtle.Bytes;
 import com.google.crypto.tink.subtle.Hex;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -68,10 +66,6 @@ public final class SignaturePemKeysetReaderTest {
     }
   }
 
-  byte[] addZeroPrefix(byte[] data) throws GeneralSecurityException {
-    return Bytes.concat(new byte[] {0x00}, data);
-  }
-
   @Test
   public void read_oneRSAPublicKey_shouldWork() throws Exception {
     String pem =
@@ -92,6 +86,14 @@ public final class SignaturePemKeysetReaderTest {
         + "z3BSRIngcgOvXBmV1JokcJ_LsrJD263WE9iUknZDhBK7y4ChjHNqL8yJcw_D8xLNiJtIyuxiZ00p_lOVUInr"
         + "8C_a2C1UGCgEGuXZAEGAdONVez52n5TLvQP3hRd4MTi7YvfhezRcA4aXyIDOv-TYi4p-OVTYQ-FMbkgoWBm5"
         + "bqwQ"));
+    RsaSsaPssParameters expectedParams = RsaSsaPssParameters.builder()
+            .setModulusSizeBits(2048)
+            .setPublicExponent(RsaSsaPssParameters.F4)
+            .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
+            .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
+            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+            .setSaltLengthBytes(32)
+            .build();
 
     KeysetHandle handle = LegacyKeysetSerialization.parseKeysetWithoutSecret(
         SignaturePemKeysetReader.newBuilder().addPem(pem, PemKeyType.RSA_PSS_2048_SHA256).build());
@@ -99,14 +101,7 @@ public final class SignaturePemKeysetReaderTest {
     assertThat(handle.size()).isEqualTo(1);
     RsaSsaPssPublicKey key = (RsaSsaPssPublicKey) handle.getAt(0).getKey();
 
-    assertThat(key.getParameters()).isEqualTo(RsaSsaPssParameters.builder()
-            .setModulusSizeBits(2048)
-            .setPublicExponent(RsaSsaPssParameters.F4)
-            .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
-            .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
-            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
-            .setSaltLengthBytes(32)
-            .build());
+    assertThat(key.getParameters()).isEqualTo(expectedParams);
     assertThat(key.getModulus()).isEqualTo(expectedModulus);
   }
 
@@ -124,6 +119,12 @@ public final class SignaturePemKeysetReaderTest {
         new ECPoint(
             new BigInteger(1, Base64.urlSafeDecode(expectedXBase64)),
             new BigInteger(1, Base64.urlSafeDecode(expectedYBase64)));
+    EcdsaParameters expectedParams = EcdsaParameters.builder()
+        .setHashType(EcdsaParameters.HashType.SHA256)
+        .setCurveType(EcdsaParameters.CurveType.NIST_P256)
+        .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
+        .setVariant(EcdsaParameters.Variant.NO_PREFIX)
+        .build();
 
     KeysetHandle handle =
         LegacyKeysetSerialization.parseKeysetWithoutSecret(
@@ -132,14 +133,7 @@ public final class SignaturePemKeysetReaderTest {
                 .build());
 
     EcdsaPublicKey publicKey = (EcdsaPublicKey) handle.getAt(0).getKey();
-    assertThat(publicKey.getParameters())
-        .isEqualTo(
-            EcdsaParameters.builder()
-                .setHashType(EcdsaParameters.HashType.SHA256)
-                .setCurveType(EcdsaParameters.CurveType.NIST_P256)
-                .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
-                .setVariant(EcdsaParameters.Variant.NO_PREFIX)
-                .build());
+    assertThat(publicKey.getParameters()).isEqualTo(expectedParams);
     assertThat(publicKey.getPublicPoint()).isEqualTo(expectedPoint);
   }
 
@@ -177,7 +171,7 @@ public final class SignaturePemKeysetReaderTest {
         LegacyKeysetSerialization.parseKeysetWithoutSecret(
             SignaturePemKeysetReader.newBuilder()
             .addPem(p256Pem, PemKeyType.ECDSA_P256_SHA256)
-            .addPem(p256Pem, PemKeyType.ECDSA_P384_SHA384)  // is ignored.
+            .addPem(p256Pem, PemKeyType.ECDSA_P384_SHA384)  // wrong curve, is ignored.
             .build());
     assertThat(handle.size()).isEqualTo(1);
   }
@@ -237,7 +231,6 @@ public final class SignaturePemKeysetReaderTest {
     assertThat(firstKey.getParameters()).isEqualTo(expectedParams);
     assertThat(firstKey.getModulus()).isEqualTo(expectedModulus);
     assertThat(secondKey.getParameters()).isEqualTo(expectedParams);
-
   }
 
   @Test
@@ -319,6 +312,14 @@ public final class SignaturePemKeysetReaderTest {
         + "z3BSRIngcgOvXBmV1JokcJ_LsrJD263WE9iUknZDhBK7y4ChjHNqL8yJcw_D8xLNiJtIyuxiZ00p_lOVUInr"
         + "8C_a2C1UGCgEGuXZAEGAdONVez52n5TLvQP3hRd4MTi7YvfhezRcA4aXyIDOv-TYi4p-OVTYQ-FMbkgoWBm5"
         + "bqwQ"));
+    RsaSsaPssParameters expectedRsaSsaPssParams = RsaSsaPssParameters.builder()
+            .setModulusSizeBits(2048)
+            .setPublicExponent(RsaSsaPssParameters.F4)
+            .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
+            .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
+            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+            .setSaltLengthBytes(32)
+            .build();
 
     String expectedXBase64 = "7BiT5K5pivl4Qfrt9hRhRREMUzj_8suEJ7GlMxZfvdc";
     String expectedYBase64 = "KW4vxoWD7iYvBp9h9TWjCWXC2aOTCzysshk-bt7tVQU";
@@ -326,28 +327,22 @@ public final class SignaturePemKeysetReaderTest {
         new ECPoint(
             new BigInteger(1, Base64.urlSafeDecode(expectedXBase64)),
             new BigInteger(1, Base64.urlSafeDecode(expectedYBase64)));
+    EcdsaParameters expectedEcdsaParams = EcdsaParameters.builder()
+            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
+            .setCurveType(EcdsaParameters.CurveType.NIST_P256)
+            .setHashType(EcdsaParameters.HashType.SHA256)
+            .setVariant(EcdsaParameters.Variant.NO_PREFIX)
+            .build();
 
     assertThat(handle.size()).isEqualTo(2);
 
     assertThat(handle.getAt(0).isPrimary()).isTrue();
     RsaSsaPssPublicKey firstKey = (RsaSsaPssPublicKey) handle.getAt(0).getKey();
-    assertThat(firstKey.getParameters()).isEqualTo(RsaSsaPssParameters.builder()
-            .setModulusSizeBits(2048)
-            .setPublicExponent(RsaSsaPssParameters.F4)
-            .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
-            .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
-            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
-            .setSaltLengthBytes(32)
-            .build());
+    assertThat(firstKey.getParameters()).isEqualTo(expectedRsaSsaPssParams);
     assertThat(firstKey.getModulus()).isEqualTo(expectedModulus);
 
     EcdsaPublicKey secondKey = (EcdsaPublicKey) handle.getAt(1).getKey();
-    assertThat(secondKey.getParameters()).isEqualTo(EcdsaParameters.builder()
-            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
-            .setCurveType(EcdsaParameters.CurveType.NIST_P256)
-            .setHashType(EcdsaParameters.HashType.SHA256)
-            .setVariant(EcdsaParameters.Variant.NO_PREFIX)
-            .build());
+    assertThat(secondKey.getParameters()).isEqualTo(expectedEcdsaParams);
     assertThat(secondKey.getPublicPoint()).isEqualTo(expectedPoint);
   }
 
@@ -376,8 +371,33 @@ public final class SignaturePemKeysetReaderTest {
         + "z3BSRIngcgOvXBmV1JokcJ_LsrJD263WE9iUknZDhBK7y4ChjHNqL8yJcw_D8xLNiJtIyuxiZ00p_lOVUInr"
         + "8C_a2C1UGCgEGuXZAEGAdONVez52n5TLvQP3hRd4MTi7YvfhezRcA4aXyIDOv-TYi4p-OVTYQ-FMbkgoWBm5"
         + "bqwQ"));
+    RsaSsaPssParameters expectedRsaSsaPssParams = RsaSsaPssParameters.builder()
+            .setModulusSizeBits(2048)
+            .setPublicExponent(RsaSsaPssParameters.F4)
+            .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
+            .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
+            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+            .setSaltLengthBytes(32)
+            .build();
+    RsaSsaPkcs1Parameters expectedRsaPkcs1Params = RsaSsaPkcs1Parameters.builder()
+            .setModulusSizeBits(2048)
+            .setPublicExponent(RsaSsaPkcs1Parameters.F4)
+            .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
+            .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
+            .build();
     String expectedXBase64 = "7BiT5K5pivl4Qfrt9hRhRREMUzj_8suEJ7GlMxZfvdc";
     String expectedYBase64 = "KW4vxoWD7iYvBp9h9TWjCWXC2aOTCzysshk-bt7tVQU";
+    ECPoint expectedPoint =
+        new ECPoint(
+            new BigInteger(1, Base64.urlSafeDecode(expectedXBase64)),
+            new BigInteger(1, Base64.urlSafeDecode(expectedYBase64)));
+
+    EcdsaParameters expectedEcdsaParams = EcdsaParameters.builder()
+            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
+            .setCurveType(EcdsaParameters.CurveType.NIST_P256)
+            .setHashType(EcdsaParameters.HashType.SHA256)
+            .setVariant(EcdsaParameters.Variant.NO_PREFIX)
+            .build();
 
     KeysetReader keysetReader =
         SignaturePemKeysetReader.newBuilder()
@@ -389,38 +409,17 @@ public final class SignaturePemKeysetReaderTest {
 
     assertThat(handle.size()).isEqualTo(3);
     RsaSsaPssPublicKey rsaPssKey = (RsaSsaPssPublicKey) handle.getAt(0).getKey();
-    assertThat(rsaPssKey.getParameters()).isEqualTo(RsaSsaPssParameters.builder()
-            .setModulusSizeBits(2048)
-            .setPublicExponent(RsaSsaPssParameters.F4)
-            .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
-            .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
-            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
-            .setSaltLengthBytes(32)
-            .build());
+    assertThat(rsaPssKey.getParameters()).isEqualTo(expectedRsaSsaPssParams);
     assertThat(rsaPssKey.getModulus()).isEqualTo(expectedModulus);
 
     RsaSsaPkcs1PublicKey rsaPkcs1Key =
         (RsaSsaPkcs1PublicKey) handle.getAt(1).getKey();
-    assertThat(rsaPkcs1Key.getParameters()).isEqualTo(RsaSsaPkcs1Parameters.builder()
-            .setModulusSizeBits(2048)
-            .setPublicExponent(RsaSsaPkcs1Parameters.F4)
-            .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
-            .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
-            .build());
+    assertThat(rsaPkcs1Key.getParameters()).isEqualTo(expectedRsaPkcs1Params);
     assertThat(rsaPkcs1Key.getModulus()).isEqualTo(expectedModulus);
 
     EcdsaPublicKey ecdsaKey = (EcdsaPublicKey) handle.getAt(2).getKey();
-
-    assertThat(ecdsaKey.getParameters()).isEqualTo(EcdsaParameters.builder()
-            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
-            .setCurveType(EcdsaParameters.CurveType.NIST_P256)
-            .setHashType(EcdsaParameters.HashType.SHA256)
-            .setVariant(EcdsaParameters.Variant.NO_PREFIX)
-            .build());
-    assertThat(BigIntegerEncoding.toUnsignedBigEndianBytes(ecdsaKey.getPublicPoint().getAffineX()))
-        .isEqualTo(Base64.urlSafeDecode(expectedXBase64));
-    assertThat(BigIntegerEncoding.toUnsignedBigEndianBytes(ecdsaKey.getPublicPoint().getAffineY()))
-        .isEqualTo(Base64.urlSafeDecode(expectedYBase64));
+    assertThat(ecdsaKey.getParameters()).isEqualTo(expectedEcdsaParams);
+    assertThat(ecdsaKey.getPublicPoint()).isEqualTo(expectedPoint);
   }
 
   @Test
@@ -447,7 +446,7 @@ public final class SignaturePemKeysetReaderTest {
   }
 
   @Test
-  public void buildTwice_worksButOnlyOneReaderCanRead() throws Exception {
+  public void buildTwice_works() throws Exception {
     String pem =
         "-----BEGIN PUBLIC KEY-----\n"
             + "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7BiT5K5pivl4Qfrt9hRhRREMUzj/\n"
@@ -757,15 +756,15 @@ public final class SignaturePemKeysetReaderTest {
                 + "c46ca5d5a6dca3d28ca50ad18bd13fca55059dd9b185f79f9c47196a4e81b210"
                 + "4bc460a051e02f2e8444f");
     assertThat(expectedKeyBytes.length * 8).isEqualTo(PemKeyType.ML_DSA_65.keySizeInBits);
+    MlDsaParameters expectedParameters = MlDsaParameters.create(
+          MlDsaParameters.MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.NO_PREFIX);
 
     KeysetHandle handle = LegacyKeysetSerialization.parseKeysetWithoutSecret(SignaturePemKeysetReader.newBuilder()
             .addPem(ML_DSA_65_PUBLIC_KEY_PEM, PemKeyType.ML_DSA_65)
             .build());
     assertThat(handle.size()).isEqualTo(1);
     MlDsaPublicKey publicKey = (MlDsaPublicKey) handle.getAt(0).getKey();
-    assertThat(publicKey.getParameters()).isEqualTo(
-      MlDsaParameters.create(
-          MlDsaParameters.MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.NO_PREFIX));
+    assertThat(publicKey.getParameters()).isEqualTo(expectedParameters);
     assertThat(publicKey.getSerializedPublicKey().toByteArray()).isEqualTo(expectedKeyBytes);
   }
 
@@ -993,8 +992,9 @@ public final class SignaturePemKeysetReaderTest {
             + "-----END PUBLIC KEY-----\n",
         PemKeyType.ED25519,
         Hex.decode(""),
-        Hex.decode("e5564300c360ac729086e2cc806e828a84877f1eb8e5d974d873e06522490155"
-                        + "5fb8821590a33bacc61e39701cf9b46bd25bf5f0595bbe24655141438e7a100b"))
+        Hex.decode(
+            "e5564300c360ac729086e2cc806e828a84877f1eb8e5d974d873e06522490155"
+                + "5fb8821590a33bacc61e39701cf9b46bd25bf5f0595bbe24655141438e7a100b"))
   };
 
   @Theory
