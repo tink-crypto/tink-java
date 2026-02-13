@@ -21,6 +21,7 @@ gen_maven_jar_rules(
     deps = [
         "//src/main/java/com/google/crypto/tink:accesses_partial_key",
         "//src/main/java/com/google/crypto/tink:aead",
+        "//src/main/java/com/google/crypto/tink:annotations",
         "//src/main/java/com/google/crypto/tink:binary_keyset_reader",
         "//src/main/java/com/google/crypto/tink:binary_keyset_writer",
         "//src/main/java/com/google/crypto/tink:catalogue",
@@ -50,7 +51,6 @@ gen_maven_jar_rules(
         "//src/main/java/com/google/crypto/tink:legacy_keyset_serialization",
         "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
         "//src/main/java/com/google/crypto/tink:mac",
-        "//src/main/java/com/google/crypto/tink:monitoring_annotations",
         "//src/main/java/com/google/crypto/tink:no_secret_keyset_handle",
         "//src/main/java/com/google/crypto/tink:parameters",
         "//src/main/java/com/google/crypto/tink:pem_key_type",
@@ -565,6 +565,7 @@ gen_maven_jar_rules(
     deps = [
         "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
         "//src/main/java/com/google/crypto/tink:aead-android",
+        "//src/main/java/com/google/crypto/tink:annotations-android",
         "//src/main/java/com/google/crypto/tink:binary_keyset_reader-android",
         "//src/main/java/com/google/crypto/tink:binary_keyset_writer-android",
         "//src/main/java/com/google/crypto/tink:catalogue-android",
@@ -594,7 +595,6 @@ gen_maven_jar_rules(
         "//src/main/java/com/google/crypto/tink:legacy_keyset_serialization-android",
         "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
         "//src/main/java/com/google/crypto/tink:mac-android",
-        "//src/main/java/com/google/crypto/tink:monitoring_annotations-android",
         "//src/main/java/com/google/crypto/tink:no_secret_keyset_handle-android",
         "//src/main/java/com/google/crypto/tink:parameters-android",
         "//src/main/java/com/google/crypto/tink:pem_key_type-android",

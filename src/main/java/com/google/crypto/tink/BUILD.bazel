@@ -1196,11 +1196,11 @@ java_library(
 )
 
 java_library(
-    name = "monitoring_annotations",
-    srcs = ["MonitoringAnnotations.java"],
+    name = "annotations",
+    srcs = ["Annotations.java"],
 )
 
 android_library(
-    name = "monitoring_annotations-android",
-    srcs = ["MonitoringAnnotations.java"],
+    name = "annotations-android",
+    srcs = ["Annotations.java"],
 )

@@ -17,10 +17,14 @@
 package com.google.crypto.tink;
 
 /**
- * Represents annotations which can be used for monitoring.
+ * Represents annotations which can be attached to a {@link KeysetHandle} and later retrieved.
  *
- * <p>MonitoringAnnotations can be set in a {@link KeysetHandle} at the time of creation. They can
- * then obtained when creating the primitive in the {@link Configuration}. This allows to pass
- * through arbitrary data to the configuration, which is used for monitoring within Google.
+ * <p>Annotations can be set in a {@link KeysetHandle} at the time of creation, and can later be
+ * obtained with {@link KeysetHandle#getAnnotationsOrNull}. This is useful when one wants to add
+ * external information to the keyset handle (e.g. for monitoring) without changing the whole call
+ * stack.
+ *
+ * <p>We note that annotations are not copied when a keyset is copied (e.g., by creating a {@link
+ * KeysetHandle.Builder}).
  */
-public interface MonitoringAnnotations {}
+public interface Annotations {}

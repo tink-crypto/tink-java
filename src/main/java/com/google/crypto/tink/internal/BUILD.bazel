@@ -878,7 +878,7 @@ android_library(
     name = "monitoring_annotations-android",
     srcs = ["MonitoringAnnotations.java"],
     deps = [
-        "//src/main/java/com/google/crypto/tink:monitoring_annotations-android",
+        "//src/main/java/com/google/crypto/tink:annotations-android",
         "//src/main/java/com/google/crypto/tink/annotations:alpha-android",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
@@ -899,7 +899,7 @@ java_library(
     srcs = ["MonitoringAnnotations.java"],
     visibility = ["//visibility:public"],
     deps = [
-        "//src/main/java/com/google/crypto/tink:monitoring_annotations",
+        "//src/main/java/com/google/crypto/tink:annotations",
         "//src/main/java/com/google/crypto/tink/annotations:alpha",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],

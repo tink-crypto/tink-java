@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.internal;
 
+import com.google.crypto.tink.Annotations;
 import com.google.crypto.tink.annotations.Alpha;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Immutable;
@@ -30,7 +31,7 @@ import java.util.Map;
  */
 @Immutable
 @Alpha
-public final class MonitoringAnnotations implements com.google.crypto.tink.MonitoringAnnotations {
+public final class MonitoringAnnotations implements Annotations {
 
   public static final MonitoringAnnotations EMPTY = newBuilder().build();
 
