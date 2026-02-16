@@ -470,6 +470,7 @@ java_library(
     ],
     deps = [
         ":aead",
+        ":annotations",
         ":configuration",
         ":insecure_secret_key_access",
         ":key",
@@ -518,6 +519,7 @@ android_library(
     ],
     deps = [
         ":aead-android",
+        ":annotations-android",
         ":configuration-android",
         ":insecure_secret_key_access-android",
         ":key-android",

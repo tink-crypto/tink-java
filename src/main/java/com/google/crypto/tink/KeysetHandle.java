@@ -50,8 +50,10 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nullable;
 
@@ -214,7 +216,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
     private final List<KeysetHandle.Builder.Entry> entries = new ArrayList<>();
     // If set, throw this error on BUILD instead of actually building.
     @Nullable private GeneralSecurityException errorToThrow = null;
-    private MonitoringAnnotations annotations = MonitoringAnnotations.EMPTY;
+    private final Map<Class<?>, Annotations> annotationsMap = new HashMap<>();
     private boolean buildCalled = false;
 
     private void clearPrimary() {
@@ -248,7 +250,29 @@ public final class KeysetHandle implements KeysetHandleInterface {
     @CanIgnoreReturnValue
     @Alpha
     public KeysetHandle.Builder setMonitoringAnnotations(MonitoringAnnotations annotations) {
-      this.annotations = annotations;
+      addAnnotations(MonitoringAnnotations.class, annotations);
+      return this;
+    }
+
+    /**
+     * Adds some annotations to the keyset.
+     *
+     * <p>The annotations object needs to be a subclass of {@link Annotations}, and it can later be
+     * retrieved from the keyset by calling {@link KeysetHandle#getAnnotationsOrNull}. These
+     * annotations are ignored when creating a {@code KeysetHandle.Builder} from a {@code Keyset},
+     * when comparing two keyset using {@code equalsKeyset}, or any other situation.
+     */
+    @CanIgnoreReturnValue
+    public <T extends Annotations> KeysetHandle.Builder addAnnotations(
+        Class<T> clazz, T annotations) {
+      if (clazz == Annotations.class) {
+        throw new IllegalArgumentException("Cannot use Annotations.class for addAnnotations");
+      }
+      if (annotationsMap.containsKey(clazz)) {
+        throw new IllegalArgumentException(
+            "Cannot call addAnnotations twice for the same annotations class");
+      }
+      annotationsMap.put(clazz, annotations);
       return this;
     }
 
@@ -413,7 +437,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
       if (primaryId == null) {
         throw new GeneralSecurityException("No primary was set");
       }
-      KeysetHandle unmonitoredKeyset = new KeysetHandle(handleEntries, annotations);
+      KeysetHandle unmonitoredKeyset = new KeysetHandle(handleEntries, annotationsMap);
       return addMonitoringIfNeeded(unmonitoredKeyset);
     }
   }
@@ -645,7 +669,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
   }
 
   private final List<Entry> entries;
-  private final MonitoringAnnotations annotations;
+  private final Map<Class<?>, Annotations> annotationsMap;
 
   /**
    * A version of this keyset handle in which "getKey" is not monitored. If "this" is already
@@ -681,10 +705,10 @@ public final class KeysetHandle implements KeysetHandleInterface {
     }
   }
 
-  private KeysetHandle(List<Entry> entries, MonitoringAnnotations annotations)
+  private KeysetHandle(List<Entry> entries, Map<Class<?>, Annotations> annotationsMap)
       throws GeneralSecurityException {
     this.entries = entries;
-    this.annotations = annotations;
+    this.annotationsMap = annotationsMap;
     if (GlobalTinkFlags.validateKeysetsOnParsing.getValue()) {
       validateNoDuplicateIds(entries);
     }
@@ -692,15 +716,19 @@ public final class KeysetHandle implements KeysetHandleInterface {
   }
 
   private KeysetHandle(
-      List<Entry> entries, MonitoringAnnotations annotations, KeysetHandle unmonitoredHandle) {
+      List<Entry> entries,
+      Map<Class<?>, Annotations> annotationsMap,
+      KeysetHandle unmonitoredHandle) {
     this.entries = entries;
-    this.annotations = annotations;
+    this.annotationsMap = annotationsMap;
     this.unmonitoredHandle = unmonitoredHandle;
   }
 
   private static KeysetHandle addMonitoringIfNeeded(KeysetHandle unmonitoredHandle) {
-    MonitoringAnnotations annotations = unmonitoredHandle.annotations;
-    if (annotations.isEmpty()) {
+    @Nullable
+    MonitoringAnnotations annotations =
+        unmonitoredHandle.getAnnotationsOrNull(MonitoringAnnotations.class);
+    if (annotations == null) {
       return unmonitoredHandle;
     }
     @SuppressWarnings("Immutable") // KeysetHandle is not annotated with immutable
@@ -719,7 +747,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
           new Entry(
               e.key, e.keyStatusType, e.id, e.isPrimary, e.keyParsingFailed, keyExportLogger));
     }
-    return new KeysetHandle(monitoredEntries, annotations, unmonitoredHandle);
+    return new KeysetHandle(monitoredEntries, unmonitoredHandle.annotationsMap, unmonitoredHandle);
   }
 
   /**
@@ -730,7 +758,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
     assertEnoughKeyMaterial(keyset);
     List<Entry> entries = getEntriesFromKeyset(keyset);
 
-    return new KeysetHandle(entries, MonitoringAnnotations.EMPTY);
+    return new KeysetHandle(entries, new HashMap<>());
   }
 
   /**
@@ -741,7 +769,9 @@ public final class KeysetHandle implements KeysetHandleInterface {
       Keyset keyset, MonitoringAnnotations annotations) throws GeneralSecurityException {
     assertEnoughKeyMaterial(keyset);
     List<Entry> entries = getEntriesFromKeyset(keyset);
-    return addMonitoringIfNeeded(new KeysetHandle(entries, annotations));
+    Map<Class<?>, Annotations> annotationsMap = new HashMap<>();
+    annotationsMap.put(MonitoringAnnotations.class, annotations);
+    return addMonitoringIfNeeded(new KeysetHandle(entries, annotationsMap));
   }
 
   /** Returns the actual keyset data. */
@@ -841,6 +871,17 @@ public final class KeysetHandle implements KeysetHandleInterface {
       throw new IndexOutOfBoundsException("Invalid index " + i + " for keyset of size " + size());
     }
     return entryByIndex(i);
+  }
+
+  /**
+   * Returns annotations which were previously set with {@link KeysetHandleBuilder#addAnnotations}.
+   *
+   * <p>Annotations are not interpreted by Tink.
+   */
+  @Nullable
+  @SuppressWarnings("unchecked") // Fine by implementation of addAnnotations
+  public <T extends Annotations> T getAnnotationsOrNull(Class<T> t) {
+    return (T) annotationsMap.get(t);
   }
 
   /**
@@ -1172,7 +1213,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
       publicEntries.add(publicEntry);
       i++;
     }
-    return addMonitoringIfNeeded(new KeysetHandle(publicEntries, annotations));
+    return addMonitoringIfNeeded(new KeysetHandle(publicEntries, annotationsMap));
   }
 
   private static KeyData getPublicKeyDataFromRegistry(KeyData privateKeyData)
@@ -1250,6 +1291,10 @@ public final class KeysetHandle implements KeysetHandleInterface {
                 + protoKey.getKeyData().getTypeUrl()
                 + " failed, unable to get primitive");
       }
+    }
+    MonitoringAnnotations annotations = getAnnotationsOrNull(MonitoringAnnotations.class);
+    if (annotations == null) {
+      annotations = MonitoringAnnotations.EMPTY;
     }
     return config.wrap(getUnmonitoredHandle(), annotations, classObject);
   }

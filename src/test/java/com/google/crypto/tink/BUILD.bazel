@@ -254,6 +254,7 @@ java_test(
         "//proto:hmac_prf_java_proto",
         "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:aead",
+        "//src/main/java/com/google/crypto/tink:annotations",
         "//src/main/java/com/google/crypto/tink:binary_keyset_reader",
         "//src/main/java/com/google/crypto/tink:binary_keyset_writer",
         "//src/main/java/com/google/crypto/tink:cleartext_keyset_handle",

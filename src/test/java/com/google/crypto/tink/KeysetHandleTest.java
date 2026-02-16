@@ -2469,4 +2469,55 @@ public class KeysetHandleTest {
         fakeMonitoringClient.getLogKeyExportEntries();
     assertThat(exports).isEmpty();
   }
+
+  static class Annotations1 implements Annotations {}
+
+  static class Annotations2 implements Annotations {}
+
+  @Test
+  public void annotationsCanBeAdded() throws Exception {
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.importKey(XChaCha20Poly1305Key.create(SecretBytes.randomBytes(32)))
+                    .withFixedId(100)
+                    .makePrimary())
+            .addAnnotations(Annotations1.class, new Annotations1())
+            .build();
+    assertThat(keysetHandle.getAnnotationsOrNull(Annotations1.class)).isNotNull();
+    assertThat(keysetHandle.getAnnotationsOrNull(Annotations2.class)).isNull();
+  }
+
+  @Test
+  public void annotationsCannotBeAddedTwice() throws Exception {
+    KeysetHandle.Builder builder =
+        KeysetHandle.newBuilder().addAnnotations(Annotations1.class, new Annotations1());
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> builder.addAnnotations(Annotations1.class, new Annotations1()));
+  }
+
+  @Test
+  public void annotationsNeedToBeSubclasses() throws Exception {
+    KeysetHandle.Builder builder = KeysetHandle.newBuilder();
+    // We reject Annotations.class
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> builder.addAnnotations(Annotations.class, new Annotations1()));
+  }
+
+  @Test
+  public void annotationsWorksWithMultipleClasses() throws Exception {
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.importKey(XChaCha20Poly1305Key.create(SecretBytes.randomBytes(32)))
+                    .withFixedId(100)
+                    .makePrimary())
+            .addAnnotations(Annotations1.class, new Annotations1())
+            .addAnnotations(Annotations2.class, new Annotations2())
+            .build();
+    assertThat(handle.getAnnotationsOrNull(Annotations1.class)).isNotNull();
+    assertThat(handle.getAnnotationsOrNull(Annotations2.class)).isNotNull();
+  }
 }
