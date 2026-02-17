@@ -50,12 +50,14 @@ class JwtPublicKeySignWrapper implements PrimitiveWrapper<JwtPublicKeySign, JwtP
 
     public WrappedJwtPublicKeySign(
         KeysetHandleInterface keysetHandle,
-        MonitoringAnnotations annotations,
+        MonitoringAnnotations unusedMonitoringAnnotations,
         PrimitiveFactory<JwtPublicKeySign> factory)
         throws GeneralSecurityException {
       this.primary = factory.create(keysetHandle.getPrimary());
       this.primaryKeyId = keysetHandle.getPrimary().getId();
-      if (!annotations.isEmpty()) {
+      MonitoringAnnotations annotations =
+          keysetHandle.getAnnotationsOrNull(MonitoringAnnotations.class);
+      if (annotations != null && !annotations.isEmpty()) {
         MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
         this.logger = client.createLogger(keysetHandle, annotations, "jwtsign", "sign");
       } else {
@@ -79,10 +81,10 @@ class JwtPublicKeySignWrapper implements PrimitiveWrapper<JwtPublicKeySign, JwtP
   @Override
   public JwtPublicKeySign wrap(
       KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations annotations,
+      MonitoringAnnotations unusedMonitoringAnnotations,
       PrimitiveFactory<JwtPublicKeySign> factory)
       throws GeneralSecurityException {
-    return new WrappedJwtPublicKeySign(keysetHandle, annotations, factory);
+    return new WrappedJwtPublicKeySign(keysetHandle, unusedMonitoringAnnotations, factory);
   }
 
   @Override

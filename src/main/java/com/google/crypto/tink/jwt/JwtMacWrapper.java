@@ -118,7 +118,7 @@ class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
   @Override
   public JwtMac wrap(
       KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations annotations,
+      MonitoringAnnotations unusedMonitoringAnnotations,
       PrimitiveFactory<JwtMac> factory)
       throws GeneralSecurityException {
     validate(keysetHandle);
@@ -132,7 +132,9 @@ class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
     }
     MonitoringClient.Logger computeLogger;
     MonitoringClient.Logger verifyLogger;
-    if (!annotations.isEmpty()) {
+    MonitoringAnnotations annotations =
+        keysetHandle.getAnnotationsOrNull(MonitoringAnnotations.class);
+    if (annotations != null && !annotations.isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
       computeLogger = client.createLogger(keysetHandle, annotations, "jwtmac", "compute");
       verifyLogger = client.createLogger(keysetHandle, annotations, "jwtmac", "verify");

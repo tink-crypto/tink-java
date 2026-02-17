@@ -108,7 +108,7 @@ public class PublicKeyVerifyWrapper implements PrimitiveWrapper<PublicKeyVerify,
   @Override
   public PublicKeyVerify wrap(
       KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations annotations,
+      MonitoringAnnotations unusedMonitoringAnnotations,
       PrimitiveFactory<PublicKeyVerify> factory)
       throws GeneralSecurityException {
     PrefixMap.Builder<PublicKeyVerifyWithId> builder = new PrefixMap.Builder<>();
@@ -122,7 +122,9 @@ public class PublicKeyVerifyWrapper implements PrimitiveWrapper<PublicKeyVerify,
       }
     }
     MonitoringClient.Logger logger;
-    if (!annotations.isEmpty()) {
+    MonitoringAnnotations annotations =
+        keysetHandle.getAnnotationsOrNull(MonitoringAnnotations.class);
+    if (annotations != null && !annotations.isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
       logger = client.createLogger(keysetHandle, annotations, "public_key_verify", "verify");
     } else {

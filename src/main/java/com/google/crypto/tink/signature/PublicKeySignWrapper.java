@@ -84,11 +84,13 @@ public class PublicKeySignWrapper implements PrimitiveWrapper<PublicKeySign, Pub
   @Override
   public PublicKeySign wrap(
       KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations annotations,
+      MonitoringAnnotations unusedMonitoringAnnotations,
       PrimitiveFactory<PublicKeySign> factory)
       throws GeneralSecurityException {
     MonitoringClient.Logger logger;
-    if (!annotations.isEmpty()) {
+    MonitoringAnnotations annotations =
+        keysetHandle.getAnnotationsOrNull(MonitoringAnnotations.class);
+    if (annotations != null && !annotations.isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
       logger = client.createLogger(keysetHandle, annotations, "public_key_sign", "sign");
     } else {

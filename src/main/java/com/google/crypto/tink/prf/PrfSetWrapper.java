@@ -99,11 +99,13 @@ public class PrfSetWrapper implements PrimitiveWrapper<Prf, PrfSet> {
   @Override
   public PrfSet wrap(
       KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations annotations,
+      MonitoringAnnotations unusedMonitoringAnnotations,
       PrimitiveFactory<Prf> factory)
       throws GeneralSecurityException {
     MonitoringClient.Logger logger;
-    if (!annotations.isEmpty()) {
+    MonitoringAnnotations annotations =
+        keysetHandle.getAnnotationsOrNull(MonitoringAnnotations.class);
+    if (annotations != null && !annotations.isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
       logger = client.createLogger(keysetHandle, annotations, "prf", "compute");
     } else {

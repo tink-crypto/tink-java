@@ -85,11 +85,13 @@ public class HybridEncryptWrapper implements PrimitiveWrapper<HybridEncrypt, Hyb
   @Override
   public HybridEncrypt wrap(
       KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations annotations,
+      MonitoringAnnotations unusedMonitoringAnnotations,
       PrimitiveFactory<HybridEncrypt> factory)
       throws GeneralSecurityException {
     MonitoringClient.Logger encLogger;
-    if (!annotations.isEmpty()) {
+    MonitoringAnnotations annotations =
+        keysetHandle.getAnnotationsOrNull(MonitoringAnnotations.class);
+    if (annotations != null && !annotations.isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
       encLogger = client.createLogger(keysetHandle, annotations, "hybrid_encrypt", "encrypt");
     } else {

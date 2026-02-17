@@ -106,7 +106,7 @@ public class HybridDecryptWrapper implements PrimitiveWrapper<HybridDecrypt, Hyb
   @Override
   public HybridDecrypt wrap(
       KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations annotations,
+      MonitoringAnnotations unusedMonitoringAnnotations,
       PrimitiveFactory<HybridDecrypt> factory)
       throws GeneralSecurityException {
     PrefixMap.Builder<HybridDecryptWithId> builder = new PrefixMap.Builder<>();
@@ -119,7 +119,9 @@ public class HybridDecryptWrapper implements PrimitiveWrapper<HybridDecrypt, Hyb
       }
     }
     MonitoringClient.Logger decLogger;
-    if (!annotations.isEmpty()) {
+    MonitoringAnnotations annotations =
+        keysetHandle.getAnnotationsOrNull(MonitoringAnnotations.class);
+    if (annotations != null && !annotations.isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
       decLogger = client.createLogger(keysetHandle, annotations, "hybrid_decrypt", "decrypt");
     } else {

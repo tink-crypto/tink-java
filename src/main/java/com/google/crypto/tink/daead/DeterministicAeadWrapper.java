@@ -128,7 +128,7 @@ public class DeterministicAeadWrapper
   @Override
   public DeterministicAead wrap(
       KeysetHandleInterface handle,
-      MonitoringAnnotations annotations,
+      MonitoringAnnotations unusedMonitoringAnnotations,
       PrimitiveFactory<DeterministicAead> factory)
       throws GeneralSecurityException {
     PrefixMap.Builder<DeterministicAeadWithId> builder = new PrefixMap.Builder<>();
@@ -143,7 +143,8 @@ public class DeterministicAeadWrapper
     }
     MonitoringClient.Logger encLogger;
     MonitoringClient.Logger decLogger;
-    if (!annotations.isEmpty()) {
+    MonitoringAnnotations annotations = handle.getAnnotationsOrNull(MonitoringAnnotations.class);
+    if (annotations != null && !annotations.isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
       encLogger = client.createLogger(handle, annotations, "daead", "encrypt");
       decLogger = client.createLogger(handle, annotations, "daead", "decrypt");

@@ -88,7 +88,7 @@ class JwtPublicKeyVerifyWrapper
   @Override
   public JwtPublicKeyVerify wrap(
       KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations annotations,
+      MonitoringAnnotations unusedMonitoringAnnotations,
       PrimitiveFactory<JwtPublicKeyVerify> factory)
       throws GeneralSecurityException {
     List<JwtPublicKeyVerifyWithId> allVerifiers = new ArrayList<>(keysetHandle.size());
@@ -99,7 +99,9 @@ class JwtPublicKeyVerifyWrapper
       }
     }
     MonitoringClient.Logger logger;
-    if (!annotations.isEmpty()) {
+    MonitoringAnnotations annotations =
+        keysetHandle.getAnnotationsOrNull(MonitoringAnnotations.class);
+    if (annotations != null && !annotations.isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
       logger = client.createLogger(keysetHandle, annotations, "jwtverify", "verify");
     } else {

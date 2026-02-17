@@ -125,7 +125,7 @@ public class AeadWrapper implements PrimitiveWrapper<Aead, Aead> {
   @Override
   public Aead wrap(
       KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations annotations,
+      MonitoringAnnotations unusedMonitoringAnnotations,
       PrimitiveFactory<Aead> factory)
       throws GeneralSecurityException {
     PrefixMap.Builder<AeadWithId> builder = new PrefixMap.Builder<>();
@@ -138,7 +138,9 @@ public class AeadWrapper implements PrimitiveWrapper<Aead, Aead> {
     }
     MonitoringClient.Logger encLogger;
     MonitoringClient.Logger decLogger;
-    if (!annotations.isEmpty()) {
+    MonitoringAnnotations annotations =
+        keysetHandle.getAnnotationsOrNull(MonitoringAnnotations.class);
+    if (annotations != null && !annotations.isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
       encLogger = client.createLogger(keysetHandle, annotations, "aead", "encrypt");
       decLogger = client.createLogger(keysetHandle, annotations, "aead", "decrypt");
