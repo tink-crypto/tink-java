@@ -878,6 +878,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
    *
    * <p>Annotations are not interpreted by Tink.
    */
+  @Override
   @Nullable
   @SuppressWarnings("unchecked") // Fine by implementation of addAnnotations
   public <T extends Annotations> T getAnnotationsOrNull(Class<T> t) {

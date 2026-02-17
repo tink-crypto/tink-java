@@ -124,7 +124,7 @@ public class MacWrapper implements PrimitiveWrapper<Mac, Mac> {
   @Override
   public Mac wrap(
       KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations annotations,
+      MonitoringAnnotations unusedMonitoringAnnotations,
       PrimitiveFactory<Mac> factory)
       throws GeneralSecurityException {
     PrefixMap.Builder<MacWithId> builder = new PrefixMap.Builder<>();
@@ -137,7 +137,10 @@ public class MacWrapper implements PrimitiveWrapper<Mac, Mac> {
     }
     MonitoringClient.Logger computeLogger;
     MonitoringClient.Logger verifyLogger;
-    if (!annotations.isEmpty()) {
+
+    MonitoringAnnotations annotations =
+        keysetHandle.getAnnotationsOrNull(MonitoringAnnotations.class);
+    if (annotations != null && !annotations.isEmpty()) {
       MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
       computeLogger = client.createLogger(keysetHandle, annotations, "mac", "compute");
       verifyLogger = client.createLogger(keysetHandle, annotations, "mac", "verify");

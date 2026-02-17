@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.internal;
 
+import com.google.crypto.tink.Annotations;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyStatus;
 
@@ -42,4 +43,6 @@ public interface KeysetHandleInterface {
   int size();
 
   Entry getAt(int i);
+
+  <T extends Annotations> T getAnnotationsOrNull(Class<T> t);
 }
