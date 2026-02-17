@@ -224,7 +224,7 @@ public class HybridEncryptWrapperTest {
             .build();
     KeysetHandle publicHandle =
         KeysetHandle.newBuilder(privateHandle.getPublicKeysetHandle())
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
 
     HybridEncrypt encrypt =
@@ -269,7 +269,7 @@ public class HybridEncryptWrapperTest {
             .build();
     KeysetHandle publicHandle1 =
         KeysetHandle.newBuilder(privateHandle1.getPublicKeysetHandle())
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
     KeysetHandle privateHandle2 =
         KeysetHandle.newBuilder()
@@ -278,7 +278,7 @@ public class HybridEncryptWrapperTest {
             .build();
     KeysetHandle publicHandle2 =
         KeysetHandle.newBuilder(privateHandle2.getPublicKeysetHandle())
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
 
     HybridEncrypt encrypter1 =
@@ -343,7 +343,7 @@ public class HybridEncryptWrapperTest {
             .build();
     KeysetHandle publicHandle =
         KeysetHandle.newBuilder(privateHandle.getPublicKeysetHandle())
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
     HybridEncrypt encrypt =
         publicHandle.getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class);

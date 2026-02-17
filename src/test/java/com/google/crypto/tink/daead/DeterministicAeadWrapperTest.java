@@ -301,7 +301,7 @@ public class DeterministicAeadWrapperTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(tinkKey).makePrimary())
             .addEntry(KeysetHandle.importKey(rawKey).withFixedId(43))
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
     DeterministicAead daead =
         keysetHandle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
@@ -396,7 +396,7 @@ public class DeterministicAeadWrapperTest {
     KeysetHandle keysetHandle =
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(tinkKey).makePrimary())
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
     DeterministicAead daead =
         keysetHandle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);

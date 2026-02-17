@@ -529,7 +529,7 @@ public class AeadWrapperTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(tinkKey).makePrimary())
             .addEntry(KeysetHandle.importKey(rawKey0).withFixedId(43))
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
     Aead aead = twoKeysKeysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
@@ -608,7 +608,7 @@ public class AeadWrapperTest {
     KeysetHandle aesCtrHmacAeadKeysetHandle =
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(tinkKey).makePrimary())
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
     Aead aead = aesCtrHmacAeadKeysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 

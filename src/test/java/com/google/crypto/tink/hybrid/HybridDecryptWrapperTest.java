@@ -305,7 +305,7 @@ public class HybridDecryptWrapperTest {
         KeysetHandle.newBuilder()
             .addEntry(
                 KeysetHandle.generateEntryFromParameters(parameters).withFixedId(123).makePrimary())
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
 
     HybridDecrypt decrypter = handle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
@@ -357,7 +357,7 @@ public class HybridDecryptWrapperTest {
             .addEntry(
                 KeysetHandle.generateEntryFromParameters(parameters).withFixedId(200).makePrimary())
             .addEntry(KeysetHandle.generateEntryFromParameters(parameters).withFixedId(300))
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
 
     HybridDecrypt decrypter = handle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);

@@ -459,7 +459,7 @@ public class JwtPublicKeySignVerifyWrappersTest {
                 KeysetHandle.generateEntryFromParametersName("JWT_ES256")
                     .makePrimary()
                     .withFixedId(42))
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
     KeysetHandle publicKeysetHandle = privateKeysetHandle.getPublicKeysetHandle();
     JwtPublicKeySign signer =

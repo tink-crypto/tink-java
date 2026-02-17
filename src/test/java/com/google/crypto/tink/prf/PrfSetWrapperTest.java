@@ -219,7 +219,7 @@ public class PrfSetWrapperTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(hkdfPrfKey0).withFixedId(5).makePrimary())
             .addEntry(KeysetHandle.importKey(hkdfPrfKey1).withFixedId(6))
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
     byte[] plaintext = "blah".getBytes(UTF_8);
 
@@ -299,7 +299,7 @@ public class PrfSetWrapperTest {
     KeysetHandle hkdfKeysetHandle =
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(hkdfPrfKey0).withFixedId(5).makePrimary())
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
     PrfSet prfSet = hkdfKeysetHandle.getPrimitive(RegistryConfiguration.get(), PrfSet.class);
     byte[] plaintext = "blah".getBytes(UTF_8);

@@ -313,7 +313,7 @@ public class JwtMacWrapperTest {
                 KeysetHandle.generateEntryFromParametersName("JWT_HS256")
                     .makePrimary()
                     .withFixedId(42))
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
 
     JwtMac jwtMac = keysetHandle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);

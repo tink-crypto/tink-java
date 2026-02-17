@@ -449,19 +449,19 @@ public class MacWrapperTest {
     KeysetHandle rawKeysetHandle =
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(rawKey0).withFixedId(43).makePrimary())
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
     KeysetHandle legacyKeysetHandle =
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(legacyKey0).makePrimary())
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
     KeysetHandle mixedKeysetHandle =
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(tinkKey1).makePrimary())
             .addEntry(KeysetHandle.importKey(rawKey0).withFixedId(43))
             .addEntry(KeysetHandle.importKey(legacyKey0))
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
     Mac rawMac = rawKeysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
     Mac legacyMac = legacyKeysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
@@ -577,7 +577,7 @@ public class MacWrapperTest {
     KeysetHandle keysetHandle =
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(tinkKey0).makePrimary())
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
     Mac mac = keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
 

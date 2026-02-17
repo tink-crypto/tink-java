@@ -238,7 +238,7 @@ public class PublicKeySignWrapperTest {
         KeysetHandle.newBuilder()
             .addEntry(
                 KeysetHandle.generateEntryFromParameters(parameters).withFixedId(123).makePrimary())
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
 
     PublicKeySign signer = handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
@@ -276,7 +276,7 @@ public class PublicKeySignWrapperTest {
         KeysetHandle.newBuilder()
             .addEntry(
                 KeysetHandle.generateEntryFromParameters(parameters).withFixedId(123).makePrimary())
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
 
     PublicKeySign signer = handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
@@ -314,13 +314,13 @@ public class PublicKeySignWrapperTest {
         KeysetHandle.newBuilder()
             .addEntry(
                 KeysetHandle.generateEntryFromParameters(parameters).withFixedId(123).makePrimary())
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
     KeysetHandle handle2 =
         KeysetHandle.newBuilder()
             .addEntry(
                 KeysetHandle.generateEntryFromParameters(parameters).withFixedId(456).makePrimary())
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
 
     PublicKeySign signer1 = handle1.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
@@ -379,7 +379,7 @@ public class PublicKeySignWrapperTest {
         KeysetHandle.newBuilder()
             .addEntry(
                 KeysetHandle.generateEntryFromParameters(parameters).withFixedId(123).makePrimary())
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
 
     PublicKeySign signer = handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);

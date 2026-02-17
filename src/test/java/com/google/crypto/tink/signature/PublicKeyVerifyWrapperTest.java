@@ -254,7 +254,7 @@ public class PublicKeyVerifyWrapperTest {
             .build();
     KeysetHandle publicHandle =
         KeysetHandle.newBuilder(privateHandle.getPublicKeysetHandle())
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
 
     PublicKeySign signer = EcdsaSignJce.create((EcdsaPrivateKey) privateHandle.getAt(0).getKey());
@@ -303,7 +303,7 @@ public class PublicKeyVerifyWrapperTest {
             .build();
     KeysetHandle publicHandle =
         KeysetHandle.newBuilder(privateHandle.getPublicKeysetHandle())
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
 
     PublicKeyVerify verifier =
@@ -345,7 +345,7 @@ public class PublicKeyVerifyWrapperTest {
             .build();
     KeysetHandle publicHandle =
         KeysetHandle.newBuilder(privateHandle.getPublicKeysetHandle())
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
     PublicKeySign signer = EcdsaSignJce.create((EcdsaPrivateKey) privateHandle.getAt(0).getKey());
     PublicKeyVerify verifier =
@@ -399,7 +399,7 @@ public class PublicKeyVerifyWrapperTest {
             .build();
     KeysetHandle publicHandle =
         KeysetHandle.newBuilder(privateHandle.getPublicKeysetHandle())
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
 
     PublicKeySign signer20 = EcdsaSignJce.create((EcdsaPrivateKey) privateHandle.getAt(0).getKey());
@@ -475,7 +475,7 @@ public class PublicKeyVerifyWrapperTest {
             .build();
     KeysetHandle publicHandle =
         KeysetHandle.newBuilder(privateHandle.getPublicKeysetHandle())
-            .setMonitoringAnnotations(annotations)
+            .addAnnotations(MonitoringAnnotations.class, annotations)
             .build();
 
     PublicKeySign signer = EcdsaSignJce.create((EcdsaPrivateKey) privateHandle.getAt(0).getKey());
