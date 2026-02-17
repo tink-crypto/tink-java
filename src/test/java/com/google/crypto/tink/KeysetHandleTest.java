@@ -2278,14 +2278,17 @@ public class KeysetHandleTest {
             .addEntry(
                 KeysetHandle.importKey(
                         new Key() {
+                          @Override
                           public boolean equalsKey(Key k) {
                             return false;
                           }
 
+                          @Override
                           public Integer getIdRequirementOrNull() {
                             return null;
                           }
 
+                          @Override
                           public Parameters getParameters() {
                             return null;
                           }
