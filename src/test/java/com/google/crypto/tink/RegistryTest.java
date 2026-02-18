@@ -116,27 +116,20 @@ public class RegistryTest {
     }
   }
 
-  private static interface EncryptOnly {
-    byte[] encrypt(final byte[] plaintext) throws GeneralSecurityException;
-  }
+  private static interface SomeInterface {}
 
-  private static class AeadToEncryptOnlyWrapper implements PrimitiveWrapper<Aead, EncryptOnly> {
+  private static class AeadToEncryptOnlyWrapper implements PrimitiveWrapper<Aead, SomeInterface> {
     public static final AeadToEncryptOnlyWrapper WRAPPER = new AeadToEncryptOnlyWrapper();
 
     @Override
-    public EncryptOnly wrap(KeysetHandleInterface keysetHandle, PrimitiveFactory<Aead> factory)
+    public SomeInterface wrap(KeysetHandleInterface keysetHandle, PrimitiveFactory<Aead> factory)
         throws GeneralSecurityException {
-      return new EncryptOnly() {
-        @Override
-        public byte[] encrypt(final byte[] plaintext) throws GeneralSecurityException {
-          return factory.create(keysetHandle.getPrimary()).encrypt(plaintext, new byte[0]);
-        }
-      };
+      return new SomeInterface() {};
     }
 
     @Override
-    public Class<EncryptOnly> getPrimitiveClass() {
-      return EncryptOnly.class;
+    public Class<SomeInterface> getPrimitiveClass() {
+      return SomeInterface.class;
     }
 
     @Override
@@ -708,9 +701,9 @@ public class RegistryTest {
   }
 
   @Test
-  public void testWrap_wrapAsEncryptOnly() throws Exception {
-    EncryptOnly encrypt =
-        MutablePrimitiveRegistry.globalInstance().wrap(createAeadKeyset(), EncryptOnly.class);
+  public void testWrap_wrapAsSomeInterface() throws Exception {
+    SomeInterface encrypt =
+        MutablePrimitiveRegistry.globalInstance().wrap(createAeadKeyset(), SomeInterface.class);
     assertThat(encrypt).isNotNull();
   }
 
@@ -721,16 +714,16 @@ public class RegistryTest {
         () -> {
           MutablePrimitiveRegistry.globalInstance()
               .registerPrimitiveWrapper(
-                  new PrimitiveWrapper<Mac, EncryptOnly>() {
+                  new PrimitiveWrapper<Mac, SomeInterface>() {
                     @Override
-                    public EncryptOnly wrap(
+                    public SomeInterface wrap(
                         KeysetHandleInterface keysetHandle, PrimitiveFactory<Mac> factory) {
                       return null;
                     }
 
                     @Override
-                    public Class<EncryptOnly> getPrimitiveClass() {
-                      return EncryptOnly.class;
+                    public Class<SomeInterface> getPrimitiveClass() {
+                      return SomeInterface.class;
                     }
 
                     @Override
