@@ -151,8 +151,8 @@ java_library(
     deps = [
         ":streaming_aead_helper",
         "//src/main/java/com/google/crypto/tink:key_status",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface",
         "//src/main/java/com/google/crypto/tink:streaming_aead",
-        "//src/main/java/com/google/crypto/tink/internal:keyset_handle_interface",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry",
         "//src/main/java/com/google/crypto/tink/internal:primitive_constructor",
@@ -358,8 +358,8 @@ android_library(
     deps = [
         ":streaming_aead_helper-android",
         "//src/main/java/com/google/crypto/tink:key_status-android",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface-android",
         "//src/main/java/com/google/crypto/tink:streaming_aead-android",
-        "//src/main/java/com/google/crypto/tink/internal:keyset_handle_interface-android",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key-android",
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_constructor-android",

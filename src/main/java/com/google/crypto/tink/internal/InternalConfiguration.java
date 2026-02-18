@@ -17,6 +17,7 @@
 package com.google.crypto.tink.internal;
 
 import com.google.crypto.tink.Configuration;
+import com.google.crypto.tink.KeysetHandleInterface;
 import java.security.GeneralSecurityException;
 
 /**

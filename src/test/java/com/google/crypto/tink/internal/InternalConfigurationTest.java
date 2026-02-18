@@ -19,6 +19,7 @@ package com.google.crypto.tink.internal;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.aead.AeadConfig;
 import com.google.crypto.tink.aead.PredefinedAeadParameters;
 import com.google.errorprone.annotations.Immutable;

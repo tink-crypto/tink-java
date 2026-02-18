@@ -33,7 +33,6 @@ import com.google.crypto.tink.config.GlobalTinkFlags;
 import com.google.crypto.tink.internal.InternalConfiguration;
 import com.google.crypto.tink.internal.KeyParser;
 import com.google.crypto.tink.internal.KeyStatusTypeProtoConverter;
-import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MonitoringClient;

@@ -476,6 +476,7 @@ java_library(
         ":key",
         ":key_status",
         ":key_template",
+        ":keyset_handle_interface",
         ":keyset_reader",
         ":keyset_writer",
         ":parameters",
@@ -489,7 +490,6 @@ java_library(
         "//src/main/java/com/google/crypto/tink/config:global_tink_flags",
         "//src/main/java/com/google/crypto/tink/internal:internal_configuration",
         "//src/main/java/com/google/crypto/tink/internal:key_status_type_proto_converter",
-        "//src/main/java/com/google/crypto/tink/internal:keyset_handle_interface",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_annotations",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_client",
@@ -525,6 +525,7 @@ android_library(
         ":key-android",
         ":key_status-android",
         ":key_template-android",
+        ":keyset_handle_interface-android",
         ":keyset_reader-android",
         ":keyset_writer-android",
         ":parameters-android",
@@ -538,7 +539,6 @@ android_library(
         "//src/main/java/com/google/crypto/tink/config:global_tink_flags-android",
         "//src/main/java/com/google/crypto/tink/internal:internal_configuration-android",
         "//src/main/java/com/google/crypto/tink/internal:key_status_type_proto_converter-android",
-        "//src/main/java/com/google/crypto/tink/internal:keyset_handle_interface-android",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key-android",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_annotations-android",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_client-android",
@@ -1205,4 +1205,24 @@ java_library(
 android_library(
     name = "annotations-android",
     srcs = ["Annotations.java"],
+)
+
+android_library(
+    name = "keyset_handle_interface-android",
+    srcs = ["KeysetHandleInterface.java"],
+    deps = [
+        ":annotations-android",
+        ":key-android",
+        ":key_status-android",
+    ],
+)
+
+java_library(
+    name = "keyset_handle_interface",
+    srcs = ["KeysetHandleInterface.java"],
+    deps = [
+        ":annotations",
+        ":key",
+        ":key_status",
+    ],
 )

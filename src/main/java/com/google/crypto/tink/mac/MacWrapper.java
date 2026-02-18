@@ -18,8 +18,8 @@ package com.google.crypto.tink.mac;
 
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyStatus;
+import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.Mac;
-import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MonitoringClient;

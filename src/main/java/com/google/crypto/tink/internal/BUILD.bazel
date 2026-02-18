@@ -408,10 +408,10 @@ java_library(
     name = "mutable_monitoring_registry",
     srcs = ["MutableMonitoringRegistry.java"],
     deps = [
-        ":keyset_handle_interface",
         ":monitoring_annotations",
         ":monitoring_client",
         ":monitoring_util",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface",
     ],
 )
 
@@ -419,10 +419,10 @@ android_library(
     name = "mutable_monitoring_registry-android",
     srcs = ["MutableMonitoringRegistry.java"],
     deps = [
-        ":keyset_handle_interface-android",
         ":monitoring_annotations-android",
         ":monitoring_client-android",
         ":monitoring_util-android",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface-android",
     ],
 )
 
@@ -476,13 +476,13 @@ java_library(
     name = "primitive_registry",
     srcs = ["PrimitiveRegistry.java"],
     deps = [
-        ":keyset_handle_interface",
         ":legacy_proto_key",
         ":mutable_serialization_registry",
         ":primitive_constructor",
         ":primitive_wrapper",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink:key",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
@@ -491,13 +491,13 @@ android_library(
     name = "primitive_registry-android",
     srcs = ["PrimitiveRegistry.java"],
     deps = [
-        ":keyset_handle_interface-android",
         ":legacy_proto_key-android",
         ":mutable_serialization_registry-android",
         ":primitive_constructor-android",
         ":primitive_wrapper-android",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access-android",
         "//src/main/java/com/google/crypto/tink:key-android",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface-android",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
@@ -518,11 +518,11 @@ android_library(
     name = "mutable_primitive_registry-android",
     srcs = ["MutablePrimitiveRegistry.java"],
     deps = [
-        ":keyset_handle_interface-android",
         ":primitive_constructor-android",
         ":primitive_registry-android",
         ":primitive_wrapper-android",
         "//src/main/java/com/google/crypto/tink:key-android",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface-android",
     ],
 )
 
@@ -530,11 +530,11 @@ java_library(
     name = "mutable_primitive_registry",
     srcs = ["MutablePrimitiveRegistry.java"],
     deps = [
-        ":keyset_handle_interface",
         ":primitive_constructor",
         ":primitive_registry",
         ":primitive_wrapper",
         "//src/main/java/com/google/crypto/tink:key",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface",
     ],
 )
 
@@ -640,9 +640,9 @@ java_library(
     name = "internal_configuration",
     srcs = ["InternalConfiguration.java"],
     deps = [
-        ":keyset_handle_interface",
         ":primitive_registry",
         "//src/main/java/com/google/crypto/tink:configuration",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface",
     ],
 )
 
@@ -650,9 +650,9 @@ android_library(
     name = "internal_configuration-android",
     srcs = ["InternalConfiguration.java"],
     deps = [
-        ":keyset_handle_interface-android",
         ":primitive_registry-android",
         "//src/main/java/com/google/crypto/tink:configuration-android",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface-android",
     ],
 )
 
@@ -661,9 +661,9 @@ android_library(
     srcs = ["RegistryConfiguration.java"],
     deps = [
         ":internal_configuration-android",
-        ":keyset_handle_interface-android",
         ":mutable_primitive_registry-android",
         ":primitive_registry-android",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface-android",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
@@ -673,9 +673,9 @@ java_library(
     srcs = ["RegistryConfiguration.java"],
     deps = [
         ":internal_configuration",
-        ":keyset_handle_interface",
         ":mutable_primitive_registry",
         ":primitive_registry",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
@@ -851,13 +851,13 @@ java_library(
 android_library(
     name = "primitive_wrapper-android",
     srcs = ["PrimitiveWrapper.java"],
-    deps = [":keyset_handle_interface-android"],
+    deps = ["//src/main/java/com/google/crypto/tink:keyset_handle_interface-android"],
 )
 
 java_library(
     name = "primitive_wrapper",
     srcs = ["PrimitiveWrapper.java"],
-    deps = [":keyset_handle_interface"],
+    deps = ["//src/main/java/com/google/crypto/tink:keyset_handle_interface"],
 )
 
 android_library(
@@ -874,8 +874,8 @@ android_library(
     name = "monitoring_client-android",
     srcs = ["MonitoringClient.java"],
     deps = [
-        ":keyset_handle_interface-android",
         ":monitoring_annotations-android",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface-android",
         "//src/main/java/com/google/crypto/tink/annotations:alpha-android",
     ],
 )
@@ -895,8 +895,8 @@ java_library(
     name = "monitoring_client",
     srcs = ["MonitoringClient.java"],
     deps = [
-        ":keyset_handle_interface",
         ":monitoring_annotations",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface",
         "//src/main/java/com/google/crypto/tink/annotations:alpha",
     ],
 )
@@ -928,26 +928,6 @@ java_library(
     deps = [
         "//src/main/java/com/google/crypto/tink/util:bytes",
         "@maven//:com_google_errorprone_error_prone_annotations",
-    ],
-)
-
-android_library(
-    name = "keyset_handle_interface-android",
-    srcs = ["KeysetHandleInterface.java"],
-    deps = [
-        "//src/main/java/com/google/crypto/tink:annotations-android",
-        "//src/main/java/com/google/crypto/tink:key-android",
-        "//src/main/java/com/google/crypto/tink:key_status-android",
-    ],
-)
-
-java_library(
-    name = "keyset_handle_interface",
-    srcs = ["KeysetHandleInterface.java"],
-    deps = [
-        "//src/main/java/com/google/crypto/tink:annotations",
-        "//src/main/java/com/google/crypto/tink:key",
-        "//src/main/java/com/google/crypto/tink:key_status",
     ],
 )
 

@@ -16,7 +16,7 @@
 package com.google.crypto.tink.prf;
 
 import com.google.crypto.tink.KeyStatus;
-import com.google.crypto.tink.internal.KeysetHandleInterface;
+import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MonitoringClient;

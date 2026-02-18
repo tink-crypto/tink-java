@@ -17,7 +17,7 @@
 package com.google.crypto.tink.jwt;
 
 import com.google.crypto.tink.KeyStatus;
-import com.google.crypto.tink.internal.KeysetHandleInterface;
+import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringUtil;

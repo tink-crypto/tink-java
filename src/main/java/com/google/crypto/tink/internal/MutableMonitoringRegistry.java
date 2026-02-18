@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.internal;
 
+import com.google.crypto.tink.KeysetHandleInterface;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**

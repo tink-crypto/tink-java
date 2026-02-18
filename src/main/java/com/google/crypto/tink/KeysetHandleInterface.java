@@ -14,11 +14,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package com.google.crypto.tink.internal;
-
-import com.google.crypto.tink.Annotations;
-import com.google.crypto.tink.Key;
-import com.google.crypto.tink.KeyStatus;
+package com.google.crypto.tink;
 
 /**
  * Provides the basic interface for KeysetHandle.
@@ -29,20 +25,35 @@ import com.google.crypto.tink.KeyStatus;
 public interface KeysetHandleInterface {
   /** Provides the basic interface for KeysetHandle.Entry. */
   public interface Entry {
+    /** Returns the key for this entry. */
     Key getKey();
 
+    /** Returns the key status for this entry. */
     KeyStatus getStatus();
 
+    /** Returns the ID for this entry. */
     int getId();
 
+    /** True if this entry is the unique primary in a keyset. */
     boolean isPrimary();
   }
 
+  /** Returns the unique primary entry of the keyset. */
   Entry getPrimary();
 
+  /** Returns the number of entries in this keyset. */
   int size();
 
+  /**
+   * Returns the entry at position i.
+   *
+   * @throws IndexOutOfBoundsException if i < 0 or i >= size();
+   */
   Entry getAt(int i);
 
+  /**
+   * Returns annotations which could previously be added with {@code
+   * KeysetHandleBuilder.addAnnotations();}
+   */
   <T extends Annotations> T getAnnotationsOrNull(Class<T> t);
 }

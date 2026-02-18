@@ -19,7 +19,6 @@ package com.google.crypto.tink;
 import com.google.crypto.tink.annotations.Alpha;
 import com.google.crypto.tink.config.GlobalTinkFlags;
 import com.google.crypto.tink.internal.InternalConfiguration;
-import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MonitoringClient;

@@ -19,7 +19,7 @@ package com.google.crypto.tink.keyderivation.internal;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeysetHandle;
-import com.google.crypto.tink.internal.KeysetHandleInterface;
+import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveWrapper;

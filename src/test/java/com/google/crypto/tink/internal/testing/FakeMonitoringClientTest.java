@@ -21,10 +21,10 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.aead.ChaCha20Poly1305Key;
 import com.google.crypto.tink.aead.ChaCha20Poly1305Parameters;
 import com.google.crypto.tink.config.TinkConfig;
-import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.util.SecretBytes;

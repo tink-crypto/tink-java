@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.internal;
 
+import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.errorprone.annotations.DoNotCall;
 import java.security.GeneralSecurityException;
 
