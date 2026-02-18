@@ -130,7 +130,6 @@ public class RegistryConfigurationTest {
                 KeysetHandle.newBuilder()
                     .addEntry(KeysetHandle.importKey(rawKey).withRandomId().makePrimary())
                     .build(),
-                MonitoringAnnotations.EMPTY,
                 Mac.class);
 
     assertThat(wrappedConfigurationMac.computeMac(plaintext))
@@ -143,9 +142,6 @@ public class RegistryConfigurationTest {
         GeneralSecurityException.class,
         () ->
             RegistryConfiguration.get()
-                .wrap(
-                    KeysetHandle.generateNew(rawKey.getParameters()),
-                    MonitoringAnnotations.EMPTY,
-                    Aead.class));
+                .wrap(KeysetHandle.generateNew(rawKey.getParameters()), Aead.class));
   }
 }

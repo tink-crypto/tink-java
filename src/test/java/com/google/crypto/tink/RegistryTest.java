@@ -32,7 +32,6 @@ import com.google.crypto.tink.config.TinkConfig;
 import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
-import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.jwt.JwtMac;
@@ -695,9 +694,7 @@ public class RegistryTest {
 
   @Test
   public void testWrap_wrapperRegistered() throws Exception {
-    assertNotNull(
-        MutablePrimitiveRegistry.globalInstance()
-            .wrap(createAeadKeyset(), MonitoringAnnotations.EMPTY, Aead.class));
+    assertNotNull(MutablePrimitiveRegistry.globalInstance().wrap(createAeadKeyset(), Aead.class));
   }
 
   @Test
@@ -706,9 +703,7 @@ public class RegistryTest {
     GeneralSecurityException e =
         assertThrows(
             GeneralSecurityException.class,
-            () ->
-                MutablePrimitiveRegistry.globalInstance()
-                    .wrap(createAeadKeyset(), MonitoringAnnotations.EMPTY, Aead.class));
+            () -> MutablePrimitiveRegistry.globalInstance().wrap(createAeadKeyset(), Aead.class));
     assertExceptionContains(e, "No wrapper found");
     assertExceptionContains(e, "Aead");
   }
@@ -716,8 +711,7 @@ public class RegistryTest {
   @Test
   public void testWrap_wrapAsEncryptOnly() throws Exception {
     EncryptOnly encrypt =
-        MutablePrimitiveRegistry.globalInstance()
-            .wrap(createAeadKeyset(), MonitoringAnnotations.EMPTY, EncryptOnly.class);
+        MutablePrimitiveRegistry.globalInstance().wrap(createAeadKeyset(), EncryptOnly.class);
     assertThat(encrypt).isNotNull();
   }
 

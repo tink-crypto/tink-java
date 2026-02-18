@@ -190,8 +190,7 @@ public final class PrimitiveRegistryTest {
         GeneralSecurityException.class,
         () -> registry.getPrimitive(new TestKey1(), TestPrimitiveA.class));
     assertThrows(
-        GeneralSecurityException.class,
-        () -> registry.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveA.class));
+        GeneralSecurityException.class, () -> registry.wrap(arbitraryKeyset, TestPrimitiveA.class));
   }
 
   @Test
@@ -284,8 +283,7 @@ public final class PrimitiveRegistryTest {
   public void test_registerWrapperAndGet() throws Exception {
     PrimitiveRegistry registry =
         PrimitiveRegistry.builder().registerPrimitiveWrapper(new TestWrapperA()).build();
-    assertThat(registry.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveA.class))
-        .isNotNull();
+    assertThat(registry.wrap(arbitraryKeyset, TestPrimitiveA.class)).isNotNull();
   }
 
   @Test
@@ -322,9 +320,9 @@ public final class PrimitiveRegistryTest {
             .registerPrimitiveWrapper(new TestWrapperA())
             .registerPrimitiveWrapper(new TestWrapperB())
             .build();
-    assertThat(registry.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveA.class))
+    assertThat(registry.wrap(arbitraryKeyset, TestPrimitiveA.class))
         .isInstanceOf(TestPrimitiveA.class);
-    assertThat(registry.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveB.class))
+    assertThat(registry.wrap(arbitraryKeyset, TestPrimitiveB.class))
         .isInstanceOf(TestPrimitiveB.class);
   }
 
@@ -398,7 +396,7 @@ public final class PrimitiveRegistryTest {
     PrimitiveRegistry registry2 = PrimitiveRegistry.builder(registry).build();
     assertThat(registry2.getPrimitive(new TestKey1(), TestPrimitiveA.class))
         .isInstanceOf(TestPrimitiveA.class);
-    assertThat(registry2.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveA.class))
+    assertThat(registry2.wrap(arbitraryKeyset, TestPrimitiveA.class))
         .isInstanceOf(TestPrimitiveA.class);
   }
 
@@ -422,9 +420,9 @@ public final class PrimitiveRegistryTest {
         () -> registry2.getPrimitive(new TestKey1(), TestPrimitiveA.class));
     assertThrows(
         GeneralSecurityException.class,
-        () -> registry1.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveA.class));
+        () -> registry1.wrap(arbitraryKeyset, TestPrimitiveA.class));
     assertThrows(
         GeneralSecurityException.class,
-        () -> registry2.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveA.class));
+        () -> registry2.wrap(arbitraryKeyset, TestPrimitiveA.class));
   }
 }

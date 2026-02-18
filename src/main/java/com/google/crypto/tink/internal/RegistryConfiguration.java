@@ -37,10 +37,9 @@ public final class RegistryConfiguration extends InternalConfiguration {
   private RegistryConfiguration() {}
 
   @Override
-  public <P> P wrap(
-      KeysetHandleInterface keysetHandle, MonitoringAnnotations annotations, Class<P> clazz)
+  public <P> P wrap(KeysetHandleInterface keysetHandle, Class<P> clazz)
       throws GeneralSecurityException {
-    return MutablePrimitiveRegistry.globalInstance().wrap(keysetHandle, annotations, clazz);
+    return MutablePrimitiveRegistry.globalInstance().wrap(keysetHandle, clazz);
   }
 
   /**

@@ -478,7 +478,6 @@ java_library(
     deps = [
         ":keyset_handle_interface",
         ":legacy_proto_key",
-        ":monitoring_annotations",
         ":mutable_serialization_registry",
         ":primitive_constructor",
         ":primitive_wrapper",
@@ -494,7 +493,6 @@ android_library(
     deps = [
         ":keyset_handle_interface-android",
         ":legacy_proto_key-android",
-        ":monitoring_annotations-android",
         ":mutable_serialization_registry-android",
         ":primitive_constructor-android",
         ":primitive_wrapper-android",
@@ -521,7 +519,6 @@ android_library(
     srcs = ["MutablePrimitiveRegistry.java"],
     deps = [
         ":keyset_handle_interface-android",
-        ":monitoring_annotations-android",
         ":primitive_constructor-android",
         ":primitive_registry-android",
         ":primitive_wrapper-android",
@@ -534,7 +531,6 @@ java_library(
     srcs = ["MutablePrimitiveRegistry.java"],
     deps = [
         ":keyset_handle_interface",
-        ":monitoring_annotations",
         ":primitive_constructor",
         ":primitive_registry",
         ":primitive_wrapper",
@@ -645,7 +641,6 @@ java_library(
     srcs = ["InternalConfiguration.java"],
     deps = [
         ":keyset_handle_interface",
-        ":monitoring_annotations",
         ":primitive_registry",
         "//src/main/java/com/google/crypto/tink:configuration",
     ],
@@ -656,7 +651,6 @@ android_library(
     srcs = ["InternalConfiguration.java"],
     deps = [
         ":keyset_handle_interface-android",
-        ":monitoring_annotations-android",
         ":primitive_registry-android",
         "//src/main/java/com/google/crypto/tink:configuration-android",
     ],
@@ -668,7 +662,6 @@ android_library(
     deps = [
         ":internal_configuration-android",
         ":keyset_handle_interface-android",
-        ":monitoring_annotations-android",
         ":mutable_primitive_registry-android",
         ":primitive_registry-android",
         "@maven//:com_google_errorprone_error_prone_annotations",
@@ -681,7 +674,6 @@ java_library(
     deps = [
         ":internal_configuration",
         ":keyset_handle_interface",
-        ":monitoring_annotations",
         ":mutable_primitive_registry",
         ":primitive_registry",
         "@maven//:com_google_errorprone_error_prone_annotations",

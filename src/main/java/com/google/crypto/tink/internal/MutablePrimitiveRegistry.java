@@ -86,10 +86,8 @@ public final class MutablePrimitiveRegistry {
   }
 
   public <WrapperPrimitiveT> WrapperPrimitiveT wrap(
-      KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations annotations,
-      Class<WrapperPrimitiveT> wrapperClassObject)
+      KeysetHandleInterface keysetHandle, Class<WrapperPrimitiveT> wrapperClassObject)
       throws GeneralSecurityException {
-    return registry.get().wrap(keysetHandle, annotations, wrapperClassObject);
+    return registry.get().wrap(keysetHandle, wrapperClassObject);
   }
 }

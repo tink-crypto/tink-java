@@ -177,9 +177,7 @@ public class PrimitiveRegistry {
   }
 
   public <WrappedPrimitiveT> WrappedPrimitiveT wrap(
-      KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations annotations,
-      Class<WrappedPrimitiveT> wrapperClassObject)
+      KeysetHandleInterface keysetHandle, Class<WrappedPrimitiveT> wrapperClassObject)
       throws GeneralSecurityException {
     if (!primitiveWrapperMap.containsKey(wrapperClassObject)) {
       throw new GeneralSecurityException(

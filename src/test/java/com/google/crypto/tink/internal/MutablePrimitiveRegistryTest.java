@@ -210,11 +210,7 @@ public final class MutablePrimitiveRegistryTest {
                 MutablePrimitiveRegistryTest.TestPrimitiveA.class));
     assertThrows(
         GeneralSecurityException.class,
-        () ->
-            registry.wrap(
-                arbitraryKeyset,
-                MonitoringAnnotations.EMPTY,
-                MutablePrimitiveRegistryTest.TestPrimitiveA.class));
+        () -> registry.wrap(arbitraryKeyset, MutablePrimitiveRegistryTest.TestPrimitiveA.class));
   }
 
   @Test
@@ -224,9 +220,9 @@ public final class MutablePrimitiveRegistryTest {
     registry.registerPrimitiveWrapper(new TestWrapperA());
     registry.registerPrimitiveWrapper(new TestWrapperB());
 
-    assertThat(registry.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveA.class))
+    assertThat(registry.wrap(arbitraryKeyset, TestPrimitiveA.class))
         .isInstanceOf(TestPrimitiveA.class);
-    assertThat(registry.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveB.class))
+    assertThat(registry.wrap(arbitraryKeyset, TestPrimitiveB.class))
         .isInstanceOf(TestPrimitiveB.class);
   }
 }

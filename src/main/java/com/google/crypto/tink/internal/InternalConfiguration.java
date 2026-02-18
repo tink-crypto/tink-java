@@ -31,8 +31,7 @@ public abstract class InternalConfiguration extends Configuration {
    * @throws GeneralSecurityException if the wrapper for the provided pair (input class, wrapped
    *     class) is not registered
    */
-  public abstract <P> P wrap(
-      KeysetHandleInterface keysetHandle, MonitoringAnnotations annotations, Class<P> clazz)
+  public abstract <P> P wrap(KeysetHandleInterface keysetHandle, Class<P> clazz)
       throws GeneralSecurityException;
 
   public static InternalConfiguration createFromPrimitiveRegistry(PrimitiveRegistry registry) {
@@ -53,10 +52,9 @@ public abstract class InternalConfiguration extends Configuration {
     }
 
     @Override
-    public <P> P wrap(
-        KeysetHandleInterface keysetHandle, MonitoringAnnotations annotations, Class<P> clazz)
+    public <P> P wrap(KeysetHandleInterface keysetHandle, Class<P> clazz)
         throws GeneralSecurityException {
-      return registry.wrap(keysetHandle, annotations, clazz);
+      return registry.wrap(keysetHandle, clazz);
     }
   }
 }

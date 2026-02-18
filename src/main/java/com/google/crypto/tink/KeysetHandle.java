@@ -1293,11 +1293,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
                 + " failed, unable to get primitive");
       }
     }
-    MonitoringAnnotations annotations = getAnnotationsOrNull(MonitoringAnnotations.class);
-    if (annotations == null) {
-      annotations = MonitoringAnnotations.EMPTY;
-    }
-    return config.wrap(getUnmonitoredHandle(), annotations, classObject);
+    return config.wrap(getUnmonitoredHandle(), classObject);
   }
 
   /**

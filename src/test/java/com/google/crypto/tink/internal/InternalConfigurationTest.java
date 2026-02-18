@@ -100,8 +100,7 @@ public class InternalConfigurationTest {
         InternalConfiguration.createFromPrimitiveRegistry(registry);
 
     // Check that the type is as expected.
-    TestPrimitiveA unused =
-        configuration.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveA.class);
+    TestPrimitiveA unused = configuration.wrap(arbitraryKeyset, TestPrimitiveA.class);
   }
 
   @Test
@@ -115,10 +114,8 @@ public class InternalConfigurationTest {
         InternalConfiguration.createFromPrimitiveRegistry(registry);
 
     // Check that the wrapped primitives are of the expected types.
-    TestPrimitiveA unusedA =
-        configuration.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveA.class);
-    TestPrimitiveB unusedB =
-        configuration.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveB.class);
+    TestPrimitiveA unusedA = configuration.wrap(arbitraryKeyset, TestPrimitiveA.class);
+    TestPrimitiveB unusedB = configuration.wrap(arbitraryKeyset, TestPrimitiveB.class);
   }
 
   @Test
@@ -130,8 +127,7 @@ public class InternalConfigurationTest {
 
     assertThrows(
         GeneralSecurityException.class,
-        () ->
-            configuration.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveB.class));
+        () -> configuration.wrap(arbitraryKeyset, TestPrimitiveB.class));
   }
 
 
@@ -142,7 +138,6 @@ public class InternalConfigurationTest {
         InternalConfiguration.createFromPrimitiveRegistry(registry);
     assertThrows(
         GeneralSecurityException.class,
-        () ->
-            configuration.wrap(arbitraryKeyset, MonitoringAnnotations.EMPTY, TestPrimitiveA.class));
+        () -> configuration.wrap(arbitraryKeyset, TestPrimitiveA.class));
   }
 }
