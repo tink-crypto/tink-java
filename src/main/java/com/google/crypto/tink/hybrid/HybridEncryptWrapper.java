@@ -84,9 +84,7 @@ public class HybridEncryptWrapper implements PrimitiveWrapper<HybridEncrypt, Hyb
 
   @Override
   public HybridEncrypt wrap(
-      KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations unusedMonitoringAnnotations,
-      PrimitiveFactory<HybridEncrypt> factory)
+      KeysetHandleInterface keysetHandle, PrimitiveFactory<HybridEncrypt> factory)
       throws GeneralSecurityException {
     MonitoringClient.Logger encLogger;
     MonitoringAnnotations annotations =

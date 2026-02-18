@@ -116,10 +116,7 @@ class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
   JwtMacWrapper() {}
 
   @Override
-  public JwtMac wrap(
-      KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations unusedMonitoringAnnotations,
-      PrimitiveFactory<JwtMac> factory)
+  public JwtMac wrap(KeysetHandleInterface keysetHandle, PrimitiveFactory<JwtMac> factory)
       throws GeneralSecurityException {
     validate(keysetHandle);
     List<JwtMacWithId> allMacs = new ArrayList<>(keysetHandle.size());

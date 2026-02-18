@@ -126,10 +126,7 @@ public class RegistryTest {
     public static final AeadToEncryptOnlyWrapper WRAPPER = new AeadToEncryptOnlyWrapper();
 
     @Override
-    public EncryptOnly wrap(
-        KeysetHandleInterface keysetHandle,
-        MonitoringAnnotations annotations,
-        PrimitiveFactory<Aead> factory)
+    public EncryptOnly wrap(KeysetHandleInterface keysetHandle, PrimitiveFactory<Aead> factory)
         throws GeneralSecurityException {
       return new EncryptOnly() {
         @Override
@@ -734,9 +731,7 @@ public class RegistryTest {
                   new PrimitiveWrapper<Mac, EncryptOnly>() {
                     @Override
                     public EncryptOnly wrap(
-                        KeysetHandleInterface keysetHandle,
-                        MonitoringAnnotations annotations,
-                        PrimitiveFactory<Mac> factory) {
+                        KeysetHandleInterface keysetHandle, PrimitiveFactory<Mac> factory) {
                       return null;
                     }
 

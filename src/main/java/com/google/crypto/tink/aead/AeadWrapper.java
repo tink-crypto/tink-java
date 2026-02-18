@@ -125,7 +125,6 @@ public class AeadWrapper implements PrimitiveWrapper<Aead, Aead> {
   @Override
   public Aead wrap(
       KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations unusedMonitoringAnnotations,
       PrimitiveFactory<Aead> factory)
       throws GeneralSecurityException {
     PrefixMap.Builder<AeadWithId> builder = new PrefixMap.Builder<>();

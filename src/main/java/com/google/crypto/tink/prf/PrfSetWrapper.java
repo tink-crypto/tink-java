@@ -97,10 +97,7 @@ public class PrfSetWrapper implements PrimitiveWrapper<Prf, PrfSet> {
   }
 
   @Override
-  public PrfSet wrap(
-      KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations unusedMonitoringAnnotations,
-      PrimitiveFactory<Prf> factory)
+  public PrfSet wrap(KeysetHandleInterface keysetHandle, PrimitiveFactory<Prf> factory)
       throws GeneralSecurityException {
     MonitoringClient.Logger logger;
     MonitoringAnnotations annotations =

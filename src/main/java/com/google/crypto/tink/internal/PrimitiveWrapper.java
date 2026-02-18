@@ -42,10 +42,7 @@ public interface PrimitiveWrapper<B, P> {
    *
    * <p>This method gets called when a new primitive is created.
    */
-  P wrap(
-      KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations annotations,
-      PrimitiveFactory<B> primitiveFactory)
+  P wrap(KeysetHandleInterface keysetHandle, PrimitiveFactory<B> primitiveFactory)
       throws GeneralSecurityException;
 
   /**

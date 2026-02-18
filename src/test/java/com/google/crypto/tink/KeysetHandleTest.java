@@ -123,11 +123,14 @@ public class KeysetHandleTest {
       private final PrimitiveFactory<Aead> factory;
 
       EncryptOnlyWithMonitoring(
-          KeysetHandleInterface keysetHandle,
-          MonitoringAnnotations annotations,
-          PrimitiveFactory<Aead> factory) {
+          KeysetHandleInterface keysetHandle, PrimitiveFactory<Aead> factory) {
         this.keysetHandle = keysetHandle;
         this.factory = factory;
+        MonitoringAnnotations annotations =
+            keysetHandle.getAnnotationsOrNull(MonitoringAnnotations.class);
+        if (annotations == null) {
+          annotations = MonitoringAnnotations.EMPTY;
+        }
         MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
         logger = client.createLogger(keysetHandle, annotations, "encrypt_only", "encrypt");
       }
@@ -141,12 +144,9 @@ public class KeysetHandleTest {
     }
 
     @Override
-    public EncryptOnly wrap(
-        KeysetHandleInterface keysetHandle,
-        MonitoringAnnotations annotations,
-        PrimitiveFactory<Aead> factory)
+    public EncryptOnly wrap(KeysetHandleInterface keysetHandle, PrimitiveFactory<Aead> factory)
         throws GeneralSecurityException {
-      return new EncryptOnlyWithMonitoring(keysetHandle, annotations, factory);
+      return new EncryptOnlyWithMonitoring(keysetHandle, factory);
     }
 
     @Override
@@ -1665,9 +1665,7 @@ public class KeysetHandleTest {
 
     @Override
     public TestPrimitiveB wrap(
-        KeysetHandleInterface keysetHandle,
-        MonitoringAnnotations annotations,
-        PrimitiveFactory<TestPrimitiveA> factory) {
+        KeysetHandleInterface keysetHandle, PrimitiveFactory<TestPrimitiveA> factory) {
       return new TestPrimitiveB();
     }
 

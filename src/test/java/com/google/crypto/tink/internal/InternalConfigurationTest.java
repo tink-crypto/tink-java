@@ -56,9 +56,7 @@ public class InternalConfigurationTest {
 
     @Override
     public TestPrimitiveA wrap(
-        KeysetHandleInterface keysetHandle,
-        MonitoringAnnotations annotations,
-        PrimitiveFactory<TestPrimitiveA> factory) {
+        KeysetHandleInterface keysetHandle, PrimitiveFactory<TestPrimitiveA> factory) {
       return new TestPrimitiveA();
     }
 
@@ -79,9 +77,7 @@ public class InternalConfigurationTest {
 
     @Override
     public TestPrimitiveB wrap(
-        KeysetHandleInterface keysetHandle,
-        MonitoringAnnotations annotations,
-        PrimitiveFactory<TestPrimitiveB> factory) {
+        KeysetHandleInterface keysetHandle, PrimitiveFactory<TestPrimitiveB> factory) {
       return new TestPrimitiveB();
     }
 

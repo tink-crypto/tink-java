@@ -170,13 +170,10 @@ public class PrimitiveRegistry {
 
   private <InnerPrimitiveT, WrappedPrimitiveT> WrappedPrimitiveT wrapWithPrimitiveWrapper(
       KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations annotations,
       PrimitiveWrapper<InnerPrimitiveT, WrappedPrimitiveT> wrapper)
       throws GeneralSecurityException {
     return wrapper.wrap(
-        keysetHandle,
-        annotations,
-        entry -> getPrimitive(entry.getKey(), wrapper.getInputPrimitiveClass()));
+        keysetHandle, entry -> getPrimitive(entry.getKey(), wrapper.getInputPrimitiveClass()));
   }
 
   public <WrappedPrimitiveT> WrappedPrimitiveT wrap(
@@ -191,7 +188,7 @@ public class PrimitiveRegistry {
     @SuppressWarnings("unchecked") // We know this is how this map is organized.
     PrimitiveWrapper<?, WrappedPrimitiveT> wrapper =
         (PrimitiveWrapper<?, WrappedPrimitiveT>) primitiveWrapperMap.get(wrapperClassObject);
-    return wrapWithPrimitiveWrapper(keysetHandle, annotations, wrapper);
+    return wrapWithPrimitiveWrapper(keysetHandle, wrapper);
   }
 
   private static final class PrimitiveConstructorIndex {

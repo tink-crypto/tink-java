@@ -122,10 +122,7 @@ public class MacWrapper implements PrimitiveWrapper<Mac, Mac> {
   MacWrapper() {}
 
   @Override
-  public Mac wrap(
-      KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations unusedMonitoringAnnotations,
-      PrimitiveFactory<Mac> factory)
+  public Mac wrap(KeysetHandleInterface keysetHandle, PrimitiveFactory<Mac> factory)
       throws GeneralSecurityException {
     PrefixMap.Builder<MacWithId> builder = new PrefixMap.Builder<>();
     for (int i = 0; i < keysetHandle.size(); i++) {

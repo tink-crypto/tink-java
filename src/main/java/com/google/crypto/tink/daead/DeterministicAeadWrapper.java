@@ -127,9 +127,7 @@ public class DeterministicAeadWrapper
 
   @Override
   public DeterministicAead wrap(
-      KeysetHandleInterface handle,
-      MonitoringAnnotations unusedMonitoringAnnotations,
-      PrimitiveFactory<DeterministicAead> factory)
+      KeysetHandleInterface handle, PrimitiveFactory<DeterministicAead> factory)
       throws GeneralSecurityException {
     PrefixMap.Builder<DeterministicAeadWithId> builder = new PrefixMap.Builder<>();
     for (int i = 0; i < handle.size(); i++) {

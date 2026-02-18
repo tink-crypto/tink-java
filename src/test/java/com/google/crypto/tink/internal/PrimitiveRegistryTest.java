@@ -117,9 +117,7 @@ public final class PrimitiveRegistryTest {
 
     @Override
     public TestPrimitiveA wrap(
-        KeysetHandleInterface keysetHandle,
-        MonitoringAnnotations annotations,
-        PrimitiveFactory<TestPrimitiveA> factory)
+        KeysetHandleInterface keysetHandle, PrimitiveFactory<TestPrimitiveA> factory)
         throws GeneralSecurityException {
       return new TestPrimitiveA();
     }
@@ -141,9 +139,7 @@ public final class PrimitiveRegistryTest {
 
     @Override
     public TestPrimitiveB wrap(
-        KeysetHandleInterface keysetHandle,
-        MonitoringAnnotations annotations,
-        PrimitiveFactory<TestPrimitiveA> factory)
+        KeysetHandleInterface keysetHandle, PrimitiveFactory<TestPrimitiveA> factory)
         throws GeneralSecurityException {
       return new TestPrimitiveB();
     }

@@ -20,7 +20,6 @@ import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.StreamingAead;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
-import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
@@ -49,10 +48,7 @@ public class StreamingAeadWrapper implements PrimitiveWrapper<StreamingAead, Str
   StreamingAeadWrapper() {}
 
   @Override
-  public StreamingAead wrap(
-      KeysetHandleInterface handle,
-      MonitoringAnnotations annotations,
-      PrimitiveFactory<StreamingAead> factory)
+  public StreamingAead wrap(KeysetHandleInterface handle, PrimitiveFactory<StreamingAead> factory)
       throws GeneralSecurityException {
     List<StreamingAead> allStreamingAeads = new ArrayList<>();
     for (int i = 0; i < handle.size(); i++) {

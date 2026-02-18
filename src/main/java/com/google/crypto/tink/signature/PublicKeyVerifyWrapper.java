@@ -107,9 +107,7 @@ public class PublicKeyVerifyWrapper implements PrimitiveWrapper<PublicKeyVerify,
 
   @Override
   public PublicKeyVerify wrap(
-      KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations unusedMonitoringAnnotations,
-      PrimitiveFactory<PublicKeyVerify> factory)
+      KeysetHandleInterface keysetHandle, PrimitiveFactory<PublicKeyVerify> factory)
       throws GeneralSecurityException {
     PrefixMap.Builder<PublicKeyVerifyWithId> builder = new PrefixMap.Builder<>();
     for (int i = 0; i < keysetHandle.size(); i++) {

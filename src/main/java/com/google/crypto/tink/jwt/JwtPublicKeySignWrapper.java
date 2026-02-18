@@ -49,9 +49,7 @@ class JwtPublicKeySignWrapper implements PrimitiveWrapper<JwtPublicKeySign, JwtP
     private final MonitoringClient.Logger logger;
 
     public WrappedJwtPublicKeySign(
-        KeysetHandleInterface keysetHandle,
-        MonitoringAnnotations unusedMonitoringAnnotations,
-        PrimitiveFactory<JwtPublicKeySign> factory)
+        KeysetHandleInterface keysetHandle, PrimitiveFactory<JwtPublicKeySign> factory)
         throws GeneralSecurityException {
       this.primary = factory.create(keysetHandle.getPrimary());
       this.primaryKeyId = keysetHandle.getPrimary().getId();
@@ -80,11 +78,9 @@ class JwtPublicKeySignWrapper implements PrimitiveWrapper<JwtPublicKeySign, JwtP
 
   @Override
   public JwtPublicKeySign wrap(
-      KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations unusedMonitoringAnnotations,
-      PrimitiveFactory<JwtPublicKeySign> factory)
+      KeysetHandleInterface keysetHandle, PrimitiveFactory<JwtPublicKeySign> factory)
       throws GeneralSecurityException {
-    return new WrappedJwtPublicKeySign(keysetHandle, unusedMonitoringAnnotations, factory);
+    return new WrappedJwtPublicKeySign(keysetHandle, factory);
   }
 
   @Override

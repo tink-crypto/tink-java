@@ -83,9 +83,7 @@ public class PublicKeySignWrapper implements PrimitiveWrapper<PublicKeySign, Pub
 
   @Override
   public PublicKeySign wrap(
-      KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations unusedMonitoringAnnotations,
-      PrimitiveFactory<PublicKeySign> factory)
+      KeysetHandleInterface keysetHandle, PrimitiveFactory<PublicKeySign> factory)
       throws GeneralSecurityException {
     MonitoringClient.Logger logger;
     MonitoringAnnotations annotations =

@@ -20,7 +20,6 @@ import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.internal.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
-import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrefixMap;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
@@ -132,10 +131,7 @@ public class ChunkedMacWrapper implements PrimitiveWrapper<ChunkedMac, ChunkedMa
   private ChunkedMacWrapper() {}
 
   @Override
-  public ChunkedMac wrap(
-      KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations annotations,
-      PrimitiveFactory<ChunkedMac> factory)
+  public ChunkedMac wrap(KeysetHandleInterface keysetHandle, PrimitiveFactory<ChunkedMac> factory)
       throws GeneralSecurityException {
     KeysetHandleInterface.Entry primaryEntry = keysetHandle.getPrimary();
     if (primaryEntry == null) {

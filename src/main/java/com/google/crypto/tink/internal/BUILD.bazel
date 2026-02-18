@@ -859,19 +859,13 @@ java_library(
 android_library(
     name = "primitive_wrapper-android",
     srcs = ["PrimitiveWrapper.java"],
-    deps = [
-        ":keyset_handle_interface-android",
-        ":monitoring_annotations-android",
-    ],
+    deps = [":keyset_handle_interface-android"],
 )
 
 java_library(
     name = "primitive_wrapper",
     srcs = ["PrimitiveWrapper.java"],
-    deps = [
-        ":keyset_handle_interface",
-        ":monitoring_annotations",
-    ],
+    deps = [":keyset_handle_interface"],
 )
 
 android_library(

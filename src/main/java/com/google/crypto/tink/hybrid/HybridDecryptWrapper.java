@@ -105,9 +105,7 @@ public class HybridDecryptWrapper implements PrimitiveWrapper<HybridDecrypt, Hyb
 
   @Override
   public HybridDecrypt wrap(
-      KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations unusedMonitoringAnnotations,
-      PrimitiveFactory<HybridDecrypt> factory)
+      KeysetHandleInterface keysetHandle, PrimitiveFactory<HybridDecrypt> factory)
       throws GeneralSecurityException {
     PrefixMap.Builder<HybridDecryptWithId> builder = new PrefixMap.Builder<>();
     for (int i = 0; i < keysetHandle.size(); i++) {

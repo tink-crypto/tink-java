@@ -87,9 +87,7 @@ class JwtPublicKeyVerifyWrapper
 
   @Override
   public JwtPublicKeyVerify wrap(
-      KeysetHandleInterface keysetHandle,
-      MonitoringAnnotations unusedMonitoringAnnotations,
-      PrimitiveFactory<JwtPublicKeyVerify> factory)
+      KeysetHandleInterface keysetHandle, PrimitiveFactory<JwtPublicKeyVerify> factory)
       throws GeneralSecurityException {
     List<JwtPublicKeyVerifyWithId> allVerifiers = new ArrayList<>(keysetHandle.size());
     for (int i = 0; i < keysetHandle.size(); i++) {

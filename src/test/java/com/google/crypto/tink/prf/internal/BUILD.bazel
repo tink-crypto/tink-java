@@ -40,7 +40,6 @@ java_test(
         "//src/main/java/com/google/crypto/tink/internal:enum_type_proto_converter",
         "//src/main/java/com/google/crypto/tink/internal:keyset_handle_interface",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
-        "//src/main/java/com/google/crypto/tink/internal:monitoring_annotations",
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry",
         "//src/main/java/com/google/crypto/tink/internal:primitive_constructor",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper",
