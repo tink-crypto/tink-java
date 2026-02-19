@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink;
 
-import com.google.crypto.tink.annotations.Alpha;
 import com.google.crypto.tink.config.GlobalTinkFlags;
 import com.google.crypto.tink.internal.InternalConfiguration;
 import com.google.crypto.tink.internal.LegacyProtoKey;
@@ -247,8 +246,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
      * annotations get set.
      */
     @CanIgnoreReturnValue
-    @Alpha
-    public KeysetHandle.Builder setMonitoringAnnotations(MonitoringAnnotations annotations) {
+    KeysetHandle.Builder setMonitoringAnnotations(MonitoringAnnotations annotations) {
       addAnnotations(MonitoringAnnotations.class, annotations);
       return this;
     }
