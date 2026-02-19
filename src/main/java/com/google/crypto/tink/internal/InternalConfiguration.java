@@ -25,7 +25,7 @@ import java.security.GeneralSecurityException;
  * understands. Internal. Users should not access these methods since the operations are to be used
  * by internal KeysetHandle operations only.
  */
-public abstract class InternalConfiguration extends Configuration {
+public abstract class InternalConfiguration implements Configuration {
   /**
    * Creates a primitive from a KeysetHandle.
    *
@@ -37,6 +37,12 @@ public abstract class InternalConfiguration extends Configuration {
 
   public static InternalConfiguration createFromPrimitiveRegistry(PrimitiveRegistry registry) {
     return new InternalConfigurationImpl(registry);
+  }
+
+  @Override
+  public <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
+      throws GeneralSecurityException {
+    return wrap(keysetHandle, clazz);
   }
 
   /**

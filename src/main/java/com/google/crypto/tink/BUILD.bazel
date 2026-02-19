@@ -487,7 +487,6 @@ java_library(
         ":util",
         "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink/config:global_tink_flags",
-        "//src/main/java/com/google/crypto/tink/internal:internal_configuration",
         "//src/main/java/com/google/crypto/tink/internal:key_status_type_proto_converter",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_annotations",
@@ -535,7 +534,6 @@ android_library(
         ":util-android",
         "//proto:tink_java_proto_lite",
         "//src/main/java/com/google/crypto/tink/config:global_tink_flags-android",
-        "//src/main/java/com/google/crypto/tink/internal:internal_configuration-android",
         "//src/main/java/com/google/crypto/tink/internal:key_status_type_proto_converter-android",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key-android",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_annotations-android",
@@ -852,11 +850,13 @@ java_library(
 android_library(
     name = "configuration-android",
     srcs = ["Configuration.java"],
+    deps = [":keyset_handle_interface-android"],
 )
 
 java_library(
     name = "configuration",
     srcs = ["Configuration.java"],
+    deps = [":keyset_handle_interface"],
 )
 
 android_library(

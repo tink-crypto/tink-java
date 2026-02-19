@@ -16,9 +16,14 @@
 
 package com.google.crypto.tink;
 
+import java.security.GeneralSecurityException;
+
 /**
- * An object of this class represents a collection of algorithms that a user wants Tink to
- * understand. For most users, one of the predefined {@link Configuration} objects is to be used at
- * primitive creation time.
+ * An object implementing this interface represents a collection of algorithms that a user wants
+ * Tink to understand. For most users, one of the predefined {@link Configuration} objects is to be
+ * used at primitive creation time.
  */
-public abstract class Configuration {}
+public interface Configuration {
+  <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
+      throws GeneralSecurityException;
+}

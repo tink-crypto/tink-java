@@ -17,7 +17,6 @@
 package com.google.crypto.tink;
 
 import com.google.crypto.tink.config.GlobalTinkFlags;
-import com.google.crypto.tink.internal.InternalConfiguration;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MonitoringClient;
@@ -1275,7 +1274,11 @@ public final class KeysetHandle implements KeysetHandleInterface {
     }
   }
 
-  private <P> P getPrimitiveInternal(InternalConfiguration config, Class<P> classObject)
+  /**
+   * Returns a primitive from this keyset using the provided {@link Configuration} to create
+   * resources used in creating the primitive.
+   */
+  public <P> P getPrimitive(Configuration configuration, Class<P> targetClassObject)
       throws GeneralSecurityException {
     Keyset keyset = getUnmonitoredHandle().getKeyset();
     Util.validateKeyset(keyset);
@@ -1290,21 +1293,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
                 + " failed, unable to get primitive");
       }
     }
-    return config.wrap(getUnmonitoredHandle(), classObject);
-  }
-
-  /**
-   * Returns a primitive from this keyset using the provided {@link Configuration} to create
-   * resources used in creating the primitive.
-   */
-  public <P> P getPrimitive(Configuration configuration, Class<P> targetClassObject)
-      throws GeneralSecurityException {
-    if (!(configuration instanceof InternalConfiguration)) {
-      throw new GeneralSecurityException(
-          "Currently only subclasses of InternalConfiguration are accepted");
-    }
-    InternalConfiguration internalConfig = (InternalConfiguration) configuration;
-    return getPrimitiveInternal(internalConfig, targetClassObject);
+    return configuration.createPrimitive(getUnmonitoredHandle(), targetClassObject);
   }
 
   /**
