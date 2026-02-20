@@ -102,7 +102,7 @@ public final class Ed25519SignTest {
   @Test
   public void signingWithWycheproofVectors_works() throws Exception {
     JsonObject json =
-        WycheproofTestUtil.readJson("testvectors/eddsa_test.json");
+        WycheproofTestUtil.readJson("third_party/wycheproof/testvectors/eddsa_test.json");
     ArrayList<String> errors = new ArrayList<>();
     JsonArray testGroups = json.get("testGroups").getAsJsonArray();
     for (int i = 0; i < testGroups.size(); i++) {

@@ -4,7 +4,7 @@ java_test(
     name = "Ed25519SignTest",
     size = "small",
     srcs = ["Ed25519SignTest.java"],
-    data = ["//testvectors:all"],
+    data = ["//third_party/wycheproof:testvectors_v0"],
     deps = [
         "//src/main/java/com/google/crypto/tink:public_key_sign",
         "//src/main/java/com/google/crypto/tink/signature:ed25519_private_key",
@@ -25,7 +25,7 @@ java_test(
 java_test(
     name = "EcdsaVerifyJceTest",
     srcs = ["EcdsaVerifyJceTest.java"],
-    data = ["//testvectors:all"],
+    data = ["//third_party/wycheproof:testvectors_v0"],
     deps = [
         "//src/main/java/com/google/crypto/tink/config:tink_fips",
         "//src/main/java/com/google/crypto/tink/subtle:ecdsa_sign_jce",
@@ -63,7 +63,7 @@ java_test(
     name = "RsaSsaPssVerifyJceTest",
     size = "small",
     srcs = ["RsaSsaPssVerifyJceTest.java"],
-    data = ["//testvectors:all"],
+    data = ["//third_party/wycheproof:testvectors_v0"],
     deps = [
         "//src/main/java/com/google/crypto/tink:public_key_verify",
         "//src/main/java/com/google/crypto/tink/internal:util",
@@ -125,7 +125,7 @@ java_test(
     name = "Ed25519VerifyTest",
     size = "small",
     srcs = ["Ed25519VerifyTest.java"],
-    data = ["//testvectors:all"],
+    data = ["//third_party/wycheproof:testvectors_v0"],
     deps = [
         "//src/main/java/com/google/crypto/tink:public_key_verify",
         "//src/main/java/com/google/crypto/tink/signature:ed25519_private_key",
@@ -229,7 +229,7 @@ java_test(
     name = "AesEaxJceTest",
     size = "small",
     srcs = ["AesEaxJceTest.java"],
-    data = ["//testvectors:all"],
+    data = ["//third_party/wycheproof:testvectors_v0"],
     tags = ["fips"],
     deps = [
         "//src/main/java/com/google/crypto/tink:aead",
@@ -341,7 +341,7 @@ java_test(
     name = "AesSivTest",
     size = "small",
     srcs = ["AesSivTest.java"],
-    data = ["//testvectors:all"],
+    data = ["//third_party/wycheproof:testvectors_v0"],
     tags = ["fips"],
     deps = [
         "//src/main/java/com/google/crypto/tink:deterministic_aead",
@@ -392,7 +392,7 @@ java_test(
     name = "KwpTest",
     size = "small",
     srcs = ["KwpTest.java"],
-    data = ["//testvectors:all"],
+    data = ["//third_party/wycheproof:testvectors_v0"],
     deps = [
         "//src/main/java/com/google/crypto/tink:key_wrap",
         "//src/main/java/com/google/crypto/tink/subtle:hex",
@@ -410,7 +410,7 @@ java_test(
     name = "ChaCha20Poly1305Test",
     size = "small",
     srcs = ["ChaCha20Poly1305Test.java"],
-    data = ["//testvectors:all"],
+    data = ["//third_party/wycheproof:testvectors_v0"],
     tags = [
         "fips",
         "notsan",
@@ -437,7 +437,7 @@ java_test(
 java_test(
     name = "AesGcmJceTest",
     srcs = ["AesGcmJceTest.java"],
-    data = ["//testvectors:all"],
+    data = ["//third_party/wycheproof:testvectors_v0"],
     tags = [
         "fips",
         "notsan",
@@ -469,7 +469,7 @@ java_test(
     name = "PrfAesCmacTest",
     size = "small",
     srcs = ["PrfAesCmacTest.java"],
-    data = ["//testvectors:all"],
+    data = ["//third_party/wycheproof:testvectors_v1"],
     deps = [
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink/prf:prf_set",
@@ -501,7 +501,7 @@ java_test(
     name = "RsaSsaPkcs1VerifyJceTest",
     size = "small",
     srcs = ["RsaSsaPkcs1VerifyJceTest.java"],
-    data = ["//testvectors:all"],
+    data = ["//third_party/wycheproof:testvectors_v0"],
     tags = ["notsan"],
     deps = [
         "//src/main/java/com/google/crypto/tink:accesses_partial_key",
@@ -617,7 +617,7 @@ java_test(
     name = "EllipticCurvesTest",
     size = "small",
     srcs = ["EllipticCurvesTest.java"],
-    data = ["//testvectors:all"],
+    data = ["//third_party/wycheproof:testvectors_v0"],
     deps = [
         "//src/main/java/com/google/crypto/tink/internal:util",
         "//src/main/java/com/google/crypto/tink/subtle:elliptic_curves",
@@ -677,7 +677,7 @@ java_test(
     name = "X25519Test",
     size = "small",
     srcs = ["X25519Test.java"],
-    data = ["//testvectors:all"],
+    data = ["//third_party/wycheproof:testvectors_v0"],
     deps = [
         "//src/main/java/com/google/crypto/tink/subtle:hex",
         "//src/main/java/com/google/crypto/tink/subtle:x25519",
@@ -872,7 +872,7 @@ java_test(
     name = "EllipticCurvesConscryptTest",
     size = "small",
     srcs = ["EllipticCurvesConscryptTest.java"],
-    data = ["//testvectors:all"],
+    data = ["//third_party/wycheproof:testvectors_v0"],
     deps = [
         "//src/main/java/com/google/crypto/tink/internal:util",
         "//src/main/java/com/google/crypto/tink/subtle:elliptic_curves",

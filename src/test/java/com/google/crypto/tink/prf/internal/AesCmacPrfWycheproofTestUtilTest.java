@@ -52,6 +52,6 @@ public final class AesCmacPrfWycheproofTestUtilTest {
     List<AesCmacPrfTestUtil.TestVector> testVectors =
         AesCmacPrfWycheproofTestUtil.readTestVectors();
 
-    assertThat(testVectors).hasSize(40);
+    assertThat(testVectors).hasSize(42);
   }
 }

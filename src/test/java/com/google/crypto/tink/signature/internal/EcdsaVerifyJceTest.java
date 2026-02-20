@@ -94,31 +94,31 @@ public class EcdsaVerifyJceTest {
   public static final WycheproofTestCase[] wycheproofTestCases =
       new WycheproofTestCase[] {
         new WycheproofTestCase(
-            "testvectors/ecdsa_secp256r1_sha256_test.json",
+            "third_party/wycheproof/testvectors/ecdsa_secp256r1_sha256_test.json",
             EcdsaEncoding.DER),
         new WycheproofTestCase(
-            "testvectors/ecdsa_secp256r1_sha512_test.json",
+            "third_party/wycheproof/testvectors/ecdsa_secp256r1_sha512_test.json",
             EcdsaEncoding.DER),
         new WycheproofTestCase(
-            "testvectors/ecdsa_secp384r1_sha384_test.json",
+            "third_party/wycheproof/testvectors/ecdsa_secp384r1_sha384_test.json",
             EcdsaEncoding.DER),
         new WycheproofTestCase(
-            "testvectors/ecdsa_secp384r1_sha512_test.json",
+            "third_party/wycheproof/testvectors/ecdsa_secp384r1_sha512_test.json",
             EcdsaEncoding.DER),
         new WycheproofTestCase(
-            "testvectors/ecdsa_secp521r1_sha512_test.json",
+            "third_party/wycheproof/testvectors/ecdsa_secp521r1_sha512_test.json",
             EcdsaEncoding.DER),
         new WycheproofTestCase(
-            "testvectors/ecdsa_secp256r1_sha256_p1363_test.json",
+            "third_party/wycheproof/testvectors/ecdsa_secp256r1_sha256_p1363_test.json",
             EcdsaEncoding.IEEE_P1363),
         new WycheproofTestCase(
-            "testvectors/ecdsa_secp384r1_sha384_p1363_test.json",
+            "third_party/wycheproof/testvectors/ecdsa_secp384r1_sha384_p1363_test.json",
             EcdsaEncoding.IEEE_P1363),
         new WycheproofTestCase(
-            "testvectors/ecdsa_secp384r1_sha512_p1363_test.json",
+            "third_party/wycheproof/testvectors/ecdsa_secp384r1_sha512_p1363_test.json",
             EcdsaEncoding.IEEE_P1363),
         new WycheproofTestCase(
-            "testvectors/ecdsa_secp521r1_sha512_p1363_test.json",
+            "third_party/wycheproof/testvectors/ecdsa_secp521r1_sha512_p1363_test.json",
             EcdsaEncoding.IEEE_P1363)
       };
 

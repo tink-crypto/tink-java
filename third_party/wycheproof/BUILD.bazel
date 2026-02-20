@@ -1,0 +1,22 @@
+load("//third_party/wycheproof:build_defs.bzl", "wycheproof_vectors")
+
+package(
+    default_testonly = 1,
+    default_visibility = ["//:__subpackages__"],
+)
+
+licenses(["notice"])
+
+exports_files(["wycheproof.BUILD.bazel"])
+
+wycheproof_vectors(
+    name = "testvectors_v0",
+    srcs = ["@wycheproof//:testvectors"],
+    outdir = "testvectors",
+)
+
+wycheproof_vectors(
+    name = "testvectors_v1",
+    srcs = ["@wycheproof//:testvectors_v1"],
+    outdir = "testvectors_v1",
+)

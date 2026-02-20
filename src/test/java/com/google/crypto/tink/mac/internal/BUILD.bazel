@@ -15,7 +15,7 @@ java_test(
     name = "ChunkedAesCmacTest",
     size = "small",
     srcs = ["ChunkedAesCmacTest.java"],
-    data = ["//testvectors:all"],
+    data = ["//third_party/wycheproof:testvectors_v0"],
     deps = [
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink:mac",
@@ -186,7 +186,7 @@ java_test(
     name = "ChunkedAesCmacConscryptTest",
     size = "small",
     srcs = ["ChunkedAesCmacConscryptTest.java"],
-    data = ["//testvectors:all"],
+    data = ["//third_party/wycheproof:testvectors_v0"],
     deps = [
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink:mac",

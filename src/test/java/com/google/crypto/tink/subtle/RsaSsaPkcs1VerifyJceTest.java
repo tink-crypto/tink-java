@@ -148,14 +148,14 @@ public class RsaSsaPkcs1VerifyJceTest {
   @DataPoints("wycheproofTestVectorPaths")
   public static final String[] wycheproofTestVectorPaths =
       new String[] {
-        "testvectors/rsa_signature_2048_sha256_test.json",
-        "testvectors/rsa_signature_2048_sha384_test.json",
-        "testvectors/rsa_signature_2048_sha512_test.json",
-        "testvectors/rsa_signature_3072_sha256_test.json",
-        "testvectors/rsa_signature_3072_sha384_test.json",
-        "testvectors/rsa_signature_3072_sha512_test.json",
-        "testvectors/rsa_signature_4096_sha384_test.json",
-        "testvectors/rsa_signature_4096_sha512_test.json"
+        "third_party/wycheproof/testvectors/rsa_signature_2048_sha256_test.json",
+        "third_party/wycheproof/testvectors/rsa_signature_2048_sha384_test.json",
+        "third_party/wycheproof/testvectors/rsa_signature_2048_sha512_test.json",
+        "third_party/wycheproof/testvectors/rsa_signature_3072_sha256_test.json",
+        "third_party/wycheproof/testvectors/rsa_signature_3072_sha384_test.json",
+        "third_party/wycheproof/testvectors/rsa_signature_3072_sha512_test.json",
+        "third_party/wycheproof/testvectors/rsa_signature_4096_sha384_test.json",
+        "third_party/wycheproof/testvectors/rsa_signature_4096_sha512_test.json"
       };
 
   @AccessesPartialKey

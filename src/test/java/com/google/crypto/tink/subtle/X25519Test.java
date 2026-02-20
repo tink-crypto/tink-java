@@ -232,7 +232,7 @@ public final class X25519Test {
   @Test
   public void testComputeSharedSecretWithWycheproofVectors() throws Exception {
     JsonObject json =
-        WycheproofTestUtil.readJson("testvectors/x25519_test.json");
+        WycheproofTestUtil.readJson("third_party/wycheproof/testvectors/x25519_test.json");
     ArrayList<String> errors = new ArrayList<>();
     JsonArray testGroups = json.getAsJsonArray("testGroups");
     for (int i = 0; i < testGroups.size(); i++) {

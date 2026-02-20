@@ -249,7 +249,7 @@ public class AesGcmJceTest {
     Assume.assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
 
     JsonObject json =
-        WycheproofTestUtil.readJson("testvectors/aes_gcm_test.json");
+        WycheproofTestUtil.readJson("third_party/wycheproof/testvectors/aes_gcm_test.json");
     ArrayList<String> errors = new ArrayList<>();
     JsonArray testGroups = json.get("testGroups").getAsJsonArray();
     for (int i = 0; i < testGroups.size(); i++) {

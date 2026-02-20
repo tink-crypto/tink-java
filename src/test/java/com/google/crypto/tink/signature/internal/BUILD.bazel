@@ -177,7 +177,7 @@ java_test(
     name = "RsaSsaPkcs1SignVerifyConscryptTest",
     size = "small",
     srcs = ["RsaSsaPkcs1SignVerifyConscryptTest.java"],
-    data = ["//testvectors:all"],
+    data = ["//third_party/wycheproof:testvectors_v0"],
     deps = [
         "//src/main/java/com/google/crypto/tink:public_key_sign",
         "//src/main/java/com/google/crypto/tink:public_key_verify",
@@ -245,7 +245,7 @@ java_test(
     name = "RsaSsaPssVerifyConscryptTest",
     size = "small",
     srcs = ["RsaSsaPssVerifyConscryptTest.java"],
-    data = ["//testvectors:all"],
+    data = ["//third_party/wycheproof:testvectors_v0"],
     deps = [
         "//src/main/java/com/google/crypto/tink:public_key_verify",
         "//src/main/java/com/google/crypto/tink/internal:conscrypt_util",
@@ -288,7 +288,7 @@ java_test(
     name = "Ed25519VerifyJceTest",
     size = "small",
     srcs = ["Ed25519VerifyJceTest.java"],
-    data = ["//testvectors:all"],
+    data = ["//third_party/wycheproof:testvectors_v0"],
     deps = [
         "//src/main/java/com/google/crypto/tink:public_key_verify",
         "//src/main/java/com/google/crypto/tink/config:tink_fips",
@@ -314,7 +314,7 @@ java_test(
     name = "Ed25519SignJceTest",
     size = "small",
     srcs = ["Ed25519SignJceTest.java"],
-    data = ["//testvectors:all"],
+    data = ["//third_party/wycheproof:testvectors_v0"],
     deps = [
         "//src/main/java/com/google/crypto/tink:public_key_sign",
         "//src/main/java/com/google/crypto/tink:public_key_verify",
@@ -408,7 +408,7 @@ java_test(
     name = "EcdsaVerifyJceTest",
     size = "small",
     srcs = ["EcdsaVerifyJceTest.java"],
-    data = ["//testvectors:all"],
+    data = ["//third_party/wycheproof:testvectors_v0"],
     tags = ["notsan"],
     deps = [
         "//src/main/java/com/google/crypto/tink/config:tink_fips",

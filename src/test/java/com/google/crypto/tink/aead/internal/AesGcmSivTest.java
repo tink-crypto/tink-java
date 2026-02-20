@@ -178,7 +178,7 @@ public class AesGcmSivTest {
     Assume.assumeTrue(apiLevel == null || apiLevel >= 30);
 
     JsonObject json =
-        WycheproofTestUtil.readJson("testvectors/aes_gcm_siv_test.json");
+        WycheproofTestUtil.readJson("third_party/wycheproof/testvectors/aes_gcm_siv_test.json");
     ArrayList<String> errors = new ArrayList<>();
     JsonArray testGroups = json.getAsJsonArray("testGroups");
     for (int i = 0; i < testGroups.size(); i++) {

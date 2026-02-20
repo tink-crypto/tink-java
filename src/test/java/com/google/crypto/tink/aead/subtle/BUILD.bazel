@@ -6,7 +6,7 @@ licenses(["notice"])
 java_test(
     name = "AesGcmSivTest",
     srcs = ["AesGcmSivTest.java"],
-    data = ["//testvectors:all"],
+    data = ["//third_party/wycheproof:testvectors_v0"],
     tags = ["notsan"],
     deps = [
         "//src/main/java/com/google/crypto/tink:aead",

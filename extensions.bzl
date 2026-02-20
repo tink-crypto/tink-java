@@ -24,7 +24,7 @@ def _wycheproof_impl(_ctx):
         strip_prefix = "wycheproof-b51abcfb8dafa5316791e57cf48512a2147d9671",
         url = "https://github.com/c2sp/wycheproof/archive/b51abcfb8dafa5316791e57cf48512a2147d9671.zip",
         sha256 = "56ba9f3deba06b1cc33430a770a9b6bd6ddc8af69188ea0b46d10bda60176978",
-        build_file = "@//testvectors:wycheproof.BUILD.bazel",
+        build_file = "@//third_party/wycheproof:wycheproof.BUILD.bazel",
     )
 
 wycheproof_extension = module_extension(
