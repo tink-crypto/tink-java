@@ -76,7 +76,7 @@ public class KwpTest {
   @Test
   public void testWycheproof() throws Exception {
     JsonObject json =
-        WycheproofTestUtil.readJson("third_party/wycheproof/testvectors/kwp_test.json");
+        WycheproofTestUtil.readJson("third_party/wycheproof/testvectors_v1/aes_kwp_test.json");
     ArrayList<String> errors = new ArrayList<>();
     JsonArray testGroups = json.getAsJsonArray("testGroups");
     for (int i = 0; i < testGroups.size(); i++) {
@@ -89,18 +89,21 @@ public class KwpTest {
         byte[] key = Hex.decode(testcase.get("key").getAsString());
         byte[] data = Hex.decode(testcase.get("msg").getAsString());
         byte[] expected = Hex.decode(testcase.get("ct").getAsString());
-        // Result is one of "valid", "invalid", "acceptable".
+        // Result is one of "valid", "invalid".
         // "valid" are test vectors with matching plaintext, ciphertext and tag.
         // "invalid" are test vectors with invalid parameters or invalid ciphertext and tag.
-        // "acceptable" are test vectors with weak parameters or legacy formats.
         String result = testcase.get("result").getAsString();
+
+        // This implementation does not support wrapping keys shorter than 16 bytes.
+        boolean expectedWrapFail =
+            WycheproofTestUtil.checkFlags(testcase, "SmallKey") && data.length < 16;
 
         // Test wrapping
         KeyWrap wrapper;
         try {
           wrapper = new Kwp(key);
         } catch (GeneralSecurityException ex) {
-          // tink restrict the key sizes to 128 or 256 bits.
+          // Tink restrict the key sizes to 128 or 256 bits.
           if (key.length == 16 || key.length == 32) {
             errors.add("FAIL " + tc + ": Rejected valid key, exception: " + ex);
           }
@@ -119,7 +122,7 @@ public class KwpTest {
             }
           }
         } catch (GeneralSecurityException ex) {
-          if (result.equals("valid")) {
+          if (result.equals("valid") && !expectedWrapFail) {
             errors.add("FAIL " + tc + ": rejected valid test case, exception: "+ ex);
           }
         } catch (Exception ex) {
@@ -127,7 +130,7 @@ public class KwpTest {
         }
 
         // Test unwrapping
-        // The algorithms tested in this class are typically malleable. Hence, it is in possible
+        // The algorithms tested in this class are typically malleable. Hence, it is possible
         // that modifying ciphertext randomly results in some other valid ciphertext.
         // However, all the test vectors in Wycheproof are constructed such that they have
         // invalid padding. If this changes then the test below is too strict.
@@ -152,7 +155,7 @@ public class KwpTest {
             }
           }
         } catch (GeneralSecurityException ex) {
-          if (result.equals("valid")) {
+          if (result.equals("valid") && !expectedWrapFail) {
             errors.add("FAIL " + tc + ": failed with valid test case, exception: " + ex);
           }
         } catch (Exception ex) {
