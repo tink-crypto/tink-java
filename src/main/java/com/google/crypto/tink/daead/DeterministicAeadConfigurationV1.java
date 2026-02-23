@@ -18,10 +18,9 @@ package com.google.crypto.tink.daead;
 
 import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.DeterministicAead;
+import com.google.crypto.tink.Key;
+import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
-import com.google.crypto.tink.internal.InternalConfiguration;
-import com.google.crypto.tink.internal.PrimitiveConstructor;
-import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.subtle.AesSiv;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
@@ -36,24 +35,24 @@ import java.security.InvalidAlgorithmParameterException;
 /* Placeholder for internally public; DO NOT CHANGE. */ class DeterministicAeadConfigurationV1 {
   private DeterministicAeadConfigurationV1() {}
 
-  private static final InternalConfiguration INTERNAL_CONFIGURATION = create();
+  private static final DeterministicAeadWrapper DETERMINISTIC_AEAD_WRAPPER =
+      new DeterministicAeadWrapper();
+  private static final Configuration CONFIGURATION = create();
 
-  private static InternalConfiguration create() {
-    try {
-      PrimitiveRegistry.Builder builder = PrimitiveRegistry.builder();
-
-      // Register DeterministicAead wrapper and concrete primitives.
-      DeterministicAeadWrapper.registerToInternalPrimitiveRegistry(builder);
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              DeterministicAeadConfigurationV1::createAesSiv,
-              AesSivKey.class,
-              DeterministicAead.class));
-
-      return InternalConfiguration.createFromPrimitiveRegistry(builder.build());
-    } catch (GeneralSecurityException e) {
-      throw new IllegalStateException(e);
-    }
+  private static Configuration create() {
+    return new Configuration() {
+      @Override
+      public <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
+          throws GeneralSecurityException {
+        if (clazz.equals(DeterministicAead.class)) {
+          return clazz.cast(
+              DETERMINISTIC_AEAD_WRAPPER.wrap(
+                  keysetHandle, DeterministicAeadConfigurationV1::createDeterministicAead));
+        }
+        throw new GeneralSecurityException(
+            "DeterministicAeadConfigurationV1 can only create DeterministicAead primitive");
+      }
+    };
   }
 
   public static Configuration get() throws GeneralSecurityException {
@@ -61,7 +60,16 @@ import java.security.InvalidAlgorithmParameterException;
       throw new GeneralSecurityException(
           "Cannot use non-FIPS-compliant DeterministicAeadConfigurationV1 in FIPS mode");
     }
-    return INTERNAL_CONFIGURATION;
+    return CONFIGURATION;
+  }
+
+  private static DeterministicAead createDeterministicAead(KeysetHandleInterface.Entry entry)
+      throws GeneralSecurityException {
+    Key key = entry.getKey();
+    if (key instanceof AesSivKey) {
+      return createAesSiv((AesSivKey) key);
+    }
+    throw new GeneralSecurityException("Unknown key class: " + key.getClass());
   }
 
   // We only allow 64-byte keys for AesSiv, because 32-byte keys might not provide 128-bit security
