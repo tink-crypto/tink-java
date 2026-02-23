@@ -19,12 +19,11 @@ package com.google.crypto.tink.hybrid;
 import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.HybridEncrypt;
+import com.google.crypto.tink.Key;
+import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.hybrid.internal.HpkeDecrypt;
 import com.google.crypto.tink.hybrid.internal.HpkeEncrypt;
-import com.google.crypto.tink.internal.InternalConfiguration;
-import com.google.crypto.tink.internal.PrimitiveConstructor;
-import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.subtle.EciesAeadHkdfHybridDecrypt;
 import com.google.crypto.tink.subtle.EciesAeadHkdfHybridEncrypt;
 import java.security.GeneralSecurityException;
@@ -40,34 +39,53 @@ import java.security.GeneralSecurityException;
 /* Placeholder for internally public; DO NOT CHANGE. */ class HybridConfigurationV1 {
   private HybridConfigurationV1() {}
 
-  private static final InternalConfiguration INTERNAL_CONFIGURATION = create();
+  private static final HybridEncryptWrapper HYBRID_ENCRYPT_WRAPPER = new HybridEncryptWrapper();
+  private static final HybridDecryptWrapper HYBRID_DECRYPT_WRAPPER = new HybridDecryptWrapper();
+  private static final Configuration CONFIGURATION = create();
 
-  private static InternalConfiguration create() {
-    try {
-      PrimitiveRegistry.Builder builder = PrimitiveRegistry.builder();
+  private static Configuration create() {
+    return new Configuration() {
+      @Override
+      public <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
+          throws GeneralSecurityException {
+        if (clazz.equals(HybridEncrypt.class)) {
+          return clazz.cast(
+              HYBRID_ENCRYPT_WRAPPER.wrap(
+                  keysetHandle, HybridConfigurationV1::createHybridEncrypt));
+        }
+        if (clazz.equals(HybridDecrypt.class)) {
+          return clazz.cast(
+              HYBRID_DECRYPT_WRAPPER.wrap(
+                  keysetHandle, HybridConfigurationV1::createHybridDecrypt));
+        }
+        throw new GeneralSecurityException(
+            "HybridConfigurationV1 can only create HybridEncrypt and HybridDecrypt primitives");
+      }
+    };
+  }
 
-      // Register HybridEncrypt wrapper and concrete primitives.
-      HybridEncryptWrapper.registerToInternalPrimitiveRegistry(builder);
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              EciesAeadHkdfHybridEncrypt::create, EciesPublicKey.class, HybridEncrypt.class));
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              HpkeEncrypt::create, HpkePublicKey.class, HybridEncrypt.class));
-
-      // Register HybridDecrypt wrapper and concrete primitives.
-      HybridDecryptWrapper.registerToInternalPrimitiveRegistry(builder);
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              EciesAeadHkdfHybridDecrypt::create, EciesPrivateKey.class, HybridDecrypt.class));
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              HpkeDecrypt::create, HpkePrivateKey.class, HybridDecrypt.class));
-
-      return InternalConfiguration.createFromPrimitiveRegistry(builder.build());
-    } catch (GeneralSecurityException e) {
-      throw new IllegalStateException(e);
+  private static HybridEncrypt createHybridEncrypt(KeysetHandleInterface.Entry entry)
+      throws GeneralSecurityException {
+    Key key = entry.getKey();
+    if (key instanceof EciesPublicKey) {
+      return EciesAeadHkdfHybridEncrypt.create((EciesPublicKey) key);
     }
+    if (key instanceof HpkePublicKey) {
+      return HpkeEncrypt.create((HpkePublicKey) key);
+    }
+    throw new GeneralSecurityException("Unknown key class: " + key.getClass());
+  }
+
+  private static HybridDecrypt createHybridDecrypt(KeysetHandleInterface.Entry entry)
+      throws GeneralSecurityException {
+    Key key = entry.getKey();
+    if (key instanceof EciesPrivateKey) {
+      return EciesAeadHkdfHybridDecrypt.create((EciesPrivateKey) key);
+    }
+    if (key instanceof HpkePrivateKey) {
+      return HpkeDecrypt.create((HpkePrivateKey) key);
+    }
+    throw new GeneralSecurityException("Unknown key class: " + key.getClass());
   }
 
   /**
@@ -78,6 +96,6 @@ import java.security.GeneralSecurityException;
       throw new GeneralSecurityException(
           "Cannot use non-FIPS-compliant HybridConfigurationV1 in FIPS mode");
     }
-    return INTERNAL_CONFIGURATION;
+    return CONFIGURATION;
   }
 }
