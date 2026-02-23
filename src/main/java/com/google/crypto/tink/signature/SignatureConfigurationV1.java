@@ -17,12 +17,11 @@
 package com.google.crypto.tink.signature;
 
 import com.google.crypto.tink.Configuration;
+import com.google.crypto.tink.Key;
+import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
-import com.google.crypto.tink.internal.InternalConfiguration;
-import com.google.crypto.tink.internal.PrimitiveConstructor;
-import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.signature.internal.MlDsaSignConscrypt;
 import com.google.crypto.tink.signature.internal.MlDsaVerifyConscrypt;
 import com.google.crypto.tink.signature.internal.SlhDsaSignConscrypt;
@@ -51,56 +50,30 @@ import java.security.GeneralSecurityException;
 /* Placeholder for internally public; DO NOT CHANGE. */ class SignatureConfigurationV1 {
   private SignatureConfigurationV1() {}
 
-  private static final InternalConfiguration INTERNAL_CONFIGURATION = create();
+  private static final PublicKeySignWrapper PUBLIC_KEY_SIGN_WRAPPER = new PublicKeySignWrapper();
+  private static final PublicKeyVerifyWrapper PUBLIC_KEY_VERIFY_WRAPPER =
+      new PublicKeyVerifyWrapper();
+  private static final Configuration CONFIGURATION = create();
 
-  private static InternalConfiguration create() {
-    try {
-      PrimitiveRegistry.Builder builder = PrimitiveRegistry.builder();
-
-      // Register {@code PublicKeySign/Verify} wrappers and concrete primitives.
-      PublicKeySignWrapper.registerToInternalPrimitiveRegistry(builder);
-      PublicKeyVerifyWrapper.registerToInternalPrimitiveRegistry(builder);
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              EcdsaSignJce::create, EcdsaPrivateKey.class, PublicKeySign.class));
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              EcdsaVerifyJce::create, EcdsaPublicKey.class, PublicKeyVerify.class));
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              RsaSsaPssSignJce::create, RsaSsaPssPrivateKey.class, PublicKeySign.class));
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              RsaSsaPssVerifyJce::create, RsaSsaPssPublicKey.class, PublicKeyVerify.class));
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              RsaSsaPkcs1SignJce::create, RsaSsaPkcs1PrivateKey.class, PublicKeySign.class));
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              RsaSsaPkcs1VerifyJce::create, RsaSsaPkcs1PublicKey.class, PublicKeyVerify.class));
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              Ed25519Sign::create, Ed25519PrivateKey.class, PublicKeySign.class));
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              Ed25519Verify::create, Ed25519PublicKey.class, PublicKeyVerify.class));
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              MlDsaSignConscrypt::create, MlDsaPrivateKey.class, PublicKeySign.class));
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              MlDsaVerifyConscrypt::create, MlDsaPublicKey.class, PublicKeyVerify.class));
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              SlhDsaSignConscrypt::create, SlhDsaPrivateKey.class, PublicKeySign.class));
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              SlhDsaVerifyConscrypt::create, SlhDsaPublicKey.class, PublicKeyVerify.class));
-
-      return InternalConfiguration.createFromPrimitiveRegistry(builder.build());
-    } catch (GeneralSecurityException e) {
-      throw new IllegalStateException(e);
-    }
+  private static Configuration create() {
+    return new Configuration() {
+      @Override
+      public <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
+          throws GeneralSecurityException {
+        if (clazz == PublicKeySign.class) {
+          return clazz.cast(
+              PUBLIC_KEY_SIGN_WRAPPER.wrap(
+                  keysetHandle, SignatureConfigurationV1::createPublicKeySign));
+        }
+        if (clazz == PublicKeyVerify.class) {
+          return clazz.cast(
+              PUBLIC_KEY_VERIFY_WRAPPER.wrap(
+                  keysetHandle, SignatureConfigurationV1::createPublicKeyVerify));
+        }
+        throw new GeneralSecurityException(
+            "SignatureConfigurationV1 can only create PublicKeySign and PublicKeyVerify");
+      }
+    };
   }
 
   /** Returns an instance of the {@code SignatureConfigurationV1}. */
@@ -109,6 +82,54 @@ import java.security.GeneralSecurityException;
       throw new GeneralSecurityException(
           "Cannot use non-FIPS-compliant SignatureConfigurationV1 in FIPS mode");
     }
-    return INTERNAL_CONFIGURATION;
+    return CONFIGURATION;
+  }
+
+  private static PublicKeySign createPublicKeySign(KeysetHandleInterface.Entry entry)
+      throws GeneralSecurityException {
+    Key key = entry.getKey();
+    if (key instanceof EcdsaPrivateKey) {
+      return EcdsaSignJce.create((EcdsaPrivateKey) key);
+    }
+    if (key instanceof RsaSsaPssPrivateKey) {
+      return RsaSsaPssSignJce.create((RsaSsaPssPrivateKey) key);
+    }
+    if (key instanceof RsaSsaPkcs1PrivateKey) {
+      return RsaSsaPkcs1SignJce.create((RsaSsaPkcs1PrivateKey) key);
+    }
+    if (key instanceof Ed25519PrivateKey) {
+      return Ed25519Sign.create((Ed25519PrivateKey) key);
+    }
+    if (key instanceof MlDsaPrivateKey) {
+      return MlDsaSignConscrypt.create((MlDsaPrivateKey) key);
+    }
+    if (key instanceof SlhDsaPrivateKey) {
+      return SlhDsaSignConscrypt.create((SlhDsaPrivateKey) key);
+    }
+    throw new GeneralSecurityException("Unknown key class: " + key.getClass());
+  }
+
+  private static PublicKeyVerify createPublicKeyVerify(KeysetHandleInterface.Entry entry)
+      throws GeneralSecurityException {
+    Key key = entry.getKey();
+    if (key instanceof EcdsaPublicKey) {
+      return EcdsaVerifyJce.create((EcdsaPublicKey) key);
+    }
+    if (key instanceof RsaSsaPssPublicKey) {
+      return RsaSsaPssVerifyJce.create((RsaSsaPssPublicKey) key);
+    }
+    if (key instanceof RsaSsaPkcs1PublicKey) {
+      return RsaSsaPkcs1VerifyJce.create((RsaSsaPkcs1PublicKey) key);
+    }
+    if (key instanceof Ed25519PublicKey) {
+      return Ed25519Verify.create((Ed25519PublicKey) key);
+    }
+    if (key instanceof MlDsaPublicKey) {
+      return MlDsaVerifyConscrypt.create((MlDsaPublicKey) key);
+    }
+    if (key instanceof SlhDsaPublicKey) {
+      return SlhDsaVerifyConscrypt.create((SlhDsaPublicKey) key);
+    }
+    throw new GeneralSecurityException("Unknown key class: " + key.getClass());
   }
 }
