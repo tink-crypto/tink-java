@@ -23,10 +23,6 @@ import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.signature.Ed25519PrivateKey;
 import com.google.crypto.tink.signature.internal.testing.Ed25519TestUtil;
 import com.google.crypto.tink.signature.internal.testing.SignatureTestVector;
-import com.google.crypto.tink.testing.WycheproofTestUtil;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import java.util.ArrayList;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -60,7 +56,7 @@ public final class Ed25519SignTest {
     verifier.verify(sig, msg);
 
     for (int i = 0; i < 100; i++) {
-      // Ed25519 is deterministic, expect a unique signature for the same message.
+      // Ed25519 is deterministic, expect the same signature for the same message.
       assertThat(signer.sign(msg)).isEqualTo(sig);
     }
   }
@@ -89,48 +85,6 @@ public final class Ed25519SignTest {
       byte[] sig = signer.sign(msg);
       verifier.verify(sig, msg);
     }
-  }
-
-  private byte[] getMessage(JsonObject testcase) throws Exception {
-    if (testcase.has("msg")) {
-      return Hex.decode(testcase.get("msg").getAsString());
-    } else {
-      return Hex.decode(testcase.get("message").getAsString());
-    }
-  }
-
-  @Test
-  public void signingWithWycheproofVectors_works() throws Exception {
-    JsonObject json =
-        WycheproofTestUtil.readJson("third_party/wycheproof/testvectors/eddsa_test.json");
-    ArrayList<String> errors = new ArrayList<>();
-    JsonArray testGroups = json.get("testGroups").getAsJsonArray();
-    for (int i = 0; i < testGroups.size(); i++) {
-      JsonObject group = testGroups.get(i).getAsJsonObject();
-      JsonObject key = group.get("key").getAsJsonObject();
-      byte[] privateKey = Hex.decode(key.get("sk").getAsString());
-      JsonArray tests = group.get("tests").getAsJsonArray();
-      for (int j = 0; j < tests.size(); j++) {
-        JsonObject testcase = tests.get(j).getAsJsonObject();
-        String tcId =
-            String.format(
-                "testcase %d (%s)",
-                testcase.get("tcId").getAsInt(), testcase.get("comment").getAsString());
-        byte[] msg = getMessage(testcase);
-        byte[] sig = Hex.decode(testcase.get("sig").getAsString());
-        String result = testcase.get("result").getAsString();
-        if (result.equals("invalid")) {
-          continue;
-        }
-        Ed25519Sign signer = new Ed25519Sign(privateKey);
-        byte[] computedSig = signer.sign(msg);
-        if (!Bytes.equal(sig, computedSig)) {
-          errors.add(
-              "FAIL " + tcId + ": got " + Hex.encode(computedSig) + ", want " + Hex.encode(sig));
-        }
-      }
-    }
-    assertThat(errors).isEmpty();
   }
 
   @Test

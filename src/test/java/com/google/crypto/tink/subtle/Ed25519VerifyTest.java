@@ -64,12 +64,12 @@ public final class Ed25519VerifyTest {
   @Test
   public void verifyWithWycheproofVectors_works() throws Exception {
     JsonObject json =
-        WycheproofTestUtil.readJson("third_party/wycheproof/testvectors/eddsa_test.json");
+        WycheproofTestUtil.readJson("third_party/wycheproof/testvectors_v1/ed25519_test.json");
     ArrayList<String> errors = new ArrayList<>();
     JsonArray testGroups = json.get("testGroups").getAsJsonArray();
     for (int i = 0; i < testGroups.size(); i++) {
       JsonObject group = testGroups.get(i).getAsJsonObject();
-      JsonObject key = group.get("key").getAsJsonObject();
+      JsonObject key = group.get("publicKey").getAsJsonObject();
       byte[] publicKey = Hex.decode(key.get("pk").getAsString());
       JsonArray tests = group.get("tests").getAsJsonArray();
       for (int j = 0; j < tests.size(); j++) {

@@ -17,7 +17,6 @@
 package com.google.crypto.tink.signature.internal;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
@@ -33,9 +32,6 @@ import com.google.crypto.tink.subtle.Base64;
 import com.google.crypto.tink.subtle.Ed25519Sign;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.subtle.Random;
-import com.google.crypto.tink.testing.WycheproofTestUtil;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import java.security.GeneralSecurityException;
 import java.security.Provider;
 import java.security.Security;
@@ -186,47 +182,6 @@ public final class Ed25519SignJceTest {
             ex);
       }
     }
-  }
-
-  private byte[] getMessage(JsonObject testcase) throws Exception {
-    if (testcase.has("msg")) {
-      return Hex.decode(testcase.get("msg").getAsString());
-    } else {
-      return Hex.decode(testcase.get("message").getAsString());
-    }
-  }
-
-  @Test
-  public void testSigningWithWycheproofVectors() throws Exception {
-    Assume.assumeTrue(!TinkFips.useOnlyFips() && Ed25519SignJce.isSupported());
-
-    JsonObject json =
-        WycheproofTestUtil.readJson("third_party/wycheproof/testvectors/eddsa_test.json");
-    int errors = 0;
-    JsonArray testGroups = json.get("testGroups").getAsJsonArray();
-    for (int i = 0; i < testGroups.size(); i++) {
-      JsonObject group = testGroups.get(i).getAsJsonObject();
-      JsonObject key = group.get("key").getAsJsonObject();
-      byte[] privateKey = Hex.decode(key.get("sk").getAsString());
-      JsonArray tests = group.get("tests").getAsJsonArray();
-      for (int j = 0; j < tests.size(); j++) {
-        JsonObject testcase = tests.get(j).getAsJsonObject();
-        String tcId =
-            String.format(
-                "testcase %d (%s)",
-                testcase.get("tcId").getAsInt(), testcase.get("comment").getAsString());
-        byte[] msg = getMessage(testcase);
-        byte[] sig = Hex.decode(testcase.get("sig").getAsString());
-        String result = testcase.get("result").getAsString();
-        if (result.equals("invalid")) {
-          continue;
-        }
-        Ed25519SignJce signer = new Ed25519SignJce(privateKey);
-        byte[] computedSig = signer.sign(msg);
-        assertArrayEquals(tcId, sig, computedSig);
-      }
-    }
-    assertEquals(0, errors);
   }
 
   @Test
