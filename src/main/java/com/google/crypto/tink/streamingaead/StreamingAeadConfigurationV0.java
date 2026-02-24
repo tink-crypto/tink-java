@@ -17,11 +17,13 @@
 package com.google.crypto.tink.streamingaead;
 
 import com.google.crypto.tink.Configuration;
+import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.Key;
+import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.StreamingAead;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
-import com.google.crypto.tink.internal.InternalConfiguration;
-import com.google.crypto.tink.internal.PrimitiveConstructor;
-import com.google.crypto.tink.internal.PrimitiveRegistry;
+import com.google.crypto.tink.internal.LegacyProtoKey;
+import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.subtle.AesCtrHmacStreaming;
 import com.google.crypto.tink.subtle.AesGcmHkdfStreaming;
 import java.security.GeneralSecurityException;
@@ -37,26 +39,23 @@ import java.security.GeneralSecurityException;
 /* Placeholder for internally public; DO NOT CHANGE. */ class StreamingAeadConfigurationV0 {
   private StreamingAeadConfigurationV0() {}
 
-  private static final InternalConfiguration INTERNAL_CONFIGURATION = create();
+  private static final StreamingAeadWrapper STREAMING_AEAD_WRAPPER = new StreamingAeadWrapper();
+  private static final Configuration CONFIGURATION = create();
 
-  private static InternalConfiguration create() {
-    try {
-      PrimitiveRegistry.Builder builder = PrimitiveRegistry.builder();
-
-      // Register StreamingAead wrapper and concrete primitives.
-      StreamingAeadWrapper.registerToInternalPrimitiveRegistry(builder);
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              AesGcmHkdfStreaming::create, AesGcmHkdfStreamingKey.class, StreamingAead.class));
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              AesCtrHmacStreaming::create, AesCtrHmacStreamingKey.class, StreamingAead.class));
-
-      return InternalConfiguration.createFromPrimitiveRegistry(
-          builder.allowReparsingLegacyKeys().build());
-    } catch (GeneralSecurityException e) {
-      throw new IllegalStateException(e);
-    }
+  private static Configuration create() {
+    return new Configuration() {
+      @Override
+      public <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
+          throws GeneralSecurityException {
+        if (clazz == StreamingAead.class) {
+          return clazz.cast(
+              STREAMING_AEAD_WRAPPER.wrap(
+                  keysetHandle, StreamingAeadConfigurationV0::createStreamingAead));
+        }
+        throw new GeneralSecurityException(
+            "StreamingAeadConfigurationV0 can only create StreamingAead");
+      }
+    };
   }
 
   /** Returns an instance of the {@code StreamingAeadConfigurationV0}. */
@@ -65,6 +64,27 @@ import java.security.GeneralSecurityException;
       throw new GeneralSecurityException(
           "Cannot use non-FIPS-compliant StreamingAead in FIPS mode");
     }
-    return INTERNAL_CONFIGURATION;
+    return CONFIGURATION;
+  }
+
+  private static StreamingAead createStreamingAead(KeysetHandleInterface.Entry entry)
+      throws GeneralSecurityException {
+    Key key = entry.getKey();
+    if (key instanceof LegacyProtoKey) {
+      Key reparsedKey =
+          MutableSerializationRegistry.globalInstance()
+              .parseKey(
+                  ((LegacyProtoKey) key).getSerialization(InsecureSecretKeyAccess.get()),
+                  InsecureSecretKeyAccess.get());
+      key = reparsedKey;
+    }
+
+    if (key instanceof AesGcmHkdfStreamingKey) {
+      return AesGcmHkdfStreaming.create((AesGcmHkdfStreamingKey) key);
+    }
+    if (key instanceof AesCtrHmacStreamingKey) {
+      return AesCtrHmacStreaming.create((AesCtrHmacStreamingKey) key);
+    }
+    throw new GeneralSecurityException("Unknown key class: " + key.getClass());
   }
 }
