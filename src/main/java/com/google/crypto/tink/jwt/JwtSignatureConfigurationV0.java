@@ -20,12 +20,11 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.Configuration;
+import com.google.crypto.tink.Key;
+import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
-import com.google.crypto.tink.internal.InternalConfiguration;
-import com.google.crypto.tink.internal.PrimitiveConstructor;
-import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.jwt.internal.JsonUtil;
 import com.google.crypto.tink.jwt.internal.JwtFormat;
 import com.google.crypto.tink.signature.EcdsaPrivateKey;
@@ -55,55 +54,34 @@ import java.security.GeneralSecurityException;
 /* Placeholder for internally public; DO NOT CHANGE. */ class JwtSignatureConfigurationV0 {
   private JwtSignatureConfigurationV0() {}
 
-  private static final InternalConfiguration INTERNAL_CONFIGURATION = create();
+  private static final JwtPublicKeySignWrapper JWT_PUBLIC_KEY_SIGN_WRAPPER =
+      new JwtPublicKeySignWrapper();
+  private static final JwtPublicKeyVerifyWrapper JWT_PUBLIC_KEY_VERIFY_WRAPPER =
+      new JwtPublicKeyVerifyWrapper();
+  private static final Configuration CONFIGURATION = create();
 
   private static final TinkFipsUtil.AlgorithmFipsCompatibility FIPS =
       TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_REQUIRES_BORINGCRYPTO;
 
-  private static InternalConfiguration create() {
-    try {
-      PrimitiveRegistry.Builder builder = PrimitiveRegistry.builder();
-
-      // Register {@code JwtPublicKeySign} wrapper and concrete primitives.
-      JwtPublicKeySignWrapper.registerToInternalPrimitiveRegistry(builder);
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              JwtSignatureConfigurationV0::createJwtEcdsaSign,
-              JwtEcdsaPrivateKey.class,
-              JwtPublicKeySign.class));
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              JwtSignatureConfigurationV0::createJwtRsaSsaPkcs1Sign,
-              JwtRsaSsaPkcs1PrivateKey.class,
-              JwtPublicKeySign.class));
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              JwtSignatureConfigurationV0::createJwtRsaSsaPssSign,
-              JwtRsaSsaPssPrivateKey.class,
-              JwtPublicKeySign.class));
-
-      // Register {@code JwtPublicKeyVerify} wrapper and concrete primitives.
-      JwtPublicKeyVerifyWrapper.registerToInternalPrimitiveRegistry(builder);
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              JwtSignatureConfigurationV0::createJwtEcdsaVerify,
-              JwtEcdsaPublicKey.class,
-              JwtPublicKeyVerify.class));
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              JwtSignatureConfigurationV0::createJwtRsaSsaPkcs1Verify,
-              JwtRsaSsaPkcs1PublicKey.class,
-              JwtPublicKeyVerify.class));
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              JwtSignatureConfigurationV0::createJwtRsaSsaPssVerify,
-              JwtRsaSsaPssPublicKey.class,
-              JwtPublicKeyVerify.class));
-
-      return InternalConfiguration.createFromPrimitiveRegistry(builder.build());
-    } catch (GeneralSecurityException e) {
-      throw new IllegalStateException(e);
-    }
+  private static Configuration create() {
+    return new Configuration() {
+      @Override
+      public <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
+          throws GeneralSecurityException {
+        if (clazz == JwtPublicKeySign.class) {
+          return clazz.cast(
+              JWT_PUBLIC_KEY_SIGN_WRAPPER.wrap(
+                  keysetHandle, JwtSignatureConfigurationV0::createJwtPublicKeySign));
+        }
+        if (clazz == JwtPublicKeyVerify.class) {
+          return clazz.cast(
+              JWT_PUBLIC_KEY_VERIFY_WRAPPER.wrap(
+                  keysetHandle, JwtSignatureConfigurationV0::createJwtPublicKeyVerify));
+        }
+        throw new GeneralSecurityException(
+            "JwtSignatureConfigurationV0 can only create JwtPublicKeySign and JwtPublicKeyVerify");
+      }
+    };
   }
 
   @AccessesPartialKey
@@ -241,6 +219,36 @@ import java.security.GeneralSecurityException;
     };
   }
 
+  private static JwtPublicKeySign createJwtPublicKeySign(KeysetHandleInterface.Entry entry)
+      throws GeneralSecurityException {
+    Key key = entry.getKey();
+    if (key instanceof JwtEcdsaPrivateKey) {
+      return createJwtEcdsaSign((JwtEcdsaPrivateKey) key);
+    }
+    if (key instanceof JwtRsaSsaPkcs1PrivateKey) {
+      return createJwtRsaSsaPkcs1Sign((JwtRsaSsaPkcs1PrivateKey) key);
+    }
+    if (key instanceof JwtRsaSsaPssPrivateKey) {
+      return createJwtRsaSsaPssSign((JwtRsaSsaPssPrivateKey) key);
+    }
+    throw new GeneralSecurityException("Unknown key class: " + key.getClass());
+  }
+
+  private static JwtPublicKeyVerify createJwtPublicKeyVerify(KeysetHandleInterface.Entry entry)
+      throws GeneralSecurityException {
+    Key key = entry.getKey();
+    if (key instanceof JwtEcdsaPublicKey) {
+      return createJwtEcdsaVerify((JwtEcdsaPublicKey) key);
+    }
+    if (key instanceof JwtRsaSsaPkcs1PublicKey) {
+      return createJwtRsaSsaPkcs1Verify((JwtRsaSsaPkcs1PublicKey) key);
+    }
+    if (key instanceof JwtRsaSsaPssPublicKey) {
+      return createJwtRsaSsaPssVerify((JwtRsaSsaPssPublicKey) key);
+    }
+    throw new GeneralSecurityException("Unknown key class: " + key.getClass());
+  }
+
   /** Returns an instance of the {@code JwtSignatureConfigurationV0}. */
   public static Configuration get() throws GeneralSecurityException {
     if (!FIPS.isCompatible()) {
@@ -248,6 +256,6 @@ import java.security.GeneralSecurityException;
           "Cannot use JwtSignatureConfigurationV0, as BoringCrypto module is needed for FIPS"
               + " compatibility");
     }
-    return INTERNAL_CONFIGURATION;
+    return CONFIGURATION;
   }
 }
