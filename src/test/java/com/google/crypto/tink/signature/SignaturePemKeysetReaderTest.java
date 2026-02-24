@@ -95,8 +95,10 @@ public final class SignaturePemKeysetReaderTest {
             .setSaltLengthBytes(32)
             .build();
 
-    KeysetHandle handle = LegacyKeysetSerialization.parseKeysetWithoutSecret(
-        SignaturePemKeysetReader.newBuilder().addPem(pem, PemKeyType.RSA_PSS_2048_SHA256).build());
+    KeysetHandle handle =
+        SignaturePemKeysetReader.newBuilder()
+            .addPem(pem, PemKeyType.RSA_PSS_2048_SHA256)
+            .buildPublicKeysetHandle();
 
     assertThat(handle.size()).isEqualTo(1);
     RsaSsaPssPublicKey key = (RsaSsaPssPublicKey) handle.getAt(0).getKey();
@@ -127,10 +129,9 @@ public final class SignaturePemKeysetReaderTest {
         .build();
 
     KeysetHandle handle =
-        LegacyKeysetSerialization.parseKeysetWithoutSecret(
             SignaturePemKeysetReader.newBuilder()
                 .addPem(pem, PemKeyType.ECDSA_P256_SHA256)
-                .build());
+                .buildPublicKeysetHandle();
 
     EcdsaPublicKey publicKey = (EcdsaPublicKey) handle.getAt(0).getKey();
     assertThat(publicKey.getParameters()).isEqualTo(expectedParams);
@@ -150,11 +151,10 @@ public final class SignaturePemKeysetReaderTest {
             + "wQIDAQAB\n"
             + "-----END PUBLIC KEY-----\n";
 
-    KeysetHandle handle =
-        LegacyKeysetSerialization.parseKeysetWithoutSecret(SignaturePemKeysetReader.newBuilder()
+    KeysetHandle handle = SignaturePemKeysetReader.newBuilder()
             .addPem(rsa2048Pem, PemKeyType.RSA_SIGN_PKCS1_2048_SHA256)
             .addPem(rsa2048Pem, PemKeyType.RSA_SIGN_PKCS1_3072_SHA256)  // is ignored.
-            .build());
+            .buildPublicKeysetHandle();
     assertThat(handle.size()).isEqualTo(1);
   }
 
@@ -167,12 +167,10 @@ public final class SignaturePemKeysetReaderTest {
             + "8suEJ7GlMxZfvdcpbi/GhYPuJi8Gn2H1NaMJZcLZo5MLPKyyGT5u3u1VBQ==\n"
             + "-----END PUBLIC KEY-----\n";
 
-    KeysetHandle handle =
-        LegacyKeysetSerialization.parseKeysetWithoutSecret(
-            SignaturePemKeysetReader.newBuilder()
+    KeysetHandle handle = SignaturePemKeysetReader.newBuilder()
             .addPem(p256Pem, PemKeyType.ECDSA_P256_SHA256)
             .addPem(p256Pem, PemKeyType.ECDSA_P384_SHA384)  // wrong curve, is ignored.
-            .build());
+            .buildPublicKeysetHandle();
     assertThat(handle.size()).isEqualTo(1);
   }
 
@@ -206,11 +204,9 @@ public final class SignaturePemKeysetReaderTest {
         + "8C_a2C1UGCgEGuXZAEGAdONVez52n5TLvQP3hRd4MTi7YvfhezRcA4aXyIDOv-TYi4p-OVTYQ-FMbkgoWBm5"
         + "bqwQ"));
 
-    KeysetHandle handle =
-        LegacyKeysetSerialization.parseKeysetWithoutSecret(
-            SignaturePemKeysetReader.newBuilder()
+    KeysetHandle handle = SignaturePemKeysetReader.newBuilder()
                 .addPem(pem, PemKeyType.RSA_PSS_2048_SHA256)
-                .build());
+                .buildPublicKeysetHandle();
 
     // Test that both handles have the same keys. Because the key ids are chosen at random,
     // they are not exactly the same keysets.
@@ -259,11 +255,9 @@ public final class SignaturePemKeysetReaderTest {
         + "8C_a2C1UGCgEGuXZAEGAdONVez52n5TLvQP3hRd4MTi7YvfhezRcA4aXyIDOv-TYi4p-OVTYQ-FMbkgoWBm5"
         + "bqwQ"));
 
-    KeysetHandle handle =
-        LegacyKeysetSerialization.parseKeysetWithoutSecret(
-            SignaturePemKeysetReader.newBuilder()
+    KeysetHandle handle = SignaturePemKeysetReader.newBuilder()
                 .addPem(pem, PemKeyType.RSA_PSS_2048_SHA256)
-                .build());
+                .buildPublicKeysetHandle();
 
     // The EC public key is ignored because it has the wrong type. It is not a RSA_PSS_2048_SHA256
     // key.
@@ -298,12 +292,10 @@ public final class SignaturePemKeysetReaderTest {
             + "8suEJ7GlMxZfvdcpbi/GhYPuJi8Gn2H1NaMJZcLZo5MLPKyyGT5u3u1VBQ==\n"
             + "-----END PUBLIC KEY-----\n";
 
-    KeysetHandle handle =
-        LegacyKeysetSerialization.parseKeysetWithoutSecret(
-        SignaturePemKeysetReader.newBuilder()
+    KeysetHandle handle = SignaturePemKeysetReader.newBuilder()
             .addPem(rsaPem, PemKeyType.RSA_PSS_2048_SHA256)
             .addPem(ecPem, PemKeyType.ECDSA_P256_SHA256)
-            .build());
+            .buildPublicKeysetHandle();
 
     // Extracted after converting the PEM to JWK.
     BigInteger expectedModulus = new BigInteger(1, Base64.urlSafeDecode(
@@ -399,13 +391,12 @@ public final class SignaturePemKeysetReaderTest {
             .setVariant(EcdsaParameters.Variant.NO_PREFIX)
             .build();
 
-    KeysetReader keysetReader =
+    KeysetHandle handle =
         SignaturePemKeysetReader.newBuilder()
             .addPem(rsaPem, PemKeyType.RSA_PSS_2048_SHA256)
             .addPem(rsaPem, PemKeyType.RSA_SIGN_PKCS1_2048_SHA256)
             .addPem(ecPem, PemKeyType.ECDSA_P256_SHA256)
-            .build();
-    KeysetHandle handle = LegacyKeysetSerialization.parseKeysetWithoutSecret(keysetReader);
+            .buildPublicKeysetHandle();
 
     assertThat(handle.size()).isEqualTo(3);
     RsaSsaPssPublicKey rsaPssKey = (RsaSsaPssPublicKey) handle.getAt(0).getKey();
@@ -420,6 +411,23 @@ public final class SignaturePemKeysetReaderTest {
     EcdsaPublicKey ecdsaKey = (EcdsaPublicKey) handle.getAt(2).getKey();
     assertThat(ecdsaKey.getParameters()).isEqualTo(expectedEcdsaParams);
     assertThat(ecdsaKey.getPublicPoint()).isEqualTo(expectedPoint);
+
+    KeysetReader keysetReader =
+        SignaturePemKeysetReader.newBuilder()
+            .addPem(rsaPem, PemKeyType.RSA_PSS_2048_SHA256)
+            .addPem(rsaPem, PemKeyType.RSA_SIGN_PKCS1_2048_SHA256)
+            .addPem(ecPem, PemKeyType.ECDSA_P256_SHA256)
+            .build();
+    KeysetHandle legacyHandle = LegacyKeysetSerialization.parseKeysetWithoutSecret(keysetReader);
+
+    // verify that legacyHandle has the same keys, except for the key IDs.
+    assertThat(legacyHandle.size()).isEqualTo(3);
+    assertThat(legacyHandle.getAt(0).isPrimary()).isTrue();
+    assertThat(legacyHandle.getAt(0).getKey().equalsKey(rsaPssKey)).isTrue();
+    assertThat(legacyHandle.getAt(1).getKey().equalsKey(rsaPkcs1Key)).isTrue();
+    assertThat(legacyHandle.getAt(2).getKey().equalsKey(ecdsaKey)).isTrue();
+
+
   }
 
   @Test
@@ -592,10 +600,10 @@ public final class SignaturePemKeysetReaderTest {
     byte[] expectedKeyBytes = Hex.decode(
         "19bf44096984cdfe8541bac167dc3b96c85086aa30b6b6cb0c5c38ad703166e1");
 
-    KeysetHandle handle = LegacyKeysetSerialization.parseKeysetWithoutSecret(
+    KeysetHandle handle =
         SignaturePemKeysetReader.newBuilder()
             .addPem(ed25519PublicKeyPem, PemKeyType.ED25519)
-            .build());
+            .buildPublicKeysetHandle();
 
     assertThat(handle.size()).isEqualTo(1);
     Ed25519PublicKey publicKey = (Ed25519PublicKey) handle.getAt(0).getKey();
@@ -614,11 +622,11 @@ public final class SignaturePemKeysetReaderTest {
          + "MCowBQYDK2VwAyEAGb9ECWmEzf6FQbrBZ9w7lshQhqowtrbLDFw4rXAxZuE=\n"
          + "-----END PUBLIC KEY-----\n";
 
-    KeysetHandle handle = LegacyKeysetSerialization.parseKeysetWithoutSecret(
+    KeysetHandle handle =
         SignaturePemKeysetReader.newBuilder()
             .addPem(ecPublicKeyPem, PemKeyType.ED25519)  // wrong PEM format. Is ignored.
             .addPem(ed25519PublicKeyPem, PemKeyType.ED25519)
-            .build());
+            .buildPublicKeysetHandle();
     assertThat(handle.size()).isEqualTo(1);
   }
 
@@ -633,11 +641,11 @@ public final class SignaturePemKeysetReaderTest {
          + "MCowBQYDK2VwAyEAGb9ECWmEzf6FQbrBZ9w7lshQhqowtrbL\n"
          + "-----END PUBLIC KEY-----\n";
 
-    KeysetHandle handle = LegacyKeysetSerialization.parseKeysetWithoutSecret(
+    KeysetHandle handle =
         SignaturePemKeysetReader.newBuilder()
             .addPem(invalidEd25519Pem, PemKeyType.ED25519) // invalid PEM. Is ignored.
             .addPem(ed25519PublicKeyPem, PemKeyType.ED25519)
-            .build());
+            .buildPublicKeysetHandle();
     assertThat(handle.size()).isEqualTo(1);
   }
 
@@ -759,9 +767,9 @@ public final class SignaturePemKeysetReaderTest {
     MlDsaParameters expectedParameters = MlDsaParameters.create(
           MlDsaParameters.MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.NO_PREFIX);
 
-    KeysetHandle handle = LegacyKeysetSerialization.parseKeysetWithoutSecret(SignaturePemKeysetReader.newBuilder()
+    KeysetHandle handle = SignaturePemKeysetReader.newBuilder()
             .addPem(ML_DSA_65_PUBLIC_KEY_PEM, PemKeyType.ML_DSA_65)
-            .build());
+            .buildPublicKeysetHandle();
     assertThat(handle.size()).isEqualTo(1);
     MlDsaPublicKey publicKey = (MlDsaPublicKey) handle.getAt(0).getKey();
     assertThat(publicKey.getParameters()).isEqualTo(expectedParameters);
@@ -1000,11 +1008,10 @@ public final class SignaturePemKeysetReaderTest {
   @Theory
   public void verifyWithPemTestVector_succeeds(
       @FromDataPoints("pemTestVectors") PemTestVector pemTestVector) throws Exception {
-    KeysetReader keysetReader =
+    KeysetHandle handle =
         SignaturePemKeysetReader.newBuilder()
             .addPem(pemTestVector.pem, pemTestVector.pemKeyType)
-            .build();
-    KeysetHandle handle = LegacyKeysetSerialization.parseKeysetWithoutSecret(keysetReader);
+            .buildPublicKeysetHandle();
     assertThat(handle.size()).isEqualTo(1);
 
     PublicKeyVerify verifier =
@@ -1025,11 +1032,10 @@ public final class SignaturePemKeysetReaderTest {
             Hex.decode(
                 "33aa7b0edd5bfb07cb91f07a958bb2e5a458e49182f73b18dfecd8e14d7ddf1882be270e0e53c12e27a822eade61ba265fe8c43b64ebaa7e6023730c5a1258c5a45041ded5fa19cda7f566e474dc549bea12d379303c9e0da024221d57d844db50a3519e90598e49621cb2c5d1a34d1e0ce6b9088c71440472aba7c74cd74fe9759d454c8fa8d69ee67e1ead74dba9ec42c0aa0877ccb1c193b73063f83cd7a084e12ae3d7f216aecac5a2fcfd3e5917676ea2d74514acf2ddaf204de30048c6d8bbcd1ee3d2d1a875af0d7ae5719c2f48ed43564ea8dedf97ad7d4b0450067023a2062c50f6320767ac65ce7f8695cd4edf440dabaf6a5ff570f811944d4652c79c6a3b015a849be7a7962ec708ad59abe63d6e27d5bdd7037ff053bca5d1866af4ce5f6631fe05f72c0420b5d8ffe7d5a7ff0a3e465ee6868f412d5cfcfe7caa62373592cb36d99a32963b5556729ae6083723306141a2baf08e7921ce140bf383ee9a651f5dceb208ec98630cfc96466bc11686aa98b780775b84163600ef3cc95031d50c6c8d48bd89b0dff571367a8a16ea260e0e7f0e00998b0f233c9769a4b10660c185cff19a5142efa10d1e7b94fb300d784568362f964507a35803af6d9eca514f874ef3af3cd3bda51d7ac3acbad086b4474c41f6c782da5847f8c29c59a07020361466852ef15e0fc94dc2851c6410f7d95c96353259c72174c7db04154866a9217b761bd2c39089db216ceeb5cd30bcea197992b005ede0309638731b67d16b5d6c1972a58c0d0590acec03ef3af1dd4df9c5655edfb2f1ca440c1b56dd4172e79aa711eca2225252badbfa657b4106dc941ce67a930046491063e5fda4c63c586969f54a330e6bbb296aee8f3a11dd66a9287ebdf0f9256c504c1e7eb055caf9b5b3464e74c342af41abd6e294105b26cbc5a48f7823e894f58c6806e71ac4fa92e6a7fcaf24181ef4b1031f1e2691685de572503105bed71ef0417d358cd93766ec5d073dbe607033f7001304d5fd45f34bd4ce06772c6d2185b796c42b9d5afd5d4338e7a0ddd5333e1120a44a4c5894bd50a5c8168d69a109712b4db41e27c237621def54ce3c1e5db5fbaac5aac2d1a14f4da4e04f1d98cad84762cce6a2351bf9e97cbf7a77b75275c275b5d781c30f30687a4f1f0aceb8e422d130bce433c7569c222ec98507552e3b5d4ac7f2a2332f6c1de17f2079c80b1d159fcfb33585dce0a5a787bbf2172ef3df7e851c36d9a5fac22c8e39cea72cf28af82a0af75ac5ce633c104d73d34897cb90708a01766890133c5332b73d43130a51e7a502ec277156fa9a1009950c79c7102671fc8b2e7cdd18442f513e3efe36641fe45e5aa8406976066839c1a9449e4235cd22512f3ab43b21320ba06f88628a2162844af532ba27c213bc80032a76fcb04f56c21a67d0f9e9d90417b2de27d645182de645efd32903f7fd5daad4b9c5f5017a6b5965cabbc8d4d32bc6060f8fd88b7ad9917f9a193a99c584bf6c41b80a74b9c05b6f06307bb9fbfe6ecaea7c55d3b891d9103a775f65c1d9b989542ec95b516995e8e7712a3be683a7a198a100f76d54d3c7d8c1b602f496773b33b135b9978fcbdb0b661f5cc1919757146965c1f0a8191060d824970c4fc634718b1b97603a5374eb47ab6f1a85354d39197ef69b4c1b59fac350636e0ad0fd6fc03fc6df3f9a65f1bf948e31070527cf8fd09cbc302d3c5bfbd6fce5b84742fd360c49015d8d0002b8c2cde87babde946cc0b2362983613a07ca6fb494df591c42d6af6c8abce1161d3acd6975c9b33b1026f347c41f0ef5b7fdf0168317d948720f9dbb609c90cd05f2bcaa7cc9d4ba73e6ee975d9b5b6e2d034c81a6a8fc0605fc0142f090035b5b6eac543328d50c6e6b8f3144748905feda5ff5d6f24b1124e534387e2d70639d0afe81a7a6121b5df0d03c778a87fd04eca9e5fb5b7c7c2189794b9c4ddace4548f805cf379a2683762a626d20d9881f81a149c32956223d4bcc336d7bad6be9ebcaaa956a8ad53020ea4ae942cf9660333f72ce05f5003363561a2bbc2c4bd22f257e41414de3369be78f91c64c35abaacfbb1eade5fbe955c7d5cc8c6ddbd4754dc9f3dba8062b907b30e8d07418d29e65e1bf97d8919e85618fdda5be3910e969339e901d9d8b175f3a7560cbdd1f11eb571cb0ccbd323628c4d5dc5e44f88f4eff1ac793bfcdc7b399931c985d91aead7cf3c42ccd3e3ee246303f3086ef213d0b852c6af2e558f9818f6b799dd13d593f441bfeb17a34d4aada95721a04b475fa54aa43bc4f1dd6a026404e0722d9c2bb955e422e41e067ce009c53f832dd1668e431c407ed467a78409e26f3ca0ce62ee7a1485702886a9d8a6cbd5b4f7863bead2b62226523d05c186207889485063422ee441680d2cad7d135592adb194b2a0ede0f6753b2986872681652e5ad5c5926f80fcce5ce120086c932940c3269fc5bd83d2a9f811645722de6270f3384b3c1acd138b0e93f25ec0120c4dfee4ae5fc077372c16150b180bdc68afb489aecca0ca14e794ff3049a3fe577d10dd380e219ac546989e2afd1e0fbb32334a6da24fdd01980937efc42c5aafc2689e8c57cae9f325f17fa099fe9c2f4321a1edde626a2855d70d18424d3ea9f643f88203523a15e375d1c6eb8f1904819e852e5955166da915462e615e8a2b1e5913c26b874e523cbedf2bfbad21ef3c3477becd3abcc840eed25484e4fd2bfb8148a767638a3c268475eadb8ef4c9e83709445eabdfebbddffbfe2b48fc00b85a6c532c7a44b751637a3dd7a0e8095226f66a02f66d9a3b5059c0d7181ecbc8f672602a5e88a211eb0c55a4076176a9fa644ef5e70f526a2a2b72703eaf69a4809c5c858a412a00cc060e4dd7c175f1740548eaa468d0275dc5f1ad2e6bc144535dd2e755869148774d9d38db1d68546d303edc2c7b9b0c0ba978b2eda079351fae76d34075c9b31a62a63b5068f040d35b45bc21a821be784aee06bbc719f9d18695a477d501e2a8cf127936fbbb0b2ed5dd8741f57f18aafd42b45fceac85746c0bedbb8bc590e2cc88f3cab9ff8a4d9c0a89b908e8232192fb6eb8a5b4ba177143156047e40651e687298ed786a639b630b1bdc3c25df9474a8bf5abfe0574eb9e472b004ecf934ae2a3a7c123200e2bf743b86e70d930c825cd052e0bee11d03555c976ce8a58fb06550721dde6be4eb52d5f0b2dfb76a4bebe87131d4f7b5c012d8be39f010d24f5b6ef7dcae59649b033c01fc6a0773d8c9f3ca6b547633e38dba01a5a5c8d7a9a273b6578903603f12ce066c774f72b5f1a67b2a8598ab2c89c8c14234a1f46023be69d70974358d5b7cc378c480da83253e669a30f7dc545b3c45f71ce7a0e3a3ea836e72d7eb6dc3ecc28885eccd966fe8e5f9d66c46a71aedeebe7bbdf863c73fda7c546a59b928a5a4605da896fac2238365c1a5b8550b7caa341493d0536e6704c2bf0e3977ad7d5c1ac9ad3bd8a81267cdcd2199fbf54e7d3587d86f69a278ab4706d18bcd6ab5c2ccc51fadfc09888df0accd2680dcd6161038a6e26ba10c9168b2f7e30ed844d0f9b9abc8e06415f36a4a59e89218692cae421159cf34e73a127abf5a77a9ac65746c77b4ef470360f9218b8983a0254fab4691fbdf176dfe550e19c935a831aa1e1e6dd58bebd0fae32db66b365ef32d69eac206f29c63de02fc76b9f1a156cc0b614960d818b24e4c429b2563a567a437c3d3941b6468aa4fa99307312ae7c18c4e064d57a11b0ae1836798f489b42dac9bbc3840e0b55b4c7c69871d9f7f53502586d891c4ab7c306bd63cd596988bb68f93fbbe9bcd0f70d7f78ae67b738b69713dd82a3f542714117846771eb7241801c27d2ced049cdd2237941ea4778131db8d1b106cec3faac39e986f6bb3f14f08aec6afc9764f92df23bc0c1c2c579508b2e429c7104fd7fa871b57c5c1c1e4843a6d90a0056f00bb2c76dc3f1926212d11cebba523c3b2cbbc85a60f617cae53259483d6b7feecd3be5b6b14181d7302a215f58667ebe7ec16d375d91a2a3eb1db981b1a7a6f9c2e6647db6e1e06f27ef2428fc23715eb6de9e8d9e6f71a0a4631f9c51ffa3895988d851d1a90a9ce9d1766564b3acefbc08ed66b632455335ac4684b683cf22d1d91245f4077911fb1d6a53ed32e1d30e8c7a9d78b3dbcf742460b36115f5d8c7c75e14c7063045a2fc0f5da89b86c8af6ffd2c5761f50aa8a1b528d33a8cfd69854b345e1e4891b39b52557a32189c8327fb0c6cc108b070705dade504650b60f4486f8ebdf6cee46180ded982efbc3b7ca70cb0d3c131758cb98bdc1cb8a20f1107febcab51c5e281da87cb92d1b277b1fb7c5ef1db4d646f865c25c9e0ae6c33371d2520871cec9d089affd8e8f33ea2ec4030af6cf2b359d883171430f700f1f4faa6e1dc70c65cb00f5a1147d0efbc14fea4d21685b5ac0f2d0004142ad746835159101b532b5038df05c0af8f334e11f722054e5da3fa98b00aa454dabea63b726080fdb383770dfa3903bc4f4f72957e378322f9f058e9116a7a172ed0f33ae155a12375bbfebf2021e7daa8e091a334172ff6a768028457bd6dbe2f200000000000000000000000000000000000000000000000000000000060a0b11141b"));
 
-    KeysetReader keysetReader =
+    KeysetHandle handle =
         SignaturePemKeysetReader.newBuilder()
             .addPem(pemTestVector.pem, pemTestVector.pemKeyType)
-            .build();
-    KeysetHandle handle = LegacyKeysetSerialization.parseKeysetWithoutSecret(keysetReader);
+            .buildPublicKeysetHandle();
     assertThat(handle.size()).isEqualTo(1);
 
     // Older versions of Conscrypt don't support ML-DSA. We only test

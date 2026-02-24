@@ -48,12 +48,12 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 /**
- * SignaturePemKeysetReader is a {@link KeysetReader} that can read digital signature keys in PEM
- * format (RFC 7468).
+ * SignaturePemKeysetReader reads digital signature keys in PEM format (RFC 7468).
  *
  * <p>Only supports public keys.
  *
- * <p>Private, unknown or invalid keys are ignored.
+ * <p>Warning: Private, invalid, incompatible or unparsable keys are silently ignored, without
+ * throwing an exception. This only throws an exception if no valid keys are found at all.
  *
  * <h3>Usage</h3>
  *
@@ -62,7 +62,12 @@ import javax.annotation.Nullable;
  *
  * String pem = ...;
  * PemKeyType type = ...;
- * KeysetReader reader = SignaturePemKeysetReader.newBuilder().addPem(pem, type).build();
+ * String pem2 = ...;
+ * PemKeyType type2 = ...;
+ * KeysetHandle handle = SignaturePemKeysetReader.newBuilder()
+ *     .addPem(pem, type)
+ *     .addPem(pem2, type2)
+ *     .buildPublicKeysetHandle();
  * }</pre>
  */
 public final class SignaturePemKeysetReader implements KeysetReader {
@@ -94,8 +99,15 @@ public final class SignaturePemKeysetReader implements KeysetReader {
 
     Builder() {}
 
-    // TODO(b/470859537): Make this public.
-    private KeysetHandle buildKeysetHandle() throws GeneralSecurityException {
+    /**
+     * Builds a {@link KeysetHandle} from the public PEM keys added to this {@link Builder}.
+     *
+     * <p>The first key in the first added PEM is the primary key.
+     *
+     * <p>Warning: Private keys and invalid, incompatible or unparsable keys are silently ignored,
+     * without throwing an exception. This only throws an exception if no keys are found at all.
+     */
+    public KeysetHandle buildPublicKeysetHandle() throws GeneralSecurityException {
       KeysetHandle.Builder builder = KeysetHandle.newBuilder();
       for (PemKey pemKey : pemKeys) {
         BufferedReader reader = new BufferedReader(new StringReader(pemKey.pem));
@@ -112,11 +124,16 @@ public final class SignaturePemKeysetReader implements KeysetReader {
       return builder.build();
     }
 
+    /**
+     * Builds a {@link KeysetReader} from the PEM keys added to this {@link Builder}.
+     *
+     * <p>Do not use this method. Prefer to use {@link #buildPublicKeysetHandle()} instead.
+     */
     public KeysetReader build() {
       Keyset keyset = null;
       IOException exception = null;
       try {
-        KeysetHandle handle = buildKeysetHandle();
+        KeysetHandle handle = buildPublicKeysetHandle();
         byte[] bytes = TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle);
         keyset = Keyset.parseFrom(bytes, ExtensionRegistryLite.getEmptyRegistry());
       } catch (GeneralSecurityException e) {
