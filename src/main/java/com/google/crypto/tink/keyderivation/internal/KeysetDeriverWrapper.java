@@ -44,7 +44,7 @@ public final class KeysetDeriverWrapper implements PrimitiveWrapper<KeyDeriver, 
     final boolean isPrimary;
   }
 
-  private static final KeysetDeriverWrapper WRAPPER = new KeysetDeriverWrapper();
+  public static final KeysetDeriverWrapper WRAPPER = new KeysetDeriverWrapper();
 
   private static void validate(KeysetHandleInterface keysetHandle) throws GeneralSecurityException {
     if (keysetHandle.getPrimary() == null) {

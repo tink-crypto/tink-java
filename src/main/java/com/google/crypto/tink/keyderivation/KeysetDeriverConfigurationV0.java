@@ -17,8 +17,12 @@
 package com.google.crypto.tink.keyderivation;
 
 import com.google.crypto.tink.Configuration;
+import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.Key;
+import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
-import com.google.crypto.tink.internal.InternalConfiguration;
+import com.google.crypto.tink.internal.LegacyProtoKey;
+import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.keyderivation.internal.KeyDeriver;
@@ -42,27 +46,23 @@ import java.security.GeneralSecurityException;
 /* Placeholder for internally public; DO NOT CHANGE. */ class KeysetDeriverConfigurationV0 {
   private KeysetDeriverConfigurationV0() {}
 
-  private static final InternalConfiguration INTERNAL_CONFIGURATION = create();
+  private static final Configuration CONFIGURATION = create();
   private static final PrimitiveRegistry PRF_REGISTRY = createPrfRegistry();
 
-  private static InternalConfiguration create() {
-    try {
-      PrimitiveRegistry.Builder builder = PrimitiveRegistry.builder();
-
-      KeysetDeriverWrapper.registerToInternalPrimitiveRegistry(builder);
-
-      // HKDF-PRF-based key derivation
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              KeysetDeriverConfigurationV0::createHkdfPrfBasedKeyDeriver,
-              PrfBasedKeyDerivationKey.class,
-              KeyDeriver.class));
-
-      return InternalConfiguration.createFromPrimitiveRegistry(
-          builder.allowReparsingLegacyKeys().build());
-    } catch (GeneralSecurityException e) {
-      throw new IllegalStateException(e);
-    }
+  private static Configuration create() {
+    return new Configuration() {
+      @Override
+      public <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
+          throws GeneralSecurityException {
+        if (clazz == KeysetDeriver.class) {
+          return clazz.cast(
+              KeysetDeriverWrapper.WRAPPER.wrap(
+                  keysetHandle, KeysetDeriverConfigurationV0::createKeyDeriver));
+        }
+        throw new GeneralSecurityException(
+            "KeysetDeriverConfigurationV0 can only create KeysetDeriver primitives");
+      }
+    };
   }
 
   private static PrimitiveRegistry createPrfRegistry() {
@@ -82,7 +82,7 @@ import java.security.GeneralSecurityException;
       throw new GeneralSecurityException(
           "Cannot use non-FIPS-compliant KeysetDeriverConfigurationV0 in FIPS mode");
     }
-    return INTERNAL_CONFIGURATION;
+    return CONFIGURATION;
   }
 
   private static KeyDeriver createHkdfPrfBasedKeyDeriver(PrfBasedKeyDerivationKey key)
@@ -92,5 +92,22 @@ import java.security.GeneralSecurityException;
     KeyDeriver deriver = PrfBasedKeyDeriver.createWithPrfPrimitiveRegistry(PRF_REGISTRY, key);
     Object unused = deriver.deriveKey(new byte[] {1});
     return deriver;
+  }
+
+  private static KeyDeriver createKeyDeriver(KeysetHandleInterface.Entry entry)
+      throws GeneralSecurityException {
+    Key key = entry.getKey();
+    if (key instanceof LegacyProtoKey) {
+      Key reparsedKey =
+          MutableSerializationRegistry.globalInstance()
+              .parseKey(
+                  ((LegacyProtoKey) key).getSerialization(InsecureSecretKeyAccess.get()),
+                  InsecureSecretKeyAccess.get());
+      key = reparsedKey;
+    }
+    if (key instanceof PrfBasedKeyDerivationKey) {
+      return createHkdfPrfBasedKeyDeriver((PrfBasedKeyDerivationKey) key);
+    }
+    throw new GeneralSecurityException("Unknown key class: " + key.getClass());
   }
 }
