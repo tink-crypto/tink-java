@@ -101,15 +101,12 @@ java_library(
         "//src/main/java/com/google/crypto/tink:keyset_handle_interface",
         "//src/main/java/com/google/crypto/tink:public_key_sign",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
-        "//src/main/java/com/google/crypto/tink/internal:monitoring_annotations",
-        "//src/main/java/com/google/crypto/tink/internal:monitoring_client",
-        "//src/main/java/com/google/crypto/tink/internal:monitoring_util",
-        "//src/main/java/com/google/crypto/tink/internal:mutable_monitoring_registry",
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry",
         "//src/main/java/com/google/crypto/tink/internal:primitive_constructor",
         "//src/main/java/com/google/crypto/tink/internal:primitive_registry",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper",
         "//src/main/java/com/google/crypto/tink/signature/internal:legacy_full_sign",
+        "//src/main/java/com/google/crypto/tink/signature/internal:wrapped_public_key_sign",
     ],
 )
 
@@ -614,15 +611,12 @@ android_library(
         "//src/main/java/com/google/crypto/tink:keyset_handle_interface-android",
         "//src/main/java/com/google/crypto/tink:public_key_sign-android",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key-android",
-        "//src/main/java/com/google/crypto/tink/internal:monitoring_annotations-android",
-        "//src/main/java/com/google/crypto/tink/internal:monitoring_client-android",
-        "//src/main/java/com/google/crypto/tink/internal:monitoring_util-android",
-        "//src/main/java/com/google/crypto/tink/internal:mutable_monitoring_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_constructor-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper-android",
         "//src/main/java/com/google/crypto/tink/signature/internal:legacy_full_sign-android",
+        "//src/main/java/com/google/crypto/tink/signature/internal:wrapped_public_key_sign-android",
     ],
 )
 

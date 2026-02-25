@@ -19,15 +19,12 @@ package com.google.crypto.tink.signature;
 import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.internal.LegacyProtoKey;
-import com.google.crypto.tink.internal.MonitoringAnnotations;
-import com.google.crypto.tink.internal.MonitoringClient;
-import com.google.crypto.tink.internal.MonitoringUtil;
-import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.signature.internal.LegacyFullSign;
+import com.google.crypto.tink.signature.internal.WrappedPublicKeySign;
 import java.security.GeneralSecurityException;
 
 /**
@@ -45,59 +42,13 @@ public class PublicKeySignWrapper implements PrimitiveWrapper<PublicKeySign, Pub
           PrimitiveConstructor.create(
               LegacyFullSign::create, LegacyProtoKey.class, PublicKeySign.class);
 
-  private static class PublicKeySignWithId {
-    public PublicKeySignWithId(PublicKeySign publicKeySign, int id) {
-      this.publicKeySign = publicKeySign;
-      this.id = id;
-    }
-
-    public final PublicKeySign publicKeySign;
-    public final int id;
-  }
-
-  private static class WrappedPublicKeySign implements PublicKeySign {
-
-    private final PublicKeySignWithId primary;
-
-    private final MonitoringClient.Logger logger;
-
-    public WrappedPublicKeySign(PublicKeySignWithId primary, MonitoringClient.Logger logger) {
-      this.primary = primary;
-      this.logger = logger;
-    }
-
-    @Override
-    public byte[] sign(final byte[] data) throws GeneralSecurityException {
-      try {
-        byte[] output = primary.publicKeySign.sign(data);
-        logger.log(primary.id, data.length);
-        return output;
-      } catch (GeneralSecurityException e) {
-        logger.logFailure();
-        throw e;
-      }
-    }
-  }
-
   PublicKeySignWrapper() {}
 
   @Override
   public PublicKeySign wrap(
       KeysetHandleInterface keysetHandle, PrimitiveFactory<PublicKeySign> factory)
       throws GeneralSecurityException {
-    MonitoringClient.Logger logger;
-    MonitoringAnnotations annotations =
-        keysetHandle.getAnnotationsOrNull(MonitoringAnnotations.class);
-    if (annotations != null && !annotations.isEmpty()) {
-      MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-      logger = client.createLogger(keysetHandle, annotations, "public_key_sign", "sign");
-    } else {
-      logger = MonitoringUtil.DO_NOTHING_LOGGER;
-    }
-    return new WrappedPublicKeySign(
-        new PublicKeySignWithId(
-            factory.create(keysetHandle.getPrimary()), keysetHandle.getPrimary().getId()),
-        logger);
+    return WrappedPublicKeySign.create(keysetHandle, factory);
   }
 
   @Override
