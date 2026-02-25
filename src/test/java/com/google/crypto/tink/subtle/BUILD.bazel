@@ -225,7 +225,7 @@ java_test(
     name = "AesEaxJceTest",
     size = "small",
     srcs = ["AesEaxJceTest.java"],
-    data = ["//third_party/wycheproof:testvectors_v0"],
+    data = ["//third_party/wycheproof:testvectors_v1"],
     tags = ["fips"],
     deps = [
         "//src/main/java/com/google/crypto/tink:aead",
@@ -406,7 +406,7 @@ java_test(
     name = "ChaCha20Poly1305Test",
     size = "small",
     srcs = ["ChaCha20Poly1305Test.java"],
-    data = ["//third_party/wycheproof:testvectors_v0"],
+    data = ["//third_party/wycheproof:testvectors_v1"],
     tags = [
         "fips",
         "notsan",
@@ -433,7 +433,7 @@ java_test(
 java_test(
     name = "AesGcmJceTest",
     srcs = ["AesGcmJceTest.java"],
-    data = ["//third_party/wycheproof:testvectors_v0"],
+    data = ["//third_party/wycheproof:testvectors_v1"],
     tags = [
         "fips",
         "notsan",

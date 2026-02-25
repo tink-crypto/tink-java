@@ -263,7 +263,7 @@ public class InsecureNonceChaCha20Poly1305Test {
 
     JsonObject json =
         WycheproofTestUtil.readJson(
-            "third_party/wycheproof/testvectors/chacha20_poly1305_test.json");
+            "third_party/wycheproof/testvectors_v1/chacha20_poly1305_test.json");
     ArrayList<String> errors = new ArrayList<>();
     JsonArray testGroups = json.getAsJsonArray("testGroups");
     for (int i = 0; i < testGroups.size(); i++) {
