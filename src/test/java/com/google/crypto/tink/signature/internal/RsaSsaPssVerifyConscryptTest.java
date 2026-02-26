@@ -148,11 +148,11 @@ public class RsaSsaPssVerifyConscryptTest {
   @DataPoints("wycheproofTestVectorPaths")
   public static final String[] wycheproofTestVectorPaths =
       new String[] {
-        "third_party/wycheproof/testvectors/rsa_pss_2048_sha256_mgf1_0_test.json",
-        "third_party/wycheproof/testvectors/rsa_pss_2048_sha256_mgf1_32_test.json",
-        "third_party/wycheproof/testvectors/rsa_pss_3072_sha256_mgf1_32_test.json",
-        "third_party/wycheproof/testvectors/rsa_pss_4096_sha256_mgf1_32_test.json",
-        "third_party/wycheproof/testvectors/rsa_pss_4096_sha512_mgf1_32_test.json"
+        "third_party/wycheproof/testvectors_v1/rsa_pss_2048_sha256_mgf1_0_test.json",
+        "third_party/wycheproof/testvectors_v1/rsa_pss_2048_sha256_mgf1_32_test.json",
+        "third_party/wycheproof/testvectors_v1/rsa_pss_3072_sha256_mgf1_32_test.json",
+        "third_party/wycheproof/testvectors_v1/rsa_pss_4096_sha256_mgf1_32_test.json",
+        "third_party/wycheproof/testvectors_v1/rsa_pss_4096_sha512_mgf1_32_test.json"
       };
 
   @Theory
@@ -167,8 +167,9 @@ public class RsaSsaPssVerifyConscryptTest {
     JsonArray testGroups = jsonObj.getAsJsonArray("testGroups");
     for (int i = 0; i < testGroups.size(); i++) {
       JsonObject group = testGroups.get(i).getAsJsonObject();
-      BigInteger modulus = new BigInteger(group.get("n").getAsString(), 16);
-      BigInteger exponent = new BigInteger(group.get("e").getAsString(), 16);
+      JsonObject publicKeyData = group.get("publicKey").getAsJsonObject();
+      BigInteger modulus = new BigInteger(publicKeyData.get("modulus").getAsString(), 16);
+      BigInteger exponent = new BigInteger(publicKeyData.get("publicExponent").getAsString(), 16);
       RsaSsaPssParameters.HashType hashType = getHashType(group.get("sha").getAsString());
       RsaSsaPssParameters.HashType mgf1HashType = getHashType(group.get("mgfSha").getAsString());
       int saltLength = group.get("sLen").getAsInt();

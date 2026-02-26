@@ -148,14 +148,14 @@ public class RsaSsaPkcs1VerifyJceTest {
   @DataPoints("wycheproofTestVectorPaths")
   public static final String[] wycheproofTestVectorPaths =
       new String[] {
-        "third_party/wycheproof/testvectors/rsa_signature_2048_sha256_test.json",
-        "third_party/wycheproof/testvectors/rsa_signature_2048_sha384_test.json",
-        "third_party/wycheproof/testvectors/rsa_signature_2048_sha512_test.json",
-        "third_party/wycheproof/testvectors/rsa_signature_3072_sha256_test.json",
-        "third_party/wycheproof/testvectors/rsa_signature_3072_sha384_test.json",
-        "third_party/wycheproof/testvectors/rsa_signature_3072_sha512_test.json",
-        "third_party/wycheproof/testvectors/rsa_signature_4096_sha384_test.json",
-        "third_party/wycheproof/testvectors/rsa_signature_4096_sha512_test.json"
+        "third_party/wycheproof/testvectors_v1/rsa_signature_2048_sha256_test.json",
+        "third_party/wycheproof/testvectors_v1/rsa_signature_2048_sha384_test.json",
+        "third_party/wycheproof/testvectors_v1/rsa_signature_2048_sha512_test.json",
+        "third_party/wycheproof/testvectors_v1/rsa_signature_3072_sha256_test.json",
+        "third_party/wycheproof/testvectors_v1/rsa_signature_3072_sha384_test.json",
+        "third_party/wycheproof/testvectors_v1/rsa_signature_3072_sha512_test.json",
+        "third_party/wycheproof/testvectors_v1/rsa_signature_4096_sha384_test.json",
+        "third_party/wycheproof/testvectors_v1/rsa_signature_4096_sha512_test.json"
       };
 
   @AccessesPartialKey
@@ -168,8 +168,10 @@ public class RsaSsaPkcs1VerifyJceTest {
     JsonArray testGroups = jsonObj.getAsJsonArray("testGroups");
     for (int i = 0; i < testGroups.size(); i++) {
       JsonObject group = testGroups.get(i).getAsJsonObject();
-      BigInteger modulus = new BigInteger(group.get("n").getAsString(), 16);
-      BigInteger exponent = new BigInteger(1, Hex.decode(group.get("e").getAsString()));
+      JsonObject publicKeyData = group.get("publicKey").getAsJsonObject();
+      BigInteger modulus = new BigInteger(publicKeyData.get("modulus").getAsString(), 16);
+      BigInteger exponent =
+          new BigInteger(1, Hex.decode(publicKeyData.get("publicExponent").getAsString()));
       RsaSsaPkcs1Parameters.HashType hashType = getHashType(group.get("sha").getAsString());
       JsonArray tests = group.getAsJsonArray("tests");
       for (int j = 0; j < tests.size(); j++) {

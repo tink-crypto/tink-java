@@ -59,7 +59,7 @@ java_test(
     name = "RsaSsaPssVerifyJceTest",
     size = "small",
     srcs = ["RsaSsaPssVerifyJceTest.java"],
-    data = ["//third_party/wycheproof:testvectors_v0"],
+    data = ["//third_party/wycheproof:testvectors_v1"],
     deps = [
         "//src/main/java/com/google/crypto/tink:public_key_verify",
         "//src/main/java/com/google/crypto/tink/internal:util",
@@ -497,7 +497,7 @@ java_test(
     name = "RsaSsaPkcs1VerifyJceTest",
     size = "small",
     srcs = ["RsaSsaPkcs1VerifyJceTest.java"],
-    data = ["//third_party/wycheproof:testvectors_v0"],
+    data = ["//third_party/wycheproof:testvectors_v1"],
     tags = ["notsan"],
     deps = [
         "//src/main/java/com/google/crypto/tink:accesses_partial_key",
