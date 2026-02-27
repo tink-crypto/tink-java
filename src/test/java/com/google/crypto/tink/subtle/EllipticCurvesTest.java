@@ -27,13 +27,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
-import java.security.KeyFactory;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
 import java.security.spec.EllipticCurve;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -626,17 +624,22 @@ public class EllipticCurvesTest {
     }
   }
 
-  @Test
-  public void testComputeSharedSecretWithWycheproofTestVectors() throws Exception {
+  @DataPoints("wycheproofTestVectorPaths")
+  public static final String[] wycheproofTestVectorPaths =
+      new String[] {
+        "third_party/wycheproof/testvectors_v1/ecdh_secp256r1_test.json",
+        "third_party/wycheproof/testvectors_v1/ecdh_secp384r1_test.json",
+        "third_party/wycheproof/testvectors_v1/ecdh_secp521r1_test.json",
+      };
+
+  @Theory
+  public void testComputeSharedSecretWithWycheproofTestVectors(
+      @FromDataPoints("wycheproofTestVectorPaths") String path) throws Exception {
     if (TestUtil.isTsan()) {
       return;
     }
 
-    // NOTE(bleichen): Instead of ecdh_test.json it might be easier to use the
-    //   files ecdh_<curve>_ecpoint.json, which encode the public key point just as DER
-    //   encoded bitsequence.
-    JsonObject json =
-        WycheproofTestUtil.readJson("third_party/wycheproof/testvectors/ecdh_test.json");
+    JsonObject json = WycheproofTestUtil.readJson(path);
     ArrayList<String> errors = new ArrayList<>();
     ArrayList<String> warnings = new ArrayList<>();
 
@@ -663,12 +666,11 @@ public class EllipticCurvesTest {
         if (hexPrivKey.length() % 2 == 1) {
           hexPrivKey = "0" + hexPrivKey;
         }
-        KeyFactory kf = EngineFactory.KEY_FACTORY.getInstance("EC");
+
         try {
           ECPrivateKey privKey = EllipticCurves.getEcPrivateKey(curveType, Hex.decode(hexPrivKey));
+          ECPublicKey pubKey = EllipticCurves.getEcPublicKey(Hex.decode(hexPubKey));
 
-          X509EncodedKeySpec x509keySpec = new X509EncodedKeySpec(Hex.decode(hexPubKey));
-          ECPublicKey pubKey = (ECPublicKey) kf.generatePublic(x509keySpec);
           String sharedSecret = Hex.encode(EllipticCurves.computeSharedSecret(privKey, pubKey));
           if (result.equals("invalid")) {
             if (expectedSharedSecret.equals(sharedSecret)
