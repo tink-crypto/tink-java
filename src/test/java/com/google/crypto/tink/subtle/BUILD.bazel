@@ -336,7 +336,7 @@ java_test(
     name = "AesSivTest",
     size = "small",
     srcs = ["AesSivTest.java"],
-    data = ["//third_party/wycheproof:testvectors_v0"],
+    data = ["//third_party/wycheproof:testvectors_v1"],
     tags = ["fips"],
     deps = [
         "//src/main/java/com/google/crypto/tink:deterministic_aead",
@@ -350,7 +350,6 @@ java_test(
         "//src/main/java/com/google/crypto/tink/subtle:hex",
         "//src/main/java/com/google/crypto/tink/subtle:random",
         "//src/main/java/com/google/crypto/tink/testing:wycheproof_test_util",
-        "//src/main/java/com/google/crypto/tink/util:bytes",
         "//src/main/java/com/google/crypto/tink/util:secret_bytes",
         "@maven//:com_google_code_gson_gson",
         "@maven//:com_google_truth_truth",
