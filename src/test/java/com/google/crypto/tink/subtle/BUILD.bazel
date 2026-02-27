@@ -671,7 +671,7 @@ java_test(
     name = "X25519Test",
     size = "small",
     srcs = ["X25519Test.java"],
-    data = ["//third_party/wycheproof:testvectors_v0"],
+    data = ["//third_party/wycheproof:testvectors_v1"],
     deps = [
         "//src/main/java/com/google/crypto/tink/subtle:hex",
         "//src/main/java/com/google/crypto/tink/subtle:x25519",
