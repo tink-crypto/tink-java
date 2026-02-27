@@ -94,31 +94,31 @@ public class EcdsaVerifyJceTest {
   public static final WycheproofTestCase[] wycheproofTestCases =
       new WycheproofTestCase[] {
         new WycheproofTestCase(
-            "third_party/wycheproof/testvectors/ecdsa_secp256r1_sha256_test.json",
+            "third_party/wycheproof/testvectors_v1/ecdsa_secp256r1_sha256_test.json",
             EcdsaEncoding.DER),
         new WycheproofTestCase(
-            "third_party/wycheproof/testvectors/ecdsa_secp256r1_sha512_test.json",
+            "third_party/wycheproof/testvectors_v1/ecdsa_secp256r1_sha512_test.json",
             EcdsaEncoding.DER),
         new WycheproofTestCase(
-            "third_party/wycheproof/testvectors/ecdsa_secp384r1_sha384_test.json",
+            "third_party/wycheproof/testvectors_v1/ecdsa_secp384r1_sha384_test.json",
             EcdsaEncoding.DER),
         new WycheproofTestCase(
-            "third_party/wycheproof/testvectors/ecdsa_secp384r1_sha512_test.json",
+            "third_party/wycheproof/testvectors_v1/ecdsa_secp384r1_sha512_test.json",
             EcdsaEncoding.DER),
         new WycheproofTestCase(
-            "third_party/wycheproof/testvectors/ecdsa_secp521r1_sha512_test.json",
+            "third_party/wycheproof/testvectors_v1/ecdsa_secp521r1_sha512_test.json",
             EcdsaEncoding.DER),
         new WycheproofTestCase(
-            "third_party/wycheproof/testvectors/ecdsa_secp256r1_sha256_p1363_test.json",
+            "third_party/wycheproof/testvectors_v1/ecdsa_secp256r1_sha256_p1363_test.json",
             EcdsaEncoding.IEEE_P1363),
         new WycheproofTestCase(
-            "third_party/wycheproof/testvectors/ecdsa_secp384r1_sha384_p1363_test.json",
+            "third_party/wycheproof/testvectors_v1/ecdsa_secp384r1_sha384_p1363_test.json",
             EcdsaEncoding.IEEE_P1363),
         new WycheproofTestCase(
-            "third_party/wycheproof/testvectors/ecdsa_secp384r1_sha512_p1363_test.json",
+            "third_party/wycheproof/testvectors_v1/ecdsa_secp384r1_sha512_p1363_test.json",
             EcdsaEncoding.IEEE_P1363),
         new WycheproofTestCase(
-            "third_party/wycheproof/testvectors/ecdsa_secp521r1_sha512_p1363_test.json",
+            "third_party/wycheproof/testvectors_v1/ecdsa_secp521r1_sha512_p1363_test.json",
             EcdsaEncoding.IEEE_P1363)
       };
 
@@ -133,7 +133,7 @@ public class EcdsaVerifyJceTest {
       JsonObject group = testGroups.get(i).getAsJsonObject();
 
       KeyFactory kf = KeyFactory.getInstance("EC");
-      byte[] encodedPubKey = Hex.decode(group.get("keyDer").getAsString());
+      byte[] encodedPubKey = Hex.decode(group.get("publicKeyDer").getAsString());
       X509EncodedKeySpec x509keySpec = new X509EncodedKeySpec(encodedPubKey);
       String sha = group.get("sha").getAsString();
       String signatureAlgorithm = WycheproofTestUtil.getSignatureAlgorithmName(sha, "ECDSA");

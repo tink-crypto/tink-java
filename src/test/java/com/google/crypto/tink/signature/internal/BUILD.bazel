@@ -405,7 +405,7 @@ java_test(
     name = "EcdsaVerifyJceTest",
     size = "small",
     srcs = ["EcdsaVerifyJceTest.java"],
-    data = ["//third_party/wycheproof:testvectors_v0"],
+    data = ["//third_party/wycheproof:testvectors_v1"],
     tags = ["notsan"],
     deps = [
         "//src/main/java/com/google/crypto/tink/config:tink_fips",
