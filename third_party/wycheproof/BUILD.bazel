@@ -10,12 +10,6 @@ licenses(["notice"])
 exports_files(["wycheproof.BUILD.bazel"])
 
 wycheproof_vectors(
-    name = "testvectors_v0",
-    srcs = ["@wycheproof//:testvectors"],
-    outdir = "testvectors",
-)
-
-wycheproof_vectors(
     name = "testvectors_v1",
     srcs = ["@wycheproof//:testvectors_v1"],
     outdir = "testvectors_v1",
