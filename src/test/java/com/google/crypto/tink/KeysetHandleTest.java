@@ -30,7 +30,6 @@ import com.google.crypto.tink.aead.PredefinedAeadParameters;
 import com.google.crypto.tink.aead.XChaCha20Poly1305Key;
 import com.google.crypto.tink.aead.XChaCha20Poly1305Parameters;
 import com.google.crypto.tink.config.GlobalTinkFlags;
-import com.google.crypto.tink.internal.InternalConfiguration;
 import com.google.crypto.tink.internal.KeyParser;
 import com.google.crypto.tink.internal.KeyStatusTypeProtoConverter;
 import com.google.crypto.tink.internal.LegacyProtoKey;
@@ -39,8 +38,6 @@ import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
-import com.google.crypto.tink.internal.PrimitiveConstructor;
-import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
@@ -1649,53 +1646,25 @@ public class KeysetHandleTest {
   }
 
   @Immutable
-  private static final class TestPrimitiveA {
-    public TestPrimitiveA() {}
-  }
-
-  @Immutable
   private static final class TestPrimitiveB {
     public TestPrimitiveB() {}
   }
 
-  @Immutable
-  private static final class TestWrapperA
-      implements PrimitiveWrapper<TestPrimitiveA, TestPrimitiveB> {
-
-    @Override
-    public TestPrimitiveB wrap(
-        KeysetHandleInterface keysetHandle, PrimitiveFactory<TestPrimitiveA> factory) {
-      return new TestPrimitiveB();
-    }
-
-    @Override
-    public Class<TestPrimitiveB> getPrimitiveClass() {
-      return TestPrimitiveB.class;
-    }
-
-    @Override
-    public Class<TestPrimitiveA> getInputPrimitiveClass() {
-      return TestPrimitiveA.class;
-    }
-  }
-
-  private static TestPrimitiveA getPrimitiveAHmacKey(HmacKey key) {
-    return new TestPrimitiveA();
-  }
-
   @Test
   public void getPrimitive_usesProvidedConfigurationWhenProvided() throws Exception {
-    PrimitiveRegistry registry =
-        PrimitiveRegistry.builder()
-            .registerPrimitiveConstructor(
-                PrimitiveConstructor.create(
-                    KeysetHandleTest::getPrimitiveAHmacKey,
-                    HmacKey.class,
-                    TestPrimitiveA.class))
-            .registerPrimitiveWrapper(new TestWrapperA())
-            .build();
-    InternalConfiguration configuration =
-        InternalConfiguration.createFromPrimitiveRegistry(registry);
+    Configuration configuration =
+        new Configuration() {
+          @Override
+          public <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
+              throws GeneralSecurityException {
+            if (clazz == TestPrimitiveB.class) {
+              if (keysetHandle.getPrimary().getKey().getClass().equals(HmacKey.class)) {
+                return clazz.cast(new TestPrimitiveB());
+              }
+            }
+            throw new GeneralSecurityException("Unexpected Primitive");
+          }
+        };
     HmacKey hmacKey =
         HmacKey.builder()
             .setParameters(
