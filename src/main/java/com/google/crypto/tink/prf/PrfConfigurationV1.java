@@ -17,10 +17,9 @@
 package com.google.crypto.tink.prf;
 
 import com.google.crypto.tink.Configuration;
+import com.google.crypto.tink.Key;
+import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
-import com.google.crypto.tink.internal.InternalConfiguration;
-import com.google.crypto.tink.internal.PrimitiveConstructor;
-import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.subtle.PrfAesCmac;
 import com.google.crypto.tink.subtle.PrfHmacJce;
 import com.google.crypto.tink.subtle.prf.HkdfStreamingPrf;
@@ -39,27 +38,20 @@ import java.security.GeneralSecurityException;
 /* Placeholder for internally public; DO NOT CHANGE. */ class PrfConfigurationV1 {
   private PrfConfigurationV1() {}
 
-  private static final InternalConfiguration INTERNAL_CONFIGURATION = create();
+  private static final PrfSetWrapper PRF_SET_WRAPPER = new PrfSetWrapper();
+  private static final Configuration CONFIGURATION = create();
 
-  private static InternalConfiguration create() {
-    try {
-      PrimitiveRegistry.Builder builder = PrimitiveRegistry.builder();
-
-      // Register {@code PrfSet} wrapper and concrete primitives.
-      PrfSetWrapper.registerToInternalPrimitiveRegistry(builder);
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(PrfHmacJce::create, HmacPrfKey.class, Prf.class));
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              PrfConfigurationV1::createHkdfPrf, HkdfPrfKey.class, Prf.class));
-      builder.registerPrimitiveConstructor(
-          PrimitiveConstructor.create(
-              PrfConfigurationV1::createAesCmacPrf, AesCmacPrfKey.class, Prf.class));
-
-      return InternalConfiguration.createFromPrimitiveRegistry(builder.build());
-    } catch (GeneralSecurityException e) {
-      throw new IllegalStateException(e);
-    }
+  private static Configuration create() {
+    return new Configuration() {
+      @Override
+      public <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
+          throws GeneralSecurityException {
+        if (clazz.equals(PrfSet.class)) {
+          return clazz.cast(PRF_SET_WRAPPER.wrap(keysetHandle, PrfConfigurationV1::createPrf));
+        }
+        throw new GeneralSecurityException("PrfConfigurationV1 can only create PrfSet primitive");
+      }
+    };
   }
 
   /** Returns an instance of the {@code PrfConfigurationV1}. */
@@ -68,7 +60,22 @@ import java.security.GeneralSecurityException;
       throw new GeneralSecurityException(
           "Cannot use non-FIPS-compliant PrfConfigurationV1 in FIPS mode");
     }
-    return INTERNAL_CONFIGURATION;
+    return CONFIGURATION;
+  }
+
+  private static Prf createPrf(KeysetHandleInterface.Entry entry) throws GeneralSecurityException {
+    Key key = entry.getKey();
+
+    if (key instanceof HmacPrfKey) {
+      return PrfHmacJce.create((HmacPrfKey) key);
+    }
+    if (key instanceof HkdfPrfKey) {
+      return createHkdfPrf((HkdfPrfKey) key);
+    }
+    if (key instanceof AesCmacPrfKey) {
+      return createAesCmacPrf((AesCmacPrfKey) key);
+    }
+    throw new GeneralSecurityException("Unknown key class: " + key.getClass());
   }
 
   // We use a somewhat larger minimum key size than usual, because PRFs might be used by many users,
