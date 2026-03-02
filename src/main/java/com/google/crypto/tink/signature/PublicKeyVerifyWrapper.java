@@ -16,22 +16,15 @@
 
 package com.google.crypto.tink.signature;
 
-import com.google.crypto.tink.Key;
-import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.internal.LegacyProtoKey;
-import com.google.crypto.tink.internal.MonitoringAnnotations;
-import com.google.crypto.tink.internal.MonitoringClient;
-import com.google.crypto.tink.internal.MonitoringUtil;
-import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
-import com.google.crypto.tink.internal.PrefixMap;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.signature.internal.LegacyFullVerify;
-import com.google.crypto.tink.util.Bytes;
+import com.google.crypto.tink.signature.internal.WrappedPublicKeyVerify;
 import java.security.GeneralSecurityException;
 
 /**
@@ -45,15 +38,6 @@ import java.security.GeneralSecurityException;
  * @since 1.0.0
  */
 public class PublicKeyVerifyWrapper implements PrimitiveWrapper<PublicKeyVerify, PublicKeyVerify> {
-  private static class PublicKeyVerifyWithId {
-    public PublicKeyVerifyWithId(PublicKeyVerify publicKeyVerify, int id) {
-      this.publicKeyVerify = publicKeyVerify;
-      this.id = id;
-    }
-
-    public final PublicKeyVerify publicKeyVerify;
-    public final int id;
-  }
 
   private static final PublicKeyVerifyWrapper WRAPPER = new PublicKeyVerifyWrapper();
   private static final PrimitiveConstructor<LegacyProtoKey, PublicKeyVerify>
@@ -61,74 +45,11 @@ public class PublicKeyVerifyWrapper implements PrimitiveWrapper<PublicKeyVerify,
           PrimitiveConstructor.create(
               LegacyFullVerify::create, LegacyProtoKey.class, PublicKeyVerify.class);
 
-  private static Bytes getOutputPrefix(Key key) throws GeneralSecurityException {
-    if (key instanceof SignaturePublicKey) {
-      return ((SignaturePublicKey) key).getOutputPrefix();
-    }
-    if (key instanceof LegacyProtoKey) {
-      return ((LegacyProtoKey) key).getOutputPrefix();
-    }
-    throw new GeneralSecurityException(
-        "Cannot get output prefix for key of class "
-            + key.getClass().getName()
-            + " with parameters "
-            + key.getParameters());
-  }
-
-  private static class WrappedPublicKeyVerify implements PublicKeyVerify {
-    private final PrefixMap<PublicKeyVerifyWithId> allPublicKeyVerifys;
-
-    private final MonitoringClient.Logger monitoringLogger;
-
-    public WrappedPublicKeyVerify(
-        PrefixMap<PublicKeyVerifyWithId> allPublicKeyVerifys,
-        MonitoringClient.Logger monitoringLogger) {
-      this.allPublicKeyVerifys = allPublicKeyVerifys;
-      this.monitoringLogger = monitoringLogger;
-    }
-
-    @Override
-    public void verify(final byte[] signature, final byte[] data) throws GeneralSecurityException {
-      for (PublicKeyVerifyWithId publicKeyVerifyWithId :
-          allPublicKeyVerifys.getAllWithMatchingPrefix(signature)) {
-        try {
-          publicKeyVerifyWithId.publicKeyVerify.verify(signature, data);
-          monitoringLogger.log(publicKeyVerifyWithId.id, data.length);
-          // If there is no exception, the signature is valid and we can return.
-          return;
-        } catch (GeneralSecurityException e) {
-          // Ignored
-        }
-      }
-      monitoringLogger.logFailure();
-      throw new GeneralSecurityException("invalid signature");
-    }
-  }
-
   @Override
   public PublicKeyVerify wrap(
       KeysetHandleInterface keysetHandle, PrimitiveFactory<PublicKeyVerify> factory)
       throws GeneralSecurityException {
-    PrefixMap.Builder<PublicKeyVerifyWithId> builder = new PrefixMap.Builder<>();
-    for (int i = 0; i < keysetHandle.size(); i++) {
-      KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
-      if (entry.getStatus().equals(KeyStatus.ENABLED)) {
-        PublicKeyVerify publicKeyVerify = factory.create(entry);
-        builder.put(
-            getOutputPrefix(entry.getKey()),
-            new PublicKeyVerifyWithId(publicKeyVerify, entry.getId()));
-      }
-    }
-    MonitoringClient.Logger logger;
-    MonitoringAnnotations annotations =
-        keysetHandle.getAnnotationsOrNull(MonitoringAnnotations.class);
-    if (annotations != null && !annotations.isEmpty()) {
-      MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-      logger = client.createLogger(keysetHandle, annotations, "public_key_verify", "verify");
-    } else {
-      logger = MonitoringUtil.DO_NOTHING_LOGGER;
-    }
-    return new WrappedPublicKeyVerify(builder.build(), logger);
+    return WrappedPublicKeyVerify.create(keysetHandle, factory);
   }
 
   @Override

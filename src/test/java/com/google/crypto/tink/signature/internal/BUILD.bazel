@@ -636,3 +636,28 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "WrappedPublicKeyVerifyTest",
+    size = "small",
+    srcs = ["WrappedPublicKeyVerifyTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:key",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface",
+        "//src/main/java/com/google/crypto/tink:public_key_sign",
+        "//src/main/java/com/google/crypto/tink:public_key_verify",
+        "//src/main/java/com/google/crypto/tink:registry_cluster",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_annotations",
+        "//src/main/java/com/google/crypto/tink/internal:mutable_monitoring_registry",
+        "//src/main/java/com/google/crypto/tink/internal/testing:fake_monitoring_client",
+        "//src/main/java/com/google/crypto/tink/signature:ecdsa_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:ecdsa_private_key",
+        "//src/main/java/com/google/crypto/tink/signature:ecdsa_public_key",
+        "//src/main/java/com/google/crypto/tink/signature:signature_config",
+        "//src/main/java/com/google/crypto/tink/signature/internal:ecdsa_sign_jce",
+        "//src/main/java/com/google/crypto/tink/signature/internal:ecdsa_verify_jce",
+        "//src/main/java/com/google/crypto/tink/signature/internal:wrapped_public_key_verify",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
