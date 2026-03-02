@@ -126,7 +126,7 @@ public class RegistryConfigurationTest {
     // The following relies on the fact that internally LegacyFullMac uses RegistryConfiguration.
     Mac wrappedConfigurationMac =
         RegistryConfiguration.get()
-            .wrap(
+            .createPrimitive(
                 KeysetHandle.newBuilder()
                     .addEntry(KeysetHandle.importKey(rawKey).withRandomId().makePrimary())
                     .build(),
@@ -142,6 +142,6 @@ public class RegistryConfigurationTest {
         GeneralSecurityException.class,
         () ->
             RegistryConfiguration.get()
-                .wrap(KeysetHandle.generateNew(rawKey.getParameters()), Aead.class));
+                .createPrimitive(KeysetHandle.generateNew(rawKey.getParameters()), Aead.class));
   }
 }

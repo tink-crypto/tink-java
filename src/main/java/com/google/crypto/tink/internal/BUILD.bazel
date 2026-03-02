@@ -660,11 +660,9 @@ android_library(
     name = "registry_configuration-android",
     srcs = ["RegistryConfiguration.java"],
     deps = [
-        ":internal_configuration-android",
         ":mutable_primitive_registry-android",
-        ":primitive_registry-android",
+        "//src/main/java/com/google/crypto/tink:configuration-android",
         "//src/main/java/com/google/crypto/tink:keyset_handle_interface-android",
-        "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
 
@@ -672,11 +670,9 @@ java_library(
     name = "registry_configuration",
     srcs = ["RegistryConfiguration.java"],
     deps = [
-        ":internal_configuration",
         ":mutable_primitive_registry",
-        ":primitive_registry",
+        "//src/main/java/com/google/crypto/tink:configuration",
         "//src/main/java/com/google/crypto/tink:keyset_handle_interface",
-        "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
 

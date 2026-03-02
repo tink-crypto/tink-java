@@ -16,8 +16,8 @@
 
 package com.google.crypto.tink.internal;
 
+import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.KeysetHandleInterface;
-import com.google.errorprone.annotations.DoNotCall;
 import java.security.GeneralSecurityException;
 
 /**
@@ -27,32 +27,20 @@ import java.security.GeneralSecurityException;
  * <p>Because the global {@link com.google.crypto.tink.Registry} changes when user code adds to it,
  * using this class is not recommended.
  */
-public final class RegistryConfiguration extends InternalConfiguration {
+public final class RegistryConfiguration {
   // Returns the singleton instance of RegistryConfiguration.
-  public static RegistryConfiguration get() {
+  public static Configuration get() {
     return CONFIG;
   }
 
-  private static final RegistryConfiguration CONFIG = new RegistryConfiguration();
+  private static final Configuration CONFIG =
+      new Configuration() {
+        @Override
+        public <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
+            throws GeneralSecurityException {
+          return MutablePrimitiveRegistry.globalInstance().wrap(keysetHandle, clazz);
+        }
+      };
 
   private RegistryConfiguration() {}
-
-  @Override
-  public <P> P wrap(KeysetHandleInterface keysetHandle, Class<P> clazz)
-      throws GeneralSecurityException {
-    return MutablePrimitiveRegistry.globalInstance().wrap(keysetHandle, clazz);
-  }
-
-  /**
-   * Do not call.
-   *
-   * <p>We shadow the function {@code createFromPrimitiveRegistry} here so that one cannot invoke
-   * the static function in the superclass by writing {@code
-   * RegistryConfiguration.createFromPrimitiveRegistry}.
-   */
-  @DoNotCall
-  public static InternalConfiguration createFromPrimitiveRegistry(PrimitiveRegistry registry) {
-    throw new UnsupportedOperationException(
-        "Cannot create RegistryConfiguration from a PrimitiveRegistry");
-  }
 }

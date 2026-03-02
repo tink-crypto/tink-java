@@ -646,7 +646,6 @@ java_test(
     srcs = ["RegistryConfigurationTest.java"],
     deps = [
         "//src/main/java/com/google/crypto/tink:registry_configuration",
-        "//src/main/java/com/google/crypto/tink/internal:registry_configuration",
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
     ],

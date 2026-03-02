@@ -25,8 +25,7 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class RegistryConfigurationTest {
   @Test
-  public void get_works() throws Exception {
-    assertThat(RegistryConfiguration.get())
-        .isInstanceOf(com.google.crypto.tink.internal.RegistryConfiguration.class);
+  public void getWorks() throws Exception {
+    assertThat(RegistryConfiguration.get()).isNotNull();
   }
 }
