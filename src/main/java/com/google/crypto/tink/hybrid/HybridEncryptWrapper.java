@@ -18,11 +18,8 @@ package com.google.crypto.tink.hybrid;
 import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.hybrid.internal.LegacyFullHybridEncrypt;
+import com.google.crypto.tink.hybrid.internal.WrappedHybridEncrypt;
 import com.google.crypto.tink.internal.LegacyProtoKey;
-import com.google.crypto.tink.internal.MonitoringAnnotations;
-import com.google.crypto.tink.internal.MonitoringClient;
-import com.google.crypto.tink.internal.MonitoringUtil;
-import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
@@ -37,48 +34,11 @@ import java.security.GeneralSecurityException;
  * with the primary key.
  */
 public class HybridEncryptWrapper implements PrimitiveWrapper<HybridEncrypt, HybridEncrypt> {
-  private static class HybridEncryptWithId {
-    public HybridEncryptWithId(HybridEncrypt hybridEncrypt, int id) {
-      this.hybridEncrypt = hybridEncrypt;
-      this.id = id;
-    }
-
-    public final HybridEncrypt hybridEncrypt;
-    public final int id;
-  }
-
   private static final HybridEncryptWrapper WRAPPER = new HybridEncryptWrapper();
   private static final PrimitiveConstructor<LegacyProtoKey, HybridEncrypt>
       LEGACY_PRIMITIVE_CONSTRUCTOR =
           PrimitiveConstructor.create(
               LegacyFullHybridEncrypt::create, LegacyProtoKey.class, HybridEncrypt.class);
-
-  private static class WrappedHybridEncrypt implements HybridEncrypt {
-    private final HybridEncryptWithId primary;
-    private final MonitoringClient.Logger encLogger;
-
-    public WrappedHybridEncrypt(HybridEncryptWithId primary, MonitoringClient.Logger encLogger) {
-      this.primary = primary;
-      this.encLogger = encLogger;
-    }
-
-    @Override
-    public byte[] encrypt(final byte[] plaintext, final byte[] contextInfo)
-        throws GeneralSecurityException {
-      if (primary.hybridEncrypt == null) {
-        encLogger.logFailure();
-        throw new GeneralSecurityException("keyset without primary key");
-      }
-      try {
-        byte[] output = primary.hybridEncrypt.encrypt(plaintext, contextInfo);
-        encLogger.log(primary.id, plaintext.length);
-        return output;
-      } catch (GeneralSecurityException e) {
-        encLogger.logFailure();
-        throw e;
-      }
-    }
-  }
 
   HybridEncryptWrapper() {}
 
@@ -86,18 +46,7 @@ public class HybridEncryptWrapper implements PrimitiveWrapper<HybridEncrypt, Hyb
   public HybridEncrypt wrap(
       KeysetHandleInterface keysetHandle, PrimitiveFactory<HybridEncrypt> factory)
       throws GeneralSecurityException {
-    MonitoringClient.Logger encLogger;
-    MonitoringAnnotations annotations =
-        keysetHandle.getAnnotationsOrNull(MonitoringAnnotations.class);
-    if (annotations != null && !annotations.isEmpty()) {
-      MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-      encLogger = client.createLogger(keysetHandle, annotations, "hybrid_encrypt", "encrypt");
-    } else {
-      encLogger = MonitoringUtil.DO_NOTHING_LOGGER;
-    }
-    KeysetHandleInterface.Entry primary = keysetHandle.getPrimary();
-    return new WrappedHybridEncrypt(
-        new HybridEncryptWithId(factory.create(primary), primary.getId()), encLogger);
+    return WrappedHybridEncrypt.create(keysetHandle, factory);
   }
 
   @Override
