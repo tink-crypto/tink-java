@@ -435,3 +435,43 @@ java_library(
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
+
+android_library(
+    name = "wrapped_mac-android",
+    srcs = ["WrappedMac.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:key-android",
+        "//src/main/java/com/google/crypto/tink:key_status-android",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface-android",
+        "//src/main/java/com/google/crypto/tink:mac-android",
+        "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key-android",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_annotations-android",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_client-android",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_util-android",
+        "//src/main/java/com/google/crypto/tink/internal:mutable_monitoring_registry-android",
+        "//src/main/java/com/google/crypto/tink/internal:prefix_map-android",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper-android",
+        "//src/main/java/com/google/crypto/tink/mac:mac_key-android",
+        "//src/main/java/com/google/crypto/tink/util:bytes-android",
+    ],
+)
+
+java_library(
+    name = "wrapped_mac",
+    srcs = ["WrappedMac.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:key",
+        "//src/main/java/com/google/crypto/tink:key_status",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface",
+        "//src/main/java/com/google/crypto/tink:mac",
+        "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_annotations",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_client",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_util",
+        "//src/main/java/com/google/crypto/tink/internal:mutable_monitoring_registry",
+        "//src/main/java/com/google/crypto/tink/internal:prefix_map",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper",
+        "//src/main/java/com/google/crypto/tink/mac:mac_key",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
+    ],
+)
