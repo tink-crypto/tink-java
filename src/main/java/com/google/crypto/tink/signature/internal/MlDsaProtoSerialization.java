@@ -111,6 +111,9 @@ public final class MlDsaProtoSerialization {
               .add(
                   com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_65,
                   MlDsaParameters.MlDsaInstance.ML_DSA_65)
+              .add(
+                  com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_87,
+                  MlDsaParameters.MlDsaInstance.ML_DSA_87)
               .build();
 
   /**

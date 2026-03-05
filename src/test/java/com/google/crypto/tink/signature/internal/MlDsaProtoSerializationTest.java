@@ -122,21 +122,31 @@ public class MlDsaProtoSerializationTest {
   private static final ByteString PUBLIC_KEY_ML_DSA_65_BYTE_STRING =
       ByteString.copyFrom(publicKeyMlDsa65ByteArray);
 
-  // From wycheproof/testvectors_v1/mldsa_87_verify_test.json
+  private static final String PRIVATE_KEY_ML_DSA_65_SEED_HEX =
+      "84d1e8cb37e37dc5a172706588fd367a85e9b10669a791bff7a1d77c0661e379";
+  private static final byte[] privateKeyMlDsa65SeedByteArray =
+      Hex.decode(PRIVATE_KEY_ML_DSA_65_SEED_HEX);
+  private static final SecretBytes PRIVATE_KEY_ML_DSA_65_SEED_SECRET_BYTES =
+      SecretBytes.copyFrom(privateKeyMlDsa65SeedByteArray, InsecureSecretKeyAccess.get());
+  private static final ByteString PRIVATE_KEY_ML_DSA_65_SEED_BYTE_STRING =
+      ByteString.copyFrom(privateKeyMlDsa65SeedByteArray);
+
+  // From //tink/go/internal/signature/mldsa/mldsa_test.go
   private static final String PUBLIC_KEY_ML_DSA_87_HEX =
-      "17a508179b35057099111733da28fd1a2265de7d8ab22d5279f13bca84cc42a5b8c9644c121e7e1b81723c5295be288fb6c36bfa188b6e08d913a152350947fa2c8ccc3fd01b319f65a2058a1dff54133946cfeb408d0b6dfde6bbebd7e0591cfe83b8b5452ceef6c855f7d33e06a0d269345089ed0d3ad67d84d8a4a34d16836004cff125469e8c3387abd788b620e30c1fc23909117a0e34c42a6631d9791347b1b2a3c9ab3082416211afb7bc3f6ce630a7019af19f736cdfacb1e7db66b65ef56844d2a2b0753d09283a7a0b66f77596384e95f7ceddd1c4ba20edc11f1eaab695bb963f6eda1c383754aa372a0d7729bfa6e0f142131c2367ba3f89ce3de6c357f9a7225b7cb85f6b3e8a3a122e8501fd1446b8152a415c19dda1d2e4590cd994f6664b4d1abd7381468c3a085abe2741a0cfbb81880664b271677245c4a471bf8bb8e0192eb32e4fb5e8560f3c50d6b19a353e486d0fcc2a35ac046286e707e095f61786d92212686a65d39b6863e0f8cec1e1997f2f845e4878ca9df650c746765296790863e51d012d32dffcbd746aa2276d04c0a57cd1b3d6ed06c0d66a0897aae5c49c97b6f19ae829baaafbfed28a52c05963c6eea9eff69528294207f8cda75280f7c486e6848791c8e37015479f2e13c28a9fe654dbde11689875203aaec51be3da7cab1cf31e4ec476c0c830cbdd04ac02167c0a6fbfdd6548b1fa525d235c7e3fca8d63e6427503b0a45c0bfddb428b837c32e8755441077bfe1c0142bac357b012a46545bf4148d465472dcf89c9d73b62357087e229f53a450d3cce41c8ee21a9d54b61e34a794f5b1406a70724ab0c3712c49df231ef30a956075e907c51b63dd1f9453dbe60e25b0f3cc0354dfd7c9119313919e77cb2c92f544d3e5302b8827603e936b567e99bfe9904932585a9f01a5a1b5bce07565f1d84c6b1c5c86259e1fefcff18cd06861122be6836be21e40be4eaf6bcabee8f634f95520aa914bb51c54dbd67d1b9dc5e38831e786c283979a963a3206b98e339edec4128b0502d4d47813869713e431a529a03c7f54b50123680f2b7f256f5d2b40642203259b9e85c62253d5670ce372193f28b5aa48ddd643c54756a2cff808c109f74772961d8db6bb8a17547c8f29c7f5ff3ea06740b867d84917e07f3978ad0281a20689eef58467e768b6178a9b36a567289fd39762bb3e4254031b2798a4550857f6af369d484392cddd7b48eaa2942e2cbfe754d5ee2da2b7fa71222e4a525ff5224d551a778ebd828e4e0499adc74ff0d59a5abc78ad6a8abafeedb3c99045a14423507f85597b1a7f540982f7d72ea13449110b442d54b78029b4c7fe3b49396dc6c3b7d58792538fa907963de10a4b724548142541cdf1512e0f7ff1b10a93de63541b8cc3268b4de20ed26739ee8973b6507ebe48965602c35fa3f7d4278146b598d7d7044e16e97e9351f7c51ac25573b7232ae2432638e9166190e7f7a7dcb5096ecb5d10017cdea2a82b4f56c7385041c6919a7e36e11beac77ec3f25df44e7b596c1542c1e376de3667c0e903fe25b57c338e9d93c5570c484f0ddab4f57d38f292b23599d9efc7a9fd9e078aaddca0acb1a196d6c45d3c8be6f39e8cdbe3299e370b262e0bf6fb5f005cae2b12879289d00bd8039de6a571c310d87557f5c9a4f64a0bde7177a8464722a04bf87fa2cb0e312d4fa6e536c61d65dc2c1baf144b0d1d1d75f4c860626ff773933efa9941d105c53a1d92c4f7c7bba4aa969590acef1e50901870f59715ac14d9846d83871a77367be57c63f88bc2c02eabafe678f44925a3e605979282fcd3f284736a1d346c033cb782dd615e886683fc37cd87a91422857774c63c6659096eba393c56225ed8c3485b4f89ecb07d53526281a6426ae7d67cda52fec5ac32320caae9b96000bcbe9e8782be88cb1ca6dcaffb74ef04c77e03a994bea2c89e4fcfa44cd0c9f4e30705a8b7b20df8c76b05a4479400e07db03d243e9fe4c90d34e9245f1e574be9a388f5355482077e4e98b919de024e666fdd7d51ed2a0d58a823e7497eb07303cf1d6d5f10a536be980220de5856727e5c13981839cfa19740988e7771a2b984f53ae3a5916ed881a4a90fe524f0bb3778355882864f8961fade32e656fcf9f524e748c8196a1f1bbc57bf8da7b36de9b0080f0c7bb8487a2b7bb7a81a8ff43a2539b367c9a48c70041520f05ca3dae316dbbe3118218216f52b7bcdba7557c4c9d861803a5e2ee01d3682e1261d7cae0a99fb8de909eb2bc1e112aa43cc2fa9c76a222bd85faaaba5d9ec2198ac45a295181a324a0592632b89e2752582cd5e01e1a610e7563faee10b76d853109e257e7c0c248a9fb7933f514b07b4f4e3a4a3d2cd22e8cc45ebda3bef5948aa050f01eff85ae98d19f69c51e67ff89f2df0c5268acfdd325e84591317e05cab4f9e6358f249c4ddf4019fbc8f511549a733898a50efa9e0793083de0b15b5bf78d9f63d8df830d42df2fefa27b89e0ede2a702eb9467118fc0ed44edc63ad1b1935877c34843fea06fdf388bbf83e501723a13cc6cc2efbb9691fe28fc1d45270591e5bdf7aa1c82673544ee29d9e6c9da3328f21e9729bffd7f4e56de585909679a74037105fdac3f51ae35f69d9763d2e4cfeb1d4a8fdce99bf1aa21f866a9f523b2a9549e12258a4d19900cf5db37b67da19b23563bd1d701c6106fccb28e4689c62e1a6cf1abd763d7239c2258b765610d4478be9f1650cb8d18923592ad0024076e52f9bd0a3894fe97bc0a1646b4c37f62c27f32d0df270260f47c49a5caf110e4cf80168a7d54b1c70bed9bd5d9a143ce869a05cd44ee266aecd6bfedb39be79e7c7d5c11a99575ebc0f389cc55a4fe1469a2d61b70bfe4b74e3e27521a037d2b9f4fdb377231e2ceb214ba90f6953865c683215203ce963875c6524c01b789e0389a9f0c386eb236f0dfba6c95df4f28ccc7ae7cd473f9dcd20817cccdd211bcbc78b064e936e4ba2813df531128428ddf410e6ca07044aeb4cfcc0a16c995ec51c8af16a541ce18dbeb69a26635632dcc24ee52a5eedce38c502cd0e356ec31341c893f92e6063c3a160a53d34b85e92357a8ebaaad8f206771be43ee48cc409825a7094bda529ee18776d9e67f1fa1c1419514309d70ba2443be2f63b6943478d6c0f56dd058731e53de4c30bfc7d915e9284a56248e81944392881666680d4991f04269ec9a83b24b458ed59a6c274de452ab3013c103a4920543e6a7d22dadfd764f6ea39d49b910ee0dc216e547aa5fb4382a72a568ebe83ec00416fb5830dc21c24ae72416602870cb52c3a8a1c4c12a4b287b9b800d31c287ca161f404a9e598a5358d28b3aae43e534846bcd0d7a9c7652ae01e6698c79e315aca8198f36de45af7084b1cb21ca2ba0ee3a547a7343a10ef9e3fd17b0a4060badd1409a0562cba25b84fd578268fac53cfbca08e6cf6e5419f57262eb5813c1d1324e0df1d483ade08d8f6c62498e262485ac7c2872b11b42e5c1b797fc12e838b38a711d364d45cd1ed35f7faffdf4b0fb0eaa312fc3d5af77909b0649cbbacea10c9831273922b5b05172face9ce6cf324edf6e2f5f5fa0a9f0463eee938b30adf3e55664f94d274cd87dea901a7e08e805";
+      "467079ba853507ac38bd883bffbd9100dd43a2b755c31d59f2459f09907450525e781539f5b1ac3dcb67bbceaaa08107e92524084199be4ca89b15b1e66c9c3eecf51a885a9559ef458ff47710e12b82e083bf05a7ccb91e4ec28c9bea51cc8c093ca88306b30adef37e3af8ebd73fa730d9470e4cda5125ceb91cef4959898f4da7768d774a9a32907112220f9e44b8bfbd40e3262e3c409483a325d5bdb3d9bb998c6b2bee793947fc733f93e75b2fd2b44624e75bd0d861427147d3f82779cfdf414842d5e3645a05c05157a8097c60116d2d33090ba6f72237df5e6cd6a99b34cf75fe3c72195444165f875de88dd24cf90bd91d61d49e8319e4214e6d321b4943b988fcea283a307d46144d4da2c3dcea3158a181141fb38528214245a159c836abc600fdd870826362c2988be73ceada985f5de1efa5f27e6f42da75d57ece95447e4734efdd7577a6792ae4e166b2ecba0bd4bf5d428581d4ba12b44d2d7e44006b7471e538af7bb83b0bc588a999568542be276dad6416c71bb3129ea0cb81eeab734d5692c2db0786017c3c583987fc1d207d9bade74c288d4efe08b169907702cb10698a0e04223da082e90c68b6d1e45e86f2585ae4f4b0f70b96c6b79900fe34fdeaee21125271b090e43ac7d5219f0baa95dd71f9435f5e7acfce0eaa6c0b948308553238fc5063b9f1cdd2a4fd938cd000edd91f3ea7b13fc8a795ee2066c6f963d8a90ec0ab323e5d22ddccfa63261ee0bd51ef06bf7eef0fc84d35289f717463887717d2bf4030e55a6fc086ac4adf07d946e77bea275cb94cecd869ef162972d0489237d1be2cbfac5b7e0c1a6b1420aeb114fa83bd7fdbfa4f44dae7cf893e54aeff340845d85072cfa7fe0eff63d4a1fb0817fe6a9aea8326e6e30b7a1ad4a7ebde2bbea83986a4a39fe531eec7d6186ca44a8a8481f2832f74c4089b4338ca0236e46c7c08b00225e00217f19d24083e3b65694451e97995dffab3254f39ec1fa61164f0ac8b40c2b9d05db2e1d618a4d45b589dd742a5d2964ecb6a00ab13794ec615b9ecdf2cf33cdc3074d50138e8e5cef99542e6586b854075452630767056d4ce60d27e9ba603ed10676a891729a9fe02e5341da78668276284ed2aa7dd002080b907c36c2e68f51b47b625513cc0ebb6de26d2bd9bdaa91faa504080b9d7bfa4c42b0ef1d7966f40e82fcbc0f1790b6a1ba240f061c5b2dc63e1339e960f1999a498b7e3e2ed9cc048f389dbf2a5d4b2841b2aa7ada38118dfbca25ec124eea44a7155b3e2812b6993b91bb6558b7fafefecbd4637a411cc363f098b674dbac2236825fedb722832ac6d7825cab66d9e27384a1d99f2c4ba87ed124a4df127fee2ae6e44e7b134ccdffcc83c43ceb6971541beacd798868d1606f289b823325f841627fa3425133332633ff1e96b0d61eee4a756cddee52faf8587f96df0036fd5ed4bfafa21acef1112874efce3dc3cf385cd39d0a5dc7fa5998d850136e4639505d7b53f6d7c1076f5677b731849d9e54a5f3edc51014dcd9e171d28355a4555e643752cc6ac459e570384215d14d9f18b2a3a9a43b6e60d098bd16e546922b3a8fb743940a15af7220d07ab41b376f78b24845b8f5d17d2ef95b2ea0c66731c11f2e6a5663d57225394cf7e274fdbec0cb10e29ed42b09dccb97cf7e4974b2b07222ac77d51b94fdc3850c220e61c1b2816e85725053f0973d04f02e58993ba4ca46bb40fe8f0609516c145a4b5668ef893735d02bc0e86572ae8027f4be99e024ab922bb310411eb3f90286c8de75a1def0faf118ff322d87a348efda4f0a6cca47a059d897219453913cfbabce4badf2396cbd0b08d2e2d9a6cdd00de2caccab4f9fa28ea099bd253bcef35bd9d45e20589219b86647afc6a58ac4e0c3d10aca039d455f27fca07e4393cc4fb5cbdfc71ed8c433501a8cb9a86faf81080b17bea367c84cb4ed076e1ce037faabff6d752127c6fde5f9f388369d69200b49453e3862c607551bbf17e8d729ebf231a058d0c13ca97a426d2f9e0b7b573e5f9702ae3c673c2495b188870073995d2cd7d7f2f59672ce97cc24a08b2ec0b1671330faf986720ee5146fe45198d6b9cb291dd4b11b0741db975694244b9d746f1e95e78cac2dfd20eb4bf34b67371fb7f4619dc2e5c687d1a519903a31bbf7de02cb6dc6e9337011f1520b992e65ebcfbbf1d843a8e41f9f1080a148764a86d893b34bd70902e04fc5bff58a4dc007655cfb641e424b7ff50b587981f1225df7808cfdd7d9d67d01a67dfd9f5f264c7c5731463cb215d7ec5ada0c79411fcbcfe7932b25a668f415bda6738dff5b35195ba3ab4d233075e3d14ecdc3b695c502dd2bc7644a59ee0dffda587345e9d917b5bc7014d44097ad326f409582af76c17ad066cf62f1cf3fb0d04da94918972661b34dda287d7d2b29fc901fac30dd789f2680d7d5d5734c8cb562916b86e5e626dda2158932299985e78b7c64114c25367e69514e856ecba8e2d631bae701870110b77f1fce7f34a7cbd94475557844d2201e40caf27dd47716361e3795880f388babed1049fc83e125d3f570ce32c11f309ad24407b5d8066e94c6580d8b59a33408333d6431cf19ee5364bbb9c155faff06bdf23e32543e27913984213f9be63ed8d929b1a743d7b760d9c8ce98299dd4fe6d8bb1313b5a2cef487bd032e1b82c5740ab2c4a380aa04237947e6ffa6e8f6d2cde7ea3eedbf4d2c4e94a17a57739166b3b22e19eeb21d812775d26416f7a52bed28631ba24fb05c271b4bbc08f7725bedd2018de9b521faf8808b3c3ea26c17a50bfb6eb3abc438d3abf7f214e42ec7bca0ffe935111e4761a2fcf7bf41895be662f90d258a879b85f4393cf41d94037c96eb9e8188ddc03e6904a97361971747b48bf9a1315894f75a2f77953f63dce7741b815bf56f6205776a42d97ea7de99748d8991346dbc18b0b61bb77267df6c42c17d5afa9f3d5f49eca689d1f962eb5635165c307090f9ceeb19c96fec4ac27c0fead4e986c89d805a6318cba05d0ae727a017b813bf6f1fed8e30fc5fa5278b88919e9e20e0631d40e338b7326b464ceb154a641f208162e2ba8dca3253a80c7ff651274bcbbf6412049a91213cb0108b889d1e0b1b59edc2d730c0e36c35e395375333f48155cf2a5020587aba95fc325c633bb46d511f9717d8a9b2f272988a9ec0c7c30978030775a6d33d0816c3de1bd7fa03f01de7a1a58e1f5cd7b9fdcb1bf54520fec8547cf50ab33565b7eb605e355beeda9306341f658cb97f0d6d43e6f502f4e3bd253738a3841868e954f5859f0d26eee0141300c2001e6dbbb8c598ebe72f0f58276ed92682b95c777e2054392b1cb399a9dae4e658e3af757aa80897e549e3d47c99daf602d4523cfb994ff5b102c5555ea31145e6c6ffff8bb72c4d7a91dc9d06f20a7ba19fdd93a4628aaa9c665b0cae98720d9681d1421ab0af82758efaa4b5489ec1d22900efe84b3bdb7b64d8268036273a21afa618d8ef46feca0a8468719c4ceb2ee0159a1599ccd1bc074bcca27c0b228428f7ce1e4b310ed753cfcf9de625cbe325e07a846d2a73bdc487f36b3b5c538f6b22f0d4db5c003732e12599989071f58522702dc1c902d8df391e19f17882c1c6";
   private static final byte[] publicKeyMlDsa87ByteArray = Hex.decode(PUBLIC_KEY_ML_DSA_87_HEX);
+  private static final Bytes PUBLIC_KEY_ML_DSA_87_BYTES = Bytes.copyFrom(publicKeyMlDsa87ByteArray);
   private static final ByteString PUBLIC_KEY_ML_DSA_87_BYTE_STRING =
       ByteString.copyFrom(publicKeyMlDsa87ByteArray);
 
-  // From //tink/cc/signature/internal/ml_dsa_proto_serialization_test.cc
-  private static final String PRIVATE_KEY_SEED_HEX =
-      "84d1e8cb37e37dc5a172706588fd367a85e9b10669a791bff7a1d77c0661e379";
-  private static final byte[] privateKeySeedByteArray = Hex.decode(PRIVATE_KEY_SEED_HEX);
-  private static final SecretBytes PRIVATE_KEY_SEED_SECRET_BYTES =
-      SecretBytes.copyFrom(privateKeySeedByteArray, InsecureSecretKeyAccess.get());
-  private static final ByteString PRIVATE_KEY_SEED_BYTE_STRING =
-      ByteString.copyFrom(privateKeySeedByteArray);
+  private static final String PRIVATE_KEY_ML_DSA_87_SEED_HEX =
+      "000102030405060708090A0B0C0D0E0F000102030405060708090A0B0C0D0E03";
+  private static final byte[] privateKeyMlDsa87SeedByteArray =
+      Hex.decode(PRIVATE_KEY_ML_DSA_87_SEED_HEX);
+  private static final SecretBytes PRIVATE_KEY_ML_DSA_87_SEED_SECRET_BYTES =
+      SecretBytes.copyFrom(privateKeyMlDsa87SeedByteArray, InsecureSecretKeyAccess.get());
+  private static final ByteString PRIVATE_KEY_ML_DSA_87_SEED_BYTE_STRING =
+      ByteString.copyFrom(privateKeyMlDsa87SeedByteArray);
 
   private static final MutableSerializationRegistry registry = new MutableSerializationRegistry();
 
@@ -181,6 +191,28 @@ public class MlDsaProtoSerializationTest {
                           MlDsaParams.newBuilder()
                               .setMlDsaInstance(
                                   com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_65))
+                      .build())),
+          new ParametersSerializationTestPair(
+              MlDsaParameters.create(MlDsaInstance.ML_DSA_87, Variant.NO_PREFIX),
+              ProtoParametersSerialization.create(
+                  PRIVATE_TYPE_URL,
+                  OutputPrefixType.RAW,
+                  MlDsaKeyFormat.newBuilder()
+                      .setParams(
+                          MlDsaParams.newBuilder()
+                              .setMlDsaInstance(
+                                  com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_87))
+                      .build())),
+          new ParametersSerializationTestPair(
+              MlDsaParameters.create(MlDsaInstance.ML_DSA_87, Variant.TINK),
+              ProtoParametersSerialization.create(
+                  PRIVATE_TYPE_URL,
+                  OutputPrefixType.TINK,
+                  MlDsaKeyFormat.newBuilder()
+                      .setParams(
+                          MlDsaParams.newBuilder()
+                              .setMlDsaInstance(
+                                  com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_87))
                       .build())));
 
   @Theory
@@ -249,6 +281,43 @@ public class MlDsaProtoSerializationTest {
                       .toByteString(),
                   KeyMaterialType.ASYMMETRIC_PUBLIC,
                   OutputPrefixType.TINK,
+                  /* idRequirement= */ 0x12345678)),
+          new PublicKeySerializationTestPair(
+              MlDsaPublicKey.builder()
+                  .setParameters(MlDsaParameters.create(MlDsaInstance.ML_DSA_87, Variant.NO_PREFIX))
+                  .setSerializedPublicKey(PUBLIC_KEY_ML_DSA_87_BYTES)
+                  .build(),
+              ProtoKeySerialization.create(
+                  PUBLIC_TYPE_URL,
+                  com.google.crypto.tink.proto.MlDsaPublicKey.newBuilder()
+                      .setParams(
+                          MlDsaParams.newBuilder()
+                              .setMlDsaInstance(
+                                  com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_87))
+                      .setKeyValue(PUBLIC_KEY_ML_DSA_87_BYTE_STRING)
+                      .build()
+                      .toByteString(),
+                  KeyMaterialType.ASYMMETRIC_PUBLIC,
+                  OutputPrefixType.RAW,
+                  /* idRequirement= */ null)),
+          new PublicKeySerializationTestPair(
+              MlDsaPublicKey.builder()
+                  .setParameters(MlDsaParameters.create(MlDsaInstance.ML_DSA_87, Variant.TINK))
+                  .setSerializedPublicKey(PUBLIC_KEY_ML_DSA_87_BYTES)
+                  .setIdRequirement(0x12345678)
+                  .build(),
+              ProtoKeySerialization.create(
+                  PUBLIC_TYPE_URL,
+                  com.google.crypto.tink.proto.MlDsaPublicKey.newBuilder()
+                      .setParams(
+                          MlDsaParams.newBuilder()
+                              .setMlDsaInstance(
+                                  com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_87))
+                      .setKeyValue(PUBLIC_KEY_ML_DSA_87_BYTE_STRING)
+                      .build()
+                      .toByteString(),
+                  KeyMaterialType.ASYMMETRIC_PUBLIC,
+                  OutputPrefixType.TINK,
                   /* idRequirement= */ 0x12345678)));
     } catch (GeneralSecurityException e) {
       throw new IllegalStateException(e);
@@ -285,21 +354,32 @@ public class MlDsaProtoSerializationTest {
 
   private static List<PrivateKeySerializationTestPair> createPrivateKeySerializationTestPairs() {
     try {
-      MlDsaPublicKey noPrefixPublicKey =
+      MlDsaPublicKey noPrefixPublicKey65 =
           MlDsaPublicKey.builder()
               .setParameters(MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.NO_PREFIX))
               .setSerializedPublicKey(PUBLIC_KEY_ML_DSA_65_BYTES)
               .build();
-      MlDsaPublicKey tinkPublicKey =
+      MlDsaPublicKey tinkPublicKey65 =
           MlDsaPublicKey.builder()
               .setParameters(MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.TINK))
               .setSerializedPublicKey(PUBLIC_KEY_ML_DSA_65_BYTES)
               .setIdRequirement(0x12345678)
               .build();
+      MlDsaPublicKey noPrefixPublicKey87 =
+          MlDsaPublicKey.builder()
+              .setParameters(MlDsaParameters.create(MlDsaInstance.ML_DSA_87, Variant.NO_PREFIX))
+              .setSerializedPublicKey(PUBLIC_KEY_ML_DSA_87_BYTES)
+              .build();
+      MlDsaPublicKey tinkPublicKey87 =
+          MlDsaPublicKey.builder()
+              .setParameters(MlDsaParameters.create(MlDsaInstance.ML_DSA_87, Variant.TINK))
+              .setSerializedPublicKey(PUBLIC_KEY_ML_DSA_87_BYTES)
+              .setIdRequirement(0x12345678)
+              .build();
       return Arrays.asList(
           new PrivateKeySerializationTestPair(
               MlDsaPrivateKey.createWithoutVerification(
-                  noPrefixPublicKey, PRIVATE_KEY_SEED_SECRET_BYTES),
+                  noPrefixPublicKey65, PRIVATE_KEY_ML_DSA_65_SEED_SECRET_BYTES),
               ProtoKeySerialization.create(
                   PRIVATE_TYPE_URL,
                   com.google.crypto.tink.proto.MlDsaPrivateKey.newBuilder()
@@ -310,7 +390,7 @@ public class MlDsaProtoSerializationTest {
                                       .setMlDsaInstance(
                                           com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_65))
                               .setKeyValue(PUBLIC_KEY_ML_DSA_65_BYTE_STRING))
-                      .setKeyValue(PRIVATE_KEY_SEED_BYTE_STRING)
+                      .setKeyValue(PRIVATE_KEY_ML_DSA_65_SEED_BYTE_STRING)
                       .build()
                       .toByteString(),
                   KeyMaterialType.ASYMMETRIC_PRIVATE,
@@ -318,7 +398,7 @@ public class MlDsaProtoSerializationTest {
                   /* idRequirement= */ null)),
           new PrivateKeySerializationTestPair(
               MlDsaPrivateKey.createWithoutVerification(
-                  tinkPublicKey, PRIVATE_KEY_SEED_SECRET_BYTES),
+                  tinkPublicKey65, PRIVATE_KEY_ML_DSA_65_SEED_SECRET_BYTES),
               ProtoKeySerialization.create(
                   PRIVATE_TYPE_URL,
                   com.google.crypto.tink.proto.MlDsaPrivateKey.newBuilder()
@@ -329,7 +409,45 @@ public class MlDsaProtoSerializationTest {
                                       .setMlDsaInstance(
                                           com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_65))
                               .setKeyValue(PUBLIC_KEY_ML_DSA_65_BYTE_STRING))
-                      .setKeyValue(PRIVATE_KEY_SEED_BYTE_STRING)
+                      .setKeyValue(PRIVATE_KEY_ML_DSA_65_SEED_BYTE_STRING)
+                      .build()
+                      .toByteString(),
+                  KeyMaterialType.ASYMMETRIC_PRIVATE,
+                  OutputPrefixType.TINK,
+                  /* idRequirement= */ 0x12345678)),
+          new PrivateKeySerializationTestPair(
+              MlDsaPrivateKey.createWithoutVerification(
+                  noPrefixPublicKey87, PRIVATE_KEY_ML_DSA_87_SEED_SECRET_BYTES),
+              ProtoKeySerialization.create(
+                  PRIVATE_TYPE_URL,
+                  com.google.crypto.tink.proto.MlDsaPrivateKey.newBuilder()
+                      .setPublicKey(
+                          com.google.crypto.tink.proto.MlDsaPublicKey.newBuilder()
+                              .setParams(
+                                  MlDsaParams.newBuilder()
+                                      .setMlDsaInstance(
+                                          com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_87))
+                              .setKeyValue(PUBLIC_KEY_ML_DSA_87_BYTE_STRING))
+                      .setKeyValue(PRIVATE_KEY_ML_DSA_87_SEED_BYTE_STRING)
+                      .build()
+                      .toByteString(),
+                  KeyMaterialType.ASYMMETRIC_PRIVATE,
+                  OutputPrefixType.RAW,
+                  /* idRequirement= */ null)),
+          new PrivateKeySerializationTestPair(
+              MlDsaPrivateKey.createWithoutVerification(
+                  tinkPublicKey87, PRIVATE_KEY_ML_DSA_87_SEED_SECRET_BYTES),
+              ProtoKeySerialization.create(
+                  PRIVATE_TYPE_URL,
+                  com.google.crypto.tink.proto.MlDsaPrivateKey.newBuilder()
+                      .setPublicKey(
+                          com.google.crypto.tink.proto.MlDsaPublicKey.newBuilder()
+                              .setParams(
+                                  MlDsaParams.newBuilder()
+                                      .setMlDsaInstance(
+                                          com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_87))
+                              .setKeyValue(PUBLIC_KEY_ML_DSA_87_BYTE_STRING))
+                      .setKeyValue(PRIVATE_KEY_ML_DSA_87_SEED_BYTE_STRING)
                       .build()
                       .toByteString(),
                   KeyMaterialType.ASYMMETRIC_PRIVATE,
@@ -354,16 +472,6 @@ public class MlDsaProtoSerializationTest {
   }
 
   // Test failure modes
-  @Test
-  public void serializeMlDsa87Parameters_throws() throws Exception {
-    assertThrows(
-        GeneralSecurityException.class,
-        () ->
-            registry.serializeParameters(
-                MlDsaParameters.create(MlDsaInstance.ML_DSA_87, Variant.NO_PREFIX),
-                ProtoParametersSerialization.class));
-  }
-
   @Test
   public void serializePrivateKeyWithoutAccess_throws() throws Exception {
     MlDsaPrivateKey privateKey = privateKeySerializationTestPairList.get(0).key;
@@ -427,6 +535,34 @@ public class MlDsaProtoSerializationTest {
                   .setParams(
                       MlDsaParams.newBuilder()
                           .setMlDsaInstance(com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_65))
+                  .build()),
+          // Unknown output prefix for ML_DSA_87
+          ProtoParametersSerialization.create(
+              PRIVATE_TYPE_URL,
+              OutputPrefixType.UNKNOWN_PREFIX,
+              MlDsaKeyFormat.newBuilder()
+                  .setParams(
+                      MlDsaParams.newBuilder()
+                          .setMlDsaInstance(com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_87))
+                  .build()),
+          // Invalid version for ML_DSA_87
+          ProtoParametersSerialization.create(
+              PRIVATE_TYPE_URL,
+              OutputPrefixType.RAW,
+              MlDsaKeyFormat.newBuilder()
+                  .setVersion(1)
+                  .setParams(
+                      MlDsaParams.newBuilder()
+                          .setMlDsaInstance(com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_87))
+                  .build()),
+          // Invalid type url for ML_DSA_87
+          ProtoParametersSerialization.create(
+              PUBLIC_TYPE_URL,
+              OutputPrefixType.RAW,
+              MlDsaKeyFormat.newBuilder()
+                  .setParams(
+                      MlDsaParams.newBuilder()
+                          .setMlDsaInstance(com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_87))
                   .build()));
 
   @Theory
@@ -464,8 +600,8 @@ public class MlDsaProtoSerializationTest {
                   .setVersion(1)
                   .setParams(
                       MlDsaParams.newBuilder()
-                          .setMlDsaInstance(com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_65))
-                  .setKeyValue(PUBLIC_KEY_ML_DSA_65_BYTE_STRING)
+                          .setMlDsaInstance(com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_87))
+                  .setKeyValue(PUBLIC_KEY_ML_DSA_87_BYTE_STRING)
                   .build()
                   .toByteString(),
               KeyMaterialType.ASYMMETRIC_PUBLIC,
@@ -512,8 +648,8 @@ public class MlDsaProtoSerializationTest {
               com.google.crypto.tink.proto.MlDsaPublicKey.newBuilder()
                   .setParams(
                       MlDsaParams.newBuilder()
-                          .setMlDsaInstance(com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_65))
-                  .setKeyValue(PUBLIC_KEY_ML_DSA_65_BYTE_STRING)
+                          .setMlDsaInstance(com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_87))
+                  .setKeyValue(PUBLIC_KEY_ML_DSA_87_BYTE_STRING)
                   .build()
                   .toByteString(),
               KeyMaterialType.ASYMMETRIC_PRIVATE,
@@ -566,7 +702,7 @@ public class MlDsaProtoSerializationTest {
                                   .setMlDsaInstance(
                                       com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_65))
                           .setKeyValue(PUBLIC_KEY_ML_DSA_65_BYTE_STRING))
-                  .setKeyValue(PRIVATE_KEY_SEED_BYTE_STRING)
+                  .setKeyValue(PRIVATE_KEY_ML_DSA_65_SEED_BYTE_STRING)
                   .build()
                   .toByteString(),
               KeyMaterialType.ASYMMETRIC_PRIVATE,
@@ -582,9 +718,9 @@ public class MlDsaProtoSerializationTest {
                           .setParams(
                               MlDsaParams.newBuilder()
                                   .setMlDsaInstance(
-                                      com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_65))
-                          .setKeyValue(PUBLIC_KEY_ML_DSA_65_BYTE_STRING))
-                  .setKeyValue(PRIVATE_KEY_SEED_BYTE_STRING)
+                                      com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_87))
+                          .setKeyValue(PUBLIC_KEY_ML_DSA_87_BYTE_STRING))
+                  .setKeyValue(PRIVATE_KEY_ML_DSA_87_SEED_BYTE_STRING)
                   .build()
                   .toByteString(),
               KeyMaterialType.ASYMMETRIC_PRIVATE,
@@ -602,7 +738,7 @@ public class MlDsaProtoSerializationTest {
                                   .setMlDsaInstance(
                                       com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_65))
                           .setKeyValue(PUBLIC_KEY_ML_DSA_65_BYTE_STRING))
-                  .setKeyValue(PRIVATE_KEY_SEED_BYTE_STRING)
+                  .setKeyValue(PRIVATE_KEY_ML_DSA_65_SEED_BYTE_STRING)
                   .build()
                   .toByteString(),
               KeyMaterialType.ASYMMETRIC_PRIVATE,
@@ -619,8 +755,8 @@ public class MlDsaProtoSerializationTest {
                                   .setMlDsaInstance(
                                       com.google.crypto.tink.proto.MlDsaInstance
                                           .ML_DSA_UNKNOWN_INSTANCE))
-                          .setKeyValue(PUBLIC_KEY_ML_DSA_65_BYTE_STRING))
-                  .setKeyValue(PRIVATE_KEY_SEED_BYTE_STRING)
+                          .setKeyValue(PUBLIC_KEY_ML_DSA_87_BYTE_STRING))
+                  .setKeyValue(PRIVATE_KEY_ML_DSA_87_SEED_BYTE_STRING)
                   .build()
                   .toByteString(),
               KeyMaterialType.ASYMMETRIC_PRIVATE,
@@ -659,9 +795,9 @@ public class MlDsaProtoSerializationTest {
                           .setParams(
                               MlDsaParams.newBuilder()
                                   .setMlDsaInstance(
-                                      com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_65))
-                          .setKeyValue(PUBLIC_KEY_ML_DSA_65_BYTE_STRING))
-                  .setKeyValue(PRIVATE_KEY_SEED_BYTE_STRING)
+                                      com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_87))
+                          .setKeyValue(PUBLIC_KEY_ML_DSA_87_BYTE_STRING))
+                  .setKeyValue(PRIVATE_KEY_ML_DSA_87_SEED_BYTE_STRING)
                   .build()
                   .toByteString(),
               KeyMaterialType.ASYMMETRIC_PUBLIC,
@@ -678,7 +814,7 @@ public class MlDsaProtoSerializationTest {
                                   .setMlDsaInstance(
                                       com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_65))
                           .setKeyValue(PUBLIC_KEY_ML_DSA_65_BYTE_STRING))
-                  .setKeyValue(PRIVATE_KEY_SEED_BYTE_STRING)
+                  .setKeyValue(PRIVATE_KEY_ML_DSA_65_SEED_BYTE_STRING)
                   .build()
                   .toByteString(),
               KeyMaterialType.ASYMMETRIC_PRIVATE,
