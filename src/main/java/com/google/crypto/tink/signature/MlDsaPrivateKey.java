@@ -24,7 +24,7 @@ import com.google.errorprone.annotations.RestrictedApi;
 import java.security.GeneralSecurityException;
 
 /**
- * Private key for ML-DSA-65.
+ * Private key for ML-DSA-{65,87}.
  */
 public class MlDsaPrivateKey extends SignaturePrivateKey {
 
@@ -49,10 +49,14 @@ public class MlDsaPrivateKey extends SignaturePrivateKey {
     if (privateSeed.size() != MLDSA_SEED_BYTES) {
       throw new GeneralSecurityException("Incorrect private seed size for ML-DSA");
     }
-    if (((MlDsaParameters) mlDsaPublicKey.getParameters()).getMlDsaInstance()
-        != MlDsaInstance.ML_DSA_65) {
+    if (mlDsaPublicKey.getParameters().getMlDsaInstance()
+            != MlDsaInstance.ML_DSA_65
+        && mlDsaPublicKey.getParameters().getMlDsaInstance()
+            != MlDsaInstance.ML_DSA_87) {
       throw new GeneralSecurityException(
-          "Unknown ML-DSA instance; only ML-DSA-65 is currently supported");
+          "Unknown ML-DSA instance: "
+              + mlDsaPublicKey.getParameters().getMlDsaInstance()
+              + ", only ML-DSA-{65,87} are supported");
     }
     // WARNING: currently NO VERIFICATION checks are performed since Conscrypt doesn't expose the
     // necessary functionality (public-from-private key derivation is not a part of the
