@@ -49,3 +49,28 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "WrappedDeterministicAeadTest",
+    size = "small",
+    srcs = ["WrappedDeterministicAeadTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:deterministic_aead",
+        "//src/main/java/com/google/crypto/tink:key_status",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface",
+        "//src/main/java/com/google/crypto/tink:registry_cluster",
+        "//src/main/java/com/google/crypto/tink/daead:aes_siv_key",
+        "//src/main/java/com/google/crypto/tink/daead:aes_siv_parameters",
+        "//src/main/java/com/google/crypto/tink/daead/internal:wrapped_deterministic_aead",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_annotations",
+        "//src/main/java/com/google/crypto/tink/internal:mutable_monitoring_registry",
+        "//src/main/java/com/google/crypto/tink/internal/testing:fake_monitoring_client",
+        "//src/main/java/com/google/crypto/tink/subtle:aes_siv",
+        "//src/main/java/com/google/crypto/tink/subtle:random",
+        "//src/main/java/com/google/crypto/tink/testing:test_util",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
+        "@maven//:com_google_code_findbugs_jsr305",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
