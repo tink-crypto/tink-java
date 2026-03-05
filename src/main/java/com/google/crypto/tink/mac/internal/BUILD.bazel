@@ -437,6 +437,44 @@ java_library(
 )
 
 android_library(
+    name = "wrapped_chunked_mac-android",
+    srcs = ["WrappedChunkedMac.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:key-android",
+        "//src/main/java/com/google/crypto/tink:key_status-android",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface-android",
+        "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key-android",
+        "//src/main/java/com/google/crypto/tink/internal:prefix_map-android",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper-android",
+        "//src/main/java/com/google/crypto/tink/mac:chunked_mac-android",
+        "//src/main/java/com/google/crypto/tink/mac:chunked_mac_computation-android",
+        "//src/main/java/com/google/crypto/tink/mac:chunked_mac_verification-android",
+        "//src/main/java/com/google/crypto/tink/mac:mac_key-android",
+        "//src/main/java/com/google/crypto/tink/util:bytes-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "wrapped_chunked_mac",
+    srcs = ["WrappedChunkedMac.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:key",
+        "//src/main/java/com/google/crypto/tink:key_status",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface",
+        "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
+        "//src/main/java/com/google/crypto/tink/internal:prefix_map",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper",
+        "//src/main/java/com/google/crypto/tink/mac:chunked_mac",
+        "//src/main/java/com/google/crypto/tink/mac:chunked_mac_computation",
+        "//src/main/java/com/google/crypto/tink/mac:chunked_mac_verification",
+        "//src/main/java/com/google/crypto/tink/mac:mac_key",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
     name = "wrapped_mac-android",
     srcs = ["WrappedMac.java"],
     deps = [

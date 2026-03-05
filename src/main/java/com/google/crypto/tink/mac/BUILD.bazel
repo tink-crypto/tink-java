@@ -431,19 +431,11 @@ java_library(
     srcs = ["ChunkedMacWrapper.java"],
     deps = [
         ":chunked_mac",
-        ":chunked_mac_computation",
-        ":chunked_mac_verification",
-        ":mac_key",
-        "//src/main/java/com/google/crypto/tink:key",
-        "//src/main/java/com/google/crypto/tink:key_status",
         "//src/main/java/com/google/crypto/tink:keyset_handle_interface",
-        "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry",
-        "//src/main/java/com/google/crypto/tink/internal:prefix_map",
         "//src/main/java/com/google/crypto/tink/internal:primitive_registry",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper",
-        "//src/main/java/com/google/crypto/tink/util:bytes",
-        "@maven//:com_google_errorprone_error_prone_annotations",
+        "//src/main/java/com/google/crypto/tink/mac/internal:wrapped_chunked_mac",
     ],
 )
 
@@ -452,19 +444,11 @@ android_library(
     srcs = ["ChunkedMacWrapper.java"],
     deps = [
         ":chunked_mac-android",
-        ":chunked_mac_computation-android",
-        ":chunked_mac_verification-android",
-        ":mac_key-android",
-        "//src/main/java/com/google/crypto/tink:key-android",
-        "//src/main/java/com/google/crypto/tink:key_status-android",
         "//src/main/java/com/google/crypto/tink:keyset_handle_interface-android",
-        "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key-android",
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry-android",
-        "//src/main/java/com/google/crypto/tink/internal:prefix_map-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper-android",
-        "//src/main/java/com/google/crypto/tink/util:bytes-android",
-        "@maven//:com_google_errorprone_error_prone_annotations",
+        "//src/main/java/com/google/crypto/tink/mac/internal:wrapped_chunked_mac-android",
     ],
 )
 
