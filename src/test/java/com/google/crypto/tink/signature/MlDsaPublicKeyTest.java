@@ -20,7 +20,6 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.signature.MlDsaParameters.MlDsaInstance;
-import com.google.crypto.tink.signature.MlDsaParameters.Variant;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.util.Bytes;
 import java.security.GeneralSecurityException;
@@ -32,42 +31,74 @@ import org.junit.runners.JUnit4;
 public final class MlDsaPublicKeyTest {
 
   private static final int MLDSA65_PUBLIC_KEY_BYTES = 1952;
-  private static final MlDsaParameters NO_PREFIX_PARAMS =
+  private static final int MLDSA87_PUBLIC_KEY_BYTES = 2592;
+  private static final MlDsaParameters NO_PREFIX_MLDSA65_PARAMS =
       MlDsaParameters.create(MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.NO_PREFIX);
-  private static final MlDsaParameters TINK_PARAMS =
+  private static final MlDsaParameters TINK_MLDSA65_PARAMS =
       MlDsaParameters.create(MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.TINK);
-  private static final Bytes FAKE_PUBLIC_KEY_BYTES =
+  private static final MlDsaParameters NO_PREFIX_MLDSA87_PARAMS =
+      MlDsaParameters.create(MlDsaInstance.ML_DSA_87, MlDsaParameters.Variant.NO_PREFIX);
+  private static final MlDsaParameters TINK_MLDSA87_PARAMS =
+      MlDsaParameters.create(MlDsaInstance.ML_DSA_87, MlDsaParameters.Variant.TINK);
+  private static final Bytes FAKE_MLDSA65_PUBLIC_KEY_BYTES =
       Bytes.copyFrom(Hex.decode("01".repeat(MLDSA65_PUBLIC_KEY_BYTES)));
-  private static final Bytes SHORT_PUBLIC_KEY =
-      Bytes.copyFrom(new byte[MLDSA65_PUBLIC_KEY_BYTES - 1]);
-  private static final Bytes LONG_PUBLIC_KEY =
-      Bytes.copyFrom(new byte[MLDSA65_PUBLIC_KEY_BYTES + 1]);
+  private static final Bytes FAKE_MLDSA87_PUBLIC_KEY_BYTES =
+      Bytes.copyFrom(Hex.decode("01".repeat(MLDSA87_PUBLIC_KEY_BYTES)));
 
   @Test
-  public void buildNoPrefixVariantAndGetProperties() throws Exception {
+  public void buildNoPrefixMlDsa65AndGetProperties() throws Exception {
     MlDsaPublicKey key =
         MlDsaPublicKey.builder()
-            .setParameters(NO_PREFIX_PARAMS)
-            .setSerializedPublicKey(FAKE_PUBLIC_KEY_BYTES)
+            .setParameters(NO_PREFIX_MLDSA65_PARAMS)
+            .setSerializedPublicKey(FAKE_MLDSA65_PUBLIC_KEY_BYTES)
             .build();
 
-    assertThat(key.getParameters()).isEqualTo(NO_PREFIX_PARAMS);
-    assertThat(key.getSerializedPublicKey()).isEqualTo(FAKE_PUBLIC_KEY_BYTES);
+    assertThat(key.getParameters()).isEqualTo(NO_PREFIX_MLDSA65_PARAMS);
+    assertThat(key.getSerializedPublicKey()).isEqualTo(FAKE_MLDSA65_PUBLIC_KEY_BYTES);
     assertThat(key.getOutputPrefix()).isEqualTo(Bytes.copyFrom(new byte[] {}));
     assertThat(key.getIdRequirementOrNull()).isNull();
   }
 
   @Test
-  public void buildTinkVariantAndGetProperties() throws Exception {
+  public void buildNoPrefixMlDsa87AndGetProperties() throws Exception {
     MlDsaPublicKey key =
         MlDsaPublicKey.builder()
-            .setParameters(TINK_PARAMS)
-            .setSerializedPublicKey(FAKE_PUBLIC_KEY_BYTES)
+            .setParameters(NO_PREFIX_MLDSA87_PARAMS)
+            .setSerializedPublicKey(FAKE_MLDSA87_PUBLIC_KEY_BYTES)
+            .build();
+
+    assertThat(key.getParameters()).isEqualTo(NO_PREFIX_MLDSA87_PARAMS);
+    assertThat(key.getSerializedPublicKey()).isEqualTo(FAKE_MLDSA87_PUBLIC_KEY_BYTES);
+    assertThat(key.getOutputPrefix()).isEqualTo(Bytes.copyFrom(new byte[] {}));
+    assertThat(key.getIdRequirementOrNull()).isNull();
+  }
+
+  @Test
+  public void buildTinkMlDsa65AndGetProperties() throws Exception {
+    MlDsaPublicKey key =
+        MlDsaPublicKey.builder()
+            .setParameters(TINK_MLDSA65_PARAMS)
+            .setSerializedPublicKey(FAKE_MLDSA65_PUBLIC_KEY_BYTES)
             .setIdRequirement(0x66AABBCC)
             .build();
 
-    assertThat(key.getParameters()).isEqualTo(TINK_PARAMS);
-    assertThat(key.getSerializedPublicKey()).isEqualTo(FAKE_PUBLIC_KEY_BYTES);
+    assertThat(key.getParameters()).isEqualTo(TINK_MLDSA65_PARAMS);
+    assertThat(key.getSerializedPublicKey()).isEqualTo(FAKE_MLDSA65_PUBLIC_KEY_BYTES);
+    assertThat(key.getOutputPrefix()).isEqualTo(Bytes.copyFrom(Hex.decode("0166AABBCC")));
+    assertThat(key.getIdRequirementOrNull()).isEqualTo(0x66AABBCC);
+  }
+
+  @Test
+  public void buildTinkMlDsa87AndGetProperties() throws Exception {
+    MlDsaPublicKey key =
+        MlDsaPublicKey.builder()
+            .setParameters(TINK_MLDSA87_PARAMS)
+            .setSerializedPublicKey(FAKE_MLDSA87_PUBLIC_KEY_BYTES)
+            .setIdRequirement(0x66AABBCC)
+            .build();
+
+    assertThat(key.getParameters()).isEqualTo(TINK_MLDSA87_PARAMS);
+    assertThat(key.getSerializedPublicKey()).isEqualTo(FAKE_MLDSA87_PUBLIC_KEY_BYTES);
     assertThat(key.getOutputPrefix()).isEqualTo(Bytes.copyFrom(Hex.decode("0166AABBCC")));
     assertThat(key.getIdRequirementOrNull()).isEqualTo(0x66AABBCC);
   }
@@ -81,14 +112,14 @@ public final class MlDsaPublicKeyTest {
   public void buildWithoutParameters_fails() throws Exception {
     assertThrows(
         GeneralSecurityException.class,
-        () -> MlDsaPublicKey.builder().setSerializedPublicKey(FAKE_PUBLIC_KEY_BYTES).build());
+        () -> MlDsaPublicKey.builder().setSerializedPublicKey(FAKE_MLDSA65_PUBLIC_KEY_BYTES).build());
   }
 
   @Test
   public void buildWithoutSerializedPublicKey_fails() throws Exception {
     assertThrows(
         GeneralSecurityException.class,
-        () -> MlDsaPublicKey.builder().setParameters(NO_PREFIX_PARAMS).build());
+        () -> MlDsaPublicKey.builder().setParameters(NO_PREFIX_MLDSA65_PARAMS).build());
   }
 
   @Test
@@ -97,8 +128,8 @@ public final class MlDsaPublicKeyTest {
         GeneralSecurityException.class,
         () ->
             MlDsaPublicKey.builder()
-                .setParameters(NO_PREFIX_PARAMS)
-                .setSerializedPublicKey(FAKE_PUBLIC_KEY_BYTES)
+                .setParameters(NO_PREFIX_MLDSA65_PARAMS)
+                .setSerializedPublicKey(FAKE_MLDSA65_PUBLIC_KEY_BYTES)
                 .setIdRequirement(123)
                 .build());
   }
@@ -109,41 +140,45 @@ public final class MlDsaPublicKeyTest {
         GeneralSecurityException.class,
         () ->
             MlDsaPublicKey.builder()
-                .setParameters(TINK_PARAMS)
-                .setSerializedPublicKey(FAKE_PUBLIC_KEY_BYTES)
+                .setParameters(TINK_MLDSA65_PARAMS)
+                .setSerializedPublicKey(FAKE_MLDSA65_PUBLIC_KEY_BYTES)
                 .build());
   }
 
   @Test
   public void incorrectPublicKeySize_fails() throws Exception {
-    assertThrows(
-        GeneralSecurityException.class,
-        () ->
-            MlDsaPublicKey.builder()
-                .setParameters(NO_PREFIX_PARAMS)
-                .setSerializedPublicKey(SHORT_PUBLIC_KEY)
-                .build());
-    assertThrows(
-        GeneralSecurityException.class,
-        () ->
-            MlDsaPublicKey.builder()
-                .setParameters(NO_PREFIX_PARAMS)
-                .setSerializedPublicKey(LONG_PUBLIC_KEY)
-                .build());
-  }
-
-  @Test
-  public void incorrectInstance_fails() throws Exception {
-    MlDsaParameters mlDsa87Parameters =
-        MlDsaParameters.create(MlDsaInstance.ML_DSA_87, Variant.TINK);
+    Bytes shortPublicKey65 = Bytes.copyFrom(new byte[MLDSA65_PUBLIC_KEY_BYTES - 1]);
+    Bytes longPublicKey65 = Bytes.copyFrom(new byte[MLDSA65_PUBLIC_KEY_BYTES + 1]);
+    Bytes shortPublicKey87 = Bytes.copyFrom(new byte[MLDSA87_PUBLIC_KEY_BYTES - 1]);
+    Bytes longPublicKey87 = Bytes.copyFrom(new byte[MLDSA87_PUBLIC_KEY_BYTES + 1]);
 
     assertThrows(
         GeneralSecurityException.class,
         () ->
             MlDsaPublicKey.builder()
-                .setSerializedPublicKey(FAKE_PUBLIC_KEY_BYTES)
-                .setParameters(mlDsa87Parameters)
-                .setIdRequirement(123)
+                .setParameters(NO_PREFIX_MLDSA65_PARAMS)
+                .setSerializedPublicKey(shortPublicKey65)
+                .build());
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            MlDsaPublicKey.builder()
+                .setParameters(NO_PREFIX_MLDSA65_PARAMS)
+                .setSerializedPublicKey(longPublicKey65)
+                .build());
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            MlDsaPublicKey.builder()
+                .setParameters(TINK_MLDSA87_PARAMS)
+                .setSerializedPublicKey(shortPublicKey87)
+                .build());
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            MlDsaPublicKey.builder()
+                .setParameters(TINK_MLDSA87_PARAMS)
+                .setSerializedPublicKey(longPublicKey87)
                 .build());
   }
 }
