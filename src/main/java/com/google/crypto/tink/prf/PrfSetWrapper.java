@@ -15,22 +15,16 @@
 ////////////////////////////////////////////////////////////////////////////////
 package com.google.crypto.tink.prf;
 
-import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
-import com.google.crypto.tink.internal.MonitoringAnnotations;
-import com.google.crypto.tink.internal.MonitoringClient;
-import com.google.crypto.tink.internal.MonitoringUtil;
-import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.prf.internal.LegacyFullPrf;
+import com.google.crypto.tink.prf.internal.WrappedPrfSet;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * PrfSetWrapper is the implementation of PrimitiveWrapper for the PrfSet primitive.
@@ -46,87 +40,10 @@ public class PrfSetWrapper implements PrimitiveWrapper<Prf, PrfSet> {
       LEGACY_FULL_PRF_PRIMITIVE_CONSTRUCTOR =
           PrimitiveConstructor.create(LegacyFullPrf::create, LegacyProtoKey.class, Prf.class);
 
-  private static class WrappedPrfSet extends PrfSet {
-    // This map is constructed using Collections.unmodifiableMap
-    @SuppressWarnings("Immutable")
-    private final Map<Integer, Prf> keyIdToPrfMap;
-
-    private final int primaryKeyId;
-
-    @Immutable
-    private static class PrfWithMonitoring implements Prf {
-      private final Prf prf;
-      private final int keyId;
-
-      @SuppressWarnings("Immutable")
-      private final MonitoringClient.Logger logger;
-
-      @Override
-      public byte[] compute(byte[] input, int outputLength) throws GeneralSecurityException {
-        try {
-          byte[] output = prf.compute(input, outputLength);
-          logger.log(keyId, input.length);
-          return output;
-        } catch (GeneralSecurityException e) {
-          logger.logFailure();
-          throw e;
-        }
-      }
-
-      public PrfWithMonitoring(Prf prf, int keyId, MonitoringClient.Logger logger) {
-        this.prf = prf;
-        this.keyId = keyId;
-        this.logger = logger;
-      }
-    }
-
-    private WrappedPrfSet(Map<Integer, Prf> keyIdToPrfMap, int primaryKeyId) {
-      this.keyIdToPrfMap = keyIdToPrfMap;
-      this.primaryKeyId = primaryKeyId;
-    }
-
-    @Override
-    public int getPrimaryId() {
-      return primaryKeyId;
-    }
-
-    @Override
-    public Map<Integer, Prf> getPrfs() throws GeneralSecurityException {
-      return keyIdToPrfMap;
-    }
-  }
-
   @Override
   public PrfSet wrap(KeysetHandleInterface keysetHandle, PrimitiveFactory<Prf> factory)
       throws GeneralSecurityException {
-    MonitoringClient.Logger logger;
-    MonitoringAnnotations annotations =
-        keysetHandle.getAnnotationsOrNull(MonitoringAnnotations.class);
-    if (annotations != null && !annotations.isEmpty()) {
-      MonitoringClient client = MutableMonitoringRegistry.globalInstance().getMonitoringClient();
-      logger = client.createLogger(keysetHandle, annotations, "prf", "compute");
-    } else {
-      logger = MonitoringUtil.DO_NOTHING_LOGGER;
-    }
-
-    Map<Integer, Prf> mutablePrfMap = new HashMap<>();
-    for (int i = 0; i < keysetHandle.size(); i++) {
-      KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
-      if (entry.getStatus().equals(KeyStatus.ENABLED)) {
-        if (entry.getKey() instanceof LegacyProtoKey) {
-          LegacyProtoKey legacyProtoKey = (LegacyProtoKey) entry.getKey();
-          if (legacyProtoKey.getOutputPrefix().size() != 0) {
-            throw new GeneralSecurityException(
-                "Cannot build PrfSet with keys with non-empty output prefix");
-          }
-        }
-        Prf prf = factory.create(entry);
-        // Likewise, the key IDs of the PrfSet passed
-        mutablePrfMap.put(
-            entry.getId(), new WrappedPrfSet.PrfWithMonitoring(prf, entry.getId(), logger));
-      }
-    }
-    return new WrappedPrfSet(mutablePrfMap, keysetHandle.getPrimary().getId());
+    return WrappedPrfSet.create(keysetHandle, factory);
   }
 
   @Override
