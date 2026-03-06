@@ -69,7 +69,8 @@ public class MlDsaSignKeyManagerConscryptTest {
   }
 
   @DataPoints("templateNames")
-  public static final String[] keyTemplates = new String[] {"ML_DSA_65", "ML_DSA_65_RAW"};
+  public static final String[] keyTemplates =
+      new String[] {"ML_DSA_65", "ML_DSA_65_RAW", "ML_DSA_87", "ML_DSA_87_RAW"};
 
   @Theory
   public void testTemplates(@FromDataPoints("templateNames") String templateName) throws Exception {
@@ -129,7 +130,7 @@ public class MlDsaSignKeyManagerConscryptTest {
   }
 
   @Test
-  public void callingCreateTwiceGivesDifferentKeys() throws Exception {
+  public void callingCreateTwiceMlDsa65GivesDifferentKeys() throws Exception {
     // TODO(b/458349867): remove this check once ML-DSA is available on Android and OSS Conscrypt.
     if (!MlDsaVerifyConscrypt.isSupported()) {
       return;
@@ -144,7 +145,22 @@ public class MlDsaSignKeyManagerConscryptTest {
   }
 
   @Test
-  public void testCreateSignAndVerifyFromParameters_works() throws Exception {
+  public void callingCreateTwiceMlDsa87GivesDifferentKeys() throws Exception {
+    // TODO(b/458349867): remove this check once ML-DSA is available on Android and OSS Conscrypt.
+    if (!MlDsaVerifyConscrypt.isSupported()) {
+      return;
+    }
+
+    MlDsaParameters parameters = MlDsaParameters.create(MlDsaInstance.ML_DSA_87, Variant.NO_PREFIX);
+
+    MlDsaPrivateKey key0 = (MlDsaPrivateKey) KeysetHandle.generateNew(parameters).getAt(0).getKey();
+    MlDsaPrivateKey key1 = (MlDsaPrivateKey) KeysetHandle.generateNew(parameters).getAt(0).getKey();
+
+    assertFalse(key0.equalsKey(key1));
+  }
+
+  @Test
+  public void testCreateSignAndVerifyFromParameterMlDsa65_works() throws Exception {
     // TODO(b/458349867): remove this check once ML-DSA is available on Android and OSS Conscrypt.
     if (!MlDsaVerifyConscrypt.isSupported()) {
       return;
@@ -165,24 +181,56 @@ public class MlDsaSignKeyManagerConscryptTest {
   }
 
   @Test
-  public void testCreateSignAndVerifyFromParameters_wrongParameters_throws() throws Exception {
+  public void testCreateSignAndVerifyFromParametersMlDsa87_works() throws Exception {
     // TODO(b/458349867): remove this check once ML-DSA is available on Android and OSS Conscrypt.
     if (!MlDsaVerifyConscrypt.isSupported()) {
       return;
     }
 
     MlDsaParameters parameters = MlDsaParameters.create(MlDsaInstance.ML_DSA_87, Variant.NO_PREFIX);
-    assertThrows(GeneralSecurityException.class, () -> KeysetHandle.generateNew(parameters));
+    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    PublicKeySign signer = handle.getPrimitive(SignatureConfigurationV1.get(), PublicKeySign.class);
+    PublicKeyVerify verifier =
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(SignatureConfigurationV1.get(), PublicKeyVerify.class);
+    byte[] data = "data".getBytes(UTF_8);
+
+    byte[] signature = signer.sign(data);
+
+    verifier.verify(signature, data);
   }
 
   @Test
-  public void testCreateSignAndVerifyFromParameters_wrongMessage_throws() throws Exception {
+  public void testCreateSignAndVerifyFromParametersMlDsa65_wrongMessage_throws() throws Exception {
     // TODO(b/458349867): remove this check once ML-DSA is available on Android and OSS Conscrypt.
     if (!MlDsaVerifyConscrypt.isSupported()) {
       return;
     }
 
     MlDsaParameters parameters = MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.NO_PREFIX);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    PublicKeySign signer = handle.getPrimitive(SignatureConfigurationV1.get(), PublicKeySign.class);
+    PublicKeyVerify verifier =
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(SignatureConfigurationV1.get(), PublicKeyVerify.class);
+    byte[] data = "data".getBytes(UTF_8);
+    byte[] wrongData = "wrong data".getBytes(UTF_8);
+
+    byte[] signature = signer.sign(data);
+
+    assertThrows(GeneralSecurityException.class, () -> verifier.verify(signature, wrongData));
+  }
+
+  @Test
+  public void testCreateSignAndVerifyFromParametersMlDsa87_wrongMessage_throws() throws Exception {
+    // TODO(b/458349867): remove this check once ML-DSA is available on Android and OSS Conscrypt.
+    if (!MlDsaVerifyConscrypt.isSupported()) {
+      return;
+    }
+
+    MlDsaParameters parameters = MlDsaParameters.create(MlDsaInstance.ML_DSA_87, Variant.NO_PREFIX);
     KeysetHandle handle = KeysetHandle.generateNew(parameters);
     PublicKeySign signer = handle.getPrimitive(SignatureConfigurationV1.get(), PublicKeySign.class);
     PublicKeyVerify verifier =

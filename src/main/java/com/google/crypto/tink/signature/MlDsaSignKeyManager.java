@@ -54,6 +54,7 @@ import javax.annotation.Nullable;
   }
 
   static final String ML_DSA_65_ALGORITHM = "ML-DSA-65";
+  static final String ML_DSA_87_ALGORITHM = "ML-DSA-87";
 
   private static final KeyCreator<MlDsaParameters> KEY_CREATOR = MlDsaSignKeyManager::createKey;
   private static final TinkFipsUtil.AlgorithmFipsCompatibility FIPS =
@@ -66,10 +67,19 @@ import javax.annotation.Nullable;
     if (provider == null) {
       throw new GeneralSecurityException("Obtaining Conscrypt provider failed");
     }
-
-    KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(ML_DSA_65_ALGORITHM, provider);
+    KeyPairGenerator keyPairGenerator;
+    KeyFactory keyFactory;
+    if (parameters.getMlDsaInstance() == MlDsaInstance.ML_DSA_65) {
+      keyPairGenerator = KeyPairGenerator.getInstance(ML_DSA_65_ALGORITHM, provider);
+      keyFactory = KeyFactory.getInstance(ML_DSA_65_ALGORITHM, provider);
+    } else if (parameters.getMlDsaInstance() == MlDsaInstance.ML_DSA_87) {
+      keyPairGenerator = KeyPairGenerator.getInstance(ML_DSA_87_ALGORITHM, provider);
+      keyFactory = KeyFactory.getInstance(ML_DSA_87_ALGORITHM, provider);
+    } else {
+      throw new GeneralSecurityException(
+          "Unknown ML-DSA instance: " + parameters.getMlDsaInstance());
+    }
     KeyPair keyPair = keyPairGenerator.generateKeyPair();
-    KeyFactory keyFactory = KeyFactory.getInstance(ML_DSA_65_ALGORITHM, provider);
 
     MlDsaPublicKey publicKey =
         MlDsaPublicKey.builder()
@@ -96,7 +106,11 @@ import javax.annotation.Nullable;
         "ML_DSA_65",
         MlDsaParameters.create(MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.TINK),
         "ML_DSA_65_RAW",
-        MlDsaParameters.create(MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.NO_PREFIX));
+        MlDsaParameters.create(MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.NO_PREFIX),
+        "ML_DSA_87",
+        MlDsaParameters.create(MlDsaInstance.ML_DSA_87, MlDsaParameters.Variant.TINK),
+        "ML_DSA_87_RAW",
+        MlDsaParameters.create(MlDsaInstance.ML_DSA_87, MlDsaParameters.Variant.NO_PREFIX));
   }
 
   /**
