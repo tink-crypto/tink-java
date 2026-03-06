@@ -40,6 +40,8 @@ public final class MlDsaVerifyConscrypt implements PublicKeyVerify {
       AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS;
   static final int ML_DSA_65_SIG_LENGTH = 3309;
   static final String ML_DSA_65_ALGORITHM = "ML-DSA-65";
+  static final int ML_DSA_87_SIG_LENGTH = 4627;
+  static final String ML_DSA_87_ALGORITHM = "ML-DSA-87";
 
   @SuppressWarnings("Immutable") // We do not change the output prefix
   private final byte[] outputPrefix;
@@ -78,20 +80,30 @@ public final class MlDsaVerifyConscrypt implements PublicKeyVerify {
     }
 
     MlDsaInstance mlDsaInstance = mlDsaPublicKey.getParameters().getMlDsaInstance();
-    if (mlDsaInstance != MlDsaInstance.ML_DSA_65) {
-      throw new GeneralSecurityException("Only ML-DSA-65 currently supported");
+    PublicKey publicKey;
+    String algorithm;
+    int signatureLength;
+    if (mlDsaInstance == MlDsaInstance.ML_DSA_65) {
+      algorithm = ML_DSA_65_ALGORITHM;
+      publicKey =
+          KeyFactory.getInstance(ML_DSA_65_ALGORITHM, provider)
+              .generatePublic(new RawKeySpec(mlDsaPublicKey.getSerializedPublicKey().toByteArray()));
+      signatureLength = ML_DSA_65_SIG_LENGTH;
+    } else if (mlDsaInstance == MlDsaInstance.ML_DSA_87) {
+      algorithm = ML_DSA_87_ALGORITHM;
+      publicKey =
+          KeyFactory.getInstance(ML_DSA_87_ALGORITHM, provider)
+              .generatePublic(new RawKeySpec(mlDsaPublicKey.getSerializedPublicKey().toByteArray()));
+      signatureLength = ML_DSA_87_SIG_LENGTH;
+    } else {
+      throw new GeneralSecurityException("Unsupported ML-DSA instance: " + mlDsaInstance);
     }
-
-    // We ensured that the algorithm is ML-DSA-65
-    PublicKey publicKey =
-        KeyFactory.getInstance(ML_DSA_65_ALGORITHM, provider)
-            .generatePublic(new RawKeySpec(mlDsaPublicKey.getSerializedPublicKey().toByteArray()));
 
     return new MlDsaVerifyConscrypt(
         mlDsaPublicKey.getOutputPrefix().toByteArray(),
         publicKey,
-        ML_DSA_65_ALGORITHM,
-        ML_DSA_65_SIG_LENGTH,
+        algorithm,
+        signatureLength,
         provider);
   }
 
@@ -137,8 +149,10 @@ public final class MlDsaVerifyConscrypt implements PublicKeyVerify {
     }
 
     try {
-      KeyFactory unusedKeyFactory = KeyFactory.getInstance(ML_DSA_65_ALGORITHM, provider);
-      Signature unusedSignature = Signature.getInstance(ML_DSA_65_ALGORITHM, provider);
+      KeyFactory unusedKeyFactory65 = KeyFactory.getInstance(ML_DSA_65_ALGORITHM, provider);
+      Signature unusedSignature65 = Signature.getInstance(ML_DSA_65_ALGORITHM, provider);
+      KeyFactory unusedKeyFactory87 = KeyFactory.getInstance(ML_DSA_87_ALGORITHM, provider);
+      Signature unusedSignature87 = Signature.getInstance(ML_DSA_87_ALGORITHM, provider);
       return true;
     } catch (GeneralSecurityException e) {
       return false;

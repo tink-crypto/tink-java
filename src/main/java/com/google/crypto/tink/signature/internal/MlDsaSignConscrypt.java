@@ -18,6 +18,8 @@ package com.google.crypto.tink.signature.internal;
 
 import static com.google.crypto.tink.signature.internal.MlDsaVerifyConscrypt.ML_DSA_65_ALGORITHM;
 import static com.google.crypto.tink.signature.internal.MlDsaVerifyConscrypt.ML_DSA_65_SIG_LENGTH;
+import static com.google.crypto.tink.signature.internal.MlDsaVerifyConscrypt.ML_DSA_87_ALGORITHM;
+import static com.google.crypto.tink.signature.internal.MlDsaVerifyConscrypt.ML_DSA_87_SIG_LENGTH;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.crypto.tink.AccessesPartialKey;
@@ -77,15 +79,28 @@ public final class MlDsaSignConscrypt implements PublicKeySign {
           "Can not use ML-DSA in FIPS-mode, as it is not yet certified in Conscrypt.");
     }
     MlDsaInstance mlDsaInstance = mlDsaPrivateKey.getPublicKey().getParameters().getMlDsaInstance();
-    if (mlDsaInstance != MlDsaInstance.ML_DSA_65) {
-      throw new GeneralSecurityException("Only ML-DSA-65 currently supported");
+    PrivateKey privateKey;
+    String algorithm;
+    int signatureLength;
+    if (mlDsaInstance == MlDsaInstance.ML_DSA_65) {
+      algorithm = ML_DSA_65_ALGORITHM;
+      privateKey =
+          KeyFactory.getInstance(ML_DSA_65_ALGORITHM, provider)
+              .generatePrivate(
+                  new RawKeySpec(
+                      mlDsaPrivateKey.getPrivateSeed().toByteArray(InsecureSecretKeyAccess.get())));
+      signatureLength = ML_DSA_65_SIG_LENGTH;
+    } else if (mlDsaInstance == MlDsaInstance.ML_DSA_87) {
+      algorithm = ML_DSA_87_ALGORITHM;
+      privateKey =
+          KeyFactory.getInstance(ML_DSA_87_ALGORITHM, provider)
+              .generatePrivate(
+                  new RawKeySpec(
+                      mlDsaPrivateKey.getPrivateSeed().toByteArray(InsecureSecretKeyAccess.get())));
+      signatureLength = ML_DSA_87_SIG_LENGTH;
+    } else {
+      throw new GeneralSecurityException("Unsupported ML-DSA instance: " + mlDsaInstance);
     }
-    // We ensured that the algorithm is ML-DSA-65
-    PrivateKey privateKey =
-        KeyFactory.getInstance(ML_DSA_65_ALGORITHM, provider)
-            .generatePrivate(
-                new RawKeySpec(
-                    mlDsaPrivateKey.getPrivateSeed().toByteArray(InsecureSecretKeyAccess.get())));
 
     // Verify that the public key and the private key match by creating and verifying a dummy
     // signature. This is subomptimal to do it this way, but at this time we prefer to not have our
@@ -95,8 +110,8 @@ public final class MlDsaSignConscrypt implements PublicKeySign {
             TEST_WORKLOAD.getBytes(UTF_8),
             mlDsaPrivateKey.getOutputPrefix().toByteArray(),
             privateKey,
-            ML_DSA_65_ALGORITHM,
-            ML_DSA_65_SIG_LENGTH,
+            algorithm,
+            signatureLength,
             provider);
     MlDsaVerifyConscrypt verifier =
         (MlDsaVerifyConscrypt)
@@ -107,8 +122,8 @@ public final class MlDsaSignConscrypt implements PublicKeySign {
     return new MlDsaSignConscrypt(
         mlDsaPrivateKey.getOutputPrefix().toByteArray(),
         privateKey,
-        ML_DSA_65_ALGORITHM,
-        ML_DSA_65_SIG_LENGTH,
+        algorithm,
+        signatureLength,
         provider);
   }
 
@@ -126,7 +141,7 @@ public final class MlDsaSignConscrypt implements PublicKeySign {
     return createWithProvider(mlDsaPrivateKey, provider);
   }
 
-  /** Returns true if the Conscrypt is available and supports ML-DSA-65. */
+  /** Returns true if the Conscrypt is available and supports ML-DSA-{65, 87}. */
   public static boolean isSupported() {
     return MlDsaVerifyConscrypt.isSupported();
   }
@@ -151,7 +166,7 @@ public final class MlDsaSignConscrypt implements PublicKeySign {
     if (outputPrefix.length > 0) {
       System.arraycopy(outputPrefix, 0, signature, 0, outputPrefix.length);
     }
-    // Use this interface instead of plain sign() to avoid an extra copy of 3MB of signature.
+    // Use this interface instead of plain sign() to avoid an extra copy of 3KB of signature.
     // Resets the Signature object into its initial initialized state.
     signer.sign(signature, outputPrefix.length, signatureLength);
     return signature;
