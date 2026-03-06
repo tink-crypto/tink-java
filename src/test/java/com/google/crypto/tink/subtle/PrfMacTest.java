@@ -80,6 +80,7 @@ public class PrfMacTest {
         AesCmacTestUtil.SHORTER_TAG,
         AesCmacTestUtil.TAG_WITH_KEY_PREFIX_TYPE_LEGACY,
         AesCmacTestUtil.TAG_WITH_KEY_PREFIX_TYPE_TINK,
+        AesCmacTestUtil.TAG_WITH_KEY_PREFIX_TYPE_CRUNCHY,
         AesCmacTestUtil.LONG_KEY_TEST_VECTOR,
       };
 

@@ -140,6 +140,14 @@ public final class AesCmacTestUtil {
               + "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
               + "bbbbbb",
           "0100000755611a1ededd3dfff548ed80b7fd10c0ba");
+  public static final AesCmacTestVector TAG_WITH_KEY_PREFIX_TYPE_CRUNCHY =
+      new AesCmacTestVector(
+          createAesCmacKey(
+              "00112233445566778899aabbccddeeff",
+              createAesCmacParameters(16, 16, Variant.CRUNCHY),
+              1877),
+          "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "0000000755611a1ededd3dfff548ed80b7fd10c0ba");
   public static final AesCmacTestVector LONG_KEY_TEST_VECTOR =
       new AesCmacTestVector(
           createAesCmacKey(
