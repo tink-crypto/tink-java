@@ -16,26 +16,22 @@
 
 package com.google.crypto.tink;
 
-import com.google.crypto.tink.aead.AeadWrapper;
 import com.google.crypto.tink.aead.AesCtrHmacAeadKey;
 import com.google.crypto.tink.aead.AesGcmKey;
+import com.google.crypto.tink.aead.internal.WrappedAead;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
-import com.google.crypto.tink.internal.InternalConfiguration;
-import com.google.crypto.tink.internal.PrimitiveConstructor;
-import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.Random;
 import com.google.crypto.tink.mac.ChunkedMac;
-import com.google.crypto.tink.mac.ChunkedMacWrapper;
 import com.google.crypto.tink.mac.HmacKey;
-import com.google.crypto.tink.mac.MacWrapper;
 import com.google.crypto.tink.mac.internal.ChunkedHmacImpl;
+import com.google.crypto.tink.mac.internal.WrappedChunkedMac;
+import com.google.crypto.tink.mac.internal.WrappedMac;
 import com.google.crypto.tink.prf.HmacPrfKey;
 import com.google.crypto.tink.prf.Prf;
-import com.google.crypto.tink.prf.PrfSetWrapper;
+import com.google.crypto.tink.prf.PrfSet;
+import com.google.crypto.tink.prf.internal.WrappedPrfSet;
 import com.google.crypto.tink.signature.EcdsaPrivateKey;
 import com.google.crypto.tink.signature.EcdsaPublicKey;
-import com.google.crypto.tink.signature.PublicKeySignWrapper;
-import com.google.crypto.tink.signature.PublicKeyVerifyWrapper;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
 import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
@@ -43,6 +39,8 @@ import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
 import com.google.crypto.tink.signature.internal.RsaSsaPkcs1VerifyConscrypt;
 import com.google.crypto.tink.signature.internal.RsaSsaPssSignConscrypt;
 import com.google.crypto.tink.signature.internal.RsaSsaPssVerifyConscrypt;
+import com.google.crypto.tink.signature.internal.WrappedPublicKeySign;
+import com.google.crypto.tink.signature.internal.WrappedPublicKeyVerify;
 import com.google.crypto.tink.subtle.AesGcmJce;
 import com.google.crypto.tink.subtle.EcdsaSignJce;
 import com.google.crypto.tink.subtle.EcdsaVerifyJce;
@@ -57,9 +55,10 @@ import java.security.GeneralSecurityException;
  * href="https://csrc.nist.gov/pubs/fips/140-2/upd2/final">FIPS 140-2</a>.
  */
 public class ConfigurationFips140v2 {
-  private ConfigurationFips140v2() {}
 
-  /** get returns a Configuration containing primitives that are FIPS 140-2 compiant. */
+  private static final Configuration CONFIGURATION = create();
+
+  /** get returns a Configuration containing primitives that are FIPS 140-2 compliant. */
   public static Configuration get() throws GeneralSecurityException {
     // First, check that we've got Conscrypt built with the BoringCrypto module.
     if (!TinkFipsUtil.fipsModuleAvailable()) {
@@ -67,63 +66,114 @@ public class ConfigurationFips140v2 {
           "Conscrypt is not available or does not support checking for FIPS build.");
     }
     Random.validateUsesConscrypt();
-
-    // Got Conscrypt, can proceed.
-    PrimitiveRegistry.Builder builder = PrimitiveRegistry.builder();
-
-    // Register Mac wrappers and concrete primitives.
-    MacWrapper.registerToInternalPrimitiveRegistry(builder);
-    ChunkedMacWrapper.registerToInternalPrimitiveRegistry(builder);
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(PrfMac::create, HmacKey.class, Mac.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(ChunkedHmacImpl::new, HmacKey.class, ChunkedMac.class));
-
-    // Register Aead wrapper and concrete primitives.
-    AeadWrapper.registerToInternalPrimitiveRegistry(builder);
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            EncryptThenAuthenticate::create, AesCtrHmacAeadKey.class, Aead.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(AesGcmJce::create, AesGcmKey.class, Aead.class));
-
-    // Register Prf wrapper and concrete primitives.
-    PrfSetWrapper.registerToInternalPrimitiveRegistry(builder);
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(PrfHmacJce::create, HmacPrfKey.class, Prf.class));
-
-    // Register PublicKeySign/Verify wrapper and primitives.
-    PublicKeySignWrapper.registerToInternalPrimitiveRegistry(builder);
-    PublicKeyVerifyWrapper.registerToInternalPrimitiveRegistry(builder);
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            EcdsaSignJce::create, EcdsaPrivateKey.class, PublicKeySign.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            EcdsaVerifyJce::create, EcdsaPublicKey.class, PublicKeyVerify.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            ConfigurationFips140v2::rsaSsaPkcs1SignCreate,
-            RsaSsaPkcs1PrivateKey.class,
-            PublicKeySign.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            ConfigurationFips140v2::rsaSsaPkcs1VerifyCreate,
-            RsaSsaPkcs1PublicKey.class,
-            PublicKeyVerify.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            ConfigurationFips140v2::rsaSsaPssSignCreate,
-            RsaSsaPssPrivateKey.class,
-            PublicKeySign.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            ConfigurationFips140v2::rsaSsaPssVerifyCreate,
-            RsaSsaPssPublicKey.class,
-            PublicKeyVerify.class));
-
-    return InternalConfiguration.createFromPrimitiveRegistry(builder.build());
+    return CONFIGURATION;
   }
+
+  private static Configuration create() {
+    return new Configuration() {
+      @Override
+      public <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
+          throws GeneralSecurityException {
+        if (clazz.equals(Aead.class)) {
+          return clazz.cast(WrappedAead.create(keysetHandle, ConfigurationFips140v2::createAead));
+        }
+        if (clazz.equals(Mac.class)) {
+          return clazz.cast(WrappedMac.create(keysetHandle, ConfigurationFips140v2::createMac));
+        }
+        if (clazz.equals(ChunkedMac.class)) {
+          return clazz.cast(
+              WrappedChunkedMac.create(keysetHandle, ConfigurationFips140v2::createChunkedMac));
+        }
+        if (clazz.equals(PrfSet.class)) {
+          return clazz.cast(WrappedPrfSet.create(keysetHandle, ConfigurationFips140v2::createPrf));
+        }
+        if (clazz.equals(PublicKeySign.class)) {
+          return clazz.cast(
+              WrappedPublicKeySign.create(
+                  keysetHandle, ConfigurationFips140v2::createPublicKeySign));
+        }
+        if (clazz.equals(PublicKeyVerify.class)) {
+          return clazz.cast(
+              WrappedPublicKeyVerify.create(
+                  keysetHandle, ConfigurationFips140v2::createPublicKeyVerify));
+        }
+        throw new GeneralSecurityException(
+            "No primitive creator for " + clazz.getName() + " available in ConfigurationFips140v2");
+      }
+    };
+  }
+
+  private static Aead createAead(KeysetHandleInterface.Entry entry)
+      throws GeneralSecurityException {
+    Key key = entry.getKey();
+    if (key instanceof AesCtrHmacAeadKey) {
+      return EncryptThenAuthenticate.create((AesCtrHmacAeadKey) key);
+    }
+    if (key instanceof AesGcmKey) {
+      return AesGcmJce.create((AesGcmKey) key);
+    }
+    throw new GeneralSecurityException("Key type" + key.getClass() + " not supported for AEAD");
+  }
+
+  private static Mac createMac(KeysetHandleInterface.Entry entry) throws GeneralSecurityException {
+    Key key = entry.getKey();
+    if (key instanceof HmacKey) {
+      return PrfMac.create((HmacKey) key);
+    }
+    throw new GeneralSecurityException("Key type" + key.getClass() + " not supported for MAC");
+  }
+
+  private static ChunkedMac createChunkedMac(KeysetHandleInterface.Entry entry)
+      throws GeneralSecurityException {
+    Key key = entry.getKey();
+    if (key instanceof HmacKey) {
+      return new ChunkedHmacImpl((HmacKey) key);
+    }
+    throw new GeneralSecurityException(
+        "Key type" + key.getClass() + " not supported for ChunkedMac");
+  }
+
+  private static Prf createPrf(KeysetHandleInterface.Entry entry) throws GeneralSecurityException {
+    Key key = entry.getKey();
+    if (key instanceof HmacPrfKey) {
+      return PrfHmacJce.create((HmacPrfKey) key);
+    }
+    throw new GeneralSecurityException("Key type" + key.getClass() + " not supported for Prf");
+  }
+
+  private static PublicKeySign createPublicKeySign(KeysetHandleInterface.Entry entry)
+      throws GeneralSecurityException {
+    Key key = entry.getKey();
+    if (key instanceof EcdsaPrivateKey) {
+      return EcdsaSignJce.create((EcdsaPrivateKey) key);
+    }
+    if (key instanceof RsaSsaPkcs1PrivateKey) {
+      return rsaSsaPkcs1SignCreate((RsaSsaPkcs1PrivateKey) key);
+    }
+    if (key instanceof RsaSsaPssPrivateKey) {
+      return rsaSsaPssSignCreate((RsaSsaPssPrivateKey) key);
+    }
+    throw new GeneralSecurityException(
+        "Key type" + key.getClass() + " not supported for PublicKeySign");
+  }
+
+  private static PublicKeyVerify createPublicKeyVerify(KeysetHandleInterface.Entry entry)
+      throws GeneralSecurityException {
+    Key key = entry.getKey();
+    if (key instanceof EcdsaPublicKey) {
+      return EcdsaVerifyJce.create((EcdsaPublicKey) key);
+    }
+    if (key instanceof RsaSsaPkcs1PublicKey) {
+      return rsaSsaPkcs1VerifyCreate((RsaSsaPkcs1PublicKey) key);
+    }
+    if (key instanceof RsaSsaPssPublicKey) {
+      return rsaSsaPssVerifyCreate((RsaSsaPssPublicKey) key);
+    }
+    throw new GeneralSecurityException(
+        "Key type" + key.getClass() + " not supported for PublicKeyVerify");
+  }
+
+  private ConfigurationFips140v2() {}
 
   // In FIPS only mode we additionally check if the modulus is 2048 or 3072, as this is the
   // only size which is covered by the FIPS validation and supported by Tink.
