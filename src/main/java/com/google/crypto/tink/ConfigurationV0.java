@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink;
 
-import com.google.crypto.tink.aead.AeadWrapper;
 import com.google.crypto.tink.aead.AesCtrHmacAeadKey;
 import com.google.crypto.tink.aead.AesEaxKey;
 import com.google.crypto.tink.aead.AesGcmKey;
@@ -24,48 +23,49 @@ import com.google.crypto.tink.aead.AesGcmSivKey;
 import com.google.crypto.tink.aead.ChaCha20Poly1305Key;
 import com.google.crypto.tink.aead.XChaCha20Poly1305Key;
 import com.google.crypto.tink.aead.internal.ChaCha20Poly1305Jce;
+import com.google.crypto.tink.aead.internal.WrappedAead;
 import com.google.crypto.tink.aead.internal.XChaCha20Poly1305Jce;
 import com.google.crypto.tink.aead.subtle.AesGcmSiv;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.daead.AesSivKey;
-import com.google.crypto.tink.daead.DeterministicAeadWrapper;
+import com.google.crypto.tink.daead.internal.WrappedDeterministicAead;
 import com.google.crypto.tink.hybrid.EciesPrivateKey;
 import com.google.crypto.tink.hybrid.EciesPublicKey;
 import com.google.crypto.tink.hybrid.HpkePrivateKey;
 import com.google.crypto.tink.hybrid.HpkePublicKey;
-import com.google.crypto.tink.hybrid.HybridDecryptWrapper;
-import com.google.crypto.tink.hybrid.HybridEncryptWrapper;
 import com.google.crypto.tink.hybrid.internal.HpkeDecrypt;
 import com.google.crypto.tink.hybrid.internal.HpkeEncrypt;
-import com.google.crypto.tink.internal.InternalConfiguration;
-import com.google.crypto.tink.internal.PrimitiveConstructor;
-import com.google.crypto.tink.internal.PrimitiveRegistry;
+import com.google.crypto.tink.hybrid.internal.WrappedHybridDecrypt;
+import com.google.crypto.tink.hybrid.internal.WrappedHybridEncrypt;
+import com.google.crypto.tink.internal.LegacyProtoKey;
+import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.mac.AesCmacKey;
 import com.google.crypto.tink.mac.ChunkedMac;
-import com.google.crypto.tink.mac.ChunkedMacWrapper;
 import com.google.crypto.tink.mac.HmacKey;
-import com.google.crypto.tink.mac.MacWrapper;
 import com.google.crypto.tink.mac.internal.ChunkedAesCmacImpl;
 import com.google.crypto.tink.mac.internal.ChunkedHmacImpl;
+import com.google.crypto.tink.mac.internal.WrappedChunkedMac;
+import com.google.crypto.tink.mac.internal.WrappedMac;
 import com.google.crypto.tink.prf.AesCmacPrfKey;
 import com.google.crypto.tink.prf.HkdfPrfKey;
 import com.google.crypto.tink.prf.HkdfPrfParameters;
 import com.google.crypto.tink.prf.HmacPrfKey;
 import com.google.crypto.tink.prf.Prf;
-import com.google.crypto.tink.prf.PrfSetWrapper;
+import com.google.crypto.tink.prf.PrfSet;
+import com.google.crypto.tink.prf.internal.WrappedPrfSet;
 import com.google.crypto.tink.signature.EcdsaPrivateKey;
 import com.google.crypto.tink.signature.EcdsaPublicKey;
 import com.google.crypto.tink.signature.Ed25519PrivateKey;
 import com.google.crypto.tink.signature.Ed25519PublicKey;
-import com.google.crypto.tink.signature.PublicKeySignWrapper;
-import com.google.crypto.tink.signature.PublicKeyVerifyWrapper;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
 import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
+import com.google.crypto.tink.signature.internal.WrappedPublicKeySign;
+import com.google.crypto.tink.signature.internal.WrappedPublicKeyVerify;
 import com.google.crypto.tink.streamingaead.AesCtrHmacStreamingKey;
 import com.google.crypto.tink.streamingaead.AesGcmHkdfStreamingKey;
-import com.google.crypto.tink.streamingaead.StreamingAeadWrapper;
+import com.google.crypto.tink.streamingaead.internal.WrappedStreamingAead;
 import com.google.crypto.tink.subtle.AesCtrHmacStreaming;
 import com.google.crypto.tink.subtle.AesEaxJce;
 import com.google.crypto.tink.subtle.AesGcmHkdfStreaming;
@@ -152,115 +152,63 @@ import java.security.GeneralSecurityException;
 public class ConfigurationV0 {
   private ConfigurationV0() {}
 
+  private static final Configuration CONFIGURATION = create();
+
   public static Configuration get() throws GeneralSecurityException {
     if (TinkFipsUtil.useOnlyFips()) {
       throw new GeneralSecurityException(
           "Cannot use non-FIPS-compliant ConfigurationV0 in FIPS mode");
     }
+    return CONFIGURATION;
+  }
 
-    PrimitiveRegistry.Builder builder = PrimitiveRegistry.builder();
-
-    // Register Mac wrappers and concrete primitives.
-    MacWrapper.registerToInternalPrimitiveRegistry(builder);
-    ChunkedMacWrapper.registerToInternalPrimitiveRegistry(builder);
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(ConfigurationV0::createAesCmac, AesCmacKey.class, Mac.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(PrfMac::create, HmacKey.class, Mac.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            ConfigurationV0::createChunkedAesCmac, AesCmacKey.class, ChunkedMac.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(ChunkedHmacImpl::new, HmacKey.class, ChunkedMac.class));
-
-    // Register Aead wrapper and concrete primitives.
-    AeadWrapper.registerToInternalPrimitiveRegistry(builder);
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            EncryptThenAuthenticate::create, AesCtrHmacAeadKey.class, Aead.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(AesEaxJce::create, AesEaxKey.class, Aead.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(AesGcmJce::create, AesGcmKey.class, Aead.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(AesGcmSiv::create, AesGcmSivKey.class, Aead.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            ConfigurationV0::createChaCha20Poly1305, ChaCha20Poly1305Key.class, Aead.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            ConfigurationV0::createXChaCha20Poly1305, XChaCha20Poly1305Key.class, Aead.class));
-
-    // Register DeterministicAead wrapper and concrete primitives.
-    DeterministicAeadWrapper.registerToInternalPrimitiveRegistry(builder);
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            ConfigurationV0::createAesSiv, AesSivKey.class, DeterministicAead.class));
-
-    // Register StreamingAead wrapper and concrete primitives.
-    StreamingAeadWrapper.registerToInternalPrimitiveRegistry(builder);
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            AesCtrHmacStreaming::create, AesCtrHmacStreamingKey.class, StreamingAead.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            AesGcmHkdfStreaming::create, AesGcmHkdfStreamingKey.class, StreamingAead.class));
-
-    // Register HybridEncrypt/Decrypt wrapper and concrete primitives.
-    HybridEncryptWrapper.registerToInternalPrimitiveRegistry(builder);
-    HybridDecryptWrapper.registerToInternalPrimitiveRegistry(builder);
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            EciesAeadHkdfHybridEncrypt::create, EciesPublicKey.class, HybridEncrypt.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            EciesAeadHkdfHybridDecrypt::create, EciesPrivateKey.class, HybridDecrypt.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(HpkeEncrypt::create, HpkePublicKey.class, HybridEncrypt.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            HpkeDecrypt::create, HpkePrivateKey.class, HybridDecrypt.class));
-
-    // Register Prf wrapper and concrete primitives.
-    PrfSetWrapper.registerToInternalPrimitiveRegistry(builder);
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            ConfigurationV0::createAesCmacPrf, AesCmacPrfKey.class, Prf.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(ConfigurationV0::createHkdfPrf, HkdfPrfKey.class, Prf.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(PrfHmacJce::create, HmacPrfKey.class, Prf.class));
-
-    // Register PublicKeySign/Verify wrapper and primitives.
-    PublicKeySignWrapper.registerToInternalPrimitiveRegistry(builder);
-    PublicKeyVerifyWrapper.registerToInternalPrimitiveRegistry(builder);
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            EcdsaSignJce::create, EcdsaPrivateKey.class, PublicKeySign.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            EcdsaVerifyJce::create, EcdsaPublicKey.class, PublicKeyVerify.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            Ed25519Sign::create, Ed25519PrivateKey.class, PublicKeySign.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            Ed25519Verify::create, Ed25519PublicKey.class, PublicKeyVerify.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            RsaSsaPkcs1SignJce::create, RsaSsaPkcs1PrivateKey.class, PublicKeySign.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            RsaSsaPkcs1VerifyJce::create, RsaSsaPkcs1PublicKey.class, PublicKeyVerify.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            RsaSsaPssSignJce::create, RsaSsaPssPrivateKey.class, PublicKeySign.class));
-    builder.registerPrimitiveConstructor(
-        PrimitiveConstructor.create(
-            RsaSsaPssVerifyJce::create, RsaSsaPssPublicKey.class, PublicKeyVerify.class));
-
-    return InternalConfiguration.createFromPrimitiveRegistry(
-        builder.allowReparsingLegacyKeys().build());
+  private static Configuration create() {
+    return new Configuration() {
+      @Override
+      public <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
+          throws GeneralSecurityException {
+        if (clazz.equals(Mac.class)) {
+          return clazz.cast(WrappedMac.create(keysetHandle, ConfigurationV0::createMac));
+        }
+        if (clazz.equals(ChunkedMac.class)) {
+          return clazz.cast(
+              WrappedChunkedMac.create(keysetHandle, ConfigurationV0::createChunkedMac));
+        }
+        if (clazz.equals(Aead.class)) {
+          return clazz.cast(WrappedAead.create(keysetHandle, ConfigurationV0::createAead));
+        }
+        if (clazz.equals(DeterministicAead.class)) {
+          return clazz.cast(
+              WrappedDeterministicAead.create(
+                  keysetHandle, ConfigurationV0::createDeterministicAead));
+        }
+        if (clazz.equals(StreamingAead.class)) {
+          return clazz.cast(
+              WrappedStreamingAead.wrap(keysetHandle, ConfigurationV0::createStreamingAead));
+        }
+        if (clazz.equals(HybridEncrypt.class)) {
+          return clazz.cast(
+              WrappedHybridEncrypt.create(keysetHandle, ConfigurationV0::createHybridEncrypt));
+        }
+        if (clazz.equals(HybridDecrypt.class)) {
+          return clazz.cast(
+              WrappedHybridDecrypt.create(keysetHandle, ConfigurationV0::createHybridDecrypt));
+        }
+        if (clazz.equals(PrfSet.class)) {
+          return clazz.cast(WrappedPrfSet.create(keysetHandle, ConfigurationV0::createPrf));
+        }
+        if (clazz.equals(PublicKeySign.class)) {
+          return clazz.cast(
+              WrappedPublicKeySign.create(keysetHandle, ConfigurationV0::createPublicKeySign));
+        }
+        if (clazz.equals(PublicKeyVerify.class)) {
+          return clazz.cast(
+              WrappedPublicKeyVerify.create(keysetHandle, ConfigurationV0::createPublicKeyVerify));
+        }
+        throw new GeneralSecurityException(
+            "ConfigurationV0 does not support creating primitives of type " + clazz.getName());
+      }
+    };
   }
 
   // For compatibility reasons, and on some versions of Android for correctness reasons,
@@ -337,5 +285,164 @@ public class ConfigurationV0 {
       throw new GeneralSecurityException("AesCmac key size is not 32 bytes");
     }
     return PrfMac.create(key);
+  }
+
+  private static Key reparseLegacyProtoKey(Key key) throws GeneralSecurityException {
+    if (key instanceof LegacyProtoKey) {
+      return MutableSerializationRegistry.globalInstance()
+          .parseKey(
+              ((LegacyProtoKey) key).getSerialization(InsecureSecretKeyAccess.get()),
+              InsecureSecretKeyAccess.get());
+    }
+    return key;
+  }
+
+  private static Mac createMac(KeysetHandleInterface.Entry entry) throws GeneralSecurityException {
+    Key key = reparseLegacyProtoKey(entry.getKey());
+
+    if (key instanceof AesCmacKey) {
+      return createAesCmac((AesCmacKey) key);
+    }
+    if (key instanceof HmacKey) {
+      return PrfMac.create((HmacKey) key);
+    }
+    throw new GeneralSecurityException("Cannot create Mac for key " + key);
+  }
+
+  private static ChunkedMac createChunkedMac(KeysetHandleInterface.Entry entry)
+      throws GeneralSecurityException {
+    Key key = reparseLegacyProtoKey(entry.getKey());
+    if (key instanceof AesCmacKey) {
+      return createChunkedAesCmac((AesCmacKey) key);
+    }
+    if (key instanceof HmacKey) {
+      return new ChunkedHmacImpl((HmacKey) key);
+    }
+    throw new GeneralSecurityException("Cannot create ChunkedMac for key " + key);
+  }
+
+  private static Aead createAead(KeysetHandleInterface.Entry entry)
+      throws GeneralSecurityException {
+    Key key = reparseLegacyProtoKey(entry.getKey());
+
+    if (key instanceof AesCtrHmacAeadKey) {
+      return EncryptThenAuthenticate.create((AesCtrHmacAeadKey) key);
+    }
+    if (key instanceof AesEaxKey) {
+      return AesEaxJce.create((AesEaxKey) key);
+    }
+    if (key instanceof AesGcmKey) {
+      return AesGcmJce.create((AesGcmKey) key);
+    }
+    if (key instanceof AesGcmSivKey) {
+      return AesGcmSiv.create((AesGcmSivKey) key);
+    }
+    if (key instanceof ChaCha20Poly1305Key) {
+      return createChaCha20Poly1305((ChaCha20Poly1305Key) key);
+    }
+    if (key instanceof XChaCha20Poly1305Key) {
+      return createXChaCha20Poly1305((XChaCha20Poly1305Key) key);
+    }
+    throw new GeneralSecurityException("Cannot create Aead for key " + key);
+  }
+
+  private static DeterministicAead createDeterministicAead(KeysetHandleInterface.Entry entry)
+      throws GeneralSecurityException {
+    Key key = reparseLegacyProtoKey(entry.getKey());
+
+    if (key instanceof AesSivKey) {
+      return createAesSiv((AesSivKey) key);
+    }
+    throw new GeneralSecurityException("Cannot create DeterministicAead for key " + key);
+  }
+
+  private static StreamingAead createStreamingAead(KeysetHandleInterface.Entry entry)
+      throws GeneralSecurityException {
+    Key key = reparseLegacyProtoKey(entry.getKey());
+
+    if (key instanceof AesCtrHmacStreamingKey) {
+      return AesCtrHmacStreaming.create((AesCtrHmacStreamingKey) key);
+    }
+    if (key instanceof AesGcmHkdfStreamingKey) {
+      return AesGcmHkdfStreaming.create((AesGcmHkdfStreamingKey) key);
+    }
+    throw new GeneralSecurityException("Cannot create StreamingAead for key " + key);
+  }
+
+  private static HybridEncrypt createHybridEncrypt(KeysetHandleInterface.Entry entry)
+      throws GeneralSecurityException {
+    Key key = reparseLegacyProtoKey(entry.getKey());
+
+    if (key instanceof EciesPublicKey) {
+      return EciesAeadHkdfHybridEncrypt.create((EciesPublicKey) key);
+    }
+    if (key instanceof HpkePublicKey) {
+      return HpkeEncrypt.create((HpkePublicKey) key);
+    }
+    throw new GeneralSecurityException("Cannot create HybridEncrypt for key " + key);
+  }
+
+  private static HybridDecrypt createHybridDecrypt(KeysetHandleInterface.Entry entry)
+      throws GeneralSecurityException {
+    Key key = reparseLegacyProtoKey(entry.getKey());
+
+    if (key instanceof EciesPrivateKey) {
+      return EciesAeadHkdfHybridDecrypt.create((EciesPrivateKey) key);
+    }
+    if (key instanceof HpkePrivateKey) {
+      return HpkeDecrypt.create((HpkePrivateKey) key);
+    }
+    throw new GeneralSecurityException("Cannot create HybridDecrypt for key " + key);
+  }
+
+  private static Prf createPrf(KeysetHandleInterface.Entry entry) throws GeneralSecurityException {
+    Key key = reparseLegacyProtoKey(entry.getKey());
+
+    if (key instanceof AesCmacPrfKey) {
+      return createAesCmacPrf((AesCmacPrfKey) key);
+    }
+    if (key instanceof HkdfPrfKey) {
+      return createHkdfPrf((HkdfPrfKey) key);
+    }
+    if (key instanceof HmacPrfKey) {
+      return PrfHmacJce.create((HmacPrfKey) key);
+    }
+    throw new GeneralSecurityException("Cannot create Prf for key " + key);
+  }
+
+  private static PublicKeySign createPublicKeySign(KeysetHandleInterface.Entry entry)
+      throws GeneralSecurityException {
+    Key key = reparseLegacyProtoKey(entry.getKey());
+    if (key instanceof EcdsaPrivateKey) {
+      return EcdsaSignJce.create((EcdsaPrivateKey) key);
+    }
+    if (key instanceof Ed25519PrivateKey) {
+      return Ed25519Sign.create((Ed25519PrivateKey) key);
+    }
+    if (key instanceof RsaSsaPkcs1PrivateKey) {
+      return RsaSsaPkcs1SignJce.create((RsaSsaPkcs1PrivateKey) key);
+    }
+    if (key instanceof RsaSsaPssPrivateKey) {
+      return RsaSsaPssSignJce.create((RsaSsaPssPrivateKey) key);
+    }
+    throw new GeneralSecurityException("Cannot create PublicKeySign for key " + key);
+  }
+
+  private static PublicKeyVerify createPublicKeyVerify(KeysetHandleInterface.Entry entry)
+      throws GeneralSecurityException {
+    Key key = reparseLegacyProtoKey(entry.getKey());
+    if (key instanceof EcdsaPublicKey) {
+      return EcdsaVerifyJce.create((EcdsaPublicKey) key);
+    }
+    if (key instanceof Ed25519PublicKey) {
+      return Ed25519Verify.create((Ed25519PublicKey) key);
+    }
+    if (key instanceof RsaSsaPkcs1PublicKey) {
+      return RsaSsaPkcs1VerifyJce.create((RsaSsaPkcs1PublicKey) key);
+    }
+    if (key instanceof RsaSsaPssPublicKey) {
+      return RsaSsaPssVerifyJce.create((RsaSsaPssPublicKey) key);
+    }
+    throw new GeneralSecurityException("Cannot create PublicKeyVerify for key " + key);
   }
 }
