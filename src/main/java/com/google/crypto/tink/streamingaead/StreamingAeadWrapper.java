@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink.streamingaead;
 
-import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.StreamingAead;
 import com.google.crypto.tink.internal.LegacyProtoKey;
@@ -25,9 +24,8 @@ import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.streamingaead.internal.LegacyFullStreamingAead;
+import com.google.crypto.tink.streamingaead.internal.WrappedStreamingAead;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * StreamingAeadWrapper is the implementation of PrimitiveWrapper for the StreamingAead primitive.
@@ -50,24 +48,7 @@ public class StreamingAeadWrapper implements PrimitiveWrapper<StreamingAead, Str
   @Override
   public StreamingAead wrap(KeysetHandleInterface handle, PrimitiveFactory<StreamingAead> factory)
       throws GeneralSecurityException {
-    List<StreamingAead> allStreamingAeads = new ArrayList<>();
-    for (int i = 0; i < handle.size(); i++) {
-      KeysetHandleInterface.Entry entry = handle.getAt(i);
-      if (entry.getStatus().equals(KeyStatus.ENABLED)) {
-        StreamingAead streamingAead = factory.create(entry);
-        allStreamingAeads.add(streamingAead);
-      }
-    }
-    KeysetHandleInterface.Entry primaryEntry = handle.getPrimary();
-    if (primaryEntry == null) {
-      throw new GeneralSecurityException("No primary set");
-    }
-    StreamingAead primaryStreamingAead = factory.create(primaryEntry);
-    if (primaryStreamingAead == null) {
-      throw new GeneralSecurityException("No primary set");
-    }
-
-    return new StreamingAeadHelper(allStreamingAeads, primaryStreamingAead);
+    return WrappedStreamingAead.wrap(handle, factory);
   }
 
   @Override
