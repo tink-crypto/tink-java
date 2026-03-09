@@ -108,6 +108,189 @@ public final class SignaturePemKeysetReaderTest {
   }
 
   @Test
+  public void sha256WithRSAEncryption_isAlwaysAccepted() throws Exception {
+    // This PEM uses OID sha256WithRSAEncryption (1 2 840 113549 1 1 11), see RFC 4055.
+    // This OID should normally only be used with RSA SSA PKCS1 signatures with SHA256.
+
+    // from: wycheproof/testvectors/rsa_signature_test.json
+    String pem =
+        "-----BEGIN PUBLIC KEY-----\n"
+            + "MIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEAoHiH83M3gZawt0jN8xwU\n"
+            + "c1zPoPEXrK/aoh/eS251WTkLg057kunhzJ1J/A/mz7YEKWUrS/mndo9x/EJxym/v\n"
+            + "TkMRkuvcmGML+5TFuvGLTPeIHYRIPkxEwi2xWpYncFoLQqJtbz1gCa7g0qcb7fTU\n"
+            + "sO5rb+wvFuEnfsqjve26QGRzpHbRaI3w+tHaeVUmx+ZBmBtIErBbaS1gxgsr+kJM\n"
+            + "i2IPQNydulnixxDn7nULPhNMH3H0MhBoiv8XqqQc21ZodT8ABrHPlRvFlR9NiaMR\n"
+            + "lphepVwJZsNmK8/k5M008S5K/X5cShMHObEBfWpYOIL9ctsaZ0GHAsiwE1PM91t7\n"
+            + "k/rsDgvjYhHV8r2RDhVSMjcRu+tzhY+JnMHsBj72fYjgxpnVponFIQbwbpYPCdKj\n"
+            + "z4T1O76ipHPt8ubgF2gB0/ocLTWOHlom9kask3luwfrcaZHA7BnJ3ZCyWi3Tv3PS\n"
+            + "zx7qiGf5bKpaLfVJc6yyotoKE2fsdK+7lo9Rd2UjjRdpAgMBAAE=\n"
+            + "-----END PUBLIC KEY-----\n";
+
+    String expectedModulusHex =
+        "a07887f373378196b0b748cdf31c14735ccfa0f117acafdaa21fde4b6e7559390b834e7b92e9e1cc9d49f"
+            + "c0fe6cfb60429652b4bf9a7768f71fc4271ca6fef4e431192ebdc98630bfb94c5baf18b4cf7881d"
+            + "84483e4c44c22db15a9627705a0b42a26d6f3d6009aee0d2a71bedf4d4b0ee6b6fec2f16e1277ec"
+            + "aa3bdedba406473a476d1688df0fad1da795526c7e641981b4812b05b692d60c60b2bfa424c8b62"
+            + "0f40dc9dba59e2c710e7ee750b3e134c1f71f43210688aff17aaa41cdb5668753f0006b1cf951bc"
+            + "5951f4d89a31196985ea55c0966c3662bcfe4e4cd34f12e4afd7e5c4a130739b1017d6a583882fd"
+            + "72db1a67418702c8b01353ccf75b7b93faec0e0be36211d5f2bd910e1552323711bbeb73858f899"
+            + "cc1ec063ef67d88e0c699d5a689c52106f06e960f09d2a3cf84f53bbea2a473edf2e6e0176801d3"
+            + "fa1c2d358e1e5a26f646ac93796ec1fadc6991c0ec19c9dd90b25a2dd3bf73d2cf1eea8867f96ca"
+            + "a5a2df54973acb2a2da0a1367ec74afbb968f517765238d1769";
+    BigInteger expectedModulus = new BigInteger(1, Hex.decode(expectedModulusHex));
+
+    {
+      // import as PSS.
+      // This works, even though sha256WithRSAEncryption should normally not be used with PSS.
+      RsaSsaPssParameters expectedParams =
+          RsaSsaPssParameters.builder()
+              .setModulusSizeBits(3072)
+              .setPublicExponent(RsaSsaPssParameters.F4)
+              .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
+              .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
+              .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+              .setSaltLengthBytes(32)
+              .build();
+
+    KeysetHandle handle = SignaturePemKeysetReader.newBuilder()
+            .addPem(pem, PemKeyType.RSA_PSS_3072_SHA256)
+            .buildPublicKeysetHandle();
+
+      assertThat(handle.size()).isEqualTo(1);
+      RsaSsaPssPublicKey key = (RsaSsaPssPublicKey) handle.getAt(0).getKey();
+
+      assertThat(key.getParameters()).isEqualTo(expectedParams);
+      assertThat(key.getModulus()).isEqualTo(expectedModulus);
+    }
+
+    {
+      // import as PKCS1.
+      RsaSsaPkcs1Parameters expectedParams =
+          RsaSsaPkcs1Parameters.builder()
+              .setModulusSizeBits(3072)
+              .setPublicExponent(RsaSsaPkcs1Parameters.F4)
+              .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
+              .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
+              .build();
+
+      KeysetHandle handle = SignaturePemKeysetReader.newBuilder()
+              .addPem(pem, PemKeyType.RSA_SIGN_PKCS1_3072_SHA256)
+              .buildPublicKeysetHandle();
+
+      assertThat(handle.size()).isEqualTo(1);
+      RsaSsaPkcs1PublicKey key = (RsaSsaPkcs1PublicKey) handle.getAt(0).getKey();
+
+      assertThat(key.getParameters()).isEqualTo(expectedParams);
+      assertThat(key.getModulus()).isEqualTo(expectedModulus);
+    }
+  }
+
+  @Test
+  public void sha384withRsaPublicKey_isAcceptedWhenNotOnAndroid() throws Exception {
+    // This PEM uses OID SHA384withRSA (1 2 840 113549 1 1 12), see RFC 4055.
+    // This OID should normally only be used with RSA SSA PKCS1 signatures with SHA384.
+
+    // from: wycheproof/testvectors/rsa_signature_test.json, and manually changed one byte.
+    String pem =
+        "-----BEGIN PUBLIC KEY-----\n"
+            + "MIIBojANBgkqhkiG9w0BAQwFAAOCAY8AMIIBigKCAYEAoHiH83M3gZawt0jN8xwU\n"
+            + "c1zPoPEXrK/aoh/eS251WTkLg057kunhzJ1J/A/mz7YEKWUrS/mndo9x/EJxym/v\n"
+            + "TkMRkuvcmGML+5TFuvGLTPeIHYRIPkxEwi2xWpYncFoLQqJtbz1gCa7g0qcb7fTU\n"
+            + "sO5rb+wvFuEnfsqjve26QGRzpHbRaI3w+tHaeVUmx+ZBmBtIErBbaS1gxgsr+kJM\n"
+            + "i2IPQNydulnixxDn7nULPhNMH3H0MhBoiv8XqqQc21ZodT8ABrHPlRvFlR9NiaMR\n"
+            + "lphepVwJZsNmK8/k5M008S5K/X5cShMHObEBfWpYOIL9ctsaZ0GHAsiwE1PM91t7\n"
+            + "k/rsDgvjYhHV8r2RDhVSMjcRu+tzhY+JnMHsBj72fYjgxpnVponFIQbwbpYPCdKj\n"
+            + "z4T1O76ipHPt8ubgF2gB0/ocLTWOHlom9kask3luwfrcaZHA7BnJ3ZCyWi3Tv3PS\n"
+            + "zx7qiGf5bKpaLfVJc6yyotoKE2fsdK+7lo9Rd2UjjRdpAgMBAAE=\n"
+            + "-----END PUBLIC KEY-----\n";
+
+    if (Util.isAndroid()) {
+      // Is not supported on Android.
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> {
+            SignaturePemKeysetReader.newBuilder()
+                .addPem(pem, PemKeyType.RSA_PSS_3072_SHA256)
+                .buildPublicKeysetHandle();
+          });
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> {
+            SignaturePemKeysetReader.newBuilder()
+                .addPem(pem, PemKeyType.RSA_SIGN_PKCS1_3072_SHA256)
+                .buildPublicKeysetHandle();
+          });
+      return;
+    }
+
+    String expectedModulusHex =
+        "a07887f373378196b0b748cdf31c14735ccfa0f117acafdaa21fde4b6e7559390b834e7b92e9e1cc9d49f"
+            + "c0fe6cfb60429652b4bf9a7768f71fc4271ca6fef4e431192ebdc98630bfb94c5baf18b4cf7881d"
+            + "84483e4c44c22db15a9627705a0b42a26d6f3d6009aee0d2a71bedf4d4b0ee6b6fec2f16e1277ec"
+            + "aa3bdedba406473a476d1688df0fad1da795526c7e641981b4812b05b692d60c60b2bfa424c8b62"
+            + "0f40dc9dba59e2c710e7ee750b3e134c1f71f43210688aff17aaa41cdb5668753f0006b1cf951bc"
+            + "5951f4d89a31196985ea55c0966c3662bcfe4e4cd34f12e4afd7e5c4a130739b1017d6a583882fd"
+            + "72db1a67418702c8b01353ccf75b7b93faec0e0be36211d5f2bd910e1552323711bbeb73858f899"
+            + "cc1ec063ef67d88e0c699d5a689c52106f06e960f09d2a3cf84f53bbea2a473edf2e6e0176801d3"
+            + "fa1c2d358e1e5a26f646ac93796ec1fadc6991c0ec19c9dd90b25a2dd3bf73d2cf1eea8867f96ca"
+            + "a5a2df54973acb2a2da0a1367ec74afbb968f517765238d1769";
+    BigInteger expectedModulus = new BigInteger(1, Hex.decode(expectedModulusHex));
+
+
+    // When not on Android, this is accepted.
+
+    {
+      // import as PSS.
+      // This works, even though sha384WithRSAEncryption should normally not be used with PSS.
+      // Also, the hash function is wrong, which is ignored.
+      RsaSsaPssParameters expectedParams =
+        RsaSsaPssParameters.builder()
+            .setModulusSizeBits(3072)
+            .setPublicExponent(RsaSsaPssParameters.F4)
+            .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
+            .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
+            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+            .setSaltLengthBytes(32)
+            .build();
+
+      KeysetHandle handle =
+          SignaturePemKeysetReader.newBuilder()
+              .addPem(pem, PemKeyType.RSA_PSS_3072_SHA256)
+              .buildPublicKeysetHandle();
+
+      assertThat(handle.size()).isEqualTo(1);
+      RsaSsaPssPublicKey key = (RsaSsaPssPublicKey) handle.getAt(0).getKey();
+
+      assertThat(key.getParameters()).isEqualTo(expectedParams);
+      assertThat(key.getModulus()).isEqualTo(expectedModulus);
+    }
+    {
+      // import as PKCS1 with SHA256.
+      // The hash function is wrong, which is ignored.
+      RsaSsaPkcs1Parameters expectedParams =
+        RsaSsaPkcs1Parameters.builder()
+            .setModulusSizeBits(3072)
+            .setPublicExponent(RsaSsaPkcs1Parameters.F4)
+            .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
+            .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
+            .build();
+
+      KeysetHandle handle =
+          SignaturePemKeysetReader.newBuilder()
+              .addPem(pem, PemKeyType.RSA_SIGN_PKCS1_3072_SHA256)
+              .buildPublicKeysetHandle();
+
+      assertThat(handle.size()).isEqualTo(1);
+      RsaSsaPkcs1PublicKey key = (RsaSsaPkcs1PublicKey) handle.getAt(0).getKey();
+
+      assertThat(key.getParameters()).isEqualTo(expectedParams);
+      assertThat(key.getModulus()).isEqualTo(expectedModulus);
+    }
+  }
+
+
+
+  @Test
   public void read_oneECPublicKey_shouldWork() throws Exception {
     String pem =
         "-----BEGIN PUBLIC KEY-----\n"
