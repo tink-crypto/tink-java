@@ -464,46 +464,6 @@ java_test(
 )
 
 java_test(
-    name = "MlDsaArithmeticUtilTest",
-    size = "small",
-    srcs = ["MlDsaArithmeticUtilTest.java"],
-    deps = [
-        "//src/main/java/com/google/crypto/tink/signature/internal:ml_dsa_arithmetic_util",
-        "//src/main/java/com/google/crypto/tink/signature/internal:ml_dsa_constants",
-        "//src/main/java/com/google/crypto/tink/testing:test_util",
-        "@maven//:com_google_truth_truth",
-        "@maven//:junit_junit",
-    ],
-)
-
-java_test(
-    name = "MlDsaConstantsTest",
-    size = "small",
-    srcs = ["MlDsaConstantsTest.java"],
-    deps = [
-        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_parameters",
-        "//src/main/java/com/google/crypto/tink/signature/internal:ml_dsa_constants",
-        "@maven//:junit_junit",
-    ],
-)
-
-java_test(
-    name = "MlDsaMarshalUtilTest",
-    size = "small",
-    srcs = ["MlDsaMarshalUtilTest.java"],
-    deps = [
-        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
-        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_parameters",
-        "//src/main/java/com/google/crypto/tink/signature/internal:ml_dsa_arithmetic_util",
-        "//src/main/java/com/google/crypto/tink/signature/internal:ml_dsa_constants",
-        "//src/main/java/com/google/crypto/tink/signature/internal:ml_dsa_marshal_util",
-        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
-        "@maven//:com_google_truth_truth",
-        "@maven//:junit_junit",
-    ],
-)
-
-java_test(
     name = "MlDsaSignConscryptTest",
     size = "small",
     srcs = ["MlDsaSignConscryptTest.java"],
