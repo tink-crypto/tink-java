@@ -636,26 +636,6 @@ android_library(
     deps = ["@maven//:com_google_errorprone_error_prone_annotations"],
 )
 
-java_library(
-    name = "internal_configuration",
-    srcs = ["InternalConfiguration.java"],
-    deps = [
-        ":primitive_registry",
-        "//src/main/java/com/google/crypto/tink:configuration",
-        "//src/main/java/com/google/crypto/tink:keyset_handle_interface",
-    ],
-)
-
-android_library(
-    name = "internal_configuration-android",
-    srcs = ["InternalConfiguration.java"],
-    deps = [
-        ":primitive_registry-android",
-        "//src/main/java/com/google/crypto/tink:configuration-android",
-        "//src/main/java/com/google/crypto/tink:keyset_handle_interface-android",
-    ],
-)
-
 android_library(
     name = "registry_configuration-android",
     srcs = ["RegistryConfiguration.java"],
