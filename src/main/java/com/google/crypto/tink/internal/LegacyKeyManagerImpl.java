@@ -1,4 +1,4 @@
-// Copyright 2023 Google Inc.
+// Copyright 2023 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -152,7 +152,7 @@ public class LegacyKeyManagerImpl<P> implements KeyManager<P> {
 
   private static class LegacyPrivateKeyManagerImpl<P> extends LegacyKeyManagerImpl<P>
       implements PrivateKeyManager<P> {
-    protected LegacyPrivateKeyManagerImpl(
+    LegacyPrivateKeyManagerImpl(
         String typeUrl, Class<P> primitiveClass, Parser<? extends MessageLite> protobufKeyParser) {
       super(typeUrl, primitiveClass, KeyMaterialType.ASYMMETRIC_PRIVATE, protobufKeyParser);
     }

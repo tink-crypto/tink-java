@@ -48,7 +48,7 @@ class JwtPublicKeySignWrapper implements PrimitiveWrapper<JwtPublicKeySign, JwtP
     @SuppressWarnings("Immutable")
     private final MonitoringClient.Logger logger;
 
-    public WrappedJwtPublicKeySign(
+    WrappedJwtPublicKeySign(
         KeysetHandleInterface keysetHandle, PrimitiveFactory<JwtPublicKeySign> factory)
         throws GeneralSecurityException {
       this.primary = factory.create(keysetHandle.getPrimary());

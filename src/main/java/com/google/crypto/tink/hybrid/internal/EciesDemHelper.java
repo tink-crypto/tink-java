@@ -60,7 +60,7 @@ public final class EciesDemHelper {
 
     private final int keySizeInBytes;
 
-    public AesGcmDem(AesGcmParameters parameters) throws GeneralSecurityException {
+    AesGcmDem(AesGcmParameters parameters) throws GeneralSecurityException {
       if (parameters.getIvSizeBytes() != AES_GCM_IV_SIZE_IN_BYTES) {
         throw new GeneralSecurityException("invalid IV size");
       }
@@ -149,7 +149,7 @@ public final class EciesDemHelper {
     private final AesCtrHmacAeadParameters parameters;
     private final int keySizeInBytes;
 
-    public AesCtrHmacDem(AesCtrHmacAeadParameters parameters) {
+    AesCtrHmacDem(AesCtrHmacAeadParameters parameters) {
       this.parameters = parameters;
       this.keySizeInBytes = parameters.getAesKeySizeBytes() + parameters.getHmacKeySizeBytes();
     }
@@ -197,7 +197,7 @@ public final class EciesDemHelper {
     private final AesSivParameters parameters;
     private final int keySizeInBytes;
 
-    public AesSivDem(AesSivParameters parameters) {
+    AesSivDem(AesSivParameters parameters) {
       this.parameters = parameters;
       this.keySizeInBytes = parameters.getKeySizeBytes();
     }

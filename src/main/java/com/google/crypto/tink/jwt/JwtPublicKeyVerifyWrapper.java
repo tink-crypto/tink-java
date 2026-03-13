@@ -54,7 +54,7 @@ class JwtPublicKeyVerifyWrapper
     @SuppressWarnings("Immutable")
     private final List<JwtPublicKeyVerifyWithId> allVerifiers;
 
-    public WrappedJwtPublicKeyVerify(
+    WrappedJwtPublicKeyVerify(
         MonitoringClient.Logger logger, List<JwtPublicKeyVerifyWithId> allVerifiers) {
       this.logger = logger;
       this.allVerifiers = allVerifiers;

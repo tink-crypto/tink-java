@@ -69,7 +69,7 @@ public final class JsonParser {
   private static final class LazilyParsedNumber extends Number {
     private final String value;
 
-    public LazilyParsedNumber(String value) {
+    LazilyParsedNumber(String value) {
       this.value = value;
     }
 
