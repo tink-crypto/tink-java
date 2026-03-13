@@ -1,4 +1,4 @@
-// Copyright 2018 Google Inc.
+// Copyright 2018 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -85,12 +85,12 @@ public class InsecureNonceXChaCha20Test {
   }
 
   private static class XChaCha20TestVector {
-    public byte[] key;
-    public byte[] nonce;
-    public byte[] ciphertext;
-    public byte[] plaintext;
+    byte[] key;
+    byte[] nonce;
+    byte[] ciphertext;
+    byte[] plaintext;
 
-    public XChaCha20TestVector(String key, String nonce, String ciphertext, String plaintext) {
+    XChaCha20TestVector(String key, String nonce, String ciphertext, String plaintext) {
       this.key = Hex.decode(key);
       this.nonce = Hex.decode(nonce);
       this.ciphertext = Hex.decode(ciphertext);

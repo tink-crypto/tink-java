@@ -61,7 +61,7 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class RegistryTest {
   private static class CustomAeadKeyManager implements KeyManager<Aead> {
-    public CustomAeadKeyManager(String typeUrl) {
+    CustomAeadKeyManager(String typeUrl) {
       this.typeUrl = typeUrl;
     }
 
@@ -119,7 +119,7 @@ public class RegistryTest {
   private static interface SomeInterface {}
 
   private static class AeadToEncryptOnlyWrapper implements PrimitiveWrapper<Aead, SomeInterface> {
-    public static final AeadToEncryptOnlyWrapper WRAPPER = new AeadToEncryptOnlyWrapper();
+    static final AeadToEncryptOnlyWrapper WRAPPER = new AeadToEncryptOnlyWrapper();
 
     @Override
     public SomeInterface wrap(KeysetHandleInterface keysetHandle, PrimitiveFactory<Aead> factory)

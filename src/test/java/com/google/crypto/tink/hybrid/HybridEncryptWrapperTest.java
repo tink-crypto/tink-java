@@ -307,7 +307,7 @@ public class HybridEncryptWrapperTest {
   }
 
   private static class AlwaysFailingHybridEncrypt implements HybridEncrypt {
-    public AlwaysFailingHybridEncrypt(HpkePublicKey key) {}
+    AlwaysFailingHybridEncrypt(HpkePublicKey key) {}
 
     @Override
     public byte[] encrypt(byte[] message, byte[] contextInfo) throws GeneralSecurityException {

@@ -576,7 +576,7 @@ public class AeadWrapperTest {
   }
 
   private static class AlwaysFailingAead implements Aead {
-    public AlwaysFailingAead(com.google.crypto.tink.aead.AesCtrHmacAeadKey key) {}
+    AlwaysFailingAead(com.google.crypto.tink.aead.AesCtrHmacAeadKey key) {}
 
     @Override
     public byte[] encrypt(byte[] plaintext, byte[] aad) throws GeneralSecurityException {

@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc.
+// Copyright 2017 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -55,14 +55,14 @@ public class AesEaxKeyManagerTest {
 
   private static class PublicTestVector {
     String name;
-    public byte[] keyValue;
-    public byte[] plaintext;
-    public byte[] aad;
-    public byte[] iv;
-    public byte[] ciphertext;
-    public byte[] tag;
+    byte[] keyValue;
+    byte[] plaintext;
+    byte[] aad;
+    byte[] iv;
+    byte[] ciphertext;
+    byte[] tag;
 
-    public PublicTestVector(
+    PublicTestVector(
         String name,
         String keyValue,
         String plaintext,

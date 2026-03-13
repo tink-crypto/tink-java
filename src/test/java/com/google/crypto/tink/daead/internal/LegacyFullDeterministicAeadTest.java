@@ -111,7 +111,7 @@ public class LegacyFullDeterministicAeadTest {
     final LegacyProtoKey key;
     final byte[] outputPrefix;
 
-    public LegacyFullDeterministicAeadTestVector(
+    LegacyFullDeterministicAeadTestVector(
         int keySizeBytes,
         OutputPrefixType outputPrefixType,
         @Nullable Integer idRequirement,

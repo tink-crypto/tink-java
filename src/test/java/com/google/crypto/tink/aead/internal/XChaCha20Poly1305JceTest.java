@@ -1,4 +1,4 @@
-// Copyright 2018 Google Inc.
+// Copyright 2018 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -49,14 +49,14 @@ public class XChaCha20Poly1305JceTest {
   private static final int KEY_SIZE = 32;
 
   private static class XChaCha20Poly1305TestVector {
-    public byte[] key;
-    public byte[] nonce;
-    public byte[] plaintext;
-    public byte[] aad;
-    public byte[] ciphertext;
-    public byte[] tag;
+    byte[] key;
+    byte[] nonce;
+    byte[] plaintext;
+    byte[] aad;
+    byte[] ciphertext;
+    byte[] tag;
 
-    public XChaCha20Poly1305TestVector(
+    XChaCha20Poly1305TestVector(
         String key, String nonce, String plaintext, String aad, String ciphertext, String tag) {
       this.key = Hex.decode(key);
       this.nonce = Hex.decode(nonce);
