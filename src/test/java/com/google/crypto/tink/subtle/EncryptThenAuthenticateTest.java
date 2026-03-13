@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc.
+// Copyright 2017 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -44,15 +44,15 @@ import org.junit.runner.RunWith;
 @RunWith(Theories.class)
 public class EncryptThenAuthenticateTest {
   private static class RFCTestVector {
-    public byte[] encKey;
-    public byte[] macKey;
-    public byte[] ciphertext;
-    public byte[] aad;
-    public String macAlg;
-    public int ivSize;
-    public int tagLength;
+    byte[] encKey;
+    byte[] macKey;
+    byte[] ciphertext;
+    byte[] aad;
+    String macAlg;
+    int ivSize;
+    int tagLength;
 
-    public RFCTestVector(
+    RFCTestVector(
         String macKey,
         String encKey,
         String ciphertext,

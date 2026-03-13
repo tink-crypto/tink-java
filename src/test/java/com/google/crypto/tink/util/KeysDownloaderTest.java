@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc.
+// Copyright 2017 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -469,36 +469,36 @@ public class KeysDownloaderTest {
     private int statusCode = HttpStatusCodes.STATUS_CODE_OK;
 
     @CanIgnoreReturnValue
-    public HttpResponseBuilder setStatusCode(int statusCode) {
+    HttpResponseBuilder setStatusCode(int statusCode) {
       this.statusCode = statusCode;
       return this;
     }
 
     @CanIgnoreReturnValue
-    public HttpResponseBuilder setContent(String content) {
+    HttpResponseBuilder setContent(String content) {
       this.content = content;
       return this;
     }
 
     @CanIgnoreReturnValue
-    public HttpResponseBuilder setCacheControlWithMaxAgeInSeconds(Long maxAgeInSeconds) {
+    HttpResponseBuilder setCacheControlWithMaxAgeInSeconds(Long maxAgeInSeconds) {
       this.maxAgeInSeconds = maxAgeInSeconds;
       return this;
     }
 
     @CanIgnoreReturnValue
-    public HttpResponseBuilder clearCacheControl() {
+    HttpResponseBuilder clearCacheControl() {
       this.maxAgeInSeconds = null;
       return this;
     }
 
     @CanIgnoreReturnValue
-    public HttpResponseBuilder setAgeInSeconds(Long ageInSeconds) {
+    HttpResponseBuilder setAgeInSeconds(Long ageInSeconds) {
       this.ageInSeconds = ageInSeconds;
       return this;
     }
 
-    public MockLowLevelHttpResponse build() {
+    MockLowLevelHttpResponse build() {
       MockLowLevelHttpResponse response =
           new MockLowLevelHttpResponse().setContent(content).setStatusCode(statusCode);
       if (ageInSeconds != null) {

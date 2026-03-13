@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc.
+// Copyright 2017 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -328,7 +328,7 @@ public class AesEaxJceTest {
   }
 
   private static class TestVector {
-    public TestVector(
+    TestVector(
         String hexMessage, String hexKey, String hexNonce, String hexAad, String hexCiphertext) {
       this.hexMessage = hexMessage;
       this.hexKey = hexKey;
@@ -337,11 +337,11 @@ public class AesEaxJceTest {
       this.hexCiphertext = hexCiphertext;
     }
 
-    public final String hexMessage;
-    public final String hexKey;
-    public final String hexNonce;
-    public final String hexAad;
-    public final String hexCiphertext;
+    final String hexMessage;
+    final String hexKey;
+    final String hexNonce;
+    final String hexAad;
+    final String hexCiphertext;
   }
 
   @DataPoints("testVectors")

@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc.
+// Copyright 2017 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -52,11 +52,11 @@ import org.junit.runners.JUnit4;
 public class PrfHmacJceTest {
   private static class MacTestVector {
     String algName;
-    public byte[] key;
-    public byte[] message;
-    public byte[] tag;
+    byte[] key;
+    byte[] message;
+    byte[] tag;
 
-    public MacTestVector(String algName, String key, String message, String tag) {
+    MacTestVector(String algName, String key, String message, String tag) {
       this.algName = algName;
       this.key = Hex.decode(key);
       this.message = Hex.decode(message);

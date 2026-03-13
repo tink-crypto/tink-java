@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc.
+// Copyright 2017 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -80,13 +80,13 @@ public class ChaCha20Test {
 
   /** https://tools.ietf.org/html/rfc7539#section-2.4.2 */
   private static class Rfc7539TestVector {
-    public byte[] key;
-    public byte[] plaintext;
-    public byte[] nonce;
-    public byte[] ciphertext;
+    byte[] key;
+    byte[] plaintext;
+    byte[] nonce;
+    byte[] ciphertext;
     int initialCounter;
 
-    public Rfc7539TestVector(
+    Rfc7539TestVector(
         String key, String plaintext, String nonce, String ciphertext, int initialCounter) {
       this.key = Hex.decode(key);
       this.plaintext = Hex.decode(plaintext);
