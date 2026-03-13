@@ -115,7 +115,7 @@ public final class SerializationRegistryTest {
 
   @Immutable
   private static final class TestSerializationA implements Serialization {
-    public TestSerializationA(Bytes objectIdentifier) {
+    TestSerializationA(Bytes objectIdentifier) {
       this.objectIdentifier = objectIdentifier;
     }
 
@@ -129,7 +129,7 @@ public final class SerializationRegistryTest {
 
   @Immutable
   private static final class TestSerializationB implements Serialization {
-    public TestSerializationB(Bytes objectIdentifier) {
+    TestSerializationB(Bytes objectIdentifier) {
       this.objectIdentifier = objectIdentifier;
     }
 

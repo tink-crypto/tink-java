@@ -32,7 +32,7 @@ public final class KeyTesterTest {
   private static class TestParameters extends Parameters {
     private final int hashCode;
 
-    public TestParameters(int hashCode) {
+    TestParameters(int hashCode) {
       this.hashCode = hashCode;
     }
 
@@ -59,12 +59,12 @@ public final class KeyTesterTest {
     private final int id;
     private final TestParameters parameters;
 
-    public TestKey(int id, TestParameters parameters) {
+    TestKey(int id, TestParameters parameters) {
       this.id = id;
       this.parameters = parameters;
     }
 
-    public TestKey(int id) {
+    TestKey(int id) {
       this.id = id;
       this.parameters = new TestParameters(0);
     }

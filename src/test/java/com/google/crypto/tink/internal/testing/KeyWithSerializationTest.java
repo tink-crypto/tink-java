@@ -34,7 +34,7 @@ import org.junit.runners.JUnit4;
 public final class KeyWithSerializationTest {
   @Immutable
   private static final class TestKey extends Key {
-    public TestKey() {}
+    TestKey() {}
 
     @Override
     public Parameters getParameters() {

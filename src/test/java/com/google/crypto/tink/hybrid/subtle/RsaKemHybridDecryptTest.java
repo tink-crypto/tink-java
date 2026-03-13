@@ -148,15 +148,15 @@ public final class RsaKemHybridDecryptTest {
   }
 
   private static class RsaKemHybridTestVector {
-    public RSAPrivateKey privateKey;
-    public String hmacAlgo;
-    public byte[] salt;
-    public byte[] contextInfo;
+    RSAPrivateKey privateKey;
+    String hmacAlgo;
+    byte[] salt;
+    byte[] contextInfo;
     int aesGcmKeySizeInBytes;
     String plaintext;
-    public byte[] ciphertext;
+    byte[] ciphertext;
 
-    public RsaKemHybridTestVector(
+    RsaKemHybridTestVector(
         String privateKey,
         String hmacAlgo,
         String salt,

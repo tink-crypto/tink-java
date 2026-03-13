@@ -37,7 +37,7 @@ public final class KeyManagerRegistryTest {
   private static class Primitive1 {}
 
   private static class TestKeyManager implements KeyManager<Primitive1> {
-    public TestKeyManager(String typeUrl) {
+    TestKeyManager(String typeUrl) {
       this.typeUrl = typeUrl;
     }
 

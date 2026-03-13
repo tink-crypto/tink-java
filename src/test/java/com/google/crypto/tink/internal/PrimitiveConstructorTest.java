@@ -49,7 +49,7 @@ public final class PrimitiveConstructorTest {
 
   @Immutable
   private static final class TestPrimitive {
-    public TestPrimitive() {}
+    TestPrimitive() {}
   }
 
   private static TestPrimitive getTestPrimitive(TestKey key) {

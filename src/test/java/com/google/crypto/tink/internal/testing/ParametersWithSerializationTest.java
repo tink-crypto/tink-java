@@ -30,7 +30,7 @@ import org.junit.runners.JUnit4;
 public final class ParametersWithSerializationTest {
   @Immutable
   private static final class TestParameters extends Parameters {
-    public TestParameters() {}
+    TestParameters() {}
 
     @Override
     public boolean hasIdRequirement() {

@@ -75,12 +75,12 @@ public class MutablePrimitiveRegistryMultithreadTest {
 
   @Immutable
   private static final class TestPrimitiveA {
-    public TestPrimitiveA() {}
+    TestPrimitiveA() {}
   }
 
   @Immutable
   private static final class TestPrimitiveB {
-    public TestPrimitiveB() {}
+    TestPrimitiveB() {}
   }
 
   private static MutablePrimitiveRegistryMultithreadTest.TestPrimitiveA getPrimitiveAKey1(
