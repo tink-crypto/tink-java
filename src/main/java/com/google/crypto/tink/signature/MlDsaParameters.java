@@ -46,8 +46,6 @@ public final class MlDsaParameters extends SignatureParameters {
 
   /**
    * Describes the parameters set of ML-DSA that is used.
-   * In the beginning, only ML-DSA-65 will be supported on the implementation side, but we still
-   * add ML-DSA-87 since the implementation is going to be added in the near future.
    *
    * <p>ML-DSA-44 is not supported.
    */
