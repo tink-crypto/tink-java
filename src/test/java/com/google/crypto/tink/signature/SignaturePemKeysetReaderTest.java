@@ -876,6 +876,67 @@ public final class SignaturePemKeysetReaderTest {
           + "HgLy6ERP\n"
           + "-----END PUBLIC KEY-----\n";
 
+  // From:
+  // https://datatracker.ietf.org/doc/html/rfc9881#name-example-public-keys
+  private static final String ML_DSA_87_PUBLIC_KEY_PEM =
+      "-----BEGIN PUBLIC KEY-----\n"
+          + "MIIKMjALBglghkgBZQMEAxMDggohAJeSvOwvJDBoaoL8zzwvX/Zl53HXq0G5AljP\n"
+          + "p+kOyXEkpzsyO5uiGrZNdnxDP1pSHv/hj4bkahiJUsRGfgSLcp5/xNEV5+SNoYlt\n"
+          + "X+EZsQ3N3vYssweVQHS0IzblKDbeYdqUH4036misgQb6vhkHBnmvYAhTcSD3B5O4\n"
+          + "6pzA5ue3tMmlx0IcYPJEUboekz2xou4Wx5VZ8hs9G4MFhQqkKvuxPx9NW59INfnY\n"
+          + "ffzrFi0O9Kf9xMuhdDzRyHu0ln2hbMh2S2Vp347lvcv/6aTgV0jm/fIlr55O63dz\n"
+          + "ti6Phfm1a1SJRVUYRPvYmAakrDab7S0lYQD2iKatXgpwmCbcREnpHiPFUG5kI2Hv\n"
+          + "WjE3EvebxLMYaGHKhaS6sX5/lD0bijM6o6584WtEDWAY+eBNr1clx/GpP60aWie2\n"
+          + "eJW9JJqpFoXeIK8yyLfiaMf5aHfQyFABE1pPCo8bgmT6br5aNJ2K7K0aFimczy/Z\n"
+          + "x7hbrOLO06oSdrph7njtflyltnzdRYqTVAMOaru6v1agojFv7J26g7UdQv0xZ/Hg\n"
+          + "+QhV1cZlCbIQJl3B5U7ES0O6fPmu8Ri0TYCRLOdRZqZlHhFs6+SSKacGLAmTH3Gr\n"
+          + "0ik/dvfvwyFbqXgAA35Y5HC9u7Q8GwQ56vecVNk7RKrJ7+n74VGHTPsqZMvuKMxM\n"
+          + "D+d3Xl2HDxwC5bLjxQBMmV8kybd5y3U6J30Ocf1CXra8LKVs4SnbUfcHQPMeY5dr\n"
+          + "UMcxLpeX14xbGsJKX6NHzJFuCoP1w7Z1zTC4Hj+hC5NETgc5dXHM6Yso2lHbkFa8\n"
+          + "coxbCxGB4vvTh7THmrGl/v7ONxZ693LdrRTrTDmC2lpZ0OnrFz7GMVCRFwAno6te\n"
+          + "9qoSnLhYVye5NYooUB1xOnLz8dsxcUKG+bZAgBOvBgRddVkvwLfdR8c+2cdbEenX\n"
+          + "xp98rfwygKkGLFJzxDvhw0+HRIhkzqe1yX1tMvWb1fJThGU7tcT6pFvqi4lAKEPm\n"
+          + "Rba5Jp4r2YjdrLAzMo/7BgRQ998IAFPmlpslHodezsMs/FkoQNaatpp14Gs3nFNd\n"
+          + "lSZrCC9PCckxYrM7DZ9zB6TqqlIQRDf+1m+O4+q71F1nslqBM/SWRotSuv/b+tk+\n"
+          + "7xqYGLXkLscieIo9jTUp/Hd9K6VwgB364B7IgwKDfB+54DVXJ2Re4QRsP5Ffaugt\n"
+          + "rU+2sDVqRlGP/INBVcO0/m2vpsyKXM9TxzoISdjUT33PcnVOcOG337RHu070nRpx\n"
+          + "j2Fxu84gCVDgzpJhBrFRo+hx1c5JcxvWZQqbDKly2hxfE21Egg6mODwI87OEzyM4\n"
+          + "54nFE/YYzFaUpvDO4QRRHh7XxfI6Hr/YoNuEJFUyQBVtv2IoMbDGQ9HFUbbz96mN\n"
+          + "KbhcLeBaZfphXu4WSVvZBzdnIRW1PpHF2QAozz8ak5U6FT3lO0QITpzP9rc2aTkm\n"
+          + "2u/rstd6pa1om5LzFoZmnfFtFxXMWPeiz7ct0aUekvglmTp0Aivn6etgVGVEVwlN\n"
+          + "FJKPICFeeyIqxWtRrb7I2L22mDl5p+OiG0S10VGMqX0LUZX1HtaiQ1DIl0fh7epR\n"
+          + "tEjj6RRwVM6SeHPJDbOU2GiI4H3/F3WT1veeFSMCIErrA74jhq8+JAeL0CixaJ9e\n"
+          + "FHyfRSyM6wLsWcydtjoDV2zur+mCOQI4l9oCNmMKU8Def0NaGYaXkvqzbnueY1dg\n"
+          + "8JBp5kMucAA1rCoCh5//Ch4b7FIgRxk9lOtd8e/VPuoRRMp4lAhS9eyXJ5BLNm7e\n"
+          + "T14tMx+tX8KC6ixH6SMUJ3HD3XWoc1dIfe+Z5fGOnZ7WI8F10CiIxR+CwHqA1UcW\n"
+          + "s8PCvb4unwqbuq6+tNUpNodkBvXADo5LvQpewFeX5iB8WrbIjxpohCG9BaEU9Nfe\n"
+          + "KsJB+g6L7f9H92Ldy+qpEAT40x6FCVyBBUmUrTgm40S6lgQIEPwLKtHeSM+t4ALG\n"
+          + "LlpJoHMas4NEvBY23xa/YH1WhV5W1oQAPHGOS62eWgmZefzd7rHEp3ds03o0F8sO\n"
+          + "GE4p75vA6HR1umY74J4Aq1Yut8D3Fl+WmptCQUGYzPG/8qLI1omkFOznZiknZlaJ\n"
+          + "6U25YeuuxWFcvBp4lcaFGslhQy/xEY1GB9Mu+dxzLVEzO+S00OMN3qeE7Ki+R+dB\n"
+          + "vpwZYx3EcKUu9NwTpPNjP9Q014fBcJd7QX31mOHQ3eUGu3HW8LwX7HDjsDzcGWXL\n"
+          + "Npk/YzsEcuUNCSOsbGb98dPmRZzBIfD1+U0J6dvPXWkOIyM4OKC6y3xjjRsmUKQw\n"
+          + "jNFxtoVRJtHaZypu2FqNeMKG+1b0qz0hSXUoBFxjJiyKQq8vmALFO3u4vijnj+C1\n"
+          + "zkX7t6GvGjsoqNlLeJDjyILjm8mOnwrXYCW/DdLwApjnFBoiaz187kFPYE0eC6VN\n"
+          + "EdX+WLzOpq13rS6MHKrPMkWQFLe5EAGx76itFypSP7jjZbV3Ehv5/Yiixgwh6CHX\n"
+          + "tqy0elqZXkDKztXCI7j+beXhjp0uWJOu/rt6rn/xoUYmDi8RDpOVKCE6ACWjjsea\n"
+          + "q8hhsl68UJpGdMEyqqy34BRvFO/RHPyvTKpPd1pxbOMl4KQ1pNNJ1yC88TdFCvxF\n"
+          + "BG/Bofg6nTKXd6cITkqtrnEizpcAWTBSjrPH9/ESmzcoh6NxFVo7ogGiXL8dy2Tn\n"
+          + "ze4JLDFB+1VQ/j0N2C6HDleLK0ZQCBgRO49laXc8Z3OFtppCt33Lp6z/2V/URS4j\n"
+          + "qqHTfh2iFR6mWNQKNZayesn4Ep3GzwZDdyYktZ9PRhIw30ccomCHw5QtXGaH32CC\n"
+          + "g1k1o/h8t2Kww7HQ3aSmUzllvvG3uCkuJUwBTQkP7YV8RMGDnGlMCmTj+tkKEfU0\n"
+          + "citu4VdPLhSdVddE3kiHAk4IURQxwGJ1DhbHSrnzJC8ts/+xKo1hB/qiKdb2NzsH\n"
+          + "8205MrO9sEwZ3WTq3X+Tw8Vkw1ihyB3PHJwx5bBlaPl1RMF9wVaYxcs4mDqa/EJ4\n"
+          + "P6p3OlLJ2CYGkL6eMVaqW8FQneo/aVh2lc1v8XK6g+am2KfWu+u7zaNnJzGYP4m8\n"
+          + "WDHcN8PzxcVvrMaX88sgvV2629cC5UhErC9iaQH+FZ25Pf1Hc9j+c1YrhGwfyFbR\n"
+          + "gCdihA68cteYi951y8pw0xnTLODMAlO7KtRVcj7gx/RzbObmZlxayjKkgcU4Obwl\n"
+          + "kWewE9BCM5Xuuaqu4yBhSafVUNZ/xf3+SopcNdJRC2ZDeauPcoVaKvR6vOKmMgSO\n"
+          + "r4nly0qI3rxTpZUQOszk8c/xis/wev4etXFqoeQLYxNMOjrpV5+of1Fb4JPC0p22\n"
+          + "1rZck2YeAGNrWScE0JPMZxbCNC6xhT1IyFxjrIooVEYse3fn470erFvKKP+qALXT\n"
+          + "SfilR62HW5aowrKRDJMBMJo/kTilaTER9Vs8AJypR8Od/ILZjrHKpKnL6IX3hvqG\n"
+          + "5VvgYiIvi6kKl0BzMmsxISrs4KNKYA==\n"
+          + "-----END PUBLIC KEY-----\n";
+
   @Test
   public void read_oneMlDsa65PublicKey_shouldWork() throws Exception {
     byte[] expectedKeyBytes =
@@ -946,8 +1007,110 @@ public final class SignaturePemKeysetReaderTest {
     MlDsaParameters expectedParameters = MlDsaParameters.create(
           MlDsaParameters.MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.NO_PREFIX);
 
-    KeysetHandle handle = SignaturePemKeysetReader.newBuilder()
+    KeysetHandle handle =
+        SignaturePemKeysetReader.newBuilder()
             .addPem(ML_DSA_65_PUBLIC_KEY_PEM, PemKeyType.ML_DSA_65)
+            .buildPublicKeysetHandle();
+    assertThat(handle.size()).isEqualTo(1);
+    MlDsaPublicKey publicKey = (MlDsaPublicKey) handle.getAt(0).getKey();
+    assertThat(publicKey.getParameters()).isEqualTo(expectedParameters);
+    assertThat(publicKey.getSerializedPublicKey().toByteArray()).isEqualTo(expectedKeyBytes);
+  }
+
+  @Test
+  public void read_oneMlDsa87PublicKey_shouldWork() throws Exception {
+    byte[] expectedKeyBytes =
+        Hex.decode(
+            "9792bcec2f2430686a82fccf3c2f5ff665e771d7ab4"
+                + "1b90258cfa7e90ec97124a73b323b9ba21ab64d767c433f5a521effe18f86e46"
+                + "a188952c4467e048b729e7fc4d115e7e48da1896d5fe119b10dcddef62cb3079"
+                + "54074b42336e52836de61da941f8d37ea68ac8106fabe19070679af600853712"
+                + "0f70793b8ea9cc0e6e7b7b4c9a5c7421c60f24451ba1e933db1a2ee16c79559f"
+                + "21b3d1b8305850aa42afbb13f1f4d5b9f4835f9d87dfceb162d0ef4a7fdc4cba"
+                + "1743cd1c87bb4967da16cc8764b6569df8ee5bdcbffe9a4e05748e6fdf225af9"
+                + "e4eeb7773b62e8f85f9b56b548945551844fbd89806a4ac369bed2d256100f68"
+                + "8a6ad5e0a709826dc4449e91e23c5506e642361ef5a313712f79bc4b3186861c"
+                + "a85a4bab17e7f943d1b8a333aa3ae7ce16b440d6018f9e04daf5725c7f1a93fa"
+                + "d1a5a27b67895bd249aa91685de20af32c8b7e268c7f96877d0c85001135a4f0"
+                + "a8f1b8264fa6ebe5a349d8aecad1a16299ccf2fd9c7b85bace2ced3aa1276ba6"
+                + "1ee78ed7e5ca5b67cdd458a9354030e6abbbabf56a0a2316fec9dba83b51d42f"
+                + "d3167f1e0f90855d5c66509b210265dc1e54ec44b43ba7cf9aef118b44d80912"
+                + "ce75166a6651e116cebe49229a7062c09931f71abd2293f76f7efc3215ba9780"
+                + "0037e58e470bdbbb43c1b0439eaf79c54d93b44aac9efe9fbe151874cfb2a64c"
+                + "bee28cc4c0fe7775e5d870f1c02e5b2e3c5004c995f24c9b779cb753a277d0e7"
+                + "1fd425eb6bc2ca56ce129db51f70740f31e63976b50c7312e9797d78c5b1ac24"
+                + "a5fa347cc916e0a83f5c3b675cd30b81e3fa10b93444e07397571cce98b28da5"
+                + "1db9056bc728c5b0b1181e2fbd387b4c79ab1a5fefece37167af772ddad14eb4"
+                + "c3982da5a59d0e9eb173ec6315091170027a3ab5ef6aa129cb8585727b9358a2"
+                + "8501d713a72f3f1db31714286f9b6408013af06045d75592fc0b7dd47c73ed9c"
+                + "75b11e9d7c69f7cadfc3280a9062c5273c43be1c34f87448864cea7b5c97d6d3"
+                + "2f59bd5f25384653bb5c4faa45bea8b89402843e645b6b9269e2bd988ddacb03"
+                + "3328ffb060450f7df080053e6969b251e875ecec32cfc592840d69ab69a75e06"
+                + "b379c535d95266b082f4f09c93162b33b0d9f7307a4eaaa52104437fed66f8ee"
+                + "3eabbd45d67b25a8133f496468b52baffdbfad93eef1a9818b5e42ec722788a3"
+                + "d8d3529fc777d2ba570801dfae01ec88302837c1fb9e0355727645ee1046c3f9"
+                + "15f6ae82dad4fb6b0356a46518ffc834155c3b4fe6dafa6cc8a5ccf53c73a084"
+                + "9d8d44f7dcf72754e70e1b7dfb447bb4ef49d1a718f6171bbce200950e0ce926"
+                + "106b151a3e871d5ce49731bd6650a9b0ca972da1c5f136d44820ea6383c08f3b"
+                + "384cf2338e789c513f618cc5694a6f0cee104511e1ed7c5f23a1ebfd8a0db842"
+                + "4553240156dbf622831b0c643d1c551b6f3f7a98d29b85c2de05a65fa615eee1"
+                + "6495bd90737672115b53e91c5d90028cf3f1a93953a153de53b44084e9ccff6b"
+                + "736693926daefebb2d77aa5ad689b92f31686669df16d1715cc58f7a2cfb72dd"
+                + "1a51e92f825993a74022be7e9eb6054654457094d14928f20215e7b222ac56b5"
+                + "1adbec8d8bdb6983979a7e3a21b44b5d1518ca97d0b5195f51ed6a24350c8974"
+                + "7e1edea51b448e3e9147054ce927873c90db394d86888e07dff177593d6f79e1"
+                + "52302204aeb03be2386af3e24078bd028b1689f5e147c9f452c8ceb02ec59cc9"
+                + "db63a03576ceeafe98239023897da0236630a53c0de7f435a19869792fab36e7"
+                + "b9e635760f09069e6432e700035ac2a02879fff0a1e1bec522047193d94eb5df"
+                + "1efd53eea1144ca78940852f5ec9727904b366ede4f5e2d331fad5fc282ea2c4"
+                + "7e923142771c3dd75a87357487def99e5f18e9d9ed623c175d02888c51f82c07"
+                + "a80d54716b3c3c2bdbe2e9f0a9bbaaebeb4d52936876406f5c00e8e4bbd0a5ec"
+                + "05797e6207c5ab6c88f1a688421bd05a114f4d7de2ac241fa0e8bedff47f762d"
+                + "dcbeaa91004f8d31e85095c81054994ad3826e344ba96040810fc0b2ad1de48c"
+                + "fade002c62e5a49a0731ab38344bc1636df16bf607d56855e56d684003c718e4"
+                + "bad9e5a099979fcddeeb1c4a7776cd37a3417cb0e184e29ef9bc0e87475ba663"
+                + "be09e00ab562eb7c0f7165f969a9b42414198ccf1bff2a2c8d689a414ece7662"
+                + "927665689e94db961ebaec5615cbc1a7895c6851ac961432ff1118d4607d32ef"
+                + "9dc732d51333be4b4d0e30ddea784eca8be47e741be9c19631dc470a52ef4dc1"
+                + "3a4f3633fd434d787c170977b417df598e1d0dde506bb71d6f0bc17ec70e3b03"
+                + "cdc1965cb36993f633b0472e50d0923ac6c66fdf1d3e6459cc121f0f5f94d09e"
+                + "9dbcf5d690e23233838a0bacb7c638d1b2650a4308cd171b6855126d1da672a6"
+                + "ed85a8d78c286fb56f4ab3d21497528045c63262c8a42af2f9802c53b7bb8be2"
+                + "8e78fe0b5ce45fbb7a1af1a3b28a8d94b7890e3c882e39bc98e9f0ad76025bf0"
+                + "dd2f00298e7141a226b3d7cee414f604d1e0ba54d11d5fe58bccea6ad77ad2e8"
+                + "c1caacf32459014b7b91001b1efa8ad172a523fb8e365b577121bf9fd88a2c60"
+                + "c21e821d7b6acb47a5a995e40caced5c223b8fe6de5e18e9d2e5893aefebb7aa"
+                + "e7ff1a146260e2f110e939528213a0025a38ec79aabc861b25ebc509a4674c13"
+                + "2aaacb7e0146f14efd11cfcaf4caa4f775a716ce325e0a435a4d349d720bcf13"
+                + "7450afc45046fc1a1f83a9d329777a7084e4aadae7122ce97005930528eb3c7f"
+                + "7f1129b372887a371155a3ba201a25cbf1dcb64e7cdee092c3141fb5550fe3d0"
+                + "dd82e870e578b2b46500818113b8f6569773c677385b69a42b77dcba7acffd95"
+                + "fd4452e23aaa1d37e1da2151ea658d40a3596b27ac9f8129dc6cf0643772624b"
+                + "59f4f461230df471ca26087c3942d5c6687df6082835935a3f87cb762b0c3b1d"
+                + "0dda4a6533965bef1b7b8292e254c014d090fed857c44c1839c694c0a64e3fad"
+                + "90a11f534722b6ee1574f2e149d55d744de4887024e08511431c062750e16c74"
+                + "ab9f3242f2db3ffb12a8d6107faa229d6f6373b07f36d3932b3bdb04c19dd64e"
+                + "add7f93c3c564c358a1c81dcf1c9c31e5b06568f97544c17dc15698c5cb38983"
+                + "a9afc42783faa773a52c9d8260690be9e3156aa5bc1509dea3f69587695cd6ff"
+                + "172ba83e6a6d8a7d6bbebbbcda3672731983f89bc5831dc37c3f3c5c56facc69"
+                + "7f3cb20bd5dbadbd702e54844ac2f626901fe159db93dfd4773d8fe73562b846"
+                + "c1fc856d1802762840ebc72d7988bde75cbca70d319d32ce0cc0253bb2ad4557"
+                + "23ee0c7f4736ce6e6665c5aca32a481c53839bc259167b013d0423395eeb9aaa"
+                + "ee3206149a7d550d67fc5fdfe4a8a5c35d2510b664379ab8f72855a2af47abce"
+                + "2a632048eaf89e5cb4a88debc53a595103acce4f1cff18acff07afe1eb5716aa"
+                + "1e40b63134c3a3ae9579fa87f515be093c2d29db6d6b65c93661e00636b59270"
+                + "4d093cc6716c2342eb1853d48c85c63ac8a2854462c7b77e7e3bd1eac5bca28f"
+                + "faa00b5d349f8a547ad875b96a8c2b2910c9301309a3f9138a5693111f55b3c0"
+                + "09ca947c39dfc82d98eb1caa4a9cbe885f786fa86e55be062222f8ba90a97407"
+                + "3326b31212aece0a34a60");
+    assertThat(expectedKeyBytes.length * 8).isEqualTo(PemKeyType.ML_DSA_87.keySizeInBits);
+    MlDsaParameters expectedParameters =
+        MlDsaParameters.create(
+            MlDsaParameters.MlDsaInstance.ML_DSA_87, MlDsaParameters.Variant.NO_PREFIX);
+
+    KeysetHandle handle =
+        SignaturePemKeysetReader.newBuilder()
+            .addPem(ML_DSA_87_PUBLIC_KEY_PEM, PemKeyType.ML_DSA_87)
             .buildPublicKeysetHandle();
     assertThat(handle.size()).isEqualTo(1);
     MlDsaPublicKey publicKey = (MlDsaPublicKey) handle.getAt(0).getKey();
@@ -1216,14 +1379,45 @@ public final class SignaturePemKeysetReaderTest {
             .buildPublicKeysetHandle();
     assertThat(handle.size()).isEqualTo(1);
 
-    // Older versions of Conscrypt don't support ML-DSA. We only test
-    // that verification is successful if we can create the primitive.
+    PublicKeyVerify verifier;
     try {
-      PublicKeyVerify verifier =
-        handle.getPrimitive(SignatureConfigurationV1.get(), PublicKeyVerify.class);
-      verifier.verify(pemTestVector.signature, pemTestVector.message);
+      verifier = handle.getPrimitive(SignatureConfigurationV1.get(), PublicKeyVerify.class);
     } catch (GeneralSecurityException e) {
-      // ignore
+      // Ignore.
+      // Older versions of Conscrypt don't support ML-DSA. We only test
+      // that verification is successful if we can create the primitive.
+      return;
     }
+    verifier.verify(pemTestVector.signature, pemTestVector.message);
+  }
+
+  @Test
+  public void verifyWithMlDsa87TestVector_worksIfPrimitiveCanBeCreated() throws Exception {
+    Assume.assumeFalse(Util.isAndroid());
+
+    PemTestVector pemTestVector =
+        new PemTestVector(
+            ML_DSA_87_PUBLIC_KEY_PEM,
+            PemKeyType.ML_DSA_87,
+            Hex.decode("aa"),
+            Hex.decode(
+                "c562ac64ff138e4ead4a35766d750d0f8b2dace6b179a09956940ac5e8455e6e12da1f4b2f213c37fcfe40b5cfe762ac118fbd1e083d6e2aa575d37fdd16ed9ed0c9d2d1baa738dc580834595cd0ec83e2b698771275f79ace6ff5b0a3e394666825fbcc425f7531b5de51845f6cb45e084b9e9d33d558a1d02ad23bae2550f512048d9de1cc2b5e06462e9187ee1dd1e1457279910bde50dec5222f5b183f2fbbdca4ddbb3d0edb2ee5ad061e5d40d38fa971b0825a72bf7dc51d1efcc364b9eefd0735c215fba1b5f2acd26b318f18a6aab74ce20907b8ec917bca6da540e7f672c04e36ef55e35a06912f178726f2341bfa3410cae54b50177f6730e8270b035a8b90196d855000a3b8c594b7f24e23ba2b95892682aa9e11b9b57ab8468658ac9d93251e46630ed8de0113ce46f9a196f08bb5f71c10693bcbcb07d36f92bd56fb4128a75fa2af9546f4d8918446457a49b2d3105ba5c7328bcd632eb2b6b50836bc8ba1b75af9127b7bf9ae0d6ec01c8f5cdaadf700e3fe78da2e815c431f53f88bc25b25463787902d24b3146fd97522f7a6d8f7fa3bd03161f98055f70b727db8ccaa7969a0f360984926995c44124a58f5d6e1bd05a4658e20905ddae1de5b4437d16da177264875a5a12d944d34a1863b391cf97c487a1f001989bc2bedd1cf15741b7539d8f0376b3968b3f702df2da1f170e59de8c3c5dbcb11d191bc9b01cfdc1a013bd300c6bb78bd2c98eed33ad934d1e90fcd613b11b1c19a105117ef2df98aded2bf238d4b28a5789508c1cee13ddb6d03bc536957ba2a3f3a639e322d2c8dae814c725d06d630ae5495e06826a97c8b556bba389e09e1d877d6f16e6711c2f2fdcf24281a422396540bb6392b186933e18bd90f16b8eab26f15f551d27c7672c3be09110b8e61bd9d2e6ee496d7c12edd5e06b8ae3b056d08eb47677d45f10003b10a220af906b42215f8872a4fc3a9451d2cd9d6276297ea29b23a60ce919e8d9b335ef81a045691f9e44256251051620074eb0202cc4891159991c7a0f30d86ebe5c531115e54f4e794f75f854d9c84a95edfe4e5592a4bb844cf78a024faee6007800cbf139b997c820ee03aabc212a624ad8005245b52d10e21ac204daa7b3ab13d864f4d0fa53fb69965a475e7efa32c821e7492b8d4551b7ad3b2fe29d252a5431d823b4a26f17f02a76dc2af3935d921c6854ce4072aa8cebf658f34f0462f7b8e8fdf1280e4bf6fa7282ac9e0b923ea466315455555a2fcbcfa53872500c73f5807ce2598c25ee5875a45afbd6c86595e189b7e8f535597bbb139752806a6c99c1054dfe39aeff60afd3071541904dbd57a3547b55eb22d2e25be049358977abf5c4c1a1af8832bd1bf52b18a0f2a07e5914acafd4b675716ddad1cd043db8a7f3a2325d66f2d95d44074f4e0fc8eda5689d1bd85fe803ae5fae0512d2d757f63a1b8d25d5f99c5dcc5ca558d49a42c9081885b9ea3b79eb01b6c17c1d466cef13d6d9286ebe1396994c763fa65f365ac1267e516361ae39ca69a891079412391cbea740d9c6b7499155f61222944c1f098bc5825e4c329b6b7bd23ab7521ad88769df403f150bc9108471879ba25b2117b691a4720280e57150185ab6913be0aaf42d882a97ea015e945b6ee29d5f6b4ee4c09e5059b51b2fbdd2173b681f01fe4bc1ff6946e7d4c22f2e207788c6183a4649a16ebf7d6bec8220523c96f22f75c193391c13fc5da1ddff9ac4f29d9f0f1a1e27fdd2ec8bf052cc448bfc39381fdc0bed332fc8ab9e1209fe26c315ac7a11680d3b06aa1197a60eb1f732643af2d542830076810f066b3b8a683593eb9eee9ee6917274954ac5492b9799451b7f61d8b7fcc73cecbac6866ae9abf0100360e71bcba603fc12c930844f79d4e4445833a0fb85feec7891eb382ef92394e6436ceb6498733b05fc3b414acae0a25e79a50f8e182a1150fe78f8340f0fcd2703b1c5c28833b996a747c4986703b34e1f88c3b5de18f9cdf072350d7abeebee4ea965062798d9bba409bb634389b7fe8a947101753b649f52df3d711053a9c315d3ef7e211ca293d6ce34992a3da46a05a565ff7ca82d1e731ec45bedf7e36e6564d7a6281ab1fbdedbfa0449f60b77f6ef4c5225117a0a8e270a59999d2866e44740c3fe7910c29abaa894e3ff5960052501d70571b2c7d479b6a06c6e19524ba7570236ee81f3fc90e2cfa8d17c68461bf4ca4b94f6ea7df5ff40961c0f4875cc92e8f694b724adae1232e7c7ac4dc32a24f18cebb9cbfe672de4136ab33420eeeca9370a9361b9e16f7c62c1a1072e7cc5a2cb8b7d3b6a74ba014b57cb6e65dfe6daeb7ad2dc2e6b2ce993b8bfc0a616c03b103a4ee70ec9af982349cfcbf9c8636218db0929895058e9dbce260b5b88d68e2f3240e27fce2d1192027458311732f822413729dc3e97c553cd3781dad4cf0f528cd933aee21e6b48aa776155ecfd3af3e7e0b78781bc75e50f452c7c2656edbe39d0129623c8eae62715ad3e99aa482fc0fdb52f4e1b95f1a0dbe59617a602abd03f7bfcd44dabbbcb46763d94801227fe67207d461333d71861e62801433e13d26be1b712b3a9cab71b7dda61739b6ef2cd9799febd77c3b90174276e4ba6204b2721a6d90d3bcb62874ba0d78f4f29bce4599c919d68d4cc36b76830ddbc5e4ecef115b0cc3bdb46535920a7a38d64020968aa0ff879f30ca564e8aaa403e4e3f090991871c550b3a467b33e790e3615c159145abca01e7a7dacf03bb48ecfcb6d5c130efdc63f20c3072e6730b5d937cb880565487e85fdaa56f6a9f2b34afee7c40c98c91892b3b6d37ce4a290b08f3bf2cc52497262eb400a149a282f6846e3d7bf245714a5b6e4653cc6cf7b6402b29814dfe9d88c3c2252d2c8ac9a08ea50937ab8b0495d2cfabd45bce17a8b7c4d518d4bbb73fe02fd0989d65bb997ab074a6e791156512ae34b45b27c05134b2e0101ae8497764ac14b463b6cb98521e56f3fa3f4b4b71a402d78a38ee6abf21c05b6b4897fec15b2ed72335397ba7573bd937c741e2f148d1134f1844132d2449994964dba5dcc87ca2dd5594fdfee9f6fb4ca31c63f3a7b1e8124e358a19f45b4ebe3a86765c4a301a626ef43fb986b66bee47c12a5b65799b96bd1a7373cc4ef4fd1e585243400dfc13a9c9167de69cd2d002f107cc44176da2d00acd9bb676a004588c6dc25ac9d0df54d2aa9f88f0ea5a50b0fda8db847436e866e9e229e72e4abe70cc77711bb5928a742edaa444217ef69f54d3ef8ea1a0e4ec72af624c37cc9883b5d3c1e75f81d0df9e3e3b815c5e38099529b6a9f0109b206a8aaaa97f702273198c5efb30dbc4eb4fe5b06088bc342aa608e1d0a490e9c11fc60cec34026df760a09fa443f05f7dbdc52d69fa269832b50f1f4d8df9f13186c58c91a48a53dbeabc127ded3daac7c7555e358901cb81d45ffadeb8610f62bf29a846a3f9ebe9bb32a986ca492b91daa6cfccd65af25f37059d7187dd48e971360d592662714af9aacd8f14ac32329e5e13346c3c6ce782fd51266d70eee118c84f5a6415fbd5d3fb09bc0da351f9599446d5702218a702b50580d86baeb441d501f0ab6b5cdbe222617e538fbd0e65fd07314d01f9ff66c6c42a9bb2d8b62f82e24538f3d1cb78e5100d0eaf6eb5cbcadafe38dcaa7569b067bc04fb1f854ec9fef830ee89a187e6acf672b95e9a088606058e4ddd87f2123183f539b750eb3f389c83674a8f553508a5db05c85c5957511616742de5ad772b5922ee3b5f90a21d4b872f529b1d6ad20283be17b6cc406870ff4220d0c0dd2ff78ea696eea7436c4c6ada62bb697f0d58bee13246c8dd7270859bb3d5ea381b860120d9cf85ded4374192f81bae9b353ffdef44451c39e439b2d47897d3df874b2e0778335095a395061555229dabb8458c8d2368032121a5878a68979eedf000f88dcc08d041aab8e68f9ef9992dcb974e5ba6561bc3275da161750bb43f5fef92993803a6146a3f82f91eb4ef23c4570f5e1c69f372736700809f4215fc1b81c5c64ee57432b9f944e0f4bc84eb3e93e5801ef86a457d94a90d510bb1b3b15e400503fc1243998f0146e404fdd3488c1c880192ff52442cf2edda388d22625dd97fd38088b63cae7c6d180adb840879a268e5c8c5c2fdfa41a39ff7ec5aee2d7b47c66a82c9c20e26b8837053455faa2411e94e679f0f944caf165646bd71c21642a2949719efa1e0125d08be3c995f12caed74b2cbd9d198e487a3de179b8ad89751996f6ab6f1db56cf61d1af366c19e996b26fd2f7ca45d5204fce938683f15bbcbf9f27afccc9ad796d0258757ba4be8d27ac74c20963b91bc78a26c555441898b5c9d522dc1b47ef9418dac4b2d7fc438b7f0830a616375b9e33a29e34728c192a35679855453c1e68b956f0498ae3a41e03be286d47198bb9b0519fd0bd728a70da8691aa132f57e92c34f479dd95936e63d98c3dc427eb5ec8e64f9f892612fc1ebc0e97ccb86465d8e405d510ee3c6c1b82d2176d6a59a7fb59f428f0d81ae423d62af17b062c0d50c5b83c4d385c77447f082ed8be7e6ff6e8b9cdc4c5c4e27a8d5a57ad5d59e147e6e84e02a6792528695e0c01a3edb7643faad8297a563c2d6c00348f8b4db6c9c3ed40b5be1e20377c9f5fd92187e7efa4985b0855dee923797e5350682949dcc243b2c4d35be0f3bf7dcee82cc3656abc4302935b47736ce6585c17f5b4aa4e9b227b86d6d016f60ce84d6f3d51f6997e2c771816a37bf1211fcf9bc9b2f07ce694d3e4e2d672d0617f502e0a932d21ba5b5d45c720f4f5b94ca89fd6c4e3c85c865fb6cee683dbc52938636bb0c64503ea10faf71f63476664a2f84e0991e94747ac542b503a6940f25e6b277978d78ca447420712f83ab1a26a5b9857d3d3f0823163f1c4b8643796fa7981d0106aef063aad74cc59c22dbe98996a88db18b620674bfb9300c8316dc8a477ace7cd669e10a0cc0ebffc6d4915b89af87e7f989faadeb87840108e5962983d93e11e5afdf3c18785887f89520654094e4cc58d45cb3b1bc7d18e1138fe8314cc3969dc9a1842df1da4ad45cb5860bedc6a1b169b77fd95a379ce60a39e1975dbb635642ce2f4d17067c91caa727b4aed7c76496d65775a265499b29ceacf178c695800601a54db27e373178464e15019dc9fb9a3bc387c0d3165876d37ffcf4d7c01a2ae0ce8426d8562491ad6dba52f120bac753bce81b2b86d7af5196fecfec9de97f269d5c96026dd1fa53e1cae485ae05c126ac816a3201a13e5dfb80625204d7a7bfb1515eaf2ae707038f3274a9eb9c80d3f315e9d3413d6ad94e106d47b3aeb9daf48480f979ec5eb0bb566f60bdf5c5e4d4852b92c96a8ab6150824d6414da2428dc5a0908405c962b027014f10ee72b1043d6a3d1e34e152b7c71b64261c2c9f45ee96fdcb4e2220fd8e4bdf03d4046064700eb590d1126eb90c0b59583c464a473d88427ac80f1621c3097d6a12eef87dccab6fd0a06fd96d81b0f792e107334e15645e9f233e41caae8dcc21fbc371601f765a519d10aef6fd471fa3563124a94fb0a6b0c57b3d19993e0e71ebd0c309b5afb9f15e69ac367843ce0709c76d4e86426a70516aa81ddcb36077cc824bc930a1311aff513a555cb1ae0b20b86a3929b9976d99ec4d44669d6bbfb9b015d43eb920a58e060e90c16a7abb0938057e62eecbe56a29af3d4245967d764968c2a7feb63a3d9a2345105a37dc46f46fc1ebe9b1046360aeab94b9e410319bf5d7a5f3ae41e34e1363c601174886e5c6dbc82fc7480e1ec6606eab4eef9b63e1d8455bbe39127044a763bc66ecd8de2a643f80394c842c81738cb6729f26702797aaa1a12c55295056daa52268032b43fb9911f7615d93b19ff5ea3633c2067ead713eb99a242e84668314b3cfd1bb3d57a44935bdda472d08a1c792e7be8aa51d9c2d60fd0197b5f078787a05b49732131f73f40c76baf47595dc77de694a4b5dc8ebdf500f5459735becdc89a65717e6a1ac6e212ea74cc5e93787ce43cf4a459a80527efc9b56463b625fd454bc450fa2099e4d9bf42712b0e719ecda7351371a236d7e9f513871e7da159692666c25dce71c58f60b3d5a764d3588cca1b00b0c8336b3ad72866bdafdc26ee6a89a0e5a01a7bc3a5048e14e532fe3085abaaa413e85dc3c0042fe88e319fff8a1af5d77aca76b2758e2451221a98c449da1fe6be94da599cc2a8ab78615bb34296f9c1391bf9175eb73b26a9a0c266d89b05e0af04e7ded55b84f72c9f2236df08938fae495c31d81d7151df6f181ea90e15c81f28f5f97998094d67056a24bf62ea9a96dee2a3df523d2639df81c7af65a716299232ba8d8c4ceb9b250ee5c823ddbd67bf7105101e59040696a7a9c8466681a2a5d1f73a4d6277a8dcecf8304c4e6a6d788ba2a5fa2a628bb0c6c7dd4f60698f999fa30000000000000000000000000000000000000000000000000001050b121a242b32"));
+
+    KeysetHandle handle =
+        SignaturePemKeysetReader.newBuilder()
+            .addPem(pemTestVector.pem, pemTestVector.pemKeyType)
+            .buildPublicKeysetHandle();
+    assertThat(handle.size()).isEqualTo(1);
+
+    PublicKeyVerify verifier;
+    try {
+      verifier = handle.getPrimitive(SignatureConfigurationV1.get(), PublicKeyVerify.class);
+    } catch (GeneralSecurityException e) {
+      // Ignore.
+      // Older versions of Conscrypt don't support ML-DSA. We only test
+      // that verification is successful if we can create the primitive.
+      return;
+    }
+    verifier.verify(pemTestVector.signature, pemTestVector.message);
   }
 }

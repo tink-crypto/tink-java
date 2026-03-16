@@ -66,7 +66,8 @@ public enum PemKeyType {
 
   // ML-DSA (without pre-hashing)
   // keySizeInBits is the public key size in bits
-  ML_DSA_65("ML-DSA", "ML-DSA", 15616); // 1952 * 8 = 15616
+  ML_DSA_65("ML-DSA", "ML-DSA", 15616), // 1952 * 8 = 15616
+  ML_DSA_87("ML-DSA", "ML-DSA", 20736); // 2592 * 8 = 20736
 
   public final String keyType;
   public final String algorithm;

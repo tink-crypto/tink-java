@@ -247,6 +247,8 @@ public final class SignaturePemKeysetReader implements KeysetReader {
         return convertEd25519PublicKey(x509KeySpec);
       case ML_DSA_65:
         return convertMlDsa65PublicKey(x509KeySpec);
+      case ML_DSA_87:
+        return convertMlDsa87PublicKey(x509KeySpec);
       default:
         throw new IllegalArgumentException("unsupported key type: " + pemKeyType);
     }
@@ -415,6 +417,13 @@ public final class SignaturePemKeysetReader implements KeysetReader {
 
   // RFC 9881 defines the ML-DSA-65 x509 public key encoding. This encoding always has the same
   // preamble, followed by the raw public key value.
+  //
+  // 30 82 07 B2: SubjectPublicKeyInfo SEQUENCE, 1970 bytes
+  // 30 0b:  AlgorithmIdentifier SEQUENCE, 11 bytes
+  // 06 09 60 86 48 01 65 03 04 03 12: algorithm OBJECT IDENTIFIER, OID for ML-DSA-65
+  // (2.16.840.1.101.3.4.3.18)
+  // 03 82 07 A1: subjectPublicKey BIT STRING, 1953 bytes
+  // 00: Padding
   private static final byte[] x509PreambleMlDsa65 =
       Hex.decode("308207b2300b0609608648016503040312038207a100");
 
@@ -432,6 +441,40 @@ public final class SignaturePemKeysetReader implements KeysetReader {
     }
     return MlDsaPublicKey.builder()
         .setParameters(ML_DSA_65_PARAMS)
+        .setSerializedPublicKey(Bytes.copyFrom(keyValue))
+        .build();
+  }
+
+  private static final MlDsaParameters ML_DSA_87_PARAMS =
+      MlDsaParameters.create(
+          MlDsaParameters.MlDsaInstance.ML_DSA_87, MlDsaParameters.Variant.NO_PREFIX);
+
+  // RFC 9881 defines the ML-DSA-87 x509 public key encoding. This encoding always has the same
+  // preamble, followed by the raw public key value.
+  //
+  // 30 82 0A 32: SubjectPublicKeyInfo SEQUENCE, 2610 bytes
+  // 30 0b:  AlgorithmIdentifier SEQUENCE, 11 bytes
+  // 06 09 60 86 48 01 65 03 04 03 13: algorithm OBJECT IDENTIFIER, OID for ML-DSA-87
+  // (2.16.840.1.101.3.4.3.19)
+  // 03 82 0A 21: subjectPublicKey BIT STRING, 2593 bytes
+  // 00: Padding
+  private static final byte[] x509PreambleMlDsa87 =
+      Hex.decode("30820a32300b060960864801650304031303820a2100");
+
+  @Nullable
+  @AccessesPartialKey
+  static MlDsaPublicKey convertMlDsa87PublicKey(X509EncodedKeySpec keySpec)
+      throws GeneralSecurityException {
+    byte[] encodedKey = keySpec.getEncoded();
+    if (!Util.isPrefix(x509PreambleMlDsa87, encodedKey)) {
+      throw new GeneralSecurityException("is not a ML-DSA-87 public key");
+    }
+    byte[] keyValue = Arrays.copyOfRange(encodedKey, x509PreambleMlDsa87.length, encodedKey.length);
+    if (keyValue.length != 2592) {
+      throw new GeneralSecurityException("wrong key length");
+    }
+    return MlDsaPublicKey.builder()
+        .setParameters(ML_DSA_87_PARAMS)
         .setSerializedPublicKey(Bytes.copyFrom(keyValue))
         .build();
   }
