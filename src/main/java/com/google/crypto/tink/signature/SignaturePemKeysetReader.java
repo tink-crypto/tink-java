@@ -127,8 +127,9 @@ public final class SignaturePemKeysetReader implements KeysetReader {
     /**
      * Builds a {@link KeysetReader} from the PEM keys added to this {@link Builder}.
      *
-     * <p>Do not use this method. Prefer to use {@link #buildPublicKeysetHandle()} instead.
+     * @deprecated Use {@link #buildPublicKeysetHandle} instead.
      */
+    @Deprecated
     public KeysetReader build() {
       Keyset keyset = null;
       IOException exception = null;

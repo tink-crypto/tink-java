@@ -25,7 +25,6 @@ import com.google.crypto.tink.LegacyKeysetSerialization;
 import com.google.crypto.tink.PemKeyType;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.internal.Util;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.signature.internal.MlDsaProtoSerialization;
 import com.google.crypto.tink.subtle.Base64;
@@ -522,7 +521,7 @@ public final class SignaturePemKeysetReaderTest {
   }
 
   @Test
-  public void withLegacyKeysetReader_shouldWork() throws Exception {
+  public void deprecatedBuildWithLegacyKeysetReader_isEquivalentToBuildPublicKeysetHandle() throws Exception {
     String rsaPem =
         "-----BEGIN PUBLIC KEY-----\n"
             + "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAv90Xf/NN1lRGBofJQzJf\n"
@@ -614,13 +613,13 @@ public final class SignaturePemKeysetReaderTest {
   }
 
   @Test
-  public void emptyReader_readThrowsIOException() throws Exception {
+  public void deprecatedBuild_emptyReader_readThrowsIOException() throws Exception {
     KeysetReader keysetReader = SignaturePemKeysetReader.newBuilder().build();
     assertThrows(IOException.class, keysetReader::read);
   }
 
   @Test
-  public void readTwice_works() throws Exception {
+  public void deprecatedBuild_readTwice_works() throws Exception {
     String pem =
         "-----BEGIN PUBLIC KEY-----\n"
             + "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7BiT5K5pivl4Qfrt9hRhRREMUzj/\n"
@@ -637,7 +636,7 @@ public final class SignaturePemKeysetReaderTest {
   }
 
   @Test
-  public void buildTwice_works() throws Exception {
+  public void deprecatedBuild_callBuildTwice_works() throws Exception {
     String pem =
         "-----BEGIN PUBLIC KEY-----\n"
             + "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7BiT5K5pivl4Qfrt9hRhRREMUzj/\n"
@@ -657,7 +656,7 @@ public final class SignaturePemKeysetReaderTest {
   }
 
   @Test
-  public void addAfterBuild_doesNotAffectExistingReader() throws Exception {
+  public void deprecatedBuild_callAddAfterBuild_doesNotAffectExistingReader() throws Exception {
     String pem =
         "-----BEGIN PUBLIC KEY-----\n"
             + "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7BiT5K5pivl4Qfrt9hRhRREMUzj/\n"
@@ -680,25 +679,24 @@ public final class SignaturePemKeysetReaderTest {
   }
 
   @Test
-  public void readerWithInvalidKeys_invalidKeysAreIgnored() throws Exception {
+  public void buildPublicKeysetHandle_invalidKeys_areIgnored() throws Exception {
     String ecPublicKeyPem =
         "-----BEGIN PUBLIC KEY-----\n"
             + "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7BiT5K5pivl4Qfrt9hRhRREMUzj/\n"
             + "8suEJ7GlMxZfvdcpbi/GhYPuJi8Gn2H1NaMJZcLZo5MLPKyyGT5u3u1VBQ==\n"
             + "-----END PUBLIC KEY-----\n";
 
-    KeysetReader keysetReader =
+    KeysetHandle handle =
         SignaturePemKeysetReader.newBuilder()
             .addPem("invalid", PemKeyType.ECDSA_P256_SHA256)
             .addPem(ecPublicKeyPem, PemKeyType.ECDSA_P256_SHA256)
             .addPem("invalid2", PemKeyType.ECDSA_P256_SHA256)
-            .build();
-    Keyset keyset = keysetReader.read();
-    assertThat(keyset.getKeyCount()).isEqualTo(1);
+            .buildPublicKeysetHandle();
+    assertThat(handle.size()).isEqualTo(1);
   }
 
   @Test
-  public void readerWithRsaPrivateKey_privateKeyIsIgnored() throws Exception {
+  public void buildPublicKeysetHandle_withRsaPrivateKey_isIgnored() throws Exception {
     String rsaPublicKeyPem =
         "-----BEGIN PUBLIC KEY-----\n"
             + "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAv90Xf/NN1lRGBofJQzJf\n"
@@ -737,19 +735,18 @@ public final class SignaturePemKeysetReaderTest {
             + "uAeidKZk3SJEmj0F1+Aiir2KRv+RX543VvzCtEXNkVViVrirzvjZUGKPdkMWfbF8\n"
             + "OdD7qHPPNu5jSyaroeN6VqfbELpewhYzulMEipckEZlU4+Dxu2k1eQ==\n"
             + "-----END RSA PRIVATE KEY-----\n";
-    KeysetReader keysetReader =
+    KeysetHandle handle =
         SignaturePemKeysetReader.newBuilder()
             .addPem(rsaPublicKeyPem, PemKeyType.RSA_PSS_2048_SHA256)
             .addPem(rsaPrivateKeyPem, PemKeyType.RSA_PSS_2048_SHA256)
-            .build();
-    Keyset keyset = keysetReader.read();
-    assertThat(keyset.getKeyCount()).isEqualTo(1);
-    assertThat(keyset.getKey(0).getKeyData().getKeyMaterialType())
-        .isEqualTo(KeyMaterialType.ASYMMETRIC_PUBLIC);
+            .buildPublicKeysetHandle();
+    assertThat(handle.size()).isEqualTo(1);
+    assertThat(handle.getAt(0).getKey())
+        .isInstanceOf(RsaSsaPssPublicKey.class);
   }
 
   @Test
-  public void readerWithEcPrivateKey_privateKeyIsIgnored() throws Exception {
+  public void buildPublicKeysetHandle_withEcPrivateKey_isIgnored() throws Exception {
     String ecPublicKeyPem =
         "-----BEGIN PUBLIC KEY-----\n"
             + "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7BiT5K5pivl4Qfrt9hRhRREMUzj/\n"
@@ -762,19 +759,18 @@ public final class SignaturePemKeysetReaderTest {
             + "lyZ0gbLJ/vheUAwtcA2z0csWU60MfBup3Q==\n"
             + "-----END EC PRIVATE KEY-----\n";
 
-    KeysetReader keysetReader =
+    KeysetHandle handle =
         SignaturePemKeysetReader.newBuilder()
             .addPem(ecPublicKeyPem, PemKeyType.ECDSA_P256_SHA256)
             .addPem(ecPrivateKeyPem, PemKeyType.ECDSA_P256_SHA256)
-            .build();
-    Keyset keyset = keysetReader.read();
-    assertThat(keyset.getKeyCount()).isEqualTo(1);
-    assertThat(keyset.getKey(0).getKeyData().getKeyMaterialType())
-        .isEqualTo(KeyMaterialType.ASYMMETRIC_PUBLIC);
+            .buildPublicKeysetHandle();
+    assertThat(handle.size()).isEqualTo(1);
+    assertThat(handle.getAt(0).getKey())
+        .isInstanceOf(EcdsaPublicKey.class);
   }
 
   @Test
-  public void readEd25519PublicKey_works() throws Exception {
+  public void buildPublicKeysetHandle_withEd25519PublicKey_works() throws Exception {
     // from RFC 8410, Section 10.1
     String ed25519PublicKeyPem =
         "-----BEGIN PUBLIC KEY-----\n"
@@ -960,7 +956,7 @@ public final class SignaturePemKeysetReaderTest {
   }
 
   @Test
-  public void read_invalidMlDsa65PublicKey_isIgnored() throws Exception {
+  public void buildPublicKeysetHandle_invalidMlDsa65PublicKey_isIgnored() throws Exception {
     // has the correct preamble, but is not long enough.
     String invalid1 =
       "-----BEGIN PUBLIC KEY-----\n"
@@ -974,14 +970,13 @@ public final class SignaturePemKeysetReaderTest {
     String invalid2 =
       "-----BEGIN PUBLIC KEY-----\nMIIHsjALBglg\n-----END PUBLIC KEY-----\n";
 
-    KeysetReader keysetReader =
+    KeysetHandle handle =
         SignaturePemKeysetReader.newBuilder()
             .addPem(invalid1, PemKeyType.ML_DSA_65) // is ignored
             .addPem(invalid2, PemKeyType.ML_DSA_65) // is ignored
             .addPem(ML_DSA_65_PUBLIC_KEY_PEM, PemKeyType.ML_DSA_65)
-            .build();
-    Keyset ks = keysetReader.read();
-    assertThat(ks.getKeyCount()).isEqualTo(1);
+            .buildPublicKeysetHandle();
+    assertThat(handle.size()).isEqualTo(1);
   }
 
   public static final class PemTestVector {
