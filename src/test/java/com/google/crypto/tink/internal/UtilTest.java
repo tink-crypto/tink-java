@@ -68,7 +68,7 @@ public final class UtilTest {
   public void checkedToBytesFromPrintableAscii_works() throws Exception {
     String pureAsciiString =
         "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-    Bytes pureAsciiBytes = Bytes.copyFrom(pureAsciiString.getBytes("ASCII"));
+    Bytes pureAsciiBytes = Bytes.copyFrom(pureAsciiString.getBytes(US_ASCII));
     assertThat(Util.checkedToBytesFromPrintableAscii(pureAsciiString)).isEqualTo(pureAsciiBytes);
   }
 

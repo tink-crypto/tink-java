@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.signature;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.KeysetHandle;
@@ -65,7 +66,7 @@ public class EcdsaVerifyKeyManagerTest {
         EcdsaParameters.HashType hashType,
         EcdsaParameters.CurveType curveType) {
       try {
-        this.msg = msg.getBytes("UTF-8");
+        this.msg = msg.getBytes(UTF_8);
       } catch (Exception ignored) {
         // Ignored
       }

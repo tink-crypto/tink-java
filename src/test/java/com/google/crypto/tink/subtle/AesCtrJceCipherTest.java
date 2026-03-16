@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc.
+// Copyright 2017 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.subtle;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -62,7 +63,7 @@ public class AesCtrJceCipherTest {
   @Before
   public void setUp() {
     try {
-      msg = PLAINTEXT.getBytes("UTF-8");
+      msg = PLAINTEXT.getBytes(UTF_8);
     } catch (Exception ignored) {
       // Ignored
     }

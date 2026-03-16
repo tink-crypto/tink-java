@@ -17,6 +17,7 @@
 package com.google.crypto.tink.hybrid;
 
 import static com.google.crypto.tink.internal.TinkBugException.exceptionIsBug;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -106,9 +107,9 @@ public class EciesAeadHkdfHybridEncryptTest {
     KeyPair recipientKey = EllipticCurves.generateKeyPair(toParameterSpec(curveType));
     ECPublicKey recipientPublicKey = (ECPublicKey) recipientKey.getPublic();
     ECPrivateKey recipientPrivateKey = (ECPrivateKey) recipientKey.getPrivate();
-    byte[] salt = "some salt".getBytes("UTF-8");
+    byte[] salt = "some salt".getBytes(UTF_8);
     byte[] plaintext = Random.randBytes(20);
-    byte[] context = "context info".getBytes("UTF-8");
+    byte[] context = "context info".getBytes(UTF_8);
     EciesParameters eciesParameters =
         EciesParameters.builder()
             .setCurveType(curveType)
@@ -134,10 +135,10 @@ public class EciesAeadHkdfHybridEncryptTest {
     Set<String> ciphertexts = new TreeSet<String>();
     for (int j = 0; j < 8; j++) {
       byte[] ciphertext = hybridEncrypt.encrypt(plaintext, context);
-      if (ciphertexts.contains(new String(ciphertext, "UTF-8"))) {
+      if (ciphertexts.contains(new String(ciphertext, UTF_8))) {
         throw new GeneralSecurityException("Encryption is not randomized");
       }
-      ciphertexts.add(new String(ciphertext, "UTF-8"));
+      ciphertexts.add(new String(ciphertext, UTF_8));
       byte[] decrypted = hybridDecrypt.decrypt(ciphertext, context);
       assertArrayEquals(plaintext, decrypted);
     }

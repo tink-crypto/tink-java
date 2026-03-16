@@ -16,8 +16,9 @@
 
 package com.google.crypto.tink.subtle;
 
+import static java.nio.charset.StandardCharsets.US_ASCII;
+
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
 /**
@@ -503,12 +504,7 @@ public final class Base64 {
    *     in output that adheres to RFC 2045.
    */
   public static String encodeToString(byte[] input, int flags) {
-    try {
-      return new String(encode(input, flags), "US-ASCII");
-    } catch (UnsupportedEncodingException e) {
-      // US-ASCII is guaranteed to be available.
-      throw new AssertionError(e);
-    }
+    return new String(encode(input, flags), US_ASCII);
   }
 
   /**
@@ -521,12 +517,7 @@ public final class Base64 {
    *     in output that adheres to RFC 2045.
    */
   public static String encodeToString(byte[] input, int offset, int len, int flags) {
-    try {
-      return new String(encode(input, offset, len, flags), "US-ASCII");
-    } catch (UnsupportedEncodingException e) {
-      // US-ASCII is guaranteed to be available.
-      throw new AssertionError(e);
-    }
+    return new String(encode(input, offset, len, flags), US_ASCII);
   }
 
   /* package */ static class Encoder extends Coder {
