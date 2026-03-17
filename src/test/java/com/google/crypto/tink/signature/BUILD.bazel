@@ -926,3 +926,14 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "CompositeMlDsaParametersTest",
+    size = "small",
+    srcs = ["CompositeMlDsaParametersTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/signature:composite_ml_dsa_parameters",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
