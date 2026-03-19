@@ -349,11 +349,32 @@ public final class SignaturePemKeysetReaderTest {
             + "8suEJ7GlMxZfvdcpbi/GhYPuJi8Gn2H1NaMJZcLZo5MLPKyyGT5u3u1VBQ==\n"
             + "-----END PUBLIC KEY-----\n";
 
-    KeysetHandle handle = SignaturePemKeysetReader.newBuilder()
+    KeysetHandle handle =
+        SignaturePemKeysetReader.newBuilder()
             .addPem(p256Pem, PemKeyType.ECDSA_P256_SHA256)
-            .addPem(p256Pem, PemKeyType.ECDSA_P384_SHA384)  // wrong curve, is ignored.
+            .addPem(p256Pem, PemKeyType.ECDSA_P384_SHA384) // wrong curve, is ignored.
             .buildPublicKeysetHandle();
     assertThat(handle.size()).isEqualTo(1);
+  }
+
+  @Test
+  public void whenNoKeysAreValid_throwsAndIncludesFirstException() throws Exception {
+    String p256Pem =
+        "-----BEGIN PUBLIC KEY-----\n"
+            + "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7BiT5K5pivl4Qfrt9hRhRREMUzj/\n"
+            + "8suEJ7GlMxZfvdcpbi/GhYPuJi8Gn2H1NaMJZcLZo5MLPKyyGT5u3u1VBQ==\n"
+            + "-----END PUBLIC KEY-----\n";
+
+    Exception exception =
+        assertThrows(
+            GeneralSecurityException.class,
+            () ->
+                SignaturePemKeysetReader.newBuilder()
+                    .addPem(p256Pem, PemKeyType.ECDSA_P384_SHA384) // wrong curve
+                    .buildPublicKeysetHandle());
+    assertThat(exception)
+        .hasMessageThat()
+        .contains("wrong NIST curve: found curve with 256 bits, expected 384 bits");
   }
 
   @Test

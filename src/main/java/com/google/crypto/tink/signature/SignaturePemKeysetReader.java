@@ -99,6 +99,20 @@ public final class SignaturePemKeysetReader implements KeysetReader {
 
     Builder() {}
 
+    private GeneralSecurityException firstException = null;
+
+    @Nullable
+    private Key readKey(BufferedReader reader, PemKeyType pemKeyType) {
+      try {
+        return readKeyWithExceptions(reader, pemKeyType);
+      } catch (GeneralSecurityException e) {
+        if (firstException == null) {
+          firstException = e;
+        }
+        return null;
+      }
+    }
+
     /**
      * Builds a {@link KeysetHandle} from the public PEM keys added to this {@link Builder}.
      *
@@ -118,7 +132,12 @@ public final class SignaturePemKeysetReader implements KeysetReader {
         }
       }
       if (builder.size() == 0) {
-        throw new GeneralSecurityException("cannot find any key");
+        if (firstException != null) {
+          throw new GeneralSecurityException(
+            "parsing failed for all keys. First exception: " + firstException);
+        } else {
+          throw new GeneralSecurityException("cannot find any key");
+        }
       }
       builder.getAt(0).makePrimary();
       return builder.build();
@@ -201,19 +220,11 @@ public final class SignaturePemKeysetReader implements KeysetReader {
     }
     int foundKeySizeInBits = EllipticCurves.fieldSizeInBits(ecParams.getCurve());
     if (foundKeySizeInBits != keySizeInBits) {
-      throw new GeneralSecurityException("wrong key size");
+      throw new GeneralSecurityException(
+          String.format("wrong NIST curve: found curve with %d bits, expected %d bits",
+              foundKeySizeInBits, keySizeInBits));
     }
     return ecKey;
-  }
-
-  /** Reads a single PEM key from {@code reader}. Invalid or unparsable PEM are ignored. */
-  @Nullable
-  private static Key readKey(BufferedReader reader, PemKeyType pemKeyType) {
-    try {
-      return readKeyWithExceptions(reader, pemKeyType);
-    } catch (GeneralSecurityException e) {
-      return null;
-    }
   }
 
   /** Reads a single PEM key from {@code reader}. Throws an exception if parsing fails. */
