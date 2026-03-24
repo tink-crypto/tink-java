@@ -121,9 +121,6 @@ import javax.annotation.Nullable;
       throw new GeneralSecurityException(
           "Cannot use ML-DSA in FIPS-mode, as it is not yet certified in Conscrypt.");
     }
-    if (ConscryptUtil.providerOrNull() == null) {
-      throw new GeneralSecurityException("Cannot use ML-DSA without Conscrypt provider");
-    }
     MlDsaProtoSerialization.register();
     MutableParametersRegistry.globalInstance().putAll(namedParameters());
     MutableKeyCreationRegistry.globalInstance().add(KEY_CREATOR, MlDsaParameters.class);

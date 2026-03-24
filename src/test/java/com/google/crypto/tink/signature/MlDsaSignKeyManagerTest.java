@@ -20,7 +20,6 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
-import com.google.crypto.tink.internal.ConscryptUtil;
 import java.security.GeneralSecurityException;
 import org.junit.Assume;
 import org.junit.Test;
@@ -32,13 +31,8 @@ import org.junit.runner.RunWith;
 @RunWith(Theories.class)
 public class MlDsaSignKeyManagerTest {
   @Test
-  public void registerPair_throwsWithoutConscrypt() throws Exception {
-    // Checking for when Conscrypt is absent.
-    if (ConscryptUtil.providerOrNull() != null) {
-      return;
-    }
-
-    assertThrows(GeneralSecurityException.class, MlDsaSignKeyManager::registerPair);
+  public void registerPair_doesNotThrow() throws Exception {
+    MlDsaSignKeyManager.registerPair();
   }
 
   @Test
