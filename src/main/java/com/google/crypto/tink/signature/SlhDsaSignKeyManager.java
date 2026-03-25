@@ -110,14 +110,16 @@ public final class SlhDsaSignKeyManager {
    *   <li> creation of new SLH-DSA keys with {@code KeysetHandle#generateEntryFromParametersName}
    *        (currently "SLH_DSA_SHA2_128S_TINK" and "SLH_DSA_SHA2_128S_RAW" available)
    * </ul>
+   *
+   * Currently the key creation functionality will only work if the Conscrypt provider was
+   * explicitly registered (even though this method will succeed regardless).
+   *
+   * @throws GeneralSecurityException if called in FIPS mode.
    */
   public static void registerPair() throws GeneralSecurityException {
     if (!FIPS.isCompatible()) {
       throw new GeneralSecurityException(
           "Can not use SLH-DSA in FIPS-mode, as it is not yet certified in Conscrypt.");
-    }
-    if (ConscryptUtil.providerOrNull() == null) {
-      throw new GeneralSecurityException("Cannot use SLH-DSA without Conscrypt provider");
     }
     SlhDsaProtoSerialization.register();
     MutableParametersRegistry.globalInstance().putAll(namedParameters());

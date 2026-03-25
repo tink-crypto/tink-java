@@ -921,7 +921,6 @@ java_test(
     srcs = ["SlhDsaSignKeyManagerTest.java"],
     deps = [
         "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
-        "//src/main/java/com/google/crypto/tink/internal:conscrypt_util",
         "//src/main/java/com/google/crypto/tink/signature:slh_dsa_sign_key_manager",
         "@maven//:junit_junit",
     ],

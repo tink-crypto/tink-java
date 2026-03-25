@@ -19,7 +19,6 @@ package com.google.crypto.tink.signature;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
-import com.google.crypto.tink.internal.ConscryptUtil;
 import java.security.GeneralSecurityException;
 import org.junit.Assume;
 import org.junit.Test;
@@ -31,13 +30,10 @@ import org.junit.runner.RunWith;
 @RunWith(Theories.class)
 public class SlhDsaSignKeyManagerTest {
   @Test
-  public void registerPair_throwsWithoutConscrypt() throws Exception {
-    // Checking for when Conscrypt is absent.
-    if (ConscryptUtil.providerOrNull() != null) {
-      return;
-    }
+  public void registerPair_worksIfNotInFips() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
 
-    assertThrows(GeneralSecurityException.class, SlhDsaSignKeyManager::registerPair);
+    SlhDsaSignKeyManager.registerPair();
   }
 
   @Test
