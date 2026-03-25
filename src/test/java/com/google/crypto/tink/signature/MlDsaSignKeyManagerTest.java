@@ -31,7 +31,9 @@ import org.junit.runner.RunWith;
 @RunWith(Theories.class)
 public class MlDsaSignKeyManagerTest {
   @Test
-  public void registerPair_doesNotThrow() throws Exception {
+  public void registerPair_doesNotThrowWhenNotInFips() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
     MlDsaSignKeyManager.registerPair();
   }
 
