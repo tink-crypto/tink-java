@@ -23,14 +23,14 @@ import com.google.crypto.tink.SecretKeyAccess;
 import com.google.errorprone.annotations.RestrictedApi;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nullable;
 
 /** Stores methods to create {@link Key} objects from {@link Parameters} with fixed randomness. */
 public final class MutableKeyDerivationRegistry {
   private final Map<Class<? extends Parameters>, InsecureKeyCreator<? extends Parameters>>
-      creators = new HashMap<>();
+      creators = new ConcurrentHashMap<>();
 
   /** A class to create key objects from parameters with given randomness. */
   public static interface InsecureKeyCreator<ParametersT extends Parameters> {
@@ -55,17 +55,14 @@ public final class MutableKeyDerivationRegistry {
    * <p>If a creator for this class has been added previously, the two instances have to be equal.
    * Otherwise, this method throws a {@code GeneralSecurityException}.
    */
-  public synchronized <ParametersT extends Parameters> void add(
+  public <ParametersT extends Parameters> void add(
       InsecureKeyCreator<ParametersT> creator, Class<ParametersT> parametersClass)
       throws GeneralSecurityException {
-    InsecureKeyCreator<?> existingCreator = creators.get(parametersClass);
-    if (existingCreator != null) {
-      if (!existingCreator.equals(creator)) {
-        throw new GeneralSecurityException(
-            "Different key creator for parameters class already inserted");
-      }
+    InsecureKeyCreator<?> existingCreator = creators.putIfAbsent(parametersClass, creator);
+    if (existingCreator != null && !existingCreator.equals(creator)) {
+      throw new GeneralSecurityException(
+          "Different key creator for parameters class already inserted");
     }
-    creators.put(parametersClass, creator);
   }
 
   /**
@@ -89,7 +86,7 @@ public final class MutableKeyDerivationRegistry {
   }
 
   // Separate function to hide use of generics in the above public function.
-  private synchronized <ParametersT extends Parameters> Key createKeyFromRandomnessTyped(
+  private <ParametersT extends Parameters> Key createKeyFromRandomnessTyped(
       ParametersT parameters,
       InputStream inputStream,
       @Nullable Integer idRequirement,
