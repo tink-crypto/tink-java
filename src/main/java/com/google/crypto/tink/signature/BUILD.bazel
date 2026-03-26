@@ -1449,3 +1449,47 @@ java_library(
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
+
+android_library(
+    name = "composite_ml_dsa_public_key-android",
+    srcs = ["CompositeMlDsaPublicKey.java"],
+    deps = [
+        ":composite_ml_dsa_parameters-android",
+        ":ecdsa_parameters-android",
+        ":ed25519_parameters-android",
+        ":ml_dsa_parameters-android",
+        ":ml_dsa_public_key-android",
+        ":rsa_ssa_pkcs1_parameters-android",
+        ":rsa_ssa_pss_parameters-android",
+        ":signature_parameters-android",
+        ":signature_public_key-android",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
+        "//src/main/java/com/google/crypto/tink:key-android",
+        "//src/main/java/com/google/crypto/tink/internal:output_prefix_util-android",
+        "//src/main/java/com/google/crypto/tink/util:bytes-android",
+        "@maven//:com_google_code_findbugs_jsr305",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "composite_ml_dsa_public_key",
+    srcs = ["CompositeMlDsaPublicKey.java"],
+    deps = [
+        ":composite_ml_dsa_parameters",
+        ":ecdsa_parameters",
+        ":ed25519_parameters",
+        ":ml_dsa_parameters",
+        ":ml_dsa_public_key",
+        ":rsa_ssa_pkcs1_parameters",
+        ":rsa_ssa_pss_parameters",
+        ":signature_parameters",
+        ":signature_public_key",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:key",
+        "//src/main/java/com/google/crypto/tink/internal:output_prefix_util",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
+        "@maven//:com_google_code_findbugs_jsr305",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
