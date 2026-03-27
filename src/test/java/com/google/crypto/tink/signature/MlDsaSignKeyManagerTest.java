@@ -19,7 +19,17 @@ package com.google.crypto.tink.signature;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
+import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.Key;
+import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.MutableSerializationRegistry;
+import com.google.crypto.tink.internal.ProtoKeySerialization;
+import com.google.crypto.tink.internal.ProtoParametersSerialization;
+import com.google.crypto.tink.signature.MlDsaParameters.MlDsaInstance;
+import com.google.crypto.tink.signature.MlDsaParameters.Variant;
+import com.google.crypto.tink.util.Bytes;
+import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
 import org.junit.Assume;
 import org.junit.Test;
@@ -35,6 +45,66 @@ public class MlDsaSignKeyManagerTest {
     Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
 
     MlDsaSignKeyManager.registerPair();
+  }
+
+  @Test
+  public void registerPair_registersParametersProtoSerialization() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    MlDsaSignKeyManager.registerPair();
+    MutableSerializationRegistry registry = MutableSerializationRegistry.globalInstance();
+
+    MlDsaParameters parameters = MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.NO_PREFIX);
+    Parameters parsedParameters =
+        registry.parseParameters(
+            registry.serializeParameters(parameters, ProtoParametersSerialization.class));
+
+    assertThat(parsedParameters).isEqualTo(parameters);
+  }
+
+  @Test
+  public void registerPair_registersPublicKeyProtoSerialization() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    MlDsaSignKeyManager.registerPair();
+    MutableSerializationRegistry registry = MutableSerializationRegistry.globalInstance();
+
+    MlDsaParameters parameters = MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.NO_PREFIX);
+    MlDsaPublicKey publicKey =
+        MlDsaPublicKey.builder()
+            .setParameters(parameters)
+            .setSerializedPublicKey(Bytes.copyFrom(new byte[1952])) // Size for ML-DSA-65
+            .build();
+    Key parsedPublicKey =
+        registry.parseKey(
+            registry.serializeKey(publicKey, ProtoKeySerialization.class, null), null);
+
+    assertThat(parsedPublicKey.equalsKey(publicKey)).isTrue();
+  }
+
+  @Test
+  public void registerPair_registersPrivateKeyProtoSerialization() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    MlDsaSignKeyManager.registerPair();
+    MutableSerializationRegistry registry = MutableSerializationRegistry.globalInstance();
+
+    MlDsaParameters parameters = MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.NO_PREFIX);
+    MlDsaPublicKey publicKey =
+        MlDsaPublicKey.builder()
+            .setParameters(parameters)
+            .setSerializedPublicKey(Bytes.copyFrom(new byte[1952])) // Size for ML-DSA-65
+            .build();
+    MlDsaPrivateKey privateKey =
+        MlDsaPrivateKey.createWithoutVerification(
+            publicKey, SecretBytes.copyFrom(new byte[32], InsecureSecretKeyAccess.get()));
+    Key parsedPrivateKey =
+        registry.parseKey(
+            registry.serializeKey(
+                privateKey, ProtoKeySerialization.class, InsecureSecretKeyAccess.get()),
+            InsecureSecretKeyAccess.get());
+
+    assertThat(parsedPrivateKey.equalsKey(privateKey)).isTrue();
   }
 
   @Test

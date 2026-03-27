@@ -40,10 +40,11 @@ import javax.annotation.Nullable;
 
 /**
  * This key manager generates new {@code MlDsaPrivateKey} keys and some named parameters.
+ *
+ * NOTE: in order for the key generation functionality to work, one needs to have a version
+ * of Conscrypt installed that supports ML-DSA.
  */
-/* Placeholder for internally public; DO NOT CHANGE. */ final class MlDsaSignKeyManager {
-  // TODO(b/458349867): make OSS-public once ML-DSA is available in OSS Conscrypt (or we get the
-  //  implementation elsewhere).
+public final class MlDsaSignKeyManager {
 
   static String getPublicKeyType() {
     return "type.googleapis.com/google.crypto.tink.MlDsaPublicKey";
