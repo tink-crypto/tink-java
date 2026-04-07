@@ -390,7 +390,6 @@ java_test(
     srcs = ["MonitoringUtilTest.java"],
     deps = [
         "//src/main/java/com/google/crypto/tink/internal:monitoring_util",
-        "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
     ],
 )
@@ -777,6 +776,18 @@ java_test(
         "//src/main/java/com/google/crypto/tink/jwt:raw_jwt",
         "//src/main/java/com/google/crypto/tink/jwt:verified_jwt",
         "//src/main/java/com/google/crypto/tink/signature:signature_config",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
+    name = "ProtoKeySerializationTest",
+    size = "small",
+    srcs = ["ProtoKeySerializationTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization",
+        "@maven//:com_google_protobuf_protobuf_java",
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
     ],

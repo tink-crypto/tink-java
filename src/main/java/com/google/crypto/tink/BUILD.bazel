@@ -1226,3 +1226,47 @@ java_library(
         ":key_status",
     ],
 )
+
+android_library(
+    name = "proto_key_serialization-android",
+    srcs = ["ProtoKeySerialization.java"],
+    deps = [
+        "@maven//:com_google_code_findbugs_jsr305",
+        "@maven//:com_google_protobuf_protobuf_javalite",
+    ],
+)
+
+android_library(
+    name = "proto_key_serializer-android",
+    srcs = ["ProtoKeySerializer.java"],
+    deps = [
+        ":key-android",
+        ":parameters-android",
+        ":proto_key_serialization-android",
+        ":secret_key_access-android",
+        "@maven//:com_google_code_findbugs_jsr305",
+        "@maven//:com_google_protobuf_protobuf_javalite",
+    ],
+)
+
+java_library(
+    name = "proto_key_serialization",
+    srcs = ["ProtoKeySerialization.java"],
+    deps = [
+        "@maven//:com_google_code_findbugs_jsr305",
+        "@maven//:com_google_protobuf_protobuf_java",
+    ],
+)
+
+java_library(
+    name = "proto_key_serializer",
+    srcs = ["ProtoKeySerializer.java"],
+    deps = [
+        ":key",
+        ":parameters",
+        ":proto_key_serialization",
+        ":secret_key_access",
+        "@maven//:com_google_code_findbugs_jsr305",
+        "@maven//:com_google_protobuf_protobuf_java",
+    ],
+)
