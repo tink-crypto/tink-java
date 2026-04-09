@@ -26,4 +26,8 @@ import java.security.GeneralSecurityException;
 public interface Configuration {
   <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
       throws GeneralSecurityException;
+
+  default <P> P get(Class<P> clazz) throws GeneralSecurityException {
+    throw new GeneralSecurityException("get() not implemented");
+  }
 }

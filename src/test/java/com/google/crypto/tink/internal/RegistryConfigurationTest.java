@@ -25,6 +25,7 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
+import com.google.crypto.tink.ProtoKeySerializer;
 import com.google.crypto.tink.mac.HmacKey;
 import com.google.crypto.tink.mac.HmacParameters;
 import com.google.crypto.tink.mac.HmacParameters.HashType;
@@ -143,5 +144,31 @@ public class RegistryConfigurationTest {
         () ->
             RegistryConfiguration.get()
                 .createPrimitive(KeysetHandle.generateNew(rawKey.getParameters()), Aead.class));
+  }
+
+  @Test
+  public void getUnknown_throws() throws Exception {
+    assertThrows(GeneralSecurityException.class, () -> RegistryConfiguration.get().get(Mac.class));
+  }
+
+  @Test
+  public void getProtoKeySerializer_works() throws Exception {
+    assertThat(RegistryConfiguration.get().get(ProtoKeySerializer.class)).isNotNull();
+  }
+
+  @Test
+  public void getProtoKeySerializer_serializeAndParseKey() throws Exception {
+    ProtoKeySerializer serializer = RegistryConfiguration.get().get(ProtoKeySerializer.class);
+    com.google.crypto.tink.ProtoKeySerialization serialization =
+        serializer.serializeKey(rawKey, InsecureSecretKeyAccess.get());
+    assertThat(serializer.parseKey(serialization, InsecureSecretKeyAccess.get()).equalsKey(rawKey))
+        .isTrue();
+  }
+
+  @Test
+  public void getProtoKeySerializer_serializeAndParseParameters() throws Exception {
+    ProtoKeySerializer serializer = RegistryConfiguration.get().get(ProtoKeySerializer.class);
+    ByteString serializedParameters = serializer.serializeParameters(rawKey.getParameters());
+    assertThat(serializer.parseParameters(serializedParameters)).isEqualTo(rawKey.getParameters());
   }
 }

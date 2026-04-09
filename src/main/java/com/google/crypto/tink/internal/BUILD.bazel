@@ -643,8 +643,19 @@ android_library(
     srcs = ["RegistryConfiguration.java"],
     deps = [
         ":mutable_primitive_registry-android",
+        ":mutable_serialization_registry-android",
+        ":proto_key_serialization-android",
+        ":proto_parameters_serialization-android",
+        "//proto:tink_java_proto_lite",
         "//src/main/java/com/google/crypto/tink:configuration-android",
+        "//src/main/java/com/google/crypto/tink:key-android",
         "//src/main/java/com/google/crypto/tink:keyset_handle_interface-android",
+        "//src/main/java/com/google/crypto/tink:parameters-android",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization-android",
+        "//src/main/java/com/google/crypto/tink:proto_key_serializer-android",
+        "//src/main/java/com/google/crypto/tink:secret_key_access-android",
+        "@maven//:com_google_code_findbugs_jsr305",
+        "@maven//:com_google_protobuf_protobuf_javalite",
     ],
 )
 
@@ -653,8 +664,19 @@ java_library(
     srcs = ["RegistryConfiguration.java"],
     deps = [
         ":mutable_primitive_registry",
+        ":mutable_serialization_registry",
+        ":proto_key_serialization",
+        ":proto_parameters_serialization",
+        "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:configuration",
+        "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink:keyset_handle_interface",
+        "//src/main/java/com/google/crypto/tink:parameters",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization",
+        "//src/main/java/com/google/crypto/tink:proto_key_serializer",
+        "//src/main/java/com/google/crypto/tink:secret_key_access",
+        "@maven//:com_google_code_findbugs_jsr305",
+        "@maven//:com_google_protobuf_protobuf_java",
     ],
 )
 
