@@ -126,4 +126,372 @@ public final class ProtoKeySerializationTest {
                 OutputPrefixType.LEGACY,
                 /* idRequirement = */ null));
   }
+
+  @Test
+  public void testApiConversions_rawSymmetric() throws Exception {
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization =
+        com.google.crypto.tink.ProtoKeySerialization.create(
+            "typeUrl",
+            ByteString.copyFrom(new byte[] {1, 2, 3}),
+            com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.SYMMETRIC,
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW,
+            null);
+    ProtoKeySerialization internalSerialization =
+        ProtoKeySerialization.createFromPublic(apiSerialization);
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization2 =
+        internalSerialization.toPublic();
+    assertThat(apiSerialization2.getTypeUrl()).isEqualTo(apiSerialization.getTypeUrl());
+    assertThat(apiSerialization2.getValue()).isEqualTo(apiSerialization.getValue());
+    assertThat(apiSerialization2.getKeyMaterialType())
+        .isEqualTo(apiSerialization.getKeyMaterialType());
+    assertThat(apiSerialization2.getOutputPrefixType())
+        .isEqualTo(apiSerialization.getOutputPrefixType());
+    assertThat(apiSerialization2.getIdRequirementOrNull())
+        .isEqualTo(apiSerialization.getIdRequirementOrNull());
+  }
+
+  @Test
+  public void testApiConversions_rawAsymmetricPrivate() throws Exception {
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization =
+        com.google.crypto.tink.ProtoKeySerialization.create(
+            "typeUrl",
+            ByteString.copyFrom(new byte[] {1, 2, 3}),
+            com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PRIVATE,
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW,
+            null);
+    ProtoKeySerialization internalSerialization =
+        ProtoKeySerialization.createFromPublic(apiSerialization);
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization2 =
+        internalSerialization.toPublic();
+    assertThat(apiSerialization2.getTypeUrl()).isEqualTo(apiSerialization.getTypeUrl());
+    assertThat(apiSerialization2.getValue()).isEqualTo(apiSerialization.getValue());
+    assertThat(apiSerialization2.getKeyMaterialType())
+        .isEqualTo(apiSerialization.getKeyMaterialType());
+    assertThat(apiSerialization2.getOutputPrefixType())
+        .isEqualTo(apiSerialization.getOutputPrefixType());
+    assertThat(apiSerialization2.getIdRequirementOrNull())
+        .isEqualTo(apiSerialization.getIdRequirementOrNull());
+  }
+
+  @Test
+  public void testApiConversions_rawAsymmetricPublic() throws Exception {
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization =
+        com.google.crypto.tink.ProtoKeySerialization.create(
+            "typeUrl",
+            ByteString.copyFrom(new byte[] {1, 2, 3}),
+            com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PUBLIC,
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW,
+            null);
+    ProtoKeySerialization internalSerialization =
+        ProtoKeySerialization.createFromPublic(apiSerialization);
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization2 =
+        internalSerialization.toPublic();
+    assertThat(apiSerialization2.getTypeUrl()).isEqualTo(apiSerialization.getTypeUrl());
+    assertThat(apiSerialization2.getValue()).isEqualTo(apiSerialization.getValue());
+    assertThat(apiSerialization2.getKeyMaterialType())
+        .isEqualTo(apiSerialization.getKeyMaterialType());
+    assertThat(apiSerialization2.getOutputPrefixType())
+        .isEqualTo(apiSerialization.getOutputPrefixType());
+    assertThat(apiSerialization2.getIdRequirementOrNull())
+        .isEqualTo(apiSerialization.getIdRequirementOrNull());
+  }
+
+  @Test
+  public void testApiConversions_rawRemote() throws Exception {
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization =
+        com.google.crypto.tink.ProtoKeySerialization.create(
+            "typeUrl",
+            ByteString.copyFrom(new byte[] {1, 2, 3}),
+            com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.REMOTE,
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW,
+            null);
+    ProtoKeySerialization internalSerialization =
+        ProtoKeySerialization.createFromPublic(apiSerialization);
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization2 =
+        internalSerialization.toPublic();
+    assertThat(apiSerialization2.getTypeUrl()).isEqualTo(apiSerialization.getTypeUrl());
+    assertThat(apiSerialization2.getValue()).isEqualTo(apiSerialization.getValue());
+    assertThat(apiSerialization2.getKeyMaterialType())
+        .isEqualTo(apiSerialization.getKeyMaterialType());
+    assertThat(apiSerialization2.getOutputPrefixType())
+        .isEqualTo(apiSerialization.getOutputPrefixType());
+    assertThat(apiSerialization2.getIdRequirementOrNull())
+        .isEqualTo(apiSerialization.getIdRequirementOrNull());
+  }
+
+  @Test
+  public void testApiConversions_tinkSymmetric() throws Exception {
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization =
+        com.google.crypto.tink.ProtoKeySerialization.create(
+            "typeUrl",
+            ByteString.copyFrom(new byte[] {1, 2, 3}),
+            com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.SYMMETRIC,
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK,
+            123);
+    ProtoKeySerialization internalSerialization =
+        ProtoKeySerialization.createFromPublic(apiSerialization);
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization2 =
+        internalSerialization.toPublic();
+    assertThat(apiSerialization2.getTypeUrl()).isEqualTo(apiSerialization.getTypeUrl());
+    assertThat(apiSerialization2.getValue()).isEqualTo(apiSerialization.getValue());
+    assertThat(apiSerialization2.getKeyMaterialType())
+        .isEqualTo(apiSerialization.getKeyMaterialType());
+    assertThat(apiSerialization2.getOutputPrefixType())
+        .isEqualTo(apiSerialization.getOutputPrefixType());
+    assertThat(apiSerialization2.getIdRequirementOrNull())
+        .isEqualTo(apiSerialization.getIdRequirementOrNull());
+  }
+
+  @Test
+  public void testApiConversions_tinkAsymmetricPrivate() throws Exception {
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization =
+        com.google.crypto.tink.ProtoKeySerialization.create(
+            "typeUrl",
+            ByteString.copyFrom(new byte[] {1, 2, 3}),
+            com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PRIVATE,
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK,
+            123);
+    ProtoKeySerialization internalSerialization =
+        ProtoKeySerialization.createFromPublic(apiSerialization);
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization2 =
+        internalSerialization.toPublic();
+    assertThat(apiSerialization2.getTypeUrl()).isEqualTo(apiSerialization.getTypeUrl());
+    assertThat(apiSerialization2.getValue()).isEqualTo(apiSerialization.getValue());
+    assertThat(apiSerialization2.getKeyMaterialType())
+        .isEqualTo(apiSerialization.getKeyMaterialType());
+    assertThat(apiSerialization2.getOutputPrefixType())
+        .isEqualTo(apiSerialization.getOutputPrefixType());
+    assertThat(apiSerialization2.getIdRequirementOrNull())
+        .isEqualTo(apiSerialization.getIdRequirementOrNull());
+  }
+
+  @Test
+  public void testApiConversions_tinkAsymmetricPublic() throws Exception {
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization =
+        com.google.crypto.tink.ProtoKeySerialization.create(
+            "typeUrl",
+            ByteString.copyFrom(new byte[] {1, 2, 3}),
+            com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PUBLIC,
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK,
+            123);
+    ProtoKeySerialization internalSerialization =
+        ProtoKeySerialization.createFromPublic(apiSerialization);
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization2 =
+        internalSerialization.toPublic();
+    assertThat(apiSerialization2.getTypeUrl()).isEqualTo(apiSerialization.getTypeUrl());
+    assertThat(apiSerialization2.getValue()).isEqualTo(apiSerialization.getValue());
+    assertThat(apiSerialization2.getKeyMaterialType())
+        .isEqualTo(apiSerialization.getKeyMaterialType());
+    assertThat(apiSerialization2.getOutputPrefixType())
+        .isEqualTo(apiSerialization.getOutputPrefixType());
+    assertThat(apiSerialization2.getIdRequirementOrNull())
+        .isEqualTo(apiSerialization.getIdRequirementOrNull());
+  }
+
+  @Test
+  public void testApiConversions_tinkRemote() throws Exception {
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization =
+        com.google.crypto.tink.ProtoKeySerialization.create(
+            "typeUrl",
+            ByteString.copyFrom(new byte[] {1, 2, 3}),
+            com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.REMOTE,
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK,
+            123);
+    ProtoKeySerialization internalSerialization =
+        ProtoKeySerialization.createFromPublic(apiSerialization);
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization2 =
+        internalSerialization.toPublic();
+    assertThat(apiSerialization2.getTypeUrl()).isEqualTo(apiSerialization.getTypeUrl());
+    assertThat(apiSerialization2.getValue()).isEqualTo(apiSerialization.getValue());
+    assertThat(apiSerialization2.getKeyMaterialType())
+        .isEqualTo(apiSerialization.getKeyMaterialType());
+    assertThat(apiSerialization2.getOutputPrefixType())
+        .isEqualTo(apiSerialization.getOutputPrefixType());
+    assertThat(apiSerialization2.getIdRequirementOrNull())
+        .isEqualTo(apiSerialization.getIdRequirementOrNull());
+  }
+
+  @Test
+  public void testApiConversions_legacySymmetric() throws Exception {
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization =
+        com.google.crypto.tink.ProtoKeySerialization.create(
+            "typeUrl",
+            ByteString.copyFrom(new byte[] {1, 2, 3}),
+            com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.SYMMETRIC,
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.LEGACY,
+            123);
+    ProtoKeySerialization internalSerialization =
+        ProtoKeySerialization.createFromPublic(apiSerialization);
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization2 =
+        internalSerialization.toPublic();
+    assertThat(apiSerialization2.getTypeUrl()).isEqualTo(apiSerialization.getTypeUrl());
+    assertThat(apiSerialization2.getValue()).isEqualTo(apiSerialization.getValue());
+    assertThat(apiSerialization2.getKeyMaterialType())
+        .isEqualTo(apiSerialization.getKeyMaterialType());
+    assertThat(apiSerialization2.getOutputPrefixType())
+        .isEqualTo(apiSerialization.getOutputPrefixType());
+    assertThat(apiSerialization2.getIdRequirementOrNull())
+        .isEqualTo(apiSerialization.getIdRequirementOrNull());
+  }
+
+  @Test
+  public void testApiConversions_legacyAsymmetricPrivate() throws Exception {
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization =
+        com.google.crypto.tink.ProtoKeySerialization.create(
+            "typeUrl",
+            ByteString.copyFrom(new byte[] {1, 2, 3}),
+            com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PRIVATE,
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.LEGACY,
+            123);
+    ProtoKeySerialization internalSerialization =
+        ProtoKeySerialization.createFromPublic(apiSerialization);
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization2 =
+        internalSerialization.toPublic();
+    assertThat(apiSerialization2.getTypeUrl()).isEqualTo(apiSerialization.getTypeUrl());
+    assertThat(apiSerialization2.getValue()).isEqualTo(apiSerialization.getValue());
+    assertThat(apiSerialization2.getKeyMaterialType())
+        .isEqualTo(apiSerialization.getKeyMaterialType());
+    assertThat(apiSerialization2.getOutputPrefixType())
+        .isEqualTo(apiSerialization.getOutputPrefixType());
+    assertThat(apiSerialization2.getIdRequirementOrNull())
+        .isEqualTo(apiSerialization.getIdRequirementOrNull());
+  }
+
+  @Test
+  public void testApiConversions_legacyAsymmetricPublic() throws Exception {
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization =
+        com.google.crypto.tink.ProtoKeySerialization.create(
+            "typeUrl",
+            ByteString.copyFrom(new byte[] {1, 2, 3}),
+            com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PUBLIC,
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.LEGACY,
+            123);
+    ProtoKeySerialization internalSerialization =
+        ProtoKeySerialization.createFromPublic(apiSerialization);
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization2 =
+        internalSerialization.toPublic();
+    assertThat(apiSerialization2.getTypeUrl()).isEqualTo(apiSerialization.getTypeUrl());
+    assertThat(apiSerialization2.getValue()).isEqualTo(apiSerialization.getValue());
+    assertThat(apiSerialization2.getKeyMaterialType())
+        .isEqualTo(apiSerialization.getKeyMaterialType());
+    assertThat(apiSerialization2.getOutputPrefixType())
+        .isEqualTo(apiSerialization.getOutputPrefixType());
+    assertThat(apiSerialization2.getIdRequirementOrNull())
+        .isEqualTo(apiSerialization.getIdRequirementOrNull());
+  }
+
+  @Test
+  public void testApiConversions_legacyRemote() throws Exception {
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization =
+        com.google.crypto.tink.ProtoKeySerialization.create(
+            "typeUrl",
+            ByteString.copyFrom(new byte[] {1, 2, 3}),
+            com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.REMOTE,
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.LEGACY,
+            123);
+    ProtoKeySerialization internalSerialization =
+        ProtoKeySerialization.createFromPublic(apiSerialization);
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization2 =
+        internalSerialization.toPublic();
+    assertThat(apiSerialization2.getTypeUrl()).isEqualTo(apiSerialization.getTypeUrl());
+    assertThat(apiSerialization2.getValue()).isEqualTo(apiSerialization.getValue());
+    assertThat(apiSerialization2.getKeyMaterialType())
+        .isEqualTo(apiSerialization.getKeyMaterialType());
+    assertThat(apiSerialization2.getOutputPrefixType())
+        .isEqualTo(apiSerialization.getOutputPrefixType());
+    assertThat(apiSerialization2.getIdRequirementOrNull())
+        .isEqualTo(apiSerialization.getIdRequirementOrNull());
+  }
+
+  @Test
+  public void testApiConversions_crunchySymmetric() throws Exception {
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization =
+        com.google.crypto.tink.ProtoKeySerialization.create(
+            "typeUrl",
+            ByteString.copyFrom(new byte[] {1, 2, 3}),
+            com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.SYMMETRIC,
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.CRUNCHY,
+            123);
+    ProtoKeySerialization internalSerialization =
+        ProtoKeySerialization.createFromPublic(apiSerialization);
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization2 =
+        internalSerialization.toPublic();
+    assertThat(apiSerialization2.getTypeUrl()).isEqualTo(apiSerialization.getTypeUrl());
+    assertThat(apiSerialization2.getValue()).isEqualTo(apiSerialization.getValue());
+    assertThat(apiSerialization2.getKeyMaterialType())
+        .isEqualTo(apiSerialization.getKeyMaterialType());
+    assertThat(apiSerialization2.getOutputPrefixType())
+        .isEqualTo(apiSerialization.getOutputPrefixType());
+    assertThat(apiSerialization2.getIdRequirementOrNull())
+        .isEqualTo(apiSerialization.getIdRequirementOrNull());
+  }
+
+  @Test
+  public void testApiConversions_crunchyAsymmetricPrivate() throws Exception {
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization =
+        com.google.crypto.tink.ProtoKeySerialization.create(
+            "typeUrl",
+            ByteString.copyFrom(new byte[] {1, 2, 3}),
+            com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PRIVATE,
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.CRUNCHY,
+            123);
+    ProtoKeySerialization internalSerialization =
+        ProtoKeySerialization.createFromPublic(apiSerialization);
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization2 =
+        internalSerialization.toPublic();
+    assertThat(apiSerialization2.getTypeUrl()).isEqualTo(apiSerialization.getTypeUrl());
+    assertThat(apiSerialization2.getValue()).isEqualTo(apiSerialization.getValue());
+    assertThat(apiSerialization2.getKeyMaterialType())
+        .isEqualTo(apiSerialization.getKeyMaterialType());
+    assertThat(apiSerialization2.getOutputPrefixType())
+        .isEqualTo(apiSerialization.getOutputPrefixType());
+    assertThat(apiSerialization2.getIdRequirementOrNull())
+        .isEqualTo(apiSerialization.getIdRequirementOrNull());
+  }
+
+  @Test
+  public void testApiConversions_crunchyAsymmetricPublic() throws Exception {
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization =
+        com.google.crypto.tink.ProtoKeySerialization.create(
+            "typeUrl",
+            ByteString.copyFrom(new byte[] {1, 2, 3}),
+            com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PUBLIC,
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.CRUNCHY,
+            123);
+    ProtoKeySerialization internalSerialization =
+        ProtoKeySerialization.createFromPublic(apiSerialization);
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization2 =
+        internalSerialization.toPublic();
+    assertThat(apiSerialization2.getTypeUrl()).isEqualTo(apiSerialization.getTypeUrl());
+    assertThat(apiSerialization2.getValue()).isEqualTo(apiSerialization.getValue());
+    assertThat(apiSerialization2.getKeyMaterialType())
+        .isEqualTo(apiSerialization.getKeyMaterialType());
+    assertThat(apiSerialization2.getOutputPrefixType())
+        .isEqualTo(apiSerialization.getOutputPrefixType());
+    assertThat(apiSerialization2.getIdRequirementOrNull())
+        .isEqualTo(apiSerialization.getIdRequirementOrNull());
+  }
+
+  @Test
+  public void testApiConversions_crunchyRemote() throws Exception {
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization =
+        com.google.crypto.tink.ProtoKeySerialization.create(
+            "typeUrl",
+            ByteString.copyFrom(new byte[] {1, 2, 3}),
+            com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.REMOTE,
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.CRUNCHY,
+            123);
+    ProtoKeySerialization internalSerialization =
+        ProtoKeySerialization.createFromPublic(apiSerialization);
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization2 =
+        internalSerialization.toPublic();
+    assertThat(apiSerialization2.getTypeUrl()).isEqualTo(apiSerialization.getTypeUrl());
+    assertThat(apiSerialization2.getValue()).isEqualTo(apiSerialization.getValue());
+    assertThat(apiSerialization2.getKeyMaterialType())
+        .isEqualTo(apiSerialization.getKeyMaterialType());
+    assertThat(apiSerialization2.getOutputPrefixType())
+        .isEqualTo(apiSerialization.getOutputPrefixType());
+    assertThat(apiSerialization2.getIdRequirementOrNull())
+        .isEqualTo(apiSerialization.getIdRequirementOrNull());
+  }
 }

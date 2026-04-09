@@ -123,4 +123,95 @@ public final class ProtoKeySerialization implements Serialization {
   public String getTypeUrl() {
     return typeUrl;
   }
+
+  private static com.google.crypto.tink.proto.KeyData.KeyMaterialType toProtoKeyMaterialType(
+      com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType type)
+      throws GeneralSecurityException {
+    if (type.equals(com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.SYMMETRIC)) {
+      return com.google.crypto.tink.proto.KeyData.KeyMaterialType.SYMMETRIC;
+    }
+    if (type.equals(
+        com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PRIVATE)) {
+      return com.google.crypto.tink.proto.KeyData.KeyMaterialType.ASYMMETRIC_PRIVATE;
+    }
+    if (type.equals(
+        com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PUBLIC)) {
+      return com.google.crypto.tink.proto.KeyData.KeyMaterialType.ASYMMETRIC_PUBLIC;
+    }
+    if (type.equals(com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.REMOTE)) {
+      return com.google.crypto.tink.proto.KeyData.KeyMaterialType.REMOTE;
+    }
+    throw new GeneralSecurityException("Unknown KeyMaterialType " + type);
+  }
+
+  private static com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType
+      fromProtoKeyMaterialType(com.google.crypto.tink.proto.KeyData.KeyMaterialType type)
+          throws GeneralSecurityException {
+    switch (type) {
+      case SYMMETRIC:
+        return com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.SYMMETRIC;
+      case ASYMMETRIC_PRIVATE:
+        return com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PRIVATE;
+      case ASYMMETRIC_PUBLIC:
+        return com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PUBLIC;
+      case REMOTE:
+        return com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.REMOTE;
+      default:
+        throw new GeneralSecurityException("Unknown KeyMaterialType " + type);
+    }
+  }
+
+  private static com.google.crypto.tink.proto.OutputPrefixType toProtoOutputPrefixType(
+      com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType type)
+      throws GeneralSecurityException {
+    if (type.equals(com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK)) {
+      return com.google.crypto.tink.proto.OutputPrefixType.TINK;
+    }
+    if (type.equals(com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.LEGACY)) {
+      return com.google.crypto.tink.proto.OutputPrefixType.LEGACY;
+    }
+    if (type.equals(com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW)) {
+      return com.google.crypto.tink.proto.OutputPrefixType.RAW;
+    }
+    if (type.equals(com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.CRUNCHY)) {
+      return com.google.crypto.tink.proto.OutputPrefixType.CRUNCHY;
+    }
+    throw new GeneralSecurityException("Unknown OutputPrefixType " + type);
+  }
+
+  private static com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType
+      fromProtoOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType type)
+          throws GeneralSecurityException {
+    switch (type) {
+      case TINK:
+        return com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK;
+      case LEGACY:
+        return com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.LEGACY;
+      case RAW:
+        return com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW;
+      case CRUNCHY:
+        return com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.CRUNCHY;
+      default:
+        throw new GeneralSecurityException("Unknown OutputPrefixType " + type);
+    }
+  }
+
+  public static ProtoKeySerialization createFromPublic(
+      com.google.crypto.tink.ProtoKeySerialization serialization) throws GeneralSecurityException {
+    return create(
+        serialization.getTypeUrl(),
+        serialization.getValue(),
+        toProtoKeyMaterialType(serialization.getKeyMaterialType()),
+        toProtoOutputPrefixType(serialization.getOutputPrefixType()),
+        serialization.getIdRequirementOrNull());
+  }
+
+  public com.google.crypto.tink.ProtoKeySerialization toPublic() throws GeneralSecurityException {
+    return com.google.crypto.tink.ProtoKeySerialization.create(
+        getTypeUrl(),
+        getValue(),
+        fromProtoKeyMaterialType(getKeyMaterialType()),
+        fromProtoOutputPrefixType(getOutputPrefixType()),
+        getIdRequirementOrNull());
+  }
 }

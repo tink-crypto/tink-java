@@ -106,6 +106,7 @@ java_test(
     srcs = ["ProtoKeySerializationTest.java"],
     deps = [
         "//proto:tink_java_proto",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization",
         "//src/main/java/com/google/crypto/tink/internal:proto_key_serialization",
         "//src/main/java/com/google/crypto/tink/util:bytes",
         "@maven//:com_google_protobuf_protobuf_java",
