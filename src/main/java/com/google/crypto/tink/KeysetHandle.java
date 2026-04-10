@@ -1158,10 +1158,8 @@ public final class KeysetHandle implements KeysetHandleInterface {
    *     non-private keys.
    */
   public KeysetHandle getPublicKeysetHandle() throws GeneralSecurityException {
-    Keyset keyset = getKeyset();
     List<KeysetHandle.Entry> publicEntries = new ArrayList<>(entries.size());
 
-    int i = 0;
     for (KeysetHandle.Entry entry : entries) {
       KeysetHandle.Entry publicEntry;
 
@@ -1178,7 +1176,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
         validateKeyId(publicKey, entry.getId());
 
       } else {
-        Keyset.Key protoKey = keyset.getKey(i);
+        Keyset.Key protoKey = createKeysetKey(entry.getKey(), entry.keyStatusType, entry.getId());
         KeyData keyData = getPublicKeyDataFromRegistry(protoKey.getKeyData());
         Keyset.Key publicProtoKey = protoKey.toBuilder().setKeyData(keyData).build();
         Key publicKey;
@@ -1202,13 +1200,12 @@ public final class KeysetHandle implements KeysetHandleInterface {
                 publicKey,
                 entry.keyStatusType,
                 id,
-                id == keyset.getPrimaryKeyId(),
+                id == getPrimary().getId(),
                 keyParsingFailed,
                 Entry.NO_LOGGING);
       }
 
       publicEntries.add(publicEntry);
-      i++;
     }
     return addMonitoringIfNeeded(new KeysetHandle(publicEntries, annotationsMap));
   }
