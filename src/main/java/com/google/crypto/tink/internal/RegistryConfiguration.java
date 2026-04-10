@@ -78,7 +78,7 @@ public final class RegistryConfiguration {
             com.google.crypto.tink.proto.KeyTemplate.parseFrom(
                 serialization, ExtensionRegistryLite.getEmptyRegistry());
         return MutableSerializationRegistry.globalInstance()
-            .parseParametersWithLegacyFallback(ProtoParametersSerialization.create(template));
+            .parseParameters(ProtoParametersSerialization.create(template));
       } catch (InvalidProtocolBufferException e) {
         throw new GeneralSecurityException("Problem parsing the parameters", e);
       }

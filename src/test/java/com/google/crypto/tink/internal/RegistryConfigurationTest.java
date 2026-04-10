@@ -34,6 +34,7 @@ import com.google.crypto.tink.proto.HmacParams;
 import com.google.crypto.tink.proto.KeyData;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.KeyStatusType;
+import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.SecretBytes;
@@ -138,12 +139,11 @@ public class RegistryConfigurationTest {
   }
 
   @Test
-  public void requestingUnregisteredPrimitives_throws() throws GeneralSecurityException {
+  public void requestingUnregisteredPrimitives_throws() throws GeneralSecurityException, Exception {
+    KeysetHandle keysetHandle = KeysetHandle.generateNew(rawKey.getParameters());
     assertThrows(
         GeneralSecurityException.class,
-        () ->
-            RegistryConfiguration.get()
-                .createPrimitive(KeysetHandle.generateNew(rawKey.getParameters()), Aead.class));
+        () -> RegistryConfiguration.get().createPrimitive(keysetHandle, Aead.class));
   }
 
   @Test
@@ -170,5 +170,32 @@ public class RegistryConfigurationTest {
     ProtoKeySerializer serializer = RegistryConfiguration.get().get(ProtoKeySerializer.class);
     ByteString serializedParameters = serializer.serializeParameters(rawKey.getParameters());
     assertThat(serializer.parseParameters(serializedParameters)).isEqualTo(rawKey.getParameters());
+  }
+
+  @Test
+  public void getProtoKeySerializer_parseKeyFailsWithoutParser() throws Exception {
+    com.google.crypto.tink.ProtoKeySerialization serialization =
+        com.google.crypto.tink.ProtoKeySerialization.create(
+            "unknown_type_url",
+            ByteString.EMPTY,
+            com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.SYMMETRIC,
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK,
+            /* idRequirement= */ 123);
+    ProtoKeySerializer serializer = RegistryConfiguration.get().get(ProtoKeySerializer.class);
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> serializer.parseKey(serialization, InsecureSecretKeyAccess.get()));
+  }
+
+  @Test
+  public void getProtoKeySerializer_parseParametersFailsWithoutParser() throws Exception {
+    ProtoKeySerializer serializer = RegistryConfiguration.get().get(ProtoKeySerializer.class);
+    KeyTemplate template =
+        KeyTemplate.newBuilder()
+            .setTypeUrl("UnknownTypeUrl")
+            .setOutputPrefixType(OutputPrefixType.TINK)
+            .build();
+    assertThrows(
+        GeneralSecurityException.class, () -> serializer.parseParameters(template.toByteString()));
   }
 }
