@@ -278,7 +278,7 @@ public final class HpkeProtoSerialization {
       }
 
       HpkeParameters params =
-          fromProtoParameters(serialization.getOutputPrefixType(), protoKey.getParams());
+          fromProtoParameters(serialization.getOutputPrefixTypeProto(), protoKey.getParams());
       return HpkePublicKey.create(
           params,
           encodePublicKeyBytes(params.getKemId(), protoKey.getPublicKey().toByteArray()),
@@ -319,7 +319,7 @@ public final class HpkeProtoSerialization {
         throw new GeneralSecurityException("Only version " + VERSION + " keys are accepted");
       }
       HpkeParameters params =
-          fromProtoParameters(serialization.getOutputPrefixType(), protoPublicKey.getParams());
+          fromProtoParameters(serialization.getOutputPrefixTypeProto(), protoPublicKey.getParams());
       HpkePublicKey publicKey =
           HpkePublicKey.create(
               params,

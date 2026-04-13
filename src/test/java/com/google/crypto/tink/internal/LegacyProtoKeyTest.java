@@ -380,7 +380,7 @@ public final class LegacyProtoKeyTest {
         .isEqualTo("type.googleapis.com/google.crypto.tink.EcdsaPublicKey");
     assertThat(publicKeySerialization.getKeyMaterialType())
         .isEqualTo(KeyMaterialType.ASYMMETRIC_PUBLIC);
-    assertThat(publicKeySerialization.getOutputPrefixType()).isEqualTo(OutputPrefixType.TINK);
+    assertThat(publicKeySerialization.getOutputPrefixTypeProto()).isEqualTo(OutputPrefixType.TINK);
     assertThat(publicKeySerialization.getIdRequirementOrNull()).isEqualTo(123);
 
     EcdsaPublicKey obtainedProtoPublicKey =

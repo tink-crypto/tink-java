@@ -54,7 +54,7 @@ public class LegacyFullDeterministicAead implements DeterministicAead {
 
     DeterministicAead rawPrimitive = manager.getPrimitive(protoKeySerialization.getValue());
 
-    OutputPrefixType outputPrefixType = protoKeySerialization.getOutputPrefixType();
+    OutputPrefixType outputPrefixType = protoKeySerialization.getOutputPrefixTypeProto();
     byte[] identifier;
     switch (outputPrefixType) {
       case RAW:

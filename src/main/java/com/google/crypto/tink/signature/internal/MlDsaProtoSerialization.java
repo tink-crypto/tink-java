@@ -245,7 +245,7 @@ public final class MlDsaProtoSerialization {
       MlDsaParameters parameters =
           MlDsaParameters.create(
               INSTANCE_CONVERTER.fromProtoEnum(protoKey.getParams().getMlDsaInstance()),
-              VARIANT_CONVERTER.fromProtoEnum(serialization.getOutputPrefixType()));
+              VARIANT_CONVERTER.fromProtoEnum(serialization.getOutputPrefixTypeProto()));
       MlDsaPublicKey.Builder builder =
           MlDsaPublicKey.builder()
               .setParameters(parameters)
@@ -286,7 +286,7 @@ public final class MlDsaProtoSerialization {
       MlDsaParameters parameters =
           MlDsaParameters.create(
               INSTANCE_CONVERTER.fromProtoEnum(protoPublicKey.getParams().getMlDsaInstance()),
-              VARIANT_CONVERTER.fromProtoEnum(serialization.getOutputPrefixType()));
+              VARIANT_CONVERTER.fromProtoEnum(serialization.getOutputPrefixTypeProto()));
       MlDsaPublicKey.Builder builder =
           MlDsaPublicKey.builder()
               .setParameters(parameters)

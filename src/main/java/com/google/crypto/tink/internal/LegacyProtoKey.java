@@ -95,14 +95,14 @@ public final class LegacyProtoKey extends Key {
 
   private static Bytes computeOutputPrefix(ProtoKeySerialization serialization)
       throws GeneralSecurityException {
-    if (serialization.getOutputPrefixType().equals(OutputPrefixType.RAW)) {
+    if (serialization.getOutputPrefixTypeProto().equals(OutputPrefixType.RAW)) {
       return Bytes.copyFrom(new byte[0]);
     }
-    if (serialization.getOutputPrefixType().equals(OutputPrefixType.TINK)) {
+    if (serialization.getOutputPrefixTypeProto().equals(OutputPrefixType.TINK)) {
       return OutputPrefixUtil.getTinkOutputPrefix(serialization.getIdRequirementOrNull());
     }
-    if (serialization.getOutputPrefixType().equals(OutputPrefixType.LEGACY)
-        || serialization.getOutputPrefixType().equals(OutputPrefixType.CRUNCHY)) {
+    if (serialization.getOutputPrefixTypeProto().equals(OutputPrefixType.LEGACY)
+        || serialization.getOutputPrefixTypeProto().equals(OutputPrefixType.CRUNCHY)) {
       return OutputPrefixUtil.getLegacyOutputPrefix(serialization.getIdRequirementOrNull());
     }
     throw new GeneralSecurityException("Unknown output prefix type");
@@ -138,7 +138,7 @@ public final class LegacyProtoKey extends Key {
     }
     ProtoKeySerialization other = ((LegacyProtoKey) key).serialization;
 
-    if (!other.getOutputPrefixType().equals(serialization.getOutputPrefixType())) {
+    if (!other.getOutputPrefixTypeProto().equals(serialization.getOutputPrefixTypeProto())) {
       return false;
     }
     if (!other.getKeyMaterialType().equals(serialization.getKeyMaterialType())) {
@@ -180,7 +180,7 @@ public final class LegacyProtoKey extends Key {
   @Override
   public Parameters getParameters() {
     return new LegacyProtoParametersNotForCreation(
-        serialization.getTypeUrl(), serialization.getOutputPrefixType());
+        serialization.getTypeUrl(), serialization.getOutputPrefixTypeProto());
   }
 
   public Bytes getOutputPrefix() throws GeneralSecurityException {
@@ -200,7 +200,7 @@ public final class LegacyProtoKey extends Key {
             keyData.getTypeUrl(),
             keyData.getValue(),
             keyData.getKeyMaterialType(),
-            serialization.getOutputPrefixType(),
+            serialization.getOutputPrefixTypeProto(),
             serialization.getIdRequirementOrNull());
     return new LegacyProtoKey(publicKeySerialization, /* access= */ null);
   }

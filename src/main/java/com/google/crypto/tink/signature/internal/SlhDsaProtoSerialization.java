@@ -279,7 +279,7 @@ public final class SlhDsaProtoSerialization {
     SlhDsaParameters parameters =
         validateAndConvertToSlhDsaParameters(
             protoKey.getParams(),
-            VARIANT_CONVERTER.fromProtoEnum(serialization.getOutputPrefixType()));
+            VARIANT_CONVERTER.fromProtoEnum(serialization.getOutputPrefixTypeProto()));
 
     SlhDsaPublicKey.Builder builder =
         SlhDsaPublicKey.builder()

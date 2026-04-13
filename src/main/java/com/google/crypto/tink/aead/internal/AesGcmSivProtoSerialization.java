@@ -175,7 +175,7 @@ public final class AesGcmSivProtoSerialization {
       AesGcmSivParameters parameters =
           AesGcmSivParameters.builder()
               .setKeySizeBytes(protoKey.getKeyValue().size())
-              .setVariant(toVariant(serialization.getOutputPrefixType()))
+              .setVariant(toVariant(serialization.getOutputPrefixTypeProto()))
               .build();
       return AesGcmSivKey.builder()
           .setParameters(parameters)

@@ -67,7 +67,7 @@ public final class Asserts {
   public static void assertEqualWhenValueParsed(
       Parser<? extends MessageLite> parser, ProtoKeySerialization one, ProtoKeySerialization two) {
     assertThat(one.getKeyMaterialType()).isEqualTo(two.getKeyMaterialType());
-    assertThat(one.getOutputPrefixType()).isEqualTo(two.getOutputPrefixType());
+    assertThat(one.getOutputPrefixTypeProto()).isEqualTo(two.getOutputPrefixTypeProto());
     assertThat(one.getIdRequirementOrNull()).isEqualTo(two.getIdRequirementOrNull());
     assertThat(one.getTypeUrl()).isEqualTo(two.getTypeUrl());
     try {

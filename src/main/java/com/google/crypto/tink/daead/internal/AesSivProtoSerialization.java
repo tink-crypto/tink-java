@@ -188,7 +188,7 @@ public final class AesSivProtoSerialization {
       AesSivParameters parameters =
           AesSivParameters.builder()
               .setKeySizeBytes(protoKey.getKeyValue().size())
-              .setVariant(toVariant(serialization.getOutputPrefixType()))
+              .setVariant(toVariant(serialization.getOutputPrefixTypeProto()))
               .build();
       return AesSivKey.builder()
           .setParameters(parameters)

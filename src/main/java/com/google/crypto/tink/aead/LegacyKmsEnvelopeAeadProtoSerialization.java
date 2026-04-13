@@ -219,7 +219,7 @@ public final class LegacyKmsEnvelopeAeadProtoSerialization {
       }
 
       LegacyKmsEnvelopeAeadParameters parameters =
-          parseParameters(protoKey.getParams(), serialization.getOutputPrefixType());
+          parseParameters(protoKey.getParams(), serialization.getOutputPrefixTypeProto());
       return LegacyKmsEnvelopeAeadKey.create(parameters, serialization.getIdRequirementOrNull());
     } catch (InvalidProtocolBufferException e) {
       throw new GeneralSecurityException("Parsing KmsEnvelopeAeadKey failed: ", e);

@@ -53,7 +53,7 @@ public final class LegacyFullVerify implements PublicKeyVerify {
   }
 
   static byte[] getOutputPrefix(ProtoKeySerialization key) throws GeneralSecurityException {
-    switch (key.getOutputPrefixType()) {
+    switch (key.getOutputPrefixTypeProto()) {
       case LEGACY: // fall through
       case CRUNCHY:
         return OutputPrefixUtil.getLegacyOutputPrefix(key.getIdRequirementOrNull()).toByteArray();
@@ -67,7 +67,7 @@ public final class LegacyFullVerify implements PublicKeyVerify {
   }
 
   static byte[] getMessageSuffix(ProtoKeySerialization key) {
-    if (key.getOutputPrefixType().equals(OutputPrefixType.LEGACY)) {
+    if (key.getOutputPrefixTypeProto().equals(OutputPrefixType.LEGACY)) {
       return new byte[] {0};
     }
     return new byte[0];

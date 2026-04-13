@@ -189,7 +189,7 @@ public final class AesEaxProtoSerialization {
               .setKeySizeBytes(protoKey.getKeyValue().size())
               .setIvSizeBytes(protoKey.getParams().getIvSize())
               .setTagSizeBytes(16)
-              .setVariant(toVariant(serialization.getOutputPrefixType()))
+              .setVariant(toVariant(serialization.getOutputPrefixTypeProto()))
               .build();
       return AesEaxKey.builder()
           .setParameters(parameters)

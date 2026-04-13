@@ -172,7 +172,7 @@ public final class ChaCha20Poly1305ProtoSerialization {
         throw new GeneralSecurityException("Only version 0 keys are accepted");
       }
       return ChaCha20Poly1305Key.create(
-          toVariant(serialization.getOutputPrefixType()),
+          toVariant(serialization.getOutputPrefixTypeProto()),
           SecretBytes.copyFrom(
               protoKey.getKeyValue().toByteArray(), SecretKeyAccess.requireAccess(access)),
           serialization.getIdRequirementOrNull());

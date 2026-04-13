@@ -149,7 +149,7 @@ final class LegacyKmsAeadProtoSerialization {
       }
       LegacyKmsAeadParameters parameters =
           LegacyKmsAeadParameters.create(
-              protoKey.getParams().getKeyUri(), toVariant(serialization.getOutputPrefixType()));
+              protoKey.getParams().getKeyUri(), toVariant(serialization.getOutputPrefixTypeProto()));
       return LegacyKmsAeadKey.create(parameters, serialization.getIdRequirementOrNull());
     } catch (InvalidProtocolBufferException e) {
       throw new GeneralSecurityException("Parsing KmsAeadKey failed: ", e);

@@ -96,12 +96,12 @@ public final class ProtoKeySerialization implements Serialization {
    * The contents of the field output_prefix_type in the message
    * com.google.crypto.tink.proto.Keyset.Key.
    */
-  public OutputPrefixType getOutputPrefixType() {
+  public OutputPrefixType getOutputPrefixTypeProto() {
     return outputPrefixType;
   }
 
   /**
-   * The id requirement of this key. Guaranteed to be null if getOutputPrefixType == RAW, otherwise
+   * The id requirement of this key. Guaranteed to be null if getOutputPrefixTypeProto == RAW, otherwise
    * non-null, and equal to the ID this key has to have.
    */
   @Nullable
@@ -211,7 +211,7 @@ public final class ProtoKeySerialization implements Serialization {
         getTypeUrl(),
         getValue(),
         fromProtoKeyMaterialType(getKeyMaterialType()),
-        fromProtoOutputPrefixType(getOutputPrefixType()),
+        fromProtoOutputPrefixType(getOutputPrefixTypeProto()),
         getIdRequirementOrNull());
   }
 }

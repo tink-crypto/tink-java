@@ -214,7 +214,7 @@ final class JwtHmacProtoSerialization {
       }
       JwtHmacParameters.Builder parametersBuilder = JwtHmacParameters.builder();
       JwtHmacKey.Builder keyBuilder = JwtHmacKey.builder();
-      if (serialization.getOutputPrefixType().equals(OutputPrefixType.TINK)) {
+      if (serialization.getOutputPrefixTypeProto().equals(OutputPrefixType.TINK)) {
         if (protoKey.hasCustomKid()) {
           throw new GeneralSecurityException(
               "Keys serialized with OutputPrefixType TINK should not have a custom kid");
@@ -226,7 +226,7 @@ final class JwtHmacProtoSerialization {
         }
         parametersBuilder.setKidStrategy(JwtHmacParameters.KidStrategy.BASE64_ENCODED_KEY_ID);
         keyBuilder.setIdRequirement(idRequirement);
-      } else if (serialization.getOutputPrefixType().equals(OutputPrefixType.RAW)) {
+      } else if (serialization.getOutputPrefixTypeProto().equals(OutputPrefixType.RAW)) {
         if (protoKey.hasCustomKid()) {
           parametersBuilder.setKidStrategy(JwtHmacParameters.KidStrategy.CUSTOM);
           keyBuilder.setCustomKid(protoKey.getCustomKid().getValue());

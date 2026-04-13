@@ -242,7 +242,7 @@ public final class RsaSsaPkcs1ProtoSerialization {
               .setHashType(HASH_TYPE_CONVERTER.fromProtoEnum(protoKey.getParams().getHashType()))
               .setPublicExponent(decodeBigInteger(protoKey.getE()))
               .setModulusSizeBits(modulusSizeInBits)
-              .setVariant(VARIANT_CONVERTER.fromProtoEnum(serialization.getOutputPrefixType()))
+              .setVariant(VARIANT_CONVERTER.fromProtoEnum(serialization.getOutputPrefixTypeProto()))
               .build();
       return RsaSsaPkcs1PublicKey.builder()
           .setParameters(parameters)
@@ -289,7 +289,7 @@ public final class RsaSsaPkcs1ProtoSerialization {
                   HASH_TYPE_CONVERTER.fromProtoEnum(protoPublicKey.getParams().getHashType()))
               .setPublicExponent(publicExponent)
               .setModulusSizeBits(modulusSizeInBits)
-              .setVariant(VARIANT_CONVERTER.fromProtoEnum(serialization.getOutputPrefixType()))
+              .setVariant(VARIANT_CONVERTER.fromProtoEnum(serialization.getOutputPrefixTypeProto()))
               .build();
       RsaSsaPkcs1PublicKey publicKey =
           RsaSsaPkcs1PublicKey.builder()

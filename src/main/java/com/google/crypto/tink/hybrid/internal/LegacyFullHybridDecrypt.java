@@ -57,7 +57,7 @@ public final class LegacyFullHybridDecrypt implements HybridDecrypt {
 
     HybridDecrypt rawPrimitive = manager.getPrimitive(protoKeySerialization.getValue());
 
-    OutputPrefixType outputPrefixType = protoKeySerialization.getOutputPrefixType();
+    OutputPrefixType outputPrefixType = protoKeySerialization.getOutputPrefixTypeProto();
     byte[] outputPrefix;
     switch (outputPrefixType) {
       case RAW:

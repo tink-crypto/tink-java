@@ -300,7 +300,7 @@ public final class JwtEcdsaProtoSerialization {
           com.google.crypto.tink.proto.JwtEcdsaPublicKey.parseFrom(
               serialization.getValue(), ExtensionRegistryLite.getEmptyRegistry());
       return parsePublicKeyFromProto(
-          protoKey, serialization.getOutputPrefixType(), serialization.getIdRequirementOrNull());
+          protoKey, serialization.getOutputPrefixTypeProto(), serialization.getIdRequirementOrNull());
     } catch (InvalidProtocolBufferException e) {
       throw new GeneralSecurityException("Parsing EcdsaPublicKey failed");
     }
@@ -347,7 +347,7 @@ public final class JwtEcdsaProtoSerialization {
       JwtEcdsaPublicKey publicKey =
           parsePublicKeyFromProto(
               protoKey.getPublicKey(),
-              serialization.getOutputPrefixType(),
+              serialization.getOutputPrefixTypeProto(),
               serialization.getIdRequirementOrNull());
       return JwtEcdsaPrivateKey.create(
           publicKey,

@@ -202,7 +202,7 @@ public final class AesGcmProtoSerialization {
               .setKeySizeBytes(protoKey.getKeyValue().size())
               .setIvSizeBytes(12)
               .setTagSizeBytes(16)
-              .setVariant(toVariant(serialization.getOutputPrefixType()))
+              .setVariant(toVariant(serialization.getOutputPrefixTypeProto()))
               .build();
       return AesGcmKey.builder()
           .setParameters(parameters)

@@ -213,7 +213,7 @@ public final class Ed25519ProtoSerialization {
       }
 
       return Ed25519PublicKey.create(
-          VARIANT_CONVERTER.fromProtoEnum(serialization.getOutputPrefixType()),
+          VARIANT_CONVERTER.fromProtoEnum(serialization.getOutputPrefixTypeProto()),
           Bytes.copyFrom(protoKey.getKeyValue().toByteArray()),
           serialization.getIdRequirementOrNull());
     } catch (InvalidProtocolBufferException e) {
@@ -243,7 +243,7 @@ public final class Ed25519ProtoSerialization {
       }
       Ed25519PublicKey publicKey =
           Ed25519PublicKey.create(
-              VARIANT_CONVERTER.fromProtoEnum(serialization.getOutputPrefixType()),
+              VARIANT_CONVERTER.fromProtoEnum(serialization.getOutputPrefixTypeProto()),
               Bytes.copyFrom(protoPublicKey.getKeyValue().toByteArray()),
               serialization.getIdRequirementOrNull());
 

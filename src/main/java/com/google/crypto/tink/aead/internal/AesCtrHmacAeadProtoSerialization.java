@@ -263,7 +263,7 @@ public final class AesCtrHmacAeadProtoSerialization {
               .setIvSizeBytes(protoKey.getAesCtrKey().getParams().getIvSize())
               .setTagSizeBytes(protoKey.getHmacKey().getParams().getTagSize())
               .setHashType(toHashType(protoKey.getHmacKey().getParams().getHash()))
-              .setVariant(toVariant(serialization.getOutputPrefixType()))
+              .setVariant(toVariant(serialization.getOutputPrefixTypeProto()))
               .build();
       return AesCtrHmacAeadKey.builder()
           .setParameters(parameters)

@@ -344,7 +344,7 @@ public final class EcdsaProtoSerialization {
               .setHashType(toHashType(protoKey.getParams().getHashType()))
               .setSignatureEncoding(toSignatureEncoding(protoKey.getParams().getEncoding()))
               .setCurveType(toCurveType(protoKey.getParams().getCurve()))
-              .setVariant(toVariant(serialization.getOutputPrefixType()))
+              .setVariant(toVariant(serialization.getOutputPrefixTypeProto()))
               .build();
       return EcdsaPublicKey.builder()
           .setParameters(parameters)
@@ -384,7 +384,7 @@ public final class EcdsaProtoSerialization {
               .setHashType(toHashType(protoPublicKey.getParams().getHashType()))
               .setSignatureEncoding(toSignatureEncoding(protoPublicKey.getParams().getEncoding()))
               .setCurveType(toCurveType(protoPublicKey.getParams().getCurve()))
-              .setVariant(toVariant(serialization.getOutputPrefixType()))
+              .setVariant(toVariant(serialization.getOutputPrefixTypeProto()))
               .build();
       EcdsaPublicKey publicKey =
           EcdsaPublicKey.builder()

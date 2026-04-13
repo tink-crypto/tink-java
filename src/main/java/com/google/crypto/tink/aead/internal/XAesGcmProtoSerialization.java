@@ -177,7 +177,7 @@ public final class XAesGcmProtoSerialization {
       }
       return XAesGcmKey.create(
           XAesGcmParameters.create(
-              toVariant(serialization.getOutputPrefixType()), protoKey.getParams().getSaltSize()),
+              toVariant(serialization.getOutputPrefixTypeProto()), protoKey.getParams().getSaltSize()),
           SecretBytes.copyFrom(
               protoKey.getKeyValue().toByteArray(), SecretKeyAccess.requireAccess(access)),
           serialization.getIdRequirementOrNull());

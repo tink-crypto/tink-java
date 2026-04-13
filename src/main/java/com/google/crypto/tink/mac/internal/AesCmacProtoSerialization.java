@@ -181,7 +181,7 @@ public final class AesCmacProtoSerialization {
       AesCmacParameters parameters =
           AesCmacParameters.builder().setKeySizeBytes(protoKey.getKeyValue().size())
               .setTagSizeBytes(protoKey.getParams().getTagSize())
-              .setVariant(toVariant(serialization.getOutputPrefixType())).build();
+              .setVariant(toVariant(serialization.getOutputPrefixTypeProto())).build();
       return AesCmacKey.builder()
           .setParameters(parameters)
           .setAesKeyBytes(SecretBytes.copyFrom(

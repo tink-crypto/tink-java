@@ -375,7 +375,7 @@ public final class EciesProtoSerialization {
         throw new GeneralSecurityException("Only version 0 keys are accepted");
       }
       EciesParameters parameters =
-          fromProtoParameters(serialization.getOutputPrefixType(), protoKey.getParams());
+          fromProtoParameters(serialization.getOutputPrefixTypeProto(), protoKey.getParams());
       if (parameters.getCurveType().equals(EciesParameters.CurveType.X25519)) {
         if (!protoKey.getY().isEmpty()) {
           throw new GeneralSecurityException("Y must be empty for X25519 points");
@@ -418,7 +418,7 @@ public final class EciesProtoSerialization {
         throw new GeneralSecurityException("Only version 0 keys are accepted");
       }
       EciesParameters parameters =
-          fromProtoParameters(serialization.getOutputPrefixType(), protoPublicKey.getParams());
+          fromProtoParameters(serialization.getOutputPrefixTypeProto(), protoPublicKey.getParams());
       if (parameters.getCurveType().equals(EciesParameters.CurveType.X25519)) {
         EciesPublicKey publicKey =
             EciesPublicKey.createForCurveX25519(

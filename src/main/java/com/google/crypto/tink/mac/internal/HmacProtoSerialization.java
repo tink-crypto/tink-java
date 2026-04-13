@@ -176,7 +176,7 @@ public final class HmacProtoSerialization {
               .setTagSizeBytes(protoKey.getParams().getTagSize())
               .setHashType(HASH_TYPE_CONVERTER.fromProtoEnum(protoKey.getParams().getHash()))
               .setVariant(
-                  OUTPUT_PREFIX_TYPE_CONVERTER.fromProtoEnum(serialization.getOutputPrefixType()))
+                  OUTPUT_PREFIX_TYPE_CONVERTER.fromProtoEnum(serialization.getOutputPrefixTypeProto()))
               .build();
       return HmacKey.builder()
           .setParameters(parameters)

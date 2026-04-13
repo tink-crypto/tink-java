@@ -308,7 +308,7 @@ public final class JwtRsaSsaPssProtoSerialization {
           com.google.crypto.tink.proto.JwtRsaSsaPssPublicKey.parseFrom(
               serialization.getValue(), ExtensionRegistryLite.getEmptyRegistry());
       return getPublicKeyFromProto(
-          protoKey, serialization.getOutputPrefixType(), serialization.getIdRequirementOrNull());
+          protoKey, serialization.getOutputPrefixTypeProto(), serialization.getIdRequirementOrNull());
     } catch (InvalidProtocolBufferException e) {
       throw new GeneralSecurityException("Parsing JwtRsaSsaPssPublicKey failed");
     }
@@ -337,7 +337,7 @@ public final class JwtRsaSsaPssProtoSerialization {
       JwtRsaSsaPssPublicKey publicKey =
           getPublicKeyFromProto(
               protoKey.getPublicKey(),
-              serialization.getOutputPrefixType(),
+              serialization.getOutputPrefixTypeProto(),
               serialization.getIdRequirementOrNull());
 
       SecretKeyAccess a = SecretKeyAccess.requireAccess(access);
