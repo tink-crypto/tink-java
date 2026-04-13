@@ -17,8 +17,11 @@
 package com.google.crypto.tink.internal;
 
 import com.google.crypto.tink.Key;
+import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.PrivateKeyManager;
 import com.google.crypto.tink.SecretKeyAccess;
+import com.google.crypto.tink.proto.KeyData;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
@@ -182,5 +185,23 @@ public final class LegacyProtoKey extends Key {
 
   public Bytes getOutputPrefix() throws GeneralSecurityException {
     return computeOutputPrefix(serialization);
+  }
+
+  public Key maybeGetPublicKey() throws GeneralSecurityException {
+    String typeUrl = serialization.getTypeUrl();
+    KeyManager<?> manager = KeyManagerRegistry.globalInstance().getUntypedKeyManager(typeUrl);
+    if (!(manager instanceof PrivateKeyManager)) {
+      throw new GeneralSecurityException(
+          "manager for key type " + typeUrl + " is not a PrivateKeyManager");
+    }
+    KeyData keyData = ((PrivateKeyManager) manager).getPublicKeyData(serialization.getValue());
+    ProtoKeySerialization publicKeySerialization =
+        ProtoKeySerialization.create(
+            keyData.getTypeUrl(),
+            keyData.getValue(),
+            keyData.getKeyMaterialType(),
+            serialization.getOutputPrefixType(),
+            serialization.getIdRequirementOrNull());
+    return new LegacyProtoKey(publicKeySerialization, /* access= */ null);
   }
 }

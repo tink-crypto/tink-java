@@ -2033,8 +2033,7 @@ public class KeysetHandleTest {
 
     // getPublicKeysetHandle now works, because the key manager is now registered.
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
-    // But the public key can't be parsed, so getAt fails.
-    assertThrows(IllegalStateException.class, () -> publicHandle.getAt(0));
+    KeysetHandle.Entry publicEntry = publicHandle.getAt(0);
 
     // parseKeyset now uses the parser for JwtEcdsaPrivateKey, but parsing fails.
     KeysetHandle privateHandle2 =
@@ -2043,8 +2042,7 @@ public class KeysetHandleTest {
     assertThrows(IllegalStateException.class, () -> privateHandle2.getAt(0));
     // getPublicKeysetHandle still work, because it uses the unparsed proto key.
     KeysetHandle publicHandle2 = privateHandle2.getPublicKeysetHandle();
-    // But also parsing of the public key fails.
-    assertThrows(IllegalStateException.class, () -> publicHandle2.getAt(0));
+    publicEntry = publicHandle2.getAt(0);
     // serializeKeysetWithoutSecret works, because it uses the unparsed proto keyset.
     String publicJsonKeyset2 = TinkJsonProtoKeysetFormat.serializeKeysetWithoutSecret(publicHandle);
     assertThat(publicJsonKeyset2).contains("JwtEcdsaPublicKey");

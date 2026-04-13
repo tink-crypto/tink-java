@@ -1161,63 +1161,29 @@ public final class KeysetHandle implements KeysetHandleInterface {
     List<KeysetHandle.Entry> publicEntries = new ArrayList<>(entries.size());
 
     for (KeysetHandle.Entry entry : entries) {
-      KeysetHandle.Entry publicEntry;
 
+      Key publicKey;
       if (entry.getKey() instanceof PrivateKey) {
-        Key publicKey = ((PrivateKey) entry.getKey()).getPublicKey();
-        publicEntry =
-            new KeysetHandle.Entry(
-                publicKey,
-                entry.keyStatusType,
-                entry.getId(),
-                entry.isPrimary(),
-                /* keyParsingFailed= */ false,
-                Entry.NO_LOGGING);
-        validateKeyId(publicKey, entry.getId());
-
+        publicKey = ((PrivateKey) entry.getKey()).getPublicKey();
+      } else if (entry.getKey() instanceof LegacyProtoKey) {
+        publicKey = ((LegacyProtoKey) entry.getKey()).maybeGetPublicKey();
       } else {
-        Keyset.Key protoKey = createKeysetKey(entry.getKey(), entry.keyStatusType, entry.getId());
-        KeyData keyData = getPublicKeyDataFromRegistry(protoKey.getKeyData());
-        Keyset.Key publicProtoKey = protoKey.toBuilder().setKeyData(keyData).build();
-        Key publicKey;
-        boolean keyParsingFailed;
-        try {
-          publicKey = toKey(publicProtoKey);
-          keyParsingFailed = false;
-        } catch (GeneralSecurityException e) {
-          if (GlobalTinkFlags.validateKeysetsOnParsing.getValue()) {
-            throw e;
-          } else {
-            publicKey =
-                new LegacyProtoKey(
-                    toProtoKeySerialization(publicProtoKey), InsecureSecretKeyAccess.get());
-            keyParsingFailed = true;
-          }
-        }
-        int id = publicProtoKey.getKeyId();
-        publicEntry =
-            new KeysetHandle.Entry(
-                publicKey,
-                entry.keyStatusType,
-                id,
-                id == getPrimary().getId(),
-                keyParsingFailed,
-                Entry.NO_LOGGING);
+        throw new GeneralSecurityException(
+            "Cannot get Public Key for key of type " + entry.getKey().getClass());
       }
+      KeysetHandle.Entry publicEntry =
+          new KeysetHandle.Entry(
+              publicKey,
+              entry.keyStatusType,
+              entry.getId(),
+              entry.isPrimary(),
+              /* keyParsingFailed= */ false,
+              Entry.NO_LOGGING);
+      validateKeyId(publicKey, entry.getId());
 
       publicEntries.add(publicEntry);
     }
     return addMonitoringIfNeeded(new KeysetHandle(publicEntries, annotationsMap));
-  }
-
-  private static KeyData getPublicKeyDataFromRegistry(KeyData privateKeyData)
-      throws GeneralSecurityException {
-    if (privateKeyData.getKeyMaterialType() != KeyData.KeyMaterialType.ASYMMETRIC_PRIVATE) {
-      throw new GeneralSecurityException("The keyset contains a non-private key");
-    }
-    KeyData publicKeyData =
-        Registry.getPublicKeyData(privateKeyData.getTypeUrl(), privateKeyData.getValue());
-    return publicKeyData;
   }
 
   /**

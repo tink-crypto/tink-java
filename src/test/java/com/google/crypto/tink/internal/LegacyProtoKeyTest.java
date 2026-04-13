@@ -20,12 +20,24 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.Key;
 import com.google.crypto.tink.SecretKeyAccess;
+import com.google.crypto.tink.aead.AeadConfig;
+import com.google.crypto.tink.proto.EcdsaParams;
+import com.google.crypto.tink.proto.EcdsaPrivateKey;
+import com.google.crypto.tink.proto.EcdsaPublicKey;
+import com.google.crypto.tink.proto.EcdsaSignatureEncoding;
+import com.google.crypto.tink.proto.EllipticCurveType;
+import com.google.crypto.tink.proto.HashType;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.OutputPrefixType;
+import com.google.crypto.tink.signature.SignatureConfig;
+import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.util.Bytes;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.ExtensionRegistryLite;
 import java.security.GeneralSecurityException;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -33,6 +45,12 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public final class LegacyProtoKeyTest {
   private static final SecretKeyAccess ACCESS = InsecureSecretKeyAccess.get();
+
+  @BeforeClass
+  public static void setUp() throws GeneralSecurityException {
+    SignatureConfig.register();
+    AeadConfig.register();
+  }
 
   @Test
   public void testLegacyProtoKeyCreate() throws Exception {
@@ -317,5 +335,72 @@ public final class LegacyProtoKeyTest {
             ACCESS);
     assertThat(key123.equalsKey(key123b)).isTrue();
     assertThat(key123.equalsKey(key124)).isFalse();
+  }
+
+  @Test
+  public void testMaybeGetPublicKey() throws Exception {
+    String hexX = "60FED4BA255A9D31C961EB74C6356D68C049B8923B61FA6CE669622E60F29FB6";
+    String hexY = "7903FE1008B8BC99A41AE9E95628BC64F2F1B20C2D7E9F5177A3C294D4462299";
+    String hexPrivateValue = "C9AFA9D845BA75166B5C215767B1D6934E50C3DB36E89B127B8A622B120F6721";
+    EcdsaPublicKey protoPublicKey =
+        EcdsaPublicKey.newBuilder()
+            .setVersion(0)
+            // X and Y are currently serialized with an extra zero at the beginning.
+            .setX(ByteString.copyFrom(Hex.decode("00" + hexX)))
+            .setY(ByteString.copyFrom(Hex.decode("00" + hexY)))
+            .setParams(
+                EcdsaParams.newBuilder()
+                    .setHashType(HashType.SHA256)
+                    .setCurve(EllipticCurveType.NIST_P256)
+                    .setEncoding(EcdsaSignatureEncoding.IEEE_P1363))
+            .build();
+    EcdsaPrivateKey protoPrivateKey =
+        EcdsaPrivateKey.newBuilder()
+            .setVersion(0)
+            .setPublicKey(protoPublicKey)
+            // privateValue is currently serialized with an extra zero at the beginning.
+            .setKeyValue(ByteString.copyFrom(Hex.decode("00" + hexPrivateValue)))
+            .build();
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "type.googleapis.com/google.crypto.tink.EcdsaPrivateKey",
+            protoPrivateKey.toByteString(),
+            KeyMaterialType.ASYMMETRIC_PRIVATE,
+            OutputPrefixType.TINK,
+            /* idRequirement= */ 123);
+
+    LegacyProtoKey privateKey = new LegacyProtoKey(serialization, ACCESS);
+
+    Key publicKey = privateKey.maybeGetPublicKey();
+
+    assertThat(publicKey).isInstanceOf(LegacyProtoKey.class);
+    ProtoKeySerialization publicKeySerialization =
+        ((LegacyProtoKey) publicKey).getSerialization(/* access= */ null);
+    assertThat(publicKeySerialization.getTypeUrl())
+        .isEqualTo("type.googleapis.com/google.crypto.tink.EcdsaPublicKey");
+    assertThat(publicKeySerialization.getKeyMaterialType())
+        .isEqualTo(KeyMaterialType.ASYMMETRIC_PUBLIC);
+    assertThat(publicKeySerialization.getOutputPrefixType()).isEqualTo(OutputPrefixType.TINK);
+    assertThat(publicKeySerialization.getIdRequirementOrNull()).isEqualTo(123);
+
+    EcdsaPublicKey obtainedProtoPublicKey =
+        EcdsaPublicKey.parseFrom(
+            publicKeySerialization.getValue(), ExtensionRegistryLite.getEmptyRegistry());
+    assertThat(obtainedProtoPublicKey).isEqualTo(protoPublicKey);
+  }
+
+  @Test
+  public void testMaybeGetPublicKey_failsIfNoPrivateKeyManager() throws Exception {
+    LegacyProtoKey symmetricKey =
+        new LegacyProtoKey(
+            ProtoKeySerialization.create(
+                "myTypeUrl",
+                ByteString.EMPTY,
+                KeyMaterialType.SYMMETRIC,
+                OutputPrefixType.TINK,
+                123),
+            ACCESS);
+
+    assertThrows(GeneralSecurityException.class, symmetricKey::maybeGetPublicKey);
   }
 }
