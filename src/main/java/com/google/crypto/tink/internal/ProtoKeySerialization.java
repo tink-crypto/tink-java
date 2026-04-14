@@ -88,7 +88,7 @@ public final class ProtoKeySerialization implements Serialization {
    * The contents of the field key_material_type in the message
    * com.google.crypto.tink.proto.KeyData.
    */
-  public KeyMaterialType getKeyMaterialType() {
+  public KeyMaterialType getKeyMaterialTypeProto() {
     return keyMaterialType;
   }
 
@@ -210,7 +210,7 @@ public final class ProtoKeySerialization implements Serialization {
     return com.google.crypto.tink.ProtoKeySerialization.create(
         getTypeUrl(),
         getValue(),
-        fromProtoKeyMaterialType(getKeyMaterialType()),
+        fromProtoKeyMaterialType(getKeyMaterialTypeProto()),
         fromProtoOutputPrefixType(getOutputPrefixTypeProto()),
         getIdRequirementOrNull());
   }

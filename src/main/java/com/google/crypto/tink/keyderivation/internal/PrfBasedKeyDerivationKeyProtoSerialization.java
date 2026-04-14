@@ -166,7 +166,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
                 KeyData.newBuilder()
                     .setValue(prfKeySerialization.getValue())
                     .setTypeUrl(prfKeySerialization.getTypeUrl())
-                    .setKeyMaterialType(prfKeySerialization.getKeyMaterialType()))
+                    .setKeyMaterialType(prfKeySerialization.getKeyMaterialTypeProto()))
             .setParams(
                 PrfBasedDeriverParams.newBuilder()
                     .setDerivedKeyTemplate(derivedKeyParametersSerialization.getKeyTemplate()))

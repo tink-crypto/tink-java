@@ -255,10 +255,10 @@ public final class SlhDsaProtoSerialization {
           "Wrong type URL in call to SlhDsaProtoSerialization.parsePublicKey: "
               + serialization.getTypeUrl());
     }
-    if (serialization.getKeyMaterialType() != KeyMaterialType.ASYMMETRIC_PUBLIC) {
+    if (serialization.getKeyMaterialTypeProto() != KeyMaterialType.ASYMMETRIC_PUBLIC) {
       throw new GeneralSecurityException(
           "Wrong KeyMaterialType for SlhDsaPublicKey: "
-              + serialization.getKeyMaterialType().name());
+              + serialization.getKeyMaterialTypeProto().name());
     }
     try {
       return convertToSlhDsaPublicKey(
@@ -300,10 +300,10 @@ public final class SlhDsaProtoSerialization {
           "Wrong type URL in call to SlhDsaProtoSerialization.parsePrivateKey: "
               + serialization.getTypeUrl());
     }
-    if (serialization.getKeyMaterialType() != KeyMaterialType.ASYMMETRIC_PRIVATE) {
+    if (serialization.getKeyMaterialTypeProto() != KeyMaterialType.ASYMMETRIC_PRIVATE) {
       throw new GeneralSecurityException(
           "Wrong KeyMaterialType for SlhDsaPrivateKey: "
-              + serialization.getKeyMaterialType().name());
+              + serialization.getKeyMaterialTypeProto().name());
     }
     try {
       com.google.crypto.tink.proto.SlhDsaPrivateKey protoKey =

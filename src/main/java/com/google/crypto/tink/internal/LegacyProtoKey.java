@@ -84,7 +84,7 @@ public final class LegacyProtoKey extends Key {
   private static void throwIfMissingAccess(
       ProtoKeySerialization protoKeySerialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
-    switch (protoKeySerialization.getKeyMaterialType()) {
+    switch (protoKeySerialization.getKeyMaterialTypeProto()) {
       case SYMMETRIC:
       case ASYMMETRIC_PRIVATE:
         SecretKeyAccess.requireAccess(access);
@@ -141,7 +141,7 @@ public final class LegacyProtoKey extends Key {
     if (!other.getOutputPrefixTypeProto().equals(serialization.getOutputPrefixTypeProto())) {
       return false;
     }
-    if (!other.getKeyMaterialType().equals(serialization.getKeyMaterialType())) {
+    if (!other.getKeyMaterialTypeProto().equals(serialization.getKeyMaterialTypeProto())) {
       return false;
     }
     if (!other.getTypeUrl().equals(serialization.getTypeUrl())) {

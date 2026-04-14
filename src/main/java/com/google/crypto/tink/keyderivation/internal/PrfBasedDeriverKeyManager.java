@@ -190,7 +190,7 @@ public final class PrfBasedDeriverKeyManager implements KeyManager<Void> {
     return KeyData.newBuilder()
         .setTypeUrl(keySerialization.getTypeUrl())
         .setValue(keySerialization.getValue())
-        .setKeyMaterialType(keySerialization.getKeyMaterialType())
+        .setKeyMaterialType(keySerialization.getKeyMaterialTypeProto())
         .build();
   }
 

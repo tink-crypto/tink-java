@@ -1364,7 +1364,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
             KeyData.newBuilder()
                 .setTypeUrl(protoKeySerialization.getTypeUrl())
                 .setValue(protoKeySerialization.getValue())
-                .setKeyMaterialType(protoKeySerialization.getKeyMaterialType()))
+                .setKeyMaterialType(protoKeySerialization.getKeyMaterialTypeProto()))
         .setStatus(status)
         .setKeyId(id)
         .setOutputPrefixType(protoKeySerialization.getOutputPrefixTypeProto())

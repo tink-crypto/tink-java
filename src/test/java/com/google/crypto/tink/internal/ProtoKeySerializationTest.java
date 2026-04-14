@@ -43,7 +43,7 @@ public final class ProtoKeySerializationTest {
             /* idRequirement = */ null);
 
     assertThat(serialization.getValue()).isEqualTo(ByteString.copyFrom(new byte[] {10, 11, 12}));
-    assertThat(serialization.getKeyMaterialType()).isEqualTo(KeyMaterialType.SYMMETRIC);
+    assertThat(serialization.getKeyMaterialTypeProto()).isEqualTo(KeyMaterialType.SYMMETRIC);
     assertThat(serialization.getOutputPrefixTypeProto()).isEqualTo(OutputPrefixType.RAW);
     assertThat(serialization.getTypeUrl()).isEqualTo("myTypeUrl");
     assertThat(serialization.getIdRequirementOrNull()).isNull();

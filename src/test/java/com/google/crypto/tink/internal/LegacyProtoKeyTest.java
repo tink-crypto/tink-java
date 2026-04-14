@@ -378,7 +378,7 @@ public final class LegacyProtoKeyTest {
         ((LegacyProtoKey) publicKey).getSerialization(/* access= */ null);
     assertThat(publicKeySerialization.getTypeUrl())
         .isEqualTo("type.googleapis.com/google.crypto.tink.EcdsaPublicKey");
-    assertThat(publicKeySerialization.getKeyMaterialType())
+    assertThat(publicKeySerialization.getKeyMaterialTypeProto())
         .isEqualTo(KeyMaterialType.ASYMMETRIC_PUBLIC);
     assertThat(publicKeySerialization.getOutputPrefixTypeProto()).isEqualTo(OutputPrefixType.TINK);
     assertThat(publicKeySerialization.getIdRequirementOrNull()).isEqualTo(123);

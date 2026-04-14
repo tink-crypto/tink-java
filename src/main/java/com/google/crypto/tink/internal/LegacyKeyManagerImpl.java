@@ -141,7 +141,7 @@ public class LegacyKeyManagerImpl<P> implements KeyManager<P> {
     return KeyData.newBuilder()
         .setTypeUrl(keySerialization.getTypeUrl())
         .setValue(keySerialization.getValue())
-        .setKeyMaterialType(keySerialization.getKeyMaterialType())
+        .setKeyMaterialType(keySerialization.getKeyMaterialTypeProto())
         .build();
   }
 
@@ -175,7 +175,7 @@ public class LegacyKeyManagerImpl<P> implements KeyManager<P> {
       return KeyData.newBuilder()
           .setTypeUrl(publicKeySerialization.getTypeUrl())
           .setValue(publicKeySerialization.getValue())
-          .setKeyMaterialType(publicKeySerialization.getKeyMaterialType())
+          .setKeyMaterialType(publicKeySerialization.getKeyMaterialTypeProto())
           .build();
     }
   }
