@@ -92,6 +92,9 @@ public final class ProtoKeySerializationTest {
             typeUrl, value, keyMaterialType, OutputPrefixType.CRUNCHY, 123);
     unused =
         ProtoKeySerialization.create(typeUrl, value, keyMaterialType, OutputPrefixType.LEGACY, 123);
+    unused =
+        ProtoKeySerialization.create(
+            typeUrl, value, keyMaterialType, OutputPrefixType.WITH_ID_REQUIREMENT, 123);
 
     assertThrows(
         GeneralSecurityException.class,
@@ -125,6 +128,15 @@ public final class ProtoKeySerializationTest {
                 keyMaterialType,
                 OutputPrefixType.LEGACY,
                 /* idRequirement = */ null));
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            ProtoKeySerialization.create(
+                typeUrl,
+                value,
+                keyMaterialType,
+                OutputPrefixType.WITH_ID_REQUIREMENT,
+                /* idRequirement= */ null));
   }
 
   @Test
@@ -480,6 +492,29 @@ public final class ProtoKeySerializationTest {
             ByteString.copyFrom(new byte[] {1, 2, 3}),
             com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.REMOTE,
             com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.CRUNCHY,
+            123);
+    ProtoKeySerialization internalSerialization =
+        ProtoKeySerialization.createFromPublic(apiSerialization);
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization2 =
+        internalSerialization.toPublic();
+    assertThat(apiSerialization2.getTypeUrl()).isEqualTo(apiSerialization.getTypeUrl());
+    assertThat(apiSerialization2.getValue()).isEqualTo(apiSerialization.getValue());
+    assertThat(apiSerialization2.getKeyMaterialType())
+        .isEqualTo(apiSerialization.getKeyMaterialType());
+    assertThat(apiSerialization2.getOutputPrefixType())
+        .isEqualTo(apiSerialization.getOutputPrefixType());
+    assertThat(apiSerialization2.getIdRequirementOrNull())
+        .isEqualTo(apiSerialization.getIdRequirementOrNull());
+  }
+
+  @Test
+  public void testApiConversions_withIdRequirement() throws Exception {
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization =
+        com.google.crypto.tink.ProtoKeySerialization.create(
+            "typeUrl",
+            ByteString.copyFrom(new byte[] {1, 2, 3}),
+            com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.SYMMETRIC,
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.WITH_ID_REQUIREMENT,
             123);
     ProtoKeySerialization internalSerialization =
         ProtoKeySerialization.createFromPublic(apiSerialization);

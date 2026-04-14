@@ -176,6 +176,9 @@ public final class ProtoKeySerialization implements Serialization {
     if (type.equals(com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.CRUNCHY)) {
       return com.google.crypto.tink.proto.OutputPrefixType.CRUNCHY;
     }
+    if (type.equals(com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.WITH_ID_REQUIREMENT)) {
+      return com.google.crypto.tink.proto.OutputPrefixType.WITH_ID_REQUIREMENT;
+    }
     throw new GeneralSecurityException("Unknown OutputPrefixType " + type);
   }
 
@@ -191,6 +194,8 @@ public final class ProtoKeySerialization implements Serialization {
         return com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW;
       case CRUNCHY:
         return com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.CRUNCHY;
+      case WITH_ID_REQUIREMENT:
+        return com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.WITH_ID_REQUIREMENT;
       default:
         throw new GeneralSecurityException("Unknown OutputPrefixType " + type);
     }
