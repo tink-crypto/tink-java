@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink;
 
+import com.google.errorprone.annotations.Immutable;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import javax.annotation.Nullable;
@@ -26,11 +27,13 @@ import javax.annotation.Nullable;
  * <p>{@link ProtoKeySerialization} objects fully describe a {@link Key} object, but they are such
  * that the {@link TinkProtoKeysetFormat} can be easily obtained from it.
  */
+@Immutable
 public final class ProtoKeySerialization {
   /**
-   * An enum describing the key material type. Corresponds to the proto enum
-   * {@link com.google.crypto.tink.KeyData.KeyMaterialType}.
+   * An enum describing the key material type. Corresponds to the proto enum {@link
+   * com.google.crypto.tink.KeyData.KeyMaterialType}.
    */
+  @Immutable
   public static final class KeyMaterialType {
     public static final KeyMaterialType SYMMETRIC = new KeyMaterialType("SYMMETRIC");
     public static final KeyMaterialType ASYMMETRIC_PRIVATE =
@@ -55,6 +58,7 @@ public final class ProtoKeySerialization {
    * An enum describing the how to prefix signatures and ciphertexts. The concrete interpretation
    * will depend on the primitive and the key type.
    */
+  @Immutable
   public static final class OutputPrefixType {
     public static final OutputPrefixType TINK = new OutputPrefixType("TINK");
     public static final OutputPrefixType LEGACY = new OutputPrefixType("LEGACY");
