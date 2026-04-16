@@ -48,6 +48,25 @@ public final class ProtoKeySerializationTest {
   }
 
   @Test
+  public void testCreationAndValues_basicButDifferentValues() throws Exception {
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "someTypeUrl",
+            ByteString.copyFrom(new byte[] {10, 11, 13}),
+            ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PUBLIC,
+            ProtoKeySerialization.OutputPrefixType.TINK,
+            /* idRequirement= */ 123);
+
+    assertThat(serialization.getValue()).isEqualTo(ByteString.copyFrom(new byte[] {10, 11, 13}));
+    assertThat(serialization.getKeyMaterialType())
+        .isEqualTo(ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PUBLIC);
+    assertThat(serialization.getOutputPrefixType())
+        .isEqualTo(ProtoKeySerialization.OutputPrefixType.TINK);
+    assertThat(serialization.getTypeUrl()).isEqualTo("someTypeUrl");
+    assertThat(serialization.getIdRequirementOrNull()).isEqualTo(123);
+  }
+
+  @Test
   public void testIdRequirement_present() throws Exception {
     final String typeUrl = "myTypeUrl";
     final ByteString value = ByteString.copyFrom(new byte[] {10, 11, 12});
@@ -98,6 +117,20 @@ public final class ProtoKeySerializationTest {
     unused =
         ProtoKeySerialization.create(
             typeUrl, value, keyMaterialType, ProtoKeySerialization.OutputPrefixType.LEGACY, 123);
+    unused =
+        ProtoKeySerialization.create(
+            typeUrl,
+            value,
+            keyMaterialType,
+            ProtoKeySerialization.OutputPrefixType.WITH_ID_REQUIREMENT,
+            123);
+    unused =
+        ProtoKeySerialization.create(
+            typeUrl,
+            value,
+            keyMaterialType,
+            ProtoKeySerialization.OutputPrefixType.UNKNOWN_PREFIX,
+            123);
 
     assertThrows(
         GeneralSecurityException.class,
@@ -130,6 +163,24 @@ public final class ProtoKeySerializationTest {
                 value,
                 keyMaterialType,
                 ProtoKeySerialization.OutputPrefixType.LEGACY,
+                /* idRequirement= */ null));
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            ProtoKeySerialization.create(
+                typeUrl,
+                value,
+                keyMaterialType,
+                ProtoKeySerialization.OutputPrefixType.WITH_ID_REQUIREMENT,
+                /* idRequirement= */ null));
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            ProtoKeySerialization.create(
+                typeUrl,
+                value,
+                keyMaterialType,
+                ProtoKeySerialization.OutputPrefixType.UNKNOWN_PREFIX,
                 /* idRequirement= */ null));
   }
 }

@@ -35,6 +35,8 @@ public final class ProtoKeySerialization {
    */
   @Immutable
   public static final class KeyMaterialType {
+    public static final KeyMaterialType UNKNOWN_KEY_MATERIAL_TYPE =
+        new KeyMaterialType("UNKNOWN_KEY_MATERIAL_TYPE");
     public static final KeyMaterialType SYMMETRIC = new KeyMaterialType("SYMMETRIC");
     public static final KeyMaterialType ASYMMETRIC_PRIVATE =
         new KeyMaterialType("ASYMMETRIC_PRIVATE");
@@ -60,6 +62,7 @@ public final class ProtoKeySerialization {
    */
   @Immutable
   public static final class OutputPrefixType {
+    public static final OutputPrefixType UNKNOWN_PREFIX = new OutputPrefixType("UNKNOWN_PREFIX");
     public static final OutputPrefixType TINK = new OutputPrefixType("TINK");
     public static final OutputPrefixType LEGACY = new OutputPrefixType("LEGACY");
     public static final OutputPrefixType RAW = new OutputPrefixType("RAW");
