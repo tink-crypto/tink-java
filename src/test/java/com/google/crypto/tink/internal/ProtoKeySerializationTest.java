@@ -529,4 +529,27 @@ public final class ProtoKeySerializationTest {
     assertThat(apiSerialization2.getIdRequirementOrNull())
         .isEqualTo(apiSerialization.getIdRequirementOrNull());
   }
+
+  @Test
+  public void testApiConversions_unknown() throws Exception {
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization =
+        com.google.crypto.tink.ProtoKeySerialization.create(
+            "typeUrl",
+            ByteString.copyFrom(new byte[] {1, 2, 3}),
+            com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.UNKNOWN_KEYMATERIAL,
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.UNKNOWN_PREFIX,
+            123);
+    ProtoKeySerialization internalSerialization =
+        ProtoKeySerialization.createFromPublic(apiSerialization);
+    com.google.crypto.tink.ProtoKeySerialization apiSerialization2 =
+        internalSerialization.toPublic();
+    assertThat(apiSerialization2.getTypeUrl()).isEqualTo(apiSerialization.getTypeUrl());
+    assertThat(apiSerialization2.getValue()).isEqualTo(apiSerialization.getValue());
+    assertThat(apiSerialization2.getKeyMaterialType())
+        .isEqualTo(apiSerialization.getKeyMaterialType());
+    assertThat(apiSerialization2.getOutputPrefixType())
+        .isEqualTo(apiSerialization.getOutputPrefixType());
+    assertThat(apiSerialization2.getIdRequirementOrNull())
+        .isEqualTo(apiSerialization.getIdRequirementOrNull());
+  }
 }

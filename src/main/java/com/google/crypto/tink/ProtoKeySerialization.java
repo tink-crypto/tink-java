@@ -35,8 +35,8 @@ public final class ProtoKeySerialization {
    */
   @Immutable
   public static final class KeyMaterialType {
-    public static final KeyMaterialType UNKNOWN_KEY_MATERIAL_TYPE =
-        new KeyMaterialType("UNKNOWN_KEY_MATERIAL_TYPE");
+    public static final KeyMaterialType UNKNOWN_KEYMATERIAL =
+        new KeyMaterialType("UNKNOWN_KEYMATERIAL");
     public static final KeyMaterialType SYMMETRIC = new KeyMaterialType("SYMMETRIC");
     public static final KeyMaterialType ASYMMETRIC_PRIVATE =
         new KeyMaterialType("ASYMMETRIC_PRIVATE");

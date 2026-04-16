@@ -127,6 +127,10 @@ public final class ProtoKeySerialization implements Serialization {
   private static com.google.crypto.tink.proto.KeyData.KeyMaterialType toProtoKeyMaterialType(
       com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType type)
       throws GeneralSecurityException {
+    if (type.equals(
+        com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.UNKNOWN_KEYMATERIAL)) {
+      return com.google.crypto.tink.proto.KeyData.KeyMaterialType.UNKNOWN_KEYMATERIAL;
+    }
     if (type.equals(com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.SYMMETRIC)) {
       return com.google.crypto.tink.proto.KeyData.KeyMaterialType.SYMMETRIC;
     }
@@ -148,6 +152,8 @@ public final class ProtoKeySerialization implements Serialization {
       fromProtoKeyMaterialType(com.google.crypto.tink.proto.KeyData.KeyMaterialType type)
           throws GeneralSecurityException {
     switch (type) {
+      case UNKNOWN_KEYMATERIAL:
+        return com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.UNKNOWN_KEYMATERIAL;
       case SYMMETRIC:
         return com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.SYMMETRIC;
       case ASYMMETRIC_PRIVATE:
@@ -164,6 +170,9 @@ public final class ProtoKeySerialization implements Serialization {
   private static com.google.crypto.tink.proto.OutputPrefixType toProtoOutputPrefixType(
       com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType type)
       throws GeneralSecurityException {
+    if (type.equals(com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.UNKNOWN_PREFIX)) {
+      return com.google.crypto.tink.proto.OutputPrefixType.UNKNOWN_PREFIX;
+    }
     if (type.equals(com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK)) {
       return com.google.crypto.tink.proto.OutputPrefixType.TINK;
     }
@@ -186,6 +195,8 @@ public final class ProtoKeySerialization implements Serialization {
       fromProtoOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType type)
           throws GeneralSecurityException {
     switch (type) {
+      case UNKNOWN_PREFIX:
+        return com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.UNKNOWN_PREFIX;
       case TINK:
         return com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK;
       case LEGACY:
