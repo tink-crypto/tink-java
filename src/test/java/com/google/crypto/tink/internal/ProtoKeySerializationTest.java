@@ -49,6 +49,33 @@ public final class ProtoKeySerializationTest {
     assertThat(serialization.getIdRequirementOrNull()).isNull();
     assertThat(serialization.getObjectIdentifier())
         .isEqualTo(Bytes.copyFrom("myTypeUrl".getBytes(UTF_8)));
+    assertThat(serialization.getKeyMaterialType())
+        .isEqualTo(com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.SYMMETRIC);
+    assertThat(serialization.getOutputPrefixType())
+        .isEqualTo(com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW);
+  }
+
+  @Test
+  public void testSecondCreate_basic() throws Exception {
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "myTypeUrl",
+            ByteString.copyFrom(new byte[] {10, 11, 12}),
+            com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.SYMMETRIC,
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW,
+            /* idRequirement= */ null);
+
+    assertThat(serialization.getValue()).isEqualTo(ByteString.copyFrom(new byte[] {10, 11, 12}));
+    assertThat(serialization.getKeyMaterialTypeProto()).isEqualTo(KeyMaterialType.SYMMETRIC);
+    assertThat(serialization.getOutputPrefixTypeProto()).isEqualTo(OutputPrefixType.RAW);
+    assertThat(serialization.getTypeUrl()).isEqualTo("myTypeUrl");
+    assertThat(serialization.getIdRequirementOrNull()).isNull();
+    assertThat(serialization.getObjectIdentifier())
+        .isEqualTo(Bytes.copyFrom("myTypeUrl".getBytes(UTF_8)));
+    assertThat(serialization.getKeyMaterialType())
+        .isEqualTo(com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.SYMMETRIC);
+    assertThat(serialization.getOutputPrefixType())
+        .isEqualTo(com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW);
   }
 
   @Test
@@ -61,6 +88,8 @@ public final class ProtoKeySerializationTest {
         ProtoKeySerialization.create(typeUrl, value, keyMaterialType, OutputPrefixType.TINK, 123);
     assertThat(serialization.getOutputPrefixTypeProto()).isEqualTo(OutputPrefixType.TINK);
     assertThat(serialization.getIdRequirementOrNull()).isEqualTo(123);
+    assertThat(serialization.getOutputPrefixType())
+        .isEqualTo(com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK);
   }
 
   @Test

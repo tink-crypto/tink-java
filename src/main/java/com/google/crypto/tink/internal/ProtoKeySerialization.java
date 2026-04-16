@@ -37,23 +37,60 @@ public final class ProtoKeySerialization implements Serialization {
   private final String typeUrl;
   private final Bytes objectIdentifier;
   private final ByteString value;
-  private final KeyMaterialType keyMaterialType;
-  private final OutputPrefixType outputPrefixType;
+  private final KeyMaterialType keyMaterialTypeProto;
+  private final OutputPrefixType outputPrefixTypeProto;
+  private final com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType keyMaterialType;
+  private final com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType outputPrefixType;
   @Nullable private final Integer idRequirement;
 
   private ProtoKeySerialization(
       String typeUrl,
       Bytes objectIdentifier,
       ByteString value,
-      KeyMaterialType keyMaterialType,
-      OutputPrefixType outputPrefixType,
+      KeyMaterialType keyMaterialTypeProto,
+      OutputPrefixType outputPrefixTypeProto,
+      com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType keyMaterialType,
+      com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType outputPrefixType,
       @Nullable Integer idRequirement) {
     this.typeUrl = typeUrl;
     this.objectIdentifier = objectIdentifier;
     this.value = value;
+    this.keyMaterialTypeProto = keyMaterialTypeProto;
+    this.outputPrefixTypeProto = outputPrefixTypeProto;
     this.keyMaterialType = keyMaterialType;
     this.outputPrefixType = outputPrefixType;
     this.idRequirement = idRequirement;
+  }
+
+  public static ProtoKeySerialization create(
+      String typeUrl,
+      ByteString value,
+      com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType keyMaterialType,
+      com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType outputPrefixType,
+      @Nullable Integer idRequirement)
+      throws GeneralSecurityException {
+    if (outputPrefixType.equals(
+        com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW)) {
+      if (idRequirement != null) {
+        throw new GeneralSecurityException(
+            "Keys with output prefix type raw should not have an id requirement.");
+      }
+    } else {
+      if (idRequirement == null) {
+        throw new GeneralSecurityException(
+            "Keys with output prefix type different from raw should have an id requirement.");
+      }
+    }
+    Bytes objectIdentifier = checkedToBytesFromPrintableAscii(typeUrl);
+    return new ProtoKeySerialization(
+        typeUrl,
+        objectIdentifier,
+        value,
+        toProtoKeyMaterialType(keyMaterialType),
+        toProtoOutputPrefixType(outputPrefixType),
+        keyMaterialType,
+        outputPrefixType,
+        idRequirement);
   }
 
   public static ProtoKeySerialization create(
@@ -76,7 +113,14 @@ public final class ProtoKeySerialization implements Serialization {
     }
     Bytes objectIdentifier = checkedToBytesFromPrintableAscii(typeUrl);
     return new ProtoKeySerialization(
-        typeUrl, objectIdentifier, value, keyMaterialType, outputPrefixType, idRequirement);
+        typeUrl,
+        objectIdentifier,
+        value,
+        keyMaterialType,
+        outputPrefixType,
+        fromProtoKeyMaterialType(keyMaterialType),
+        fromProtoOutputPrefixType(outputPrefixType),
+        idRequirement);
   }
 
   /** The contents of the field value in the message com.google.crypto.tink.proto.KeyData. */
@@ -89,6 +133,14 @@ public final class ProtoKeySerialization implements Serialization {
    * com.google.crypto.tink.proto.KeyData.
    */
   public KeyMaterialType getKeyMaterialTypeProto() {
+    return keyMaterialTypeProto;
+  }
+
+  /**
+   * The contents of the field key_material_type in the message
+   * com.google.crypto.tink.proto.KeyData.
+   */
+  public com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType getKeyMaterialType() {
     return keyMaterialType;
   }
 
@@ -97,6 +149,14 @@ public final class ProtoKeySerialization implements Serialization {
    * com.google.crypto.tink.proto.Keyset.Key.
    */
   public OutputPrefixType getOutputPrefixTypeProto() {
+    return outputPrefixTypeProto;
+  }
+
+  /**
+   * The contents of the field output_prefix_type in the message
+   * com.google.crypto.tink.proto.Keyset.Key.
+   */
+  public com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType getOutputPrefixType() {
     return outputPrefixType;
   }
 
