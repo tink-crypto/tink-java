@@ -72,6 +72,60 @@ public final class ProtoParametersSerializationTest {
   }
 
   @Test
+  public void testGetOutputPrefixType() throws Exception {
+    KeyTemplate tinkTemplate =
+        KeyTemplate.newBuilder()
+            .setTypeUrl("myTypeUrl")
+            .setOutputPrefixType(OutputPrefixType.TINK)
+            .build();
+    ProtoParametersSerialization tinkSerialization =
+        ProtoParametersSerialization.create(tinkTemplate);
+    assertThat(tinkSerialization.getOutputPrefixType())
+        .isEqualTo(com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK);
+
+    KeyTemplate legacyTemplate =
+        KeyTemplate.newBuilder()
+            .setTypeUrl("myTypeUrl")
+            .setOutputPrefixType(OutputPrefixType.LEGACY)
+            .build();
+    ProtoParametersSerialization legacySerialization =
+        ProtoParametersSerialization.create(legacyTemplate);
+    assertThat(legacySerialization.getOutputPrefixType())
+        .isEqualTo(com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.LEGACY);
+
+    KeyTemplate rawTemplate =
+        KeyTemplate.newBuilder()
+            .setTypeUrl("myTypeUrl")
+            .setOutputPrefixType(OutputPrefixType.RAW)
+            .build();
+    ProtoParametersSerialization rawSerialization =
+        ProtoParametersSerialization.create(rawTemplate);
+    assertThat(rawSerialization.getOutputPrefixType())
+        .isEqualTo(com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW);
+
+    KeyTemplate crunchyTemplate =
+        KeyTemplate.newBuilder()
+            .setTypeUrl("myTypeUrl")
+            .setOutputPrefixType(OutputPrefixType.CRUNCHY)
+            .build();
+    ProtoParametersSerialization crunchySerialization =
+        ProtoParametersSerialization.create(crunchyTemplate);
+    assertThat(crunchySerialization.getOutputPrefixType())
+        .isEqualTo(com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.CRUNCHY);
+
+    KeyTemplate withIdRequirementTemplate =
+        KeyTemplate.newBuilder()
+            .setTypeUrl("myTypeUrl")
+            .setOutputPrefixType(OutputPrefixType.WITH_ID_REQUIREMENT)
+            .build();
+    ProtoParametersSerialization withIdRequirementSerialization =
+        ProtoParametersSerialization.create(withIdRequirementTemplate);
+    assertThat(withIdRequirementSerialization.getOutputPrefixType())
+        .isEqualTo(
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.WITH_ID_REQUIREMENT);
+  }
+
+  @Test
   public void testCheckedCreationFromTemplate_invalidTypeUrl_throws() throws Exception {
     KeyTemplate template = KeyTemplate.newBuilder().setTypeUrl("some invalid typeurl").build();
     assertThrows(

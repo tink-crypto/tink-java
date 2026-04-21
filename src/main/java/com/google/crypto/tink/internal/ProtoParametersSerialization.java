@@ -36,10 +36,15 @@ import java.security.GeneralSecurityException;
 public final class ProtoParametersSerialization implements Serialization {
   private final Bytes objectIdentifier;
   private final KeyTemplate keyTemplate;
+  private final com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType outputPrefixType;
 
-  private ProtoParametersSerialization(KeyTemplate keyTemplate, Bytes objectIdentifier) {
+  private ProtoParametersSerialization(
+      KeyTemplate keyTemplate,
+      Bytes objectIdentifier,
+      com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType outputPrefixType) {
     this.keyTemplate = keyTemplate;
     this.objectIdentifier = objectIdentifier;
+    this.outputPrefixType = outputPrefixType;
   }
 
   /**
@@ -60,11 +65,18 @@ public final class ProtoParametersSerialization implements Serialization {
   /**
    * Creates a new {@code ProtoParametersSerialization} object.
    *
-   * <p>Note: the given typeUrl must be valid and may not contain invalid characters.
+   * <p>Note: the given typeUrl must be valid and may not contain invalid characters. The
+   * OutputPrefixType in the Template must be valid.
    */
   public static ProtoParametersSerialization create(KeyTemplate keyTemplate) {
-    return new ProtoParametersSerialization(
-        keyTemplate, toBytesFromPrintableAscii(keyTemplate.getTypeUrl()));
+    try {
+      return new ProtoParametersSerialization(
+          keyTemplate,
+          toBytesFromPrintableAscii(keyTemplate.getTypeUrl()),
+          ProtoKeySerialization.fromProtoOutputPrefixType(keyTemplate.getOutputPrefixType()));
+    } catch (GeneralSecurityException e) {
+      throw new TinkBugException(e);
+    }
   }
 
   /**
@@ -76,12 +88,18 @@ public final class ProtoParametersSerialization implements Serialization {
   public static ProtoParametersSerialization checkedCreate(KeyTemplate keyTemplate)
       throws GeneralSecurityException {
     return new ProtoParametersSerialization(
-        keyTemplate, checkedToBytesFromPrintableAscii(keyTemplate.getTypeUrl()));
+        keyTemplate,
+        checkedToBytesFromPrintableAscii(keyTemplate.getTypeUrl()),
+        ProtoKeySerialization.fromProtoOutputPrefixType(keyTemplate.getOutputPrefixType()));
   }
 
   /** The contents of the field value in the message com.google.crypto.tink.proto.KeyData. */
   public KeyTemplate getKeyTemplate() {
     return keyTemplate;
+  }
+
+  public com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType getOutputPrefixType() {
+    return outputPrefixType;
   }
 
   /** The typeUrl. */
