@@ -23,6 +23,7 @@ import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
+import com.google.protobuf.ByteString;
 import com.google.protobuf.MessageLite;
 import java.security.GeneralSecurityException;
 
@@ -106,5 +107,15 @@ public final class ProtoParametersSerialization implements Serialization {
   @Override
   public Bytes getObjectIdentifier() {
     return objectIdentifier;
+  }
+
+  /** The typeUrl. */
+  public String getTypeUrl() {
+    return keyTemplate.getTypeUrl();
+  }
+
+  /** The value. */
+  public ByteString getValue() {
+    return keyTemplate.getValue();
   }
 }

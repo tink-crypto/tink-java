@@ -24,6 +24,7 @@ import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.proto.TestProto;
 import com.google.crypto.tink.util.Bytes;
+import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,11 +35,14 @@ import org.junit.runners.JUnit4;
 public final class ProtoParametersSerializationTest {
   @Test
   public void testCreationAndValues_basic() throws Exception {
-    KeyTemplate template = KeyTemplate.newBuilder().setTypeUrl("myTypeUrl").build();
+    ByteString value = ByteString.copyFrom(new byte[] {1, 2, 3});
+    KeyTemplate template = KeyTemplate.newBuilder().setTypeUrl("myTypeUrl").setValue(value).build();
     ProtoParametersSerialization serialization = ProtoParametersSerialization.create(template);
     assertThat(serialization.getKeyTemplate()).isEqualTo(template);
     assertThat(serialization.getObjectIdentifier())
         .isEqualTo(Bytes.copyFrom("myTypeUrl".getBytes(UTF_8)));
+    assertThat(serialization.getTypeUrl()).isEqualTo("myTypeUrl");
+    assertThat(serialization.getValue()).isEqualTo(value);
   }
 
   @Test
@@ -53,6 +57,9 @@ public final class ProtoParametersSerializationTest {
         .isEqualTo(OutputPrefixType.RAW);
     TestProto parsedProto = TestProto.parseFrom(serialization.getKeyTemplate().getValue());
     assertThat(parsedProto.getNum()).isEqualTo(13234);
+    TestProto parsedProto2 = TestProto.parseFrom(serialization.getValue());
+    assertThat(parsedProto2.getNum()).isEqualTo(13234);
+    assertThat(serialization.getTypeUrl()).isEqualTo("typeUrl");
   }
 
   @Test
