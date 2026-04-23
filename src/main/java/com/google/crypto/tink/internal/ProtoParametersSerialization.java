@@ -64,6 +64,23 @@ public final class ProtoParametersSerialization implements Serialization {
   }
 
   /**
+   * Creates a new {@code ProtoParametersSerialization} object from the individual parts.
+   *
+   * <p>Note: the given typeUrl must be valid and must not contain invalid characters.
+   */
+  public static ProtoParametersSerialization create(
+      String typeUrl,
+      com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType outputPrefixType,
+      MessageLite value) throws GeneralSecurityException {
+    return checkedCreate(
+        KeyTemplate.newBuilder()
+            .setTypeUrl(typeUrl)
+            .setOutputPrefixType(ProtoKeySerialization.toProtoOutputPrefixType(outputPrefixType))
+            .setValue(value.toByteString())
+            .build());
+  }
+
+  /**
    * Creates a new {@code ProtoParametersSerialization} object.
    *
    * <p>Note: the given typeUrl must be valid and may not contain invalid characters. The

@@ -227,7 +227,7 @@ public final class ProtoKeySerialization implements Serialization {
     }
   }
 
-  private static com.google.crypto.tink.proto.OutputPrefixType toProtoOutputPrefixType(
+  static com.google.crypto.tink.proto.OutputPrefixType toProtoOutputPrefixType(
       com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType type)
       throws GeneralSecurityException {
     if (type.equals(com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.UNKNOWN_PREFIX)) {

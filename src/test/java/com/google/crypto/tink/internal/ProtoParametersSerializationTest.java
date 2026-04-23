@@ -133,6 +133,24 @@ public final class ProtoParametersSerializationTest {
   }
 
   @Test
+  public void testCreateWithModernOutputPrefixType() throws Exception {
+    KeyTemplate innerTemplate = KeyTemplate.newBuilder().setTypeUrl("inner").build();
+    ProtoParametersSerialization serialization =
+        ProtoParametersSerialization.create(
+            "typeUrl",
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW,
+            innerTemplate);
+    assertThat(serialization.getTypeUrl()).isEqualTo("typeUrl");
+    assertThat(serialization.getObjectIdentifier())
+        .isEqualTo(Bytes.copyFrom("typeUrl".getBytes(UTF_8)));
+    assertThat(serialization.getOutputPrefixType())
+        .isEqualTo(com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW);
+    assertThat(serialization.getKeyTemplate().getOutputPrefixType())
+        .isEqualTo(OutputPrefixType.RAW);
+    assertThat(serialization.getValue()).isEqualTo(innerTemplate.toByteString());
+  }
+
+  @Test
   public void testCheckedCreationFromTemplate_invalidTypeUrl_throws() throws Exception {
     KeyTemplate template = KeyTemplate.newBuilder().setTypeUrl("some invalid typeurl").build();
     assertThrows(
