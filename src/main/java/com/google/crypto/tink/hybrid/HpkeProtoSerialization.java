@@ -19,6 +19,8 @@ package com.google.crypto.tink.hybrid;
 import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.hybrid.internal.HpkeUtil;
 import com.google.crypto.tink.internal.BigIntegerEncoding;
@@ -35,9 +37,6 @@ import com.google.crypto.tink.proto.HpkeKdf;
 import com.google.crypto.tink.proto.HpkeKem;
 import com.google.crypto.tink.proto.HpkeKeyFormat;
 import com.google.crypto.tink.proto.HpkeParams;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.KeyTemplate;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
@@ -99,18 +98,34 @@ public final class HpkeProtoSerialization {
           PRIVATE_TYPE_URL_BYTES,
           ProtoKeySerialization.class);
 
-  private static final EnumTypeProtoConverter<OutputPrefixType, HpkeParameters.Variant>
-      VARIANT_TYPE_CONVERTER =
-          EnumTypeProtoConverter.<OutputPrefixType, HpkeParameters.Variant>builder()
-              .add(OutputPrefixType.RAW, HpkeParameters.Variant.NO_PREFIX)
-              .add(OutputPrefixType.TINK, HpkeParameters.Variant.TINK)
-              .add(OutputPrefixType.LEGACY, HpkeParameters.Variant.CRUNCHY)
-              // WARNING: The following mapping MUST be added last to ensure that
-              // {@code HpkeParameters.Variant.CRUNCHY} keys are correctly serialized to
-              // {@code OutputPrefixType.CRUNCHY} proto keys. Specifically, the most recent entry
-              // overrides that toProtoEnum mapping.
-              .add(OutputPrefixType.CRUNCHY, HpkeParameters.Variant.CRUNCHY)
-              .build();
+  private static OutputPrefixType toOutputPrefixType(HpkeParameters.Variant variant)
+      throws GeneralSecurityException {
+    if (variant.equals(HpkeParameters.Variant.NO_PREFIX)) {
+      return OutputPrefixType.RAW;
+    }
+    if (variant.equals(HpkeParameters.Variant.TINK)) {
+      return OutputPrefixType.TINK;
+    }
+    if (variant.equals(HpkeParameters.Variant.CRUNCHY)) {
+      return OutputPrefixType.CRUNCHY;
+    }
+    throw new GeneralSecurityException("unknown variant: " + variant);
+  }
+
+  private static HpkeParameters.Variant toVariant(OutputPrefixType outputPrefixType)
+      throws GeneralSecurityException {
+    if (outputPrefixType.equals(OutputPrefixType.RAW)) {
+      return HpkeParameters.Variant.NO_PREFIX;
+    }
+    if (outputPrefixType.equals(OutputPrefixType.TINK)) {
+      return HpkeParameters.Variant.TINK;
+    }
+    if (outputPrefixType.equals(OutputPrefixType.CRUNCHY)
+        || outputPrefixType.equals(OutputPrefixType.LEGACY)) {
+      return HpkeParameters.Variant.CRUNCHY;
+    }
+    throw new GeneralSecurityException("unknown variant: " + outputPrefixType);
+  }
 
   private static final EnumTypeProtoConverter<HpkeKem, HpkeParameters.KemId> KEM_TYPE_CONVERTER =
       EnumTypeProtoConverter.<HpkeKem, HpkeParameters.KemId>builder()
@@ -185,7 +200,7 @@ public final class HpkeProtoSerialization {
   private static HpkeParameters fromProtoParameters(
       OutputPrefixType outputPrefixType, HpkeParams protoParams) throws GeneralSecurityException {
     return HpkeParameters.builder()
-        .setVariant(VARIANT_TYPE_CONVERTER.fromProtoEnum(outputPrefixType))
+        .setVariant(toVariant(outputPrefixType))
         .setKemId(KEM_TYPE_CONVERTER.fromProtoEnum(protoParams.getKem()))
         .setKdfId(KDF_TYPE_CONVERTER.fromProtoEnum(protoParams.getKdf()))
         .setAeadId(AEAD_TYPE_CONVERTER.fromProtoEnum(protoParams.getAead()))
@@ -195,15 +210,9 @@ public final class HpkeProtoSerialization {
   private static ProtoParametersSerialization serializeParameters(HpkeParameters parameters)
       throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
-        KeyTemplate.newBuilder()
-            .setTypeUrl(PRIVATE_TYPE_URL)
-            .setValue(
-                HpkeKeyFormat.newBuilder()
-                    .setParams(toProtoParameters(parameters))
-                    .build()
-                    .toByteString())
-            .setOutputPrefixType(VARIANT_TYPE_CONVERTER.toProtoEnum(parameters.getVariant()))
-            .build());
+        PRIVATE_TYPE_URL,
+        toOutputPrefixType(parameters.getVariant()),
+        HpkeKeyFormat.newBuilder().setParams(toProtoParameters(parameters)).build());
   }
 
   /**
@@ -218,7 +227,7 @@ public final class HpkeProtoSerialization {
         PUBLIC_TYPE_URL,
         toProtoPublicKey(key).toByteString(),
         KeyMaterialType.ASYMMETRIC_PUBLIC,
-        VARIANT_TYPE_CONVERTER.toProtoEnum(key.getParameters().getVariant()),
+        toOutputPrefixType(key.getParameters().getVariant()),
         key.getIdRequirementOrNull());
   }
 
@@ -228,27 +237,26 @@ public final class HpkeProtoSerialization {
         PRIVATE_TYPE_URL,
         toProtoPrivateKey(key, access).toByteString(),
         KeyMaterialType.ASYMMETRIC_PRIVATE,
-        VARIANT_TYPE_CONVERTER.toProtoEnum(key.getParameters().getVariant()),
+        toOutputPrefixType(key.getParameters().getVariant()),
         key.getIdRequirementOrNull());
   }
 
   private static HpkeParameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
-    if (!serialization.getKeyTemplate().getTypeUrl().equals(PRIVATE_TYPE_URL)) {
+    if (!serialization.getTypeUrl().equals(PRIVATE_TYPE_URL)) {
       throw new IllegalArgumentException(
           "Wrong type URL in call to HpkeProtoSerialization.parseParameters: "
-              + serialization.getKeyTemplate().getTypeUrl());
+              + serialization.getTypeUrl());
     }
     HpkeKeyFormat format;
     try {
       format =
           HpkeKeyFormat.parseFrom(
-              serialization.getKeyTemplate().getValue(), ExtensionRegistryLite.getEmptyRegistry());
+              serialization.getValue(), ExtensionRegistryLite.getEmptyRegistry());
     } catch (InvalidProtocolBufferException e) {
       throw new GeneralSecurityException("Parsing HpkeParameters failed: ", e);
     }
-    return fromProtoParameters(
-        serialization.getKeyTemplate().getOutputPrefixType(), format.getParams());
+    return fromProtoParameters(serialization.getOutputPrefixType(), format.getParams());
   }
 
   private static Bytes encodePublicKeyBytes(HpkeParameters.KemId kemId, byte[] publicKeyBytes)
@@ -278,7 +286,7 @@ public final class HpkeProtoSerialization {
       }
 
       HpkeParameters params =
-          fromProtoParameters(serialization.getOutputPrefixTypeProto(), protoKey.getParams());
+          fromProtoParameters(serialization.getOutputPrefixType(), protoKey.getParams());
       return HpkePublicKey.create(
           params,
           encodePublicKeyBytes(params.getKemId(), protoKey.getPublicKey().toByteArray()),
@@ -319,7 +327,7 @@ public final class HpkeProtoSerialization {
         throw new GeneralSecurityException("Only version " + VERSION + " keys are accepted");
       }
       HpkeParameters params =
-          fromProtoParameters(serialization.getOutputPrefixTypeProto(), protoPublicKey.getParams());
+          fromProtoParameters(serialization.getOutputPrefixType(), protoPublicKey.getParams());
       HpkePublicKey publicKey =
           HpkePublicKey.create(
               params,

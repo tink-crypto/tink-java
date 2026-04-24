@@ -19,6 +19,8 @@ package com.google.crypto.tink.hybrid.internal;
 import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.TinkProtoParametersFormat;
 import com.google.crypto.tink.hybrid.EciesParameters;
@@ -38,9 +40,6 @@ import com.google.crypto.tink.proto.EciesAeadHkdfKeyFormat;
 import com.google.crypto.tink.proto.EciesAeadHkdfParams;
 import com.google.crypto.tink.proto.EllipticCurveType;
 import com.google.crypto.tink.proto.HashType;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.KeyTemplate;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBigInteger;
 import com.google.crypto.tink.util.SecretBytes;
@@ -101,18 +100,34 @@ public final class EciesProtoSerialization {
           PRIVATE_TYPE_URL_BYTES,
           ProtoKeySerialization.class);
 
-  private static final EnumTypeProtoConverter<OutputPrefixType, EciesParameters.Variant>
-      VARIANT_CONVERTER =
-          EnumTypeProtoConverter.<OutputPrefixType, EciesParameters.Variant>builder()
-              .add(OutputPrefixType.RAW, EciesParameters.Variant.NO_PREFIX)
-              .add(OutputPrefixType.TINK, EciesParameters.Variant.TINK)
-              .add(OutputPrefixType.LEGACY, EciesParameters.Variant.CRUNCHY)
-              // WARNING: The following mapping MUST be added last to ensure that
-              // {@code HpkeParameters.Variant.CRUNCHY} keys are correctly serialized to
-              // {@code OutputPrefixType.CRUNCHY} proto keys. Specifically, the most recent entry
-              // overrides that toProtoEnum mapping.
-              .add(OutputPrefixType.CRUNCHY, EciesParameters.Variant.CRUNCHY)
-              .build();
+  private static OutputPrefixType toOutputPrefixType(EciesParameters.Variant variant)
+      throws GeneralSecurityException {
+    if (variant.equals(EciesParameters.Variant.NO_PREFIX)) {
+      return OutputPrefixType.RAW;
+    }
+    if (variant.equals(EciesParameters.Variant.TINK)) {
+      return OutputPrefixType.TINK;
+    }
+    if (variant.equals(EciesParameters.Variant.CRUNCHY)) {
+      return OutputPrefixType.CRUNCHY;
+    }
+    throw new GeneralSecurityException("unknown variant: " + variant);
+  }
+
+  private static EciesParameters.Variant toVariant(OutputPrefixType outputPrefixType)
+      throws GeneralSecurityException {
+    if (outputPrefixType.equals(OutputPrefixType.RAW)) {
+      return EciesParameters.Variant.NO_PREFIX;
+    }
+    if (outputPrefixType.equals(OutputPrefixType.TINK)) {
+      return EciesParameters.Variant.TINK;
+    }
+    if (outputPrefixType.equals(OutputPrefixType.CRUNCHY)
+        || outputPrefixType.equals(OutputPrefixType.LEGACY)) {
+      return EciesParameters.Variant.CRUNCHY;
+    }
+    throw new GeneralSecurityException("unknown variant: " + outputPrefixType);
+  }
 
   private static final EnumTypeProtoConverter<HashType, EciesParameters.HashType>
       HASH_TYPE_CONVERTER =
@@ -175,8 +190,8 @@ public final class EciesProtoSerialization {
 
     com.google.crypto.tink.proto.EciesAeadDemParams demProtoParams;
     try {
-      KeyTemplate demKeyTemplate =
-          KeyTemplate.parseFrom(
+      com.google.crypto.tink.proto.KeyTemplate demKeyTemplate =
+          com.google.crypto.tink.proto.KeyTemplate.parseFrom(
               TinkProtoParametersFormat.serialize(parameters.getDemParameters()),
               ExtensionRegistryLite.getEmptyRegistry());
       demProtoParams =
@@ -186,7 +201,7 @@ public final class EciesProtoSerialization {
               .setAeadDem(
                   com.google.crypto.tink.proto.KeyTemplate.newBuilder()
                       .setTypeUrl(demKeyTemplate.getTypeUrl())
-                      .setOutputPrefixType(OutputPrefixType.TINK)
+                      .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.TINK)
                       .setValue(demKeyTemplate.getValue())
                       .build())
               .build();
@@ -213,13 +228,13 @@ public final class EciesProtoSerialization {
     com.google.crypto.tink.proto.KeyTemplate aeadKeyTemplate =
         com.google.crypto.tink.proto.KeyTemplate.newBuilder()
             .setTypeUrl(protoParams.getDemParams().getAeadDem().getTypeUrl())
-            .setOutputPrefixType(OutputPrefixType.RAW)
+            .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
             .setValue(protoParams.getDemParams().getAeadDem().getValue())
             .build();
 
     EciesParameters.Builder builder =
         EciesParameters.builder()
-            .setVariant(VARIANT_CONVERTER.fromProtoEnum(outputPrefixType))
+            .setVariant(toVariant(outputPrefixType))
             .setCurveType(
                 CURVE_TYPE_CONVERTER.fromProtoEnum(protoParams.getKemParams().getCurveType()))
             .setHashType(
@@ -308,15 +323,9 @@ public final class EciesProtoSerialization {
   private static ProtoParametersSerialization serializeParameters(EciesParameters parameters)
       throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
-        com.google.crypto.tink.proto.KeyTemplate.newBuilder()
-            .setTypeUrl(PRIVATE_TYPE_URL)
-            .setValue(
-                EciesAeadHkdfKeyFormat.newBuilder()
-                    .setParams(toProtoParameters(parameters))
-                    .build()
-                    .toByteString())
-            .setOutputPrefixType(VARIANT_CONVERTER.toProtoEnum(parameters.getVariant()))
-            .build());
+        PRIVATE_TYPE_URL,
+        toOutputPrefixType(parameters.getVariant()),
+        EciesAeadHkdfKeyFormat.newBuilder().setParams(toProtoParameters(parameters)).build());
   }
 
   private static ProtoKeySerialization serializePublicKey(
@@ -325,7 +334,7 @@ public final class EciesProtoSerialization {
         PUBLIC_TYPE_URL,
         toProtoPublicKey(key).toByteString(),
         KeyMaterialType.ASYMMETRIC_PUBLIC,
-        VARIANT_CONVERTER.toProtoEnum(key.getParameters().getVariant()),
+        toOutputPrefixType(key.getParameters().getVariant()),
         key.getIdRequirementOrNull());
   }
 
@@ -335,27 +344,26 @@ public final class EciesProtoSerialization {
         PRIVATE_TYPE_URL,
         toProtoPrivateKey(key, access).toByteString(),
         KeyMaterialType.ASYMMETRIC_PRIVATE,
-        VARIANT_CONVERTER.toProtoEnum(key.getParameters().getVariant()),
+        toOutputPrefixType(key.getParameters().getVariant()),
         key.getIdRequirementOrNull());
   }
 
   private static EciesParameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
-    if (!serialization.getKeyTemplate().getTypeUrl().equals(PRIVATE_TYPE_URL)) {
+    if (!serialization.getTypeUrl().equals(PRIVATE_TYPE_URL)) {
       throw new IllegalArgumentException(
           "Wrong type URL in call to EciesProtoSerialization.parseParameters: "
-              + serialization.getKeyTemplate().getTypeUrl());
+              + serialization.getTypeUrl());
     }
     EciesAeadHkdfKeyFormat format;
     try {
       format =
           EciesAeadHkdfKeyFormat.parseFrom(
-              serialization.getKeyTemplate().getValue(), ExtensionRegistryLite.getEmptyRegistry());
+              serialization.getValue(), ExtensionRegistryLite.getEmptyRegistry());
     } catch (InvalidProtocolBufferException e) {
       throw new GeneralSecurityException("Parsing EciesParameters failed: ", e);
     }
-    return fromProtoParameters(
-        serialization.getKeyTemplate().getOutputPrefixType(), format.getParams());
+    return fromProtoParameters(serialization.getOutputPrefixType(), format.getParams());
   }
 
   @SuppressWarnings("UnusedException")
@@ -375,7 +383,7 @@ public final class EciesProtoSerialization {
         throw new GeneralSecurityException("Only version 0 keys are accepted");
       }
       EciesParameters parameters =
-          fromProtoParameters(serialization.getOutputPrefixTypeProto(), protoKey.getParams());
+          fromProtoParameters(serialization.getOutputPrefixType(), protoKey.getParams());
       if (parameters.getCurveType().equals(EciesParameters.CurveType.X25519)) {
         if (!protoKey.getY().isEmpty()) {
           throw new GeneralSecurityException("Y must be empty for X25519 points");
@@ -418,7 +426,7 @@ public final class EciesProtoSerialization {
         throw new GeneralSecurityException("Only version 0 keys are accepted");
       }
       EciesParameters parameters =
-          fromProtoParameters(serialization.getOutputPrefixTypeProto(), protoPublicKey.getParams());
+          fromProtoParameters(serialization.getOutputPrefixType(), protoPublicKey.getParams());
       if (parameters.getCurveType().equals(EciesParameters.CurveType.X25519)) {
         EciesPublicKey publicKey =
             EciesPublicKey.createForCurveX25519(
