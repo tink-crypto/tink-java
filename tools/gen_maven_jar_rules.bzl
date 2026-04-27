@@ -202,7 +202,7 @@ def maven_bundle(
               sha1sum "$$f" | cut -d' ' -f1 > "$$f.sha1"
               sha256sum "$$f" | cut -d' ' -f1 > "$$f.sha256"
               sha512sum "$$f" | cut -d' ' -f1 > "$$f.sha512"
-              gpg --pinentry-mode loopback --batch --yes \
+              gpg --pinentry-mode loopback --batch --yes --armor \
                   --passphrase-file $(location {gpg_pin_file}) \
                   --output "$$f.asc" --detach-sign "$$f"
             done
