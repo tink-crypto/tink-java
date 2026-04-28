@@ -31,8 +31,6 @@ import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.proto.EcdsaSignatureEncoding;
 import com.google.crypto.tink.proto.EllipticCurveType;
 import com.google.crypto.tink.proto.HashType;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.signature.EcdsaParameters;
 import com.google.crypto.tink.signature.EcdsaPrivateKey;
@@ -98,32 +96,32 @@ public final class EcdsaProtoSerialization {
           PRIVATE_TYPE_URL_BYTES,
           ProtoKeySerialization.class);
 
-  private static OutputPrefixType toProtoOutputPrefixType(EcdsaParameters.Variant variant)
-      throws GeneralSecurityException {
-    if (EcdsaParameters.Variant.TINK.equals(variant)) {
-      return OutputPrefixType.TINK;
+  private static com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType
+      toProtoOutputPrefixType(EcdsaParameters.Variant variant) throws GeneralSecurityException {
+    if (variant.equals(EcdsaParameters.Variant.TINK)) {
+      return com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK;
     }
-    if (EcdsaParameters.Variant.CRUNCHY.equals(variant)) {
-      return OutputPrefixType.CRUNCHY;
+    if (variant.equals(EcdsaParameters.Variant.CRUNCHY)) {
+      return com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.CRUNCHY;
     }
-    if (EcdsaParameters.Variant.NO_PREFIX.equals(variant)) {
-      return OutputPrefixType.RAW;
+    if (variant.equals(EcdsaParameters.Variant.NO_PREFIX)) {
+      return com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW;
     }
-    if (EcdsaParameters.Variant.LEGACY.equals(variant)) {
-      return OutputPrefixType.LEGACY;
+    if (variant.equals(EcdsaParameters.Variant.LEGACY)) {
+      return com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.LEGACY;
     }
     throw new GeneralSecurityException("Unable to serialize variant: " + variant);
   }
 
   private static HashType toProtoHashType(EcdsaParameters.HashType hashType)
       throws GeneralSecurityException {
-    if (EcdsaParameters.HashType.SHA256.equals(hashType)) {
+    if (hashType.equals(EcdsaParameters.HashType.SHA256)) {
       return HashType.SHA256;
     }
-    if (EcdsaParameters.HashType.SHA384.equals(hashType)) {
+    if (hashType.equals(EcdsaParameters.HashType.SHA384)) {
       return HashType.SHA384;
     }
-    if (EcdsaParameters.HashType.SHA512.equals(hashType)) {
+    if (hashType.equals(EcdsaParameters.HashType.SHA512)) {
       return HashType.SHA512;
     }
     throw new GeneralSecurityException("Unable to serialize HashType " + hashType);
@@ -163,13 +161,13 @@ public final class EcdsaProtoSerialization {
 
   private static EllipticCurveType toProtoCurveType(EcdsaParameters.CurveType curveType)
       throws GeneralSecurityException {
-    if (EcdsaParameters.CurveType.NIST_P256.equals(curveType)) {
+    if (curveType.equals(EcdsaParameters.CurveType.NIST_P256)) {
       return EllipticCurveType.NIST_P256;
     }
-    if (EcdsaParameters.CurveType.NIST_P384.equals(curveType)) {
+    if (curveType.equals(EcdsaParameters.CurveType.NIST_P384)) {
       return EllipticCurveType.NIST_P384;
     }
-    if (EcdsaParameters.CurveType.NIST_P521.equals(curveType)) {
+    if (curveType.equals(EcdsaParameters.CurveType.NIST_P521)) {
       return EllipticCurveType.NIST_P521;
     }
     throw new GeneralSecurityException("Unable to serialize CurveType " + curveType);
@@ -180,13 +178,13 @@ public final class EcdsaProtoSerialization {
     // We currently encode with one extra 0 byte at the beginning, to make sure
     // that parsing is correct even if passing of a two's complement encoding is used.
     // See also b/264525021.
-    if (EcdsaParameters.CurveType.NIST_P256.equals(curveType)) {
+    if (curveType.equals(EcdsaParameters.CurveType.NIST_P256)) {
       return 33;
     }
-    if (EcdsaParameters.CurveType.NIST_P384.equals(curveType)) {
+    if (curveType.equals(EcdsaParameters.CurveType.NIST_P384)) {
       return 49;
     }
-    if (EcdsaParameters.CurveType.NIST_P521.equals(curveType)) {
+    if (curveType.equals(EcdsaParameters.CurveType.NIST_P521)) {
       return 67;
     }
     throw new GeneralSecurityException("Unable to serialize CurveType " + curveType);
@@ -209,10 +207,10 @@ public final class EcdsaProtoSerialization {
 
   private static EcdsaSignatureEncoding toProtoSignatureEncoding(
       EcdsaParameters.SignatureEncoding encoding) throws GeneralSecurityException {
-    if (EcdsaParameters.SignatureEncoding.IEEE_P1363.equals(encoding)) {
+    if (encoding.equals(EcdsaParameters.SignatureEncoding.IEEE_P1363)) {
       return EcdsaSignatureEncoding.IEEE_P1363;
     }
-    if (EcdsaParameters.SignatureEncoding.DER.equals(encoding)) {
+    if (encoding.equals(EcdsaParameters.SignatureEncoding.DER)) {
       return EcdsaSignatureEncoding.DER;
     }
     throw new GeneralSecurityException("Unable to serialize SignatureEncoding " + encoding);
@@ -260,14 +258,10 @@ public final class EcdsaProtoSerialization {
   private static ProtoParametersSerialization serializeParameters(EcdsaParameters parameters)
       throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
-        KeyTemplate.newBuilder()
-            .setTypeUrl(PRIVATE_TYPE_URL)
-            .setValue(
-                com.google.crypto.tink.proto.EcdsaKeyFormat.newBuilder()
-                    .setParams(getProtoParams(parameters))
-                    .build()
-                    .toByteString())
-            .setOutputPrefixType(toProtoOutputPrefixType(parameters.getVariant()))
+        PRIVATE_TYPE_URL,
+        toProtoOutputPrefixType(parameters.getVariant()),
+        com.google.crypto.tink.proto.EcdsaKeyFormat.newBuilder()
+            .setParams(getProtoParams(parameters))
             .build());
   }
 
@@ -276,7 +270,7 @@ public final class EcdsaProtoSerialization {
     return ProtoKeySerialization.create(
         PUBLIC_TYPE_URL,
         getProtoPublicKey(key).toByteString(),
-        KeyMaterialType.ASYMMETRIC_PUBLIC,
+        com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PUBLIC,
         toProtoOutputPrefixType(key.getParameters().getVariant()),
         key.getIdRequirementOrNull());
   }
@@ -295,7 +289,7 @@ public final class EcdsaProtoSerialization {
                         encLength)))
             .build()
             .toByteString(),
-        KeyMaterialType.ASYMMETRIC_PRIVATE,
+        com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PRIVATE,
         toProtoOutputPrefixType(key.getParameters().getVariant()),
         key.getIdRequirementOrNull());
   }
