@@ -29,7 +29,6 @@ import com.google.crypto.tink.internal.ParametersSerializer;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.signature.SlhDsaParameters;
 import com.google.crypto.tink.signature.SlhDsaPrivateKey;
@@ -94,12 +93,40 @@ public final class SlhDsaProtoSerialization {
           PRIVATE_TYPE_URL_BYTES,
           ProtoKeySerialization.class);
 
-  private static final EnumTypeProtoConverter<OutputPrefixType, SlhDsaParameters.Variant>
-      VARIANT_CONVERTER =
-          EnumTypeProtoConverter.<OutputPrefixType, SlhDsaParameters.Variant>builder()
-              .add(OutputPrefixType.RAW, SlhDsaParameters.Variant.NO_PREFIX)
-              .add(OutputPrefixType.TINK, SlhDsaParameters.Variant.TINK)
-              .build();
+  private static com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType toOutputPrefixType(
+      SlhDsaParameters.Variant variant) throws GeneralSecurityException {
+    if (variant.equals(SlhDsaParameters.Variant.NO_PREFIX)) {
+      return com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW;
+    }
+    if (variant.equals(SlhDsaParameters.Variant.TINK)) {
+      return com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK;
+    }
+    throw new GeneralSecurityException("unknown variant: " + variant);
+  }
+
+  private static SlhDsaParameters.Variant toVariant(OutputPrefixType outputPrefixType)
+      throws GeneralSecurityException {
+    switch (outputPrefixType) {
+      case RAW:
+        return SlhDsaParameters.Variant.NO_PREFIX;
+      case TINK:
+        return SlhDsaParameters.Variant.TINK;
+      default:
+        throw new GeneralSecurityException("unknown variant: " + outputPrefixType.toString());
+    }
+  }
+
+  private static SlhDsaParameters.Variant toVariant(
+      com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType outputPrefixType)
+      throws GeneralSecurityException {
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW) {
+      return SlhDsaParameters.Variant.NO_PREFIX;
+    }
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK) {
+      return SlhDsaParameters.Variant.TINK;
+    }
+    throw new GeneralSecurityException("unknown variant: " + outputPrefixType.toString());
+  }
 
   private static final EnumTypeProtoConverter<
           com.google.crypto.tink.proto.SlhDsaHashType, SlhDsaParameters.HashType>
@@ -166,15 +193,11 @@ public final class SlhDsaProtoSerialization {
   private static ProtoParametersSerialization serializeParameters(SlhDsaParameters parameters)
       throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
-        KeyTemplate.newBuilder()
-            .setTypeUrl(PRIVATE_TYPE_URL)
-            .setValue(
-                com.google.crypto.tink.proto.SlhDsaKeyFormat.newBuilder()
-                    .setParams(getProtoParams(parameters))
-                    .setVersion(0)
-                    .build()
-                    .toByteString())
-            .setOutputPrefixType(VARIANT_CONVERTER.toProtoEnum(parameters.getVariant()))
+        PRIVATE_TYPE_URL,
+        toOutputPrefixType(parameters.getVariant()),
+        com.google.crypto.tink.proto.SlhDsaKeyFormat.newBuilder()
+            .setParams(getProtoParams(parameters))
+            .setVersion(0)
             .build());
   }
 
@@ -189,8 +212,8 @@ public final class SlhDsaProtoSerialization {
     return ProtoKeySerialization.create(
         PUBLIC_TYPE_URL,
         getProtoPublicKey(key).toByteString(),
-        KeyMaterialType.ASYMMETRIC_PUBLIC,
-        VARIANT_CONVERTER.toProtoEnum(key.getParameters().getVariant()),
+        com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PUBLIC,
+        toOutputPrefixType(key.getParameters().getVariant()),
         key.getIdRequirementOrNull());
   }
 
@@ -206,8 +229,8 @@ public final class SlhDsaProtoSerialization {
                     key.getPrivateKeyBytes().toByteArray(SecretKeyAccess.requireAccess(access))))
             .build()
             .toByteString(),
-        KeyMaterialType.ASYMMETRIC_PRIVATE,
-        VARIANT_CONVERTER.toProtoEnum(key.getParameters().getVariant()),
+        com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PRIVATE,
+        toOutputPrefixType(key.getParameters().getVariant()),
         key.getIdRequirementOrNull());
   }
 
@@ -230,8 +253,7 @@ public final class SlhDsaProtoSerialization {
       throw new GeneralSecurityException("Only version 0 keys are accepted for SLH-DSA.");
     }
     return validateAndConvertToSlhDsaParameters(
-        format.getParams(),
-        VARIANT_CONVERTER.fromProtoEnum(serialization.getKeyTemplate().getOutputPrefixType()));
+        format.getParams(), toVariant(serialization.getKeyTemplate().getOutputPrefixType()));
   }
 
   private static SlhDsaParameters validateAndConvertToSlhDsaParameters(
@@ -278,8 +300,7 @@ public final class SlhDsaProtoSerialization {
     }
     SlhDsaParameters parameters =
         validateAndConvertToSlhDsaParameters(
-            protoKey.getParams(),
-            VARIANT_CONVERTER.fromProtoEnum(serialization.getOutputPrefixTypeProto()));
+            protoKey.getParams(), toVariant(serialization.getOutputPrefixType()));
 
     SlhDsaPublicKey.Builder builder =
         SlhDsaPublicKey.builder()
