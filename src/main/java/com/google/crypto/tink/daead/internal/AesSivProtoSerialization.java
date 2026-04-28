@@ -108,6 +108,24 @@ public final class AesSivProtoSerialization {
     throw new GeneralSecurityException("Unable to serialize variant: " + variant);
   }
 
+  private static AesSivParameters.Variant toVariant(
+      com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType outputPrefixType)
+      throws GeneralSecurityException {
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW) {
+      return AesSivParameters.Variant.NO_PREFIX;
+    }
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK) {
+      return AesSivParameters.Variant.TINK;
+    }
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.CRUNCHY) {
+      return AesSivParameters.Variant.CRUNCHY;
+    }
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.LEGACY) {
+      return AesSivParameters.Variant.CRUNCHY;
+    }
+    throw new GeneralSecurityException("Unable to parse OutputPrefixType: " + outputPrefixType);
+  }
+
   private static AesSivParameters.Variant toVariant(OutputPrefixType outputPrefixType)
       throws GeneralSecurityException {
     if (outputPrefixToVariantMap.containsKey(outputPrefixType)) {
@@ -188,7 +206,7 @@ public final class AesSivProtoSerialization {
       AesSivParameters parameters =
           AesSivParameters.builder()
               .setKeySizeBytes(protoKey.getKeyValue().size())
-              .setVariant(toVariant(serialization.getOutputPrefixTypeProto()))
+              .setVariant(toVariant(serialization.getOutputPrefixType()))
               .build();
       return AesSivKey.builder()
           .setParameters(parameters)

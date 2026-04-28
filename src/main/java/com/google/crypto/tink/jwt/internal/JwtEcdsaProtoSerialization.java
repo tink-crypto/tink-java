@@ -205,6 +205,24 @@ public final class JwtEcdsaProtoSerialization {
     throw new GeneralSecurityException("Unknown algorithm: " + algorithm);
   }
 
+  private static OutputPrefixType toProtoOutputPrefixType(
+      com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType outputPrefixType)
+      throws GeneralSecurityException {
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK) {
+      return OutputPrefixType.TINK;
+    }
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.LEGACY) {
+      return OutputPrefixType.LEGACY;
+    }
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW) {
+      return OutputPrefixType.RAW;
+    }
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.CRUNCHY) {
+      return OutputPrefixType.CRUNCHY;
+    }
+    throw new GeneralSecurityException("Unknown OutputPrefixType: " + outputPrefixType);
+  }
+
   private static OutputPrefixType toProtoOutputPrefixType(JwtEcdsaParameters parameters) {
     if (parameters.getKidStrategy().equals(JwtEcdsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID)) {
       return OutputPrefixType.TINK;
@@ -300,7 +318,9 @@ public final class JwtEcdsaProtoSerialization {
           com.google.crypto.tink.proto.JwtEcdsaPublicKey.parseFrom(
               serialization.getValue(), ExtensionRegistryLite.getEmptyRegistry());
       return parsePublicKeyFromProto(
-          protoKey, serialization.getOutputPrefixTypeProto(), serialization.getIdRequirementOrNull());
+          protoKey,
+          toProtoOutputPrefixType(serialization.getOutputPrefixType()),
+          serialization.getIdRequirementOrNull());
     } catch (InvalidProtocolBufferException e) {
       throw new GeneralSecurityException("Parsing EcdsaPublicKey failed");
     }
@@ -347,7 +367,7 @@ public final class JwtEcdsaProtoSerialization {
       JwtEcdsaPublicKey publicKey =
           parsePublicKeyFromProto(
               protoKey.getPublicKey(),
-              serialization.getOutputPrefixTypeProto(),
+              toProtoOutputPrefixType(serialization.getOutputPrefixType()),
               serialization.getIdRequirementOrNull());
       return JwtEcdsaPrivateKey.create(
           publicKey,

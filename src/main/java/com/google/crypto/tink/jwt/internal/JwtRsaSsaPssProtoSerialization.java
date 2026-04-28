@@ -108,6 +108,24 @@ public final class JwtRsaSsaPssProtoSerialization {
               .add(JwtRsaSsaPssAlgorithm.PS512, JwtRsaSsaPssParameters.Algorithm.PS512)
               .build();
 
+  private static OutputPrefixType toProtoOutputPrefixType(
+      com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType outputPrefixType)
+      throws GeneralSecurityException {
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK) {
+      return OutputPrefixType.TINK;
+    }
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.LEGACY) {
+      return OutputPrefixType.LEGACY;
+    }
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW) {
+      return OutputPrefixType.RAW;
+    }
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.CRUNCHY) {
+      return OutputPrefixType.CRUNCHY;
+    }
+    throw new GeneralSecurityException("Unknown OutputPrefixType: " + outputPrefixType);
+  }
+
   private static OutputPrefixType toProtoOutputPrefixType(JwtRsaSsaPssParameters parameters) {
     if (parameters
         .getKidStrategy()
@@ -308,7 +326,9 @@ public final class JwtRsaSsaPssProtoSerialization {
           com.google.crypto.tink.proto.JwtRsaSsaPssPublicKey.parseFrom(
               serialization.getValue(), ExtensionRegistryLite.getEmptyRegistry());
       return getPublicKeyFromProto(
-          protoKey, serialization.getOutputPrefixTypeProto(), serialization.getIdRequirementOrNull());
+          protoKey,
+          toProtoOutputPrefixType(serialization.getOutputPrefixType()),
+          serialization.getIdRequirementOrNull());
     } catch (InvalidProtocolBufferException e) {
       throw new GeneralSecurityException("Parsing JwtRsaSsaPssPublicKey failed");
     }
@@ -337,7 +357,7 @@ public final class JwtRsaSsaPssProtoSerialization {
       JwtRsaSsaPssPublicKey publicKey =
           getPublicKeyFromProto(
               protoKey.getPublicKey(),
-              serialization.getOutputPrefixTypeProto(),
+              toProtoOutputPrefixType(serialization.getOutputPrefixType()),
               serialization.getIdRequirementOrNull());
 
       SecretKeyAccess a = SecretKeyAccess.requireAccess(access);
