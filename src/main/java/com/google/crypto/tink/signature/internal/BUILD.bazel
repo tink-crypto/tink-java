@@ -106,9 +106,9 @@ java_library(
     name = "legacy_full_verify",
     srcs = ["LegacyFullVerify.java"],
     deps = [
-        "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink:key_manager",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization",
         "//src/main/java/com/google/crypto/tink:public_key_verify",
         "//src/main/java/com/google/crypto/tink/internal:key_manager_registry",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
@@ -169,9 +169,9 @@ android_library(
     name = "legacy_full_verify-android",
     srcs = ["LegacyFullVerify.java"],
     deps = [
-        "//proto:tink_java_proto_lite",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access-android",
         "//src/main/java/com/google/crypto/tink:key_manager-android",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization-android",
         "//src/main/java/com/google/crypto/tink:public_key_verify-android",
         "//src/main/java/com/google/crypto/tink/internal:key_manager_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key-android",

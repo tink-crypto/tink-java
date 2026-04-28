@@ -20,12 +20,12 @@ import static com.google.crypto.tink.internal.Util.isPrefix;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyManager;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.OutputPrefixUtil;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.subtle.Bytes;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
@@ -53,21 +53,21 @@ public final class LegacyFullVerify implements PublicKeyVerify {
   }
 
   static byte[] getOutputPrefix(ProtoKeySerialization key) throws GeneralSecurityException {
-    switch (key.getOutputPrefixTypeProto()) {
-      case LEGACY: // fall through
-      case CRUNCHY:
-        return OutputPrefixUtil.getLegacyOutputPrefix(key.getIdRequirementOrNull()).toByteArray();
-      case TINK:
-        return OutputPrefixUtil.getTinkOutputPrefix(key.getIdRequirementOrNull()).toByteArray();
-      case RAW:
-        return OutputPrefixUtil.EMPTY_PREFIX.toByteArray();
-      default:
-        throw new GeneralSecurityException("unknown output prefix type");
+    if (key.getOutputPrefixType().equals(OutputPrefixType.LEGACY)
+        || key.getOutputPrefixType().equals(OutputPrefixType.CRUNCHY)) {
+      return OutputPrefixUtil.getLegacyOutputPrefix(key.getIdRequirementOrNull()).toByteArray();
     }
+    if (key.getOutputPrefixType().equals(OutputPrefixType.TINK)) {
+      return OutputPrefixUtil.getTinkOutputPrefix(key.getIdRequirementOrNull()).toByteArray();
+    }
+    if (key.getOutputPrefixType().equals(OutputPrefixType.RAW)) {
+      return OutputPrefixUtil.EMPTY_PREFIX.toByteArray();
+    }
+    throw new GeneralSecurityException("unknown output prefix type");
   }
 
   static byte[] getMessageSuffix(ProtoKeySerialization key) {
-    if (key.getOutputPrefixTypeProto().equals(OutputPrefixType.LEGACY)) {
+    if (key.getOutputPrefixType().equals(OutputPrefixType.LEGACY)) {
       return new byte[] {0};
     }
     return new byte[0];
