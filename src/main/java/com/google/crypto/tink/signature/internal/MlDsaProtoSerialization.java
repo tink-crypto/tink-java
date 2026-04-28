@@ -29,10 +29,8 @@ import com.google.crypto.tink.internal.ParametersSerializer;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.proto.MlDsaKeyFormat;
 import com.google.crypto.tink.proto.MlDsaParams;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.signature.MlDsaParameters;
 import com.google.crypto.tink.signature.MlDsaPrivateKey;
 import com.google.crypto.tink.signature.MlDsaPublicKey;
@@ -96,12 +94,43 @@ public final class MlDsaProtoSerialization {
           PRIVATE_TYPE_URL_BYTES,
           ProtoKeySerialization.class);
 
-  private static final EnumTypeProtoConverter<OutputPrefixType, MlDsaParameters.Variant>
-      VARIANT_CONVERTER =
-          EnumTypeProtoConverter.<OutputPrefixType, MlDsaParameters.Variant>builder()
-              .add(OutputPrefixType.RAW, MlDsaParameters.Variant.NO_PREFIX)
-              .add(OutputPrefixType.TINK, MlDsaParameters.Variant.TINK)
-              .build();
+  private static com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType toOutputPrefixType(
+      MlDsaParameters.Variant variant) throws GeneralSecurityException {
+    if (variant.equals(MlDsaParameters.Variant.NO_PREFIX)) {
+      return com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW;
+    }
+    if (variant.equals(MlDsaParameters.Variant.TINK)) {
+      return com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK;
+    }
+    throw new GeneralSecurityException("unknown variant: " + variant);
+  }
+
+  private static MlDsaParameters.Variant toVariant(
+      com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType outputPrefixType)
+      throws GeneralSecurityException {
+    if (outputPrefixType.equals(
+        com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW)) {
+      return MlDsaParameters.Variant.NO_PREFIX;
+    }
+    if (outputPrefixType.equals(
+        com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK)) {
+      return MlDsaParameters.Variant.TINK;
+    }
+    throw new GeneralSecurityException("unknown variant: " + outputPrefixType);
+  }
+
+  private static MlDsaParameters.Variant toVariant(
+      com.google.crypto.tink.proto.OutputPrefixType outputPrefixType)
+      throws GeneralSecurityException {
+    switch (outputPrefixType) {
+      case RAW:
+        return MlDsaParameters.Variant.NO_PREFIX;
+      case TINK:
+        return MlDsaParameters.Variant.TINK;
+      default:
+        throw new GeneralSecurityException("unknown variant: " + outputPrefixType);
+    }
+  }
 
   private static final EnumTypeProtoConverter<
           com.google.crypto.tink.proto.MlDsaInstance, MlDsaParameters.MlDsaInstance>
@@ -154,16 +183,9 @@ public final class MlDsaProtoSerialization {
   private static ProtoParametersSerialization serializeParameters(MlDsaParameters parameters)
       throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
-        KeyTemplate.newBuilder()
-            .setTypeUrl(PRIVATE_TYPE_URL)
-            .setValue(
-                MlDsaKeyFormat.newBuilder()
-                    .setParams(getProtoParams(parameters))
-                    .setVersion(0)
-                    .build()
-                    .toByteString())
-            .setOutputPrefixType(VARIANT_CONVERTER.toProtoEnum(parameters.getVariant()))
-            .build());
+        PRIVATE_TYPE_URL,
+        toOutputPrefixType(parameters.getVariant()),
+        MlDsaKeyFormat.newBuilder().setParams(getProtoParams(parameters)).setVersion(0).build());
   }
 
   /**
@@ -177,8 +199,8 @@ public final class MlDsaProtoSerialization {
     return ProtoKeySerialization.create(
         PUBLIC_TYPE_URL,
         getProtoPublicKey(key).toByteString(),
-        KeyMaterialType.ASYMMETRIC_PUBLIC,
-        VARIANT_CONVERTER.toProtoEnum(key.getParameters().getVariant()),
+        com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PUBLIC,
+        toOutputPrefixType(key.getParameters().getVariant()),
         key.getIdRequirementOrNull());
   }
 
@@ -194,8 +216,8 @@ public final class MlDsaProtoSerialization {
                     key.getPrivateSeed().toByteArray(SecretKeyAccess.requireAccess(access))))
             .build()
             .toByteString(),
-        KeyMaterialType.ASYMMETRIC_PRIVATE,
-        VARIANT_CONVERTER.toProtoEnum(key.getParameters().getVariant()),
+        com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PRIVATE,
+        toOutputPrefixType(key.getParameters().getVariant()),
         key.getIdRequirementOrNull());
   }
 
@@ -219,7 +241,7 @@ public final class MlDsaProtoSerialization {
     }
     return MlDsaParameters.create(
         INSTANCE_CONVERTER.fromProtoEnum(format.getParams().getMlDsaInstance()),
-        VARIANT_CONVERTER.fromProtoEnum(serialization.getKeyTemplate().getOutputPrefixType()));
+        toVariant(serialization.getKeyTemplate().getOutputPrefixType()));
   }
 
   @SuppressWarnings("UnusedException")
@@ -245,7 +267,7 @@ public final class MlDsaProtoSerialization {
       MlDsaParameters parameters =
           MlDsaParameters.create(
               INSTANCE_CONVERTER.fromProtoEnum(protoKey.getParams().getMlDsaInstance()),
-              VARIANT_CONVERTER.fromProtoEnum(serialization.getOutputPrefixTypeProto()));
+              toVariant(serialization.getOutputPrefixType()));
       MlDsaPublicKey.Builder builder =
           MlDsaPublicKey.builder()
               .setParameters(parameters)
@@ -286,7 +308,7 @@ public final class MlDsaProtoSerialization {
       MlDsaParameters parameters =
           MlDsaParameters.create(
               INSTANCE_CONVERTER.fromProtoEnum(protoPublicKey.getParams().getMlDsaInstance()),
-              VARIANT_CONVERTER.fromProtoEnum(serialization.getOutputPrefixTypeProto()));
+              toVariant(serialization.getOutputPrefixType()));
       MlDsaPublicKey.Builder builder =
           MlDsaPublicKey.builder()
               .setParameters(parameters)
