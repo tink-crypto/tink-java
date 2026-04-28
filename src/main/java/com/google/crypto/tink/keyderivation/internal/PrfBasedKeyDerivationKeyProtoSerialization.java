@@ -214,8 +214,8 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
               .setPrfParameters(prfKey.getParameters())
               .build();
 
-      if (serialization.getOutputPrefixTypeProto()
-          != derivedKeyParametersSerialization.getKeyTemplate().getOutputPrefixType()) {
+      if (serialization.getOutputPrefixType()
+          != derivedKeyParametersSerialization.getOutputPrefixType()) {
         throw new GeneralSecurityException(
             "Output-Prefix mismatch in parameters while parsing PrfBasedKeyDerivationKey with"
                 + " parameters "

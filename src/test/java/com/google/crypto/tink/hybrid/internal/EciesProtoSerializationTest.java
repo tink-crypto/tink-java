@@ -463,7 +463,7 @@ public final class EciesProtoSerializationTest {
 
     assertThat(serialized.getKeyMaterialTypeProto())
         .isEqualTo(serialization.getKeyMaterialTypeProto());
-    assertThat(serialized.getOutputPrefixTypeProto()).isEqualTo(serialization.getOutputPrefixTypeProto());
+    assertThat(serialized.getOutputPrefixType()).isEqualTo(serialization.getOutputPrefixType());
     assertThat(serialized.getIdRequirementOrNull())
         .isEqualTo(serialization.getIdRequirementOrNull());
     assertThat(serialized.getTypeUrl()).isEqualTo(serialization.getTypeUrl());
@@ -515,7 +515,7 @@ public final class EciesProtoSerializationTest {
 
     assertThat(serialized.getKeyMaterialTypeProto())
         .isEqualTo(serialization.getKeyMaterialTypeProto());
-    assertThat(serialized.getOutputPrefixTypeProto()).isEqualTo(serialization.getOutputPrefixTypeProto());
+    assertThat(serialized.getOutputPrefixType()).isEqualTo(serialization.getOutputPrefixType());
     assertThat(serialized.getIdRequirementOrNull())
         .isEqualTo(serialization.getIdRequirementOrNull());
     assertThat(serialized.getTypeUrl()).isEqualTo(serialization.getTypeUrl());
@@ -615,7 +615,7 @@ public final class EciesProtoSerializationTest {
 
     assertThat(serialized.getKeyMaterialTypeProto())
         .isEqualTo(serialization.getKeyMaterialTypeProto());
-    assertThat(serialized.getOutputPrefixTypeProto()).isEqualTo(serialization.getOutputPrefixTypeProto());
+    assertThat(serialized.getOutputPrefixType()).isEqualTo(serialization.getOutputPrefixType());
     assertThat(serialized.getIdRequirementOrNull())
         .isEqualTo(serialization.getIdRequirementOrNull());
     assertThat(serialized.getTypeUrl()).isEqualTo(serialization.getTypeUrl());
@@ -674,7 +674,7 @@ public final class EciesProtoSerializationTest {
 
     assertThat(serialized.getKeyMaterialTypeProto())
         .isEqualTo(serialization.getKeyMaterialTypeProto());
-    assertThat(serialized.getOutputPrefixTypeProto()).isEqualTo(serialization.getOutputPrefixTypeProto());
+    assertThat(serialized.getOutputPrefixType()).isEqualTo(serialization.getOutputPrefixType());
     assertThat(serialized.getIdRequirementOrNull())
         .isEqualTo(serialization.getIdRequirementOrNull());
     assertThat(serialized.getTypeUrl()).isEqualTo(serialization.getTypeUrl());
@@ -801,7 +801,7 @@ public final class EciesProtoSerializationTest {
 
     assertThat(serialized.getKeyMaterialTypeProto())
         .isEqualTo(serialization.getKeyMaterialTypeProto());
-    assertThat(serialized.getOutputPrefixTypeProto()).isEqualTo(serialization.getOutputPrefixTypeProto());
+    assertThat(serialized.getOutputPrefixType()).isEqualTo(serialization.getOutputPrefixType());
     assertThat(serialized.getIdRequirementOrNull())
         .isEqualTo(serialization.getIdRequirementOrNull());
     assertThat(serialized.getTypeUrl()).isEqualTo(serialization.getTypeUrl());
@@ -951,7 +951,7 @@ public final class EciesProtoSerializationTest {
 
     assertThat(serialized.getKeyMaterialTypeProto())
         .isEqualTo(serialization.getKeyMaterialTypeProto());
-    assertThat(serialized.getOutputPrefixTypeProto()).isEqualTo(serialization.getOutputPrefixTypeProto());
+    assertThat(serialized.getOutputPrefixType()).isEqualTo(serialization.getOutputPrefixType());
     assertThat(serialized.getIdRequirementOrNull())
         .isEqualTo(serialization.getIdRequirementOrNull());
     assertThat(serialized.getTypeUrl()).isEqualTo(serialization.getTypeUrl());
@@ -1008,7 +1008,7 @@ public final class EciesProtoSerializationTest {
 
     assertThat(serialized.getKeyMaterialTypeProto())
         .isEqualTo(serialization.getKeyMaterialTypeProto());
-    assertThat(serialized.getOutputPrefixTypeProto()).isEqualTo(serialization.getOutputPrefixTypeProto());
+    assertThat(serialized.getOutputPrefixType()).isEqualTo(serialization.getOutputPrefixType());
     assertThat(serialized.getIdRequirementOrNull())
         .isEqualTo(serialization.getIdRequirementOrNull());
     assertThat(serialized.getTypeUrl()).isEqualTo(serialization.getTypeUrl());
