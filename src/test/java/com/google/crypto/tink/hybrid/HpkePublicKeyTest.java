@@ -29,6 +29,7 @@ import java.security.GeneralSecurityException;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECPoint;
 import java.security.spec.EllipticCurve;
+import java.util.Arrays;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -104,6 +105,27 @@ public final class HpkePublicKeyTest {
     assertThat(publicKey.getIdRequirementOrNull()).isEqualTo(null);
   }
 
+  @Test
+  public void createXWingPublicKey() throws Exception {
+    HpkeParameters params =
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.NO_PREFIX)
+            .setKemId(HpkeParameters.KemId.X_WING)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+            .setAeadId(HpkeParameters.AeadId.AES_128_GCM)
+            .build();
+    byte[] publicKeyBytes = new byte[1216];
+    Arrays.fill(publicKeyBytes, (byte) 137);
+
+    HpkePublicKey publicKey =
+        HpkePublicKey.create(params, Bytes.copyFrom(publicKeyBytes), /* idRequirement= */ null);
+
+    assertThat(publicKey.getPublicKeyBytes()).isEqualTo(Bytes.copyFrom(publicKeyBytes));
+    assertThat(publicKey.getOutputPrefix()).isEqualTo(Bytes.copyFrom(new byte[] {}));
+    assertThat(publicKey.getParameters()).isEqualTo(params);
+    assertThat(publicKey.getIdRequirementOrNull()).isNull();
+  }
+
   @Theory
   public void createNistCurvePublicKey_failsWithWrongKeyLength(
       @FromDataPoints("nistKemTuples") NistKemTuple tuple) throws Exception {
@@ -152,6 +174,30 @@ public final class HpkePublicKeyTest {
         GeneralSecurityException.class,
         () -> HpkePublicKey.create(params, tooShort, /* idRequirement= */ null));
 
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> HpkePublicKey.create(params, tooLong, /* idRequirement= */ null));
+  }
+
+  @Test
+  public void createXWingPublicKey_failsWithWrongKeyLength() throws Exception {
+    HpkeParameters params =
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.NO_PREFIX)
+            .setKemId(HpkeParameters.KemId.X_WING)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+            .setAeadId(HpkeParameters.AeadId.AES_128_GCM)
+            .build();
+    byte[] publicKeyBytes = new byte[1216];
+    Arrays.fill(publicKeyBytes, (byte) 137);
+    Bytes tooShort = Bytes.copyFrom(publicKeyBytes, 0, publicKeyBytes.length - 1);
+    byte[] tooLongBytes = new byte[publicKeyBytes.length + 1];
+    System.arraycopy(publicKeyBytes, 0, tooLongBytes, 0, publicKeyBytes.length);
+    Bytes tooLong = Bytes.copyFrom(tooLongBytes);
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> HpkePublicKey.create(params, tooShort, /* idRequirement= */ null));
     assertThrows(
         GeneralSecurityException.class,
         () -> HpkePublicKey.create(params, tooLong, /* idRequirement= */ null));

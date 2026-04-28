@@ -75,7 +75,8 @@ public final class HpkeDecrypt implements HybridDecrypt {
     if (kemId.equals(HpkeParameters.KemId.DHKEM_P521_HKDF_SHA512)) {
       return 133;
     }
-    throw new GeneralSecurityException("Unrecognized HPKE KEM identifier");
+    // That includes X-Wing.
+    throw new GeneralSecurityException("Unrecognized or not NIST HPKE KEM identifier");
   }
 
   @AccessesPartialKey
@@ -92,7 +93,8 @@ public final class HpkeDecrypt implements HybridDecrypt {
       return new HpkeKemPrivateKey(
           convertedPrivateKeyBytes, privateKey.getPublicKey().getPublicKeyBytes());
     }
-    throw new GeneralSecurityException("Unrecognized HPKE KEM identifier");
+    // That includes X-Wing.
+    throw new GeneralSecurityException("Unrecognized or not NIST HPKE KEM identifier");
   }
 
   public static HybridDecrypt create(HpkePrivateKey privateKey) throws GeneralSecurityException {

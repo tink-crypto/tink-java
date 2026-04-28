@@ -34,6 +34,7 @@ public final class HpkeUtil {
   public static final byte[] P256_HKDF_SHA256_KEM_ID = intToByteArray(2, 0x10);
   public static final byte[] P384_HKDF_SHA384_KEM_ID = intToByteArray(2, 0x11);
   public static final byte[] P521_HKDF_SHA512_KEM_ID = intToByteArray(2, 0x12);
+  public static final byte[] X_WING_KEM_ID = intToByteArray(2, 0x647a);
 
   // HPKE KDF algorithm identifiers.
   public static final byte[] HKDF_SHA256_KDF_ID = intToByteArray(2, 0x1);
@@ -152,6 +153,9 @@ public final class HpkeUtil {
     if (kemId == HpkeParameters.KemId.DHKEM_P521_HKDF_SHA512) {
       return 133;
     }
+    if (kemId == HpkeParameters.KemId.X_WING) {
+      return 1216;
+    }
     throw new GeneralSecurityException("Unrecognized HPKE KEM identifier");
   }
 
@@ -174,6 +178,9 @@ public final class HpkeUtil {
     if (kemId == HpkeParameters.KemId.DHKEM_P521_HKDF_SHA512) {
       return 133;
     }
+    if (kemId == HpkeParameters.KemId.X_WING) {
+      return 1120;
+    }
     throw new IllegalArgumentException("Unable to determine KEM-encoding length for " + kemId);
   }
 
@@ -191,6 +198,9 @@ public final class HpkeUtil {
     }
     if (kemId == HpkeParameters.KemId.DHKEM_P521_HKDF_SHA512) {
       return 66;
+    }
+    if (kemId == HpkeParameters.KemId.X_WING) {
+      return 32;
     }
     throw new GeneralSecurityException("Unrecognized HPKE KEM identifier");
   }

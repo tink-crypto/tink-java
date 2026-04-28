@@ -91,6 +91,12 @@ public final class HpkePublicKey extends HybridPublicKey {
       }
       return;
     }
+    if (kemId == HpkeParameters.KemId.X_WING) {
+      if (keyLengthInBytes != 1216) {
+        throw new GeneralSecurityException(String.format(parameterizedErrorMessage, 1216));
+      }
+      return;
+    }
     throw new GeneralSecurityException("Unable to validate public key length for " + kemId);
   }
 

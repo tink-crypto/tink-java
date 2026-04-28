@@ -83,6 +83,8 @@ public final class HpkeParameters extends HybridParameters {
     public static final KemId DHKEM_X25519_HKDF_SHA256 =
         new KemId("DHKEM_X25519_HKDF_SHA256", 0x20);
 
+    public static final KemId X_WING = new KemId("X_WING", 0x647a);
+
     private KemId(String name, int value) {
       super(name, value);
     }
@@ -165,6 +167,10 @@ public final class HpkeParameters extends HybridParameters {
       }
       if (variant == null) {
         throw new GeneralSecurityException("HPKE variant is not set");
+      }
+
+      if (kem.equals(KemId.X_WING) && !kdf.equals(KdfId.HKDF_SHA256)) {
+        throw new GeneralSecurityException("Only SHA256 KDF is supported with X-Wing KEM");
       }
       return new HpkeParameters(kem, kdf, aead, variant);
     }

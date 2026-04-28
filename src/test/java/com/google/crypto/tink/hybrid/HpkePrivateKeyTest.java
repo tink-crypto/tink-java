@@ -23,6 +23,7 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.internal.BigIntegerEncoding;
 import com.google.crypto.tink.subtle.EllipticCurves;
 import com.google.crypto.tink.subtle.EllipticCurves.PointFormatType;
+import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.subtle.X25519;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
@@ -120,6 +121,34 @@ public final class HpkePrivateKeyTest {
         .isEqualTo(privateKeyBytes);
   }
 
+  @Test
+  public void createXWingPrivateKey() throws Exception {
+    HpkeParameters params =
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.NO_PREFIX)
+            .setKemId(HpkeParameters.KemId.X_WING)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+            .setAeadId(HpkeParameters.AeadId.AES_128_GCM)
+            .build();
+    byte[] privateKeyBytes =
+        Hex.decode("00112233445566778899AABBCCDDEEFF00112233445566778899AABBCCDDEEFF");
+    byte[] publicKeyBytes = new byte[1216];
+    Arrays.fill(publicKeyBytes, (byte) 137);
+    HpkePublicKey publicKey =
+        HpkePublicKey.create(
+            params, Bytes.copyFrom(publicKeyBytes), /* idRequirement= */ null);
+
+    HpkePrivateKey privateKey =
+        HpkePrivateKey.create(
+            publicKey,
+            SecretBytes.copyFrom(privateKeyBytes, InsecureSecretKeyAccess.get()));
+
+    assertThat(privateKey.getParameters()).isEqualTo(params);
+    assertThat(privateKey.getPublicKey().equalsKey(publicKey)).isTrue();
+    assertThat(privateKey.getPrivateKeyBytes().toByteArray(InsecureSecretKeyAccess.get()))
+        .isEqualTo(privateKeyBytes);
+  }
+
   @Theory
   public void createNistCurvePrivateKey_failsWithWrongKeyLength(
       @FromDataPoints("nistKemTuples") NistKemTuple tuple) throws Exception {
@@ -195,6 +224,32 @@ public final class HpkePrivateKeyTest {
     Bytes publicKeyBytes = Bytes.copyFrom(X25519.publicFromPrivate(privateKeyBytes));
     HpkePublicKey publicKey =
         HpkePublicKey.create(params, publicKeyBytes, /* idRequirement= */ null);
+
+    byte[] tooShortBytes = Arrays.copyOf(privateKeyBytes, privateKeyBytes.length - 1);
+    SecretBytes tooShort = SecretBytes.copyFrom(tooShortBytes, InsecureSecretKeyAccess.get());
+    byte[] tooLongBytes = Arrays.copyOf(privateKeyBytes, privateKeyBytes.length + 1);
+    SecretBytes tooLong = SecretBytes.copyFrom(tooLongBytes, InsecureSecretKeyAccess.get());
+
+    assertThrows(GeneralSecurityException.class, () -> HpkePrivateKey.create(publicKey, tooShort));
+    assertThrows(GeneralSecurityException.class, () -> HpkePrivateKey.create(publicKey, tooLong));
+  }
+
+  @Test
+  public void createXWingPrivateKey_failsWithWrongKeyLength() throws Exception {
+    HpkeParameters params =
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.NO_PREFIX)
+            .setKemId(HpkeParameters.KemId.X_WING)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+            .setAeadId(HpkeParameters.AeadId.AES_128_GCM)
+            .build();
+    byte[] privateKeyBytes = X25519.generatePrivateKey();
+    byte[] x25519PublicKeyBytes = X25519.publicFromPrivate(privateKeyBytes);
+    byte[] publicKeyBytes = new byte[1216];
+    System.arraycopy(x25519PublicKeyBytes, 0, publicKeyBytes, 0, 32);
+
+    HpkePublicKey publicKey =
+        HpkePublicKey.create(params, Bytes.copyFrom(publicKeyBytes), /* idRequirement= */ null);
 
     byte[] tooShortBytes = Arrays.copyOf(privateKeyBytes, privateKeyBytes.length - 1);
     SecretBytes tooShort = SecretBytes.copyFrom(tooShortBytes, InsecureSecretKeyAccess.get());

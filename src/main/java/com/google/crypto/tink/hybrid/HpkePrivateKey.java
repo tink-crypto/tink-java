@@ -73,6 +73,12 @@ public final class HpkePrivateKey extends HybridPrivateKey {
       }
       return;
     }
+    if (kemId == HpkeParameters.KemId.X_WING) {
+      if (keyLengthInBytes != 32) {
+        throw new GeneralSecurityException(String.format(parameterizedErrorMessage, 32));
+      }
+      return;
+    }
     throw new GeneralSecurityException("Unable to validate private key length for " + kemId);
   }
 
@@ -98,6 +104,8 @@ public final class HpkePrivateKey extends HybridPrivateKey {
   /**
    * Confirms that the private key encoded as {@code privateKeyBytes} corresponds to the public key
    * encoded as {@code publicKeyBytes} given the HPKE {@code kemId}.
+   *
+   * NOTE: for X-Wing, the key pair cannot be verified.
    */
   private static void validateKeyPair(
       HpkeParameters.KemId kemId, byte[] publicKeyBytes, byte[] privateKeyBytes)
@@ -125,11 +133,18 @@ public final class HpkePrivateKey extends HybridPrivateKey {
       }
       return;
     }
+    if (kemId == HpkeParameters.KemId.X_WING) {
+      // No validation for X-Wing.
+      return;
+    }
     throw new IllegalArgumentException("Unable to validate key pair for " + kemId);
   }
 
   /**
    * Creates a new HPKE private key.
+   *
+   * <p>IMPORTANT: this will NOT validate X_WING key pairs' correctness, only the private key
+   * length.
    *
    * @param publicKey Corresponding HPKE public key for this private key
    * @param privateKeyBytes Private key encoded according to

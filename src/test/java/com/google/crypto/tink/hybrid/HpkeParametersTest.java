@@ -38,7 +38,7 @@ public final class HpkeParametersTest {
         HpkeParameters.Variant.NO_PREFIX,
       };
 
-  @DataPoints("kemIds")
+  @DataPoints("kemIds") // Note that X_WING is not included here.
   public static final HpkeParameters.KemId[] KEM_IDS =
       new HpkeParameters.KemId[] {
         HpkeParameters.KemId.DHKEM_P256_HKDF_SHA256,
@@ -96,6 +96,46 @@ public final class HpkeParametersTest {
     assertThat(params.getVariant()).isEqualTo(HpkeParameters.Variant.NO_PREFIX);
     assertThat(params.getKemId()).isEqualTo(kemId);
     assertThat(params.getKdfId()).isEqualTo(kdfId);
+    assertThat(params.getAeadId()).isEqualTo(aeadId);
+  }
+
+  @Theory
+  public void buildParameters_xWingFailsWhenNotHkdfSha256(
+      @FromDataPoints("variants") HpkeParameters.Variant variant,
+      @FromDataPoints("kdfIds") HpkeParameters.KdfId kdfId,
+      @FromDataPoints("aeadIds") HpkeParameters.AeadId aeadId)
+      throws Exception {
+    if (kdfId.equals(HpkeParameters.KdfId.HKDF_SHA256)) {
+      return;
+    }
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            HpkeParameters.builder()
+                .setVariant(variant)
+                .setKemId(HpkeParameters.KemId.X_WING)
+                .setKdfId(kdfId)
+                .setAeadId(aeadId)
+                .build());
+  }
+
+  @Theory
+  public void buildParameters_xWingWorksWithHkdfSha256(
+      @FromDataPoints("variants") HpkeParameters.Variant variant,
+      @FromDataPoints("aeadIds") HpkeParameters.AeadId aeadId)
+      throws Exception {
+    HpkeParameters params =
+        HpkeParameters.builder()
+            .setVariant(variant)
+            .setKemId(HpkeParameters.KemId.X_WING)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+            .setAeadId(aeadId)
+            .build();
+
+    assertThat(params.getVariant()).isEqualTo(variant);
+    assertThat(params.getKemId()).isEqualTo(HpkeParameters.KemId.X_WING);
+    assertThat(params.getKdfId()).isEqualTo(HpkeParameters.KdfId.HKDF_SHA256);
     assertThat(params.getAeadId()).isEqualTo(aeadId);
   }
 
