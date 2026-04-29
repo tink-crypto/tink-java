@@ -27,6 +27,7 @@ import com.google.crypto.tink.internal.ParametersParser;
 import com.google.crypto.tink.internal.ParametersSerializer;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
+import com.google.crypto.tink.internal.SerializationRegistry;
 import com.google.crypto.tink.proto.Ed25519KeyFormat;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.signature.Ed25519Parameters;
@@ -163,6 +164,16 @@ public final class Ed25519ProtoSerialization {
     registry.registerKeyParser(PUBLIC_KEY_PARSER);
     registry.registerKeySerializer(PRIVATE_KEY_SERIALIZER);
     registry.registerKeyParser(PRIVATE_KEY_PARSER);
+  }
+
+  public static void register(SerializationRegistry.Builder registryBuilder)
+      throws GeneralSecurityException {
+    registryBuilder.registerParametersSerializer(PARAMETERS_SERIALIZER);
+    registryBuilder.registerParametersParser(PARAMETERS_PARSER);
+    registryBuilder.registerKeySerializer(PUBLIC_KEY_SERIALIZER);
+    registryBuilder.registerKeyParser(PUBLIC_KEY_PARSER);
+    registryBuilder.registerKeySerializer(PRIVATE_KEY_SERIALIZER);
+    registryBuilder.registerKeyParser(PRIVATE_KEY_PARSER);
   }
 
   private static com.google.crypto.tink.proto.Ed25519PublicKey getProtoPublicKey(
