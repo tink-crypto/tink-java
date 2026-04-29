@@ -88,6 +88,24 @@ public final class AesCtrHmacAeadProtoSerialization {
     throw new GeneralSecurityException("Unable to serialize variant: " + variant);
   }
 
+  private static AesCtrHmacAeadParameters.Variant toVariant(
+      com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType outputPrefixType)
+      throws GeneralSecurityException {
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK) {
+      return AesCtrHmacAeadParameters.Variant.TINK;
+    }
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.CRUNCHY) {
+      return AesCtrHmacAeadParameters.Variant.CRUNCHY;
+    }
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.LEGACY) {
+      return AesCtrHmacAeadParameters.Variant.CRUNCHY;
+    }
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW) {
+      return AesCtrHmacAeadParameters.Variant.NO_PREFIX;
+    }
+    throw new GeneralSecurityException("Unable to parse OutputPrefixType: " + outputPrefixType);
+  }
+
   private static AesCtrHmacAeadParameters.Variant toVariant(OutputPrefixType outputPrefixType)
       throws GeneralSecurityException {
     switch (outputPrefixType) {
@@ -263,7 +281,7 @@ public final class AesCtrHmacAeadProtoSerialization {
               .setIvSizeBytes(protoKey.getAesCtrKey().getParams().getIvSize())
               .setTagSizeBytes(protoKey.getHmacKey().getParams().getTagSize())
               .setHashType(toHashType(protoKey.getHmacKey().getParams().getHash()))
-              .setVariant(toVariant(serialization.getOutputPrefixTypeProto()))
+              .setVariant(toVariant(serialization.getOutputPrefixType()))
               .build();
       return AesCtrHmacAeadKey.builder()
           .setParameters(parameters)

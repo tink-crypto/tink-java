@@ -54,23 +54,28 @@ public final class LegacyFullMac implements Mac {
 
     Mac rawPrimitive = manager.getPrimitive(protoKeySerialization.getValue());
 
-    OutputPrefixType outputPrefixType = protoKeySerialization.getOutputPrefixTypeProto();
+    com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType extPrefix =
+        protoKeySerialization.getOutputPrefixType();
+    OutputPrefixType outputPrefixType;
     byte[] outputPrefix;
-    switch (outputPrefixType) {
-      case RAW:
-        outputPrefix = OutputPrefixUtil.EMPTY_PREFIX.toByteArray();
-        break;
-      case LEGACY:
-      case CRUNCHY:
-        outputPrefix =
-            OutputPrefixUtil.getLegacyOutputPrefix(key.getIdRequirementOrNull()).toByteArray();
-        break;
-      case TINK:
-        outputPrefix =
-            OutputPrefixUtil.getTinkOutputPrefix(key.getIdRequirementOrNull()).toByteArray();
-        break;
-      default:
-        throw new GeneralSecurityException("unknown output prefix type");
+
+    if (extPrefix == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW) {
+      outputPrefixType = OutputPrefixType.RAW;
+      outputPrefix = OutputPrefixUtil.EMPTY_PREFIX.toByteArray();
+    } else if (extPrefix == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.LEGACY) {
+      outputPrefixType = OutputPrefixType.LEGACY;
+      outputPrefix =
+          OutputPrefixUtil.getLegacyOutputPrefix(key.getIdRequirementOrNull()).toByteArray();
+    } else if (extPrefix == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.CRUNCHY) {
+      outputPrefixType = OutputPrefixType.CRUNCHY;
+      outputPrefix =
+          OutputPrefixUtil.getLegacyOutputPrefix(key.getIdRequirementOrNull()).toByteArray();
+    } else if (extPrefix == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK) {
+      outputPrefixType = OutputPrefixType.TINK;
+      outputPrefix =
+          OutputPrefixUtil.getTinkOutputPrefix(key.getIdRequirementOrNull()).toByteArray();
+    } else {
+      throw new GeneralSecurityException("unknown output prefix type " + extPrefix);
     }
     return new LegacyFullMac(rawPrimitive, outputPrefixType, outputPrefix);
   }

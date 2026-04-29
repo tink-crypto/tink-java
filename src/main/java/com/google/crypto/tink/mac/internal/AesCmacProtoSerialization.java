@@ -87,6 +87,24 @@ public final class AesCmacProtoSerialization {
     throw new GeneralSecurityException("Unable to serialize variant: " + variant);
   }
 
+  private static AesCmacParameters.Variant toVariant(
+      com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType outputPrefixType)
+      throws GeneralSecurityException {
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK) {
+      return AesCmacParameters.Variant.TINK;
+    }
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.CRUNCHY) {
+      return AesCmacParameters.Variant.CRUNCHY;
+    }
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.LEGACY) {
+      return AesCmacParameters.Variant.LEGACY;
+    }
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW) {
+      return AesCmacParameters.Variant.NO_PREFIX;
+    }
+    throw new GeneralSecurityException("Unable to parse OutputPrefixType: " + outputPrefixType);
+  }
+
   private static AesCmacParameters.Variant toVariant(OutputPrefixType outputPrefixType)
       throws GeneralSecurityException {
     switch (outputPrefixType) {
@@ -179,9 +197,11 @@ public final class AesCmacProtoSerialization {
         throw new GeneralSecurityException("Only version 0 keys are accepted");
       }
       AesCmacParameters parameters =
-          AesCmacParameters.builder().setKeySizeBytes(protoKey.getKeyValue().size())
+          AesCmacParameters.builder()
+              .setKeySizeBytes(protoKey.getKeyValue().size())
               .setTagSizeBytes(protoKey.getParams().getTagSize())
-              .setVariant(toVariant(serialization.getOutputPrefixTypeProto())).build();
+              .setVariant(toVariant(serialization.getOutputPrefixType()))
+              .build();
       return AesCmacKey.builder()
           .setParameters(parameters)
           .setAesKeyBytes(SecretBytes.copyFrom(

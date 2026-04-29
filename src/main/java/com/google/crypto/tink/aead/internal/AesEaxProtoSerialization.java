@@ -82,6 +82,24 @@ public final class AesEaxProtoSerialization {
     throw new GeneralSecurityException("Unable to serialize variant: " + variant);
   }
 
+  private static AesEaxParameters.Variant toVariant(
+      com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType outputPrefixType)
+      throws GeneralSecurityException {
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK) {
+      return AesEaxParameters.Variant.TINK;
+    }
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.CRUNCHY) {
+      return AesEaxParameters.Variant.CRUNCHY;
+    }
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.LEGACY) {
+      return AesEaxParameters.Variant.CRUNCHY;
+    }
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW) {
+      return AesEaxParameters.Variant.NO_PREFIX;
+    }
+    throw new GeneralSecurityException("Unable to parse OutputPrefixType: " + outputPrefixType);
+  }
+
   private static AesEaxParameters.Variant toVariant(OutputPrefixType outputPrefixType)
       throws GeneralSecurityException {
     switch (outputPrefixType) {
@@ -189,7 +207,7 @@ public final class AesEaxProtoSerialization {
               .setKeySizeBytes(protoKey.getKeyValue().size())
               .setIvSizeBytes(protoKey.getParams().getIvSize())
               .setTagSizeBytes(16)
-              .setVariant(toVariant(serialization.getOutputPrefixTypeProto()))
+              .setVariant(toVariant(serialization.getOutputPrefixType()))
               .build();
       return AesEaxKey.builder()
           .setParameters(parameters)

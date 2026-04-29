@@ -22,11 +22,11 @@ import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.CryptoFormat;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyManager;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.OutputPrefixUtil;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.subtle.Bytes;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
@@ -51,23 +51,21 @@ public class LegacyFullAead implements Aead {
 
     Aead rawPrimitive = manager.getPrimitive(protoKeySerialization.getValue());
 
-    OutputPrefixType outputPrefixType = protoKeySerialization.getOutputPrefixTypeProto();
+    OutputPrefixType extPrefix = protoKeySerialization.getOutputPrefixType();
     byte[] identifier;
-    switch (outputPrefixType) {
-      case RAW:
-        identifier = OutputPrefixUtil.EMPTY_PREFIX.toByteArray();
-        break;
-      case LEGACY:
-      case CRUNCHY:
-        identifier =
-            OutputPrefixUtil.getLegacyOutputPrefix(key.getIdRequirementOrNull()).toByteArray();
-        break;
-      case TINK:
-        identifier =
-            OutputPrefixUtil.getTinkOutputPrefix(key.getIdRequirementOrNull()).toByteArray();
-        break;
-      default:
-        throw new GeneralSecurityException("unknown output prefix type " + outputPrefixType);
+
+    if (extPrefix == OutputPrefixType.RAW) {
+      identifier = OutputPrefixUtil.EMPTY_PREFIX.toByteArray();
+    } else if (extPrefix == OutputPrefixType.LEGACY) {
+      identifier =
+          OutputPrefixUtil.getLegacyOutputPrefix(key.getIdRequirementOrNull()).toByteArray();
+    } else if (extPrefix == OutputPrefixType.CRUNCHY) {
+      identifier =
+          OutputPrefixUtil.getLegacyOutputPrefix(key.getIdRequirementOrNull()).toByteArray();
+    } else if (extPrefix == OutputPrefixType.TINK) {
+      identifier = OutputPrefixUtil.getTinkOutputPrefix(key.getIdRequirementOrNull()).toByteArray();
+    } else {
+      throw new GeneralSecurityException("unknown output prefix type " + extPrefix);
     }
 
     return new LegacyFullAead(rawPrimitive, identifier);

@@ -84,6 +84,18 @@ public final class XAesGcmProtoSerialization {
     throw new GeneralSecurityException("Unable to serialize variant: " + variant);
   }
 
+  private static XAesGcmParameters.Variant toVariant(
+      com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType outputPrefixType)
+      throws GeneralSecurityException {
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK) {
+      return XAesGcmParameters.Variant.TINK;
+    }
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW) {
+      return XAesGcmParameters.Variant.NO_PREFIX;
+    }
+    throw new GeneralSecurityException("Unable to parse OutputPrefixType: " + outputPrefixType);
+  }
+
   private static XAesGcmParameters.Variant toVariant(OutputPrefixType outputPrefixType)
       throws GeneralSecurityException {
     switch (outputPrefixType) {
@@ -177,7 +189,7 @@ public final class XAesGcmProtoSerialization {
       }
       return XAesGcmKey.create(
           XAesGcmParameters.create(
-              toVariant(serialization.getOutputPrefixTypeProto()), protoKey.getParams().getSaltSize()),
+              toVariant(serialization.getOutputPrefixType()), protoKey.getParams().getSaltSize()),
           SecretBytes.copyFrom(
               protoKey.getKeyValue().toByteArray(), SecretKeyAccess.requireAccess(access)),
           serialization.getIdRequirementOrNull());

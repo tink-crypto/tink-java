@@ -87,6 +87,18 @@ public final class LegacyKmsEnvelopeAeadProtoSerialization {
     throw new GeneralSecurityException("Unable to serialize variant: " + variant);
   }
 
+  private static OutputPrefixType toProto(
+      com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType outputPrefixType)
+      throws GeneralSecurityException {
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK) {
+      return OutputPrefixType.TINK;
+    }
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW) {
+      return OutputPrefixType.RAW;
+    }
+    throw new GeneralSecurityException("Unable to parse OutputPrefixType: " + outputPrefixType);
+  }
+
   private static LegacyKmsEnvelopeAeadParameters.Variant toVariant(
       OutputPrefixType outputPrefixType) throws GeneralSecurityException {
     switch (outputPrefixType) {
@@ -219,7 +231,7 @@ public final class LegacyKmsEnvelopeAeadProtoSerialization {
       }
 
       LegacyKmsEnvelopeAeadParameters parameters =
-          parseParameters(protoKey.getParams(), serialization.getOutputPrefixTypeProto());
+          parseParameters(protoKey.getParams(), toProto(serialization.getOutputPrefixType()));
       return LegacyKmsEnvelopeAeadKey.create(parameters, serialization.getIdRequirementOrNull());
     } catch (InvalidProtocolBufferException e) {
       throw new GeneralSecurityException("Parsing KmsEnvelopeAeadKey failed: ", e);

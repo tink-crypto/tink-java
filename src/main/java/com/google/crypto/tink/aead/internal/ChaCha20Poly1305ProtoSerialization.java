@@ -91,6 +91,24 @@ public final class ChaCha20Poly1305ProtoSerialization {
     throw new GeneralSecurityException("Unable to serialize variant: " + variant);
   }
 
+  private static ChaCha20Poly1305Parameters.Variant toVariant(
+      com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType outputPrefixType)
+      throws GeneralSecurityException {
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK) {
+      return ChaCha20Poly1305Parameters.Variant.TINK;
+    }
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.CRUNCHY) {
+      return ChaCha20Poly1305Parameters.Variant.CRUNCHY;
+    }
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.LEGACY) {
+      return ChaCha20Poly1305Parameters.Variant.CRUNCHY;
+    }
+    if (outputPrefixType == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW) {
+      return ChaCha20Poly1305Parameters.Variant.NO_PREFIX;
+    }
+    throw new GeneralSecurityException("Unable to parse OutputPrefixType: " + outputPrefixType);
+  }
+
   private static ChaCha20Poly1305Parameters.Variant toVariant(OutputPrefixType outputPrefixType)
       throws GeneralSecurityException {
     switch (outputPrefixType) {
@@ -172,7 +190,7 @@ public final class ChaCha20Poly1305ProtoSerialization {
         throw new GeneralSecurityException("Only version 0 keys are accepted");
       }
       return ChaCha20Poly1305Key.create(
-          toVariant(serialization.getOutputPrefixTypeProto()),
+          toVariant(serialization.getOutputPrefixType()),
           SecretBytes.copyFrom(
               protoKey.getKeyValue().toByteArray(), SecretKeyAccess.requireAccess(access)),
           serialization.getIdRequirementOrNull());
