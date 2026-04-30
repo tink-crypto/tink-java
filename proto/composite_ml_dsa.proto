@@ -28,6 +28,7 @@ option java_package = "com.google.crypto.tink.proto";
 option java_multiple_files = true;
 option go_package = "github.com/tink-crypto/tink-go/v2/proto/composite_ml_dsa_go_proto";
 
+// LINT: LEGACY_NAMES
 enum CompositeMlDsaClassicalAlgorithm {
   CLASSICAL_ALGORITHM_UNKNOWN = 0;
   CLASSICAL_ALGORITHM_ED25519 = 1;
