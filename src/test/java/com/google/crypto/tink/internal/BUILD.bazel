@@ -717,3 +717,16 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "ProtoConversionsTest",
+    size = "small",
+    srcs = ["ProtoConversionsTest.java"],
+    deps = [
+        "//proto:tink_java_proto",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization",
+        "//src/main/java/com/google/crypto/tink/internal:proto_conversions",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
