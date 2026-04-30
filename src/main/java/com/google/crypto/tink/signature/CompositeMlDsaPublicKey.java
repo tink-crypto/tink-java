@@ -245,8 +245,8 @@ public final class CompositeMlDsaPublicKey extends SignaturePublicKey {
     }
     CompositeMlDsaPublicKey other = (CompositeMlDsaPublicKey) o;
     return parameters.equals(other.parameters)
-        && mlDsaPublicKey.equals(other.mlDsaPublicKey)
-        && classicalPublicKey.equals(other.classicalPublicKey)
+        && mlDsaPublicKey.equalsKey(other.mlDsaPublicKey)
+        && classicalPublicKey.equalsKey(other.classicalPublicKey)
         && Objects.equals(idRequirement, other.idRequirement);
   }
 }

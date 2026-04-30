@@ -364,7 +364,7 @@ public final class CompositeMlDsaPublicKeyTest {
   }
 
   @Test
-  public void testEqualsKey() throws Exception {
+  public void testSimpleEqualsKey() throws Exception {
     CompositeMlDsaParameters parameters =
         CompositeMlDsaParameters.builder()
             .setMlDsaInstance(CompositeMlDsaParameters.MlDsaInstance.ML_DSA_65)
@@ -420,5 +420,79 @@ public final class CompositeMlDsaPublicKeyTest {
     assertThat(key1.equalsKey(keyDifferentId)).isFalse();
     assertThat(key1.equalsKey(keyNoPrefix)).isFalse();
     assertThat(key1.equalsKey(ed25519PublicKey)).isFalse();
+  }
+
+  @Test
+  public void testFullEqualsKey() throws Exception {
+    CompositeMlDsaParameters parameters1 =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(CompositeMlDsaParameters.MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(CompositeMlDsaParameters.ClassicalAlgorithm.ED25519)
+            .setVariant(CompositeMlDsaParameters.Variant.TINK)
+            .build();
+    MlDsaPublicKey mlDsaPublicKey1 =
+        MlDsaPublicKey.builder()
+            .setParameters(
+                MlDsaParameters.create(
+                    MlDsaParameters.MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.NO_PREFIX))
+            .setSerializedPublicKey(FAKE_MLDSA65_PUBLIC_KEY_BYTES)
+            .build();
+    Ed25519PublicKey ed25519PublicKey1 =
+        Ed25519PublicKey.create(Ed25519Parameters.Variant.NO_PREFIX, FAKE_ED25519_PUBLIC_KEY_BYTES, null);
+    CompositeMlDsaParameters parameters2 =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(CompositeMlDsaParameters.MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(CompositeMlDsaParameters.ClassicalAlgorithm.ED25519)
+            .setVariant(CompositeMlDsaParameters.Variant.TINK)
+            .build();
+    MlDsaPublicKey mlDsaPublicKey2 =
+        MlDsaPublicKey.builder()
+            .setParameters(
+                MlDsaParameters.create(
+                    MlDsaParameters.MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.NO_PREFIX))
+            .setSerializedPublicKey(FAKE_MLDSA65_PUBLIC_KEY_BYTES)
+            .build();
+    Ed25519PublicKey ed25519PublicKey2 =
+        Ed25519PublicKey.create(Ed25519Parameters.Variant.NO_PREFIX, FAKE_ED25519_PUBLIC_KEY_BYTES, null);
+
+    CompositeMlDsaPublicKey key1 =
+        CompositeMlDsaPublicKey.builder()
+            .setParameters(parameters1)
+            .setMlDsaPublicKey(mlDsaPublicKey1)
+            .setClassicalPublicKey(ed25519PublicKey1)
+            .setIdRequirement(123)
+            .build();
+    CompositeMlDsaPublicKey key2 =
+        CompositeMlDsaPublicKey.builder()
+            .setParameters(parameters2)
+            .setMlDsaPublicKey(mlDsaPublicKey2)
+            .setClassicalPublicKey(ed25519PublicKey2)
+            .setIdRequirement(123)
+            .build();
+    CompositeMlDsaPublicKey keyDifferentId =
+        CompositeMlDsaPublicKey.builder()
+            .setParameters(parameters1)
+            .setMlDsaPublicKey(mlDsaPublicKey1)
+            .setClassicalPublicKey(ed25519PublicKey1)
+            .setIdRequirement(456)
+            .build();
+    // Also test it with NO_PREFIX
+    CompositeMlDsaParameters parametersNoPrefix =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(CompositeMlDsaParameters.MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(CompositeMlDsaParameters.ClassicalAlgorithm.ED25519)
+            .setVariant(CompositeMlDsaParameters.Variant.NO_PREFIX)
+            .build();
+    CompositeMlDsaPublicKey keyNoPrefix =
+        CompositeMlDsaPublicKey.builder()
+            .setParameters(parametersNoPrefix)
+            .setMlDsaPublicKey(mlDsaPublicKey1)
+            .setClassicalPublicKey(ed25519PublicKey1)
+            .build();
+
+    assertThat(key1.equalsKey(key2)).isTrue();
+    assertThat(key1.equalsKey(keyDifferentId)).isFalse();
+    assertThat(key1.equalsKey(keyNoPrefix)).isFalse();
+    assertThat(key1.equalsKey(ed25519PublicKey1)).isFalse();
   }
 }
