@@ -24,7 +24,7 @@ import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyProtoKey;
-import com.google.crypto.tink.internal.OutputPrefixUtil;
+import com.google.crypto.tink.internal.ProtoConversions;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.subtle.Bytes;
 import com.google.errorprone.annotations.Immutable;
@@ -53,17 +53,8 @@ public final class LegacyFullVerify implements PublicKeyVerify {
   }
 
   static byte[] getOutputPrefix(ProtoKeySerialization key) throws GeneralSecurityException {
-    if (key.getOutputPrefixType().equals(OutputPrefixType.LEGACY)
-        || key.getOutputPrefixType().equals(OutputPrefixType.CRUNCHY)) {
-      return OutputPrefixUtil.getLegacyOutputPrefix(key.getIdRequirementOrNull()).toByteArray();
-    }
-    if (key.getOutputPrefixType().equals(OutputPrefixType.TINK)) {
-      return OutputPrefixUtil.getTinkOutputPrefix(key.getIdRequirementOrNull()).toByteArray();
-    }
-    if (key.getOutputPrefixType().equals(OutputPrefixType.RAW)) {
-      return OutputPrefixUtil.EMPTY_PREFIX.toByteArray();
-    }
-    throw new GeneralSecurityException("unknown output prefix type");
+    return ProtoConversions.getOutputPrefix(key.getOutputPrefixType(), key.getIdRequirementOrNull())
+        .toByteArray();
   }
 
   static byte[] getMessageSuffix(ProtoKeySerialization key) {

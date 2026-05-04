@@ -22,7 +22,7 @@ import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyProtoKey;
-import com.google.crypto.tink.internal.OutputPrefixUtil;
+import com.google.crypto.tink.internal.ProtoConversions;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.subtle.Bytes;
 import com.google.errorprone.annotations.Immutable;
@@ -57,22 +57,8 @@ public final class LegacyFullHybridEncrypt implements HybridEncrypt {
     HybridEncrypt rawPrimitive = manager.getPrimitive(protoKeySerialization.getValue());
 
     OutputPrefixType extPrefix = protoKeySerialization.getOutputPrefixType();
-    byte[] outputPrefix;
-
-    if (extPrefix == OutputPrefixType.RAW) {
-      outputPrefix = OutputPrefixUtil.EMPTY_PREFIX.toByteArray();
-    } else if (extPrefix == OutputPrefixType.LEGACY) {
-      outputPrefix =
-          OutputPrefixUtil.getLegacyOutputPrefix(key.getIdRequirementOrNull()).toByteArray();
-    } else if (extPrefix == OutputPrefixType.CRUNCHY) {
-      outputPrefix =
-          OutputPrefixUtil.getLegacyOutputPrefix(key.getIdRequirementOrNull()).toByteArray();
-    } else if (extPrefix == OutputPrefixType.TINK) {
-      outputPrefix =
-          OutputPrefixUtil.getTinkOutputPrefix(key.getIdRequirementOrNull()).toByteArray();
-    } else {
-      throw new GeneralSecurityException("unknown output prefix type " + extPrefix);
-    }
+    byte[] outputPrefix =
+        ProtoConversions.getOutputPrefix(extPrefix, key.getIdRequirementOrNull()).toByteArray();
     return new LegacyFullHybridEncrypt(rawPrimitive, outputPrefix);
   }
 

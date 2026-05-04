@@ -25,7 +25,7 @@ import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyProtoKey;
-import com.google.crypto.tink.internal.OutputPrefixUtil;
+import com.google.crypto.tink.internal.ProtoConversions;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.subtle.Bytes;
 import java.security.GeneralSecurityException;
@@ -52,21 +52,8 @@ public class LegacyFullAead implements Aead {
     Aead rawPrimitive = manager.getPrimitive(protoKeySerialization.getValue());
 
     OutputPrefixType extPrefix = protoKeySerialization.getOutputPrefixType();
-    byte[] identifier;
-
-    if (extPrefix == OutputPrefixType.RAW) {
-      identifier = OutputPrefixUtil.EMPTY_PREFIX.toByteArray();
-    } else if (extPrefix == OutputPrefixType.LEGACY) {
-      identifier =
-          OutputPrefixUtil.getLegacyOutputPrefix(key.getIdRequirementOrNull()).toByteArray();
-    } else if (extPrefix == OutputPrefixType.CRUNCHY) {
-      identifier =
-          OutputPrefixUtil.getLegacyOutputPrefix(key.getIdRequirementOrNull()).toByteArray();
-    } else if (extPrefix == OutputPrefixType.TINK) {
-      identifier = OutputPrefixUtil.getTinkOutputPrefix(key.getIdRequirementOrNull()).toByteArray();
-    } else {
-      throw new GeneralSecurityException("unknown output prefix type " + extPrefix);
-    }
+    byte[] identifier =
+        ProtoConversions.getOutputPrefix(extPrefix, key.getIdRequirementOrNull()).toByteArray();
 
     return new LegacyFullAead(rawPrimitive, identifier);
   }

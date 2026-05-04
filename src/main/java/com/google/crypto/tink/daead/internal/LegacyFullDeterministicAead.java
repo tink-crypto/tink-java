@@ -24,7 +24,7 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyProtoKey;
-import com.google.crypto.tink.internal.OutputPrefixUtil;
+import com.google.crypto.tink.internal.ProtoConversions;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.subtle.Bytes;
@@ -56,26 +56,9 @@ public class LegacyFullDeterministicAead implements DeterministicAead {
 
     com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType extPrefix =
         protoKeySerialization.getOutputPrefixType();
-    OutputPrefixType outputPrefixType;
-    byte[] identifier;
-
-    if (extPrefix == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW) {
-      outputPrefixType = OutputPrefixType.RAW;
-      identifier = OutputPrefixUtil.EMPTY_PREFIX.toByteArray();
-    } else if (extPrefix == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.LEGACY) {
-      outputPrefixType = OutputPrefixType.LEGACY;
-      identifier =
-          OutputPrefixUtil.getLegacyOutputPrefix(key.getIdRequirementOrNull()).toByteArray();
-    } else if (extPrefix == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.CRUNCHY) {
-      outputPrefixType = OutputPrefixType.CRUNCHY;
-      identifier =
-          OutputPrefixUtil.getLegacyOutputPrefix(key.getIdRequirementOrNull()).toByteArray();
-    } else if (extPrefix == com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK) {
-      outputPrefixType = OutputPrefixType.TINK;
-      identifier = OutputPrefixUtil.getTinkOutputPrefix(key.getIdRequirementOrNull()).toByteArray();
-    } else {
-      throw new GeneralSecurityException("unknown output prefix type " + extPrefix);
-    }
+    OutputPrefixType outputPrefixType = ProtoConversions.toProto(extPrefix);
+    byte[] identifier =
+        ProtoConversions.getOutputPrefix(extPrefix, key.getIdRequirementOrNull()).toByteArray();
 
     return new LegacyFullDeterministicAead(rawPrimitive, outputPrefixType, identifier);
   }
