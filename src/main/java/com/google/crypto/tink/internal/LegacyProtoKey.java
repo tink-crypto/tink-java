@@ -20,9 +20,9 @@ import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.PrivateKeyManager;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.proto.KeyData;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
@@ -48,29 +48,13 @@ public final class LegacyProtoKey extends Key {
       return outputPrefixType != OutputPrefixType.RAW;
     }
 
-    // This function is needed because LiteProto do not have a good toString function.
-    private static String outputPrefixToString(OutputPrefixType outputPrefixType) {
-      switch (outputPrefixType) {
-        case TINK:
-          return "TINK";
-        case LEGACY:
-          return "LEGACY";
-        case RAW:
-          return "RAW";
-        case CRUNCHY:
-          return "CRUNCHY";
-        default:
-          return "UNKNOWN";
-      }
-    }
-
     /**
      * Returns the string representation. The exact details are unspecified and subject to change.
      */
     @Override
     public String toString() {
       return String.format(
-          "(typeUrl=%s, outputPrefixType=%s)", typeUrl, outputPrefixToString(outputPrefixType));
+          "(typeUrl=%s, outputPrefixType=%s)", typeUrl, outputPrefixType.toString());
     }
 
     private LegacyProtoParametersNotForCreation(String typeUrl, OutputPrefixType outputPrefixType) {
@@ -95,14 +79,14 @@ public final class LegacyProtoKey extends Key {
 
   private static Bytes computeOutputPrefix(ProtoKeySerialization serialization)
       throws GeneralSecurityException {
-    if (serialization.getOutputPrefixTypeProto().equals(OutputPrefixType.RAW)) {
+    if (serialization.getOutputPrefixType().equals(OutputPrefixType.RAW)) {
       return Bytes.copyFrom(new byte[0]);
     }
-    if (serialization.getOutputPrefixTypeProto().equals(OutputPrefixType.TINK)) {
+    if (serialization.getOutputPrefixType().equals(OutputPrefixType.TINK)) {
       return OutputPrefixUtil.getTinkOutputPrefix(serialization.getIdRequirementOrNull());
     }
-    if (serialization.getOutputPrefixTypeProto().equals(OutputPrefixType.LEGACY)
-        || serialization.getOutputPrefixTypeProto().equals(OutputPrefixType.CRUNCHY)) {
+    if (serialization.getOutputPrefixType().equals(OutputPrefixType.LEGACY)
+        || serialization.getOutputPrefixType().equals(OutputPrefixType.CRUNCHY)) {
       return OutputPrefixUtil.getLegacyOutputPrefix(serialization.getIdRequirementOrNull());
     }
     throw new GeneralSecurityException("Unknown output prefix type");
@@ -138,10 +122,10 @@ public final class LegacyProtoKey extends Key {
     }
     ProtoKeySerialization other = ((LegacyProtoKey) key).serialization;
 
-    if (!other.getOutputPrefixTypeProto().equals(serialization.getOutputPrefixTypeProto())) {
+    if (!other.getOutputPrefixType().equals(serialization.getOutputPrefixType())) {
       return false;
     }
-    if (!other.getKeyMaterialTypeProto().equals(serialization.getKeyMaterialTypeProto())) {
+    if (!other.getKeyMaterialType().equals(serialization.getKeyMaterialType())) {
       return false;
     }
     if (!other.getTypeUrl().equals(serialization.getTypeUrl())) {
@@ -180,7 +164,7 @@ public final class LegacyProtoKey extends Key {
   @Override
   public Parameters getParameters() {
     return new LegacyProtoParametersNotForCreation(
-        serialization.getTypeUrl(), serialization.getOutputPrefixTypeProto());
+        serialization.getTypeUrl(), serialization.getOutputPrefixType());
   }
 
   public Bytes getOutputPrefix() throws GeneralSecurityException {
