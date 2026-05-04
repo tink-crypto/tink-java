@@ -83,10 +83,14 @@ public final class Ed25519SignJceTest {
   }
 
   @Test
-  public void isSupported_onAndroid_returnsFalse() throws Exception {
+  public void isSupported_onAndroid_returnsTrueSinceApi37() throws Exception {
     Assume.assumeTrue(Util.isAndroid());
 
-    assertThat(Ed25519SignJce.isSupported()).isFalse();
+    if(Util.getAndroidApiLevel() >= 37) {
+      assertThat(Ed25519SignJce.isSupported()).isTrue();
+    } else {
+      assertThat(Ed25519SignJce.isSupported()).isFalse();
+    }
   }
 
   @Test

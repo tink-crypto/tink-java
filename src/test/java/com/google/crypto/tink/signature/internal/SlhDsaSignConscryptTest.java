@@ -252,15 +252,18 @@ public final class SlhDsaSignConscryptTest {
   }
 
   @Test
-  public void isSupported_conscryptAvailable_onAndroid_returnsFalse() throws Exception {
-    // Currently Android doesn't support SLH-DSA. This will change in the future. Once it's changed,
-    // this test would need to be changed, as well as the SignatureConfigurationV1ConscryptTest
-    // where the extra if's related to availability of Conscrypt for SLH-DSA will become
-    // unnecessary.
-    Assume.assumeTrue(ConscryptUtil.providerOrNull() != null && Util.isAndroid());
+  public void isSupported_onAndroid_returnsTrueSinceApi37() throws Exception {
+    Assume.assumeTrue(Util.isAndroid());
 
-    assertFalse(SlhDsaSignConscrypt.isSupported());
-    assertFalse(SlhDsaVerifyConscrypt.isSupported());
+    assertThat(ConscryptUtil.providerOrNull()).isNotNull();
+
+    if (Util.getAndroidApiLevel() >= 37) {
+      assertThat(SlhDsaSignConscrypt.isSupported()).isTrue();
+      assertThat(SlhDsaVerifyConscrypt.isSupported()).isTrue();
+    } else {
+      assertThat(SlhDsaSignConscrypt.isSupported()).isFalse();
+      assertThat(SlhDsaVerifyConscrypt.isSupported()).isFalse();
+    }
   }
 
 @Test

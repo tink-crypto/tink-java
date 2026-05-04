@@ -85,11 +85,14 @@ public final class Ed25519VerifyJceTest {
   }
 
   @Test
-  public void isSupported_onAndroid_returnsFalse() throws Exception {
-    // Also test the API level, because future versions of Conscrypt might support Ed25519.
-    Assume.assumeTrue(Util.isAndroid() && Util.getAndroidApiLevel() <= 35);
+  public void isSupported_onAndroid_returnsTrueSinceApi37() throws Exception {
+    Assume.assumeTrue(Util.isAndroid());
 
-    assertThat(Ed25519VerifyJce.isSupported()).isFalse();
+    if(Util.getAndroidApiLevel() >= 37) {
+      assertThat(Ed25519VerifyJce.isSupported()).isTrue();
+    } else {
+      assertThat(Ed25519VerifyJce.isSupported()).isFalse();
+    }
   }
 
   @Test

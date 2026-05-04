@@ -363,15 +363,18 @@ public final class MlDsaSignConscryptTest {
   }
 
   @Test
-  public void isSupported_conscryptAvailable_onAndroid_returnsFalse() throws Exception {
-    // Currently Android doesn't support ML-DSA. This will change in the future. Once it's changed,
-    // this test would need to be changed, as well as the SignatureConfigurationV1ConscryptTest
-    // where the extra if's related to availability of Conscrypt for ML-DSA will become
-    // unnecessary.
-    Assume.assumeTrue(ConscryptUtil.providerOrNull() != null && Util.isAndroid());
+  public void isSupported_onAndroid_returnsTrueSinceApi37() throws Exception {
+    Assume.assumeTrue(Util.isAndroid());
 
-    assertFalse(MlDsaSignConscrypt.isSupported());
-    assertFalse(MlDsaVerifyConscrypt.isSupported());
+    assertThat(ConscryptUtil.providerOrNull()).isNotNull();
+
+    if (Util.getAndroidApiLevel() >= 37) {
+      assertThat(MlDsaSignConscrypt.isSupported()).isTrue();
+      assertThat(MlDsaVerifyConscrypt.isSupported()).isTrue();
+    } else {
+      assertThat(MlDsaSignConscrypt.isSupported()).isFalse();
+      assertThat(MlDsaVerifyConscrypt.isSupported()).isFalse();
+    }
   }
 
   @Test

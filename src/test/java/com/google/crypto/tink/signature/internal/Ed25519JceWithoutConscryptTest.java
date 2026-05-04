@@ -22,18 +22,25 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
+import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.signature.Ed25519PrivateKey;
 import com.google.crypto.tink.signature.Ed25519PublicKey;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public final class Ed25519JceWithoutConscryptTest {
+
+  // Android API 37 and newer support Ed25519. Older Android versions do not.
+  boolean isNewerAndroid() {
+    return Util.isAndroid() && Util.getAndroidApiLevel() >= 37;
+  }
 
   // Test case from https://www.rfc-editor.org/rfc/rfc8032#page-24
   private static final SecretBytes SECRET_KEY_BYTES =
@@ -45,13 +52,20 @@ public final class Ed25519JceWithoutConscryptTest {
           Hex.decode("d75a980182b10ab7d54bfed3c964073a0ee172f3daa62325af021a68f707511a"));
 
   @Test
-  public void isSupported_returnsFalse() throws Exception {
-    assertThat(Ed25519SignJce.isSupported()).isFalse();
-    assertThat(Ed25519VerifyJce.isSupported()).isFalse();
+  public void isSupported_returnsTrueOnNewerAndroid() throws Exception {
+    if (isNewerAndroid()) {
+      assertThat(Ed25519SignJce.isSupported()).isTrue();
+      assertThat(Ed25519VerifyJce.isSupported()).isTrue();
+    } else {
+      assertThat(Ed25519SignJce.isSupported()).isFalse();
+      assertThat(Ed25519VerifyJce.isSupported()).isFalse();
+    }
   }
 
   @Test
-  public void ed25519SignJceCreate_throws() throws Exception {
+  public void ed25519SignJceCreate_throwsIfNotNewerAndroid() throws Exception {
+    Assume.assumeFalse(isNewerAndroid());
+
     Ed25519PublicKey publicKey = Ed25519PublicKey.create(PUBLIC_KEY_BYTES);
     Ed25519PrivateKey privateKey = Ed25519PrivateKey.create(publicKey, SECRET_KEY_BYTES);
 
@@ -63,7 +77,9 @@ public final class Ed25519JceWithoutConscryptTest {
   }
 
   @Test
-  public void ed25519VerifyJceCreate_throws() throws Exception {
+  public void ed25519VerifyJceCreate_throwsIfNotNewerAndroid() throws Exception {
+    Assume.assumeFalse(isNewerAndroid());
+
     Ed25519PublicKey publicKey = Ed25519PublicKey.create(PUBLIC_KEY_BYTES);
     assertThrows(
         GeneralSecurityException.class,
@@ -73,7 +89,9 @@ public final class Ed25519JceWithoutConscryptTest {
   }
 
   @Test
-  public void ed25519SignJceConstructor_throws() throws Exception {
+  public void ed25519SignJceConstructor_throwsIfNotNewerAndroid() throws Exception {
+    Assume.assumeFalse(isNewerAndroid());
+
     assertThrows(
         GeneralSecurityException.class,
         () -> {
@@ -83,7 +101,9 @@ public final class Ed25519JceWithoutConscryptTest {
   }
 
   @Test
-  public void ed25519VerifyJceConstructor_throws() throws Exception {
+  public void ed25519VerifyJceConstructor_throwsIfNotNewerAndroid() throws Exception {
+    Assume.assumeFalse(isNewerAndroid());
+
     assertThrows(
         GeneralSecurityException.class,
         () -> {
