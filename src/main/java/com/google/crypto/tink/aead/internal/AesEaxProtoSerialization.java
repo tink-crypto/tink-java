@@ -70,13 +70,13 @@ public final class AesEaxProtoSerialization {
 
   private static OutputPrefixType toProtoOutputPrefixType(AesEaxParameters.Variant variant)
       throws GeneralSecurityException {
-    if (AesEaxParameters.Variant.TINK.equals(variant)) {
+    if (variant.equals(AesEaxParameters.Variant.TINK)) {
       return OutputPrefixType.TINK;
     }
-    if (AesEaxParameters.Variant.CRUNCHY.equals(variant)) {
+    if (variant.equals(AesEaxParameters.Variant.CRUNCHY)) {
       return OutputPrefixType.CRUNCHY;
     }
-    if (AesEaxParameters.Variant.NO_PREFIX.equals(variant)) {
+    if (variant.equals(AesEaxParameters.Variant.NO_PREFIX)) {
       return OutputPrefixType.RAW;
     }
     throw new GeneralSecurityException("Unable to serialize variant: " + variant);
@@ -100,26 +100,10 @@ public final class AesEaxProtoSerialization {
     throw new GeneralSecurityException("Unable to parse OutputPrefixType: " + outputPrefixType);
   }
 
-  private static AesEaxParameters.Variant toVariant(OutputPrefixType outputPrefixType)
-      throws GeneralSecurityException {
-    switch (outputPrefixType) {
-      case TINK:
-        return AesEaxParameters.Variant.TINK;
-        /** Parse LEGACY prefix to CRUNCHY, since they act the same for this type of key */
-      case CRUNCHY:
-      case LEGACY:
-        return AesEaxParameters.Variant.CRUNCHY;
-      case RAW:
-        return AesEaxParameters.Variant.NO_PREFIX;
-      default:
-        throw new GeneralSecurityException(
-            "Unable to parse OutputPrefixType: " + outputPrefixType.getNumber());
-    }
-  }
 
   private static com.google.crypto.tink.proto.AesEaxParams getProtoParams(
       AesEaxParameters parameters) throws GeneralSecurityException {
-    /** Current implementation restricts to 16-byte tag value */
+    /* Current implementation restricts to 16-byte tag value */
     if (parameters.getTagSizeBytes() != 16) {
       throw new GeneralSecurityException(
           String.format(
@@ -181,9 +165,9 @@ public final class AesEaxProtoSerialization {
     return AesEaxParameters.builder()
         .setKeySizeBytes(format.getKeySize())
         .setIvSizeBytes(format.getParams().getIvSize())
-        /** Subtle implementation currently restricts tag size to 16 bytes. */
+        /* Subtle implementation currently restricts tag size to 16 bytes. */
         .setTagSizeBytes(16)
-        .setVariant(toVariant(serialization.getKeyTemplate().getOutputPrefixType()))
+        .setVariant(toVariant(serialization.getOutputPrefixType()))
         .build();
   }
 

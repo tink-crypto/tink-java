@@ -119,19 +119,6 @@ public final class MlDsaProtoSerialization {
     throw new GeneralSecurityException("unknown variant: " + outputPrefixType);
   }
 
-  private static MlDsaParameters.Variant toVariant(
-      com.google.crypto.tink.proto.OutputPrefixType outputPrefixType)
-      throws GeneralSecurityException {
-    switch (outputPrefixType) {
-      case RAW:
-        return MlDsaParameters.Variant.NO_PREFIX;
-      case TINK:
-        return MlDsaParameters.Variant.TINK;
-      default:
-        throw new GeneralSecurityException("unknown variant: " + outputPrefixType);
-    }
-  }
-
   private static final EnumTypeProtoConverter<
           com.google.crypto.tink.proto.MlDsaInstance, MlDsaParameters.MlDsaInstance>
       INSTANCE_CONVERTER =
@@ -241,7 +228,7 @@ public final class MlDsaProtoSerialization {
     }
     return MlDsaParameters.create(
         INSTANCE_CONVERTER.fromProtoEnum(format.getParams().getMlDsaInstance()),
-        toVariant(serialization.getKeyTemplate().getOutputPrefixType()));
+        toVariant(serialization.getOutputPrefixType()));
   }
 
   @SuppressWarnings("UnusedException")

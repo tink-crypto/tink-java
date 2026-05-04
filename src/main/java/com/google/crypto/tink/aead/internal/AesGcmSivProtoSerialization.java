@@ -75,13 +75,13 @@ public final class AesGcmSivProtoSerialization {
 
   private static OutputPrefixType toProtoOutputPrefixType(AesGcmSivParameters.Variant variant)
       throws GeneralSecurityException {
-    if (AesGcmSivParameters.Variant.TINK.equals(variant)) {
+    if (variant.equals(AesGcmSivParameters.Variant.TINK)) {
       return OutputPrefixType.TINK;
     }
-    if (AesGcmSivParameters.Variant.CRUNCHY.equals(variant)) {
+    if (variant.equals(AesGcmSivParameters.Variant.CRUNCHY)) {
       return OutputPrefixType.CRUNCHY;
     }
-    if (AesGcmSivParameters.Variant.NO_PREFIX.equals(variant)) {
+    if (variant.equals(AesGcmSivParameters.Variant.NO_PREFIX)) {
       return OutputPrefixType.RAW;
     }
     throw new GeneralSecurityException("Unable to serialize variant: " + variant);
@@ -105,22 +105,6 @@ public final class AesGcmSivProtoSerialization {
     throw new GeneralSecurityException("Unable to parse OutputPrefixType: " + outputPrefixType);
   }
 
-  private static AesGcmSivParameters.Variant toVariant(OutputPrefixType outputPrefixType)
-      throws GeneralSecurityException {
-    switch (outputPrefixType) {
-      case TINK:
-        return AesGcmSivParameters.Variant.TINK;
-        /** Parse LEGACY prefix to CRUNCHY, since they act the same for this type of key */
-      case CRUNCHY:
-      case LEGACY:
-        return AesGcmSivParameters.Variant.CRUNCHY;
-      case RAW:
-        return AesGcmSivParameters.Variant.NO_PREFIX;
-      default:
-        throw new GeneralSecurityException(
-            "Unable to parse OutputPrefixType: " + outputPrefixType.getNumber());
-    }
-  }
 
   private static ProtoParametersSerialization serializeParameters(AesGcmSivParameters parameters)
       throws GeneralSecurityException {
@@ -171,7 +155,7 @@ public final class AesGcmSivProtoSerialization {
     }
     return AesGcmSivParameters.builder()
         .setKeySizeBytes(format.getKeySize())
-        .setVariant(toVariant(serialization.getKeyTemplate().getOutputPrefixType()))
+        .setVariant(toVariant(serialization.getOutputPrefixType()))
         .build();
   }
 

@@ -76,13 +76,13 @@ public final class AesCtrHmacAeadProtoSerialization {
 
   private static OutputPrefixType toProtoOutputPrefixType(AesCtrHmacAeadParameters.Variant variant)
       throws GeneralSecurityException {
-    if (AesCtrHmacAeadParameters.Variant.TINK.equals(variant)) {
+    if (variant.equals(AesCtrHmacAeadParameters.Variant.TINK)) {
       return OutputPrefixType.TINK;
     }
-    if (AesCtrHmacAeadParameters.Variant.CRUNCHY.equals(variant)) {
+    if (variant.equals(AesCtrHmacAeadParameters.Variant.CRUNCHY)) {
       return OutputPrefixType.CRUNCHY;
     }
-    if (AesCtrHmacAeadParameters.Variant.NO_PREFIX.equals(variant)) {
+    if (variant.equals(AesCtrHmacAeadParameters.Variant.NO_PREFIX)) {
       return OutputPrefixType.RAW;
     }
     throw new GeneralSecurityException("Unable to serialize variant: " + variant);
@@ -106,37 +106,21 @@ public final class AesCtrHmacAeadProtoSerialization {
     throw new GeneralSecurityException("Unable to parse OutputPrefixType: " + outputPrefixType);
   }
 
-  private static AesCtrHmacAeadParameters.Variant toVariant(OutputPrefixType outputPrefixType)
-      throws GeneralSecurityException {
-    switch (outputPrefixType) {
-      case TINK:
-        return AesCtrHmacAeadParameters.Variant.TINK;
-      case CRUNCHY:
-      case LEGACY:
-        return AesCtrHmacAeadParameters.Variant.CRUNCHY;
-      case RAW:
-        return AesCtrHmacAeadParameters.Variant.NO_PREFIX;
-      default:
-        throw new GeneralSecurityException(
-            "Unable to parse OutputPrefixType: " + outputPrefixType.getNumber());
-    }
-  }
-
   private static HashType toProtoHashType(AesCtrHmacAeadParameters.HashType hashType)
       throws GeneralSecurityException {
-    if (AesCtrHmacAeadParameters.HashType.SHA1.equals(hashType)) {
+    if (hashType.equals(AesCtrHmacAeadParameters.HashType.SHA1)) {
       return HashType.SHA1;
     }
-    if (AesCtrHmacAeadParameters.HashType.SHA224.equals(hashType)) {
+    if (hashType.equals(AesCtrHmacAeadParameters.HashType.SHA224)) {
       return HashType.SHA224;
     }
-    if (AesCtrHmacAeadParameters.HashType.SHA256.equals(hashType)) {
+    if (hashType.equals(AesCtrHmacAeadParameters.HashType.SHA256)) {
       return HashType.SHA256;
     }
-    if (AesCtrHmacAeadParameters.HashType.SHA384.equals(hashType)) {
+    if (hashType.equals(AesCtrHmacAeadParameters.HashType.SHA384)) {
       return HashType.SHA384;
     }
-    if (AesCtrHmacAeadParameters.HashType.SHA512.equals(hashType)) {
+    if (hashType.equals(AesCtrHmacAeadParameters.HashType.SHA512)) {
       return HashType.SHA512;
     }
     throw new GeneralSecurityException("Unable to serialize HashType " + hashType);
@@ -249,7 +233,8 @@ public final class AesCtrHmacAeadProtoSerialization {
         .setIvSizeBytes(format.getAesCtrKeyFormat().getParams().getIvSize())
         .setTagSizeBytes(format.getHmacKeyFormat().getParams().getTagSize())
         .setHashType(toHashType(format.getHmacKeyFormat().getParams().getHash()))
-        .setVariant(toVariant(serialization.getKeyTemplate().getOutputPrefixType()))
+        .setVariant(
+            toVariant(serialization.getOutputPrefixType()))
         .build();
   }
 

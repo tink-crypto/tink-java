@@ -29,7 +29,6 @@ import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.internal.SerializationRegistry;
 import com.google.crypto.tink.proto.Ed25519KeyFormat;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.signature.Ed25519Parameters;
 import com.google.crypto.tink.signature.Ed25519PrivateKey;
 import com.google.crypto.tink.signature.Ed25519PublicKey;
@@ -109,23 +108,6 @@ public final class Ed25519ProtoSerialization {
       return com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.LEGACY;
     }
     throw new GeneralSecurityException("Unable to serialize variant: " + variant);
-  }
-
-  private static Ed25519Parameters.Variant toVariant(OutputPrefixType outputPrefixType)
-      throws GeneralSecurityException {
-    switch (outputPrefixType) {
-      case RAW:
-        return Ed25519Parameters.Variant.NO_PREFIX;
-      case TINK:
-        return Ed25519Parameters.Variant.TINK;
-      case CRUNCHY:
-        return Ed25519Parameters.Variant.CRUNCHY;
-      case LEGACY:
-        return Ed25519Parameters.Variant.LEGACY;
-      default:
-        throw new GeneralSecurityException(
-            "Unable to parse OutputPrefixType: " + outputPrefixType.toString());
-    }
   }
 
   private static Ed25519Parameters.Variant toVariant(
@@ -242,7 +224,7 @@ public final class Ed25519ProtoSerialization {
       throw new GeneralSecurityException("Parsing Ed25519Parameters failed: ", e);
     }
     return Ed25519Parameters.create(
-        toVariant(serialization.getKeyTemplate().getOutputPrefixType()));
+        toVariant(serialization.getOutputPrefixType()));
   }
 
   @SuppressWarnings("UnusedException")

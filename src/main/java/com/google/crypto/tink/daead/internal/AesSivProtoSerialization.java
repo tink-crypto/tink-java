@@ -39,7 +39,6 @@ import com.google.protobuf.ExtensionRegistryLite;
 import com.google.protobuf.InvalidProtocolBufferException;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nullable;
@@ -80,25 +79,10 @@ public final class AesSivProtoSerialization {
     return Collections.unmodifiableMap(result);
   }
 
-  private static Map<OutputPrefixType, AesSivParameters.Variant> createOutputPrefixToVariantMap() {
-    Map<OutputPrefixType, AesSivParameters.Variant> result = new EnumMap<>(OutputPrefixType.class);
-    result.put(OutputPrefixType.RAW, AesSivParameters.Variant.NO_PREFIX);
-    result.put(OutputPrefixType.TINK, AesSivParameters.Variant.TINK);
-    result.put(OutputPrefixType.CRUNCHY, AesSivParameters.Variant.CRUNCHY);
-    /** Parse LEGACY prefix to CRUNCHY, since they act the same for this type of key */
-    result.put(OutputPrefixType.LEGACY, AesSivParameters.Variant.CRUNCHY);
-    return Collections.unmodifiableMap(result);
-  }
-
   // This map is constructed using Collections.unmodifiableMap
   @SuppressWarnings("Immutable")
   private static final Map<AesSivParameters.Variant, OutputPrefixType> variantsToOutputPrefixMap =
       createVariantToOutputPrefixMap();
-
-  // This map is constructed using Collections.unmodifiableMap
-  @SuppressWarnings("Immutable")
-  private static final Map<OutputPrefixType, AesSivParameters.Variant> outputPrefixToVariantMap =
-      createOutputPrefixToVariantMap();
 
   private static OutputPrefixType toProtoOutputPrefixType(AesSivParameters.Variant variant)
       throws GeneralSecurityException {
@@ -124,15 +108,6 @@ public final class AesSivProtoSerialization {
       return AesSivParameters.Variant.CRUNCHY;
     }
     throw new GeneralSecurityException("Unable to parse OutputPrefixType: " + outputPrefixType);
-  }
-
-  private static AesSivParameters.Variant toVariant(OutputPrefixType outputPrefixType)
-      throws GeneralSecurityException {
-    if (outputPrefixToVariantMap.containsKey(outputPrefixType)) {
-      return outputPrefixToVariantMap.get(outputPrefixType);
-    }
-    throw new GeneralSecurityException(
-        "Unable to parse OutputPrefixType: " + outputPrefixType.getNumber());
   }
 
   private static ProtoParametersSerialization serializeParameters(AesSivParameters parameters)
@@ -184,7 +159,8 @@ public final class AesSivProtoSerialization {
     }
     return AesSivParameters.builder()
         .setKeySizeBytes(format.getKeySize())
-        .setVariant(toVariant(serialization.getKeyTemplate().getOutputPrefixType()))
+        .setVariant(
+            toVariant(serialization.getOutputPrefixType()))
         .build();
   }
 

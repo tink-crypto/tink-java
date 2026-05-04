@@ -96,18 +96,6 @@ public final class XAesGcmProtoSerialization {
     throw new GeneralSecurityException("Unable to parse OutputPrefixType: " + outputPrefixType);
   }
 
-  private static XAesGcmParameters.Variant toVariant(OutputPrefixType outputPrefixType)
-      throws GeneralSecurityException {
-    switch (outputPrefixType) {
-      case TINK:
-        return XAesGcmParameters.Variant.TINK;
-      case RAW:
-        return XAesGcmParameters.Variant.NO_PREFIX;
-      default:
-        throw new GeneralSecurityException(
-            "Unable to parse OutputPrefixType: " + outputPrefixType.getNumber());
-    }
-  }
 
   private static ProtoParametersSerialization serializeParameters(XAesGcmParameters parameters)
       throws GeneralSecurityException {
@@ -164,7 +152,7 @@ public final class XAesGcmProtoSerialization {
       throw new GeneralSecurityException("Only version 0 parameters are accepted");
     }
     return XAesGcmParameters.create(
-        toVariant(serialization.getKeyTemplate().getOutputPrefixType()),
+        toVariant(serialization.getOutputPrefixType()),
         format.getParams().getSaltSize());
   }
 

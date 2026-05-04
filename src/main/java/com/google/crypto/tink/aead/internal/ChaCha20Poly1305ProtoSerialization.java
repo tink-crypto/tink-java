@@ -79,13 +79,13 @@ public final class ChaCha20Poly1305ProtoSerialization {
 
   private static OutputPrefixType toProtoOutputPrefixType(
       ChaCha20Poly1305Parameters.Variant variant) throws GeneralSecurityException {
-    if (ChaCha20Poly1305Parameters.Variant.TINK.equals(variant)) {
+    if (variant.equals(ChaCha20Poly1305Parameters.Variant.TINK)) {
       return OutputPrefixType.TINK;
     }
-    if (ChaCha20Poly1305Parameters.Variant.CRUNCHY.equals(variant)) {
+    if (variant.equals(ChaCha20Poly1305Parameters.Variant.CRUNCHY)) {
       return OutputPrefixType.CRUNCHY;
     }
-    if (ChaCha20Poly1305Parameters.Variant.NO_PREFIX.equals(variant)) {
+    if (variant.equals(ChaCha20Poly1305Parameters.Variant.NO_PREFIX)) {
       return OutputPrefixType.RAW;
     }
     throw new GeneralSecurityException("Unable to serialize variant: " + variant);
@@ -107,23 +107,6 @@ public final class ChaCha20Poly1305ProtoSerialization {
       return ChaCha20Poly1305Parameters.Variant.NO_PREFIX;
     }
     throw new GeneralSecurityException("Unable to parse OutputPrefixType: " + outputPrefixType);
-  }
-
-  private static ChaCha20Poly1305Parameters.Variant toVariant(OutputPrefixType outputPrefixType)
-      throws GeneralSecurityException {
-    switch (outputPrefixType) {
-      case TINK:
-        return ChaCha20Poly1305Parameters.Variant.TINK;
-        /** Parse LEGACY prefix to CRUNCHY, since they act the same for this type of key */
-      case CRUNCHY:
-      case LEGACY:
-        return ChaCha20Poly1305Parameters.Variant.CRUNCHY;
-      case RAW:
-        return ChaCha20Poly1305Parameters.Variant.NO_PREFIX;
-      default:
-        throw new GeneralSecurityException(
-            "Unable to parse OutputPrefixType: " + outputPrefixType.getNumber());
-    }
   }
 
   private static ProtoParametersSerialization serializeParameters(
@@ -171,7 +154,7 @@ public final class ChaCha20Poly1305ProtoSerialization {
       throw new GeneralSecurityException("Parsing ChaCha20Poly1305Parameters failed: ", e);
     }
     return ChaCha20Poly1305Parameters.create(
-        toVariant(serialization.getKeyTemplate().getOutputPrefixType()));
+        toVariant(serialization.getOutputPrefixType()));
   }
 
   @SuppressWarnings("UnusedException")

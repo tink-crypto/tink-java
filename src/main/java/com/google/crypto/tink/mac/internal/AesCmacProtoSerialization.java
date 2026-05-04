@@ -73,16 +73,16 @@ public final class AesCmacProtoSerialization {
 
   private static OutputPrefixType toOutputPrefixType(AesCmacParameters.Variant variant)
       throws GeneralSecurityException {
-    if (AesCmacParameters.Variant.TINK.equals(variant)) {
+    if (variant.equals(AesCmacParameters.Variant.TINK)) {
       return OutputPrefixType.TINK;
     }
-    if (AesCmacParameters.Variant.CRUNCHY.equals(variant)) {
+    if (variant.equals(AesCmacParameters.Variant.CRUNCHY)) {
       return OutputPrefixType.CRUNCHY;
     }
-    if (AesCmacParameters.Variant.NO_PREFIX.equals(variant)) {
+    if (variant.equals(AesCmacParameters.Variant.NO_PREFIX)) {
       return OutputPrefixType.RAW;
     }
-    if (AesCmacParameters.Variant.LEGACY.equals(variant)) {
+    if (variant.equals(AesCmacParameters.Variant.LEGACY)) {
       return OutputPrefixType.LEGACY;
     }
     throw new GeneralSecurityException("Unable to serialize variant: " + variant);
@@ -106,22 +106,6 @@ public final class AesCmacProtoSerialization {
     throw new GeneralSecurityException("Unable to parse OutputPrefixType: " + outputPrefixType);
   }
 
-  private static AesCmacParameters.Variant toVariant(OutputPrefixType outputPrefixType)
-      throws GeneralSecurityException {
-    switch (outputPrefixType) {
-      case TINK:
-        return AesCmacParameters.Variant.TINK;
-      case CRUNCHY:
-        return AesCmacParameters.Variant.CRUNCHY;
-      case LEGACY:
-        return AesCmacParameters.Variant.LEGACY;
-      case RAW:
-        return AesCmacParameters.Variant.NO_PREFIX;
-      default:
-        throw new GeneralSecurityException(
-            "Unable to parse OutputPrefixType: " + outputPrefixType.getNumber());
-    }
-  }
 
   private static com.google.crypto.tink.proto.AesCmacParams getProtoParams(
       AesCmacParameters parameters) {
@@ -177,9 +161,11 @@ public final class AesCmacProtoSerialization {
       throw new GeneralSecurityException("Parsing AesCmacParameters failed: ", e);
     }
 
-    return AesCmacParameters.builder().setKeySizeBytes(format.getKeySize()).setTagSizeBytes(
-        format.getParams().getTagSize()).setVariant(
-        toVariant(serialization.getKeyTemplate().getOutputPrefixType())).build();
+    return AesCmacParameters.builder()
+        .setKeySizeBytes(format.getKeySize())
+        .setTagSizeBytes(format.getParams().getTagSize())
+        .setVariant(toVariant(serialization.getOutputPrefixType()))
+        .build();
   }
 
   @SuppressWarnings("UnusedException")

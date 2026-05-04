@@ -29,7 +29,6 @@ import com.google.crypto.tink.internal.ParametersSerializer;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.signature.SlhDsaParameters;
 import com.google.crypto.tink.signature.SlhDsaPrivateKey;
 import com.google.crypto.tink.signature.SlhDsaPublicKey;
@@ -102,18 +101,6 @@ public final class SlhDsaProtoSerialization {
       return com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK;
     }
     throw new GeneralSecurityException("unknown variant: " + variant);
-  }
-
-  private static SlhDsaParameters.Variant toVariant(OutputPrefixType outputPrefixType)
-      throws GeneralSecurityException {
-    switch (outputPrefixType) {
-      case RAW:
-        return SlhDsaParameters.Variant.NO_PREFIX;
-      case TINK:
-        return SlhDsaParameters.Variant.TINK;
-      default:
-        throw new GeneralSecurityException("unknown variant: " + outputPrefixType.toString());
-    }
   }
 
   private static SlhDsaParameters.Variant toVariant(
@@ -253,7 +240,8 @@ public final class SlhDsaProtoSerialization {
       throw new GeneralSecurityException("Only version 0 keys are accepted for SLH-DSA.");
     }
     return validateAndConvertToSlhDsaParameters(
-        format.getParams(), toVariant(serialization.getKeyTemplate().getOutputPrefixType()));
+        format.getParams(),
+        toVariant(serialization.getOutputPrefixType()));
   }
 
   private static SlhDsaParameters validateAndConvertToSlhDsaParameters(

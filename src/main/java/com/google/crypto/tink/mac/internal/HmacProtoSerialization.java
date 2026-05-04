@@ -82,23 +82,6 @@ public final class HmacProtoSerialization {
     throw new GeneralSecurityException("unknown OutputPrefixType: " + outputPrefixType);
   }
 
-  private static HmacParameters.Variant toVariant(
-      com.google.crypto.tink.proto.OutputPrefixType outputPrefixType)
-      throws GeneralSecurityException {
-    if (outputPrefixType == com.google.crypto.tink.proto.OutputPrefixType.RAW) {
-      return HmacParameters.Variant.NO_PREFIX;
-    }
-    if (outputPrefixType == com.google.crypto.tink.proto.OutputPrefixType.TINK) {
-      return HmacParameters.Variant.TINK;
-    }
-    if (outputPrefixType == com.google.crypto.tink.proto.OutputPrefixType.LEGACY) {
-      return HmacParameters.Variant.LEGACY;
-    }
-    if (outputPrefixType == com.google.crypto.tink.proto.OutputPrefixType.CRUNCHY) {
-      return HmacParameters.Variant.CRUNCHY;
-    }
-    throw new GeneralSecurityException("unknown OutputPrefixType: " + outputPrefixType);
-  }
 
   private static final EnumTypeProtoConverter<HashType, HmacParameters.HashType>
       HASH_TYPE_CONVERTER =
@@ -189,7 +172,7 @@ public final class HmacProtoSerialization {
         .setKeySizeBytes(format.getKeySize())
         .setTagSizeBytes(format.getParams().getTagSize())
         .setHashType(HASH_TYPE_CONVERTER.fromProtoEnum(format.getParams().getHash()))
-        .setVariant(toVariant(serialization.getKeyTemplate().getOutputPrefixType()))
+        .setVariant(toVariant(serialization.getOutputPrefixType()))
         .build();
   }
 

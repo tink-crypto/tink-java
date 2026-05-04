@@ -30,7 +30,6 @@ import com.google.crypto.tink.internal.ParametersSerializer;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.proto.HashType;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.signature.RsaSsaPssParameters;
 import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
@@ -111,23 +110,6 @@ public final class RsaSsaPssProtoSerialization {
       return com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.LEGACY;
     }
     throw new GeneralSecurityException("Unable to serialize variant: " + variant);
-  }
-
-  private static RsaSsaPssParameters.Variant toVariant(OutputPrefixType outputPrefixType)
-      throws GeneralSecurityException {
-    switch (outputPrefixType) {
-      case RAW:
-        return RsaSsaPssParameters.Variant.NO_PREFIX;
-      case TINK:
-        return RsaSsaPssParameters.Variant.TINK;
-      case CRUNCHY:
-        return RsaSsaPssParameters.Variant.CRUNCHY;
-      case LEGACY:
-        return RsaSsaPssParameters.Variant.LEGACY;
-      default:
-        throw new GeneralSecurityException(
-            "Unable to parse OutputPrefixType: " + outputPrefixType.toString());
-    }
   }
 
   private static RsaSsaPssParameters.Variant toVariant(
@@ -257,7 +239,7 @@ public final class RsaSsaPssProtoSerialization {
         .setPublicExponent(decodeBigInteger(format.getPublicExponent()))
         .setModulusSizeBits(format.getModulusSizeInBits())
         .setSaltLengthBytes(format.getParams().getSaltLength())
-        .setVariant(toVariant(serialization.getKeyTemplate().getOutputPrefixType()))
+        .setVariant(toVariant(serialization.getOutputPrefixType()))
         .build();
   }
 

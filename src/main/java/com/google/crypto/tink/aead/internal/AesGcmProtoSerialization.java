@@ -71,13 +71,13 @@ public final class AesGcmProtoSerialization {
 
   private static OutputPrefixType toProtoOutputPrefixType(AesGcmParameters.Variant variant)
       throws GeneralSecurityException {
-    if (AesGcmParameters.Variant.TINK.equals(variant)) {
+    if (variant.equals(AesGcmParameters.Variant.TINK)) {
       return OutputPrefixType.TINK;
     }
-    if (AesGcmParameters.Variant.CRUNCHY.equals(variant)) {
+    if (variant.equals(AesGcmParameters.Variant.CRUNCHY)) {
       return OutputPrefixType.CRUNCHY;
     }
-    if (AesGcmParameters.Variant.NO_PREFIX.equals(variant)) {
+    if (variant.equals(AesGcmParameters.Variant.NO_PREFIX)) {
       return OutputPrefixType.RAW;
     }
     throw new GeneralSecurityException("Unable to serialize variant: " + variant);
@@ -101,26 +101,10 @@ public final class AesGcmProtoSerialization {
     throw new GeneralSecurityException("Unable to parse OutputPrefixType: " + outputPrefixType);
   }
 
-  private static AesGcmParameters.Variant toVariant(OutputPrefixType outputPrefixType)
-      throws GeneralSecurityException {
-    switch (outputPrefixType) {
-      case TINK:
-        return AesGcmParameters.Variant.TINK;
-        /** Parse LEGACY prefix to CRUNCHY, since they act the same for this type of key */
-      case CRUNCHY:
-      case LEGACY:
-        return AesGcmParameters.Variant.CRUNCHY;
-      case RAW:
-        return AesGcmParameters.Variant.NO_PREFIX;
-      default:
-        throw new GeneralSecurityException(
-            "Unable to parse OutputPrefixType: " + outputPrefixType.getNumber());
-    }
-  }
 
   private static void validateParameters(AesGcmParameters parameters)
       throws GeneralSecurityException {
-    /** Current implementation restricts tag size to 16 bytes */
+    /* Current implementation restricts tag size to 16 bytes */
     if (parameters.getTagSizeBytes() != 16) {
       throw new GeneralSecurityException(
           String.format(
@@ -128,7 +112,7 @@ public final class AesGcmProtoSerialization {
                   + " keys with tag size equal to 16 bytes.",
               parameters.getTagSizeBytes()));
     }
-    /** Current implementation restricts IV size to 12 bytes */
+    /* Current implementation restricts IV size to 12 bytes */
     if (parameters.getIvSizeBytes() != 12) {
       throw new GeneralSecurityException(
           String.format(
@@ -189,14 +173,14 @@ public final class AesGcmProtoSerialization {
     }
     return AesGcmParameters.builder()
         .setKeySizeBytes(format.getKeySize())
-        /**
+        /*
          * Currently, the Tink subtle implementation has the following restrictions: IV is a
          * uniformly random initialization vector of length 12 and the tag is restricted to 16
          * bytes.
          */
         .setIvSizeBytes(12)
         .setTagSizeBytes(16)
-        .setVariant(toVariant(serialization.getKeyTemplate().getOutputPrefixType()))
+        .setVariant(toVariant(serialization.getOutputPrefixType()))
         .build();
   }
 

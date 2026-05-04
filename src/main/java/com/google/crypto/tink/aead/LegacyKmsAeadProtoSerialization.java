@@ -28,6 +28,7 @@ import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.KeyTemplate;
+import com.google.crypto.tink.proto.KmsAeadKey;
 import com.google.crypto.tink.proto.KmsAeadKeyFormat;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.Bytes;
@@ -66,10 +67,10 @@ final class LegacyKmsAeadProtoSerialization {
 
   private static OutputPrefixType toProtoOutputPrefixType(LegacyKmsAeadParameters.Variant variant)
       throws GeneralSecurityException {
-    if (LegacyKmsAeadParameters.Variant.TINK.equals(variant)) {
+    if (variant.equals(LegacyKmsAeadParameters.Variant.TINK)) {
       return OutputPrefixType.TINK;
     }
-    if (LegacyKmsAeadParameters.Variant.NO_PREFIX.equals(variant)) {
+    if (variant.equals(LegacyKmsAeadParameters.Variant.NO_PREFIX)) {
       return OutputPrefixType.RAW;
     }
     throw new GeneralSecurityException("Unable to serialize variant: " + variant);
@@ -85,19 +86,6 @@ final class LegacyKmsAeadProtoSerialization {
       return LegacyKmsAeadParameters.Variant.NO_PREFIX;
     }
     throw new GeneralSecurityException("Unable to parse OutputPrefixType: " + outputPrefixType);
-  }
-
-  private static LegacyKmsAeadParameters.Variant toVariant(OutputPrefixType outputPrefixType)
-      throws GeneralSecurityException {
-    switch (outputPrefixType) {
-      case TINK:
-        return LegacyKmsAeadParameters.Variant.TINK;
-      case RAW:
-        return LegacyKmsAeadParameters.Variant.NO_PREFIX;
-      default:
-        throw new GeneralSecurityException(
-            "Unable to parse OutputPrefixType: " + outputPrefixType.getNumber());
-    }
   }
 
   private static ProtoParametersSerialization serializeParameters(
@@ -127,14 +115,15 @@ final class LegacyKmsAeadProtoSerialization {
       throw new GeneralSecurityException("Parsing KmsAeadKeyFormat failed: ", e);
     }
     return LegacyKmsAeadParameters.create(
-        format.getKeyUri(), toVariant(serialization.getKeyTemplate().getOutputPrefixType()));
+        format.getKeyUri(),
+        toVariant(serialization.getOutputPrefixType()));
   }
 
   private static ProtoKeySerialization serializeKey(
       LegacyKmsAeadKey key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     return ProtoKeySerialization.create(
         TYPE_URL,
-        com.google.crypto.tink.proto.KmsAeadKey.newBuilder()
+        KmsAeadKey.newBuilder()
             .setParams(
                 KmsAeadKeyFormat.newBuilder().setKeyUri(key.getParameters().keyUri()).build())
             .build()
@@ -152,9 +141,8 @@ final class LegacyKmsAeadProtoSerialization {
           "Wrong type URL in call to LegacyKmsAeadProtoSerialization.parseKey");
     }
     try {
-      com.google.crypto.tink.proto.KmsAeadKey protoKey =
-          com.google.crypto.tink.proto.KmsAeadKey.parseFrom(
-              serialization.getValue(), ExtensionRegistryLite.getEmptyRegistry());
+      KmsAeadKey protoKey =
+          KmsAeadKey.parseFrom(serialization.getValue(), ExtensionRegistryLite.getEmptyRegistry());
       if (protoKey.getVersion() != 0) {
         throw new GeneralSecurityException(
             "KmsAeadKey are only accepted with version 0, got " + protoKey);
