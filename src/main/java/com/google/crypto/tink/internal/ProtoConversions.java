@@ -19,7 +19,9 @@ package com.google.crypto.tink.internal;
 import com.google.crypto.tink.ProtoKeySerialization;
 import com.google.crypto.tink.proto.KeyData;
 import com.google.crypto.tink.proto.OutputPrefixType;
+import com.google.crypto.tink.util.Bytes;
 import java.security.GeneralSecurityException;
+import javax.annotation.Nullable;
 
 /**
  * This class provides conversions to Tink classes and enums which are in the public API to classes
@@ -52,6 +54,46 @@ public final class ProtoConversions {
     throw new GeneralSecurityException("Unknown KeyMaterialType: " + type);
   }
 
+  public static ProtoKeySerialization.KeyMaterialType fromProto(KeyData.KeyMaterialType type)
+      throws GeneralSecurityException {
+    switch (type) {
+      case UNKNOWN_KEYMATERIAL:
+        return ProtoKeySerialization.KeyMaterialType.UNKNOWN_KEYMATERIAL;
+      case SYMMETRIC:
+        return ProtoKeySerialization.KeyMaterialType.SYMMETRIC;
+      case ASYMMETRIC_PRIVATE:
+        return ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PRIVATE;
+      case ASYMMETRIC_PUBLIC:
+        return ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PUBLIC;
+      case REMOTE:
+        return ProtoKeySerialization.KeyMaterialType.REMOTE;
+      case UNRECOGNIZED:
+        throw new GeneralSecurityException("Unknown KeyMaterialType: " + type);
+    }
+    throw new GeneralSecurityException("Unknown KeyMaterialType: " + type);
+  }
+
+  public static ProtoKeySerialization.OutputPrefixType fromProto(OutputPrefixType type)
+      throws GeneralSecurityException {
+    switch (type) {
+      case UNKNOWN_PREFIX:
+        return ProtoKeySerialization.OutputPrefixType.UNKNOWN_PREFIX;
+      case TINK:
+        return ProtoKeySerialization.OutputPrefixType.TINK;
+      case LEGACY:
+        return ProtoKeySerialization.OutputPrefixType.LEGACY;
+      case RAW:
+        return ProtoKeySerialization.OutputPrefixType.RAW;
+      case CRUNCHY:
+        return ProtoKeySerialization.OutputPrefixType.CRUNCHY;
+      case WITH_ID_REQUIREMENT:
+        return ProtoKeySerialization.OutputPrefixType.WITH_ID_REQUIREMENT;
+      case UNRECOGNIZED:
+        throw new GeneralSecurityException("Unknown OutputPrefixType: " + type);
+    }
+    throw new GeneralSecurityException("Unknown OutputPrefixType: " + type);
+  }
+
   public static OutputPrefixType toProto(ProtoKeySerialization.OutputPrefixType type)
       throws GeneralSecurityException {
     if (type.equals(ProtoKeySerialization.OutputPrefixType.UNKNOWN_PREFIX)) {
@@ -71,6 +113,32 @@ public final class ProtoConversions {
     }
     if (type.equals(ProtoKeySerialization.OutputPrefixType.WITH_ID_REQUIREMENT)) {
       return OutputPrefixType.WITH_ID_REQUIREMENT;
+    }
+    throw new GeneralSecurityException("Unknown OutputPrefixType: " + type);
+  }
+
+  /**
+   * Returns the output prefix using the standard technique for protobuf based keys. Typically, this
+   * should only be needed for legacy protobuf based keys.
+   */
+  public static Bytes getOutputPrefix(
+      ProtoKeySerialization.OutputPrefixType type, @Nullable Integer idRequirement)
+      throws GeneralSecurityException {
+    if (type == ProtoKeySerialization.OutputPrefixType.RAW) {
+      if (idRequirement != null) {
+        throw new GeneralSecurityException("RAW output prefix type cannot have an id requirement");
+      }
+      return OutputPrefixUtil.EMPTY_PREFIX;
+    }
+    if (idRequirement == null) {
+      throw new GeneralSecurityException("idRequirement must be non-null for " + type + " type");
+    }
+    if (type == ProtoKeySerialization.OutputPrefixType.TINK) {
+      return OutputPrefixUtil.getTinkOutputPrefix(idRequirement);
+    }
+    if (type == ProtoKeySerialization.OutputPrefixType.LEGACY
+        || type == ProtoKeySerialization.OutputPrefixType.CRUNCHY) {
+      return OutputPrefixUtil.getLegacyOutputPrefix(idRequirement);
     }
     throw new GeneralSecurityException("Unknown OutputPrefixType: " + type);
   }
