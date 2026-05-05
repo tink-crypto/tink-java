@@ -20,6 +20,8 @@ import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.Key;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.internal.EnumTypeProtoConverter;
 import com.google.crypto.tink.internal.KeyParser;
@@ -27,16 +29,14 @@ import com.google.crypto.tink.internal.KeySerializer;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ParametersParser;
 import com.google.crypto.tink.internal.ParametersSerializer;
+import com.google.crypto.tink.internal.ProtoConversions;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.proto.CompositeMlDsaClassicalAlgorithm;
 import com.google.crypto.tink.proto.CompositeMlDsaKeyFormat;
 import com.google.crypto.tink.proto.CompositeMlDsaParams;
 import com.google.crypto.tink.proto.KeyData;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.proto.MlDsaInstance;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters;
 import com.google.crypto.tink.signature.CompositeMlDsaPrivateKey;
 import com.google.crypto.tink.signature.CompositeMlDsaPublicKey;
@@ -120,12 +120,27 @@ public final class CompositeMlDsaProtoSerialization {
           PRIVATE_TYPE_URL_BYTES,
           ProtoKeySerialization.class);
 
-  private static final EnumTypeProtoConverter<OutputPrefixType, CompositeMlDsaParameters.Variant>
-      VARIANT_CONVERTER =
-          EnumTypeProtoConverter.<OutputPrefixType, CompositeMlDsaParameters.Variant>builder()
-              .add(OutputPrefixType.RAW, CompositeMlDsaParameters.Variant.NO_PREFIX)
-              .add(OutputPrefixType.TINK, CompositeMlDsaParameters.Variant.TINK)
-              .build();
+  private static OutputPrefixType toOutputPrefixType(CompositeMlDsaParameters.Variant variant)
+      throws GeneralSecurityException {
+    if (variant == CompositeMlDsaParameters.Variant.NO_PREFIX) {
+      return OutputPrefixType.RAW;
+    }
+    if (variant == CompositeMlDsaParameters.Variant.TINK) {
+      return OutputPrefixType.TINK;
+    }
+    throw new GeneralSecurityException("Unable to serialize variant: " + variant);
+  }
+
+  private static CompositeMlDsaParameters.Variant toVariant(OutputPrefixType outputPrefixType)
+      throws GeneralSecurityException {
+    if (outputPrefixType.equals(OutputPrefixType.RAW)) {
+      return CompositeMlDsaParameters.Variant.NO_PREFIX;
+    }
+    if (outputPrefixType.equals(OutputPrefixType.TINK)) {
+      return CompositeMlDsaParameters.Variant.TINK;
+    }
+    throw new GeneralSecurityException("Unable to parse OutputPrefixType: " + outputPrefixType);
+  }
 
   private static final EnumTypeProtoConverter<MlDsaInstance, CompositeMlDsaParameters.MlDsaInstance>
       INSTANCE_CONVERTER =
@@ -197,15 +212,11 @@ public final class CompositeMlDsaProtoSerialization {
   private static ProtoParametersSerialization serializeParameters(
       CompositeMlDsaParameters parameters) throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
-        KeyTemplate.newBuilder()
-            .setTypeUrl(PRIVATE_TYPE_URL)
-            .setValue(
-                CompositeMlDsaKeyFormat.newBuilder()
-                    .setParams(getProtoParams(parameters))
-                    .setVersion(0)
-                    .build()
-                    .toByteString())
-            .setOutputPrefixType(VARIANT_CONVERTER.toProtoEnum(parameters.getVariant()))
+        PRIVATE_TYPE_URL,
+        toOutputPrefixType(parameters.getVariant()),
+        CompositeMlDsaKeyFormat.newBuilder()
+            .setParams(getProtoParams(parameters))
+            .setVersion(0)
             .build());
   }
 
@@ -215,7 +226,7 @@ public final class CompositeMlDsaProtoSerialization {
     ProtoKeySerialization mlDsaKeySerialization =
         SERIALIZATION_REGISTRY.serializeKey(
             key.getMlDsaPublicKey(), ProtoKeySerialization.class, /* access= */ null);
-    if (mlDsaKeySerialization.getOutputPrefixTypeProto() != OutputPrefixType.RAW) {
+    if (!mlDsaKeySerialization.getOutputPrefixType().equals(OutputPrefixType.RAW)) {
       throw new GeneralSecurityException("Require raw output prefix for ML-DSA public key.");
     }
     if (mlDsaKeySerialization.getIdRequirementOrNull() != null) {
@@ -224,14 +235,15 @@ public final class CompositeMlDsaProtoSerialization {
     KeyData mlDsaKeyData =
         KeyData.newBuilder()
             .setTypeUrl(mlDsaKeySerialization.getTypeUrl())
-            .setKeyMaterialType(mlDsaKeySerialization.getKeyMaterialTypeProto())
+            .setKeyMaterialType(
+                ProtoConversions.toProto(mlDsaKeySerialization.getKeyMaterialType()))
             .setValue(mlDsaKeySerialization.getValue())
             .build();
 
     ProtoKeySerialization classicalKeySerialization =
         SERIALIZATION_REGISTRY.serializeKey(
             key.getClassicalPublicKey(), ProtoKeySerialization.class, /* access= */ null);
-    if (classicalKeySerialization.getOutputPrefixTypeProto() != OutputPrefixType.RAW) {
+    if (!classicalKeySerialization.getOutputPrefixType().equals(OutputPrefixType.RAW)) {
       throw new GeneralSecurityException("Require raw output prefix for classical public key.");
     }
     if (classicalKeySerialization.getIdRequirementOrNull() != null) {
@@ -240,7 +252,8 @@ public final class CompositeMlDsaProtoSerialization {
     KeyData classicalKeyData =
         KeyData.newBuilder()
             .setTypeUrl(classicalKeySerialization.getTypeUrl())
-            .setKeyMaterialType(classicalKeySerialization.getKeyMaterialTypeProto())
+            .setKeyMaterialType(
+                ProtoConversions.toProto(classicalKeySerialization.getKeyMaterialType()))
             .setValue(classicalKeySerialization.getValue())
             .build();
 
@@ -256,7 +269,7 @@ public final class CompositeMlDsaProtoSerialization {
         PUBLIC_TYPE_URL,
         protoKey.toByteString(),
         KeyMaterialType.ASYMMETRIC_PUBLIC,
-        VARIANT_CONVERTER.toProtoEnum(key.getParameters().getVariant()),
+        toOutputPrefixType(key.getParameters().getVariant()),
         key.getIdRequirementOrNull());
   }
 
@@ -268,7 +281,7 @@ public final class CompositeMlDsaProtoSerialization {
     ProtoKeySerialization mlDsaKeySerialization =
         SERIALIZATION_REGISTRY.serializeKey(
             key.getMlDsaPrivateKey(), ProtoKeySerialization.class, access);
-    if (mlDsaKeySerialization.getOutputPrefixTypeProto() != OutputPrefixType.RAW) {
+    if (!mlDsaKeySerialization.getOutputPrefixType().equals(OutputPrefixType.RAW)) {
       throw new GeneralSecurityException("Require raw output prefix for ML-DSA private key.");
     }
     if (mlDsaKeySerialization.getIdRequirementOrNull() != null) {
@@ -277,14 +290,15 @@ public final class CompositeMlDsaProtoSerialization {
     KeyData mlDsaKeyData =
         KeyData.newBuilder()
             .setTypeUrl(mlDsaKeySerialization.getTypeUrl())
-            .setKeyMaterialType(mlDsaKeySerialization.getKeyMaterialTypeProto())
+            .setKeyMaterialType(
+                ProtoConversions.toProto(mlDsaKeySerialization.getKeyMaterialType()))
             .setValue(mlDsaKeySerialization.getValue())
             .build();
 
     ProtoKeySerialization classicalKeySerialization =
         SERIALIZATION_REGISTRY.serializeKey(
             key.getClassicalPrivateKey(), ProtoKeySerialization.class, access);
-    if (classicalKeySerialization.getOutputPrefixTypeProto() != OutputPrefixType.RAW) {
+    if (!classicalKeySerialization.getOutputPrefixType().equals(OutputPrefixType.RAW)) {
       throw new GeneralSecurityException("Require raw output prefix for classical private key.");
     }
     if (classicalKeySerialization.getIdRequirementOrNull() != null) {
@@ -293,7 +307,8 @@ public final class CompositeMlDsaProtoSerialization {
     KeyData classicalKeyData =
         KeyData.newBuilder()
             .setTypeUrl(classicalKeySerialization.getTypeUrl())
-            .setKeyMaterialType(classicalKeySerialization.getKeyMaterialTypeProto())
+            .setKeyMaterialType(
+                ProtoConversions.toProto(classicalKeySerialization.getKeyMaterialType()))
             .setValue(classicalKeySerialization.getValue())
             .build();
 
@@ -309,7 +324,7 @@ public final class CompositeMlDsaProtoSerialization {
         PRIVATE_TYPE_URL,
         protoKey.toByteString(),
         KeyMaterialType.ASYMMETRIC_PRIVATE,
-        VARIANT_CONVERTER.toProtoEnum(key.getParameters().getVariant()),
+        toOutputPrefixType(key.getParameters().getVariant()),
         key.getIdRequirementOrNull());
   }
 
@@ -335,8 +350,7 @@ public final class CompositeMlDsaProtoSerialization {
         .setMlDsaInstance(INSTANCE_CONVERTER.fromProtoEnum(format.getParams().getMlDsaInstance()))
         .setClassicalAlgorithm(
             CLASSICAL_ALGORITHM_CONVERTER.fromProtoEnum(format.getParams().getClassicalAlgorithm()))
-        .setVariant(
-            VARIANT_CONVERTER.fromProtoEnum(serialization.getKeyTemplate().getOutputPrefixType()))
+        .setVariant(toVariant(serialization.getOutputPrefixType()))
         .build();
   }
 
@@ -349,10 +363,10 @@ public final class CompositeMlDsaProtoSerialization {
           "Wrong type URL in call to CompositeMlDsaProtoSerialization.parsePublicKey: "
               + serialization.getTypeUrl());
     }
-    if (serialization.getKeyMaterialTypeProto() != KeyMaterialType.ASYMMETRIC_PUBLIC) {
+    if (!serialization.getKeyMaterialType().equals(KeyMaterialType.ASYMMETRIC_PUBLIC)) {
       throw new GeneralSecurityException(
           "Wrong KeyMaterialType for CompositeMlDsaPublicKey: "
-              + serialization.getKeyMaterialTypeProto());
+              + serialization.getKeyMaterialType());
     }
     try {
       com.google.crypto.tink.proto.CompositeMlDsaPublicKey protoKey =
@@ -368,14 +382,14 @@ public final class CompositeMlDsaProtoSerialization {
               .setClassicalAlgorithm(
                   CLASSICAL_ALGORITHM_CONVERTER.fromProtoEnum(
                       protoKey.getParams().getClassicalAlgorithm()))
-              .setVariant(VARIANT_CONVERTER.fromProtoEnum(serialization.getOutputPrefixTypeProto()))
+              .setVariant(toVariant(serialization.getOutputPrefixType()))
               .build();
 
       ProtoKeySerialization mlDsaKeySerialization =
           ProtoKeySerialization.create(
               protoKey.getMlDsaPublicKey().getTypeUrl(),
               protoKey.getMlDsaPublicKey().getValue(),
-              protoKey.getMlDsaPublicKey().getKeyMaterialType(),
+              ProtoConversions.fromProto(protoKey.getMlDsaPublicKey().getKeyMaterialType()),
               OutputPrefixType.RAW,
               /* idRequirement= */ null);
       Key parsedMlDsaKey =
@@ -388,7 +402,7 @@ public final class CompositeMlDsaProtoSerialization {
           ProtoKeySerialization.create(
               protoKey.getClassicalPublicKey().getTypeUrl(),
               protoKey.getClassicalPublicKey().getValue(),
-              protoKey.getClassicalPublicKey().getKeyMaterialType(),
+              ProtoConversions.fromProto(protoKey.getClassicalPublicKey().getKeyMaterialType()),
               OutputPrefixType.RAW,
               /* idRequirement= */ null);
       Key parsedClassicalKey =
@@ -420,10 +434,10 @@ public final class CompositeMlDsaProtoSerialization {
           "Wrong type URL in call to CompositeMlDsaProtoSerialization.parsePrivateKey: "
               + serialization.getTypeUrl());
     }
-    if (serialization.getKeyMaterialTypeProto() != KeyMaterialType.ASYMMETRIC_PRIVATE) {
+    if (!serialization.getKeyMaterialType().equals(KeyMaterialType.ASYMMETRIC_PRIVATE)) {
       throw new GeneralSecurityException(
           "Wrong KeyMaterialType for CompositeMlDsaPrivateKey: "
-              + serialization.getKeyMaterialTypeProto());
+              + serialization.getKeyMaterialType());
     }
     SecretKeyAccess.requireAccess(access);
 
@@ -441,14 +455,14 @@ public final class CompositeMlDsaProtoSerialization {
               .setClassicalAlgorithm(
                   CLASSICAL_ALGORITHM_CONVERTER.fromProtoEnum(
                       protoKey.getParams().getClassicalAlgorithm()))
-              .setVariant(VARIANT_CONVERTER.fromProtoEnum(serialization.getOutputPrefixTypeProto()))
+              .setVariant(toVariant(serialization.getOutputPrefixType()))
               .build();
 
       ProtoKeySerialization mlDsaKeySerialization =
           ProtoKeySerialization.create(
               protoKey.getMlDsaPrivateKey().getTypeUrl(),
               protoKey.getMlDsaPrivateKey().getValue(),
-              protoKey.getMlDsaPrivateKey().getKeyMaterialType(),
+              ProtoConversions.fromProto(protoKey.getMlDsaPrivateKey().getKeyMaterialType()),
               OutputPrefixType.RAW,
               /* idRequirement= */ null);
       Key parsedMlDsaKey = SERIALIZATION_REGISTRY.parseKey(mlDsaKeySerialization, access);
@@ -460,7 +474,7 @@ public final class CompositeMlDsaProtoSerialization {
           ProtoKeySerialization.create(
               protoKey.getClassicalPrivateKey().getTypeUrl(),
               protoKey.getClassicalPrivateKey().getValue(),
-              protoKey.getClassicalPrivateKey().getKeyMaterialType(),
+              ProtoConversions.fromProto(protoKey.getClassicalPrivateKey().getKeyMaterialType()),
               OutputPrefixType.RAW,
               /* idRequirement= */ null);
       Key parsedClassicalKey = SERIALIZATION_REGISTRY.parseKey(classicalKeySerialization, access);
