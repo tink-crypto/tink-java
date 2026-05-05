@@ -24,6 +24,7 @@ import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
+import com.google.crypto.tink.internal.ProtoConversions;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.TinkBugException;
 import com.google.crypto.tink.proto.EncryptedKeyset;
@@ -1346,8 +1347,8 @@ public final class KeysetHandle implements KeysetHandleInterface {
     return ProtoKeySerialization.create(
         protoKey.getKeyData().getTypeUrl(),
         protoKey.getKeyData().getValue(),
-        protoKey.getKeyData().getKeyMaterialType(),
-        protoKey.getOutputPrefixType(),
+        ProtoConversions.fromProto(protoKey.getKeyData().getKeyMaterialType()),
+        ProtoConversions.fromProto(protoKey.getOutputPrefixType()),
         idRequirement);
   }
 
@@ -1358,16 +1359,18 @@ public final class KeysetHandle implements KeysetHandleInterface {
   }
 
   private static Keyset.Key toKeysetKey(
-      int id, KeyStatusType status, ProtoKeySerialization protoKeySerialization) {
+      int id, KeyStatusType status, ProtoKeySerialization protoKeySerialization)
+      throws GeneralSecurityException {
     return Keyset.Key.newBuilder()
         .setKeyData(
             KeyData.newBuilder()
                 .setTypeUrl(protoKeySerialization.getTypeUrl())
                 .setValue(protoKeySerialization.getValue())
-                .setKeyMaterialType(protoKeySerialization.getKeyMaterialTypeProto()))
+                .setKeyMaterialType(
+                    ProtoConversions.toProto(protoKeySerialization.getKeyMaterialType())))
         .setStatus(status)
         .setKeyId(id)
-        .setOutputPrefixType(protoKeySerialization.getOutputPrefixTypeProto())
+        .setOutputPrefixType(ProtoConversions.toProto(protoKeySerialization.getOutputPrefixType()))
         .build();
   }
 
