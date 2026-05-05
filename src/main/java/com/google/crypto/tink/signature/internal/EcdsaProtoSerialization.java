@@ -19,6 +19,7 @@ package com.google.crypto.tink.signature.internal;
 import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.internal.BigIntegerEncoding;
 import com.google.crypto.tink.internal.KeyParser;
@@ -31,7 +32,6 @@ import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.proto.EcdsaSignatureEncoding;
 import com.google.crypto.tink.proto.EllipticCurveType;
 import com.google.crypto.tink.proto.HashType;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.signature.EcdsaParameters;
 import com.google.crypto.tink.signature.EcdsaPrivateKey;
 import com.google.crypto.tink.signature.EcdsaPublicKey;
@@ -144,19 +144,19 @@ public final class EcdsaProtoSerialization {
 
   private static EcdsaParameters.Variant toVariant(OutputPrefixType outputPrefixType)
       throws GeneralSecurityException {
-    switch (outputPrefixType) {
-      case TINK:
-        return EcdsaParameters.Variant.TINK;
-      case CRUNCHY:
-        return EcdsaParameters.Variant.CRUNCHY;
-      case LEGACY:
-        return EcdsaParameters.Variant.LEGACY;
-      case RAW:
-        return EcdsaParameters.Variant.NO_PREFIX;
-      default:
-        throw new GeneralSecurityException(
-            "Unable to parse OutputPrefixType: " + outputPrefixType.getNumber());
+    if (outputPrefixType.equals(OutputPrefixType.TINK)) {
+      return EcdsaParameters.Variant.TINK;
     }
+    if (outputPrefixType.equals(OutputPrefixType.CRUNCHY)) {
+      return EcdsaParameters.Variant.CRUNCHY;
+    }
+    if (outputPrefixType.equals(OutputPrefixType.LEGACY)) {
+      return EcdsaParameters.Variant.LEGACY;
+    }
+    if (outputPrefixType.equals(OutputPrefixType.RAW)) {
+      return EcdsaParameters.Variant.NO_PREFIX;
+    }
+    throw new GeneralSecurityException("Unable to parse OutputPrefixType: " + outputPrefixType);
   }
 
   private static EllipticCurveType toProtoCurveType(EcdsaParameters.CurveType curveType)
@@ -313,7 +313,7 @@ public final class EcdsaProtoSerialization {
         .setHashType(toHashType(format.getParams().getHashType()))
         .setSignatureEncoding(toSignatureEncoding(format.getParams().getEncoding()))
         .setCurveType(toCurveType(format.getParams().getCurve()))
-        .setVariant(toVariant(serialization.getKeyTemplate().getOutputPrefixType()))
+        .setVariant(toVariant(serialization.getOutputPrefixType()))
         .build();
   }
 
@@ -338,7 +338,7 @@ public final class EcdsaProtoSerialization {
               .setHashType(toHashType(protoKey.getParams().getHashType()))
               .setSignatureEncoding(toSignatureEncoding(protoKey.getParams().getEncoding()))
               .setCurveType(toCurveType(protoKey.getParams().getCurve()))
-              .setVariant(toVariant(serialization.getOutputPrefixTypeProto()))
+              .setVariant(toVariant(serialization.getOutputPrefixType()))
               .build();
       return EcdsaPublicKey.builder()
           .setParameters(parameters)
@@ -378,7 +378,7 @@ public final class EcdsaProtoSerialization {
               .setHashType(toHashType(protoPublicKey.getParams().getHashType()))
               .setSignatureEncoding(toSignatureEncoding(protoPublicKey.getParams().getEncoding()))
               .setCurveType(toCurveType(protoPublicKey.getParams().getCurve()))
-              .setVariant(toVariant(serialization.getOutputPrefixTypeProto()))
+              .setVariant(toVariant(serialization.getOutputPrefixType()))
               .build();
       EcdsaPublicKey publicKey =
           EcdsaPublicKey.builder()
