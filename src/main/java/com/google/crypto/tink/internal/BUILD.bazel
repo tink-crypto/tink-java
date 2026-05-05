@@ -318,6 +318,7 @@ java_library(
     deps = [
         ":key_manager_registry",
         ":output_prefix_util",
+        ":proto_conversions",
         ":proto_key_serialization",
         "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:key",
@@ -339,6 +340,7 @@ android_library(
     deps = [
         ":key_manager_registry-android",
         ":output_prefix_util-android",
+        ":proto_conversions-android",
         ":proto_key_serialization-android",
         "//proto:tink_java_proto_lite",
         "//src/main/java/com/google/crypto/tink:key-android",

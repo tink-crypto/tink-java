@@ -183,8 +183,8 @@ public final class LegacyProtoKey extends Key {
         ProtoKeySerialization.create(
             keyData.getTypeUrl(),
             keyData.getValue(),
-            keyData.getKeyMaterialType(),
-            serialization.getOutputPrefixTypeProto(),
+            ProtoConversions.fromProto(keyData.getKeyMaterialType()),
+            serialization.getOutputPrefixType(),
             serialization.getIdRequirementOrNull());
     return new LegacyProtoKey(publicKeySerialization, /* access= */ null);
   }
