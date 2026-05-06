@@ -20,6 +20,7 @@ import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.PrivateKeyManager;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
 import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.proto.KeyData;
@@ -68,12 +69,10 @@ public final class LegacyProtoKey extends Key {
   private static void throwIfMissingAccess(
       ProtoKeySerialization protoKeySerialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
-    switch (protoKeySerialization.getKeyMaterialTypeProto()) {
-      case SYMMETRIC:
-      case ASYMMETRIC_PRIVATE:
+    if (protoKeySerialization.getKeyMaterialType().equals(KeyMaterialType.SYMMETRIC)
+        || protoKeySerialization.getKeyMaterialType().equals(KeyMaterialType.ASYMMETRIC_PRIVATE)) {
         SecretKeyAccess.requireAccess(access);
-        break;
-      default:
+
     }
   }
 
