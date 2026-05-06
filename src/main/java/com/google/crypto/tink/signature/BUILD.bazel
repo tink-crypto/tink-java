@@ -1114,6 +1114,15 @@ android_library(
     name = "signature_configuration_v1-android",
     srcs = ["SignatureConfigurationV1.java"],
     deps = [
+        ":signature_config_2026-android",
+        "//src/main/java/com/google/crypto/tink:configuration-android",
+    ],
+)
+
+android_library(
+    name = "signature_config_2026-android",
+    srcs = ["SignatureConfig2026.java"],
+    deps = [
         ":ecdsa_private_key-android",
         ":ecdsa_public_key-android",
         ":ed25519_private_key-android",
@@ -1152,6 +1161,15 @@ android_library(
 java_library(
     name = "signature_configuration_v1",
     srcs = ["SignatureConfigurationV1.java"],
+    deps = [
+        ":signature_config_2026",
+        "//src/main/java/com/google/crypto/tink:configuration",
+    ],
+)
+
+java_library(
+    name = "signature_config_2026",
+    srcs = ["SignatureConfig2026.java"],
     deps = [
         ":ecdsa_private_key",
         ":ecdsa_public_key",

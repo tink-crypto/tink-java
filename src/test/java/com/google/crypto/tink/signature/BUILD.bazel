@@ -737,6 +737,41 @@ java_test(
 )
 
 java_test(
+    name = "SignatureConfig2026Test",
+    size = "small",
+    srcs = ["SignatureConfig2026Test.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:configuration",
+        "//src/main/java/com/google/crypto/tink:public_key_sign",
+        "//src/main/java/com/google/crypto/tink:public_key_verify",
+        "//src/main/java/com/google/crypto/tink:registry_cluster",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
+        "//src/main/java/com/google/crypto/tink/internal:util",
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_private_key",
+        "//src/main/java/com/google/crypto/tink/signature:signature_config_2026",
+        "//src/main/java/com/google/crypto/tink/signature:signature_private_key",
+        "//src/main/java/com/google/crypto/tink/signature:slh_dsa_private_key",
+        "//src/main/java/com/google/crypto/tink/signature/internal:ecdsa_proto_serialization",
+        "//src/main/java/com/google/crypto/tink/signature/internal:ed25519_proto_serialization",
+        "//src/main/java/com/google/crypto/tink/signature/internal:ml_dsa_proto_serialization",
+        "//src/main/java/com/google/crypto/tink/signature/internal:ml_dsa_verify_conscrypt",
+        "//src/main/java/com/google/crypto/tink/signature/internal:rsa_ssa_pkcs1_proto_serialization",
+        "//src/main/java/com/google/crypto/tink/signature/internal:rsa_ssa_pss_proto_serialization",
+        "//src/main/java/com/google/crypto/tink/signature/internal:slh_dsa_proto_serialization",
+        "//src/main/java/com/google/crypto/tink/signature/internal:slh_dsa_verify_conscrypt",
+        "//src/main/java/com/google/crypto/tink/signature/internal/testing:ecdsa_test_util",
+        "//src/main/java/com/google/crypto/tink/signature/internal/testing:ed25519_test_util",
+        "//src/main/java/com/google/crypto/tink/signature/internal/testing:ml_dsa_test_util",
+        "//src/main/java/com/google/crypto/tink/signature/internal/testing:rsa_ssa_pkcs1_test_util",
+        "//src/main/java/com/google/crypto/tink/signature/internal/testing:rsa_ssa_pss_test_util",
+        "//src/main/java/com/google/crypto/tink/signature/internal/testing:signature_test_vector",
+        "//src/main/java/com/google/crypto/tink/signature/internal/testing:slh_dsa_test_util",
+        "@maven//:com_google_code_findbugs_jsr305",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
     name = "MlDsaParametersTest",
     size = "small",
     srcs = ["MlDsaParametersTest.java"],
