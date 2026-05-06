@@ -683,7 +683,6 @@ android_library(
     srcs = ["MlDsaProtoSerialization.java"],
     deps = [
         "//proto:ml_dsa_java_proto_lite",
-        "//proto:tink_java_proto_lite",
         "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
         "//src/main/java/com/google/crypto/tink:proto_key_serialization-android",
         "//src/main/java/com/google/crypto/tink:secret_key_access-android",
@@ -712,7 +711,6 @@ java_library(
     srcs = ["MlDsaProtoSerialization.java"],
     deps = [
         "//proto:ml_dsa_java_proto",
-        "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:accesses_partial_key",
         "//src/main/java/com/google/crypto/tink:proto_key_serialization",
         "//src/main/java/com/google/crypto/tink:secret_key_access",
@@ -819,7 +817,6 @@ android_library(
     srcs = ["SlhDsaProtoSerialization.java"],
     deps = [
         "//proto:slh_dsa_java_proto_lite",
-        "//proto:tink_java_proto_lite",
         "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
         "//src/main/java/com/google/crypto/tink:proto_key_serialization-android",
         "//src/main/java/com/google/crypto/tink:secret_key_access-android",
@@ -878,7 +875,6 @@ java_library(
     srcs = ["SlhDsaProtoSerialization.java"],
     deps = [
         "//proto:slh_dsa_java_proto",
-        "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:accesses_partial_key",
         "//src/main/java/com/google/crypto/tink:proto_key_serialization",
         "//src/main/java/com/google/crypto/tink:secret_key_access",

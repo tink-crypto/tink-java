@@ -28,6 +28,7 @@ import com.google.crypto.tink.internal.KeySerializer;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ParametersParser;
 import com.google.crypto.tink.internal.ParametersSerializer;
+import com.google.crypto.tink.internal.ProtoConversions;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.keyderivation.PrfBasedKeyDerivationKey;
@@ -166,7 +167,8 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
                 KeyData.newBuilder()
                     .setValue(prfKeySerialization.getValue())
                     .setTypeUrl(prfKeySerialization.getTypeUrl())
-                    .setKeyMaterialType(prfKeySerialization.getKeyMaterialTypeProto()))
+                    .setKeyMaterialType(
+                        ProtoConversions.toProto(prfKeySerialization.getKeyMaterialType())))
             .setParams(
                 PrfBasedDeriverParams.newBuilder()
                     .setDerivedKeyTemplate(derivedKeyParametersSerialization.getKeyTemplate()))

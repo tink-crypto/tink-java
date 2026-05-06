@@ -28,7 +28,6 @@ import com.google.crypto.tink.internal.ParametersParser;
 import com.google.crypto.tink.internal.ParametersSerializer;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.signature.SlhDsaParameters;
 import com.google.crypto.tink.signature.SlhDsaPrivateKey;
 import com.google.crypto.tink.signature.SlhDsaPublicKey;
@@ -265,10 +264,11 @@ public final class SlhDsaProtoSerialization {
           "Wrong type URL in call to SlhDsaProtoSerialization.parsePublicKey: "
               + serialization.getTypeUrl());
     }
-    if (serialization.getKeyMaterialTypeProto() != KeyMaterialType.ASYMMETRIC_PUBLIC) {
+    if (!serialization
+        .getKeyMaterialType()
+        .equals(com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PUBLIC)) {
       throw new GeneralSecurityException(
-          "Wrong KeyMaterialType for SlhDsaPublicKey: "
-              + serialization.getKeyMaterialTypeProto().name());
+          "Wrong KeyMaterialType for SlhDsaPublicKey: " + serialization.getKeyMaterialType());
     }
     try {
       return convertToSlhDsaPublicKey(
@@ -309,10 +309,11 @@ public final class SlhDsaProtoSerialization {
           "Wrong type URL in call to SlhDsaProtoSerialization.parsePrivateKey: "
               + serialization.getTypeUrl());
     }
-    if (serialization.getKeyMaterialTypeProto() != KeyMaterialType.ASYMMETRIC_PRIVATE) {
+    if (!serialization
+        .getKeyMaterialType()
+        .equals(com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PRIVATE)) {
       throw new GeneralSecurityException(
-          "Wrong KeyMaterialType for SlhDsaPrivateKey: "
-              + serialization.getKeyMaterialTypeProto().name());
+          "Wrong KeyMaterialType for SlhDsaPrivateKey: " + serialization.getKeyMaterialType());
     }
     try {
       com.google.crypto.tink.proto.SlhDsaPrivateKey protoKey =

@@ -461,8 +461,7 @@ public final class EciesProtoSerializationTest {
     ProtoKeySerialization serialized =
         registry.serializeKey(publicKey, ProtoKeySerialization.class, /* access= */ null);
 
-    assertThat(serialized.getKeyMaterialTypeProto())
-        .isEqualTo(serialization.getKeyMaterialTypeProto());
+    assertThat(serialized.getKeyMaterialType()).isEqualTo(serialization.getKeyMaterialType());
     assertThat(serialized.getOutputPrefixType()).isEqualTo(serialization.getOutputPrefixType());
     assertThat(serialized.getIdRequirementOrNull())
         .isEqualTo(serialization.getIdRequirementOrNull());
@@ -513,8 +512,7 @@ public final class EciesProtoSerializationTest {
     ProtoKeySerialization serialized =
         registry.serializeKey(publicKey, ProtoKeySerialization.class, /* access= */ null);
 
-    assertThat(serialized.getKeyMaterialTypeProto())
-        .isEqualTo(serialization.getKeyMaterialTypeProto());
+    assertThat(serialized.getKeyMaterialType()).isEqualTo(serialization.getKeyMaterialType());
     assertThat(serialized.getOutputPrefixType()).isEqualTo(serialization.getOutputPrefixType());
     assertThat(serialized.getIdRequirementOrNull())
         .isEqualTo(serialization.getIdRequirementOrNull());
@@ -613,8 +611,7 @@ public final class EciesProtoSerializationTest {
     ProtoKeySerialization serialized =
         registry.serializeKey(publicKey, ProtoKeySerialization.class, /* access= */ null);
 
-    assertThat(serialized.getKeyMaterialTypeProto())
-        .isEqualTo(serialization.getKeyMaterialTypeProto());
+    assertThat(serialized.getKeyMaterialType()).isEqualTo(serialization.getKeyMaterialType());
     assertThat(serialized.getOutputPrefixType()).isEqualTo(serialization.getOutputPrefixType());
     assertThat(serialized.getIdRequirementOrNull())
         .isEqualTo(serialization.getIdRequirementOrNull());
@@ -672,8 +669,7 @@ public final class EciesProtoSerializationTest {
     ProtoKeySerialization serialized =
         registry.serializeKey(publicKey, ProtoKeySerialization.class, /* access= */ null);
 
-    assertThat(serialized.getKeyMaterialTypeProto())
-        .isEqualTo(serialization.getKeyMaterialTypeProto());
+    assertThat(serialized.getKeyMaterialType()).isEqualTo(serialization.getKeyMaterialType());
     assertThat(serialized.getOutputPrefixType()).isEqualTo(serialization.getOutputPrefixType());
     assertThat(serialized.getIdRequirementOrNull())
         .isEqualTo(serialization.getIdRequirementOrNull());
@@ -799,8 +795,7 @@ public final class EciesProtoSerializationTest {
     ProtoKeySerialization serialized =
         registry.serializeKey(publicKey, ProtoKeySerialization.class, /* access= */ null);
 
-    assertThat(serialized.getKeyMaterialTypeProto())
-        .isEqualTo(serialization.getKeyMaterialTypeProto());
+    assertThat(serialized.getKeyMaterialType()).isEqualTo(serialization.getKeyMaterialType());
     assertThat(serialized.getOutputPrefixType()).isEqualTo(serialization.getOutputPrefixType());
     assertThat(serialized.getIdRequirementOrNull())
         .isEqualTo(serialization.getIdRequirementOrNull());
@@ -949,8 +944,7 @@ public final class EciesProtoSerializationTest {
         registry.serializeKey(
             privateKey, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
 
-    assertThat(serialized.getKeyMaterialTypeProto())
-        .isEqualTo(serialization.getKeyMaterialTypeProto());
+    assertThat(serialized.getKeyMaterialType()).isEqualTo(serialization.getKeyMaterialType());
     assertThat(serialized.getOutputPrefixType()).isEqualTo(serialization.getOutputPrefixType());
     assertThat(serialized.getIdRequirementOrNull())
         .isEqualTo(serialization.getIdRequirementOrNull());
@@ -1006,8 +1000,7 @@ public final class EciesProtoSerializationTest {
         registry.serializeKey(
             privateKey, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
 
-    assertThat(serialized.getKeyMaterialTypeProto())
-        .isEqualTo(serialization.getKeyMaterialTypeProto());
+    assertThat(serialized.getKeyMaterialType()).isEqualTo(serialization.getKeyMaterialType());
     assertThat(serialized.getOutputPrefixType()).isEqualTo(serialization.getOutputPrefixType());
     assertThat(serialized.getIdRequirementOrNull())
         .isEqualTo(serialization.getIdRequirementOrNull());

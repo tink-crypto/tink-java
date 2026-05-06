@@ -27,6 +27,7 @@ import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
+import com.google.crypto.tink.internal.ProtoConversions;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.keyderivation.PrfBasedKeyDerivationKey;
@@ -190,7 +191,7 @@ public final class PrfBasedDeriverKeyManager implements KeyManager<Void> {
     return KeyData.newBuilder()
         .setTypeUrl(keySerialization.getTypeUrl())
         .setValue(keySerialization.getValue())
-        .setKeyMaterialType(keySerialization.getKeyMaterialTypeProto())
+        .setKeyMaterialType(ProtoConversions.toProto(keySerialization.getKeyMaterialType()))
         .build();
   }
 
