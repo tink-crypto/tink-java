@@ -28,11 +28,9 @@ import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.signature.internal.EcdsaProtoSerialization;
 import com.google.crypto.tink.signature.internal.Ed25519ProtoSerialization;
 import com.google.crypto.tink.signature.internal.MlDsaProtoSerialization;
-import com.google.crypto.tink.signature.internal.MlDsaVerifyConscrypt;
 import com.google.crypto.tink.signature.internal.RsaSsaPkcs1ProtoSerialization;
 import com.google.crypto.tink.signature.internal.RsaSsaPssProtoSerialization;
 import com.google.crypto.tink.signature.internal.SlhDsaProtoSerialization;
-import com.google.crypto.tink.signature.internal.SlhDsaVerifyConscrypt;
 import com.google.crypto.tink.signature.internal.testing.EcdsaTestUtil;
 import com.google.crypto.tink.signature.internal.testing.Ed25519TestUtil;
 import com.google.crypto.tink.signature.internal.testing.MlDsaTestUtil;
@@ -65,6 +63,21 @@ public class SignatureConfig2026Test {
     SlhDsaProtoSerialization.register();
   }
 
+  private boolean shouldBeSupported(SignatureTestVector testVector) {
+    Integer apiLevel = Util.getAndroidApiLevel();
+    if (apiLevel != null && apiLevel >= 37) {
+      // On Android API 37 and above, all signature algorithms should be supported.
+      return true;
+    }
+    if ((testVector.getPrivateKey() instanceof MlDsaPrivateKey)
+        || (testVector.getPrivateKey() instanceof SlhDsaPrivateKey)) {
+      // ML-DSA and SLH-DSA are not supported on Java without Conscrypt, and on older Android
+      // versions.
+      return false;
+    }
+    return true;
+  }
+
   @Test
   public void config_throwsIfInFipsMode() throws Exception {
     Assume.assumeTrue(TinkFipsUtil.useOnlyFips());
@@ -87,16 +100,6 @@ public class SignatureConfig2026Test {
       // Android API 19 is slower than the others in this.
       return;
     }
-    if ((testVector.getPrivateKey() instanceof MlDsaPrivateKey
-            && !MlDsaVerifyConscrypt.isSupported())
-        || (testVector.getPrivateKey() instanceof SlhDsaPrivateKey
-            && !SlhDsaVerifyConscrypt.isSupported())) {
-      // ML-DSA/SLH-DSA requires Conscrypt to be available. This also captures cases where
-      // ML-DSA/SLH-DSA is not
-      // available even with Conscrypt installed, since 1) an older version of Conscrypt may be in
-      // use and 2) Conscrypt on Android does not support ML-DSA/SLH-DSA yet.
-      return;
-    }
 
     SignaturePrivateKey key = testVector.getPrivateKey();
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
@@ -107,11 +110,18 @@ public class SignatureConfig2026Test {
       entry.withFixedId(id);
     }
     KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
+    KeysetHandle publicKeyHandle = handle.getPublicKeysetHandle();
+
+    if (!shouldBeSupported(testVector)) {
+      Configuration configuration = SignatureConfig2026.get();
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> publicKeyHandle.getPrimitive(configuration, PublicKeyVerify.class));
+      return;
+    }
 
     PublicKeyVerify verifier =
-        handle
-            .getPublicKeysetHandle()
-            .getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
+        publicKeyHandle.getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
 
     verifier.verify(testVector.getSignature(), testVector.getMessage());
   }
@@ -141,33 +151,23 @@ public class SignatureConfig2026Test {
       entry.withFixedId(id);
     }
     KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
+    KeysetHandle publicKeyHandle = handle.getPublicKeysetHandle();
 
-    if ((testVector.getPrivateKey() instanceof MlDsaPrivateKey
-            && !MlDsaVerifyConscrypt.isSupported())
-        || (testVector.getPrivateKey() instanceof SlhDsaPrivateKey
-            && !SlhDsaVerifyConscrypt.isSupported())) {
-      // ML-DSA/SLH-DSA requires Conscrypt to be available. This also captures cases where
-      // ML-DSA/SLH-DSA is not
-      // available even with Conscrypt installed, since 1) an older version of Conscrypt may be in
-      // use and 2) Conscrypt on Android does not support ML-DSA/SLH-DSA yet.
+    if (!shouldBeSupported(testVector)) {
       Configuration configuration = SignatureConfig2026.get();
       assertThrows(
           GeneralSecurityException.class,
           () -> handle.getPrimitive(configuration, PublicKeySign.class));
-      KeysetHandle keysetHandle = handle.getPublicKeysetHandle();
-      Configuration configuration2 = SignatureConfig2026.get();
       assertThrows(
           GeneralSecurityException.class,
-          () -> keysetHandle.getPrimitive(configuration2, PublicKeyVerify.class));
+          () -> publicKeyHandle.getPrimitive(configuration, PublicKeyVerify.class));
       return;
     }
 
     PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     byte[] signature = signer.sign(testVector.getMessage());
     PublicKeyVerify verifier =
-        handle
-            .getPublicKeysetHandle()
-            .getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
+        publicKeyHandle.getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
 
     verifier.verify(signature, testVector.getMessage());
   }
@@ -194,16 +194,6 @@ public class SignatureConfig2026Test {
       // Android API 19 is slower than the others in this.
       return;
     }
-    if ((testVector.getPrivateKey() instanceof MlDsaPrivateKey
-            && !MlDsaVerifyConscrypt.isSupported())
-        || (testVector.getPrivateKey() instanceof SlhDsaPrivateKey
-            && !SlhDsaVerifyConscrypt.isSupported())) {
-      // ML-DSA/SLH-DSA requires Conscrypt to be available. This also captures cases where
-      // ML-DSA/SLH-DSA is not
-      // available even with Conscrypt installed, since 1) an older version of Conscrypt may be in
-      // use and 2) Conscrypt on Android does not support ML-DSA/SLH-DSA yet.
-      return;
-    }
 
     SignaturePrivateKey key = testVector.getPrivateKey();
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
@@ -214,12 +204,23 @@ public class SignatureConfig2026Test {
       entry.withFixedId(id);
     }
     KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
+    KeysetHandle publicKeyHandle = handle.getPublicKeysetHandle();
+
+    if (!shouldBeSupported(testVector)) {
+      Configuration configuration = SignatureConfig2026.get();
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> handle.getPrimitive(configuration, PublicKeySign.class));
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> publicKeyHandle.getPrimitive(configuration, PublicKeyVerify.class));
+      return;
+    }
 
     PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     byte[] signature = signer.sign(testVector.getMessage());
     PublicKeyVerify verifier =
-        handle
-            .getPublicKeysetHandle()
+        publicKeyHandle
             .getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
 
     assertThrows(
