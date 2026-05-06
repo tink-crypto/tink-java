@@ -37,8 +37,6 @@ public final class ProtoKeySerialization implements Serialization {
   private final String typeUrl;
   private final Bytes objectIdentifier;
   private final ByteString value;
-  private final KeyMaterialType keyMaterialTypeProto;
-  private final OutputPrefixType outputPrefixTypeProto;
   private final com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType keyMaterialType;
   private final com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType outputPrefixType;
   @Nullable private final Integer idRequirement;
@@ -47,16 +45,12 @@ public final class ProtoKeySerialization implements Serialization {
       String typeUrl,
       Bytes objectIdentifier,
       ByteString value,
-      KeyMaterialType keyMaterialTypeProto,
-      OutputPrefixType outputPrefixTypeProto,
       com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType keyMaterialType,
       com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType outputPrefixType,
       @Nullable Integer idRequirement) {
     this.typeUrl = typeUrl;
     this.objectIdentifier = objectIdentifier;
     this.value = value;
-    this.keyMaterialTypeProto = keyMaterialTypeProto;
-    this.outputPrefixTypeProto = outputPrefixTypeProto;
     this.keyMaterialType = keyMaterialType;
     this.outputPrefixType = outputPrefixType;
     this.idRequirement = idRequirement;
@@ -83,14 +77,7 @@ public final class ProtoKeySerialization implements Serialization {
     }
     Bytes objectIdentifier = checkedToBytesFromPrintableAscii(typeUrl);
     return new ProtoKeySerialization(
-        typeUrl,
-        objectIdentifier,
-        value,
-        toProtoKeyMaterialType(keyMaterialType),
-        toProtoOutputPrefixType(outputPrefixType),
-        keyMaterialType,
-        outputPrefixType,
-        idRequirement);
+        typeUrl, objectIdentifier, value, keyMaterialType, outputPrefixType, idRequirement);
   }
 
   public static ProtoKeySerialization create(
@@ -116,8 +103,6 @@ public final class ProtoKeySerialization implements Serialization {
         typeUrl,
         objectIdentifier,
         value,
-        keyMaterialType,
-        outputPrefixType,
         fromProtoKeyMaterialType(keyMaterialType),
         fromProtoOutputPrefixType(outputPrefixType),
         idRequirement);
@@ -132,24 +117,8 @@ public final class ProtoKeySerialization implements Serialization {
    * The contents of the field key_material_type in the message
    * com.google.crypto.tink.proto.KeyData.
    */
-  public KeyMaterialType getKeyMaterialTypeProto() {
-    return keyMaterialTypeProto;
-  }
-
-  /**
-   * The contents of the field key_material_type in the message
-   * com.google.crypto.tink.proto.KeyData.
-   */
   public com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType getKeyMaterialType() {
     return keyMaterialType;
-  }
-
-  /**
-   * The contents of the field output_prefix_type in the message
-   * com.google.crypto.tink.proto.Keyset.Key.
-   */
-  public OutputPrefixType getOutputPrefixTypeProto() {
-    return outputPrefixTypeProto;
   }
 
   /**
@@ -182,30 +151,6 @@ public final class ProtoKeySerialization implements Serialization {
   /** The typeUrl. */
   public String getTypeUrl() {
     return typeUrl;
-  }
-
-  private static com.google.crypto.tink.proto.KeyData.KeyMaterialType toProtoKeyMaterialType(
-      com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType type)
-      throws GeneralSecurityException {
-    if (type.equals(
-        com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.UNKNOWN_KEYMATERIAL)) {
-      return com.google.crypto.tink.proto.KeyData.KeyMaterialType.UNKNOWN_KEYMATERIAL;
-    }
-    if (type.equals(com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.SYMMETRIC)) {
-      return com.google.crypto.tink.proto.KeyData.KeyMaterialType.SYMMETRIC;
-    }
-    if (type.equals(
-        com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PRIVATE)) {
-      return com.google.crypto.tink.proto.KeyData.KeyMaterialType.ASYMMETRIC_PRIVATE;
-    }
-    if (type.equals(
-        com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PUBLIC)) {
-      return com.google.crypto.tink.proto.KeyData.KeyMaterialType.ASYMMETRIC_PUBLIC;
-    }
-    if (type.equals(com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.REMOTE)) {
-      return com.google.crypto.tink.proto.KeyData.KeyMaterialType.REMOTE;
-    }
-    throw new GeneralSecurityException("Unknown KeyMaterialType " + type);
   }
 
   private static com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType
@@ -277,8 +222,8 @@ public final class ProtoKeySerialization implements Serialization {
     return create(
         serialization.getTypeUrl(),
         serialization.getValue(),
-        toProtoKeyMaterialType(serialization.getKeyMaterialType()),
-        toProtoOutputPrefixType(serialization.getOutputPrefixType()),
+        serialization.getKeyMaterialType(),
+        serialization.getOutputPrefixType(),
         serialization.getIdRequirementOrNull());
   }
 
@@ -286,8 +231,8 @@ public final class ProtoKeySerialization implements Serialization {
     return com.google.crypto.tink.ProtoKeySerialization.create(
         getTypeUrl(),
         getValue(),
-        fromProtoKeyMaterialType(getKeyMaterialTypeProto()),
-        fromProtoOutputPrefixType(getOutputPrefixTypeProto()),
+        getKeyMaterialType(),
+        getOutputPrefixType(),
         getIdRequirementOrNull());
   }
 }

@@ -43,8 +43,6 @@ public final class ProtoKeySerializationTest {
             /* idRequirement = */ null);
 
     assertThat(serialization.getValue()).isEqualTo(ByteString.copyFrom(new byte[] {10, 11, 12}));
-    assertThat(serialization.getKeyMaterialTypeProto()).isEqualTo(KeyMaterialType.SYMMETRIC);
-    assertThat(serialization.getOutputPrefixTypeProto()).isEqualTo(OutputPrefixType.RAW);
     assertThat(serialization.getTypeUrl()).isEqualTo("myTypeUrl");
     assertThat(serialization.getIdRequirementOrNull()).isNull();
     assertThat(serialization.getObjectIdentifier())
@@ -66,8 +64,6 @@ public final class ProtoKeySerializationTest {
             /* idRequirement= */ null);
 
     assertThat(serialization.getValue()).isEqualTo(ByteString.copyFrom(new byte[] {10, 11, 12}));
-    assertThat(serialization.getKeyMaterialTypeProto()).isEqualTo(KeyMaterialType.SYMMETRIC);
-    assertThat(serialization.getOutputPrefixTypeProto()).isEqualTo(OutputPrefixType.RAW);
     assertThat(serialization.getTypeUrl()).isEqualTo("myTypeUrl");
     assertThat(serialization.getIdRequirementOrNull()).isNull();
     assertThat(serialization.getObjectIdentifier())
@@ -86,7 +82,6 @@ public final class ProtoKeySerializationTest {
 
     ProtoKeySerialization serialization =
         ProtoKeySerialization.create(typeUrl, value, keyMaterialType, OutputPrefixType.TINK, 123);
-    assertThat(serialization.getOutputPrefixTypeProto()).isEqualTo(OutputPrefixType.TINK);
     assertThat(serialization.getIdRequirementOrNull()).isEqualTo(123);
     assertThat(serialization.getOutputPrefixType())
         .isEqualTo(com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK);
