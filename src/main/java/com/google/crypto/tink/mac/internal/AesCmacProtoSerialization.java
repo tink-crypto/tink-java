@@ -19,6 +19,8 @@ package com.google.crypto.tink.mac.internal;
 import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.internal.KeyParser;
 import com.google.crypto.tink.internal.KeySerializer;
@@ -30,9 +32,6 @@ import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.internal.SerializationRegistry;
 import com.google.crypto.tink.mac.AesCmacKey;
 import com.google.crypto.tink.mac.AesCmacParameters;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.KeyTemplate;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
@@ -117,16 +116,13 @@ public final class AesCmacProtoSerialization {
   private static ProtoParametersSerialization serializeParameters(AesCmacParameters parameters)
       throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
-        KeyTemplate.newBuilder()
-            .setTypeUrl(TYPE_URL)
-            .setValue(
-                com.google.crypto.tink.proto.AesCmacKeyFormat.newBuilder()
-                    .setParams(getProtoParams(parameters))
-                    .setKeySize(parameters.getKeySizeBytes())
-                    .build()
-                    .toByteString())
-            .setOutputPrefixType(toOutputPrefixType(parameters.getVariant()))
-            .build());
+        TYPE_URL,
+        toOutputPrefixType(parameters.getVariant()),
+        com.google.crypto.tink.proto.AesCmacKeyFormat.newBuilder()
+            .setParams(getProtoParams(parameters))
+            .setKeySize(parameters.getKeySizeBytes())
+            .build()
+            .toByteString());
   }
 
   private static ProtoKeySerialization serializeKey(

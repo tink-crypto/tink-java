@@ -19,6 +19,8 @@ package com.google.crypto.tink.jwt.internal;
 import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.internal.BigIntegerEncoding;
 import com.google.crypto.tink.internal.KeyParser;
@@ -32,9 +34,6 @@ import com.google.crypto.tink.jwt.JwtEcdsaParameters;
 import com.google.crypto.tink.jwt.JwtEcdsaPrivateKey;
 import com.google.crypto.tink.jwt.JwtEcdsaPublicKey;
 import com.google.crypto.tink.proto.JwtEcdsaAlgorithm;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.KeyTemplate;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBigInteger;
 import com.google.protobuf.ByteString;
@@ -146,11 +145,7 @@ public final class JwtEcdsaProtoSerialization {
       outputPrefixType = OutputPrefixType.RAW;
     }
     return ProtoParametersSerialization.create(
-        KeyTemplate.newBuilder()
-            .setTypeUrl(TYPE_URL)
-            .setValue(serializeToJwtEcdsaKeyFormat(parameters).toByteString())
-            .setOutputPrefixType(outputPrefixType)
-            .build());
+        TYPE_URL, outputPrefixType, serializeToJwtEcdsaKeyFormat(parameters).toByteString());
   }
 
   private static JwtEcdsaParameters parseParameters(ProtoParametersSerialization serialization)
@@ -173,10 +168,10 @@ public final class JwtEcdsaProtoSerialization {
           "Parsing HmacParameters failed: unknown Version " + format.getVersion());
     }
     JwtEcdsaParameters.KidStrategy kidStrategy = null;
-    if (serialization.getKeyTemplate().getOutputPrefixType().equals(OutputPrefixType.TINK)) {
+    if (serialization.getOutputPrefixType().equals(OutputPrefixType.TINK)) {
       kidStrategy = JwtEcdsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID;
     }
-    if (serialization.getKeyTemplate().getOutputPrefixType().equals(OutputPrefixType.RAW)) {
+    if (serialization.getOutputPrefixType().equals(OutputPrefixType.RAW)) {
       kidStrategy = JwtEcdsaParameters.KidStrategy.IGNORED;
     }
     if (kidStrategy == null) {

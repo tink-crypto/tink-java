@@ -19,6 +19,8 @@ package com.google.crypto.tink.jwt.internal;
 import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.internal.BigIntegerEncoding;
 import com.google.crypto.tink.internal.EnumTypeProtoConverter;
@@ -33,9 +35,6 @@ import com.google.crypto.tink.jwt.JwtRsaSsaPkcs1Parameters;
 import com.google.crypto.tink.jwt.JwtRsaSsaPkcs1PrivateKey;
 import com.google.crypto.tink.jwt.JwtRsaSsaPkcs1PublicKey;
 import com.google.crypto.tink.proto.JwtRsaSsaPkcs1Algorithm;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.KeyTemplate;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBigInteger;
 import com.google.protobuf.ByteString;
@@ -164,11 +163,7 @@ public final class JwtRsaSsaPkcs1ProtoSerialization {
       JwtRsaSsaPkcs1Parameters parameters) throws GeneralSecurityException {
     OutputPrefixType outputPrefixType = toProtoOutputPrefixType(parameters);
     return ProtoParametersSerialization.create(
-        KeyTemplate.newBuilder()
-            .setTypeUrl(PRIVATE_TYPE_URL)
-            .setValue(getProtoKeyFormat(parameters).toByteString())
-            .setOutputPrefixType(outputPrefixType)
-            .build());
+        PRIVATE_TYPE_URL, outputPrefixType, getProtoKeyFormat(parameters).toByteString());
   }
 
   private static com.google.crypto.tink.proto.JwtRsaSsaPkcs1PublicKey getProtoPublicKey(
@@ -253,10 +248,10 @@ public final class JwtRsaSsaPkcs1ProtoSerialization {
     }
     validateVersion(format.getVersion());
     JwtRsaSsaPkcs1Parameters.KidStrategy kidStrategy = null;
-    if (serialization.getKeyTemplate().getOutputPrefixType().equals(OutputPrefixType.TINK)) {
+    if (serialization.getOutputPrefixType().equals(OutputPrefixType.TINK)) {
       kidStrategy = JwtRsaSsaPkcs1Parameters.KidStrategy.BASE64_ENCODED_KEY_ID;
     }
-    if (serialization.getKeyTemplate().getOutputPrefixType().equals(OutputPrefixType.RAW)) {
+    if (serialization.getOutputPrefixType().equals(OutputPrefixType.RAW)) {
       kidStrategy = JwtRsaSsaPkcs1Parameters.KidStrategy.IGNORED;
     }
     if (kidStrategy == null) {

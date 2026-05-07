@@ -19,6 +19,8 @@ package com.google.crypto.tink.jwt;
 import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.internal.KeyParser;
 import com.google.crypto.tink.internal.KeySerializer;
@@ -29,9 +31,6 @@ import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.proto.JwtHmacAlgorithm;
 import com.google.crypto.tink.proto.JwtHmacKey.CustomKid;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.KeyTemplate;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
@@ -118,11 +117,7 @@ final class JwtHmacProtoSerialization {
       outputPrefixType = OutputPrefixType.RAW;
     }
     return ProtoParametersSerialization.create(
-        KeyTemplate.newBuilder()
-            .setTypeUrl(TYPE_URL)
-            .setValue(serializeToJwtHmacKeyFormat(parameters).toByteString())
-            .setOutputPrefixType(outputPrefixType)
-            .build());
+        TYPE_URL, outputPrefixType, serializeToJwtHmacKeyFormat(parameters).toByteString());
   }
 
   private static ProtoKeySerialization serializeKey(
@@ -181,10 +176,10 @@ final class JwtHmacProtoSerialization {
           "Parsing HmacParameters failed: unknown Version " + format.getVersion());
     }
     JwtHmacParameters.KidStrategy kidStrategy = null;
-    if (serialization.getKeyTemplate().getOutputPrefixType().equals(OutputPrefixType.TINK)) {
+    if (serialization.getOutputPrefixType().equals(OutputPrefixType.TINK)) {
       kidStrategy = JwtHmacParameters.KidStrategy.BASE64_ENCODED_KEY_ID;
     }
-    if (serialization.getKeyTemplate().getOutputPrefixType().equals(OutputPrefixType.RAW)) {
+    if (serialization.getOutputPrefixType().equals(OutputPrefixType.RAW)) {
       kidStrategy = JwtHmacParameters.KidStrategy.IGNORED;
     }
     if (kidStrategy == null) {

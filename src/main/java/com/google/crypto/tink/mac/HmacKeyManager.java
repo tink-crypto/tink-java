@@ -36,7 +36,6 @@ import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.mac.internal.ChunkedHmacImpl;
 import com.google.crypto.tink.mac.internal.HmacProtoSerialization;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.subtle.PrfMac;
 import com.google.crypto.tink.util.SecretBytes;
 import java.io.InputStream;
@@ -60,7 +59,7 @@ public final class HmacKeyManager {
       LegacyKeyManagerImpl.create(
           "type.googleapis.com/google.crypto.tink.HmacKey",
           Mac.class,
-          KeyMaterialType.SYMMETRIC,
+          com.google.crypto.tink.proto.KeyData.KeyMaterialType.SYMMETRIC,
           com.google.crypto.tink.proto.HmacKey.parser());
 
   static String getKeyType() {
