@@ -1116,6 +1116,7 @@ android_library(
     deps = [
         ":signature_config_2026-android",
         "//src/main/java/com/google/crypto/tink:configuration-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
 
@@ -1164,6 +1165,7 @@ java_library(
     deps = [
         ":signature_config_2026",
         "//src/main/java/com/google/crypto/tink:configuration",
+        "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
 

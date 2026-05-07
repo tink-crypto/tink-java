@@ -17,6 +17,7 @@
 package com.google.crypto.tink.signature;
 
 import com.google.crypto.tink.Configuration;
+import com.google.errorprone.annotations.InlineMe;
 import java.security.GeneralSecurityException;
 
 /**
@@ -27,6 +28,10 @@ import java.security.GeneralSecurityException;
   private SignatureConfigurationV1() {}
 
   /** Returns an instance of the {@code SignatureConfigurationV1}. */
+  @InlineMe(
+      replacement = "SignatureConfig2026.get()",
+      imports = {"com.google.crypto.tink.signature.SignatureConfig2026"}
+  )
   public static Configuration get() throws GeneralSecurityException {
     return SignatureConfig2026.get();
   }
