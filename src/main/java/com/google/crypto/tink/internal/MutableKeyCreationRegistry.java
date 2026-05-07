@@ -46,8 +46,8 @@ public final class MutableKeyCreationRegistry {
         ProtoKeySerialization.create(
             keyData.getTypeUrl(),
             keyData.getValue(),
-            keyData.getKeyMaterialType(),
-            keyTemplate.getOutputPrefixType(),
+            ProtoConversions.fromProto(keyData.getKeyMaterialType()),
+            ProtoConversions.fromProto(keyTemplate.getOutputPrefixType()),
             idRequirement);
     return new LegacyProtoKey(protoSerialization, InsecureSecretKeyAccess.get());
   }

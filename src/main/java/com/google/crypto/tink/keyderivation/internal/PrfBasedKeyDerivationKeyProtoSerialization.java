@@ -21,6 +21,8 @@ import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.TinkProtoParametersFormat;
 import com.google.crypto.tink.internal.KeyParser;
@@ -36,9 +38,7 @@ import com.google.crypto.tink.keyderivation.PrfBasedKeyDerivationParameters;
 import com.google.crypto.tink.prf.PrfKey;
 import com.google.crypto.tink.prf.PrfParameters;
 import com.google.crypto.tink.proto.KeyData;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.KeyTemplate;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.proto.PrfBasedDeriverKey;
 import com.google.crypto.tink.proto.PrfBasedDeriverKeyFormat;
 import com.google.crypto.tink.proto.PrfBasedDeriverParams;
@@ -175,7 +175,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
             .build()
             .toByteString(),
         KeyMaterialType.SYMMETRIC,
-        derivedKeyParametersSerialization.getKeyTemplate().getOutputPrefixType(),
+        derivedKeyParametersSerialization.getOutputPrefixType(),
         key.getIdRequirementOrNull());
   }
 
@@ -196,7 +196,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
           ProtoKeySerialization.create(
               protoKey.getPrfKey().getTypeUrl(),
               protoKey.getPrfKey().getValue(),
-              protoKey.getPrfKey().getKeyMaterialType(),
+              ProtoConversions.fromProto(protoKey.getPrfKey().getKeyMaterialType()),
               OutputPrefixType.RAW,
               /* idRequirement= */ null);
       Key prfKeyUncast =

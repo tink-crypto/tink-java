@@ -77,7 +77,11 @@ public class LegacyKeyManagerImpl<P> implements KeyManager<P> {
   public P getPrimitive(ByteString serializedKey) throws GeneralSecurityException {
     ProtoKeySerialization serialization =
         ProtoKeySerialization.create(
-            typeUrl, serializedKey, keyMaterialType, OutputPrefixType.RAW, null);
+            typeUrl,
+            serializedKey,
+            ProtoConversions.fromProto(keyMaterialType),
+            ProtoConversions.fromProto(OutputPrefixType.RAW),
+            null);
     Key key =
         MutableSerializationRegistry.globalInstance()
             .parseKey(serialization, InsecureSecretKeyAccess.get());
@@ -161,7 +165,11 @@ public class LegacyKeyManagerImpl<P> implements KeyManager<P> {
     public KeyData getPublicKeyData(ByteString serializedKey) throws GeneralSecurityException {
       ProtoKeySerialization serialization =
           ProtoKeySerialization.create(
-              typeUrl, serializedKey, keyMaterialType, OutputPrefixType.RAW, null);
+              typeUrl,
+              serializedKey,
+              ProtoConversions.fromProto(keyMaterialType),
+              ProtoConversions.fromProto(OutputPrefixType.RAW),
+              null);
       Key key =
           MutableSerializationRegistry.globalInstance()
               .parseKey(serialization, InsecureSecretKeyAccess.get());
