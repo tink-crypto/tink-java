@@ -18,6 +18,8 @@ package com.google.crypto.tink.aead;
 
 import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.internal.KeyParser;
 import com.google.crypto.tink.internal.KeySerializer;
@@ -26,11 +28,8 @@ import com.google.crypto.tink.internal.ParametersParser;
 import com.google.crypto.tink.internal.ParametersSerializer;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.proto.KmsAeadKey;
 import com.google.crypto.tink.proto.KmsAeadKeyFormat;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.Bytes;
 import com.google.protobuf.ExtensionRegistryLite;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -91,12 +90,9 @@ final class LegacyKmsAeadProtoSerialization {
   private static ProtoParametersSerialization serializeParameters(
       LegacyKmsAeadParameters parameters) throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
-        KeyTemplate.newBuilder()
-            .setTypeUrl(TYPE_URL)
-            .setValue(
-                KmsAeadKeyFormat.newBuilder().setKeyUri(parameters.keyUri()).build().toByteString())
-            .setOutputPrefixType(toProtoOutputPrefixType(parameters.variant()))
-            .build());
+        TYPE_URL,
+        toProtoOutputPrefixType(parameters.variant()),
+        KmsAeadKeyFormat.newBuilder().setKeyUri(parameters.keyUri()).build().toByteString());
   }
 
   private static LegacyKmsAeadParameters parseParameters(ProtoParametersSerialization serialization)

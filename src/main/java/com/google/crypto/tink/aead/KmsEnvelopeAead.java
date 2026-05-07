@@ -20,14 +20,14 @@ import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.TinkProtoParametersFormat;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.KeyTemplate;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ExtensionRegistryLite;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -85,7 +85,9 @@ public final class KmsEnvelopeAead implements Aead {
 
   private Parameters getRawParameters(KeyTemplate dekTemplate) throws GeneralSecurityException {
     KeyTemplate rawTemplate =
-        KeyTemplate.newBuilder(dekTemplate).setOutputPrefixType(OutputPrefixType.RAW).build();
+        KeyTemplate.newBuilder(dekTemplate)
+            .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
+            .build();
     return TinkProtoParametersFormat.parse(rawTemplate.toByteArray());
   }
 

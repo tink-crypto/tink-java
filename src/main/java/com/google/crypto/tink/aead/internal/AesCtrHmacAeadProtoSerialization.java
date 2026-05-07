@@ -19,6 +19,8 @@ package com.google.crypto.tink.aead.internal;
 import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.aead.AesCtrHmacAeadKey;
 import com.google.crypto.tink.aead.AesCtrHmacAeadParameters;
@@ -30,9 +32,6 @@ import com.google.crypto.tink.internal.ParametersSerializer;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.proto.HashType;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.KeyTemplate;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
@@ -155,27 +154,24 @@ public final class AesCtrHmacAeadProtoSerialization {
   private static ProtoParametersSerialization serializeParameters(
       AesCtrHmacAeadParameters parameters) throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
-        KeyTemplate.newBuilder()
-            .setTypeUrl(TYPE_URL)
-            .setValue(
-                com.google.crypto.tink.proto.AesCtrHmacAeadKeyFormat.newBuilder()
-                    .setAesCtrKeyFormat(
-                        com.google.crypto.tink.proto.AesCtrKeyFormat.newBuilder()
-                            .setParams(
-                                com.google.crypto.tink.proto.AesCtrParams.newBuilder()
-                                    .setIvSize(parameters.getIvSizeBytes())
-                                    .build())
-                            .setKeySize(parameters.getAesKeySizeBytes())
+        TYPE_URL,
+        toProtoOutputPrefixType(parameters.getVariant()),
+        com.google.crypto.tink.proto.AesCtrHmacAeadKeyFormat.newBuilder()
+            .setAesCtrKeyFormat(
+                com.google.crypto.tink.proto.AesCtrKeyFormat.newBuilder()
+                    .setParams(
+                        com.google.crypto.tink.proto.AesCtrParams.newBuilder()
+                            .setIvSize(parameters.getIvSizeBytes())
                             .build())
-                    .setHmacKeyFormat(
-                        com.google.crypto.tink.proto.HmacKeyFormat.newBuilder()
-                            .setParams(getHmacProtoParams(parameters))
-                            .setKeySize(parameters.getHmacKeySizeBytes())
-                            .build())
-                    .build()
-                    .toByteString())
-            .setOutputPrefixType(toProtoOutputPrefixType(parameters.getVariant()))
-            .build());
+                    .setKeySize(parameters.getAesKeySizeBytes())
+                    .build())
+            .setHmacKeyFormat(
+                com.google.crypto.tink.proto.HmacKeyFormat.newBuilder()
+                    .setParams(getHmacProtoParams(parameters))
+                    .setKeySize(parameters.getHmacKeySizeBytes())
+                    .build())
+            .build()
+            .toByteString());
   }
 
   private static ProtoKeySerialization serializeKey(

@@ -20,6 +20,8 @@ import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.TinkProtoParametersFormat;
 import com.google.crypto.tink.internal.KeyParser;
@@ -29,11 +31,9 @@ import com.google.crypto.tink.internal.ParametersParser;
 import com.google.crypto.tink.internal.ParametersSerializer;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.proto.KmsEnvelopeAeadKey;
 import com.google.crypto.tink.proto.KmsEnvelopeAeadKeyFormat;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.Bytes;
 import com.google.protobuf.ExtensionRegistryLite;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -101,26 +101,23 @@ public final class LegacyKmsEnvelopeAeadProtoSerialization {
 
   private static LegacyKmsEnvelopeAeadParameters.Variant toVariant(
       OutputPrefixType outputPrefixType) throws GeneralSecurityException {
-    switch (outputPrefixType) {
-      case TINK:
-        return LegacyKmsEnvelopeAeadParameters.Variant.TINK;
-      case RAW:
-        return LegacyKmsEnvelopeAeadParameters.Variant.NO_PREFIX;
-      default:
-        throw new GeneralSecurityException(
-            "Unable to parse OutputPrefixType: " + outputPrefixType.getNumber());
+    if (outputPrefixType.equals(OutputPrefixType.TINK)) {
+      return LegacyKmsEnvelopeAeadParameters.Variant.TINK;
     }
+
+    if (outputPrefixType.equals(OutputPrefixType.RAW)) {
+      return LegacyKmsEnvelopeAeadParameters.Variant.NO_PREFIX;
+    }
+    throw new GeneralSecurityException("Unable to parse OutputPrefixType: " + outputPrefixType);
   }
 
   @AccessesPartialKey
   private static ProtoParametersSerialization serializeParameters(
       LegacyKmsEnvelopeAeadParameters parameters) throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
-        KeyTemplate.newBuilder()
-            .setTypeUrl(TYPE_URL)
-            .setValue(serializeParametersToKmsEnvelopeAeadKeyFormat(parameters).toByteString())
-            .setOutputPrefixType(toProtoOutputPrefixType(parameters.getVariant()))
-            .build());
+        TYPE_URL,
+        toProtoOutputPrefixType(parameters.getVariant()),
+        serializeParametersToKmsEnvelopeAeadKeyFormat(parameters).toByteString());
   }
 
   @AccessesPartialKey
@@ -171,7 +168,7 @@ public final class LegacyKmsEnvelopeAeadProtoSerialization {
     } catch (InvalidProtocolBufferException e) {
       throw new GeneralSecurityException("Parsing KmsEnvelopeAeadKeyFormat failed: ", e);
     }
-    return parseParameters(format, serialization.getKeyTemplate().getOutputPrefixType());
+    return parseParameters(format, serialization.getOutputPrefixType());
   }
 
   @AccessesPartialKey
@@ -183,7 +180,7 @@ public final class LegacyKmsEnvelopeAeadProtoSerialization {
             KeyTemplate.newBuilder()
                 .setTypeUrl(format.getDekTemplate().getTypeUrl())
                 .setValue(format.getDekTemplate().getValue())
-                .setOutputPrefixType(OutputPrefixType.RAW)
+                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                 .build()
                 .toByteArray());
 

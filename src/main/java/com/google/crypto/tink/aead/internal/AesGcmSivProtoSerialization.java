@@ -19,6 +19,8 @@ package com.google.crypto.tink.aead.internal;
 import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.aead.AesGcmSivKey;
 import com.google.crypto.tink.aead.AesGcmSivParameters;
@@ -29,9 +31,6 @@ import com.google.crypto.tink.internal.ParametersParser;
 import com.google.crypto.tink.internal.ParametersSerializer;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.KeyTemplate;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
@@ -109,15 +108,12 @@ public final class AesGcmSivProtoSerialization {
   private static ProtoParametersSerialization serializeParameters(AesGcmSivParameters parameters)
       throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
-        KeyTemplate.newBuilder()
-            .setTypeUrl(TYPE_URL)
-            .setValue(
-                com.google.crypto.tink.proto.AesGcmSivKeyFormat.newBuilder()
-                    .setKeySize(parameters.getKeySizeBytes())
-                    .build()
-                    .toByteString())
-            .setOutputPrefixType(toProtoOutputPrefixType(parameters.getVariant()))
-            .build());
+        TYPE_URL,
+        toProtoOutputPrefixType(parameters.getVariant()),
+        com.google.crypto.tink.proto.AesGcmSivKeyFormat.newBuilder()
+            .setKeySize(parameters.getKeySizeBytes())
+            .build()
+            .toByteString());
   }
 
   private static ProtoKeySerialization serializeKey(
