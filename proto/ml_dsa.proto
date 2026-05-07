@@ -29,6 +29,7 @@ enum MlDsaInstance {
   ML_DSA_UNKNOWN_INSTANCE = 0;
   ML_DSA_65 = 1;
   ML_DSA_87 = 2;
+  ML_DSA_44 = 3;
 }
 
 message MlDsaParams {
