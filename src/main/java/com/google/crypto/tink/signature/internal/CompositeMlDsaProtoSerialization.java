@@ -217,7 +217,8 @@ public final class CompositeMlDsaProtoSerialization {
         CompositeMlDsaKeyFormat.newBuilder()
             .setParams(getProtoParams(parameters))
             .setVersion(0)
-            .build());
+            .build()
+            .toByteString());
   }
 
   private static ProtoKeySerialization serializePublicKey(

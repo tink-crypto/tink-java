@@ -183,7 +183,11 @@ public final class MlDsaProtoSerialization {
     return ProtoParametersSerialization.create(
         PRIVATE_TYPE_URL,
         toOutputPrefixType(parameters.getVariant()),
-        MlDsaKeyFormat.newBuilder().setParams(getProtoParams(parameters)).setVersion(0).build());
+        MlDsaKeyFormat.newBuilder()
+            .setParams(getProtoParams(parameters))
+            .setVersion(0)
+            .build()
+            .toByteString());
   }
 
   /**

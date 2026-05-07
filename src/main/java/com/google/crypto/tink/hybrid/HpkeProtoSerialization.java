@@ -213,7 +213,7 @@ public final class HpkeProtoSerialization {
     return ProtoParametersSerialization.create(
         PRIVATE_TYPE_URL,
         toOutputPrefixType(parameters.getVariant()),
-        HpkeKeyFormat.newBuilder().setParams(toProtoParameters(parameters)).build());
+        HpkeKeyFormat.newBuilder().setParams(toProtoParameters(parameters)).build().toByteString());
   }
 
   /**

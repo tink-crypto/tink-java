@@ -71,12 +71,12 @@ public final class ProtoParametersSerialization implements Serialization {
   public static ProtoParametersSerialization create(
       String typeUrl,
       com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType outputPrefixType,
-      MessageLite value) throws GeneralSecurityException {
+      ByteString value) throws GeneralSecurityException {
     return checkedCreate(
         KeyTemplate.newBuilder()
             .setTypeUrl(typeUrl)
             .setOutputPrefixType(ProtoKeySerialization.toProtoOutputPrefixType(outputPrefixType))
-            .setValue(value.toByteString())
+            .setValue(value)
             .build());
   }
 

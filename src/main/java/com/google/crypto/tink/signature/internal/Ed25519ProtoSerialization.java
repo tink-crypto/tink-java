@@ -170,7 +170,7 @@ public final class Ed25519ProtoSerialization {
     return ProtoParametersSerialization.create(
         PRIVATE_TYPE_URL,
         toOutputPrefixType(parameters.getVariant()),
-        Ed25519KeyFormat.getDefaultInstance());
+        Ed25519KeyFormat.getDefaultInstance().toByteString());
   }
 
   /**

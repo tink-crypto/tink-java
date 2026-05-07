@@ -171,7 +171,8 @@ public final class RsaSsaPkcs1ProtoSerialization {
             .setParams(getProtoParams(parameters))
             .setModulusSizeInBits(parameters.getModulusSizeBits())
             .setPublicExponent(encodeBigInteger(parameters.getPublicExponent()))
-            .build());
+            .build()
+            .toByteString());
   }
 
   private static ProtoKeySerialization serializePublicKey(

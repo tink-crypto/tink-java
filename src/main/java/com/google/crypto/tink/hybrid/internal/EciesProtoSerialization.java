@@ -325,7 +325,10 @@ public final class EciesProtoSerialization {
     return ProtoParametersSerialization.create(
         PRIVATE_TYPE_URL,
         toOutputPrefixType(parameters.getVariant()),
-        EciesAeadHkdfKeyFormat.newBuilder().setParams(toProtoParameters(parameters)).build());
+        EciesAeadHkdfKeyFormat.newBuilder()
+            .setParams(toProtoParameters(parameters))
+            .build()
+            .toByteString());
   }
 
   private static ProtoKeySerialization serializePublicKey(

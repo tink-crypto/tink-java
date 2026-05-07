@@ -184,7 +184,8 @@ public final class SlhDsaProtoSerialization {
         com.google.crypto.tink.proto.SlhDsaKeyFormat.newBuilder()
             .setParams(getProtoParams(parameters))
             .setVersion(0)
-            .build());
+            .build()
+            .toByteString());
   }
 
   /**

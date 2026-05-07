@@ -263,7 +263,8 @@ public final class EcdsaProtoSerialization {
         toProtoOutputPrefixType(parameters.getVariant()),
         com.google.crypto.tink.proto.EcdsaKeyFormat.newBuilder()
             .setParams(getProtoParams(parameters))
-            .build());
+            .build()
+            .toByteString());
   }
 
   private static ProtoKeySerialization serializePublicKey(

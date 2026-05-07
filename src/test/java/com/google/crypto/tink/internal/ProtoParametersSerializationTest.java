@@ -139,7 +139,7 @@ public final class ProtoParametersSerializationTest {
         ProtoParametersSerialization.create(
             "typeUrl",
             com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW,
-            innerTemplate);
+            innerTemplate.toByteString());
     assertThat(serialization.getTypeUrl()).isEqualTo("typeUrl");
     assertThat(serialization.getObjectIdentifier())
         .isEqualTo(Bytes.copyFrom("typeUrl".getBytes(UTF_8)));

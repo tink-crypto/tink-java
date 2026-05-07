@@ -130,7 +130,8 @@ public final class HmacProtoSerialization {
         com.google.crypto.tink.proto.HmacKeyFormat.newBuilder()
             .setParams(getProtoParams(parameters))
             .setKeySize(parameters.getKeySizeBytes())
-            .build());
+            .build()
+            .toByteString());
   }
 
   private static ProtoKeySerialization serializeKey(HmacKey key, @Nullable SecretKeyAccess access)
