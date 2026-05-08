@@ -23,14 +23,14 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.aead.AesEaxKey;
 import com.google.crypto.tink.aead.AesEaxParameters;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.proto.AesEaxParams;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
@@ -83,7 +83,8 @@ public final class AesEaxProtoSerializationTest {
             com.google.crypto.tink.proto.AesEaxKeyFormat.newBuilder()
                 .setKeySize(16)
                 .setParams(AesEaxParams.newBuilder().setIvSize(16))
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -111,7 +112,8 @@ public final class AesEaxProtoSerializationTest {
             com.google.crypto.tink.proto.AesEaxKeyFormat.newBuilder()
                 .setKeySize(24)
                 .setParams(AesEaxParams.newBuilder().setIvSize(12))
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -139,7 +141,8 @@ public final class AesEaxProtoSerializationTest {
             com.google.crypto.tink.proto.AesEaxKeyFormat.newBuilder()
                 .setKeySize(32)
                 .setParams(AesEaxParams.newBuilder().setIvSize(16))
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -341,9 +344,9 @@ public final class AesEaxProtoSerializationTest {
         () -> registry.serializeKey(key, ProtoKeySerialization.class, null));
   }
 
-  @DataPoints("invalidParametersSerializations")
-  public static final ProtoParametersSerialization[] INVALID_PARAMETERS_SERIALIZATIONS =
-      new ProtoParametersSerialization[] {
+  private static ProtoParametersSerialization[] createInvalidParameterSerializations() {
+    try {
+      return new ProtoParametersSerialization[] {
         // Bad IV size: only 12 or 16 bytes values accepted
         ProtoParametersSerialization.create(
             TYPE_URL,
@@ -351,7 +354,8 @@ public final class AesEaxProtoSerializationTest {
             com.google.crypto.tink.proto.AesEaxKeyFormat.newBuilder()
                 .setKeySize(16)
                 .setParams(AesEaxParams.newBuilder().setIvSize(10))
-                .build()),
+                .build()
+                .toByteString()),
         // Bad key size
         ProtoParametersSerialization.create(
             TYPE_URL,
@@ -359,7 +363,8 @@ public final class AesEaxProtoSerializationTest {
             com.google.crypto.tink.proto.AesEaxKeyFormat.newBuilder()
                 .setKeySize(10)
                 .setParams(AesEaxParams.newBuilder().setIvSize(12))
-                .build()),
+                .build()
+                .toByteString()),
         // Unknown output prefix
         ProtoParametersSerialization.create(
             TYPE_URL,
@@ -367,8 +372,17 @@ public final class AesEaxProtoSerializationTest {
             com.google.crypto.tink.proto.AesEaxKeyFormat.newBuilder()
                 .setKeySize(16)
                 .setParams(AesEaxParams.newBuilder().setIvSize(12))
-                .build()),
+                .build()
+                .toByteString()),
       };
+    } catch (GeneralSecurityException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @DataPoints("invalidParametersSerializations")
+  public static final ProtoParametersSerialization[] invalidParametersSerializations =
+      createInvalidParameterSerializations();
 
   @Theory
   public void testParseInvalidParameters_fails(

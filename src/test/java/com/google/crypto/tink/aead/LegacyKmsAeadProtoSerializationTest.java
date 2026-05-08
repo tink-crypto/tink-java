@@ -22,11 +22,11 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import java.security.GeneralSecurityException;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -61,7 +61,8 @@ public final class LegacyKmsAeadProtoSerializationTest {
             OutputPrefixType.RAW,
             com.google.crypto.tink.proto.KmsAeadKeyFormat.newBuilder()
                 .setKeyUri("someArbitrarykeyUri723")
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -84,7 +85,8 @@ public final class LegacyKmsAeadProtoSerializationTest {
             OutputPrefixType.TINK,
             com.google.crypto.tink.proto.KmsAeadKeyFormat.newBuilder()
                 .setKeyUri("someArbitrarykeyUri723")
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -103,7 +105,8 @@ public final class LegacyKmsAeadProtoSerializationTest {
             OutputPrefixType.LEGACY,
             com.google.crypto.tink.proto.KmsAeadKeyFormat.newBuilder()
                 .setKeyUri("someArbitrarykeyUri723")
-                .build());
+                .build()
+                .toByteString());
 
     assertThrows(GeneralSecurityException.class, () -> registry.parseParameters(serialization));
   }

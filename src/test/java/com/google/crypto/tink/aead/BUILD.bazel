@@ -620,9 +620,9 @@ java_test(
     srcs = ["LegacyKmsAeadProtoSerializationTest.java"],
     deps = [
         "//proto:kms_aead_java_proto",
-        "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink:parameters",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization",
         "//src/main/java/com/google/crypto/tink/aead:legacy_kms_aead_key",
         "//src/main/java/com/google/crypto/tink/aead:legacy_kms_aead_parameters",
         "//src/main/java/com/google/crypto/tink/aead:legacy_kms_aead_proto_serialization",

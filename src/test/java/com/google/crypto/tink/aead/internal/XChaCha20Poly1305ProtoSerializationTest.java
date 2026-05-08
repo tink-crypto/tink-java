@@ -23,13 +23,13 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.aead.XChaCha20Poly1305Key;
 import com.google.crypto.tink.aead.XChaCha20Poly1305Parameters;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
@@ -74,7 +74,8 @@ public final class XChaCha20Poly1305ProtoSerializationTest {
         ProtoParametersSerialization.create(
             "type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key",
             OutputPrefixType.RAW,
-            com.google.crypto.tink.proto.XChaCha20Poly1305KeyFormat.getDefaultInstance());
+            com.google.crypto.tink.proto.XChaCha20Poly1305KeyFormat.getDefaultInstance()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -96,7 +97,8 @@ public final class XChaCha20Poly1305ProtoSerializationTest {
         ProtoParametersSerialization.create(
             "type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key",
             OutputPrefixType.TINK,
-            com.google.crypto.tink.proto.XChaCha20Poly1305KeyFormat.getDefaultInstance());
+            com.google.crypto.tink.proto.XChaCha20Poly1305KeyFormat.getDefaultInstance()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -118,7 +120,8 @@ public final class XChaCha20Poly1305ProtoSerializationTest {
         ProtoParametersSerialization.create(
             "type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key",
             OutputPrefixType.CRUNCHY,
-            com.google.crypto.tink.proto.XChaCha20Poly1305KeyFormat.getDefaultInstance());
+            com.google.crypto.tink.proto.XChaCha20Poly1305KeyFormat.getDefaultInstance()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -231,22 +234,32 @@ public final class XChaCha20Poly1305ProtoSerializationTest {
         () -> registry.serializeKey(key, ProtoKeySerialization.class, null));
   }
 
-  @DataPoints("invalidParametersSerializations")
-  public static final ProtoParametersSerialization[] INVALID_PARAMETERS_SERIALIZATIONS =
-      new ProtoParametersSerialization[] {
+  private static ProtoParametersSerialization[] createInvalidParametersSerializations() {
+    try {
+      return new ProtoParametersSerialization[] {
         // Unknown output prefix
         ProtoParametersSerialization.create(
             TYPE_URL,
             OutputPrefixType.UNKNOWN_PREFIX,
-            com.google.crypto.tink.proto.XChaCha20Poly1305KeyFormat.getDefaultInstance()),
+            com.google.crypto.tink.proto.XChaCha20Poly1305KeyFormat.getDefaultInstance()
+                .toByteString()),
         // Wrong version
         ProtoParametersSerialization.create(
             TYPE_URL,
             OutputPrefixType.RAW,
             com.google.crypto.tink.proto.XChaCha20Poly1305KeyFormat.newBuilder()
                 .setVersion(1)
-                .build()),
+                .build()
+                .toByteString()),
       };
+    } catch (GeneralSecurityException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @DataPoints("invalidParametersSerializations")
+  public static final ProtoParametersSerialization[] invalidParametersSerializations =
+      createInvalidParametersSerializations();
 
   @Theory
   public void testParseInvalidParameters_fails(
