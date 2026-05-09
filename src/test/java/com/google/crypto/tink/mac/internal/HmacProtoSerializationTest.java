@@ -23,6 +23,8 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
@@ -30,9 +32,7 @@ import com.google.crypto.tink.mac.HmacKey;
 import com.google.crypto.tink.mac.HmacParameters;
 import com.google.crypto.tink.proto.HashType;
 import com.google.crypto.tink.proto.HmacParams;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.KeyTemplate;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
@@ -76,7 +76,8 @@ public final class HmacProtoSerializationTest {
             com.google.crypto.tink.proto.HmacKeyFormat.newBuilder()
                 .setKeySize(42)
                 .setParams(HmacParams.newBuilder().setHash(HashType.SHA1).setTagSize(13))
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -104,7 +105,8 @@ public final class HmacProtoSerializationTest {
             com.google.crypto.tink.proto.HmacKeyFormat.newBuilder()
                 .setKeySize(42)
                 .setParams(HmacParams.newBuilder().setHash(HashType.SHA224).setTagSize(13))
-                .build());
+                .build()
+                .toByteString());
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
     assertEqualWhenValueParsed(
@@ -131,7 +133,8 @@ public final class HmacProtoSerializationTest {
             com.google.crypto.tink.proto.HmacKeyFormat.newBuilder()
                 .setKeySize(42)
                 .setParams(HmacParams.newBuilder().setHash(HashType.SHA256).setTagSize(13))
-                .build());
+                .build()
+                .toByteString());
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
     assertEqualWhenValueParsed(
@@ -158,7 +161,8 @@ public final class HmacProtoSerializationTest {
             com.google.crypto.tink.proto.HmacKeyFormat.newBuilder()
                 .setKeySize(42)
                 .setParams(HmacParams.newBuilder().setHash(HashType.SHA384).setTagSize(13))
-                .build());
+                .build()
+                .toByteString());
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
     assertEqualWhenValueParsed(
@@ -185,7 +189,8 @@ public final class HmacProtoSerializationTest {
             com.google.crypto.tink.proto.HmacKeyFormat.newBuilder()
                 .setKeySize(42)
                 .setParams(HmacParams.newBuilder().setHash(HashType.SHA512).setTagSize(13))
-                .build());
+                .build()
+                .toByteString());
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
     assertEqualWhenValueParsed(
@@ -420,9 +425,9 @@ public final class HmacProtoSerializationTest {
         () -> registry.serializeKey(key, ProtoKeySerialization.class, null));
   }
 
-  @DataPoints("invalidParametersSerializations")
-  public static final ProtoParametersSerialization[] INVALID_PARAMETERS_SERIALIZATIONS =
-      new ProtoParametersSerialization[] {
+  private static ProtoParametersSerialization[] createInvalidParameters() {
+    try {
+      return new ProtoParametersSerialization[] {
         // tag size too small
         ProtoParametersSerialization.create(
             TYPE_URL,
@@ -430,7 +435,8 @@ public final class HmacProtoSerializationTest {
             com.google.crypto.tink.proto.HmacKeyFormat.newBuilder()
                 .setKeySize(42)
                 .setParams(HmacParams.newBuilder().setHash(HashType.SHA256).setTagSize(9))
-                .build()),
+                .build()
+                .toByteString()),
         // key size too small
         ProtoParametersSerialization.create(
             TYPE_URL,
@@ -438,14 +444,16 @@ public final class HmacProtoSerializationTest {
             com.google.crypto.tink.proto.HmacKeyFormat.newBuilder()
                 .setKeySize(1)
                 .setParams(HmacParams.newBuilder().setHash(HashType.SHA256).setTagSize(13))
-                .build()),
+                .build()
+                .toByteString()),
         ProtoParametersSerialization.create(
             TYPE_URL,
             OutputPrefixType.RAW,
             com.google.crypto.tink.proto.HmacKeyFormat.newBuilder()
                 .setKeySize(-1)
                 .setParams(HmacParams.newBuilder().setHash(HashType.SHA256).setTagSize(13))
-                .build()),
+                .build()
+                .toByteString()),
         // unknown output prefix
         ProtoParametersSerialization.create(
             TYPE_URL,
@@ -453,7 +461,8 @@ public final class HmacProtoSerializationTest {
             com.google.crypto.tink.proto.HmacKeyFormat.newBuilder()
                 .setKeySize(42)
                 .setParams(HmacParams.newBuilder().setHash(HashType.SHA256).setTagSize(13))
-                .build()),
+                .build()
+                .toByteString()),
         // version 1 is unknown and must be rejected
         ProtoParametersSerialization.create(
             TYPE_URL,
@@ -462,16 +471,25 @@ public final class HmacProtoSerializationTest {
                 .setVersion(1)
                 .setKeySize(42)
                 .setParams(HmacParams.newBuilder().setHash(HashType.SHA256).setTagSize(13))
-                .build()),
+                .build()
+                .toByteString()),
         // Proto messages start with a VarInt, which always ends with a byte with most
         // significant bit unset. 0x80 is hence invalid.
         ProtoParametersSerialization.create(
             KeyTemplate.newBuilder()
                 .setTypeUrl(TYPE_URL)
-                .setOutputPrefixType(OutputPrefixType.RAW)
+                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                 .setValue(ByteString.copyFrom(new byte[] {(byte) 0x80}))
                 .build()),
       };
+    } catch (GeneralSecurityException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @DataPoints("invalidParametersSerializations")
+  public static final ProtoParametersSerialization[] invalidParametersSerializations =
+      createInvalidParameters();
 
   @Theory
   public void testParseInvalidParameters_fails(

@@ -23,6 +23,8 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
@@ -31,9 +33,7 @@ import com.google.crypto.tink.internal.testing.ParametersWithSerialization;
 import com.google.crypto.tink.mac.AesCmacKey;
 import com.google.crypto.tink.mac.AesCmacParameters;
 import com.google.crypto.tink.proto.AesCmacParams;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.KeyTemplate;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
@@ -104,150 +104,182 @@ public final class AesCmacProtoSerializationTest {
         .build();
   }
 
-  @DataPoints("validParameters")
-  public static final ParametersWithSerialization[] VALID_PARAMETERS =
-      new ParametersWithSerialization[] {
+  private static ParametersWithSerialization[] createValidParameters() {
+    try {
+      return new ParametersWithSerialization[] {
         new ParametersWithSerialization(
             createAesCmacParameters(
-                /*keySize=*/ 16, /*tagSize=*/ 16, AesCmacParameters.Variant.TINK),
+                /* keySize= */ 16, /* tagSize= */ 16, AesCmacParameters.Variant.TINK),
             ProtoParametersSerialization.create(
                 TYPE_URL,
                 OutputPrefixType.TINK,
-                createProtoFormat(/*keySize=*/ 16, /*tagSize=*/ 16))),
+                createProtoFormat(/* keySize= */ 16, /* tagSize= */ 16).toByteString())),
         new ParametersWithSerialization(
             createAesCmacParameters(
-                /*keySize=*/ 16, /*tagSize=*/ 16, AesCmacParameters.Variant.CRUNCHY),
+                /* keySize= */ 16, /* tagSize= */ 16, AesCmacParameters.Variant.CRUNCHY),
             ProtoParametersSerialization.create(
                 TYPE_URL,
                 OutputPrefixType.CRUNCHY,
-                createProtoFormat(/*keySize=*/ 16, /*tagSize=*/ 16))),
+                createProtoFormat(/* keySize= */ 16, /* tagSize= */ 16).toByteString())),
         new ParametersWithSerialization(
             createAesCmacParameters(
-                /*keySize=*/ 16, /*tagSize=*/ 16, AesCmacParameters.Variant.LEGACY),
+                /* keySize= */ 16, /* tagSize= */ 16, AesCmacParameters.Variant.LEGACY),
             ProtoParametersSerialization.create(
                 TYPE_URL,
                 OutputPrefixType.LEGACY,
-                createProtoFormat(/*keySize=*/ 16, /*tagSize=*/ 16))),
+                createProtoFormat(/* keySize= */ 16, /* tagSize= */ 16).toByteString())),
         new ParametersWithSerialization(
             createAesCmacParameters(
-                /*keySize=*/ 16, /*tagSize=*/ 16, AesCmacParameters.Variant.NO_PREFIX),
+                /* keySize= */ 16, /* tagSize= */ 16, AesCmacParameters.Variant.NO_PREFIX),
             ProtoParametersSerialization.create(
                 TYPE_URL,
                 OutputPrefixType.RAW,
-                createProtoFormat(/*keySize=*/ 16, /*tagSize=*/ 16))),
+                createProtoFormat(/* keySize= */ 16, /* tagSize= */ 16).toByteString())),
         new ParametersWithSerialization(
             createAesCmacParameters(
-                /*keySize=*/ 32, /*tagSize=*/ 16, AesCmacParameters.Variant.TINK),
+                /* keySize= */ 32, /* tagSize= */ 16, AesCmacParameters.Variant.TINK),
             ProtoParametersSerialization.create(
                 TYPE_URL,
                 OutputPrefixType.TINK,
-                createProtoFormat(/*keySize=*/ 32, /*tagSize=*/ 16))),
+                createProtoFormat(/* keySize= */ 32, /* tagSize= */ 16).toByteString())),
         new ParametersWithSerialization(
             createAesCmacParameters(
-                /*keySize=*/ 32, /*tagSize=*/ 16, AesCmacParameters.Variant.CRUNCHY),
+                /* keySize= */ 32, /* tagSize= */ 16, AesCmacParameters.Variant.CRUNCHY),
             ProtoParametersSerialization.create(
                 TYPE_URL,
                 OutputPrefixType.CRUNCHY,
-                createProtoFormat(/*keySize=*/ 32, /*tagSize=*/ 16))),
+                createProtoFormat(/* keySize= */ 32, /* tagSize= */ 16).toByteString())),
         new ParametersWithSerialization(
             createAesCmacParameters(
-                /*keySize=*/ 32, /*tagSize=*/ 16, AesCmacParameters.Variant.LEGACY),
+                /* keySize= */ 32, /* tagSize= */ 16, AesCmacParameters.Variant.LEGACY),
             ProtoParametersSerialization.create(
                 TYPE_URL,
                 OutputPrefixType.LEGACY,
-                createProtoFormat(/*keySize=*/ 32, /*tagSize=*/ 16))),
+                createProtoFormat(/* keySize= */ 32, /* tagSize= */ 16).toByteString())),
         new ParametersWithSerialization(
             createAesCmacParameters(
-                /*keySize=*/ 32, /*tagSize=*/ 16, AesCmacParameters.Variant.NO_PREFIX),
+                /* keySize= */ 32, /* tagSize= */ 16, AesCmacParameters.Variant.NO_PREFIX),
             ProtoParametersSerialization.create(
                 TYPE_URL,
                 OutputPrefixType.RAW,
-                createProtoFormat(/*keySize=*/ 32, /*tagSize=*/ 16))),
+                createProtoFormat(/* keySize= */ 32, /* tagSize= */ 16).toByteString())),
         new ParametersWithSerialization(
             createAesCmacParameters(
-                /*keySize=*/ 32, /*tagSize=*/ 10, AesCmacParameters.Variant.TINK),
+                /* keySize= */ 32, /* tagSize= */ 10, AesCmacParameters.Variant.TINK),
             ProtoParametersSerialization.create(
                 TYPE_URL,
                 OutputPrefixType.TINK,
-                createProtoFormat(/*keySize=*/ 32, /*tagSize=*/ 10))),
+                createProtoFormat(/* keySize= */ 32, /* tagSize= */ 10).toByteString())),
         new ParametersWithSerialization(
             createAesCmacParameters(
-                /*keySize=*/ 32, /*tagSize=*/ 11, AesCmacParameters.Variant.TINK),
+                /* keySize= */ 32, /* tagSize= */ 11, AesCmacParameters.Variant.TINK),
             ProtoParametersSerialization.create(
                 TYPE_URL,
                 OutputPrefixType.TINK,
-                createProtoFormat(/*keySize=*/ 32, /*tagSize=*/ 11))),
+                createProtoFormat(/* keySize= */ 32, /* tagSize= */ 11).toByteString())),
         new ParametersWithSerialization(
             createAesCmacParameters(
-                /*keySize=*/ 32, /*tagSize=*/ 12, AesCmacParameters.Variant.TINK),
+                /* keySize= */ 32, /* tagSize= */ 12, AesCmacParameters.Variant.TINK),
             ProtoParametersSerialization.create(
                 TYPE_URL,
                 OutputPrefixType.TINK,
-                createProtoFormat(/*keySize=*/ 32, /*tagSize=*/ 12))),
+                createProtoFormat(/* keySize= */ 32, /* tagSize= */ 12).toByteString())),
         new ParametersWithSerialization(
             createAesCmacParameters(
-                /*keySize=*/ 32, /*tagSize=*/ 13, AesCmacParameters.Variant.TINK),
+                /* keySize= */ 32, /* tagSize= */ 13, AesCmacParameters.Variant.TINK),
             ProtoParametersSerialization.create(
                 TYPE_URL,
                 OutputPrefixType.TINK,
-                createProtoFormat(/*keySize=*/ 32, /*tagSize=*/ 13))),
+                createProtoFormat(/* keySize= */ 32, /* tagSize= */ 13).toByteString())),
         new ParametersWithSerialization(
             createAesCmacParameters(
-                /*keySize=*/ 32, /*tagSize=*/ 14, AesCmacParameters.Variant.TINK),
+                /* keySize= */ 32, /* tagSize= */ 14, AesCmacParameters.Variant.TINK),
             ProtoParametersSerialization.create(
                 TYPE_URL,
                 OutputPrefixType.TINK,
-                createProtoFormat(/*keySize=*/ 32, /*tagSize=*/ 14))),
+                createProtoFormat(/* keySize= */ 32, /* tagSize= */ 14).toByteString())),
         new ParametersWithSerialization(
             createAesCmacParameters(
-                /*keySize=*/ 32, /*tagSize=*/ 15, AesCmacParameters.Variant.TINK),
+                /* keySize= */ 32, /* tagSize= */ 15, AesCmacParameters.Variant.TINK),
             ProtoParametersSerialization.create(
                 TYPE_URL,
                 OutputPrefixType.TINK,
-                createProtoFormat(/*keySize=*/ 32, /*tagSize=*/ 15))),
+                createProtoFormat(/* keySize= */ 32, /* tagSize= */ 15).toByteString())),
         new ParametersWithSerialization(
             createAesCmacParameters(
-                /*keySize=*/ 32, /*tagSize=*/ 11, AesCmacParameters.Variant.NO_PREFIX),
+                /* keySize= */ 32, /* tagSize= */ 11, AesCmacParameters.Variant.NO_PREFIX),
             ProtoParametersSerialization.create(
                 TYPE_URL,
                 OutputPrefixType.RAW,
-                createProtoFormat(/*keySize=*/ 32, /*tagSize=*/ 11))),
+                createProtoFormat(/* keySize= */ 32, /* tagSize= */ 11).toByteString())),
       };
+    } catch (GeneralSecurityException e) {
+      throw new RuntimeException(e);
+    }
+  }
 
-  @DataPoints("invalidParameters")
-  public static final ProtoParametersSerialization[] INVALID_PARAMETERS =
-      new ProtoParametersSerialization[] {
+  @DataPoints("validParameters")
+  public static final ParametersWithSerialization[] validParameters = createValidParameters();
+
+  private static ProtoParametersSerialization[] createInvalidParameters() {
+    try {
+      return new ProtoParametersSerialization[] {
         ProtoParametersSerialization.create(
-            TYPE_URL, OutputPrefixType.RAW, createProtoFormat(/*keySize=*/ 32, /*tagSize=*/ 9)),
+            TYPE_URL,
+            OutputPrefixType.RAW,
+            createProtoFormat(/* keySize= */ 32, /* tagSize= */ 9).toByteString()),
         ProtoParametersSerialization.create(
-            TYPE_URL, OutputPrefixType.RAW, createProtoFormat(/*keySize=*/ 32, /*tagSize=*/ 7)),
+            TYPE_URL,
+            OutputPrefixType.RAW,
+            createProtoFormat(/* keySize= */ 32, /* tagSize= */ 7).toByteString()),
         ProtoParametersSerialization.create(
-            TYPE_URL, OutputPrefixType.RAW, createProtoFormat(/*keySize=*/ 16, /*tagSize=*/ 17)),
+            TYPE_URL,
+            OutputPrefixType.RAW,
+            createProtoFormat(/* keySize= */ 16, /* tagSize= */ 17).toByteString()),
         ProtoParametersSerialization.create(
-            TYPE_URL, OutputPrefixType.RAW, createProtoFormat(/*keySize=*/ 16, /*tagSize=*/ 19)),
+            TYPE_URL,
+            OutputPrefixType.RAW,
+            createProtoFormat(/* keySize= */ 16, /* tagSize= */ 19).toByteString()),
         ProtoParametersSerialization.create(
-            TYPE_URL, OutputPrefixType.RAW, createProtoFormat(/*keySize=*/ 32, /*tagSize=*/ 32)),
+            TYPE_URL,
+            OutputPrefixType.RAW,
+            createProtoFormat(/* keySize= */ 32, /* tagSize= */ 32).toByteString()),
         ProtoParametersSerialization.create(
-            TYPE_URL, OutputPrefixType.RAW, createProtoFormat(/*keySize=*/ 1, /*tagSize=*/ 10)),
+            TYPE_URL,
+            OutputPrefixType.RAW,
+            createProtoFormat(/* keySize= */ 1, /* tagSize= */ 10).toByteString()),
         ProtoParametersSerialization.create(
-            TYPE_URL, OutputPrefixType.RAW, createProtoFormat(/*keySize=*/ -1, /*tagSize=*/ 10)),
+            TYPE_URL,
+            OutputPrefixType.RAW,
+            createProtoFormat(/* keySize= */ -1, /* tagSize= */ 10).toByteString()),
         ProtoParametersSerialization.create(
-            TYPE_URL, OutputPrefixType.RAW, createProtoFormat(/*keySize=*/ 20, /*tagSize=*/ 10)),
+            TYPE_URL,
+            OutputPrefixType.RAW,
+            createProtoFormat(/* keySize= */ 20, /* tagSize= */ 10).toByteString()),
         ProtoParametersSerialization.create(
-            TYPE_URL, OutputPrefixType.RAW, createProtoFormat(/*keySize=*/ 390, /*tagSize=*/ 10)),
+            TYPE_URL,
+            OutputPrefixType.RAW,
+            createProtoFormat(/* keySize= */ 390, /* tagSize= */ 10).toByteString()),
         ProtoParametersSerialization.create(
             TYPE_URL,
             OutputPrefixType.UNKNOWN_PREFIX,
-            createProtoFormat(/*keySize=*/ 32, /*tagSize=*/ 16)),
+            createProtoFormat(/* keySize= */ 32, /* tagSize= */ 16).toByteString()),
         // Proto messages start with a VarInt, which always ends with a byte with most
         // significant bit unset. 0x80 is hence invalid.
         ProtoParametersSerialization.create(
             KeyTemplate.newBuilder()
                 .setTypeUrl(TYPE_URL)
-                .setOutputPrefixType(OutputPrefixType.RAW)
+                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                 .setValue(ByteString.copyFrom(new byte[] {(byte) 0x80}))
                 .build()),
       };
+    } catch (GeneralSecurityException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @DataPoints("invalidParameters")
+  public static final ProtoParametersSerialization[] invalidParameters = createInvalidParameters();
 
   @Theory
   public void testSerializeParameters(

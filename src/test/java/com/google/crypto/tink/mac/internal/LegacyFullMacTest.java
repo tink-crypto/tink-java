@@ -21,18 +21,17 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Mac;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.internal.EnumTypeProtoConverter;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.mac.HmacKey;
 import com.google.crypto.tink.mac.HmacParameters;
-import com.google.crypto.tink.mac.HmacParameters.Variant;
 import com.google.crypto.tink.mac.MacConfig;
 import com.google.crypto.tink.mac.internal.HmacTestUtil.HmacTestVector;
 import com.google.crypto.tink.proto.HashType;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
@@ -46,14 +45,24 @@ import org.junit.runner.RunWith;
 @RunWith(Theories.class)
 public class LegacyFullMacTest {
   private static final String TYPE_URL = "type.googleapis.com/custom.HmacKey";
-  private static final EnumTypeProtoConverter<OutputPrefixType, Variant>
-      OUTPUT_PREFIX_TYPE_CONVERTER =
-          EnumTypeProtoConverter.<OutputPrefixType, HmacParameters.Variant>builder()
-              .add(OutputPrefixType.RAW, HmacParameters.Variant.NO_PREFIX)
-              .add(OutputPrefixType.TINK, HmacParameters.Variant.TINK)
-              .add(OutputPrefixType.LEGACY, HmacParameters.Variant.LEGACY)
-              .add(OutputPrefixType.CRUNCHY, HmacParameters.Variant.CRUNCHY)
-              .build();
+
+  private static OutputPrefixType toOutputPrefixType(HmacParameters.Variant variant)
+      throws GeneralSecurityException {
+    if (variant == HmacParameters.Variant.NO_PREFIX) {
+      return OutputPrefixType.RAW;
+    }
+    if (variant == HmacParameters.Variant.TINK) {
+      return OutputPrefixType.TINK;
+    }
+    if (variant == HmacParameters.Variant.LEGACY) {
+      return OutputPrefixType.LEGACY;
+    }
+    if (variant == HmacParameters.Variant.CRUNCHY) {
+      return OutputPrefixType.CRUNCHY;
+    }
+    throw new GeneralSecurityException("unknown variant: " + variant);
+  }
+
   private static final EnumTypeProtoConverter<HashType, HmacParameters.HashType>
       HASH_TYPE_CONVERTER =
           EnumTypeProtoConverter.<HashType, HmacParameters.HashType>builder()
@@ -132,7 +141,7 @@ public class LegacyFullMacTest {
                 .build()
                 .toByteString(),
             KeyMaterialType.SYMMETRIC,
-            OUTPUT_PREFIX_TYPE_CONVERTER.toProtoEnum(hmacKey.getParameters().getVariant()),
+            toOutputPrefixType(hmacKey.getParameters().getVariant()),
             hmacKey.getIdRequirementOrNull()),
         InsecureSecretKeyAccess.get());
   }
