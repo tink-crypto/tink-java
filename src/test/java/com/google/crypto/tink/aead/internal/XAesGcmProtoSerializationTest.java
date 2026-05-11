@@ -23,13 +23,13 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.aead.XAesGcmKey;
 import com.google.crypto.tink.aead.XAesGcmParameters;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
@@ -78,7 +78,8 @@ public final class XAesGcmProtoSerializationTest {
                     com.google.crypto.tink.proto.XAesGcmParams.newBuilder()
                         .setSaltSize(parameters.getSaltSizeBytes())
                         .build())
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -102,7 +103,8 @@ public final class XAesGcmProtoSerializationTest {
                     com.google.crypto.tink.proto.XAesGcmParams.newBuilder()
                         .setSaltSize(parameters.getSaltSizeBytes())
                         .build())
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -256,9 +258,9 @@ public final class XAesGcmProtoSerializationTest {
         () -> registry.serializeKey(key, ProtoKeySerialization.class, null));
   }
 
-  @DataPoints("invalidParametersSerializations")
-  public static final ProtoParametersSerialization[] INVALID_PARAMETERS_SERIALIZATIONS =
-      new ProtoParametersSerialization[] {
+  private static ProtoParametersSerialization[] createInvalidParameters() {
+    try {
+      return new ProtoParametersSerialization[] {
         // Unknown output prefix
         ProtoParametersSerialization.create(
             TYPE_URL,
@@ -266,7 +268,8 @@ public final class XAesGcmProtoSerializationTest {
             com.google.crypto.tink.proto.XAesGcmKeyFormat.newBuilder()
                 .setParams(
                     com.google.crypto.tink.proto.XAesGcmParams.newBuilder().setSaltSize(12).build())
-                .build()),
+                .build()
+                .toByteString()),
         // Bad version
         ProtoParametersSerialization.create(
             TYPE_URL,
@@ -275,7 +278,8 @@ public final class XAesGcmProtoSerializationTest {
                 .setParams(
                     com.google.crypto.tink.proto.XAesGcmParams.newBuilder().setSaltSize(12).build())
                 .setVersion(1)
-                .build()),
+                .build()
+                .toByteString()),
         // Bad salt size
         ProtoParametersSerialization.create(
             TYPE_URL,
@@ -284,7 +288,8 @@ public final class XAesGcmProtoSerializationTest {
                 .setParams(
                     com.google.crypto.tink.proto.XAesGcmParams.newBuilder().setSaltSize(13).build())
                 .setVersion(0)
-                .build()),
+                .build()
+                .toByteString()),
         ProtoParametersSerialization.create(
             TYPE_URL,
             OutputPrefixType.RAW,
@@ -292,8 +297,17 @@ public final class XAesGcmProtoSerializationTest {
                 .setParams(
                     com.google.crypto.tink.proto.XAesGcmParams.newBuilder().setSaltSize(7).build())
                 .setVersion(0)
-                .build()),
+                .build()
+                .toByteString()),
       };
+    } catch (GeneralSecurityException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @DataPoints("invalidParametersSerializations")
+  public static final ProtoParametersSerialization[] invalidParametersSerializations =
+      createInvalidParameters();
 
   @Theory
   public void testParseInvalidParameters_fails(

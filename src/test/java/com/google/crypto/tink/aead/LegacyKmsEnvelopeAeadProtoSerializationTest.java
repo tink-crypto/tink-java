@@ -22,6 +22,8 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.aead.internal.AesGcmSivProtoSerialization;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
@@ -39,11 +41,9 @@ import com.google.crypto.tink.proto.AesGcmSivKeyFormat;
 import com.google.crypto.tink.proto.HashType;
 import com.google.crypto.tink.proto.HmacKeyFormat;
 import com.google.crypto.tink.proto.HmacParams;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.proto.KmsEnvelopeAeadKey;
 import com.google.crypto.tink.proto.KmsEnvelopeAeadKeyFormat;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import java.security.GeneralSecurityException;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -58,7 +58,7 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
   private static final KeyTemplate CHACHA20POLY1305_RAW_TEMPLATE =
       KeyTemplate.newBuilder()
           .setTypeUrl("type.googleapis.com/google.crypto.tink.ChaCha20Poly1305Key")
-          .setOutputPrefixType(OutputPrefixType.RAW)
+          .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
           .build();
 
   private static final String TYPE_URL =
@@ -110,9 +110,10 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
                         .setTypeUrl("type.googleapis.com/google.crypto.tink.AesGcmKey")
                         .setValue(
                             AesGcmKeyFormat.newBuilder().setKeySize(16).build().toByteString())
-                        .setOutputPrefixType(OutputPrefixType.RAW)
+                        .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                         .build())
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -141,9 +142,10 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
                 .setDekTemplate(
                     KeyTemplate.newBuilder()
                         .setTypeUrl("type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key")
-                        .setOutputPrefixType(OutputPrefixType.RAW)
+                        .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                         .build())
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -170,7 +172,8 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
             KmsEnvelopeAeadKeyFormat.newBuilder()
                 .setKekUri("someArbitrarykeyUri723")
                 .setDekTemplate(CHACHA20POLY1305_RAW_TEMPLATE)
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -223,10 +226,11 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
                 .setDekTemplate(
                     KeyTemplate.newBuilder()
                         .setTypeUrl("type.googleapis.com/google.crypto.tink.AesCtrHmacAeadKey")
-                        .setOutputPrefixType(OutputPrefixType.RAW)
+                        .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                         .setValue(format.toByteString())
                         .build())
-                .build());
+                .build()
+                .toByteString());
     Parameters parsed = registry.parseParameters(serialization);
     assertThat(parsed).isEqualTo(parameters);
 
@@ -266,9 +270,10 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
                                 .setParams(AesEaxParams.newBuilder().setIvSize(12))
                                 .build()
                                 .toByteString())
-                        .setOutputPrefixType(OutputPrefixType.RAW)
+                        .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                         .build())
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -303,9 +308,10 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
                         .setTypeUrl("type.googleapis.com/google.crypto.tink.AesGcmSivKey")
                         .setValue(
                             AesGcmSivKeyFormat.newBuilder().setKeySize(16).build().toByteString())
-                        .setOutputPrefixType(OutputPrefixType.RAW)
+                        .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                         .build())
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -343,9 +349,10 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
                         .setTypeUrl("type.googleapis.com/google.crypto.tink.AesGcmKey")
                         .setValue(
                             AesGcmKeyFormat.newBuilder().setKeySize(16).build().toByteString())
-                        .setOutputPrefixType(OutputPrefixType.RAW)
+                        .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                         .build())
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -372,9 +379,10 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
                                 .setParams(AesCmacParams.newBuilder().setTagSize(16).build())
                                 .build()
                                 .toByteString())
-                        .setOutputPrefixType(OutputPrefixType.RAW)
+                        .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                         .build())
-                .build());
+                .build()
+                .toByteString());
 
     GeneralSecurityException thrown =
         assertThrows(GeneralSecurityException.class, () -> registry.parseParameters(serialization));
@@ -406,9 +414,11 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
                 .setDekTemplate(
                     KeyTemplate.newBuilder()
                         .setTypeUrl("type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key")
-                        .setOutputPrefixType(OutputPrefixType.UNKNOWN_PREFIX)
+                        .setOutputPrefixType(
+                            com.google.crypto.tink.proto.OutputPrefixType.UNKNOWN_PREFIX)
                         .build())
-                .build());
+                .build()
+                .toByteString());
 
     Parameters parsed = registry.parseParameters(serialization);
     assertThat(parsed).isEqualTo(parameters);
@@ -437,9 +447,10 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
                 .setDekTemplate(
                     KeyTemplate.newBuilder()
                         .setTypeUrl("type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key")
-                        .setOutputPrefixType(OutputPrefixType.TINK)
+                        .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.TINK)
                         .build())
-                .build());
+                .build()
+                .toByteString());
 
     Parameters parsed = registry.parseParameters(serialization);
     assertThat(parsed).isEqualTo(parameters);
@@ -462,7 +473,7 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
             .setDekTemplate(
                 KeyTemplate.newBuilder()
                     .setTypeUrl("type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key")
-                    .setOutputPrefixType(OutputPrefixType.RAW))
+                    .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW))
             .build();
 
     ProtoKeySerialization serialization =
@@ -500,7 +511,7 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
             .setDekTemplate(
                 KeyTemplate.newBuilder()
                     .setTypeUrl("type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key")
-                    .setOutputPrefixType(OutputPrefixType.RAW))
+                    .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW))
             .build();
 
     ProtoKeySerialization serialization =
@@ -527,7 +538,7 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
             .setDekTemplate(
                 KeyTemplate.newBuilder()
                     .setTypeUrl("type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key")
-                    .setOutputPrefixType(OutputPrefixType.RAW))
+                    .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW))
             .build();
 
     ProtoKeySerialization serialization =
@@ -550,7 +561,7 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
             .setDekTemplate(
                 KeyTemplate.newBuilder()
                     .setTypeUrl("type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key")
-                    .setOutputPrefixType(OutputPrefixType.RAW))
+                    .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW))
             .build();
 
     ProtoKeySerialization serialization =
