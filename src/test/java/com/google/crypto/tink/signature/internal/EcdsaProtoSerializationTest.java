@@ -23,6 +23,8 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
@@ -30,9 +32,7 @@ import com.google.crypto.tink.proto.EcdsaParams;
 import com.google.crypto.tink.proto.EcdsaSignatureEncoding;
 import com.google.crypto.tink.proto.EllipticCurveType;
 import com.google.crypto.tink.proto.HashType;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.KeyTemplate;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.signature.EcdsaParameters;
 import com.google.crypto.tink.signature.EcdsaPrivateKey;
 import com.google.crypto.tink.signature.EcdsaPublicKey;
@@ -86,7 +86,8 @@ public final class EcdsaProtoSerializationTest {
                         .setHashType(HashType.SHA256)
                         .setCurve(EllipticCurveType.NIST_P256)
                         .setEncoding(EcdsaSignatureEncoding.IEEE_P1363))
-                .build());
+                .build()
+                .toByteString());
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
     assertEqualWhenValueParsed(
@@ -115,7 +116,8 @@ public final class EcdsaProtoSerializationTest {
                         .setHashType(HashType.SHA512)
                         .setCurve(EllipticCurveType.NIST_P384)
                         .setEncoding(EcdsaSignatureEncoding.DER))
-                .build());
+                .build()
+                .toByteString());
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
     assertEqualWhenValueParsed(
@@ -144,7 +146,8 @@ public final class EcdsaProtoSerializationTest {
                         .setHashType(HashType.SHA512)
                         .setCurve(EllipticCurveType.NIST_P521)
                         .setEncoding(EcdsaSignatureEncoding.IEEE_P1363))
-                .build());
+                .build()
+                .toByteString());
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
     assertEqualWhenValueParsed(
@@ -173,7 +176,8 @@ public final class EcdsaProtoSerializationTest {
                         .setHashType(HashType.SHA256)
                         .setCurve(EllipticCurveType.NIST_P256)
                         .setEncoding(EcdsaSignatureEncoding.DER))
-                .build());
+                .build()
+                .toByteString());
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
     assertEqualWhenValueParsed(
@@ -494,9 +498,9 @@ public final class EcdsaProtoSerializationTest {
         () -> registry.serializeKey(privateKey, ProtoKeySerialization.class, /* access= */ null));
   }
 
-  @DataPoints("invalidParametersSerializations")
-  public static final ProtoParametersSerialization[] INVALID_PARAMETERS_SERIALIZATIONS =
-      new ProtoParametersSerialization[] {
+  private static ProtoParametersSerialization[] createInvalidParameters() {
+    try {
+      return new ProtoParametersSerialization[] {
         // invalid hash type
         ProtoParametersSerialization.create(
             PRIVATE_TYPE_URL,
@@ -507,7 +511,8 @@ public final class EcdsaProtoSerializationTest {
                         .setHashType(HashType.SHA1)
                         .setCurve(EllipticCurveType.NIST_P256)
                         .setEncoding(EcdsaSignatureEncoding.IEEE_P1363))
-                .build()),
+                .build()
+                .toByteString()),
         // unsupported curve
         ProtoParametersSerialization.create(
             PRIVATE_TYPE_URL,
@@ -518,7 +523,8 @@ public final class EcdsaProtoSerializationTest {
                         .setHashType(HashType.SHA256)
                         .setCurve(EllipticCurveType.CURVE25519)
                         .setEncoding(EcdsaSignatureEncoding.IEEE_P1363))
-                .build()),
+                .build()
+                .toByteString()),
         // unknown encoding
         ProtoParametersSerialization.create(
             PRIVATE_TYPE_URL,
@@ -529,7 +535,8 @@ public final class EcdsaProtoSerializationTest {
                         .setHashType(HashType.SHA256)
                         .setCurve(EllipticCurveType.NIST_P256)
                         .setEncoding(EcdsaSignatureEncoding.UNKNOWN_ENCODING))
-                .build()),
+                .build()
+                .toByteString()),
         // unknown output prefix
         ProtoParametersSerialization.create(
             PRIVATE_TYPE_URL,
@@ -540,16 +547,25 @@ public final class EcdsaProtoSerializationTest {
                         .setHashType(HashType.SHA256)
                         .setCurve(EllipticCurveType.NIST_P256)
                         .setEncoding(EcdsaSignatureEncoding.IEEE_P1363))
-                .build()),
+                .build()
+                .toByteString()),
         // Proto messages start with a VarInt, which always ends with a byte with most
         // significant bit unset. 0x80 is hence invalid.
         ProtoParametersSerialization.create(
             KeyTemplate.newBuilder()
                 .setTypeUrl(PRIVATE_TYPE_URL)
-                .setOutputPrefixType(OutputPrefixType.RAW)
+                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                 .setValue(ByteString.copyFrom(new byte[] {(byte) 0x80}))
                 .build()),
       };
+    } catch (GeneralSecurityException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @DataPoints("invalidParametersSerializations")
+  public static final ProtoParametersSerialization[] invalidParametersSerializations =
+      createInvalidParameters();
 
   @Theory
   public void testParseInvalidParameters_fails(

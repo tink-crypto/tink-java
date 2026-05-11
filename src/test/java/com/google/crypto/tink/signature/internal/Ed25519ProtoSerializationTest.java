@@ -23,13 +23,13 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.proto.Ed25519KeyFormat;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.KeyTemplate;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.signature.Ed25519Parameters;
 import com.google.crypto.tink.signature.Ed25519Parameters.Variant;
 import com.google.crypto.tink.signature.Ed25519PrivateKey;
@@ -110,7 +110,7 @@ public final class Ed25519ProtoSerializationTest {
         ProtoParametersSerialization.create(
             "type.googleapis.com/google.crypto.tink.Ed25519PrivateKey",
             OutputPrefixType.RAW,
-            Ed25519KeyFormat.getDefaultInstance());
+            Ed25519KeyFormat.getDefaultInstance().toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -131,7 +131,7 @@ public final class Ed25519ProtoSerializationTest {
         ProtoParametersSerialization.create(
             "type.googleapis.com/google.crypto.tink.Ed25519PrivateKey",
             variantsMap.getValue(),
-            Ed25519KeyFormat.getDefaultInstance());
+            Ed25519KeyFormat.getDefaultInstance().toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -315,28 +315,36 @@ public final class Ed25519ProtoSerializationTest {
         () -> registry.serializeKey(privateKey, ProtoKeySerialization.class, /* access= */ null));
   }
 
-  @DataPoints("invalidParametersSerializations")
-  public static final ProtoParametersSerialization[] INVALID_PARAMETERS_SERIALIZATIONS =
-      new ProtoParametersSerialization[] {
+  private static ProtoParametersSerialization[] createInvalidParameters() {
+    try {
+      return new ProtoParametersSerialization[] {
         // Unknown output prefix
         ProtoParametersSerialization.create(
             PRIVATE_TYPE_URL,
             OutputPrefixType.UNKNOWN_PREFIX,
-            Ed25519KeyFormat.getDefaultInstance()),
+            Ed25519KeyFormat.getDefaultInstance().toByteString()),
         // Bad Version Number
         ProtoParametersSerialization.create(
             PRIVATE_TYPE_URL,
             OutputPrefixType.RAW,
-            Ed25519KeyFormat.newBuilder().setVersion(1).build()),
+            Ed25519KeyFormat.newBuilder().setVersion(1).build().toByteString()),
         // Proto messages start with a VarInt, which always ends with a byte with most
         // significant bit unset. 0x80 is hence invalid.
         ProtoParametersSerialization.create(
             KeyTemplate.newBuilder()
                 .setTypeUrl(PRIVATE_TYPE_URL)
-                .setOutputPrefixType(OutputPrefixType.RAW)
+                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                 .setValue(ByteString.copyFrom(new byte[] {(byte) 0x80}))
                 .build()),
       };
+    } catch (GeneralSecurityException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @DataPoints("invalidParametersSerializations")
+  public static final ProtoParametersSerialization[] invalidParametersSerializations =
+      createInvalidParameters();
 
   @Theory
   public void testParseInvalidParameters_fails(

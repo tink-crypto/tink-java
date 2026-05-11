@@ -24,6 +24,8 @@ import static org.junit.Assert.assertTrue;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.aead.internal.AesGcmProtoSerialization;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
@@ -31,8 +33,6 @@ import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.proto.CompositeMlDsaClassicalAlgorithm;
 import com.google.crypto.tink.proto.CompositeMlDsaKeyFormat;
 import com.google.crypto.tink.proto.CompositeMlDsaParams;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.Variant;
 import com.google.crypto.tink.signature.CompositeMlDsaPrivateKey;
@@ -158,7 +158,8 @@ public class CompositeMlDsaProtoSerializationTest {
                   .setKeyValue(ByteString.copyFrom(publicKeyMlDsa65ByteArray))
                   .build()
                   .toByteString())
-          .setKeyMaterialType(KeyMaterialType.ASYMMETRIC_PUBLIC)
+          .setKeyMaterialType(
+              com.google.crypto.tink.proto.KeyData.KeyMaterialType.ASYMMETRIC_PUBLIC)
           .build();
   private static final com.google.crypto.tink.proto.KeyData ML_DSA_65_PRIVATE_KEY_DATA =
       com.google.crypto.tink.proto.KeyData.newBuilder()
@@ -176,7 +177,8 @@ public class CompositeMlDsaProtoSerializationTest {
                   .setKeyValue(ByteString.copyFrom(privateKeyMlDsa65SeedByteArray))
                   .build()
                   .toByteString())
-          .setKeyMaterialType(KeyMaterialType.ASYMMETRIC_PRIVATE)
+          .setKeyMaterialType(
+              com.google.crypto.tink.proto.KeyData.KeyMaterialType.ASYMMETRIC_PRIVATE)
           .build();
 
   // Test case from https://www.rfc-editor.org/rfc/rfc8032#page-24
@@ -200,7 +202,8 @@ public class CompositeMlDsaProtoSerializationTest {
                   .setKeyValue(ED25519_PUBLIC_KEY_BYTE_STRING)
                   .build()
                   .toByteString())
-          .setKeyMaterialType(KeyMaterialType.ASYMMETRIC_PUBLIC)
+          .setKeyMaterialType(
+              com.google.crypto.tink.proto.KeyData.KeyMaterialType.ASYMMETRIC_PUBLIC)
           .build();
   private static final com.google.crypto.tink.proto.KeyData ED25519_PRIVATE_KEY_DATA =
       com.google.crypto.tink.proto.KeyData.newBuilder()
@@ -213,7 +216,8 @@ public class CompositeMlDsaProtoSerializationTest {
                   .setKeyValue(ED25519_PRIVATE_KEY_BYTE_STRING)
                   .build()
                   .toByteString())
-          .setKeyMaterialType(KeyMaterialType.ASYMMETRIC_PRIVATE)
+          .setKeyMaterialType(
+              com.google.crypto.tink.proto.KeyData.KeyMaterialType.ASYMMETRIC_PRIVATE)
           .build();
 
   @BeforeClass
@@ -255,7 +259,8 @@ public class CompositeMlDsaProtoSerializationTest {
                   OutputPrefixType.RAW,
                   CompositeMlDsaKeyFormat.newBuilder()
                       .setParams(compositeMlDsa65Ed25519ParamsBuilder)
-                      .build())),
+                      .build()
+                      .toByteString())),
           new ParametersSerializationTestPair(
               CompositeMlDsaParameters.builder()
                   .setMlDsaInstance(CompositeMlDsaParameters.MlDsaInstance.ML_DSA_65)
@@ -267,7 +272,8 @@ public class CompositeMlDsaProtoSerializationTest {
                   OutputPrefixType.TINK,
                   CompositeMlDsaKeyFormat.newBuilder()
                       .setParams(compositeMlDsa65Ed25519ParamsBuilder)
-                      .build())));
+                      .build()
+                      .toByteString())));
     } catch (GeneralSecurityException e) {
       throw new IllegalStateException(e);
     }
@@ -510,9 +516,9 @@ public class CompositeMlDsaProtoSerializationTest {
                 .parseKey(serialization, /* access= */ null));
   }
 
-  @DataPoints("invalidParametersSerializations")
-  public static final List<ProtoParametersSerialization> invalidParametersSerializations =
-      Arrays.asList(
+  private static List<ProtoParametersSerialization> createInvalidParameters() {
+    try {
+      return Arrays.asList(
           // Unknown output prefix
           ProtoParametersSerialization.create(
               PRIVATE_TYPE_URL,
@@ -523,7 +529,8 @@ public class CompositeMlDsaProtoSerializationTest {
                           .setMlDsaInstance(com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_65)
                           .setClassicalAlgorithm(
                               CompositeMlDsaClassicalAlgorithm.CLASSICAL_ALGORITHM_ED25519))
-                  .build()),
+                  .build()
+                  .toByteString()),
           // Invalid version
           ProtoParametersSerialization.create(
               PRIVATE_TYPE_URL,
@@ -535,7 +542,8 @@ public class CompositeMlDsaProtoSerializationTest {
                           .setMlDsaInstance(com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_65)
                           .setClassicalAlgorithm(
                               CompositeMlDsaClassicalAlgorithm.CLASSICAL_ALGORITHM_ED25519))
-                  .build()),
+                  .build()
+                  .toByteString()),
           // Unknown instance
           ProtoParametersSerialization.create(
               PRIVATE_TYPE_URL,
@@ -547,7 +555,8 @@ public class CompositeMlDsaProtoSerializationTest {
                               com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_UNKNOWN_INSTANCE)
                           .setClassicalAlgorithm(
                               CompositeMlDsaClassicalAlgorithm.CLASSICAL_ALGORITHM_ED25519))
-                  .build()),
+                  .build()
+                  .toByteString()),
           // Unknown classical algorithm
           ProtoParametersSerialization.create(
               PRIVATE_TYPE_URL,
@@ -558,19 +567,27 @@ public class CompositeMlDsaProtoSerializationTest {
                           .setMlDsaInstance(com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_65)
                           .setClassicalAlgorithm(
                               CompositeMlDsaClassicalAlgorithm.CLASSICAL_ALGORITHM_UNKNOWN))
-                  .build()),
+                  .build()
+                  .toByteString()),
           // Invalid proto serialization
           ProtoParametersSerialization.create(
-              PRIVATE_TYPE_URL,
-              OutputPrefixType.RAW,
-              ED25519_PUBLIC_KEY_DATA),
+              PRIVATE_TYPE_URL, OutputPrefixType.RAW, ED25519_PUBLIC_KEY_DATA.toByteString()),
           // Invalid type url
           ProtoParametersSerialization.create(
               PUBLIC_TYPE_URL,
               OutputPrefixType.RAW,
               CompositeMlDsaKeyFormat.newBuilder()
                   .setParams(compositeMlDsa65Ed25519ParamsBuilder)
-                  .build()));
+                  .build()
+                  .toByteString()));
+    } catch (GeneralSecurityException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
+  @DataPoints("invalidParametersSerializations")
+  public static final List<ProtoParametersSerialization> invalidParametersSerializations =
+      createInvalidParameters();
 
   @Theory
   public void parseInvalidParameters_throws(
@@ -689,7 +706,8 @@ public class CompositeMlDsaProtoSerializationTest {
                       com.google.crypto.tink.proto.KeyData.newBuilder()
                           .setTypeUrl("type.googleapis.com/google.crypto.tink.AesGcmKey")
                           .setValue(ByteString.copyFrom(new byte[16]))
-                          .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
+                          .setKeyMaterialType(
+                              com.google.crypto.tink.proto.KeyData.KeyMaterialType.SYMMETRIC)
                           .build())
                   .build()
                   .toByteString(),
@@ -829,7 +847,9 @@ public class CompositeMlDsaProtoSerializationTest {
                                   .setKeyValue(ByteString.copyFrom(privateKeyMlDsa65SeedByteArray))
                                   .build()
                                   .toByteString())
-                          .setKeyMaterialType(KeyMaterialType.ASYMMETRIC_PRIVATE)
+                          .setKeyMaterialType(
+                              com.google.crypto.tink.proto.KeyData.KeyMaterialType
+                                  .ASYMMETRIC_PRIVATE)
                           .build())
                   .setClassicalPrivateKey(ED25519_PRIVATE_KEY_DATA)
                   .build()
@@ -862,7 +882,9 @@ public class CompositeMlDsaProtoSerializationTest {
                                   .setKeyValue(ByteString.copyFrom(privateKeyMlDsa65SeedByteArray))
                                   .build()
                                   .toByteString())
-                          .setKeyMaterialType(KeyMaterialType.ASYMMETRIC_PRIVATE)
+                          .setKeyMaterialType(
+                              com.google.crypto.tink.proto.KeyData.KeyMaterialType
+                                  .ASYMMETRIC_PRIVATE)
                           .build())
                   .setClassicalPrivateKey(ED25519_PRIVATE_KEY_DATA)
                   .build()
@@ -895,7 +917,9 @@ public class CompositeMlDsaProtoSerializationTest {
                                   .setKeyValue(ByteString.copyFrom(new byte[] {(byte) 0x80}))
                                   .build()
                                   .toByteString())
-                          .setKeyMaterialType(KeyMaterialType.ASYMMETRIC_PRIVATE)
+                          .setKeyMaterialType(
+                              com.google.crypto.tink.proto.KeyData.KeyMaterialType
+                                  .ASYMMETRIC_PRIVATE)
                           .build())
                   .setClassicalPrivateKey(ED25519_PRIVATE_KEY_DATA)
                   .build()
@@ -913,7 +937,8 @@ public class CompositeMlDsaProtoSerializationTest {
                       com.google.crypto.tink.proto.KeyData.newBuilder()
                           .setTypeUrl("type.googleapis.com/google.crypto.tink.AesGcmKey")
                           .setValue(ByteString.copyFrom(new byte[16]))
-                          .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
+                          .setKeyMaterialType(
+                              com.google.crypto.tink.proto.KeyData.KeyMaterialType.SYMMETRIC)
                           .build())
                   .setClassicalPrivateKey(ED25519_PRIVATE_KEY_DATA)
                   .build()
@@ -932,7 +957,8 @@ public class CompositeMlDsaProtoSerializationTest {
                       com.google.crypto.tink.proto.KeyData.newBuilder()
                           .setTypeUrl("type.googleapis.com/google.crypto.tink.AesGcmKey")
                           .setValue(ByteString.copyFrom(new byte[16]))
-                          .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
+                          .setKeyMaterialType(
+                              com.google.crypto.tink.proto.KeyData.KeyMaterialType.SYMMETRIC)
                           .build())
                   .build()
                   .toByteString(),

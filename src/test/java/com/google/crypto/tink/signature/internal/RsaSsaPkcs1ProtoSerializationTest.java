@@ -23,13 +23,14 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
+import com.google.crypto.tink.internal.ProtoConversions;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.proto.HashType;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.KeyTemplate;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.proto.RsaSsaPkcs1Params;
 import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
@@ -171,7 +172,8 @@ public final class RsaSsaPkcs1ProtoSerializationTest {
                 .setParams(RsaSsaPkcs1Params.newBuilder().setHashType(HashType.SHA256).build())
                 .setModulusSizeInBits(2048)
                 .setPublicExponent(ByteString.copyFrom(EXPONENT_BYTES))
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -199,7 +201,8 @@ public final class RsaSsaPkcs1ProtoSerializationTest {
                 .setParams(RsaSsaPkcs1Params.newBuilder().setHashType(HashType.SHA512).build())
                 .setModulusSizeInBits(2048)
                 .setPublicExponent(ByteString.copyFrom(EXPONENT_BYTES))
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -227,7 +230,8 @@ public final class RsaSsaPkcs1ProtoSerializationTest {
                 .setParams(RsaSsaPkcs1Params.newBuilder().setHashType(HashType.SHA384).build())
                 .setModulusSizeInBits(2048)
                 .setPublicExponent(ByteString.copyFrom(EXPONENT_BYTES))
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -255,7 +259,8 @@ public final class RsaSsaPkcs1ProtoSerializationTest {
                 .setParams(RsaSsaPkcs1Params.newBuilder().setHashType(HashType.SHA256).build())
                 .setModulusSizeInBits(2048)
                 .setPublicExponent(ByteString.copyFrom(EXPONENT_BYTES))
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -549,7 +554,7 @@ public final class RsaSsaPkcs1ProtoSerializationTest {
         ProtoKeySerialization.create(
             keyDataOfExistingKey.getTypeUrl(),
             keyDataOfExistingKey.getValue(),
-            keyDataOfExistingKey.getKeyMaterialType(),
+            ProtoConversions.fromProto(keyDataOfExistingKey.getKeyMaterialType()),
             OutputPrefixType.RAW,
             /* idRequirement= */ null);
 
@@ -630,9 +635,9 @@ public final class RsaSsaPkcs1ProtoSerializationTest {
         () -> registry.serializeKey(privateKey, ProtoKeySerialization.class, /* access= */ null));
   }
 
-  @DataPoints("invalidParametersSerializations")
-  public static final ProtoParametersSerialization[] INVALID_PARAMETERS_SERIALIZATIONS =
-      new ProtoParametersSerialization[] {
+  private static ProtoParametersSerialization[] createInvalidParameters() {
+    try {
+      return new ProtoParametersSerialization[] {
         // invalid hash type
         ProtoParametersSerialization.create(
             PRIVATE_TYPE_URL,
@@ -641,7 +646,8 @@ public final class RsaSsaPkcs1ProtoSerializationTest {
                 .setParams(RsaSsaPkcs1Params.newBuilder().setHashType(HashType.SHA1).build())
                 .setModulusSizeInBits(2048)
                 .setPublicExponent(ByteString.copyFrom(EXPONENT_BYTES))
-                .build()),
+                .build()
+                .toByteString()),
         // too small public exponent
         ProtoParametersSerialization.create(
             PRIVATE_TYPE_URL,
@@ -650,7 +656,8 @@ public final class RsaSsaPkcs1ProtoSerializationTest {
                 .setParams(RsaSsaPkcs1Params.newBuilder().setHashType(HashType.SHA256).build())
                 .setModulusSizeInBits(2048)
                 .setPublicExponent(ByteString.copyFrom(new byte[] {(byte) 0x03}))
-                .build()),
+                .build()
+                .toByteString()),
         // too small modulus size in bits
         ProtoParametersSerialization.create(
             PRIVATE_TYPE_URL,
@@ -659,7 +666,8 @@ public final class RsaSsaPkcs1ProtoSerializationTest {
                 .setParams(RsaSsaPkcs1Params.newBuilder().setHashType(HashType.SHA256).build())
                 .setModulusSizeInBits(123)
                 .setPublicExponent(ByteString.copyFrom(EXPONENT_BYTES))
-                .build()),
+                .build()
+                .toByteString()),
         // unknown output prefix
         ProtoParametersSerialization.create(
             PRIVATE_TYPE_URL,
@@ -668,16 +676,25 @@ public final class RsaSsaPkcs1ProtoSerializationTest {
                 .setParams(RsaSsaPkcs1Params.newBuilder().setHashType(HashType.SHA256).build())
                 .setModulusSizeInBits(2048)
                 .setPublicExponent(ByteString.copyFrom(EXPONENT_BYTES))
-                .build()),
+                .build()
+                .toByteString()),
         // Proto messages start with a VarInt, which always ends with a byte with most
         // significant bit unset. 0x80 is hence invalid.
         ProtoParametersSerialization.create(
             KeyTemplate.newBuilder()
                 .setTypeUrl(PRIVATE_TYPE_URL)
-                .setOutputPrefixType(OutputPrefixType.RAW)
+                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                 .setValue(ByteString.copyFrom(new byte[] {(byte) 0x80}))
                 .build()),
       };
+    } catch (GeneralSecurityException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @DataPoints("invalidParametersSerializations")
+  public static final ProtoParametersSerialization[] invalidParametersSerializations =
+      createInvalidParameters();
 
   @Theory
   public void testParseInvalidParameters_fails(

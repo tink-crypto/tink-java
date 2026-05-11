@@ -24,12 +24,12 @@ import static org.junit.Assert.assertTrue;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.KeyTemplate;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.proto.SlhDsaKeyFormat;
 import com.google.crypto.tink.proto.SlhDsaParams;
 import com.google.crypto.tink.signature.SlhDsaParameters;
@@ -95,9 +95,9 @@ public class SlhDsaProtoSerializationTest {
     }
   }
 
-  @DataPoints("parametersSerializationTestPairList")
-  public static final List<ParametersSerializationTestPair> parametersSerializationTestPairList =
-      Arrays.asList(
+  private static List<ParametersSerializationTestPair> createParametersSerializationTestPairs() {
+    try {
+      return Arrays.asList(
           new ParametersSerializationTestPair(
               SlhDsaParameters.createSlhDsaWithSha2And128S(Variant.NO_PREFIX),
               ProtoParametersSerialization.create(
@@ -110,7 +110,8 @@ public class SlhDsaProtoSerializationTest {
                               .setHashType(com.google.crypto.tink.proto.SlhDsaHashType.SHA2)
                               .setSigType(
                                   com.google.crypto.tink.proto.SlhDsaSignatureType.SMALL_SIGNATURE))
-                      .build())),
+                      .build()
+                      .toByteString())),
           new ParametersSerializationTestPair(
               SlhDsaParameters.createSlhDsaWithSha2And128S(Variant.TINK),
               ProtoParametersSerialization.create(
@@ -123,7 +124,16 @@ public class SlhDsaProtoSerializationTest {
                               .setHashType(com.google.crypto.tink.proto.SlhDsaHashType.SHA2)
                               .setSigType(
                                   com.google.crypto.tink.proto.SlhDsaSignatureType.SMALL_SIGNATURE))
-                      .build())));
+                      .build()
+                      .toByteString())));
+    } catch (GeneralSecurityException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
+  @DataPoints("parametersSerializationTestPairList")
+  public static final List<ParametersSerializationTestPair> parametersSerializationTestPairList =
+      createParametersSerializationTestPairs();
 
   @Theory
   public void serializeParseParameters_equal(
@@ -323,9 +333,9 @@ public class SlhDsaProtoSerializationTest {
         GeneralSecurityException.class, () -> registry.parseKey(serialization, /* access= */ null));
   }
 
-  @DataPoints("invalidParametersSerializations")
-  public static final List<ProtoParametersSerialization> invalidParametersSerializations =
-      Arrays.asList(
+  private static List<ProtoParametersSerialization> createInvalidParameters() {
+    try {
+      return Arrays.asList(
           // Unknown output prefix
           ProtoParametersSerialization.create(
               PRIVATE_TYPE_URL,
@@ -337,7 +347,8 @@ public class SlhDsaProtoSerializationTest {
                           .setHashType(com.google.crypto.tink.proto.SlhDsaHashType.SHA2)
                           .setSigType(
                               com.google.crypto.tink.proto.SlhDsaSignatureType.SMALL_SIGNATURE))
-                  .build()),
+                  .build()
+                  .toByteString()),
           // Invalid version
           ProtoParametersSerialization.create(
               PRIVATE_TYPE_URL,
@@ -350,7 +361,8 @@ public class SlhDsaProtoSerializationTest {
                           .setHashType(com.google.crypto.tink.proto.SlhDsaHashType.SHA2)
                           .setSigType(
                               com.google.crypto.tink.proto.SlhDsaSignatureType.SMALL_SIGNATURE))
-                  .build()),
+                  .build()
+                  .toByteString()),
           // Unsupported key size
           ProtoParametersSerialization.create(
               PRIVATE_TYPE_URL,
@@ -362,12 +374,13 @@ public class SlhDsaProtoSerializationTest {
                           .setHashType(com.google.crypto.tink.proto.SlhDsaHashType.SHA2)
                           .setSigType(
                               com.google.crypto.tink.proto.SlhDsaSignatureType.SMALL_SIGNATURE))
-                  .build()),
+                  .build()
+                  .toByteString()),
           // Invalid proto serialization
           ProtoParametersSerialization.create(
               KeyTemplate.newBuilder()
                   .setTypeUrl(PRIVATE_TYPE_URL)
-                  .setOutputPrefixType(OutputPrefixType.RAW)
+                  .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                   .setValue(ByteString.copyFrom(new byte[] {(byte) 0x80}))
                   .build()),
           // Invalid type url (which will cause the wrong parser being invoked, and that parser will
@@ -382,7 +395,16 @@ public class SlhDsaProtoSerializationTest {
                           .setHashType(com.google.crypto.tink.proto.SlhDsaHashType.SHA2)
                           .setSigType(
                               com.google.crypto.tink.proto.SlhDsaSignatureType.SMALL_SIGNATURE))
-                  .build()));
+                  .build()
+                  .toByteString()));
+    } catch (GeneralSecurityException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
+  @DataPoints("invalidParametersSerializations")
+  public static final List<ProtoParametersSerialization> invalidParametersSerializations =
+      createInvalidParameters();
 
   @Theory
   public void parseInvalidParameters_throws(
