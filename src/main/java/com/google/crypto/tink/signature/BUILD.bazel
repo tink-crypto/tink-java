@@ -1015,6 +1015,7 @@ android_library(
         ":ml_dsa_parameters-android",
         ":rsa_ssa_pkcs1_parameters-android",
         ":rsa_ssa_pss_parameters-android",
+        ":slh_dsa_parameters-android",
         "//src/main/java/com/google/crypto/tink/internal:tink_bug_exception-android",
     ],
 )
@@ -1028,6 +1029,7 @@ java_library(
         ":ml_dsa_parameters",
         ":rsa_ssa_pkcs1_parameters",
         ":rsa_ssa_pss_parameters",
+        ":slh_dsa_parameters",
         "//src/main/java/com/google/crypto/tink/internal:tink_bug_exception",
     ],
 )

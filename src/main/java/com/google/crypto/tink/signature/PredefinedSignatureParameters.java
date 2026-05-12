@@ -320,5 +320,21 @@ public final class PredefinedSignatureParameters {
               MlDsaParameters.create(
                   MlDsaParameters.MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.TINK));
 
+  /**
+   * A {@link Parameters} object that generates new instances of {@link SlhDsaPrivateKey} objects
+   * with the following parameters:
+   *
+   * <ul>
+   *   <li>Hash type: SHA-2
+   *   <li>Private key size: 64 bytes
+   *   <li>Signature type: Small
+   *   <li>Prefix type: {@link OutputPrefixType.TINK}
+   * </ul>
+   */
+  public static final SlhDsaParameters SLH_DSA_SHA2_128S =
+      exceptionIsBug(
+          () ->
+              SlhDsaParameters.createSlhDsaWithSha2And128S(SlhDsaParameters.Variant.TINK));
+
   private PredefinedSignatureParameters() {}
 }

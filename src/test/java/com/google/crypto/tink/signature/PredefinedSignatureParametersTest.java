@@ -21,7 +21,11 @@ import static com.google.common.truth.TruthJUnit.assume;
 
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.signature.internal.MlDsaVerifyConscrypt;
+import com.google.crypto.tink.signature.internal.SlhDsaVerifyConscrypt;
 import com.google.crypto.tink.testing.TestUtil;
+import java.security.Security;
+import org.conscrypt.Conscrypt;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -32,12 +36,25 @@ import org.junit.runner.RunWith;
 
 @RunWith(Theories.class)
 public final class PredefinedSignatureParametersTest {
+  private static boolean conscryptIsAvailable() {
+    try {
+      return Conscrypt.isAvailable();
+    } catch (Throwable e) {
+      return false;
+    }
+  }
+
   @BeforeClass
   public static void setUp() throws Exception {
     SignatureConfig.register();
+    if (!TestUtil.isAndroid() && conscryptIsAvailable()) {
+      Security.addProvider(Conscrypt.newProvider());
+      MlDsaSignKeyManager.registerPair();
+      SlhDsaSignKeyManager.registerPair();
+    }
   }
 
-  @DataPoints("AllParameters")
+  @DataPoints("AllClassicalParameters")
   public static final SignatureParameters[] TEMPLATES =
       new SignatureParameters[] {
         PredefinedSignatureParameters.ECDSA_P256,
@@ -57,8 +74,8 @@ public final class PredefinedSignatureParametersTest {
       };
 
   @Theory
-  public void testInstantiation(@FromDataPoints("AllParameters") SignatureParameters parameters)
-      throws Exception {
+  public void testClassicalInstantiation(
+      @FromDataPoints("AllClassicalParameters") SignatureParameters parameters) throws Exception {
     if (TestUtil.isTsan()) {
       assume().that(parameters).isInstanceOf(Ed25519Parameters.class);
     }
@@ -68,7 +85,7 @@ public final class PredefinedSignatureParametersTest {
   }
 
   @Test
-  public void testTypes() throws Exception {
+  public void testClassicalTypes() throws Exception {
     assertThat(PredefinedSignatureParameters.ECDSA_P256).isNotNull();
     assertThat(PredefinedSignatureParameters.ECDSA_P384).isNotNull();
     assertThat(PredefinedSignatureParameters.ECDSA_P521).isNotNull();
@@ -84,5 +101,35 @@ public final class PredefinedSignatureParametersTest {
     assertThat(PredefinedSignatureParameters.RSA_SSA_PKCS1_4096_SHA512_F4).isNotNull();
     assertThat(PredefinedSignatureParameters.RSA_SSA_PSS_3072_SHA256_SHA256_32_F4).isNotNull();
     assertThat(PredefinedSignatureParameters.RSA_SSA_PSS_4096_SHA512_SHA512_64_F4).isNotNull();
+  }
+
+  @DataPoints("AllPqcParameters")
+  public static final SignatureParameters[] PQC_TEMPLATES =
+      new SignatureParameters[] {
+        PredefinedSignatureParameters.ML_DSA_65, PredefinedSignatureParameters.SLH_DSA_SHA2_128S,
+      };
+
+  @Theory
+  public void testPqcInstantiation(
+      @FromDataPoints("AllPqcParameters") SignatureParameters parameters) throws Exception {
+    if (TestUtil.isAndroid() || !conscryptIsAvailable()) {
+      System.out.println(
+          "testPqcInstantiation doesn't work on Android or without Conscrypt, skipping");
+      return;
+    }
+    if (!SlhDsaVerifyConscrypt.isSupported() || !MlDsaVerifyConscrypt.isSupported()) {
+      System.out.println(
+          "testPqcInstantion requires a version of Conscrypt that supports SLH-DSA and ML-DSA.");
+      return;
+    }
+
+    Key key = KeysetHandle.generateNew(parameters).getAt(0).getKey();
+    assertThat(key.getParameters()).isEqualTo(parameters);
+  }
+
+  @Test
+  public void testPqcTypes() throws Exception {
+    assertThat(PredefinedSignatureParameters.ML_DSA_65).isNotNull();
+    assertThat(PredefinedSignatureParameters.SLH_DSA_SHA2_128S).isNotNull();
   }
 }
