@@ -23,13 +23,13 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.daead.AesSivKey;
 import com.google.crypto.tink.daead.AesSivParameters;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
@@ -77,7 +77,10 @@ public final class AesSivProtoSerializationTest {
         ProtoParametersSerialization.create(
             "type.googleapis.com/google.crypto.tink.AesSivKey",
             OutputPrefixType.RAW,
-            com.google.crypto.tink.proto.AesSivKeyFormat.newBuilder().setKeySize(32).build());
+            com.google.crypto.tink.proto.AesSivKeyFormat.newBuilder()
+                .setKeySize(32)
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -100,7 +103,10 @@ public final class AesSivProtoSerializationTest {
         ProtoParametersSerialization.create(
             "type.googleapis.com/google.crypto.tink.AesSivKey",
             OutputPrefixType.TINK,
-            com.google.crypto.tink.proto.AesSivKeyFormat.newBuilder().setKeySize(32).build());
+            com.google.crypto.tink.proto.AesSivKeyFormat.newBuilder()
+                .setKeySize(32)
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -123,7 +129,10 @@ public final class AesSivProtoSerializationTest {
         ProtoParametersSerialization.create(
             "type.googleapis.com/google.crypto.tink.AesSivKey",
             OutputPrefixType.CRUNCHY,
-            com.google.crypto.tink.proto.AesSivKeyFormat.newBuilder().setKeySize(32).build());
+            com.google.crypto.tink.proto.AesSivKeyFormat.newBuilder()
+                .setKeySize(32)
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -297,9 +306,9 @@ public final class AesSivProtoSerializationTest {
         () -> registry.serializeKey(key, ProtoKeySerialization.class, null));
   }
 
-  @DataPoints("invalidParametersSerializations")
-  public static final ProtoParametersSerialization[] INVALID_PARAMETERS_SERIALIZATIONS =
-      new ProtoParametersSerialization[] {
+  private static ProtoParametersSerialization[] createInvalidParameters() {
+    try {
+      return new ProtoParametersSerialization[] {
         // Bad version number
         ProtoParametersSerialization.create(
             TYPE_URL,
@@ -307,18 +316,33 @@ public final class AesSivProtoSerializationTest {
             com.google.crypto.tink.proto.AesSivKeyFormat.newBuilder()
                 .setVersion(1)
                 .setKeySize(32)
-                .build()),
+                .build()
+                .toByteString()),
         // Bad key size
         ProtoParametersSerialization.create(
             TYPE_URL,
             OutputPrefixType.RAW,
-            com.google.crypto.tink.proto.AesSivKeyFormat.newBuilder().setKeySize(16).build()),
+            com.google.crypto.tink.proto.AesSivKeyFormat.newBuilder()
+                .setKeySize(16)
+                .build()
+                .toByteString()),
         // Unknown output prefix
         ProtoParametersSerialization.create(
             TYPE_URL,
             OutputPrefixType.UNKNOWN_PREFIX,
-            com.google.crypto.tink.proto.AesSivKeyFormat.newBuilder().setKeySize(32).build()),
+            com.google.crypto.tink.proto.AesSivKeyFormat.newBuilder()
+                .setKeySize(32)
+                .build()
+                .toByteString()),
       };
+    } catch (GeneralSecurityException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @DataPoints("invalidParametersSerializations")
+  public static final ProtoParametersSerialization[] invalidParametersSerializations =
+      createInvalidParameters();
 
   @Theory
   public void testParseInvalidParameters_fails(

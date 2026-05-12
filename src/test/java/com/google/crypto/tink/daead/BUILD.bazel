@@ -225,9 +225,9 @@ java_test(
     srcs = ["DeterministicAeadConfigurationV0Test.java"],
     deps = [
         "//proto:aes_siv_java_proto",
-        "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:deterministic_aead",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization",
         "//src/main/java/com/google/crypto/tink:registry_cluster",
         "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
         "//src/main/java/com/google/crypto/tink/daead:aes_siv_key",
