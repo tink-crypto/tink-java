@@ -23,6 +23,8 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
@@ -31,9 +33,7 @@ import com.google.crypto.tink.proto.HpkeKdf;
 import com.google.crypto.tink.proto.HpkeKem;
 import com.google.crypto.tink.proto.HpkeKeyFormat;
 import com.google.crypto.tink.proto.HpkeParams;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.KeyTemplate;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.subtle.Random;
 import com.google.crypto.tink.testing.TestUtil;
@@ -215,7 +215,9 @@ public final class HpkeProtoSerializationTest {
     HpkeKeyFormat format = HpkeKeyFormat.newBuilder().setParams(protoParams).build();
     ProtoParametersSerialization serialization =
         ProtoParametersSerialization.create(
-            "type.googleapis.com/google.crypto.tink.HpkePrivateKey", OutputPrefixType.RAW, format);
+            "type.googleapis.com/google.crypto.tink.HpkePrivateKey",
+            OutputPrefixType.RAW,
+            format.toByteString());
 
     MutableSerializationRegistry registry = new MutableSerializationRegistry();
     assertThat(registry.hasParserForParameters(serialization)).isFalse();
@@ -258,7 +260,7 @@ public final class HpkeProtoSerializationTest {
         ProtoParametersSerialization.create(
             "type.googleapis.com/google.crypto.tink.HpkePrivateKey",
             variantTuple.outputPrefixType,
-            format);
+            format.toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -558,9 +560,9 @@ public final class HpkeProtoSerializationTest {
         () -> registry.serializeKey(privateKey, ProtoKeySerialization.class, /* access= */ null));
   }
 
-  @DataPoints("invalidParametersSerializations")
-  public static final ProtoParametersSerialization[] INVALID_PARAMETERS_SERIALIZATIONS =
-      new ProtoParametersSerialization[] {
+  private static ProtoParametersSerialization[] createInvalidParameters() {
+    try {
+      return new ProtoParametersSerialization[] {
         // Unknown output prefix.
         ProtoParametersSerialization.create(
             PRIVATE_TYPE_URL,
@@ -568,7 +570,8 @@ public final class HpkeProtoSerializationTest {
             HpkeKeyFormat.newBuilder()
                 .setParams(
                     createHpkeProtoParams(KEMS[0].kemProto, KDFS[0].kdfProto, AEADS[0].aeadProto))
-                .build()),
+                .build()
+                .toByteString()),
         // Unknown KEM.
         ProtoParametersSerialization.create(
             PRIVATE_TYPE_URL,
@@ -577,7 +580,8 @@ public final class HpkeProtoSerializationTest {
                 .setParams(
                     createHpkeProtoParams(
                         HpkeKem.KEM_UNKNOWN, KDFS[0].kdfProto, AEADS[0].aeadProto))
-                .build()),
+                .build()
+                .toByteString()),
         // Unknown KDF.
         ProtoParametersSerialization.create(
             PRIVATE_TYPE_URL,
@@ -586,7 +590,8 @@ public final class HpkeProtoSerializationTest {
                 .setParams(
                     createHpkeProtoParams(
                         KEMS[0].kemProto, HpkeKdf.KDF_UNKNOWN, AEADS[0].aeadProto))
-                .build()),
+                .build()
+                .toByteString()),
         // Unknown AEAD.
         ProtoParametersSerialization.create(
             PRIVATE_TYPE_URL,
@@ -595,16 +600,25 @@ public final class HpkeProtoSerializationTest {
                 .setParams(
                     createHpkeProtoParams(
                         KEMS[0].kemProto, KDFS[0].kdfProto, HpkeAead.AEAD_UNKNOWN))
-                .build()),
+                .build()
+                .toByteString()),
         // Proto messages start with a VarInt, which always ends with a byte with most
         // significant bit unset. 0x80 is hence invalid.
         ProtoParametersSerialization.create(
             KeyTemplate.newBuilder()
                 .setTypeUrl(PRIVATE_TYPE_URL)
-                .setOutputPrefixType(OutputPrefixType.RAW)
+                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                 .setValue(ByteString.copyFrom(new byte[] {(byte) 0x80}))
                 .build()),
       };
+    } catch (GeneralSecurityException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @DataPoints("invalidParametersSerializations")
+  public static final ProtoParametersSerialization[] invalidParametersSerializations =
+      createInvalidParameters();
 
   @Theory
   public void parseInvalidParameters_fails(

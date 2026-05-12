@@ -23,13 +23,13 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.prf.HkdfPrfKey;
 import com.google.crypto.tink.prf.HkdfPrfParameters;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
@@ -109,7 +109,8 @@ public final class HkdfPrfProtoSerializationTest {
                         .setHash(hashType.proto)
                         .setSalt(ByteString.copyFrom(salt.toByteArray()))
                         .build())
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -198,9 +199,9 @@ public final class HkdfPrfProtoSerializationTest {
     assertThrows(GeneralSecurityException.class, () -> registry.parseKey(serialization, null));
   }
 
-  @DataPoints("invalidParametersSerializations")
-  public static final ProtoParametersSerialization[] INVALID_PARAMETERS_SERIALIZATIONS =
-      new ProtoParametersSerialization[] {
+  private static ProtoParametersSerialization[] createInvalidParameters() {
+    try {
+      return new ProtoParametersSerialization[] {
         // Invalid type URL.
         ProtoParametersSerialization.create(
             "i.am.a.random.type.url",
@@ -211,7 +212,8 @@ public final class HkdfPrfProtoSerializationTest {
                     com.google.crypto.tink.proto.HkdfPrfParams.newBuilder()
                         .setHash(com.google.crypto.tink.proto.HashType.SHA256)
                         .build())
-                .build()),
+                .build()
+                .toByteString()),
         // Invalid output prefix type.
         ProtoParametersSerialization.create(
             TYPE_URL,
@@ -222,7 +224,8 @@ public final class HkdfPrfProtoSerializationTest {
                     com.google.crypto.tink.proto.HkdfPrfParams.newBuilder()
                         .setHash(com.google.crypto.tink.proto.HashType.SHA256)
                         .build())
-                .build()),
+                .build()
+                .toByteString()),
         // Key size is too small.
         ProtoParametersSerialization.create(
             TYPE_URL,
@@ -233,7 +236,8 @@ public final class HkdfPrfProtoSerializationTest {
                     com.google.crypto.tink.proto.HkdfPrfParams.newBuilder()
                         .setHash(com.google.crypto.tink.proto.HashType.SHA256)
                         .build())
-                .build()),
+                .build()
+                .toByteString()),
         // Unknown hash type.
         ProtoParametersSerialization.create(
             TYPE_URL,
@@ -244,8 +248,17 @@ public final class HkdfPrfProtoSerializationTest {
                     com.google.crypto.tink.proto.HkdfPrfParams.newBuilder()
                         .setHash(com.google.crypto.tink.proto.HashType.UNKNOWN_HASH)
                         .build())
-                .build()),
+                .build()
+                .toByteString()),
       };
+    } catch (GeneralSecurityException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @DataPoints("invalidParametersSerializations")
+  public static final ProtoParametersSerialization[] invalidParametersSerializations =
+      createInvalidParameters();
 
   @Theory
   public void testParseInvalidParameters_fails(

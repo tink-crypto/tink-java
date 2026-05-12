@@ -21,6 +21,8 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.Registry;
 import com.google.crypto.tink.hybrid.internal.testing.LegacyHybridDecryptKeyManager;
 import com.google.crypto.tink.hybrid.internal.testing.LegacyHybridEncryptKeyManager;
@@ -32,8 +34,6 @@ import com.google.crypto.tink.proto.HpkeKem;
 import com.google.crypto.tink.proto.HpkeParams;
 import com.google.crypto.tink.proto.HpkePrivateKey;
 import com.google.crypto.tink.proto.HpkePublicKey;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.subtle.Bytes;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.protobuf.ByteString;

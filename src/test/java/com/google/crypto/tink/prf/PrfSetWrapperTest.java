@@ -23,6 +23,8 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.Registry;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.internal.LegacyKeyManagerImpl;
@@ -37,8 +39,6 @@ import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
 import com.google.crypto.tink.prf.HkdfPrfParameters.HashType;
 import com.google.crypto.tink.prf.internal.HkdfPrfProtoSerialization;
 import com.google.crypto.tink.proto.HkdfPrfParams;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.errorprone.annotations.Immutable;
@@ -279,7 +279,7 @@ public class PrfSetWrapperTest {
         LegacyKeyManagerImpl.create(
             HkdfPrfKeyManager.getKeyType(),
             Prf.class,
-            KeyMaterialType.SYMMETRIC,
+            com.google.crypto.tink.proto.KeyData.KeyMaterialType.SYMMETRIC,
             com.google.crypto.tink.proto.HkdfPrfKey.parser()),
         true);
   }

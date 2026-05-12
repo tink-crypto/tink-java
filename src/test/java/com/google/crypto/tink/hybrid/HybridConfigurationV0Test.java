@@ -23,6 +23,8 @@ import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.aead.AesGcmParameters;
 import com.google.crypto.tink.aead.internal.AesCtrHmacAeadProtoSerialization;
 import com.google.crypto.tink.aead.internal.AesGcmProtoSerialization;
@@ -40,7 +42,6 @@ import com.google.crypto.tink.hybrid.internal.testing.HybridTestVector;
 import com.google.crypto.tink.internal.BigIntegerEncoding;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.subtle.EllipticCurves;
 import com.google.crypto.tink.subtle.EllipticCurves.PointFormatType;
@@ -265,7 +266,7 @@ public class HybridConfigurationV0Test {
                 .build()
                 .toByteString(),
             KeyMaterialType.ASYMMETRIC_PUBLIC,
-            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            OutputPrefixType.RAW,
             null);
     LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
     KeysetHandle keysetHandle =
@@ -337,7 +338,7 @@ public class HybridConfigurationV0Test {
                 .build()
                 .toByteString(),
             KeyMaterialType.ASYMMETRIC_PRIVATE,
-            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            OutputPrefixType.RAW,
             null);
     LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
     KeysetHandle keysetHandle =
@@ -372,7 +373,7 @@ public class HybridConfigurationV0Test {
                 .build()
                 .toByteString(),
             KeyMaterialType.ASYMMETRIC_PUBLIC,
-            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            OutputPrefixType.RAW,
             null);
     LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
     KeysetHandle keysetHandle =
@@ -415,7 +416,7 @@ public class HybridConfigurationV0Test {
                 .build()
                 .toByteString(),
             KeyMaterialType.ASYMMETRIC_PRIVATE,
-            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            OutputPrefixType.RAW,
             null);
     LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
     KeysetHandle keysetHandle =

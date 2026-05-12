@@ -24,6 +24,8 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.aead.AeadConfig;
 import com.google.crypto.tink.aead.XChaCha20Poly1305Parameters;
 import com.google.crypto.tink.hybrid.EciesParameters;
@@ -43,9 +45,7 @@ import com.google.crypto.tink.proto.EciesAeadHkdfPublicKey;
 import com.google.crypto.tink.proto.EciesHkdfKemParams;
 import com.google.crypto.tink.proto.EllipticCurveType;
 import com.google.crypto.tink.proto.HashType;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.KeyTemplate;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.proto.XChaCha20Poly1305KeyFormat;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.subtle.Random;
@@ -161,7 +161,8 @@ public final class EciesProtoSerializationTest {
     EciesAeadHkdfKeyFormat format =
         EciesAeadHkdfKeyFormat.newBuilder().setParams(protoParams).build();
     ProtoParametersSerialization serialization =
-        ProtoParametersSerialization.create(PRIVATE_TYPE_URL, OutputPrefixType.RAW, format);
+        ProtoParametersSerialization.create(
+            PRIVATE_TYPE_URL, OutputPrefixType.RAW, format.toByteString());
 
     MutableSerializationRegistry registry = new MutableSerializationRegistry();
     assertThat(registry.hasParserForParameters(serialization)).isFalse();
@@ -206,7 +207,7 @@ public final class EciesProtoSerializationTest {
 
     ProtoParametersSerialization serialization =
         ProtoParametersSerialization.create(
-            PRIVATE_TYPE_URL, variantTuple.outputPrefixType, format);
+            PRIVATE_TYPE_URL, variantTuple.outputPrefixType, format.toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -240,7 +241,8 @@ public final class EciesProtoSerializationTest {
         EciesAeadHkdfKeyFormat.newBuilder().setParams(protoParams).build();
 
     ProtoParametersSerialization serialization =
-        ProtoParametersSerialization.create(PRIVATE_TYPE_URL, OutputPrefixType.RAW, format);
+        ProtoParametersSerialization.create(
+            PRIVATE_TYPE_URL, OutputPrefixType.RAW, format.toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -266,15 +268,16 @@ public final class EciesProtoSerializationTest {
         EciesAeadHkdfKeyFormat.newBuilder().setParams(protoParams).build();
 
     ProtoParametersSerialization serialization =
-        ProtoParametersSerialization.create(PRIVATE_TYPE_URL, OutputPrefixType.RAW, format);
+        ProtoParametersSerialization.create(
+            PRIVATE_TYPE_URL, OutputPrefixType.RAW, format.toByteString());
 
     EciesParameters parsed = (EciesParameters) registry.parseParameters(serialization);
     assertThat(parsed.getDemParameters().hasIdRequirement()).isFalse();
   }
 
-  @DataPoints("invalidParametersSerializations")
-  public static final ProtoParametersSerialization[] INVALID_PARAMETERS_SERIALIZATIONS =
-      new ProtoParametersSerialization[] {
+  private static ProtoParametersSerialization[] createInvalidParameters() {
+    try {
+      return new ProtoParametersSerialization[] {
         // Unknown output prefix.
         ProtoParametersSerialization.create(
             PRIVATE_TYPE_URL,
@@ -287,7 +290,8 @@ public final class EciesProtoSerializationTest {
                         EcPointFormat.UNCOMPRESSED,
                         ByteString.copyFrom(SALT.toByteArray()),
                         DEM_KEY_TEMPLATE))
-                .build()),
+                .build()
+                .toByteString()),
         // Unknown Curve.
         ProtoParametersSerialization.create(
             PRIVATE_TYPE_URL,
@@ -300,7 +304,8 @@ public final class EciesProtoSerializationTest {
                         EcPointFormat.UNCOMPRESSED,
                         ByteString.copyFrom(SALT.toByteArray()),
                         DEM_KEY_TEMPLATE))
-                .build()),
+                .build()
+                .toByteString()),
         // CURVE25519 with UNCOMPRESSED.
         ProtoParametersSerialization.create(
             PRIVATE_TYPE_URL,
@@ -313,7 +318,8 @@ public final class EciesProtoSerializationTest {
                         EcPointFormat.UNCOMPRESSED,
                         ByteString.copyFrom(SALT.toByteArray()),
                         DEM_KEY_TEMPLATE))
-                .build()),
+                .build()
+                .toByteString()),
         // Unknown HashType.
         ProtoParametersSerialization.create(
             PRIVATE_TYPE_URL,
@@ -326,7 +332,8 @@ public final class EciesProtoSerializationTest {
                         EcPointFormat.UNCOMPRESSED,
                         ByteString.copyFrom(SALT.toByteArray()),
                         DEM_KEY_TEMPLATE))
-                .build()),
+                .build()
+                .toByteString()),
         // Unknown Point Format.
         ProtoParametersSerialization.create(
             PRIVATE_TYPE_URL,
@@ -339,7 +346,8 @@ public final class EciesProtoSerializationTest {
                         EcPointFormat.UNKNOWN_FORMAT,
                         ByteString.copyFrom(SALT.toByteArray()),
                         DEM_KEY_TEMPLATE))
-                .build()),
+                .build()
+                .toByteString()),
         // Bad dem key template Type URL.
         ProtoParametersSerialization.create(
             PRIVATE_TYPE_URL,
@@ -358,9 +366,10 @@ public final class EciesProtoSerializationTest {
                                     .setVersion(0)
                                     .build()
                                     .toByteString())
-                            .setOutputPrefixType(OutputPrefixType.RAW)
+                            .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                             .build()))
-                .build()),
+                .build()
+                .toByteString()),
         // Bad dem key template value.
         ProtoParametersSerialization.create(
             PRIVATE_TYPE_URL,
@@ -376,18 +385,27 @@ public final class EciesProtoSerializationTest {
                             .setTypeUrl(
                                 "type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key")
                             .setValue(ByteString.copyFrom(new byte[] {(byte) 0x80}))
-                            .setOutputPrefixType(OutputPrefixType.RAW)
+                            .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                             .build()))
-                .build()),
+                .build()
+                .toByteString()),
         // Proto messages start with a VarInt, which always ends with a byte with most
         // significant bit unset. 0x80 is hence invalid.
         ProtoParametersSerialization.create(
             KeyTemplate.newBuilder()
                 .setTypeUrl(PRIVATE_TYPE_URL)
-                .setOutputPrefixType(OutputPrefixType.RAW)
+                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                 .setValue(ByteString.copyFrom(new byte[] {(byte) 0x80}))
                 .build()),
       };
+    } catch (GeneralSecurityException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @DataPoints("invalidParametersSerializations")
+  public static final ProtoParametersSerialization[] invalidParametersSerializations =
+      createInvalidParameters();
 
   @Theory
   public void parseInvalidParameters_fails(
