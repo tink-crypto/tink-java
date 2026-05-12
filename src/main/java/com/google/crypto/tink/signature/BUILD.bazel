@@ -1,4 +1,5 @@
 load("@build_bazel_rules_android//android:rules.bzl", "android_library")
+load("//:internal/java_8_library.bzl", java_library = "java_8_library")
 
 licenses(["notice"])
 
@@ -1304,6 +1305,7 @@ java_library(
         "//src/main/java/com/google/crypto/tink/signature/internal:ml_dsa_proto_serialization",
         "//src/main/java/com/google/crypto/tink/signature/internal:ml_dsa_verify_conscrypt",
         "//src/main/java/com/google/crypto/tink/util:bytes",
+        "//src/main/java/com/google/crypto/tink/util:maps",
         "//src/main/java/com/google/crypto/tink/util:secret_bytes",
         "@maven//:com_google_code_findbugs_jsr305",
     ],
@@ -1327,6 +1329,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink/signature/internal:ml_dsa_proto_serialization-android",
         "//src/main/java/com/google/crypto/tink/signature/internal:ml_dsa_verify_conscrypt-android",
         "//src/main/java/com/google/crypto/tink/util:bytes-android",
+        "//src/main/java/com/google/crypto/tink/util:maps-android",
         "//src/main/java/com/google/crypto/tink/util:secret_bytes-android",
         "@maven//:com_google_code_findbugs_jsr305",
     ],
@@ -1388,6 +1391,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink/signature/internal:slh_dsa_proto_serialization-android",
         "//src/main/java/com/google/crypto/tink/signature/internal:slh_dsa_verify_conscrypt-android",
         "//src/main/java/com/google/crypto/tink/util:bytes-android",
+        "//src/main/java/com/google/crypto/tink/util:maps-android",
         "//src/main/java/com/google/crypto/tink/util:secret_bytes-android",
         "@maven//:com_google_code_findbugs_jsr305",
     ],
@@ -1449,6 +1453,7 @@ java_library(
         "//src/main/java/com/google/crypto/tink/signature/internal:slh_dsa_proto_serialization",
         "//src/main/java/com/google/crypto/tink/signature/internal:slh_dsa_verify_conscrypt",
         "//src/main/java/com/google/crypto/tink/util:bytes",
+        "//src/main/java/com/google/crypto/tink/util:maps",
         "//src/main/java/com/google/crypto/tink/util:secret_bytes",
         "@maven//:com_google_code_findbugs_jsr305",
     ],
@@ -1489,6 +1494,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink:key-android",
         "//src/main/java/com/google/crypto/tink/internal:output_prefix_util-android",
         "//src/main/java/com/google/crypto/tink/util:bytes-android",
+        "//src/main/java/com/google/crypto/tink/util:maps-android",
         "@maven//:com_google_code_findbugs_jsr305",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
@@ -1511,6 +1517,7 @@ java_library(
         "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink/internal:output_prefix_util",
         "//src/main/java/com/google/crypto/tink/util:bytes",
+        "//src/main/java/com/google/crypto/tink/util:maps",
         "@maven//:com_google_code_findbugs_jsr305",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],

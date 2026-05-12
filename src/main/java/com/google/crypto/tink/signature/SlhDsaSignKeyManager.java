@@ -15,6 +15,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 package com.google.crypto.tink.signature;
 
+import static com.google.crypto.tink.util.Maps.entry;
+import static com.google.crypto.tink.util.Maps.ofEntries;
+
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Parameters;
@@ -94,21 +97,24 @@ public final class SlhDsaSignKeyManager {
    */
   @SuppressWarnings({"CheckedExceptionNotThrown", "JdkImmutableCollections"})
   private static Map<String, Parameters> namedParameters() throws GeneralSecurityException {
-    return Map.of(
-        "SLH_DSA_SHA2_128S_TINK",
-        SlhDsaParameters.createSlhDsaWithSha2And128S(SlhDsaParameters.Variant.TINK),
-        "SLH_DSA_SHA2_128S_RAW",
-        SlhDsaParameters.createSlhDsaWithSha2And128S(SlhDsaParameters.Variant.NO_PREFIX));
+    return ofEntries(
+        entry(
+            "SLH_DSA_SHA2_128S_TINK",
+            SlhDsaParameters.createSlhDsaWithSha2And128S(SlhDsaParameters.Variant.TINK)),
+        entry(
+            "SLH_DSA_SHA2_128S_RAW",
+            SlhDsaParameters.createSlhDsaWithSha2And128S(SlhDsaParameters.Variant.NO_PREFIX)));
   }
 
   /**
    * Registers the {@link SlhDsaProtoSerialization}, named parameters, and the key (pair) creator,
    * for now only supporting SLH-DSA-SHA2-128S in TINK and NO_PREFIX veriants. This enables:
+   *
    * <ul>
-   *   <li> parsing and serializing SLH-DSA keys with {@code TinkProtoKeysetFormat}
-   *   <li> creation of new SLH-DSA keys with {@code KeysetHandle#generateEntryFromParameters}
-   *   <li> creation of new SLH-DSA keys with {@code KeysetHandle#generateEntryFromParametersName}
-   *        (currently "SLH_DSA_SHA2_128S_TINK" and "SLH_DSA_SHA2_128S_RAW" available)
+   *   <li>parsing and serializing SLH-DSA keys with {@code TinkProtoKeysetFormat}
+   *   <li>creation of new SLH-DSA keys with {@code KeysetHandle#generateEntryFromParameters}
+   *   <li>creation of new SLH-DSA keys with {@code KeysetHandle#generateEntryFromParametersName}
+   *       (currently "SLH_DSA_SHA2_128S_TINK" and "SLH_DSA_SHA2_128S_RAW" available)
    * </ul>
    *
    * Currently the key creation functionality will only work if the Conscrypt provider was
