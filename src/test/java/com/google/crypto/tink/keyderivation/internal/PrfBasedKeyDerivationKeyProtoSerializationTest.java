@@ -24,6 +24,8 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.aead.AeadConfig;
 import com.google.crypto.tink.aead.XChaCha20Poly1305Parameters;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
@@ -37,9 +39,7 @@ import com.google.crypto.tink.prf.PrfConfig;
 import com.google.crypto.tink.prf.PrfParameters;
 import com.google.crypto.tink.proto.AesCmacPrfKeyFormat;
 import com.google.crypto.tink.proto.KeyData;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.KeyTemplate;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.proto.PrfBasedDeriverKey;
 import com.google.crypto.tink.proto.PrfBasedDeriverKeyFormat;
 import com.google.crypto.tink.proto.PrfBasedDeriverParams;
@@ -101,7 +101,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
                     KeyTemplate.newBuilder()
                         .setTypeUrl("type.googleapis.com/google.crypto.tink.AesCmacPrfKey")
                         .setValue(PRF_KEY_FORMAT_PROTO.toByteString())
-                        .setOutputPrefixType(OutputPrefixType.RAW))
+                        .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW))
                 .setParams(
                     PrfBasedDeriverParams.newBuilder()
                         .setDerivedKeyTemplate(
@@ -109,8 +109,10 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
                                 .setTypeUrl(
                                     "type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key")
                                 .setValue(DERIVED_KEY_FORMAT_PROTO.toByteString())
-                                .setOutputPrefixType(OutputPrefixType.RAW)))
-                .build());
+                                .setOutputPrefixType(
+                                    com.google.crypto.tink.proto.OutputPrefixType.RAW)))
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -137,7 +139,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
                     KeyTemplate.newBuilder()
                         .setTypeUrl("type.googleapis.com/google.crypto.tink.AesCmacPrfKey")
                         .setValue(PRF_KEY_FORMAT_PROTO.toByteString())
-                        .setOutputPrefixType(OutputPrefixType.RAW))
+                        .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW))
                 .setParams(
                     PrfBasedDeriverParams.newBuilder()
                         .setDerivedKeyTemplate(
@@ -145,8 +147,10 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
                                 .setTypeUrl(
                                     "type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key")
                                 .setValue(DERIVED_KEY_FORMAT_PROTO.toByteString())
-                                .setOutputPrefixType(OutputPrefixType.TINK)))
-                .build());
+                                .setOutputPrefixType(
+                                    com.google.crypto.tink.proto.OutputPrefixType.TINK)))
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -203,7 +207,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
                     KeyTemplate.newBuilder()
                         .setTypeUrl("type.googleapis.com/google.crypto.tink.AesCmacPrfKey")
                         .setValue(PRF_KEY_FORMAT_PROTO.toByteString())
-                        .setOutputPrefixType(OutputPrefixType.RAW))
+                        .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW))
                 .setParams(
                     PrfBasedDeriverParams.newBuilder()
                         .setDerivedKeyTemplate(
@@ -211,8 +215,11 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
                                 .setTypeUrl(
                                     "type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key")
                                 .setValue(DERIVED_KEY_FORMAT_PROTO.toByteString())
-                                .setOutputPrefixType(OutputPrefixType.TINK))) // Mismatch: TINK here
-                .build());
+                                .setOutputPrefixType(
+                                    com.google.crypto.tink.proto.OutputPrefixType
+                                        .TINK))) // Mismatch: TINK here
+                .build()
+                .toByteString());
     assertThrows(GeneralSecurityException.class, () -> registry.parseParameters(serialization));
   }
 
@@ -227,7 +234,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
                     KeyTemplate.newBuilder()
                         .setTypeUrl("NonExistentTypeUrl")
                         .setValue(PRF_KEY_FORMAT_PROTO.toByteString())
-                        .setOutputPrefixType(OutputPrefixType.RAW))
+                        .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW))
                 .setParams(
                     PrfBasedDeriverParams.newBuilder()
                         .setDerivedKeyTemplate(
@@ -235,8 +242,10 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
                                 .setTypeUrl(
                                     "type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key")
                                 .setValue(DERIVED_KEY_FORMAT_PROTO.toByteString())
-                                .setOutputPrefixType(OutputPrefixType.RAW)))
-                .build());
+                                .setOutputPrefixType(
+                                    com.google.crypto.tink.proto.OutputPrefixType.RAW)))
+                .build()
+                .toByteString());
     assertThrows(GeneralSecurityException.class, () -> registry.parseParameters(serialization));
   }
 
@@ -251,15 +260,17 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
                     KeyTemplate.newBuilder()
                         .setTypeUrl("type.googleapis.com/google.crypto.tink.AesCmacPrfKey")
                         .setValue(PRF_KEY_FORMAT_PROTO.toByteString())
-                        .setOutputPrefixType(OutputPrefixType.RAW))
+                        .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW))
                 .setParams(
                     PrfBasedDeriverParams.newBuilder()
                         .setDerivedKeyTemplate(
                             KeyTemplate.newBuilder()
                                 .setTypeUrl("Non Existent Type Url")
                                 .setValue(DERIVED_KEY_FORMAT_PROTO.toByteString())
-                                .setOutputPrefixType(OutputPrefixType.RAW)))
-                .build());
+                                .setOutputPrefixType(
+                                    com.google.crypto.tink.proto.OutputPrefixType.RAW)))
+                .build()
+                .toByteString());
     assertThrows(GeneralSecurityException.class, () -> registry.parseParameters(serialization));
   }
 
@@ -274,7 +285,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
                     KeyTemplate.newBuilder()
                         .setTypeUrl("type.googleapis.com/google.crypto.tink.AesCmacPrfKey")
                         .setValue(ByteString.copyFrom(new byte[] {(byte) 0x80}))
-                        .setOutputPrefixType(OutputPrefixType.RAW))
+                        .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW))
                 .setParams(
                     PrfBasedDeriverParams.newBuilder()
                         .setDerivedKeyTemplate(
@@ -282,8 +293,10 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
                                 .setTypeUrl(
                                     "type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key")
                                 .setValue(DERIVED_KEY_FORMAT_PROTO.toByteString())
-                                .setOutputPrefixType(OutputPrefixType.RAW)))
-                .build());
+                                .setOutputPrefixType(
+                                    com.google.crypto.tink.proto.OutputPrefixType.RAW)))
+                .build()
+                .toByteString());
     assertThrows(GeneralSecurityException.class, () -> registry.parseParameters(serialization));
   }
 
@@ -298,7 +311,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
                     KeyTemplate.newBuilder()
                         .setTypeUrl("type.googleapis.com/google.crypto.tink.AesCmacPrfKey")
                         .setValue(PRF_KEY_FORMAT_PROTO.toByteString())
-                        .setOutputPrefixType(OutputPrefixType.RAW))
+                        .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW))
                 .setParams(
                     PrfBasedDeriverParams.newBuilder()
                         .setDerivedKeyTemplate(
@@ -306,8 +319,10 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
                                 .setTypeUrl(
                                     "type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key")
                                 .setValue(ByteString.copyFrom(new byte[] {(byte) 0x80}))
-                                .setOutputPrefixType(OutputPrefixType.RAW)))
-                .build());
+                                .setOutputPrefixType(
+                                    com.google.crypto.tink.proto.OutputPrefixType.RAW)))
+                .build()
+                .toByteString());
     assertThrows(GeneralSecurityException.class, () -> registry.parseParameters(serialization));
   }
 
@@ -322,7 +337,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
                     KeyTemplate.newBuilder()
                         .setTypeUrl("type.googleapis.com/google.crypto.tink.AesCmacPrfKey")
                         .setValue(PRF_KEY_FORMAT_PROTO.toByteString())
-                        .setOutputPrefixType(OutputPrefixType.TINK))
+                        .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.TINK))
                 .setParams(
                     PrfBasedDeriverParams.newBuilder()
                         .setDerivedKeyTemplate(
@@ -330,8 +345,10 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
                                 .setTypeUrl(
                                     "type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key")
                                 .setValue(DERIVED_KEY_FORMAT_PROTO.toByteString())
-                                .setOutputPrefixType(OutputPrefixType.UNKNOWN_PREFIX)))
-                .build());
+                                .setOutputPrefixType(
+                                    com.google.crypto.tink.proto.OutputPrefixType.UNKNOWN_PREFIX)))
+                .build()
+                .toByteString());
     assertThrows(GeneralSecurityException.class, () -> registry.parseParameters(serialization));
   }
 
@@ -349,7 +366,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
     KeyData prfAsKeyData =
         KeyData.newBuilder()
             .setTypeUrl("type.googleapis.com/google.crypto.tink.AesCmacPrfKey")
-            .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
+            .setKeyMaterialType(com.google.crypto.tink.proto.KeyData.KeyMaterialType.SYMMETRIC)
             .setValue(
                 com.google.crypto.tink.proto.AesCmacPrfKey.newBuilder()
                     .setVersion(0)
@@ -370,7 +387,8 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
                             .setTypeUrl(
                                 "type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key")
                             .setValue(DERIVED_KEY_FORMAT_PROTO.toByteString())
-                            .setOutputPrefixType(OutputPrefixType.RAW)))
+                            .setOutputPrefixType(
+                                com.google.crypto.tink.proto.OutputPrefixType.RAW)))
             .build();
 
     ProtoKeySerialization serialization =
@@ -403,7 +421,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
     KeyData prfAsKeyData =
         KeyData.newBuilder()
             .setTypeUrl("type.googleapis.com/google.crypto.tink.AesCmacPrfKey")
-            .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
+            .setKeyMaterialType(com.google.crypto.tink.proto.KeyData.KeyMaterialType.SYMMETRIC)
             .setValue(
                 com.google.crypto.tink.proto.AesCmacPrfKey.newBuilder()
                     .setVersion(0)
@@ -424,7 +442,8 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
                             .setTypeUrl(
                                 "type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key")
                             .setValue(DERIVED_KEY_FORMAT_PROTO.toByteString())
-                            .setOutputPrefixType(OutputPrefixType.TINK)))
+                            .setOutputPrefixType(
+                                com.google.crypto.tink.proto.OutputPrefixType.TINK)))
             .build();
 
     ProtoKeySerialization serialization =
@@ -448,7 +467,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
     KeyData prfAsKeyData =
         KeyData.newBuilder()
             .setTypeUrl("unknown_type_url")
-            .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
+            .setKeyMaterialType(com.google.crypto.tink.proto.KeyData.KeyMaterialType.SYMMETRIC)
             .setValue(ByteString.EMPTY)
             .build();
 
@@ -462,7 +481,8 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
                             .setTypeUrl(
                                 "type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key")
                             .setValue(DERIVED_KEY_FORMAT_PROTO.toByteString())
-                            .setOutputPrefixType(OutputPrefixType.TINK)))
+                            .setOutputPrefixType(
+                                com.google.crypto.tink.proto.OutputPrefixType.TINK)))
             .build();
 
     ProtoKeySerialization serialization =
@@ -483,7 +503,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
     KeyData prfAsKeyData =
         KeyData.newBuilder()
             .setTypeUrl("type.googleapis.com/google.crypto.tink.AesCmacPrfKey")
-            .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
+            .setKeyMaterialType(com.google.crypto.tink.proto.KeyData.KeyMaterialType.SYMMETRIC)
             .setValue(
                 com.google.crypto.tink.proto.AesCmacPrfKey.newBuilder()
                     .setVersion(0)
@@ -503,7 +523,8 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
                         KeyTemplate.newBuilder()
                             .setTypeUrl("unknown_type_url")
                             .setValue(ByteString.EMPTY)
-                            .setOutputPrefixType(OutputPrefixType.TINK)))
+                            .setOutputPrefixType(
+                                com.google.crypto.tink.proto.OutputPrefixType.TINK)))
             .build();
 
     ProtoKeySerialization serialization =
@@ -524,7 +545,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
     KeyData prfAsKeyData =
         KeyData.newBuilder()
             .setTypeUrl("type.googleapis.com/google.crypto.tink.AesCmacPrfKey")
-            .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
+            .setKeyMaterialType(com.google.crypto.tink.proto.KeyData.KeyMaterialType.SYMMETRIC)
             .setValue(
                 com.google.crypto.tink.proto.AesCmacPrfKey.newBuilder()
                     .setVersion(0)
@@ -545,7 +566,8 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
                             .setTypeUrl(
                                 "type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key")
                             .setValue(DERIVED_KEY_FORMAT_PROTO.toByteString())
-                            .setOutputPrefixType(OutputPrefixType.TINK)))
+                            .setOutputPrefixType(
+                                com.google.crypto.tink.proto.OutputPrefixType.TINK)))
             .build();
 
     ProtoKeySerialization serialization =
@@ -575,7 +597,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
     KeyData prfAsKeyData =
         KeyData.newBuilder()
             .setTypeUrl("type.googleapis.com/google.crypto.tink.AesCmacPrfKey")
-            .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
+            .setKeyMaterialType(com.google.crypto.tink.proto.KeyData.KeyMaterialType.SYMMETRIC)
             .setValue(
                 com.google.crypto.tink.proto.AesCmacPrfKey.newBuilder()
                     .setVersion(0)
@@ -596,7 +618,8 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
                             .setTypeUrl(
                                 "type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key")
                             .setValue(DERIVED_KEY_FORMAT_PROTO.toByteString())
-                            .setOutputPrefixType(OutputPrefixType.RAW)))
+                            .setOutputPrefixType(
+                                com.google.crypto.tink.proto.OutputPrefixType.RAW)))
             .build();
 
     ProtoKeySerialization serialization =
