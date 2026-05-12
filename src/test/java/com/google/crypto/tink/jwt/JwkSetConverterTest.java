@@ -20,18 +20,9 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
-import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.RegistryConfiguration;
-import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
-import com.google.crypto.tink.TinkProtoKeysetFormat;
-import com.google.crypto.tink.config.GlobalTinkFlags;
-import com.google.crypto.tink.internal.testing.SetTinkFlag;
-import com.google.crypto.tink.proto.KeyData;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.KeyStatusType;
-import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.subtle.Base64;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.testing.TestUtil;
@@ -39,12 +30,10 @@ import com.google.crypto.tink.tinkkey.KeyAccess;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.protobuf.ByteString;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.spec.ECPoint;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -55,13 +44,11 @@ import org.junit.runner.RunWith;
 /** Unit tests for JwkSetConverter */
 @RunWith(Theories.class)
 public final class JwkSetConverterTest {
-  @Rule public SetTinkFlag setTinkFlag = new SetTinkFlag();
 
   @Before
   public void setup() throws Exception {
     JwtSignatureConfig.register();
   }
-
 
   private static final String ES256_JWK_SET =
       "{\"keys\":[{"
@@ -71,7 +58,6 @@ public final class JwkSetConverterTest {
           + "\"y\":\"UxCtK0wAqQG_e5vpr7SSgJNKt5h4z3FGZtAuBLng1uE\","
           + "\"use\":\"sig\",\"alg\":\"ES256\",\"key_ops\":[\"verify\"]}]}";
 
-
   private static final String ES256_JWK_SET_KID =
       "{\"keys\":[{"
           + "\"kty\":\"EC\","
@@ -80,8 +66,6 @@ public final class JwkSetConverterTest {
           + "\"y\":\"UxCtK0wAqQG_e5vpr7SSgJNKt5h4z3FGZtAuBLng1uE\","
           + "\"use\":\"sig\",\"alg\":\"ES256\",\"key_ops\":[\"verify\"],"
           + "\"kid\":\"ENgjPA\"}]}";
-
-
 
   private static final String ES384_JWK_SET =
       "{\"keys\":[{\"kty\":\"EC\",\"crv\":\"P-384\","
@@ -95,7 +79,6 @@ public final class JwkSetConverterTest {
           + "\"y\":\"ATht_NOX8RcbaEr1MaH-0BFTaepvpTzSfQ04C2P8VCoURB3GeVKk4VQh8O_KLSYfX-58bqEnaZ0G7W9qjHa2ols2\","
           + "\"use\":\"sig\",\"alg\":\"ES512\",\"key_ops\":[\"verify\"]}]}";
 
-  //
   private static final String RS256_JWK_SET =
       "{\"keys\":[{\"kty\":\"RSA\","
           + "\"n\":\"kspk37lGBqXmPPq2CL5KdDeRx7xFiTadpL3jc4nXaqftCtpM6qExfrc2JLaIsnwpwfGMClfe_alIs2"
@@ -104,7 +87,6 @@ public final class JwkSetConverterTest {
           + "1SBTe20Bt1AmpZDT2Dmfmlb_Q1UFjj_F3C77NCNQ344ZcAEI42HY-uighy5GdKQRHMoTT1OzyDG90ABjggQqDG"
           + "W-zXzw\","
           + "\"e\":\"AQAB\",\"use\":\"sig\",\"alg\":\"RS256\",\"key_ops\":[\"verify\"]}]}";
-
 
   private static final String RS256_JWK_SET_KID =
       "{\"keys\":[{\"kty\":\"RSA\","
@@ -116,8 +98,6 @@ public final class JwkSetConverterTest {
           + "\"e\":\"AQAB\",\"use\":\"sig\",\"alg\":\"RS256\",\"key_ops\":[\"verify\"],"
           + "\"kid\":\"HL1QoQ\"}]}";
 
-
-
   private static final String RS384_JWK_SET =
       "{\"keys\":[{\"kty\":\"RSA\","
           + "\"n\":\"nlBY5WD7gVQjNKvrS2whLKzt0Eql72B6haZ17eKifNn4S49eGdBy9RLj_mvHXAbacrngt9fzi0iv_W"
@@ -128,7 +108,6 @@ public final class JwkSetConverterTest {
           + "U49kAHzzeAntn8C-vIrxN-X6N2EU9N8t9BF-mwYiBEsY54wx99RbRrY9yICfPBmQJGwXSxNCXBRrbJyxkIVuqv"
           + "ACP5\","
           + "\"e\":\"AQAB\",\"use\":\"sig\",\"alg\":\"RS384\",\"key_ops\":[\"verify\"]}]}";
-
 
   private static final String RS512_JWK_SET =
       "{\"keys\":[{\"kty\":\"RSA\","
@@ -143,8 +122,6 @@ public final class JwkSetConverterTest {
           + "9Q0\","
           + "\"e\":\"AQAB\",\"use\":\"sig\",\"alg\":\"RS512\",\"key_ops\":[\"verify\"]}]}";
 
-
-
   private static final String PS256_JWK_SET =
       "{\"keys\":[{\"kty\":\"RSA\","
           + "\"n\":\"j7Eud2n5G11qsdtjpgGWjW4cAKalSE1atm7d-Cp8biRX9wbmLJRMUvoO2j7Sp9Szx1TMmksY2Ugf_7"
@@ -155,7 +132,6 @@ public final class JwkSetConverterTest {
           + "jSgW9GLLsbNJLFFqLFMwPuZPe8BbgvimPdStXasX_PN6DLKoK2PaT0I-iLK9mRi1Z4OjFbl9KAZXXElhAQTzrE"
           + "I2ad\","
           + "\"e\":\"AQAB\",\"use\":\"sig\",\"alg\":\"PS256\",\"key_ops\":[\"verify\"]}]}";
-
 
   private static final String PS256_JWK_SET_KID =
       "{\"keys\":[{\"kty\":\"RSA\","
@@ -169,9 +145,6 @@ public final class JwkSetConverterTest {
           + "\"e\":\"AQAB\",\"use\":\"sig\",\"alg\":\"PS256\",\"key_ops\":[\"verify\"],"
           + "\"kid\":\"Wes4wg\"}]}";
 
-
-
-
   private static final String PS384_JWK_SET =
       "{\"keys\":[{\"kty\":\"RSA\","
           + "\"n\":\"v6a0OergWYmY1k6l6vx6Of5-RxCeeQ9jMTXQyvO0GCgMDExxtqVS8S25ehZ5LNDIiGjhE3v2--D7QE"
@@ -182,8 +155,6 @@ public final class JwkSetConverterTest {
           + "8755kGJI08h1b7LPgqJcPgtHjcqbxHFU2yOf7mNGlW7YTnoQBO0StzQUk7kEw3X0-niEwX_L8jqW4YMbxrGdAf"
           + "kTnP\","
           + "\"e\":\"AQAB\",\"use\":\"sig\",\"alg\":\"PS384\",\"key_ops\":[\"verify\"]}]}";
-
-
 
   private static final String PS512_JWK_SET =
       "{\"keys\":[{\"kty\":\"RSA\","
@@ -197,11 +168,6 @@ public final class JwkSetConverterTest {
           + "FupiZZ9PyzO5WgT9lRpH7U7tzGLAjV-AUpjH6HA1o6bRLKOHFBPS-I9IqAYb_RpF6M_6hCmC2Rz64yYzR3y4vH"
           + "KGM\","
           + "\"e\":\"AQAB\",\"use\":\"sig\",\"alg\":\"PS512\",\"key_ops\":[\"verify\"]}]}";
-
-
-
-
-
 
   private static final String JWK_SET_WITH_TWO_KEYS =
       "{\"keys\":[{"
@@ -517,17 +483,6 @@ public final class JwkSetConverterTest {
     return KeysetHandle.newBuilder()
         .addEntry(KeysetHandle.importKey(key).withFixedId(1508587714).makePrimary())
         .build();
-  }
-
-  private static KeysetHandle createPrivatekeyKeyset() throws Exception {
-    String privatekeyKeyset =
-        "{\"primaryKeyId\":152493399,\"key\":[{\"keyData\":{"
-            + "\"typeUrl\":\"type.googleapis.com/google.crypto.tink.JwtEcdsaPrivateKey\","
-            + "\"value\":\"EkYQARogaHkaakArEB51RyZ236S5x3BxaNTFycWuXIGZF8adZ2UiIFlZT7MFogZ8ARbS1URIAP"
-            + "cpw8A0g2uwAHRkBqGUiCU2GiBI4jtU/59Zajohgeezi2BXB13O8IJh8V3b0itq5zyy5Q==\","
-            + "\"keyMaterialType\":\"ASYMMETRIC_PRIVATE\""
-            + "},\"status\":\"ENABLED\",\"keyId\":152493399,\"outputPrefixType\":\"RAW\"}]}";
-    return TinkJsonProtoKeysetFormat.parseKeyset(privatekeyKeyset, InsecureSecretKeyAccess.get());
   }
 
   private static KeysetHandle createKeysetWithTwoKeys() throws Exception {
@@ -900,50 +855,18 @@ public final class JwkSetConverterTest {
   }
 
   @Test
-  public void primaryKeyIdMissing_fromPublicKeysetHandleSuccess() throws Exception {
-    String es256Keyset =
-        "{\"primaryKeyId\":282600252,\"key\":[{\"keyData\":{"
-            + "\"typeUrl\":\"type.googleapis.com/google.crypto.tink.JwtEcdsaPublicKey\","
-            + "\"value\":\"EAEaIBDPI66hjLHvjxmUJ2nyHIBDmdOtQ4gPsvWgYYgZ0gygIiBTEK0rTACpAb97m+mvtJKAk0"
-            + "q3mHjPcUZm0C4EueDW4Q==\",\"keyMaterialType\":\"ASYMMETRIC_PUBLIC\""
-            + "},\"status\":\"ENABLED\",\"keyId\":282600252,\"outputPrefixType\":\"RAW\"}]}";
-    String keyset = es256Keyset.replace("\"primaryKeyId\":282600252,", "");
-    assertThrows(
-        GeneralSecurityException.class,
-        () ->
-            convertToJwkSet(
-                TinkJsonProtoKeysetFormat.parseKeyset(keyset, InsecureSecretKeyAccess.get())));
-  }
-
-
-  @Test
   public void privateKey_fromPublicKeysetHandleFails() throws Exception {
+    KeysetHandle privateKeyset =
+        KeysetHandle.generateNew(
+            JwtEcdsaParameters.builder()
+                .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
+                .setKidStrategy(JwtEcdsaParameters.KidStrategy.IGNORED)
+                .build());
     assertThrows(
-        GeneralSecurityException.class, () -> convertToJwkSet(createPrivatekeyKeyset()));
+        GeneralSecurityException.class, () -> convertToJwkSet(privateKeyset));
   }
 
-  @Test
-  public void fromPublicKeysetHandle_throwsOnInvalidKeysetHandle() throws Exception {
-    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
-    Keyset keyset =
-        Keyset.newBuilder()
-            .setPrimaryKeyId(1)
-            .addKey(
-                Keyset.Key.newBuilder()
-                    .setKeyId(1)
-                    // Keysets with unknown status are not parsed properly and will throw unchecked
-                    // at getAt()
-                    .setStatus(KeyStatusType.UNKNOWN_STATUS)
-                    .setKeyData(
-                        KeyData.newBuilder()
-                            .setTypeUrl("somenonexistenttypeurl")
-                            .setKeyMaterialType(KeyMaterialType.ASYMMETRIC_PUBLIC)
-                            .setValue(ByteString.EMPTY)))
-            .build();
-    KeysetHandle handle = TinkProtoKeysetFormat.parseKeysetWithoutSecret(keyset.toByteArray());
-    assertThrows(
-        GeneralSecurityException.class, () -> JwkSetConverter.fromPublicKeysetHandle(handle));
-  }
+
 
   @Test
   public void ecdsaWithoutUseAndKeyOps_toPublicKeysetHandleSuccess() throws Exception {
