@@ -21,6 +21,8 @@ import static com.google.common.truth.Truth.assertThat;
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.StreamingAead;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
@@ -30,10 +32,8 @@ import com.google.crypto.tink.proto.AesGcmHkdfStreamingKey;
 import com.google.crypto.tink.proto.AesGcmHkdfStreamingParams;
 import com.google.crypto.tink.proto.HashType;
 import com.google.crypto.tink.proto.KeyData;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.KeyStatusType;
 import com.google.crypto.tink.proto.Keyset;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.streamingaead.internal.LegacyAesGcmHkdfStreamingTestKeyManager;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.testing.StreamingTestUtil;
@@ -76,7 +76,7 @@ public class StreamingAeadWrapperLegacyTest {
             .build();
     KeyData keyData =
         KeyData.newBuilder()
-            .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
+            .setKeyMaterialType(com.google.crypto.tink.proto.KeyData.KeyMaterialType.SYMMETRIC)
             .setTypeUrl(TYPE_URL)
             .setValue(protoKey.toByteString())
             .build();
@@ -85,7 +85,7 @@ public class StreamingAeadWrapperLegacyTest {
             .setKeyData(keyData)
             .setStatus(KeyStatusType.ENABLED)
             .setKeyId(42)
-            .setOutputPrefixType(OutputPrefixType.RAW)
+            .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
             .build();
     KeysetHandle keysetHandle =
         TinkProtoKeysetFormat.parseKeyset(
@@ -126,7 +126,7 @@ public class StreamingAeadWrapperLegacyTest {
             .build();
     KeyData keyData =
         KeyData.newBuilder()
-            .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
+            .setKeyMaterialType(com.google.crypto.tink.proto.KeyData.KeyMaterialType.SYMMETRIC)
             .setTypeUrl(TYPE_URL)
             .setValue(protoKey.toByteString())
             .build();
@@ -135,7 +135,7 @@ public class StreamingAeadWrapperLegacyTest {
             .setKeyData(keyData)
             .setStatus(KeyStatusType.ENABLED)
             .setKeyId(42)
-            .setOutputPrefixType(OutputPrefixType.RAW)
+            .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
             .build();
     KeysetHandle legacyKeysKeysetHandle =
         TinkProtoKeysetFormat.parseKeyset(

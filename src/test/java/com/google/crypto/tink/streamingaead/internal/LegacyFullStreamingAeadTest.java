@@ -18,12 +18,12 @@ package com.google.crypto.tink.streamingaead.internal;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.StreamingAead;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.proto.AesGcmHkdfStreamingParams;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.streamingaead.AesGcmHkdfStreamingKey;
 import com.google.crypto.tink.streamingaead.AesGcmHkdfStreamingParameters;
 import com.google.crypto.tink.streamingaead.AesGcmHkdfStreamingParameters.HashType;

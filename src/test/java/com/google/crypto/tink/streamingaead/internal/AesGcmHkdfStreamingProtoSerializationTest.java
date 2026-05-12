@@ -23,12 +23,12 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.proto.HashType;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.streamingaead.AesGcmHkdfStreamingKey;
 import com.google.crypto.tink.streamingaead.AesGcmHkdfStreamingParameters;
 import com.google.crypto.tink.util.SecretBytes;
@@ -93,7 +93,8 @@ public final class AesGcmHkdfStreamingProtoSerializationTest {
                         .setCiphertextSegmentSize(1024 * 1024)
                         .setDerivedKeySize(16)
                         .setHkdfHashType(HashType.SHA256))
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -127,7 +128,8 @@ public final class AesGcmHkdfStreamingProtoSerializationTest {
                         .setCiphertextSegmentSize(1024 * 1024)
                         .setDerivedKeySize(16)
                         .setHkdfHashType(HashType.SHA256))
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -161,7 +163,8 @@ public final class AesGcmHkdfStreamingProtoSerializationTest {
                         .setCiphertextSegmentSize(1024 * 1024)
                         .setDerivedKeySize(32)
                         .setHkdfHashType(HashType.SHA256))
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -195,7 +198,8 @@ public final class AesGcmHkdfStreamingProtoSerializationTest {
                         .setCiphertextSegmentSize(1024 * 1024)
                         .setDerivedKeySize(32)
                         .setHkdfHashType(HashType.SHA512))
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -229,7 +233,8 @@ public final class AesGcmHkdfStreamingProtoSerializationTest {
                         .setCiphertextSegmentSize(512 * 1024)
                         .setDerivedKeySize(32)
                         .setHkdfHashType(HashType.SHA512))
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -264,7 +269,8 @@ public final class AesGcmHkdfStreamingProtoSerializationTest {
                         .setCiphertextSegmentSize(512 * 1024)
                         .setDerivedKeySize(32)
                         .setHkdfHashType(HashType.SHA512))
-                .build());
+                .build()
+                .toByteString());
 
     Parameters parsed = registry.parseParameters(serialization);
     assertThat(parsed).isEqualTo(parameters);
@@ -292,7 +298,8 @@ public final class AesGcmHkdfStreamingProtoSerializationTest {
                         .setCiphertextSegmentSize(512 * 1024)
                         .setDerivedKeySize(32)
                         .setHkdfHashType(HashType.SHA512))
-                .build());
+                .build()
+                .toByteString());
 
     Parameters parsed = registry.parseParameters(serialization);
     assertThat(parsed).isEqualTo(parameters);
@@ -319,15 +326,16 @@ public final class AesGcmHkdfStreamingProtoSerializationTest {
                         .setCiphertextSegmentSize(512 * 1024)
                         .setDerivedKeySize(32)
                         .setHkdfHashType(HashType.SHA512))
-                .build());
+                .build()
+                .toByteString());
 
     Parameters parsed = registry.parseParameters(serialization);
     assertThat(parsed).isEqualTo(parameters);
   }
 
-  @DataPoints("invalidParametersSerializations")
-  public static final ProtoParametersSerialization[] INVALID_PARAMETERS_SERIALIZATIONS =
-      new ProtoParametersSerialization[] {
+  private static ProtoParametersSerialization[] createInvalidParameters() {
+    try {
+      return new ProtoParametersSerialization[] {
         // Key size smaller than derived key size
         ProtoParametersSerialization.create(
             TYPE_URL,
@@ -339,7 +347,8 @@ public final class AesGcmHkdfStreamingProtoSerializationTest {
                         .setCiphertextSegmentSize(512 * 1024)
                         .setDerivedKeySize(32)
                         .setHkdfHashType(HashType.SHA1))
-                .build()),
+                .build()
+                .toByteString()),
         ProtoParametersSerialization.create(
             TYPE_URL,
             OutputPrefixType.RAW,
@@ -350,7 +359,8 @@ public final class AesGcmHkdfStreamingProtoSerializationTest {
                         .setCiphertextSegmentSize(5)
                         .setDerivedKeySize(32)
                         .setHkdfHashType(HashType.SHA1))
-                .build()),
+                .build()
+                .toByteString()),
         ProtoParametersSerialization.create(
             TYPE_URL,
             OutputPrefixType.RAW,
@@ -362,7 +372,8 @@ public final class AesGcmHkdfStreamingProtoSerializationTest {
                         .setCiphertextSegmentSize(1024)
                         .setDerivedKeySize(32)
                         .setHkdfHashType(HashType.SHA1))
-                .build()),
+                .build()
+                .toByteString()),
         // Bad hash type
         ProtoParametersSerialization.create(
             TYPE_URL,
@@ -374,8 +385,17 @@ public final class AesGcmHkdfStreamingProtoSerializationTest {
                         .setCiphertextSegmentSize(5)
                         .setDerivedKeySize(32)
                         .setHkdfHashType(HashType.SHA224))
-                .build())
+                .build()
+                .toByteString())
       };
+    } catch (GeneralSecurityException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @DataPoints("invalidParametersSerializations")
+  public static final ProtoParametersSerialization[] invalidParametersSerializations =
+      createInvalidParameters();
 
   @Theory
   public void testParseInvalidParameters_fails(
