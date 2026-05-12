@@ -39,7 +39,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.protobuf.ByteString;
+import java.math.BigInteger;
 import java.security.GeneralSecurityException;
+import java.security.spec.ECPoint;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -295,165 +297,270 @@ public final class JwkSetConverterTest {
   }
 
   private static KeysetHandle createEs256Keyset() throws Exception {
-    String es256Keyset =
-        "{\"primaryKeyId\":282600252,\"key\":[{\"keyData\":{"
-            + "\"typeUrl\":\"type.googleapis.com/google.crypto.tink.JwtEcdsaPublicKey\","
-            + "\"value\":\"EAEaIBDPI66hjLHvjxmUJ2nyHIBDmdOtQ4gPsvWgYYgZ0gygIiBTEK0rTACpAb97m+mvtJKAk0"
-            + "q3mHjPcUZm0C4EueDW4Q==\",\"keyMaterialType\":\"ASYMMETRIC_PUBLIC\""
-            + "},\"status\":\"ENABLED\",\"keyId\":282600252,\"outputPrefixType\":\"RAW\"}]}";
-    return TinkJsonProtoKeysetFormat.parseKeyset(es256Keyset, InsecureSecretKeyAccess.get());
+    JwtEcdsaPublicKey key =
+        JwtEcdsaPublicKey.builder()
+            .setParameters(
+                JwtEcdsaParameters.builder()
+                    .setKidStrategy(JwtEcdsaParameters.KidStrategy.IGNORED)
+                    .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
+                    .build())
+            .setPublicPoint(
+                new ECPoint(
+                    new BigInteger(
+                        1, Base64.urlSafeDecode("EM8jrqGMse-PGZQnafIcgEOZ061DiA-y9aBhiBnSDKA")),
+                    new BigInteger(
+                        1, Base64.urlSafeDecode("UxCtK0wAqQG_e5vpr7SSgJNKt5h4z3FGZtAuBLng1uE"))))
+            .build();
+    return KeysetHandle.newBuilder()
+        .addEntry(KeysetHandle.importKey(key).withFixedId(282600252).makePrimary())
+        .build();
   }
 
   private static KeysetHandle createEs384Keyset() throws Exception {
-    String es384Keyset =
-        "{\"primaryKeyId\":456087424,\"key\":[{\"keyData\":{"
-            + "\"typeUrl\":\"type.googleapis.com/google.crypto.tink.JwtEcdsaPublicKey\","
-            + "\"value\":\"EAIaMQDSjvWihoKGmr4nlDuI/KkvuPvEZr+B4bU0MuXQQXgyNMGApFm2iTeotv7LCSsG3mQiME"
-            + "HIMGx4wa+Y8yeJQWMiSpukpPM7jP9GqaykZQQ2GY/NLg/n9+BJtntgvFhG5gWLTg==\","
-            + "\"keyMaterialType\":\"ASYMMETRIC_PUBLIC\""
-            + "},\"status\":\"ENABLED\",\"keyId\":456087424,\"outputPrefixType\":\"RAW\"}]}";
-    return TinkJsonProtoKeysetFormat.parseKeyset(es384Keyset, InsecureSecretKeyAccess.get());
+    JwtEcdsaPublicKey key =
+        JwtEcdsaPublicKey.builder()
+            .setParameters(
+                JwtEcdsaParameters.builder()
+                    .setKidStrategy(JwtEcdsaParameters.KidStrategy.IGNORED)
+                    .setAlgorithm(JwtEcdsaParameters.Algorithm.ES384)
+                    .build())
+            .setPublicPoint(
+                new ECPoint(
+                    new BigInteger(
+                        1,
+                        Base64.urlSafeDecode(
+                            "0o71ooaChpq-J5Q7iPypL7j7xGa_geG1NDLl0EF4MjTBgKRZtok3qLb-ywkrBt5k")),
+                    new BigInteger(
+                        1,
+                        Base64.urlSafeDecode(
+                            "QcgwbHjBr5jzJ4lBYyJKm6Sk8zuM_0aprKRlBDYZj80uD-f34Em2e2C8WEbmBYtO"))))
+            .build();
+    return KeysetHandle.newBuilder()
+        .addEntry(KeysetHandle.importKey(key).withFixedId(456087424).makePrimary())
+        .build();
   }
 
   private static KeysetHandle createEs512Keyset() throws Exception {
-    String es512Keyset =
-        "{\"primaryKeyId\":1570200439,\"key\":[{\"keyData\":{"
-            + "\"typeUrl\":\"type.googleapis.com/google.crypto.tink.JwtEcdsaPublicKey\","
-            + "\"value\":\"EAMaQgEV3nweRej6Z1/aPTqCkc1tQla5eVI68+qfwR1kB/wXCuYCB5otarhomUt64Fah/8Tjf0"
-            + "WJHMZyFr86RUitiRQm1SJCATht/NOX8RcbaEr1MaH+0BFTaepvpTzSfQ04C2P8VCoURB3GeVKk4VQh8O/KLSYf"
-            + "X+58bqEnaZ0G7W9qjHa2ols2\",\"keyMaterialType\":\"ASYMMETRIC_PUBLIC\""
-            + "},\"status\":\"ENABLED\",\"keyId\":1570200439,\"outputPrefixType\":\"RAW\"}]}";
-    return TinkJsonProtoKeysetFormat.parseKeyset(es512Keyset, InsecureSecretKeyAccess.get());
+    JwtEcdsaPublicKey key =
+        JwtEcdsaPublicKey.builder()
+            .setParameters(
+                JwtEcdsaParameters.builder()
+                    .setKidStrategy(JwtEcdsaParameters.KidStrategy.IGNORED)
+                    .setAlgorithm(JwtEcdsaParameters.Algorithm.ES512)
+                    .build())
+            .setPublicPoint(
+                new ECPoint(
+                    new BigInteger(
+                        1,
+                        Base64.urlSafeDecode(
+                            "ARXefB5F6PpnX9o9OoKRzW1CVrl5Ujrz6p_BHWQH_BcK5gIHmi1quGiZS3rgVqH_xON_RYkcxnIWvzpFSK2JFCbV")),
+                    new BigInteger(
+                        1,
+                        Base64.urlSafeDecode(
+                            "ATht_NOX8RcbaEr1MaH-0BFTaepvpTzSfQ04C2P8VCoURB3GeVKk4VQh8O_KLSYfX-58bqEnaZ0G7W9qjHa2ols2"))))
+            .build();
+    return KeysetHandle.newBuilder()
+        .addEntry(KeysetHandle.importKey(key).withFixedId(1570200439).makePrimary())
+        .build();
   }
 
   private static KeysetHandle createEs256KeysetTink() throws Exception {
-    String es256KeysetTink =
-        "{\"primaryKeyId\":282600252,\"key\":[{\"keyData\":{"
-            + "\"typeUrl\":\"type.googleapis.com/google.crypto.tink.JwtEcdsaPublicKey\","
-            + "\"value\":\"EAEaIBDPI66hjLHvjxmUJ2nyHIBDmdOtQ4gPsvWgYYgZ0gygIiBTEK0rTACpAb97m+mvtJKAk0"
-            + "q3mHjPcUZm0C4EueDW4Q==\",\"keyMaterialType\":\"ASYMMETRIC_PUBLIC\""
-            + "},\"status\":\"ENABLED\",\"keyId\":282600252,\"outputPrefixType\":\"TINK\"}]}";
-    return TinkJsonProtoKeysetFormat.parseKeyset(es256KeysetTink, InsecureSecretKeyAccess.get());
+    JwtEcdsaPublicKey key =
+        JwtEcdsaPublicKey.builder()
+            .setParameters(
+                JwtEcdsaParameters.builder()
+                    .setKidStrategy(JwtEcdsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
+                    .build())
+            .setPublicPoint(
+                new ECPoint(
+                    new BigInteger(
+                        1, Base64.urlSafeDecode("EM8jrqGMse-PGZQnafIcgEOZ061DiA-y9aBhiBnSDKA")),
+                    new BigInteger(
+                        1, Base64.urlSafeDecode("UxCtK0wAqQG_e5vpr7SSgJNKt5h4z3FGZtAuBLng1uE"))))
+            .setIdRequirement(282600252)
+            .build();
+    return KeysetHandle.newBuilder()
+        .addEntry(KeysetHandle.importKey(key).withFixedId(282600252).makePrimary())
+        .build();
   }
 
   private static KeysetHandle createRs256Keyset() throws Exception {
-    String rs256Keyset =
-        "{\"primaryKeyId\":482168993,\"key\":[{\"keyData\":{"
-            + "\"typeUrl\":\"type.googleapis.com/google.crypto.tink.JwtRsaSsaPkcs1PublicKey\","
-            + "\"value\":\"EAEagQIAkspk37lGBqXmPPq2CL5KdDeRx7xFiTadpL3jc4nXaqftCtpM6qExfrc2JLaIsnwpwf"
-            + "GMClfe/alIs2GrT9fpM8oDeCccvC39DzZhsSFnAELggi3hnWNKRLfSV0UJzBI+5hZ6ifUsv8W8mSHKlsVMmvOf"
-            + "C2P5+l72qTwN6Le3hy6CxFp5s9pw011B7J3PU65sty6GI9sehB2B/n7nfiWw9YN5++pfwyoitzoMoVKOOpj7fF"
-            + "q88f8ArpC7kR1SBTe20Bt1AmpZDT2Dmfmlb/Q1UFjj/F3C77NCNQ344ZcAEI42HY+uighy5GdKQRHMoTT1OzyD"
-            + "G90ABjggQqDGW+zXzyIDAQAB\",\"keyMaterialType\":\"ASYMMETRIC_PUBLIC\""
-            + "},\"status\":\"ENABLED\",\"keyId\":482168993,\"outputPrefixType\":\"RAW\"}]}";
-    return TinkJsonProtoKeysetFormat.parseKeyset(rs256Keyset, InsecureSecretKeyAccess.get());
+    BigInteger modulus =
+        new BigInteger(
+            1,
+            Base64.urlSafeDecode(
+                "kspk37lGBqXmPPq2CL5KdDeRx7xFiTadpL3jc4nXaqftCtpM6qExfrc2JLaIsnwpwfGMClfe_alIs2GrT9fpM8oDeCccvC39DzZhsSFnAELggi3hnWNKRLfSV0UJzBI-5hZ6ifUsv8W8mSHKlsVMmvOfC2P5-l72qTwN6Le3hy6CxFp5s9pw011B7J3PU65sty6GI9sehB2B_n7nfiWw9YN5--pfwyoitzoMoVKOOpj7fFq88f8ArpC7kR1SBTe20Bt1AmpZDT2Dmfmlb_Q1UFjj_F3C77NCNQ344ZcAEI42HY-uighy5GdKQRHMoTT1OzyDG90ABjggQqDGW-zXzw"));
+    JwtRsaSsaPkcs1PublicKey key =
+        JwtRsaSsaPkcs1PublicKey.builder()
+            .setParameters(
+                JwtRsaSsaPkcs1Parameters.builder()
+                    .setModulusSizeBits(modulus.bitLength())
+                    .setPublicExponent(new BigInteger(1, Base64.urlSafeDecode("AQAB")))
+                    .setAlgorithm(JwtRsaSsaPkcs1Parameters.Algorithm.RS256)
+                    .setKidStrategy(JwtRsaSsaPkcs1Parameters.KidStrategy.IGNORED)
+                    .build())
+            .setModulus(modulus)
+            .build();
+    return KeysetHandle.newBuilder()
+        .addEntry(KeysetHandle.importKey(key).withFixedId(482168993).makePrimary())
+        .build();
   }
 
   private static KeysetHandle createRs384Keyset() throws Exception {
-    String rs384Keyset =
-        "{\"primaryKeyId\":333504275,\"key\":[{\"keyData\":{"
-            + "\"typeUrl\":\"type.googleapis.com/google.crypto.tink.JwtRsaSsaPkcs1PublicKey\","
-            + "\"value\":\"EAIagQMAnlBY5WD7gVQjNKvrS2whLKzt0Eql72B6haZ17eKifNn4S49eGdBy9RLj/mvHXAbacr"
-            + "ngt9fzi0iv/WQ57jUmtO1b/wLt5LYk9APsBYjywDCIe+u9UouikP7c3SBqjjQijZ50jgYbMY6cL7s2Gx5lI1vl"
-            + "GX3ZExLVYbNoI9VBFAWjSDefd6GugESxXQFnnO3p2GHOKryZLeDH/KzVacTq2/pVXKVH/9/EQzcLB0oYUljZ4v"
-            + "YQ4HCAcwnUZbirsRwA0350Dz0Mlj+3+9sSAF8FPA+F/wlIBkPqjJ26b80V5FU4mBTzvYoXGTjkD7+bxH9p28hu"
-            + "JSU96P4WdG5PYVwI1VEYwGipkUIpMWjJ7dXAtmltHzM9vkUt2bsBe9vyJjmRXyoC6mHSJbSyOm9Dd8BENobcUL"
-            + "9h+aBoxruY+mU49kAHzzeAntn8C+vIrxN+X6N2EU9N8t9BF+mwYiBEsY54wx99RbRrY9yICfPBmQJGwXSxNCXB"
-            + "RrbJyxkIVuqvACP5IgMBAAE=\",\"keyMaterialType\":\"ASYMMETRIC_PUBLIC\""
-            + "},\"status\":\"ENABLED\",\"keyId\":333504275,\"outputPrefixType\":\"RAW\"}]}";
-    return TinkJsonProtoKeysetFormat.parseKeyset(rs384Keyset, InsecureSecretKeyAccess.get());
+    BigInteger modulus =
+        new BigInteger(
+            1,
+            Base64.urlSafeDecode(
+                "nlBY5WD7gVQjNKvrS2whLKzt0Eql72B6haZ17eKifNn4S49eGdBy9RLj_mvHXAbacrngt9fzi0iv_WQ57jUmtO1b_wLt5LYk9APsBYjywDCIe-u9UouikP7c3SBqjjQijZ50jgYbMY6cL7s2Gx5lI1vlGX3ZExLVYbNoI9VBFAWjSDefd6GugESxXQFnnO3p2GHOKryZLeDH_KzVacTq2_pVXKVH_9_EQzcLB0oYUljZ4vYQ4HCAcwnUZbirsRwA0350Dz0Mlj-3-9sSAF8FPA-F_wlIBkPqjJ26b80V5FU4mBTzvYoXGTjkD7-bxH9p28huJSU96P4WdG5PYVwI1VEYwGipkUIpMWjJ7dXAtmltHzM9vkUt2bsBe9vyJjmRXyoC6mHSJbSyOm9Dd8BENobcUL9h-aBoxruY-mU49kAHzzeAntn8C-vIrxN-X6N2EU9N8t9BF-mwYiBEsY54wx99RbRrY9yICfPBmQJGwXSxNCXBRrbJyxkIVuqvACP5"));
+    JwtRsaSsaPkcs1PublicKey key =
+        JwtRsaSsaPkcs1PublicKey.builder()
+            .setParameters(
+                JwtRsaSsaPkcs1Parameters.builder()
+                    .setModulusSizeBits(modulus.bitLength())
+                    .setPublicExponent(new BigInteger(1, Base64.urlSafeDecode("AQAB")))
+                    .setAlgorithm(JwtRsaSsaPkcs1Parameters.Algorithm.RS384)
+                    .setKidStrategy(JwtRsaSsaPkcs1Parameters.KidStrategy.IGNORED)
+                    .build())
+            .setModulus(modulus)
+            .build();
+    return KeysetHandle.newBuilder()
+        .addEntry(KeysetHandle.importKey(key).withFixedId(333504275).makePrimary())
+        .build();
   }
 
   private static KeysetHandle createRs512Keyset() throws Exception {
-    String rs512Keyset =
-        "{\"primaryKeyId\":705596479,\"key\":[{\"keyData\":{"
-            + "\"typeUrl\":\"type.googleapis.com/google.crypto.tink.JwtRsaSsaPkcs1PublicKey\","
-            + "\"value\":\"EAMagQQAkKxZ9IRzF56gh47RXLJzQ6lffcnBmQSwvxUDJ0wHpKZzfAawOn1uidbgEoQ3XWOgtN"
-            + "vi7QeKLE4GjQa5bY0xdRnu8nKjFcsvH+eu1sV8oVoZ984J5mT1mhwU6nt26p4xKyeapMhzYYNvKudQjQJ8SbpV"
-            + "OFpEiJ7j0ECMUd4Q8mCUqWsrXYE8+1CcHjprsIxdot+haCARc72RBj9cLuBIhJNzlFXNmsYh8yoSiEYr/auRvg"
-            + "/kIlNlnlOK/rJM/jMXbB6FuWdePrtqZ+ce2TVyARqjZJ0G0vZcPuvOhgS4LM7/Aeal84ZhIcHladSo/g8pK1eU"
-            + "hnRqRXJpsltwux+1XVJeg2a0FQ0BN3Ft25uu5jhfvGWXeTkQOR7LbpbxKTI+vumSy9dmY4UrgAG37N8Xj5/Neq"
-            + "BT51L3qE6tk2ZLoO7yjRjhADK5lnbb4iYWWvWd3kqyv0JVlxfDzjAaYtiduEUIdCe45MGk8DpCn9Lnjlunhm4Q"
-            + "yQufK8k8UPiBbWNEODI8pjTSEjs0wyMqhegBKAvtVEhr029bg3Lv7YjN9FDvx4usuWGc16bXkTqNgCK4KzPG7P"
-            + "wV120r6IVGflfpSkd5rrkzDY01fsP0mW57QCHA67bxqLUECr2dAfNzz6ddS9pqXQyXZWCyWKcvTFsGrr1oECwD"
-            + "OmW+nUIHGklr9Q0iAwEAAQ==\",\"keyMaterialType\":\"ASYMMETRIC_PUBLIC\""
-            + "},\"status\":\"ENABLED\",\"keyId\":705596479,\"outputPrefixType\":\"RAW\"}]}";
-    return TinkJsonProtoKeysetFormat.parseKeyset(rs512Keyset, InsecureSecretKeyAccess.get());
+    BigInteger modulus =
+        new BigInteger(
+            1,
+            Base64.urlSafeDecode(
+                "kKxZ9IRzF56gh47RXLJzQ6lffcnBmQSwvxUDJ0wHpKZzfAawOn1uidbgEoQ3XWOgtNvi7QeKLE4GjQa5bY0xdRnu8nKjFcsvH-eu1sV8oVoZ984J5mT1mhwU6nt26p4xKyeapMhzYYNvKudQjQJ8SbpVOFpEiJ7j0ECMUd4Q8mCUqWsrXYE8-1CcHjprsIxdot-haCARc72RBj9cLuBIhJNzlFXNmsYh8yoSiEYr_auRvg_kIlNlnlOK_rJM_jMXbB6FuWdePrtqZ-ce2TVyARqjZJ0G0vZcPuvOhgS4LM7_Aeal84ZhIcHladSo_g8pK1eUhnRqRXJpsltwux-1XVJeg2a0FQ0BN3Ft25uu5jhfvGWXeTkQOR7LbpbxKTI-vumSy9dmY4UrgAG37N8Xj5_NeqBT51L3qE6tk2ZLoO7yjRjhADK5lnbb4iYWWvWd3kqyv0JVlxfDzjAaYtiduEUIdCe45MGk8DpCn9Lnjlunhm4QyQufK8k8UPiBbWNEODI8pjTSEjs0wyMqhegBKAvtVEhr029bg3Lv7YjN9FDvx4usuWGc16bXkTqNgCK4KzPG7PwV120r6IVGflfpSkd5rrkzDY01fsP0mW57QCHA67bxqLUECr2dAfNzz6ddS9pqXQyXZWCyWKcvTFsGrr1oECwDOmW-nUIHGklr9Q0"));
+    JwtRsaSsaPkcs1PublicKey key =
+        JwtRsaSsaPkcs1PublicKey.builder()
+            .setParameters(
+                JwtRsaSsaPkcs1Parameters.builder()
+                    .setModulusSizeBits(modulus.bitLength())
+                    .setPublicExponent(new BigInteger(1, Base64.urlSafeDecode("AQAB")))
+                    .setAlgorithm(JwtRsaSsaPkcs1Parameters.Algorithm.RS512)
+                    .setKidStrategy(JwtRsaSsaPkcs1Parameters.KidStrategy.IGNORED)
+                    .build())
+            .setModulus(modulus)
+            .build();
+    return KeysetHandle.newBuilder()
+        .addEntry(KeysetHandle.importKey(key).withFixedId(705596479).makePrimary())
+        .build();
   }
 
   private static KeysetHandle createRs256KeysetTink() throws Exception {
-    String rs256KeysetTink =
-        "{\"primaryKeyId\":482168993,\"key\":[{\"keyData\":{"
-            + "\"typeUrl\":\"type.googleapis.com/google.crypto.tink.JwtRsaSsaPkcs1PublicKey\","
-            + "\"value\":\"EAEagQIAkspk37lGBqXmPPq2CL5KdDeRx7xFiTadpL3jc4nXaqftCtpM6qExfrc2JLaIsnwpwf"
-            + "GMClfe/alIs2GrT9fpM8oDeCccvC39DzZhsSFnAELggi3hnWNKRLfSV0UJzBI+5hZ6ifUsv8W8mSHKlsVMmvOf"
-            + "C2P5+l72qTwN6Le3hy6CxFp5s9pw011B7J3PU65sty6GI9sehB2B/n7nfiWw9YN5++pfwyoitzoMoVKOOpj7fF"
-            + "q88f8ArpC7kR1SBTe20Bt1AmpZDT2Dmfmlb/Q1UFjj/F3C77NCNQ344ZcAEI42HY+uighy5GdKQRHMoTT1OzyD"
-            + "G90ABjggQqDGW+zXzyIDAQAB\",\"keyMaterialType\":\"ASYMMETRIC_PUBLIC\""
-            + "},\"status\":\"ENABLED\",\"keyId\":482168993,\"outputPrefixType\":\"TINK\"}]}";
-    return TinkJsonProtoKeysetFormat.parseKeyset(rs256KeysetTink, InsecureSecretKeyAccess.get());
+    BigInteger modulus =
+        new BigInteger(
+            1,
+            Base64.urlSafeDecode(
+                "kspk37lGBqXmPPq2CL5KdDeRx7xFiTadpL3jc4nXaqftCtpM6qExfrc2JLaIsnwpwfGMClfe_alIs2GrT9fpM8oDeCccvC39DzZhsSFnAELggi3hnWNKRLfSV0UJzBI-5hZ6ifUsv8W8mSHKlsVMmvOfC2P5-l72qTwN6Le3hy6CxFp5s9pw011B7J3PU65sty6GI9sehB2B_n7nfiWw9YN5--pfwyoitzoMoVKOOpj7fFq88f8ArpC7kR1SBTe20Bt1AmpZDT2Dmfmlb_Q1UFjj_F3C77NCNQ344ZcAEI42HY-uighy5GdKQRHMoTT1OzyDG90ABjggQqDGW-zXzw"));
+    JwtRsaSsaPkcs1PublicKey key =
+        JwtRsaSsaPkcs1PublicKey.builder()
+            .setParameters(
+                JwtRsaSsaPkcs1Parameters.builder()
+                    .setModulusSizeBits(modulus.bitLength())
+                    .setPublicExponent(new BigInteger(1, Base64.urlSafeDecode("AQAB")))
+                    .setAlgorithm(JwtRsaSsaPkcs1Parameters.Algorithm.RS256)
+                    .setKidStrategy(JwtRsaSsaPkcs1Parameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build())
+            .setModulus(modulus)
+            .setIdRequirement(482168993)
+            .build();
+    return KeysetHandle.newBuilder()
+        .addEntry(KeysetHandle.importKey(key).withFixedId(482168993).makePrimary())
+        .build();
   }
 
   private static KeysetHandle createPs256Keyset() throws Exception {
-    String ps256Keyset =
-        "{\"primaryKeyId\":1508587714,\"key\":[{\"keyData\":{"
-            + "\"typeUrl\":\"type.googleapis.com/google.crypto.tink.JwtRsaSsaPssPublicKey\","
-            + "\"value\":\"EAEagQMAj7Eud2n5G11qsdtjpgGWjW4cAKalSE1atm7d+Cp8biRX9wbmLJRMUvoO2j7Sp9Szx1"
-            + "TMmksY2Ugf/7+Nv9fY7vBbmxOiBQVTvikWn0FgPwhFTXTz+9fhGjM6E6sdSOUzjM6nsPulKqOQ8Aed+TLIlgvw"
-            + "uSTF4B5d6QkZWBymq7My6vV+epzWnoLpVDzCHh+c35r81Pyrj6tiTPQzPLN2ixeanclMjx8deNwlak3vwBdMDg"
-            + "wQ63rVCo2eWDS/BYK4rG22luSTDVfQVHU1NXlwXEnb/eONFSF6ZbD6JXFMT3uHT4okTOrX4Kd34stbPIUtZFUy"
-            + "3XiSeCGtghBXLMf/ge113Q9WDJ+RN1Xa4vgHJCO0+VO+cAugVkiu9UgsPP8o/r7tA2aP/Ps8EHYa1IaZg75vnr"
-            + "MZPvsTH7WG2SjSgW9GLLsbNJLFFqLFMwPuZPe8BbgvimPdStXasX/PN6DLKoK2PaT0I+iLK9mRi1Z4OjFbl9KA"
-            + "ZXXElhAQTzrEI2adIgMBAAE=\",\"keyMaterialType\":\"ASYMMETRIC_PUBLIC\""
-            + "},\"status\":\"ENABLED\",\"keyId\":1508587714,\"outputPrefixType\":\"RAW\"}]}";
-    return TinkJsonProtoKeysetFormat.parseKeyset(ps256Keyset, InsecureSecretKeyAccess.get());
+    BigInteger modulus =
+        new BigInteger(
+            1,
+            Base64.urlSafeDecode(
+                "j7Eud2n5G11qsdtjpgGWjW4cAKalSE1atm7d-Cp8biRX9wbmLJRMUvoO2j7Sp9Szx1TMmksY2Ugf_7-Nv9fY7vBbmxOiBQVTvikWn0FgPwhFTXTz-9fhGjM6E6sdSOUzjM6nsPulKqOQ8Aed-TLIlgvwuSTF4B5d6QkZWBymq7My6vV-epzWnoLpVDzCHh-c35r81Pyrj6tiTPQzPLN2ixeanclMjx8deNwlak3vwBdMDgwQ63rVCo2eWDS_BYK4rG22luSTDVfQVHU1NXlwXEnb_eONFSF6ZbD6JXFMT3uHT4okTOrX4Kd34stbPIUtZFUy3XiSeCGtghBXLMf_ge113Q9WDJ-RN1Xa4vgHJCO0-VO-cAugVkiu9UgsPP8o_r7tA2aP_Ps8EHYa1IaZg75vnrMZPvsTH7WG2SjSgW9GLLsbNJLFFqLFMwPuZPe8BbgvimPdStXasX_PN6DLKoK2PaT0I-iLK9mRi1Z4OjFbl9KAZXXElhAQTzrEI2ad"));
+    JwtRsaSsaPssPublicKey key =
+        JwtRsaSsaPssPublicKey.builder()
+            .setParameters(
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(modulus.bitLength())
+                    .setPublicExponent(new BigInteger(1, Base64.urlSafeDecode("AQAB")))
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.IGNORED)
+                    .build())
+            .setModulus(modulus)
+            .build();
+    return KeysetHandle.newBuilder()
+        .addEntry(KeysetHandle.importKey(key).withFixedId(1508587714).makePrimary())
+        .build();
   }
 
   private static KeysetHandle createPs384Keyset() throws Exception {
-    String ps384Keyset =
-        "{\"primaryKeyId\":1042230435,\"key\":[{\"keyData\":{"
-            + "\"typeUrl\":\"type.googleapis.com/google.crypto.tink.JwtRsaSsaPssPublicKey\","
-            + "\"value\":\"EAIagQMAv6a0OergWYmY1k6l6vx6Of5+RxCeeQ9jMTXQyvO0GCgMDExxtqVS8S25ehZ5LNDIiG"
-            + "jhE3v2++D7QEjnzOC5UqI1ZwPxUBSrOaf5oDbJ9vBc2c7wDyJhRV8UobQSpzunD4kXypVhytjwRdiP61vG0C/e"
-            + "L0x+LijtM/XVee1Y+5mWrypVrB6EHKtdkMx2WIYNpsFOForFrr6JzLbWfDRWoqbCXKYivnw+CSE38ddW1XsrAT"
-            + "76E2Vf+womuwyBbkjLaiWvNxNFBTap2IaBLKAni6x7pqYCeu1n9eMUi41oz9QM8xfOvpH+wubc2PjwyTsb1FDT"
-            + "LnhV36tQLTVGdQdCDMF2Z8Agrnio3n1SFjSbYgFyVtpCwFKM2Z0zfO7k9jVbYYkzglzkJfp/lQrsuWqe4CVJjF"
-            + "E1H4BxcU7L0j8755kGJI08h1b7LPgqJcPgtHjcqbxHFU2yOf7mNGlW7YTnoQBO0StzQUk7kEw3X0+niEwX/L8j"
-            + "qW4YMbxrGdAfkTnPIgMBAAE=\",\"keyMaterialType\":\"ASYMMETRIC_PUBLIC\""
-            + "},\"status\":\"ENABLED\",\"keyId\":1042230435,\"outputPrefixType\":\"RAW\"}]}";
-    return TinkJsonProtoKeysetFormat.parseKeyset(ps384Keyset, InsecureSecretKeyAccess.get());
+    BigInteger modulus =
+        new BigInteger(
+            1,
+            Base64.urlSafeDecode(
+                "v6a0OergWYmY1k6l6vx6Of5-RxCeeQ9jMTXQyvO0GCgMDExxtqVS8S25ehZ5LNDIiGjhE3v2--D7QEjnzOC5UqI1ZwPxUBSrOaf5oDbJ9vBc2c7wDyJhRV8UobQSpzunD4kXypVhytjwRdiP61vG0C_eL0x-LijtM_XVee1Y-5mWrypVrB6EHKtdkMx2WIYNpsFOForFrr6JzLbWfDRWoqbCXKYivnw-CSE38ddW1XsrAT76E2Vf-womuwyBbkjLaiWvNxNFBTap2IaBLKAni6x7pqYCeu1n9eMUi41oz9QM8xfOvpH-wubc2PjwyTsb1FDTLnhV36tQLTVGdQdCDMF2Z8Agrnio3n1SFjSbYgFyVtpCwFKM2Z0zfO7k9jVbYYkzglzkJfp_lQrsuWqe4CVJjFE1H4BxcU7L0j8755kGJI08h1b7LPgqJcPgtHjcqbxHFU2yOf7mNGlW7YTnoQBO0StzQUk7kEw3X0-niEwX_L8jqW4YMbxrGdAfkTnP"));
+    JwtRsaSsaPssPublicKey key =
+        JwtRsaSsaPssPublicKey.builder()
+            .setParameters(
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(modulus.bitLength())
+                    .setPublicExponent(new BigInteger(1, Base64.urlSafeDecode("AQAB")))
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS384)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.IGNORED)
+                    .build())
+            .setModulus(modulus)
+            .build();
+    return KeysetHandle.newBuilder()
+        .addEntry(KeysetHandle.importKey(key).withFixedId(1042230435).makePrimary())
+        .build();
   }
 
   private static KeysetHandle createPs512Keyset() throws Exception {
-    String ps512Keyset =
-        "{\"primaryKeyId\":257081135,\"key\":[{\"keyData\":{"
-            + "\"typeUrl\":\"type.googleapis.com/google.crypto.tink.JwtRsaSsaPssPublicKey\","
-            + "\"value\":\"EAMagQQAnOUQvBwNRgeI3zlzIhVo4NzFVCsQn9hd2EIclz6cWBRMFr4EX5lXLK0StSIB7EQP4c"
-            + "iHa+vr59sOgMFMC2kiXRUXNtl99QhGwH0YjbWeDC50PKEAjH1hhhPgSw2dFcUVs4jbScDrwNn1sQ8rkgSNczvQ"
-            + "NpV1MtBhS/CC1PxVF88JaejG2zr+unoFlw7xnqxBWMzNrMHZHwqga2vL3inSbvA/RGQjnE2DzQSwZkXthGSwYB"
-            + "jOYbGawMN4onkAx/myHMyTg/TLAqG9GUyB0DVelvVoGZG/QJBY2Fp2FlpOQRKeBr6pC7Lk8zZL4GJk264KoOpG"
-            + "8v1t7PveN+STIdTE2D548K+GDOvsvrO4ZhofS/iqN9xLucuU1HkqKUqyLvMxsWum8Zhp7zinFdBnDOgeheOHUg"
-            + "N/iwjupk6u1Svt+RWNJsfb2l0jrvzf0cRMbPeLZRmpDwBxBvXWo61u6uaBEVb+ooZ6K5+hx3Rld7wXktjYIZzH"
-            + "qUr39P5yTw28b8Y2dPFWR4vwr2/0zBxcDmTRRtQ7vPOtZPD0/LVIXkgbBiLILpycnucWt9Lq9Hc62KFiTQOAuu"
-            + "Oxz7ObBegXjnFupiZZ9PyzO5WgT9lRpH7U7tzGLAjV+AUpjH6HA1o6bRLKOHFBPS+I9IqAYb/RpF6M/6hCmC2R"
-            + "z64yYzR3y4vHKGMiAwEAAQ==\",\"keyMaterialType\":\"ASYMMETRIC_PUBLIC\""
-            + "},\"status\":\"ENABLED\",\"keyId\":257081135,\"outputPrefixType\":\"RAW\"}]}";
-    return TinkJsonProtoKeysetFormat.parseKeyset(ps512Keyset, InsecureSecretKeyAccess.get());
+    BigInteger modulus =
+        new BigInteger(
+            1,
+            Base64.urlSafeDecode(
+                "nOUQvBwNRgeI3zlzIhVo4NzFVCsQn9hd2EIclz6cWBRMFr4EX5lXLK0StSIB7EQP4ciHa-vr59sOgMFMC2kiXRUXNtl99QhGwH0YjbWeDC50PKEAjH1hhhPgSw2dFcUVs4jbScDrwNn1sQ8rkgSNczvQNpV1MtBhS_CC1PxVF88JaejG2zr-unoFlw7xnqxBWMzNrMHZHwqga2vL3inSbvA_RGQjnE2DzQSwZkXthGSwYBjOYbGawMN4onkAx_myHMyTg_TLAqG9GUyB0DVelvVoGZG_QJBY2Fp2FlpOQRKeBr6pC7Lk8zZL4GJk264KoOpG8v1t7PveN-STIdTE2D548K-GDOvsvrO4ZhofS_iqN9xLucuU1HkqKUqyLvMxsWum8Zhp7zinFdBnDOgeheOHUgN_iwjupk6u1Svt-RWNJsfb2l0jrvzf0cRMbPeLZRmpDwBxBvXWo61u6uaBEVb-ooZ6K5-hx3Rld7wXktjYIZzHqUr39P5yTw28b8Y2dPFWR4vwr2_0zBxcDmTRRtQ7vPOtZPD0_LVIXkgbBiLILpycnucWt9Lq9Hc62KFiTQOAuuOxz7ObBegXjnFupiZZ9PyzO5WgT9lRpH7U7tzGLAjV-AUpjH6HA1o6bRLKOHFBPS-I9IqAYb_RpF6M_6hCmC2Rz64yYzR3y4vHKGM"));
+    JwtRsaSsaPssPublicKey key =
+        JwtRsaSsaPssPublicKey.builder()
+            .setParameters(
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(modulus.bitLength())
+                    .setPublicExponent(new BigInteger(1, Base64.urlSafeDecode("AQAB")))
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS512)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.IGNORED)
+                    .build())
+            .setModulus(modulus)
+            .build();
+    return KeysetHandle.newBuilder()
+        .addEntry(KeysetHandle.importKey(key).withFixedId(257081135).makePrimary())
+        .build();
   }
 
   private static KeysetHandle createPs256KeysetTink() throws Exception {
-    String ps256KeysetTink =
-        "{\"primaryKeyId\":1508587714,\"key\":[{\"keyData\":{"
-            + "\"typeUrl\":\"type.googleapis.com/google.crypto.tink.JwtRsaSsaPssPublicKey\","
-            + "\"value\":\"EAEagQMAj7Eud2n5G11qsdtjpgGWjW4cAKalSE1atm7d+Cp8biRX9wbmLJRMUvoO2j7Sp9Szx1"
-            + "TMmksY2Ugf/7+Nv9fY7vBbmxOiBQVTvikWn0FgPwhFTXTz+9fhGjM6E6sdSOUzjM6nsPulKqOQ8Aed+TLIlgvw"
-            + "uSTF4B5d6QkZWBymq7My6vV+epzWnoLpVDzCHh+c35r81Pyrj6tiTPQzPLN2ixeanclMjx8deNwlak3vwBdMDg"
-            + "wQ63rVCo2eWDS/BYK4rG22luSTDVfQVHU1NXlwXEnb/eONFSF6ZbD6JXFMT3uHT4okTOrX4Kd34stbPIUtZFUy"
-            + "3XiSeCGtghBXLMf/ge113Q9WDJ+RN1Xa4vgHJCO0+VO+cAugVkiu9UgsPP8o/r7tA2aP/Ps8EHYa1IaZg75vnr"
-            + "MZPvsTH7WG2SjSgW9GLLsbNJLFFqLFMwPuZPe8BbgvimPdStXasX/PN6DLKoK2PaT0I+iLK9mRi1Z4OjFbl9KA"
-            + "ZXXElhAQTzrEI2adIgMBAAE=\",\"keyMaterialType\":\"ASYMMETRIC_PUBLIC\""
-            + "},\"status\":\"ENABLED\",\"keyId\":1508587714,\"outputPrefixType\":\"TINK\"}]}";
-    return TinkJsonProtoKeysetFormat.parseKeyset(ps256KeysetTink, InsecureSecretKeyAccess.get());
+    BigInteger modulus =
+        new BigInteger(
+            1,
+            Base64.urlSafeDecode(
+                "j7Eud2n5G11qsdtjpgGWjW4cAKalSE1atm7d-Cp8biRX9wbmLJRMUvoO2j7Sp9Szx1TMmksY2Ugf_7-Nv9fY7vBbmxOiBQVTvikWn0FgPwhFTXTz-9fhGjM6E6sdSOUzjM6nsPulKqOQ8Aed-TLIlgvwuSTF4B5d6QkZWBymq7My6vV-epzWnoLpVDzCHh-c35r81Pyrj6tiTPQzPLN2ixeanclMjx8deNwlak3vwBdMDgwQ63rVCo2eWDS_BYK4rG22luSTDVfQVHU1NXlwXEnb_eONFSF6ZbD6JXFMT3uHT4okTOrX4Kd34stbPIUtZFUy3XiSeCGtghBXLMf_ge113Q9WDJ-RN1Xa4vgHJCO0-VO-cAugVkiu9UgsPP8o_r7tA2aP_Ps8EHYa1IaZg75vnrMZPvsTH7WG2SjSgW9GLLsbNJLFFqLFMwPuZPe8BbgvimPdStXasX_PN6DLKoK2PaT0I-iLK9mRi1Z4OjFbl9KAZXXElhAQTzrEI2ad"));
+    JwtRsaSsaPssPublicKey key =
+        JwtRsaSsaPssPublicKey.builder()
+            .setParameters(
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(modulus.bitLength())
+                    .setPublicExponent(new BigInteger(1, Base64.urlSafeDecode("AQAB")))
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build())
+            .setModulus(modulus)
+            .setIdRequirement(1508587714)
+            .build();
+    return KeysetHandle.newBuilder()
+        .addEntry(KeysetHandle.importKey(key).withFixedId(1508587714).makePrimary())
+        .build();
   }
 
   private static KeysetHandle createPrivatekeyKeyset() throws Exception {
@@ -468,21 +575,40 @@ public final class JwkSetConverterTest {
   }
 
   private static KeysetHandle createKeysetWithTwoKeys() throws Exception {
-    String keysetWithTwoKeys =
-        "{\"primaryKeyId\":282600252,\"key\":[{\"keyData\":{"
-            + "\"typeUrl\":\"type.googleapis.com/google.crypto.tink.JwtEcdsaPublicKey\","
-            + "\"value\":\"EAEaIBDPI66hjLHvjxmUJ2nyHIBDmdOtQ4gPsvWgYYgZ0gygIiBTEK0rTACpAb97m+mvtJKAk0"
-            + "q3mHjPcUZm0C4EueDW4Q==\",\"keyMaterialType\":\"ASYMMETRIC_PUBLIC\""
-            + "},\"status\":\"ENABLED\",\"keyId\":282600252,\"outputPrefixType\":\"RAW\"},"
-            + "{\"keyData\":{"
-            + "\"typeUrl\":\"type.googleapis.com/google.crypto.tink.JwtRsaSsaPkcs1PublicKey\","
-            + "\"value\":\"EAEagQIAkspk37lGBqXmPPq2CL5KdDeRx7xFiTadpL3jc4nXaqftCtpM6qExfrc2JLaIsnwpwf"
-            + "GMClfe/alIs2GrT9fpM8oDeCccvC39DzZhsSFnAELggi3hnWNKRLfSV0UJzBI+5hZ6ifUsv8W8mSHKlsVMmvOf"
-            + "C2P5+l72qTwN6Le3hy6CxFp5s9pw011B7J3PU65sty6GI9sehB2B/n7nfiWw9YN5++pfwyoitzoMoVKOOpj7fF"
-            + "q88f8ArpC7kR1SBTe20Bt1AmpZDT2Dmfmlb/Q1UFjj/F3C77NCNQ344ZcAEI42HY+uighy5GdKQRHMoTT1OzyD"
-            + "G90ABjggQqDGW+zXzyIDAQAB\",\"keyMaterialType\":\"ASYMMETRIC_PUBLIC\""
-            + "},\"status\":\"ENABLED\",\"keyId\":482168993,\"outputPrefixType\":\"RAW\"}]}";
-    return TinkJsonProtoKeysetFormat.parseKeyset(keysetWithTwoKeys, InsecureSecretKeyAccess.get());
+    JwtEcdsaPublicKey es256Key =
+        JwtEcdsaPublicKey.builder()
+            .setParameters(
+                JwtEcdsaParameters.builder()
+                    .setKidStrategy(JwtEcdsaParameters.KidStrategy.IGNORED)
+                    .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
+                    .build())
+            .setPublicPoint(
+                new ECPoint(
+                    new BigInteger(
+                        1, Base64.urlSafeDecode("EM8jrqGMse-PGZQnafIcgEOZ061DiA-y9aBhiBnSDKA")),
+                    new BigInteger(
+                        1, Base64.urlSafeDecode("UxCtK0wAqQG_e5vpr7SSgJNKt5h4z3FGZtAuBLng1uE"))))
+            .build();
+    BigInteger rs256Modulus =
+        new BigInteger(
+            1,
+            Base64.urlSafeDecode(
+                "kspk37lGBqXmPPq2CL5KdDeRx7xFiTadpL3jc4nXaqftCtpM6qExfrc2JLaIsnwpwfGMClfe_alIs2GrT9fpM8oDeCccvC39DzZhsSFnAELggi3hnWNKRLfSV0UJzBI-5hZ6ifUsv8W8mSHKlsVMmvOfC2P5-l72qTwN6Le3hy6CxFp5s9pw011B7J3PU65sty6GI9sehB2B_n7nfiWw9YN5--pfwyoitzoMoVKOOpj7fFq88f8ArpC7kR1SBTe20Bt1AmpZDT2Dmfmlb_Q1UFjj_F3C77NCNQ344ZcAEI42HY-uighy5GdKQRHMoTT1OzyDG90ABjggQqDGW-zXzw"));
+    JwtRsaSsaPkcs1PublicKey rs256Key =
+        JwtRsaSsaPkcs1PublicKey.builder()
+            .setParameters(
+                JwtRsaSsaPkcs1Parameters.builder()
+                    .setModulusSizeBits(rs256Modulus.bitLength())
+                    .setPublicExponent(new BigInteger(1, Base64.urlSafeDecode("AQAB")))
+                    .setAlgorithm(JwtRsaSsaPkcs1Parameters.Algorithm.RS256)
+                    .setKidStrategy(JwtRsaSsaPkcs1Parameters.KidStrategy.IGNORED)
+                    .build())
+            .setModulus(rs256Modulus)
+            .build();
+    return KeysetHandle.newBuilder()
+        .addEntry(KeysetHandle.importKey(es256Key).withFixedId(282600252).makePrimary())
+        .addEntry(KeysetHandle.importKey(rs256Key).withFixedId(482168993))
+        .build();
   }
 
   private static byte[] getCoordinate(JsonObject jwkSet, String coordinate) throws Exception {
