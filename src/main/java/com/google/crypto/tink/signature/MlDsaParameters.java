@@ -47,10 +47,11 @@ public final class MlDsaParameters extends SignatureParameters {
   /**
    * Describes the parameters set of ML-DSA that is used.
    *
-   * <p>ML-DSA-44 is not supported.
+   * <p>ML-DSA-{44,65,87} are supported.
    */
   @Immutable
   public static final class MlDsaInstance {
+    public static final MlDsaInstance ML_DSA_44 = new MlDsaInstance("ML_DSA_44");
     public static final MlDsaInstance ML_DSA_65 = new MlDsaInstance("ML_DSA_65");
     public static final MlDsaInstance ML_DSA_87 = new MlDsaInstance("ML_DSA_87");
 

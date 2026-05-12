@@ -53,6 +53,7 @@ import java.util.List;
 import org.conscrypt.Conscrypt;
 import org.junit.Assume;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -63,9 +64,14 @@ import org.junit.runner.RunWith;
 @RunWith(Theories.class)
 public final class MlDsaSignConscryptTest {
 
+  private static final int MLDSA44_SIGNATURE_BYTES = 2420;
   private static final int MLDSA65_SIGNATURE_BYTES = 3309;
   private static final int MLDSA87_SIGNATURE_BYTES = 4627;
 
+  private static final MlDsaParameters NO_PREFIX_MLDSA44_PARAMS =
+      MlDsaParameters.create(MlDsaInstance.ML_DSA_44, MlDsaParameters.Variant.NO_PREFIX);
+  private static final MlDsaParameters TINK_MLDSA44_PARAMS =
+      MlDsaParameters.create(MlDsaInstance.ML_DSA_44, MlDsaParameters.Variant.TINK);
   private static final MlDsaParameters NO_PREFIX_MLDSA65_PARAMS =
       MlDsaParameters.create(MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.NO_PREFIX);
   private static final MlDsaParameters TINK_MLDSA65_PARAMS =
@@ -76,6 +82,106 @@ public final class MlDsaSignConscryptTest {
       MlDsaParameters.create(MlDsaInstance.ML_DSA_87, MlDsaParameters.Variant.TINK);
 
   private static final byte[] testData = "this is some data to be signed".getBytes(UTF_8);
+  private static final String PRIVATE_KEY_MLDSA44_SEED_HEX =
+      "2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a";
+  private static final String PUBLIC_KEY_MLDSA44_HEX =
+      "db9ac67708f2ba0fac1f92bd802f9be89ecab966feef59872a1a9ac90b1111170a561290ae86b139"
+          + "68f2506023c014ba09fa449a26e4e9d35595e73986506cc8790e4d07a94d6c736f7ae78cc5e3e3cf"
+          + "025ce06a09252bef97fe92e94cbd107b1844d1a7c690d88bff9e9336f8f58e0bd5ee384de9c7ffbb"
+          + "149a6fcd87c77288601d8843e28e0c7a60149d02ebc57b183c39888d98b61cd8ad48135ddb8a1666"
+          + "743bb689f44c1a92d52017b6a8fa493eeb839dffb086a9a6c399b194a52f0e4164c96ff8a2a54337"
+          + "de24350a866b5fe4195257778e72511221778f1eae5fa93ed3532f696b9b0767aded85f62ea31102"
+          + "7c7f5fc4182dcd2864b1c26bd6dcf72ebdedf70471327be0ea1c2ae53e46489c6dbefa512a78fdd7"
+          + "be0ad3ada16a7f7b1ece49817b44868a2cc234bfdba556c32cc92ec2c5e8a5d206f2e4ee372d4168"
+          + "1e67d1b7e7b0061870c57f600fafca85f98aed8ce4ba76bba961f9ed56e563220d3ced853b6b28e7"
+          + "527da0e0912bc932a23c8bab811429bbb4d49b2770bcda44abb932b11c0a5866409fce39fed2b459"
+          + "c86c8f6e1ab0aefc5879503f4b21a49b4b2de6760c9b6aaf041144a656a26af39f4578e1d482ddc1"
+          + "360ef751d9784b860ec373d415360fe99f32e126a2ac1243430e8bed1bc90b19b3d219c2712edcf8"
+          + "1c44b4331f6421088e662b695e1fd8fa5091f616ab60af70f159b63368f1ac60d77b279ed47ef7f2"
+          + "4ec2044bb6c2bc76d933ecd568f7e663392afc1d335abac6c03670adf87747dde90052f5cd45f7d3"
+          + "0f43a4dc3c500ceb658fce235c171240baca1b5a14733d774b9416c540f53eb83481afc98344b12a"
+          + "4309e6222b08d978430467497010314c6f6b8caf65361c216106395275a67d7500dbc120f7918c6f"
+          + "8db7aa63fa965b4a22c70dc88f727d768ce2bfc7597fd470184e1c59a6b2e1204cc8c3d052c594d5"
+          + "771e0ccc8cfb191f47038b1c0672f07caf4747562d3d76a9816fb1def1391cf0f05fcdbf2a0eb6c2"
+          + "1ac24b26e74ee403133e80a79313ddb02c1fa386c6dd1d420195343e3a104aff6d60887f7304fa9e"
+          + "3bb59bb55f820dd85b1445c54e9a38dc1c7f3b88eb36a9f48d13455e51c934825ff3cd8bedb2b542"
+          + "2344120399eef83a360b83440ebdd8ea6e01c95159e3735bb4408500caa785ca4049891c7331c4ea"
+          + "31ad9060ece768fd339e6904f88e27bad3b28845687be2cc9314f300fda56fe3ff2508e54c59123b"
+          + "068f86fe00213d5af8da1b1735423ed688f097c306dbc121b81f532fcaf872d9f80596642295d6e4"
+          + "bead478644081618ab903b39e9b5e7cc0b5f2742d8337b18d4ad4788db7443e946cafc1762a5da84"
+          + "070e8c2fd86d6c633f0b44ee234ba11b9e1440c94a08d0437015279690405353059020fd2f58f15d"
+          + "ab18754177244adfb81ceab79c7840bf3884a3d364afc8c453a425fd8c5378eaa7445f8c6256bfbd"
+          + "03a66c53e8cf27e2c52f14ef3294afe79cda408f5dff933ca0211a78a4e3be3d9a932558ed71ed19"
+          + "bbb57f87937fa3d4a78128491ff096a261045bdd186325c42caa8c7564195a4d2499a1c17d21a52d"
+          + "1aacd221d9c8a1866963a20390f2fd43dcf56b308a1c01c38091fd3e04c12b695de497d48bcc268d"
+          + "50cb0bed793b8e6937e8d533afd568521f1c9377a3804d38e785674d7ce868d289938e33dda6edc7"
+          + "6d25b15fcb38852b7803cfe62f08d9fbd070957c4e6f134973964c9dc009985c8501e7d8f72e7ec2"
+          + "85d5289fdd07f64d62acaa9737b039efa7a9d1d175577c6bcf9dddcf692877af38e75263bebe2453"
+          + "155be61f0723c274388a532abe29dd7023e327085f4c9dda41839b7b3357ab9d";
+  private static final String MESSAGE_MLDSA44_HEX =
+      "48656c6c6f20776f726c64";
+  private static final String SIGNATURE_MLDSA44_HEX =
+      "1aa69cb5ed35204534f25f40a17eb0d767f8981f5e7cec46d3bf3252bfc78e09d02ef0c82da6dde9"
+          + "73611c849472890106158cb15ffa6ca891615e888efa0d2d8a121b75ca440228ad32991be3424962"
+          + "0f158ffd6f74d7b03bf919218ce259b500808ec157ead67b56b79e9e6607eafb9227b8a30adbec08"
+          + "7d35bc1aec2f1a0c4dd126dfcfb9fbf0bd74fb1e092495fa994ab5a7cd1333281aafe834694a6dc1"
+          + "1e889c762b5645638e172dfab3060031ebcdc1fd455d5de6050bf71b074a4dd34af5ebf15487651f"
+          + "0f13e5d3cee231b9b347810bfc418196df9d7231780c09171b9aae732bea27a1649d8c03220f417e"
+          + "30a016b08ccb1d55c9337b4812e20e04523f5d29a760a01b3a80d76285521206481ee1e44df09a76"
+          + "913ba54ae50c8eb973a3ced73950fbf39c4c0c1262a216821a442072c10cc82839ac57b898411be9"
+          + "e810f893272a2546ff7d1d920f146210efc2b4528bc98a099a398302d301fc1dea31b3d8ff78246a"
+          + "66f690ef536b68e02bd7ea23a5378930dde7f1beb51749896a7944e5a40e6fbbb1f76c3fda09e32e"
+          + "0a58062c24cac7ddb8c1d2cbb352a81e336425c5f551246db45ecd0ab29dac88cdebf51c60bebc2e"
+          + "27c974f56da12c1fec4f5745850429b607f5ed7cd821f2c91fc2dda8c2c8e8ec278d1b2a5bf50ec7"
+          + "0c5623fc681b4d1dccff96b324cb53ff97470f9de177c2006a89af8f18603a6d4ea2625794695fe7"
+          + "9cd30318a1e76307a4c2a353db1e076ad9b609a2489b94cb6dd821c3af31046bb7a5d43d190e09fc"
+          + "e4969fe4e93c8393975e64cb2d9c2294fc427ef5191c40937929b3b0e1b037e6b84cc0299d5af2b5"
+          + "410118bfd88ef6491af6f21233390ca7a19f1576e6c5a10a673796905562075047896e3a2379f64d"
+          + "fbbc12b9bfe64939c2d05efbc5f6e4b5ca69ce1ed4b7d25e8c835b0612b33e13ed7a8a7233b4b3d5"
+          + "8eead0bc4c841acb65a5ec0ed45e2584c23c2a162392b5789c62358e4038864e20c10e10c67d940c"
+          + "e78993178dbeb3de1fea1e50e7c29f4d7d938c3bfe50229ea040102f30d5b3a64cb8e13420065d54"
+          + "a1ac50a77383bdff3cae2340ebf15a1557fde897007c1b67d04f19431ca00cb0f08db87e90e166e0"
+          + "f4ce6fd69c6ecef1b3f70d9eb601b57a7bf931057c2afe2d3567b6bbec7891c664713385122fdd78"
+          + "9c1d5a8a9cfd491f407c16d0b0c5dfc53a6862208e264b981bf2ddbdd1d7db9729b5265c4c3868a9"
+          + "47c982880bc55b786153b89ef3324067b35a928c51236bcbe9f860ad9eee5644478f894a9fe78d26"
+          + "a5a17d482612f1cb9983b864e6fba84591c0f73b7b27918819d2121d4af640f533e2939d3da0f0aa"
+          + "6b9df80837a80165ae8b7579715192eb0f6cca78a43d8ad8d7abb56d816e3af2de59b88bfdcf6767"
+          + "abfb043d3ae24223d05001953faa292671c57ade1fe28988075ab8d14ac98363412bd694c40ae85b"
+          + "1f104afcd0f25aa590f57ba4f5dfdf613bf8594e3f54baadfdf50c0881af2475590758a23b7eee72"
+          + "5513e4d1ea9f4630159c424a289f18a9879e5e173390f8e630f6ee2a6043d82a1983dc97c7acfea3"
+          + "b0c03e27e865d810d012daeec28dc454f59334edf24627d435701d329ff5e68d19bbdca5ef7d5e00"
+          + "204fa947d08f81cb6484cabe60989d2f61fbe70940f7e4f449b3fcb103a89143d74b15d72e7913dc"
+          + "e9193a0b9c5a7b2a97bde6d7f396ae80b4b566f9f2e7345bc42ce3b002818e19f0f16416b850832c"
+          + "d02279ee8d58a381deaac09b1b4d4613f4d066805d2faea6716e015fe361c0526c6e4617a389ffdf"
+          + "930213c1dc0c4c905c3106a7517dce7abea7a9341132f8ad98de3e42f6b75809fff38f6eeafb9739"
+          + "8e79d50a5622338763c4e45a88ddda7fb87ab7f5cec61109fdc1c5d4a16310275241fc34178028a4"
+          + "9fd79581a05c3b6984eecd6cb9bd60a44da72600f8f2604a4ff4578126194fb2269c8e6e71447445"
+          + "e8e80bf8c6063dbbf29c7ded58abbc0d2eed347bf495b6a9cbe68585a594aa0e65834bfbcccc3f6b"
+          + "f42fe4ef42d86232c3fb1412dd0b5f8a0489958f5c3b883bf7851337a35b13dd2b6517626ff2d106"
+          + "4cd189beb402497dd6b8893d414dde7d1d51018c7a83766a2d8a29b80e8f428237732f7ee5ba8781"
+          + "63f0aa8af5b60533b4d4621a38fdc54383acb3325b5e876e21483eddcc64c419596e656d1557be31"
+          + "b530ea66054f79d4f4a755f9ee33c84fed5d552ec5e2eccd061cf4c4b5c3c16a70a7baecccfc208d"
+          + "2430e78621c9ae5b0d080973b4e1df0a1f5c0415db6d3c85f9ea9041e9a9abdde71d6776a522aa95"
+          + "7f708b14a33eda10ebbab93bb8ec2b7a04679f38eb44fc558ee698d3c6937e0e647dce898d7599fe"
+          + "f6de32ae4d52adc722443610b2126559756aa36f3c79696b99be3d908f780fcbaef33b215693634d"
+          + "63ce2a0777dfbbc899d2be72efdbafbc10aefb26a1a63cdcfda00235b34db723c91624ee5f939024"
+          + "dfedba0863ad08f648767d41fc7fd6b317c51f4b1b87e21e07d488c9423581f9bbdae43e4d32b37e"
+          + "8283960524f9a601ab69f5cd7fb01c9a8a5c64fe863519a1e9f3426398f691a96e1748491b4e209f"
+          + "ca2ab29481a674621c797614ba16fbfdfd1a4184e7f84667e720e6bcd9debef32c2b9e891a6e3c04"
+          + "23158f539838d8413e9fc707d5c65b23368b6edc95d9c3f8e20bbb844499311614945606c1487ef4"
+          + "015d1e260fa8239abaa071be572163132bdb06ef21e31be0f9d4b6747134e4842bedcd3bf53b0d6f"
+          + "054693bc428e9a715d5a32a79e6a3cb8b81faf2c04087d8816752637a2fe11eacb38341e02484856"
+          + "2a29d4585e4ee56552ce9b1fad43b965a37bff8558921790ef0f4ac55bcac4327d1783f5e1e79bf0"
+          + "1e96934bb4a8f5dd06c83bb70b2377189d622a106100f0cbdd38e34c0565900c616561161b326185"
+          + "9133f83893feb22b0bafc82cf4f0dbafde0648e2f86260e6e747034e5cb3ece98087fbf74179c630"
+          + "6f0c460b5d609b9b3a66761472ee0b9dabb5dfa872d5c6bc9b33461a27b5427bd8833f874f479ecc"
+          + "5f0a20304b9a75aacc82420a87af6469daaef53391ae8a25468e717dc47f464fce45a31147c0c4e1"
+          + "2ac2f834567e4005b0827d13b3ec80cd8b7a907436e6624c6c8ac6a80add35cfa1a28872fb65cb3f"
+          + "a46894d116a052f19b5fe20c7ead10bd24d27ad2b5683f299d1193ec6d9ff3379f3b3e39cb999183"
+          + "1f194af2041085508da4dcb7b8785cbdc4e04cf4d826d1ef4a11036e4c5803c3aaa7669b4dd3bc12"
+          + "ff888984e9bbdace0e772ab59332b47300334757677578808e90929697a9cecfd6ed1b303d425073"
+          + "8a97a0aabac6d91e283a4b696f7181828493aec8cdcfe1eaecfc0227484957595badbcbfc8fa0000"
+          + "00000000000000000000000000000000121f323e";
   private static final String PRIVATE_KEY_MLDSA65_SEED_HEX =
       "7C9935A0B07694AA0C6D10E4DB6B1ADD2FD81A25CCB148032DCD739936737F2D";
   private static final String PUBLIC_KEY_MLDSA65_HEX =
@@ -84,6 +190,12 @@ public final class MlDsaSignConscryptTest {
       "D81C4D8D734FCBFBEADE3D3F8A039FAA2A2C9957E835AD55B22E75BF57BB556AC8";
   private static final String SIGNATURE_MLDSA65_HEX =
       "BD0D51DB2F225AC6D3DA8F0C2439B0BCDA26EFF7EFA67CFD3C2B98EFA08477A74088DC638126865E493697B6FE360FF9C55B304D15A7474C983C3D8A4E1AB28FF9925CC9073AD986D4B53C28B4CC909DC36B9334CC4510AFFDEA9548620923ED2158224AC5CA8FEF19228DBBBF12956F5422176E8A474AFBE6EC6551F1FFDE71E86C48B39BE6CA540DBD78B985E89A2F7576325E79DCF801585D30DCB3F971C827F4489745D450DF7AE34496C42C7A8778AAC7FDDB9740CD3F07A8AFAD1C1471FB9591BBCF37BEAEA10C465ADB4BD7303ED6CA41AD4848CE8A5659F7E3D4894AB0E79A0E7206C9FE278AC9CF1F6A3DA6B9FA8E03AFEEE717739CBFEB5C26EF3B1C9130C8DD46F9C8E8149DA9B0FE5AA8FD03600F87824A6F2EE8BBCA0EF6D8C38EC526E982100BB8A8974EA91129BF827FE4CCA13D7203D38AC51B2A14025948E5AC0F71394EB804C885521EE65EEA303CE30D0FA9626A914F36246A8F55EB2D866B215FC191CB734CC6B4724C8C1562F81E3678D39097871249B86833C6981FF45CEC71339E1C6F38ED1D04B6C70C21642D268B5E058F8095101C2339EE5619280F2553308DBCFEF74537DD02722E42608FFCA2E8EA8B8A2FECF46948C952D003071792845A07DBCFCC483B594CA9E0A69664498835DA427761E19F9FDF29E5319AA0FBAA7150DE0B1F951D9CC0E1B62DFB0857DB7C2129A896D65DCE0ECD3A87FABCC2A4A6FA5811CF6312DC9E3ABFD5ACC116A8A25F45AD3736FDB541276732DCD997B1B687BDAC9827A4582B8D3F0877595830E2079DCE9104E1FCFEFD0F8225BA9739C30CA7671A05688B55BCA1F9ED968E6F3F2831E3D54E596707BF63FD6AA809FE410EC38A17E3F8DE2E050A9E6B81CC386CC229041A7BE15FFC912FC4066A4D2D7FB98AF7022840E593C4E599D0309F37B65B85F10541683300779FA41124B19D4032CF8D7AF5726D3A08331D7A712DA910903C0A381F616CE5B1085F779486172EA4D7B127692557DD156B63B0E445ED8888E446397542E50C9BFE7B728E31388F7743D0F51151D4B4CB7642431ED0BAEAE264F4B2D9BAC2D5618338EE092228A251A4F99D4F95D263CAE16FB9A45A51D45BEF0F6CAD30547AB4BAA1C6F28E6FF35B195D938514F58FC2B47BEB8C895D213F11035E5FAEF85C917D7AA551FDF8D316CC4DE5A159CD4F39E3C118673984147C82BB41089CF0D9B6712E899A99CBA5DE33BF33E2C0DA03745031A48A37F7E6A7288790839461F2C58BB5ED93477834B572DCE2DD00DD31B866C2387076037053872D8CF8EB57AE81FDD84823DC69FE0A33F599846620AB74E86912759E245332EECFEFAAB9726F8A59256200BE72BC47DC3E0A4E28868842935D216334191F32E0630920D8DB05EE62813218A1E1FC5DE96719D08A00FE7D5072C8D51B3ED0AB0F9D5B45BBC2D5DD2CC7E6ECCB080D617565119C4B2A4E408A0B18EC969DCDB2BB7D8DE2EEEF3A76A0A5E437C6681AE7A00D54868E0F51EE39616AA29FEB7ABF4A3E17865003B781497BA572EDE6EA7A9479FD15C295B79C0384D4D8451043C6F67F2E10D8442F0C4E72684D6576FD41BC3756B1A8834082144760C7F609B3665C03F001073CCFEC1EB18FB9A61D82A8462D0A86FF80520053C55F2D79502F95EEE9B50F1B95179BEAB6EB1ADC4F582A9CA12C31E6F165E064AA9F289DD2A5E12F45E71C98CBC87DBF218926250D1A78DFD2B46B1DB4844AC63C5A6960F67A6BF0B270337E629AC04BA47883E52C33246863EB9F54BF2DFA5905F057490FE14F993D81EAC50E0D16DD0EB2098D0D1170FBF30892A7BFB45F6C6B7E349865CF4313D1572CA41A06C0D5561B0704AF4BCD4CBFF4045C5F76A9A760751F7B1432F8049CC9C0496F3E80026E2078CDC7BF54132C84200A4C27B23AAF69E97B25D8CBADA6F5C82748D73F8CEE44980B909EB0C11EB49FCEA972552BF5BE540DD9467EC81D70990562DC558C00CFF68DB80F3D2BBE61D7E154A2D5A4166E86546D8A82886E1CFA28CE2D8BF57D67D9B6CE32D451F9B2B4D73474C299C64FDD8D2AE15EAFC3F88179B8B364FE16B51E7B6C4DB47D796E159546BD409DD72879234578875C7940E057FB9508DDD9754D130F5CC3E32D82104DBCE1BA883FBC0C9AB9072A1A2771B0EA1152682D182D537EEEABE3F79C531A26E236AEF6479D5A7817D00723D0183E4A1A671C3285BAE7793D7FF982A6B90F7D38E40F763EDC401F2BD0618D3E305257CFADD3CCFED8DD3FD03CDBB533976FA353ABE73503EF8360964C2CA78888B4E67B0EEA68D35E64A840D136A7F0CA41CBBC52543BE45CA846F0213EEA90D932AB3A6902795B0B4FAC28C838224309E94782FA315BFBB9A535F3763FA9C3C95FFA3FFDA9C486678F7905A3637605A6929F234B9B04BDC729E14581888848930DF0D77FB1DB65D75F292E0EC78FFF3352ECF99D87E0B6FFC78F5B9CB423FCCE606D74D35D115A418EEEAE012026691B82D5B0262A1DD137ABF192683173A5615A3298A2224280C405EEE6094ADD0E1ACEE74204BC0F8170221621A71743084A072FDF03293D8FD7778E8E3282DC49A1A950404CE827C281E1F57E9DFA1F1156726DFCA3560F5C909987D6D79E831166155D5AAEE8F1ED382863195ED48EA6924D7A119EA99756434092F08E217804EB4943E56A42CC7AC5CDFA7CACE562FAC86AAF3BB5C3CF6F6DC35036B388E9EC8BE2272C2D6CA425FF23E6EF7878332042B120246271B93F87C463434921D0BF6A105A2C7E473B3C5E4BC5828403C130005B2EEDB7C161010A7A782AF3EA91700A7610DDA532DAC61DCA768B51541D2F6213B9C5047CA2AC0E1DDA275EFB58359B5AE203706BBCB1B2DB3ED8896C3721B51865A6F9B4B8949FAB4F3301AE7CBDC540F0B04FD6E27BE48748DA228DAE22353DA7CA1C464E70FB78960491279E827128BEF241C764061A5AD103EE62B26AE08066C5F20B807883C8E8A3144B7968F232627440154FED536DCC09DC9E33BB7BCDAED850F0435E1B9D943F79640BA06F21F99A1D89997BC5529D1E69095DE36958B8F186C12007DAF19115B0F971DFACB126280E1C4B956C458F9AD2EDF2226A696685A3DEACE620DBAD643B4B2E31911F53BBCC1E712B83DE8687D4956EBE1A30CF4D7E86DBE8B6E28DD6AF59BF6E83E25D9B67458ABE922181C4BFA5E5D047A7799D8F117411DA633096CE2ABF19C5317C545835B06A54759497605A0265A0396C4F069F7AAF9E677140679A265893780B0F4ACA2E48010346CDA16356E6D69F48FBD6E9763E1EAF576008BD2EDCCA2DF8808989D801F687EFC97EBD1C0FAA8555664BDD49E39B38565480D7DE0BB51E1CC5341DBF12DA73B5AA7DF954B5569272A7A3EA3AD45D8F65F718007A0C35AE3C7206E14AE7033E4DCE999F232BBB488AEFF090A1D160B10847B134FA82867114C4EFB7CC83DF601108E61457F7242FB159B0840D7711C0C50DEDBDDF346BFBA7C7EFCA4068B35B93FF81054115AE59DE3C55BBA020AD66893B88AE491F8F6BD45BDB0D506D15E050B26BDD0242F0EEC3092830E3F35D59A4B94B7A41A993F44DF9199EE6B084681D554AFD3970DD410E748F4A95F3F5A3B2827F1C587B563FF7F0D7C47AF3B9F72B8AD6A46C2CB178929F80C1852AD8247769BD4FEE274A0A07B20137CA67674E91779D9C6424F06E78A8BAC807C31CBB4677E9CC7D8755997BD19DBF053F1EB7DD6DC3875E667088B0501FDDBAB90C6A4C215E28B17DB87B0F4423C6108813AC993F69CD20953E0C6B85E308F20F1855F5993FB269159F2EE5D87316A0B744CD6530BFAF581C7FBAFD20689B702BDD4F907CD9D5ED768FAB06CD625B171D7159112E2446F8B6B2FD3B89F43D6C42B5120CFC98AE2762D241C41D32DFF80F7147119FBA9900689E1919EAD74C77F27C046B513FE143884A439F1E8399CF97C7E83F3BA585C5A0117251EFB5AFF33974D5B0FDBD61B62CA5692983643788AC31010E70E6909BE8757F6BD2E721BAC6790F8DCA7D1AFCDA291F1DA1669E8906F4880E0E1BDC2608A0DF671BA401C178A53AA6E1B2D6C90D2769E4230B60E9FF10EE38A1532090B3D5076D1D320697F4AC06FC8574136373FDF90D6872190E26F5311BAF686A95F47EF7A31F8A6AAF0196D3CCED25D5A549FE618D02F3C531FECF1C6770BE5B43FFC299519B7AA701BED350A09AF45B9268D8D5D81E8B962303C1F8E4BF15F5DE14A85312EB1C9511DF3E687CA14081754A2958324B4E5BAC035C91240F01D7719DAAE546ED56885F1F393DF95690C20618AAE3229C6488AF7820C3E8B421957CCF4F31A5173B7282FB972F7981AE53F73F2AE5747B608FB05F01888E80C1C6CA031D52E573FBCDF986471D038EE3C6E0814E24E8DF75BDBAE63F2909B47D9401107439A6B022C897763194687110D50779A9ACA6231B04D587A87CAADE5E4E91B7BCF43B2E469F52DBF19AB1D180F477D5DF2E45ED2609638E22E4F5143BB0E733F16AD183153C8460E9D0A821C9AE4AD7DB358B18E91A9022A26283F553D722F4D37B3B9EA7E5F684A1395C72EAF26150960A318B8901630E1A657479A2B1F7181A1C215678F3626BB7E2FD0F36498497A20F2D3C467E803F697DA800000000000000000000000000000000000000080F141A2024";
+  private static final byte[] privateKeyMlDsa44Seed = Hex.decode(PRIVATE_KEY_MLDSA44_SEED_HEX);
+  private static final byte[] publicKeyMlDsa44 = Hex.decode(PUBLIC_KEY_MLDSA44_HEX);
+  private static final byte[] messageMlDsa44 = Hex.decode(MESSAGE_MLDSA44_HEX);
+  private static final byte[] noPrefixSignatureMlDsa44 = Hex.decode(SIGNATURE_MLDSA44_HEX);
+  private static final byte[] tinkSignatureMlDsa44 =
+      Hex.decode("0112345678" + SIGNATURE_MLDSA44_HEX);
   private static final byte[] privateKeyMlDsa65Seed = Hex.decode(PRIVATE_KEY_MLDSA65_SEED_HEX);
   private static final byte[] publicKeyMlDsa65 = Hex.decode(PUBLIC_KEY_MLDSA65_HEX);
   private static final byte[] messageMlDsa65 = Hex.decode(MESSAGE_MLDSA65_HEX);
@@ -304,6 +416,10 @@ public final class MlDsaSignConscryptTest {
   private static final byte[] tinkSignatureMlDsa87 =
       Hex.decode("0112345678" + SIGNATURE_MLDSA87_HEX);
 
+  private static MlDsaPublicKey noPrefixMlDsa44PublicKey;
+  private static MlDsaPrivateKey noPrefixMlDsa44PrivateKey;
+  private static MlDsaPublicKey tinkMlDsa44PublicKey;
+  private static MlDsaPrivateKey tinkMlDsa44PrivateKey;
   private static MlDsaPublicKey noPrefixMlDsa65PublicKey;
   private static MlDsaPrivateKey noPrefixMlDsa65PrivateKey;
   private static MlDsaPublicKey tinkMlDsa65PublicKey;
@@ -321,6 +437,26 @@ public final class MlDsaSignConscryptTest {
     } catch (Throwable cause) {
       // If Conscrypt is not available, we verify that the primitive creation fails.
     }
+    noPrefixMlDsa44PublicKey =
+        MlDsaPublicKey.builder()
+            .setParameters(NO_PREFIX_MLDSA44_PARAMS)
+            .setSerializedPublicKey(Bytes.copyFrom(publicKeyMlDsa44))
+            .build();
+    noPrefixMlDsa44PrivateKey =
+        MlDsaPrivateKey.createWithoutVerification(
+            noPrefixMlDsa44PublicKey,
+            SecretBytes.copyFrom(privateKeyMlDsa44Seed, InsecureSecretKeyAccess.get()));
+    tinkMlDsa44PublicKey =
+        MlDsaPublicKey.builder()
+            .setParameters(TINK_MLDSA44_PARAMS)
+            .setSerializedPublicKey(Bytes.copyFrom(publicKeyMlDsa44))
+            .setIdRequirement(0x12345678)
+            .build();
+    tinkMlDsa44PrivateKey =
+        MlDsaPrivateKey.createWithoutVerification(
+            tinkMlDsa44PublicKey,
+            SecretBytes.copyFrom(privateKeyMlDsa44Seed, InsecureSecretKeyAccess.get()));
+
     noPrefixMlDsa65PublicKey =
         MlDsaPublicKey.builder()
             .setParameters(NO_PREFIX_MLDSA65_PARAMS)
@@ -362,6 +498,7 @@ public final class MlDsaSignConscryptTest {
             SecretBytes.copyFrom(privateKeyMlDsa87Seed, InsecureSecretKeyAccess.get()));
   }
 
+  @Ignore("TODO(b/458349867): rewrite once ML-DSA-44 is available on Android")
   @Test
   public void isSupported_onAndroid_returnsTrueSinceApi37() throws Exception {
     Assume.assumeTrue(Util.isAndroid());
@@ -375,6 +512,34 @@ public final class MlDsaSignConscryptTest {
       assertThat(MlDsaSignConscrypt.isSupported()).isFalse();
       assertThat(MlDsaVerifyConscrypt.isSupported()).isFalse();
     }
+  }
+
+  @Test
+  public void signAndVerify_noPrefix_mlDsa44() throws Exception {
+    Assume.assumeTrue(MlDsaVerifyConscrypt.isSupported());
+
+    PublicKeySign signer = MlDsaSignConscrypt.create(noPrefixMlDsa44PrivateKey);
+    PublicKeyVerify verifier = MlDsaVerifyConscrypt.create(noPrefixMlDsa44PublicKey);
+
+    byte[] signature = signer.sign(testData);
+
+    assertThat(signature).hasLength(MLDSA44_SIGNATURE_BYTES);
+    verifier.verify(signature, testData);
+  }
+
+  @Test
+  public void signAndVerify_tinkPrefix_mlDsa44() throws Exception {
+    Assume.assumeTrue(MlDsaVerifyConscrypt.isSupported());
+
+    PublicKeySign signer = MlDsaSignConscrypt.create(tinkMlDsa44PrivateKey);
+    PublicKeyVerify verifier = MlDsaVerifyConscrypt.create(tinkMlDsa44PublicKey);
+
+    byte[] signature = signer.sign(testData);
+
+    assertThat(signature).hasLength(5 + MLDSA44_SIGNATURE_BYTES);
+    assertThat(Hex.encode(Arrays.copyOf(signature, 1))).isEqualTo("01");
+    assertThat(Hex.encode(Arrays.copyOfRange(signature, 1, 5))).isEqualTo("12345678");
+    verifier.verify(signature, testData);
   }
 
   @Test
@@ -434,6 +599,22 @@ public final class MlDsaSignConscryptTest {
   }
 
   @Test
+  public void verify_goldenTestNoPrefix_mlDsa44() throws Exception {
+    Assume.assumeTrue(MlDsaVerifyConscrypt.isSupported());
+
+    PublicKeyVerify verifier = MlDsaVerifyConscrypt.create(noPrefixMlDsa44PublicKey);
+    verifier.verify(noPrefixSignatureMlDsa44, messageMlDsa44);
+  }
+
+  @Test
+  public void verify_goldenTestTink_mlDsa44() throws Exception {
+    Assume.assumeTrue(MlDsaVerifyConscrypt.isSupported());
+
+    PublicKeyVerify verifier = MlDsaVerifyConscrypt.create(tinkMlDsa44PublicKey);
+    verifier.verify(tinkSignatureMlDsa44, messageMlDsa44);
+  }
+
+  @Test
   public void verify_goldenTestNoPrefix_mlDsa65() throws Exception {
     Assume.assumeTrue(MlDsaVerifyConscrypt.isSupported());
 
@@ -463,6 +644,45 @@ public final class MlDsaSignConscryptTest {
 
     PublicKeyVerify verifier = MlDsaVerifyConscrypt.create(tinkMlDsa87PublicKey);
     verifier.verify(tinkSignatureMlDsa87, messageMlDsa87);
+  }
+
+  @Test
+  public void verify_invalidSignature_fails_mlDsa44() throws Exception {
+    Assume.assumeTrue(MlDsaVerifyConscrypt.isSupported());
+
+    PublicKeySign signer = MlDsaSignConscrypt.create(noPrefixMlDsa44PrivateKey);
+    PublicKeyVerify verifier = MlDsaVerifyConscrypt.create(noPrefixMlDsa44PublicKey);
+
+    byte[] signature = signer.sign(testData);
+    signature[0] = (byte) (signature[0] ^ 0xFF); // Corrupt signature
+
+    assertThrows(GeneralSecurityException.class, () -> verifier.verify(signature, testData));
+  }
+
+  @Test
+  public void verify_wrongOutputPrefix_fails_mlDsa44() throws Exception {
+    Assume.assumeTrue(MlDsaVerifyConscrypt.isSupported());
+
+    PublicKeySign signer = MlDsaSignConscrypt.create(tinkMlDsa44PrivateKey);
+    PublicKeyVerify verifier = MlDsaVerifyConscrypt.create(tinkMlDsa44PublicKey);
+
+    byte[] signature = signer.sign(testData);
+    signature[1] = (byte) (signature[1] ^ 0xFF); // Corrupt prefix byte
+
+    assertThrows(GeneralSecurityException.class, () -> verifier.verify(signature, testData));
+  }
+
+  @Test
+  public void verify_wrongSignatureLength_fails_mlDsa44() throws Exception {
+    Assume.assumeTrue(MlDsaVerifyConscrypt.isSupported());
+
+    PublicKeySign signer = MlDsaSignConscrypt.create(tinkMlDsa44PrivateKey);
+    PublicKeyVerify verifier = MlDsaVerifyConscrypt.create(tinkMlDsa44PublicKey);
+
+    byte[] signature = signer.sign(testData);
+    byte[] shortSignature = Arrays.copyOf(signature, signature.length - 1);
+
+    assertThrows(GeneralSecurityException.class, () -> verifier.verify(shortSignature, testData));
   }
 
   @Test
@@ -541,6 +761,25 @@ public final class MlDsaSignConscryptTest {
     byte[] shortSignature = Arrays.copyOf(signature, signature.length - 1);
 
     assertThrows(GeneralSecurityException.class, () -> verifier.verify(shortSignature, testData));
+  }
+
+  @Test
+  public void create_unmatchedKeys_fails_mlDsa44() throws Exception {
+    Assume.assumeTrue(MlDsaVerifyConscrypt.isSupported());
+
+    byte[] wrongPublicKeyBytes = Arrays.copyOf(publicKeyMlDsa44, publicKeyMlDsa44.length);
+    wrongPublicKeyBytes[0] ^= 0xFF;
+    MlDsaPublicKey wrongPublicKey =
+        MlDsaPublicKey.builder()
+            .setSerializedPublicKey(Bytes.copyFrom(wrongPublicKeyBytes))
+            .setParameters(NO_PREFIX_MLDSA44_PARAMS)
+            .build();
+    MlDsaPrivateKey wrongPrivateKey =
+        MlDsaPrivateKey.createWithoutVerification(
+            wrongPublicKey,
+            SecretBytes.copyFrom(privateKeyMlDsa44Seed, InsecureSecretKeyAccess.get()));
+
+    assertThrows(GeneralSecurityException.class, () -> MlDsaSignConscrypt.create(wrongPrivateKey));
   }
 
   @Test
@@ -712,7 +951,9 @@ public final class MlDsaSignConscryptTest {
           boolean isValidSig = WycheproofTestUtil.checkFlags(testCase, "ValidSignature");
 
           MlDsaInstance instance;
-          if (algorithm.equals("ML-DSA-65")) {
+          if (algorithm.equals("ML-DSA-44")) {
+            instance = MlDsaInstance.ML_DSA_44;
+          } else if (algorithm.equals("ML-DSA-65")) {
             instance = MlDsaInstance.ML_DSA_65;
           } else if (algorithm.equals("ML-DSA-87")) {
             instance = MlDsaInstance.ML_DSA_87;
@@ -743,6 +984,7 @@ public final class MlDsaSignConscryptTest {
           () ->
               readTestVectors(
                   asList(
+                      "third_party/wycheproof/testvectors_v1/mldsa_44_verify_test.json",
                       "third_party/wycheproof/testvectors_v1/mldsa_65_verify_test.json",
                       "third_party/wycheproof/testvectors_v1/mldsa_87_verify_test.json")));
 
@@ -790,6 +1032,10 @@ public final class MlDsaSignConscryptTest {
     Assume.assumeTrue(TinkFipsUtil.useOnlyFips());
 
     assertThrows(
+        GeneralSecurityException.class, () -> MlDsaSignConscrypt.create(tinkMlDsa44PrivateKey));
+    assertThrows(
+        GeneralSecurityException.class, () -> MlDsaVerifyConscrypt.create(tinkMlDsa44PublicKey));
+    assertThrows(
         GeneralSecurityException.class, () -> MlDsaSignConscrypt.create(tinkMlDsa65PrivateKey));
     assertThrows(
         GeneralSecurityException.class, () -> MlDsaVerifyConscrypt.create(tinkMlDsa65PublicKey));
@@ -799,12 +1045,17 @@ public final class MlDsaSignConscryptTest {
         GeneralSecurityException.class, () -> MlDsaVerifyConscrypt.create(tinkMlDsa87PublicKey));
   }
 
+  @Ignore("TODO(b/458349867): rewrite once ML-DSA-44 is available on Android")
   @Test
   public void noConscryptSupport_primitiveCreationFails() throws Exception {
     // TODO(b/458349867): change to plain Conscrypt abailability verification once this bug and also
     //  b/458047608 are resolved.
     Assume.assumeFalse(MlDsaVerifyConscrypt.isSupported());
 
+    assertThrows(
+        GeneralSecurityException.class, () -> MlDsaSignConscrypt.create(tinkMlDsa44PrivateKey));
+    assertThrows(
+        GeneralSecurityException.class, () -> MlDsaVerifyConscrypt.create(tinkMlDsa44PublicKey));
     assertThrows(
         GeneralSecurityException.class, () -> MlDsaSignConscrypt.create(tinkMlDsa65PrivateKey));
     assertThrows(
@@ -823,6 +1074,16 @@ public final class MlDsaSignConscryptTest {
 
     assertNotNull(provider);
 
+    PublicKeySign signer44 =
+        MlDsaSignConscrypt.createWithProvider(noPrefixMlDsa44PrivateKey, provider);
+    PublicKeyVerify verifier44 =
+        MlDsaVerifyConscrypt.createWithProvider(noPrefixMlDsa44PublicKey, provider);
+
+    byte[] signature44 = signer44.sign(testData);
+
+    assertThat(signature44).hasLength(MLDSA44_SIGNATURE_BYTES);
+    verifier44.verify(signature44, testData);
+
     PublicKeySign signer =
         MlDsaSignConscrypt.createWithProvider(noPrefixMlDsa65PrivateKey, provider);
     PublicKeyVerify verifier =
@@ -837,6 +1098,12 @@ public final class MlDsaSignConscryptTest {
   @Test
   public void createWithProvider_providerIsNull_throws() throws Exception {
     Provider nullProvider = null;
+    assertThrows(
+        NullPointerException.class,
+        () -> MlDsaSignConscrypt.createWithProvider(noPrefixMlDsa44PrivateKey, nullProvider));
+    assertThrows(
+        NullPointerException.class,
+        () -> MlDsaVerifyConscrypt.createWithProvider(noPrefixMlDsa44PublicKey, nullProvider));
     assertThrows(
         NullPointerException.class,
         () -> MlDsaSignConscrypt.createWithProvider(noPrefixMlDsa65PrivateKey, nullProvider));

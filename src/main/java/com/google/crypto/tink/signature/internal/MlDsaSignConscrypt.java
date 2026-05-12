@@ -16,6 +16,8 @@
 
 package com.google.crypto.tink.signature.internal;
 
+import static com.google.crypto.tink.signature.internal.MlDsaVerifyConscrypt.ML_DSA_44_ALGORITHM;
+import static com.google.crypto.tink.signature.internal.MlDsaVerifyConscrypt.ML_DSA_44_SIG_LENGTH;
 import static com.google.crypto.tink.signature.internal.MlDsaVerifyConscrypt.ML_DSA_65_ALGORITHM;
 import static com.google.crypto.tink.signature.internal.MlDsaVerifyConscrypt.ML_DSA_65_SIG_LENGTH;
 import static com.google.crypto.tink.signature.internal.MlDsaVerifyConscrypt.ML_DSA_87_ALGORITHM;
@@ -82,7 +84,15 @@ public final class MlDsaSignConscrypt implements PublicKeySign {
     PrivateKey privateKey;
     String algorithm;
     int signatureLength;
-    if (mlDsaInstance == MlDsaInstance.ML_DSA_65) {
+    if (mlDsaInstance == MlDsaInstance.ML_DSA_44) {
+      algorithm = ML_DSA_44_ALGORITHM;
+      privateKey =
+          KeyFactory.getInstance(ML_DSA_44_ALGORITHM, provider)
+              .generatePrivate(
+                  new RawKeySpec(
+                      mlDsaPrivateKey.getPrivateSeed().toByteArray(InsecureSecretKeyAccess.get())));
+      signatureLength = ML_DSA_44_SIG_LENGTH;
+    } else if (mlDsaInstance == MlDsaInstance.ML_DSA_65) {
       algorithm = ML_DSA_65_ALGORITHM;
       privateKey =
           KeyFactory.getInstance(ML_DSA_65_ALGORITHM, provider)
@@ -141,7 +151,7 @@ public final class MlDsaSignConscrypt implements PublicKeySign {
     return createWithProvider(mlDsaPrivateKey, provider);
   }
 
-  /** Returns true if the Conscrypt is available and supports ML-DSA-{65, 87}. */
+  /** Returns true if the Conscrypt is available and supports ML-DSA-{44, 65, 87}. */
   public static boolean isSupported() {
     return MlDsaVerifyConscrypt.isSupported();
   }

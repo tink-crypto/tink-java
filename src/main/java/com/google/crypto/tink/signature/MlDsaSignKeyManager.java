@@ -54,6 +54,7 @@ public final class MlDsaSignKeyManager {
     return "type.googleapis.com/google.crypto.tink.MlDsaPrivateKey";
   }
 
+  static final String ML_DSA_44_ALGORITHM = "ML-DSA-44";
   static final String ML_DSA_65_ALGORITHM = "ML-DSA-65";
   static final String ML_DSA_87_ALGORITHM = "ML-DSA-87";
 
@@ -70,7 +71,10 @@ public final class MlDsaSignKeyManager {
     }
     KeyPairGenerator keyPairGenerator;
     KeyFactory keyFactory;
-    if (parameters.getMlDsaInstance() == MlDsaInstance.ML_DSA_65) {
+    if (parameters.getMlDsaInstance() == MlDsaInstance.ML_DSA_44) {
+      keyPairGenerator = KeyPairGenerator.getInstance(ML_DSA_44_ALGORITHM, provider);
+      keyFactory = KeyFactory.getInstance(ML_DSA_44_ALGORITHM, provider);
+    } else if (parameters.getMlDsaInstance() == MlDsaInstance.ML_DSA_65) {
       keyPairGenerator = KeyPairGenerator.getInstance(ML_DSA_65_ALGORITHM, provider);
       keyFactory = KeyFactory.getInstance(ML_DSA_65_ALGORITHM, provider);
     } else if (parameters.getMlDsaInstance() == MlDsaInstance.ML_DSA_87) {
@@ -104,6 +108,10 @@ public final class MlDsaSignKeyManager {
 
   private static Map<String, Parameters> namedParameters() throws GeneralSecurityException {
     return Map.of(
+        "ML_DSA_44",
+        MlDsaParameters.create(MlDsaInstance.ML_DSA_44, MlDsaParameters.Variant.TINK),
+        "ML_DSA_44_RAW",
+        MlDsaParameters.create(MlDsaInstance.ML_DSA_44, MlDsaParameters.Variant.NO_PREFIX),
         "ML_DSA_65",
         MlDsaParameters.create(MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.TINK),
         "ML_DSA_65_RAW",

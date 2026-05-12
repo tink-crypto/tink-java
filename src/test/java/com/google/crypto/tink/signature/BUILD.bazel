@@ -866,7 +866,7 @@ java_test(
         "//src/main/java/com/google/crypto/tink/signature:ml_dsa_parameters",
         "//src/main/java/com/google/crypto/tink/signature:ml_dsa_private_key",
         "//src/main/java/com/google/crypto/tink/signature:ml_dsa_sign_key_manager",
-        "//src/main/java/com/google/crypto/tink/signature:signature_configuration_v1",
+        "//src/main/java/com/google/crypto/tink/signature:signature_config_2026",
         "//src/main/java/com/google/crypto/tink/signature/internal:ml_dsa_verify_conscrypt",
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",

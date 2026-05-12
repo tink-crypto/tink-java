@@ -70,7 +70,9 @@ public class MlDsaSignKeyManagerConscryptTest {
 
   @DataPoints("templateNames")
   public static final String[] keyTemplates =
-      new String[] {"ML_DSA_65", "ML_DSA_65_RAW", "ML_DSA_87", "ML_DSA_87_RAW"};
+      new String[] {
+        "ML_DSA_44", "ML_DSA_44_RAW", "ML_DSA_65", "ML_DSA_65_RAW", "ML_DSA_87", "ML_DSA_87_RAW"
+      };
 
   @Theory
   public void testTemplates(@FromDataPoints("templateNames") String templateName) throws Exception {
@@ -95,11 +97,11 @@ public class MlDsaSignKeyManagerConscryptTest {
     }
 
     KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
-    PublicKeySign signer = handle.getPrimitive(SignatureConfigurationV1.get(), PublicKeySign.class);
+    PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
         handle
             .getPublicKeysetHandle()
-            .getPrimitive(SignatureConfigurationV1.get(), PublicKeyVerify.class);
+            .getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
     byte[] data = "data".getBytes(UTF_8);
 
     byte[] signature = signer.sign(data);
@@ -116,17 +118,32 @@ public class MlDsaSignKeyManagerConscryptTest {
     }
 
     KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
-    PublicKeySign signer = handle.getPrimitive(SignatureConfigurationV1.get(), PublicKeySign.class);
+    PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
         handle
             .getPublicKeysetHandle()
-            .getPrimitive(SignatureConfigurationV1.get(), PublicKeyVerify.class);
+            .getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
     byte[] data = "data".getBytes(UTF_8);
     byte[] wrongData = "wrong data".getBytes(UTF_8);
 
     byte[] signature = signer.sign(data);
 
     assertThrows(GeneralSecurityException.class, () -> verifier.verify(signature, wrongData));
+  }
+
+  @Test
+  public void callingCreateTwiceMlDsa44GivesDifferentKeys() throws Exception {
+    // TODO(b/458349867): remove this check once ML-DSA is available on Android and OSS Conscrypt.
+    if (!MlDsaVerifyConscrypt.isSupported()) {
+      return;
+    }
+
+    MlDsaParameters parameters = MlDsaParameters.create(MlDsaInstance.ML_DSA_44, Variant.NO_PREFIX);
+
+    MlDsaPrivateKey key0 = (MlDsaPrivateKey) KeysetHandle.generateNew(parameters).getAt(0).getKey();
+    MlDsaPrivateKey key1 = (MlDsaPrivateKey) KeysetHandle.generateNew(parameters).getAt(0).getKey();
+
+    assertFalse(key0.equalsKey(key1));
   }
 
   @Test
@@ -160,6 +177,27 @@ public class MlDsaSignKeyManagerConscryptTest {
   }
 
   @Test
+  public void testCreateSignAndVerifyFromParameterMlDsa44_works() throws Exception {
+    // TODO(b/458349867): remove this check once ML-DSA is available on Android and OSS Conscrypt.
+    if (!MlDsaVerifyConscrypt.isSupported()) {
+      return;
+    }
+
+    MlDsaParameters parameters = MlDsaParameters.create(MlDsaInstance.ML_DSA_44, Variant.NO_PREFIX);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
+    PublicKeyVerify verifier =
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
+    byte[] data = "data".getBytes(UTF_8);
+
+    byte[] signature = signer.sign(data);
+
+    verifier.verify(signature, data);
+  }
+
+  @Test
   public void testCreateSignAndVerifyFromParameterMlDsa65_works() throws Exception {
     // TODO(b/458349867): remove this check once ML-DSA is available on Android and OSS Conscrypt.
     if (!MlDsaVerifyConscrypt.isSupported()) {
@@ -168,11 +206,11 @@ public class MlDsaSignKeyManagerConscryptTest {
 
     MlDsaParameters parameters = MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.NO_PREFIX);
     KeysetHandle handle = KeysetHandle.generateNew(parameters);
-    PublicKeySign signer = handle.getPrimitive(SignatureConfigurationV1.get(), PublicKeySign.class);
+    PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
         handle
             .getPublicKeysetHandle()
-            .getPrimitive(SignatureConfigurationV1.get(), PublicKeyVerify.class);
+            .getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
     byte[] data = "data".getBytes(UTF_8);
 
     byte[] signature = signer.sign(data);
@@ -189,16 +227,38 @@ public class MlDsaSignKeyManagerConscryptTest {
 
     MlDsaParameters parameters = MlDsaParameters.create(MlDsaInstance.ML_DSA_87, Variant.NO_PREFIX);
     KeysetHandle handle = KeysetHandle.generateNew(parameters);
-    PublicKeySign signer = handle.getPrimitive(SignatureConfigurationV1.get(), PublicKeySign.class);
+    PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
         handle
             .getPublicKeysetHandle()
-            .getPrimitive(SignatureConfigurationV1.get(), PublicKeyVerify.class);
+            .getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
     byte[] data = "data".getBytes(UTF_8);
 
     byte[] signature = signer.sign(data);
 
     verifier.verify(signature, data);
+  }
+
+  @Test
+  public void testCreateSignAndVerifyFromParametersMlDsa44_wrongMessage_throws() throws Exception {
+    // TODO(b/458349867): remove this check once ML-DSA is available on Android and OSS Conscrypt.
+    if (!MlDsaVerifyConscrypt.isSupported()) {
+      return;
+    }
+
+    MlDsaParameters parameters = MlDsaParameters.create(MlDsaInstance.ML_DSA_44, Variant.NO_PREFIX);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
+    PublicKeyVerify verifier =
+        handle
+            .getPublicKeysetHandle()
+            .getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
+    byte[] data = "data".getBytes(UTF_8);
+    byte[] wrongData = "wrong data".getBytes(UTF_8);
+
+    byte[] signature = signer.sign(data);
+
+    assertThrows(GeneralSecurityException.class, () -> verifier.verify(signature, wrongData));
   }
 
   @Test
@@ -210,11 +270,11 @@ public class MlDsaSignKeyManagerConscryptTest {
 
     MlDsaParameters parameters = MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.NO_PREFIX);
     KeysetHandle handle = KeysetHandle.generateNew(parameters);
-    PublicKeySign signer = handle.getPrimitive(SignatureConfigurationV1.get(), PublicKeySign.class);
+    PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
         handle
             .getPublicKeysetHandle()
-            .getPrimitive(SignatureConfigurationV1.get(), PublicKeyVerify.class);
+            .getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
     byte[] data = "data".getBytes(UTF_8);
     byte[] wrongData = "wrong data".getBytes(UTF_8);
 
@@ -232,11 +292,11 @@ public class MlDsaSignKeyManagerConscryptTest {
 
     MlDsaParameters parameters = MlDsaParameters.create(MlDsaInstance.ML_DSA_87, Variant.NO_PREFIX);
     KeysetHandle handle = KeysetHandle.generateNew(parameters);
-    PublicKeySign signer = handle.getPrimitive(SignatureConfigurationV1.get(), PublicKeySign.class);
+    PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
         handle
             .getPublicKeysetHandle()
-            .getPrimitive(SignatureConfigurationV1.get(), PublicKeyVerify.class);
+            .getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
     byte[] data = "data".getBytes(UTF_8);
     byte[] wrongData = "wrong data".getBytes(UTF_8);
 

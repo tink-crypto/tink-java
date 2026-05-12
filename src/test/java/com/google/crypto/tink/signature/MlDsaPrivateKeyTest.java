@@ -33,10 +33,15 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public final class MlDsaPrivateKeyTest {
 
+  private static final int MLDSA44_PUBLIC_KEY_BYTES = 1312;
   private static final int MLDSA65_PUBLIC_KEY_BYTES = 1952;
   private static final int MLDSA87_PUBLIC_KEY_BYTES = 2592;
   private static final int MLDSA_SEED_BYTES = 32;
 
+  private static final MlDsaParameters NO_PREFIX_MLDSA44_PARAMS =
+      MlDsaParameters.create(MlDsaInstance.ML_DSA_44, MlDsaParameters.Variant.NO_PREFIX);
+  private static final MlDsaParameters TINK_MLDSA44_PARAMS =
+      MlDsaParameters.create(MlDsaInstance.ML_DSA_44, MlDsaParameters.Variant.TINK);
   private static final MlDsaParameters NO_PREFIX_MLDSA65_PARAMS =
       MlDsaParameters.create(MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.NO_PREFIX);
   private static final MlDsaParameters TINK_MLDSA65_PARAMS =
@@ -46,6 +51,8 @@ public final class MlDsaPrivateKeyTest {
   private static final MlDsaParameters TINK_MLDSA87_PARAMS =
       MlDsaParameters.create(MlDsaInstance.ML_DSA_87, MlDsaParameters.Variant.TINK);
 
+  private static final Bytes FAKE_MLDSA44_PUBLIC_KEY_BYTES =
+      Bytes.copyFrom(Hex.decode("01".repeat(MLDSA44_PUBLIC_KEY_BYTES)));
   private static final Bytes FAKE_MLDSA65_PUBLIC_KEY_BYTES =
       Bytes.copyFrom(Hex.decode("01".repeat(MLDSA65_PUBLIC_KEY_BYTES)));
   private static final Bytes FAKE_MLDSA87_PUBLIC_KEY_BYTES =
@@ -58,6 +65,43 @@ public final class MlDsaPrivateKeyTest {
       SecretBytes.copyFrom(new byte[MLDSA_SEED_BYTES - 1], InsecureSecretKeyAccess.get());
   private static final SecretBytes LONG_PRIVATE_SEED =
       SecretBytes.copyFrom(new byte[MLDSA_SEED_BYTES + 1], InsecureSecretKeyAccess.get());
+
+  @Test
+  @AccessesPartialKey
+  public void createNoPrefixMlDsa44AndGetProperties() throws Exception {
+    MlDsaPublicKey publicKey =
+        MlDsaPublicKey.builder()
+            .setParameters(NO_PREFIX_MLDSA44_PARAMS)
+            .setSerializedPublicKey(FAKE_MLDSA44_PUBLIC_KEY_BYTES)
+            .build();
+
+    MlDsaPrivateKey privateKey = MlDsaPrivateKey.createWithoutVerification(publicKey, PRIVATE_SEED);
+
+    assertThat(privateKey.getPublicKey()).isEqualTo(publicKey);
+    assertThat(privateKey.getPrivateSeed()).isEqualTo(PRIVATE_SEED);
+    assertThat(privateKey.getParameters()).isEqualTo(NO_PREFIX_MLDSA44_PARAMS);
+    assertThat(privateKey.getOutputPrefix()).isEqualTo(Bytes.copyFrom(new byte[] {}));
+    assertThat(privateKey.getIdRequirementOrNull()).isNull();
+  }
+
+  @Test
+  @AccessesPartialKey
+  public void createTinkMlDsa44AndGetProperties() throws Exception {
+    MlDsaPublicKey publicKey =
+        MlDsaPublicKey.builder()
+            .setParameters(TINK_MLDSA44_PARAMS)
+            .setSerializedPublicKey(FAKE_MLDSA44_PUBLIC_KEY_BYTES)
+            .setIdRequirement(0x66AABBCC)
+            .build();
+
+    MlDsaPrivateKey privateKey = MlDsaPrivateKey.createWithoutVerification(publicKey, PRIVATE_SEED);
+
+    assertThat(privateKey.getPublicKey()).isEqualTo(publicKey);
+    assertThat(privateKey.getPrivateSeed()).isEqualTo(PRIVATE_SEED);
+    assertThat(privateKey.getParameters()).isEqualTo(TINK_MLDSA44_PARAMS);
+    assertThat(privateKey.getOutputPrefix()).isEqualTo(Bytes.copyFrom(Hex.decode("0166AABBCC")));
+    assertThat(privateKey.getIdRequirementOrNull()).isEqualTo(0x66AABBCC);
+  }
 
   @Test
   @AccessesPartialKey
@@ -136,6 +180,11 @@ public final class MlDsaPrivateKeyTest {
   @Test
   @AccessesPartialKey
   public void createWithIncorrectSeedSize_fails() throws Exception {
+    MlDsaPublicKey publicKey44 =
+        MlDsaPublicKey.builder()
+            .setParameters(NO_PREFIX_MLDSA44_PARAMS)
+            .setSerializedPublicKey(FAKE_MLDSA44_PUBLIC_KEY_BYTES)
+            .build();
     MlDsaPublicKey publicKey65 =
         MlDsaPublicKey.builder()
             .setParameters(NO_PREFIX_MLDSA65_PARAMS)
@@ -150,12 +199,22 @@ public final class MlDsaPrivateKeyTest {
     GeneralSecurityException e =
         assertThrows(
             GeneralSecurityException.class,
+            () -> MlDsaPrivateKey.createWithoutVerification(publicKey44, SHORT_PRIVATE_SEED));
+    assertThat(e).hasMessageThat().contains("Incorrect private seed size");
+    e =
+        assertThrows(
+            GeneralSecurityException.class,
             () -> MlDsaPrivateKey.createWithoutVerification(publicKey65, SHORT_PRIVATE_SEED));
     assertThat(e).hasMessageThat().contains("Incorrect private seed size");
     e =
         assertThrows(
             GeneralSecurityException.class,
             () -> MlDsaPrivateKey.createWithoutVerification(publicKey87, SHORT_PRIVATE_SEED));
+    assertThat(e).hasMessageThat().contains("Incorrect private seed size");
+    e =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> MlDsaPrivateKey.createWithoutVerification(publicKey44, LONG_PRIVATE_SEED));
     assertThat(e).hasMessageThat().contains("Incorrect private seed size");
     e =
         assertThrows(

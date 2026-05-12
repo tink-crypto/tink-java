@@ -125,6 +125,9 @@ public final class MlDsaProtoSerialization {
           EnumTypeProtoConverter
               .<com.google.crypto.tink.proto.MlDsaInstance, MlDsaParameters.MlDsaInstance>builder()
               .add(
+                  com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_44,
+                  MlDsaParameters.MlDsaInstance.ML_DSA_44)
+              .add(
                   com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_65,
                   MlDsaParameters.MlDsaInstance.ML_DSA_65)
               .add(

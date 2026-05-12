@@ -28,6 +28,14 @@ import org.junit.runners.JUnit4;
 public class MlDsaParametersTest {
 
   @Test
+  public void createMlDsa44() {
+    MlDsaParameters parameters = MlDsaParameters.create(MlDsaInstance.ML_DSA_44, Variant.TINK);
+
+    assertThat(parameters.getMlDsaInstance()).isEqualTo(MlDsaInstance.ML_DSA_44);
+    assertThat(parameters.getVariant()).isEqualTo(Variant.TINK);
+  }
+
+  @Test
   public void createMlDsa65() {
     MlDsaParameters parameters = MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.TINK);
 

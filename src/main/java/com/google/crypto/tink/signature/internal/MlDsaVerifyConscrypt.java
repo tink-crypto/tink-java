@@ -38,6 +38,8 @@ import java.security.spec.EncodedKeySpec;
 public final class MlDsaVerifyConscrypt implements PublicKeyVerify {
   public static final TinkFipsUtil.AlgorithmFipsCompatibility FIPS =
       AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS;
+  static final int ML_DSA_44_SIG_LENGTH = 2420;
+  static final String ML_DSA_44_ALGORITHM = "ML-DSA-44";
   static final int ML_DSA_65_SIG_LENGTH = 3309;
   static final String ML_DSA_65_ALGORITHM = "ML-DSA-65";
   static final int ML_DSA_87_SIG_LENGTH = 4627;
@@ -83,7 +85,13 @@ public final class MlDsaVerifyConscrypt implements PublicKeyVerify {
     PublicKey publicKey;
     String algorithm;
     int signatureLength;
-    if (mlDsaInstance == MlDsaInstance.ML_DSA_65) {
+    if (mlDsaInstance == MlDsaInstance.ML_DSA_44) {
+      algorithm = ML_DSA_44_ALGORITHM;
+      publicKey =
+          KeyFactory.getInstance(ML_DSA_44_ALGORITHM, provider)
+              .generatePublic(new RawKeySpec(mlDsaPublicKey.getSerializedPublicKey().toByteArray()));
+      signatureLength = ML_DSA_44_SIG_LENGTH;
+    } else if (mlDsaInstance == MlDsaInstance.ML_DSA_65) {
       algorithm = ML_DSA_65_ALGORITHM;
       publicKey =
           KeyFactory.getInstance(ML_DSA_65_ALGORITHM, provider)
@@ -137,7 +145,7 @@ public final class MlDsaVerifyConscrypt implements PublicKeyVerify {
     }
   }
 
-  /** Returns true if we're not in FIPS, and Conscrypt is available and supports ML-DSA-65. */
+  /** Returns true if we're not in FIPS, and Conscrypt is available and supports ML-DSA-{44, 65, 87}. */
   public static boolean isSupported() {
     if (!FIPS.isCompatible()) {
       return false;
@@ -149,6 +157,8 @@ public final class MlDsaVerifyConscrypt implements PublicKeyVerify {
     }
 
     try {
+      KeyFactory unusedKeyFactory44 = KeyFactory.getInstance(ML_DSA_44_ALGORITHM, provider);
+      Signature unusedSignature44 = Signature.getInstance(ML_DSA_44_ALGORITHM, provider);
       KeyFactory unusedKeyFactory65 = KeyFactory.getInstance(ML_DSA_65_ALGORITHM, provider);
       Signature unusedSignature65 = Signature.getInstance(ML_DSA_65_ALGORITHM, provider);
       KeyFactory unusedKeyFactory87 = KeyFactory.getInstance(ML_DSA_87_ALGORITHM, provider);

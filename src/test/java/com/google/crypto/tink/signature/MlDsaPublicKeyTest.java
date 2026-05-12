@@ -30,8 +30,13 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public final class MlDsaPublicKeyTest {
 
+  private static final int MLDSA44_PUBLIC_KEY_BYTES = 1312;
   private static final int MLDSA65_PUBLIC_KEY_BYTES = 1952;
   private static final int MLDSA87_PUBLIC_KEY_BYTES = 2592;
+  private static final MlDsaParameters NO_PREFIX_MLDSA44_PARAMS =
+      MlDsaParameters.create(MlDsaInstance.ML_DSA_44, MlDsaParameters.Variant.NO_PREFIX);
+  private static final MlDsaParameters TINK_MLDSA44_PARAMS =
+      MlDsaParameters.create(MlDsaInstance.ML_DSA_44, MlDsaParameters.Variant.TINK);
   private static final MlDsaParameters NO_PREFIX_MLDSA65_PARAMS =
       MlDsaParameters.create(MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.NO_PREFIX);
   private static final MlDsaParameters TINK_MLDSA65_PARAMS =
@@ -40,10 +45,41 @@ public final class MlDsaPublicKeyTest {
       MlDsaParameters.create(MlDsaInstance.ML_DSA_87, MlDsaParameters.Variant.NO_PREFIX);
   private static final MlDsaParameters TINK_MLDSA87_PARAMS =
       MlDsaParameters.create(MlDsaInstance.ML_DSA_87, MlDsaParameters.Variant.TINK);
+  private static final Bytes FAKE_MLDSA44_PUBLIC_KEY_BYTES =
+      Bytes.copyFrom(Hex.decode("01".repeat(MLDSA44_PUBLIC_KEY_BYTES)));
   private static final Bytes FAKE_MLDSA65_PUBLIC_KEY_BYTES =
       Bytes.copyFrom(Hex.decode("01".repeat(MLDSA65_PUBLIC_KEY_BYTES)));
   private static final Bytes FAKE_MLDSA87_PUBLIC_KEY_BYTES =
       Bytes.copyFrom(Hex.decode("01".repeat(MLDSA87_PUBLIC_KEY_BYTES)));
+
+  @Test
+  public void buildNoPrefixMlDsa44AndGetProperties() throws Exception {
+    MlDsaPublicKey key =
+        MlDsaPublicKey.builder()
+            .setParameters(NO_PREFIX_MLDSA44_PARAMS)
+            .setSerializedPublicKey(FAKE_MLDSA44_PUBLIC_KEY_BYTES)
+            .build();
+
+    assertThat(key.getParameters()).isEqualTo(NO_PREFIX_MLDSA44_PARAMS);
+    assertThat(key.getSerializedPublicKey()).isEqualTo(FAKE_MLDSA44_PUBLIC_KEY_BYTES);
+    assertThat(key.getOutputPrefix()).isEqualTo(Bytes.copyFrom(new byte[] {}));
+    assertThat(key.getIdRequirementOrNull()).isNull();
+  }
+
+  @Test
+  public void buildTinkMlDsa44AndGetProperties() throws Exception {
+    MlDsaPublicKey key =
+        MlDsaPublicKey.builder()
+            .setParameters(TINK_MLDSA44_PARAMS)
+            .setSerializedPublicKey(FAKE_MLDSA44_PUBLIC_KEY_BYTES)
+            .setIdRequirement(0x66AABBCC)
+            .build();
+
+    assertThat(key.getParameters()).isEqualTo(TINK_MLDSA44_PARAMS);
+    assertThat(key.getSerializedPublicKey()).isEqualTo(FAKE_MLDSA44_PUBLIC_KEY_BYTES);
+    assertThat(key.getOutputPrefix()).isEqualTo(Bytes.copyFrom(Hex.decode("0166AABBCC")));
+    assertThat(key.getIdRequirementOrNull()).isEqualTo(0x66AABBCC);
+  }
 
   @Test
   public void buildNoPrefixMlDsa65AndGetProperties() throws Exception {
@@ -147,11 +183,27 @@ public final class MlDsaPublicKeyTest {
 
   @Test
   public void incorrectPublicKeySize_fails() throws Exception {
+    Bytes shortPublicKey44 = Bytes.copyFrom(new byte[MLDSA44_PUBLIC_KEY_BYTES - 1]);
+    Bytes longPublicKey44 = Bytes.copyFrom(new byte[MLDSA44_PUBLIC_KEY_BYTES + 1]);
     Bytes shortPublicKey65 = Bytes.copyFrom(new byte[MLDSA65_PUBLIC_KEY_BYTES - 1]);
     Bytes longPublicKey65 = Bytes.copyFrom(new byte[MLDSA65_PUBLIC_KEY_BYTES + 1]);
     Bytes shortPublicKey87 = Bytes.copyFrom(new byte[MLDSA87_PUBLIC_KEY_BYTES - 1]);
     Bytes longPublicKey87 = Bytes.copyFrom(new byte[MLDSA87_PUBLIC_KEY_BYTES + 1]);
 
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            MlDsaPublicKey.builder()
+                .setParameters(NO_PREFIX_MLDSA44_PARAMS)
+                .setSerializedPublicKey(shortPublicKey44)
+                .build());
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            MlDsaPublicKey.builder()
+                .setParameters(NO_PREFIX_MLDSA44_PARAMS)
+                .setSerializedPublicKey(longPublicKey44)
+                .build());
     assertThrows(
         GeneralSecurityException.class,
         () ->

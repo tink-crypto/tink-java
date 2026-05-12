@@ -28,10 +28,11 @@ import java.util.Objects;
 import javax.annotation.Nullable;
 
 /**
- * Public key for ML-DSA-{65,87}.
+ * Public key for ML-DSA-{44,65,87}.
  */
 public class MlDsaPublicKey extends SignaturePublicKey {
 
+  private static final int MLDSA44_PUBLIC_KEY_BYTES = 1312;
   private static final int MLDSA65_PUBLIC_KEY_BYTES = 1952;
   private static final int MLDSA87_PUBLIC_KEY_BYTES = 2592;
 
@@ -100,23 +101,28 @@ public class MlDsaPublicKey extends SignaturePublicKey {
       if (parameters.getVariant() == MlDsaParameters.Variant.TINK && idRequirement == null) {
         throw new GeneralSecurityException("Id requirement missing for parameters' variant TINK");
       }
-      if (parameters.getMlDsaInstance() != MlDsaInstance.ML_DSA_65
+      if (parameters.getMlDsaInstance() != MlDsaInstance.ML_DSA_44
+          && parameters.getMlDsaInstance() != MlDsaInstance.ML_DSA_65
           && parameters.getMlDsaInstance() != MlDsaInstance.ML_DSA_87) {
         throw new GeneralSecurityException(
             "Unknown ML-DSA instance: "
                 + parameters.getMlDsaInstance()
-                + ", only ML-DSA-{65,87} are supported");
+                + ", only ML-DSA-{44,65,87} are supported");
       }
       if (serializedPublicKey == null) {
         throw new GeneralSecurityException("Cannot build without public key bytes");
       }
-      if (parameters.getMlDsaInstance() == MlDsaInstance.ML_DSA_65 && serializedPublicKey.size() != MLDSA65_PUBLIC_KEY_BYTES) {
-        throw new GeneralSecurityException(
-            "Incorrect public key size for ML-DSA-65");
+      if (parameters.getMlDsaInstance() == MlDsaInstance.ML_DSA_44
+          && serializedPublicKey.size() != MLDSA44_PUBLIC_KEY_BYTES) {
+        throw new GeneralSecurityException("Incorrect public key size for ML-DSA-44");
       }
-      if (parameters.getMlDsaInstance() == MlDsaInstance.ML_DSA_87 && serializedPublicKey.size() != MLDSA87_PUBLIC_KEY_BYTES) {
-        throw new GeneralSecurityException(
-            "Incorrect public key size for ML-DSA-87");
+      if (parameters.getMlDsaInstance() == MlDsaInstance.ML_DSA_65
+          && serializedPublicKey.size() != MLDSA65_PUBLIC_KEY_BYTES) {
+        throw new GeneralSecurityException("Incorrect public key size for ML-DSA-65");
+      }
+      if (parameters.getMlDsaInstance() == MlDsaInstance.ML_DSA_87
+          && serializedPublicKey.size() != MLDSA87_PUBLIC_KEY_BYTES) {
+        throw new GeneralSecurityException("Incorrect public key size for ML-DSA-87");
       }
 
       Bytes outputPrefix = getOutputPrefix();
