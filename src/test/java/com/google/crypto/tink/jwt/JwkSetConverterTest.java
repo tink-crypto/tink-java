@@ -214,10 +214,6 @@ public final class JwkSetConverterTest {
                 "{\"keys\":[{\"kty\":\"EC\",\"key_ops\":[\"c\",\"b\"]}]}"));
   }
 
-  private static String convertToJwkSet(KeysetHandle handle) throws Exception {
-    return JwkSetConverter.fromPublicKeysetHandle(handle);
-  }
-
   private static KeysetHandle createEs256Keyset() throws Exception {
     JwtEcdsaPublicKey key =
         JwtEcdsaPublicKey.builder()
@@ -552,7 +548,9 @@ public final class JwkSetConverterTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(p256Key).withFixedId(2124611562).makePrimary())
             .build();
-    JsonObject jwkSet = JsonParser.parseString(convertToJwkSet(p256Handle)).getAsJsonObject();
+    JsonObject jwkSet =
+        JsonParser.parseString(JwkSetConverter.fromPublicKeysetHandle(p256Handle))
+            .getAsJsonObject();
     assertThat(getCoordinate(jwkSet, "x"))
         .isEqualTo(
             Hex.decode("0069458ed6f02e0b7344387b755f6c6265b821697764a03e5a086fad03e208da"));
@@ -586,7 +584,9 @@ public final class JwkSetConverterTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(p384Key).withFixedId((int) 4159170178L).makePrimary())
             .build();
-    JsonObject jwkSet = JsonParser.parseString(convertToJwkSet(p384Handle)).getAsJsonObject();
+    JsonObject jwkSet =
+        JsonParser.parseString(JwkSetConverter.fromPublicKeysetHandle(p384Handle))
+            .getAsJsonObject();
     assertThat(getCoordinate(jwkSet, "x"))
         .isEqualTo(
             Hex.decode(
@@ -622,7 +622,9 @@ public final class JwkSetConverterTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(p521Key).withFixedId(1286030637).makePrimary())
             .build();
-    JsonObject jwkSet = JsonParser.parseString(convertToJwkSet(p521Handle)).getAsJsonObject();
+    JsonObject jwkSet =
+        JsonParser.parseString(JwkSetConverter.fromPublicKeysetHandle(p521Handle))
+            .getAsJsonObject();
     assertThat(getCoordinate(jwkSet, "x"))
         .isEqualTo(
             Hex.decode(
@@ -665,7 +667,8 @@ public final class JwkSetConverterTest {
   @Theory
   public void fromPublicKeysetHandle_success(
       @FromDataPoints("testCases") KeysetAndJwkSet testCase) throws Exception {
-    assertEqualJwkSets(convertToJwkSet(testCase.keysetHandle), testCase.jwkSet);
+    assertEqualJwkSets(
+        JwkSetConverter.fromPublicKeysetHandle(testCase.keysetHandle), testCase.jwkSet);
   }
 
   // This test ensures that converting a KeysetHandle to a JWK set and back results in an
@@ -831,7 +834,8 @@ public final class JwkSetConverterTest {
                 .setKidStrategy(JwtEcdsaParameters.KidStrategy.IGNORED)
                 .build());
     assertThrows(
-        GeneralSecurityException.class, () -> convertToJwkSet(privateKeyset));
+        GeneralSecurityException.class,
+        () -> JwkSetConverter.fromPublicKeysetHandle(privateKeyset));
   }
 
   @Test
