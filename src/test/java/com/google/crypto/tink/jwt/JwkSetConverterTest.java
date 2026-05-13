@@ -633,78 +633,51 @@ public final class JwkSetConverterTest {
                 "00f6396a1ae123a693416da5e4416473dbb3b53c48c157564695f8766d8e67e5d7540689053d86a521a16f68724d8ad3183ac1d71605eebb6135457506d38459ad0a"));
   }
 
-  @Test
-  public void convertEcdsaKeysets_success() throws Exception {
-    assertEqualJwkSets(convertToJwkSet(createEs256Keyset()), ES256_JWK_SET);
-    assertEqualJwkSets(convertToJwkSet(createEs384Keyset()), ES384_JWK_SET);
-    assertEqualJwkSets(convertToJwkSet(createEs512Keyset()), ES512_JWK_SET);
-    assertEqualJwkSets(convertToJwkSet(createEs256KeysetTink()), ES256_JWK_SET_KID);
+  private static class KeysetAndJwkSet {
+    final KeysetHandle keysetHandle;
+    final String jwkSet;
+
+    KeysetAndJwkSet(KeysetHandle keysetHandle, String jwkSet) {
+      this.keysetHandle = keysetHandle;
+      this.jwkSet = jwkSet;
+    }
   }
 
-  @Test
-  public void convertRsaSsaPkcs1Keysets_success() throws Exception {
-    assertEqualJwkSets(convertToJwkSet(createRs256Keyset()), RS256_JWK_SET);
-    assertEqualJwkSets(convertToJwkSet(createRs384Keyset()), RS384_JWK_SET);
-    assertEqualJwkSets(convertToJwkSet(createRs512Keyset()), RS512_JWK_SET);
-    assertEqualJwkSets(convertToJwkSet(createRs256KeysetTink()), RS256_JWK_SET_KID);
+  @DataPoints("testCases")
+  public static KeysetAndJwkSet[] testCases() throws Exception {
+    return new KeysetAndJwkSet[] {
+      new KeysetAndJwkSet(createEs256Keyset(), ES256_JWK_SET),
+      new KeysetAndJwkSet(createEs384Keyset(), ES384_JWK_SET),
+      new KeysetAndJwkSet(createEs512Keyset(), ES512_JWK_SET),
+      new KeysetAndJwkSet(createEs256KeysetTink(), ES256_JWK_SET_KID),
+      new KeysetAndJwkSet(createRs256Keyset(), RS256_JWK_SET),
+      new KeysetAndJwkSet(createRs384Keyset(), RS384_JWK_SET),
+      new KeysetAndJwkSet(createRs512Keyset(), RS512_JWK_SET),
+      new KeysetAndJwkSet(createRs256KeysetTink(), RS256_JWK_SET_KID),
+      new KeysetAndJwkSet(createPs256Keyset(), PS256_JWK_SET),
+      new KeysetAndJwkSet(createPs384Keyset(), PS384_JWK_SET),
+      new KeysetAndJwkSet(createPs512Keyset(), PS512_JWK_SET),
+      new KeysetAndJwkSet(createPs256KeysetTink(), PS256_JWK_SET_KID),
+      new KeysetAndJwkSet(createKeysetWithTwoKeys(), JWK_SET_WITH_TWO_KEYS),
+    };
   }
 
-  @Test
-  public void convertRsaSsaPssKeysets_success() throws Exception {
-    assertEqualJwkSets(convertToJwkSet(createPs256Keyset()), PS256_JWK_SET);
-    assertEqualJwkSets(convertToJwkSet(createPs384Keyset()), PS384_JWK_SET);
-    assertEqualJwkSets(convertToJwkSet(createPs512Keyset()), PS512_JWK_SET);
-    assertEqualJwkSets(convertToJwkSet(createPs256KeysetTink()), PS256_JWK_SET_KID);
+  @Theory
+  public void fromPublicKeysetHandle_success(
+      @FromDataPoints("testCases") KeysetAndJwkSet testCase) throws Exception {
+    assertEqualJwkSets(convertToJwkSet(testCase.keysetHandle), testCase.jwkSet);
   }
 
-  @Test
-  public void toPublicKeysetHandlefromPublicKeysetHandle_success() throws Exception {
-    assertEqualJwkSets(
-        JwkSetConverter.fromPublicKeysetHandle(JwkSetConverter.toPublicKeysetHandle(ES256_JWK_SET)),
-        ES256_JWK_SET);
-    assertEqualJwkSets(
-        JwkSetConverter.fromPublicKeysetHandle(JwkSetConverter.toPublicKeysetHandle(ES384_JWK_SET)),
-        ES384_JWK_SET);
-    assertEqualJwkSets(
-        JwkSetConverter.fromPublicKeysetHandle(JwkSetConverter.toPublicKeysetHandle(ES512_JWK_SET)),
-        ES512_JWK_SET);
-    assertEqualJwkSets(
-        JwkSetConverter.fromPublicKeysetHandle(JwkSetConverter.toPublicKeysetHandle(RS256_JWK_SET)),
-        RS256_JWK_SET);
-    assertEqualJwkSets(
-        JwkSetConverter.fromPublicKeysetHandle(JwkSetConverter.toPublicKeysetHandle(RS384_JWK_SET)),
-        RS384_JWK_SET);
-    assertEqualJwkSets(
-        JwkSetConverter.fromPublicKeysetHandle(JwkSetConverter.toPublicKeysetHandle(RS512_JWK_SET)),
-        RS512_JWK_SET);
-    assertEqualJwkSets(
-        JwkSetConverter.fromPublicKeysetHandle(JwkSetConverter.toPublicKeysetHandle(PS256_JWK_SET)),
-        PS256_JWK_SET);
-    assertEqualJwkSets(
-        JwkSetConverter.fromPublicKeysetHandle(JwkSetConverter.toPublicKeysetHandle(PS384_JWK_SET)),
-        PS384_JWK_SET);
-    assertEqualJwkSets(
-        JwkSetConverter.fromPublicKeysetHandle(JwkSetConverter.toPublicKeysetHandle(PS512_JWK_SET)),
-        PS512_JWK_SET);
-  }
-
-  @Test
-  public void toPublicKeysetHandleWithValidKid_fromPublicKeysetHandle_sameJwkSet()
-      throws Exception {
-    // When the kid can be decoded into a key ID, the output prefix type of the key will be TINK,
-    // and the same kid value will be generated again when converted to JWK Set.
+  // This test ensures that converting a KeysetHandle to a JWK set and back results in an
+  // equivalent JWK set. This also preseves the KID, because JWKs with KID will be imported
+  // with custom KIDs, and then exported with the same custom KIDs.
+  @Theory
+  public void toPublicKeysetHandle_fromPublicKeysetHandle_success(
+      @FromDataPoints("testCases") KeysetAndJwkSet testCase) throws Exception {
     assertEqualJwkSets(
         JwkSetConverter.fromPublicKeysetHandle(
-            JwkSetConverter.toPublicKeysetHandle(ES256_JWK_SET_KID)),
-        ES256_JWK_SET_KID);
-    assertEqualJwkSets(
-        JwkSetConverter.fromPublicKeysetHandle(
-            JwkSetConverter.toPublicKeysetHandle(RS256_JWK_SET_KID)),
-        RS256_JWK_SET_KID);
-    assertEqualJwkSets(
-        JwkSetConverter.fromPublicKeysetHandle(
-            JwkSetConverter.toPublicKeysetHandle(PS256_JWK_SET_KID)),
-        PS256_JWK_SET_KID);
+            JwkSetConverter.toPublicKeysetHandle(testCase.jwkSet)),
+        testCase.jwkSet);
   }
 
   @Test
@@ -850,11 +823,6 @@ public final class JwkSetConverterTest {
   }
 
   @Test
-  public void keysetWithTwoKeys_fromPublicKeysetHandleSuccess() throws Exception {
-    assertEqualJwkSets(convertToJwkSet(createKeysetWithTwoKeys()), JWK_SET_WITH_TWO_KEYS);
-  }
-
-  @Test
   public void privateKey_fromPublicKeysetHandleFails() throws Exception {
     KeysetHandle privateKeyset =
         KeysetHandle.generateNew(
@@ -865,8 +833,6 @@ public final class JwkSetConverterTest {
     assertThrows(
         GeneralSecurityException.class, () -> convertToJwkSet(privateKeyset));
   }
-
-
 
   @Test
   public void ecdsaWithoutUseAndKeyOps_toPublicKeysetHandleSuccess() throws Exception {
