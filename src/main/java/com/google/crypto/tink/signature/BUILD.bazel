@@ -1545,3 +1545,51 @@ java_library(
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
+
+java_library(
+    name = "jwk_set_converter",
+    srcs = ["JwkSetConverter.java"],
+    deps = [
+        ":ecdsa_parameters",
+        ":ecdsa_public_key",
+        ":ed25519_parameters",
+        ":ed25519_public_key",
+        ":rsa_ssa_pkcs1_parameters",
+        ":rsa_ssa_pkcs1_public_key",
+        ":rsa_ssa_pss_parameters",
+        ":rsa_ssa_pss_public_key",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:key",
+        "//src/main/java/com/google/crypto/tink:key_status",
+        "//src/main/java/com/google/crypto/tink:registry_cluster",
+        "//src/main/java/com/google/crypto/tink/internal:big_integer_encoding",
+        "//src/main/java/com/google/crypto/tink/internal:json_parser",
+        "//src/main/java/com/google/crypto/tink/subtle:base64",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
+        "@maven//:com_google_code_gson_gson",
+    ],
+)
+
+android_library(
+    name = "jwk_set_converter-android",
+    srcs = ["JwkSetConverter.java"],
+    deps = [
+        ":ecdsa_parameters-android",
+        ":ecdsa_public_key-android",
+        ":ed25519_parameters-android",
+        ":ed25519_public_key-android",
+        ":rsa_ssa_pkcs1_parameters-android",
+        ":rsa_ssa_pkcs1_public_key-android",
+        ":rsa_ssa_pss_parameters-android",
+        ":rsa_ssa_pss_public_key-android",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
+        "//src/main/java/com/google/crypto/tink:key-android",
+        "//src/main/java/com/google/crypto/tink:key_status-android",
+        "//src/main/java/com/google/crypto/tink:registry_cluster-android",
+        "//src/main/java/com/google/crypto/tink/internal:big_integer_encoding-android",
+        "//src/main/java/com/google/crypto/tink/internal:json_parser-android",
+        "//src/main/java/com/google/crypto/tink/subtle:base64-android",
+        "//src/main/java/com/google/crypto/tink/util:bytes-android",
+        "@maven//:com_google_code_gson_gson",
+    ],
+)
