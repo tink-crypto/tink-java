@@ -19,6 +19,7 @@ package com.google.crypto.tink.jwt;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
@@ -518,6 +519,73 @@ public final class JwkSetConverterTest {
         .build();
   }
 
+  private static KeysetHandle createEs256KeysetCustomKid() throws Exception {
+    JwtEcdsaPublicKey key =
+        JwtEcdsaPublicKey.builder()
+            .setParameters(
+                JwtEcdsaParameters.builder()
+                    .setKidStrategy(JwtEcdsaParameters.KidStrategy.CUSTOM)
+                    .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
+                    .build())
+            .setPublicPoint(
+                new ECPoint(
+                    new BigInteger(
+                        1, Base64.urlSafeDecode("EM8jrqGMse-PGZQnafIcgEOZ061DiA-y9aBhiBnSDKA")),
+                    new BigInteger(
+                        1, Base64.urlSafeDecode("UxCtK0wAqQG_e5vpr7SSgJNKt5h4z3FGZtAuBLng1uE"))))
+            .setCustomKid("ENgjPA")
+            .build();
+    return KeysetHandle.newBuilder()
+        .addEntry(KeysetHandle.importKey(key).withFixedId(123).makePrimary())
+        .build();
+  }
+
+  private static KeysetHandle createRs256KeysetCustomKid() throws Exception {
+    BigInteger modulus =
+        new BigInteger(
+            1,
+            Base64.urlSafeDecode(
+                "kspk37lGBqXmPPq2CL5KdDeRx7xFiTadpL3jc4nXaqftCtpM6qExfrc2JLaIsnwpwfGMClfe_alIs2GrT9fpM8oDeCccvC39DzZhsSFnAELggi3hnWNKRLfSV0UJzBI-5hZ6ifUsv8W8mSHKlsVMmvOfC2P5-l72qTwN6Le3hy6CxFp5s9pw011B7J3PU65sty6GI9sehB2B_n7nfiWw9YN5--pfwyoitzoMoVKOOpj7fFq88f8ArpC7kR1SBTe20Bt1AmpZDT2Dmfmlb_Q1UFjj_F3C77NCNQ344ZcAEI42HY-uighy5GdKQRHMoTT1OzyDG90ABjggQqDGW-zXzw"));
+    JwtRsaSsaPkcs1PublicKey key =
+        JwtRsaSsaPkcs1PublicKey.builder()
+            .setParameters(
+                JwtRsaSsaPkcs1Parameters.builder()
+                    .setModulusSizeBits(modulus.bitLength())
+                    .setPublicExponent(new BigInteger(1, Base64.urlSafeDecode("AQAB")))
+                    .setAlgorithm(JwtRsaSsaPkcs1Parameters.Algorithm.RS256)
+                    .setKidStrategy(JwtRsaSsaPkcs1Parameters.KidStrategy.CUSTOM)
+                    .build())
+            .setModulus(modulus)
+            .setCustomKid("HL1QoQ")
+            .build();
+    return KeysetHandle.newBuilder()
+        .addEntry(KeysetHandle.importKey(key).withFixedId(123).makePrimary())
+        .build();
+  }
+
+  private static KeysetHandle createPs256KeysetCustomKid() throws Exception {
+    BigInteger modulus =
+        new BigInteger(
+            1,
+            Base64.urlSafeDecode(
+                "j7Eud2n5G11qsdtjpgGWjW4cAKalSE1atm7d-Cp8biRX9wbmLJRMUvoO2j7Sp9Szx1TMmksY2Ugf_7-Nv9fY7vBbmxOiBQVTvikWn0FgPwhFTXTz-9fhGjM6E6sdSOUzjM6nsPulKqOQ8Aed-TLIlgvwuSTF4B5d6QkZWBymq7My6vV-epzWnoLpVDzCHh-c35r81Pyrj6tiTPQzPLN2ixeanclMjx8deNwlak3vwBdMDgwQ63rVCo2eWDS_BYK4rG22luSTDVfQVHU1NXlwXEnb_eONFSF6ZbD6JXFMT3uHT4okTOrX4Kd34stbPIUtZFUy3XiSeCGtghBXLMf_ge113Q9WDJ-RN1Xa4vgHJCO0-VO-cAugVkiu9UgsPP8o_r7tA2aP_Ps8EHYa1IaZg75vnrMZPvsTH7WG2SjSgW9GLLsbNJLFFqLFMwPuZPe8BbgvimPdStXasX_PN6DLKoK2PaT0I-iLK9mRi1Z4OjFbl9KAZXXElhAQTzrEI2ad"));
+    JwtRsaSsaPssPublicKey key =
+        JwtRsaSsaPssPublicKey.builder()
+            .setParameters(
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(modulus.bitLength())
+                    .setPublicExponent(new BigInteger(1, Base64.urlSafeDecode("AQAB")))
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.CUSTOM)
+                    .build())
+            .setModulus(modulus)
+            .setCustomKid("Wes4wg")
+            .build();
+    return KeysetHandle.newBuilder()
+        .addEntry(KeysetHandle.importKey(key).withFixedId(123).makePrimary())
+        .build();
+  }
+
   private static byte[] getCoordinate(JsonObject jwkSet, String coordinate) throws Exception {
     return Base64.urlSafeDecode(
         jwkSet.get("keys").getAsJsonArray().get(0).getAsJsonObject().get(coordinate).getAsString());
@@ -638,10 +706,16 @@ public final class JwkSetConverterTest {
   private static class KeysetAndJwkSet {
     final KeysetHandle keysetHandle;
     final String jwkSet;
+    final boolean testToPublicKeysetHandle;
 
     KeysetAndJwkSet(KeysetHandle keysetHandle, String jwkSet) {
+      this(keysetHandle, jwkSet, true);
+    }
+
+    KeysetAndJwkSet(KeysetHandle keysetHandle, String jwkSet, boolean testToPublicKeysetHandle) {
       this.keysetHandle = keysetHandle;
       this.jwkSet = jwkSet;
+      this.testToPublicKeysetHandle = testToPublicKeysetHandle;
     }
   }
 
@@ -651,16 +725,19 @@ public final class JwkSetConverterTest {
       new KeysetAndJwkSet(createEs256Keyset(), ES256_JWK_SET),
       new KeysetAndJwkSet(createEs384Keyset(), ES384_JWK_SET),
       new KeysetAndJwkSet(createEs512Keyset(), ES512_JWK_SET),
-      new KeysetAndJwkSet(createEs256KeysetTink(), ES256_JWK_SET_KID),
+      new KeysetAndJwkSet(createEs256KeysetTink(), ES256_JWK_SET_KID, false),
       new KeysetAndJwkSet(createRs256Keyset(), RS256_JWK_SET),
       new KeysetAndJwkSet(createRs384Keyset(), RS384_JWK_SET),
       new KeysetAndJwkSet(createRs512Keyset(), RS512_JWK_SET),
-      new KeysetAndJwkSet(createRs256KeysetTink(), RS256_JWK_SET_KID),
+      new KeysetAndJwkSet(createRs256KeysetTink(), RS256_JWK_SET_KID, false),
       new KeysetAndJwkSet(createPs256Keyset(), PS256_JWK_SET),
       new KeysetAndJwkSet(createPs384Keyset(), PS384_JWK_SET),
       new KeysetAndJwkSet(createPs512Keyset(), PS512_JWK_SET),
-      new KeysetAndJwkSet(createPs256KeysetTink(), PS256_JWK_SET_KID),
+      new KeysetAndJwkSet(createPs256KeysetTink(), PS256_JWK_SET_KID, false),
       new KeysetAndJwkSet(createKeysetWithTwoKeys(), JWK_SET_WITH_TWO_KEYS),
+      new KeysetAndJwkSet(createEs256KeysetCustomKid(), ES256_JWK_SET_KID),
+      new KeysetAndJwkSet(createRs256KeysetCustomKid(), RS256_JWK_SET_KID),
+      new KeysetAndJwkSet(createPs256KeysetCustomKid(), PS256_JWK_SET_KID),
     };
   }
 
@@ -672,7 +749,7 @@ public final class JwkSetConverterTest {
   }
 
   // This test ensures that converting a KeysetHandle to a JWK set and back results in an
-  // equivalent JWK set. This also preseves the KID, because JWKs with KID will be imported
+  // equivalent JWK set. This also preserves the KID, because JWKs with KID will be imported
   // with custom KIDs, and then exported with the same custom KIDs.
   @Theory
   public void toPublicKeysetHandle_fromPublicKeysetHandle_success(
@@ -683,74 +760,15 @@ public final class JwkSetConverterTest {
         testCase.jwkSet);
   }
 
-  @Test
-  public void jwkEs256WithKid_isImportedWithCustomKid() throws Exception {
-    KeysetHandle converted = JwkSetConverter.toPublicKeysetHandle(ES256_JWK_SET_KID);
-    JwtEcdsaPublicKey expectedKey =
-        JwtEcdsaPublicKey.builder()
-            .setParameters(
-                JwtEcdsaParameters.builder()
-                    .setKidStrategy(JwtEcdsaParameters.KidStrategy.CUSTOM)
-                    .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
-                    .build())
-            .setPublicPoint(
-                new ECPoint(
-                    new BigInteger(
-                        1, Base64.urlSafeDecode("EM8jrqGMse-PGZQnafIcgEOZ061DiA-y9aBhiBnSDKA")),
-                    new BigInteger(
-                        1, Base64.urlSafeDecode("UxCtK0wAqQG_e5vpr7SSgJNKt5h4z3FGZtAuBLng1uE"))))
-            .setCustomKid("ENgjPA")
-            .build();
-    assertThat(converted.size()).isEqualTo(1);
-    assertTrue(converted.getAt(0).getKey().equalsKey(expectedKey));
-  }
-
-  @Test
-  public void jwkRs256WithKid_isImportedWithCustomKid() throws Exception {
-    KeysetHandle converted = JwkSetConverter.toPublicKeysetHandle(RS256_JWK_SET_KID);
-    BigInteger modulus =
-        new BigInteger(
-            1,
-            Base64.urlSafeDecode(
-                "kspk37lGBqXmPPq2CL5KdDeRx7xFiTadpL3jc4nXaqftCtpM6qExfrc2JLaIsnwpwfGMClfe_alIs2GrT9fpM8oDeCccvC39DzZhsSFnAELggi3hnWNKRLfSV0UJzBI-5hZ6ifUsv8W8mSHKlsVMmvOfC2P5-l72qTwN6Le3hy6CxFp5s9pw011B7J3PU65sty6GI9sehB2B_n7nfiWw9YN5--pfwyoitzoMoVKOOpj7fFq88f8ArpC7kR1SBTe20Bt1AmpZDT2Dmfmlb_Q1UFjj_F3C77NCNQ344ZcAEI42HY-uighy5GdKQRHMoTT1OzyDG90ABjggQqDGW-zXzw"));
-    JwtRsaSsaPkcs1PublicKey expectedKey =
-        JwtRsaSsaPkcs1PublicKey.builder()
-            .setParameters(
-                JwtRsaSsaPkcs1Parameters.builder()
-                    .setModulusSizeBits(modulus.bitLength())
-                    .setPublicExponent(new BigInteger(1, Base64.urlSafeDecode("AQAB")))
-                    .setAlgorithm(JwtRsaSsaPkcs1Parameters.Algorithm.RS256)
-                    .setKidStrategy(JwtRsaSsaPkcs1Parameters.KidStrategy.CUSTOM)
-                    .build())
-            .setModulus(modulus)
-            .setCustomKid("HL1QoQ")
-            .build();
-    assertThat(converted.size()).isEqualTo(1);
-    assertTrue(converted.getAt(0).getKey().equalsKey(expectedKey));
-  }
-
-  @Test
-  public void jwkPs256WithKid_isImportedWithCustomKid() throws Exception {
-    KeysetHandle converted = JwkSetConverter.toPublicKeysetHandle(PS256_JWK_SET_KID);
-    BigInteger modulus =
-        new BigInteger(
-            1,
-            Base64.urlSafeDecode(
-                "j7Eud2n5G11qsdtjpgGWjW4cAKalSE1atm7d-Cp8biRX9wbmLJRMUvoO2j7Sp9Szx1TMmksY2Ugf_7-Nv9fY7vBbmxOiBQVTvikWn0FgPwhFTXTz-9fhGjM6E6sdSOUzjM6nsPulKqOQ8Aed-TLIlgvwuSTF4B5d6QkZWBymq7My6vV-epzWnoLpVDzCHh-c35r81Pyrj6tiTPQzPLN2ixeanclMjx8deNwlak3vwBdMDgwQ63rVCo2eWDS_BYK4rG22luSTDVfQVHU1NXlwXEnb_eONFSF6ZbD6JXFMT3uHT4okTOrX4Kd34stbPIUtZFUy3XiSeCGtghBXLMf_ge113Q9WDJ-RN1Xa4vgHJCO0-VO-cAugVkiu9UgsPP8o_r7tA2aP_Ps8EHYa1IaZg75vnrMZPvsTH7WG2SjSgW9GLLsbNJLFFqLFMwPuZPe8BbgvimPdStXasX_PN6DLKoK2PaT0I-iLK9mRi1Z4OjFbl9KAZXXElhAQTzrEI2ad"));
-    JwtRsaSsaPssPublicKey expectedKey =
-        JwtRsaSsaPssPublicKey.builder()
-            .setParameters(
-                JwtRsaSsaPssParameters.builder()
-                    .setModulusSizeBits(modulus.bitLength())
-                    .setPublicExponent(new BigInteger(1, Base64.urlSafeDecode("AQAB")))
-                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
-                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.CUSTOM)
-                    .build())
-            .setModulus(modulus)
-            .setCustomKid("Wes4wg")
-            .build();
-    assertThat(converted.size()).isEqualTo(1);
-    assertTrue(converted.getAt(0).getKey().equalsKey(expectedKey));
+  @Theory
+  public void toPublicKeysetHandle_isImportedAsExpected(
+      @FromDataPoints("testCases") KeysetAndJwkSet testCase) throws Exception {
+    assumeTrue(testCase.testToPublicKeysetHandle);
+    KeysetHandle converted = JwkSetConverter.toPublicKeysetHandle(testCase.jwkSet);
+    assertThat(converted.size()).isEqualTo(testCase.keysetHandle.size());
+    for (int i = 0; i < converted.size(); i++) {
+      assertTrue(converted.getAt(i).getKey().equalsKey(testCase.keysetHandle.getAt(i).getKey()));
+    }
   }
 
   @Test
@@ -770,14 +788,6 @@ public final class JwkSetConverterTest {
         JwkSetConverter.fromPublicKeysetHandle(
             JwkSetConverter.toPublicKeysetHandle(psWithEmptyKid)),
         psWithEmptyKid);
-  }
-
-  @Test
-  public void toPublicKeysetHandleSetsKeyIdsAndPrimaryKeyId() throws Exception {
-    KeysetHandle handle = JwkSetConverter.toPublicKeysetHandle(JWK_SET_WITH_TWO_KEYS);
-    assertThat(handle.size()).isEqualTo(2);
-    assertThat(handle.getAt(0).getKey()).isInstanceOf(JwtEcdsaPublicKey.class);
-    assertThat(handle.getAt(1).getKey()).isInstanceOf(JwtRsaSsaPkcs1PublicKey.class);
   }
 
   @DataPoints("templatesNames")
