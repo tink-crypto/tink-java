@@ -23,6 +23,8 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.internal.BigIntegerEncoding;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
@@ -32,8 +34,6 @@ import com.google.crypto.tink.jwt.JwtEcdsaPrivateKey;
 import com.google.crypto.tink.jwt.JwtEcdsaPublicKey;
 import com.google.crypto.tink.proto.JwtEcdsaAlgorithm;
 import com.google.crypto.tink.proto.JwtEcdsaPublicKey.CustomKid;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.util.SecretBigInteger;
 import com.google.protobuf.ByteString;
@@ -72,7 +72,8 @@ public final class JwtEcdsaProtoSerializationTest {
             com.google.crypto.tink.proto.JwtEcdsaKeyFormat.newBuilder()
                 .setVersion(0)
                 .setAlgorithm(JwtEcdsaAlgorithm.ES256)
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -97,7 +98,8 @@ public final class JwtEcdsaProtoSerializationTest {
             com.google.crypto.tink.proto.JwtEcdsaKeyFormat.newBuilder()
                 .setVersion(0)
                 .setAlgorithm(JwtEcdsaAlgorithm.ES256)
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -122,7 +124,8 @@ public final class JwtEcdsaProtoSerializationTest {
             com.google.crypto.tink.proto.JwtEcdsaKeyFormat.newBuilder()
                 .setVersion(0)
                 .setAlgorithm(JwtEcdsaAlgorithm.ES384)
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -147,7 +150,8 @@ public final class JwtEcdsaProtoSerializationTest {
             com.google.crypto.tink.proto.JwtEcdsaKeyFormat.newBuilder()
                 .setVersion(0)
                 .setAlgorithm(JwtEcdsaAlgorithm.ES512)
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -180,7 +184,8 @@ public final class JwtEcdsaProtoSerializationTest {
             com.google.crypto.tink.proto.JwtEcdsaKeyFormat.newBuilder()
                 .setVersion(0)
                 .setAlgorithm(JwtEcdsaAlgorithm.ES512)
-                .build());
+                .build()
+                .toByteString());
     assertThrows(GeneralSecurityException.class, () -> registry.parseParameters(serialization));
   }
 

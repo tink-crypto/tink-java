@@ -23,6 +23,8 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.internal.BigIntegerEncoding;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
@@ -35,8 +37,6 @@ import com.google.crypto.tink.jwt.JwtRsaSsaPkcs1PublicKey;
 import com.google.crypto.tink.proto.JwtRsaSsaPkcs1Algorithm;
 import com.google.crypto.tink.proto.JwtRsaSsaPkcs1KeyFormat;
 import com.google.crypto.tink.proto.JwtRsaSsaPkcs1PublicKey.CustomKid;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.subtle.Base64;
 import com.google.crypto.tink.util.SecretBigInteger;
 import com.google.protobuf.ByteString;
@@ -161,7 +161,8 @@ public final class JwtRsaSsaPkcs1ProtoSerializationTest {
                 .setPublicExponent(
                     ByteString.copyFrom(
                         BigIntegerEncoding.toBigEndianBytes(BigInteger.valueOf(65537))))
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -189,7 +190,8 @@ public final class JwtRsaSsaPkcs1ProtoSerializationTest {
                 .setAlgorithm(JwtRsaSsaPkcs1Algorithm.RS256)
                 .setModulusSizeInBits(2048)
                 .setPublicExponent(ByteString.copyFrom(EXPONENT_BYTES))
-                .build());
+                .build()
+                .toByteString());
 
     ProtoParametersSerialization serialized =
         registry.serializeParameters(parameters, ProtoParametersSerialization.class);
@@ -224,7 +226,8 @@ public final class JwtRsaSsaPkcs1ProtoSerializationTest {
                 .setAlgorithm(JwtRsaSsaPkcs1Algorithm.RS512)
                 .setModulusSizeInBits(2048)
                 .setPublicExponent(ByteString.copyFrom(EXPONENT_BYTES))
-                .build());
+                .build()
+                .toByteString());
     assertThrows(GeneralSecurityException.class, () -> registry.parseParameters(serialization));
   }
 
