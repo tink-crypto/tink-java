@@ -29,6 +29,7 @@ import com.google.crypto.tink.internal.ParametersParser;
 import com.google.crypto.tink.internal.ParametersSerializer;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
+import com.google.crypto.tink.internal.SerializationRegistry;
 import com.google.crypto.tink.proto.HashType;
 import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
@@ -347,6 +348,16 @@ public final class RsaSsaPkcs1ProtoSerialization {
     registry.registerKeyParser(PUBLIC_KEY_PARSER);
     registry.registerKeySerializer(PRIVATE_KEY_SERIALIZER);
     registry.registerKeyParser(PRIVATE_KEY_PARSER);
+  }
+
+  public static void register(SerializationRegistry.Builder registryBuilder)
+      throws GeneralSecurityException {
+    registryBuilder.registerParametersSerializer(PARAMETERS_SERIALIZER);
+    registryBuilder.registerParametersParser(PARAMETERS_PARSER);
+    registryBuilder.registerKeySerializer(PUBLIC_KEY_SERIALIZER);
+    registryBuilder.registerKeyParser(PUBLIC_KEY_PARSER);
+    registryBuilder.registerKeySerializer(PRIVATE_KEY_SERIALIZER);
+    registryBuilder.registerKeyParser(PRIVATE_KEY_PARSER);
   }
 
   private RsaSsaPkcs1ProtoSerialization() {}
