@@ -18,11 +18,11 @@ package com.google.crypto.tink.internal.testing;
 
 import static org.junit.Assert.assertThrows;
 
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.KeyTemplate;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.proto.TestProto;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.protobuf.ByteString;
@@ -37,14 +37,14 @@ public final class AssertsTest {
     ProtoParametersSerialization serialization1 =
         ProtoParametersSerialization.create(
             KeyTemplate.newBuilder()
-                .setOutputPrefixType(OutputPrefixType.RAW)
+                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                 .setTypeUrl("TYPE_URL")
                 .setValue(TestProto.newBuilder().setNum(1).build().toByteString())
                 .build());
     ProtoParametersSerialization serialization2 =
         ProtoParametersSerialization.create(
             KeyTemplate.newBuilder()
-                .setOutputPrefixType(OutputPrefixType.RAW)
+                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                 .setTypeUrl("TYPE_URL")
                 .setValue(TestProto.newBuilder().setNum(1).build().toByteString())
                 .build());
@@ -63,14 +63,14 @@ public final class AssertsTest {
     ProtoParametersSerialization serialization1 =
         ProtoParametersSerialization.create(
             KeyTemplate.newBuilder()
-                .setOutputPrefixType(OutputPrefixType.RAW)
+                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                 .setTypeUrl("TYPE_URL")
                 .setValue(ByteString.copyFrom(Hex.decode("0800")))
                 .build());
     ProtoParametersSerialization serialization2 =
         ProtoParametersSerialization.create(
             KeyTemplate.newBuilder()
-                .setOutputPrefixType(OutputPrefixType.RAW)
+                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                 .setTypeUrl("TYPE_URL")
                 .setValue(ByteString.EMPTY)
                 .build());
@@ -96,14 +96,14 @@ public final class AssertsTest {
     ProtoParametersSerialization serialization1 =
         ProtoParametersSerialization.create(
             KeyTemplate.newBuilder()
-                .setOutputPrefixType(OutputPrefixType.RAW)
+                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                 .setTypeUrl("TYPE_URL")
                 .setValue(ByteString.copyFrom(Hex.decode("0801120100")))
                 .build());
     ProtoParametersSerialization serialization2 =
         ProtoParametersSerialization.create(
             KeyTemplate.newBuilder()
-                .setOutputPrefixType(OutputPrefixType.RAW)
+                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                 .setTypeUrl("TYPE_URL")
                 .setValue(ByteString.copyFrom(Hex.decode("1201000801")))
                 .build());
@@ -115,14 +115,14 @@ public final class AssertsTest {
     ProtoParametersSerialization serialization1 =
         ProtoParametersSerialization.create(
             KeyTemplate.newBuilder()
-                .setOutputPrefixType(OutputPrefixType.RAW)
+                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                 .setTypeUrl("TYPE_URL")
                 .setValue(TestProto.newBuilder().setNum(1).build().toByteString())
                 .build());
     ProtoParametersSerialization serialization2 =
         ProtoParametersSerialization.create(
             KeyTemplate.newBuilder()
-                .setOutputPrefixType(OutputPrefixType.TINK)
+                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.TINK)
                 .setTypeUrl("TYPE_URL")
                 .setValue(TestProto.newBuilder().setNum(1).build().toByteString())
                 .build());
@@ -137,14 +137,14 @@ public final class AssertsTest {
     ProtoParametersSerialization serialization1 =
         ProtoParametersSerialization.create(
             KeyTemplate.newBuilder()
-                .setOutputPrefixType(OutputPrefixType.RAW)
+                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                 .setTypeUrl("TYPE_URL1")
                 .setValue(TestProto.newBuilder().setNum(1).build().toByteString())
                 .build());
     ProtoParametersSerialization serialization2 =
         ProtoParametersSerialization.create(
             KeyTemplate.newBuilder()
-                .setOutputPrefixType(OutputPrefixType.RAW)
+                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                 .setTypeUrl("TYPE_URL2")
                 .setValue(TestProto.newBuilder().setNum(1).build().toByteString())
                 .build());
@@ -159,14 +159,14 @@ public final class AssertsTest {
     ProtoParametersSerialization serialization1 =
         ProtoParametersSerialization.create(
             KeyTemplate.newBuilder()
-                .setOutputPrefixType(OutputPrefixType.RAW)
+                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                 .setTypeUrl("TYPE_URL")
                 .setValue(TestProto.newBuilder().setNum(1).build().toByteString())
                 .build());
     ProtoParametersSerialization serialization2 =
         ProtoParametersSerialization.create(
             KeyTemplate.newBuilder()
-                .setOutputPrefixType(OutputPrefixType.RAW)
+                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                 .setTypeUrl("TYPE_URL")
                 .setValue(TestProto.newBuilder().setNum(2).build().toByteString())
                 .build());
@@ -183,14 +183,14 @@ public final class AssertsTest {
     ProtoParametersSerialization serialization1 =
         ProtoParametersSerialization.create(
             KeyTemplate.newBuilder()
-                .setOutputPrefixType(OutputPrefixType.RAW)
+                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                 .setTypeUrl("TYPE_URL")
                 .setValue(ByteString.copyFrom(new byte[] {(byte) 0x80}))
                 .build());
     ProtoParametersSerialization serialization2 =
         ProtoParametersSerialization.create(
             KeyTemplate.newBuilder()
-                .setOutputPrefixType(OutputPrefixType.RAW)
+                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
                 .setTypeUrl("TYPE_URL")
                 .setValue(ByteString.copyFrom(new byte[] {(byte) 0x80}))
                 .build());

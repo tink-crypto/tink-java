@@ -23,9 +23,9 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.SecretKeyAccess;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.proto.TestProto;
 import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
@@ -437,7 +437,9 @@ public final class MutableSerializationRegistryTest {
     MutableSerializationRegistry registry = new MutableSerializationRegistry();
     ProtoParametersSerialization protoParameters =
         ProtoParametersSerialization.create(
-            "typeUrlForTesting73107", OutputPrefixType.TINK, TestProto.getDefaultInstance());
+            "typeUrlForTesting73107",
+            OutputPrefixType.TINK,
+            TestProto.getDefaultInstance().toByteString());
     Parameters parameters = registry.parseParametersWithLegacyFallback(protoParameters);
     assertThat(parameters).isInstanceOf(LegacyProtoParameters.class);
     LegacyProtoParameters legacyProtoParameters = (LegacyProtoParameters) parameters;
@@ -465,7 +467,9 @@ public final class MutableSerializationRegistryTest {
             ProtoParametersSerialization.class));
     ProtoParametersSerialization protoParameters =
         ProtoParametersSerialization.create(
-            "typeUrlForTesting98178", OutputPrefixType.TINK, TestProto.getDefaultInstance());
+            "typeUrlForTesting98178",
+            OutputPrefixType.TINK,
+            TestProto.getDefaultInstance().toByteString());
     Parameters parameters = registry.parseParametersWithLegacyFallback(protoParameters);
     assertThat(parameters).isInstanceOf(TestParameters1.class);
   }
@@ -481,7 +485,9 @@ public final class MutableSerializationRegistryTest {
             ProtoParametersSerialization.class));
     ProtoParametersSerialization protoParameters =
         ProtoParametersSerialization.create(
-            "typeUrlForTesting98178", OutputPrefixType.TINK, TestProto.getDefaultInstance());
+            "typeUrlForTesting98178",
+            OutputPrefixType.TINK,
+            TestProto.getDefaultInstance().toByteString());
     assertThrows(
         GeneralSecurityException.class,
         () -> registry.parseParametersWithLegacyFallback(protoParameters));

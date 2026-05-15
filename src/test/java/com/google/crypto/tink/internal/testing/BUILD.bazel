@@ -40,9 +40,9 @@ java_test(
     size = "small",
     srcs = ["KeyWithSerializationTest.java"],
     deps = [
-        "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink:parameters",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization",
         "//src/main/java/com/google/crypto/tink/internal:proto_key_serialization",
         "//src/main/java/com/google/crypto/tink/internal/testing:key_with_serialization",
         "@maven//:com_google_code_findbugs_jsr305",
@@ -60,6 +60,7 @@ java_test(
     deps = [
         "//proto:test_proto_java_proto",
         "//proto:tink_java_proto",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization",
         "//src/main/java/com/google/crypto/tink/internal:proto_key_serialization",
         "//src/main/java/com/google/crypto/tink/internal:proto_parameters_serialization",
         "//src/main/java/com/google/crypto/tink/internal/testing:asserts",
