@@ -20,6 +20,8 @@ import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.aead.AesCtrHmacAeadKey;
 import com.google.crypto.tink.aead.AesCtrHmacAeadParameters;
 import com.google.crypto.tink.aead.AesEaxKey;
@@ -69,7 +71,6 @@ import com.google.crypto.tink.prf.PrfSet;
 import com.google.crypto.tink.prf.internal.AesCmacPrfProtoSerialization;
 import com.google.crypto.tink.prf.internal.HkdfPrfProtoSerialization;
 import com.google.crypto.tink.prf.internal.HmacPrfProtoSerialization;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.signature.EcdsaParameters;
 import com.google.crypto.tink.signature.EcdsaPrivateKey;
 import com.google.crypto.tink.signature.EcdsaPublicKey;
@@ -1296,7 +1297,7 @@ public class ConfigurationV0Test {
                 .build()
                 .toByteString(),
             KeyMaterialType.SYMMETRIC,
-            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            OutputPrefixType.RAW,
             null);
     LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
     KeysetHandle keysetHandle =

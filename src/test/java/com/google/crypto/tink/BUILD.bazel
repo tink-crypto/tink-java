@@ -675,7 +675,6 @@ java_test(
     srcs = ["ConfigurationV0Test.java"],
     deps = [
         "//proto:aes_gcm_java_proto",
-        "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:aead",
         "//src/main/java/com/google/crypto/tink:configuration_v0",
         "//src/main/java/com/google/crypto/tink:deterministic_aead",
@@ -683,6 +682,7 @@ java_test(
         "//src/main/java/com/google/crypto/tink:hybrid_encrypt",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink:mac",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization",
         "//src/main/java/com/google/crypto/tink:public_key_sign",
         "//src/main/java/com/google/crypto/tink:public_key_verify",
         "//src/main/java/com/google/crypto/tink:registry_cluster",

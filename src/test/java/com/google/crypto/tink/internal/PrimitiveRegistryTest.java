@@ -25,11 +25,12 @@ import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.Mac;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.aead.AeadConfig;
 import com.google.crypto.tink.aead.PredefinedAeadParameters;
 import com.google.crypto.tink.mac.AesCmacKey;
 import com.google.crypto.tink.mac.internal.AesCmacProtoSerialization;
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.subtle.PrfMac;
 import com.google.errorprone.annotations.Immutable;
 import com.google.protobuf.ByteString;
@@ -342,7 +343,7 @@ public final class PrimitiveRegistryTest {
                 .build()
                 .toByteString(),
             KeyMaterialType.SYMMETRIC,
-            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            OutputPrefixType.RAW,
             null);
     LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
 
@@ -370,7 +371,7 @@ public final class PrimitiveRegistryTest {
                 .build()
                 .toByteString(),
             KeyMaterialType.SYMMETRIC,
-            com.google.crypto.tink.proto.OutputPrefixType.RAW,
+            OutputPrefixType.RAW,
             null);
     LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
 
