@@ -1033,9 +1033,9 @@ java_test(
 )
 
 java_test(
-    name = "JwkSetConverterTest",
+    name = "SignatureJwkSetConverterTest",
     size = "small",
-    srcs = ["JwkSetConverterTest.java"],
+    srcs = ["SignatureJwkSetConverterTest.java"],
     deps = [
         "//src/main/java/com/google/crypto/tink:accesses_partial_key",
         "//src/main/java/com/google/crypto/tink:public_key_verify",
@@ -1046,13 +1046,13 @@ java_test(
         "//src/main/java/com/google/crypto/tink/signature:ecdsa_public_key",
         "//src/main/java/com/google/crypto/tink/signature:ed25519_parameters",
         "//src/main/java/com/google/crypto/tink/signature:ed25519_public_key",
-        "//src/main/java/com/google/crypto/tink/signature:jwk_set_converter",
         "//src/main/java/com/google/crypto/tink/signature:predefined_signature_parameters",
         "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_parameters",
         "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_public_key",
         "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_parameters",
         "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_public_key",
         "//src/main/java/com/google/crypto/tink/signature:signature_config",
+        "//src/main/java/com/google/crypto/tink/signature:signature_jwk_set_converter",
         "//src/main/java/com/google/crypto/tink/signature:signature_private_key",
         "//src/main/java/com/google/crypto/tink/signature:signature_public_key",
         "//src/main/java/com/google/crypto/tink/signature/internal/testing:ecdsa_test_util",

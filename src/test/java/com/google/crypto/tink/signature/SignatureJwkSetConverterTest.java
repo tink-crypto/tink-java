@@ -48,7 +48,7 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
 @RunWith(Theories.class)
-public final class JwkSetConverterTest {
+public final class SignatureJwkSetConverterTest {
 
   @BeforeClass
   public static void setUp() throws Exception {
@@ -59,8 +59,8 @@ public final class JwkSetConverterTest {
   public void convertEcdsaJwkSet() throws Exception {
     KeysetHandle publicHandle = createEs256Keyset();
 
-    String jwkSet = JwkSetConverter.fromPublicKeysetHandle(publicHandle);
-    KeysetHandle importedHandle = JwkSetConverter.toPublicKeysetHandle(jwkSet);
+    String jwkSet = SignatureJwkSetConverter.fromPublicKeysetHandle(publicHandle);
+    KeysetHandle importedHandle = SignatureJwkSetConverter.toPublicKeysetHandle(jwkSet);
 
     assertThat(importedHandle.size()).isEqualTo(1);
     assertThat(importedHandle.getAt(0).getKey().equalsKey(publicHandle.getAt(0).getKey())).isTrue();
@@ -79,8 +79,8 @@ public final class JwkSetConverterTest {
   public void convertEd25519JwkSet() throws Exception {
     KeysetHandle publicHandle = createEd25519Keyset();
 
-    String jwkSet = JwkSetConverter.fromPublicKeysetHandle(publicHandle);
-    KeysetHandle importedHandle = JwkSetConverter.toPublicKeysetHandle(jwkSet);
+    String jwkSet = SignatureJwkSetConverter.fromPublicKeysetHandle(publicHandle);
+    KeysetHandle importedHandle = SignatureJwkSetConverter.toPublicKeysetHandle(jwkSet);
 
     assertThat(importedHandle.size()).isEqualTo(1);
     assertThat(importedHandle.getAt(0).getKey().equalsKey(publicHandle.getAt(0).getKey())).isTrue();
@@ -98,8 +98,8 @@ public final class JwkSetConverterTest {
   public void convertRsaSsaPkcs1JwkSet() throws Exception {
     KeysetHandle publicHandle = createRs256Keyset();
 
-    String jwkSet = JwkSetConverter.fromPublicKeysetHandle(publicHandle);
-    KeysetHandle importedHandle = JwkSetConverter.toPublicKeysetHandle(jwkSet);
+    String jwkSet = SignatureJwkSetConverter.fromPublicKeysetHandle(publicHandle);
+    KeysetHandle importedHandle = SignatureJwkSetConverter.toPublicKeysetHandle(jwkSet);
 
     assertThat(importedHandle.size()).isEqualTo(1);
     assertThat(importedHandle.getAt(0).getKey().equalsKey(publicHandle.getAt(0).getKey())).isTrue();
@@ -116,8 +116,8 @@ public final class JwkSetConverterTest {
   public void convertRsaSsaPssJwkSet() throws Exception {
     KeysetHandle publicHandle = createPs256Keyset();
 
-    String jwkSet = JwkSetConverter.fromPublicKeysetHandle(publicHandle);
-    KeysetHandle importedHandle = JwkSetConverter.toPublicKeysetHandle(jwkSet);
+    String jwkSet = SignatureJwkSetConverter.fromPublicKeysetHandle(publicHandle);
+    KeysetHandle importedHandle = SignatureJwkSetConverter.toPublicKeysetHandle(jwkSet);
 
     assertThat(importedHandle.size()).isEqualTo(1);
     assertThat(importedHandle.getAt(0).getKey().equalsKey(publicHandle.getAt(0).getKey())).isTrue();
@@ -136,7 +136,7 @@ public final class JwkSetConverterTest {
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
 
     assertThrows(
-        GeneralSecurityException.class, () -> JwkSetConverter.fromPublicKeysetHandle(publicHandle));
+        GeneralSecurityException.class, () -> SignatureJwkSetConverter.fromPublicKeysetHandle(publicHandle));
   }
 
   @Test
@@ -154,7 +154,7 @@ public final class JwkSetConverterTest {
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
 
     assertThrows(
-        GeneralSecurityException.class, () -> JwkSetConverter.fromPublicKeysetHandle(publicHandle));
+        GeneralSecurityException.class, () -> SignatureJwkSetConverter.fromPublicKeysetHandle(publicHandle));
   }
 
   @Test
@@ -164,7 +164,7 @@ public final class JwkSetConverterTest {
         KeysetHandle.generateNew(
             PredefinedSignatureParameters.ECDSA_P256_IEEE_P1363_WITHOUT_PREFIX);
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
-    String jwkSet = JwkSetConverter.fromPublicKeysetHandle(publicHandle);
+    String jwkSet = SignatureJwkSetConverter.fromPublicKeysetHandle(publicHandle);
 
     JsonObject jsonKeyset = JsonParser.parse(jwkSet).getAsJsonObject();
     JsonArray jsonKeys = jsonKeyset.get("keys").getAsJsonArray();
@@ -173,7 +173,7 @@ public final class JwkSetConverterTest {
 
     String jwkSetWithKid = jsonKeyset.toString();
 
-    KeysetHandle importedHandle = JwkSetConverter.toPublicKeysetHandle(jwkSetWithKid);
+    KeysetHandle importedHandle = SignatureJwkSetConverter.toPublicKeysetHandle(jwkSetWithKid);
 
     assertThat(importedHandle.size()).isEqualTo(1);
     // It should be equal to the original public key (which is RAW / NO_PREFIX)
@@ -190,7 +190,7 @@ public final class JwkSetConverterTest {
     String invalidJwkSet =
         "{\"keys\": [{\"kty\": \"EC\", \"alg\": \"ES256\"}]}"; // Missing x, y, crv
     assertThrows(
-        GeneralSecurityException.class, () -> JwkSetConverter.toPublicKeysetHandle(invalidJwkSet));
+        GeneralSecurityException.class, () -> SignatureJwkSetConverter.toPublicKeysetHandle(invalidJwkSet));
   }
 
   @Test
@@ -200,7 +200,7 @@ public final class JwkSetConverterTest {
         "{\"keys\": [{\"kty\": \"EC\", \"alg\": \"ES256\", \"crv\": \"P-384\", \"x\": \"fake\", \"y\": \"fake\"}]}";
     assertThrows(
         GeneralSecurityException.class,
-        () -> JwkSetConverter.toPublicKeysetHandle(mismatchedJwkSet));
+        () -> SignatureJwkSetConverter.toPublicKeysetHandle(mismatchedJwkSet));
   }
 
   private static boolean isSupportedKeyType(SignatureTestVector testVector) {
@@ -289,8 +289,8 @@ public final class JwkSetConverterTest {
     KeysetHandle privateHandle = keysetHandleFromPrivateKey(privateKey);
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
 
-    String jwkSet = JwkSetConverter.fromPublicKeysetHandle(publicHandle);
-    KeysetHandle importedHandle = JwkSetConverter.toPublicKeysetHandle(jwkSet);
+    String jwkSet = SignatureJwkSetConverter.fromPublicKeysetHandle(publicHandle);
+    KeysetHandle importedHandle = SignatureJwkSetConverter.toPublicKeysetHandle(jwkSet);
 
     assertThat(importedHandle.size()).isEqualTo(1);
     assertThat(importedHandle.getAt(0).getKey().equalsKey(publicHandle.getAt(0).getKey()))
@@ -313,7 +313,7 @@ public final class JwkSetConverterTest {
 
     assertThrows(
         GeneralSecurityException.class,
-        () -> JwkSetConverter.fromPublicKeysetHandle(publicHandle));
+        () -> SignatureJwkSetConverter.fromPublicKeysetHandle(publicHandle));
   }
 
   @DataPoints("signatureTests")
@@ -477,7 +477,7 @@ public final class JwkSetConverterTest {
   @AccessesPartialKey
   public void convertKeyset_success(
       @FromDataPoints("signatureTestCases") KeysetAndJwkSet testCase) throws Exception {
-    String jwkSet = JwkSetConverter.fromPublicKeysetHandle(testCase.keysetHandle);
+    String jwkSet = SignatureJwkSetConverter.fromPublicKeysetHandle(testCase.keysetHandle);
     assertEqualJwkSets(jwkSet, testCase.jwkSet);
   }
 
@@ -485,15 +485,15 @@ public final class JwkSetConverterTest {
   public void toPublicKeysetHandle_fromPublicKeysetHandle_success(
       @FromDataPoints("signatureTestCases") KeysetAndJwkSet testCase) throws Exception {
     assertEqualJwkSets(
-        JwkSetConverter.fromPublicKeysetHandle(
-            JwkSetConverter.toPublicKeysetHandle(testCase.jwkSet)),
+        SignatureJwkSetConverter.fromPublicKeysetHandle(
+            SignatureJwkSetConverter.toPublicKeysetHandle(testCase.jwkSet)),
         testCase.jwkSet);
   }
 
   @Theory
   public void toPublicKeysetHandle_isImportedAsExpected(
       @FromDataPoints("signatureTestCases") KeysetAndJwkSet testCase) throws Exception {
-    KeysetHandle converted = JwkSetConverter.toPublicKeysetHandle(testCase.jwkSet);
+    KeysetHandle converted = SignatureJwkSetConverter.toPublicKeysetHandle(testCase.jwkSet);
     assertThat(converted.size()).isEqualTo(testCase.keysetHandle.size());
     for (int i = 0; i < converted.size(); i++) {
       assertThat(converted.getAt(i).getKey().equalsKey(testCase.keysetHandle.getAt(i).getKey()))

@@ -1547,8 +1547,8 @@ java_library(
 )
 
 java_library(
-    name = "jwk_set_converter",
-    srcs = ["JwkSetConverter.java"],
+    name = "signature_jwk_set_converter",
+    srcs = ["SignatureJwkSetConverter.java"],
     deps = [
         ":ecdsa_parameters",
         ":ecdsa_public_key",
@@ -1571,8 +1571,8 @@ java_library(
 )
 
 android_library(
-    name = "jwk_set_converter-android",
-    srcs = ["JwkSetConverter.java"],
+    name = "signature_jwk_set_converter-android",
+    srcs = ["SignatureJwkSetConverter.java"],
     deps = [
         ":ecdsa_parameters-android",
         ":ecdsa_public_key-android",

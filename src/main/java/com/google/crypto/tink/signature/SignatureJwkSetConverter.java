@@ -41,10 +41,8 @@ import java.security.spec.ECPoint;
  *
  * <p>Only keys with {@code NO_PREFIX} variant are supported for export. All imported keys will have
  * {@code NO_PREFIX} variant, and the {@code kid} field in the JWK will be ignored.
- *
- * <p>Note: This class is package-private as it is not yet public.
  */
-final class JwkSetConverter {
+public final class SignatureJwkSetConverter {
 
   /**
    * Converts a Tink KeysetHandle with public signature keys into a Json Web Key (JWK) set.
@@ -52,7 +50,7 @@ final class JwkSetConverter {
    * <p>Only keys with {@code NO_PREFIX} variant are supported. For other variants, a {@link
    * GeneralSecurityException} is thrown.
    */
-  static String fromPublicKeysetHandle(KeysetHandle handle) throws GeneralSecurityException {
+  public static String fromPublicKeysetHandle(KeysetHandle handle) throws GeneralSecurityException {
     // Check validity of the keyset handle before calling "getAt".
     // See comments in {@link KeysetHandle#Entry#getAt}.
     handle = KeysetHandle.newBuilder(handle).build();
@@ -87,7 +85,7 @@ final class JwkSetConverter {
    * <p>All imported keys will have {@code NO_PREFIX} variant. The {@code kid} field in the JWK (if
    * present) will be ignored.
    */
-  static KeysetHandle toPublicKeysetHandle(String jwkSet) throws GeneralSecurityException {
+  public static KeysetHandle toPublicKeysetHandle(String jwkSet) throws GeneralSecurityException {
     JsonObject jsonKeyset;
     try {
       jsonKeyset = JsonParser.parse(jwkSet).getAsJsonObject();
@@ -492,5 +490,5 @@ final class JwkSetConverter {
     }
   }
 
-  private JwkSetConverter() {}
+  private SignatureJwkSetConverter() {}
 }
