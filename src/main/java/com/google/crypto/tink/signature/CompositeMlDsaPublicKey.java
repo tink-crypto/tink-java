@@ -17,12 +17,12 @@
 package com.google.crypto.tink.signature;
 
 import static com.google.crypto.tink.util.Maps.entry;
-import static com.google.crypto.tink.util.Maps.ofEntries;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.internal.OutputPrefixUtil;
 import com.google.crypto.tink.util.Bytes;
+import com.google.crypto.tink.util.Maps;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Immutable;
 import com.google.errorprone.annotations.RestrictedApi;
@@ -40,7 +40,7 @@ public final class CompositeMlDsaPublicKey extends SignaturePublicKey {
   private static Map<CompositeMlDsaParameters.ClassicalAlgorithm, SignatureParameters>
       createSupportedClassicalParameters() {
     try {
-      return ofEntries(
+      return Maps.ofEntries(
           entry(
               CompositeMlDsaParameters.ClassicalAlgorithm.ED25519,
               Ed25519Parameters.create(Ed25519Parameters.Variant.NO_PREFIX)),

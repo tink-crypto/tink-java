@@ -17,7 +17,6 @@
 package com.google.crypto.tink.signature;
 
 import static com.google.crypto.tink.util.Maps.entry;
-import static com.google.crypto.tink.util.Maps.ofEntries;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
@@ -32,6 +31,7 @@ import com.google.crypto.tink.signature.MlDsaParameters.MlDsaInstance;
 import com.google.crypto.tink.signature.internal.MlDsaProtoSerialization;
 import com.google.crypto.tink.signature.internal.MlDsaVerifyConscrypt;
 import com.google.crypto.tink.util.Bytes;
+import com.google.crypto.tink.util.Maps;
 import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
@@ -110,7 +110,7 @@ public final class MlDsaSignKeyManager {
   }
 
   private static Map<String, Parameters> namedParameters() throws GeneralSecurityException {
-    return ofEntries(
+    return Maps.ofEntries(
         entry(
             "ML_DSA_44",
             MlDsaParameters.create(MlDsaInstance.ML_DSA_44, MlDsaParameters.Variant.TINK)),
