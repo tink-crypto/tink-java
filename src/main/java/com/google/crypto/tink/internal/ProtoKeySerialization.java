@@ -18,8 +18,6 @@ package com.google.crypto.tink.internal;
 
 import static com.google.crypto.tink.internal.Util.checkedToBytesFromPrintableAscii;
 
-import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
 import com.google.protobuf.ByteString;
@@ -80,34 +78,6 @@ public final class ProtoKeySerialization implements Serialization {
         typeUrl, objectIdentifier, value, keyMaterialType, outputPrefixType, idRequirement);
   }
 
-  public static ProtoKeySerialization create(
-      String typeUrl,
-      ByteString value,
-      KeyMaterialType keyMaterialType,
-      OutputPrefixType outputPrefixType,
-      @Nullable Integer idRequirement)
-      throws GeneralSecurityException {
-    if (outputPrefixType == OutputPrefixType.RAW) {
-      if (idRequirement != null) {
-        throw new GeneralSecurityException(
-            "Keys with output prefix type raw should not have an id requirement.");
-      }
-    } else {
-      if (idRequirement == null) {
-        throw new GeneralSecurityException(
-            "Keys with output prefix type different from raw should have an id requirement.");
-      }
-    }
-    Bytes objectIdentifier = checkedToBytesFromPrintableAscii(typeUrl);
-    return new ProtoKeySerialization(
-        typeUrl,
-        objectIdentifier,
-        value,
-        fromProtoKeyMaterialType(keyMaterialType),
-        fromProtoOutputPrefixType(outputPrefixType),
-        idRequirement);
-  }
-
   /** The contents of the field value in the message com.google.crypto.tink.proto.KeyData. */
   public ByteString getValue() {
     return value;
@@ -151,25 +121,6 @@ public final class ProtoKeySerialization implements Serialization {
   /** The typeUrl. */
   public String getTypeUrl() {
     return typeUrl;
-  }
-
-  private static com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType
-      fromProtoKeyMaterialType(com.google.crypto.tink.proto.KeyData.KeyMaterialType type)
-          throws GeneralSecurityException {
-    switch (type) {
-      case UNKNOWN_KEYMATERIAL:
-        return com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.UNKNOWN_KEYMATERIAL;
-      case SYMMETRIC:
-        return com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.SYMMETRIC;
-      case ASYMMETRIC_PRIVATE:
-        return com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PRIVATE;
-      case ASYMMETRIC_PUBLIC:
-        return com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.ASYMMETRIC_PUBLIC;
-      case REMOTE:
-        return com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.REMOTE;
-      default:
-        throw new GeneralSecurityException("Unknown KeyMaterialType " + type);
-    }
   }
 
   static com.google.crypto.tink.proto.OutputPrefixType toProtoOutputPrefixType(
