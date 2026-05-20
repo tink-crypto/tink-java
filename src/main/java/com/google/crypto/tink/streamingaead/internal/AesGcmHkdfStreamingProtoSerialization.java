@@ -56,26 +56,18 @@ public final class AesGcmHkdfStreamingProtoSerialization {
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               AesGcmHkdfStreamingProtoSerialization::serializeParameters,
-              AesGcmHkdfStreamingParameters.class,
-              ProtoParametersSerialization.class);
+              AesGcmHkdfStreamingParameters.class);
 
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
       ParametersParser.create(
-          AesGcmHkdfStreamingProtoSerialization::parseParameters,
-          TYPE_URL_BYTES,
-          ProtoParametersSerialization.class);
+          AesGcmHkdfStreamingProtoSerialization::parseParameters, TYPE_URL_BYTES);
 
   private static final KeySerializer<AesGcmHkdfStreamingKey, ProtoKeySerialization> KEY_SERIALIZER =
       KeySerializer.create(
-          AesGcmHkdfStreamingProtoSerialization::serializeKey,
-          AesGcmHkdfStreamingKey.class,
-          ProtoKeySerialization.class);
+          AesGcmHkdfStreamingProtoSerialization::serializeKey, AesGcmHkdfStreamingKey.class);
 
   private static final KeyParser<ProtoKeySerialization> KEY_PARSER =
-      KeyParser.create(
-          AesGcmHkdfStreamingProtoSerialization::parseKey,
-          TYPE_URL_BYTES,
-          ProtoKeySerialization.class);
+      KeyParser.create(AesGcmHkdfStreamingProtoSerialization::parseKey, TYPE_URL_BYTES);
 
   private static HashType toProtoHashType(AesGcmHkdfStreamingParameters.HashType hashType)
       throws GeneralSecurityException {

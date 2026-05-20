@@ -1068,9 +1068,7 @@ public class KeysetHandleTest {
     MutableSerializationRegistry.globalInstance()
         .registerKeyParser(
             KeyParser.create(
-                KeysetHandleTest::parseTestKey,
-                Bytes.copyFrom("testKeyTypeUrl".getBytes(UTF_8)),
-                ProtoKeySerialization.class));
+                KeysetHandleTest::parseTestKey, Bytes.copyFrom("testKeyTypeUrl".getBytes(UTF_8))));
     Keyset keyset =
         Keyset.newBuilder()
             .setPrimaryKeyId(1)

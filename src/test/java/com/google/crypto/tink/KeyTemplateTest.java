@@ -132,8 +132,7 @@ public final class KeyTemplateTest {
               (ParametersSubclass p) ->
                   ProtoParametersSerialization.create(
                       "sometypeurl", OutputPrefixType.RAW, AesGcmKeyFormat.getDefaultInstance()),
-              ParametersSubclass.class,
-              ProtoParametersSerialization.class);
+              ParametersSubclass.class);
 
   @Test
   public void testCreateFromParameters_unserializableAtCreationButLaterYes_works()

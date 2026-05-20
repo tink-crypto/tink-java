@@ -65,40 +65,23 @@ public final class EciesProtoSerialization {
   private static final ParametersSerializer<EciesParameters, ProtoParametersSerialization>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
-              EciesProtoSerialization::serializeParameters,
-              EciesParameters.class,
-              ProtoParametersSerialization.class);
+              EciesProtoSerialization::serializeParameters, EciesParameters.class);
 
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
-      ParametersParser.create(
-          EciesProtoSerialization::parseParameters,
-          PRIVATE_TYPE_URL_BYTES,
-          ProtoParametersSerialization.class);
+      ParametersParser.create(EciesProtoSerialization::parseParameters, PRIVATE_TYPE_URL_BYTES);
 
   private static final KeySerializer<EciesPublicKey, ProtoKeySerialization> PUBLIC_KEY_SERIALIZER =
-      KeySerializer.create(
-          EciesProtoSerialization::serializePublicKey,
-          EciesPublicKey.class,
-          ProtoKeySerialization.class);
+      KeySerializer.create(EciesProtoSerialization::serializePublicKey, EciesPublicKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PUBLIC_KEY_PARSER =
-      KeyParser.create(
-          EciesProtoSerialization::parsePublicKey,
-          PUBLIC_TYPE_URL_BYTES,
-          ProtoKeySerialization.class);
+      KeyParser.create(EciesProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL_BYTES);
 
   private static final KeySerializer<EciesPrivateKey, ProtoKeySerialization>
       PRIVATE_KEY_SERIALIZER =
-          KeySerializer.create(
-              EciesProtoSerialization::serializePrivateKey,
-              EciesPrivateKey.class,
-              ProtoKeySerialization.class);
+          KeySerializer.create(EciesProtoSerialization::serializePrivateKey, EciesPrivateKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PRIVATE_KEY_PARSER =
-      KeyParser.create(
-          EciesProtoSerialization::parsePrivateKey,
-          PRIVATE_TYPE_URL_BYTES,
-          ProtoKeySerialization.class);
+      KeyParser.create(EciesProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL_BYTES);
 
   private static OutputPrefixType toOutputPrefixType(EciesParameters.Variant variant)
       throws GeneralSecurityException {

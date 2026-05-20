@@ -62,27 +62,20 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               PrfBasedKeyDerivationKeyProtoSerialization::serializeParameters,
-              PrfBasedKeyDerivationParameters.class,
-              ProtoParametersSerialization.class);
+              PrfBasedKeyDerivationParameters.class);
 
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
       ParametersParser.create(
-          PrfBasedKeyDerivationKeyProtoSerialization::parseParameters,
-          TYPE_URL_BYTES,
-          ProtoParametersSerialization.class);
+          PrfBasedKeyDerivationKeyProtoSerialization::parseParameters, TYPE_URL_BYTES);
 
   private static final KeySerializer<PrfBasedKeyDerivationKey, ProtoKeySerialization>
       KEY_SERIALIZER =
           KeySerializer.create(
               PrfBasedKeyDerivationKeyProtoSerialization::serializeKey,
-              PrfBasedKeyDerivationKey.class,
-              ProtoKeySerialization.class);
+              PrfBasedKeyDerivationKey.class);
 
   private static final KeyParser<ProtoKeySerialization> KEY_PARSER =
-      KeyParser.create(
-          PrfBasedKeyDerivationKeyProtoSerialization::parseKey,
-          TYPE_URL_BYTES,
-          ProtoKeySerialization.class);
+      KeyParser.create(PrfBasedKeyDerivationKeyProtoSerialization::parseKey, TYPE_URL_BYTES);
 
   private static PrfBasedKeyDerivationParameters parseParameters(
       ProtoParametersSerialization serialization) throws GeneralSecurityException {

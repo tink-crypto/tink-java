@@ -57,26 +57,18 @@ public final class AesCtrHmacStreamingProtoSerialization {
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               AesCtrHmacStreamingProtoSerialization::serializeParameters,
-              AesCtrHmacStreamingParameters.class,
-              ProtoParametersSerialization.class);
+              AesCtrHmacStreamingParameters.class);
 
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
       ParametersParser.create(
-          AesCtrHmacStreamingProtoSerialization::parseParameters,
-          TYPE_URL_BYTES,
-          ProtoParametersSerialization.class);
+          AesCtrHmacStreamingProtoSerialization::parseParameters, TYPE_URL_BYTES);
 
   private static final KeySerializer<AesCtrHmacStreamingKey, ProtoKeySerialization> KEY_SERIALIZER =
       KeySerializer.create(
-          AesCtrHmacStreamingProtoSerialization::serializeKey,
-          AesCtrHmacStreamingKey.class,
-          ProtoKeySerialization.class);
+          AesCtrHmacStreamingProtoSerialization::serializeKey, AesCtrHmacStreamingKey.class);
 
   private static final KeyParser<ProtoKeySerialization> KEY_PARSER =
-      KeyParser.create(
-          AesCtrHmacStreamingProtoSerialization::parseKey,
-          TYPE_URL_BYTES,
-          ProtoKeySerialization.class);
+      KeyParser.create(AesCtrHmacStreamingProtoSerialization::parseKey, TYPE_URL_BYTES);
 
   private static HashType toProtoHashType(AesCtrHmacStreamingParameters.HashType hashType)
       throws GeneralSecurityException {

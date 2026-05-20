@@ -64,39 +64,22 @@ public final class HpkeProtoSerialization {
   private static final ParametersSerializer<HpkeParameters, ProtoParametersSerialization>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
-              HpkeProtoSerialization::serializeParameters,
-              HpkeParameters.class,
-              ProtoParametersSerialization.class);
+              HpkeProtoSerialization::serializeParameters, HpkeParameters.class);
 
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
-      ParametersParser.create(
-          HpkeProtoSerialization::parseParameters,
-          PRIVATE_TYPE_URL_BYTES,
-          ProtoParametersSerialization.class);
+      ParametersParser.create(HpkeProtoSerialization::parseParameters, PRIVATE_TYPE_URL_BYTES);
 
   private static final KeySerializer<HpkePublicKey, ProtoKeySerialization> PUBLIC_KEY_SERIALIZER =
-      KeySerializer.create(
-          HpkeProtoSerialization::serializePublicKey,
-          HpkePublicKey.class,
-          ProtoKeySerialization.class);
+      KeySerializer.create(HpkeProtoSerialization::serializePublicKey, HpkePublicKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PUBLIC_KEY_PARSER =
-      KeyParser.create(
-          HpkeProtoSerialization::parsePublicKey,
-          PUBLIC_TYPE_URL_BYTES,
-          ProtoKeySerialization.class);
+      KeyParser.create(HpkeProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL_BYTES);
 
   private static final KeySerializer<HpkePrivateKey, ProtoKeySerialization> PRIVATE_KEY_SERIALIZER =
-      KeySerializer.create(
-          HpkeProtoSerialization::serializePrivateKey,
-          HpkePrivateKey.class,
-          ProtoKeySerialization.class);
+      KeySerializer.create(HpkeProtoSerialization::serializePrivateKey, HpkePrivateKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PRIVATE_KEY_PARSER =
-      KeyParser.create(
-          HpkeProtoSerialization::parsePrivateKey,
-          PRIVATE_TYPE_URL_BYTES,
-          ProtoKeySerialization.class);
+      KeyParser.create(HpkeProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL_BYTES);
 
   private static OutputPrefixType toOutputPrefixType(HpkeParameters.Variant variant)
       throws GeneralSecurityException {
