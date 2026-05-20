@@ -62,40 +62,34 @@ public final class JwtRsaSsaPkcs1ProtoSerialization {
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               JwtRsaSsaPkcs1ProtoSerialization::serializeParameters,
-              JwtRsaSsaPkcs1Parameters.class,
-              ProtoParametersSerialization.class);
+              JwtRsaSsaPkcs1Parameters.class);
 
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
       ParametersParser.create(
           JwtRsaSsaPkcs1ProtoSerialization::parseParameters,
-          PRIVATE_TYPE_URL_BYTES,
-          ProtoParametersSerialization.class);
+          PRIVATE_TYPE_URL_BYTES);
 
   private static final KeySerializer<JwtRsaSsaPkcs1PublicKey, ProtoKeySerialization>
       PUBLIC_KEY_SERIALIZER =
           KeySerializer.create(
               JwtRsaSsaPkcs1ProtoSerialization::serializePublicKey,
-              JwtRsaSsaPkcs1PublicKey.class,
-              ProtoKeySerialization.class);
+              JwtRsaSsaPkcs1PublicKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PUBLIC_KEY_PARSER =
       KeyParser.create(
           JwtRsaSsaPkcs1ProtoSerialization::parsePublicKey,
-          PUBLIC_TYPE_URL_BYTES,
-          ProtoKeySerialization.class);
+          PUBLIC_TYPE_URL_BYTES);
 
   private static final KeySerializer<JwtRsaSsaPkcs1PrivateKey, ProtoKeySerialization>
       PRIVATE_KEY_SERIALIZER =
           KeySerializer.create(
               JwtRsaSsaPkcs1ProtoSerialization::serializePrivateKey,
-              JwtRsaSsaPkcs1PrivateKey.class,
-              ProtoKeySerialization.class);
+              JwtRsaSsaPkcs1PrivateKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PRIVATE_KEY_PARSER =
       KeyParser.create(
           JwtRsaSsaPkcs1ProtoSerialization::parsePrivateKey,
-          PRIVATE_TYPE_URL_BYTES,
-          ProtoKeySerialization.class);
+          PRIVATE_TYPE_URL_BYTES);
 
   private static final EnumTypeProtoConverter<
           JwtRsaSsaPkcs1Algorithm, JwtRsaSsaPkcs1Parameters.Algorithm>

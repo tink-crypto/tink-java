@@ -61,39 +61,26 @@ public final class JwtEcdsaProtoSerialization {
   private static final ParametersSerializer<JwtEcdsaParameters, ProtoParametersSerialization>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
-              JwtEcdsaProtoSerialization::serializeParameters,
-              JwtEcdsaParameters.class,
-              ProtoParametersSerialization.class);
+              JwtEcdsaProtoSerialization::serializeParameters, JwtEcdsaParameters.class);
 
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
-      ParametersParser.create(
-          JwtEcdsaProtoSerialization::parseParameters,
-          TYPE_URL_BYTES,
-          ProtoParametersSerialization.class);
+      ParametersParser.create(JwtEcdsaProtoSerialization::parseParameters, TYPE_URL_BYTES);
 
   private static final KeySerializer<JwtEcdsaPublicKey, ProtoKeySerialization>
       PUBLIC_KEY_SERIALIZER =
           KeySerializer.create(
-              JwtEcdsaProtoSerialization::serializePublicKey,
-              JwtEcdsaPublicKey.class,
-              ProtoKeySerialization.class);
+              JwtEcdsaProtoSerialization::serializePublicKey, JwtEcdsaPublicKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PUBLIC_KEY_PARSER =
-      KeyParser.create(
-          JwtEcdsaProtoSerialization::parsePublicKey,
-          PUBLIC_TYPE_URL_BYTES,
-          ProtoKeySerialization.class);
+      KeyParser.create(JwtEcdsaProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL_BYTES);
 
   private static final KeySerializer<JwtEcdsaPrivateKey, ProtoKeySerialization>
       PRIVATE_KEY_SERIALIZER =
           KeySerializer.create(
-              JwtEcdsaProtoSerialization::serializePrivateKey,
-              JwtEcdsaPrivateKey.class,
-              ProtoKeySerialization.class);
+              JwtEcdsaProtoSerialization::serializePrivateKey, JwtEcdsaPrivateKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PRIVATE_KEY_PARSER =
-      KeyParser.create(
-          JwtEcdsaProtoSerialization::parsePrivateKey, TYPE_URL_BYTES, ProtoKeySerialization.class);
+      KeyParser.create(JwtEcdsaProtoSerialization::parsePrivateKey, TYPE_URL_BYTES);
 
   private static JwtEcdsaAlgorithm toProtoAlgorithm(JwtEcdsaParameters.Algorithm algorithm)
       throws GeneralSecurityException {

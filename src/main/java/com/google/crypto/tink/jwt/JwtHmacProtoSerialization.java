@@ -51,23 +51,16 @@ final class JwtHmacProtoSerialization {
   private static final ParametersSerializer<JwtHmacParameters, ProtoParametersSerialization>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
-              JwtHmacProtoSerialization::serializeParameters,
-              JwtHmacParameters.class,
-              ProtoParametersSerialization.class);
+              JwtHmacProtoSerialization::serializeParameters, JwtHmacParameters.class);
 
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
-      ParametersParser.create(
-          JwtHmacProtoSerialization::parseParameters,
-          TYPE_URL_BYTES,
-          ProtoParametersSerialization.class);
+      ParametersParser.create(JwtHmacProtoSerialization::parseParameters, TYPE_URL_BYTES);
 
   private static final KeySerializer<JwtHmacKey, ProtoKeySerialization> KEY_SERIALIZER =
-      KeySerializer.create(
-          JwtHmacProtoSerialization::serializeKey, JwtHmacKey.class, ProtoKeySerialization.class);
+      KeySerializer.create(JwtHmacProtoSerialization::serializeKey, JwtHmacKey.class);
 
   private static final KeyParser<ProtoKeySerialization> KEY_PARSER =
-      KeyParser.create(
-          JwtHmacProtoSerialization::parseKey, TYPE_URL_BYTES, ProtoKeySerialization.class);
+      KeyParser.create(JwtHmacProtoSerialization::parseKey, TYPE_URL_BYTES);
 
   private static JwtHmacAlgorithm toProtoAlgorithm(JwtHmacParameters.Algorithm hashType)
       throws GeneralSecurityException {

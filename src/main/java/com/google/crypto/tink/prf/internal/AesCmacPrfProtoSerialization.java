@@ -52,25 +52,16 @@ public final class AesCmacPrfProtoSerialization {
   private static final ParametersSerializer<AesCmacPrfParameters, ProtoParametersSerialization>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
-              AesCmacPrfProtoSerialization::serializeParameters,
-              AesCmacPrfParameters.class,
-              ProtoParametersSerialization.class);
+              AesCmacPrfProtoSerialization::serializeParameters, AesCmacPrfParameters.class);
 
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
-      ParametersParser.create(
-          AesCmacPrfProtoSerialization::parseParameters,
-          TYPE_URL_BYTES,
-          ProtoParametersSerialization.class);
+      ParametersParser.create(AesCmacPrfProtoSerialization::parseParameters, TYPE_URL_BYTES);
 
   private static final KeySerializer<AesCmacPrfKey, ProtoKeySerialization> KEY_SERIALIZER =
-      KeySerializer.create(
-          AesCmacPrfProtoSerialization::serializeKey,
-          AesCmacPrfKey.class,
-          ProtoKeySerialization.class);
+      KeySerializer.create(AesCmacPrfProtoSerialization::serializeKey, AesCmacPrfKey.class);
 
   private static final KeyParser<ProtoKeySerialization> KEY_PARSER =
-      KeyParser.create(
-          AesCmacPrfProtoSerialization::parseKey, TYPE_URL_BYTES, ProtoKeySerialization.class);
+      KeyParser.create(AesCmacPrfProtoSerialization::parseKey, TYPE_URL_BYTES);
 
   private static ProtoParametersSerialization serializeParameters(AesCmacPrfParameters parameters)
       throws GeneralSecurityException {

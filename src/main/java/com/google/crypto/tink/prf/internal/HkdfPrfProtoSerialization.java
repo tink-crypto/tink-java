@@ -52,23 +52,16 @@ public final class HkdfPrfProtoSerialization {
   private static final ParametersSerializer<HkdfPrfParameters, ProtoParametersSerialization>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
-              HkdfPrfProtoSerialization::serializeParameters,
-              HkdfPrfParameters.class,
-              ProtoParametersSerialization.class);
+              HkdfPrfProtoSerialization::serializeParameters, HkdfPrfParameters.class);
 
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
-      ParametersParser.create(
-          HkdfPrfProtoSerialization::parseParameters,
-          TYPE_URL_BYTES,
-          ProtoParametersSerialization.class);
+      ParametersParser.create(HkdfPrfProtoSerialization::parseParameters, TYPE_URL_BYTES);
 
   private static final KeySerializer<HkdfPrfKey, ProtoKeySerialization> KEY_SERIALIZER =
-      KeySerializer.create(
-          HkdfPrfProtoSerialization::serializeKey, HkdfPrfKey.class, ProtoKeySerialization.class);
+      KeySerializer.create(HkdfPrfProtoSerialization::serializeKey, HkdfPrfKey.class);
 
   private static final KeyParser<ProtoKeySerialization> KEY_PARSER =
-      KeyParser.create(
-          HkdfPrfProtoSerialization::parseKey, TYPE_URL_BYTES, ProtoKeySerialization.class);
+      KeyParser.create(HkdfPrfProtoSerialization::parseKey, TYPE_URL_BYTES);
 
   private static HashType toProtoHashType(HkdfPrfParameters.HashType hashType)
       throws GeneralSecurityException {
