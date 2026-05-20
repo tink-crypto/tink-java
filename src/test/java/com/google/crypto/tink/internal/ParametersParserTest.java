@@ -69,6 +69,12 @@ public final class ParametersParserTest {
   }
 
   @Test
+  public void createParser_works_2() throws Exception {
+    Object unused =
+        ParametersParser.create(ParametersParserTest::parse, Bytes.copyFrom(new byte[0]));
+  }
+
+  @Test
   public void createParser_parseKey_works() throws Exception {
     ParametersParser<ProtoParametersSerialization> parser =
         ParametersParser.create(

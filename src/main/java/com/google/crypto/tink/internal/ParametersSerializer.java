@@ -97,4 +97,11 @@ public abstract class ParametersSerializer<
       }
     };
   }
+
+  public static <ParametersT extends Parameters>
+      ParametersSerializer<ParametersT, ProtoParametersSerialization> create(
+          ParametersSerializationFunction<ParametersT, ProtoParametersSerialization> function,
+          Class<ParametersT> parametersClass) {
+    return create(function, parametersClass, ProtoParametersSerialization.class);
+  }
 }

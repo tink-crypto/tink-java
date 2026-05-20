@@ -72,6 +72,12 @@ public final class ParametersSerializerTest {
   }
 
   @Test
+  public void createSerializer_works_2() throws Exception {
+    Object unused =
+        ParametersSerializer.create(ParametersSerializerTest::serialize, ExampleParameters.class);
+  }
+
+  @Test
   public void createSerializer_serializeKey_works() throws Exception {
     ParametersSerializer<ExampleParameters, ProtoParametersSerialization> serializer =
         ParametersSerializer.create(

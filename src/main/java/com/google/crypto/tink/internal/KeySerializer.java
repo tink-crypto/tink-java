@@ -100,4 +100,9 @@ public abstract class KeySerializer<KeyT extends Key, SerializationT extends Ser
       }
     };
   }
+
+  public static <KeyT extends Key> KeySerializer<KeyT, ProtoKeySerialization> create(
+      KeySerializationFunction<KeyT, ProtoKeySerialization> function, Class<KeyT> keyClass) {
+    return create(function, keyClass, ProtoKeySerialization.class);
+  }
 }

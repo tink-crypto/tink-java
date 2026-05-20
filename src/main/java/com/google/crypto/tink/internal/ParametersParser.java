@@ -112,4 +112,9 @@ public abstract class ParametersParser<SerializationT extends Serialization> {
       }
     };
   }
+
+  public static ParametersParser<ProtoParametersSerialization> create(
+      ParametersParsingFunction<ProtoParametersSerialization> function, Bytes objectIdentifier) {
+    return create(function, objectIdentifier, ProtoParametersSerialization.class);
+  }
 }

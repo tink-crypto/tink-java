@@ -117,4 +117,9 @@ public abstract class KeyParser<SerializationT extends Serialization> {
       }
     };
   }
+
+  public static KeyParser<ProtoKeySerialization> create(
+      KeyParsingFunction<ProtoKeySerialization> function, Bytes objectIdentifier) {
+    return create(function, objectIdentifier, ProtoKeySerialization.class);
+  }
 }
