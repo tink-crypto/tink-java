@@ -49,23 +49,16 @@ public final class AesEaxProtoSerialization {
   private static final ParametersSerializer<AesEaxParameters, ProtoParametersSerialization>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
-              AesEaxProtoSerialization::serializeParameters,
-              AesEaxParameters.class,
-              ProtoParametersSerialization.class);
+              AesEaxProtoSerialization::serializeParameters, AesEaxParameters.class);
 
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
-      ParametersParser.create(
-          AesEaxProtoSerialization::parseParameters,
-          TYPE_URL_BYTES,
-          ProtoParametersSerialization.class);
+      ParametersParser.create(AesEaxProtoSerialization::parseParameters, TYPE_URL_BYTES);
 
   private static final KeySerializer<AesEaxKey, ProtoKeySerialization> KEY_SERIALIZER =
-      KeySerializer.create(
-          AesEaxProtoSerialization::serializeKey, AesEaxKey.class, ProtoKeySerialization.class);
+      KeySerializer.create(AesEaxProtoSerialization::serializeKey, AesEaxKey.class);
 
   private static final KeyParser<ProtoKeySerialization> KEY_PARSER =
-      KeyParser.create(
-          AesEaxProtoSerialization::parseKey, TYPE_URL_BYTES, ProtoKeySerialization.class);
+      KeyParser.create(AesEaxProtoSerialization::parseKey, TYPE_URL_BYTES);
 
   private static OutputPrefixType toProtoOutputPrefixType(AesEaxParameters.Variant variant)
       throws GeneralSecurityException {

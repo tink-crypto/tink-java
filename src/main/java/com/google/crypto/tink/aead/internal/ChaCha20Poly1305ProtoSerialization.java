@@ -55,26 +55,17 @@ public final class ChaCha20Poly1305ProtoSerialization {
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               ChaCha20Poly1305ProtoSerialization::serializeParameters,
-              ChaCha20Poly1305Parameters.class,
-              ProtoParametersSerialization.class);
+              ChaCha20Poly1305Parameters.class);
 
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
-      ParametersParser.create(
-          ChaCha20Poly1305ProtoSerialization::parseParameters,
-          TYPE_URL_BYTES,
-          ProtoParametersSerialization.class);
+      ParametersParser.create(ChaCha20Poly1305ProtoSerialization::parseParameters, TYPE_URL_BYTES);
 
   private static final KeySerializer<ChaCha20Poly1305Key, ProtoKeySerialization> KEY_SERIALIZER =
       KeySerializer.create(
-          ChaCha20Poly1305ProtoSerialization::serializeKey,
-          ChaCha20Poly1305Key.class,
-          ProtoKeySerialization.class);
+          ChaCha20Poly1305ProtoSerialization::serializeKey, ChaCha20Poly1305Key.class);
 
   private static final KeyParser<ProtoKeySerialization> KEY_PARSER =
-      KeyParser.create(
-          ChaCha20Poly1305ProtoSerialization::parseKey,
-          TYPE_URL_BYTES,
-          ProtoKeySerialization.class);
+      KeyParser.create(ChaCha20Poly1305ProtoSerialization::parseKey, TYPE_URL_BYTES);
 
   private static OutputPrefixType toProtoOutputPrefixType(
       ChaCha20Poly1305Parameters.Variant variant) throws GeneralSecurityException {

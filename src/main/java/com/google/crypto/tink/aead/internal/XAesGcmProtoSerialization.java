@@ -54,23 +54,16 @@ public final class XAesGcmProtoSerialization {
   private static final ParametersSerializer<XAesGcmParameters, ProtoParametersSerialization>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
-              XAesGcmProtoSerialization::serializeParameters,
-              XAesGcmParameters.class,
-              ProtoParametersSerialization.class);
+              XAesGcmProtoSerialization::serializeParameters, XAesGcmParameters.class);
 
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
-      ParametersParser.create(
-          XAesGcmProtoSerialization::parseParameters,
-          TYPE_URL_BYTES,
-          ProtoParametersSerialization.class);
+      ParametersParser.create(XAesGcmProtoSerialization::parseParameters, TYPE_URL_BYTES);
 
   private static final KeySerializer<XAesGcmKey, ProtoKeySerialization> KEY_SERIALIZER =
-      KeySerializer.create(
-          XAesGcmProtoSerialization::serializeKey, XAesGcmKey.class, ProtoKeySerialization.class);
+      KeySerializer.create(XAesGcmProtoSerialization::serializeKey, XAesGcmKey.class);
 
   private static final KeyParser<ProtoKeySerialization> KEY_PARSER =
-      KeyParser.create(
-          XAesGcmProtoSerialization::parseKey, TYPE_URL_BYTES, ProtoKeySerialization.class);
+      KeyParser.create(XAesGcmProtoSerialization::parseKey, TYPE_URL_BYTES);
 
   private static OutputPrefixType toProtoOutputPrefixType(XAesGcmParameters.Variant variant)
       throws GeneralSecurityException {

@@ -52,25 +52,16 @@ public final class AesGcmSivProtoSerialization {
   private static final ParametersSerializer<AesGcmSivParameters, ProtoParametersSerialization>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
-              AesGcmSivProtoSerialization::serializeParameters,
-              AesGcmSivParameters.class,
-              ProtoParametersSerialization.class);
+              AesGcmSivProtoSerialization::serializeParameters, AesGcmSivParameters.class);
 
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
-      ParametersParser.create(
-          AesGcmSivProtoSerialization::parseParameters,
-          TYPE_URL_BYTES,
-          ProtoParametersSerialization.class);
+      ParametersParser.create(AesGcmSivProtoSerialization::parseParameters, TYPE_URL_BYTES);
 
   private static final KeySerializer<AesGcmSivKey, ProtoKeySerialization> KEY_SERIALIZER =
-      KeySerializer.create(
-          AesGcmSivProtoSerialization::serializeKey,
-          AesGcmSivKey.class,
-          ProtoKeySerialization.class);
+      KeySerializer.create(AesGcmSivProtoSerialization::serializeKey, AesGcmSivKey.class);
 
   private static final KeyParser<ProtoKeySerialization> KEY_PARSER =
-      KeyParser.create(
-          AesGcmSivProtoSerialization::parseKey, TYPE_URL_BYTES, ProtoKeySerialization.class);
+      KeyParser.create(AesGcmSivProtoSerialization::parseKey, TYPE_URL_BYTES);
 
   private static OutputPrefixType toProtoOutputPrefixType(AesGcmSivParameters.Variant variant)
       throws GeneralSecurityException {

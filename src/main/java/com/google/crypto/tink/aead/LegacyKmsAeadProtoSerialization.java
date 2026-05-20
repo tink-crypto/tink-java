@@ -44,25 +44,16 @@ final class LegacyKmsAeadProtoSerialization {
   private static final ParametersSerializer<LegacyKmsAeadParameters, ProtoParametersSerialization>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
-              LegacyKmsAeadProtoSerialization::serializeParameters,
-              LegacyKmsAeadParameters.class,
-              ProtoParametersSerialization.class);
+              LegacyKmsAeadProtoSerialization::serializeParameters, LegacyKmsAeadParameters.class);
 
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
-      ParametersParser.create(
-          LegacyKmsAeadProtoSerialization::parseParameters,
-          TYPE_URL_BYTES,
-          ProtoParametersSerialization.class);
+      ParametersParser.create(LegacyKmsAeadProtoSerialization::parseParameters, TYPE_URL_BYTES);
 
   private static final KeySerializer<LegacyKmsAeadKey, ProtoKeySerialization> KEY_SERIALIZER =
-      KeySerializer.create(
-          LegacyKmsAeadProtoSerialization::serializeKey,
-          LegacyKmsAeadKey.class,
-          ProtoKeySerialization.class);
+      KeySerializer.create(LegacyKmsAeadProtoSerialization::serializeKey, LegacyKmsAeadKey.class);
 
   private static final KeyParser<ProtoKeySerialization> KEY_PARSER =
-      KeyParser.create(
-          LegacyKmsAeadProtoSerialization::parseKey, TYPE_URL_BYTES, ProtoKeySerialization.class);
+      KeyParser.create(LegacyKmsAeadProtoSerialization::parseKey, TYPE_URL_BYTES);
 
   private static OutputPrefixType toProtoOutputPrefixType(LegacyKmsAeadParameters.Variant variant)
       throws GeneralSecurityException {
