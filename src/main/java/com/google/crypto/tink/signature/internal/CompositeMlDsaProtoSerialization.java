@@ -85,40 +85,34 @@ public final class CompositeMlDsaProtoSerialization {
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               CompositeMlDsaProtoSerialization::serializeParameters,
-              CompositeMlDsaParameters.class,
-              ProtoParametersSerialization.class);
+              CompositeMlDsaParameters.class);
 
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
       ParametersParser.create(
           CompositeMlDsaProtoSerialization::parseParameters,
-          PRIVATE_TYPE_URL_BYTES,
-          ProtoParametersSerialization.class);
+          PRIVATE_TYPE_URL_BYTES);
 
   private static final KeySerializer<CompositeMlDsaPublicKey, ProtoKeySerialization>
       PUBLIC_KEY_SERIALIZER =
           KeySerializer.create(
               CompositeMlDsaProtoSerialization::serializePublicKey,
-              CompositeMlDsaPublicKey.class,
-              ProtoKeySerialization.class);
+              CompositeMlDsaPublicKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PUBLIC_KEY_PARSER =
       KeyParser.create(
           CompositeMlDsaProtoSerialization::parsePublicKey,
-          PUBLIC_TYPE_URL_BYTES,
-          ProtoKeySerialization.class);
+          PUBLIC_TYPE_URL_BYTES);
 
   private static final KeySerializer<CompositeMlDsaPrivateKey, ProtoKeySerialization>
       PRIVATE_KEY_SERIALIZER =
           KeySerializer.create(
               CompositeMlDsaProtoSerialization::serializePrivateKey,
-              CompositeMlDsaPrivateKey.class,
-              ProtoKeySerialization.class);
+              CompositeMlDsaPrivateKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PRIVATE_KEY_PARSER =
       KeyParser.create(
           CompositeMlDsaProtoSerialization::parsePrivateKey,
-          PRIVATE_TYPE_URL_BYTES,
-          ProtoKeySerialization.class);
+          PRIVATE_TYPE_URL_BYTES);
 
   private static OutputPrefixType toOutputPrefixType(CompositeMlDsaParameters.Variant variant)
       throws GeneralSecurityException {

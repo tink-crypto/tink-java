@@ -57,40 +57,24 @@ public final class SlhDsaProtoSerialization {
   private static final ParametersSerializer<SlhDsaParameters, ProtoParametersSerialization>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
-              SlhDsaProtoSerialization::serializeParameters,
-              SlhDsaParameters.class,
-              ProtoParametersSerialization.class);
+              SlhDsaProtoSerialization::serializeParameters, SlhDsaParameters.class);
 
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
-      ParametersParser.create(
-          SlhDsaProtoSerialization::parseParameters,
-          PRIVATE_TYPE_URL_BYTES,
-          ProtoParametersSerialization.class);
+      ParametersParser.create(SlhDsaProtoSerialization::parseParameters, PRIVATE_TYPE_URL_BYTES);
 
   private static final KeySerializer<SlhDsaPublicKey, ProtoKeySerialization> PUBLIC_KEY_SERIALIZER =
-      KeySerializer.create(
-          SlhDsaProtoSerialization::serializePublicKey,
-          SlhDsaPublicKey.class,
-          ProtoKeySerialization.class);
+      KeySerializer.create(SlhDsaProtoSerialization::serializePublicKey, SlhDsaPublicKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PUBLIC_KEY_PARSER =
-      KeyParser.create(
-          SlhDsaProtoSerialization::parsePublicKey,
-          PUBLIC_TYPE_URL_BYTES,
-          ProtoKeySerialization.class);
+      KeyParser.create(SlhDsaProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL_BYTES);
 
   private static final KeySerializer<SlhDsaPrivateKey, ProtoKeySerialization>
       PRIVATE_KEY_SERIALIZER =
           KeySerializer.create(
-              SlhDsaProtoSerialization::serializePrivateKey,
-              SlhDsaPrivateKey.class,
-              ProtoKeySerialization.class);
+              SlhDsaProtoSerialization::serializePrivateKey, SlhDsaPrivateKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PRIVATE_KEY_PARSER =
-      KeyParser.create(
-          SlhDsaProtoSerialization::parsePrivateKey,
-          PRIVATE_TYPE_URL_BYTES,
-          ProtoKeySerialization.class);
+      KeyParser.create(SlhDsaProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL_BYTES);
 
   private static com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType toOutputPrefixType(
       SlhDsaParameters.Variant variant) throws GeneralSecurityException {

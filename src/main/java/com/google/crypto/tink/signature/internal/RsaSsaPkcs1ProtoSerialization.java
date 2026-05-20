@@ -60,41 +60,27 @@ public final class RsaSsaPkcs1ProtoSerialization {
   private static final ParametersSerializer<RsaSsaPkcs1Parameters, ProtoParametersSerialization>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
-              RsaSsaPkcs1ProtoSerialization::serializeParameters,
-              RsaSsaPkcs1Parameters.class,
-              ProtoParametersSerialization.class);
+              RsaSsaPkcs1ProtoSerialization::serializeParameters, RsaSsaPkcs1Parameters.class);
 
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
       ParametersParser.create(
-          RsaSsaPkcs1ProtoSerialization::parseParameters,
-          PRIVATE_TYPE_URL_BYTES,
-          ProtoParametersSerialization.class);
+          RsaSsaPkcs1ProtoSerialization::parseParameters, PRIVATE_TYPE_URL_BYTES);
 
   private static final KeySerializer<RsaSsaPkcs1PublicKey, ProtoKeySerialization>
       PUBLIC_KEY_SERIALIZER =
           KeySerializer.create(
-              RsaSsaPkcs1ProtoSerialization::serializePublicKey,
-              RsaSsaPkcs1PublicKey.class,
-              ProtoKeySerialization.class);
+              RsaSsaPkcs1ProtoSerialization::serializePublicKey, RsaSsaPkcs1PublicKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PUBLIC_KEY_PARSER =
-      KeyParser.create(
-          RsaSsaPkcs1ProtoSerialization::parsePublicKey,
-          PUBLIC_TYPE_URL_BYTES,
-          ProtoKeySerialization.class);
+      KeyParser.create(RsaSsaPkcs1ProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL_BYTES);
 
   private static final KeySerializer<RsaSsaPkcs1PrivateKey, ProtoKeySerialization>
       PRIVATE_KEY_SERIALIZER =
           KeySerializer.create(
-              RsaSsaPkcs1ProtoSerialization::serializePrivateKey,
-              RsaSsaPkcs1PrivateKey.class,
-              ProtoKeySerialization.class);
+              RsaSsaPkcs1ProtoSerialization::serializePrivateKey, RsaSsaPkcs1PrivateKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PRIVATE_KEY_PARSER =
-      KeyParser.create(
-          RsaSsaPkcs1ProtoSerialization::parsePrivateKey,
-          PRIVATE_TYPE_URL_BYTES,
-          ProtoKeySerialization.class);
+      KeyParser.create(RsaSsaPkcs1ProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL_BYTES);
 
   private static com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType toOutputPrefixType(
       RsaSsaPkcs1Parameters.Variant variant) throws GeneralSecurityException {

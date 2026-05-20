@@ -52,23 +52,16 @@ public final class AesSivProtoSerialization {
   private static final ParametersSerializer<AesSivParameters, ProtoParametersSerialization>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
-              AesSivProtoSerialization::serializeParameters,
-              AesSivParameters.class,
-              ProtoParametersSerialization.class);
+              AesSivProtoSerialization::serializeParameters, AesSivParameters.class);
 
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
-      ParametersParser.create(
-          AesSivProtoSerialization::parseParameters,
-          TYPE_URL_BYTES,
-          ProtoParametersSerialization.class);
+      ParametersParser.create(AesSivProtoSerialization::parseParameters, TYPE_URL_BYTES);
 
   private static final KeySerializer<AesSivKey, ProtoKeySerialization> KEY_SERIALIZER =
-      KeySerializer.create(
-          AesSivProtoSerialization::serializeKey, AesSivKey.class, ProtoKeySerialization.class);
+      KeySerializer.create(AesSivProtoSerialization::serializeKey, AesSivKey.class);
 
   private static final KeyParser<ProtoKeySerialization> KEY_PARSER =
-      KeyParser.create(
-          AesSivProtoSerialization::parseKey, TYPE_URL_BYTES, ProtoKeySerialization.class);
+      KeyParser.create(AesSivProtoSerialization::parseKey, TYPE_URL_BYTES);
 
   private static Map<AesSivParameters.Variant, OutputPrefixType> createVariantToOutputPrefixMap() {
     Map<AesSivParameters.Variant, OutputPrefixType> result = new HashMap<>();

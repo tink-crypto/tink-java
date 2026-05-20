@@ -57,41 +57,26 @@ public final class Ed25519ProtoSerialization {
   private static final ParametersSerializer<Ed25519Parameters, ProtoParametersSerialization>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
-              Ed25519ProtoSerialization::serializeParameters,
-              Ed25519Parameters.class,
-              ProtoParametersSerialization.class);
+              Ed25519ProtoSerialization::serializeParameters, Ed25519Parameters.class);
 
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
-      ParametersParser.create(
-          Ed25519ProtoSerialization::parseParameters,
-          PRIVATE_TYPE_URL_BYTES,
-          ProtoParametersSerialization.class);
+      ParametersParser.create(Ed25519ProtoSerialization::parseParameters, PRIVATE_TYPE_URL_BYTES);
 
   private static final KeySerializer<Ed25519PublicKey, ProtoKeySerialization>
       PUBLIC_KEY_SERIALIZER =
           KeySerializer.create(
-              Ed25519ProtoSerialization::serializePublicKey,
-              Ed25519PublicKey.class,
-              ProtoKeySerialization.class);
+              Ed25519ProtoSerialization::serializePublicKey, Ed25519PublicKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PUBLIC_KEY_PARSER =
-      KeyParser.create(
-          Ed25519ProtoSerialization::parsePublicKey,
-          PUBLIC_TYPE_URL_BYTES,
-          ProtoKeySerialization.class);
+      KeyParser.create(Ed25519ProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL_BYTES);
 
   private static final KeySerializer<Ed25519PrivateKey, ProtoKeySerialization>
       PRIVATE_KEY_SERIALIZER =
           KeySerializer.create(
-              Ed25519ProtoSerialization::serializePrivateKey,
-              Ed25519PrivateKey.class,
-              ProtoKeySerialization.class);
+              Ed25519ProtoSerialization::serializePrivateKey, Ed25519PrivateKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PRIVATE_KEY_PARSER =
-      KeyParser.create(
-          Ed25519ProtoSerialization::parsePrivateKey,
-          PRIVATE_TYPE_URL_BYTES,
-          ProtoKeySerialization.class);
+      KeyParser.create(Ed25519ProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL_BYTES);
 
   private static com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType toOutputPrefixType(
       Ed25519Parameters.Variant variant) throws GeneralSecurityException {
