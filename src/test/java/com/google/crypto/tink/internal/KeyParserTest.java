@@ -22,9 +22,12 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
+import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import javax.annotation.Nullable;
 import org.junit.Test;
@@ -63,9 +66,15 @@ public final class KeyParserTest {
   }
 
   private static ExampleKey parse(
-      ExampleSerialization serialization, @Nullable SecretKeyAccess access)
+      ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     SecretKeyAccess.requireAccess(access);
+    return new ExampleKey();
+  }
+
+  private static ExampleKey parseExample(
+      ExampleSerialization serialization, @Nullable SecretKeyAccess access)
+      throws GeneralSecurityException {
     return new ExampleKey();
   }
 
@@ -73,27 +82,44 @@ public final class KeyParserTest {
   public void createParser_works() throws Exception {
     Object unused =
         KeyParser.create(
-            KeyParserTest::parse, Bytes.copyFrom(new byte[0]), ExampleSerialization.class);
+            KeyParserTest::parse, Bytes.copyFrom(new byte[0]), ProtoKeySerialization.class);
   }
 
   @Test
   public void createParser_parseKey_works() throws Exception {
-    KeyParser<ExampleSerialization> parser =
+    KeyParser<ProtoKeySerialization> parser =
         KeyParser.create(
-            KeyParserTest::parse, Bytes.copyFrom(new byte[0]), ExampleSerialization.class);
-    assertThat(parser.parseKey(new ExampleSerialization(), InsecureSecretKeyAccess.get()))
-        .isNotNull();
+            KeyParserTest::parse, Bytes.copyFrom(new byte[0]), ProtoKeySerialization.class);
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "typeUrl",
+            ByteString.EMPTY,
+            KeyMaterialType.SYMMETRIC,
+            OutputPrefixType.RAW,
+            /* idRequirement= */ null);
+    assertThat(parser.parseKey(serialization, InsecureSecretKeyAccess.get())).isNotNull();
     assertThrows(
-        GeneralSecurityException.class,
-        () -> parser.parseKey(new ExampleSerialization(), /* access = */ null));
+        GeneralSecurityException.class, () -> parser.parseKey(serialization, /* access= */ null));
   }
 
   @Test
   public void createParser_classes_work() throws Exception {
-    KeyParser<ExampleSerialization> parser =
+    KeyParser<ProtoKeySerialization> parser =
         KeyParser.create(
-            KeyParserTest::parse, Bytes.copyFrom(new byte[] {1, 2, 3}), ExampleSerialization.class);
+            KeyParserTest::parse,
+            Bytes.copyFrom(new byte[] {1, 2, 3}),
+            ProtoKeySerialization.class);
     assertThat(parser.getObjectIdentifier()).isEqualTo(Bytes.copyFrom(new byte[] {1, 2, 3}));
-    assertThat(parser.getSerializationClass()).isEqualTo(ExampleSerialization.class);
+    assertThat(parser.getSerializationClass()).isEqualTo(ProtoKeySerialization.class);
+  }
+
+  @Test
+  public void createParser_nonProto_throws() throws Exception {
+    Bytes objectIdentifier = Bytes.copyFrom(new byte[0]);
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            KeyParser.create(
+                KeyParserTest::parseExample, objectIdentifier, ExampleSerialization.class));
   }
 }

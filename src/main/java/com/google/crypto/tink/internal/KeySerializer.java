@@ -44,6 +44,9 @@ public abstract class KeySerializer<KeyT extends Key, SerializationT extends Ser
   private final Class<SerializationT> serializationClass;
 
   private KeySerializer(Class<KeyT> keyClass, Class<SerializationT> serializationClass) {
+    if (!serializationClass.equals(ProtoKeySerialization.class)) {
+      throw new IllegalArgumentException("Only ProtoKeySerialization is supported");
+    }
     this.keyClass = keyClass;
     this.serializationClass = serializationClass;
   }

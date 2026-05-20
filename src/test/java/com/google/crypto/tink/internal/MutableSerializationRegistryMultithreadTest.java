@@ -23,9 +23,12 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
+import com.google.protobuf.ByteString;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -43,10 +46,10 @@ import org.junit.runners.JUnit4;
 public final class MutableSerializationRegistryMultithreadTest {
   private static final SecretKeyAccess ACCESS = InsecureSecretKeyAccess.get();
 
-  private static final Bytes A_1 = Bytes.copyFrom("0".getBytes(UTF_8));
-  private static final Bytes A_2 = Bytes.copyFrom("1".getBytes(UTF_8));
-  private static final Bytes B_1 = Bytes.copyFrom("1".getBytes(UTF_8));
-  private static final Bytes B_2 = Bytes.copyFrom("2".getBytes(UTF_8));
+  private static final String TYPE_URL_1 = "type_url_1";
+  private static final String TYPE_URL_2 = "type_url_2";
+
+  private static final Bytes A_1 = Bytes.copyFrom(TYPE_URL_1.getBytes(UTF_8));
 
   @Immutable
   private static final class TestParameters1 extends Parameters {
@@ -102,110 +105,52 @@ public final class MutableSerializationRegistryMultithreadTest {
     }
   }
 
-  @Immutable
-  private static final class TestSerializationA implements Serialization {
-    TestSerializationA(Bytes objectIdentifier) {
-      this.objectIdentifier = objectIdentifier;
-    }
-
-    private final Bytes objectIdentifier;
-
-    @Override
-    public Bytes getObjectIdentifier() {
-      return objectIdentifier;
-    }
-  }
-
-  @Immutable
-  private static final class TestSerializationB implements Serialization {
-    TestSerializationB(Bytes objectIdentifier) {
-      this.objectIdentifier = objectIdentifier;
-    }
-
-    private final Bytes objectIdentifier;
-
-    @Override
-    public Bytes getObjectIdentifier() {
-      return objectIdentifier;
-    }
-  }
-
-  private static TestSerializationA serializeKey1ToA(TestKey1 key, @Nullable SecretKeyAccess access)
-      throws GeneralSecurityException {
+  private static ProtoKeySerialization serializeKey1ToProto(
+      TestKey1 key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     SecretKeyAccess.requireAccess(access);
-    return new TestSerializationA(A_1);
+    return ProtoKeySerialization.create(
+        TYPE_URL_1,
+        ByteString.EMPTY,
+        KeyMaterialType.SYMMETRIC,
+        OutputPrefixType.RAW,
+        /* idRequirement= */ null);
   }
 
-  private static TestSerializationA serializeKey2ToA(TestKey2 key, @Nullable SecretKeyAccess access)
-      throws GeneralSecurityException {
+  private static ProtoKeySerialization serializeKey2ToProto(
+      TestKey2 key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     SecretKeyAccess.requireAccess(access);
-    return new TestSerializationA(A_2);
+    return ProtoKeySerialization.create(
+        TYPE_URL_2,
+        ByteString.EMPTY,
+        KeyMaterialType.SYMMETRIC,
+        OutputPrefixType.RAW,
+        /* idRequirement= */ null);
   }
 
-  private static TestSerializationB serializeKey1ToB(TestKey1 key, @Nullable SecretKeyAccess access)
+  private static Key parseProtoToKey1(
+      ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
-    SecretKeyAccess.requireAccess(access);
-    return new TestSerializationB(B_1);
-  }
-
-  private static TestSerializationB serializeKey2ToB(TestKey2 key, @Nullable SecretKeyAccess access)
-      throws GeneralSecurityException {
-    SecretKeyAccess.requireAccess(access);
-    return new TestSerializationB(B_2);
-  }
-
-  private static Key parseAToKey1(
-      TestSerializationA serialization, @Nullable SecretKeyAccess access)
-      throws GeneralSecurityException {
-    if (!A_1.equals(serialization.getObjectIdentifier())) {
-      throw new GeneralSecurityException("Wrong object identifier");
+    if (!TYPE_URL_1.equals(serialization.getTypeUrl())) {
+      throw new GeneralSecurityException("Wrong type URL");
     }
     SecretKeyAccess.requireAccess(access);
     return new TestKey1();
   }
 
-  private static Key parseBToKey1(
-      TestSerializationB serialization, @Nullable SecretKeyAccess access)
-      throws GeneralSecurityException {
-    if (!B_1.equals(serialization.getObjectIdentifier())) {
-      throw new GeneralSecurityException("Wrong object identifier");
-    }
-    SecretKeyAccess.requireAccess(access);
-    return new TestKey1();
+  private static ProtoParametersSerialization serializeParameters1ToProto(
+      TestParameters1 parameters) throws GeneralSecurityException {
+    return ProtoParametersSerialization.create(TYPE_URL_1, OutputPrefixType.RAW, ByteString.EMPTY);
   }
 
-  private static TestSerializationA serializeParameters1ToA(TestParameters1 parameters)
-      throws GeneralSecurityException {
-    return new TestSerializationA(A_1);
+  private static ProtoParametersSerialization serializeParameters2ToProto(
+      TestParameters2 parameters) throws GeneralSecurityException {
+    return ProtoParametersSerialization.create(TYPE_URL_2, OutputPrefixType.RAW, ByteString.EMPTY);
   }
 
-  private static TestSerializationA serializeParameters2ToA(TestParameters2 parameters)
+  private static Parameters parseProtoToParameters1(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
-    return new TestSerializationA(A_2);
-  }
-
-  private static TestSerializationB serializeParameters1ToB(TestParameters1 parameters)
-      throws GeneralSecurityException {
-    return new TestSerializationB(B_1);
-  }
-
-  private static TestSerializationB serializeParameters2ToB(TestParameters2 parameters)
-      throws GeneralSecurityException {
-    return new TestSerializationB(B_2);
-  }
-
-  private static Parameters parseAToParameters1(TestSerializationA serialization)
-      throws GeneralSecurityException {
-    if (!A_1.equals(serialization.getObjectIdentifier())) {
-      throw new GeneralSecurityException("Wrong object identifier");
-    }
-    return new TestParameters1();
-  }
-
-  private static Parameters parseBToParameters1(TestSerializationB serialization)
-      throws GeneralSecurityException {
-    if (!B_1.equals(serialization.getObjectIdentifier())) {
-      throw new GeneralSecurityException("Wrong object identifier");
+    if (!TYPE_URL_1.equals(serialization.getTypeUrl())) {
+      throw new GeneralSecurityException("Wrong type URL");
     }
     return new TestParameters1();
   }
@@ -219,24 +164,38 @@ public final class MutableSerializationRegistryMultithreadTest {
     List<Future<?>> futures = new ArrayList<>();
     registry.registerKeySerializer(
         KeySerializer.create(
-            MutableSerializationRegistryMultithreadTest::serializeKey1ToA,
+            MutableSerializationRegistryMultithreadTest::serializeKey1ToProto,
             TestKey1.class,
-            TestSerializationA.class));
+            ProtoKeySerialization.class));
     registry.registerKeyParser(
         KeyParser.create(
-            MutableSerializationRegistryMultithreadTest::parseAToKey1,
+            MutableSerializationRegistryMultithreadTest::parseProtoToKey1,
             A_1,
-            TestSerializationA.class));
+            ProtoKeySerialization.class));
     registry.registerParametersSerializer(
         ParametersSerializer.create(
-            MutableSerializationRegistryMultithreadTest::serializeParameters1ToA,
+            MutableSerializationRegistryMultithreadTest::serializeParameters1ToProto,
             TestParameters1.class,
-            TestSerializationA.class));
+            ProtoParametersSerialization.class));
     registry.registerParametersParser(
         ParametersParser.create(
-            MutableSerializationRegistryMultithreadTest::parseAToParameters1,
+            MutableSerializationRegistryMultithreadTest::parseProtoToParameters1,
             A_1,
-            TestSerializationA.class));
+            ProtoParametersSerialization.class));
+
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            TYPE_URL_1,
+            ByteString.EMPTY,
+            KeyMaterialType.SYMMETRIC,
+            OutputPrefixType.RAW,
+            /* idRequirement= */ null);
+
+    ProtoParametersSerialization protoParameters =
+        ProtoParametersSerialization.create(
+            TYPE_URL_1,
+            OutputPrefixType.RAW,
+            ByteString.EMPTY);
 
     futures.add(
         threadPool.submit(
@@ -245,9 +204,9 @@ public final class MutableSerializationRegistryMultithreadTest {
                 for (int i = 0; i < REPETITIONS; ++i) {
                   registry.registerKeyParser(
                       KeyParser.create(
-                          MutableSerializationRegistryMultithreadTest::parseAToKey1,
+                          MutableSerializationRegistryMultithreadTest::parseProtoToKey1,
                           Bytes.copyFrom(ByteBuffer.allocate(4).putInt(i).array()),
-                          TestSerializationA.class));
+                          ProtoKeySerialization.class));
                 }
               } catch (GeneralSecurityException e) {
                 throw new RuntimeException(e);
@@ -263,25 +222,15 @@ public final class MutableSerializationRegistryMultithreadTest {
                 for (int i = 0; i < REPETITIONS / 2; ++i) {
                   registry.registerKeyParser(
                       KeyParser.create(
-                          MutableSerializationRegistryMultithreadTest::parseBToKey1,
-                          Bytes.copyFrom(ByteBuffer.allocate(4).putInt(i).array()),
-                          TestSerializationB.class));
+                          MutableSerializationRegistryMultithreadTest::parseProtoToKey1,
+                          Bytes.copyFrom(ByteBuffer.allocate(4).putInt(i + REPETITIONS).array()),
+                          ProtoKeySerialization.class));
                 }
                 registry.registerKeySerializer(
                     KeySerializer.create(
-                        MutableSerializationRegistryMultithreadTest::serializeKey2ToA,
+                        MutableSerializationRegistryMultithreadTest::serializeKey2ToProto,
                         TestKey2.class,
-                        TestSerializationA.class));
-                registry.registerKeySerializer(
-                    KeySerializer.create(
-                        MutableSerializationRegistryMultithreadTest::serializeKey2ToB,
-                        TestKey2.class,
-                        TestSerializationB.class));
-                registry.registerKeySerializer(
-                    KeySerializer.create(
-                        MutableSerializationRegistryMultithreadTest::serializeKey1ToB,
-                        TestKey1.class,
-                        TestSerializationB.class));
+                        ProtoKeySerialization.class));
               } catch (GeneralSecurityException e) {
                 throw new RuntimeException(e);
               }
@@ -291,7 +240,7 @@ public final class MutableSerializationRegistryMultithreadTest {
             () -> {
               try {
                 for (int i = 0; i < REPETITIONS; ++i) {
-                  Object unused = registry.parseKey(new TestSerializationA(A_1), ACCESS);
+                  Object unused = registry.parseKey(serialization, ACCESS);
                 }
               } catch (GeneralSecurityException e) {
                 throw new RuntimeException(e);
@@ -303,7 +252,7 @@ public final class MutableSerializationRegistryMultithreadTest {
               try {
                 for (int i = 0; i < REPETITIONS; ++i) {
                   Object unused =
-                      registry.serializeKey(new TestKey1(), TestSerializationA.class, ACCESS);
+                      registry.serializeKey(new TestKey1(), ProtoKeySerialization.class, ACCESS);
                 }
               } catch (GeneralSecurityException e) {
                 throw new RuntimeException(e);
@@ -317,9 +266,9 @@ public final class MutableSerializationRegistryMultithreadTest {
                 for (int i = 0; i < REPETITIONS; ++i) {
                   registry.registerParametersParser(
                       ParametersParser.create(
-                          MutableSerializationRegistryMultithreadTest::parseAToParameters1,
+                          MutableSerializationRegistryMultithreadTest::parseProtoToParameters1,
                           Bytes.copyFrom(ByteBuffer.allocate(4).putInt(i).array()),
-                          TestSerializationA.class));
+                          ProtoParametersSerialization.class));
                 }
               } catch (GeneralSecurityException e) {
                 throw new RuntimeException(e);
@@ -335,25 +284,15 @@ public final class MutableSerializationRegistryMultithreadTest {
                 for (int i = 0; i < REPETITIONS / 2; ++i) {
                   registry.registerParametersParser(
                       ParametersParser.create(
-                          MutableSerializationRegistryMultithreadTest::parseBToParameters1,
-                          Bytes.copyFrom(ByteBuffer.allocate(4).putInt(i).array()),
-                          TestSerializationB.class));
+                          MutableSerializationRegistryMultithreadTest::parseProtoToParameters1,
+                          Bytes.copyFrom(ByteBuffer.allocate(4).putInt(i + REPETITIONS).array()),
+                          ProtoParametersSerialization.class));
                 }
                 registry.registerParametersSerializer(
                     ParametersSerializer.create(
-                        MutableSerializationRegistryMultithreadTest::serializeParameters2ToA,
+                        MutableSerializationRegistryMultithreadTest::serializeParameters2ToProto,
                         TestParameters2.class,
-                        TestSerializationA.class));
-                registry.registerParametersSerializer(
-                    ParametersSerializer.create(
-                        MutableSerializationRegistryMultithreadTest::serializeParameters2ToB,
-                        TestParameters2.class,
-                        TestSerializationB.class));
-                registry.registerParametersSerializer(
-                    ParametersSerializer.create(
-                        MutableSerializationRegistryMultithreadTest::serializeParameters1ToB,
-                        TestParameters1.class,
-                        TestSerializationB.class));
+                        ProtoParametersSerialization.class));
               } catch (GeneralSecurityException e) {
                 throw new RuntimeException(e);
               }
@@ -364,7 +303,7 @@ public final class MutableSerializationRegistryMultithreadTest {
             () -> {
               try {
                 for (int i = 0; i < REPETITIONS; ++i) {
-                  Object unused = registry.parseParameters(new TestSerializationA(A_1));
+                  Object unused = registry.parseParameters(protoParameters);
                 }
               } catch (GeneralSecurityException e) {
                 throw new RuntimeException(e);
@@ -376,7 +315,8 @@ public final class MutableSerializationRegistryMultithreadTest {
               try {
                 for (int i = 0; i < REPETITIONS; ++i) {
                   Object unused =
-                      registry.serializeParameters(new TestParameters1(), TestSerializationA.class);
+                      registry.serializeParameters(
+                          new TestParameters1(), ProtoParametersSerialization.class);
                 }
               } catch (GeneralSecurityException e) {
                 throw new RuntimeException(e);

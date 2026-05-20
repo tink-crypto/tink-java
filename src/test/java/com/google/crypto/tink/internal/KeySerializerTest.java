@@ -22,9 +22,11 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
+import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import javax.annotation.Nullable;
 import org.junit.Test;
@@ -62,9 +64,19 @@ public final class KeySerializerTest {
     }
   }
 
-  private static ExampleSerialization serialize(ExampleKey k, @Nullable SecretKeyAccess access)
+  private static ProtoKeySerialization serialize(ExampleKey k, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     SecretKeyAccess.requireAccess(access);
+    return ProtoKeySerialization.create(
+        "typeUrl",
+        ByteString.EMPTY,
+        KeyMaterialType.SYMMETRIC,
+        com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW,
+        /* idRequirement= */ null);
+  }
+
+  private static ExampleSerialization serializeToExample(
+      ExampleKey k, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     return new ExampleSerialization();
   }
 
@@ -72,14 +84,14 @@ public final class KeySerializerTest {
   public void createSerializer_works() throws Exception {
     Object unused =
         KeySerializer.create(
-            KeySerializerTest::serialize, ExampleKey.class, ExampleSerialization.class);
+            KeySerializerTest::serialize, ExampleKey.class, ProtoKeySerialization.class);
   }
 
   @Test
   public void createSerializer_serializeKey_works() throws Exception {
-    KeySerializer<ExampleKey, ExampleSerialization> serializer =
+    KeySerializer<ExampleKey, ProtoKeySerialization> serializer =
         KeySerializer.create(
-            KeySerializerTest::serialize, ExampleKey.class, ExampleSerialization.class);
+            KeySerializerTest::serialize, ExampleKey.class, ProtoKeySerialization.class);
     assertThat(serializer.serializeKey(new ExampleKey(), InsecureSecretKeyAccess.get()))
         .isNotNull();
     assertThrows(
@@ -89,10 +101,21 @@ public final class KeySerializerTest {
 
   @Test
   public void createSerializer_classes_work() throws Exception {
-    KeySerializer<ExampleKey, ExampleSerialization> serializer =
+    KeySerializer<ExampleKey, ProtoKeySerialization> serializer =
         KeySerializer.create(
-            KeySerializerTest::serialize, ExampleKey.class, ExampleSerialization.class);
+            KeySerializerTest::serialize, ExampleKey.class, ProtoKeySerialization.class);
     assertThat(serializer.getKeyClass()).isEqualTo(ExampleKey.class);
-    assertThat(serializer.getSerializationClass()).isEqualTo(ExampleSerialization.class);
+    assertThat(serializer.getSerializationClass()).isEqualTo(ProtoKeySerialization.class);
+  }
+
+  @Test
+  public void createSerializer_nonProto_throws() throws Exception {
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            KeySerializer.create(
+                KeySerializerTest::serializeToExample,
+                ExampleKey.class,
+                ExampleSerialization.class));
   }
 }

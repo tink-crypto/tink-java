@@ -44,6 +44,9 @@ public abstract class KeyParser<SerializationT extends Serialization> {
   private final Class<SerializationT> serializationClass;
 
   private KeyParser(Bytes objectIdentifier, Class<SerializationT> serializationClass) {
+    if (serializationClass != ProtoKeySerialization.class) {
+      throw new IllegalArgumentException("Only ProtoKeySerialization is supported");
+    }
     this.objectIdentifier = objectIdentifier;
     this.serializationClass = serializationClass;
   }

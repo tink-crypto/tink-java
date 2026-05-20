@@ -43,6 +43,9 @@ public abstract class ParametersSerializer<
 
   private ParametersSerializer(
       Class<ParametersT> parametersClass, Class<SerializationT> serializationClass) {
+    if (serializationClass != ProtoParametersSerialization.class) {
+      throw new IllegalArgumentException("Only ProtoParametersSerialization is supported");
+    }
     this.parametersClass = parametersClass;
     this.serializationClass = serializationClass;
   }

@@ -46,10 +46,11 @@ import org.junit.runners.JUnit4;
 public final class MutableSerializationRegistryTest {
   private static final SecretKeyAccess ACCESS = InsecureSecretKeyAccess.get();
 
-  private static final Bytes A_1 = Bytes.copyFrom("0".getBytes(UTF_8));
-  private static final Bytes A_2 = Bytes.copyFrom("1".getBytes(UTF_8));
-  private static final Bytes B_1 = Bytes.copyFrom("1".getBytes(UTF_8));
-  private static final Bytes B_2 = Bytes.copyFrom("2".getBytes(UTF_8));
+  private static final String TYPE_URL_1 = "type_url_1";
+  private static final String TYPE_URL_2 = "type_url_2";
+
+  private static final Bytes A_1 = Bytes.copyFrom(TYPE_URL_1.getBytes(UTF_8));
+  private static final Bytes A_2 = Bytes.copyFrom(TYPE_URL_2.getBytes(UTF_8));
 
   @Immutable
   private static final class TestParameters1 extends Parameters {
@@ -105,93 +106,43 @@ public final class MutableSerializationRegistryTest {
     }
   }
 
-  @Immutable
-  private static final class TestSerializationA implements Serialization {
-    public TestSerializationA(Bytes objectIdentifier) {
-      this.objectIdentifier = objectIdentifier;
-    }
-
-    private final Bytes objectIdentifier;
-
-    @Override
-    public Bytes getObjectIdentifier() {
-      return objectIdentifier;
-    }
-  }
-
-  @Immutable
-  private static final class TestSerializationB implements Serialization {
-    public TestSerializationB(Bytes objectIdentifier) {
-      this.objectIdentifier = objectIdentifier;
-    }
-
-    private final Bytes objectIdentifier;
-
-    @Override
-    public Bytes getObjectIdentifier() {
-      return objectIdentifier;
-    }
-  }
-
-  private static TestSerializationA serializeKey1ToA(TestKey1 key, @Nullable SecretKeyAccess access)
-      throws GeneralSecurityException {
+  private static ProtoKeySerialization serializeKey1ToProto(
+      TestKey1 key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     SecretKeyAccess.requireAccess(access);
-    return new TestSerializationA(A_1);
+    return ProtoKeySerialization.create(
+        TYPE_URL_1,
+        ByteString.EMPTY,
+        KeyMaterialType.SYMMETRIC,
+        OutputPrefixType.RAW,
+        /* idRequirement= */ null);
   }
 
-  private static TestSerializationA serializeKey2ToA(TestKey2 key, @Nullable SecretKeyAccess access)
-      throws GeneralSecurityException {
+  private static ProtoKeySerialization serializeKey2ToProto(
+      TestKey2 key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     SecretKeyAccess.requireAccess(access);
-    return new TestSerializationA(A_2);
+    return ProtoKeySerialization.create(
+        TYPE_URL_2,
+        ByteString.EMPTY,
+        KeyMaterialType.SYMMETRIC,
+        OutputPrefixType.RAW,
+        /* idRequirement= */ null);
   }
 
-  private static TestSerializationB serializeKey1ToB(TestKey1 key, @Nullable SecretKeyAccess access)
+  private static Key parseProtoToKey1(
+      ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
-    SecretKeyAccess.requireAccess(access);
-    return new TestSerializationB(B_1);
-  }
-
-  private static TestSerializationB serializeKey2ToB(TestKey2 key, @Nullable SecretKeyAccess access)
-      throws GeneralSecurityException {
-    SecretKeyAccess.requireAccess(access);
-    return new TestSerializationB(B_2);
-  }
-
-  private static Key parseAToKey1(
-      TestSerializationA serialization, @Nullable SecretKeyAccess access)
-      throws GeneralSecurityException {
-    if (!A_1.equals(serialization.getObjectIdentifier())) {
-      throw new GeneralSecurityException("Wrong object identifier");
+    if (!TYPE_URL_1.equals(serialization.getTypeUrl())) {
+      throw new GeneralSecurityException("Wrong type URL");
     }
     SecretKeyAccess.requireAccess(access);
     return new TestKey1();
   }
 
-  private static Key parseAToKey2(
-      TestSerializationA serialization, @Nullable SecretKeyAccess access)
+  private static Key parseProtoToKey2(
+      ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
-    if (!A_2.equals(serialization.getObjectIdentifier())) {
-      throw new GeneralSecurityException("Wrong object identifier");
-    }
-    SecretKeyAccess.requireAccess(access);
-    return new TestKey2();
-  }
-
-  private static Key parseBToKey1(
-      TestSerializationB serialization, @Nullable SecretKeyAccess access)
-      throws GeneralSecurityException {
-    if (!B_1.equals(serialization.getObjectIdentifier())) {
-      throw new GeneralSecurityException("Wrong object identifier");
-    }
-    SecretKeyAccess.requireAccess(access);
-    return new TestKey1();
-  }
-
-  private static Key parseBToKey2(
-      TestSerializationB serialization, @Nullable SecretKeyAccess access)
-      throws GeneralSecurityException {
-    if (!B_2.equals(serialization.getObjectIdentifier())) {
-      throw new GeneralSecurityException("Wrong object identifier");
+    if (!TYPE_URL_2.equals(serialization.getTypeUrl())) {
+      throw new GeneralSecurityException("Wrong type URL");
     }
     SecretKeyAccess.requireAccess(access);
     return new TestKey2();
@@ -203,55 +154,30 @@ public final class MutableSerializationRegistryTest {
     MutableSerializationRegistry registry = new MutableSerializationRegistry();
     registry.registerKeySerializer(
         KeySerializer.create(
-            MutableSerializationRegistryTest::serializeKey1ToA,
+            MutableSerializationRegistryTest::serializeKey1ToProto,
             TestKey1.class,
-            TestSerializationA.class));
+            ProtoKeySerialization.class));
     registry.registerKeySerializer(
         KeySerializer.create(
-            MutableSerializationRegistryTest::serializeKey1ToB,
-            TestKey1.class,
-            TestSerializationB.class));
-    registry.registerKeySerializer(
-        KeySerializer.create(
-            MutableSerializationRegistryTest::serializeKey2ToA,
+            MutableSerializationRegistryTest::serializeKey2ToProto,
             TestKey2.class,
-            TestSerializationA.class));
-    registry.registerKeySerializer(
-        KeySerializer.create(
-            MutableSerializationRegistryTest::serializeKey2ToB,
-            TestKey2.class,
-            TestSerializationB.class));
-    assertThat(registry.hasSerializerForKey(new TestKey1(), TestSerializationA.class)).isTrue();
+            ProtoKeySerialization.class));
+    assertThat(registry.hasSerializerForKey(new TestKey1(), ProtoKeySerialization.class)).isTrue();
     assertThat(
-            registry
-                .serializeKey(new TestKey1(), TestSerializationA.class, ACCESS)
-                .getObjectIdentifier())
-        .isEqualTo(A_1);
+            registry.serializeKey(new TestKey1(), ProtoKeySerialization.class, ACCESS).getTypeUrl())
+        .isEqualTo(TYPE_URL_1);
     assertThat(
-            registry
-                .serializeKey(new TestKey2(), TestSerializationA.class, ACCESS)
-                .getObjectIdentifier())
-        .isEqualTo(A_2);
-    assertThat(
-            registry
-                .serializeKey(new TestKey1(), TestSerializationB.class, ACCESS)
-                .getObjectIdentifier())
-        .isEqualTo(B_1);
-    assertThat(
-            registry
-                .serializeKey(new TestKey2(), TestSerializationB.class, ACCESS)
-                .getObjectIdentifier())
-        .isEqualTo(B_2);
+            registry.serializeKey(new TestKey2(), ProtoKeySerialization.class, ACCESS).getTypeUrl())
+        .isEqualTo(TYPE_URL_2);
   }
 
   @Test
   public void emptyRegistry_serializeKey_throws() throws Exception {
     MutableSerializationRegistry registry = new MutableSerializationRegistry();
-    assertThat(registry.hasSerializerForKey(new TestKey1(), TestSerializationA.class)).isFalse();
+    assertThat(registry.hasSerializerForKey(new TestKey1(), ProtoKeySerialization.class)).isFalse();
     assertThrows(
         GeneralSecurityException.class,
-        () -> registry
-                .serializeKey(new TestKey1(), TestSerializationA.class, ACCESS));
+        () -> registry.serializeKey(new TestKey1(), ProtoKeySerialization.class, ACCESS));
   }
 
   @Test
@@ -259,83 +185,68 @@ public final class MutableSerializationRegistryTest {
     MutableSerializationRegistry registry = new MutableSerializationRegistry();
     registry.registerKeyParser(
         KeyParser.create(
-            MutableSerializationRegistryTest::parseAToKey1, A_1, TestSerializationA.class));
+            MutableSerializationRegistryTest::parseProtoToKey1, A_1, ProtoKeySerialization.class));
     registry.registerKeyParser(
         KeyParser.create(
-            MutableSerializationRegistryTest::parseBToKey1, B_1, TestSerializationB.class));
-    registry.registerKeyParser(
-        KeyParser.create(
-            MutableSerializationRegistryTest::parseAToKey2, A_2, TestSerializationA.class));
-    registry.registerKeyParser(
-        KeyParser.create(
-            MutableSerializationRegistryTest::parseBToKey2, B_2, TestSerializationB.class));
-    assertThat(registry.hasParserForKey(new TestSerializationA(A_1))).isTrue();
-    assertThat(registry.parseKey(new TestSerializationA(A_1), ACCESS)).isInstanceOf(TestKey1.class);
-    assertThat(registry.parseKey(new TestSerializationA(A_2), ACCESS)).isInstanceOf(TestKey2.class);
-    assertThat(registry.parseKey(new TestSerializationB(B_1), ACCESS)).isInstanceOf(TestKey1.class);
-    assertThat(registry.parseKey(new TestSerializationB(B_2), ACCESS)).isInstanceOf(TestKey2.class);
+            MutableSerializationRegistryTest::parseProtoToKey2, A_2, ProtoKeySerialization.class));
+    ProtoKeySerialization serialization1 =
+        ProtoKeySerialization.create(
+            TYPE_URL_1,
+            ByteString.EMPTY,
+            KeyMaterialType.SYMMETRIC,
+            OutputPrefixType.RAW,
+            /* idRequirement= */ null);
+    ProtoKeySerialization serialization2 =
+        ProtoKeySerialization.create(
+            TYPE_URL_2,
+            ByteString.EMPTY,
+            KeyMaterialType.SYMMETRIC,
+            OutputPrefixType.RAW,
+            /* idRequirement= */ null);
+    assertThat(registry.hasParserForKey(serialization1)).isTrue();
+    assertThat(registry.parseKey(serialization1, ACCESS)).isInstanceOf(TestKey1.class);
+    assertThat(registry.parseKey(serialization2, ACCESS)).isInstanceOf(TestKey2.class);
   }
 
   @Test
   public void emptyRegistry_parseKey_throws() throws Exception {
     MutableSerializationRegistry registry = new MutableSerializationRegistry();
-    assertThat(registry.hasParserForKey(new TestSerializationA(A_1))).isFalse();
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> registry.parseKey(new TestSerializationA(A_1), ACCESS));
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            TYPE_URL_1,
+            ByteString.EMPTY,
+            KeyMaterialType.SYMMETRIC,
+            OutputPrefixType.RAW,
+            /* idRequirement= */ null);
+    assertThat(registry.hasParserForKey(serialization)).isFalse();
+    assertThrows(GeneralSecurityException.class, () -> registry.parseKey(serialization, ACCESS));
   }
 
   // ================================================================================================
   // PARAMETERS TESTS
   // ================================================================================================
-  private static TestSerializationA serializeParameters1ToA(TestParameters1 parameters)
-      throws GeneralSecurityException {
-    return new TestSerializationA(A_1);
+  private static ProtoParametersSerialization serializeParameters1ToProto(
+      TestParameters1 parameters) throws GeneralSecurityException {
+    return ProtoParametersSerialization.create(TYPE_URL_1, OutputPrefixType.RAW, ByteString.EMPTY);
   }
 
-  private static TestSerializationA serializeParameters2ToA(TestParameters2 parameters)
-      throws GeneralSecurityException {
-    return new TestSerializationA(A_2);
+  private static ProtoParametersSerialization serializeParameters2ToProto(
+      TestParameters2 parameters) throws GeneralSecurityException {
+    return ProtoParametersSerialization.create(TYPE_URL_2, OutputPrefixType.RAW, ByteString.EMPTY);
   }
 
-  private static TestSerializationB serializeParameters1ToB(TestParameters1 parameters)
+  private static Parameters parseProtoToParameters1(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
-    return new TestSerializationB(B_1);
-  }
-
-  private static TestSerializationB serializeParameters2ToB(TestParameters2 parameters)
-      throws GeneralSecurityException {
-    return new TestSerializationB(B_2);
-  }
-
-  private static Parameters parseAToParameters1(TestSerializationA serialization)
-      throws GeneralSecurityException {
-    if (!A_1.equals(serialization.getObjectIdentifier())) {
-      throw new GeneralSecurityException("Wrong object identifier");
+    if (!TYPE_URL_1.equals(serialization.getTypeUrl())) {
+      throw new GeneralSecurityException("Wrong type URL");
     }
     return new TestParameters1();
   }
 
-  private static Parameters parseAToParameters2(TestSerializationA serialization)
+  private static Parameters parseProtoToParameters2(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
-    if (!A_2.equals(serialization.getObjectIdentifier())) {
-      throw new GeneralSecurityException("Wrong object identifier");
-    }
-    return new TestParameters2();
-  }
-
-  private static Parameters parseBToParameters1(TestSerializationB serialization)
-      throws GeneralSecurityException {
-    if (!B_1.equals(serialization.getObjectIdentifier())) {
-      throw new GeneralSecurityException("Wrong object identifier");
-    }
-    return new TestParameters1();
-  }
-
-  private static Parameters parseBToParameters2(TestSerializationB serialization)
-      throws GeneralSecurityException {
-    if (!B_2.equals(serialization.getObjectIdentifier())) {
-      throw new GeneralSecurityException("Wrong object identifier");
+    if (!TYPE_URL_2.equals(serialization.getTypeUrl())) {
+      throw new GeneralSecurityException("Wrong type URL");
     }
     return new TestParameters2();
   }
@@ -345,56 +256,42 @@ public final class MutableSerializationRegistryTest {
     MutableSerializationRegistry registry = new MutableSerializationRegistry();
     registry.registerParametersSerializer(
         ParametersSerializer.create(
-            MutableSerializationRegistryTest::serializeParameters1ToA,
+            MutableSerializationRegistryTest::serializeParameters1ToProto,
             TestParameters1.class,
-            TestSerializationA.class));
+            ProtoParametersSerialization.class));
     registry.registerParametersSerializer(
         ParametersSerializer.create(
-            MutableSerializationRegistryTest::serializeParameters1ToB,
-            TestParameters1.class,
-            TestSerializationB.class));
-    registry.registerParametersSerializer(
-        ParametersSerializer.create(
-            MutableSerializationRegistryTest::serializeParameters2ToA,
+            MutableSerializationRegistryTest::serializeParameters2ToProto,
             TestParameters2.class,
-            TestSerializationA.class));
-    registry.registerParametersSerializer(
-        ParametersSerializer.create(
-            MutableSerializationRegistryTest::serializeParameters2ToB,
-            TestParameters2.class,
-            TestSerializationB.class));
-    assertThat(registry.hasSerializerForParameters(new TestParameters1(), TestSerializationA.class))
+            ProtoParametersSerialization.class));
+    assertThat(
+            registry.hasSerializerForParameters(
+                new TestParameters1(), ProtoParametersSerialization.class))
         .isTrue();
     assertThat(
             registry
-                .serializeParameters(new TestParameters1(), TestSerializationA.class)
-                .getObjectIdentifier())
-        .isEqualTo(A_1);
+                .serializeParameters(new TestParameters1(), ProtoParametersSerialization.class)
+                .getTypeUrl())
+        .isEqualTo(TYPE_URL_1);
     assertThat(
             registry
-                .serializeParameters(new TestParameters2(), TestSerializationA.class)
-                .getObjectIdentifier())
-        .isEqualTo(A_2);
-    assertThat(
-            registry
-                .serializeParameters(new TestParameters1(), TestSerializationB.class)
-                .getObjectIdentifier())
-        .isEqualTo(B_1);
-    assertThat(
-            registry
-                .serializeParameters(new TestParameters2(), TestSerializationB.class)
-                .getObjectIdentifier())
-        .isEqualTo(B_2);
+                .serializeParameters(new TestParameters2(), ProtoParametersSerialization.class)
+                .getTypeUrl())
+        .isEqualTo(TYPE_URL_2);
   }
 
   @Test
   public void emptyRegistry_serializeParameters_throws() throws Exception {
     MutableSerializationRegistry registry = new MutableSerializationRegistry();
-    assertThat(registry.hasSerializerForParameters(new TestParameters1(), TestSerializationA.class))
+    assertThat(
+            registry.hasSerializerForParameters(
+                new TestParameters1(), ProtoParametersSerialization.class))
         .isFalse();
     assertThrows(
         GeneralSecurityException.class,
-        () -> registry.serializeParameters(new TestParameters1(), TestSerializationA.class));
+        () ->
+            registry.serializeParameters(
+                new TestParameters1(), ProtoParametersSerialization.class));
   }
 
   @Test
@@ -402,34 +299,30 @@ public final class MutableSerializationRegistryTest {
     MutableSerializationRegistry registry = new MutableSerializationRegistry();
     registry.registerParametersParser(
         ParametersParser.create(
-            MutableSerializationRegistryTest::parseAToParameters1, A_1, TestSerializationA.class));
+            MutableSerializationRegistryTest::parseProtoToParameters1,
+            A_1,
+            ProtoParametersSerialization.class));
     registry.registerParametersParser(
         ParametersParser.create(
-            MutableSerializationRegistryTest::parseBToParameters1, B_1, TestSerializationB.class));
-    registry.registerParametersParser(
-        ParametersParser.create(
-            MutableSerializationRegistryTest::parseAToParameters2, A_2, TestSerializationA.class));
-    registry.registerParametersParser(
-        ParametersParser.create(
-            MutableSerializationRegistryTest::parseBToParameters2, B_2, TestSerializationB.class));
-    assertThat(registry.hasParserForParameters(new TestSerializationA(A_1))).isTrue();
-    assertThat(registry.parseParameters(new TestSerializationA(A_1)))
-        .isInstanceOf(TestParameters1.class);
-    assertThat(registry.parseParameters(new TestSerializationA(A_2)))
-        .isInstanceOf(TestParameters2.class);
-    assertThat(registry.parseParameters(new TestSerializationB(B_1)))
-        .isInstanceOf(TestParameters1.class);
-    assertThat(registry.parseParameters(new TestSerializationB(B_2)))
-        .isInstanceOf(TestParameters2.class);
+            MutableSerializationRegistryTest::parseProtoToParameters2,
+            A_2,
+            ProtoParametersSerialization.class));
+    ProtoParametersSerialization serialization1 =
+        ProtoParametersSerialization.create(TYPE_URL_1, OutputPrefixType.RAW, ByteString.EMPTY);
+    ProtoParametersSerialization serialization2 =
+        ProtoParametersSerialization.create(TYPE_URL_2, OutputPrefixType.RAW, ByteString.EMPTY);
+    assertThat(registry.hasParserForParameters(serialization1)).isTrue();
+    assertThat(registry.parseParameters(serialization1)).isInstanceOf(TestParameters1.class);
+    assertThat(registry.parseParameters(serialization2)).isInstanceOf(TestParameters2.class);
   }
 
   @Test
   public void emptyRegistry_parseParameters_throws() throws Exception {
     MutableSerializationRegistry registry = new MutableSerializationRegistry();
-    assertThat(registry.hasParserForParameters(new TestSerializationA(A_1))).isFalse();
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> registry.parseParameters(new TestSerializationA(A_1)));
+    ProtoParametersSerialization serialization =
+        ProtoParametersSerialization.create(TYPE_URL_1, OutputPrefixType.RAW, ByteString.EMPTY);
+    assertThat(registry.hasParserForParameters(serialization)).isFalse();
+    assertThrows(GeneralSecurityException.class, () -> registry.parseParameters(serialization));
   }
 
   @Test

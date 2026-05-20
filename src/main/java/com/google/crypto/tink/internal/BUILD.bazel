@@ -116,6 +116,7 @@ java_library(
     name = "key_serializer",
     srcs = ["KeySerializer.java"],
     deps = [
+        ":proto_key_serialization",
         ":serialization",
         "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink:secret_key_access",
@@ -127,6 +128,7 @@ android_library(
     name = "key_serializer-android",
     srcs = ["KeySerializer.java"],
     deps = [
+        ":proto_key_serialization-android",
         ":serialization-android",
         "//src/main/java/com/google/crypto/tink:key-android",
         "//src/main/java/com/google/crypto/tink:secret_key_access-android",
@@ -156,6 +158,7 @@ java_library(
     name = "key_parser",
     srcs = ["KeyParser.java"],
     deps = [
+        ":proto_key_serialization",
         ":serialization",
         "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink:secret_key_access",
@@ -168,6 +171,7 @@ android_library(
     name = "key_parser-android",
     srcs = ["KeyParser.java"],
     deps = [
+        ":proto_key_serialization-android",
         ":serialization-android",
         "//src/main/java/com/google/crypto/tink:key-android",
         "//src/main/java/com/google/crypto/tink:secret_key_access-android",
@@ -278,6 +282,7 @@ java_library(
     name = "parameters_parser",
     srcs = ["ParametersParser.java"],
     deps = [
+        ":proto_parameters_serialization",
         ":serialization",
         "//src/main/java/com/google/crypto/tink:parameters",
         "//src/main/java/com/google/crypto/tink/util:bytes",
@@ -288,6 +293,7 @@ android_library(
     name = "parameters_parser-android",
     srcs = ["ParametersParser.java"],
     deps = [
+        ":proto_parameters_serialization-android",
         ":serialization-android",
         "//src/main/java/com/google/crypto/tink:parameters-android",
         "//src/main/java/com/google/crypto/tink/util:bytes-android",
@@ -298,6 +304,7 @@ java_library(
     name = "parameters_serializer",
     srcs = ["ParametersSerializer.java"],
     deps = [
+        ":proto_parameters_serialization",
         ":serialization",
         "//src/main/java/com/google/crypto/tink:parameters",
     ],
@@ -307,6 +314,7 @@ android_library(
     name = "parameters_serializer-android",
     srcs = ["ParametersSerializer.java"],
     deps = [
+        ":proto_parameters_serialization-android",
         ":serialization-android",
         "//src/main/java/com/google/crypto/tink:parameters-android",
     ],

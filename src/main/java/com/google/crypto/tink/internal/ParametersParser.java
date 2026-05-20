@@ -41,6 +41,9 @@ public abstract class ParametersParser<SerializationT extends Serialization> {
   private final Class<SerializationT> serializationClass;
 
   private ParametersParser(Bytes objectIdentifier, Class<SerializationT> serializationClass) {
+    if (serializationClass != ProtoParametersSerialization.class) {
+      throw new IllegalArgumentException("Only ProtoParametersSerialization is supported");
+    }
     this.objectIdentifier = objectIdentifier;
     this.serializationClass = serializationClass;
   }
