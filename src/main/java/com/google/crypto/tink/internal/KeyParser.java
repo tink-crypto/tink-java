@@ -84,7 +84,7 @@ public abstract class KeyParser<SerializationT extends Serialization> {
    *
    * <pre>{@code
    * class MyClass {
-   *   private static MyKey parse(MySerialization key, @Nullable SecretKeyAccess access)
+   *   private static MyKey parse(ProtoKeySerialization s, @Nullable SecretKeyAccess access)
    *             throws GeneralSecurityException {
    *     ...
    *   }
@@ -94,8 +94,8 @@ public abstract class KeyParser<SerializationT extends Serialization> {
    * This function can then be used to create a {@code KeyParser}:
    *
    * <pre>{@code
-   * KeyParser<MyKey, MySerialization> parser =
-   *       KeyParser.create(MyClass::parse, objectIdentifier, MySerialization.class);
+   * KeyParser<ProtoKeySerialization> parser =
+   *       KeyParser.create(MyClass::parse, objectIdentifier);
    * }</pre>
    *
    * Note that calling this function twice will result in objects which are not equal according to
@@ -103,23 +103,15 @@ public abstract class KeyParser<SerializationT extends Serialization> {
    *
    * @param function The function used to parse a Key
    * @param objectIdentifier The identifier to be returned by {@link #getObjectIdentifier}
-   * @param serializationClass The class object corresponding to {@code SerializationT}
    */
-  public static <SerializationT extends Serialization> KeyParser<SerializationT> create(
-      KeyParsingFunction<SerializationT> function,
-      Bytes objectIdentifier,
-      Class<SerializationT> serializationClass) {
-    return new KeyParser<SerializationT>(objectIdentifier, serializationClass) {
+  public static KeyParser<ProtoKeySerialization> create(
+      KeyParsingFunction<ProtoKeySerialization> function, Bytes objectIdentifier) {
+    return new KeyParser<ProtoKeySerialization>(objectIdentifier, ProtoKeySerialization.class) {
       @Override
-      public Key parseKey(SerializationT serialization, @Nullable SecretKeyAccess access)
+      public Key parseKey(ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
           throws GeneralSecurityException {
         return function.parseKey(serialization, access);
       }
     };
-  }
-
-  public static KeyParser<ProtoKeySerialization> create(
-      KeyParsingFunction<ProtoKeySerialization> function, Bytes objectIdentifier) {
-    return create(function, objectIdentifier, ProtoKeySerialization.class);
   }
 }

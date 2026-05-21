@@ -69,7 +69,7 @@ public abstract class KeySerializer<KeyT extends Key, SerializationT extends Ser
    *
    * <pre>{@code
    * class MyClass {
-   *   private static MySerialization serialize(MyKey key, @Nullable SecretKeyAccess access)
+   *   private static ProtoKeySerialization serialize(MyKey key, @Nullable SecretKeyAccess access)
    *             throws GeneralSecurityException {
    *     ...
    *   }
@@ -79,30 +79,22 @@ public abstract class KeySerializer<KeyT extends Key, SerializationT extends Ser
    * This function can then be used to create a {@code KeySerializer}:
    *
    * <pre>{@code
-   * KeySerializer<MyKey, MySerialization> serializer =
-   *       KeySerializer.create(MyClass::serialize, MyKey.class, MySerialization.class);
+   * KeySerializer<MyKey, ProtoKeySerialization> serializer =
+   *     KeySerializer.create(MyClass::serialize, MyKey.class);
    * }</pre>
    *
    * <p>Note that calling this function twice will result in objects which are not equal according
    * to {@code Object.equals}, and hence cannot be used to re-register a previously registered
    * object.
    */
-  public static <KeyT extends Key, SerializationT extends Serialization>
-      KeySerializer<KeyT, SerializationT> create(
-          KeySerializationFunction<KeyT, SerializationT> function,
-          Class<KeyT> keyClass,
-          Class<SerializationT> serializationClass) {
-    return new KeySerializer<KeyT, SerializationT>(keyClass, serializationClass) {
+  public static <KeyT extends Key> KeySerializer<KeyT, ProtoKeySerialization> create(
+      KeySerializationFunction<KeyT, ProtoKeySerialization> function, Class<KeyT> keyClass) {
+    return new KeySerializer<KeyT, ProtoKeySerialization>(keyClass, ProtoKeySerialization.class) {
       @Override
-      public SerializationT serializeKey(KeyT key, @Nullable SecretKeyAccess access)
+      public ProtoKeySerialization serializeKey(KeyT key, @Nullable SecretKeyAccess access)
           throws GeneralSecurityException {
         return function.serializeKey(key, access);
       }
     };
-  }
-
-  public static <KeyT extends Key> KeySerializer<KeyT, ProtoKeySerialization> create(
-      KeySerializationFunction<KeyT, ProtoKeySerialization> function, Class<KeyT> keyClass) {
-    return create(function, keyClass, ProtoKeySerialization.class);
   }
 }

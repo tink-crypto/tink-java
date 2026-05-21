@@ -17,7 +17,6 @@
 package com.google.crypto.tink.internal;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
@@ -57,22 +56,8 @@ public final class ParametersSerializerTest {
         ByteString.EMPTY);
   }
 
-  private static ExampleSerialization serializeToExample(ExampleParameters k)
-      throws GeneralSecurityException {
-    return new ExampleSerialization();
-  }
-
   @Test
   public void createSerializer_works() throws Exception {
-    Object unused =
-        ParametersSerializer.create(
-            ParametersSerializerTest::serialize,
-            ExampleParameters.class,
-            ProtoParametersSerialization.class);
-  }
-
-  @Test
-  public void createSerializer_works_2() throws Exception {
     Object unused =
         ParametersSerializer.create(ParametersSerializerTest::serialize, ExampleParameters.class);
   }
@@ -80,32 +65,15 @@ public final class ParametersSerializerTest {
   @Test
   public void createSerializer_serializeKey_works() throws Exception {
     ParametersSerializer<ExampleParameters, ProtoParametersSerialization> serializer =
-        ParametersSerializer.create(
-            ParametersSerializerTest::serialize,
-            ExampleParameters.class,
-            ProtoParametersSerialization.class);
+        ParametersSerializer.create(ParametersSerializerTest::serialize, ExampleParameters.class);
     assertThat(serializer.serializeParameters(new ExampleParameters())).isNotNull();
   }
 
   @Test
   public void createSerializer_classes_work() throws Exception {
     ParametersSerializer<ExampleParameters, ProtoParametersSerialization> serializer =
-        ParametersSerializer.create(
-            ParametersSerializerTest::serialize,
-            ExampleParameters.class,
-            ProtoParametersSerialization.class);
+        ParametersSerializer.create(ParametersSerializerTest::serialize, ExampleParameters.class);
     assertThat(serializer.getParametersClass()).isEqualTo(ExampleParameters.class);
     assertThat(serializer.getSerializationClass()).isEqualTo(ProtoParametersSerialization.class);
-  }
-
-  @Test
-  public void createSerializer_nonProto_throws() throws Exception {
-    assertThrows(
-        IllegalArgumentException.class,
-        () ->
-            ParametersSerializer.create(
-                ParametersSerializerTest::serializeToExample,
-                ExampleParameters.class,
-                ExampleSerialization.class));
   }
 }

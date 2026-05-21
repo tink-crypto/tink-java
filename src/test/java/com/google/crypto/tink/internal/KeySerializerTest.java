@@ -75,28 +75,15 @@ public final class KeySerializerTest {
         /* idRequirement= */ null);
   }
 
-  private static ExampleSerialization serializeToExample(
-      ExampleKey k, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
-    return new ExampleSerialization();
-  }
-
   @Test
   public void createSerializer_works() throws Exception {
-    Object unused =
-        KeySerializer.create(
-            KeySerializerTest::serialize, ExampleKey.class, ProtoKeySerialization.class);
-  }
-
-  @Test
-  public void createSerializer_works_2() throws Exception {
     Object unused = KeySerializer.create(KeySerializerTest::serialize, ExampleKey.class);
   }
 
   @Test
   public void createSerializer_serializeKey_works() throws Exception {
     KeySerializer<ExampleKey, ProtoKeySerialization> serializer =
-        KeySerializer.create(
-            KeySerializerTest::serialize, ExampleKey.class, ProtoKeySerialization.class);
+        KeySerializer.create(KeySerializerTest::serialize, ExampleKey.class);
     assertThat(serializer.serializeKey(new ExampleKey(), InsecureSecretKeyAccess.get()))
         .isNotNull();
     assertThrows(
@@ -107,20 +94,8 @@ public final class KeySerializerTest {
   @Test
   public void createSerializer_classes_work() throws Exception {
     KeySerializer<ExampleKey, ProtoKeySerialization> serializer =
-        KeySerializer.create(
-            KeySerializerTest::serialize, ExampleKey.class, ProtoKeySerialization.class);
+        KeySerializer.create(KeySerializerTest::serialize, ExampleKey.class);
     assertThat(serializer.getKeyClass()).isEqualTo(ExampleKey.class);
     assertThat(serializer.getSerializationClass()).isEqualTo(ProtoKeySerialization.class);
-  }
-
-  @Test
-  public void createSerializer_nonProto_throws() throws Exception {
-    assertThrows(
-        IllegalArgumentException.class,
-        () ->
-            KeySerializer.create(
-                KeySerializerTest::serializeToExample,
-                ExampleKey.class,
-                ExampleSerialization.class));
   }
 }

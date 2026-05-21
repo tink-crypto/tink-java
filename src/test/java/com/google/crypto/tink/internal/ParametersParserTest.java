@@ -17,7 +17,6 @@
 package com.google.crypto.tink.internal;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
@@ -54,22 +53,8 @@ public final class ParametersParserTest {
     return new ExampleParameters();
   }
 
-  private static ExampleParameters parseExample(ExampleSerialization serialization)
-      throws GeneralSecurityException {
-    return new ExampleParameters();
-  }
-
   @Test
   public void createParser_works() throws Exception {
-    Object unused =
-        ParametersParser.create(
-            ParametersParserTest::parse,
-            Bytes.copyFrom(new byte[0]),
-            ProtoParametersSerialization.class);
-  }
-
-  @Test
-  public void createParser_works_2() throws Exception {
     Object unused =
         ParametersParser.create(ParametersParserTest::parse, Bytes.copyFrom(new byte[0]));
   }
@@ -77,10 +62,7 @@ public final class ParametersParserTest {
   @Test
   public void createParser_parseKey_works() throws Exception {
     ParametersParser<ProtoParametersSerialization> parser =
-        ParametersParser.create(
-            ParametersParserTest::parse,
-            Bytes.copyFrom(new byte[0]),
-            ProtoParametersSerialization.class);
+        ParametersParser.create(ParametersParserTest::parse, Bytes.copyFrom(new byte[0]));
     ProtoParametersSerialization serialization =
         ProtoParametersSerialization.create(
             "typeUrl",
@@ -92,22 +74,8 @@ public final class ParametersParserTest {
   @Test
   public void createParser_classes_work() throws Exception {
     ParametersParser<ProtoParametersSerialization> parser =
-        ParametersParser.create(
-            ParametersParserTest::parse,
-            Bytes.copyFrom(new byte[] {1, 2, 3}),
-            ProtoParametersSerialization.class);
+        ParametersParser.create(ParametersParserTest::parse, Bytes.copyFrom(new byte[] {1, 2, 3}));
     assertThat(parser.getObjectIdentifier()).isEqualTo(Bytes.copyFrom(new byte[] {1, 2, 3}));
     assertThat(parser.getSerializationClass()).isEqualTo(ProtoParametersSerialization.class);
-  }
-
-  @Test
-  public void createParser_nonProto_throws() throws Exception {
-    assertThrows(
-        IllegalArgumentException.class,
-        () ->
-            ParametersParser.create(
-                ParametersParserTest::parseExample,
-                Bytes.copyFrom(new byte[0]),
-                ExampleSerialization.class));
   }
 }

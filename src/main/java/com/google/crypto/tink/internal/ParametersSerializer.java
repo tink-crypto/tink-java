@@ -68,7 +68,7 @@ public abstract class ParametersSerializer<
    *
    * <pre>{@code
    * class MyClass {
-   *   private static MySerialization serializeParameters(MyParameters Parameters)
+   *   private static ProtoParametersSerialization serializeParameters(MyParameters Parameters)
    *             throws GeneralSecurityException {
    *     ...
    *   }
@@ -78,30 +78,22 @@ public abstract class ParametersSerializer<
    * This function can then be used to create a {@code ParametersSerializer}:
    *
    * <pre>{@code
-   * ParametersSerializer<MyParameters, MySerialization> serializer =
-   *       ParametersSerializer.create(MyClass::serializeParameters, MyParameters.class,
-   *                                  MySerialization.class);
+   * ParametersSerializer<MyParameters, ProtoParametersSerialization> serializer =
+   *       ParametersSerializer.create(MyClass::serializeParameters, MyParameters.class);
    * }</pre>
    */
-  public static <ParametersT extends Parameters, SerializationT extends Serialization>
-      ParametersSerializer<ParametersT, SerializationT> create(
-          ParametersSerializationFunction<ParametersT, SerializationT> function,
-          Class<ParametersT> parametersClass,
-          Class<SerializationT> serializationClass) {
-    return new ParametersSerializer<ParametersT, SerializationT>(
-        parametersClass, serializationClass) {
+  public static <ParametersT extends Parameters>
+      ParametersSerializer<ParametersT, ProtoParametersSerialization> create(
+          ParametersSerializationFunction<ParametersT, ProtoParametersSerialization> function,
+          Class<ParametersT> parametersClass) {
+    return new ParametersSerializer<ParametersT, ProtoParametersSerialization>(
+        parametersClass, ProtoParametersSerialization.class) {
       @Override
-      public SerializationT serializeParameters(ParametersT parameters)
+      public ProtoParametersSerialization serializeParameters(ParametersT parameters)
           throws GeneralSecurityException {
         return function.serializeParameters(parameters);
       }
     };
   }
 
-  public static <ParametersT extends Parameters>
-      ParametersSerializer<ParametersT, ProtoParametersSerialization> create(
-          ParametersSerializationFunction<ParametersT, ProtoParametersSerialization> function,
-          Class<ParametersT> parametersClass) {
-    return create(function, parametersClass, ProtoParametersSerialization.class);
-  }
 }

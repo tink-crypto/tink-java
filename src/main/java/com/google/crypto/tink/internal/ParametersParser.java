@@ -82,7 +82,7 @@ public abstract class ParametersParser<SerializationT extends Serialization> {
    *
    * <pre>{@code
    * class MyClass {
-   *   private static MyParameters parse(MySerialization parametersSerialization)
+   *   private static MyParameters parse(ProtoParametersSerialization parametersSerialization)
    *             throws GeneralSecurityException {
    *     ...
    *   }
@@ -92,29 +92,23 @@ public abstract class ParametersParser<SerializationT extends Serialization> {
    * This function can then be used to create a {@code ParametersParser}:
    *
    * <pre>{@code
-   * ParametersParser<MySerialization> parser =
-   *       ParametersParser.create(MyClass::parse, objectIdentifier, MySerialization.class);
+   * ParametersParser<ProtoParametersSerialization> parser =
+   *       ParametersParser.create(MyClass::parse, objectIdentifier);
    * }</pre>
    *
    * @param function The function used to parse a {@link Parameters} object.
    * @param objectIdentifier The identifier to be returned by {@link #getObjectIdentifier}
-   * @param serializationClass The class object corresponding to {@code SerializationT}
    */
-  public static <SerializationT extends Serialization> ParametersParser<SerializationT> create(
-      ParametersParsingFunction<SerializationT> function,
-      Bytes objectIdentifier,
-      Class<SerializationT> serializationClass) {
-    return new ParametersParser<SerializationT>(objectIdentifier, serializationClass) {
+  public static ParametersParser<ProtoParametersSerialization> create(
+      ParametersParsingFunction<ProtoParametersSerialization> function, Bytes objectIdentifier) {
+    return new ParametersParser<ProtoParametersSerialization>(
+        objectIdentifier, ProtoParametersSerialization.class) {
       @Override
-      public Parameters parseParameters(SerializationT serialization)
+      public Parameters parseParameters(ProtoParametersSerialization serialization)
           throws GeneralSecurityException {
         return function.parseParameters(serialization);
       }
     };
   }
 
-  public static ParametersParser<ProtoParametersSerialization> create(
-      ParametersParsingFunction<ProtoParametersSerialization> function, Bytes objectIdentifier) {
-    return create(function, objectIdentifier, ProtoParametersSerialization.class);
-  }
 }

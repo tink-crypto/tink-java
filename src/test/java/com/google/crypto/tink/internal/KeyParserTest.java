@@ -80,9 +80,7 @@ public final class KeyParserTest {
 
   @Test
   public void createParser_works() throws Exception {
-    Object unused =
-        KeyParser.create(
-            KeyParserTest::parse, Bytes.copyFrom(new byte[0]), ProtoKeySerialization.class);
+    Object unused = KeyParser.create(KeyParserTest::parse, Bytes.copyFrom(new byte[0]));
   }
 
   @Test
@@ -93,8 +91,7 @@ public final class KeyParserTest {
   @Test
   public void createParser_parseKey_works() throws Exception {
     KeyParser<ProtoKeySerialization> parser =
-        KeyParser.create(
-            KeyParserTest::parse, Bytes.copyFrom(new byte[0]), ProtoKeySerialization.class);
+        KeyParser.create(KeyParserTest::parse, Bytes.copyFrom(new byte[0]));
     ProtoKeySerialization serialization =
         ProtoKeySerialization.create(
             "typeUrl",
@@ -110,21 +107,8 @@ public final class KeyParserTest {
   @Test
   public void createParser_classes_work() throws Exception {
     KeyParser<ProtoKeySerialization> parser =
-        KeyParser.create(
-            KeyParserTest::parse,
-            Bytes.copyFrom(new byte[] {1, 2, 3}),
-            ProtoKeySerialization.class);
+        KeyParser.create(KeyParserTest::parse, Bytes.copyFrom(new byte[] {1, 2, 3}));
     assertThat(parser.getObjectIdentifier()).isEqualTo(Bytes.copyFrom(new byte[] {1, 2, 3}));
     assertThat(parser.getSerializationClass()).isEqualTo(ProtoKeySerialization.class);
-  }
-
-  @Test
-  public void createParser_nonProto_throws() throws Exception {
-    Bytes objectIdentifier = Bytes.copyFrom(new byte[0]);
-    assertThrows(
-        IllegalArgumentException.class,
-        () ->
-            KeyParser.create(
-                KeyParserTest::parseExample, objectIdentifier, ExampleSerialization.class));
   }
 }
