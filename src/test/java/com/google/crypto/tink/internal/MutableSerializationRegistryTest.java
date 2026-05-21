@@ -154,14 +154,10 @@ public final class MutableSerializationRegistryTest {
     MutableSerializationRegistry registry = new MutableSerializationRegistry();
     registry.registerKeySerializer(
         KeySerializer.create(
-            MutableSerializationRegistryTest::serializeKey1ToProto,
-            TestKey1.class,
-            ProtoKeySerialization.class));
+            MutableSerializationRegistryTest::serializeKey1ToProto, TestKey1.class));
     registry.registerKeySerializer(
         KeySerializer.create(
-            MutableSerializationRegistryTest::serializeKey2ToProto,
-            TestKey2.class,
-            ProtoKeySerialization.class));
+            MutableSerializationRegistryTest::serializeKey2ToProto, TestKey2.class));
     assertThat(registry.hasSerializerForKey(new TestKey1(), ProtoKeySerialization.class)).isTrue();
     assertThat(
             registry.serializeKey(new TestKey1(), ProtoKeySerialization.class, ACCESS).getTypeUrl())
@@ -184,11 +180,9 @@ public final class MutableSerializationRegistryTest {
   public void test_registerAllParsers_checkDispatch() throws Exception {
     MutableSerializationRegistry registry = new MutableSerializationRegistry();
     registry.registerKeyParser(
-        KeyParser.create(
-            MutableSerializationRegistryTest::parseProtoToKey1, A_1, ProtoKeySerialization.class));
+        KeyParser.create(MutableSerializationRegistryTest::parseProtoToKey1, A_1));
     registry.registerKeyParser(
-        KeyParser.create(
-            MutableSerializationRegistryTest::parseProtoToKey2, A_2, ProtoKeySerialization.class));
+        KeyParser.create(MutableSerializationRegistryTest::parseProtoToKey2, A_2));
     ProtoKeySerialization serialization1 =
         ProtoKeySerialization.create(
             TYPE_URL_1,
@@ -256,14 +250,10 @@ public final class MutableSerializationRegistryTest {
     MutableSerializationRegistry registry = new MutableSerializationRegistry();
     registry.registerParametersSerializer(
         ParametersSerializer.create(
-            MutableSerializationRegistryTest::serializeParameters1ToProto,
-            TestParameters1.class,
-            ProtoParametersSerialization.class));
+            MutableSerializationRegistryTest::serializeParameters1ToProto, TestParameters1.class));
     registry.registerParametersSerializer(
         ParametersSerializer.create(
-            MutableSerializationRegistryTest::serializeParameters2ToProto,
-            TestParameters2.class,
-            ProtoParametersSerialization.class));
+            MutableSerializationRegistryTest::serializeParameters2ToProto, TestParameters2.class));
     assertThat(
             registry.hasSerializerForParameters(
                 new TestParameters1(), ProtoParametersSerialization.class))
@@ -298,15 +288,9 @@ public final class MutableSerializationRegistryTest {
   public void test_registerAllParametersParsers_checkDispatch() throws Exception {
     MutableSerializationRegistry registry = new MutableSerializationRegistry();
     registry.registerParametersParser(
-        ParametersParser.create(
-            MutableSerializationRegistryTest::parseProtoToParameters1,
-            A_1,
-            ProtoParametersSerialization.class));
+        ParametersParser.create(MutableSerializationRegistryTest::parseProtoToParameters1, A_1));
     registry.registerParametersParser(
-        ParametersParser.create(
-            MutableSerializationRegistryTest::parseProtoToParameters2,
-            A_2,
-            ProtoParametersSerialization.class));
+        ParametersParser.create(MutableSerializationRegistryTest::parseProtoToParameters2, A_2));
     ProtoParametersSerialization serialization1 =
         ProtoParametersSerialization.create(TYPE_URL_1, OutputPrefixType.RAW, ByteString.EMPTY);
     ProtoParametersSerialization serialization2 =
@@ -356,8 +340,7 @@ public final class MutableSerializationRegistryTest {
     registry.registerParametersParser(
         ParametersParser.create(
             MutableSerializationRegistryTest::parseParameters,
-            Util.toBytesFromPrintableAscii("typeUrlForTesting98178"),
-            ProtoParametersSerialization.class));
+            Util.toBytesFromPrintableAscii("typeUrlForTesting98178")));
     ProtoParametersSerialization protoParameters =
         ProtoParametersSerialization.create(
             "typeUrlForTesting98178",
@@ -374,8 +357,7 @@ public final class MutableSerializationRegistryTest {
     registry.registerParametersParser(
         ParametersParser.create(
             MutableSerializationRegistryTest::parseParametersAlwaysThrows,
-            Util.toBytesFromPrintableAscii("typeUrlForTesting98178"),
-            ProtoParametersSerialization.class));
+            Util.toBytesFromPrintableAscii("typeUrlForTesting98178")));
     ProtoParametersSerialization protoParameters =
         ProtoParametersSerialization.create(
             "typeUrlForTesting98178",
@@ -415,8 +397,7 @@ public final class MutableSerializationRegistryTest {
     registry.registerKeyParser(
         KeyParser.create(
             MutableSerializationRegistryTest::parseKey,
-            Util.toBytesFromPrintableAscii("typeUrlForTesting18412"),
-            ProtoKeySerialization.class));
+            Util.toBytesFromPrintableAscii("typeUrlForTesting18412")));
     ProtoKeySerialization protoKey =
         ProtoKeySerialization.create(
             "typeUrlForTesting18412",

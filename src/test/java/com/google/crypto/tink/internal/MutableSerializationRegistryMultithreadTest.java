@@ -164,24 +164,16 @@ public final class MutableSerializationRegistryMultithreadTest {
     List<Future<?>> futures = new ArrayList<>();
     registry.registerKeySerializer(
         KeySerializer.create(
-            MutableSerializationRegistryMultithreadTest::serializeKey1ToProto,
-            TestKey1.class,
-            ProtoKeySerialization.class));
+            MutableSerializationRegistryMultithreadTest::serializeKey1ToProto, TestKey1.class));
     registry.registerKeyParser(
-        KeyParser.create(
-            MutableSerializationRegistryMultithreadTest::parseProtoToKey1,
-            A_1,
-            ProtoKeySerialization.class));
+        KeyParser.create(MutableSerializationRegistryMultithreadTest::parseProtoToKey1, A_1));
     registry.registerParametersSerializer(
         ParametersSerializer.create(
             MutableSerializationRegistryMultithreadTest::serializeParameters1ToProto,
-            TestParameters1.class,
-            ProtoParametersSerialization.class));
+            TestParameters1.class));
     registry.registerParametersParser(
         ParametersParser.create(
-            MutableSerializationRegistryMultithreadTest::parseProtoToParameters1,
-            A_1,
-            ProtoParametersSerialization.class));
+            MutableSerializationRegistryMultithreadTest::parseProtoToParameters1, A_1));
 
     ProtoKeySerialization serialization =
         ProtoKeySerialization.create(
@@ -205,8 +197,7 @@ public final class MutableSerializationRegistryMultithreadTest {
                   registry.registerKeyParser(
                       KeyParser.create(
                           MutableSerializationRegistryMultithreadTest::parseProtoToKey1,
-                          Bytes.copyFrom(ByteBuffer.allocate(4).putInt(i).array()),
-                          ProtoKeySerialization.class));
+                          Bytes.copyFrom(ByteBuffer.allocate(4).putInt(i).array())));
                 }
               } catch (GeneralSecurityException e) {
                 throw new RuntimeException(e);
@@ -223,14 +214,12 @@ public final class MutableSerializationRegistryMultithreadTest {
                   registry.registerKeyParser(
                       KeyParser.create(
                           MutableSerializationRegistryMultithreadTest::parseProtoToKey1,
-                          Bytes.copyFrom(ByteBuffer.allocate(4).putInt(i + REPETITIONS).array()),
-                          ProtoKeySerialization.class));
+                          Bytes.copyFrom(ByteBuffer.allocate(4).putInt(i + REPETITIONS).array())));
                 }
                 registry.registerKeySerializer(
                     KeySerializer.create(
                         MutableSerializationRegistryMultithreadTest::serializeKey2ToProto,
-                        TestKey2.class,
-                        ProtoKeySerialization.class));
+                        TestKey2.class));
               } catch (GeneralSecurityException e) {
                 throw new RuntimeException(e);
               }
@@ -267,8 +256,7 @@ public final class MutableSerializationRegistryMultithreadTest {
                   registry.registerParametersParser(
                       ParametersParser.create(
                           MutableSerializationRegistryMultithreadTest::parseProtoToParameters1,
-                          Bytes.copyFrom(ByteBuffer.allocate(4).putInt(i).array()),
-                          ProtoParametersSerialization.class));
+                          Bytes.copyFrom(ByteBuffer.allocate(4).putInt(i).array())));
                 }
               } catch (GeneralSecurityException e) {
                 throw new RuntimeException(e);
@@ -285,14 +273,12 @@ public final class MutableSerializationRegistryMultithreadTest {
                   registry.registerParametersParser(
                       ParametersParser.create(
                           MutableSerializationRegistryMultithreadTest::parseProtoToParameters1,
-                          Bytes.copyFrom(ByteBuffer.allocate(4).putInt(i + REPETITIONS).array()),
-                          ProtoParametersSerialization.class));
+                          Bytes.copyFrom(ByteBuffer.allocate(4).putInt(i + REPETITIONS).array())));
                 }
                 registry.registerParametersSerializer(
                     ParametersSerializer.create(
                         MutableSerializationRegistryMultithreadTest::serializeParameters2ToProto,
-                        TestParameters2.class,
-                        ProtoParametersSerialization.class));
+                        TestParameters2.class));
               } catch (GeneralSecurityException e) {
                 throw new RuntimeException(e);
               }
