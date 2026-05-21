@@ -40,8 +40,7 @@ public final class MutableSerializationRegistry {
       throws GeneralSecurityException {
     MutableSerializationRegistry registry = new MutableSerializationRegistry();
     registry.registerKeySerializer(
-        KeySerializer.create(
-            LegacyProtoKey::getSerialization, LegacyProtoKey.class, ProtoKeySerialization.class));
+        KeySerializer.create(LegacyProtoKey::getSerialization, LegacyProtoKey.class));
     return registry;
   }
 
