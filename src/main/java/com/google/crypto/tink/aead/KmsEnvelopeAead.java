@@ -154,7 +154,7 @@ public final class KmsEnvelopeAead implements Aead {
 
     ProtoKeySerialization serialization =
         MutableSerializationRegistry.globalInstance()
-            .serializeKey(key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+            .serializeKey(key, InsecureSecretKeyAccess.get());
     byte[] dek = serialization.getValue().toByteArray();
     // Wrap it with remote.
     byte[] encryptedDek = remote.encrypt(dek, EMPTY_AAD);

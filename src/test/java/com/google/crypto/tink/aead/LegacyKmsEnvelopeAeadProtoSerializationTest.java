@@ -484,8 +484,7 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
             OutputPrefixType.RAW,
             /* idRequirement= */ null);
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, /* access= */ null);
+    ProtoKeySerialization serialized = registry.serializeKey(key, /* access= */ null);
     assertEqualWhenValueParsed(KmsEnvelopeAeadKey.parser(), serialized, serialization);
 
     Key parsed = registry.parseKey(serialization, /* access= */ null);
@@ -522,8 +521,7 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
             OutputPrefixType.TINK,
             /* idRequirement= */ 0x11223344);
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, /* access= */ null);
+    ProtoKeySerialization serialized = registry.serializeKey(key, /* access= */ null);
     assertEqualWhenValueParsed(KmsEnvelopeAeadKey.parser(), serialized, serialization);
 
     Key parsed = registry.parseKey(serialization, /* access= */ null);

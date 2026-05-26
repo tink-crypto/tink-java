@@ -229,9 +229,7 @@ public final class HmacProtoSerializationTest {
             OutputPrefixType.RAW,
             /*idRequirement=*/ null);
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(
-            key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+    ProtoKeySerialization serialized = registry.serializeKey(key, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.HmacKey.parser(), serialized, serialization);
 
@@ -266,9 +264,7 @@ public final class HmacProtoSerializationTest {
             OutputPrefixType.TINK,
             /*idRequirement=*/ 123);
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(
-            key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+    ProtoKeySerialization serialized = registry.serializeKey(key, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.HmacKey.parser(), serialized, serialization);
 
@@ -303,9 +299,7 @@ public final class HmacProtoSerializationTest {
             OutputPrefixType.LEGACY,
             /*idRequirement=*/ 123);
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(
-            key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+    ProtoKeySerialization serialized = registry.serializeKey(key, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.HmacKey.parser(), serialized, serialization);
 
@@ -340,9 +334,7 @@ public final class HmacProtoSerializationTest {
             OutputPrefixType.CRUNCHY,
             /*idRequirement=*/ 123);
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(
-            key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+    ProtoKeySerialization serialized = registry.serializeKey(key, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.HmacKey.parser(), serialized, serialization);
 
@@ -377,9 +369,7 @@ public final class HmacProtoSerializationTest {
             OutputPrefixType.TINK,
             /*idRequirement=*/ 123);
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(
-            key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+    ProtoKeySerialization serialized = registry.serializeKey(key, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.HmacKey.parser(), serialized, serialization);
 
@@ -420,9 +410,7 @@ public final class HmacProtoSerializationTest {
         .setKeyBytes(KEY_BYTES_42)
         .setIdRequirement(123)
         .build();
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> registry.serializeKey(key, ProtoKeySerialization.class, null));
+    assertThrows(GeneralSecurityException.class, () -> registry.serializeKey(key, null));
   }
 
   private static ProtoParametersSerialization[] createInvalidParameters() {

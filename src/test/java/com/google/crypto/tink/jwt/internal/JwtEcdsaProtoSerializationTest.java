@@ -224,8 +224,7 @@ public final class JwtEcdsaProtoSerializationTest {
     Key parsed = registry.parseKey(serialization, /* access= */ null);
     assertThat(parsed.equalsKey(key)).isTrue();
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, /* access= */ null);
+    ProtoKeySerialization serialized = registry.serializeKey(key, /* access= */ null);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.JwtEcdsaPublicKey.parser(), serialized, serialization);
   }
@@ -268,8 +267,7 @@ public final class JwtEcdsaProtoSerializationTest {
     Key parsed = registry.parseKey(serialization, /* access= */ null);
     assertThat(parsed.equalsKey(key)).isTrue();
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, /* access= */ null);
+    ProtoKeySerialization serialized = registry.serializeKey(key, /* access= */ null);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.JwtEcdsaPublicKey.parser(), serialized, serialization);
   }
@@ -338,8 +336,7 @@ public final class JwtEcdsaProtoSerializationTest {
             OutputPrefixType.RAW,
             /* idRequirement= */ null);
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, /* access= */ null);
+    ProtoKeySerialization serialized = registry.serializeKey(key, /* access= */ null);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.JwtEcdsaPublicKey.parser(), serialized, expectedSerialization);
   }
@@ -380,8 +377,7 @@ public final class JwtEcdsaProtoSerializationTest {
     Key parsed = registry.parseKey(serialization, /* access= */ null);
     assertThat(parsed.equalsKey(key)).isTrue();
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, /* access= */ null);
+    ProtoKeySerialization serialized = registry.serializeKey(key, /* access= */ null);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.JwtEcdsaPublicKey.parser(), serialized, serialization);
   }
@@ -421,8 +417,7 @@ public final class JwtEcdsaProtoSerializationTest {
     Key parsed = registry.parseKey(serialization, /* access= */ null);
     assertThat(parsed.equalsKey(key)).isTrue();
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, /* access= */ null);
+    ProtoKeySerialization serialized = registry.serializeKey(key, /* access= */ null);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.JwtEcdsaPublicKey.parser(), serialized, serialization);
   }
@@ -580,8 +575,7 @@ public final class JwtEcdsaProtoSerializationTest {
     assertThat(parsed.equalsKey(privateKey)).isTrue();
 
     ProtoKeySerialization serialized =
-        registry.serializeKey(
-            privateKey, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+        registry.serializeKey(privateKey, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.JwtEcdsaPrivateKey.parser(), serialized, serialization);
   }
@@ -643,7 +637,7 @@ public final class JwtEcdsaProtoSerializationTest {
 
     assertThrows(
         GeneralSecurityException.class,
-        () -> registry.serializeKey(privateKey, ProtoKeySerialization.class, /* access= */ null));
+        () -> registry.serializeKey(privateKey, /* access= */ null));
   }
 
   @Test

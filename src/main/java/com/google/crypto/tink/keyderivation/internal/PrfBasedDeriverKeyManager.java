@@ -187,7 +187,7 @@ public final class PrfBasedDeriverKeyManager implements KeyManager<Void> {
     Key key = MutableKeyCreationRegistry.globalInstance().createKey(parameters, idRequirement);
     ProtoKeySerialization keySerialization =
         MutableSerializationRegistry.globalInstance()
-            .serializeKey(key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+            .serializeKey(key, InsecureSecretKeyAccess.get());
     return KeyData.newBuilder()
         .setTypeUrl(keySerialization.getTypeUrl())
         .setValue(keySerialization.getValue())

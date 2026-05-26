@@ -476,8 +476,7 @@ public final class EciesProtoSerializationTest {
     assertThat(parsed.getParameters()).isEqualTo(publicKey.getParameters());
     assertThat(parsed.equalsKey(publicKey)).isTrue();
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(publicKey, ProtoKeySerialization.class, /* access= */ null);
+    ProtoKeySerialization serialized = registry.serializeKey(publicKey, /* access= */ null);
 
     assertThat(serialized.getKeyMaterialType()).isEqualTo(serialization.getKeyMaterialType());
     assertThat(serialized.getOutputPrefixType()).isEqualTo(serialization.getOutputPrefixType());
@@ -527,8 +526,7 @@ public final class EciesProtoSerializationTest {
     assertThat(parsed.getParameters()).isEqualTo(publicKey.getParameters());
     assertThat(parsed.equalsKey(publicKey)).isTrue();
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(publicKey, ProtoKeySerialization.class, /* access= */ null);
+    ProtoKeySerialization serialized = registry.serializeKey(publicKey, /* access= */ null);
 
     assertThat(serialized.getKeyMaterialType()).isEqualTo(serialization.getKeyMaterialType());
     assertThat(serialized.getOutputPrefixType()).isEqualTo(serialization.getOutputPrefixType());
@@ -626,8 +624,7 @@ public final class EciesProtoSerializationTest {
     assertThat(parsed.getParameters()).isEqualTo(publicKey.getParameters());
     assertThat(parsed.equalsKey(publicKey)).isTrue();
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(publicKey, ProtoKeySerialization.class, /* access= */ null);
+    ProtoKeySerialization serialized = registry.serializeKey(publicKey, /* access= */ null);
 
     assertThat(serialized.getKeyMaterialType()).isEqualTo(serialization.getKeyMaterialType());
     assertThat(serialized.getOutputPrefixType()).isEqualTo(serialization.getOutputPrefixType());
@@ -684,8 +681,7 @@ public final class EciesProtoSerializationTest {
     assertThat(parsed.getParameters()).isEqualTo(publicKey.getParameters());
     assertThat(parsed.equalsKey(publicKey)).isTrue();
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(publicKey, ProtoKeySerialization.class, /* access= */ null);
+    ProtoKeySerialization serialized = registry.serializeKey(publicKey, /* access= */ null);
 
     assertThat(serialized.getKeyMaterialType()).isEqualTo(serialization.getKeyMaterialType());
     assertThat(serialized.getOutputPrefixType()).isEqualTo(serialization.getOutputPrefixType());
@@ -712,8 +708,7 @@ public final class EciesProtoSerializationTest {
             .build();
     EciesPublicKey publicKey =
         EciesPublicKey.createForNistCurve(parameters, someP256PublicPoint, 101);
-    ProtoKeySerialization serialized =
-        registry.serializeKey(publicKey, ProtoKeySerialization.class, /* access= */ null);
+    ProtoKeySerialization serialized = registry.serializeKey(publicKey, /* access= */ null);
 
     com.google.crypto.tink.proto.EciesAeadHkdfPublicKey parsedProtoEciesAeadHkdfPublicKey =
         com.google.crypto.tink.proto.EciesAeadHkdfPublicKey.parseFrom(
@@ -810,8 +805,7 @@ public final class EciesProtoSerializationTest {
     assertThat(parsed.getParameters()).isEqualTo(publicKey.getParameters());
     assertThat(parsed.equalsKey(publicKey)).isTrue();
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(publicKey, ProtoKeySerialization.class, /* access= */ null);
+    ProtoKeySerialization serialized = registry.serializeKey(publicKey, /* access= */ null);
 
     assertThat(serialized.getKeyMaterialType()).isEqualTo(serialization.getKeyMaterialType());
     assertThat(serialized.getOutputPrefixType()).isEqualTo(serialization.getOutputPrefixType());
@@ -959,8 +953,7 @@ public final class EciesProtoSerializationTest {
     assertThat(parsed.equalsKey(privateKey)).isTrue();
 
     ProtoKeySerialization serialized =
-        registry.serializeKey(
-            privateKey, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+        registry.serializeKey(privateKey, InsecureSecretKeyAccess.get());
 
     assertThat(serialized.getKeyMaterialType()).isEqualTo(serialization.getKeyMaterialType());
     assertThat(serialized.getOutputPrefixType()).isEqualTo(serialization.getOutputPrefixType());
@@ -1015,8 +1008,7 @@ public final class EciesProtoSerializationTest {
     assertThat(parsed.equalsKey(privateKey)).isTrue();
 
     ProtoKeySerialization serialized =
-        registry.serializeKey(
-            privateKey, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+        registry.serializeKey(privateKey, InsecureSecretKeyAccess.get());
 
     assertThat(serialized.getKeyMaterialType()).isEqualTo(serialization.getKeyMaterialType());
     assertThat(serialized.getOutputPrefixType()).isEqualTo(serialization.getOutputPrefixType());
@@ -1084,7 +1076,7 @@ public final class EciesProtoSerializationTest {
 
     assertThrows(
         GeneralSecurityException.class,
-        () -> registry.serializeKey(privateKey, ProtoKeySerialization.class, /* access= */ null));
+        () -> registry.serializeKey(privateKey, /* access= */ null));
   }
 
   private static ProtoKeySerialization[] createInvalidPrivateKeySerializations() {

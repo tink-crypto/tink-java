@@ -1385,7 +1385,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
       throws GeneralSecurityException {
     ProtoKeySerialization serializedKey =
         MutableSerializationRegistry.globalInstance()
-            .serializeKey(key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+            .serializeKey(key, InsecureSecretKeyAccess.get());
     validateKeyId(key, id);
     return toKeysetKey(id, keyStatus, serializedKey);
   }

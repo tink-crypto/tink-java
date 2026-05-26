@@ -50,9 +50,7 @@ public class RegistryConfiguration {
     @Override
     public com.google.crypto.tink.ProtoKeySerialization serializeKey(
         Key key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
-      return MutableSerializationRegistry.globalInstance()
-          .serializeKey(key, com.google.crypto.tink.internal.ProtoKeySerialization.class, access)
-          .toPublic();
+      return MutableSerializationRegistry.globalInstance().serializeKey(key, access).toPublic();
     }
 
     @Override

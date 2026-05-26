@@ -129,8 +129,7 @@ public final class LegacyKmsAeadProtoSerializationTest {
             OutputPrefixType.RAW,
             null);
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, null);
+    ProtoKeySerialization serialized = registry.serializeKey(key, null);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.KmsAeadKey.parser(), serialized, serialization);
 
@@ -158,8 +157,7 @@ public final class LegacyKmsAeadProtoSerializationTest {
             OutputPrefixType.TINK,
             /* idRequirement= */ 123);
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, null);
+    ProtoKeySerialization serialized = registry.serializeKey(key, null);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.KmsAeadKey.parser(), serialized, serialization);
 

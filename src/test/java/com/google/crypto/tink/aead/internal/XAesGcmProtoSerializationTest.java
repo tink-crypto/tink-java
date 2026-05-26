@@ -141,8 +141,7 @@ public final class XAesGcmProtoSerializationTest {
             OutputPrefixType.RAW,
             /* idRequirement= */ null);
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+    ProtoKeySerialization serialized = registry.serializeKey(key, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.XAesGcmKey.parser(), serialized, serialization);
 
@@ -176,8 +175,7 @@ public final class XAesGcmProtoSerializationTest {
             OutputPrefixType.TINK,
             /* idRequirement= */ 123);
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+    ProtoKeySerialization serialized = registry.serializeKey(key, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.XAesGcmKey.parser(), serialized, serialization);
 
@@ -253,9 +251,7 @@ public final class XAesGcmProtoSerializationTest {
             XAesGcmParameters.create(XAesGcmParameters.Variant.TINK, 8),
             KEY_BYTES_32,
             /* idRequirement= */ 123);
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> registry.serializeKey(key, ProtoKeySerialization.class, null));
+    assertThrows(GeneralSecurityException.class, () -> registry.serializeKey(key, null));
   }
 
   private static ProtoParametersSerialization[] createInvalidParameters() {

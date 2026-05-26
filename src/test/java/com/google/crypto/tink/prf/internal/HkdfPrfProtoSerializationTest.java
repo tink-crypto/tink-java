@@ -152,8 +152,7 @@ public final class HkdfPrfProtoSerializationTest {
             OutputPrefixType.RAW,
             /* idRequirement= */ null);
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+    ProtoKeySerialization serialized = registry.serializeKey(key, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.HkdfPrfKey.parser(), serialized, serialization);
 
@@ -173,9 +172,7 @@ public final class HkdfPrfProtoSerializationTest {
                     .build())
             .setKeyBytes(SECRET_16)
             .build();
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> registry.serializeKey(key, ProtoKeySerialization.class, null));
+    assertThrows(GeneralSecurityException.class, () -> registry.serializeKey(key, null));
   }
 
   @Test

@@ -24,7 +24,6 @@ import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
-import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.signature.MlDsaParameters.MlDsaInstance;
 import com.google.crypto.tink.signature.MlDsaParameters.Variant;
@@ -75,9 +74,7 @@ public class MlDsaSignKeyManagerTest {
             .setParameters(parameters)
             .setSerializedPublicKey(Bytes.copyFrom(new byte[1952])) // Size for ML-DSA-65
             .build();
-    Key parsedPublicKey =
-        registry.parseKey(
-            registry.serializeKey(publicKey, ProtoKeySerialization.class, null), null);
+    Key parsedPublicKey = registry.parseKey(registry.serializeKey(publicKey, null), null);
 
     assertThat(parsedPublicKey.equalsKey(publicKey)).isTrue();
   }
@@ -100,8 +97,7 @@ public class MlDsaSignKeyManagerTest {
             publicKey, SecretBytes.copyFrom(new byte[32], InsecureSecretKeyAccess.get()));
     Key parsedPrivateKey =
         registry.parseKey(
-            registry.serializeKey(
-                privateKey, ProtoKeySerialization.class, InsecureSecretKeyAccess.get()),
+            registry.serializeKey(privateKey, InsecureSecretKeyAccess.get()),
             InsecureSecretKeyAccess.get());
 
     assertThat(parsedPrivateKey.equalsKey(privateKey)).isTrue();

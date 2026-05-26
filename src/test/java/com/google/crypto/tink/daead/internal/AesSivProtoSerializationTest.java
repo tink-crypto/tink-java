@@ -167,8 +167,7 @@ public final class AesSivProtoSerializationTest {
             OutputPrefixType.RAW,
             /* idRequirement= */ null);
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+    ProtoKeySerialization serialized = registry.serializeKey(key, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.AesSivKey.parser(), serialized, serialization);
 
@@ -205,8 +204,7 @@ public final class AesSivProtoSerializationTest {
             OutputPrefixType.TINK,
             /* idRequirement= */ 123);
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+    ProtoKeySerialization serialized = registry.serializeKey(key, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.AesSivKey.parser(), serialized, serialization);
 
@@ -243,8 +241,7 @@ public final class AesSivProtoSerializationTest {
             OutputPrefixType.CRUNCHY,
             /* idRequirement= */ 123);
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+    ProtoKeySerialization serialized = registry.serializeKey(key, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.AesSivKey.parser(), serialized, serialization);
 
@@ -301,9 +298,7 @@ public final class AesSivProtoSerializationTest {
             .setKeyBytes(KEY_BYTES_32)
             .setIdRequirement(123)
             .build();
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> registry.serializeKey(key, ProtoKeySerialization.class, null));
+    assertThrows(GeneralSecurityException.class, () -> registry.serializeKey(key, null));
   }
 
   private static ProtoParametersSerialization[] createInvalidParameters() {

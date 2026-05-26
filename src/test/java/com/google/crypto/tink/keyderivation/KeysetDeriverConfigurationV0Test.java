@@ -127,7 +127,7 @@ public class KeysetDeriverConfigurationV0Test {
             null);
     ProtoKeySerialization serialization =
         MutableSerializationRegistry.globalInstance()
-            .serializeKey(key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+            .serializeKey(key, InsecureSecretKeyAccess.get());
     LegacyProtoKey legacyKey = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
     KeysetHandle handle =
         KeysetHandle.newBuilder()

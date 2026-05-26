@@ -240,8 +240,7 @@ public final class MutableSerializationRegistryMultithreadTest {
             () -> {
               try {
                 for (int i = 0; i < REPETITIONS; ++i) {
-                  Object unused =
-                      registry.serializeKey(new TestKey1(), ProtoKeySerialization.class, ACCESS);
+                  Object unused = registry.serializeKey(new TestKey1(), ACCESS);
                 }
               } catch (GeneralSecurityException e) {
                 throw new RuntimeException(e);

@@ -282,8 +282,7 @@ public final class AesCtrHmacAeadProtoSerializationTest {
             OutputPrefixType.RAW,
             /* idRequirement= */ null);
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+    ProtoKeySerialization serialized = registry.serializeKey(key, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.AesCtrHmacAeadKey.parser(), serialized, serialization);
 
@@ -320,8 +319,7 @@ public final class AesCtrHmacAeadProtoSerializationTest {
             OutputPrefixType.TINK,
             /* idRequirement= */ 123);
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+    ProtoKeySerialization serialized = registry.serializeKey(key, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.AesCtrHmacAeadKey.parser(), serialized, serialization);
 
@@ -358,8 +356,7 @@ public final class AesCtrHmacAeadProtoSerializationTest {
             OutputPrefixType.CRUNCHY,
             /* idRequirement= */ 123);
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+    ProtoKeySerialization serialized = registry.serializeKey(key, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.AesCtrHmacAeadKey.parser(), serialized, serialization);
 
@@ -396,8 +393,7 @@ public final class AesCtrHmacAeadProtoSerializationTest {
             OutputPrefixType.CRUNCHY,
             /* idRequirement= */ 123);
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+    ProtoKeySerialization serialized = registry.serializeKey(key, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.AesCtrHmacAeadKey.parser(), serialized, serialization);
 
@@ -434,8 +430,7 @@ public final class AesCtrHmacAeadProtoSerializationTest {
             OutputPrefixType.TINK,
             /* idRequirement= */ 123);
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+    ProtoKeySerialization serialized = registry.serializeKey(key, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.AesCtrHmacAeadKey.parser(), serialized, serialization);
 
@@ -493,9 +488,7 @@ public final class AesCtrHmacAeadProtoSerializationTest {
             .setHmacKeyBytes(KEY_BYTES_32)
             .setIdRequirement(123)
             .build();
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> registry.serializeKey(key, ProtoKeySerialization.class, null));
+    assertThrows(GeneralSecurityException.class, () -> registry.serializeKey(key, null));
   }
 
   private static ProtoParametersSerialization[] createInvalidParameters() {

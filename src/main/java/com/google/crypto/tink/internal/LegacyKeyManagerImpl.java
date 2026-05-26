@@ -141,7 +141,7 @@ public class LegacyKeyManagerImpl<P> implements KeyManager<P> {
             .createKey(parameters, /* idRequirement= */ null);
     ProtoKeySerialization keySerialization =
         MutableSerializationRegistry.globalInstance()
-            .serializeKey(key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+            .serializeKey(key, InsecureSecretKeyAccess.get());
     return KeyData.newBuilder()
         .setTypeUrl(keySerialization.getTypeUrl())
         .setValue(keySerialization.getValue())
@@ -179,7 +179,7 @@ public class LegacyKeyManagerImpl<P> implements KeyManager<P> {
       Key publicKey = ((PrivateKey) key).getPublicKey();
       ProtoKeySerialization publicKeySerialization =
           MutableSerializationRegistry.globalInstance()
-              .serializeKey(publicKey, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+              .serializeKey(publicKey, InsecureSecretKeyAccess.get());
       return KeyData.newBuilder()
           .setTypeUrl(publicKeySerialization.getTypeUrl())
           .setValue(publicKeySerialization.getValue())

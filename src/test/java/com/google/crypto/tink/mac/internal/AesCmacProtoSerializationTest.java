@@ -503,8 +503,7 @@ public final class AesCmacProtoSerializationTest {
   public void testSerializeKeys(@FromDataPoints("validKeys") KeyWithSerialization pair)
       throws Exception {
     ProtoKeySerialization tinkFormatSerialized =
-        registry.serializeKey(
-            pair.getKey(), ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+        registry.serializeKey(pair.getKey(), InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.AesCmacKey.parser(),
         tinkFormatSerialized,
@@ -521,9 +520,7 @@ public final class AesCmacProtoSerializationTest {
   @Theory
   public void testSerializeKeys_noAccess_throws(
       @FromDataPoints("validKeys") KeyWithSerialization pair) throws Exception {
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> registry.serializeKey(pair.getKey(), ProtoKeySerialization.class, null));
+    assertThrows(GeneralSecurityException.class, () -> registry.serializeKey(pair.getKey(), null));
   }
 
   @Theory

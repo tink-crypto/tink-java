@@ -153,8 +153,7 @@ public final class SerializationRegistryTest {
                     SerializationRegistryTest::serializeKey1ToProto, TestKey1.class))
             .build();
     assertThat(registry.hasSerializerForKey(new TestKey1(), ProtoKeySerialization.class)).isTrue();
-    assertThat(registry.serializeKey(new TestKey1(), ProtoKeySerialization.class, ACCESS))
-        .isNotNull();
+    assertThat(registry.serializeKey(new TestKey1(), ACCESS)).isNotNull();
   }
 
   @Test
@@ -162,8 +161,7 @@ public final class SerializationRegistryTest {
     SerializationRegistry registry = new SerializationRegistry.Builder().build();
     assertThat(registry.hasSerializerForKey(new TestKey1(), ProtoKeySerialization.class)).isFalse();
     assertThrows(
-        GeneralSecurityException.class,
-        () -> registry.serializeKey(new TestKey1(), ProtoKeySerialization.class, ACCESS));
+        GeneralSecurityException.class, () -> registry.serializeKey(new TestKey1(), ACCESS));
   }
 
   @Test
@@ -176,8 +174,7 @@ public final class SerializationRegistryTest {
             .build();
     assertThrows(
         GeneralSecurityException.class,
-        () ->
-            registry.serializeKey(new TestKey1(), ProtoKeySerialization.class, /* access= */ null));
+        () -> registry.serializeKey(new TestKey1(), /* access= */ null));
   }
 
   @Test
@@ -226,12 +223,8 @@ public final class SerializationRegistryTest {
                 KeySerializer.create(
                     SerializationRegistryTest::serializeKey2ToProto, TestKey2.class))
             .build();
-    assertThat(
-            registry.serializeKey(new TestKey1(), ProtoKeySerialization.class, ACCESS).getTypeUrl())
-        .isEqualTo(TYPE_URL_1);
-    assertThat(
-            registry.serializeKey(new TestKey2(), ProtoKeySerialization.class, ACCESS).getTypeUrl())
-        .isEqualTo(TYPE_URL_2);
+    assertThat(registry.serializeKey(new TestKey1(), ACCESS).getTypeUrl()).isEqualTo(TYPE_URL_1);
+    assertThat(registry.serializeKey(new TestKey2(), ACCESS).getTypeUrl()).isEqualTo(TYPE_URL_2);
   }
 
   @Test
@@ -243,8 +236,7 @@ public final class SerializationRegistryTest {
                     SerializationRegistryTest::serializeKey1ToProto, TestKey1.class))
             .build();
     SerializationRegistry registry2 = new SerializationRegistry.Builder(registry).build();
-    assertThat(registry2.serializeKey(new TestKey1(), ProtoKeySerialization.class, ACCESS))
-        .isNotNull();
+    assertThat(registry2.serializeKey(new TestKey1(), ACCESS)).isNotNull();
   }
 
   @Test
@@ -255,11 +247,9 @@ public final class SerializationRegistryTest {
     builder.registerKeySerializer(
         KeySerializer.create(SerializationRegistryTest::serializeKey1ToProto, TestKey1.class));
     assertThrows(
-        GeneralSecurityException.class,
-        () -> registry1.serializeKey(new TestKey1(), ProtoKeySerialization.class, ACCESS));
+        GeneralSecurityException.class, () -> registry1.serializeKey(new TestKey1(), ACCESS));
     assertThrows(
-        GeneralSecurityException.class,
-        () -> registry2.serializeKey(new TestKey1(), ProtoKeySerialization.class, ACCESS));
+        GeneralSecurityException.class, () -> registry2.serializeKey(new TestKey1(), ACCESS));
   }
 
   // ============================================================================= Key parsing tests

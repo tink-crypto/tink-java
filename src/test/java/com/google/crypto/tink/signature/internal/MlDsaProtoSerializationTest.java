@@ -449,8 +449,7 @@ public class MlDsaProtoSerializationTest {
   public void serializeParsePublicKey_equal(
       @FromDataPoints("publicKeySerializationTestPairList") PublicKeySerializationTestPair pair)
       throws Exception {
-    ProtoKeySerialization serialized =
-        registry.serializeKey(pair.key, ProtoKeySerialization.class, null);
+    ProtoKeySerialization serialized = registry.serializeKey(pair.key, null);
     Key parsed = registry.parseKey(pair.serialization, null);
 
     assertEqualWhenValueParsed(
@@ -633,7 +632,7 @@ public class MlDsaProtoSerializationTest {
       @FromDataPoints("privateKeySerializationTestPairList") PrivateKeySerializationTestPair pair)
       throws Exception {
     ProtoKeySerialization serialized =
-        registry.serializeKey(pair.key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+        registry.serializeKey(pair.key, InsecureSecretKeyAccess.get());
     Key parsed = registry.parseKey(pair.serialization, InsecureSecretKeyAccess.get());
 
     assertEqualWhenValueParsed(
@@ -647,7 +646,7 @@ public class MlDsaProtoSerializationTest {
     MlDsaPrivateKey privateKey = privateKeySerializationTestPairList.get(0).key;
     assertThrows(
         GeneralSecurityException.class,
-        () -> registry.serializeKey(privateKey, ProtoKeySerialization.class, /* access= */ null));
+        () -> registry.serializeKey(privateKey, /* access= */ null));
   }
 
   @Test

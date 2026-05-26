@@ -379,8 +379,7 @@ public class CompositeMlDsaProtoSerializationTest {
       @FromDataPoints("publicKeySerializationTestPairList") PublicKeySerializationTestPair pair)
       throws Exception {
     ProtoKeySerialization serialized =
-        MutableSerializationRegistry.globalInstance()
-            .serializeKey(pair.key, ProtoKeySerialization.class, null);
+        MutableSerializationRegistry.globalInstance().serializeKey(pair.key, null);
     Key parsed = MutableSerializationRegistry.globalInstance().parseKey(pair.serialization, null);
 
     assertEqualWhenValueParsed(
@@ -484,7 +483,7 @@ public class CompositeMlDsaProtoSerializationTest {
       throws Exception {
     ProtoKeySerialization serialized =
         MutableSerializationRegistry.globalInstance()
-            .serializeKey(pair.key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+            .serializeKey(pair.key, InsecureSecretKeyAccess.get());
     Key parsed =
         MutableSerializationRegistry.globalInstance()
             .parseKey(pair.serialization, InsecureSecretKeyAccess.get());
@@ -503,7 +502,7 @@ public class CompositeMlDsaProtoSerializationTest {
         GeneralSecurityException.class,
         () ->
             MutableSerializationRegistry.globalInstance()
-                .serializeKey(privateKey, ProtoKeySerialization.class, /* access= */ null));
+                .serializeKey(privateKey, /* access= */ null));
   }
 
   @Test

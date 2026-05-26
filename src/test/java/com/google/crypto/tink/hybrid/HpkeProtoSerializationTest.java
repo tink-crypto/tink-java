@@ -304,8 +304,7 @@ public final class HpkeProtoSerializationTest {
     Key parsed = registry.parseKey(serialization, /* access= */ null);
     assertThat(parsed.equalsKey(publicKey)).isTrue();
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(publicKey, ProtoKeySerialization.class, /* access= */ null);
+    ProtoKeySerialization serialized = registry.serializeKey(publicKey, /* access= */ null);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.HpkePublicKey.parser(), serialized, serialization);
   }
@@ -424,8 +423,7 @@ public final class HpkeProtoSerializationTest {
     assertThat(parsed.equalsKey(privateKey)).isTrue();
 
     ProtoKeySerialization serialized =
-        registry.serializeKey(
-            privateKey, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+        registry.serializeKey(privateKey, InsecureSecretKeyAccess.get());
 
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.HpkePublicKey.parser(), serialized, serialization);
@@ -557,7 +555,7 @@ public final class HpkeProtoSerializationTest {
 
     assertThrows(
         GeneralSecurityException.class,
-        () -> registry.serializeKey(privateKey, ProtoKeySerialization.class, /* access= */ null));
+        () -> registry.serializeKey(privateKey, /* access= */ null));
   }
 
   private static ProtoParametersSerialization[] createInvalidParameters() {

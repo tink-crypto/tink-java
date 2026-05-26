@@ -344,8 +344,7 @@ public final class RsaSsaPssProtoSerializationTest {
     Key parsed = registry.parseKey(serialization, InsecureSecretKeyAccess.get());
     assertThat(parsed.equalsKey(key)).isTrue();
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+    ProtoKeySerialization serialized = registry.serializeKey(key, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.RsaSsaPssPublicKey.parser(), serialized, serialization);
   }
@@ -389,8 +388,7 @@ public final class RsaSsaPssProtoSerializationTest {
     Key parsed = registry.parseKey(serialization, InsecureSecretKeyAccess.get());
     assertThat(parsed.equalsKey(key)).isTrue();
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+    ProtoKeySerialization serialized = registry.serializeKey(key, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.RsaSsaPssPublicKey.parser(), serialized, serialization);
   }
@@ -459,8 +457,7 @@ public final class RsaSsaPssProtoSerializationTest {
     assertThat(parsed.equalsKey(privateKey)).isTrue();
 
     ProtoKeySerialization serialized =
-        registry.serializeKey(
-            privateKey, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+        registry.serializeKey(privateKey, InsecureSecretKeyAccess.get());
 
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.RsaSsaPssPrivateKey.parser(), serialized, serialization);
@@ -530,8 +527,7 @@ public final class RsaSsaPssProtoSerializationTest {
     assertThat(parsed.equalsKey(privateKey)).isTrue();
 
     ProtoKeySerialization serialized =
-        registry.serializeKey(
-            privateKey, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+        registry.serializeKey(privateKey, InsecureSecretKeyAccess.get());
 
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.RsaSsaPssPrivateKey.parser(), serialized, serialization);
@@ -623,8 +619,7 @@ public final class RsaSsaPssProtoSerializationTest {
             /* idRequirement= */ null);
 
     Key parsed = registry.parseKey(serializationOfExistingKey, InsecureSecretKeyAccess.get());
-    ProtoKeySerialization serialized =
-        registry.serializeKey(parsed, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+    ProtoKeySerialization serialized = registry.serializeKey(parsed, InsecureSecretKeyAccess.get());
 
     com.google.crypto.tink.proto.RsaSsaPssPrivateKey serializedKey =
         com.google.crypto.tink.proto.RsaSsaPssPrivateKey.parseFrom(
@@ -703,7 +698,7 @@ public final class RsaSsaPssProtoSerializationTest {
 
     assertThrows(
         GeneralSecurityException.class,
-        () -> registry.serializeKey(privateKey, ProtoKeySerialization.class, /* access= */ null));
+        () -> registry.serializeKey(privateKey, /* access= */ null));
   }
 
   private static ProtoParametersSerialization[] createInvalidParameters() {

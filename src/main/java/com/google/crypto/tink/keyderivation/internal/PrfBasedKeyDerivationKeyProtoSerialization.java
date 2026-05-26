@@ -147,8 +147,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
       PrfBasedKeyDerivationKey key, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     ProtoKeySerialization prfKeySerialization =
-        MutableSerializationRegistry.globalInstance()
-            .serializeKey(key.getPrfKey(), ProtoKeySerialization.class, access);
+        MutableSerializationRegistry.globalInstance().serializeKey(key.getPrfKey(), access);
     ProtoParametersSerialization derivedKeyParametersSerialization =
         MutableSerializationRegistry.globalInstance()
             .serializeParameters(

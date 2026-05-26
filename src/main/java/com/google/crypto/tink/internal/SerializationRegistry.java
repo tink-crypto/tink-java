@@ -123,7 +123,8 @@ public final class SerializationRegistry {
             ParametersSerializer<ParametersT, SerializationT> serializer)
             throws GeneralSecurityException {
       if (parametersSerializerMap.containsKey(serializer.getParametersClass())) {
-        ParametersSerializer<?, ?> existingSerializer = parametersSerializerMap.get(serializer.getParametersClass());
+        ParametersSerializer<?, ?> existingSerializer =
+            parametersSerializerMap.get(serializer.getParametersClass());
         if (!existingSerializer.equals(serializer) || !serializer.equals(existingSerializer)) {
           throw new GeneralSecurityException(
               "Attempt to register non-equal serializer for already existing object of type: "
@@ -247,15 +248,14 @@ public final class SerializationRegistry {
    * <p>This will look up a previously registered serializer for the requested {@code
    * SerializationT} class and the passed in key type, and then call serializeKey on the result.
    */
-  public <KeyT extends Key, SerializationT extends Serialization> SerializationT serializeKey(
-      KeyT key, Class<SerializationT> serializationClass, @Nullable SecretKeyAccess access)
-      throws GeneralSecurityException {
+  public <KeyT extends Key> ProtoKeySerialization serializeKey(
+      KeyT key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     if (!keySerializerMap.containsKey(key.getClass())) {
       throw new GeneralSecurityException("No Key serializer for " + key.getClass() + " available");
     }
     @SuppressWarnings("unchecked") // We know we only insert like this.
-    KeySerializer<KeyT, SerializationT> serializer =
-        (KeySerializer<KeyT, SerializationT>) keySerializerMap.get(key.getClass());
+    KeySerializer<KeyT, ProtoKeySerialization> serializer =
+        (KeySerializer<KeyT, ProtoKeySerialization>) keySerializerMap.get(key.getClass());
     return serializer.serializeKey(key, access);
   }
 

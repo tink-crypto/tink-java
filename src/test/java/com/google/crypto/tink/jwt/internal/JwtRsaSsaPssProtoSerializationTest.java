@@ -263,8 +263,7 @@ public final class JwtRsaSsaPssProtoSerializationTest {
     Key parsed = registry.parseKey(serialization, /* access= */ null);
     assertThat(parsed.equalsKey(key)).isTrue();
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, /* access= */ null);
+    ProtoKeySerialization serialized = registry.serializeKey(key, /* access= */ null);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.JwtRsaSsaPssPublicKey.parser(), serialized, serialization);
   }
@@ -302,8 +301,7 @@ public final class JwtRsaSsaPssProtoSerializationTest {
     Key parsed = registry.parseKey(serialization, /* access= */ null);
     assertThat(parsed.equalsKey(key)).isTrue();
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, /* access= */ null);
+    ProtoKeySerialization serialized = registry.serializeKey(key, /* access= */ null);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.JwtRsaSsaPssPublicKey.parser(), serialized, serialization);
   }
@@ -341,8 +339,7 @@ public final class JwtRsaSsaPssProtoSerializationTest {
     Key parsed = registry.parseKey(serialization, /* access= */ null);
     assertThat(parsed.equalsKey(key)).isTrue();
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, /* access= */ null);
+    ProtoKeySerialization serialized = registry.serializeKey(key, /* access= */ null);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.JwtRsaSsaPssPublicKey.parser(), serialized, serialization);
   }
@@ -489,8 +486,7 @@ public final class JwtRsaSsaPssProtoSerializationTest {
     assertThat(parsed.equalsKey(privateKey)).isTrue();
 
     ProtoKeySerialization serialized =
-        registry.serializeKey(
-            privateKey, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+        registry.serializeKey(privateKey, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.JwtRsaSsaPssPrivateKey.parser(), serialized, serialization);
   }
@@ -557,7 +553,7 @@ public final class JwtRsaSsaPssProtoSerializationTest {
 
     assertThrows(
         GeneralSecurityException.class,
-        () -> registry.serializeKey(privateKey, ProtoKeySerialization.class, /* access= */ null));
+        () -> registry.serializeKey(privateKey, /* access= */ null));
   }
 
   @Test

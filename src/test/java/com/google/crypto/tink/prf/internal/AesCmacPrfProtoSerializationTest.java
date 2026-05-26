@@ -108,8 +108,7 @@ public final class AesCmacPrfProtoSerializationTest {
             OutputPrefixType.RAW,
             /* idRequirement= */ null);
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+    ProtoKeySerialization serialized = registry.serializeKey(key, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.AesCmacPrfKey.parser(), serialized, serialization);
 
@@ -121,9 +120,7 @@ public final class AesCmacPrfProtoSerializationTest {
   public void testSerializeKey_noAccess_fails() throws Exception {
     AesCmacPrfKey key = AesCmacPrfKey.create(AesCmacPrfParameters.create(16), KEY_BYTES_16);
 
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> registry.serializeKey(key, ProtoKeySerialization.class, null));
+    assertThrows(GeneralSecurityException.class, () -> registry.serializeKey(key, null));
   }
 
   @Test

@@ -219,8 +219,7 @@ public final class CompositeMlDsaProtoSerialization {
       CompositeMlDsaPublicKey key, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     ProtoKeySerialization mlDsaKeySerialization =
-        SERIALIZATION_REGISTRY.serializeKey(
-            key.getMlDsaPublicKey(), ProtoKeySerialization.class, /* access= */ null);
+        SERIALIZATION_REGISTRY.serializeKey(key.getMlDsaPublicKey(), /* access= */ null);
     if (!mlDsaKeySerialization.getOutputPrefixType().equals(OutputPrefixType.RAW)) {
       throw new GeneralSecurityException("Require raw output prefix for ML-DSA public key.");
     }
@@ -236,8 +235,7 @@ public final class CompositeMlDsaProtoSerialization {
             .build();
 
     ProtoKeySerialization classicalKeySerialization =
-        SERIALIZATION_REGISTRY.serializeKey(
-            key.getClassicalPublicKey(), ProtoKeySerialization.class, /* access= */ null);
+        SERIALIZATION_REGISTRY.serializeKey(key.getClassicalPublicKey(), /* access= */ null);
     if (!classicalKeySerialization.getOutputPrefixType().equals(OutputPrefixType.RAW)) {
       throw new GeneralSecurityException("Require raw output prefix for classical public key.");
     }
@@ -274,8 +272,7 @@ public final class CompositeMlDsaProtoSerialization {
     SecretKeyAccess.requireAccess(access);
 
     ProtoKeySerialization mlDsaKeySerialization =
-        SERIALIZATION_REGISTRY.serializeKey(
-            key.getMlDsaPrivateKey(), ProtoKeySerialization.class, access);
+        SERIALIZATION_REGISTRY.serializeKey(key.getMlDsaPrivateKey(), access);
     if (!mlDsaKeySerialization.getOutputPrefixType().equals(OutputPrefixType.RAW)) {
       throw new GeneralSecurityException("Require raw output prefix for ML-DSA private key.");
     }
@@ -291,8 +288,7 @@ public final class CompositeMlDsaProtoSerialization {
             .build();
 
     ProtoKeySerialization classicalKeySerialization =
-        SERIALIZATION_REGISTRY.serializeKey(
-            key.getClassicalPrivateKey(), ProtoKeySerialization.class, access);
+        SERIALIZATION_REGISTRY.serializeKey(key.getClassicalPrivateKey(), access);
     if (!classicalKeySerialization.getOutputPrefixType().equals(OutputPrefixType.RAW)) {
       throw new GeneralSecurityException("Require raw output prefix for classical private key.");
     }

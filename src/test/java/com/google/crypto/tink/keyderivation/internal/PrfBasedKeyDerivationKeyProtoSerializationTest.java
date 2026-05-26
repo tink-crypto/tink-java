@@ -399,8 +399,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
             OutputPrefixType.RAW,
             /* idRequirement= */ null);
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+    ProtoKeySerialization serialized = registry.serializeKey(key, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(PrfBasedDeriverKey.parser(), serialized, serialization);
 
     Key parsed = registry.parseKey(serialization, InsecureSecretKeyAccess.get());
@@ -454,8 +453,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
             OutputPrefixType.TINK,
             /* idRequirement= */ 123);
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+    ProtoKeySerialization serialized = registry.serializeKey(key, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(PrfBasedDeriverKey.parser(), serialized, serialization);
 
     Key parsed = registry.parseKey(serialization, InsecureSecretKeyAccess.get());
@@ -631,8 +629,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
             /* idRequirement= */ null);
 
     assertThrows(
-        GeneralSecurityException.class,
-        () -> registry.serializeKey(key, ProtoKeySerialization.class, /* access= */ null));
+        GeneralSecurityException.class, () -> registry.serializeKey(key, /* access= */ null));
     assertThrows(
         GeneralSecurityException.class, () -> registry.parseKey(serialization, /* access= */ null));
   }

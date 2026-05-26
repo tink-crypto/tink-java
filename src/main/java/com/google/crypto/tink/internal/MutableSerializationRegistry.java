@@ -171,10 +171,9 @@ public final class MutableSerializationRegistry {
    * <p>This will look up a previously registered serializer for the requested {@code
    * SerializationT} class and the passed in key type, and then call serializeKey on the result.
    */
-  public <KeyT extends Key, SerializationT extends Serialization> SerializationT serializeKey(
-      KeyT key, Class<SerializationT> serializationClass, @Nullable SecretKeyAccess access)
-      throws GeneralSecurityException {
-    return registry.get().serializeKey(key, serializationClass, access);
+  public <KeyT extends Key> ProtoKeySerialization serializeKey(
+      KeyT key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
+    return registry.get().serializeKey(key, access);
   }
 
   /** Returns true if a parser for this {@code serializedKey} has been registered. */

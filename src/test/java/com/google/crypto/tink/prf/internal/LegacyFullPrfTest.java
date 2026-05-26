@@ -23,7 +23,6 @@ import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
-import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.prf.HmacPrfKey;
 import com.google.crypto.tink.prf.Prf;
 import com.google.crypto.tink.prf.internal.LegacyHmacPrfTestUtil.HmacLegacyPrfTestVector;
@@ -66,7 +65,7 @@ public class LegacyFullPrfTest {
       throws GeneralSecurityException {
     return new LegacyProtoKey(
         MutableSerializationRegistry.globalInstance()
-            .serializeKey(hmacPrfKey, ProtoKeySerialization.class, InsecureSecretKeyAccess.get()),
+            .serializeKey(hmacPrfKey, InsecureSecretKeyAccess.get()),
         InsecureSecretKeyAccess.get());
   }
 }

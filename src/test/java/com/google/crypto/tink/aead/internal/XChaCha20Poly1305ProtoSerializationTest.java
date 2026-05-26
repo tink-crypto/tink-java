@@ -153,8 +153,7 @@ public final class XChaCha20Poly1305ProtoSerializationTest {
             OutputPrefixType.TINK,
             /* idRequirement= */ 123);
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+    ProtoKeySerialization serialized = registry.serializeKey(key, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.XChaCha20Poly1305Key.parser(), serialized, serialization);
 
@@ -181,8 +180,7 @@ public final class XChaCha20Poly1305ProtoSerializationTest {
             OutputPrefixType.CRUNCHY,
             /* idRequirement= */ 123);
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+    ProtoKeySerialization serialized = registry.serializeKey(key, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.XChaCha20Poly1305Key.parser(), serialized, serialization);
 
@@ -229,9 +227,7 @@ public final class XChaCha20Poly1305ProtoSerializationTest {
   @Test
   public void testSerializeKeys_noAccess_throws() throws Exception {
     XChaCha20Poly1305Key key = XChaCha20Poly1305Key.create(KEY_BYTES_32);
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> registry.serializeKey(key, ProtoKeySerialization.class, null));
+    assertThrows(GeneralSecurityException.class, () -> registry.serializeKey(key, null));
   }
 
   private static ProtoParametersSerialization[] createInvalidParametersSerializations() {

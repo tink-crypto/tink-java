@@ -159,12 +159,8 @@ public final class MutableSerializationRegistryTest {
         KeySerializer.create(
             MutableSerializationRegistryTest::serializeKey2ToProto, TestKey2.class));
     assertThat(registry.hasSerializerForKey(new TestKey1(), ProtoKeySerialization.class)).isTrue();
-    assertThat(
-            registry.serializeKey(new TestKey1(), ProtoKeySerialization.class, ACCESS).getTypeUrl())
-        .isEqualTo(TYPE_URL_1);
-    assertThat(
-            registry.serializeKey(new TestKey2(), ProtoKeySerialization.class, ACCESS).getTypeUrl())
-        .isEqualTo(TYPE_URL_2);
+    assertThat(registry.serializeKey(new TestKey1(), ACCESS).getTypeUrl()).isEqualTo(TYPE_URL_1);
+    assertThat(registry.serializeKey(new TestKey2(), ACCESS).getTypeUrl()).isEqualTo(TYPE_URL_2);
   }
 
   @Test
@@ -172,8 +168,7 @@ public final class MutableSerializationRegistryTest {
     MutableSerializationRegistry registry = new MutableSerializationRegistry();
     assertThat(registry.hasSerializerForKey(new TestKey1(), ProtoKeySerialization.class)).isFalse();
     assertThrows(
-        GeneralSecurityException.class,
-        () -> registry.serializeKey(new TestKey1(), ProtoKeySerialization.class, ACCESS));
+        GeneralSecurityException.class, () -> registry.serializeKey(new TestKey1(), ACCESS));
   }
 
   @Test

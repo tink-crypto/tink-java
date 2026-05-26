@@ -658,7 +658,6 @@ java_test(
         "//src/main/java/com/google/crypto/tink/internal:key_manager_registry",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
         "//src/main/java/com/google/crypto/tink/internal:mutable_serialization_registry",
-        "//src/main/java/com/google/crypto/tink/internal:proto_key_serialization",
         "//src/main/java/com/google/crypto/tink/mac:hmac_key",
         "//src/main/java/com/google/crypto/tink/mac:hmac_parameters",
         "//src/main/java/com/google/crypto/tink/mac:mac_config",

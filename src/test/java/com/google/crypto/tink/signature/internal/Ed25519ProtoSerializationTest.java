@@ -162,8 +162,7 @@ public final class Ed25519ProtoSerializationTest {
     assertThat(parsed.equalsKey(publicKey)).isTrue();
 
     ProtoKeySerialization serialized =
-        registry.serializeKey(
-            publicKey, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+        registry.serializeKey(publicKey, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.Ed25519PublicKey.parser(), serialized, serialization);
   }
@@ -194,8 +193,7 @@ public final class Ed25519ProtoSerializationTest {
     assertThat(parsed.equalsKey(publicKey)).isTrue();
 
     ProtoKeySerialization serialized =
-        registry.serializeKey(
-            publicKey, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+        registry.serializeKey(publicKey, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.Ed25519PublicKey.parser(), serialized, serialization);
   }
@@ -230,8 +228,7 @@ public final class Ed25519ProtoSerializationTest {
     assertThat(parsed.equalsKey(privateKey)).isTrue();
 
     ProtoKeySerialization serialized =
-        registry.serializeKey(
-            privateKey, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+        registry.serializeKey(privateKey, InsecureSecretKeyAccess.get());
 
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.Ed25519PublicKey.parser(), serialized, serialization);
@@ -272,8 +269,7 @@ public final class Ed25519ProtoSerializationTest {
     assertThat(parsed.equalsKey(privateKey)).isTrue();
 
     ProtoKeySerialization serialized =
-        registry.serializeKey(
-            privateKey, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+        registry.serializeKey(privateKey, InsecureSecretKeyAccess.get());
 
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.Ed25519PublicKey.parser(), serialized, serialization);
@@ -312,7 +308,7 @@ public final class Ed25519ProtoSerializationTest {
 
     assertThrows(
         GeneralSecurityException.class,
-        () -> registry.serializeKey(privateKey, ProtoKeySerialization.class, /* access= */ null));
+        () -> registry.serializeKey(privateKey, /* access= */ null));
   }
 
   private static ProtoParametersSerialization[] createInvalidParameters() {

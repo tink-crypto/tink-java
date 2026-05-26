@@ -228,8 +228,7 @@ public final class EcdsaProtoSerializationTest {
     Key parsed = registry.parseKey(serialization, /* access= */ null);
     assertThat(parsed.equalsKey(key)).isTrue();
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, /* access= */ null);
+    ProtoKeySerialization serialized = registry.serializeKey(key, /* access= */ null);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.EcdsaPublicKey.parser(), serialized, serialization);
   }
@@ -278,8 +277,7 @@ public final class EcdsaProtoSerializationTest {
     Key parsed = registry.parseKey(serialization, /* access= */ null);
     assertThat(parsed.equalsKey(key)).isTrue();
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, /* access= */ null);
+    ProtoKeySerialization serialized = registry.serializeKey(key, /* access= */ null);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.EcdsaPublicKey.parser(), serialized, serialization);
   }
@@ -314,8 +312,7 @@ public final class EcdsaProtoSerializationTest {
             /* idRequirement= */ 123);
 
     Key key = registry.parseKey(serialization, /* access= */ null);
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, /* access= */ null);
+    ProtoKeySerialization serialized = registry.serializeKey(key, /* access= */ null);
 
     com.google.crypto.tink.proto.EcdsaPublicKey protoPublicKeyFromSerialized =
         com.google.crypto.tink.proto.EcdsaPublicKey.parseFrom(
@@ -355,8 +352,7 @@ public final class EcdsaProtoSerializationTest {
             .setIdRequirement(123)
             .build();
 
-    ProtoKeySerialization serialized =
-        registry.serializeKey(key, ProtoKeySerialization.class, /* access= */ null);
+    ProtoKeySerialization serialized = registry.serializeKey(key, /* access= */ null);
 
     com.google.crypto.tink.proto.EcdsaPublicKey parsedProtoEcdsaPublicKey =
         com.google.crypto.tink.proto.EcdsaPublicKey.parseFrom(
@@ -427,8 +423,7 @@ public final class EcdsaProtoSerializationTest {
     assertThat(parsed.equalsKey(privateKey)).isTrue();
 
     ProtoKeySerialization serialized =
-        registry.serializeKey(
-            privateKey, ProtoKeySerialization.class, InsecureSecretKeyAccess.get());
+        registry.serializeKey(privateKey, InsecureSecretKeyAccess.get());
 
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.EcdsaPublicKey.parser(), serialized, serialization);
@@ -495,7 +490,7 @@ public final class EcdsaProtoSerializationTest {
 
     assertThrows(
         GeneralSecurityException.class,
-        () -> registry.serializeKey(privateKey, ProtoKeySerialization.class, /* access= */ null));
+        () -> registry.serializeKey(privateKey, /* access= */ null));
   }
 
   private static ProtoParametersSerialization[] createInvalidParameters() {

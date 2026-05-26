@@ -21,8 +21,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.internal.KeyManagerRegistry;
-import com.google.crypto.tink.internal.LegacyProtoKey;
-import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.mac.HmacKey;
 import com.google.crypto.tink.mac.HmacParameters;
 import com.google.crypto.tink.mac.HmacParameters.HashType;
@@ -30,9 +28,7 @@ import com.google.crypto.tink.mac.MacConfig;
 import com.google.crypto.tink.proto.HmacParams;
 import com.google.crypto.tink.proto.KeyData;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.KeyStatusType;
 import com.google.crypto.tink.proto.KeyTemplate;
-import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
@@ -49,8 +45,6 @@ public class RegistryConfigurationTest {
 
   private static HmacKey rawKey;
   private static KeyData rawKeyData;
-  private static Keyset.Key rawKeysetKey;
-  private static LegacyProtoKey legacyProtoRawKey;
 
   @Before
   public void setUp() throws GeneralSecurityException {
@@ -95,21 +89,6 @@ public class RegistryConfigurationTest {
               .setTypeUrl("type.googleapis.com/google.crypto.tink.HmacKey")
               .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
               .build();
-      rawKeysetKey =
-          Keyset.Key.newBuilder()
-              .setKeyData(rawKeyData)
-              .setStatus(KeyStatusType.ENABLED)
-              .setKeyId(keysetHandle.getPrimary().getId())
-              .setOutputPrefixType(OutputPrefixType.RAW)
-              .build();
-      legacyProtoRawKey =
-          new LegacyProtoKey(
-              MutableSerializationRegistry.globalInstance()
-                  .serializeKey(
-                      rawKey,
-                      com.google.crypto.tink.internal.ProtoKeySerialization.class,
-                      InsecureSecretKeyAccess.get()),
-              InsecureSecretKeyAccess.get());
     } catch (GeneralSecurityException e) {
       throw new IllegalStateException(e);
     }
