@@ -134,8 +134,7 @@ public final class MutableSerializationRegistry {
    * class, and the used object identifier (as indicated by {@code
    * serializedKey.getObjectIdentifier()}), and then parse the object with this parsers.
    */
-  public <SerializationT extends Serialization> Key parseKey(
-      SerializationT serializedKey, @Nullable SecretKeyAccess access)
+  public Key parseKey(ProtoKeySerialization serializedKey, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     return registry.get().parseKey(serializedKey, access);
   }
@@ -191,8 +190,8 @@ public final class MutableSerializationRegistry {
    * class, and the used object identifier (as indicated by {@code
    * serializedKey.getObjectIdentifier()}), and then parse the object with this parsers.
    */
-  public <SerializationT extends Serialization> Parameters parseParameters(
-      SerializationT serializedParameters) throws GeneralSecurityException {
+  public Parameters parseParameters(ProtoParametersSerialization serializedParameters)
+      throws GeneralSecurityException {
     return registry.get().parseParameters(serializedParameters);
   }
 

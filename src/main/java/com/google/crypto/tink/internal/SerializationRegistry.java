@@ -220,8 +220,7 @@ public final class SerializationRegistry {
    * class, and the used object identifier (as indicated by {@code
    * serializedKey.getObjectIdentifier()}), and then parse the object with this parsers.
    */
-  public <SerializationT extends Serialization> Key parseKey(
-      SerializationT serializedKey, @Nullable SecretKeyAccess access)
+  public Key parseKey(ProtoKeySerialization serializedKey, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     ParserIndex index =
         new ParserIndex(serializedKey.getClass(), serializedKey.getObjectIdentifier());
@@ -231,7 +230,8 @@ public final class SerializationRegistry {
           "No Key Parser for requested key type " + index + " available");
     }
     @SuppressWarnings("unchecked") // We know we only insert like this.
-    KeyParser<SerializationT> parser = (KeyParser<SerializationT>) keyParserMap.get(index);
+    KeyParser<ProtoKeySerialization> parser =
+        (KeyParser<ProtoKeySerialization>) keyParserMap.get(index);
     return parser.parseKey(serializedKey, access);
   }
 
@@ -275,8 +275,8 @@ public final class SerializationRegistry {
    * class, and the used object identifier (as indicated by {@code
    * serializedKey.getObjectIdentifier()}), and then parse the object with this parsers.
    */
-  public <SerializationT extends Serialization> Parameters parseParameters(
-      SerializationT serializedParameters) throws GeneralSecurityException {
+  public Parameters parseParameters(ProtoParametersSerialization serializedParameters)
+      throws GeneralSecurityException {
     ParserIndex index =
         new ParserIndex(
             serializedParameters.getClass(), serializedParameters.getObjectIdentifier());
@@ -286,8 +286,8 @@ public final class SerializationRegistry {
           "No Parameters Parser for requested key type " + index + " available");
     }
     @SuppressWarnings("unchecked") // We know we only insert like this.
-    ParametersParser<SerializationT> parser =
-        (ParametersParser<SerializationT>) parametersParserMap.get(index);
+    ParametersParser<ProtoParametersSerialization> parser =
+        (ParametersParser<ProtoParametersSerialization>) parametersParserMap.get(index);
     return parser.parseParameters(serializedParameters);
   }
 
