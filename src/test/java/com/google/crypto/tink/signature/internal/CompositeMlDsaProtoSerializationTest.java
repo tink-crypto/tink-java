@@ -284,8 +284,7 @@ public class CompositeMlDsaProtoSerializationTest {
       @FromDataPoints("parametersSerializationTestPairList") ParametersSerializationTestPair pair)
       throws Exception {
     ProtoParametersSerialization serialized =
-        MutableSerializationRegistry.globalInstance()
-            .serializeParameters(pair.parameters, ProtoParametersSerialization.class);
+        MutableSerializationRegistry.globalInstance().serializeParameters(pair.parameters);
     Parameters parsed =
         MutableSerializationRegistry.globalInstance().parseParameters(pair.serialization);
 

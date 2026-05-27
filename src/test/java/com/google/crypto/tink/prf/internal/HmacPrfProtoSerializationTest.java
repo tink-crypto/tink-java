@@ -112,8 +112,7 @@ public final class HmacPrfProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.HmacPrfKeyFormat.parser(), serialized, serialization);
 

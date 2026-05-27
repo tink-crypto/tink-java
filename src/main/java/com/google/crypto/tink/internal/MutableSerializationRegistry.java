@@ -223,10 +223,8 @@ public final class MutableSerializationRegistry {
    * <p>This will look up a previously registered serializer for the requested {@code
    * SerializationT} class and the passed in key type, and then call serializeKey on the result.
    */
-  public <ParametersT extends Parameters, SerializationT extends Serialization>
-      SerializationT serializeParameters(
-          ParametersT parameters, Class<SerializationT> serializationClass)
-          throws GeneralSecurityException {
-    return registry.get().serializeParameters(parameters, serializationClass);
+  public <ParametersT extends Parameters> ProtoParametersSerialization serializeParameters(
+      ParametersT parameters) throws GeneralSecurityException {
+    return registry.get().serializeParameters(parameters);
   }
 }

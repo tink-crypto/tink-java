@@ -145,8 +145,7 @@ public final class AesCtrHmacAeadProtoSerializationTest {
             OutputPrefixType.RAW,
             getAesCtrHmacKeyFormatProto(32, 32, 16, 13, HashType.SHA1).toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.AesCtrHmacAeadKeyFormat.parser(), serialized, serialization);
 
@@ -171,8 +170,7 @@ public final class AesCtrHmacAeadProtoSerializationTest {
             OutputPrefixType.TINK,
             getAesCtrHmacKeyFormatProto(32, 32, 16, 13, HashType.SHA224).toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.AesCtrHmacAeadKeyFormat.parser(), serialized, serialization);
 
@@ -196,8 +194,7 @@ public final class AesCtrHmacAeadProtoSerializationTest {
             "type.googleapis.com/google.crypto.tink.AesCtrHmacAeadKey",
             OutputPrefixType.CRUNCHY,
             getAesCtrHmacKeyFormatProto(32, 32, 16, 13, HashType.SHA256).toByteString());
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.AesCtrHmacAeadKeyFormat.parser(), serialized, serialization);
 
@@ -221,8 +218,7 @@ public final class AesCtrHmacAeadProtoSerializationTest {
             "type.googleapis.com/google.crypto.tink.AesCtrHmacAeadKey",
             OutputPrefixType.CRUNCHY,
             getAesCtrHmacKeyFormatProto(16, 32, 12, 13, HashType.SHA384).toByteString());
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.AesCtrHmacAeadKeyFormat.parser(), serialized, serialization);
 
@@ -246,8 +242,7 @@ public final class AesCtrHmacAeadProtoSerializationTest {
             "type.googleapis.com/google.crypto.tink.AesCtrHmacAeadKey",
             OutputPrefixType.TINK,
             getAesCtrHmacKeyFormatProto(32, 16, 14, 13, HashType.SHA512).toByteString());
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.AesCtrHmacAeadKeyFormat.parser(), serialized, serialization);
 

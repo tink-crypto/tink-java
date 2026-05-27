@@ -150,8 +150,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
         MutableSerializationRegistry.globalInstance().serializeKey(key.getPrfKey(), access);
     ProtoParametersSerialization derivedKeyParametersSerialization =
         MutableSerializationRegistry.globalInstance()
-            .serializeParameters(
-                key.getParameters().getDerivedKeyParameters(), ProtoParametersSerialization.class);
+            .serializeParameters(key.getParameters().getDerivedKeyParameters());
     return ProtoKeySerialization.create(
         TYPE_URL,
         PrfBasedDeriverKey.newBuilder()

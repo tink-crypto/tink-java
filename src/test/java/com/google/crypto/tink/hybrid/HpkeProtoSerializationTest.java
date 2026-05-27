@@ -262,8 +262,7 @@ public final class HpkeProtoSerializationTest {
             variantTuple.outputPrefixType,
             format.toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(HpkeKeyFormat.parser(), serialized, serialization);
 
     Parameters parsed = registry.parseParameters(serialization);

@@ -34,8 +34,7 @@ public final class TinkProtoParametersFormat {
       return ((LegacyProtoParameters) parameters).getSerialization().getKeyTemplate().toByteArray();
     }
     ProtoParametersSerialization s =
-        MutableSerializationRegistry.globalInstance()
-            .serializeParameters(parameters, ProtoParametersSerialization.class);
+        MutableSerializationRegistry.globalInstance().serializeParameters(parameters);
     return s.getKeyTemplate().toByteArray();
   }
 

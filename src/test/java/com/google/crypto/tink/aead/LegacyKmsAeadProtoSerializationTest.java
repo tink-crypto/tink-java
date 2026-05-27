@@ -64,8 +64,7 @@ public final class LegacyKmsAeadProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.KmsAeadKeyFormat.parser(), serialized, serialization);
 
@@ -88,8 +87,7 @@ public final class LegacyKmsAeadProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.KmsAeadKeyFormat.parser(), serialized, serialization);
 

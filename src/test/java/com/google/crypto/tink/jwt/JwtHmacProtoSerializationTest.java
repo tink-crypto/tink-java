@@ -74,8 +74,7 @@ public final class JwtHmacProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.JwtHmacKeyFormat.parser(), serialized, serialization);
 
@@ -103,8 +102,7 @@ public final class JwtHmacProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.JwtHmacKeyFormat.parser(), serialized, serialization);
 
@@ -132,8 +130,7 @@ public final class JwtHmacProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.JwtHmacKeyFormat.parser(), serialized, serialization);
 
@@ -160,8 +157,7 @@ public final class JwtHmacProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.JwtHmacKeyFormat.parser(), serialized, serialization);
 
@@ -178,9 +174,7 @@ public final class JwtHmacProtoSerializationTest {
             .setAlgorithm(JwtHmacParameters.Algorithm.HS256)
             .setKidStrategy(JwtHmacParameters.KidStrategy.CUSTOM)
             .build();
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> registry.serializeParameters(parameters, ProtoParametersSerialization.class));
+    assertThrows(GeneralSecurityException.class, () -> registry.serializeParameters(parameters));
   }
 
   @Test

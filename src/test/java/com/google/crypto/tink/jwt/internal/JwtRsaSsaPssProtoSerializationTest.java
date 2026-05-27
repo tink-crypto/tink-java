@@ -164,8 +164,7 @@ public final class JwtRsaSsaPssProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(JwtRsaSsaPssKeyFormat.parser(), serialized, serialization);
 
     Parameters parsed = registry.parseParameters(serialization);
@@ -193,8 +192,7 @@ public final class JwtRsaSsaPssProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(JwtRsaSsaPssKeyFormat.parser(), serialized, serialization);
 
     Parameters parsed = registry.parseParameters(serialization);
@@ -210,9 +208,7 @@ public final class JwtRsaSsaPssProtoSerializationTest {
             .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.CUSTOM)
             .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS512)
             .build();
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> registry.serializeParameters(parameters, ProtoParametersSerialization.class));
+    assertThrows(GeneralSecurityException.class, () -> registry.serializeParameters(parameters));
   }
 
   @Test

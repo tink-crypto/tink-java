@@ -299,9 +299,7 @@ public final class MutableSerializationRegistryMultithreadTest {
             () -> {
               try {
                 for (int i = 0; i < REPETITIONS; ++i) {
-                  Object unused =
-                      registry.serializeParameters(
-                          new TestParameters1(), ProtoParametersSerialization.class);
+                  Object unused = registry.serializeParameters(new TestParameters1());
                 }
               } catch (GeneralSecurityException e) {
                 throw new RuntimeException(e);

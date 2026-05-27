@@ -86,8 +86,7 @@ public final class AesEaxProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.AesEaxKeyFormat.parser(), serialized, serialization);
 
@@ -115,8 +114,7 @@ public final class AesEaxProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.AesEaxKeyFormat.parser(), serialized, serialization);
 
@@ -144,8 +142,7 @@ public final class AesEaxProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.AesEaxKeyFormat.parser(), serialized, serialization);
 
@@ -164,9 +161,7 @@ public final class AesEaxProtoSerializationTest {
             .build();
 
     // Fails when tag size is not a 16-byte value
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> registry.serializeParameters(parameters, ProtoParametersSerialization.class));
+    assertThrows(GeneralSecurityException.class, () -> registry.serializeParameters(parameters));
   }
 
   @Test

@@ -75,8 +75,7 @@ public final class JwtEcdsaProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.JwtEcdsaKeyFormat.parser(), serialized, serialization);
 
@@ -101,8 +100,7 @@ public final class JwtEcdsaProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.JwtEcdsaKeyFormat.parser(), serialized, serialization);
 
@@ -127,8 +125,7 @@ public final class JwtEcdsaProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.JwtEcdsaKeyFormat.parser(), serialized, serialization);
 
@@ -153,8 +150,7 @@ public final class JwtEcdsaProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.JwtEcdsaKeyFormat.parser(), serialized, serialization);
 
@@ -170,9 +166,7 @@ public final class JwtEcdsaProtoSerializationTest {
             .setAlgorithm(JwtEcdsaParameters.Algorithm.ES512)
             .setKidStrategy(JwtEcdsaParameters.KidStrategy.CUSTOM)
             .build();
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> registry.serializeParameters(parameters, ProtoParametersSerialization.class));
+    assertThrows(GeneralSecurityException.class, () -> registry.serializeParameters(parameters));
   }
 
   @Test

@@ -114,8 +114,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(PrfBasedDeriverKeyFormat.parser(), serialized, serialization);
 
     Parameters parsed = registry.parseParameters(serialization);
@@ -152,8 +151,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(PrfBasedDeriverKeyFormat.parser(), serialized, serialization);
 
     Parameters parsed = registry.parseParameters(serialization);
@@ -173,9 +171,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
                   }
                 })
             .build();
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> registry.serializeParameters(parameters, ProtoParametersSerialization.class));
+    assertThrows(GeneralSecurityException.class, () -> registry.serializeParameters(parameters));
   }
 
   @Test
@@ -191,9 +187,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerializationTest {
                 })
             .setDerivedKeyParameters(DERIVED_PARAMETERS)
             .build();
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> registry.serializeParameters(parameters, ProtoParametersSerialization.class));
+    assertThrows(GeneralSecurityException.class, () -> registry.serializeParameters(parameters));
   }
 
   @Test

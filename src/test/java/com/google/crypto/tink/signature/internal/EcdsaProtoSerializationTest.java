@@ -88,8 +88,7 @@ public final class EcdsaProtoSerializationTest {
                         .setEncoding(EcdsaSignatureEncoding.IEEE_P1363))
                 .build()
                 .toByteString());
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.EcdsaKeyFormat.parser(), serialized, serialization);
 
@@ -118,8 +117,7 @@ public final class EcdsaProtoSerializationTest {
                         .setEncoding(EcdsaSignatureEncoding.DER))
                 .build()
                 .toByteString());
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.EcdsaKeyFormat.parser(), serialized, serialization);
 
@@ -148,8 +146,7 @@ public final class EcdsaProtoSerializationTest {
                         .setEncoding(EcdsaSignatureEncoding.IEEE_P1363))
                 .build()
                 .toByteString());
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.EcdsaKeyFormat.parser(), serialized, serialization);
 
@@ -178,8 +175,7 @@ public final class EcdsaProtoSerializationTest {
                         .setEncoding(EcdsaSignatureEncoding.DER))
                 .build()
                 .toByteString());
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.EcdsaKeyFormat.parser(), serialized, serialization);
 

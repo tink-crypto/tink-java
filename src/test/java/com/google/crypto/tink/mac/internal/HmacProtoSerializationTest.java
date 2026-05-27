@@ -79,8 +79,7 @@ public final class HmacProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.HmacKeyFormat.parser(),
         serialized,
@@ -107,8 +106,7 @@ public final class HmacProtoSerializationTest {
                 .setParams(HmacParams.newBuilder().setHash(HashType.SHA224).setTagSize(13))
                 .build()
                 .toByteString());
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.HmacKeyFormat.parser(),
         serialized,
@@ -135,8 +133,7 @@ public final class HmacProtoSerializationTest {
                 .setParams(HmacParams.newBuilder().setHash(HashType.SHA256).setTagSize(13))
                 .build()
                 .toByteString());
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.HmacKeyFormat.parser(),
         serialized,
@@ -163,8 +160,7 @@ public final class HmacProtoSerializationTest {
                 .setParams(HmacParams.newBuilder().setHash(HashType.SHA384).setTagSize(13))
                 .build()
                 .toByteString());
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.HmacKeyFormat.parser(),
         serialized,
@@ -191,8 +187,7 @@ public final class HmacProtoSerializationTest {
                 .setParams(HmacParams.newBuilder().setHash(HashType.SHA512).setTagSize(13))
                 .build()
                 .toByteString());
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.HmacKeyFormat.parser(),
         serialized,

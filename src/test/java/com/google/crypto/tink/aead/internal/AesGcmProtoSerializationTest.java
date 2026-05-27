@@ -84,8 +84,7 @@ public final class AesGcmProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.AesGcmKeyFormat.parser(), serialized, serialization);
 
@@ -112,8 +111,7 @@ public final class AesGcmProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.AesGcmKeyFormat.parser(), serialized, serialization);
 
@@ -140,8 +138,7 @@ public final class AesGcmProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.AesGcmKeyFormat.parser(), serialized, serialization);
 
@@ -160,9 +157,7 @@ public final class AesGcmProtoSerializationTest {
             .build();
 
     // Fails when tag size is not a 16-byte value
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> registry.serializeParameters(parameters, ProtoParametersSerialization.class));
+    assertThrows(GeneralSecurityException.class, () -> registry.serializeParameters(parameters));
   }
 
   @Test
@@ -176,9 +171,7 @@ public final class AesGcmProtoSerializationTest {
             .build();
 
     // Fails when IV size is not a 12-byte value
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> registry.serializeParameters(parameters, ProtoParametersSerialization.class));
+    assertThrows(GeneralSecurityException.class, () -> registry.serializeParameters(parameters));
   }
 
   @Test

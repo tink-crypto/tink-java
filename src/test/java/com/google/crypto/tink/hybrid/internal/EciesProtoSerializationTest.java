@@ -209,8 +209,7 @@ public final class EciesProtoSerializationTest {
         ProtoParametersSerialization.create(
             PRIVATE_TYPE_URL, variantTuple.outputPrefixType, format.toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertThat(serialized.getKeyTemplate().getTypeUrl())
         .isEqualTo(serialization.getKeyTemplate().getTypeUrl());
     assertThat(serialized.getKeyTemplate().getOutputPrefixType())
@@ -244,8 +243,7 @@ public final class EciesProtoSerializationTest {
         ProtoParametersSerialization.create(
             PRIVATE_TYPE_URL, OutputPrefixType.RAW, format.toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertThat(serialized.getKeyTemplate().getTypeUrl())
         .isEqualTo(serialization.getKeyTemplate().getTypeUrl());
     assertThat(serialized.getKeyTemplate().getOutputPrefixType())

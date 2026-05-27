@@ -77,8 +77,7 @@ public final class ChaCha20Poly1305ProtoSerializationTest {
             com.google.crypto.tink.proto.ChaCha20Poly1305KeyFormat.getDefaultInstance()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.ChaCha20Poly1305KeyFormat.parser(), serialized, serialization);
 
@@ -98,8 +97,7 @@ public final class ChaCha20Poly1305ProtoSerializationTest {
             com.google.crypto.tink.proto.ChaCha20Poly1305KeyFormat.getDefaultInstance()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.ChaCha20Poly1305KeyFormat.parser(), serialized, serialization);
 
@@ -119,8 +117,7 @@ public final class ChaCha20Poly1305ProtoSerializationTest {
             com.google.crypto.tink.proto.ChaCha20Poly1305KeyFormat.getDefaultInstance()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.ChaCha20Poly1305KeyFormat.parser(), serialized, serialization);
 

@@ -303,8 +303,7 @@ public class MlDsaProtoSerializationTest {
   public void serializeParseParameters_equal(
       @FromDataPoints("parametersSerializationTestPairList") ParametersSerializationTestPair pair)
       throws Exception {
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(pair.parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(pair.parameters);
     Parameters parsed = registry.parseParameters(pair.serialization);
 
     assertEqualWhenValueParsed(MlDsaKeyFormat.parser(), serialized, pair.serialization);

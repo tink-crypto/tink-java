@@ -304,17 +304,15 @@ public final class SerializationRegistry {
    * <p>This will look up a previously registered serializer for the requested {@code
    * SerializationT} class and the passed in key type, and then call serializeKey on the result.
    */
-  public <ParametersT extends Parameters, SerializationT extends Serialization>
-      SerializationT serializeParameters(
-          ParametersT parameters, Class<SerializationT> serializationClass)
-          throws GeneralSecurityException {
+  public <ParametersT extends Parameters> ProtoParametersSerialization serializeParameters(
+      ParametersT parameters) throws GeneralSecurityException {
     if (!parametersSerializerMap.containsKey(parameters.getClass())) {
       throw new GeneralSecurityException(
           "No Key Format serializer for " + parameters.getClass() + " available");
     }
     @SuppressWarnings("unchecked") // We know we only insert like this.
-    ParametersSerializer<ParametersT, SerializationT> serializer =
-        (ParametersSerializer<ParametersT, SerializationT>)
+    ParametersSerializer<ParametersT, ProtoParametersSerialization> serializer =
+        (ParametersSerializer<ParametersT, ProtoParametersSerialization>)
             parametersSerializerMap.get(parameters.getClass());
     return serializer.serializeParameters(parameters);
   }

@@ -286,7 +286,7 @@ public final class AesCmacProtoSerializationTest {
       @FromDataPoints("validParameters") ParametersWithSerialization pair) throws Exception {
 
     ProtoParametersSerialization serializedParameters =
-        registry.serializeParameters(pair.getParameters(), ProtoParametersSerialization.class);
+        registry.serializeParameters(pair.getParameters());
 
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.AesCmacKeyFormat.parser(),

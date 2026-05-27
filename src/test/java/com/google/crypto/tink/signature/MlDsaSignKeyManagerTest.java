@@ -24,7 +24,6 @@ import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
-import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.signature.MlDsaParameters.MlDsaInstance;
 import com.google.crypto.tink.signature.MlDsaParameters.Variant;
 import com.google.crypto.tink.util.Bytes;
@@ -55,8 +54,7 @@ public class MlDsaSignKeyManagerTest {
 
     MlDsaParameters parameters = MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.NO_PREFIX);
     Parameters parsedParameters =
-        registry.parseParameters(
-            registry.serializeParameters(parameters, ProtoParametersSerialization.class));
+        registry.parseParameters(registry.serializeParameters(parameters));
 
     assertThat(parsedParameters).isEqualTo(parameters);
   }

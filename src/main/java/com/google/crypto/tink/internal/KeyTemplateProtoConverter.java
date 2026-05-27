@@ -47,8 +47,7 @@ public final class KeyTemplateProtoConverter {
       return ((LegacyProtoParameters) parameters).getSerialization().getKeyTemplate();
     }
     ProtoParametersSerialization s =
-        MutableSerializationRegistry.globalInstance()
-            .serializeParameters(parameters, ProtoParametersSerialization.class);
+        MutableSerializationRegistry.globalInstance().serializeParameters(parameters);
     return s.getKeyTemplate();
   }
 

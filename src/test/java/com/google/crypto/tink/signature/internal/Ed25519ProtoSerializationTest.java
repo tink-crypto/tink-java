@@ -112,8 +112,7 @@ public final class Ed25519ProtoSerializationTest {
             OutputPrefixType.RAW,
             Ed25519KeyFormat.getDefaultInstance().toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(Ed25519KeyFormat.parser(), serialized, serialization);
 
     Parameters parsed = registry.parseParameters(serialization);
@@ -133,8 +132,7 @@ public final class Ed25519ProtoSerializationTest {
             variantsMap.getValue(),
             Ed25519KeyFormat.getDefaultInstance().toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(Ed25519KeyFormat.parser(), serialized, serialization);
 
     Parameters parsed = registry.parseParameters(serialization);

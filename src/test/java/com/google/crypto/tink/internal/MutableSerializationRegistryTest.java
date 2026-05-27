@@ -253,15 +253,9 @@ public final class MutableSerializationRegistryTest {
             registry.hasSerializerForParameters(
                 new TestParameters1(), ProtoParametersSerialization.class))
         .isTrue();
-    assertThat(
-            registry
-                .serializeParameters(new TestParameters1(), ProtoParametersSerialization.class)
-                .getTypeUrl())
+    assertThat(registry.serializeParameters(new TestParameters1()).getTypeUrl())
         .isEqualTo(TYPE_URL_1);
-    assertThat(
-            registry
-                .serializeParameters(new TestParameters2(), ProtoParametersSerialization.class)
-                .getTypeUrl())
+    assertThat(registry.serializeParameters(new TestParameters2()).getTypeUrl())
         .isEqualTo(TYPE_URL_2);
   }
 
@@ -273,10 +267,7 @@ public final class MutableSerializationRegistryTest {
                 new TestParameters1(), ProtoParametersSerialization.class))
         .isFalse();
     assertThrows(
-        GeneralSecurityException.class,
-        () ->
-            registry.serializeParameters(
-                new TestParameters1(), ProtoParametersSerialization.class));
+        GeneralSecurityException.class, () -> registry.serializeParameters(new TestParameters1()));
   }
 
   @Test

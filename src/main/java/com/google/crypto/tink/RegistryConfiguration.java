@@ -56,8 +56,7 @@ public class RegistryConfiguration {
     @Override
     public ByteString serializeParameters(Parameters parameters) throws GeneralSecurityException {
       ProtoParametersSerialization serialization =
-          MutableSerializationRegistry.globalInstance()
-              .serializeParameters(parameters, ProtoParametersSerialization.class);
+          MutableSerializationRegistry.globalInstance().serializeParameters(parameters);
       return serialization.getKeyTemplate().toByteString();
     }
 

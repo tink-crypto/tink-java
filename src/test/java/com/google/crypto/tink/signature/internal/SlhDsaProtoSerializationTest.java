@@ -139,8 +139,7 @@ public class SlhDsaProtoSerializationTest {
   public void serializeParseParameters_equal(
       @FromDataPoints("parametersSerializationTestPairList") ParametersSerializationTestPair pair)
       throws Exception {
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(pair.parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(pair.parameters);
     Parameters parsed = registry.parseParameters(pair.serialization);
 
     assertEqualWhenValueParsed(SlhDsaKeyFormat.parser(), serialized, pair.serialization);

@@ -175,8 +175,7 @@ public final class RsaSsaPkcs1ProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.RsaSsaPkcs1KeyFormat.parser(), serialized, serialization);
 
@@ -204,8 +203,7 @@ public final class RsaSsaPkcs1ProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.RsaSsaPkcs1KeyFormat.parser(), serialized, serialization);
 
@@ -233,8 +231,7 @@ public final class RsaSsaPkcs1ProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.RsaSsaPkcs1KeyFormat.parser(), serialized, serialization);
 
@@ -262,8 +259,7 @@ public final class RsaSsaPkcs1ProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized =
-        registry.serializeParameters(parameters, ProtoParametersSerialization.class);
+    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.RsaSsaPkcs1KeyFormat.parser(), serialized, serialization);
 

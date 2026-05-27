@@ -441,9 +441,7 @@ public final class SerializationRegistryTest {
             registry.hasSerializerForParameters(
                 new TestParameters1(), ProtoParametersSerialization.class))
         .isTrue();
-    assertThat(
-            registry.serializeParameters(new TestParameters1(), ProtoParametersSerialization.class))
-        .isNotNull();
+    assertThat(registry.serializeParameters(new TestParameters1())).isNotNull();
   }
 
   @Test
@@ -454,10 +452,7 @@ public final class SerializationRegistryTest {
                 new TestParameters1(), ProtoParametersSerialization.class))
         .isFalse();
     assertThrows(
-        GeneralSecurityException.class,
-        () ->
-            registry.serializeParameters(
-                new TestParameters1(), ProtoParametersSerialization.class));
+        GeneralSecurityException.class, () -> registry.serializeParameters(new TestParameters1()));
   }
 
   @Test
@@ -511,15 +506,9 @@ public final class SerializationRegistryTest {
                 ParametersSerializer.create(
                     SerializationRegistryTest::serializeParameters2ToProto, TestParameters2.class))
             .build();
-    assertThat(
-            registry
-                .serializeParameters(new TestParameters1(), ProtoParametersSerialization.class)
-                .getTypeUrl())
+    assertThat(registry.serializeParameters(new TestParameters1()).getTypeUrl())
         .isEqualTo(TYPE_URL_1);
-    assertThat(
-            registry
-                .serializeParameters(new TestParameters2(), ProtoParametersSerialization.class)
-                .getTypeUrl())
+    assertThat(registry.serializeParameters(new TestParameters2()).getTypeUrl())
         .isEqualTo(TYPE_URL_2);
   }
 
@@ -532,10 +521,7 @@ public final class SerializationRegistryTest {
                     SerializationRegistryTest::serializeParameters1ToProto, TestParameters1.class))
             .build();
     SerializationRegistry registry2 = new SerializationRegistry.Builder(registry).build();
-    assertThat(
-            registry2.serializeParameters(
-                new TestParameters1(), ProtoParametersSerialization.class))
-        .isNotNull();
+    assertThat(registry2.serializeParameters(new TestParameters1())).isNotNull();
   }
 
   @Test
@@ -547,15 +533,9 @@ public final class SerializationRegistryTest {
         ParametersSerializer.create(
             SerializationRegistryTest::serializeParameters1ToProto, TestParameters1.class));
     assertThrows(
-        GeneralSecurityException.class,
-        () ->
-            registry1.serializeParameters(
-                new TestParameters1(), ProtoParametersSerialization.class));
+        GeneralSecurityException.class, () -> registry1.serializeParameters(new TestParameters1()));
     assertThrows(
-        GeneralSecurityException.class,
-        () ->
-            registry2.serializeParameters(
-                new TestParameters1(), ProtoParametersSerialization.class));
+        GeneralSecurityException.class, () -> registry2.serializeParameters(new TestParameters1()));
   }
 
   // ====================================================================== Parameters parsing tests
