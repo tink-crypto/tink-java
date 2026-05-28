@@ -211,8 +211,20 @@ public final class PemKeyTypeTest {
   }
 
   @Test
+  public void readKey_mlDsa44PublicKey_shouldThrowUnsupportedOperationException() throws Exception {
+    BufferedReader reader = new BufferedReader(new StringReader("input"));
+    assertThrows(UnsupportedOperationException.class, () -> PemKeyType.ML_DSA_44.readKey(reader));
+  }
+
+  @Test
   public void readKey_mlDsa65PublicKey_shouldThrowUnsupportedOperationException() throws Exception {
     BufferedReader reader = new BufferedReader(new StringReader("input"));
     assertThrows(UnsupportedOperationException.class, () -> PemKeyType.ML_DSA_65.readKey(reader));
+  }
+
+  @Test
+  public void readKey_mlDsa87PublicKey_shouldThrowUnsupportedOperationException() throws Exception {
+    BufferedReader reader = new BufferedReader(new StringReader("input"));
+    assertThrows(UnsupportedOperationException.class, () -> PemKeyType.ML_DSA_87.readKey(reader));
   }
 }

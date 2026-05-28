@@ -256,6 +256,8 @@ public final class SignaturePemKeysetReader implements KeysetReader {
         return convertEcdsaPublicKey(pemKeyType, x509KeySpec);
       case ED25519:
         return convertEd25519PublicKey(x509KeySpec);
+      case ML_DSA_44:
+        return convertMlDsa44PublicKey(x509KeySpec);
       case ML_DSA_65:
         return convertMlDsa65PublicKey(x509KeySpec);
       case ML_DSA_87:
@@ -420,6 +422,40 @@ public final class SignaturePemKeysetReader implements KeysetReader {
       return null;
     }
     return Ed25519PublicKey.create(Bytes.copyFrom(keyValue));
+  }
+
+  private static final MlDsaParameters ML_DSA_44_PARAMS =
+      MlDsaParameters.create(
+          MlDsaParameters.MlDsaInstance.ML_DSA_44, MlDsaParameters.Variant.NO_PREFIX);
+
+  // RFC 9881 defines the ML-DSA-44 x509 public key encoding. This encoding always has the same
+  // preamble, followed by the raw public key value.
+  //
+  // 30 82 05 32: SubjectPublicKeyInfo SEQUENCE, 1330 bytes
+  // 30 0b:  AlgorithmIdentifier SEQUENCE, 11 bytes
+  // 06 09 60 86 48 01 65 03 04 03 11: algorithm OBJECT IDENTIFIER, OID for ML-DSA-44
+  // (2.16.840.1.101.3.4.3.17)
+  // 03 82 05 21: subjectPublicKey BIT STRING, 1313 bytes
+  // 00: Padding
+  private static final byte[] x509PreambleMlDsa44 =
+      Hex.decode("30820532300b06096086480165030403110382052100");
+
+  @Nullable
+  @AccessesPartialKey
+  static MlDsaPublicKey convertMlDsa44PublicKey(X509EncodedKeySpec keySpec)
+      throws GeneralSecurityException {
+    byte[] encodedKey = keySpec.getEncoded();
+    if (!Util.isPrefix(x509PreambleMlDsa44, encodedKey)) {
+      throw new GeneralSecurityException("is not a ML-DSA-44 public key");
+    }
+    byte[] keyValue = Arrays.copyOfRange(encodedKey, x509PreambleMlDsa44.length, encodedKey.length);
+    if (keyValue.length != 1312) {
+      throw new GeneralSecurityException("wrong key length");
+    }
+    return MlDsaPublicKey.builder()
+        .setParameters(ML_DSA_44_PARAMS)
+        .setSerializedPublicKey(Bytes.copyFrom(keyValue))
+        .build();
   }
 
   private static final MlDsaParameters ML_DSA_65_PARAMS =

@@ -849,6 +849,76 @@ public final class SignaturePemKeysetReaderTest {
     assertThat(handle.size()).isEqualTo(1);
   }
 
+  private static final String ML_DSA_44_PUBLIC_KEY_PEM =
+      "-----BEGIN PUBLIC KEY-----\n"
+          + "MIIFMjALBglghkgBZQMEAxEDggUhANeytHJUquDbReeTDUqY0sl9jxOX0Xidr6Fw\n"
+          + "JLMW6b7JT8mUbULxm3mnQTu6oz5xSctC7VEVaTrAQfrLmIretf4OHYYxGEmVtZLD\n"
+          + "l9IpTi4U+QqkFLo4JomaxD9MzKy8JumoMrlRGNXLQzy++WYLABOOCBf2HnYsonTD\n"
+          + "atVU6yKqwRYuSrAay6HjjE79j4C2WzM9D3LlXf5xzpweu5iJ58VhBsD9c4A6Kuz+\n"
+          + "r97XqjyyztpU0SvYzTanjPl1lDtHq9JeiArEUuV0LtHo0agq+oblkMdYwVrk0oQN\n"
+          + "kryhpQkPQElll/yn2LlRPxob2m6VCqqY3kZ1B9Sk9aTwWZIWWCw1cvYu2okFqzWB\n"
+          + "zwxKAnd6M+DKcpX9j0/20aCjp2g9ZfX19/xg2gI+gmxfkhRMAvfRuhB1mHVT6pNn\n"
+          + "/NdtmQt/qZzUWv24g21D5Fn1GH3wWEeXCaAepoNZNfpwRgmQzT3BukAbqUurHd5B\n"
+          + "rGerMxncrKBgSNTE7vJ+4TqcF9BTj0MPLWQtwkFWYN54h32NirxyUjl4wELkKF9D\n"
+          + "GYRsRBJiQpdoRMEOVWuiFbWnGeWdDGsqltOYWQcf3MLN51JKe+2uVOhbMY6FTo/i\n"
+          + "svPt+slxkSgnCq/R5QRMOk/a/Z/zH5B4S46ORZYUSg2vWGUR09mWK56pWvGXtOX8\n"
+          + "YPKx7RXeOlvvX4m9x52RBR2bKBbnT6VFMe/cHL501EiFf0drzVjyHAtlOzt2pOB2\n"
+          + "plWaMCcYVVzGP3SFmqurkl8COGHKjND3utsocfZ9VTJtdFETWtRfShumkRj7ssij\n"
+          + "DuyTku8/l3Bmya3VxxDMZHsVFNIX2VjHAXw+kP0gwE5nS5BIbpNwoxoAHTL0c5ee\n"
+          + "SQZ0nn5Hf6C3RQj4pfI3gxK4PCW9OIygsP/3R4uvQrcWZ+2qyXxGsSlkPlhuWwVa\n"
+          + "DCEZRtTzbmdb7Vhg+gQqMV2YJhZNapI3w1pfv0lUkKW9TfJIuVxKrneEtgVnMWas\n"
+          + "QkW1tLCCoJ6TI+YvIHjFt2eDRG3v1zatOjcC1JsImESQCmGDM5e8RBmzDXqXoLOH\n"
+          + "wZEUdMTUG1PjKpd6y28Op122W7OeWecB52lX3vby1EVZwxp3EitSBOO1whnxaIsU\n"
+          + "7QvAuAGz5ugtzUPpwOn0F0TNmBW9G8iCDYuxI/BPrNGxtoXdWisbjbvz7ZM2cPCV\n"
+          + "oYC08ZLQixC4+rvfzCskUY4y7qCl4MkEyoRHgAg/OwzS0Li2r2e8NVuUlAJdx7Cn\n"
+          + "j6gOOi2/61EyiFHWB4GY6Uk2Ua54fsAlH5Irow6fUd9iptcnhM890gU5MXbfoySl\n"
+          + "Er2Ulwo23TSlFKhnkfDrNvAUWwmrZGUbSgMTsplhGiocSIkWJ1mHaKMRQGC6RENI\n"
+          + "bfUVIqHOiLMJhcIW+ObtF43VZ7MEoNTK+6iCooNC8XqaomrljbYwCD0sNY/fVmw/\n"
+          + "XWKkKFZ7yeqM6VyqDzVHSwv6jzOaJQq0388gg76O77wQVeGP4VNw7ssmBWbYP/Br\n"
+          + "IRquxDyim1TM0A+IFaJGXvC0ZRXMfkHzEk8J7/9zkwmrWLKaFFmgC85QOOk4yWeP\n"
+          + "cusOTuX9quZtn4Vz/Jf8QrSVn0v4th14Qz6GsDNdbpGRxNi/SHs5BcEIz9asJLDO\n"
+          + "t9y3z1H4TQ7Wh7lerrHFM8BvDZcCPZKnCCWDe1m6bLfU5WsKh8IDhiro8xW6WSXo\n"
+          + "7e+meTaaIgJ2YVHxapZfn4Hs52zAcLVYaeTbl4TPBcgwsyQsgxI=\n"
+          + "-----END PUBLIC KEY-----\n";
+
+  private static final String ML_DSA_44_EXPECTED_BYTES_HEX =
+      "d7b2b47254aae0db45e7930d4a98d2c97d8f1397d1789dafa17024b316e9bec94fc9946d42"
+          + "f19b79a7413bbaa33e7149cb42ed5115693ac041facb988adeb5fe0e1d8631184995b592c3"
+          + "97d2294e2e14f90aa414ba3826899ac43f4cccacbc26e9a832b95118d5cb433cbef9660b00"
+          + "138e0817f61e762ca274c36ad554eb22aac1162e4ab01acba1e38c4efd8f80b65b333d0f72"
+          + "e55dfe71ce9c1ebb9889e7c56106c0fd73803a2aecfeafded7aa3cb2ceda54d12bd8cd36a7"
+          + "8cf975943b47abd25e880ac452e5742ed1e8d1a82afa86e590c758c15ae4d2840d92bca1a5"
+          + "090f40496597fca7d8b9513f1a1bda6e950aaa98de467507d4a4f5a4f0599216582c3572f6"
+          + "2eda8905ab3581cf0c4a02777a33e0ca7295fd8f4ff6d1a0a3a7683d65f5f5f7fc60da023e"
+          + "826c5f92144c02f7d1ba1075987553ea9367fcd76d990b7fa99cd45afdb8836d43e459f518"
+          + "7df058479709a01ea6835935fa70460990cd3dc1ba401ba94bab1dde41ac67ab3319dcaca0"
+          + "6048d4c4eef27ee13a9c17d0538f430f2d642dc2415660de78877d8d8abc72523978c042e4"
+          + "285f4319846c44126242976844c10e556ba215b5a719e59d0c6b2a96d39859071fdcc2cde7"
+          + "524a7bedae54e85b318e854e8fe2b2f3edfac9719128270aafd1e5044c3a4fdafd9ff31f90"
+          + "784b8e8e4596144a0daf586511d3d9962b9ea95af197b4e5fc60f2b1ed15de3a5bef5f89bd"
+          + "c79d91051d9b2816e74fa54531efdc1cbe74d448857f476bcd58f21c0b653b3b76a4e076a6"
+          + "559a302718555cc63f74859aabab925f023861ca8cd0f7badb2871f67d55326d7451135ad4"
+          + "5f4a1ba69118fbb2c8a30eec9392ef3f977066c9add5c710cc647b1514d217d958c7017c3e"
+          + "90fd20c04e674b90486e9370a31a001d32f473979e4906749e7e477fa0b74508f8a5f23783"
+          + "12b83c25bd388ca0b0fff7478baf42b71667edaac97c46b129643e586e5b055a0c211946d4"
+          + "f36e675bed5860fa042a315d9826164d6a9237c35a5fbf495490a5bd4df248b95c4aae7784"
+          + "b605673166ac4245b5b4b082a09e9323e62f2078c5b76783446defd736ad3a3702d49b0898"
+          + "44900a61833397bc4419b30d7a97a0b387c1911474c4d41b53e32a977acb6f0ea75db65bb3"
+          + "9e59e701e76957def6f2d44559c31a77122b5204e3b5c219f1688b14ed0bc0b801b3e6e82d"
+          + "cd43e9c0e9f41744cd9815bd1bc8820d8bb123f04facd1b1b685dd5a2b1b8dbbf3ed933670"
+          + "f095a180b4f192d08b10b8fabbdfcc2b24518e32eea0a5e0c904ca844780083f3b0cd2d0b8"
+          + "b6af67bc355b9494025dc7b0a78fa80e3a2dbfeb51328851d6078198e9493651ae787ec025"
+          + "1f922ba30e9f51df62a6d72784cf3dd205393176dfa324a512bd94970a36dd34a514a86791"
+          + "f0eb36f0145b09ab64651b4a0313b299611a2a1c48891627598768a3114060ba4443486df5"
+          + "1522a1ce88b30985c216f8e6ed178dd567b304a0d4cafba882a28342f17a9aa26ae58db630"
+          + "083d2c358fdf566c3f5d62a428567bc9ea8ce95caa0f35474b0bfa8f339a250ab4dfcf2083"
+          + "be8eefbc1055e18fe15370eecb260566d83ff06b211aaec43ca29b54ccd00f8815a2465ef0"
+          + "b46515cc7e41f3124f09efff739309ab58b29a1459a00bce5038e938c9678f72eb0e4ee5fd"
+          + "aae66d9f8573fc97fc42b4959f4bf8b61d78433e86b0335d6e9191c4d8bf487b3905c108cf"
+          + "d6ac24b0ceb7dcb7cf51f84d0ed687b95eaeb1c533c06f0d97023d92a70825837b59ba6cb7"
+          + "d4e56b0a87c203862ae8f315ba5925e8edefa679369a2202766151f16a965f9f81ece76cc0"
+          + "70b55869e4db9784cf05c830b3242c8312";
+
   // From:
   // https://datatracker.ietf.org/doc/html/rfc9881#name-example-public-keys
   private static final String ML_DSA_65_PUBLIC_KEY_PEM =
@@ -957,6 +1027,23 @@ public final class SignaturePemKeysetReaderTest {
           + "SfilR62HW5aowrKRDJMBMJo/kTilaTER9Vs8AJypR8Od/ILZjrHKpKnL6IX3hvqG\n"
           + "5VvgYiIvi6kKl0BzMmsxISrs4KNKYA==\n"
           + "-----END PUBLIC KEY-----\n";
+
+  @Test
+  public void read_oneMlDsa44PublicKey_shouldWork() throws Exception {
+    byte[] expectedKeyBytes = Hex.decode(ML_DSA_44_EXPECTED_BYTES_HEX);
+    assertThat(expectedKeyBytes.length * 8).isEqualTo(PemKeyType.ML_DSA_44.keySizeInBits);
+    MlDsaParameters expectedParameters = MlDsaParameters.create(
+          MlDsaParameters.MlDsaInstance.ML_DSA_44, MlDsaParameters.Variant.NO_PREFIX);
+
+    KeysetHandle handle =
+        SignaturePemKeysetReader.newBuilder()
+            .addPem(ML_DSA_44_PUBLIC_KEY_PEM, PemKeyType.ML_DSA_44)
+            .buildPublicKeysetHandle();
+    assertThat(handle.size()).isEqualTo(1);
+    MlDsaPublicKey publicKey = (MlDsaPublicKey) handle.getAt(0).getKey();
+    assertThat(publicKey.getParameters()).isEqualTo(expectedParameters);
+    assertThat(publicKey.getSerializedPublicKey().toByteArray()).isEqualTo(expectedKeyBytes);
+  }
 
   @Test
   public void read_oneMlDsa65PublicKey_shouldWork() throws Exception {
