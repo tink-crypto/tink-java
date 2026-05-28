@@ -33,7 +33,7 @@ import javax.annotation.Nullable;
  */
 public final class SerializationRegistry {
   // Maps the class of a key to a serializer for this key.
-  private final Map<Class<?>, KeySerializer<?, ?>> keySerializerMap;
+  private final Map<Class<?>, KeySerializer<?>> keySerializerMap;
   private final Map<ParserIndex, KeyParser<?>> keyParserMap;
   // Maps the class of a parameters to a serializer for these parameters.
   private final Map<Class<?>, ParametersSerializer<?, ?>> parametersSerializerMap;
@@ -41,7 +41,7 @@ public final class SerializationRegistry {
 
   /** Allows building SerializationRegistry objects. */
   public static final class Builder {
-    private final Map<Class<?>, KeySerializer<?, ?>> keySerializerMap;
+    private final Map<Class<?>, KeySerializer<?>> keySerializerMap;
     private final Map<ParserIndex, KeyParser<?>> keyParserMap;
     private final Map<Class<?>, ParametersSerializer<?, ?>> parametersSerializerMap;
     private final Map<ParserIndex, ParametersParser<?>> parametersParserMap;
@@ -69,10 +69,10 @@ public final class SerializationRegistry {
      * otherwise an exception is thrown.
      */
     @CanIgnoreReturnValue
-    public <KeyT extends Key, SerializationT extends Serialization> Builder registerKeySerializer(
-        KeySerializer<KeyT, SerializationT> serializer) throws GeneralSecurityException {
+    public <KeyT extends Key> Builder registerKeySerializer(KeySerializer<KeyT> serializer)
+        throws GeneralSecurityException {
       if (keySerializerMap.containsKey(serializer.getKeyClass())) {
-        KeySerializer<?, ?> existingSerializer = keySerializerMap.get(serializer.getKeyClass());
+        KeySerializer<?> existingSerializer = keySerializerMap.get(serializer.getKeyClass());
         if (!existingSerializer.equals(serializer) || !serializer.equals(existingSerializer)) {
           throw new GeneralSecurityException(
               "Attempt to register non-equal serializer for already existing object of type: "
@@ -239,7 +239,8 @@ public final class SerializationRegistry {
   /** Returns true if a parser for this {@code serializedKey} has been registered. */
   public <KeyT extends Key, SerializationT extends Serialization> boolean hasSerializerForKey(
       KeyT key, Class<SerializationT> serializationClass) {
-    return keySerializerMap.containsKey(key.getClass());
+    return keySerializerMap.containsKey(key.getClass())
+        && serializationClass.equals(ProtoKeySerialization.class);
   }
 
   /**
@@ -254,8 +255,7 @@ public final class SerializationRegistry {
       throw new GeneralSecurityException("No Key serializer for " + key.getClass() + " available");
     }
     @SuppressWarnings("unchecked") // We know we only insert like this.
-    KeySerializer<KeyT, ProtoKeySerialization> serializer =
-        (KeySerializer<KeyT, ProtoKeySerialization>) keySerializerMap.get(key.getClass());
+    KeySerializer<KeyT> serializer = (KeySerializer<KeyT>) keySerializerMap.get(key.getClass());
     return serializer.serializeKey(key, access);
   }
 

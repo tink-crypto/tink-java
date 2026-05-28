@@ -24,7 +24,6 @@ import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
 import com.google.crypto.tink.SecretKeyAccess;
-import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
@@ -56,14 +55,6 @@ public final class KeySerializerTest {
     }
   }
 
-  @Immutable
-  private static class ExampleSerialization implements Serialization {
-    @Override
-    public Bytes getObjectIdentifier() {
-      return Bytes.copyFrom(new byte[0]);
-    }
-  }
-
   private static ProtoKeySerialization serialize(ExampleKey k, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     SecretKeyAccess.requireAccess(access);
@@ -82,7 +73,7 @@ public final class KeySerializerTest {
 
   @Test
   public void createSerializer_serializeKey_works() throws Exception {
-    KeySerializer<ExampleKey, ProtoKeySerialization> serializer =
+    KeySerializer<ExampleKey> serializer =
         KeySerializer.create(KeySerializerTest::serialize, ExampleKey.class);
     assertThat(serializer.serializeKey(new ExampleKey(), InsecureSecretKeyAccess.get()))
         .isNotNull();
@@ -93,7 +84,7 @@ public final class KeySerializerTest {
 
   @Test
   public void createSerializer_classes_work() throws Exception {
-    KeySerializer<ExampleKey, ProtoKeySerialization> serializer =
+    KeySerializer<ExampleKey> serializer =
         KeySerializer.create(KeySerializerTest::serialize, ExampleKey.class);
     assertThat(serializer.getKeyClass()).isEqualTo(ExampleKey.class);
     assertThat(serializer.getSerializationClass()).isEqualTo(ProtoKeySerialization.class);

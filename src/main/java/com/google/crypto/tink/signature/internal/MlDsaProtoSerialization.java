@@ -64,15 +64,14 @@ public final class MlDsaProtoSerialization {
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
       ParametersParser.create(MlDsaProtoSerialization::parseParameters, PRIVATE_TYPE_URL_BYTES);
 
-  private static final KeySerializer<MlDsaPublicKey, ProtoKeySerialization> PUBLIC_KEY_SERIALIZER =
+  private static final KeySerializer<MlDsaPublicKey> PUBLIC_KEY_SERIALIZER =
       KeySerializer.create(MlDsaProtoSerialization::serializePublicKey, MlDsaPublicKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PUBLIC_KEY_PARSER =
       KeyParser.create(MlDsaProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL_BYTES);
 
-  private static final KeySerializer<MlDsaPrivateKey, ProtoKeySerialization>
-      PRIVATE_KEY_SERIALIZER =
-          KeySerializer.create(MlDsaProtoSerialization::serializePrivateKey, MlDsaPrivateKey.class);
+  private static final KeySerializer<MlDsaPrivateKey> PRIVATE_KEY_SERIALIZER =
+      KeySerializer.create(MlDsaProtoSerialization::serializePrivateKey, MlDsaPrivateKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PRIVATE_KEY_PARSER =
       KeyParser.create(MlDsaProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL_BYTES);

@@ -54,7 +54,7 @@ public final class AesEaxProtoSerialization {
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
       ParametersParser.create(AesEaxProtoSerialization::parseParameters, TYPE_URL_BYTES);
 
-  private static final KeySerializer<AesEaxKey, ProtoKeySerialization> KEY_SERIALIZER =
+  private static final KeySerializer<AesEaxKey> KEY_SERIALIZER =
       KeySerializer.create(AesEaxProtoSerialization::serializeKey, AesEaxKey.class);
 
   private static final KeyParser<ProtoKeySerialization> KEY_PARSER =

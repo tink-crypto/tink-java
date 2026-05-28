@@ -69,22 +69,18 @@ public final class JwtRsaSsaPkcs1ProtoSerialization {
           JwtRsaSsaPkcs1ProtoSerialization::parseParameters,
           PRIVATE_TYPE_URL_BYTES);
 
-  private static final KeySerializer<JwtRsaSsaPkcs1PublicKey, ProtoKeySerialization>
-      PUBLIC_KEY_SERIALIZER =
-          KeySerializer.create(
-              JwtRsaSsaPkcs1ProtoSerialization::serializePublicKey,
-              JwtRsaSsaPkcs1PublicKey.class);
+  private static final KeySerializer<JwtRsaSsaPkcs1PublicKey> PUBLIC_KEY_SERIALIZER =
+      KeySerializer.create(
+          JwtRsaSsaPkcs1ProtoSerialization::serializePublicKey, JwtRsaSsaPkcs1PublicKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PUBLIC_KEY_PARSER =
       KeyParser.create(
           JwtRsaSsaPkcs1ProtoSerialization::parsePublicKey,
           PUBLIC_TYPE_URL_BYTES);
 
-  private static final KeySerializer<JwtRsaSsaPkcs1PrivateKey, ProtoKeySerialization>
-      PRIVATE_KEY_SERIALIZER =
-          KeySerializer.create(
-              JwtRsaSsaPkcs1ProtoSerialization::serializePrivateKey,
-              JwtRsaSsaPkcs1PrivateKey.class);
+  private static final KeySerializer<JwtRsaSsaPkcs1PrivateKey> PRIVATE_KEY_SERIALIZER =
+      KeySerializer.create(
+          JwtRsaSsaPkcs1ProtoSerialization::serializePrivateKey, JwtRsaSsaPkcs1PrivateKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PRIVATE_KEY_PARSER =
       KeyParser.create(

@@ -65,18 +65,16 @@ public final class RsaSsaPssProtoSerialization {
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
       ParametersParser.create(RsaSsaPssProtoSerialization::parseParameters, PRIVATE_TYPE_URL_BYTES);
 
-  private static final KeySerializer<RsaSsaPssPublicKey, ProtoKeySerialization>
-      PUBLIC_KEY_SERIALIZER =
-          KeySerializer.create(
-              RsaSsaPssProtoSerialization::serializePublicKey, RsaSsaPssPublicKey.class);
+  private static final KeySerializer<RsaSsaPssPublicKey> PUBLIC_KEY_SERIALIZER =
+      KeySerializer.create(
+          RsaSsaPssProtoSerialization::serializePublicKey, RsaSsaPssPublicKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PUBLIC_KEY_PARSER =
       KeyParser.create(RsaSsaPssProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL_BYTES);
 
-  private static final KeySerializer<RsaSsaPssPrivateKey, ProtoKeySerialization>
-      PRIVATE_KEY_SERIALIZER =
-          KeySerializer.create(
-              RsaSsaPssProtoSerialization::serializePrivateKey, RsaSsaPssPrivateKey.class);
+  private static final KeySerializer<RsaSsaPssPrivateKey> PRIVATE_KEY_SERIALIZER =
+      KeySerializer.create(
+          RsaSsaPssProtoSerialization::serializePrivateKey, RsaSsaPssPrivateKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PRIVATE_KEY_PARSER =
       KeyParser.create(RsaSsaPssProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL_BYTES);

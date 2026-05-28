@@ -62,18 +62,14 @@ public final class Ed25519ProtoSerialization {
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
       ParametersParser.create(Ed25519ProtoSerialization::parseParameters, PRIVATE_TYPE_URL_BYTES);
 
-  private static final KeySerializer<Ed25519PublicKey, ProtoKeySerialization>
-      PUBLIC_KEY_SERIALIZER =
-          KeySerializer.create(
-              Ed25519ProtoSerialization::serializePublicKey, Ed25519PublicKey.class);
+  private static final KeySerializer<Ed25519PublicKey> PUBLIC_KEY_SERIALIZER =
+      KeySerializer.create(Ed25519ProtoSerialization::serializePublicKey, Ed25519PublicKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PUBLIC_KEY_PARSER =
       KeyParser.create(Ed25519ProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL_BYTES);
 
-  private static final KeySerializer<Ed25519PrivateKey, ProtoKeySerialization>
-      PRIVATE_KEY_SERIALIZER =
-          KeySerializer.create(
-              Ed25519ProtoSerialization::serializePrivateKey, Ed25519PrivateKey.class);
+  private static final KeySerializer<Ed25519PrivateKey> PRIVATE_KEY_SERIALIZER =
+      KeySerializer.create(Ed25519ProtoSerialization::serializePrivateKey, Ed25519PrivateKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PRIVATE_KEY_PARSER =
       KeyParser.create(Ed25519ProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL_BYTES);

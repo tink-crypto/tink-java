@@ -179,7 +179,7 @@ public final class SerializationRegistryTest {
 
   @Test
   public void test_registerSameSerializerTwice_works() throws Exception {
-    KeySerializer<TestKey1, ProtoKeySerialization> testSerializer =
+    KeySerializer<TestKey1> testSerializer =
         KeySerializer.create(SerializationRegistryTest::serializeKey1ToProto, TestKey1.class);
     SerializationRegistry unused = new SerializationRegistry.Builder()
         .registerKeySerializer(testSerializer)
@@ -189,9 +189,9 @@ public final class SerializationRegistryTest {
 
   @Test
   public void test_registerDifferentSerializerWithSameKeyType_throws() throws Exception {
-    KeySerializer<TestKey1, ProtoKeySerialization> testSerializer1 =
+    KeySerializer<TestKey1> testSerializer1 =
         KeySerializer.create(SerializationRegistryTest::serializeKey1ToProto, TestKey1.class);
-    KeySerializer<TestKey1, ProtoKeySerialization> testSerializer2 =
+    KeySerializer<TestKey1> testSerializer2 =
         KeySerializer.create(SerializationRegistryTest::serializeKey1ToProto, TestKey1.class);
     SerializationRegistry.Builder builder = new SerializationRegistry.Builder();
     builder.registerKeySerializer(testSerializer1);
@@ -202,9 +202,9 @@ public final class SerializationRegistryTest {
 
   @Test
   public void test_registerDifferentSerializerWithDifferentKeyType_works() throws Exception {
-    KeySerializer<TestKey1, ProtoKeySerialization> testSerializer1 =
+    KeySerializer<TestKey1> testSerializer1 =
         KeySerializer.create(SerializationRegistryTest::serializeKey1ToProto, TestKey1.class);
-    KeySerializer<TestKey2, ProtoKeySerialization> testSerializer2 =
+    KeySerializer<TestKey2> testSerializer2 =
         KeySerializer.create(SerializationRegistryTest::serializeKey2ToProto, TestKey2.class);
     SerializationRegistry unused = new SerializationRegistry.Builder()
         .registerKeySerializer(testSerializer1)

@@ -62,16 +62,14 @@ public final class SlhDsaProtoSerialization {
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
       ParametersParser.create(SlhDsaProtoSerialization::parseParameters, PRIVATE_TYPE_URL_BYTES);
 
-  private static final KeySerializer<SlhDsaPublicKey, ProtoKeySerialization> PUBLIC_KEY_SERIALIZER =
+  private static final KeySerializer<SlhDsaPublicKey> PUBLIC_KEY_SERIALIZER =
       KeySerializer.create(SlhDsaProtoSerialization::serializePublicKey, SlhDsaPublicKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PUBLIC_KEY_PARSER =
       KeyParser.create(SlhDsaProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL_BYTES);
 
-  private static final KeySerializer<SlhDsaPrivateKey, ProtoKeySerialization>
-      PRIVATE_KEY_SERIALIZER =
-          KeySerializer.create(
-              SlhDsaProtoSerialization::serializePrivateKey, SlhDsaPrivateKey.class);
+  private static final KeySerializer<SlhDsaPrivateKey> PRIVATE_KEY_SERIALIZER =
+      KeySerializer.create(SlhDsaProtoSerialization::serializePrivateKey, SlhDsaPrivateKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PRIVATE_KEY_PARSER =
       KeyParser.create(SlhDsaProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL_BYTES);

@@ -64,9 +64,8 @@ public final class MutableSerializationRegistry {
    * registered, this checks if they are the same. If they are, the call is ignored, otherwise an
    * exception is thrown, and the object is unchanged.
    */
-  public synchronized <KeyT extends Key, SerializationT extends Serialization>
-      void registerKeySerializer(KeySerializer<KeyT, SerializationT> serializer)
-          throws GeneralSecurityException {
+  public synchronized <KeyT extends Key> void registerKeySerializer(KeySerializer<KeyT> serializer)
+      throws GeneralSecurityException {
     SerializationRegistry newRegistry =
         new SerializationRegistry.Builder(registry.get()).registerKeySerializer(serializer).build();
     registry.set(newRegistry);

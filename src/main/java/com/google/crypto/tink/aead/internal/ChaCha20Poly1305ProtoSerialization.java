@@ -60,7 +60,7 @@ public final class ChaCha20Poly1305ProtoSerialization {
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
       ParametersParser.create(ChaCha20Poly1305ProtoSerialization::parseParameters, TYPE_URL_BYTES);
 
-  private static final KeySerializer<ChaCha20Poly1305Key, ProtoKeySerialization> KEY_SERIALIZER =
+  private static final KeySerializer<ChaCha20Poly1305Key> KEY_SERIALIZER =
       KeySerializer.create(
           ChaCha20Poly1305ProtoSerialization::serializeKey, ChaCha20Poly1305Key.class);
 

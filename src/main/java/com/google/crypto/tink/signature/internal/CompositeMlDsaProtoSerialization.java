@@ -92,22 +92,18 @@ public final class CompositeMlDsaProtoSerialization {
           CompositeMlDsaProtoSerialization::parseParameters,
           PRIVATE_TYPE_URL_BYTES);
 
-  private static final KeySerializer<CompositeMlDsaPublicKey, ProtoKeySerialization>
-      PUBLIC_KEY_SERIALIZER =
-          KeySerializer.create(
-              CompositeMlDsaProtoSerialization::serializePublicKey,
-              CompositeMlDsaPublicKey.class);
+  private static final KeySerializer<CompositeMlDsaPublicKey> PUBLIC_KEY_SERIALIZER =
+      KeySerializer.create(
+          CompositeMlDsaProtoSerialization::serializePublicKey, CompositeMlDsaPublicKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PUBLIC_KEY_PARSER =
       KeyParser.create(
           CompositeMlDsaProtoSerialization::parsePublicKey,
           PUBLIC_TYPE_URL_BYTES);
 
-  private static final KeySerializer<CompositeMlDsaPrivateKey, ProtoKeySerialization>
-      PRIVATE_KEY_SERIALIZER =
-          KeySerializer.create(
-              CompositeMlDsaProtoSerialization::serializePrivateKey,
-              CompositeMlDsaPrivateKey.class);
+  private static final KeySerializer<CompositeMlDsaPrivateKey> PRIVATE_KEY_SERIALIZER =
+      KeySerializer.create(
+          CompositeMlDsaProtoSerialization::serializePrivateKey, CompositeMlDsaPrivateKey.class);
 
   private static final KeyParser<ProtoKeySerialization> PRIVATE_KEY_PARSER =
       KeyParser.create(

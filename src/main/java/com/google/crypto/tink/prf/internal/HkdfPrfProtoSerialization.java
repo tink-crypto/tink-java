@@ -57,7 +57,7 @@ public final class HkdfPrfProtoSerialization {
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
       ParametersParser.create(HkdfPrfProtoSerialization::parseParameters, TYPE_URL_BYTES);
 
-  private static final KeySerializer<HkdfPrfKey, ProtoKeySerialization> KEY_SERIALIZER =
+  private static final KeySerializer<HkdfPrfKey> KEY_SERIALIZER =
       KeySerializer.create(HkdfPrfProtoSerialization::serializeKey, HkdfPrfKey.class);
 
   private static final KeyParser<ProtoKeySerialization> KEY_PARSER =

@@ -57,7 +57,7 @@ public final class AesCmacPrfProtoSerialization {
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
       ParametersParser.create(AesCmacPrfProtoSerialization::parseParameters, TYPE_URL_BYTES);
 
-  private static final KeySerializer<AesCmacPrfKey, ProtoKeySerialization> KEY_SERIALIZER =
+  private static final KeySerializer<AesCmacPrfKey> KEY_SERIALIZER =
       KeySerializer.create(AesCmacPrfProtoSerialization::serializeKey, AesCmacPrfKey.class);
 
   private static final KeyParser<ProtoKeySerialization> KEY_PARSER =

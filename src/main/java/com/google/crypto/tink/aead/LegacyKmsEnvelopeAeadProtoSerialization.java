@@ -60,11 +60,9 @@ public final class LegacyKmsEnvelopeAeadProtoSerialization {
       ParametersParser.create(
           LegacyKmsEnvelopeAeadProtoSerialization::parseParameters, TYPE_URL_BYTES);
 
-  private static final KeySerializer<LegacyKmsEnvelopeAeadKey, ProtoKeySerialization>
-      KEY_SERIALIZER =
-          KeySerializer.create(
-              LegacyKmsEnvelopeAeadProtoSerialization::serializeKey,
-              LegacyKmsEnvelopeAeadKey.class);
+  private static final KeySerializer<LegacyKmsEnvelopeAeadKey> KEY_SERIALIZER =
+      KeySerializer.create(
+          LegacyKmsEnvelopeAeadProtoSerialization::serializeKey, LegacyKmsEnvelopeAeadKey.class);
 
   private static final KeyParser<ProtoKeySerialization> KEY_PARSER =
       KeyParser.create(LegacyKmsEnvelopeAeadProtoSerialization::parseKey, TYPE_URL_BYTES);

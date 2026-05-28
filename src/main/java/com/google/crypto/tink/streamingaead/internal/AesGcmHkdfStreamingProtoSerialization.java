@@ -62,7 +62,7 @@ public final class AesGcmHkdfStreamingProtoSerialization {
       ParametersParser.create(
           AesGcmHkdfStreamingProtoSerialization::parseParameters, TYPE_URL_BYTES);
 
-  private static final KeySerializer<AesGcmHkdfStreamingKey, ProtoKeySerialization> KEY_SERIALIZER =
+  private static final KeySerializer<AesGcmHkdfStreamingKey> KEY_SERIALIZER =
       KeySerializer.create(
           AesGcmHkdfStreamingProtoSerialization::serializeKey, AesGcmHkdfStreamingKey.class);
 

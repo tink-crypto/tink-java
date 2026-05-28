@@ -49,7 +49,7 @@ final class LegacyKmsAeadProtoSerialization {
   private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
       ParametersParser.create(LegacyKmsAeadProtoSerialization::parseParameters, TYPE_URL_BYTES);
 
-  private static final KeySerializer<LegacyKmsAeadKey, ProtoKeySerialization> KEY_SERIALIZER =
+  private static final KeySerializer<LegacyKmsAeadKey> KEY_SERIALIZER =
       KeySerializer.create(LegacyKmsAeadProtoSerialization::serializeKey, LegacyKmsAeadKey.class);
 
   private static final KeyParser<ProtoKeySerialization> KEY_PARSER =

@@ -27,39 +27,33 @@ import javax.annotation.Nullable;
  * <p>This class should eventually be in Tinks public API -- however, it might still change before
  * that.
  */
-public abstract class KeySerializer<KeyT extends Key, SerializationT extends Serialization> {
+public abstract class KeySerializer<KeyT extends Key> {
   /**
    * A function which serializes a key.
    *
    * <p>This interface exists only so we have a type we can reference in {@link #create}. Users
    * should not use this directly; see the explanation in {@link #create}.
    */
-  public interface KeySerializationFunction<
-      KeyT extends Key, SerializationT extends Serialization> {
-    SerializationT serializeKey(KeyT key, @Nullable SecretKeyAccess access)
+  public interface KeySerializationFunction<KeyT extends Key> {
+    ProtoKeySerialization serializeKey(KeyT key, @Nullable SecretKeyAccess access)
         throws GeneralSecurityException;
   }
 
   private final Class<KeyT> keyClass;
-  private final Class<SerializationT> serializationClass;
 
-  private KeySerializer(Class<KeyT> keyClass, Class<SerializationT> serializationClass) {
-    if (!serializationClass.equals(ProtoKeySerialization.class)) {
-      throw new IllegalArgumentException("Only ProtoKeySerialization is supported");
-    }
+  private KeySerializer(Class<KeyT> keyClass) {
     this.keyClass = keyClass;
-    this.serializationClass = serializationClass;
   }
 
-  public abstract SerializationT serializeKey(KeyT key, @Nullable SecretKeyAccess access)
+  public abstract ProtoKeySerialization serializeKey(KeyT key, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException;
 
   public Class<KeyT> getKeyClass() {
     return keyClass;
   }
 
-  public Class<SerializationT> getSerializationClass() {
-    return serializationClass;
+  public Class<ProtoKeySerialization> getSerializationClass() {
+    return ProtoKeySerialization.class;
   }
 
   /**
@@ -79,7 +73,7 @@ public abstract class KeySerializer<KeyT extends Key, SerializationT extends Ser
    * This function can then be used to create a {@code KeySerializer}:
    *
    * <pre>{@code
-   * KeySerializer<MyKey, ProtoKeySerialization> serializer =
+   * KeySerializer<MyKey> serializer =
    *     KeySerializer.create(MyClass::serialize, MyKey.class);
    * }</pre>
    *
@@ -87,9 +81,9 @@ public abstract class KeySerializer<KeyT extends Key, SerializationT extends Ser
    * to {@code Object.equals}, and hence cannot be used to re-register a previously registered
    * object.
    */
-  public static <KeyT extends Key> KeySerializer<KeyT, ProtoKeySerialization> create(
-      KeySerializationFunction<KeyT, ProtoKeySerialization> function, Class<KeyT> keyClass) {
-    return new KeySerializer<KeyT, ProtoKeySerialization>(keyClass, ProtoKeySerialization.class) {
+  public static <KeyT extends Key> KeySerializer<KeyT> create(
+      KeySerializationFunction<KeyT> function, Class<KeyT> keyClass) {
+    return new KeySerializer<KeyT>(keyClass) {
       @Override
       public ProtoKeySerialization serializeKey(KeyT key, @Nullable SecretKeyAccess access)
           throws GeneralSecurityException {
