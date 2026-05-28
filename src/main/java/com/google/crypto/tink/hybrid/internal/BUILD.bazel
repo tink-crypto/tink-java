@@ -72,6 +72,7 @@ java_library(
         ":hpke_kem",
         ":hpke_kem_private_key",
         ":hpke_primitive_factory",
+        ":xwing_hpke_conscrypt_decrypt",
         "//src/main/java/com/google/crypto/tink:accesses_partial_key",
         "//src/main/java/com/google/crypto/tink:hybrid_decrypt",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
@@ -92,6 +93,7 @@ java_library(
         ":hpke_kdf",
         ":hpke_kem",
         ":hpke_primitive_factory",
+        ":xwing_hpke_conscrypt_encrypt",
         "//src/main/java/com/google/crypto/tink:accesses_partial_key",
         "//src/main/java/com/google/crypto/tink:hybrid_encrypt",
         "//src/main/java/com/google/crypto/tink/hybrid:hpke_parameters",
@@ -343,6 +345,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink/hybrid:hpke_private_key-android",
         "//src/main/java/com/google/crypto/tink/internal:util-android",
         "//src/main/java/com/google/crypto/tink/util:bytes-android",
+        "//src_android/main/java/com/google/crypto/tink/hybrid/internal:xwing_hpke_conscrypt_decrypt",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
@@ -361,6 +364,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink/hybrid:hpke_parameters-android",
         "//src/main/java/com/google/crypto/tink/hybrid:hpke_public_key-android",
         "//src/main/java/com/google/crypto/tink/util:bytes-android",
+        "//src_android/main/java/com/google/crypto/tink/hybrid/internal:xwing_hpke_conscrypt_encrypt",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
@@ -851,5 +855,41 @@ java_library(
         "//src/main/java/com/google/crypto/tink/internal:prefix_map",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper",
         "//src/main/java/com/google/crypto/tink/util:bytes",
+    ],
+)
+
+java_library(
+    name = "xwing_hpke_conscrypt_decrypt",
+    srcs = ["XWingHpkeConscryptDecrypt.java"],
+    deps = [
+        ":hpke_util",
+        ":xwing_hpke_conscrypt_encrypt",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:hybrid_decrypt",
+        "//src/main/java/com/google/crypto/tink:hybrid_encrypt",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink/hybrid:hpke_parameters",
+        "//src/main/java/com/google/crypto/tink/hybrid:hpke_private_key",
+        "//src/main/java/com/google/crypto/tink/internal:conscrypt_util",
+        "//src/main/java/com/google/crypto/tink/internal:util",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
+        "@maven//:org_conscrypt_conscrypt_openjdk_uber",
+    ],
+)
+
+java_library(
+    name = "xwing_hpke_conscrypt_encrypt",
+    srcs = ["XWingHpkeConscryptEncrypt.java"],
+    deps = [
+        ":hpke_util",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:hybrid_encrypt",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
+        "//src/main/java/com/google/crypto/tink/hybrid:hpke_parameters",
+        "//src/main/java/com/google/crypto/tink/hybrid:hpke_public_key",
+        "//src/main/java/com/google/crypto/tink/internal:conscrypt_util",
+        "//src/main/java/com/google/crypto/tink/subtle:bytes",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
+        "@maven//:org_conscrypt_conscrypt_openjdk_uber",
     ],
 )

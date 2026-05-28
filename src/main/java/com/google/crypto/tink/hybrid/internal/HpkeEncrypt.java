@@ -55,6 +55,9 @@ public final class HpkeEncrypt implements HybridEncrypt {
   @AccessesPartialKey
   public static HybridEncrypt create(HpkePublicKey key) throws GeneralSecurityException {
     HpkeParameters parameters = key.getParameters();
+    if (parameters.getKemId() == HpkeParameters.KemId.X_WING) {
+      return XWingHpkeConscryptEncrypt.create(key);
+    }
     return new HpkeEncrypt(
         key.getPublicKeyBytes(),
         HpkePrimitiveFactory.createKem(parameters.getKemId()),

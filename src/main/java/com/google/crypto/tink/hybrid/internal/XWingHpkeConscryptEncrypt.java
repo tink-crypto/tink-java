@@ -1,0 +1,48 @@
+// Copyright 2026 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+////////////////////////////////////////////////////////////////////////////////
+
+package com.google.crypto.tink.hybrid.internal;
+
+import com.google.crypto.tink.AccessesPartialKey;
+import com.google.crypto.tink.HybridEncrypt;
+import com.google.crypto.tink.hybrid.HpkePublicKey;
+import java.security.GeneralSecurityException;
+
+/** X-Wing HPKE encryption implementation using Conscrypt. */
+public final class XWingHpkeConscryptEncrypt implements HybridEncrypt {
+  // TODO(b/498579995): this is a stub; implement the class functionality in the coming changes.
+
+  public static boolean isSupported() {
+    return false;
+  }
+
+  /**
+   * Returns a new instance of {@link HybridEncrypt} for HPKE that uses Conscrypt.
+   */
+  @AccessesPartialKey
+  public static HybridEncrypt create(HpkePublicKey key)
+      throws GeneralSecurityException {
+    throw new GeneralSecurityException("Not implemented yet.");
+  }
+
+  private XWingHpkeConscryptEncrypt() {}
+
+  @Override
+  public byte[] encrypt(final byte[] plaintext, final byte[] contextInfo)
+      throws GeneralSecurityException {
+    throw new GeneralSecurityException("Not implemented yet.");
+  }
+}

@@ -212,6 +212,8 @@ gen_maven_jar_rules(
         "//src/main/java/com/google/crypto/tink/hybrid/internal:x25519",
         "//src/main/java/com/google/crypto/tink/hybrid/internal:x25519_conscrypt",
         "//src/main/java/com/google/crypto/tink/hybrid/internal:x25519_hpke_kem",
+        "//src/main/java/com/google/crypto/tink/hybrid/internal:xwing_hpke_conscrypt_decrypt",
+        "//src/main/java/com/google/crypto/tink/hybrid/internal:xwing_hpke_conscrypt_encrypt",
         "//src/main/java/com/google/crypto/tink/hybrid/subtle:rsa_kem",
         "//src/main/java/com/google/crypto/tink/hybrid/subtle:rsa_kem_hybrid_decrypt",
         "//src/main/java/com/google/crypto/tink/hybrid/subtle:rsa_kem_hybrid_encrypt",
@@ -1091,6 +1093,8 @@ gen_maven_jar_rules(
         "//src/main/java/com/google/crypto/tink/util:bytes-android",
         "//src/main/java/com/google/crypto/tink/util:secret_big_integer-android",
         "//src/main/java/com/google/crypto/tink/util:secret_bytes-android",
+        "//src_android/main/java/com/google/crypto/tink/hybrid/internal:xwing_hpke_conscrypt_decrypt",
+        "//src_android/main/java/com/google/crypto/tink/hybrid/internal:xwing_hpke_conscrypt_encrypt",
         "//src_android/main/java/com/google/crypto/tink/internal:build_dispatched_code",
     ],
 )

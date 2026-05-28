@@ -99,6 +99,9 @@ public final class HpkeDecrypt implements HybridDecrypt {
 
   public static HybridDecrypt create(HpkePrivateKey privateKey) throws GeneralSecurityException {
     HpkeParameters parameters = privateKey.getParameters();
+    if (parameters.getKemId() == HpkeParameters.KemId.X_WING) {
+      return XWingHpkeConscryptDecrypt.create(privateKey);
+    }
     HpkeKem kem = HpkePrimitiveFactory.createKem(parameters.getKemId());
     HpkeKdf kdf = HpkePrimitiveFactory.createKdf(parameters.getKdfId());
     HpkeAead aead = HpkePrimitiveFactory.createAead(parameters.getAeadId());

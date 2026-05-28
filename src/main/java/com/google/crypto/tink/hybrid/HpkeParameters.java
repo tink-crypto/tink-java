@@ -83,7 +83,7 @@ public final class HpkeParameters extends HybridParameters {
     public static final KemId DHKEM_X25519_HKDF_SHA256 =
         new KemId("DHKEM_X25519_HKDF_SHA256", 0x20);
 
-    public static final KemId X_WING = new KemId("X_WING", 0x647a);
+    public static final KemId X_WING = new KemId("XWING", 0x647a);
 
     private KemId(String name, int value) {
       super(name, value);

@@ -1,0 +1,25 @@
+load("@build_bazel_rules_android//android:rules.bzl", "android_library")
+
+licenses(["notice"])
+
+package(default_visibility = ["//:__subpackages__"])
+
+android_library(
+    name = "xwing_hpke_conscrypt_encrypt",
+    srcs = ["XWingHpkeConscryptEncrypt.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
+        "//src/main/java/com/google/crypto/tink:hybrid_encrypt-android",
+        "//src/main/java/com/google/crypto/tink/hybrid:hpke_public_key-android",
+    ],
+)
+
+android_library(
+    name = "xwing_hpke_conscrypt_decrypt",
+    srcs = ["XWingHpkeConscryptDecrypt.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
+        "//src/main/java/com/google/crypto/tink:hybrid_decrypt-android",
+        "//src/main/java/com/google/crypto/tink/hybrid:hpke_private_key-android",
+    ],
+)
