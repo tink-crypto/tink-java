@@ -1,0 +1,24 @@
+licenses(["notice"])
+
+java_test(
+    name = "Ed25519VerifierTest",
+    size = "small",
+    srcs = ["Ed25519VerifierTest.java"],
+    data = ["//third_party/wycheproof:testvectors_v1"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink:public_key_verify",
+        "//src/main/java/com/google/crypto/tink/signature:ed25519_private_key",
+        "//src/main/java/com/google/crypto/tink/signature:ed25519_public_key",
+        "//src/main/java/com/google/crypto/tink/signature/internal/testing:ed25519_test_util",
+        "//src/main/java/com/google/crypto/tink/signature/internal/testing:signature_test_vector",
+        "//src/main/java/com/google/crypto/tink/signature/subtle:ed25519_verifier",
+        "//src/main/java/com/google/crypto/tink/subtle:bytes",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "//src/main/java/com/google/crypto/tink/testing:wycheproof_test_util",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
+        "@maven//:com_google_code_gson_gson",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
