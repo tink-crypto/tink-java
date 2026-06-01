@@ -42,7 +42,7 @@ public final class X25519ConscryptTest {
 
   @BeforeClass
   public static void addConscrypt() throws Exception {
-    if (!Util.isAndroid() && Conscrypt.isAvailable()) {
+    if (!Util.isAndroid()) {
       Security.addProvider(Conscrypt.newProvider());
     }
   }
@@ -51,19 +51,8 @@ public final class X25519ConscryptTest {
     if (Util.isAndroid()) {
       return Util.getAndroidApiLevel() >= 31;
     }
-    // Conscrypt XDH was added in https://github.com/google/conscrypt/pull/1156 which is not in
-    // 2.5.3 -- it will probably be added in 2.6.0.
-    if (Conscrypt.version() == null) {
-      // Google3 version.
-      return true;
-    }
-    if (Conscrypt.version().major() >= 3) {
-      return true;
-    }
-    if (Conscrypt.version().major() >= 2 && Conscrypt.version().minor() >= 6) {
-      return true;
-    }
-    return false;
+    // We expect Conscrypt to be new enough to support X25519.
+    return true;
   }
 
   @Test

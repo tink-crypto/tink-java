@@ -85,7 +85,7 @@
     <error_prone_annotations.version>2.41.0</error_prone_annotations.version>
     <google-http-client.version>1.43.3</google-http-client.version>
     <protobuf-java.version>4.33.0</protobuf-java.version>
-    <conscrypt.version>2.5.2</conscrypt.version>
+    <conscrypt.version>2.6-alpha2</conscrypt.version>
   </properties>
 
   <dependencies>

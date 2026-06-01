@@ -20,7 +20,7 @@ maven.install(
         "com.google.protobuf:protobuf-java:4.33.0",
         "com.google.protobuf:protobuf-javalite:4.33.0",
         "androidx.annotation:annotation:1.8.2",
-        "org.conscrypt:conscrypt-openjdk-uber:2.5.2",
+        "org.conscrypt:conscrypt-openjdk-uber:2.6-alpha2",
         "org.pantsbuild:jarjar:1.7.2",
         "org.ow2.asm:asm-commons:7.0",
         "androidx.test:monitor:1.7.2",

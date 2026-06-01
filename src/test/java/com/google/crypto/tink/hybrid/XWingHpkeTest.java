@@ -630,8 +630,9 @@ public final class XWingHpkeTest {
     // TODO(b/498579995): Remove this assume once the new version of Conscrypt is released in the
     // open-source.
     Assume.assumeTrue(hasXWingSupport());
-
-    assertThat(XWingHpkeConscryptEncrypt.isSupported()).isTrue();
+    // TODO(b/498579995): Currently, we don't support X-Wing HPKE open-source. Remove this once
+    // we do support it.
+    Assume.assumeTrue(XWingHpkeConscryptEncrypt.isSupported());
 
     HybridEncrypt encrypter =
         XWingHpkeConscryptEncrypt.create(HPKE_NO_PREFIX_PRIVATE_KEY.getPublicKey());
