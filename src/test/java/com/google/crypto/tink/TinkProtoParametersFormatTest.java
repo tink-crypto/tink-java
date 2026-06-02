@@ -121,7 +121,12 @@ public final class TinkProtoParametersFormatTest {
     Parameters parsed = TinkProtoParametersFormat.parse(template.toByteArray());
 
     LegacyProtoParameters expected =
-        new LegacyProtoParameters(ProtoParametersSerialization.create(template));
+        new LegacyProtoParameters(
+            ProtoParametersSerialization.create(
+                template.getTypeUrl(),
+                com.google.crypto.tink.internal.ProtoConversions.fromProto(
+                    template.getOutputPrefixType()),
+                template.getValue()));
 
     assertThat(parsed).isEqualTo(expected);
   }
@@ -136,7 +141,12 @@ public final class TinkProtoParametersFormatTest {
             .setTypeUrl("SomeInvalidTypeURL")
             .build();
     LegacyProtoParameters legacyParameters =
-        new LegacyProtoParameters(ProtoParametersSerialization.create(template));
+        new LegacyProtoParameters(
+            ProtoParametersSerialization.create(
+                template.getTypeUrl(),
+                com.google.crypto.tink.internal.ProtoConversions.fromProto(
+                    template.getOutputPrefixType()),
+                template.getValue()));
 
     byte[] serialized = TinkProtoParametersFormat.serialize(legacyParameters);
 

@@ -27,7 +27,6 @@ import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ParametersSerializer;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.proto.AesGcmKeyFormat;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import org.junit.BeforeClass;
@@ -90,12 +89,11 @@ public final class KeyTemplateTest {
             .toParameters();
     assertThat(p).isInstanceOf(LegacyProtoParameters.class);
     LegacyProtoParameters parameters = (LegacyProtoParameters) p;
-    assertThat(parameters.getSerialization().getKeyTemplate().getTypeUrl())
-        .isEqualTo("nonexistenttypeurl");
-    assertThat(parameters.getSerialization().getKeyTemplate().getValue())
+    assertThat(parameters.getSerialization().getTypeUrl()).isEqualTo("nonexistenttypeurl");
+    assertThat(parameters.getSerialization().getValue())
         .isEqualTo(ByteString.copyFrom(new byte[] {1}));
-    assertThat(parameters.getSerialization().getKeyTemplate().getOutputPrefixType())
-        .isEqualTo(OutputPrefixType.TINK);
+    assertThat(parameters.getSerialization().getOutputPrefixType())
+        .isEqualTo(ProtoKeySerialization.OutputPrefixType.TINK);
   }
 
   @Test
@@ -131,7 +129,9 @@ public final class KeyTemplateTest {
           ParametersSerializer.create(
               (ParametersSubclass p) ->
                   ProtoParametersSerialization.create(
-                      "sometypeurl", OutputPrefixType.RAW, AesGcmKeyFormat.getDefaultInstance()),
+                      "sometypeurl",
+                      ProtoKeySerialization.OutputPrefixType.RAW,
+                      AesGcmKeyFormat.getDefaultInstance().toByteString()),
               ParametersSubclass.class);
 
   @Test
