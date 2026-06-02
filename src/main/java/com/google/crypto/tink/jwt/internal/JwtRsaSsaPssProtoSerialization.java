@@ -217,16 +217,16 @@ public final class JwtRsaSsaPssProtoSerialization {
 
   private static JwtRsaSsaPssParameters parseParameters(
       ProtoParametersSerialization serialization) throws GeneralSecurityException {
-    if (!serialization.getKeyTemplate().getTypeUrl().equals(PRIVATE_TYPE_URL)) {
+    if (!serialization.getTypeUrl().equals(PRIVATE_TYPE_URL)) {
       throw new IllegalArgumentException(
           "Wrong type URL in call to JwtRsaSsaPssProtoSerialization.parseParameters: "
-              + serialization.getKeyTemplate().getTypeUrl());
+              + serialization.getTypeUrl());
     }
     com.google.crypto.tink.proto.JwtRsaSsaPssKeyFormat format;
     try {
       format =
           com.google.crypto.tink.proto.JwtRsaSsaPssKeyFormat.parseFrom(
-              serialization.getKeyTemplate().getValue(), ExtensionRegistryLite.getEmptyRegistry());
+              serialization.getValue(), ExtensionRegistryLite.getEmptyRegistry());
     } catch (InvalidProtocolBufferException e) {
       throw new GeneralSecurityException("Parsing JwtRsaSsaPssParameters failed: ", e);
     }
