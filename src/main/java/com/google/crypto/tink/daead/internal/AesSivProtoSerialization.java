@@ -130,16 +130,16 @@ public final class AesSivProtoSerialization {
 
   private static AesSivParameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
-    if (!serialization.getKeyTemplate().getTypeUrl().equals(TYPE_URL)) {
+    if (!serialization.getTypeUrl().equals(TYPE_URL)) {
       throw new IllegalArgumentException(
           "Wrong type URL in call to AesSivParameters.parseParameters: "
-              + serialization.getKeyTemplate().getTypeUrl());
+              + serialization.getTypeUrl());
     }
     com.google.crypto.tink.proto.AesSivKeyFormat format;
     try {
       format =
           com.google.crypto.tink.proto.AesSivKeyFormat.parseFrom(
-              serialization.getKeyTemplate().getValue(), ExtensionRegistryLite.getEmptyRegistry());
+              serialization.getValue(), ExtensionRegistryLite.getEmptyRegistry());
       if (format.getVersion() != 0) {
         throw new GeneralSecurityException("Only version 0 keys are accepted");
       }

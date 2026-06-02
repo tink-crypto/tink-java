@@ -322,7 +322,6 @@ java_test(
     srcs = ["HpkeProtoSerializationTest.java"],
     deps = [
         "//proto:hpke_java_proto",
-        "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink:parameters",

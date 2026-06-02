@@ -33,7 +33,6 @@ import com.google.crypto.tink.proto.HpkeKdf;
 import com.google.crypto.tink.proto.HpkeKem;
 import com.google.crypto.tink.proto.HpkeKeyFormat;
 import com.google.crypto.tink.proto.HpkeParams;
-import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.subtle.Random;
 import com.google.crypto.tink.testing.TestUtil;
@@ -602,11 +601,9 @@ public final class HpkeProtoSerializationTest {
         // Proto messages start with a VarInt, which always ends with a byte with most
         // significant bit unset. 0x80 is hence invalid.
         ProtoParametersSerialization.create(
-            KeyTemplate.newBuilder()
-                .setTypeUrl(PRIVATE_TYPE_URL)
-                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
-                .setValue(ByteString.copyFrom(new byte[] {(byte) 0x80}))
-                .build()),
+            PRIVATE_TYPE_URL,
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW,
+            ByteString.copyFrom(new byte[] {(byte) 0x80})),
       };
     } catch (GeneralSecurityException e) {
       throw new RuntimeException(e);

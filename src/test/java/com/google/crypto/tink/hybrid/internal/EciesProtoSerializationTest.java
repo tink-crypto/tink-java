@@ -210,10 +210,8 @@ public final class EciesProtoSerializationTest {
             PRIVATE_TYPE_URL, variantTuple.outputPrefixType, format.toByteString());
 
     ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
-    assertThat(serialized.getKeyTemplate().getTypeUrl())
-        .isEqualTo(serialization.getKeyTemplate().getTypeUrl());
-    assertThat(serialized.getKeyTemplate().getOutputPrefixType())
-        .isEqualTo(serialization.getKeyTemplate().getOutputPrefixType());
+    assertThat(serialized.getTypeUrl()).isEqualTo(serialization.getTypeUrl());
+    assertThat(serialized.getOutputPrefixType()).isEqualTo(serialization.getOutputPrefixType());
 
     Parameters parsed = registry.parseParameters(serialization);
     assertThat(parsed).isEqualTo(parameters);
@@ -244,10 +242,8 @@ public final class EciesProtoSerializationTest {
             PRIVATE_TYPE_URL, OutputPrefixType.RAW, format.toByteString());
 
     ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
-    assertThat(serialized.getKeyTemplate().getTypeUrl())
-        .isEqualTo(serialization.getKeyTemplate().getTypeUrl());
-    assertThat(serialized.getKeyTemplate().getOutputPrefixType())
-        .isEqualTo(serialization.getKeyTemplate().getOutputPrefixType());
+    assertThat(serialized.getTypeUrl()).isEqualTo(serialization.getTypeUrl());
+    assertThat(serialized.getOutputPrefixType()).isEqualTo(serialization.getOutputPrefixType());
 
     Parameters parsed = registry.parseParameters(serialization);
     assertThat(parsed).isEqualTo(parameters);
@@ -390,11 +386,9 @@ public final class EciesProtoSerializationTest {
         // Proto messages start with a VarInt, which always ends with a byte with most
         // significant bit unset. 0x80 is hence invalid.
         ProtoParametersSerialization.create(
-            KeyTemplate.newBuilder()
-                .setTypeUrl(PRIVATE_TYPE_URL)
-                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
-                .setValue(ByteString.copyFrom(new byte[] {(byte) 0x80}))
-                .build()),
+            PRIVATE_TYPE_URL,
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW,
+            ByteString.copyFrom(new byte[] {(byte) 0x80})),
       };
     } catch (GeneralSecurityException e) {
       throw new RuntimeException(e);
