@@ -18,6 +18,7 @@ package com.google.crypto.tink;
 
 import com.google.crypto.tink.internal.LegacyProtoParameters;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
+import com.google.crypto.tink.internal.ProtoConversions;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.internal.TinkBugException;
 import com.google.errorprone.annotations.Immutable;
@@ -134,12 +135,17 @@ public final class KeyTemplate {
     if (kt != null) {
       return kt;
     }
+    ProtoParametersSerialization s;
     if (parameters instanceof LegacyProtoParameters) {
-      return ((LegacyProtoParameters) parameters).getSerialization().getKeyTemplate();
+      s = ((LegacyProtoParameters) parameters).getSerialization();
+    } else {
+      s = MutableSerializationRegistry.globalInstance().serializeParameters(parameters);
     }
-    ProtoParametersSerialization s =
-        MutableSerializationRegistry.globalInstance().serializeParameters(parameters);
-    return s.getKeyTemplate();
+    return com.google.crypto.tink.proto.KeyTemplate.newBuilder()
+        .setTypeUrl(s.getTypeUrl())
+        .setValue(s.getValue())
+        .setOutputPrefixType(ProtoConversions.toProto(s.getOutputPrefixType()))
+        .build();
   }
 
   /**
