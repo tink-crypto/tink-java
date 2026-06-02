@@ -188,16 +188,16 @@ public final class Ed25519ProtoSerialization {
 
   private static Ed25519Parameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
-    if (!serialization.getKeyTemplate().getTypeUrl().equals(PRIVATE_TYPE_URL)) {
+    if (!serialization.getTypeUrl().equals(PRIVATE_TYPE_URL)) {
       throw new IllegalArgumentException(
           "Wrong type URL in call to Ed25519ProtoSerialization.parseParameters: "
-              + serialization.getKeyTemplate().getTypeUrl());
+              + serialization.getTypeUrl());
     }
-    // Check that serialization.getKeyTemplate().getValue() is a proto-encoded string of version 0.
+    // Check that serialization.getValue() is a proto-encoded string of version 0.
     try {
       Ed25519KeyFormat format =
           Ed25519KeyFormat.parseFrom(
-              serialization.getKeyTemplate().getValue(), ExtensionRegistryLite.getEmptyRegistry());
+              serialization.getValue(), ExtensionRegistryLite.getEmptyRegistry());
       if (format.getVersion() != 0) {
         throw new GeneralSecurityException("Only version 0 keys are accepted");
       }

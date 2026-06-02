@@ -32,7 +32,6 @@ import com.google.crypto.tink.proto.EcdsaParams;
 import com.google.crypto.tink.proto.EcdsaSignatureEncoding;
 import com.google.crypto.tink.proto.EllipticCurveType;
 import com.google.crypto.tink.proto.HashType;
-import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.signature.EcdsaParameters;
 import com.google.crypto.tink.signature.EcdsaPrivateKey;
 import com.google.crypto.tink.signature.EcdsaPublicKey;
@@ -543,11 +542,9 @@ public final class EcdsaProtoSerializationTest {
         // Proto messages start with a VarInt, which always ends with a byte with most
         // significant bit unset. 0x80 is hence invalid.
         ProtoParametersSerialization.create(
-            KeyTemplate.newBuilder()
-                .setTypeUrl(PRIVATE_TYPE_URL)
-                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
-                .setValue(ByteString.copyFrom(new byte[] {(byte) 0x80}))
-                .build()),
+            PRIVATE_TYPE_URL,
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW,
+            ByteString.copyFrom(new byte[] {(byte) 0x80})),
       };
     } catch (GeneralSecurityException e) {
       throw new RuntimeException(e);

@@ -280,16 +280,16 @@ public final class EcdsaProtoSerialization {
 
   private static EcdsaParameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
-    if (!serialization.getKeyTemplate().getTypeUrl().equals(PRIVATE_TYPE_URL)) {
+    if (!serialization.getTypeUrl().equals(PRIVATE_TYPE_URL)) {
       throw new IllegalArgumentException(
           "Wrong type URL in call to EcdsaProtoSerialization.parseParameters: "
-              + serialization.getKeyTemplate().getTypeUrl());
+              + serialization.getTypeUrl());
     }
     com.google.crypto.tink.proto.EcdsaKeyFormat format;
     try {
       format =
           com.google.crypto.tink.proto.EcdsaKeyFormat.parseFrom(
-              serialization.getKeyTemplate().getValue(), ExtensionRegistryLite.getEmptyRegistry());
+              serialization.getValue(), ExtensionRegistryLite.getEmptyRegistry());
     } catch (InvalidProtocolBufferException e) {
       throw new GeneralSecurityException("Parsing EcdsaParameters failed: ", e);
     }

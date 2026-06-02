@@ -29,7 +29,6 @@ import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
-import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.proto.SlhDsaKeyFormat;
 import com.google.crypto.tink.proto.SlhDsaParams;
 import com.google.crypto.tink.signature.SlhDsaParameters;
@@ -376,11 +375,9 @@ public class SlhDsaProtoSerializationTest {
                   .toByteString()),
           // Invalid proto serialization
           ProtoParametersSerialization.create(
-              KeyTemplate.newBuilder()
-                  .setTypeUrl(PRIVATE_TYPE_URL)
-                  .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
-                  .setValue(ByteString.copyFrom(new byte[] {(byte) 0x80}))
-                  .build()),
+              PRIVATE_TYPE_URL,
+              com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW,
+              ByteString.copyFrom(new byte[] {(byte) 0x80})),
           // Invalid type url (which will cause the wrong parser being invoked, and that parser will
           // not accept this proto)
           ProtoParametersSerialization.create(

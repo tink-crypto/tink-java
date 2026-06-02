@@ -495,7 +495,6 @@ java_test(
         "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_public_key",
         "//src/main/java/com/google/crypto/tink/subtle:base64",
         "//src/main/java/com/google/crypto/tink/subtle:hex",
-        "//src/main/java/com/google/crypto/tink/subtle:subtle_util_cluster",
         "//src/main/java/com/google/crypto/tink/util:bytes",
         "//src/main/java/com/google/crypto/tink/util:secret_big_integer",
         "//src/main/java/com/google/crypto/tink/util:secret_bytes",

@@ -317,16 +317,16 @@ public final class CompositeMlDsaProtoSerialization {
 
   private static CompositeMlDsaParameters parseParameters(
       ProtoParametersSerialization serialization) throws GeneralSecurityException {
-    if (!serialization.getKeyTemplate().getTypeUrl().equals(PRIVATE_TYPE_URL)) {
+    if (!serialization.getTypeUrl().equals(PRIVATE_TYPE_URL)) {
       throw new IllegalArgumentException(
           "Wrong type URL in call to CompositeMlDsaProtoSerialization.parseParameters: "
-              + serialization.getKeyTemplate().getTypeUrl());
+              + serialization.getTypeUrl());
     }
     CompositeMlDsaKeyFormat format;
     try {
       format =
           CompositeMlDsaKeyFormat.parseFrom(
-              serialization.getKeyTemplate().getValue(), ExtensionRegistryLite.getEmptyRegistry());
+              serialization.getValue(), ExtensionRegistryLite.getEmptyRegistry());
     } catch (InvalidProtocolBufferException e) {
       throw new GeneralSecurityException("Parsing CompositeMlDsaParameters failed: ", e);
     }

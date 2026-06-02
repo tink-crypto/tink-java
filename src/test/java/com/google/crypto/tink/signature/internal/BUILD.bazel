@@ -19,7 +19,6 @@ java_test(
     deps = [
         "//proto:common_java_proto",
         "//proto:ecdsa_java_proto",
-        "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink:parameters",
@@ -157,7 +156,6 @@ java_test(
     srcs = ["Ed25519ProtoSerializationTest.java"],
     deps = [
         "//proto:ed25519_java_proto",
-        "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink:parameters",
@@ -505,7 +503,6 @@ java_test(
     srcs = ["MlDsaProtoSerializationTest.java"],
     deps = [
         "//proto:ml_dsa_java_proto",
-        "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink:parameters",
@@ -533,7 +530,6 @@ java_test(
     srcs = ["SlhDsaProtoSerializationTest.java"],
     deps = [
         "//proto:slh_dsa_java_proto",
-        "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink:parameters",

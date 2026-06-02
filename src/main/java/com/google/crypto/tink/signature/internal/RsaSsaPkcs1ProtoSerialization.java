@@ -202,16 +202,16 @@ public final class RsaSsaPkcs1ProtoSerialization {
 
   private static RsaSsaPkcs1Parameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
-    if (!serialization.getKeyTemplate().getTypeUrl().equals(PRIVATE_TYPE_URL)) {
+    if (!serialization.getTypeUrl().equals(PRIVATE_TYPE_URL)) {
       throw new IllegalArgumentException(
           "Wrong type URL in call to RsaSsaPkcs1ProtoSerialization.parseParameters: "
-              + serialization.getKeyTemplate().getTypeUrl());
+              + serialization.getTypeUrl());
     }
     com.google.crypto.tink.proto.RsaSsaPkcs1KeyFormat format;
     try {
       format =
           com.google.crypto.tink.proto.RsaSsaPkcs1KeyFormat.parseFrom(
-              serialization.getKeyTemplate().getValue(), ExtensionRegistryLite.getEmptyRegistry());
+              serialization.getValue(), ExtensionRegistryLite.getEmptyRegistry());
     } catch (InvalidProtocolBufferException e) {
       throw new GeneralSecurityException("Parsing RsaSsaPkcs1Parameters failed: ", e);
     }
