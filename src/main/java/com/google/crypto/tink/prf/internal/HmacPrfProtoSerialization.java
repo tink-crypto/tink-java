@@ -138,16 +138,16 @@ public final class HmacPrfProtoSerialization {
 
   private static HmacPrfParameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
-    if (!serialization.getKeyTemplate().getTypeUrl().equals(TYPE_URL)) {
+    if (!serialization.getTypeUrl().equals(TYPE_URL)) {
       throw new IllegalArgumentException(
           "Wrong type URL in call to HmacPrfProtoSerialization.parseParameters: "
-              + serialization.getKeyTemplate().getTypeUrl());
+              + serialization.getTypeUrl());
     }
     com.google.crypto.tink.proto.HmacPrfKeyFormat format;
     try {
       format =
           com.google.crypto.tink.proto.HmacPrfKeyFormat.parseFrom(
-              serialization.getKeyTemplate().getValue(), ExtensionRegistryLite.getEmptyRegistry());
+              serialization.getValue(), ExtensionRegistryLite.getEmptyRegistry());
     } catch (InvalidProtocolBufferException e) {
       throw new GeneralSecurityException("Parsing HmacPrfParameters failed: ", e);
     }

@@ -34,7 +34,6 @@ import com.google.crypto.tink.keyderivation.PrfBasedKeyDerivationKey;
 import com.google.crypto.tink.keyderivation.PrfBasedKeyDerivationParameters;
 import com.google.crypto.tink.prf.PrfKey;
 import com.google.crypto.tink.proto.KeyData;
-import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.proto.PrfBasedDeriverKey;
 import com.google.crypto.tink.proto.PrfBasedDeriverKeyFormat;
@@ -165,12 +164,8 @@ public final class PrfBasedDeriverKeyManager implements KeyManager<Void> {
     OutputPrefixType outputPrefixType =
         getOutputPrefixTypeFromSerializedKeyFormat(serializedKeyFormat);
     ProtoParametersSerialization parametersSerialization =
-        ProtoParametersSerialization.checkedCreate(
-            KeyTemplate.newBuilder()
-                .setTypeUrl(TYPE_URL)
-                .setValue(serializedKeyFormat)
-                .setOutputPrefixType(outputPrefixType)
-                .build());
+        ProtoParametersSerialization.create(
+            TYPE_URL, ProtoConversions.fromProto(outputPrefixType), serializedKeyFormat);
     Parameters parameters =
         MutableSerializationRegistry.globalInstance().parseParameters(parametersSerialization);
     @Nullable Integer idRequirement = null;

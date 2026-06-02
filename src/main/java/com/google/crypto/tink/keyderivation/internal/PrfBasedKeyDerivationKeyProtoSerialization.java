@@ -77,16 +77,16 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
 
   private static PrfBasedKeyDerivationParameters parseParameters(
       ProtoParametersSerialization serialization) throws GeneralSecurityException {
-    if (!serialization.getKeyTemplate().getTypeUrl().equals(TYPE_URL)) {
+    if (!serialization.getTypeUrl().equals(TYPE_URL)) {
       throw new IllegalArgumentException(
           "Wrong type URL in call to PrfBasedKeyDerivationKeyProtoSerialization.parseParameters: "
-              + serialization.getKeyTemplate().getTypeUrl());
+              + serialization.getTypeUrl());
     }
     PrfBasedDeriverKeyFormat format;
     try {
       format =
           PrfBasedDeriverKeyFormat.parseFrom(
-              serialization.getKeyTemplate().getValue(), ExtensionRegistryLite.getEmptyRegistry());
+              serialization.getValue(), ExtensionRegistryLite.getEmptyRegistry());
     } catch (InvalidProtocolBufferException e) {
       throw new GeneralSecurityException("Parsing PrfBasedDeriverKeyFormat failed: ", e);
     }
@@ -99,7 +99,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
       throw new GeneralSecurityException("Non-PRF parameters stored in the field prf_key_template");
     }
 
-    if (serialization.getKeyTemplate().getOutputPrefixType()
+    if (ProtoConversions.toProto(serialization.getOutputPrefixType())
         != format.getParams().getDerivedKeyTemplate().getOutputPrefixType()) {
       throw new GeneralSecurityException(
           "Output-Prefix mismatch in parameters while parsing " + format);
@@ -130,11 +130,9 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
                   PrfBasedDeriverParams.newBuilder().setDerivedKeyTemplate(derivedKeyTemplate))
               .build();
       return ProtoParametersSerialization.create(
-          KeyTemplate.newBuilder()
-              .setTypeUrl(TYPE_URL)
-              .setValue(format.toByteString())
-              .setOutputPrefixType(derivedKeyTemplate.getOutputPrefixType())
-              .build());
+          TYPE_URL,
+          ProtoConversions.fromProto(derivedKeyTemplate.getOutputPrefixType()),
+          format.toByteString());
     } catch (InvalidProtocolBufferException e) {
       throw new GeneralSecurityException("Serializing PrfBasedKeyDerivationParameters failed: ", e);
     }
@@ -160,7 +158,14 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
                         ProtoConversions.toProto(prfKeySerialization.getKeyMaterialType())))
             .setParams(
                 PrfBasedDeriverParams.newBuilder()
-                    .setDerivedKeyTemplate(derivedKeyParametersSerialization.getKeyTemplate()))
+                    .setDerivedKeyTemplate(
+                        KeyTemplate.newBuilder()
+                            .setTypeUrl(derivedKeyParametersSerialization.getTypeUrl())
+                            .setValue(derivedKeyParametersSerialization.getValue())
+                            .setOutputPrefixType(
+                                ProtoConversions.toProto(
+                                    derivedKeyParametersSerialization.getOutputPrefixType()))
+                            .build()))
             .build()
             .toByteString(),
         KeyMaterialType.SYMMETRIC,
@@ -194,8 +199,12 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
         throw new GeneralSecurityException("Non-PRF key stored in the field prf_key");
       }
       PrfKey prfKey = (PrfKey) prfKeyUncast;
+      KeyTemplate derivedKeyTemplate = protoKey.getParams().getDerivedKeyTemplate();
       ProtoParametersSerialization derivedKeyParametersSerialization =
-          ProtoParametersSerialization.checkedCreate(protoKey.getParams().getDerivedKeyTemplate());
+          ProtoParametersSerialization.create(
+              derivedKeyTemplate.getTypeUrl(),
+              ProtoConversions.fromProto(derivedKeyTemplate.getOutputPrefixType()),
+              derivedKeyTemplate.getValue());
       Parameters derivedKeyParameters =
           MutableSerializationRegistry.globalInstance()
               .parseParameters(derivedKeyParametersSerialization);
