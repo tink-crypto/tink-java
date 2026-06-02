@@ -99,7 +99,6 @@ java_test(
     deps = [
         "//proto:common_java_proto",
         "//proto:hmac_java_proto",
-        "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink:parameters",
@@ -149,7 +148,6 @@ java_test(
     srcs = ["AesCmacProtoSerializationTest.java"],
     deps = [
         "//proto:aes_cmac_java_proto",
-        "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink:parameters",

@@ -32,7 +32,6 @@ import com.google.crypto.tink.mac.HmacKey;
 import com.google.crypto.tink.mac.HmacParameters;
 import com.google.crypto.tink.proto.HashType;
 import com.google.crypto.tink.proto.HmacParams;
-import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
@@ -459,11 +458,9 @@ public final class HmacProtoSerializationTest {
         // Proto messages start with a VarInt, which always ends with a byte with most
         // significant bit unset. 0x80 is hence invalid.
         ProtoParametersSerialization.create(
-            KeyTemplate.newBuilder()
-                .setTypeUrl(TYPE_URL)
-                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
-                .setValue(ByteString.copyFrom(new byte[] {(byte) 0x80}))
-                .build()),
+            TYPE_URL,
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW,
+            ByteString.copyFrom(new byte[] {(byte) 0x80})),
       };
     } catch (GeneralSecurityException e) {
       throw new RuntimeException(e);

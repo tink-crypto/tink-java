@@ -88,16 +88,16 @@ final class LegacyKmsAeadProtoSerialization {
 
   private static LegacyKmsAeadParameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
-    if (!serialization.getKeyTemplate().getTypeUrl().equals(TYPE_URL)) {
+    if (!serialization.getTypeUrl().equals(TYPE_URL)) {
       throw new IllegalArgumentException(
           "Wrong type URL in call to LegacyKmsAeadProtoSerialization.parseParameters: "
-              + serialization.getKeyTemplate().getTypeUrl());
+              + serialization.getTypeUrl());
     }
     KmsAeadKeyFormat format;
     try {
       format =
           KmsAeadKeyFormat.parseFrom(
-              serialization.getKeyTemplate().getValue(), ExtensionRegistryLite.getEmptyRegistry());
+              serialization.getValue(), ExtensionRegistryLite.getEmptyRegistry());
     } catch (InvalidProtocolBufferException e) {
       throw new GeneralSecurityException("Parsing KmsAeadKeyFormat failed: ", e);
     }

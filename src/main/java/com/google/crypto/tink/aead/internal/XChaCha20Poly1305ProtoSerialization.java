@@ -126,16 +126,16 @@ public final class XChaCha20Poly1305ProtoSerialization {
 
   private static XChaCha20Poly1305Parameters parseParameters(
       ProtoParametersSerialization serialization) throws GeneralSecurityException {
-    if (!serialization.getKeyTemplate().getTypeUrl().equals(TYPE_URL)) {
+    if (!serialization.getTypeUrl().equals(TYPE_URL)) {
       throw new IllegalArgumentException(
           "Wrong type URL in call to XChaCha20Poly1305ProtoSerialization.parseParameters: "
-              + serialization.getKeyTemplate().getTypeUrl());
+              + serialization.getTypeUrl());
     }
     com.google.crypto.tink.proto.XChaCha20Poly1305KeyFormat format;
     try {
       format =
           com.google.crypto.tink.proto.XChaCha20Poly1305KeyFormat.parseFrom(
-              serialization.getKeyTemplate().getValue(), ExtensionRegistryLite.getEmptyRegistry());
+              serialization.getValue(), ExtensionRegistryLite.getEmptyRegistry());
     } catch (InvalidProtocolBufferException e) {
       throw new GeneralSecurityException("Parsing XChaCha20Poly1305Parameters failed: ", e);
     }

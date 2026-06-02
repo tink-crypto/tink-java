@@ -124,18 +124,18 @@ public final class ChaCha20Poly1305ProtoSerialization {
 
   private static ChaCha20Poly1305Parameters parseParameters(
       ProtoParametersSerialization serialization) throws GeneralSecurityException {
-    if (!serialization.getKeyTemplate().getTypeUrl().equals(TYPE_URL)) {
+    if (!serialization.getTypeUrl().equals(TYPE_URL)) {
       throw new IllegalArgumentException(
           "Wrong type URL in call to ChaCha20Poly1305ProtoSerialization.parseParameters: "
-              + serialization.getKeyTemplate().getTypeUrl());
+              + serialization.getTypeUrl());
     }
     // ChaCha20Poly1305KeyFormat is currently an empty proto -- so it's not quite clear if we want
     // to even do anything here. However, we might add a version field later, so we at least check
-    // that serialization.getKeyTemplate().getValue() is a proto-encoded string.
+    // that serialization.getValue() is a proto-encoded string.
     try {
       Object unused =
           com.google.crypto.tink.proto.ChaCha20Poly1305KeyFormat.parseFrom(
-              serialization.getKeyTemplate().getValue(), ExtensionRegistryLite.getEmptyRegistry());
+              serialization.getValue(), ExtensionRegistryLite.getEmptyRegistry());
     } catch (InvalidProtocolBufferException e) {
       throw new GeneralSecurityException("Parsing ChaCha20Poly1305Parameters failed: ", e);
     }
