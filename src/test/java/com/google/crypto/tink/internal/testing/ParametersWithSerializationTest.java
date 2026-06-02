@@ -20,7 +20,6 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
-import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.errorprone.annotations.Immutable;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,7 +41,10 @@ public final class ParametersWithSerializationTest {
   public void testAll() throws Exception {
     Parameters parameters = new TestParameters();
     ProtoParametersSerialization serialization =
-        ProtoParametersSerialization.create(KeyTemplate.getDefaultInstance());
+        ProtoParametersSerialization.create(
+            "",
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.UNKNOWN_PREFIX,
+            com.google.protobuf.ByteString.EMPTY);
     ParametersWithSerialization parametersWithSerialization =
         new ParametersWithSerialization(parameters, serialization);
     assertThat(parametersWithSerialization.getParameters()).isSameInstanceAs(parameters);

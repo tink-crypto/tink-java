@@ -306,7 +306,7 @@ public final class MutableSerializationRegistryTest {
     Parameters parameters = registry.parseParametersWithLegacyFallback(protoParameters);
     assertThat(parameters).isInstanceOf(LegacyProtoParameters.class);
     LegacyProtoParameters legacyProtoParameters = (LegacyProtoParameters) parameters;
-    assertThat(legacyProtoParameters.getSerialization().getKeyTemplate().getTypeUrl())
+    assertThat(legacyProtoParameters.getSerialization().getTypeUrl())
         .isEqualTo("typeUrlForTesting73107");
   }
 

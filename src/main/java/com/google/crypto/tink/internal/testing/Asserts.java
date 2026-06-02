@@ -40,16 +40,13 @@ public final class Asserts {
       Parser<? extends MessageLite> parser,
       ProtoParametersSerialization one,
       ProtoParametersSerialization two) {
-    assertThat(one.getKeyTemplate().getTypeUrl()).isEqualTo(two.getKeyTemplate().getTypeUrl());
-    assertThat(one.getKeyTemplate().getOutputPrefixType())
-        .isEqualTo(two.getKeyTemplate().getOutputPrefixType());
+    assertThat(one.getTypeUrl()).isEqualTo(two.getTypeUrl());
+    assertThat(one.getOutputPrefixType()).isEqualTo(two.getOutputPrefixType());
     try {
       MessageLite valueOne =
-          parser.parseFrom(
-              one.getKeyTemplate().getValue(), ExtensionRegistryLite.getEmptyRegistry());
+          parser.parseFrom(one.getValue(), ExtensionRegistryLite.getEmptyRegistry());
       MessageLite valueTwo =
-          parser.parseFrom(
-              two.getKeyTemplate().getValue(), ExtensionRegistryLite.getEmptyRegistry());
+          parser.parseFrom(two.getValue(), ExtensionRegistryLite.getEmptyRegistry());
       assertThat(valueOne).isEqualTo(valueTwo);
     } catch (InvalidProtocolBufferException e) {
       throw new AssertionError("Unable to parse value with given parser", e);
