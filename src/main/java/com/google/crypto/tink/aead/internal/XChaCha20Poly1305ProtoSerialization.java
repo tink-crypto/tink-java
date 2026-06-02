@@ -65,7 +65,7 @@ public final class XChaCha20Poly1305ProtoSerialization {
       KeySerializer.create(
           XChaCha20Poly1305ProtoSerialization::serializeKey, XChaCha20Poly1305Key.class);
 
-  private static final KeyParser<ProtoKeySerialization> KEY_PARSER =
+  private static final KeyParser KEY_PARSER =
       KeyParser.create(XChaCha20Poly1305ProtoSerialization::parseKey, TYPE_URL_BYTES);
 
   private static OutputPrefixType toProtoOutputPrefixType(

@@ -60,7 +60,7 @@ public final class AesGcmSivProtoSerialization {
   private static final KeySerializer<AesGcmSivKey> KEY_SERIALIZER =
       KeySerializer.create(AesGcmSivProtoSerialization::serializeKey, AesGcmSivKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> KEY_PARSER =
+  private static final KeyParser KEY_PARSER =
       KeyParser.create(AesGcmSivProtoSerialization::parseKey, TYPE_URL_BYTES);
 
   private static OutputPrefixType toProtoOutputPrefixType(AesGcmSivParameters.Variant variant)

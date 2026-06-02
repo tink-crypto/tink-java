@@ -59,7 +59,7 @@ final class JwtHmacProtoSerialization {
   private static final KeySerializer<JwtHmacKey> KEY_SERIALIZER =
       KeySerializer.create(JwtHmacProtoSerialization::serializeKey, JwtHmacKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> KEY_PARSER =
+  private static final KeyParser KEY_PARSER =
       KeyParser.create(JwtHmacProtoSerialization::parseKey, TYPE_URL_BYTES);
 
   private static JwtHmacAlgorithm toProtoAlgorithm(JwtHmacParameters.Algorithm hashType)

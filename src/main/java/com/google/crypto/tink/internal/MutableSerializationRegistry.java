@@ -80,7 +80,7 @@ public final class MutableSerializationRegistry {
    * otherwise an exception is thrown, and the object is unchanged.
    */
   public synchronized <SerializationT extends Serialization> void registerKeyParser(
-      KeyParser<SerializationT> parser) throws GeneralSecurityException {
+      KeyParser parser) throws GeneralSecurityException {
     SerializationRegistry newRegistry =
         new SerializationRegistry.Builder(registry.get()).registerKeyParser(parser).build();
     registry.set(newRegistry);

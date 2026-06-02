@@ -73,13 +73,13 @@ public final class EciesProtoSerialization {
   private static final KeySerializer<EciesPublicKey> PUBLIC_KEY_SERIALIZER =
       KeySerializer.create(EciesProtoSerialization::serializePublicKey, EciesPublicKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> PUBLIC_KEY_PARSER =
+  private static final KeyParser PUBLIC_KEY_PARSER =
       KeyParser.create(EciesProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL_BYTES);
 
   private static final KeySerializer<EciesPrivateKey> PRIVATE_KEY_SERIALIZER =
       KeySerializer.create(EciesProtoSerialization::serializePrivateKey, EciesPrivateKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> PRIVATE_KEY_PARSER =
+  private static final KeyParser PRIVATE_KEY_PARSER =
       KeyParser.create(EciesProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL_BYTES);
 
   private static OutputPrefixType toOutputPrefixType(EciesParameters.Variant variant)

@@ -62,7 +62,7 @@ public final class AesCtrHmacAeadProtoSerialization {
   private static final KeySerializer<AesCtrHmacAeadKey> KEY_SERIALIZER =
       KeySerializer.create(AesCtrHmacAeadProtoSerialization::serializeKey, AesCtrHmacAeadKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> KEY_PARSER =
+  private static final KeyParser KEY_PARSER =
       KeyParser.create(AesCtrHmacAeadProtoSerialization::parseKey, TYPE_URL_BYTES);
 
   private static OutputPrefixType toProtoOutputPrefixType(AesCtrHmacAeadParameters.Variant variant)

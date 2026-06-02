@@ -65,13 +65,13 @@ public final class SlhDsaProtoSerialization {
   private static final KeySerializer<SlhDsaPublicKey> PUBLIC_KEY_SERIALIZER =
       KeySerializer.create(SlhDsaProtoSerialization::serializePublicKey, SlhDsaPublicKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> PUBLIC_KEY_PARSER =
+  private static final KeyParser PUBLIC_KEY_PARSER =
       KeyParser.create(SlhDsaProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL_BYTES);
 
   private static final KeySerializer<SlhDsaPrivateKey> PRIVATE_KEY_SERIALIZER =
       KeySerializer.create(SlhDsaProtoSerialization::serializePrivateKey, SlhDsaPrivateKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> PRIVATE_KEY_PARSER =
+  private static final KeyParser PRIVATE_KEY_PARSER =
       KeyParser.create(SlhDsaProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL_BYTES);
 
   private static com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType toOutputPrefixType(

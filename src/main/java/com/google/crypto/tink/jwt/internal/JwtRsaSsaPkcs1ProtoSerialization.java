@@ -73,19 +73,15 @@ public final class JwtRsaSsaPkcs1ProtoSerialization {
       KeySerializer.create(
           JwtRsaSsaPkcs1ProtoSerialization::serializePublicKey, JwtRsaSsaPkcs1PublicKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> PUBLIC_KEY_PARSER =
-      KeyParser.create(
-          JwtRsaSsaPkcs1ProtoSerialization::parsePublicKey,
-          PUBLIC_TYPE_URL_BYTES);
+  private static final KeyParser PUBLIC_KEY_PARSER =
+      KeyParser.create(JwtRsaSsaPkcs1ProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL_BYTES);
 
   private static final KeySerializer<JwtRsaSsaPkcs1PrivateKey> PRIVATE_KEY_SERIALIZER =
       KeySerializer.create(
           JwtRsaSsaPkcs1ProtoSerialization::serializePrivateKey, JwtRsaSsaPkcs1PrivateKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> PRIVATE_KEY_PARSER =
-      KeyParser.create(
-          JwtRsaSsaPkcs1ProtoSerialization::parsePrivateKey,
-          PRIVATE_TYPE_URL_BYTES);
+  private static final KeyParser PRIVATE_KEY_PARSER =
+      KeyParser.create(JwtRsaSsaPkcs1ProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL_BYTES);
 
   private static final EnumTypeProtoConverter<
           JwtRsaSsaPkcs1Algorithm, JwtRsaSsaPkcs1Parameters.Algorithm>

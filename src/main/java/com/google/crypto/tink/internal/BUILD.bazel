@@ -159,7 +159,6 @@ java_library(
     srcs = ["KeyParser.java"],
     deps = [
         ":proto_key_serialization",
-        ":serialization",
         "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink:secret_key_access",
         "//src/main/java/com/google/crypto/tink/util:bytes",
@@ -172,7 +171,6 @@ android_library(
     srcs = ["KeyParser.java"],
     deps = [
         ":proto_key_serialization-android",
-        ":serialization-android",
         "//src/main/java/com/google/crypto/tink:key-android",
         "//src/main/java/com/google/crypto/tink:secret_key_access-android",
         "//src/main/java/com/google/crypto/tink/util:bytes-android",

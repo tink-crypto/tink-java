@@ -72,7 +72,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
       KeySerializer.create(
           PrfBasedKeyDerivationKeyProtoSerialization::serializeKey, PrfBasedKeyDerivationKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> KEY_PARSER =
+  private static final KeyParser KEY_PARSER =
       KeyParser.create(PrfBasedKeyDerivationKeyProtoSerialization::parseKey, TYPE_URL_BYTES);
 
   private static PrfBasedKeyDerivationParameters parseParameters(

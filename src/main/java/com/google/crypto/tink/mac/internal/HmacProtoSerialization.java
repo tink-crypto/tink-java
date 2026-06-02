@@ -104,7 +104,7 @@ public final class HmacProtoSerialization {
   private static final KeySerializer<HmacKey> KEY_SERIALIZER =
       KeySerializer.create(HmacProtoSerialization::serializeKey, HmacKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> KEY_PARSER =
+  private static final KeyParser KEY_PARSER =
       KeyParser.create(HmacProtoSerialization::parseKey, TYPE_URL_BYTES);
 
   private static com.google.crypto.tink.proto.HmacParams getProtoParams(HmacParameters parameters)

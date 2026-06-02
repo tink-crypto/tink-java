@@ -28,27 +28,22 @@ import javax.annotation.Nullable;
  * <p>This class should eventually be in Tinks public API -- however, it might still change before
  * that.
  */
-public abstract class KeyParser<SerializationT extends Serialization> {
+public abstract class KeyParser {
   /**
    * A function which parses a key.
    *
    * <p>This interface exists only so we have a type we can reference in {@link #create}. Users
    * should not use this directly; see the explanation in {@link #create}.
    */
-  public interface KeyParsingFunction<SerializationT extends Serialization> {
-    Key parseKey(SerializationT serialization, @Nullable SecretKeyAccess access)
+  public interface KeyParsingFunction {
+    Key parseKey(ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
         throws GeneralSecurityException;
   }
 
   private final Bytes objectIdentifier;
-  private final Class<SerializationT> serializationClass;
 
-  private KeyParser(Bytes objectIdentifier, Class<SerializationT> serializationClass) {
-    if (serializationClass != ProtoKeySerialization.class) {
-      throw new IllegalArgumentException("Only ProtoKeySerialization is supported");
-    }
+  private KeyParser(Bytes objectIdentifier) {
     this.objectIdentifier = objectIdentifier;
-    this.serializationClass = serializationClass;
   }
 
   /**
@@ -57,7 +52,8 @@ public abstract class KeyParser<SerializationT extends Serialization> {
    * <p>This function is usually called with a Serialization matching the result of {@link
    * getObjectIdentifier}. However, implementations should check that this is the case.
    */
-  public abstract Key parseKey(SerializationT serialization, @Nullable SecretKeyAccess access)
+  public abstract Key parseKey(
+      ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException;
 
   /**
@@ -66,15 +62,16 @@ public abstract class KeyParser<SerializationT extends Serialization> {
    * <p>The object identifier is a unique identifier per registry for this object (in the standard
    * proto serialization, it is the typeUrl). In other words, when registering a {@code KeyParser},
    * the registry will invoke this to get the handled object identifier. In order to parse an object
-   * of type {@code SerializationT}, the registry will then obtain the {@code objectIdentifier} of
-   * this serialization object, and call the parser corresponding to this object.
+   * of type {@code ProtoKeySerialization}, the registry will then obtain the {@code
+   * objectIdentifier} of this serialization object, and call the parser corresponding to this
+   * object.
    */
   public final Bytes getObjectIdentifier() {
     return objectIdentifier;
   }
 
-  public final Class<SerializationT> getSerializationClass() {
-    return serializationClass;
+  public final Class<ProtoKeySerialization> getSerializationClass() {
+    return ProtoKeySerialization.class;
   }
 
   /**
@@ -94,7 +91,7 @@ public abstract class KeyParser<SerializationT extends Serialization> {
    * This function can then be used to create a {@code KeyParser}:
    *
    * <pre>{@code
-   * KeyParser<ProtoKeySerialization> parser =
+   * KeyParser parser =
    *       KeyParser.create(MyClass::parse, objectIdentifier);
    * }</pre>
    *
@@ -104,9 +101,8 @@ public abstract class KeyParser<SerializationT extends Serialization> {
    * @param function The function used to parse a Key
    * @param objectIdentifier The identifier to be returned by {@link #getObjectIdentifier}
    */
-  public static KeyParser<ProtoKeySerialization> create(
-      KeyParsingFunction<ProtoKeySerialization> function, Bytes objectIdentifier) {
-    return new KeyParser<ProtoKeySerialization>(objectIdentifier, ProtoKeySerialization.class) {
+  public static KeyParser create(KeyParsingFunction function, Bytes objectIdentifier) {
+    return new KeyParser(objectIdentifier) {
       @Override
       public Key parseKey(ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
           throws GeneralSecurityException {

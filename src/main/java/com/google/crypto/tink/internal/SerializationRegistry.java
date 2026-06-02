@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
 public final class SerializationRegistry {
   // Maps the class of a key to a serializer for this key.
   private final Map<Class<?>, KeySerializer<?>> keySerializerMap;
-  private final Map<ParserIndex, KeyParser<?>> keyParserMap;
+  private final Map<ParserIndex, KeyParser> keyParserMap;
   // Maps the class of a parameters to a serializer for these parameters.
   private final Map<Class<?>, ParametersSerializer<?, ?>> parametersSerializerMap;
   private final Map<ParserIndex, ParametersParser<?>> parametersParserMap;
@@ -42,7 +42,7 @@ public final class SerializationRegistry {
   /** Allows building SerializationRegistry objects. */
   public static final class Builder {
     private final Map<Class<?>, KeySerializer<?>> keySerializerMap;
-    private final Map<ParserIndex, KeyParser<?>> keyParserMap;
+    private final Map<ParserIndex, KeyParser> keyParserMap;
     private final Map<Class<?>, ParametersSerializer<?, ?>> parametersSerializerMap;
     private final Map<ParserIndex, ParametersParser<?>> parametersParserMap;
 
@@ -93,12 +93,12 @@ public final class SerializationRegistry {
      * If they are, the call is ignored, otherwise an exception is thrown.
      */
     @CanIgnoreReturnValue
-    public <SerializationT extends Serialization> Builder registerKeyParser(
-        KeyParser<SerializationT> parser) throws GeneralSecurityException {
+    public <SerializationT extends Serialization> Builder registerKeyParser(KeyParser parser)
+        throws GeneralSecurityException {
       ParserIndex index =
           new ParserIndex(parser.getSerializationClass(), parser.getObjectIdentifier());
       if (keyParserMap.containsKey(index)) {
-        KeyParser<?> existingParser = keyParserMap.get(index);
+        KeyParser existingParser = keyParserMap.get(index);
         if (!existingParser.equals(parser) || !parser.equals(existingParser)) {
           throw new GeneralSecurityException(
               "Attempt to register non-equal parser for already existing object of type: " + index);
@@ -231,8 +231,7 @@ public final class SerializationRegistry {
           "No Key Parser for requested key type " + index + " available");
     }
     @SuppressWarnings("unchecked") // We know we only insert like this.
-    KeyParser<ProtoKeySerialization> parser =
-        (KeyParser<ProtoKeySerialization>) keyParserMap.get(index);
+    KeyParser parser = (KeyParser) keyParserMap.get(index);
     return parser.parseKey(serializedKey, access);
   }
 

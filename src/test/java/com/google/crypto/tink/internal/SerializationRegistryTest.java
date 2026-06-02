@@ -303,8 +303,7 @@ public final class SerializationRegistryTest {
 
   @Test
   public void test_registerSameParserTwice_works() throws Exception {
-    KeyParser<ProtoKeySerialization> testParser =
-        KeyParser.create(SerializationRegistryTest::parseProtoToKey1, A_1);
+    KeyParser testParser = KeyParser.create(SerializationRegistryTest::parseProtoToKey1, A_1);
     SerializationRegistry unused = new SerializationRegistry.Builder()
         .registerKeyParser(testParser)
         .registerKeyParser(testParser)
@@ -313,10 +312,8 @@ public final class SerializationRegistryTest {
 
   @Test
   public void test_registerDifferentParsersWithSameKeyType_throws() throws Exception {
-    KeyParser<ProtoKeySerialization> testParser1 =
-        KeyParser.create(SerializationRegistryTest::parseProtoToKey1, A_1);
-    KeyParser<ProtoKeySerialization> testParser2 =
-        KeyParser.create(SerializationRegistryTest::parseProtoToKey1, A_1);
+    KeyParser testParser1 = KeyParser.create(SerializationRegistryTest::parseProtoToKey1, A_1);
+    KeyParser testParser2 = KeyParser.create(SerializationRegistryTest::parseProtoToKey1, A_1);
     SerializationRegistry.Builder builder = new SerializationRegistry.Builder();
     builder.registerKeyParser(testParser1);
     assertThrows(
@@ -325,10 +322,8 @@ public final class SerializationRegistryTest {
 
   @Test
   public void test_registerDifferentParsersWithDifferentKeyType_works() throws Exception {
-    KeyParser<ProtoKeySerialization> testParser1 =
-        KeyParser.create(SerializationRegistryTest::parseProtoToKey1, A_1);
-    KeyParser<ProtoKeySerialization> testParser2 =
-        KeyParser.create(SerializationRegistryTest::parseProtoToKey2, A_2);
+    KeyParser testParser1 = KeyParser.create(SerializationRegistryTest::parseProtoToKey1, A_1);
+    KeyParser testParser2 = KeyParser.create(SerializationRegistryTest::parseProtoToKey2, A_2);
     SerializationRegistry unused = new SerializationRegistry.Builder()
         .registerKeyParser(testParser1)
         .registerKeyParser(testParser2)

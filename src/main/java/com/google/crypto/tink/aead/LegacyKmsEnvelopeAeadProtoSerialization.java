@@ -64,7 +64,7 @@ public final class LegacyKmsEnvelopeAeadProtoSerialization {
       KeySerializer.create(
           LegacyKmsEnvelopeAeadProtoSerialization::serializeKey, LegacyKmsEnvelopeAeadKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> KEY_PARSER =
+  private static final KeyParser KEY_PARSER =
       KeyParser.create(LegacyKmsEnvelopeAeadProtoSerialization::parseKey, TYPE_URL_BYTES);
 
   private static OutputPrefixType toProtoOutputPrefixType(

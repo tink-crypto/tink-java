@@ -70,14 +70,14 @@ public final class RsaSsaPkcs1ProtoSerialization {
       KeySerializer.create(
           RsaSsaPkcs1ProtoSerialization::serializePublicKey, RsaSsaPkcs1PublicKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> PUBLIC_KEY_PARSER =
+  private static final KeyParser PUBLIC_KEY_PARSER =
       KeyParser.create(RsaSsaPkcs1ProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL_BYTES);
 
   private static final KeySerializer<RsaSsaPkcs1PrivateKey> PRIVATE_KEY_SERIALIZER =
       KeySerializer.create(
           RsaSsaPkcs1ProtoSerialization::serializePrivateKey, RsaSsaPkcs1PrivateKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> PRIVATE_KEY_PARSER =
+  private static final KeyParser PRIVATE_KEY_PARSER =
       KeyParser.create(RsaSsaPkcs1ProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL_BYTES);
 
   private static com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType toOutputPrefixType(

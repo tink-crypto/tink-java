@@ -60,7 +60,7 @@ public final class AesCmacProtoSerialization {
   private static final KeySerializer<AesCmacKey> KEY_SERIALIZER =
       KeySerializer.create(AesCmacProtoSerialization::serializeKey, AesCmacKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> KEY_PARSER =
+  private static final KeyParser KEY_PARSER =
       KeyParser.create(AesCmacProtoSerialization::parseKey, TYPE_URL_BYTES);
 
   private static OutputPrefixType toOutputPrefixType(AesCmacParameters.Variant variant)

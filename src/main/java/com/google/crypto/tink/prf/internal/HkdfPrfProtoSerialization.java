@@ -60,7 +60,7 @@ public final class HkdfPrfProtoSerialization {
   private static final KeySerializer<HkdfPrfKey> KEY_SERIALIZER =
       KeySerializer.create(HkdfPrfProtoSerialization::serializeKey, HkdfPrfKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> KEY_PARSER =
+  private static final KeyParser KEY_PARSER =
       KeyParser.create(HkdfPrfProtoSerialization::parseKey, TYPE_URL_BYTES);
 
   private static HashType toProtoHashType(HkdfPrfParameters.HashType hashType)

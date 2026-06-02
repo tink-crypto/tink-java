@@ -96,19 +96,15 @@ public final class CompositeMlDsaProtoSerialization {
       KeySerializer.create(
           CompositeMlDsaProtoSerialization::serializePublicKey, CompositeMlDsaPublicKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> PUBLIC_KEY_PARSER =
-      KeyParser.create(
-          CompositeMlDsaProtoSerialization::parsePublicKey,
-          PUBLIC_TYPE_URL_BYTES);
+  private static final KeyParser PUBLIC_KEY_PARSER =
+      KeyParser.create(CompositeMlDsaProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL_BYTES);
 
   private static final KeySerializer<CompositeMlDsaPrivateKey> PRIVATE_KEY_SERIALIZER =
       KeySerializer.create(
           CompositeMlDsaProtoSerialization::serializePrivateKey, CompositeMlDsaPrivateKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> PRIVATE_KEY_PARSER =
-      KeyParser.create(
-          CompositeMlDsaProtoSerialization::parsePrivateKey,
-          PRIVATE_TYPE_URL_BYTES);
+  private static final KeyParser PRIVATE_KEY_PARSER =
+      KeyParser.create(CompositeMlDsaProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL_BYTES);
 
   private static OutputPrefixType toOutputPrefixType(CompositeMlDsaParameters.Variant variant)
       throws GeneralSecurityException {

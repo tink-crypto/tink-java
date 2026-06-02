@@ -70,13 +70,13 @@ public final class EcdsaProtoSerialization {
   private static final KeySerializer<EcdsaPublicKey> PUBLIC_KEY_SERIALIZER =
       KeySerializer.create(EcdsaProtoSerialization::serializePublicKey, EcdsaPublicKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> PUBLIC_KEY_PARSER =
+  private static final KeyParser PUBLIC_KEY_PARSER =
       KeyParser.create(EcdsaProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL_BYTES);
 
   private static final KeySerializer<EcdsaPrivateKey> PRIVATE_KEY_SERIALIZER =
       KeySerializer.create(EcdsaProtoSerialization::serializePrivateKey, EcdsaPrivateKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> PRIVATE_KEY_PARSER =
+  private static final KeyParser PRIVATE_KEY_PARSER =
       KeyParser.create(EcdsaProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL_BYTES);
 
   private static com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType

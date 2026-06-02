@@ -69,14 +69,14 @@ public final class JwtEcdsaProtoSerialization {
   private static final KeySerializer<JwtEcdsaPublicKey> PUBLIC_KEY_SERIALIZER =
       KeySerializer.create(JwtEcdsaProtoSerialization::serializePublicKey, JwtEcdsaPublicKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> PUBLIC_KEY_PARSER =
+  private static final KeyParser PUBLIC_KEY_PARSER =
       KeyParser.create(JwtEcdsaProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL_BYTES);
 
   private static final KeySerializer<JwtEcdsaPrivateKey> PRIVATE_KEY_SERIALIZER =
       KeySerializer.create(
           JwtEcdsaProtoSerialization::serializePrivateKey, JwtEcdsaPrivateKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> PRIVATE_KEY_PARSER =
+  private static final KeyParser PRIVATE_KEY_PARSER =
       KeyParser.create(JwtEcdsaProtoSerialization::parsePrivateKey, TYPE_URL_BYTES);
 
   private static JwtEcdsaAlgorithm toProtoAlgorithm(JwtEcdsaParameters.Algorithm algorithm)

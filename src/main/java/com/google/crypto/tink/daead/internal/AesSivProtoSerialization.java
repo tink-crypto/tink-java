@@ -60,7 +60,7 @@ public final class AesSivProtoSerialization {
   private static final KeySerializer<AesSivKey> KEY_SERIALIZER =
       KeySerializer.create(AesSivProtoSerialization::serializeKey, AesSivKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> KEY_PARSER =
+  private static final KeyParser KEY_PARSER =
       KeyParser.create(AesSivProtoSerialization::parseKey, TYPE_URL_BYTES);
 
   private static Map<AesSivParameters.Variant, OutputPrefixType> createVariantToOutputPrefixMap() {

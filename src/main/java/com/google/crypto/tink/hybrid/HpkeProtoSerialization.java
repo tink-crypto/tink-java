@@ -72,13 +72,13 @@ public final class HpkeProtoSerialization {
   private static final KeySerializer<HpkePublicKey> PUBLIC_KEY_SERIALIZER =
       KeySerializer.create(HpkeProtoSerialization::serializePublicKey, HpkePublicKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> PUBLIC_KEY_PARSER =
+  private static final KeyParser PUBLIC_KEY_PARSER =
       KeyParser.create(HpkeProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL_BYTES);
 
   private static final KeySerializer<HpkePrivateKey> PRIVATE_KEY_SERIALIZER =
       KeySerializer.create(HpkeProtoSerialization::serializePrivateKey, HpkePrivateKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> PRIVATE_KEY_PARSER =
+  private static final KeyParser PRIVATE_KEY_PARSER =
       KeyParser.create(HpkeProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL_BYTES);
 
   private static OutputPrefixType toOutputPrefixType(HpkeParameters.Variant variant)

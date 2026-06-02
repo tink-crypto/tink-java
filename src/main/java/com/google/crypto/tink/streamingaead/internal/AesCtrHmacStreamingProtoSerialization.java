@@ -67,7 +67,7 @@ public final class AesCtrHmacStreamingProtoSerialization {
       KeySerializer.create(
           AesCtrHmacStreamingProtoSerialization::serializeKey, AesCtrHmacStreamingKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> KEY_PARSER =
+  private static final KeyParser KEY_PARSER =
       KeyParser.create(AesCtrHmacStreamingProtoSerialization::parseKey, TYPE_URL_BYTES);
 
   private static HashType toProtoHashType(AesCtrHmacStreamingParameters.HashType hashType)

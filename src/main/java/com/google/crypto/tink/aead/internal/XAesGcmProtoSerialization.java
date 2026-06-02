@@ -62,7 +62,7 @@ public final class XAesGcmProtoSerialization {
   private static final KeySerializer<XAesGcmKey> KEY_SERIALIZER =
       KeySerializer.create(XAesGcmProtoSerialization::serializeKey, XAesGcmKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> KEY_PARSER =
+  private static final KeyParser KEY_PARSER =
       KeyParser.create(XAesGcmProtoSerialization::parseKey, TYPE_URL_BYTES);
 
   private static OutputPrefixType toProtoOutputPrefixType(XAesGcmParameters.Variant variant)

@@ -60,7 +60,7 @@ public final class HmacPrfProtoSerialization {
   private static final KeySerializer<HmacPrfKey> KEY_SERIALIZER =
       KeySerializer.create(HmacPrfProtoSerialization::serializeKey, HmacPrfKey.class);
 
-  private static final KeyParser<ProtoKeySerialization> KEY_PARSER =
+  private static final KeyParser KEY_PARSER =
       KeyParser.create(HmacPrfProtoSerialization::parseKey, TYPE_URL_BYTES);
 
   private static HashType toProtoHashType(HmacPrfParameters.HashType hashType)
