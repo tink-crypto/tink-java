@@ -21,7 +21,6 @@ import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.proto.KeyData;
-import com.google.crypto.tink.proto.KeyTemplate;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,19 +34,19 @@ public final class MutableKeyCreationRegistry {
   private static LegacyProtoKey createProtoKeyFromProtoParameters(
       LegacyProtoParameters parameters, @Nullable Integer idRequirement)
       throws GeneralSecurityException {
-    KeyTemplate keyTemplate = parameters.getSerialization().getKeyTemplate();
+    ProtoParametersSerialization serialization = parameters.getSerialization();
     KeyManager<?> manager =
-        KeyManagerRegistry.globalInstance().getUntypedKeyManager(keyTemplate.getTypeUrl());
-    if (!KeyManagerRegistry.globalInstance().isNewKeyAllowed(keyTemplate.getTypeUrl())) {
+        KeyManagerRegistry.globalInstance().getUntypedKeyManager(serialization.getTypeUrl());
+    if (!KeyManagerRegistry.globalInstance().isNewKeyAllowed(serialization.getTypeUrl())) {
       throw new GeneralSecurityException("Creating new keys is not allowed.");
     }
-    KeyData keyData = manager.newKeyData(keyTemplate.getValue());
+    KeyData keyData = manager.newKeyData(serialization.getValue());
     ProtoKeySerialization protoSerialization =
         ProtoKeySerialization.create(
             keyData.getTypeUrl(),
             keyData.getValue(),
             ProtoConversions.fromProto(keyData.getKeyMaterialType()),
-            ProtoConversions.fromProto(keyTemplate.getOutputPrefixType()),
+            serialization.getOutputPrefixType(),
             idRequirement);
     return new LegacyProtoKey(protoSerialization, InsecureSecretKeyAccess.get());
   }

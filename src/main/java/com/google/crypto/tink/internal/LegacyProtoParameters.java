@@ -17,7 +17,7 @@
 package com.google.crypto.tink.internal;
 
 import com.google.crypto.tink.Parameters;
-import com.google.crypto.tink.proto.OutputPrefixType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.errorprone.annotations.Immutable;
 import java.util.Objects;
 
@@ -33,7 +33,7 @@ public final class LegacyProtoParameters extends Parameters {
 
   @Override
   public boolean hasIdRequirement() {
-    return serialization.getKeyTemplate().getOutputPrefixType() != OutputPrefixType.RAW;
+    return !serialization.getOutputPrefixType().equals(OutputPrefixType.RAW);
   }
 
   /** returns the serialization which was used to create this object. */
@@ -47,40 +47,24 @@ public final class LegacyProtoParameters extends Parameters {
       return false;
     }
     ProtoParametersSerialization other = ((LegacyProtoParameters) o).serialization;
-    return serialization
-            .getKeyTemplate()
-            .getOutputPrefixType()
-            .equals(other.getKeyTemplate().getOutputPrefixType())
-        && serialization.getKeyTemplate().getTypeUrl().equals(other.getKeyTemplate().getTypeUrl())
-        && serialization.getKeyTemplate().getValue().equals(other.getKeyTemplate().getValue());
+    return serialization.getOutputPrefixType().equals(other.getOutputPrefixType())
+        && serialization.getTypeUrl().equals(other.getTypeUrl())
+        && serialization.getValue().equals(other.getValue());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(serialization.getKeyTemplate(), serialization.getObjectIdentifier());
-  }
-
-  // This function is needed because LiteProto do not have a good toString function.
-  private static String outputPrefixToString(OutputPrefixType outputPrefixType) {
-    switch (outputPrefixType) {
-      case TINK:
-        return "TINK";
-      case LEGACY:
-        return "LEGACY";
-      case RAW:
-        return "RAW";
-      case CRUNCHY:
-        return "CRUNCHY";
-      default:
-        return "UNKNOWN";
-    }
+    return Objects.hash(
+        serialization.getTypeUrl(),
+        serialization.getValue(),
+        serialization.getOutputPrefixType(),
+        serialization.getObjectIdentifier());
   }
 
   @Override
   public String toString() {
     return String.format(
         "(typeUrl=%s, outputPrefixType=%s)",
-        serialization.getKeyTemplate().getTypeUrl(),
-        outputPrefixToString(serialization.getKeyTemplate().getOutputPrefixType()));
+        serialization.getTypeUrl(), serialization.getOutputPrefixType());
   }
 }

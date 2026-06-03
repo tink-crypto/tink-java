@@ -43,12 +43,17 @@ public final class KeyTemplateProtoConverter {
   public static com.google.crypto.tink.proto.KeyTemplate toProto(KeyTemplate keyTemplate)
       throws GeneralSecurityException {
     Parameters parameters = keyTemplate.toParameters();
+    ProtoParametersSerialization s;
     if (parameters instanceof LegacyProtoParameters) {
-      return ((LegacyProtoParameters) parameters).getSerialization().getKeyTemplate();
+      s = ((LegacyProtoParameters) parameters).getSerialization();
+    } else {
+      s = MutableSerializationRegistry.globalInstance().serializeParameters(parameters);
     }
-    ProtoParametersSerialization s =
-        MutableSerializationRegistry.globalInstance().serializeParameters(parameters);
-    return s.getKeyTemplate();
+    return com.google.crypto.tink.proto.KeyTemplate.newBuilder()
+        .setTypeUrl(s.getTypeUrl())
+        .setValue(s.getValue())
+        .setOutputPrefixType(ProtoConversions.toProto(s.getOutputPrefixType()))
+        .build();
   }
 
   public static byte[] toByteArray(KeyTemplate keyTemplate) throws GeneralSecurityException {

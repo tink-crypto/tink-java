@@ -24,7 +24,6 @@ import com.google.crypto.tink.PrivateKey;
 import com.google.crypto.tink.PrivateKeyManager;
 import com.google.crypto.tink.proto.KeyData;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ExtensionRegistryLite;
@@ -128,12 +127,10 @@ public class LegacyKeyManagerImpl<P> implements KeyManager<P> {
   @Override
   public final KeyData newKeyData(ByteString serializedKeyFormat) throws GeneralSecurityException {
     ProtoParametersSerialization parametersSerialization =
-        ProtoParametersSerialization.checkedCreate(
-            KeyTemplate.newBuilder()
-                .setTypeUrl(typeUrl)
-                .setValue(serializedKeyFormat)
-                .setOutputPrefixType(OutputPrefixType.RAW)
-                .build());
+        ProtoParametersSerialization.create(
+            typeUrl,
+            com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW,
+            serializedKeyFormat);
     Parameters parameters =
         MutableSerializationRegistry.globalInstance().parseParameters(parametersSerialization);
     Key key =
