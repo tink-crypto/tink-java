@@ -558,7 +558,7 @@ public final class SerializationRegistryTest {
 
   @Test
   public void test_registerSameParametersParserTwice_works() throws Exception {
-    ParametersParser<ProtoParametersSerialization> testParser =
+    ParametersParser testParser =
         ParametersParser.create(SerializationRegistryTest::parseProtoToParameters1, A_1);
     SerializationRegistry unused = new SerializationRegistry.Builder()
         .registerParametersParser(testParser)
@@ -568,9 +568,9 @@ public final class SerializationRegistryTest {
 
   @Test
   public void test_registerDifferentParsersWithSameParametersType_throws() throws Exception {
-    ParametersParser<ProtoParametersSerialization> testParser1 =
+    ParametersParser testParser1 =
         ParametersParser.create(SerializationRegistryTest::parseProtoToParameters1, A_1);
-    ParametersParser<ProtoParametersSerialization> testParser2 =
+    ParametersParser testParser2 =
         ParametersParser.create(SerializationRegistryTest::parseProtoToParameters1, A_1);
     SerializationRegistry.Builder builder = new SerializationRegistry.Builder();
     builder.registerParametersParser(testParser1);
@@ -581,9 +581,9 @@ public final class SerializationRegistryTest {
 
   @Test
   public void test_registerDifferentParametersParsersWithDifferentKeyType_works() throws Exception {
-    ParametersParser<ProtoParametersSerialization> testParser1 =
+    ParametersParser testParser1 =
         ParametersParser.create(SerializationRegistryTest::parseProtoToParameters1, A_1);
-    ParametersParser<ProtoParametersSerialization> testParser2 =
+    ParametersParser testParser2 =
         ParametersParser.create(SerializationRegistryTest::parseProtoToParameters2, A_2);
     SerializationRegistry unused = new SerializationRegistry.Builder()
         .registerParametersParser(testParser1)

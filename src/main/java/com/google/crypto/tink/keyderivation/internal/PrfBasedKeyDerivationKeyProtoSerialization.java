@@ -64,7 +64,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
               PrfBasedKeyDerivationKeyProtoSerialization::serializeParameters,
               PrfBasedKeyDerivationParameters.class);
 
-  private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
+  private static final ParametersParser PARAMETERS_PARSER =
       ParametersParser.create(
           PrfBasedKeyDerivationKeyProtoSerialization::parseParameters, TYPE_URL_BYTES);
 

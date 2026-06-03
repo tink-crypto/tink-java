@@ -58,7 +58,7 @@ public final class AesGcmHkdfStreamingProtoSerialization {
               AesGcmHkdfStreamingProtoSerialization::serializeParameters,
               AesGcmHkdfStreamingParameters.class);
 
-  private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
+  private static final ParametersParser PARAMETERS_PARSER =
       ParametersParser.create(
           AesGcmHkdfStreamingProtoSerialization::parseParameters, TYPE_URL_BYTES);
 

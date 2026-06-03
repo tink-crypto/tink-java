@@ -66,7 +66,7 @@ public final class HpkeProtoSerialization {
           ParametersSerializer.create(
               HpkeProtoSerialization::serializeParameters, HpkeParameters.class);
 
-  private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
+  private static final ParametersParser PARAMETERS_PARSER =
       ParametersParser.create(HpkeProtoSerialization::parseParameters, PRIVATE_TYPE_URL_BYTES);
 
   private static final KeySerializer<HpkePublicKey> PUBLIC_KEY_SERIALIZER =

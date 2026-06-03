@@ -79,8 +79,7 @@ public final class MutableSerializationRegistry {
    * already been registered, this checks if they are the same. If they are, the call is ignored,
    * otherwise an exception is thrown, and the object is unchanged.
    */
-  public synchronized <SerializationT extends Serialization> void registerKeyParser(
-      KeyParser parser) throws GeneralSecurityException {
+  public synchronized void registerKeyParser(KeyParser parser) throws GeneralSecurityException {
     SerializationRegistry newRegistry =
         new SerializationRegistry.Builder(registry.get()).registerKeyParser(parser).build();
     registry.set(newRegistry);
@@ -113,8 +112,8 @@ public final class MutableSerializationRegistry {
    * already been registered, this checks if they are the same. If they are, the call is ignored,
    * otherwise an exception is thrown, and the object is unchanged.
    */
-  public synchronized <SerializationT extends Serialization> void registerParametersParser(
-      ParametersParser<SerializationT> parser) throws GeneralSecurityException {
+  public synchronized void registerParametersParser(ParametersParser parser)
+      throws GeneralSecurityException {
     SerializationRegistry newRegistry =
         new SerializationRegistry.Builder(registry.get()).registerParametersParser(parser).build();
     registry.set(newRegistry);

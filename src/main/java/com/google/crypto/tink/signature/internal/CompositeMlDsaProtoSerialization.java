@@ -87,7 +87,7 @@ public final class CompositeMlDsaProtoSerialization {
               CompositeMlDsaProtoSerialization::serializeParameters,
               CompositeMlDsaParameters.class);
 
-  private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
+  private static final ParametersParser PARAMETERS_PARSER =
       ParametersParser.create(
           CompositeMlDsaProtoSerialization::parseParameters,
           PRIVATE_TYPE_URL_BYTES);

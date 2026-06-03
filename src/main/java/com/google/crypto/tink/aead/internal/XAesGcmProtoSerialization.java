@@ -56,7 +56,7 @@ public final class XAesGcmProtoSerialization {
           ParametersSerializer.create(
               XAesGcmProtoSerialization::serializeParameters, XAesGcmParameters.class);
 
-  private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
+  private static final ParametersParser PARAMETERS_PARSER =
       ParametersParser.create(XAesGcmProtoSerialization::parseParameters, TYPE_URL_BYTES);
 
   private static final KeySerializer<XAesGcmKey> KEY_SERIALIZER =

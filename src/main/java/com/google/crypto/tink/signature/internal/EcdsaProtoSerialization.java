@@ -64,7 +64,7 @@ public final class EcdsaProtoSerialization {
           ParametersSerializer.create(
               EcdsaProtoSerialization::serializeParameters, EcdsaParameters.class);
 
-  private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
+  private static final ParametersParser PARAMETERS_PARSER =
       ParametersParser.create(EcdsaProtoSerialization::parseParameters, PRIVATE_TYPE_URL_BYTES);
 
   private static final KeySerializer<EcdsaPublicKey> PUBLIC_KEY_SERIALIZER =

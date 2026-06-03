@@ -37,14 +37,14 @@ public final class SerializationRegistry {
   private final Map<ParserIndex, KeyParser> keyParserMap;
   // Maps the class of a parameters to a serializer for these parameters.
   private final Map<Class<?>, ParametersSerializer<?, ?>> parametersSerializerMap;
-  private final Map<ParserIndex, ParametersParser<?>> parametersParserMap;
+  private final Map<ParserIndex, ParametersParser> parametersParserMap;
 
   /** Allows building SerializationRegistry objects. */
   public static final class Builder {
     private final Map<Class<?>, KeySerializer<?>> keySerializerMap;
     private final Map<ParserIndex, KeyParser> keyParserMap;
     private final Map<Class<?>, ParametersSerializer<?, ?>> parametersSerializerMap;
-    private final Map<ParserIndex, ParametersParser<?>> parametersParserMap;
+    private final Map<ParserIndex, ParametersParser> parametersParserMap;
 
     public Builder() {
       keySerializerMap = new HashMap<>();
@@ -93,8 +93,7 @@ public final class SerializationRegistry {
      * If they are, the call is ignored, otherwise an exception is thrown.
      */
     @CanIgnoreReturnValue
-    public <SerializationT extends Serialization> Builder registerKeyParser(KeyParser parser)
-        throws GeneralSecurityException {
+    public Builder registerKeyParser(KeyParser parser) throws GeneralSecurityException {
       ParserIndex index =
           new ParserIndex(parser.getSerializationClass(), parser.getObjectIdentifier());
       if (keyParserMap.containsKey(index)) {
@@ -145,12 +144,12 @@ public final class SerializationRegistry {
      * If they are, the call is ignored, otherwise an exception is thrown.
      */
     @CanIgnoreReturnValue
-    public <SerializationT extends Serialization> Builder registerParametersParser(
-        ParametersParser<SerializationT> parser) throws GeneralSecurityException {
+    public Builder registerParametersParser(ParametersParser parser)
+        throws GeneralSecurityException {
       ParserIndex index =
           new ParserIndex(parser.getSerializationClass(), parser.getObjectIdentifier());
       if (parametersParserMap.containsKey(index)) {
-        ParametersParser<?> existingParser = parametersParserMap.get(index);
+        ParametersParser existingParser = parametersParserMap.get(index);
         if (!existingParser.equals(parser) || !parser.equals(existingParser)) {
           throw new GeneralSecurityException(
               "Attempt to register non-equal parser for already existing object of type: " + index);
@@ -230,7 +229,7 @@ public final class SerializationRegistry {
       throw new GeneralSecurityException(
           "No Key Parser for requested key type " + index + " available");
     }
-    @SuppressWarnings("unchecked") // We know we only insert like this.
+    // We know we only insert like this.
     KeyParser parser = (KeyParser) keyParserMap.get(index);
     return parser.parseKey(serializedKey, access);
   }
@@ -284,9 +283,8 @@ public final class SerializationRegistry {
       throw new GeneralSecurityException(
           "No Parameters Parser for requested key type " + index + " available");
     }
-    @SuppressWarnings("unchecked") // We know we only insert like this.
-    ParametersParser<ProtoParametersSerialization> parser =
-        (ParametersParser<ProtoParametersSerialization>) parametersParserMap.get(index);
+    // We know we only insert like this.
+    ParametersParser parser = (ParametersParser) parametersParserMap.get(index);
     return parser.parseParameters(serializedParameters);
   }
 

@@ -54,7 +54,7 @@ public final class AesSivProtoSerialization {
           ParametersSerializer.create(
               AesSivProtoSerialization::serializeParameters, AesSivParameters.class);
 
-  private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
+  private static final ParametersParser PARAMETERS_PARSER =
       ParametersParser.create(AesSivProtoSerialization::parseParameters, TYPE_URL_BYTES);
 
   private static final KeySerializer<AesSivKey> KEY_SERIALIZER =

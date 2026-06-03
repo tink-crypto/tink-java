@@ -26,26 +26,22 @@ import java.security.GeneralSecurityException;
  * <p>This class should eventually be in Tinks public API -- however, it might still change before
  * that.
  */
-public abstract class ParametersParser<SerializationT extends Serialization> {
+public abstract class ParametersParser {
   /**
    * A function which parses a Parameters object.
    *
    * <p>This interface exists only so we have a type we can reference in {@link #create}. Users
    * should not use this directly; see the explanation in {@link #create}.
    */
-  public interface ParametersParsingFunction<SerializationT extends Serialization> {
-    Parameters parseParameters(SerializationT serialization) throws GeneralSecurityException;
+  public interface ParametersParsingFunction {
+    Parameters parseParameters(ProtoParametersSerialization serialization)
+        throws GeneralSecurityException;
   }
 
   private final Bytes objectIdentifier;
-  private final Class<SerializationT> serializationClass;
 
-  private ParametersParser(Bytes objectIdentifier, Class<SerializationT> serializationClass) {
-    if (serializationClass != ProtoParametersSerialization.class) {
-      throw new IllegalArgumentException("Only ProtoParametersSerialization is supported");
-    }
+  private ParametersParser(Bytes objectIdentifier) {
     this.objectIdentifier = objectIdentifier;
-    this.serializationClass = serializationClass;
   }
 
   /**
@@ -54,7 +50,7 @@ public abstract class ParametersParser<SerializationT extends Serialization> {
    * <p>This function is usually called with a Serialization matching the result of {@link
    * getObjectIdentifier}. However, implementations should check that this is the case.
    */
-  public abstract Parameters parseParameters(SerializationT serialization)
+  public abstract Parameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException;
 
   /**
@@ -71,8 +67,8 @@ public abstract class ParametersParser<SerializationT extends Serialization> {
     return objectIdentifier;
   }
 
-  public final Class<SerializationT> getSerializationClass() {
-    return serializationClass;
+  public final Class<ProtoParametersSerialization> getSerializationClass() {
+    return ProtoParametersSerialization.class;
   }
 
   /**
@@ -92,17 +88,16 @@ public abstract class ParametersParser<SerializationT extends Serialization> {
    * This function can then be used to create a {@code ParametersParser}:
    *
    * <pre>{@code
-   * ParametersParser<ProtoParametersSerialization> parser =
+   * ParametersParser parser =
    *       ParametersParser.create(MyClass::parse, objectIdentifier);
    * }</pre>
    *
    * @param function The function used to parse a {@link Parameters} object.
    * @param objectIdentifier The identifier to be returned by {@link #getObjectIdentifier}
    */
-  public static ParametersParser<ProtoParametersSerialization> create(
-      ParametersParsingFunction<ProtoParametersSerialization> function, Bytes objectIdentifier) {
-    return new ParametersParser<ProtoParametersSerialization>(
-        objectIdentifier, ProtoParametersSerialization.class) {
+  public static ParametersParser create(
+      ParametersParsingFunction function, Bytes objectIdentifier) {
+    return new ParametersParser(objectIdentifier) {
       @Override
       public Parameters parseParameters(ProtoParametersSerialization serialization)
           throws GeneralSecurityException {

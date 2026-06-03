@@ -63,7 +63,7 @@ public final class JwtEcdsaProtoSerialization {
           ParametersSerializer.create(
               JwtEcdsaProtoSerialization::serializeParameters, JwtEcdsaParameters.class);
 
-  private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
+  private static final ParametersParser PARAMETERS_PARSER =
       ParametersParser.create(JwtEcdsaProtoSerialization::parseParameters, TYPE_URL_BYTES);
 
   private static final KeySerializer<JwtEcdsaPublicKey> PUBLIC_KEY_SERIALIZER =

@@ -59,7 +59,7 @@ public final class Ed25519ProtoSerialization {
           ParametersSerializer.create(
               Ed25519ProtoSerialization::serializeParameters, Ed25519Parameters.class);
 
-  private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
+  private static final ParametersParser PARAMETERS_PARSER =
       ParametersParser.create(Ed25519ProtoSerialization::parseParameters, PRIVATE_TYPE_URL_BYTES);
 
   private static final KeySerializer<Ed25519PublicKey> PUBLIC_KEY_SERIALIZER =

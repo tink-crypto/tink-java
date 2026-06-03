@@ -62,7 +62,7 @@ public final class RsaSsaPkcs1ProtoSerialization {
           ParametersSerializer.create(
               RsaSsaPkcs1ProtoSerialization::serializeParameters, RsaSsaPkcs1Parameters.class);
 
-  private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
+  private static final ParametersParser PARAMETERS_PARSER =
       ParametersParser.create(
           RsaSsaPkcs1ProtoSerialization::parseParameters, PRIVATE_TYPE_URL_BYTES);
 

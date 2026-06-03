@@ -61,7 +61,7 @@ public final class MlDsaProtoSerialization {
           ParametersSerializer.create(
               MlDsaProtoSerialization::serializeParameters, MlDsaParameters.class);
 
-  private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
+  private static final ParametersParser PARAMETERS_PARSER =
       ParametersParser.create(MlDsaProtoSerialization::parseParameters, PRIVATE_TYPE_URL_BYTES);
 
   private static final KeySerializer<MlDsaPublicKey> PUBLIC_KEY_SERIALIZER =

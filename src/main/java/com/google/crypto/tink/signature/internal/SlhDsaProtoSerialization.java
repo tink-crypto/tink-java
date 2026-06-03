@@ -59,7 +59,7 @@ public final class SlhDsaProtoSerialization {
           ParametersSerializer.create(
               SlhDsaProtoSerialization::serializeParameters, SlhDsaParameters.class);
 
-  private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
+  private static final ParametersParser PARAMETERS_PARSER =
       ParametersParser.create(SlhDsaProtoSerialization::parseParameters, PRIVATE_TYPE_URL_BYTES);
 
   private static final KeySerializer<SlhDsaPublicKey> PUBLIC_KEY_SERIALIZER =

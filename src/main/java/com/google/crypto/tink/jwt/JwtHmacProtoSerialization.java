@@ -53,7 +53,7 @@ final class JwtHmacProtoSerialization {
           ParametersSerializer.create(
               JwtHmacProtoSerialization::serializeParameters, JwtHmacParameters.class);
 
-  private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
+  private static final ParametersParser PARAMETERS_PARSER =
       ParametersParser.create(JwtHmacProtoSerialization::parseParameters, TYPE_URL_BYTES);
 
   private static final KeySerializer<JwtHmacKey> KEY_SERIALIZER =

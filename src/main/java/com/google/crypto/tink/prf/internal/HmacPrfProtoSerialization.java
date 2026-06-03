@@ -54,7 +54,7 @@ public final class HmacPrfProtoSerialization {
           ParametersSerializer.create(
               HmacPrfProtoSerialization::serializeParameters, HmacPrfParameters.class);
 
-  private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
+  private static final ParametersParser PARAMETERS_PARSER =
       ParametersParser.create(HmacPrfProtoSerialization::parseParameters, TYPE_URL_BYTES);
 
   private static final KeySerializer<HmacPrfKey> KEY_SERIALIZER =

@@ -40,14 +40,6 @@ public final class ParametersParserTest {
     }
   }
 
-  @Immutable
-  private static class ExampleSerialization implements Serialization {
-    @Override
-    public Bytes getObjectIdentifier() {
-      return Bytes.copyFrom(new byte[0]);
-    }
-  }
-
   private static ExampleParameters parse(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
     return new ExampleParameters();
@@ -61,7 +53,7 @@ public final class ParametersParserTest {
 
   @Test
   public void createParser_parseKey_works() throws Exception {
-    ParametersParser<ProtoParametersSerialization> parser =
+    ParametersParser parser =
         ParametersParser.create(ParametersParserTest::parse, Bytes.copyFrom(new byte[0]));
     ProtoParametersSerialization serialization =
         ProtoParametersSerialization.create(
@@ -73,7 +65,7 @@ public final class ParametersParserTest {
 
   @Test
   public void createParser_classes_work() throws Exception {
-    ParametersParser<ProtoParametersSerialization> parser =
+    ParametersParser parser =
         ParametersParser.create(ParametersParserTest::parse, Bytes.copyFrom(new byte[] {1, 2, 3}));
     assertThat(parser.getObjectIdentifier()).isEqualTo(Bytes.copyFrom(new byte[] {1, 2, 3}));
     assertThat(parser.getSerializationClass()).isEqualTo(ProtoParametersSerialization.class);

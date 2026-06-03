@@ -59,7 +59,7 @@ public final class AesCtrHmacStreamingProtoSerialization {
               AesCtrHmacStreamingProtoSerialization::serializeParameters,
               AesCtrHmacStreamingParameters.class);
 
-  private static final ParametersParser<ProtoParametersSerialization> PARAMETERS_PARSER =
+  private static final ParametersParser PARAMETERS_PARSER =
       ParametersParser.create(
           AesCtrHmacStreamingProtoSerialization::parseParameters, TYPE_URL_BYTES);
 
