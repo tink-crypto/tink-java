@@ -93,10 +93,9 @@ public final class MutableSerializationRegistry {
    * registered, this checks if they are the same. If they are, the call is ignored, otherwise an
    * exception is thrown, and the object is unchanged.
    */
-  public synchronized <ParametersT extends Parameters, SerializationT extends Serialization>
-      void registerParametersSerializer(
-          ParametersSerializer<ParametersT, SerializationT> serializer)
-          throws GeneralSecurityException {
+  public synchronized <ParametersT extends Parameters> void registerParametersSerializer(
+      ParametersSerializer<ParametersT, ProtoParametersSerialization> serializer)
+      throws GeneralSecurityException {
     SerializationRegistry newRegistry =
         new SerializationRegistry.Builder(registry.get())
             .registerParametersSerializer(serializer)
@@ -120,8 +119,7 @@ public final class MutableSerializationRegistry {
   }
 
   /** Returns true if a parser for this {@code serializedKey} has been registered. */
-  public <SerializationT extends Serialization> boolean hasParserForKey(
-      SerializationT serializedKey) {
+  public boolean hasParserForKey(ProtoKeySerialization serializedKey) {
     return registry.get().hasParserForKey(serializedKey);
   }
 
@@ -156,10 +154,8 @@ public final class MutableSerializationRegistry {
     return parseKey(protoKeySerialization, access);
   }
 
-
   /** Returns true if a parser for this {@code serializedKey} has been registered. */
-  public <KeyT extends Key, SerializationT extends Serialization> boolean hasSerializerForKey(
-      KeyT key, Class<SerializationT> serializationClass) {
+  public <KeyT extends Key> boolean hasSerializerForKey(KeyT key, Class<?> serializationClass) {
     return registry.get().hasSerializerForKey(key, serializationClass);
   }
 
@@ -175,8 +171,7 @@ public final class MutableSerializationRegistry {
   }
 
   /** Returns true if a parser for this {@code serializedKey} has been registered. */
-  public <SerializationT extends Serialization> boolean hasParserForParameters(
-      SerializationT serializedParameters) {
+  public boolean hasParserForParameters(ProtoParametersSerialization serializedParameters) {
     return registry.get().hasParserForParameters(serializedParameters);
   }
 
@@ -209,9 +204,8 @@ public final class MutableSerializationRegistry {
   }
 
   /** Returns true if a parser for this {@code serializedKey} has been registered. */
-  public <ParametersT extends Parameters, SerializationT extends Serialization>
-      boolean hasSerializerForParameters(
-          ParametersT parameters, Class<SerializationT> serializationClass) {
+  public <ParametersT extends Parameters> boolean hasSerializerForParameters(
+      ParametersT parameters, Class<?> serializationClass) {
     return registry.get().hasSerializerForParameters(parameters, serializationClass);
   }
 
