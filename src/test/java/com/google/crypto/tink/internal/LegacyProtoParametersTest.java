@@ -18,8 +18,7 @@ package com.google.crypto.tink.internal;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import com.google.crypto.tink.proto.KeyTemplate;
-import com.google.crypto.tink.proto.OutputPrefixType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.protobuf.ByteString;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,64 +26,114 @@ import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public final class LegacyProtoParametersTest {
+
   @Test
-  public void create_works() {
-    KeyTemplate template =
-        KeyTemplate.newBuilder()
-            .setTypeUrl("TypeUrl")
-            .setOutputPrefixType(OutputPrefixType.TINK)
-            .setValue(ByteString.EMPTY)
-            .build();
-    ProtoParametersSerialization serialization = ProtoParametersSerialization.create(template);
+  public void testConstructorAndGetSerialization() throws Exception {
+    ProtoParametersSerialization serialization =
+        ProtoParametersSerialization.create(
+            "TypeUrl",
+            OutputPrefixType.TINK,
+            ByteString.copyFromUtf8("value"));
     LegacyProtoParameters parameters = new LegacyProtoParameters(serialization);
     assertThat(parameters.getSerialization()).isSameInstanceAs(serialization);
   }
 
-  private static LegacyProtoParameters fromBuilder(KeyTemplate.Builder builder) {
-    return new LegacyProtoParameters(ProtoParametersSerialization.create(builder.build()));
-  }
-
   @Test
-  public void create_hasIdRequirement() {
-    KeyTemplate.Builder builder =
-        KeyTemplate.newBuilder().setTypeUrl("TypeUrl").setValue(ByteString.EMPTY);
-    assertThat(fromBuilder(builder.setOutputPrefixType(OutputPrefixType.TINK)).hasIdRequirement())
+  public void testHasIdRequirement() throws Exception {
+    assertThat(
+            new LegacyProtoParameters(
+                    ProtoParametersSerialization.create(
+                        "TypeUrl", OutputPrefixType.TINK, ByteString.EMPTY))
+                .hasIdRequirement())
         .isTrue();
     assertThat(
-            fromBuilder(builder.setOutputPrefixType(OutputPrefixType.CRUNCHY)).hasIdRequirement())
+            new LegacyProtoParameters(
+                    ProtoParametersSerialization.create(
+                        "TypeUrl", OutputPrefixType.CRUNCHY, ByteString.EMPTY))
+                .hasIdRequirement())
         .isTrue();
-    assertThat(fromBuilder(builder.setOutputPrefixType(OutputPrefixType.LEGACY)).hasIdRequirement())
+    assertThat(
+            new LegacyProtoParameters(
+                    ProtoParametersSerialization.create(
+                        "TypeUrl", OutputPrefixType.LEGACY, ByteString.EMPTY))
+                .hasIdRequirement())
         .isTrue();
-    assertThat(fromBuilder(builder.setOutputPrefixType(OutputPrefixType.RAW)).hasIdRequirement())
+    assertThat(
+            new LegacyProtoParameters(
+                    ProtoParametersSerialization.create(
+                        "TypeUrl", OutputPrefixType.WITH_ID_REQUIREMENT, ByteString.EMPTY))
+                .hasIdRequirement())
+        .isTrue();
+    assertThat(
+            new LegacyProtoParameters(
+                    ProtoParametersSerialization.create(
+                        "TypeUrl", OutputPrefixType.RAW, ByteString.EMPTY))
+                .hasIdRequirement())
         .isFalse();
+    assertThat(
+            new LegacyProtoParameters(
+                    ProtoParametersSerialization.create(
+                        "TypeUrl", OutputPrefixType.UNKNOWN_PREFIX, ByteString.EMPTY))
+                .hasIdRequirement())
+        .isTrue();
   }
 
   @Test
-  public void testEquals() {
-    KeyTemplate.Builder builder =
-        KeyTemplate.newBuilder()
-            .setTypeUrl("TypeUrl")
-            .setOutputPrefixType(OutputPrefixType.TINK)
-            .setValue(ByteString.EMPTY);
-    assertThat(fromBuilder(builder)).isEqualTo(fromBuilder(builder));
-    assertThat(fromBuilder(builder.setTypeUrl("one")))
-        .isNotEqualTo(fromBuilder(builder.setTypeUrl("two")));
-    assertThat(fromBuilder(builder.setOutputPrefixType(OutputPrefixType.TINK)))
-        .isNotEqualTo(fromBuilder(builder.setOutputPrefixType(OutputPrefixType.CRUNCHY)));
-    assertThat(fromBuilder(builder.setValue(ByteString.copyFrom(new byte[] {0}))))
-        .isNotEqualTo(fromBuilder(builder.setValue(ByteString.copyFrom(new byte[] {1}))));
+  public void testEquals() throws Exception {
+    ProtoParametersSerialization serialization1 =
+        ProtoParametersSerialization.create(
+            "TypeUrl", OutputPrefixType.TINK, ByteString.copyFromUtf8("value"));
+    ProtoParametersSerialization serialization1Copy =
+        ProtoParametersSerialization.create(
+            "TypeUrl", OutputPrefixType.TINK, ByteString.copyFromUtf8("value"));
+    ProtoParametersSerialization serializationDifferentUrl =
+        ProtoParametersSerialization.create(
+            "DifferentTypeUrl", OutputPrefixType.TINK, ByteString.copyFromUtf8("value"));
+    ProtoParametersSerialization serializationDifferentPrefix =
+        ProtoParametersSerialization.create(
+            "TypeUrl", OutputPrefixType.RAW, ByteString.copyFromUtf8("value"));
+    ProtoParametersSerialization serializationDifferentValue =
+        ProtoParametersSerialization.create(
+            "TypeUrl", OutputPrefixType.TINK, ByteString.copyFromUtf8("different value"));
+
+    LegacyProtoParameters parameters1 = new LegacyProtoParameters(serialization1);
+    LegacyProtoParameters parameters1Copy = new LegacyProtoParameters(serialization1Copy);
+    LegacyProtoParameters parametersDifferentUrl = new LegacyProtoParameters(serializationDifferentUrl);
+    LegacyProtoParameters parametersDifferentPrefix = new LegacyProtoParameters(serializationDifferentPrefix);
+    LegacyProtoParameters parametersDifferentValue = new LegacyProtoParameters(serializationDifferentValue);
+
+    assertThat(parameters1).isEqualTo(parameters1Copy);
+    assertThat(parameters1Copy).isEqualTo(parameters1);
+
+    assertThat(parameters1).isNotEqualTo(parametersDifferentUrl);
+    assertThat(parameters1).isNotEqualTo(parametersDifferentPrefix);
+    assertThat(parameters1).isNotEqualTo(parametersDifferentValue);
+
+    assertThat(parameters1).isNotEqualTo(null);
+    assertThat(parameters1.equals((Object) "some string")).isFalse();
   }
 
   @Test
-  public void testHashCode() {
-    KeyTemplate.Builder builder =
-        KeyTemplate.newBuilder()
-            .setTypeUrl("TypeUrl")
-            .setOutputPrefixType(OutputPrefixType.TINK)
-            .setValue(ByteString.EMPTY);
-    assertThat(fromBuilder(builder).hashCode()).isEqualTo(fromBuilder(builder).hashCode());
+  public void testHashCode() throws Exception {
+    ProtoParametersSerialization serialization1 =
+        ProtoParametersSerialization.create(
+            "TypeUrl", OutputPrefixType.TINK, ByteString.copyFromUtf8("value"));
+    ProtoParametersSerialization serialization1Copy =
+        ProtoParametersSerialization.create(
+            "TypeUrl", OutputPrefixType.TINK, ByteString.copyFromUtf8("value"));
 
-    builder.setValue(ByteString.EMPTY);
-    assertThat(fromBuilder(builder).hashCode()).isEqualTo(fromBuilder(builder).hashCode());
+    LegacyProtoParameters parameters1 = new LegacyProtoParameters(serialization1);
+    LegacyProtoParameters parameters1Copy = new LegacyProtoParameters(serialization1Copy);
+
+    assertThat(parameters1.hashCode()).isEqualTo(parameters1Copy.hashCode());
+  }
+
+  @Test
+  public void testToString() throws Exception {
+    LegacyProtoParameters parameters =
+        new LegacyProtoParameters(
+            ProtoParametersSerialization.create(
+                "myTypeUrl", OutputPrefixType.TINK, ByteString.EMPTY));
+    assertThat(parameters.toString()).isEqualTo("(typeUrl=myTypeUrl, outputPrefixType=TINK)");
   }
 }

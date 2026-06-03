@@ -96,11 +96,8 @@ java_test(
     size = "small",
     srcs = ["ProtoParametersSerializationTest.java"],
     deps = [
-        "//proto:test_proto_java_proto",
-        "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:proto_key_serialization",
         "//src/main/java/com/google/crypto/tink/internal:proto_parameters_serialization",
-        "//src/main/java/com/google/crypto/tink/internal:tink_bug_exception",
         "//src/main/java/com/google/crypto/tink/util:bytes",
         "@maven//:com_google_protobuf_protobuf_java",
         "@maven//:com_google_truth_truth",
@@ -190,7 +187,7 @@ java_test(
     size = "small",
     srcs = ["LegacyProtoParametersTest.java"],
     deps = [
-        "//proto:tink_java_proto",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_parameters",
         "//src/main/java/com/google/crypto/tink/internal:proto_parameters_serialization",
         "@maven//:com_google_protobuf_protobuf_java",
