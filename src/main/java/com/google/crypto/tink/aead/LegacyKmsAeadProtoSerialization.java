@@ -18,6 +18,7 @@ package com.google.crypto.tink.aead;
 
 import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
+import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
 import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.SecretKeyAccess;
@@ -106,6 +107,7 @@ final class LegacyKmsAeadProtoSerialization {
         toVariant(serialization.getOutputPrefixType()));
   }
 
+  @AccessesPartialKey
   private static ProtoKeySerialization serializeKey(
       LegacyKmsAeadKey key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     return ProtoKeySerialization.create(
@@ -120,6 +122,7 @@ final class LegacyKmsAeadProtoSerialization {
         key.getIdRequirementOrNull());
   }
 
+  @AccessesPartialKey
   private static LegacyKmsAeadKey parseKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {

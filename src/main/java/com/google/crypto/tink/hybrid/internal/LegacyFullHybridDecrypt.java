@@ -18,6 +18,7 @@ package com.google.crypto.tink.hybrid.internal;
 
 import static com.google.crypto.tink.internal.Util.isPrefix;
 
+import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyManager;
@@ -48,6 +49,7 @@ public final class LegacyFullHybridDecrypt implements HybridDecrypt {
   @SuppressWarnings("Immutable") // We are careful and never leak this or change it.
   private final byte[] outputPrefix;
 
+  @AccessesPartialKey
   public static HybridDecrypt create(LegacyProtoKey key) throws GeneralSecurityException {
     ProtoKeySerialization protoKeySerialization =
         key.getSerialization(InsecureSecretKeyAccess.get());

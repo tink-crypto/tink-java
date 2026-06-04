@@ -327,6 +327,7 @@ java_library(
     name = "legacy_full_aead",
     srcs = ["LegacyFullAead.java"],
     deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
         "//src/main/java/com/google/crypto/tink:aead",
         "//src/main/java/com/google/crypto/tink:crypto_format",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
@@ -346,6 +347,7 @@ android_library(
     name = "legacy_full_aead-android",
     srcs = ["LegacyFullAead.java"],
     deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
         "//src/main/java/com/google/crypto/tink:aead-android",
         "//src/main/java/com/google/crypto/tink:crypto_format-android",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access-android",

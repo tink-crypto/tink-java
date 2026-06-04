@@ -18,6 +18,7 @@ package com.google.crypto.tink.aead.internal;
 
 import static com.google.crypto.tink.internal.Util.isPrefix;
 
+import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.CryptoFormat;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
@@ -42,6 +43,7 @@ public class LegacyFullAead implements Aead {
   private final byte[] identifier;
 
   /** This method covers the cases where users created their own aead/key classes. */
+  @AccessesPartialKey
   public static Aead create(LegacyProtoKey key) throws GeneralSecurityException {
     ProtoKeySerialization protoKeySerialization =
         key.getSerialization(InsecureSecretKeyAccess.get());
@@ -58,6 +60,7 @@ public class LegacyFullAead implements Aead {
     return new LegacyFullAead(rawPrimitive, identifier);
   }
 
+  @AccessesPartialKey
   public static Aead create(Aead rawAead, com.google.crypto.tink.util.Bytes outputPrefix) {
     return new LegacyFullAead(rawAead, outputPrefix.toByteArray());
   }

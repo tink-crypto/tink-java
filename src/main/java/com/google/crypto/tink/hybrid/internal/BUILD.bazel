@@ -520,6 +520,7 @@ android_library(
     name = "legacy_full_hybrid_decrypt-android",
     srcs = ["LegacyFullHybridDecrypt.java"],
     deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
         "//src/main/java/com/google/crypto/tink:hybrid_decrypt-android",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access-android",
         "//src/main/java/com/google/crypto/tink:key_manager-android",
@@ -537,6 +538,7 @@ android_library(
     name = "legacy_full_hybrid_encrypt-android",
     srcs = ["LegacyFullHybridEncrypt.java"],
     deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
         "//src/main/java/com/google/crypto/tink:hybrid_encrypt-android",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access-android",
         "//src/main/java/com/google/crypto/tink:key_manager-android",
@@ -554,6 +556,7 @@ java_library(
     name = "legacy_full_hybrid_decrypt",
     srcs = ["LegacyFullHybridDecrypt.java"],
     deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
         "//src/main/java/com/google/crypto/tink:hybrid_decrypt",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink:key_manager",
@@ -571,6 +574,7 @@ java_library(
     name = "legacy_full_hybrid_encrypt",
     srcs = ["LegacyFullHybridEncrypt.java"],
     deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
         "//src/main/java/com/google/crypto/tink:hybrid_encrypt",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink:key_manager",

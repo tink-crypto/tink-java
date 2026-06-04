@@ -1339,6 +1339,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
     return true;
   }
 
+  @AccessesPartialKey
   private static ProtoKeySerialization toProtoKeySerialization(Keyset.Key protoKey)
       throws GeneralSecurityException {
     int id = protoKey.getKeyId();
@@ -1358,6 +1359,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
         .parseKeyWithLegacyFallback(protoKeySerialization, InsecureSecretKeyAccess.get());
   }
 
+  @AccessesPartialKey
   private static Keyset.Key toKeysetKey(
       int id, KeyStatusType status, ProtoKeySerialization protoKeySerialization)
       throws GeneralSecurityException {

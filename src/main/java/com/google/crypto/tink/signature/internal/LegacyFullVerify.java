@@ -18,6 +18,7 @@ package com.google.crypto.tink.signature.internal;
 
 import static com.google.crypto.tink.internal.Util.isPrefix;
 
+import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
@@ -38,6 +39,7 @@ import java.util.Arrays;
 @Immutable
 public final class LegacyFullVerify implements PublicKeyVerify {
   /** Creates the full primitive corresponding to the key. */
+  @AccessesPartialKey
   public static PublicKeyVerify create(LegacyProtoKey key) throws GeneralSecurityException {
     ProtoKeySerialization protoKeySerialization =
         key.getSerialization(InsecureSecretKeyAccess.get());

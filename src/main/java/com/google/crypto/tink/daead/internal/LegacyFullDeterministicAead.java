@@ -18,6 +18,7 @@ package com.google.crypto.tink.daead.internal;
 
 import static com.google.crypto.tink.internal.Util.isPrefix;
 
+import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.CryptoFormat;
 import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
@@ -45,6 +46,7 @@ public class LegacyFullDeterministicAead implements DeterministicAead {
   /**
    * Creates a DeterministicAead full primitive from user-defined deterministic aead / key classes.
    */
+  @AccessesPartialKey
   public static DeterministicAead create(LegacyProtoKey key) throws GeneralSecurityException {
     ProtoKeySerialization protoKeySerialization =
         key.getSerialization(InsecureSecretKeyAccess.get());

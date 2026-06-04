@@ -91,6 +91,7 @@ java_library(
     srcs = ["LegacyFullSign.java"],
     deps = [
         ":legacy_full_verify",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink:key_manager",
         "//src/main/java/com/google/crypto/tink:public_key_sign",
@@ -106,6 +107,7 @@ java_library(
     name = "legacy_full_verify",
     srcs = ["LegacyFullVerify.java"],
     deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink:key_manager",
         "//src/main/java/com/google/crypto/tink:proto_key_serialization",
@@ -155,6 +157,7 @@ android_library(
     srcs = ["LegacyFullSign.java"],
     deps = [
         ":legacy_full_verify-android",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access-android",
         "//src/main/java/com/google/crypto/tink:key_manager-android",
         "//src/main/java/com/google/crypto/tink:public_key_sign-android",
@@ -170,6 +173,7 @@ android_library(
     name = "legacy_full_verify-android",
     srcs = ["LegacyFullVerify.java"],
     deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access-android",
         "//src/main/java/com/google/crypto/tink:key_manager-android",
         "//src/main/java/com/google/crypto/tink:proto_key_serialization-android",

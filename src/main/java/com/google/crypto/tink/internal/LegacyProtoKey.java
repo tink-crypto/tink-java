@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.internal;
 
+import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.Parameters;
@@ -115,6 +116,7 @@ public final class LegacyProtoKey extends Key {
    * implementations of keys)
    */
   @Override
+  @AccessesPartialKey
   public boolean equalsKey(Key key) {
     if (!(key instanceof LegacyProtoKey)) {
       return false;
@@ -170,6 +172,7 @@ public final class LegacyProtoKey extends Key {
     return computeOutputPrefix(serialization);
   }
 
+  @AccessesPartialKey
   public Key maybeGetPublicKey() throws GeneralSecurityException {
     String typeUrl = serialization.getTypeUrl();
     KeyManager<?> manager = KeyManagerRegistry.globalInstance().getUntypedKeyManager(typeUrl);

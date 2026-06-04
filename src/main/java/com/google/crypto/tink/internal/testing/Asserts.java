@@ -18,6 +18,7 @@ package com.google.crypto.tink.internal.testing;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.protobuf.ExtensionRegistryLite;
@@ -52,6 +53,7 @@ public final class Asserts {
       throw new AssertionError("Unable to parse value with given parser", e);
     }
   }
+
   /**
    * Throws an assertion error if two {@link ProtoParametersSerialization} objects are not equal.
    *
@@ -61,6 +63,7 @@ public final class Asserts {
    * <p>Equality of the protos is decided by message equality, see {@link
    * com.google.protobuf.Message#equals}.
    */
+  @AccessesPartialKey
   public static void assertEqualWhenValueParsed(
       Parser<? extends MessageLite> parser, ProtoKeySerialization one, ProtoKeySerialization two) {
     assertThat(one.getKeyMaterialType()).isEqualTo(two.getKeyMaterialType());

@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.aead; // instead of subtle, because it depends on KeyTemplate.
 
+import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
@@ -146,6 +147,7 @@ public final class KmsEnvelopeAead implements Aead {
   }
 
   @Override
+  @AccessesPartialKey
   public byte[] encrypt(final byte[] plaintext, final byte[] associatedData)
       throws GeneralSecurityException {
     Key key =
@@ -169,6 +171,7 @@ public final class KmsEnvelopeAead implements Aead {
   }
 
   @Override
+  @AccessesPartialKey
   public byte[] decrypt(final byte[] ciphertext, final byte[] associatedData)
       throws GeneralSecurityException {
     try {

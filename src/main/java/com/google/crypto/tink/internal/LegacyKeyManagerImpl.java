@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.internal;
 
+import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyManager;
@@ -73,6 +74,7 @@ public class LegacyKeyManagerImpl<P> implements KeyManager<P> {
   }
 
   @Override
+  @AccessesPartialKey
   public P getPrimitive(ByteString serializedKey) throws GeneralSecurityException {
     ProtoKeySerialization serialization =
         ProtoKeySerialization.create(
@@ -125,6 +127,7 @@ public class LegacyKeyManagerImpl<P> implements KeyManager<P> {
   }
 
   @Override
+  @AccessesPartialKey
   public final KeyData newKeyData(ByteString serializedKeyFormat) throws GeneralSecurityException {
     ProtoParametersSerialization parametersSerialization =
         ProtoParametersSerialization.create(
@@ -159,6 +162,7 @@ public class LegacyKeyManagerImpl<P> implements KeyManager<P> {
     }
 
     @Override
+    @AccessesPartialKey
     public KeyData getPublicKeyData(ByteString serializedKey) throws GeneralSecurityException {
       ProtoKeySerialization serialization =
           ProtoKeySerialization.create(

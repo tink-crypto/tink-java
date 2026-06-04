@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.internal;
 
+import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyManager;
@@ -31,6 +32,7 @@ public final class MutableKeyCreationRegistry {
   private final Map<Class<? extends Parameters>, KeyCreator<? extends Parameters>> creators =
       new HashMap<>();
 
+  @AccessesPartialKey
   private static LegacyProtoKey createProtoKeyFromProtoParameters(
       LegacyProtoParameters parameters, @Nullable Integer idRequirement)
       throws GeneralSecurityException {

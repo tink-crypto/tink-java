@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.prf.internal;
 
+import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
@@ -38,6 +39,7 @@ public class LegacyFullPrf implements Prf {
   private final Prf rawPrf;
 
   /** This method covers the cases where users created their own prf/key classes. */
+  @AccessesPartialKey
   public static Prf create(LegacyProtoKey key) throws GeneralSecurityException {
     ProtoKeySerialization protoKeySerialization =
         key.getSerialization(InsecureSecretKeyAccess.get());

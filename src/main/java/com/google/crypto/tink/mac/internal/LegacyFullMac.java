@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.mac.internal;
 
+import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.CryptoFormat;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyManager;
@@ -45,6 +46,7 @@ public final class LegacyFullMac implements Mac {
   private final byte[] identifier;
 
   /** This method covers the cases where users created their own mac/key classes. */
+  @AccessesPartialKey
   public static Mac create(LegacyProtoKey key) throws GeneralSecurityException {
     ProtoKeySerialization protoKeySerialization =
         key.getSerialization(InsecureSecretKeyAccess.get());

@@ -471,6 +471,7 @@ java_library(
         "KeysetManager.java",
     ],
     deps = [
+        ":accesses_partial_key",
         ":aead",
         ":annotations",
         ":configuration",
@@ -519,6 +520,7 @@ android_library(
         "KeysetManager.java",
     ],
     deps = [
+        ":accesses_partial_key-android",
         ":aead-android",
         ":annotations-android",
         ":configuration-android",

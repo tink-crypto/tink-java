@@ -21,6 +21,7 @@ import static com.google.crypto.tink.internal.Util.checkedToBytesFromPrintableAs
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
+import com.google.errorprone.annotations.RestrictedApi;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import javax.annotation.Nullable;
@@ -55,6 +56,11 @@ public final class ProtoKeySerialization implements Serialization {
     this.idRequirement = idRequirement;
   }
 
+  @RestrictedApi(
+      explanation = "Accessing parts of keys can produce unexpected incompatibilities, annotate the function with @AccessesPartialKey",
+      link = "https://developers.google.com/tink/design/access_control#accessing_partial_keys",
+      allowedOnPath = ".*Test\\.java",
+      allowlistAnnotations = {AccessesPartialKey.class})
   public static ProtoKeySerialization create(
       String typeUrl,
       ByteString value,
@@ -80,6 +86,11 @@ public final class ProtoKeySerialization implements Serialization {
   }
 
   /** The contents of the field value in the message com.google.crypto.tink.proto.KeyData. */
+  @RestrictedApi(
+      explanation = "Accessing parts of keys can produce unexpected incompatibilities, annotate the function with @AccessesPartialKey",
+      link = "https://developers.google.com/tink/design/access_control#accessing_partial_keys",
+      allowedOnPath = ".*Test\\.java",
+      allowlistAnnotations = {AccessesPartialKey.class})
   public ByteString getValue() {
     return value;
   }

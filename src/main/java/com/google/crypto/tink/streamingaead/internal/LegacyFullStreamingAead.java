@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.streamingaead.internal;
 
+import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.StreamingAead;
@@ -42,6 +43,7 @@ public class LegacyFullStreamingAead implements StreamingAead {
   private final StreamingAead rawStreamingAead;
 
   /** Covers the cases where users created their own streaming AEAD / key classes. */
+  @AccessesPartialKey
   public static StreamingAead create(LegacyProtoKey key) throws GeneralSecurityException {
     /* Here we don't check that the key is RAW since, for legacy reasons,
      * StreamingAeadWrapper / KeyTypeManager don't. */

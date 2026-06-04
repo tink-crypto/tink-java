@@ -160,6 +160,7 @@ public final class PrfBasedDeriverKeyManager implements KeyManager<Void> {
   }
 
   @Override
+  @AccessesPartialKey
   public final KeyData newKeyData(ByteString serializedKeyFormat) throws GeneralSecurityException {
     OutputPrefixType outputPrefixType =
         getOutputPrefixTypeFromSerializedKeyFormat(serializedKeyFormat);

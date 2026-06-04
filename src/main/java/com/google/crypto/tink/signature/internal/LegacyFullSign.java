@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.signature.internal;
 
+import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.PublicKeySign;
@@ -33,6 +34,7 @@ import java.security.GeneralSecurityException;
 @Immutable
 public final class LegacyFullSign implements PublicKeySign {
   /** Creates the full primitive corresponding to the key. */
+  @AccessesPartialKey
   public static PublicKeySign create(LegacyProtoKey key) throws GeneralSecurityException {
     ProtoKeySerialization protoKeySerialization =
         key.getSerialization(InsecureSecretKeyAccess.get());

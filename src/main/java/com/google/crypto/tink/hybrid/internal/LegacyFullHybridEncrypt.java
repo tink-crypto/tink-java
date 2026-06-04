@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.hybrid.internal;
 
+import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyManager;
@@ -47,6 +48,7 @@ public final class LegacyFullHybridEncrypt implements HybridEncrypt {
   private final byte[] outputPrefix;
 
   /** This method covers the cases where users created their own aead/key classes. */
+  @AccessesPartialKey
   public static HybridEncrypt create(LegacyProtoKey key) throws GeneralSecurityException {
     ProtoKeySerialization protoKeySerialization =
         key.getSerialization(InsecureSecretKeyAccess.get());
