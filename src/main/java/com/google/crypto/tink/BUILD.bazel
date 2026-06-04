@@ -1275,10 +1275,12 @@ android_library(
     srcs = ["ProtoKeySerializer.java"],
     deps = [
         ":key-android",
+        ":low_level_crypto_caller-android",
         ":parameters-android",
         ":proto_key_serialization-android",
         ":secret_key_access-android",
         "@maven//:com_google_code_findbugs_jsr305",
+        "@maven//:com_google_errorprone_error_prone_annotations",
         "@maven//:com_google_protobuf_protobuf_javalite",
     ],
 )
@@ -1299,10 +1301,12 @@ java_library(
     srcs = ["ProtoKeySerializer.java"],
     deps = [
         ":key",
+        ":low_level_crypto_caller",
         ":parameters",
         ":proto_key_serialization",
         ":secret_key_access",
         "@maven//:com_google_code_findbugs_jsr305",
+        "@maven//:com_google_errorprone_error_prone_annotations",
         "@maven//:com_google_protobuf_protobuf_java",
     ],
 )

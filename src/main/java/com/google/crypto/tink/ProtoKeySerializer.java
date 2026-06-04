@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink;
 
+import com.google.errorprone.annotations.RestrictedApi;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import javax.annotation.Nullable;
@@ -25,13 +26,41 @@ import javax.annotation.Nullable;
  * "ProtoKeyset" format.
  */
 public interface ProtoKeySerializer {
+  @RestrictedApi(
+      explanation =
+          "LowLevelCryptoCaller APIs are useful for implementing protocols, or higher level"
+              + " cryptographic primitives. However, most users should use Keyset APIs in order to"
+              + " be prepared for key rotation",
+      allowedOnPath = ".*Test\\.java",
+      allowlistAnnotations = {LowLevelCryptoCaller.class})
   Key parseKey(ProtoKeySerialization protoKeySerialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException;
 
+  @RestrictedApi(
+      explanation =
+          "LowLevelCryptoCaller APIs are useful for implementing protocols, or higher level"
+              + " cryptographic primitives. However, most users should use Keyset APIs in order to"
+              + " be prepared for key rotation",
+      allowedOnPath = ".*Test\\.java",
+      allowlistAnnotations = {LowLevelCryptoCaller.class})
   ProtoKeySerialization serializeKey(Key key, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException;
 
+  @RestrictedApi(
+      explanation =
+          "LowLevelCryptoCaller APIs are useful for implementing protocols, or higher level"
+              + " cryptographic primitives. However, most users should use Keyset APIs in order to"
+              + " be prepared for key rotation",
+      allowedOnPath = ".*Test\\.java",
+      allowlistAnnotations = {LowLevelCryptoCaller.class})
   ByteString serializeParameters(Parameters parameters) throws GeneralSecurityException;
 
+  @RestrictedApi(
+      explanation =
+          "LowLevelCryptoCaller APIs are useful for implementing protocols, or higher level"
+              + " cryptographic primitives. However, most users should use Keyset APIs in order to"
+              + " be prepared for key rotation",
+      allowedOnPath = ".*Test\\.java",
+      allowlistAnnotations = {LowLevelCryptoCaller.class})
   Parameters parseParameters(ByteString serialization) throws GeneralSecurityException;
 }
