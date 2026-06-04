@@ -27,6 +27,7 @@ import com.google.crypto.tink.prf.Prf;
 import com.google.crypto.tink.prf.PrfSet;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -113,7 +114,8 @@ public final class WrappedPrfSet {
             entry.getId(), new WrappedPrfSetImpl.PrfWithMonitoring(prf, entry.getId(), logger));
       }
     }
-    return new WrappedPrfSetImpl(mutablePrfMap, keysetHandle.getPrimary().getId());
+    return new WrappedPrfSetImpl(
+        Collections.unmodifiableMap(mutablePrfMap), keysetHandle.getPrimary().getId());
   }
 
   private WrappedPrfSet() {}

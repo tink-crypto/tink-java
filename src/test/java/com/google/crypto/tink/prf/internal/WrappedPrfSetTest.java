@@ -181,6 +181,21 @@ public class WrappedPrfSetTest {
   }
 
   @Test
+  public void getPrfs_isUnmodifiableMap() throws Exception {
+    MutablePrimitiveRegistry.resetGlobalInstanceTestOnly();
+    com.google.crypto.tink.prf.PrfSetWrapper.register();
+    PrfConfig.register();
+
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(hkdfPrfKey0).withFixedId(42).makePrimary())
+            .build();
+    PrfSet prfSet = WrappedPrfSet.create(keysetHandle, WrappedPrfSetTest::createPrf);
+
+    assertThrows(UnsupportedOperationException.class, () -> prfSet.getPrfs().put(43, null));
+  }
+
+  @Test
   public void testWithEmptyAnnotations_noMonitoring() throws Exception {
     MutablePrimitiveRegistry.resetGlobalInstanceTestOnly();
     PrfConfig.register();
