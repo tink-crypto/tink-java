@@ -49,7 +49,7 @@ public final class AesGcmSivProtoSerialization {
   private static final String TYPE_URL = "type.googleapis.com/google.crypto.tink.AesGcmSivKey";
   private static final Bytes TYPE_URL_BYTES = toBytesFromPrintableAscii(TYPE_URL);
 
-  private static final ParametersSerializer<AesGcmSivParameters, ProtoParametersSerialization>
+  private static final ParametersSerializer<AesGcmSivParameters>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               AesGcmSivProtoSerialization::serializeParameters, AesGcmSivParameters.class);

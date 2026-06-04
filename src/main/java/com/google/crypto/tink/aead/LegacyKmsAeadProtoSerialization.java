@@ -41,7 +41,7 @@ final class LegacyKmsAeadProtoSerialization {
   private static final String TYPE_URL = "type.googleapis.com/google.crypto.tink.KmsAeadKey";
   private static final Bytes TYPE_URL_BYTES = toBytesFromPrintableAscii(TYPE_URL);
 
-  private static final ParametersSerializer<LegacyKmsAeadParameters, ProtoParametersSerialization>
+  private static final ParametersSerializer<LegacyKmsAeadParameters>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               LegacyKmsAeadProtoSerialization::serializeParameters, LegacyKmsAeadParameters.class);

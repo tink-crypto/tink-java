@@ -46,7 +46,7 @@ public final class AesEaxProtoSerialization {
   private static final String TYPE_URL = "type.googleapis.com/google.crypto.tink.AesEaxKey";
   private static final Bytes TYPE_URL_BYTES = toBytesFromPrintableAscii(TYPE_URL);
 
-  private static final ParametersSerializer<AesEaxParameters, ProtoParametersSerialization>
+  private static final ParametersSerializer<AesEaxParameters>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               AesEaxProtoSerialization::serializeParameters, AesEaxParameters.class);

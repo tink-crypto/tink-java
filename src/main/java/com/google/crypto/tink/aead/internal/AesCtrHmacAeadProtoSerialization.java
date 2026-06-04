@@ -50,7 +50,7 @@ public final class AesCtrHmacAeadProtoSerialization {
   private static final String TYPE_URL = "type.googleapis.com/google.crypto.tink.AesCtrHmacAeadKey";
   private static final Bytes TYPE_URL_BYTES = toBytesFromPrintableAscii(TYPE_URL);
 
-  private static final ParametersSerializer<AesCtrHmacAeadParameters, ProtoParametersSerialization>
+  private static final ParametersSerializer<AesCtrHmacAeadParameters>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               AesCtrHmacAeadProtoSerialization::serializeParameters,

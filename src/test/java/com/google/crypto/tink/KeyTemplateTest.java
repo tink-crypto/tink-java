@@ -124,7 +124,7 @@ public final class KeyTemplateTest {
     }
   }
 
-  private static ParametersSerializer<ParametersSubclass, ProtoParametersSerialization>
+  private static ParametersSerializer<ParametersSubclass>
       PARAMETERS_SUBCLASS_SERIALIZER =
           ParametersSerializer.create(
               (ParametersSubclass p) ->

@@ -93,7 +93,7 @@ public final class HmacProtoSerialization {
               .add(HashType.SHA512, HmacParameters.HashType.SHA512)
               .build();
 
-  private static final ParametersSerializer<HmacParameters, ProtoParametersSerialization>
+  private static final ParametersSerializer<HmacParameters>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               HmacProtoSerialization::serializeParameters, HmacParameters.class);

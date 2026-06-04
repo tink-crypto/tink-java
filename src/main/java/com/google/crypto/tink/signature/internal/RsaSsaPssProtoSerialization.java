@@ -57,7 +57,7 @@ public final class RsaSsaPssProtoSerialization {
       "type.googleapis.com/google.crypto.tink.RsaSsaPssPublicKey";
   private static final Bytes PUBLIC_TYPE_URL_BYTES = toBytesFromPrintableAscii(PUBLIC_TYPE_URL);
 
-  private static final ParametersSerializer<RsaSsaPssParameters, ProtoParametersSerialization>
+  private static final ParametersSerializer<RsaSsaPssParameters>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               RsaSsaPssProtoSerialization::serializeParameters, RsaSsaPssParameters.class);

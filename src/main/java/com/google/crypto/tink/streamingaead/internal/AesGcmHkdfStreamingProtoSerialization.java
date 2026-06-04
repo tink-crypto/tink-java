@@ -51,8 +51,7 @@ public final class AesGcmHkdfStreamingProtoSerialization {
       "type.googleapis.com/google.crypto.tink.AesGcmHkdfStreamingKey";
   private static final Bytes TYPE_URL_BYTES = toBytesFromPrintableAscii(TYPE_URL);
 
-  private static final ParametersSerializer<
-          AesGcmHkdfStreamingParameters, ProtoParametersSerialization>
+  private static final ParametersSerializer<AesGcmHkdfStreamingParameters>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               AesGcmHkdfStreamingProtoSerialization::serializeParameters,

@@ -59,7 +59,7 @@ public final class EcdsaProtoSerialization {
       "type.googleapis.com/google.crypto.tink.EcdsaPublicKey";
   private static final Bytes PUBLIC_TYPE_URL_BYTES = toBytesFromPrintableAscii(PUBLIC_TYPE_URL);
 
-  private static final ParametersSerializer<EcdsaParameters, ProtoParametersSerialization>
+  private static final ParametersSerializer<EcdsaParameters>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               EcdsaProtoSerialization::serializeParameters, EcdsaParameters.class);

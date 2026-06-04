@@ -58,7 +58,7 @@ public final class JwtRsaSsaPkcs1ProtoSerialization {
       "type.googleapis.com/google.crypto.tink.JwtRsaSsaPkcs1PublicKey";
   private static final Bytes PUBLIC_TYPE_URL_BYTES = toBytesFromPrintableAscii(PUBLIC_TYPE_URL);
 
-  private static final ParametersSerializer<JwtRsaSsaPkcs1Parameters, ProtoParametersSerialization>
+  private static final ParametersSerializer<JwtRsaSsaPkcs1Parameters>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               JwtRsaSsaPkcs1ProtoSerialization::serializeParameters,

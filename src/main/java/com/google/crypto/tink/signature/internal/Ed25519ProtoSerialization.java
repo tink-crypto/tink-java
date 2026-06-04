@@ -54,7 +54,7 @@ public final class Ed25519ProtoSerialization {
       "type.googleapis.com/google.crypto.tink.Ed25519PublicKey";
   private static final Bytes PUBLIC_TYPE_URL_BYTES = toBytesFromPrintableAscii(PUBLIC_TYPE_URL);
 
-  private static final ParametersSerializer<Ed25519Parameters, ProtoParametersSerialization>
+  private static final ParametersSerializer<Ed25519Parameters>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               Ed25519ProtoSerialization::serializeParameters, Ed25519Parameters.class);

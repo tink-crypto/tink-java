@@ -54,7 +54,7 @@ public final class SlhDsaProtoSerialization {
       "type.googleapis.com/google.crypto.tink.SlhDsaPublicKey";
   private static final Bytes PUBLIC_TYPE_URL_BYTES = toBytesFromPrintableAscii(PUBLIC_TYPE_URL);
 
-  private static final ParametersSerializer<SlhDsaParameters, ProtoParametersSerialization>
+  private static final ParametersSerializer<SlhDsaParameters>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               SlhDsaProtoSerialization::serializeParameters, SlhDsaParameters.class);

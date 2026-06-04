@@ -48,7 +48,7 @@ final class JwtHmacProtoSerialization {
   private static final String TYPE_URL = "type.googleapis.com/google.crypto.tink.JwtHmacKey";
   private static final Bytes TYPE_URL_BYTES = toBytesFromPrintableAscii(TYPE_URL);
 
-  private static final ParametersSerializer<JwtHmacParameters, ProtoParametersSerialization>
+  private static final ParametersSerializer<JwtHmacParameters>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               JwtHmacProtoSerialization::serializeParameters, JwtHmacParameters.class);

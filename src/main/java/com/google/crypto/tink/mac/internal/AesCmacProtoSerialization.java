@@ -49,7 +49,7 @@ public final class AesCmacProtoSerialization {
   private static final String TYPE_URL = "type.googleapis.com/google.crypto.tink.AesCmacKey";
   private static final Bytes TYPE_URL_BYTES = toBytesFromPrintableAscii(TYPE_URL);
 
-  private static final ParametersSerializer<AesCmacParameters, ProtoParametersSerialization>
+  private static final ParametersSerializer<AesCmacParameters>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               AesCmacProtoSerialization::serializeParameters, AesCmacParameters.class);

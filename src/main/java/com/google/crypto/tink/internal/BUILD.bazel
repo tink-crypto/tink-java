@@ -250,7 +250,6 @@ java_library(
         ":parameters_serializer",
         ":proto_key_serialization",
         ":proto_parameters_serialization",
-        ":serialization",
         "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink:parameters",
         "//src/main/java/com/google/crypto/tink:secret_key_access",
@@ -270,7 +269,6 @@ android_library(
         ":parameters_serializer-android",
         ":proto_key_serialization-android",
         ":proto_parameters_serialization-android",
-        ":serialization-android",
         "//src/main/java/com/google/crypto/tink:key-android",
         "//src/main/java/com/google/crypto/tink:parameters-android",
         "//src/main/java/com/google/crypto/tink:secret_key_access-android",
@@ -307,7 +305,6 @@ java_library(
     srcs = ["ParametersSerializer.java"],
     deps = [
         ":proto_parameters_serialization",
-        ":serialization",
         "//src/main/java/com/google/crypto/tink:parameters",
     ],
 )
@@ -317,7 +314,6 @@ android_library(
     srcs = ["ParametersSerializer.java"],
     deps = [
         ":proto_parameters_serialization-android",
-        ":serialization-android",
         "//src/main/java/com/google/crypto/tink:parameters-android",
     ],
 )
@@ -400,7 +396,6 @@ java_library(
         ":parameters_serializer",
         ":proto_key_serialization",
         ":proto_parameters_serialization",
-        ":serialization",
         ":serialization_registry",
         ":tink_bug_exception",
         "//src/main/java/com/google/crypto/tink:key",
@@ -422,7 +417,6 @@ android_library(
         ":parameters_serializer-android",
         ":proto_key_serialization-android",
         ":proto_parameters_serialization-android",
-        ":serialization-android",
         ":serialization_registry-android",
         ":tink_bug_exception-android",
         "//src/main/java/com/google/crypto/tink:key-android",

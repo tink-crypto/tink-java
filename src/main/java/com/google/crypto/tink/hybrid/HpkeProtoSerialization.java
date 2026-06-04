@@ -61,7 +61,7 @@ public final class HpkeProtoSerialization {
       "type.googleapis.com/google.crypto.tink.HpkePublicKey";
   private static final Bytes PUBLIC_TYPE_URL_BYTES = toBytesFromPrintableAscii(PUBLIC_TYPE_URL);
 
-  private static final ParametersSerializer<HpkeParameters, ProtoParametersSerialization>
+  private static final ParametersSerializer<HpkeParameters>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               HpkeProtoSerialization::serializeParameters, HpkeParameters.class);

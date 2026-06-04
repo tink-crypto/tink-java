@@ -25,39 +25,34 @@ import java.security.GeneralSecurityException;
  * <p>This class should eventually be in Tinks public API -- however, it might still change before
  * that.
  */
-public abstract class ParametersSerializer<
-    ParametersT extends Parameters, SerializationT extends Serialization> {
+public abstract class ParametersSerializer<ParametersT extends Parameters> {
   /**
    * A function which serializes a Parameters object.
    *
    * <p>This interface exists only so we have a type we can reference in {@link #create}. Users
    * should not use this directly; see the explanation in {@link #create}.
    */
-  public interface ParametersSerializationFunction<
-      ParametersT extends Parameters, SerializationT extends Serialization> {
-    SerializationT serializeParameters(ParametersT key) throws GeneralSecurityException;
+  public interface ParametersSerializationFunction<ParametersT extends Parameters> {
+    ProtoParametersSerialization serializeParameters(ParametersT key) throws GeneralSecurityException;
   }
 
   private final Class<ParametersT> parametersClass;
-  private final Class<SerializationT> serializationClass;
+  private final Class<ProtoParametersSerialization> serializationClass;
 
   private ParametersSerializer(
-      Class<ParametersT> parametersClass, Class<SerializationT> serializationClass) {
-    if (serializationClass != ProtoParametersSerialization.class) {
-      throw new IllegalArgumentException("Only ProtoParametersSerialization is supported");
-    }
+      Class<ParametersT> parametersClass, Class<ProtoParametersSerialization> serializationClass) {
     this.parametersClass = parametersClass;
     this.serializationClass = serializationClass;
   }
 
-  public abstract SerializationT serializeParameters(ParametersT parameters)
+  public abstract ProtoParametersSerialization serializeParameters(ParametersT parameters)
       throws GeneralSecurityException;
 
   public Class<ParametersT> getParametersClass() {
     return parametersClass;
   }
 
-  public Class<SerializationT> getSerializationClass() {
+  public Class<ProtoParametersSerialization> getSerializationClass() {
     return serializationClass;
   }
 
@@ -78,15 +73,15 @@ public abstract class ParametersSerializer<
    * This function can then be used to create a {@code ParametersSerializer}:
    *
    * <pre>{@code
-   * ParametersSerializer<MyParameters, ProtoParametersSerialization> serializer =
+   * ParametersSerializer<MyParameters> serializer =
    *       ParametersSerializer.create(MyClass::serializeParameters, MyParameters.class);
    * }</pre>
    */
   public static <ParametersT extends Parameters>
-      ParametersSerializer<ParametersT, ProtoParametersSerialization> create(
-          ParametersSerializationFunction<ParametersT, ProtoParametersSerialization> function,
+      ParametersSerializer<ParametersT> create(
+          ParametersSerializationFunction<ParametersT> function,
           Class<ParametersT> parametersClass) {
-    return new ParametersSerializer<ParametersT, ProtoParametersSerialization>(
+    return new ParametersSerializer<ParametersT>(
         parametersClass, ProtoParametersSerialization.class) {
       @Override
       public ProtoParametersSerialization serializeParameters(ParametersT parameters)

@@ -81,7 +81,7 @@ public final class CompositeMlDsaProtoSerialization {
     }
   }
 
-  private static final ParametersSerializer<CompositeMlDsaParameters, ProtoParametersSerialization>
+  private static final ParametersSerializer<CompositeMlDsaParameters>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               CompositeMlDsaProtoSerialization::serializeParameters,

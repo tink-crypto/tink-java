@@ -58,7 +58,7 @@ public final class JwtEcdsaProtoSerialization {
       "type.googleapis.com/google.crypto.tink.JwtEcdsaPublicKey";
   private static final Bytes PUBLIC_TYPE_URL_BYTES = toBytesFromPrintableAscii(PUBLIC_TYPE_URL);
 
-  private static final ParametersSerializer<JwtEcdsaParameters, ProtoParametersSerialization>
+  private static final ParametersSerializer<JwtEcdsaParameters>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               JwtEcdsaProtoSerialization::serializeParameters, JwtEcdsaParameters.class);

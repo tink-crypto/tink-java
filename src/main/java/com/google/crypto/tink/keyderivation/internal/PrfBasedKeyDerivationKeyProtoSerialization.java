@@ -57,8 +57,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
       "type.googleapis.com/google.crypto.tink.PrfBasedDeriverKey";
   private static final Bytes TYPE_URL_BYTES = toBytesFromPrintableAscii(TYPE_URL);
 
-  private static final ParametersSerializer<
-          PrfBasedKeyDerivationParameters, ProtoParametersSerialization>
+  private static final ParametersSerializer<PrfBasedKeyDerivationParameters>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               PrfBasedKeyDerivationKeyProtoSerialization::serializeParameters,

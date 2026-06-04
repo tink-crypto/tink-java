@@ -62,7 +62,7 @@ public final class EciesProtoSerialization {
       "type.googleapis.com/google.crypto.tink.EciesAeadHkdfPublicKey";
   private static final Bytes PUBLIC_TYPE_URL_BYTES = toBytesFromPrintableAscii(PUBLIC_TYPE_URL);
 
-  private static final ParametersSerializer<EciesParameters, ProtoParametersSerialization>
+  private static final ParametersSerializer<EciesParameters>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               EciesProtoSerialization::serializeParameters, EciesParameters.class);

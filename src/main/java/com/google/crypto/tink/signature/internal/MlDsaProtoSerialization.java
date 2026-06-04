@@ -56,7 +56,7 @@ public final class MlDsaProtoSerialization {
       "type.googleapis.com/google.crypto.tink.MlDsaPublicKey";
   private static final Bytes PUBLIC_TYPE_URL_BYTES = toBytesFromPrintableAscii(PUBLIC_TYPE_URL);
 
-  private static final ParametersSerializer<MlDsaParameters, ProtoParametersSerialization>
+  private static final ParametersSerializer<MlDsaParameters>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               MlDsaProtoSerialization::serializeParameters, MlDsaParameters.class);

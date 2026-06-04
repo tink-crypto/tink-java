@@ -94,7 +94,7 @@ public final class MutableSerializationRegistry {
    * exception is thrown, and the object is unchanged.
    */
   public synchronized <ParametersT extends Parameters> void registerParametersSerializer(
-      ParametersSerializer<ParametersT, ProtoParametersSerialization> serializer)
+      ParametersSerializer<ParametersT> serializer)
       throws GeneralSecurityException {
     SerializationRegistry newRegistry =
         new SerializationRegistry.Builder(registry.get())

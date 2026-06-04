@@ -52,8 +52,7 @@ public final class AesCtrHmacStreamingProtoSerialization {
       "type.googleapis.com/google.crypto.tink.AesCtrHmacStreamingKey";
   private static final Bytes TYPE_URL_BYTES = toBytesFromPrintableAscii(TYPE_URL);
 
-  private static final ParametersSerializer<
-          AesCtrHmacStreamingParameters, ProtoParametersSerialization>
+  private static final ParametersSerializer<AesCtrHmacStreamingParameters>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               AesCtrHmacStreamingProtoSerialization::serializeParameters,

@@ -35,7 +35,7 @@ public final class SerializationRegistry {
   private final Map<Class<?>, KeySerializer<?>> keySerializerMap;
   private final Map<Bytes, KeyParser> keyParserMap;
   // Maps the class of a parameters to a serializer for these parameters.
-  private final Map<Class<?>, ParametersSerializer<?, ProtoParametersSerialization>>
+  private final Map<Class<?>, ParametersSerializer<?>>
       parametersSerializerMap;
   private final Map<Bytes, ParametersParser> parametersParserMap;
 
@@ -43,7 +43,7 @@ public final class SerializationRegistry {
   public static final class Builder {
     private final Map<Class<?>, KeySerializer<?>> keySerializerMap;
     private final Map<Bytes, KeyParser> keyParserMap;
-    private final Map<Class<?>, ParametersSerializer<?, ProtoParametersSerialization>>
+    private final Map<Class<?>, ParametersSerializer<?>>
         parametersSerializerMap;
     private final Map<Bytes, ParametersParser> parametersParserMap;
 
@@ -118,10 +118,10 @@ public final class SerializationRegistry {
      */
     @CanIgnoreReturnValue
     public <ParametersT extends Parameters> Builder registerParametersSerializer(
-        ParametersSerializer<ParametersT, ProtoParametersSerialization> serializer)
+        ParametersSerializer<ParametersT> serializer)
         throws GeneralSecurityException {
       if (parametersSerializerMap.containsKey(serializer.getParametersClass())) {
-        ParametersSerializer<?, ProtoParametersSerialization> existingSerializer =
+        ParametersSerializer<?> existingSerializer =
             parametersSerializerMap.get(serializer.getParametersClass());
         if (!existingSerializer.equals(serializer) || !serializer.equals(existingSerializer)) {
           throw new GeneralSecurityException(
@@ -262,8 +262,8 @@ public final class SerializationRegistry {
           "No Key Format serializer for " + parameters.getClass() + " available");
     }
     @SuppressWarnings("unchecked") // We know we only insert like this.
-    ParametersSerializer<ParametersT, ProtoParametersSerialization> serializer =
-        (ParametersSerializer<ParametersT, ProtoParametersSerialization>)
+    ParametersSerializer<ParametersT> serializer =
+        (ParametersSerializer<ParametersT>)
             parametersSerializerMap.get(parameters.getClass());
     return serializer.serializeParameters(parameters);
   }

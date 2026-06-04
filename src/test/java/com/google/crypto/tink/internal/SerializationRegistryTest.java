@@ -452,7 +452,7 @@ public final class SerializationRegistryTest {
 
   @Test
   public void test_registerSameParametersSerializerTwice_works() throws Exception {
-    ParametersSerializer<TestParameters1, ProtoParametersSerialization> testSerializer =
+    ParametersSerializer<TestParameters1> testSerializer =
         ParametersSerializer.create(
             SerializationRegistryTest::serializeParameters1ToProto, TestParameters1.class);
     SerializationRegistry unused = new SerializationRegistry.Builder()
@@ -463,10 +463,10 @@ public final class SerializationRegistryTest {
 
   @Test
   public void test_registerDifferentSerializerWithSameParametersType_throws() throws Exception {
-    ParametersSerializer<TestParameters1, ProtoParametersSerialization> testSerializer1 =
+    ParametersSerializer<TestParameters1> testSerializer1 =
         ParametersSerializer.create(
             SerializationRegistryTest::serializeParameters1ToProto, TestParameters1.class);
-    ParametersSerializer<TestParameters1, ProtoParametersSerialization> testSerializer2 =
+    ParametersSerializer<TestParameters1> testSerializer2 =
         ParametersSerializer.create(
             SerializationRegistryTest::serializeParameters1ToProto, TestParameters1.class);
     SerializationRegistry.Builder builder = new SerializationRegistry.Builder();
@@ -478,10 +478,10 @@ public final class SerializationRegistryTest {
 
   @Test
   public void test_registerDifferentSerializerWithDifferentParametersType_works() throws Exception {
-    ParametersSerializer<TestParameters1, ProtoParametersSerialization> testSerializer1 =
+    ParametersSerializer<TestParameters1> testSerializer1 =
         ParametersSerializer.create(
             SerializationRegistryTest::serializeParameters1ToProto, TestParameters1.class);
-    ParametersSerializer<TestParameters2, ProtoParametersSerialization> testSerializer2 =
+    ParametersSerializer<TestParameters2> testSerializer2 =
         ParametersSerializer.create(
             SerializationRegistryTest::serializeParameters2ToProto, TestParameters2.class);
     SerializationRegistry unused = new SerializationRegistry.Builder()

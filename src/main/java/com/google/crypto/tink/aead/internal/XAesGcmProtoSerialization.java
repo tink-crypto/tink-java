@@ -51,7 +51,7 @@ public final class XAesGcmProtoSerialization {
   private static final Bytes TYPE_URL_BYTES = toBytesFromPrintableAscii(TYPE_URL);
   private static final int KEY_SIZE_BYTES = 32;
 
-  private static final ParametersSerializer<XAesGcmParameters, ProtoParametersSerialization>
+  private static final ParametersSerializer<XAesGcmParameters>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               XAesGcmProtoSerialization::serializeParameters, XAesGcmParameters.class);

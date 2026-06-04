@@ -49,7 +49,7 @@ public final class HmacPrfProtoSerialization {
   private static final String TYPE_URL = "type.googleapis.com/google.crypto.tink.HmacPrfKey";
   private static final Bytes TYPE_URL_BYTES = toBytesFromPrintableAscii(TYPE_URL);
 
-  private static final ParametersSerializer<HmacPrfParameters, ProtoParametersSerialization>
+  private static final ParametersSerializer<HmacPrfParameters>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               HmacPrfProtoSerialization::serializeParameters, HmacPrfParameters.class);

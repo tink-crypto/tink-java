@@ -20,7 +20,6 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
-import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
@@ -40,14 +39,6 @@ public final class ParametersSerializerTest {
     }
   }
 
-  @Immutable
-  private static class ExampleSerialization implements Serialization {
-    @Override
-    public Bytes getObjectIdentifier() {
-      return Bytes.copyFrom(new byte[0]);
-    }
-  }
-
   private static ProtoParametersSerialization serialize(ExampleParameters k)
       throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
@@ -64,14 +55,14 @@ public final class ParametersSerializerTest {
 
   @Test
   public void createSerializer_serializeKey_works() throws Exception {
-    ParametersSerializer<ExampleParameters, ProtoParametersSerialization> serializer =
+    ParametersSerializer<ExampleParameters> serializer =
         ParametersSerializer.create(ParametersSerializerTest::serialize, ExampleParameters.class);
     assertThat(serializer.serializeParameters(new ExampleParameters())).isNotNull();
   }
 
   @Test
   public void createSerializer_classes_work() throws Exception {
-    ParametersSerializer<ExampleParameters, ProtoParametersSerialization> serializer =
+    ParametersSerializer<ExampleParameters> serializer =
         ParametersSerializer.create(ParametersSerializerTest::serialize, ExampleParameters.class);
     assertThat(serializer.getParametersClass()).isEqualTo(ExampleParameters.class);
     assertThat(serializer.getSerializationClass()).isEqualTo(ProtoParametersSerialization.class);

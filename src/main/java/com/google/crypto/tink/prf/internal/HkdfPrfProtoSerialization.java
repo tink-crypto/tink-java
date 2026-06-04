@@ -49,7 +49,7 @@ public final class HkdfPrfProtoSerialization {
   private static final String TYPE_URL = "type.googleapis.com/google.crypto.tink.HkdfPrfKey";
   private static final Bytes TYPE_URL_BYTES = toBytesFromPrintableAscii(TYPE_URL);
 
-  private static final ParametersSerializer<HkdfPrfParameters, ProtoParametersSerialization>
+  private static final ParametersSerializer<HkdfPrfParameters>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               HkdfPrfProtoSerialization::serializeParameters, HkdfPrfParameters.class);

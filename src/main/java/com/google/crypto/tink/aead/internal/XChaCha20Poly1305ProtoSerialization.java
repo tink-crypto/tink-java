@@ -51,8 +51,7 @@ public final class XChaCha20Poly1305ProtoSerialization {
       "type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key";
   private static final Bytes TYPE_URL_BYTES = toBytesFromPrintableAscii(TYPE_URL);
 
-  private static final ParametersSerializer<
-          XChaCha20Poly1305Parameters, ProtoParametersSerialization>
+  private static final ParametersSerializer<XChaCha20Poly1305Parameters>
       PARAMETERS_SERIALIZER =
           ParametersSerializer.create(
               XChaCha20Poly1305ProtoSerialization::serializeParameters,
