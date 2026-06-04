@@ -27,3 +27,27 @@ java_library(
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
+
+android_library(
+    name = "ed25519_signer-android",
+    srcs = ["Ed25519Signer.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink:public_key_sign-android",
+        "//src/main/java/com/google/crypto/tink/signature:ed25519_private_key-android",
+        "//src/main/java/com/google/crypto/tink/subtle:ed25519_sign-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "ed25519_signer",
+    srcs = ["Ed25519Signer.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink:public_key_sign",
+        "//src/main/java/com/google/crypto/tink/signature:ed25519_private_key",
+        "//src/main/java/com/google/crypto/tink/subtle:ed25519_sign",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
