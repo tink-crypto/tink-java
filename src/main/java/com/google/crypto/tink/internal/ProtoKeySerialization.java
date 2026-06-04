@@ -18,6 +18,7 @@ package com.google.crypto.tink.internal;
 
 import static com.google.crypto.tink.internal.Util.checkedToBytesFromPrintableAscii;
 
+import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
 import com.google.protobuf.ByteString;
@@ -168,6 +169,7 @@ public final class ProtoKeySerialization implements Serialization {
     }
   }
 
+  @AccessesPartialKey
   public static ProtoKeySerialization createFromPublic(
       com.google.crypto.tink.ProtoKeySerialization serialization) throws GeneralSecurityException {
     return create(
@@ -178,6 +180,7 @@ public final class ProtoKeySerialization implements Serialization {
         serialization.getIdRequirementOrNull());
   }
 
+  @AccessesPartialKey
   public com.google.crypto.tink.ProtoKeySerialization toPublic() throws GeneralSecurityException {
     return com.google.crypto.tink.ProtoKeySerialization.create(
         getTypeUrl(),

@@ -17,6 +17,7 @@
 package com.google.crypto.tink;
 
 import com.google.errorprone.annotations.Immutable;
+import com.google.errorprone.annotations.RestrictedApi;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import javax.annotation.Nullable;
@@ -94,6 +95,11 @@ public final class ProtoKeySerialization {
    * <p>Throws an exception if (idRequirement == null) != (outputPrefixType == RAW) or if typeUrl
    * does not consist entirely of ASCII characters.
    */
+  @RestrictedApi(
+      explanation = "Accessing parts of keys can produce unexpected incompatibilities, annotate the function with @AccessesPartialKey",
+      link = "https://developers.google.com/tink/design/access_control#accessing_partial_keys",
+      allowedOnPath = ".*Test\\.java",
+      allowlistAnnotations = {AccessesPartialKey.class})
   public static ProtoKeySerialization create(
       String typeUrl,
       ByteString value,
@@ -136,6 +142,11 @@ public final class ProtoKeySerialization {
     return typeUrl;
   }
 
+  @RestrictedApi(
+      explanation = "Accessing parts of keys can produce unexpected incompatibilities, annotate the function with @AccessesPartialKey",
+      link = "https://developers.google.com/tink/design/access_control#accessing_partial_keys",
+      allowedOnPath = ".*Test\\.java",
+      allowlistAnnotations = {AccessesPartialKey.class})
   public ByteString getValue() {
     return value;
   }

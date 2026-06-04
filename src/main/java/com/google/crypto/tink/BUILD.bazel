@@ -1263,6 +1263,7 @@ android_library(
     name = "proto_key_serialization-android",
     srcs = ["ProtoKeySerialization.java"],
     deps = [
+        ":accesses_partial_key-android",
         "@maven//:com_google_code_findbugs_jsr305",
         "@maven//:com_google_errorprone_error_prone_annotations",
         "@maven//:com_google_protobuf_protobuf_javalite",
@@ -1286,6 +1287,7 @@ java_library(
     name = "proto_key_serialization",
     srcs = ["ProtoKeySerialization.java"],
     deps = [
+        ":accesses_partial_key",
         "@maven//:com_google_code_findbugs_jsr305",
         "@maven//:com_google_errorprone_error_prone_annotations",
         "@maven//:com_google_protobuf_protobuf_java",
