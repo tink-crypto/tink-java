@@ -216,6 +216,25 @@ public final class JwtFormatTest {
   }
 
   @Test
+  public void getTypeHeader_returnsValue() throws Exception {
+    JsonObject header = JsonUtil.parseJson("{\"alg\": \"HS256\", \"typ\": \"typ-header\"}");
+    assertThat(JwtFormat.getTypeHeader(header)).hasValue("typ-header");
+  }
+
+  @Test
+  public void getTypeHeader_noTypeHeader_returnsEmpty() throws Exception {
+    // The "typ" header is in uppercase, so it should be ignored.
+    JsonObject header = JsonUtil.parseJson("{\"alg\": \"HS256\", \"TYP\": \"typ-header\"}");
+    assertThat(JwtFormat.getTypeHeader(header)).isEmpty();
+  }
+
+  @Test
+  public void getTypeHeader_nonStringValue_throwsException() throws Exception {
+    JsonObject header = JsonUtil.parseJson("{\"alg\": \"HS256\", \"typ\": 123}");
+    assertThrows(JwtInvalidException.class, () -> JwtFormat.getTypeHeader(header));
+  }
+
+  @Test
   public void validateHeaderRejectsCrit() throws Exception {
     assertThrows(
         JwtInvalidException.class,
