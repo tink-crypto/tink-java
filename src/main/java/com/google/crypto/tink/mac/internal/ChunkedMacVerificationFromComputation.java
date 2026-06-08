@@ -21,6 +21,7 @@ import com.google.crypto.tink.mac.ChunkedMacVerification;
 import com.google.crypto.tink.util.Bytes;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
 
 /** Implements chunked MAC verification from chunked MAC computation. */
 final class ChunkedMacVerificationFromComputation implements ChunkedMacVerification {
@@ -42,7 +43,7 @@ final class ChunkedMacVerificationFromComputation implements ChunkedMacVerificat
   @Override
   public void verifyMac() throws GeneralSecurityException {
     byte[] other = macComputation.computeMac();
-    if (!tag.equals(Bytes.copyFrom(other))) {
+    if (!MessageDigest.isEqual(tag.toByteArray(), other)) {
       throw new GeneralSecurityException("invalid MAC");
     }
   }
