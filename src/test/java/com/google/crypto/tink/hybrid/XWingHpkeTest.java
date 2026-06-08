@@ -28,14 +28,11 @@ import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.hybrid.internal.XWingHpkeConscryptDecrypt;
 import com.google.crypto.tink.hybrid.internal.XWingHpkeConscryptEncrypt;
-import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
-import java.security.KeyFactory;
-import java.security.Provider;
 import java.security.Security;
 import org.conscrypt.Conscrypt;
 import org.junit.Assume;
@@ -114,19 +111,6 @@ public final class XWingHpkeTest {
     }
   }
 
-  private static boolean hasXWingSupport() {
-    Provider provider = ConscryptUtil.providerOrNull();
-    if (provider == null) {
-      return false;
-    }
-    try {
-      KeyFactory unusedKeyFactory = KeyFactory.getInstance("XWING", provider);
-      return true;
-    } catch (GeneralSecurityException e) {
-      return false;
-    }
-  }
-
   @BeforeClass
   public static void setUp() throws Exception {
     HybridConfig.register();
@@ -153,24 +137,10 @@ public final class XWingHpkeTest {
   }
 
   @Test
-  public void create_failsOnAndroid() throws Exception {
-    Assume.assumeTrue(Util.isAndroid());
+  public void create_failsWhenNotSupported() throws Exception {
+    Assume.assumeFalse(XWingHpkeConscryptEncrypt.isSupported());
     Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
 
-    assertThat(XWingHpkeConscryptEncrypt.isSupported()).isFalse();
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> XWingHpkeConscryptEncrypt.create(HPKE_NO_PREFIX_PRIVATE_KEY.getPublicKey()));
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> XWingHpkeConscryptDecrypt.create(HPKE_NO_PREFIX_PRIVATE_KEY));
-  }
-
-  @Test
-  public void create_failsWhenXwingUnavailable() throws Exception {
-    Assume.assumeFalse(hasXWingSupport());
-
-    assertThat(XWingHpkeConscryptEncrypt.isSupported()).isFalse();
     assertThrows(
         GeneralSecurityException.class,
         () -> XWingHpkeConscryptEncrypt.create(HPKE_NO_PREFIX_PRIVATE_KEY.getPublicKey()));
@@ -625,13 +595,6 @@ public final class XWingHpkeTest {
 
   @Test
   public void create_directRoundtrip_works() throws Exception {
-    Assume.assumeFalse(Util.isAndroid());
-    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
-    // TODO(b/498579995): Remove this assume once the new version of Conscrypt is released in the
-    // open-source.
-    Assume.assumeTrue(hasXWingSupport());
-    // TODO(b/498579995): Currently, we don't support X-Wing HPKE open-source. Remove this once
-    // we do support it.
     Assume.assumeTrue(XWingHpkeConscryptEncrypt.isSupported());
 
     HybridEncrypt encrypter =

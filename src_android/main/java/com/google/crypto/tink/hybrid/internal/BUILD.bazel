@@ -10,7 +10,13 @@ android_library(
     deps = [
         "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
         "//src/main/java/com/google/crypto/tink:hybrid_encrypt-android",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util-android",
+        "//src/main/java/com/google/crypto/tink/hybrid:hpke_parameters-android",
         "//src/main/java/com/google/crypto/tink/hybrid:hpke_public_key-android",
+        "//src/main/java/com/google/crypto/tink/hybrid/internal:hpke_util-android",
+        "//src/main/java/com/google/crypto/tink/internal:conscrypt_util-android",
+        "//src/main/java/com/google/crypto/tink/internal:util-android",
+        "//src/main/java/com/google/crypto/tink/subtle:bytes-android",
     ],
 )
 
@@ -18,8 +24,15 @@ android_library(
     name = "xwing_hpke_conscrypt_decrypt",
     srcs = ["XWingHpkeConscryptDecrypt.java"],
     deps = [
+        ":xwing_hpke_conscrypt_encrypt",
         "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
         "//src/main/java/com/google/crypto/tink:hybrid_decrypt-android",
+        "//src/main/java/com/google/crypto/tink:hybrid_encrypt-android",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access-android",
+        "//src/main/java/com/google/crypto/tink/hybrid:hpke_parameters-android",
         "//src/main/java/com/google/crypto/tink/hybrid:hpke_private_key-android",
+        "//src/main/java/com/google/crypto/tink/hybrid/internal:hpke_util-android",
+        "//src/main/java/com/google/crypto/tink/internal:conscrypt_util-android",
+        "//src/main/java/com/google/crypto/tink/internal:util-android",
     ],
 )
