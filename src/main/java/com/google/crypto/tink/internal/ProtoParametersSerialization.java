@@ -19,7 +19,6 @@ package com.google.crypto.tink.internal;
 import static com.google.crypto.tink.internal.Util.checkedToBytesFromPrintableAscii;
 
 import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
-import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
 import com.google.protobuf.ByteString;
@@ -33,13 +32,15 @@ import java.security.GeneralSecurityException;
  */
 @Immutable
 public final class ProtoParametersSerialization implements Serialization {
+  private final ByteString value;
   private final Bytes objectIdentifier;
-  private final KeyTemplate keyTemplate;
+  private final String typeUrl;
   private final OutputPrefixType outputPrefixType;
 
   private ProtoParametersSerialization(
-      KeyTemplate keyTemplate, Bytes objectIdentifier, OutputPrefixType outputPrefixType) {
-    this.keyTemplate = keyTemplate;
+      ByteString value, String typeUrl, Bytes objectIdentifier, OutputPrefixType outputPrefixType) {
+    this.value = value;
+    this.typeUrl = typeUrl;
     this.objectIdentifier = objectIdentifier;
     this.outputPrefixType = outputPrefixType;
   }
@@ -52,27 +53,10 @@ public final class ProtoParametersSerialization implements Serialization {
   public static ProtoParametersSerialization create(
       String typeUrl, OutputPrefixType outputPrefixType, ByteString value)
       throws GeneralSecurityException {
-    return checkedCreate(
-        KeyTemplate.newBuilder()
-            .setTypeUrl(typeUrl)
-            .setOutputPrefixType(ProtoKeySerialization.toProtoOutputPrefixType(outputPrefixType))
-            .setValue(value)
-            .build());
+    return new ProtoParametersSerialization(
+        value, typeUrl, checkedToBytesFromPrintableAscii(typeUrl), outputPrefixType);
   }
 
-  /**
-   * Creates a new {@code ProtoParametersSerialization} object.
-   *
-   * <p>If the type URL contains invalid characters, such as spaces, this throws a
-   * GeneralSecurityException
-   */
-  private static ProtoParametersSerialization checkedCreate(KeyTemplate keyTemplate)
-      throws GeneralSecurityException {
-    return new ProtoParametersSerialization(
-        keyTemplate,
-        checkedToBytesFromPrintableAscii(keyTemplate.getTypeUrl()),
-        ProtoKeySerialization.fromProtoOutputPrefixType(keyTemplate.getOutputPrefixType()));
-  }
 
   public OutputPrefixType getOutputPrefixType() {
     return outputPrefixType;
@@ -86,11 +70,11 @@ public final class ProtoParametersSerialization implements Serialization {
 
   /** The typeUrl. */
   public String getTypeUrl() {
-    return keyTemplate.getTypeUrl();
+    return typeUrl;
   }
 
   /** The value. */
   public ByteString getValue() {
-    return keyTemplate.getValue();
+    return value;
   }
 }
