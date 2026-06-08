@@ -51,6 +51,27 @@ public final class PredefinedMacParameters {
    *
    * <ul>
    *   <li>Key size: 32 bytes
+   *   <li>Tag size: 16 bytes
+   *   <li>Hash function: SHA256
+   *   <li>OutputPrefixType: None
+   * </ul>
+   */
+  public static final HmacParameters HMAC_SHA256_128BITTAG_NO_PREFIX =
+      exceptionIsBug(
+          () ->
+              HmacParameters.builder()
+                  .setKeySizeBytes(32)
+                  .setTagSizeBytes(16)
+                  .setVariant(HmacParameters.Variant.NO_PREFIX)
+                  .setHashType(HmacParameters.HashType.SHA256)
+                  .build());
+
+  /**
+   * A {@link Parameters} object for generating new instances of {@link HmacKey} with the following
+   * parameters:
+   *
+   * <ul>
+   *   <li>Key size: 32 bytes
    *   <li>Tag size: 32 bytes
    *   <li>Hash function: SHA256
    *   <li>OutputPrefixType: TINK
@@ -125,6 +146,25 @@ public final class PredefinedMacParameters {
                   .setKeySizeBytes(32)
                   .setTagSizeBytes(16)
                   .setVariant(AesCmacParameters.Variant.TINK)
+                  .build());
+
+  /**
+   * A {@link Parameters} object for generating new instances of {@link CmacKey} with the following
+   * parameters:
+   *
+   * <ul>
+   *   <li>Key size: 32 bytes
+   *   <li>Tag size: 16 bytes
+   *   <li>OutputPrefixType: None
+   * </ul>
+   */
+  public static final AesCmacParameters AES_CMAC_NO_PREFIX =
+      exceptionIsBug(
+          () ->
+              AesCmacParameters.builder()
+                  .setKeySizeBytes(32)
+                  .setTagSizeBytes(16)
+                  .setVariant(AesCmacParameters.Variant.NO_PREFIX)
                   .build());
 
   private PredefinedMacParameters() {}

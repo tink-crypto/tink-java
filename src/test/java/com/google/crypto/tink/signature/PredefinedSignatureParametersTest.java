@@ -58,6 +58,7 @@ public final class PredefinedSignatureParametersTest {
   public static final SignatureParameters[] TEMPLATES =
       new SignatureParameters[] {
         PredefinedSignatureParameters.ECDSA_P256,
+        PredefinedSignatureParameters.ECDSA_P256_NO_PREFIX,
         PredefinedSignatureParameters.ECDSA_P384,
         PredefinedSignatureParameters.ECDSA_P521,
         PredefinedSignatureParameters.ECDSA_P256_IEEE_P1363,
@@ -87,6 +88,7 @@ public final class PredefinedSignatureParametersTest {
   @Test
   public void testClassicalTypes() throws Exception {
     assertThat(PredefinedSignatureParameters.ECDSA_P256).isNotNull();
+    assertThat(PredefinedSignatureParameters.ECDSA_P256_NO_PREFIX).isNotNull();
     assertThat(PredefinedSignatureParameters.ECDSA_P384).isNotNull();
     assertThat(PredefinedSignatureParameters.ECDSA_P521).isNotNull();
     assertThat(PredefinedSignatureParameters.ECDSA_P256_IEEE_P1363).isNotNull();
@@ -106,7 +108,10 @@ public final class PredefinedSignatureParametersTest {
   @DataPoints("AllPqcParameters")
   public static final SignatureParameters[] PQC_TEMPLATES =
       new SignatureParameters[] {
-        PredefinedSignatureParameters.ML_DSA_65, PredefinedSignatureParameters.SLH_DSA_SHA2_128S,
+        PredefinedSignatureParameters.ML_DSA_65,
+        PredefinedSignatureParameters.ML_DSA_65_NO_PREFIX,
+        PredefinedSignatureParameters.SLH_DSA_SHA2_128S,
+        PredefinedSignatureParameters.SLH_DSA_SHA2_128S_NO_PREFIX,
       };
 
   @Theory
@@ -130,6 +135,8 @@ public final class PredefinedSignatureParametersTest {
   @Test
   public void testPqcTypes() throws Exception {
     assertThat(PredefinedSignatureParameters.ML_DSA_65).isNotNull();
+    assertThat(PredefinedSignatureParameters.ML_DSA_65_NO_PREFIX).isNotNull();
     assertThat(PredefinedSignatureParameters.SLH_DSA_SHA2_128S).isNotNull();
+    assertThat(PredefinedSignatureParameters.SLH_DSA_SHA2_128S_NO_PREFIX).isNotNull();
   }
 }

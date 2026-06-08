@@ -39,10 +39,12 @@ public final class PredefinedMacParametersTest {
   public static final MacParameters[] TEMPLATES =
       new MacParameters[] {
         PredefinedMacParameters.HMAC_SHA256_128BITTAG,
+        PredefinedMacParameters.HMAC_SHA256_128BITTAG_NO_PREFIX,
         PredefinedMacParameters.HMAC_SHA256_256BITTAG,
         PredefinedMacParameters.HMAC_SHA512_256BITTAG,
         PredefinedMacParameters.HMAC_SHA512_512BITTAG,
-        PredefinedMacParameters.AES_CMAC
+        PredefinedMacParameters.AES_CMAC,
+        PredefinedMacParameters.AES_CMAC_NO_PREFIX
       };
 
   @Theory
@@ -55,9 +57,11 @@ public final class PredefinedMacParametersTest {
   @Test
   public void testTypes() {
     assertThat(PredefinedMacParameters.HMAC_SHA256_128BITTAG).isNotNull();
+    assertThat(PredefinedMacParameters.HMAC_SHA256_128BITTAG_NO_PREFIX).isNotNull();
     assertThat(PredefinedMacParameters.HMAC_SHA256_256BITTAG).isNotNull();
     assertThat(PredefinedMacParameters.HMAC_SHA512_256BITTAG).isNotNull();
     assertThat(PredefinedMacParameters.HMAC_SHA512_512BITTAG).isNotNull();
     assertThat(PredefinedMacParameters.AES_CMAC).isNotNull();
+    assertThat(PredefinedMacParameters.AES_CMAC_NO_PREFIX).isNotNull();
   }
 }

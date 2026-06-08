@@ -47,6 +47,27 @@ public final class PredefinedSignatureParameters {
                   .build());
 
   /**
+   * A {@link Parameters} object that generates new instances of {@link EcdsaPrivateKey} objects
+   * with the following parameters:
+   *
+   * <ul>
+   *   <li>Hash function: SHA256
+   *   <li>Curve: NIST P-256
+   *   <li>Signature encoding: DER (this is the encoding that Java uses).
+   *   <li>Prefix type: None
+   * </ul>
+   */
+  public static final EcdsaParameters ECDSA_P256_NO_PREFIX =
+      exceptionIsBug(
+          () ->
+              EcdsaParameters.builder()
+                  .setHashType(EcdsaParameters.HashType.SHA256)
+                  .setCurveType(EcdsaParameters.CurveType.NIST_P256)
+                  .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
+                  .setVariant(EcdsaParameters.Variant.NO_PREFIX)
+                  .build());
+
+  /**
    * A {@link Parameters} that generates new instances of {@link EcdsaPrivateKey} objects with the
    * following parameters:
    *
@@ -321,6 +342,21 @@ public final class PredefinedSignatureParameters {
                   MlDsaParameters.MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.TINK));
 
   /**
+   * A {@link Parameters} object that generates new instances of {@link MlDsaPrivateKey} objects
+   * with the following parameters:
+   *
+   * <ul>
+   *   <li>ML-DSA instance: ML-DSA-65
+   *   <li>Prefix type: None
+   * </ul>
+   */
+  public static final MlDsaParameters ML_DSA_65_NO_PREFIX =
+      exceptionIsBug(
+          () ->
+              MlDsaParameters.create(
+                  MlDsaParameters.MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.NO_PREFIX));
+
+  /**
    * A {@link Parameters} object that generates new instances of {@link SlhDsaPrivateKey} objects
    * with the following parameters:
    *
@@ -335,6 +371,21 @@ public final class PredefinedSignatureParameters {
       exceptionIsBug(
           () ->
               SlhDsaParameters.createSlhDsaWithSha2And128S(SlhDsaParameters.Variant.TINK));
+
+  /**
+   * A {@link Parameters} object that generates new instances of {@link SlhDsaPrivateKey} objects
+   * with the following parameters:
+   *
+   * <ul>
+   *   <li>Hash type: SHA-2
+   *   <li>Private key size: 64 bytes
+   *   <li>Signature type: Small
+   *   <li>Prefix type: None
+   * </ul>
+   */
+  public static final SlhDsaParameters SLH_DSA_SHA2_128S_NO_PREFIX =
+      exceptionIsBug(
+          () -> SlhDsaParameters.createSlhDsaWithSha2And128S(SlhDsaParameters.Variant.NO_PREFIX));
 
   private PredefinedSignatureParameters() {}
 }
