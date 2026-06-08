@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink.signature.internal;
 
-import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.SecretKeyAccess;
@@ -49,10 +48,8 @@ import javax.annotation.Nullable;
 public final class Ed25519ProtoSerialization {
   private static final String PRIVATE_TYPE_URL =
       "type.googleapis.com/google.crypto.tink.Ed25519PrivateKey";
-  private static final Bytes PRIVATE_TYPE_URL_BYTES = toBytesFromPrintableAscii(PRIVATE_TYPE_URL);
   private static final String PUBLIC_TYPE_URL =
       "type.googleapis.com/google.crypto.tink.Ed25519PublicKey";
-  private static final Bytes PUBLIC_TYPE_URL_BYTES = toBytesFromPrintableAscii(PUBLIC_TYPE_URL);
 
   private static final ParametersSerializer<Ed25519Parameters>
       PARAMETERS_SERIALIZER =
@@ -60,19 +57,19 @@ public final class Ed25519ProtoSerialization {
               Ed25519ProtoSerialization::serializeParameters, Ed25519Parameters.class);
 
   private static final ParametersParser PARAMETERS_PARSER =
-      ParametersParser.create(Ed25519ProtoSerialization::parseParameters, PRIVATE_TYPE_URL_BYTES);
+      ParametersParser.create(Ed25519ProtoSerialization::parseParameters, PRIVATE_TYPE_URL);
 
   private static final KeySerializer<Ed25519PublicKey> PUBLIC_KEY_SERIALIZER =
       KeySerializer.create(Ed25519ProtoSerialization::serializePublicKey, Ed25519PublicKey.class);
 
   private static final KeyParser PUBLIC_KEY_PARSER =
-      KeyParser.create(Ed25519ProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL_BYTES);
+      KeyParser.create(Ed25519ProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL);
 
   private static final KeySerializer<Ed25519PrivateKey> PRIVATE_KEY_SERIALIZER =
       KeySerializer.create(Ed25519ProtoSerialization::serializePrivateKey, Ed25519PrivateKey.class);
 
   private static final KeyParser PRIVATE_KEY_PARSER =
-      KeyParser.create(Ed25519ProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL_BYTES);
+      KeyParser.create(Ed25519ProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL);
 
   private static com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType toOutputPrefixType(
       Ed25519Parameters.Variant variant) throws GeneralSecurityException {

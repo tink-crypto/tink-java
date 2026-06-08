@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink.aead.internal;
 
-import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
@@ -31,7 +30,6 @@ import com.google.crypto.tink.internal.ParametersParser;
 import com.google.crypto.tink.internal.ParametersSerializer;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
-import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ExtensionRegistryLite;
@@ -47,7 +45,6 @@ import javax.annotation.Nullable;
 @SuppressWarnings("UnnecessarilyFullyQualified") // Fully specifying proto types is more readable
 public final class AesGcmSivProtoSerialization {
   private static final String TYPE_URL = "type.googleapis.com/google.crypto.tink.AesGcmSivKey";
-  private static final Bytes TYPE_URL_BYTES = toBytesFromPrintableAscii(TYPE_URL);
 
   private static final ParametersSerializer<AesGcmSivParameters>
       PARAMETERS_SERIALIZER =
@@ -55,13 +52,13 @@ public final class AesGcmSivProtoSerialization {
               AesGcmSivProtoSerialization::serializeParameters, AesGcmSivParameters.class);
 
   private static final ParametersParser PARAMETERS_PARSER =
-      ParametersParser.create(AesGcmSivProtoSerialization::parseParameters, TYPE_URL_BYTES);
+      ParametersParser.create(AesGcmSivProtoSerialization::parseParameters, TYPE_URL);
 
   private static final KeySerializer<AesGcmSivKey> KEY_SERIALIZER =
       KeySerializer.create(AesGcmSivProtoSerialization::serializeKey, AesGcmSivKey.class);
 
   private static final KeyParser KEY_PARSER =
-      KeyParser.create(AesGcmSivProtoSerialization::parseKey, TYPE_URL_BYTES);
+      KeyParser.create(AesGcmSivProtoSerialization::parseKey, TYPE_URL);
 
   private static OutputPrefixType toProtoOutputPrefixType(AesGcmSivParameters.Variant variant)
       throws GeneralSecurityException {

@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink.aead.internal;
 
-import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
@@ -32,7 +31,6 @@ import com.google.crypto.tink.internal.ParametersSerializer;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.internal.SerializationRegistry;
-import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ExtensionRegistryLite;
@@ -45,7 +43,6 @@ import javax.annotation.Nullable;
 @SuppressWarnings("UnnecessarilyFullyQualified") // Fully specifying proto types is more readable
 public final class AesGcmProtoSerialization {
   private static final String TYPE_URL = "type.googleapis.com/google.crypto.tink.AesGcmKey";
-  private static final Bytes TYPE_URL_BYTES = toBytesFromPrintableAscii(TYPE_URL);
 
   private static final ParametersSerializer<AesGcmParameters>
       PARAMETERS_SERIALIZER =
@@ -53,13 +50,13 @@ public final class AesGcmProtoSerialization {
               AesGcmProtoSerialization::serializeParameters, AesGcmParameters.class);
 
   private static final ParametersParser PARAMETERS_PARSER =
-      ParametersParser.create(AesGcmProtoSerialization::parseParameters, TYPE_URL_BYTES);
+      ParametersParser.create(AesGcmProtoSerialization::parseParameters, TYPE_URL);
 
   private static final KeySerializer<AesGcmKey> KEY_SERIALIZER =
       KeySerializer.create(AesGcmProtoSerialization::serializeKey, AesGcmKey.class);
 
   private static final KeyParser KEY_PARSER =
-      KeyParser.create(AesGcmProtoSerialization::parseKey, TYPE_URL_BYTES);
+      KeyParser.create(AesGcmProtoSerialization::parseKey, TYPE_URL);
 
   private static OutputPrefixType toProtoOutputPrefixType(AesGcmParameters.Variant variant)
       throws GeneralSecurityException {

@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink.jwt;
 
-import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
@@ -31,7 +30,6 @@ import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.proto.JwtHmacAlgorithm;
 import com.google.crypto.tink.proto.JwtHmacKey.CustomKid;
-import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ExtensionRegistryLite;
@@ -46,7 +44,6 @@ import javax.annotation.Nullable;
 @SuppressWarnings("UnnecessarilyFullyQualified") // Fully specifying proto types is more readable
 final class JwtHmacProtoSerialization {
   private static final String TYPE_URL = "type.googleapis.com/google.crypto.tink.JwtHmacKey";
-  private static final Bytes TYPE_URL_BYTES = toBytesFromPrintableAscii(TYPE_URL);
 
   private static final ParametersSerializer<JwtHmacParameters>
       PARAMETERS_SERIALIZER =
@@ -54,13 +51,13 @@ final class JwtHmacProtoSerialization {
               JwtHmacProtoSerialization::serializeParameters, JwtHmacParameters.class);
 
   private static final ParametersParser PARAMETERS_PARSER =
-      ParametersParser.create(JwtHmacProtoSerialization::parseParameters, TYPE_URL_BYTES);
+      ParametersParser.create(JwtHmacProtoSerialization::parseParameters, TYPE_URL);
 
   private static final KeySerializer<JwtHmacKey> KEY_SERIALIZER =
       KeySerializer.create(JwtHmacProtoSerialization::serializeKey, JwtHmacKey.class);
 
   private static final KeyParser KEY_PARSER =
-      KeyParser.create(JwtHmacProtoSerialization::parseKey, TYPE_URL_BYTES);
+      KeyParser.create(JwtHmacProtoSerialization::parseKey, TYPE_URL);
 
   private static JwtHmacAlgorithm toProtoAlgorithm(JwtHmacParameters.Algorithm hashType)
       throws GeneralSecurityException {

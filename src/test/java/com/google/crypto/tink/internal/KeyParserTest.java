@@ -80,17 +80,17 @@ public final class KeyParserTest {
 
   @Test
   public void createParser_works() throws Exception {
-    Object unused = KeyParser.create(KeyParserTest::parse, Bytes.copyFrom(new byte[0]));
+    Object unused = KeyParser.create(KeyParserTest::parse, "typeUrl");
   }
 
   @Test
   public void createParser_works_2() throws Exception {
-    Object unused = KeyParser.create(KeyParserTest::parse, Bytes.copyFrom(new byte[0]));
+    Object unused = KeyParser.create(KeyParserTest::parse, "typeUrl");
   }
 
   @Test
   public void createParser_parseKey_works() throws Exception {
-    KeyParser parser = KeyParser.create(KeyParserTest::parse, Bytes.copyFrom(new byte[0]));
+    KeyParser parser = KeyParser.create(KeyParserTest::parse, "typeUrl");
     ProtoKeySerialization serialization =
         ProtoKeySerialization.create(
             "typeUrl",
@@ -105,8 +105,8 @@ public final class KeyParserTest {
 
   @Test
   public void createParser_classes_work() throws Exception {
-    KeyParser parser = KeyParser.create(KeyParserTest::parse, Bytes.copyFrom(new byte[] {1, 2, 3}));
-    assertThat(parser.getObjectIdentifier()).isEqualTo(Bytes.copyFrom(new byte[] {1, 2, 3}));
+    KeyParser parser = KeyParser.create(KeyParserTest::parse, "typeUrl");
+    assertThat(parser.getTypeUrl()).isEqualTo("typeUrl");
     assertThat(parser.getSerializationClass()).isEqualTo(ProtoKeySerialization.class);
   }
 }

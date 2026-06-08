@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink.prf.internal;
 
-import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
@@ -32,7 +31,6 @@ import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.prf.HmacPrfKey;
 import com.google.crypto.tink.prf.HmacPrfParameters;
 import com.google.crypto.tink.proto.HashType;
-import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ExtensionRegistryLite;
@@ -47,7 +45,6 @@ import javax.annotation.Nullable;
 @SuppressWarnings("UnnecessarilyFullyQualified") // Fully specifying proto types is more readable
 public final class HmacPrfProtoSerialization {
   private static final String TYPE_URL = "type.googleapis.com/google.crypto.tink.HmacPrfKey";
-  private static final Bytes TYPE_URL_BYTES = toBytesFromPrintableAscii(TYPE_URL);
 
   private static final ParametersSerializer<HmacPrfParameters>
       PARAMETERS_SERIALIZER =
@@ -55,13 +52,13 @@ public final class HmacPrfProtoSerialization {
               HmacPrfProtoSerialization::serializeParameters, HmacPrfParameters.class);
 
   private static final ParametersParser PARAMETERS_PARSER =
-      ParametersParser.create(HmacPrfProtoSerialization::parseParameters, TYPE_URL_BYTES);
+      ParametersParser.create(HmacPrfProtoSerialization::parseParameters, TYPE_URL);
 
   private static final KeySerializer<HmacPrfKey> KEY_SERIALIZER =
       KeySerializer.create(HmacPrfProtoSerialization::serializeKey, HmacPrfKey.class);
 
   private static final KeyParser KEY_PARSER =
-      KeyParser.create(HmacPrfProtoSerialization::parseKey, TYPE_URL_BYTES);
+      KeyParser.create(HmacPrfProtoSerialization::parseKey, TYPE_URL);
 
   private static HashType toProtoHashType(HmacPrfParameters.HashType hashType)
       throws GeneralSecurityException {

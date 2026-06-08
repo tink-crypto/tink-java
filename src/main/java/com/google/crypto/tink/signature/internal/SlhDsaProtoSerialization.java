@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink.signature.internal;
 
-import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.SecretKeyAccess;
@@ -49,10 +48,8 @@ import javax.annotation.Nullable;
 public final class SlhDsaProtoSerialization {
   private static final String PRIVATE_TYPE_URL =
       "type.googleapis.com/google.crypto.tink.SlhDsaPrivateKey";
-  private static final Bytes PRIVATE_TYPE_URL_BYTES = toBytesFromPrintableAscii(PRIVATE_TYPE_URL);
   private static final String PUBLIC_TYPE_URL =
       "type.googleapis.com/google.crypto.tink.SlhDsaPublicKey";
-  private static final Bytes PUBLIC_TYPE_URL_BYTES = toBytesFromPrintableAscii(PUBLIC_TYPE_URL);
 
   private static final ParametersSerializer<SlhDsaParameters>
       PARAMETERS_SERIALIZER =
@@ -60,19 +57,19 @@ public final class SlhDsaProtoSerialization {
               SlhDsaProtoSerialization::serializeParameters, SlhDsaParameters.class);
 
   private static final ParametersParser PARAMETERS_PARSER =
-      ParametersParser.create(SlhDsaProtoSerialization::parseParameters, PRIVATE_TYPE_URL_BYTES);
+      ParametersParser.create(SlhDsaProtoSerialization::parseParameters, PRIVATE_TYPE_URL);
 
   private static final KeySerializer<SlhDsaPublicKey> PUBLIC_KEY_SERIALIZER =
       KeySerializer.create(SlhDsaProtoSerialization::serializePublicKey, SlhDsaPublicKey.class);
 
   private static final KeyParser PUBLIC_KEY_PARSER =
-      KeyParser.create(SlhDsaProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL_BYTES);
+      KeyParser.create(SlhDsaProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL);
 
   private static final KeySerializer<SlhDsaPrivateKey> PRIVATE_KEY_SERIALIZER =
       KeySerializer.create(SlhDsaProtoSerialization::serializePrivateKey, SlhDsaPrivateKey.class);
 
   private static final KeyParser PRIVATE_KEY_PARSER =
-      KeyParser.create(SlhDsaProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL_BYTES);
+      KeyParser.create(SlhDsaProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL);
 
   private static com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType toOutputPrefixType(
       SlhDsaParameters.Variant variant) throws GeneralSecurityException {

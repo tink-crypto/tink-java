@@ -18,7 +18,6 @@ package com.google.crypto.tink.internal;
 
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.SecretKeyAccess;
-import com.google.crypto.tink.util.Bytes;
 import java.security.GeneralSecurityException;
 import javax.annotation.Nullable;
 
@@ -40,10 +39,10 @@ public abstract class KeyParser {
         throws GeneralSecurityException;
   }
 
-  private final Bytes objectIdentifier;
+  private final String typeUrl;
 
-  private KeyParser(Bytes objectIdentifier) {
-    this.objectIdentifier = objectIdentifier;
+  private KeyParser(String typeUrl) {
+    this.typeUrl = typeUrl;
   }
 
   /**
@@ -66,8 +65,8 @@ public abstract class KeyParser {
    * objectIdentifier} of this serialization object, and call the parser corresponding to this
    * object.
    */
-  public final Bytes getObjectIdentifier() {
-    return objectIdentifier;
+  public final String getTypeUrl() {
+    return typeUrl;
   }
 
   public final Class<ProtoKeySerialization> getSerializationClass() {
@@ -101,8 +100,8 @@ public abstract class KeyParser {
    * @param function The function used to parse a Key
    * @param objectIdentifier The identifier to be returned by {@link #getObjectIdentifier}
    */
-  public static KeyParser create(KeyParsingFunction function, Bytes objectIdentifier) {
-    return new KeyParser(objectIdentifier) {
+  public static KeyParser create(KeyParsingFunction function, String typeUrl) {
+    return new KeyParser(typeUrl) {
       @Override
       public Key parseKey(ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
           throws GeneralSecurityException {

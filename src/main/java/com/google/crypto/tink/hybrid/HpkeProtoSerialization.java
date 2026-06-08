@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink.hybrid;
 
-import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
@@ -56,10 +55,9 @@ public final class HpkeProtoSerialization {
   private static final int VERSION = 0;
   private static final String PRIVATE_TYPE_URL =
       "type.googleapis.com/google.crypto.tink.HpkePrivateKey";
-  private static final Bytes PRIVATE_TYPE_URL_BYTES = toBytesFromPrintableAscii(PRIVATE_TYPE_URL);
+
   private static final String PUBLIC_TYPE_URL =
       "type.googleapis.com/google.crypto.tink.HpkePublicKey";
-  private static final Bytes PUBLIC_TYPE_URL_BYTES = toBytesFromPrintableAscii(PUBLIC_TYPE_URL);
 
   private static final ParametersSerializer<HpkeParameters>
       PARAMETERS_SERIALIZER =
@@ -67,19 +65,19 @@ public final class HpkeProtoSerialization {
               HpkeProtoSerialization::serializeParameters, HpkeParameters.class);
 
   private static final ParametersParser PARAMETERS_PARSER =
-      ParametersParser.create(HpkeProtoSerialization::parseParameters, PRIVATE_TYPE_URL_BYTES);
+      ParametersParser.create(HpkeProtoSerialization::parseParameters, PRIVATE_TYPE_URL);
 
   private static final KeySerializer<HpkePublicKey> PUBLIC_KEY_SERIALIZER =
       KeySerializer.create(HpkeProtoSerialization::serializePublicKey, HpkePublicKey.class);
 
   private static final KeyParser PUBLIC_KEY_PARSER =
-      KeyParser.create(HpkeProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL_BYTES);
+      KeyParser.create(HpkeProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL);
 
   private static final KeySerializer<HpkePrivateKey> PRIVATE_KEY_SERIALIZER =
       KeySerializer.create(HpkeProtoSerialization::serializePrivateKey, HpkePrivateKey.class);
 
   private static final KeyParser PRIVATE_KEY_PARSER =
-      KeyParser.create(HpkeProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL_BYTES);
+      KeyParser.create(HpkeProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL);
 
   private static OutputPrefixType toOutputPrefixType(HpkeParameters.Variant variant)
       throws GeneralSecurityException {

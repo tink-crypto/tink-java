@@ -163,7 +163,6 @@ java_library(
         ":proto_key_serialization",
         "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink:secret_key_access",
-        "//src/main/java/com/google/crypto/tink/util:bytes",
         "@maven//:com_google_code_findbugs_jsr305",
     ],
 )
@@ -175,7 +174,6 @@ android_library(
         ":proto_key_serialization-android",
         "//src/main/java/com/google/crypto/tink:key-android",
         "//src/main/java/com/google/crypto/tink:secret_key_access-android",
-        "//src/main/java/com/google/crypto/tink/util:bytes-android",
         "@maven//:com_google_code_findbugs_jsr305",
     ],
 )
@@ -255,7 +253,6 @@ java_library(
         "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink:parameters",
         "//src/main/java/com/google/crypto/tink:secret_key_access",
-        "//src/main/java/com/google/crypto/tink/util:bytes",
         "@maven//:com_google_code_findbugs_jsr305",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
@@ -274,7 +271,6 @@ android_library(
         "//src/main/java/com/google/crypto/tink:key-android",
         "//src/main/java/com/google/crypto/tink:parameters-android",
         "//src/main/java/com/google/crypto/tink:secret_key_access-android",
-        "//src/main/java/com/google/crypto/tink/util:bytes-android",
         "@maven//:com_google_code_findbugs_jsr305",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
@@ -285,9 +281,7 @@ java_library(
     srcs = ["ParametersParser.java"],
     deps = [
         ":proto_parameters_serialization",
-        ":serialization",
         "//src/main/java/com/google/crypto/tink:parameters",
-        "//src/main/java/com/google/crypto/tink/util:bytes",
     ],
 )
 
@@ -296,9 +290,7 @@ android_library(
     srcs = ["ParametersParser.java"],
     deps = [
         ":proto_parameters_serialization-android",
-        ":serialization-android",
         "//src/main/java/com/google/crypto/tink:parameters-android",
-        "//src/main/java/com/google/crypto/tink/util:bytes-android",
     ],
 )
 

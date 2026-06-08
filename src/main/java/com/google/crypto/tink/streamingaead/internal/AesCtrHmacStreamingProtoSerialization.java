@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink.streamingaead.internal;
 
-import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
@@ -33,7 +32,6 @@ import com.google.crypto.tink.proto.HashType;
 import com.google.crypto.tink.proto.HmacParams;
 import com.google.crypto.tink.streamingaead.AesCtrHmacStreamingKey;
 import com.google.crypto.tink.streamingaead.AesCtrHmacStreamingParameters;
-import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ExtensionRegistryLite;
@@ -50,7 +48,6 @@ import javax.annotation.Nullable;
 public final class AesCtrHmacStreamingProtoSerialization {
   private static final String TYPE_URL =
       "type.googleapis.com/google.crypto.tink.AesCtrHmacStreamingKey";
-  private static final Bytes TYPE_URL_BYTES = toBytesFromPrintableAscii(TYPE_URL);
 
   private static final ParametersSerializer<AesCtrHmacStreamingParameters>
       PARAMETERS_SERIALIZER =
@@ -59,15 +56,14 @@ public final class AesCtrHmacStreamingProtoSerialization {
               AesCtrHmacStreamingParameters.class);
 
   private static final ParametersParser PARAMETERS_PARSER =
-      ParametersParser.create(
-          AesCtrHmacStreamingProtoSerialization::parseParameters, TYPE_URL_BYTES);
+      ParametersParser.create(AesCtrHmacStreamingProtoSerialization::parseParameters, TYPE_URL);
 
   private static final KeySerializer<AesCtrHmacStreamingKey> KEY_SERIALIZER =
       KeySerializer.create(
           AesCtrHmacStreamingProtoSerialization::serializeKey, AesCtrHmacStreamingKey.class);
 
   private static final KeyParser KEY_PARSER =
-      KeyParser.create(AesCtrHmacStreamingProtoSerialization::parseKey, TYPE_URL_BYTES);
+      KeyParser.create(AesCtrHmacStreamingProtoSerialization::parseKey, TYPE_URL);
 
   private static HashType toProtoHashType(AesCtrHmacStreamingParameters.HashType hashType)
       throws GeneralSecurityException {

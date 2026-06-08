@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink.mac.internal;
 
-import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
@@ -32,7 +31,6 @@ import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.internal.SerializationRegistry;
 import com.google.crypto.tink.mac.AesCmacKey;
 import com.google.crypto.tink.mac.AesCmacParameters;
-import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ExtensionRegistryLite;
@@ -47,7 +45,6 @@ import javax.annotation.Nullable;
 @SuppressWarnings("UnnecessarilyFullyQualified") // Fully specifying proto types is more readable
 public final class AesCmacProtoSerialization {
   private static final String TYPE_URL = "type.googleapis.com/google.crypto.tink.AesCmacKey";
-  private static final Bytes TYPE_URL_BYTES = toBytesFromPrintableAscii(TYPE_URL);
 
   private static final ParametersSerializer<AesCmacParameters>
       PARAMETERS_SERIALIZER =
@@ -55,13 +52,13 @@ public final class AesCmacProtoSerialization {
               AesCmacProtoSerialization::serializeParameters, AesCmacParameters.class);
 
   private static final ParametersParser PARAMETERS_PARSER =
-      ParametersParser.create(AesCmacProtoSerialization::parseParameters, TYPE_URL_BYTES);
+      ParametersParser.create(AesCmacProtoSerialization::parseParameters, TYPE_URL);
 
   private static final KeySerializer<AesCmacKey> KEY_SERIALIZER =
       KeySerializer.create(AesCmacProtoSerialization::serializeKey, AesCmacKey.class);
 
   private static final KeyParser KEY_PARSER =
-      KeyParser.create(AesCmacProtoSerialization::parseKey, TYPE_URL_BYTES);
+      KeyParser.create(AesCmacProtoSerialization::parseKey, TYPE_URL);
 
   private static OutputPrefixType toOutputPrefixType(AesCmacParameters.Variant variant)
       throws GeneralSecurityException {

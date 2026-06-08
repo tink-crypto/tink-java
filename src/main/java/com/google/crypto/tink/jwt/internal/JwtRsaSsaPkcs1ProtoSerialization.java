@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink.jwt.internal;
 
-import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
@@ -35,7 +34,6 @@ import com.google.crypto.tink.jwt.JwtRsaSsaPkcs1Parameters;
 import com.google.crypto.tink.jwt.JwtRsaSsaPkcs1PrivateKey;
 import com.google.crypto.tink.jwt.JwtRsaSsaPkcs1PublicKey;
 import com.google.crypto.tink.proto.JwtRsaSsaPkcs1Algorithm;
-import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBigInteger;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ExtensionRegistryLite;
@@ -53,10 +51,9 @@ import javax.annotation.Nullable;
 public final class JwtRsaSsaPkcs1ProtoSerialization {
   private static final String PRIVATE_TYPE_URL =
       "type.googleapis.com/google.crypto.tink.JwtRsaSsaPkcs1PrivateKey";
-  private static final Bytes PRIVATE_TYPE_URL_BYTES = toBytesFromPrintableAscii(PRIVATE_TYPE_URL);
+
   private static final String PUBLIC_TYPE_URL =
       "type.googleapis.com/google.crypto.tink.JwtRsaSsaPkcs1PublicKey";
-  private static final Bytes PUBLIC_TYPE_URL_BYTES = toBytesFromPrintableAscii(PUBLIC_TYPE_URL);
 
   private static final ParametersSerializer<JwtRsaSsaPkcs1Parameters>
       PARAMETERS_SERIALIZER =
@@ -65,23 +62,21 @@ public final class JwtRsaSsaPkcs1ProtoSerialization {
               JwtRsaSsaPkcs1Parameters.class);
 
   private static final ParametersParser PARAMETERS_PARSER =
-      ParametersParser.create(
-          JwtRsaSsaPkcs1ProtoSerialization::parseParameters,
-          PRIVATE_TYPE_URL_BYTES);
+      ParametersParser.create(JwtRsaSsaPkcs1ProtoSerialization::parseParameters, PRIVATE_TYPE_URL);
 
   private static final KeySerializer<JwtRsaSsaPkcs1PublicKey> PUBLIC_KEY_SERIALIZER =
       KeySerializer.create(
           JwtRsaSsaPkcs1ProtoSerialization::serializePublicKey, JwtRsaSsaPkcs1PublicKey.class);
 
   private static final KeyParser PUBLIC_KEY_PARSER =
-      KeyParser.create(JwtRsaSsaPkcs1ProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL_BYTES);
+      KeyParser.create(JwtRsaSsaPkcs1ProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL);
 
   private static final KeySerializer<JwtRsaSsaPkcs1PrivateKey> PRIVATE_KEY_SERIALIZER =
       KeySerializer.create(
           JwtRsaSsaPkcs1ProtoSerialization::serializePrivateKey, JwtRsaSsaPkcs1PrivateKey.class);
 
   private static final KeyParser PRIVATE_KEY_PARSER =
-      KeyParser.create(JwtRsaSsaPkcs1ProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL_BYTES);
+      KeyParser.create(JwtRsaSsaPkcs1ProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL);
 
   private static final EnumTypeProtoConverter<
           JwtRsaSsaPkcs1Algorithm, JwtRsaSsaPkcs1Parameters.Algorithm>

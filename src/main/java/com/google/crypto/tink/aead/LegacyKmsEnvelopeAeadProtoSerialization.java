@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink.aead;
 
-import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.Parameters;
@@ -34,7 +33,6 @@ import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.proto.KmsEnvelopeAeadKey;
 import com.google.crypto.tink.proto.KmsEnvelopeAeadKeyFormat;
-import com.google.crypto.tink.util.Bytes;
 import com.google.protobuf.ExtensionRegistryLite;
 import com.google.protobuf.InvalidProtocolBufferException;
 import java.security.GeneralSecurityException;
@@ -47,7 +45,6 @@ import javax.annotation.Nullable;
 public final class LegacyKmsEnvelopeAeadProtoSerialization {
   private static final String TYPE_URL =
       "type.googleapis.com/google.crypto.tink.KmsEnvelopeAeadKey";
-  private static final Bytes TYPE_URL_BYTES = toBytesFromPrintableAscii(TYPE_URL);
 
   private static final ParametersSerializer<LegacyKmsEnvelopeAeadParameters>
       PARAMETERS_SERIALIZER =
@@ -56,15 +53,14 @@ public final class LegacyKmsEnvelopeAeadProtoSerialization {
               LegacyKmsEnvelopeAeadParameters.class);
 
   private static final ParametersParser PARAMETERS_PARSER =
-      ParametersParser.create(
-          LegacyKmsEnvelopeAeadProtoSerialization::parseParameters, TYPE_URL_BYTES);
+      ParametersParser.create(LegacyKmsEnvelopeAeadProtoSerialization::parseParameters, TYPE_URL);
 
   private static final KeySerializer<LegacyKmsEnvelopeAeadKey> KEY_SERIALIZER =
       KeySerializer.create(
           LegacyKmsEnvelopeAeadProtoSerialization::serializeKey, LegacyKmsEnvelopeAeadKey.class);
 
   private static final KeyParser KEY_PARSER =
-      KeyParser.create(LegacyKmsEnvelopeAeadProtoSerialization::parseKey, TYPE_URL_BYTES);
+      KeyParser.create(LegacyKmsEnvelopeAeadProtoSerialization::parseKey, TYPE_URL);
 
   private static OutputPrefixType toProtoOutputPrefixType(
       LegacyKmsEnvelopeAeadParameters.Variant variant) throws GeneralSecurityException {

@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink.aead;
 
-import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
@@ -31,7 +30,6 @@ import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.proto.KmsAeadKey;
 import com.google.crypto.tink.proto.KmsAeadKeyFormat;
-import com.google.crypto.tink.util.Bytes;
 import com.google.protobuf.ExtensionRegistryLite;
 import com.google.protobuf.InvalidProtocolBufferException;
 import java.security.GeneralSecurityException;
@@ -40,7 +38,6 @@ import javax.annotation.Nullable;
 /** Serializers and Parsers for LegacyKmsAeadProtoKey and LegacyKmsAeadProtoParameters */
 final class LegacyKmsAeadProtoSerialization {
   private static final String TYPE_URL = "type.googleapis.com/google.crypto.tink.KmsAeadKey";
-  private static final Bytes TYPE_URL_BYTES = toBytesFromPrintableAscii(TYPE_URL);
 
   private static final ParametersSerializer<LegacyKmsAeadParameters>
       PARAMETERS_SERIALIZER =
@@ -48,13 +45,13 @@ final class LegacyKmsAeadProtoSerialization {
               LegacyKmsAeadProtoSerialization::serializeParameters, LegacyKmsAeadParameters.class);
 
   private static final ParametersParser PARAMETERS_PARSER =
-      ParametersParser.create(LegacyKmsAeadProtoSerialization::parseParameters, TYPE_URL_BYTES);
+      ParametersParser.create(LegacyKmsAeadProtoSerialization::parseParameters, TYPE_URL);
 
   private static final KeySerializer<LegacyKmsAeadKey> KEY_SERIALIZER =
       KeySerializer.create(LegacyKmsAeadProtoSerialization::serializeKey, LegacyKmsAeadKey.class);
 
   private static final KeyParser KEY_PARSER =
-      KeyParser.create(LegacyKmsAeadProtoSerialization::parseKey, TYPE_URL_BYTES);
+      KeyParser.create(LegacyKmsAeadProtoSerialization::parseKey, TYPE_URL);
 
   private static OutputPrefixType toProtoOutputPrefixType(LegacyKmsAeadParameters.Variant variant)
       throws GeneralSecurityException {

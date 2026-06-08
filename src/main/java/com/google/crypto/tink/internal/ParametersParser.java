@@ -17,7 +17,6 @@
 package com.google.crypto.tink.internal;
 
 import com.google.crypto.tink.Parameters;
-import com.google.crypto.tink.util.Bytes;
 import java.security.GeneralSecurityException;
 
 /**
@@ -38,10 +37,10 @@ public abstract class ParametersParser {
         throws GeneralSecurityException;
   }
 
-  private final Bytes objectIdentifier;
+  private final String typeUrl;
 
-  private ParametersParser(Bytes objectIdentifier) {
-    this.objectIdentifier = objectIdentifier;
+  private ParametersParser(String typeUrl) {
+    this.typeUrl = typeUrl;
   }
 
   /**
@@ -53,18 +52,9 @@ public abstract class ParametersParser {
   public abstract Parameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException;
 
-  /**
-   * Returns the {@code objectIdentifier} for this serialization.
-   *
-   * <p>The object identifier is a unique identifier per registry for this object (in the standard
-   * proto serialization, it is the typeUrl). In other words, when registering a {@code
-   * ParametersParser}, the registry will invoke this to get the handled object identifier. In order
-   * to parse an object of type {@code SerializationT}, the registry will then obtain the {@code
-   * objectIdentifier} of this serialization object, and call the parser corresponding to this
-   * object.
-   */
-  public final Bytes getObjectIdentifier() {
-    return objectIdentifier;
+  /** Returns the {@code getTypeUrl} for this serialization. */
+  public final String getTypeUrl() {
+    return typeUrl;
   }
 
   public final Class<ProtoParametersSerialization> getSerializationClass() {
@@ -95,9 +85,8 @@ public abstract class ParametersParser {
    * @param function The function used to parse a {@link Parameters} object.
    * @param objectIdentifier The identifier to be returned by {@link #getObjectIdentifier}
    */
-  public static ParametersParser create(
-      ParametersParsingFunction function, Bytes objectIdentifier) {
-    return new ParametersParser(objectIdentifier) {
+  public static ParametersParser create(ParametersParsingFunction function, String typeUrl) {
+    return new ParametersParser(typeUrl) {
       @Override
       public Parameters parseParameters(ProtoParametersSerialization serialization)
           throws GeneralSecurityException {

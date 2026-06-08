@@ -74,7 +74,6 @@ import com.google.crypto.tink.tinkkey.KeyAccess;
 import com.google.crypto.tink.tinkkey.KeyHandle;
 import com.google.crypto.tink.tinkkey.SecretKeyAccess;
 import com.google.crypto.tink.tinkkey.internal.ProtoKey;
-import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.errorprone.annotations.Immutable;
 import com.google.protobuf.ByteString;
@@ -1066,9 +1065,7 @@ public class KeysetHandleTest {
     ByteString value = ByteString.copyFromUtf8("some value");
     // NOTE: This adds a parser to the MutableSerializationRegistry, which no other test uses.
     MutableSerializationRegistry.globalInstance()
-        .registerKeyParser(
-            KeyParser.create(
-                KeysetHandleTest::parseTestKey, Bytes.copyFrom("testKeyTypeUrl".getBytes(UTF_8))));
+        .registerKeyParser(KeyParser.create(KeysetHandleTest::parseTestKey, "testKeyTypeUrl"));
     Keyset keyset =
         Keyset.newBuilder()
             .setPrimaryKeyId(1)

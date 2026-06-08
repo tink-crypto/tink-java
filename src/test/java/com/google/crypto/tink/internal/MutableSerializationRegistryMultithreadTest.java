@@ -17,7 +17,6 @@
 package com.google.crypto.tink.internal;
 
 import static com.google.common.truth.Truth.assertThat;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
@@ -26,10 +25,8 @@ import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
 import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.SecretKeyAccess;
-import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
 import com.google.protobuf.ByteString;
-import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +46,7 @@ public final class MutableSerializationRegistryMultithreadTest {
   private static final String TYPE_URL_1 = "type_url_1";
   private static final String TYPE_URL_2 = "type_url_2";
 
-  private static final Bytes A_1 = Bytes.copyFrom(TYPE_URL_1.getBytes(UTF_8));
+
 
   @Immutable
   private static final class TestParameters1 extends Parameters {
@@ -166,14 +163,15 @@ public final class MutableSerializationRegistryMultithreadTest {
         KeySerializer.create(
             MutableSerializationRegistryMultithreadTest::serializeKey1ToProto, TestKey1.class));
     registry.registerKeyParser(
-        KeyParser.create(MutableSerializationRegistryMultithreadTest::parseProtoToKey1, A_1));
+        KeyParser.create(
+            MutableSerializationRegistryMultithreadTest::parseProtoToKey1, TYPE_URL_1));
     registry.registerParametersSerializer(
         ParametersSerializer.create(
             MutableSerializationRegistryMultithreadTest::serializeParameters1ToProto,
             TestParameters1.class));
     registry.registerParametersParser(
         ParametersParser.create(
-            MutableSerializationRegistryMultithreadTest::parseProtoToParameters1, A_1));
+            MutableSerializationRegistryMultithreadTest::parseProtoToParameters1, TYPE_URL_1));
 
     ProtoKeySerialization serialization =
         ProtoKeySerialization.create(
@@ -197,7 +195,7 @@ public final class MutableSerializationRegistryMultithreadTest {
                   registry.registerKeyParser(
                       KeyParser.create(
                           MutableSerializationRegistryMultithreadTest::parseProtoToKey1,
-                          Bytes.copyFrom(ByteBuffer.allocate(4).putInt(i).array())));
+                          Integer.toString(i)));
                 }
               } catch (GeneralSecurityException e) {
                 throw new RuntimeException(e);
@@ -214,7 +212,7 @@ public final class MutableSerializationRegistryMultithreadTest {
                   registry.registerKeyParser(
                       KeyParser.create(
                           MutableSerializationRegistryMultithreadTest::parseProtoToKey1,
-                          Bytes.copyFrom(ByteBuffer.allocate(4).putInt(i + REPETITIONS).array())));
+                          Integer.toString(i + REPETITIONS)));
                 }
                 registry.registerKeySerializer(
                     KeySerializer.create(
@@ -255,7 +253,7 @@ public final class MutableSerializationRegistryMultithreadTest {
                   registry.registerParametersParser(
                       ParametersParser.create(
                           MutableSerializationRegistryMultithreadTest::parseProtoToParameters1,
-                          Bytes.copyFrom(ByteBuffer.allocate(4).putInt(i).array())));
+                          Integer.toString(i)));
                 }
               } catch (GeneralSecurityException e) {
                 throw new RuntimeException(e);
@@ -272,7 +270,7 @@ public final class MutableSerializationRegistryMultithreadTest {
                   registry.registerParametersParser(
                       ParametersParser.create(
                           MutableSerializationRegistryMultithreadTest::parseProtoToParameters1,
-                          Bytes.copyFrom(ByteBuffer.allocate(4).putInt(i + REPETITIONS).array())));
+                          Integer.toString(i + REPETITIONS)));
                 }
                 registry.registerParametersSerializer(
                     ParametersSerializer.create(

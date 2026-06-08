@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink.mac.internal;
 
-import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.SecretKeyAccess;
@@ -32,7 +31,6 @@ import com.google.crypto.tink.internal.SerializationRegistry;
 import com.google.crypto.tink.mac.HmacKey;
 import com.google.crypto.tink.mac.HmacParameters;
 import com.google.crypto.tink.proto.HashType;
-import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ExtensionRegistryLite;
@@ -45,7 +43,6 @@ import javax.annotation.Nullable;
 @SuppressWarnings("UnnecessarilyFullyQualified") // Fully specifying proto types is more readable
 public final class HmacProtoSerialization {
   private static final String TYPE_URL = "type.googleapis.com/google.crypto.tink.HmacKey";
-  private static final Bytes TYPE_URL_BYTES = toBytesFromPrintableAscii(TYPE_URL);
 
   private static com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType toOutputPrefixType(
       HmacParameters.Variant variant) throws GeneralSecurityException {
@@ -99,13 +96,13 @@ public final class HmacProtoSerialization {
               HmacProtoSerialization::serializeParameters, HmacParameters.class);
 
   private static final ParametersParser PARAMETERS_PARSER =
-      ParametersParser.create(HmacProtoSerialization::parseParameters, TYPE_URL_BYTES);
+      ParametersParser.create(HmacProtoSerialization::parseParameters, TYPE_URL);
 
   private static final KeySerializer<HmacKey> KEY_SERIALIZER =
       KeySerializer.create(HmacProtoSerialization::serializeKey, HmacKey.class);
 
   private static final KeyParser KEY_PARSER =
-      KeyParser.create(HmacProtoSerialization::parseKey, TYPE_URL_BYTES);
+      KeyParser.create(HmacProtoSerialization::parseKey, TYPE_URL);
 
   private static com.google.crypto.tink.proto.HmacParams getProtoParams(HmacParameters parameters)
       throws GeneralSecurityException {

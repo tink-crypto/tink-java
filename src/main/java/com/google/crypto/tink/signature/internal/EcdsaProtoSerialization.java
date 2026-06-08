@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink.signature.internal;
 
-import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
@@ -36,7 +35,6 @@ import com.google.crypto.tink.proto.HashType;
 import com.google.crypto.tink.signature.EcdsaParameters;
 import com.google.crypto.tink.signature.EcdsaPrivateKey;
 import com.google.crypto.tink.signature.EcdsaPublicKey;
-import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBigInteger;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ExtensionRegistryLite;
@@ -54,10 +52,9 @@ import javax.annotation.Nullable;
 public final class EcdsaProtoSerialization {
   private static final String PRIVATE_TYPE_URL =
       "type.googleapis.com/google.crypto.tink.EcdsaPrivateKey";
-  private static final Bytes PRIVATE_TYPE_URL_BYTES = toBytesFromPrintableAscii(PRIVATE_TYPE_URL);
+
   private static final String PUBLIC_TYPE_URL =
       "type.googleapis.com/google.crypto.tink.EcdsaPublicKey";
-  private static final Bytes PUBLIC_TYPE_URL_BYTES = toBytesFromPrintableAscii(PUBLIC_TYPE_URL);
 
   private static final ParametersSerializer<EcdsaParameters>
       PARAMETERS_SERIALIZER =
@@ -65,19 +62,19 @@ public final class EcdsaProtoSerialization {
               EcdsaProtoSerialization::serializeParameters, EcdsaParameters.class);
 
   private static final ParametersParser PARAMETERS_PARSER =
-      ParametersParser.create(EcdsaProtoSerialization::parseParameters, PRIVATE_TYPE_URL_BYTES);
+      ParametersParser.create(EcdsaProtoSerialization::parseParameters, PRIVATE_TYPE_URL);
 
   private static final KeySerializer<EcdsaPublicKey> PUBLIC_KEY_SERIALIZER =
       KeySerializer.create(EcdsaProtoSerialization::serializePublicKey, EcdsaPublicKey.class);
 
   private static final KeyParser PUBLIC_KEY_PARSER =
-      KeyParser.create(EcdsaProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL_BYTES);
+      KeyParser.create(EcdsaProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL);
 
   private static final KeySerializer<EcdsaPrivateKey> PRIVATE_KEY_SERIALIZER =
       KeySerializer.create(EcdsaProtoSerialization::serializePrivateKey, EcdsaPrivateKey.class);
 
   private static final KeyParser PRIVATE_KEY_PARSER =
-      KeyParser.create(EcdsaProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL_BYTES);
+      KeyParser.create(EcdsaProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL);
 
   private static com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType
       toProtoOutputPrefixType(EcdsaParameters.Variant variant) throws GeneralSecurityException {

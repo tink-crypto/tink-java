@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink.keyderivation.internal;
 
-import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.Key;
@@ -42,7 +41,6 @@ import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.proto.PrfBasedDeriverKey;
 import com.google.crypto.tink.proto.PrfBasedDeriverKeyFormat;
 import com.google.crypto.tink.proto.PrfBasedDeriverParams;
-import com.google.crypto.tink.util.Bytes;
 import com.google.protobuf.ExtensionRegistryLite;
 import com.google.protobuf.InvalidProtocolBufferException;
 import java.security.GeneralSecurityException;
@@ -55,7 +53,6 @@ import javax.annotation.Nullable;
 public final class PrfBasedKeyDerivationKeyProtoSerialization {
   private static final String TYPE_URL =
       "type.googleapis.com/google.crypto.tink.PrfBasedDeriverKey";
-  private static final Bytes TYPE_URL_BYTES = toBytesFromPrintableAscii(TYPE_URL);
 
   private static final ParametersSerializer<PrfBasedKeyDerivationParameters>
       PARAMETERS_SERIALIZER =
@@ -65,14 +62,14 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
 
   private static final ParametersParser PARAMETERS_PARSER =
       ParametersParser.create(
-          PrfBasedKeyDerivationKeyProtoSerialization::parseParameters, TYPE_URL_BYTES);
+          PrfBasedKeyDerivationKeyProtoSerialization::parseParameters, TYPE_URL);
 
   private static final KeySerializer<PrfBasedKeyDerivationKey> KEY_SERIALIZER =
       KeySerializer.create(
           PrfBasedKeyDerivationKeyProtoSerialization::serializeKey, PrfBasedKeyDerivationKey.class);
 
   private static final KeyParser KEY_PARSER =
-      KeyParser.create(PrfBasedKeyDerivationKeyProtoSerialization::parseKey, TYPE_URL_BYTES);
+      KeyParser.create(PrfBasedKeyDerivationKeyProtoSerialization::parseKey, TYPE_URL);
 
   private static PrfBasedKeyDerivationParameters parseParameters(
       ProtoParametersSerialization serialization) throws GeneralSecurityException {

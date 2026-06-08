@@ -17,7 +17,6 @@
 package com.google.crypto.tink.internal;
 
 import static com.google.common.truth.Truth.assertThat;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
@@ -26,7 +25,6 @@ import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
 import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.SecretKeyAccess;
-import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
@@ -44,8 +42,7 @@ public final class SerializationRegistryTest {
   private static final String TYPE_URL_1 = "type_url_1";
   private static final String TYPE_URL_2 = "type_url_2";
 
-  private static final Bytes A_1 = Bytes.copyFrom(TYPE_URL_1.getBytes(UTF_8));
-  private static final Bytes A_2 = Bytes.copyFrom(TYPE_URL_2.getBytes(UTF_8));
+
 
   @Immutable
   private static final class TestParameters1 extends Parameters {
@@ -257,7 +254,8 @@ public final class SerializationRegistryTest {
   public void test_registerParserAndGet() throws Exception {
     SerializationRegistry registry =
         new SerializationRegistry.Builder()
-            .registerKeyParser(KeyParser.create(SerializationRegistryTest::parseProtoToKey1, A_1))
+            .registerKeyParser(
+                KeyParser.create(SerializationRegistryTest::parseProtoToKey1, TYPE_URL_1))
             .build();
     ProtoKeySerialization serialization =
         ProtoKeySerialization.create(
@@ -274,7 +272,8 @@ public final class SerializationRegistryTest {
   public void test_registerParser_noAccess_throws() throws Exception {
     SerializationRegistry registry =
         new SerializationRegistry.Builder()
-            .registerKeyParser(KeyParser.create(SerializationRegistryTest::parseProtoToKey1, A_1))
+            .registerKeyParser(
+                KeyParser.create(SerializationRegistryTest::parseProtoToKey1, TYPE_URL_1))
             .build();
     ProtoKeySerialization serialization =
         ProtoKeySerialization.create(
@@ -303,7 +302,8 @@ public final class SerializationRegistryTest {
 
   @Test
   public void test_registerSameParserTwice_works() throws Exception {
-    KeyParser testParser = KeyParser.create(SerializationRegistryTest::parseProtoToKey1, A_1);
+    KeyParser testParser =
+        KeyParser.create(SerializationRegistryTest::parseProtoToKey1, TYPE_URL_1);
     SerializationRegistry unused = new SerializationRegistry.Builder()
         .registerKeyParser(testParser)
         .registerKeyParser(testParser)
@@ -312,8 +312,10 @@ public final class SerializationRegistryTest {
 
   @Test
   public void test_registerDifferentParsersWithSameKeyType_throws() throws Exception {
-    KeyParser testParser1 = KeyParser.create(SerializationRegistryTest::parseProtoToKey1, A_1);
-    KeyParser testParser2 = KeyParser.create(SerializationRegistryTest::parseProtoToKey1, A_1);
+    KeyParser testParser1 =
+        KeyParser.create(SerializationRegistryTest::parseProtoToKey1, TYPE_URL_1);
+    KeyParser testParser2 =
+        KeyParser.create(SerializationRegistryTest::parseProtoToKey1, TYPE_URL_1);
     SerializationRegistry.Builder builder = new SerializationRegistry.Builder();
     builder.registerKeyParser(testParser1);
     assertThrows(
@@ -322,8 +324,10 @@ public final class SerializationRegistryTest {
 
   @Test
   public void test_registerDifferentParsersWithDifferentKeyType_works() throws Exception {
-    KeyParser testParser1 = KeyParser.create(SerializationRegistryTest::parseProtoToKey1, A_1);
-    KeyParser testParser2 = KeyParser.create(SerializationRegistryTest::parseProtoToKey2, A_2);
+    KeyParser testParser1 =
+        KeyParser.create(SerializationRegistryTest::parseProtoToKey1, TYPE_URL_1);
+    KeyParser testParser2 =
+        KeyParser.create(SerializationRegistryTest::parseProtoToKey2, TYPE_URL_2);
     SerializationRegistry unused = new SerializationRegistry.Builder()
         .registerKeyParser(testParser1)
         .registerKeyParser(testParser2)
@@ -334,8 +338,10 @@ public final class SerializationRegistryTest {
   public void test_registerAllParsers_checkDispatch() throws Exception {
     SerializationRegistry registry =
         new SerializationRegistry.Builder()
-            .registerKeyParser(KeyParser.create(SerializationRegistryTest::parseProtoToKey1, A_1))
-            .registerKeyParser(KeyParser.create(SerializationRegistryTest::parseProtoToKey2, A_2))
+            .registerKeyParser(
+                KeyParser.create(SerializationRegistryTest::parseProtoToKey1, TYPE_URL_1))
+            .registerKeyParser(
+                KeyParser.create(SerializationRegistryTest::parseProtoToKey2, TYPE_URL_2))
             .build();
     ProtoKeySerialization serialization1 =
         ProtoKeySerialization.create(
@@ -359,7 +365,8 @@ public final class SerializationRegistryTest {
   public void test_copyWorksForParsers() throws Exception {
     SerializationRegistry registry =
         new SerializationRegistry.Builder()
-            .registerKeyParser(KeyParser.create(SerializationRegistryTest::parseProtoToKey1, A_1))
+            .registerKeyParser(
+                KeyParser.create(SerializationRegistryTest::parseProtoToKey1, TYPE_URL_1))
             .build();
     SerializationRegistry registry2 = new SerializationRegistry.Builder(registry).build();
     ProtoKeySerialization serialization =
@@ -388,7 +395,8 @@ public final class SerializationRegistryTest {
 
     SerializationRegistry unused =
         builder
-            .registerKeyParser(KeyParser.create(SerializationRegistryTest::parseProtoToKey1, A_1))
+            .registerKeyParser(
+                KeyParser.create(SerializationRegistryTest::parseProtoToKey1, TYPE_URL_1))
             .build();
     assertThrows(GeneralSecurityException.class, () -> registry1.parseKey(serialization, ACCESS));
     assertThrows(GeneralSecurityException.class, () -> registry2.parseKey(serialization, ACCESS));
@@ -539,7 +547,8 @@ public final class SerializationRegistryTest {
     SerializationRegistry registry =
         new SerializationRegistry.Builder()
             .registerParametersParser(
-                ParametersParser.create(SerializationRegistryTest::parseProtoToParameters1, A_1))
+                ParametersParser.create(
+                    SerializationRegistryTest::parseProtoToParameters1, TYPE_URL_1))
             .build();
     ProtoParametersSerialization serialization =
         ProtoParametersSerialization.create(TYPE_URL_1, OutputPrefixType.RAW, ByteString.EMPTY);
@@ -559,7 +568,7 @@ public final class SerializationRegistryTest {
   @Test
   public void test_registerSameParametersParserTwice_works() throws Exception {
     ParametersParser testParser =
-        ParametersParser.create(SerializationRegistryTest::parseProtoToParameters1, A_1);
+        ParametersParser.create(SerializationRegistryTest::parseProtoToParameters1, TYPE_URL_1);
     SerializationRegistry unused = new SerializationRegistry.Builder()
         .registerParametersParser(testParser)
         .registerParametersParser(testParser)
@@ -569,9 +578,9 @@ public final class SerializationRegistryTest {
   @Test
   public void test_registerDifferentParsersWithSameParametersType_throws() throws Exception {
     ParametersParser testParser1 =
-        ParametersParser.create(SerializationRegistryTest::parseProtoToParameters1, A_1);
+        ParametersParser.create(SerializationRegistryTest::parseProtoToParameters1, TYPE_URL_1);
     ParametersParser testParser2 =
-        ParametersParser.create(SerializationRegistryTest::parseProtoToParameters1, A_1);
+        ParametersParser.create(SerializationRegistryTest::parseProtoToParameters1, TYPE_URL_1);
     SerializationRegistry.Builder builder = new SerializationRegistry.Builder();
     builder.registerParametersParser(testParser1);
     assertThrows(
@@ -582,9 +591,9 @@ public final class SerializationRegistryTest {
   @Test
   public void test_registerDifferentParametersParsersWithDifferentKeyType_works() throws Exception {
     ParametersParser testParser1 =
-        ParametersParser.create(SerializationRegistryTest::parseProtoToParameters1, A_1);
+        ParametersParser.create(SerializationRegistryTest::parseProtoToParameters1, TYPE_URL_1);
     ParametersParser testParser2 =
-        ParametersParser.create(SerializationRegistryTest::parseProtoToParameters2, A_2);
+        ParametersParser.create(SerializationRegistryTest::parseProtoToParameters2, TYPE_URL_2);
     SerializationRegistry unused = new SerializationRegistry.Builder()
         .registerParametersParser(testParser1)
         .registerParametersParser(testParser2)
@@ -596,9 +605,11 @@ public final class SerializationRegistryTest {
     SerializationRegistry registry =
         new SerializationRegistry.Builder()
             .registerParametersParser(
-                ParametersParser.create(SerializationRegistryTest::parseProtoToParameters1, A_1))
+                ParametersParser.create(
+                    SerializationRegistryTest::parseProtoToParameters1, TYPE_URL_1))
             .registerParametersParser(
-                ParametersParser.create(SerializationRegistryTest::parseProtoToParameters2, A_2))
+                ParametersParser.create(
+                    SerializationRegistryTest::parseProtoToParameters2, TYPE_URL_2))
             .build();
     ProtoParametersSerialization serialization1 =
         ProtoParametersSerialization.create(TYPE_URL_1, OutputPrefixType.RAW, ByteString.EMPTY);
@@ -613,7 +624,8 @@ public final class SerializationRegistryTest {
     SerializationRegistry registry =
         new SerializationRegistry.Builder()
             .registerParametersParser(
-                ParametersParser.create(SerializationRegistryTest::parseProtoToParameters1, A_1))
+                ParametersParser.create(
+                    SerializationRegistryTest::parseProtoToParameters1, TYPE_URL_1))
             .build();
     SerializationRegistry registry2 = new SerializationRegistry.Builder(registry).build();
     ProtoParametersSerialization serialization =
@@ -633,7 +645,8 @@ public final class SerializationRegistryTest {
     SerializationRegistry unused =
         builder
             .registerParametersParser(
-                ParametersParser.create(SerializationRegistryTest::parseProtoToParameters1, A_1))
+                ParametersParser.create(
+                    SerializationRegistryTest::parseProtoToParameters1, TYPE_URL_1))
             .build();
     assertThrows(GeneralSecurityException.class, () -> registry1.parseParameters(serialization));
     assertThrows(GeneralSecurityException.class, () -> registry2.parseParameters(serialization));

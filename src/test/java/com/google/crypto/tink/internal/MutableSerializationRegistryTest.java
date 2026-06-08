@@ -17,7 +17,6 @@
 package com.google.crypto.tink.internal;
 
 import static com.google.common.truth.Truth.assertThat;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
@@ -27,7 +26,6 @@ import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
 import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.proto.TestProto;
-import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
@@ -49,8 +47,7 @@ public final class MutableSerializationRegistryTest {
   private static final String TYPE_URL_1 = "type_url_1";
   private static final String TYPE_URL_2 = "type_url_2";
 
-  private static final Bytes A_1 = Bytes.copyFrom(TYPE_URL_1.getBytes(UTF_8));
-  private static final Bytes A_2 = Bytes.copyFrom(TYPE_URL_2.getBytes(UTF_8));
+
 
   @Immutable
   private static final class TestParameters1 extends Parameters {
@@ -175,9 +172,9 @@ public final class MutableSerializationRegistryTest {
   public void test_registerAllParsers_checkDispatch() throws Exception {
     MutableSerializationRegistry registry = new MutableSerializationRegistry();
     registry.registerKeyParser(
-        KeyParser.create(MutableSerializationRegistryTest::parseProtoToKey1, A_1));
+        KeyParser.create(MutableSerializationRegistryTest::parseProtoToKey1, TYPE_URL_1));
     registry.registerKeyParser(
-        KeyParser.create(MutableSerializationRegistryTest::parseProtoToKey2, A_2));
+        KeyParser.create(MutableSerializationRegistryTest::parseProtoToKey2, TYPE_URL_2));
     ProtoKeySerialization serialization1 =
         ProtoKeySerialization.create(
             TYPE_URL_1,
@@ -274,9 +271,11 @@ public final class MutableSerializationRegistryTest {
   public void test_registerAllParametersParsers_checkDispatch() throws Exception {
     MutableSerializationRegistry registry = new MutableSerializationRegistry();
     registry.registerParametersParser(
-        ParametersParser.create(MutableSerializationRegistryTest::parseProtoToParameters1, A_1));
+        ParametersParser.create(
+            MutableSerializationRegistryTest::parseProtoToParameters1, TYPE_URL_1));
     registry.registerParametersParser(
-        ParametersParser.create(MutableSerializationRegistryTest::parseProtoToParameters2, A_2));
+        ParametersParser.create(
+            MutableSerializationRegistryTest::parseProtoToParameters2, TYPE_URL_2));
     ProtoParametersSerialization serialization1 =
         ProtoParametersSerialization.create(TYPE_URL_1, OutputPrefixType.RAW, ByteString.EMPTY);
     ProtoParametersSerialization serialization2 =
@@ -325,8 +324,7 @@ public final class MutableSerializationRegistryTest {
     MutableSerializationRegistry registry = new MutableSerializationRegistry();
     registry.registerParametersParser(
         ParametersParser.create(
-            MutableSerializationRegistryTest::parseParameters,
-            Util.toBytesFromPrintableAscii("typeUrlForTesting98178")));
+            MutableSerializationRegistryTest::parseParameters, "typeUrlForTesting98178"));
     ProtoParametersSerialization protoParameters =
         ProtoParametersSerialization.create(
             "typeUrlForTesting98178",
@@ -343,7 +341,7 @@ public final class MutableSerializationRegistryTest {
     registry.registerParametersParser(
         ParametersParser.create(
             MutableSerializationRegistryTest::parseParametersAlwaysThrows,
-            Util.toBytesFromPrintableAscii("typeUrlForTesting98178")));
+            "typeUrlForTesting98178"));
     ProtoParametersSerialization protoParameters =
         ProtoParametersSerialization.create(
             "typeUrlForTesting98178",
@@ -381,9 +379,7 @@ public final class MutableSerializationRegistryTest {
   public void test_parseKeyWithLegacyFallback_testRegistered() throws Exception {
     MutableSerializationRegistry registry = new MutableSerializationRegistry();
     registry.registerKeyParser(
-        KeyParser.create(
-            MutableSerializationRegistryTest::parseKey,
-            Util.toBytesFromPrintableAscii("typeUrlForTesting18412")));
+        KeyParser.create(MutableSerializationRegistryTest::parseKey, "typeUrlForTesting18412"));
     ProtoKeySerialization protoKey =
         ProtoKeySerialization.create(
             "typeUrlForTesting18412",

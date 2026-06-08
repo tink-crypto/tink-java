@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink.signature.internal;
 
-import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.Key;
@@ -44,7 +43,6 @@ import com.google.crypto.tink.signature.MlDsaPrivateKey;
 import com.google.crypto.tink.signature.MlDsaPublicKey;
 import com.google.crypto.tink.signature.SignaturePrivateKey;
 import com.google.crypto.tink.signature.SignaturePublicKey;
-import com.google.crypto.tink.util.Bytes;
 import com.google.protobuf.ExtensionRegistryLite;
 import com.google.protobuf.InvalidProtocolBufferException;
 import java.security.GeneralSecurityException;
@@ -59,10 +57,8 @@ import javax.annotation.Nullable;
 public final class CompositeMlDsaProtoSerialization {
   private static final String PRIVATE_TYPE_URL =
       "type.googleapis.com/google.crypto.tink.CompositeMlDsaPrivateKey";
-  private static final Bytes PRIVATE_TYPE_URL_BYTES = toBytesFromPrintableAscii(PRIVATE_TYPE_URL);
   private static final String PUBLIC_TYPE_URL =
       "type.googleapis.com/google.crypto.tink.CompositeMlDsaPublicKey";
-  private static final Bytes PUBLIC_TYPE_URL_BYTES = toBytesFromPrintableAscii(PUBLIC_TYPE_URL);
 
   private static final MutableSerializationRegistry SERIALIZATION_REGISTRY =
       createSerializationRegistry();
@@ -88,23 +84,21 @@ public final class CompositeMlDsaProtoSerialization {
               CompositeMlDsaParameters.class);
 
   private static final ParametersParser PARAMETERS_PARSER =
-      ParametersParser.create(
-          CompositeMlDsaProtoSerialization::parseParameters,
-          PRIVATE_TYPE_URL_BYTES);
+      ParametersParser.create(CompositeMlDsaProtoSerialization::parseParameters, PRIVATE_TYPE_URL);
 
   private static final KeySerializer<CompositeMlDsaPublicKey> PUBLIC_KEY_SERIALIZER =
       KeySerializer.create(
           CompositeMlDsaProtoSerialization::serializePublicKey, CompositeMlDsaPublicKey.class);
 
   private static final KeyParser PUBLIC_KEY_PARSER =
-      KeyParser.create(CompositeMlDsaProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL_BYTES);
+      KeyParser.create(CompositeMlDsaProtoSerialization::parsePublicKey, PUBLIC_TYPE_URL);
 
   private static final KeySerializer<CompositeMlDsaPrivateKey> PRIVATE_KEY_SERIALIZER =
       KeySerializer.create(
           CompositeMlDsaProtoSerialization::serializePrivateKey, CompositeMlDsaPrivateKey.class);
 
   private static final KeyParser PRIVATE_KEY_PARSER =
-      KeyParser.create(CompositeMlDsaProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL_BYTES);
+      KeyParser.create(CompositeMlDsaProtoSerialization::parsePrivateKey, PRIVATE_TYPE_URL);
 
   private static OutputPrefixType toOutputPrefixType(CompositeMlDsaParameters.Variant variant)
       throws GeneralSecurityException {

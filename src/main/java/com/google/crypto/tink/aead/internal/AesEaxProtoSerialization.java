@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink.aead.internal;
 
-import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
@@ -31,7 +30,6 @@ import com.google.crypto.tink.internal.ParametersParser;
 import com.google.crypto.tink.internal.ParametersSerializer;
 import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
-import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ExtensionRegistryLite;
@@ -44,7 +42,6 @@ import javax.annotation.Nullable;
 @SuppressWarnings("UnnecessarilyFullyQualified") // Fully specifying proto types is more readable
 public final class AesEaxProtoSerialization {
   private static final String TYPE_URL = "type.googleapis.com/google.crypto.tink.AesEaxKey";
-  private static final Bytes TYPE_URL_BYTES = toBytesFromPrintableAscii(TYPE_URL);
 
   private static final ParametersSerializer<AesEaxParameters>
       PARAMETERS_SERIALIZER =
@@ -52,13 +49,13 @@ public final class AesEaxProtoSerialization {
               AesEaxProtoSerialization::serializeParameters, AesEaxParameters.class);
 
   private static final ParametersParser PARAMETERS_PARSER =
-      ParametersParser.create(AesEaxProtoSerialization::parseParameters, TYPE_URL_BYTES);
+      ParametersParser.create(AesEaxProtoSerialization::parseParameters, TYPE_URL);
 
   private static final KeySerializer<AesEaxKey> KEY_SERIALIZER =
       KeySerializer.create(AesEaxProtoSerialization::serializeKey, AesEaxKey.class);
 
   private static final KeyParser KEY_PARSER =
-      KeyParser.create(AesEaxProtoSerialization::parseKey, TYPE_URL_BYTES);
+      KeyParser.create(AesEaxProtoSerialization::parseKey, TYPE_URL);
 
   private static OutputPrefixType toProtoOutputPrefixType(AesEaxParameters.Variant variant)
       throws GeneralSecurityException {

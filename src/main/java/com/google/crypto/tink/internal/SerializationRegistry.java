@@ -19,7 +19,6 @@ package com.google.crypto.tink.internal;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.SecretKeyAccess;
-import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
@@ -33,19 +32,19 @@ import javax.annotation.Nullable;
 public final class SerializationRegistry {
   // Maps the class of a key to a serializer for this key.
   private final Map<Class<?>, KeySerializer<?>> keySerializerMap;
-  private final Map<Bytes, KeyParser> keyParserMap;
+  private final Map<String, KeyParser> keyParserMap;
   // Maps the class of a parameters to a serializer for these parameters.
   private final Map<Class<?>, ParametersSerializer<?>>
       parametersSerializerMap;
-  private final Map<Bytes, ParametersParser> parametersParserMap;
+  private final Map<String, ParametersParser> parametersParserMap;
 
   /** Allows building SerializationRegistry objects. */
   public static final class Builder {
     private final Map<Class<?>, KeySerializer<?>> keySerializerMap;
-    private final Map<Bytes, KeyParser> keyParserMap;
+    private final Map<String, KeyParser> keyParserMap;
     private final Map<Class<?>, ParametersSerializer<?>>
         parametersSerializerMap;
-    private final Map<Bytes, ParametersParser> parametersParserMap;
+    private final Map<String, ParametersParser> parametersParserMap;
 
     public Builder() {
       keySerializerMap = new HashMap<>();
@@ -95,7 +94,7 @@ public final class SerializationRegistry {
      */
     @CanIgnoreReturnValue
     public Builder registerKeyParser(KeyParser parser) throws GeneralSecurityException {
-      Bytes index = parser.getObjectIdentifier();
+      String index = parser.getTypeUrl();
       if (keyParserMap.containsKey(index)) {
         KeyParser existingParser = keyParserMap.get(index);
         if (!existingParser.equals(parser) || !parser.equals(existingParser)) {
@@ -145,7 +144,7 @@ public final class SerializationRegistry {
     @CanIgnoreReturnValue
     public Builder registerParametersParser(ParametersParser parser)
         throws GeneralSecurityException {
-      Bytes index = parser.getObjectIdentifier();
+      String index = parser.getTypeUrl();
       if (parametersParserMap.containsKey(index)) {
         ParametersParser existingParser = parametersParserMap.get(index);
         if (!existingParser.equals(parser) || !parser.equals(existingParser)) {
@@ -172,7 +171,7 @@ public final class SerializationRegistry {
 
   /** Returns true if a parser for this {@code serializedKey} has been registered. */
   public boolean hasParserForKey(ProtoKeySerialization serializedKey) {
-    return keyParserMap.containsKey(serializedKey.getObjectIdentifier());
+    return keyParserMap.containsKey(serializedKey.getTypeUrl());
   }
 
   /**
@@ -184,7 +183,7 @@ public final class SerializationRegistry {
    */
   public Key parseKey(ProtoKeySerialization serializedKey, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
-    Bytes index = serializedKey.getObjectIdentifier();
+    String index = serializedKey.getTypeUrl();
 
     if (!keyParserMap.containsKey(index)) {
       throw new GeneralSecurityException(
@@ -219,7 +218,7 @@ public final class SerializationRegistry {
 
   /** Returns true if a parser for this {@code serializedKey} has been registered. */
   public boolean hasParserForParameters(ProtoParametersSerialization serializedParameters) {
-    return parametersParserMap.containsKey(serializedParameters.getObjectIdentifier());
+    return parametersParserMap.containsKey(serializedParameters.getTypeUrl());
   }
 
   /**
@@ -231,7 +230,7 @@ public final class SerializationRegistry {
    */
   public Parameters parseParameters(ProtoParametersSerialization serializedParameters)
       throws GeneralSecurityException {
-    Bytes index = serializedParameters.getObjectIdentifier();
+    String index = serializedParameters.getTypeUrl();
 
     if (!parametersParserMap.containsKey(index)) {
       throw new GeneralSecurityException(

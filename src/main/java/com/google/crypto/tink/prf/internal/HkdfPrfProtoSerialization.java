@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink.prf.internal;
 
-import static com.google.crypto.tink.internal.Util.toBytesFromPrintableAscii;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
@@ -47,7 +46,6 @@ import javax.annotation.Nullable;
 @SuppressWarnings("UnnecessarilyFullyQualified") // Fully specifying proto types is more readable
 public final class HkdfPrfProtoSerialization {
   private static final String TYPE_URL = "type.googleapis.com/google.crypto.tink.HkdfPrfKey";
-  private static final Bytes TYPE_URL_BYTES = toBytesFromPrintableAscii(TYPE_URL);
 
   private static final ParametersSerializer<HkdfPrfParameters>
       PARAMETERS_SERIALIZER =
@@ -55,13 +53,13 @@ public final class HkdfPrfProtoSerialization {
               HkdfPrfProtoSerialization::serializeParameters, HkdfPrfParameters.class);
 
   private static final ParametersParser PARAMETERS_PARSER =
-      ParametersParser.create(HkdfPrfProtoSerialization::parseParameters, TYPE_URL_BYTES);
+      ParametersParser.create(HkdfPrfProtoSerialization::parseParameters, TYPE_URL);
 
   private static final KeySerializer<HkdfPrfKey> KEY_SERIALIZER =
       KeySerializer.create(HkdfPrfProtoSerialization::serializeKey, HkdfPrfKey.class);
 
   private static final KeyParser KEY_PARSER =
-      KeyParser.create(HkdfPrfProtoSerialization::parseKey, TYPE_URL_BYTES);
+      KeyParser.create(HkdfPrfProtoSerialization::parseKey, TYPE_URL);
 
   private static HashType toProtoHashType(HkdfPrfParameters.HashType hashType)
       throws GeneralSecurityException {

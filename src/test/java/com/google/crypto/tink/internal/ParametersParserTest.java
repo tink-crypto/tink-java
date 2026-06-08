@@ -20,7 +20,6 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
-import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
@@ -47,14 +46,12 @@ public final class ParametersParserTest {
 
   @Test
   public void createParser_works() throws Exception {
-    Object unused =
-        ParametersParser.create(ParametersParserTest::parse, Bytes.copyFrom(new byte[0]));
+    Object unused = ParametersParser.create(ParametersParserTest::parse, "typeUrl");
   }
 
   @Test
   public void createParser_parseKey_works() throws Exception {
-    ParametersParser parser =
-        ParametersParser.create(ParametersParserTest::parse, Bytes.copyFrom(new byte[0]));
+    ParametersParser parser = ParametersParser.create(ParametersParserTest::parse, "typeUrl");
     ProtoParametersSerialization serialization =
         ProtoParametersSerialization.create(
             "typeUrl",
@@ -65,9 +62,8 @@ public final class ParametersParserTest {
 
   @Test
   public void createParser_classes_work() throws Exception {
-    ParametersParser parser =
-        ParametersParser.create(ParametersParserTest::parse, Bytes.copyFrom(new byte[] {1, 2, 3}));
-    assertThat(parser.getObjectIdentifier()).isEqualTo(Bytes.copyFrom(new byte[] {1, 2, 3}));
+    ParametersParser parser = ParametersParser.create(ParametersParserTest::parse, "typeUrl");
+    assertThat(parser.getTypeUrl()).isEqualTo("typeUrl");
     assertThat(parser.getSerializationClass()).isEqualTo(ProtoParametersSerialization.class);
   }
 }
