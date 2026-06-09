@@ -109,6 +109,44 @@ public final class HpkeProtoSerializationTest {
 
   private static final MutableSerializationRegistry registry = new MutableSerializationRegistry();
 
+  private static final String XWING_PRIVATE_KEY_HEX =
+      "7f9c2ba4e88f827d616045507605853ed73b8093f6efbc88eb1a6eacfa66ef26";
+  private static final String XWING_PUBLIC_KEY_HEX =
+      "e2236b35a8c24b39b10aa1323a96a919a2ced88400633a7b07131713fc14b2b5b19cfc3d"
+          + "a5fa1a92c49f25513e0fd30d6b1611c9ab9635d7086727a4b7d21d34244e66969cf15b3b"
+          + "2a785329f61b096b277ea037383479a6b556de7231fe4b7fa9c9ac24c0699a0018a52534"
+          + "01bacfa905ca816573e56a2d2e067e9b7287533ba13a937dedb31fa44baced4076992361"
+          + "0034ae31e619a170245199b3c5c39864859fe1b4c9717a07c30495bdfb98a0a002ccf56c"
+          + "1286cef5041dede3c44cf16bf562c7448518026b3d8b9940680abd38a1575fd27b58da06"
+          + "3bfac32c39c30869374c05c1aeb1898b6b303cc68be455346ee0af699636224a148ca2ae"
+          + "a10463111c709f69b69c70ce8538746698c4c60a9aef0030c7924ceec42a5d36816f545e"
+          + "ae13293460b3acb37ea0e13d70e4aa78686da398a8397c08eaf96882113fe4f7bad4da40"
+          + "b0501e1c753efe73053c87014e8661c33099afe8bede414a5b1aa27d8392b3e131e9a70c"
+          + "1055878240cad0f40d5fe3cdf85236ead97e2a97448363b2808caafd516cd25052c5c362"
+          + "543c2517e4acd0e60ec07163009b6425fc32277acee71c24bab53ed9f29e74c66a0a3564"
+          + "955998d76b96a9a8b50d1635a4d7a67eb42df5644d330457293a8042f53cc7a69288f17e"
+          + "d55827e82b28e82665a86a14fbd96645eca8172c044f83bc0d8c0b4c8626985631ca87af"
+          + "829068f1358963cb333664ca482763ba3b3bb208577f9ba6ac62c25f76592743b64be519"
+          + "317714cb4102cb7b2f9a25b2b4f0615de31decd9ca55026d6da0b65111b16fe52feed8a4"
+          + "87e144462a6dba93728f500b6ffc49e515569ef25fed17aff520507368253525860f58be"
+          + "3be61c964604a6ac814e6935596402a520a4670b3d284318866593d15a4bb01c35e3e587"
+          + "ee0c67d2880d6f2407fb7a70712b838deb96c5d7bf2b44bcf6038ccbe33fbcf51a54a584"
+          + "fe90083c91c7a6d43d4fb15f48c60c2fd66e0a8aad4ad64e5c42bb8877c0ebec2b5e387c"
+          + "8a988fdc23beb9e16c8757781e0a1499c61e138c21f216c29d076979871caa6942bafc09"
+          + "0544bee99b54b16cb9a9a364d6246d9f42cce53c66b59c45c8f9ae9299a75d15180c3c95"
+          + "2151a91b7a10772429dc4cbae6fcc622fa8018c63439f890630b9928db6bb7f9438ae406"
+          + "5ed34d73d486f3f52f90f0807dc88dfdd8c728e954f1ac35c06c000ce41a0582580e3bb5"
+          + "7b672972890ac5e7988e7850657116f1b57d0809aaedec0bede1ae148148311c6f7e3173"
+          + "46e5189fb8cd635b986f8c0bdd27641c584b778b3a911a80be1c9692ab8e1bbb12839573"
+          + "cce19df183b45835bbb55052f9fc66a1678ef2a36dea78411e6c8d60501b4e60592d1369"
+          + "8a943b509185db912e2ea10be06171236b327c71716094c964a68b03377f513a05bcd99c"
+          + "1f346583bb052977a10a12adfc758034e5617da4c1276585e5774e1f3b9978b09d0e9c44"
+          + "d3bc86151c43aad185712717340223ac381d21150a04294e97bb13bbda21b5a182b6da96"
+          + "9e19a7fd072737fa8e880a53c2428e3d049b7d2197405296ddb361912a7bcf4827ced611"
+          + "d0c7a7da104dde4322095339f64a61d5bb108ff0bf4d780cae509fb22c256914193ff734"
+          + "9042581237d522828824ee3bdfd07fb03f1f942d2ea179fe722f06cc03de5b69859edb06"
+          + "eff389b27dce59844570216223593d4ba32d9abac8cd049040ef6534";
+
   @DataPoints("variants")
   public static final VariantTuple[] VARIANTS =
       new VariantTuple[] {
@@ -153,6 +191,11 @@ public final class HpkeProtoSerializationTest {
                 "014784c692da35df6ecde98ee43ac425dbdd0969c0c72b42f2e708ab9d5354"
                     + "15a8569bdacfcc0a114c85b8e3f26acf4d68115f8c91a66178cdbd03b7bcc5291e37"
                     + "4b")),
+        new KemTuple(
+            HpkeParameters.KemId.X_WING,
+            HpkeKem.X_WING,
+            /* publicKey= */ Hex.decode(XWING_PUBLIC_KEY_HEX),
+            /* privateKey= */ Hex.decode(XWING_PRIVATE_KEY_HEX)),
       };
 
   @DataPoints("kdfs")
@@ -243,6 +286,10 @@ public final class HpkeProtoSerializationTest {
       @FromDataPoints("kdfs") KdfTuple kdfTuple,
       @FromDataPoints("aeads") AeadTuple aeadTuple)
       throws Exception {
+    if (kemTuple.kemId == HpkeParameters.KemId.X_WING
+        && kdfTuple.kdfId != HpkeParameters.KdfId.HKDF_SHA256) {
+      return;
+    }
     HpkeParameters parameters =
         HpkeParameters.builder()
             .setKemId(kemTuple.kemId)
@@ -275,6 +322,10 @@ public final class HpkeProtoSerializationTest {
       @FromDataPoints("kdfs") KdfTuple kdfTuple,
       @FromDataPoints("aeads") AeadTuple aeadTuple)
       throws Exception {
+    if (kemTuple.kemId == HpkeParameters.KemId.X_WING
+        && kdfTuple.kdfId != HpkeParameters.KdfId.HKDF_SHA256) {
+      return;
+    }
     HpkeParameters parameters =
         HpkeParameters.builder()
             .setKemId(kemTuple.kemId)
@@ -313,6 +364,10 @@ public final class HpkeProtoSerializationTest {
       @FromDataPoints("kdfs") KdfTuple kdfTuple,
       @FromDataPoints("aeads") AeadTuple aeadTuple)
       throws Exception {
+    if (kemTuple.kemId == HpkeParameters.KemId.X_WING
+        && kdfTuple.kdfId != HpkeParameters.KdfId.HKDF_SHA256) {
+      return;
+    }
     HpkeParameters parameters =
         HpkeParameters.builder()
             .setKemId(kemTuple.kemId)
@@ -347,6 +402,10 @@ public final class HpkeProtoSerializationTest {
       @FromDataPoints("kdfs") KdfTuple kdfTuple,
       @FromDataPoints("aeads") AeadTuple aeadTuple)
       throws Exception {
+    if (kemTuple.kemId == HpkeParameters.KemId.X_WING
+        && kdfTuple.kdfId != HpkeParameters.KdfId.HKDF_SHA256) {
+      return;
+    }
     HpkeParameters parameters =
         HpkeParameters.builder()
             .setKemId(kemTuple.kemId)
@@ -386,6 +445,10 @@ public final class HpkeProtoSerializationTest {
       throws Exception {
     if (TestUtil.isTsan()) {
       // skip test, it's too slow in Tsan.
+      return;
+    }
+    if (kemTuple.kemId == HpkeParameters.KemId.X_WING
+        && kdfTuple.kdfId != HpkeParameters.KdfId.HKDF_SHA256) {
       return;
     }
     HpkeParameters parameters =
@@ -437,6 +500,10 @@ public final class HpkeProtoSerializationTest {
       // skip test, it's too slow in Tsan.
       return;
     }
+    if (kemTuple.kemId == HpkeParameters.KemId.X_WING
+        && kdfTuple.kdfId != HpkeParameters.KdfId.HKDF_SHA256) {
+      return;
+    }
     HpkeParameters parameters =
         HpkeParameters.builder()
             .setKemId(kemTuple.kemId)
@@ -478,6 +545,10 @@ public final class HpkeProtoSerializationTest {
       throws Exception {
     if (TestUtil.isTsan()) {
       // skip test, it's too slow in Tsan.
+      return;
+    }
+    if (kemTuple.kemId == HpkeParameters.KemId.X_WING
+        && kdfTuple.kdfId != HpkeParameters.KdfId.HKDF_SHA256) {
       return;
     }
     HpkeParameters parameters =
@@ -769,6 +840,63 @@ public final class HpkeProtoSerializationTest {
   @Theory
   public void parseInvalidPrivateKeys_throws(
       @FromDataPoints("invalidPrivateKeySerializations") ProtoKeySerialization serialization) {
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> registry.parseKey(serialization, InsecureSecretKeyAccess.get()));
+  }
+
+  @Test
+  public void parseParameters_xwingWithUnsupportedKdf_throws() throws Exception {
+    HpkeParams protoParams =
+        createHpkeProtoParams(HpkeKem.X_WING, HpkeKdf.HKDF_SHA384, HpkeAead.AES_128_GCM);
+    HpkeKeyFormat format = HpkeKeyFormat.newBuilder().setParams(protoParams).build();
+
+    ProtoParametersSerialization serialization =
+        ProtoParametersSerialization.create(
+            "type.googleapis.com/google.crypto.tink.HpkePrivateKey",
+            OutputPrefixType.RAW,
+            format.toByteString());
+
+    assertThrows(GeneralSecurityException.class, () -> registry.parseParameters(serialization));
+  }
+
+  @Test
+  public void parsePublicKey_xwingWithUnsupportedKdf_throws() throws Exception {
+    HpkeParams protoParams =
+        createHpkeProtoParams(HpkeKem.X_WING, HpkeKdf.HKDF_SHA384, HpkeAead.AES_128_GCM);
+    com.google.crypto.tink.proto.HpkePublicKey protoPublicKey =
+        createHpkeProtoPublicKey(/* version= */ 0, protoParams, Hex.decode(XWING_PUBLIC_KEY_HEX));
+
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "type.googleapis.com/google.crypto.tink.HpkePublicKey",
+            protoPublicKey.toByteString(),
+            KeyMaterialType.ASYMMETRIC_PUBLIC,
+            OutputPrefixType.RAW,
+            /* idRequirement= */ null);
+
+    assertThrows(
+        GeneralSecurityException.class, () -> registry.parseKey(serialization, /* access= */ null));
+  }
+
+  @Test
+  public void parsePrivateKey_xwingWithUnsupportedKdf_throws() throws Exception {
+    HpkeParams protoParams =
+        createHpkeProtoParams(HpkeKem.X_WING, HpkeKdf.HKDF_SHA384, HpkeAead.AES_128_GCM);
+    com.google.crypto.tink.proto.HpkePublicKey protoPublicKey =
+        createHpkeProtoPublicKey(/* version= */ 0, protoParams, Hex.decode(XWING_PUBLIC_KEY_HEX));
+    com.google.crypto.tink.proto.HpkePrivateKey protoPrivateKey =
+        createHpkeProtoPrivateKey(
+            /* version= */ 0, protoPublicKey, Hex.decode(XWING_PRIVATE_KEY_HEX));
+
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "type.googleapis.com/google.crypto.tink.HpkePrivateKey",
+            protoPrivateKey.toByteString(),
+            KeyMaterialType.ASYMMETRIC_PRIVATE,
+            OutputPrefixType.RAW,
+            /* idRequirement= */ null);
+
     assertThrows(
         GeneralSecurityException.class,
         () -> registry.parseKey(serialization, InsecureSecretKeyAccess.get()));
