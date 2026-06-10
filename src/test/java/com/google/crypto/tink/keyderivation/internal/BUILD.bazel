@@ -53,7 +53,6 @@ java_test(
         "//src/main/java/com/google/crypto/tink/aead:aead_config",
         "//src/main/java/com/google/crypto/tink/aead:x_cha_cha20_poly1305_parameters",
         "//src/main/java/com/google/crypto/tink/internal:mutable_serialization_registry",
-        "//src/main/java/com/google/crypto/tink/internal:proto_key_serialization",
         "//src/main/java/com/google/crypto/tink/internal:proto_parameters_serialization",
         "//src/main/java/com/google/crypto/tink/internal:tink_bug_exception",
         "//src/main/java/com/google/crypto/tink/internal/testing:asserts",

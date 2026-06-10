@@ -21,6 +21,7 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization;
 import com.google.crypto.tink.proto.KeyData;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;

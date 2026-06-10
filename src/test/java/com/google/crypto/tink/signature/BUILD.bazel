@@ -684,7 +684,6 @@ java_test(
         "//src/main/java/com/google/crypto/tink:registry_cluster",
         "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
-        "//src/main/java/com/google/crypto/tink/internal:proto_key_serialization",
         "//src/main/java/com/google/crypto/tink/internal:util",
         "//src/main/java/com/google/crypto/tink/signature:signature_configuration_v0",
         "//src/main/java/com/google/crypto/tink/signature:signature_private_key",

@@ -50,7 +50,7 @@ java_library(
     srcs = ["KeyWithSerialization.java"],
     deps = [
         "//src/main/java/com/google/crypto/tink:key",
-        "//src/main/java/com/google/crypto/tink/internal:proto_key_serialization",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization",
     ],
 )
 
@@ -59,7 +59,7 @@ android_library(
     srcs = ["KeyWithSerialization.java"],
     deps = [
         "//src/main/java/com/google/crypto/tink:key-android",
-        "//src/main/java/com/google/crypto/tink/internal:proto_key_serialization-android",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization-android",
     ],
 )
 
@@ -68,7 +68,7 @@ java_library(
     srcs = ["Asserts.java"],
     deps = [
         "//src/main/java/com/google/crypto/tink:accesses_partial_key",
-        "//src/main/java/com/google/crypto/tink/internal:proto_key_serialization",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization",
         "//src/main/java/com/google/crypto/tink/internal:proto_parameters_serialization",
         "@maven//:com_google_protobuf_protobuf_java",
         "@maven//:com_google_truth_truth",
@@ -80,7 +80,7 @@ android_library(
     srcs = ["Asserts.java"],
     deps = [
         "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
-        "//src/main/java/com/google/crypto/tink/internal:proto_key_serialization-android",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization-android",
         "//src/main/java/com/google/crypto/tink/internal:proto_parameters_serialization-android",
         "@maven//:com_google_protobuf_protobuf_javalite",
         "@maven//:com_google_truth_truth",

@@ -17,7 +17,7 @@
 package com.google.crypto.tink.internal.testing;
 
 import com.google.crypto.tink.Key;
-import com.google.crypto.tink.internal.ProtoKeySerialization;
+import com.google.crypto.tink.ProtoKeySerialization;
 
 /** Represents a {@link Key} together with a corresponding {@ProtoKeySerialization} for testing. */
 public final class KeyWithSerialization {

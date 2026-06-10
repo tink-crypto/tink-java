@@ -23,6 +23,7 @@ import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.PrivateKey;
 import com.google.crypto.tink.PrivateKeyManager;
+import com.google.crypto.tink.ProtoKeySerialization;
 import com.google.crypto.tink.proto.KeyData;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
 import com.google.crypto.tink.proto.OutputPrefixType;

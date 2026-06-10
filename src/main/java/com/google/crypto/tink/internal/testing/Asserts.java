@@ -19,7 +19,7 @@ package com.google.crypto.tink.internal.testing;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.crypto.tink.AccessesPartialKey;
-import com.google.crypto.tink.internal.ProtoKeySerialization;
+import com.google.crypto.tink.ProtoKeySerialization;
 import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.protobuf.ExtensionRegistryLite;
 import com.google.protobuf.InvalidProtocolBufferException;

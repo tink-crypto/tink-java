@@ -20,9 +20,9 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization;
 import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
 import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
-import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.errorprone.annotations.Immutable;
 import com.google.protobuf.ByteString;
 import javax.annotation.Nullable;

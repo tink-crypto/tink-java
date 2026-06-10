@@ -20,6 +20,7 @@ import static com.google.crypto.tink.internal.TinkBugException.exceptionIsBug;
 
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization;
 import com.google.crypto.tink.SecretKeyAccess;
 import java.security.GeneralSecurityException;
 import java.util.concurrent.atomic.AtomicReference;

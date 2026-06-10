@@ -21,13 +21,13 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.ProtoKeySerialization;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.aead.AesGcmKeyManager;
 import com.google.crypto.tink.aead.AesGcmParameters;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
-import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.keyderivation.internal.PrfBasedKeyDerivationKeyProtoSerialization;
 import com.google.crypto.tink.prf.HkdfPrfKey;
 import com.google.crypto.tink.prf.HkdfPrfParameters;

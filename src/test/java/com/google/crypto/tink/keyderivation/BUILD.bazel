@@ -97,6 +97,7 @@ java_test(
     srcs = ["KeysetDeriverConfigurationV0Test.java"],
     deps = [
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization",
         "//src/main/java/com/google/crypto/tink:registry_cluster",
         "//src/main/java/com/google/crypto/tink:registry_configuration",
         "//src/main/java/com/google/crypto/tink/aead:aes_gcm_key_manager",
@@ -104,7 +105,6 @@ java_test(
         "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
         "//src/main/java/com/google/crypto/tink/internal:mutable_serialization_registry",
-        "//src/main/java/com/google/crypto/tink/internal:proto_key_serialization",
         "//src/main/java/com/google/crypto/tink/keyderivation:keyset_deriver",
         "//src/main/java/com/google/crypto/tink/keyderivation:keyset_deriver_configuration_v0",
         "//src/main/java/com/google/crypto/tink/keyderivation:prf_based_key_derivation_key",
@@ -126,6 +126,7 @@ java_test(
     srcs = ["KeysetDeriverConfigurationV1Test.java"],
     deps = [
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization",
         "//src/main/java/com/google/crypto/tink:registry_cluster",
         "//src/main/java/com/google/crypto/tink:registry_configuration",
         "//src/main/java/com/google/crypto/tink/aead:aes_gcm_key_manager",
@@ -133,7 +134,6 @@ java_test(
         "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
         "//src/main/java/com/google/crypto/tink/internal:mutable_serialization_registry",
-        "//src/main/java/com/google/crypto/tink/internal:proto_key_serialization",
         "//src/main/java/com/google/crypto/tink/keyderivation:keyset_deriver",
         "//src/main/java/com/google/crypto/tink/keyderivation:keyset_deriver_configuration_v1",
         "//src/main/java/com/google/crypto/tink/keyderivation:prf_based_key_derivation_key",

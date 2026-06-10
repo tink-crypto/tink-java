@@ -52,7 +52,6 @@ import com.google.crypto.tink.hybrid.HpkePublicKey;
 import com.google.crypto.tink.hybrid.internal.EciesProtoSerialization;
 import com.google.crypto.tink.internal.BigIntegerEncoding;
 import com.google.crypto.tink.internal.LegacyProtoKey;
-import com.google.crypto.tink.internal.ProtoKeySerialization;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.mac.AesCmacKey;
 import com.google.crypto.tink.mac.AesCmacParameters;

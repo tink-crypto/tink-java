@@ -42,17 +42,13 @@ public class RegistryConfiguration {
         com.google.crypto.tink.ProtoKeySerialization protoKeySerialization,
         @Nullable SecretKeyAccess access)
         throws GeneralSecurityException {
-      return MutableSerializationRegistry.globalInstance()
-          .parseKey(
-              com.google.crypto.tink.internal.ProtoKeySerialization.createFromPublic(
-                  protoKeySerialization),
-              access);
+      return MutableSerializationRegistry.globalInstance().parseKey(protoKeySerialization, access);
     }
 
     @Override
     public com.google.crypto.tink.ProtoKeySerialization serializeKey(
         Key key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
-      return MutableSerializationRegistry.globalInstance().serializeKey(key, access).toPublic();
+      return MutableSerializationRegistry.globalInstance().serializeKey(key, access);
     }
 
     @Override
