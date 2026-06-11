@@ -26,7 +26,6 @@ import com.google.crypto.tink.ProtoKeySerialization;
 import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
 import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.SecretKeyAccess;
-import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
@@ -55,14 +54,6 @@ public final class KeyParserTest {
     @Override
     public Parameters getParameters() {
       throw new UnsupportedOperationException("Not needed in test");
-    }
-  }
-
-  @Immutable
-  private static class ExampleSerialization implements Serialization {
-    @Override
-    public Bytes getObjectIdentifier() {
-      return Bytes.copyFrom(new byte[0]);
     }
   }
 

@@ -137,24 +137,6 @@ android_library(
 )
 
 java_library(
-    name = "serialization",
-    srcs = ["Serialization.java"],
-    deps = [
-        "//src/main/java/com/google/crypto/tink/util:bytes",
-        "@maven//:com_google_errorprone_error_prone_annotations",
-    ],
-)
-
-android_library(
-    name = "serialization-android",
-    srcs = ["Serialization.java"],
-    deps = [
-        "//src/main/java/com/google/crypto/tink/util:bytes-android",
-        "@maven//:com_google_errorprone_error_prone_annotations",
-    ],
-)
-
-java_library(
     name = "key_parser",
     srcs = ["KeyParser.java"],
     deps = [
@@ -180,7 +162,6 @@ java_library(
     name = "proto_parameters_serialization",
     srcs = ["ProtoParametersSerialization.java"],
     deps = [
-        ":serialization",
         ":util",
         "//src/main/java/com/google/crypto/tink:proto_key_serialization",
         "//src/main/java/com/google/crypto/tink/util:bytes",
@@ -193,7 +174,6 @@ android_library(
     name = "proto_parameters_serialization-android",
     srcs = ["ProtoParametersSerialization.java"],
     deps = [
-        ":serialization-android",
         ":util-android",
         "//src/main/java/com/google/crypto/tink:proto_key_serialization-android",
         "//src/main/java/com/google/crypto/tink/util:bytes-android",
