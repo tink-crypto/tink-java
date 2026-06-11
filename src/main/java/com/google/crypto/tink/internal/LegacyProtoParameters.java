@@ -55,10 +55,7 @@ public final class LegacyProtoParameters extends Parameters {
   @Override
   public int hashCode() {
     return Objects.hash(
-        serialization.getTypeUrl(),
-        serialization.getValue(),
-        serialization.getOutputPrefixType(),
-        serialization.getObjectIdentifier());
+        serialization.getTypeUrl(), serialization.getValue(), serialization.getOutputPrefixType());
   }
 
   @Override

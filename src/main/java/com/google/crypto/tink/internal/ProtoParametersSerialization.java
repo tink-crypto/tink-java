@@ -31,17 +31,15 @@ import java.security.GeneralSecurityException;
  * tailored for protocol buffer serialization.
  */
 @Immutable
-public final class ProtoParametersSerialization implements Serialization {
+public final class ProtoParametersSerialization {
   private final ByteString value;
-  private final Bytes objectIdentifier;
   private final String typeUrl;
   private final OutputPrefixType outputPrefixType;
 
   private ProtoParametersSerialization(
-      ByteString value, String typeUrl, Bytes objectIdentifier, OutputPrefixType outputPrefixType) {
+      ByteString value, String typeUrl, OutputPrefixType outputPrefixType) {
     this.value = value;
     this.typeUrl = typeUrl;
-    this.objectIdentifier = objectIdentifier;
     this.outputPrefixType = outputPrefixType;
   }
 
@@ -53,19 +51,14 @@ public final class ProtoParametersSerialization implements Serialization {
   public static ProtoParametersSerialization create(
       String typeUrl, OutputPrefixType outputPrefixType, ByteString value)
       throws GeneralSecurityException {
-    return new ProtoParametersSerialization(
-        value, typeUrl, checkedToBytesFromPrintableAscii(typeUrl), outputPrefixType);
+    Bytes bytes = checkedToBytesFromPrintableAscii(typeUrl);
+
+    return new ProtoParametersSerialization(value, typeUrl, outputPrefixType);
   }
 
 
   public OutputPrefixType getOutputPrefixType() {
     return outputPrefixType;
-  }
-
-  /** The typeUrl. */
-  @Override
-  public Bytes getObjectIdentifier() {
-    return objectIdentifier;
   }
 
   /** The typeUrl. */

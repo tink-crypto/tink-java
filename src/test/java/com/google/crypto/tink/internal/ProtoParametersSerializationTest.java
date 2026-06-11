@@ -17,11 +17,9 @@
 package com.google.crypto.tink.internal;
 
 import static com.google.common.truth.Truth.assertThat;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
-import com.google.crypto.tink.util.Bytes;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import org.junit.Test;
@@ -37,8 +35,6 @@ public final class ProtoParametersSerializationTest {
     ByteString value = ByteString.copyFrom(new byte[] {1, 2, 3});
     ProtoParametersSerialization serialization =
         ProtoParametersSerialization.create("myTypeUrl", OutputPrefixType.RAW, value);
-    assertThat(serialization.getObjectIdentifier())
-        .isEqualTo(Bytes.copyFrom("myTypeUrl".getBytes(UTF_8)));
     assertThat(serialization.getTypeUrl()).isEqualTo("myTypeUrl");
     assertThat(serialization.getValue()).isEqualTo(value);
     assertThat(serialization.getOutputPrefixType()).isEqualTo(OutputPrefixType.RAW);
