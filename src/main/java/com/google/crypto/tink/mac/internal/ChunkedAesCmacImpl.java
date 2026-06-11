@@ -22,10 +22,11 @@ import com.google.crypto.tink.mac.AesCmacKey;
 import com.google.crypto.tink.mac.ChunkedMac;
 import com.google.crypto.tink.mac.ChunkedMacComputation;
 import com.google.crypto.tink.mac.ChunkedMacVerification;
-import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
 import java.security.Provider;
+import java.util.Arrays;
 
 /** AES-CMAC implementation of the ChunkedMac interface. */
 @Immutable
@@ -52,7 +53,9 @@ public final class ChunkedAesCmacImpl implements ChunkedMac {
     if (tag.length < key.getOutputPrefix().size()) {
       throw new GeneralSecurityException("Tag too short");
     }
-    if (!key.getOutputPrefix().equals(Bytes.copyFrom(tag, 0, key.getOutputPrefix().size()))) {
+    if (!MessageDigest.isEqual(
+        key.getOutputPrefix().toByteArray(),
+        Arrays.copyOf(tag, key.getOutputPrefix().size()))) {
       throw new GeneralSecurityException("Wrong tag prefix");
     }
     return ChunkedMacVerificationFromComputation.create(new ChunkedAesCmacComputation(key), tag);
