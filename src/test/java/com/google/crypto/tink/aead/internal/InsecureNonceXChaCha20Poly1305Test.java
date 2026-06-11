@@ -24,6 +24,7 @@ import com.google.crypto.tink.subtle.Bytes;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.subtle.Random;
 import com.google.crypto.tink.testing.TestUtil;
+import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import javax.crypto.AEADBadTagException;
@@ -219,6 +220,38 @@ public class InsecureNonceXChaCha20Poly1305Test {
             });
       }
     }
+  }
+
+  @Test
+  public void testEncryptDecryptByteBuffer() throws Exception {
+    InsecureNonceXChaCha20Poly1305 cipher =
+        new InsecureNonceXChaCha20Poly1305(Random.randBytes(KEY_SIZE_IN_BYTES));
+    byte[] nonce = Random.randBytes(24);
+    byte[] message = Random.randBytes(32);
+    byte[] aad = Random.randBytes(16);
+
+    // Prepare output ByteBuffer with extra capacity.
+    int extraCapacity = 10;
+    int initialPosition = 5;
+    ByteBuffer output =
+        ByteBuffer.allocate(message.length + Poly1305.MAC_TAG_SIZE_IN_BYTES + extraCapacity);
+    output.position(initialPosition);
+
+    // Encrypt
+    cipher.encrypt(output, nonce, message, aad);
+
+    // The output position should have advanced by message.length + MAC_TAG_SIZE_IN_BYTES
+    assertThat(output.position())
+        .isEqualTo(initialPosition + message.length + Poly1305.MAC_TAG_SIZE_IN_BYTES);
+
+    // Extract ciphertext
+    output.limit(output.position());
+    output.position(initialPosition);
+    ByteBuffer ciphertext = output.slice();
+
+    // Decrypt
+    byte[] decrypted = cipher.decrypt(ciphertext, nonce, aad);
+    assertArrayEquals(message, decrypted);
   }
 
   /** This test simply checks that the same nonce for a given input produces the same output. */

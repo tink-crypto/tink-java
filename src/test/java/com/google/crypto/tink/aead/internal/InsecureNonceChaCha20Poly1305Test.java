@@ -29,6 +29,7 @@ import com.google.crypto.tink.testing.TestUtil.BytesMutation;
 import com.google.crypto.tink.testing.WycheproofTestUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.util.ArrayList;
@@ -231,6 +232,37 @@ public class InsecureNonceChaCha20Poly1305Test {
             });
       }
     }
+  }
+
+  @Test
+  public void testEncryptDecryptByteBuffer() throws Exception {
+    Assume.assumeFalse(TinkFips.useOnlyFips());
+
+    InsecureNonceChaCha20Poly1305 cipher = createInstance(Random.randBytes(KEY_SIZE_IN_BYTES));
+    byte[] nonce = Random.randBytes(NONCE_SIZE_IN_BYTES);
+    byte[] message = Random.randBytes(32);
+    byte[] aad = Random.randBytes(16);
+
+    // Prepare output ByteBuffer with extra capacity.
+    int extraCapacity = 10;
+    int initialPosition = 5;
+    ByteBuffer output = ByteBuffer.allocate(message.length + TAG_SIZE_IN_BYTES + extraCapacity);
+    output.position(initialPosition);
+
+    // Encrypt
+    cipher.encrypt(output, nonce, message, aad);
+
+    // The output position should have advanced by message.length + TAG_SIZE_IN_BYTES
+    assertThat(output.position()).isEqualTo(initialPosition + message.length + TAG_SIZE_IN_BYTES);
+
+    // Extract ciphertext
+    output.limit(output.position());
+    output.position(initialPosition);
+    ByteBuffer ciphertext = output.slice();
+
+    // Decrypt
+    byte[] decrypted = cipher.decrypt(ciphertext, nonce, aad);
+    assertArrayEquals(message, decrypted);
   }
 
   /**

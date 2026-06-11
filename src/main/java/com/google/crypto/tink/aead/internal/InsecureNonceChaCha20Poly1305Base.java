@@ -93,16 +93,19 @@ abstract class InsecureNonceChaCha20Poly1305Base {
     if (output.remaining() < plaintext.length + MAC_TAG_SIZE_IN_BYTES) {
       throw new IllegalArgumentException("Given ByteBuffer output is too small");
     }
+    int originalLimit = output.limit();
     int firstPosition = output.position();
     chacha20.encrypt(output, nonce, plaintext);
+    int ciphertextEnd = output.position();
     output.position(firstPosition);
-    output.limit(output.limit() - MAC_TAG_SIZE_IN_BYTES);
+    output.limit(ciphertextEnd);
     byte[] aad = associatedData;
     if (aad == null) {
       aad = new byte[0];
     }
     byte[] tag = Poly1305.computeMac(getMacKey(nonce), macDataRfc8439(aad, output));
-    output.limit(output.limit() + MAC_TAG_SIZE_IN_BYTES);
+    output.limit(originalLimit);
+    output.position(ciphertextEnd);
     output.put(tag);
   }
 
