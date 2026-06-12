@@ -21,6 +21,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.internal.KeyManagerRegistry;
+import com.google.crypto.tink.internal.LegacyProtoKey;
+import com.google.crypto.tink.internal.LegacyProtoParameters;
 import com.google.crypto.tink.mac.HmacKey;
 import com.google.crypto.tink.mac.HmacParameters;
 import com.google.crypto.tink.mac.HmacParameters.HashType;
@@ -68,10 +70,6 @@ public class RegistryConfigurationTest {
               .build();
 
       // Create the proto key artefacts.
-      KeysetHandle keysetHandle =
-          KeysetHandle.newBuilder()
-              .addEntry(KeysetHandle.importKey(rawKey).withRandomId().makePrimary())
-              .build();
       rawKeyData =
           KeyData.newBuilder()
               .setValue(
@@ -151,7 +149,7 @@ public class RegistryConfigurationTest {
   }
 
   @Test
-  public void getProtoKeySerializer_parseKeyFailsWithoutParser() throws Exception {
+  public void getProtoKeySerializer_parseKeyWorksWithoutParser() throws Exception {
     com.google.crypto.tink.ProtoKeySerialization serialization =
         com.google.crypto.tink.ProtoKeySerialization.create(
             "unknown_type_url",
@@ -160,20 +158,19 @@ public class RegistryConfigurationTest {
             com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK,
             /* idRequirement= */ 123);
     ProtoKeySerializer serializer = RegistryConfiguration.get().get(ProtoKeySerializer.class);
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> serializer.parseKey(serialization, InsecureSecretKeyAccess.get()));
+    Key key = serializer.parseKey(serialization, InsecureSecretKeyAccess.get());
+    assertThat(key).isInstanceOf(LegacyProtoKey.class);
   }
 
   @Test
-  public void getProtoKeySerializer_parseParametersFailsWithoutParser() throws Exception {
+  public void getProtoKeySerializer_parseParametersWorksWithoutParser() throws Exception {
     ProtoKeySerializer serializer = RegistryConfiguration.get().get(ProtoKeySerializer.class);
     KeyTemplate template =
         KeyTemplate.newBuilder()
             .setTypeUrl("UnknownTypeUrl")
             .setOutputPrefixType(OutputPrefixType.TINK)
             .build();
-    assertThrows(
-        GeneralSecurityException.class, () -> serializer.parseParameters(template.toByteString()));
+    Parameters parameters = serializer.parseParameters(template.toByteString());
+    assertThat(parameters).isInstanceOf(LegacyProtoParameters.class);
   }
 }

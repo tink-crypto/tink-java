@@ -42,7 +42,8 @@ public class RegistryConfiguration {
         com.google.crypto.tink.ProtoKeySerialization protoKeySerialization,
         @Nullable SecretKeyAccess access)
         throws GeneralSecurityException {
-      return MutableSerializationRegistry.globalInstance().parseKey(protoKeySerialization, access);
+      return MutableSerializationRegistry.globalInstance()
+          .parseKeyWithLegacyFallback(protoKeySerialization, access);
     }
 
     @Override
@@ -64,14 +65,14 @@ public class RegistryConfiguration {
     }
 
     @Override
-    @SuppressWarnings("UnnecessarilyFullyQualified") // We fully specify KeyTemplate in Tink.
+    @SuppressWarnings("UnnecessarilyFullyQualified") // We fully specify proto KeyTemplate in Tink.
     public Parameters parseParameters(ByteString serialization) throws GeneralSecurityException {
       try {
         com.google.crypto.tink.proto.KeyTemplate template =
             com.google.crypto.tink.proto.KeyTemplate.parseFrom(
                 serialization, ExtensionRegistryLite.getEmptyRegistry());
         return MutableSerializationRegistry.globalInstance()
-            .parseParameters(
+            .parseParametersWithLegacyFallback(
                 ProtoParametersSerialization.create(
                     template.getTypeUrl(),
                     ProtoConversions.fromProto(template.getOutputPrefixType()),
