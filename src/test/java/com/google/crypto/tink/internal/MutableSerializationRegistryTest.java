@@ -420,4 +420,33 @@ public final class MutableSerializationRegistryTest {
     Key key = registry.parseKeyWithLegacyFallback(protoKey, InsecureSecretKeyAccess.get());
     assertThat(key).isInstanceOf(LegacyProtoKey.class);
   }
+
+  @Test
+  public void test_globalInstance_legacyProtoKeyAndParametersRegistered() throws Exception {
+    MutableSerializationRegistry registry = MutableSerializationRegistry.globalInstance();
+
+    // Check LegacyProtoKey serializer is registered
+    ProtoKeySerialization keySerialization =
+        ProtoKeySerialization.create(
+            "some_type_url",
+            ByteString.EMPTY,
+            KeyMaterialType.SYMMETRIC,
+            OutputPrefixType.RAW,
+            /* idRequirement= */ null);
+    LegacyProtoKey legacyKey = new LegacyProtoKey(keySerialization, InsecureSecretKeyAccess.get());
+    assertThat(registry.hasSerializerForKey(legacyKey, ProtoKeySerialization.class)).isTrue();
+    assertThat(registry.serializeKey(legacyKey, InsecureSecretKeyAccess.get()))
+        .isEqualTo(keySerialization);
+
+    // Check LegacyProtoParameters serializer is registered
+    ProtoParametersSerialization parametersSerialization =
+        ProtoParametersSerialization.create(
+            "some_type_url", OutputPrefixType.RAW, ByteString.EMPTY);
+    LegacyProtoParameters legacyParameters = new LegacyProtoParameters(parametersSerialization);
+    assertThat(
+            registry.hasSerializerForParameters(
+                legacyParameters, ProtoParametersSerialization.class))
+        .isTrue();
+    assertThat(registry.serializeParameters(legacyParameters)).isEqualTo(parametersSerialization);
+  }
 }

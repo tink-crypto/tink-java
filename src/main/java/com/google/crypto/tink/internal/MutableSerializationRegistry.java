@@ -42,6 +42,9 @@ public final class MutableSerializationRegistry {
     MutableSerializationRegistry registry = new MutableSerializationRegistry();
     registry.registerKeySerializer(
         KeySerializer.create(LegacyProtoKey::getSerialization, LegacyProtoKey.class));
+    registry.registerParametersSerializer(
+        ParametersSerializer.create(
+            LegacyProtoParameters::getSerialization, LegacyProtoParameters.class));
     return registry;
   }
 
