@@ -28,6 +28,7 @@ import com.google.crypto.tink.internal.ProtoConversions;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.subtle.Bytes;
 import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
 import java.util.Arrays;
 
 /**
@@ -97,7 +98,7 @@ public final class LegacyFullMac implements Mac {
       macNoPrefix = Arrays.copyOfRange(mac, CryptoFormat.NON_RAW_PREFIX_SIZE, mac.length);
     }
 
-    if (!Arrays.equals(identifier, prefix)) {
+    if (!MessageDigest.isEqual(identifier, prefix)) {
       throw new GeneralSecurityException("wrong prefix");
     }
 
