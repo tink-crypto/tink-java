@@ -16,6 +16,8 @@
 
 package com.google.crypto.tink.signature;
 
+import static com.google.crypto.tink.util.Maps.entry;
+
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Parameters;
@@ -29,6 +31,7 @@ import com.google.crypto.tink.signature.MlDsaParameters.MlDsaInstance;
 import com.google.crypto.tink.signature.internal.MlDsaProtoSerialization;
 import com.google.crypto.tink.signature.internal.MlDsaVerifyConscrypt;
 import com.google.crypto.tink.util.Bytes;
+import com.google.crypto.tink.util.Maps;
 import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
@@ -41,8 +44,8 @@ import javax.annotation.Nullable;
 /**
  * This key manager generates new {@code MlDsaPrivateKey} keys and some named parameters.
  *
- * NOTE: in order for the key generation functionality to work, one needs to have a version
- * of Conscrypt installed that supports ML-DSA.
+ * <p>NOTE: in order for the key generation functionality to work, one needs to have a version of
+ * Conscrypt installed that supports ML-DSA.
  */
 public final class MlDsaSignKeyManager {
 
@@ -107,19 +110,25 @@ public final class MlDsaSignKeyManager {
   }
 
   private static Map<String, Parameters> namedParameters() throws GeneralSecurityException {
-    return Map.of(
-        "ML_DSA_44",
-        MlDsaParameters.create(MlDsaInstance.ML_DSA_44, MlDsaParameters.Variant.TINK),
-        "ML_DSA_44_RAW",
-        MlDsaParameters.create(MlDsaInstance.ML_DSA_44, MlDsaParameters.Variant.NO_PREFIX),
-        "ML_DSA_65",
-        MlDsaParameters.create(MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.TINK),
-        "ML_DSA_65_RAW",
-        MlDsaParameters.create(MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.NO_PREFIX),
-        "ML_DSA_87",
-        MlDsaParameters.create(MlDsaInstance.ML_DSA_87, MlDsaParameters.Variant.TINK),
-        "ML_DSA_87_RAW",
-        MlDsaParameters.create(MlDsaInstance.ML_DSA_87, MlDsaParameters.Variant.NO_PREFIX));
+    return Maps.ofEntries(
+        entry(
+            "ML_DSA_44",
+            MlDsaParameters.create(MlDsaInstance.ML_DSA_44, MlDsaParameters.Variant.TINK)),
+        entry(
+            "ML_DSA_44_RAW",
+            MlDsaParameters.create(MlDsaInstance.ML_DSA_44, MlDsaParameters.Variant.NO_PREFIX)),
+        entry(
+            "ML_DSA_65",
+            MlDsaParameters.create(MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.TINK)),
+        entry(
+            "ML_DSA_65_RAW",
+            MlDsaParameters.create(MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.NO_PREFIX)),
+        entry(
+            "ML_DSA_87",
+            MlDsaParameters.create(MlDsaInstance.ML_DSA_87, MlDsaParameters.Variant.TINK)),
+        entry(
+            "ML_DSA_87_RAW",
+            MlDsaParameters.create(MlDsaInstance.ML_DSA_87, MlDsaParameters.Variant.NO_PREFIX)));
   }
 
   /**
