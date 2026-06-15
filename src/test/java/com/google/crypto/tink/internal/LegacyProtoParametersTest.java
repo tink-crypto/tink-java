@@ -19,6 +19,7 @@ package com.google.crypto.tink.internal;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
+import com.google.crypto.tink.ProtoParametersSerialization;
 import com.google.protobuf.ByteString;
 import org.junit.Test;
 import org.junit.runner.RunWith;

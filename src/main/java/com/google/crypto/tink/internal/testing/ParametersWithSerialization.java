@@ -17,7 +17,7 @@
 package com.google.crypto.tink.internal.testing;
 
 import com.google.crypto.tink.Parameters;
-import com.google.crypto.tink.internal.ProtoParametersSerialization;
+import com.google.crypto.tink.ProtoParametersSerialization;
 
 /**
  * Represents a {@link Parameters} object together with a corresponding {@link

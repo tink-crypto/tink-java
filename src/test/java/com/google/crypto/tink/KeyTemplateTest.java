@@ -25,7 +25,6 @@ import com.google.crypto.tink.aead.PredefinedAeadParameters;
 import com.google.crypto.tink.internal.LegacyProtoParameters;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ParametersSerializer;
-import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.proto.AesGcmKeyFormat;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;

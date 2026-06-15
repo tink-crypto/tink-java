@@ -18,6 +18,7 @@ package com.google.crypto.tink.internal;
 
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
+import com.google.crypto.tink.ProtoParametersSerialization;
 import com.google.errorprone.annotations.Immutable;
 import java.util.Objects;
 

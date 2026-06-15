@@ -19,7 +19,7 @@ package com.google.crypto.tink.internal.testing;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.crypto.tink.Parameters;
-import com.google.crypto.tink.internal.ProtoParametersSerialization;
+import com.google.crypto.tink.ProtoParametersSerialization;
 import com.google.errorprone.annotations.Immutable;
 import org.junit.Test;
 import org.junit.runner.RunWith;

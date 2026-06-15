@@ -18,6 +18,7 @@ package com.google.crypto.tink.internal;
 
 import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoParametersSerialization;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import java.security.GeneralSecurityException;
 

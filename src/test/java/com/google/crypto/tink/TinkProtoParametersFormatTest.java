@@ -20,7 +20,6 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.internal.LegacyProtoParameters;
-import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.mac.AesCmacParameters;
 import com.google.crypto.tink.mac.MacConfig;
 import com.google.crypto.tink.proto.AesCmacKeyFormat;

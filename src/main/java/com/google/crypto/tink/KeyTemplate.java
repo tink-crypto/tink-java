@@ -19,7 +19,6 @@ package com.google.crypto.tink;
 import com.google.crypto.tink.internal.LegacyProtoParameters;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoConversions;
-import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.internal.TinkBugException;
 import com.google.errorprone.annotations.Immutable;
 import com.google.protobuf.ByteString;

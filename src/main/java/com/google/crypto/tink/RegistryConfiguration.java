@@ -19,7 +19,6 @@ package com.google.crypto.tink;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoConversions;
-import com.google.crypto.tink.internal.ProtoParametersSerialization;
 import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ExtensionRegistryLite;
