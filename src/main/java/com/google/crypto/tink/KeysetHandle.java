@@ -23,7 +23,6 @@ import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutableParametersRegistry;
-import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoConversions;
 import com.google.crypto.tink.internal.TinkBugException;
 import com.google.crypto.tink.proto.EncryptedKeyset;
@@ -1352,10 +1351,12 @@ public final class KeysetHandle implements KeysetHandleInterface {
         idRequirement);
   }
 
+  @LowLevelCryptoCaller
   private static Key toKey(Keyset.Key protoKey) throws GeneralSecurityException {
     ProtoKeySerialization protoKeySerialization = toProtoKeySerialization(protoKey);
-    return MutableSerializationRegistry.globalInstance()
-        .parseKeyWithLegacyFallback(protoKeySerialization, InsecureSecretKeyAccess.get());
+    return RegistryConfiguration.get()
+        .get(ProtoKeySerializer.class)
+        .parseKey(protoKeySerialization, InsecureSecretKeyAccess.get());
   }
 
   @AccessesPartialKey
@@ -1382,10 +1383,12 @@ public final class KeysetHandle implements KeysetHandleInterface {
     }
   }
 
+  @LowLevelCryptoCaller
   private static Keyset.Key createKeysetKey(Key key, KeyStatusType keyStatus, int id)
       throws GeneralSecurityException {
     ProtoKeySerialization serializedKey =
-        MutableSerializationRegistry.globalInstance()
+        RegistryConfiguration.get()
+            .get(ProtoKeySerializer.class)
             .serializeKey(key, InsecureSecretKeyAccess.get());
     validateKeyId(key, id);
     return toKeysetKey(id, keyStatus, serializedKey);
