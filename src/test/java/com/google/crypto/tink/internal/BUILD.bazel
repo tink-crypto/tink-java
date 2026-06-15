@@ -87,19 +87,6 @@ java_test(
 )
 
 java_test(
-    name = "ProtoParametersSerializationTest",
-    size = "small",
-    srcs = ["ProtoParametersSerializationTest.java"],
-    deps = [
-        "//src/main/java/com/google/crypto/tink:proto_key_serialization",
-        "//src/main/java/com/google/crypto/tink:proto_parameters_serialization",
-        "@maven//:com_google_protobuf_protobuf_java",
-        "@maven//:com_google_truth_truth",
-        "@maven//:junit_junit",
-    ],
-)
-
-java_test(
     name = "ParametersParserTest",
     size = "small",
     srcs = ["ParametersParserTest.java"],
