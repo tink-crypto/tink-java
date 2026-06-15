@@ -124,17 +124,17 @@ public class RegistryConfigurationTest {
 
   @Test
   public void getUnknown_throws() throws Exception {
-    assertThrows(GeneralSecurityException.class, () -> RegistryConfiguration.get().get(Mac.class));
+    assertThat(RegistryConfiguration.get().getOrNull(Mac.class)).isNull();
   }
 
   @Test
   public void getProtoKeySerializer_works() throws Exception {
-    assertThat(RegistryConfiguration.get().get(ProtoKeySerializer.class)).isNotNull();
+    assertThat(RegistryConfiguration.get().getOrNull(ProtoKeySerializer.class)).isNotNull();
   }
 
   @Test
   public void getProtoKeySerializer_serializeAndParseKey() throws Exception {
-    ProtoKeySerializer serializer = RegistryConfiguration.get().get(ProtoKeySerializer.class);
+    ProtoKeySerializer serializer = RegistryConfiguration.get().getOrNull(ProtoKeySerializer.class);
     com.google.crypto.tink.ProtoKeySerialization serialization =
         serializer.serializeKey(rawKey, InsecureSecretKeyAccess.get());
     assertThat(serializer.parseKey(serialization, InsecureSecretKeyAccess.get()).equalsKey(rawKey))
@@ -143,7 +143,7 @@ public class RegistryConfigurationTest {
 
   @Test
   public void getProtoKeySerializer_serializeAndParseParameters() throws Exception {
-    ProtoKeySerializer serializer = RegistryConfiguration.get().get(ProtoKeySerializer.class);
+    ProtoKeySerializer serializer = RegistryConfiguration.get().getOrNull(ProtoKeySerializer.class);
     ByteString serializedParameters = serializer.serializeParameters(rawKey.getParameters());
     assertThat(serializer.parseParameters(serializedParameters)).isEqualTo(rawKey.getParameters());
   }
@@ -157,14 +157,14 @@ public class RegistryConfigurationTest {
             com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType.SYMMETRIC,
             com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK,
             /* idRequirement= */ 123);
-    ProtoKeySerializer serializer = RegistryConfiguration.get().get(ProtoKeySerializer.class);
+    ProtoKeySerializer serializer = RegistryConfiguration.get().getOrNull(ProtoKeySerializer.class);
     Key key = serializer.parseKey(serialization, InsecureSecretKeyAccess.get());
     assertThat(key).isInstanceOf(LegacyProtoKey.class);
   }
 
   @Test
   public void getProtoKeySerializer_parseParametersWorksWithoutParser() throws Exception {
-    ProtoKeySerializer serializer = RegistryConfiguration.get().get(ProtoKeySerializer.class);
+    ProtoKeySerializer serializer = RegistryConfiguration.get().getOrNull(ProtoKeySerializer.class);
     KeyTemplate template =
         KeyTemplate.newBuilder()
             .setTypeUrl("UnknownTypeUrl")

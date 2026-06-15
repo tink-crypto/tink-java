@@ -1354,9 +1354,13 @@ public final class KeysetHandle implements KeysetHandleInterface {
   @LowLevelCryptoCaller
   private static Key toKey(Keyset.Key protoKey) throws GeneralSecurityException {
     ProtoKeySerialization protoKeySerialization = toProtoKeySerialization(protoKey);
-    return RegistryConfiguration.get()
-        .get(ProtoKeySerializer.class)
-        .parseKey(protoKeySerialization, InsecureSecretKeyAccess.get());
+    @Nullable
+    ProtoKeySerializer serializer = RegistryConfiguration.get().getOrNull(ProtoKeySerializer.class);
+    if (serializer == null) {
+      throw new GeneralSecurityException(
+          "Passed in configuration cannot be used to serialize into proto keyset format.");
+    }
+    return serializer.parseKey(protoKeySerialization, InsecureSecretKeyAccess.get());
   }
 
   @AccessesPartialKey
@@ -1386,10 +1390,15 @@ public final class KeysetHandle implements KeysetHandleInterface {
   @LowLevelCryptoCaller
   private static Keyset.Key createKeysetKey(Key key, KeyStatusType keyStatus, int id)
       throws GeneralSecurityException {
+    @Nullable
+    ProtoKeySerializer serializer = RegistryConfiguration.get().getOrNull(ProtoKeySerializer.class);
+    if (serializer == null) {
+      throw new GeneralSecurityException(
+          "Passed in configuration cannot be used to parse and serialize proto keysets.");
+    }
+
     ProtoKeySerialization serializedKey =
-        RegistryConfiguration.get()
-            .get(ProtoKeySerializer.class)
-            .serializeKey(key, InsecureSecretKeyAccess.get());
+        serializer.serializeKey(key, InsecureSecretKeyAccess.get());
     validateKeyId(key, id);
     return toKeysetKey(id, keyStatus, serializedKey);
   }

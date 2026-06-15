@@ -92,12 +92,11 @@ public class RegistryConfiguration {
         }
 
         @Override
-        public <P> P get(Class<P> clazz) throws GeneralSecurityException {
+        public <P> P getOrNull(Class<P> clazz) {
           if (clazz.equals(ProtoKeySerializer.class)) {
             return clazz.cast(SERIALIZER);
           }
-          throw new GeneralSecurityException(
-              "RegistryConfiguration does not support get for " + clazz);
+          return null;
         }
       };
 

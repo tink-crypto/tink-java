@@ -17,6 +17,7 @@
 package com.google.crypto.tink;
 
 import java.security.GeneralSecurityException;
+import javax.annotation.Nullable;
 
 /**
  * An object implementing this interface represents a collection of algorithms that a user wants
@@ -27,7 +28,8 @@ public interface Configuration {
   <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
       throws GeneralSecurityException;
 
-  default <P> P get(Class<P> clazz) throws GeneralSecurityException {
-    throw new GeneralSecurityException("get() not implemented");
+  @Nullable
+  default <P> P getOrNull(Class<P> clazz) {
+    return null;
   }
 }

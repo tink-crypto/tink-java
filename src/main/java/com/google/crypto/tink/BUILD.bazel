@@ -860,13 +860,19 @@ java_library(
 android_library(
     name = "configuration-android",
     srcs = ["Configuration.java"],
-    deps = [":keyset_handle_interface-android"],
+    deps = [
+        ":keyset_handle_interface-android",
+        "@maven//:com_google_code_findbugs_jsr305",
+    ],
 )
 
 java_library(
     name = "configuration",
     srcs = ["Configuration.java"],
-    deps = [":keyset_handle_interface"],
+    deps = [
+        ":keyset_handle_interface",
+        "@maven//:com_google_code_findbugs_jsr305",
+    ],
 )
 
 android_library(
