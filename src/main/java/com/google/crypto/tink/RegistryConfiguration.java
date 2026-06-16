@@ -18,11 +18,6 @@ package com.google.crypto.tink;
 
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
-import com.google.crypto.tink.internal.ProtoConversions;
-import com.google.crypto.tink.proto.KeyTemplate;
-import com.google.protobuf.ByteString;
-import com.google.protobuf.ExtensionRegistryLite;
-import com.google.protobuf.InvalidProtocolBufferException;
 import java.security.GeneralSecurityException;
 import javax.annotation.Nullable;
 
@@ -52,33 +47,17 @@ public class RegistryConfiguration {
     }
 
     @Override
-    public ByteString serializeParameters(Parameters parameters) throws GeneralSecurityException {
-      ProtoParametersSerialization serialization =
-          MutableSerializationRegistry.globalInstance().serializeParameters(parameters);
-      return KeyTemplate.newBuilder()
-          .setTypeUrl(serialization.getTypeUrl())
-          .setValue(serialization.getValue())
-          .setOutputPrefixType(ProtoConversions.toProto(serialization.getOutputPrefixType()))
-          .build()
-          .toByteString();
+    public ProtoParametersSerialization serializeParameters(Parameters parameters)
+        throws GeneralSecurityException {
+      return MutableSerializationRegistry.globalInstance().serializeParameters(parameters);
     }
 
     @Override
     @SuppressWarnings("UnnecessarilyFullyQualified") // We fully specify proto KeyTemplate in Tink.
-    public Parameters parseParameters(ByteString serialization) throws GeneralSecurityException {
-      try {
-        com.google.crypto.tink.proto.KeyTemplate template =
-            com.google.crypto.tink.proto.KeyTemplate.parseFrom(
-                serialization, ExtensionRegistryLite.getEmptyRegistry());
-        return MutableSerializationRegistry.globalInstance()
-            .parseParametersWithLegacyFallback(
-                ProtoParametersSerialization.create(
-                    template.getTypeUrl(),
-                    ProtoConversions.fromProto(template.getOutputPrefixType()),
-                    template.getValue()));
-      } catch (InvalidProtocolBufferException e) {
-        throw new GeneralSecurityException("Problem parsing the parameters", e);
-      }
+    public Parameters parseParameters(ProtoParametersSerialization serialization)
+        throws GeneralSecurityException {
+      return MutableSerializationRegistry.globalInstance()
+          .parseParametersWithLegacyFallback(serialization);
     }
   }
 

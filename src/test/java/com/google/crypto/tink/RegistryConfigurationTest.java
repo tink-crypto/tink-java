@@ -30,8 +30,6 @@ import com.google.crypto.tink.mac.MacConfig;
 import com.google.crypto.tink.proto.HmacParams;
 import com.google.crypto.tink.proto.KeyData;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.proto.KeyTemplate;
-import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
@@ -144,7 +142,8 @@ public class RegistryConfigurationTest {
   @Test
   public void getProtoKeySerializer_serializeAndParseParameters() throws Exception {
     ProtoKeySerializer serializer = RegistryConfiguration.get().getOrNull(ProtoKeySerializer.class);
-    ByteString serializedParameters = serializer.serializeParameters(rawKey.getParameters());
+    ProtoParametersSerialization serializedParameters =
+        serializer.serializeParameters(rawKey.getParameters());
     assertThat(serializer.parseParameters(serializedParameters)).isEqualTo(rawKey.getParameters());
   }
 
@@ -165,12 +164,12 @@ public class RegistryConfigurationTest {
   @Test
   public void getProtoKeySerializer_parseParametersWorksWithoutParser() throws Exception {
     ProtoKeySerializer serializer = RegistryConfiguration.get().getOrNull(ProtoKeySerializer.class);
-    KeyTemplate template =
-        KeyTemplate.newBuilder()
-            .setTypeUrl("UnknownTypeUrl")
-            .setOutputPrefixType(OutputPrefixType.TINK)
-            .build();
-    Parameters parameters = serializer.parseParameters(template.toByteString());
+    Parameters parameters =
+        serializer.parseParameters(
+            ProtoParametersSerialization.create(
+                "UnknownTypeUrl",
+                com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK,
+                ByteString.EMPTY));
     assertThat(parameters).isInstanceOf(LegacyProtoParameters.class);
   }
 }

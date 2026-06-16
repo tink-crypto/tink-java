@@ -17,7 +17,6 @@
 package com.google.crypto.tink;
 
 import com.google.errorprone.annotations.RestrictedApi;
-import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import javax.annotation.Nullable;
 
@@ -53,7 +52,8 @@ public interface ProtoKeySerializer {
               + " be prepared for key rotation",
       allowedOnPath = ".*Test\\.java",
       allowlistAnnotations = {LowLevelCryptoCaller.class})
-  ByteString serializeParameters(Parameters parameters) throws GeneralSecurityException;
+  ProtoParametersSerialization serializeParameters(Parameters parameters)
+      throws GeneralSecurityException;
 
   @RestrictedApi(
       explanation =
@@ -62,5 +62,6 @@ public interface ProtoKeySerializer {
               + " be prepared for key rotation",
       allowedOnPath = ".*Test\\.java",
       allowlistAnnotations = {LowLevelCryptoCaller.class})
-  Parameters parseParameters(ByteString serialization) throws GeneralSecurityException;
+  Parameters parseParameters(ProtoParametersSerialization serialization)
+      throws GeneralSecurityException;
 }
