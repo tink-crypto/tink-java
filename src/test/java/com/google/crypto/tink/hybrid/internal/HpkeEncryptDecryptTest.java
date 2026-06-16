@@ -24,17 +24,21 @@ import com.google.common.truth.Expect;
 import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.config.internal.TinkFipsUtil.AlgorithmFipsCompatibility;
 import com.google.crypto.tink.hybrid.HpkeParameters;
 import com.google.crypto.tink.hybrid.HpkePrivateKey;
 import com.google.crypto.tink.hybrid.HpkePublicKey;
 import com.google.crypto.tink.hybrid.internal.testing.HpkeTestUtil;
 import com.google.crypto.tink.hybrid.internal.testing.HybridTestVector;
+import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.subtle.Random;
 import com.google.crypto.tink.subtle.X25519;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
+import java.security.Provider;
 import java.util.Arrays;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -130,8 +134,7 @@ public final class HpkeEncryptDecryptTest {
     byte[] contextInfo = Random.randBytes(100);
     byte[] nullPlaintext = null;
 
-    assertThrows(
-        NullPointerException.class, () -> hpkeEncrypt.encrypt(nullPlaintext, contextInfo));
+    assertThrows(NullPointerException.class, () -> hpkeEncrypt.encrypt(nullPlaintext, contextInfo));
   }
 
   @Test
@@ -244,13 +247,18 @@ public final class HpkeEncryptDecryptTest {
   }
 
   @DataPoints("testVectors")
-  public static final HybridTestVector[] HYBRID_TEST_VECTORS = HpkeTestUtil.createHpkeTestVectors();
+  public static final HybridTestVector[] hybridTestVectors = HpkeTestUtil.createHpkeTestVectors();
 
   @Theory
   public void decryptCiphertext_works(@FromDataPoints("testVectors") HybridTestVector v)
       throws Exception {
-    HybridDecrypt hybridDecrypt =
-        HpkeDecrypt.create((com.google.crypto.tink.hybrid.HpkePrivateKey) v.getPrivateKey());
+    if (v.getPrivateKey() instanceof HpkePrivateKey
+        && ((HpkePrivateKey) v.getPrivateKey()).getParameters().getKemId()
+            == HpkeParameters.KemId.X_WING
+        && !isXwingHpkeSupported()) {
+      return;
+    }
+    HybridDecrypt hybridDecrypt = HpkeDecrypt.create((HpkePrivateKey) v.getPrivateKey());
     byte[] plaintext = hybridDecrypt.decrypt(v.getCiphertext(), v.getContextInfo());
     assertThat(Hex.encode(plaintext)).isEqualTo(Hex.encode(v.getPlaintext()));
   }
@@ -258,8 +266,13 @@ public final class HpkeEncryptDecryptTest {
   @Theory
   public void decryptWrongContextInfo_throws(@FromDataPoints("testVectors") HybridTestVector v)
       throws Exception {
-    HybridDecrypt hybridDecrypt =
-        HpkeDecrypt.create((com.google.crypto.tink.hybrid.HpkePrivateKey) v.getPrivateKey());
+    if (v.getPrivateKey() instanceof HpkePrivateKey
+        && ((HpkePrivateKey) v.getPrivateKey()).getParameters().getKemId()
+            == HpkeParameters.KemId.X_WING
+        && !isXwingHpkeSupported()) {
+      return;
+    }
+    HybridDecrypt hybridDecrypt = HpkeDecrypt.create((HpkePrivateKey) v.getPrivateKey());
     byte[] contextInfo = v.getContextInfo();
     if (contextInfo.length > 0) {
       contextInfo[0] ^= 1;
@@ -276,13 +289,36 @@ public final class HpkeEncryptDecryptTest {
   @Theory
   public void encryptThenDecryptMessage_works(@FromDataPoints("testVectors") HybridTestVector v)
       throws Exception {
-    HybridDecrypt hybridDecrypt =
-        HpkeDecrypt.create((com.google.crypto.tink.hybrid.HpkePrivateKey) v.getPrivateKey());
+    if (v.getPrivateKey() instanceof HpkePrivateKey
+        && ((HpkePrivateKey) v.getPrivateKey()).getParameters().getKemId()
+            == HpkeParameters.KemId.X_WING
+        && !isXwingHpkeSupported()) {
+      return;
+    }
+    HybridDecrypt hybridDecrypt = HpkeDecrypt.create((HpkePrivateKey) v.getPrivateKey());
     HybridEncrypt hybridEncrypt =
-        HpkeEncrypt.create(
-            (com.google.crypto.tink.hybrid.HpkePublicKey) v.getPrivateKey().getPublicKey());
+        HpkeEncrypt.create((HpkePublicKey) v.getPrivateKey().getPublicKey());
     byte[] ciphertext = hybridEncrypt.encrypt(v.getPlaintext(), v.getContextInfo());
     byte[] plaintext = hybridDecrypt.decrypt(ciphertext, v.getContextInfo());
     assertThat(Hex.encode(plaintext)).isEqualTo(Hex.encode(v.getPlaintext()));
+  }
+
+  // TODO(b/498579995): remove once X-WING HPKE is available in the OSS.
+  private static boolean isXwingHpkeSupported() {
+    if (!AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS.isCompatible()) {
+      return false;
+    }
+
+    Provider provider = ConscryptUtil.providerOrNull();
+    if (provider == null) {
+      return false;
+    }
+
+    try {
+      KeyFactory unusedKeyFactory = KeyFactory.getInstance("XWING", provider);
+      return true;
+    } catch (GeneralSecurityException e) {
+      return false;
+    }
   }
 }

@@ -28,18 +28,24 @@ import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
+import com.google.crypto.tink.config.internal.TinkFipsUtil.AlgorithmFipsCompatibility;
+import com.google.crypto.tink.hybrid.HpkeParameters;
 import com.google.crypto.tink.hybrid.HpkePrivateKey;
 import com.google.crypto.tink.hybrid.HybridConfig;
 import com.google.crypto.tink.hybrid.internal.testing.HpkeTestUtil;
 import com.google.crypto.tink.hybrid.internal.testing.HybridTestVector;
+import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.testing.TestUtil;
 import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
+import java.security.Provider;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.annotation.Nullable;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -57,7 +63,7 @@ public final class HpkePrivateKeyManagerTest {
   }
 
   @DataPoints("templateNames")
-  public static final String[] KEY_TEMPLATES =
+  public static final String[] keyTemplates =
       new String[] {
         "DHKEM_X25519_HKDF_SHA256_HKDF_SHA256_AES_128_GCM",
         "DHKEM_X25519_HKDF_SHA256_HKDF_SHA256_AES_256_GCM_RAW",
@@ -96,11 +102,17 @@ public final class HpkePrivateKeyManagerTest {
   }
 
   @DataPoints("testVectors")
-  public static final HybridTestVector[] HYBRID_TEST_VECTORS = HpkeTestUtil.createHpkeTestVectors();
+  public static final HybridTestVector[] hybridTestVectors = HpkeTestUtil.createHpkeTestVectors();
 
   @Theory
   public void decryptCiphertext_works(@FromDataPoints("testVectors") HybridTestVector v)
       throws Exception {
+    if (v.getPrivateKey() instanceof HpkePrivateKey
+        && ((HpkePrivateKey) v.getPrivateKey()).getParameters().getKemId()
+            == HpkeParameters.KemId.X_WING
+        && !isXwingHpkeSupported()) {
+      return;
+    }
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(v.getPrivateKey()).makePrimary();
     @Nullable Integer id = v.getPrivateKey().getIdRequirementOrNull();
     if (id == null) {
@@ -118,6 +130,12 @@ public final class HpkePrivateKeyManagerTest {
   @Theory
   public void decryptWrongContextInfo_throws(@FromDataPoints("testVectors") HybridTestVector v)
       throws Exception {
+    if (v.getPrivateKey() instanceof HpkePrivateKey
+        && ((HpkePrivateKey) v.getPrivateKey()).getParameters().getKemId()
+            == HpkeParameters.KemId.X_WING
+        && !isXwingHpkeSupported()) {
+      return;
+    }
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(v.getPrivateKey()).makePrimary();
     @Nullable Integer id = v.getPrivateKey().getIdRequirementOrNull();
     if (id == null) {
@@ -142,8 +160,14 @@ public final class HpkePrivateKeyManagerTest {
   }
 
   @Theory
-  public void encryptThenDecryptMessage_works(
-      @FromDataPoints("testVectors") HybridTestVector v) throws Exception {
+  public void encryptThenDecryptMessage_works(@FromDataPoints("testVectors") HybridTestVector v)
+      throws Exception {
+    if (v.getPrivateKey() instanceof HpkePrivateKey
+        && ((HpkePrivateKey) v.getPrivateKey()).getParameters().getKemId()
+            == HpkeParameters.KemId.X_WING
+        && !isXwingHpkeSupported()) {
+      return;
+    }
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(v.getPrivateKey()).makePrimary();
     @Nullable Integer id = v.getPrivateKey().getIdRequirementOrNull();
     if (id == null) {
@@ -196,8 +220,30 @@ public final class HpkePrivateKeyManagerTest {
   }
 
   @Test
+  public void createKey_xwing_alwaysDifferent() throws Exception {
+    Assume.assumeTrue(isXwingHpkeSupported());
+    Parameters params =
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.TINK)
+            .setKemId(HpkeParameters.KemId.X_WING)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+            .setAeadId(HpkeParameters.AeadId.AES_128_GCM)
+            .build();
+
+    int numKeys = 10;
+    Set<String> keys = new TreeSet<>();
+    for (int i = 0; i < numKeys; i++) {
+      KeysetHandle handle = KeysetHandle.generateNew(params);
+      assertThat(handle.size()).isEqualTo(1);
+      HpkePrivateKey key = (HpkePrivateKey) handle.getPrimary().getKey();
+      keys.add(Hex.encode(key.getPrivateKeyBytes().toByteArray(InsecureSecretKeyAccess.get())));
+    }
+    assertThat(keys).hasSize(numKeys);
+  }
+
+  @Test
   public void test_serializeAndParse_works() throws Exception {
-    HybridTestVector testVector = HYBRID_TEST_VECTORS[0];
+    HybridTestVector testVector = hybridTestVectors[0];
     HpkePrivateKey key = (HpkePrivateKey) testVector.getPrivateKey();
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).withFixedId(1216).makePrimary();
     KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
@@ -211,7 +257,7 @@ public final class HpkePrivateKeyManagerTest {
 
   @Test
   public void test_serializeAndParse_publicKey_works() throws Exception {
-    HybridTestVector testVector = HYBRID_TEST_VECTORS[0];
+    HybridTestVector testVector = hybridTestVectors[0];
     HpkePrivateKey key = (HpkePrivateKey) testVector.getPrivateKey();
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).withFixedId(1216).makePrimary();
     KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build().getPublicKeysetHandle();
@@ -233,5 +279,24 @@ public final class HpkePrivateKeyManagerTest {
                 .getKeyManager(
                     "type.googleapis.com/google.crypto.tink.HpkePublicKey", HybridEncrypt.class))
         .isNotNull();
+  }
+
+  // TODO(b/498579995): remove once X-WING HPKE is available in the OSS.
+  private static boolean isXwingHpkeSupported() {
+    if (!AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS.isCompatible()) {
+      return false;
+    }
+
+    Provider provider = ConscryptUtil.providerOrNull();
+    if (provider == null) {
+      return false;
+    }
+
+    try {
+      KeyFactory unusedKeyFactory = KeyFactory.getInstance("XWING", provider);
+      return true;
+    } catch (GeneralSecurityException e) {
+      return false;
+    }
   }
 }

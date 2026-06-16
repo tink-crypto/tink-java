@@ -17,6 +17,7 @@
 package com.google.crypto.tink.hybrid;
 
 import static com.google.common.truth.Truth.assertThat;
+import static java.util.Arrays.stream;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.HybridDecrypt;
@@ -27,6 +28,7 @@ import com.google.crypto.tink.aead.AesGcmParameters;
 import com.google.crypto.tink.aead.internal.AesCtrHmacAeadProtoSerialization;
 import com.google.crypto.tink.aead.internal.AesGcmProtoSerialization;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.config.internal.TinkFipsUtil.AlgorithmFipsCompatibility;
 import com.google.crypto.tink.daead.internal.AesSivProtoSerialization;
 import com.google.crypto.tink.hybrid.EciesParameters.CurveType;
 import com.google.crypto.tink.hybrid.EciesParameters.PointFormat;
@@ -38,6 +40,7 @@ import com.google.crypto.tink.hybrid.internal.testing.EciesAeadHkdfTestUtil;
 import com.google.crypto.tink.hybrid.internal.testing.HpkeTestUtil;
 import com.google.crypto.tink.hybrid.internal.testing.HybridTestVector;
 import com.google.crypto.tink.internal.BigIntegerEncoding;
+import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.subtle.EllipticCurves;
 import com.google.crypto.tink.subtle.EllipticCurves.PointFormatType;
 import com.google.crypto.tink.subtle.Hex;
@@ -45,7 +48,9 @@ import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBigInteger;
 import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
 import java.security.KeyPair;
+import java.security.Provider;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.util.Arrays;
@@ -210,6 +215,12 @@ public class HybridConfigurationV1Test {
   public void decryptCiphertextWorks(@FromDataPoints("hybridTests") HybridTestVector v)
       throws Exception {
     Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+    if (v.getPrivateKey() instanceof HpkePrivateKey
+        && ((HpkePrivateKey) v.getPrivateKey()).getParameters().getKemId()
+            == HpkeParameters.KemId.X_WING
+        && !isXwingHpkeSupported()) {
+      return;
+    }
 
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(v.getPrivateKey()).makePrimary();
     @Nullable Integer id = v.getPrivateKey().getIdRequirementOrNull();
@@ -231,6 +242,12 @@ public class HybridConfigurationV1Test {
   public void decryptWrongContextInfoThrows(@FromDataPoints("hybridTests") HybridTestVector v)
       throws Exception {
     Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+    if (v.getPrivateKey() instanceof HpkePrivateKey
+        && ((HpkePrivateKey) v.getPrivateKey()).getParameters().getKemId()
+            == HpkeParameters.KemId.X_WING
+        && !isXwingHpkeSupported()) {
+      return;
+    }
 
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(v.getPrivateKey()).makePrimary();
     @Nullable Integer id = v.getPrivateKey().getIdRequirementOrNull();
@@ -262,6 +279,12 @@ public class HybridConfigurationV1Test {
   public void encryptThenDecryptMessageWorks(@FromDataPoints("hybridTests") HybridTestVector v)
       throws Exception {
     Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+    if (v.getPrivateKey() instanceof HpkePrivateKey
+        && ((HpkePrivateKey) v.getPrivateKey()).getParameters().getKemId()
+            == HpkeParameters.KemId.X_WING
+        && !isXwingHpkeSupported()) {
+      return;
+    }
 
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(v.getPrivateKey()).makePrimary();
     @Nullable Integer id = v.getPrivateKey().getIdRequirementOrNull();
@@ -287,7 +310,26 @@ public class HybridConfigurationV1Test {
   @DataPoints("hybridTests")
   public static final HybridTestVector[] hybridTestVectors =
       Stream.concat(
-              Arrays.stream(HpkeTestUtil.createHpkeTestVectors()),
-              Arrays.stream(EciesAeadHkdfTestUtil.createEciesTestVectors()))
+              stream(HpkeTestUtil.createHpkeTestVectors()),
+              stream(EciesAeadHkdfTestUtil.createEciesTestVectors()))
           .toArray(HybridTestVector[]::new);
+
+  // TODO(b/498579995): remove once X-WING HPKE is available in the OSS.
+  private static boolean isXwingHpkeSupported() {
+    if (!AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS.isCompatible()) {
+      return false;
+    }
+
+    Provider provider = ConscryptUtil.providerOrNull();
+    if (provider == null) {
+      return false;
+    }
+
+    try {
+      KeyFactory unusedKeyFactory = KeyFactory.getInstance("XWING", provider);
+      return true;
+    } catch (GeneralSecurityException e) {
+      return false;
+    }
+  }
 }

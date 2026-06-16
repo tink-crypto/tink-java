@@ -29,6 +29,7 @@ import com.google.crypto.tink.hybrid.HpkePrivateKey;
 import com.google.crypto.tink.hybrid.HpkeProtoSerialization;
 import com.google.crypto.tink.hybrid.HpkePublicKey;
 import com.google.crypto.tink.internal.BigIntegerEncoding;
+import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.internal.KeyCreator;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyKeyManagerImpl;
@@ -42,9 +43,13 @@ import com.google.crypto.tink.subtle.X25519;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
 import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.Provider;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
+import java.security.spec.EncodedKeySpec;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -103,6 +108,26 @@ public final class HpkePrivateKeyManager {
                   ((ECPrivateKey) keyPair.getPrivate()).getS(),
                   HpkeUtil.getEncodedPrivateKeyLength(parameters.getKemId())),
               InsecureSecretKeyAccess.get());
+    } else if (parameters.getKemId().equals(HpkeParameters.KemId.X_WING)) {
+      Provider conscryptProvider = ConscryptUtil.providerOrNull();
+      if (conscryptProvider == null) {
+        throw new GeneralSecurityException(
+            "Can't generate X-Wing key as Conscrypt is not available");
+      }
+      try {
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance("XWING", conscryptProvider);
+        KeyPair keyPair = kpg.generateKeyPair();
+        KeyFactory keyFactory = KeyFactory.getInstance("XWING", conscryptProvider);
+        publicKeyBytes =
+            Bytes.copyFrom(
+                keyFactory.getKeySpec(keyPair.getPublic(), HpkeRawKeySpec.class).getEncoded());
+        privateKeyBytes =
+            SecretBytes.copyFrom(
+                keyFactory.getKeySpec(keyPair.getPrivate(), HpkeRawKeySpec.class).getEncoded(),
+                InsecureSecretKeyAccess.get());
+      } catch (Exception e) {
+        throw new GeneralSecurityException("Can't generate X-Wing key", e);
+      }
     } else {
       throw new GeneralSecurityException("Unknown KEM ID");
     }
@@ -111,8 +136,7 @@ public final class HpkePrivateKeyManager {
   }
 
   @SuppressWarnings("InlineLambdaConstant") // We need a correct Object#equals in registration.
-  private static final KeyCreator<HpkeParameters> KEY_CREATOR =
-      HpkePrivateKeyManager::createKey;
+  private static final KeyCreator<HpkeParameters> KEY_CREATOR = HpkePrivateKeyManager::createKey;
 
   /**
    * Registers an {@link HpkePrivateKeyManager} and an {@link HpkePublicKeyManager} with the
@@ -140,153 +164,169 @@ public final class HpkePrivateKeyManager {
   }
 
   private static Map<String, Parameters> namedParameters() throws GeneralSecurityException {
-        Map<String, Parameters> result = new HashMap<>();
-        result.put(
-            "DHKEM_X25519_HKDF_SHA256_HKDF_SHA256_AES_128_GCM",
-            HpkeParameters.builder()
-                .setVariant(HpkeParameters.Variant.TINK)
-                .setKemId(HpkeParameters.KemId.DHKEM_X25519_HKDF_SHA256)
-                .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
-                .setAeadId(HpkeParameters.AeadId.AES_128_GCM)
-                .build());
-        result.put(
-            "DHKEM_X25519_HKDF_SHA256_HKDF_SHA256_AES_128_GCM_RAW",
-            HpkeParameters.builder()
-                .setVariant(HpkeParameters.Variant.NO_PREFIX)
-                .setKemId(HpkeParameters.KemId.DHKEM_X25519_HKDF_SHA256)
-                .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
-                .setAeadId(HpkeParameters.AeadId.AES_128_GCM)
-                .build());
-        result.put(
-            "DHKEM_X25519_HKDF_SHA256_HKDF_SHA256_AES_256_GCM",
-            HpkeParameters.builder()
-                .setVariant(HpkeParameters.Variant.TINK)
-                .setKemId(HpkeParameters.KemId.DHKEM_X25519_HKDF_SHA256)
-                .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
-                .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
-                .build());
-        result.put(
-            "DHKEM_X25519_HKDF_SHA256_HKDF_SHA256_AES_256_GCM_RAW",
-            HpkeParameters.builder()
-                .setVariant(HpkeParameters.Variant.NO_PREFIX)
-                .setKemId(HpkeParameters.KemId.DHKEM_X25519_HKDF_SHA256)
-                .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
-                .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
-                .build());
-        result.put(
-            "DHKEM_X25519_HKDF_SHA256_HKDF_SHA256_CHACHA20_POLY1305",
-            HpkeParameters.builder()
-                .setVariant(HpkeParameters.Variant.TINK)
-                .setKemId(HpkeParameters.KemId.DHKEM_X25519_HKDF_SHA256)
-                .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
-                .setAeadId(HpkeParameters.AeadId.CHACHA20_POLY1305)
-                .build());
-        result.put(
-            "DHKEM_X25519_HKDF_SHA256_HKDF_SHA256_CHACHA20_POLY1305_RAW",
-            HpkeParameters.builder()
-                .setVariant(HpkeParameters.Variant.NO_PREFIX)
-                .setKemId(HpkeParameters.KemId.DHKEM_X25519_HKDF_SHA256)
-                .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
-                .setAeadId(HpkeParameters.AeadId.CHACHA20_POLY1305)
-                .build());
-        result.put(
-            "DHKEM_P256_HKDF_SHA256_HKDF_SHA256_AES_128_GCM",
-            HpkeParameters.builder()
-                .setVariant(HpkeParameters.Variant.TINK)
-                .setKemId(HpkeParameters.KemId.DHKEM_P256_HKDF_SHA256)
-                .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
-                .setAeadId(HpkeParameters.AeadId.AES_128_GCM)
-                .build());
-        result.put(
-            "DHKEM_P256_HKDF_SHA256_HKDF_SHA256_AES_128_GCM_RAW",
-            HpkeParameters.builder()
-                .setVariant(HpkeParameters.Variant.NO_PREFIX)
-                .setKemId(HpkeParameters.KemId.DHKEM_P256_HKDF_SHA256)
-                .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
-                .setAeadId(HpkeParameters.AeadId.AES_128_GCM)
-                .build());
-        result.put(
-            "DHKEM_P256_HKDF_SHA256_HKDF_SHA256_AES_256_GCM",
-            HpkeParameters.builder()
-                .setVariant(HpkeParameters.Variant.TINK)
-                .setKemId(HpkeParameters.KemId.DHKEM_P256_HKDF_SHA256)
-                .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
-                .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
-                .build());
-        result.put(
-            "DHKEM_P256_HKDF_SHA256_HKDF_SHA256_AES_256_GCM_RAW",
-            HpkeParameters.builder()
-                .setVariant(HpkeParameters.Variant.NO_PREFIX)
-                .setKemId(HpkeParameters.KemId.DHKEM_P256_HKDF_SHA256)
-                .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
-                .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
-                .build());
-        result.put(
-            "DHKEM_P384_HKDF_SHA384_HKDF_SHA384_AES_128_GCM",
-            HpkeParameters.builder()
-                .setVariant(HpkeParameters.Variant.TINK)
-                .setKemId(HpkeParameters.KemId.DHKEM_P384_HKDF_SHA384)
-                .setKdfId(HpkeParameters.KdfId.HKDF_SHA384)
-                .setAeadId(HpkeParameters.AeadId.AES_128_GCM)
-                .build());
-        result.put(
-            "DHKEM_P384_HKDF_SHA384_HKDF_SHA384_AES_128_GCM_RAW",
-            HpkeParameters.builder()
-                .setVariant(HpkeParameters.Variant.NO_PREFIX)
-                .setKemId(HpkeParameters.KemId.DHKEM_P384_HKDF_SHA384)
-                .setKdfId(HpkeParameters.KdfId.HKDF_SHA384)
-                .setAeadId(HpkeParameters.AeadId.AES_128_GCM)
-                .build());
-        result.put(
-            "DHKEM_P384_HKDF_SHA384_HKDF_SHA384_AES_256_GCM",
-            HpkeParameters.builder()
-                .setVariant(HpkeParameters.Variant.TINK)
-                .setKemId(HpkeParameters.KemId.DHKEM_P384_HKDF_SHA384)
-                .setKdfId(HpkeParameters.KdfId.HKDF_SHA384)
-                .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
-                .build());
-        result.put(
-            "DHKEM_P384_HKDF_SHA384_HKDF_SHA384_AES_256_GCM_RAW",
-            HpkeParameters.builder()
-                .setVariant(HpkeParameters.Variant.NO_PREFIX)
-                .setKemId(HpkeParameters.KemId.DHKEM_P384_HKDF_SHA384)
-                .setKdfId(HpkeParameters.KdfId.HKDF_SHA384)
-                .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
-                .build());
-        result.put(
-            "DHKEM_P521_HKDF_SHA512_HKDF_SHA512_AES_128_GCM",
-            HpkeParameters.builder()
-                .setVariant(HpkeParameters.Variant.TINK)
-                .setKemId(HpkeParameters.KemId.DHKEM_P521_HKDF_SHA512)
-                .setKdfId(HpkeParameters.KdfId.HKDF_SHA512)
-                .setAeadId(HpkeParameters.AeadId.AES_128_GCM)
-                .build());
-        result.put(
-            "DHKEM_P521_HKDF_SHA512_HKDF_SHA512_AES_128_GCM_RAW",
-            HpkeParameters.builder()
-                .setVariant(HpkeParameters.Variant.NO_PREFIX)
-                .setKemId(HpkeParameters.KemId.DHKEM_P521_HKDF_SHA512)
-                .setKdfId(HpkeParameters.KdfId.HKDF_SHA512)
-                .setAeadId(HpkeParameters.AeadId.AES_128_GCM)
-                .build());
-        result.put(
-            "DHKEM_P521_HKDF_SHA512_HKDF_SHA512_AES_256_GCM",
-            HpkeParameters.builder()
-                .setVariant(HpkeParameters.Variant.TINK)
-                .setKemId(HpkeParameters.KemId.DHKEM_P521_HKDF_SHA512)
-                .setKdfId(HpkeParameters.KdfId.HKDF_SHA512)
-                .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
-                .build());
-        result.put(
-            "DHKEM_P521_HKDF_SHA512_HKDF_SHA512_AES_256_GCM_RAW",
-            HpkeParameters.builder()
-                .setVariant(HpkeParameters.Variant.NO_PREFIX)
-                .setKemId(HpkeParameters.KemId.DHKEM_P521_HKDF_SHA512)
-                .setKdfId(HpkeParameters.KdfId.HKDF_SHA512)
-                .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
-                .build());
-        return Collections.unmodifiableMap(result);
+    Map<String, Parameters> result = new HashMap<>();
+    result.put(
+        "DHKEM_X25519_HKDF_SHA256_HKDF_SHA256_AES_128_GCM",
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.TINK)
+            .setKemId(HpkeParameters.KemId.DHKEM_X25519_HKDF_SHA256)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+            .setAeadId(HpkeParameters.AeadId.AES_128_GCM)
+            .build());
+    result.put(
+        "DHKEM_X25519_HKDF_SHA256_HKDF_SHA256_AES_128_GCM_RAW",
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.NO_PREFIX)
+            .setKemId(HpkeParameters.KemId.DHKEM_X25519_HKDF_SHA256)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+            .setAeadId(HpkeParameters.AeadId.AES_128_GCM)
+            .build());
+    result.put(
+        "DHKEM_X25519_HKDF_SHA256_HKDF_SHA256_AES_256_GCM",
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.TINK)
+            .setKemId(HpkeParameters.KemId.DHKEM_X25519_HKDF_SHA256)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+            .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
+            .build());
+    result.put(
+        "DHKEM_X25519_HKDF_SHA256_HKDF_SHA256_AES_256_GCM_RAW",
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.NO_PREFIX)
+            .setKemId(HpkeParameters.KemId.DHKEM_X25519_HKDF_SHA256)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+            .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
+            .build());
+    result.put(
+        "DHKEM_X25519_HKDF_SHA256_HKDF_SHA256_CHACHA20_POLY1305",
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.TINK)
+            .setKemId(HpkeParameters.KemId.DHKEM_X25519_HKDF_SHA256)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+            .setAeadId(HpkeParameters.AeadId.CHACHA20_POLY1305)
+            .build());
+    result.put(
+        "DHKEM_X25519_HKDF_SHA256_HKDF_SHA256_CHACHA20_POLY1305_RAW",
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.NO_PREFIX)
+            .setKemId(HpkeParameters.KemId.DHKEM_X25519_HKDF_SHA256)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+            .setAeadId(HpkeParameters.AeadId.CHACHA20_POLY1305)
+            .build());
+    result.put(
+        "DHKEM_P256_HKDF_SHA256_HKDF_SHA256_AES_128_GCM",
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.TINK)
+            .setKemId(HpkeParameters.KemId.DHKEM_P256_HKDF_SHA256)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+            .setAeadId(HpkeParameters.AeadId.AES_128_GCM)
+            .build());
+    result.put(
+        "DHKEM_P256_HKDF_SHA256_HKDF_SHA256_AES_128_GCM_RAW",
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.NO_PREFIX)
+            .setKemId(HpkeParameters.KemId.DHKEM_P256_HKDF_SHA256)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+            .setAeadId(HpkeParameters.AeadId.AES_128_GCM)
+            .build());
+    result.put(
+        "DHKEM_P256_HKDF_SHA256_HKDF_SHA256_AES_256_GCM",
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.TINK)
+            .setKemId(HpkeParameters.KemId.DHKEM_P256_HKDF_SHA256)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+            .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
+            .build());
+    result.put(
+        "DHKEM_P256_HKDF_SHA256_HKDF_SHA256_AES_256_GCM_RAW",
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.NO_PREFIX)
+            .setKemId(HpkeParameters.KemId.DHKEM_P256_HKDF_SHA256)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+            .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
+            .build());
+    result.put(
+        "DHKEM_P384_HKDF_SHA384_HKDF_SHA384_AES_128_GCM",
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.TINK)
+            .setKemId(HpkeParameters.KemId.DHKEM_P384_HKDF_SHA384)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA384)
+            .setAeadId(HpkeParameters.AeadId.AES_128_GCM)
+            .build());
+    result.put(
+        "DHKEM_P384_HKDF_SHA384_HKDF_SHA384_AES_128_GCM_RAW",
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.NO_PREFIX)
+            .setKemId(HpkeParameters.KemId.DHKEM_P384_HKDF_SHA384)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA384)
+            .setAeadId(HpkeParameters.AeadId.AES_128_GCM)
+            .build());
+    result.put(
+        "DHKEM_P384_HKDF_SHA384_HKDF_SHA384_AES_256_GCM",
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.TINK)
+            .setKemId(HpkeParameters.KemId.DHKEM_P384_HKDF_SHA384)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA384)
+            .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
+            .build());
+    result.put(
+        "DHKEM_P384_HKDF_SHA384_HKDF_SHA384_AES_256_GCM_RAW",
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.NO_PREFIX)
+            .setKemId(HpkeParameters.KemId.DHKEM_P384_HKDF_SHA384)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA384)
+            .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
+            .build());
+    result.put(
+        "DHKEM_P521_HKDF_SHA512_HKDF_SHA512_AES_128_GCM",
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.TINK)
+            .setKemId(HpkeParameters.KemId.DHKEM_P521_HKDF_SHA512)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA512)
+            .setAeadId(HpkeParameters.AeadId.AES_128_GCM)
+            .build());
+    result.put(
+        "DHKEM_P521_HKDF_SHA512_HKDF_SHA512_AES_128_GCM_RAW",
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.NO_PREFIX)
+            .setKemId(HpkeParameters.KemId.DHKEM_P521_HKDF_SHA512)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA512)
+            .setAeadId(HpkeParameters.AeadId.AES_128_GCM)
+            .build());
+    result.put(
+        "DHKEM_P521_HKDF_SHA512_HKDF_SHA512_AES_256_GCM",
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.TINK)
+            .setKemId(HpkeParameters.KemId.DHKEM_P521_HKDF_SHA512)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA512)
+            .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
+            .build());
+    result.put(
+        "DHKEM_P521_HKDF_SHA512_HKDF_SHA512_AES_256_GCM_RAW",
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.NO_PREFIX)
+            .setKemId(HpkeParameters.KemId.DHKEM_P521_HKDF_SHA512)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA512)
+            .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
+            .build());
+    return Collections.unmodifiableMap(result);
   }
 
   private HpkePrivateKeyManager() {}
+
+  /**
+   * An {@link EncodedKeySpec} implementation returning "raw" to enable reflection by Conscrypt
+   * without strict compile-time coupling.
+   */
+  public static final class HpkeRawKeySpec extends EncodedKeySpec {
+    @SuppressWarnings("UnusedMethod")
+    public HpkeRawKeySpec(byte[] encodedKey) {
+      super(encodedKey);
+    }
+
+    @Override
+    public String getFormat() {
+      return "raw";
+    }
+  }
 }
