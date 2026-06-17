@@ -432,9 +432,6 @@ public final class KeysetHandle implements KeysetHandleInterface {
       if (primaryId == null) {
         throw new GeneralSecurityException("No primary was set");
       }
-      if (validateKeysetsOnParsing(RegistryConfiguration.get())) {
-        validateNoDuplicateIds(handleEntries);
-      }
 
       KeysetHandle unmonitoredKeyset = new KeysetHandle(handleEntries, annotationsMap);
       return addMonitoringIfNeeded(unmonitoredKeyset);
@@ -786,9 +783,11 @@ public final class KeysetHandle implements KeysetHandleInterface {
   /** Returns the actual keyset data. */
   Keyset getKeyset() {
     try {
+      Configuration configuration = RegistryConfiguration.get();
       Keyset.Builder builder = Keyset.newBuilder();
       for (Entry entry : entries) {
-        Keyset.Key protoKey = createKeysetKey(entry.getKey(), entry.keyStatusType, entry.getId());
+        Keyset.Key protoKey =
+            createKeysetKey(entry.getKey(), entry.keyStatusType, entry.getId(), configuration);
         builder.addKey(protoKey);
         if (entry.isPrimary()) {
           builder.setPrimaryKeyId(entry.getId());
@@ -1174,7 +1173,6 @@ public final class KeysetHandle implements KeysetHandleInterface {
     List<KeysetHandle.Entry> publicEntries = new ArrayList<>(entries.size());
 
     for (KeysetHandle.Entry entry : entries) {
-
       Key publicKey;
       if (entry.getKey() instanceof PrivateKey) {
         publicKey = ((PrivateKey) entry.getKey()).getPublicKey();
@@ -1195,9 +1193,6 @@ public final class KeysetHandle implements KeysetHandleInterface {
       validateKeyId(publicKey, entry.getId());
 
       publicEntries.add(publicEntry);
-    }
-    if (validateKeysetsOnParsing(RegistryConfiguration.get())) {
-      validateNoDuplicateIds(entries);
     }
     return addMonitoringIfNeeded(new KeysetHandle(publicEntries, annotationsMap));
   }
@@ -1405,10 +1400,11 @@ public final class KeysetHandle implements KeysetHandleInterface {
   }
 
   @LowLevelCryptoCaller
-  private static Keyset.Key createKeysetKey(Key key, KeyStatusType keyStatus, int id)
+  private static Keyset.Key createKeysetKey(
+      Key key, KeyStatusType keyStatus, int id, Configuration configuration)
       throws GeneralSecurityException {
     @Nullable
-    ProtoKeySerializer serializer = RegistryConfiguration.get().getOrNull(ProtoKeySerializer.class);
+    ProtoKeySerializer serializer = configuration.getOrNull(ProtoKeySerializer.class);
     if (serializer == null) {
       throw new GeneralSecurityException(
           "Passed in configuration cannot be used to parse and serialize proto keysets.");
