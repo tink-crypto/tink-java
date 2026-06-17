@@ -17,6 +17,7 @@
 package com.google.crypto.tink;
 
 import com.google.crypto.tink.config.GlobalTinkFlags;
+import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.SkipValidateKeysetsOnParsingTag;
@@ -70,6 +71,12 @@ public class RegistryConfiguration {
         public <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
             throws GeneralSecurityException {
           return MutablePrimitiveRegistry.globalInstance().wrap(keysetHandle, clazz);
+        }
+
+        @Override
+        public Key createKey(Parameters parameters, @Nullable Integer idRequirement)
+            throws GeneralSecurityException {
+          return MutableKeyCreationRegistry.globalInstance().createKey(parameters, idRequirement);
         }
 
         @Override

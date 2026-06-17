@@ -192,4 +192,34 @@ public class RegistryConfigurationTest {
     assertThat(RegistryConfiguration.get().getOrNull(SkipValidateKeysetsOnParsingTag.class))
         .isNotNull();
   }
+
+  @Test
+  public void createKey_works() throws Exception {
+    HmacParameters parameters =
+        HmacParameters.builder()
+            .setKeySizeBytes(HMAC_KEY_SIZE)
+            .setTagSizeBytes(HMAC_TAG_SIZE)
+            .setVariant(HmacParameters.Variant.TINK)
+            .setHashType(HashType.SHA256)
+            .build();
+
+    Key key = RegistryConfiguration.get().createKey(parameters, 123);
+    assertThat(key).isInstanceOf(HmacKey.class);
+    HmacKey hmacKey = (HmacKey) key;
+    assertThat(hmacKey.getParameters()).isEqualTo(parameters);
+    assertThat(hmacKey.getIdRequirementOrNull()).isEqualTo(123);
+  }
+
+  @Test
+  public void createKey_unsupportedParameters_throws() throws Exception {
+    Parameters parameters =
+        new Parameters() {
+          @Override
+          public boolean hasIdRequirement() {
+            return false;
+          }
+        };
+    Configuration configuration = RegistryConfiguration.get();
+    assertThrows(GeneralSecurityException.class, () -> configuration.createKey(parameters, null));
+  }
 }
