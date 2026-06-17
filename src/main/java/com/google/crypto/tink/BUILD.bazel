@@ -861,7 +861,9 @@ android_library(
     name = "configuration-android",
     srcs = ["Configuration.java"],
     deps = [
+        ":key-android",
         ":keyset_handle_interface-android",
+        ":parameters-android",
         "@maven//:com_google_code_findbugs_jsr305",
     ],
 )
@@ -870,7 +872,9 @@ java_library(
     name = "configuration",
     srcs = ["Configuration.java"],
     deps = [
+        ":key",
         ":keyset_handle_interface",
+        ":parameters",
         "@maven//:com_google_code_findbugs_jsr305",
     ],
 )

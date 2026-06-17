@@ -25,11 +25,18 @@ import javax.annotation.Nullable;
  * used at primitive creation time.
  */
 public interface Configuration {
-  <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
-      throws GeneralSecurityException;
+  default <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
+      throws GeneralSecurityException {
+    throw new GeneralSecurityException("createPrimitive is unimplemented");
+  }
 
   @Nullable
   default <P> P getOrNull(Class<P> clazz) {
     return null;
+  }
+
+  default Key createKey(Parameters parameters, @Nullable Integer idRequirement)
+      throws GeneralSecurityException {
+    throw new GeneralSecurityException("createKey is unimplemented");
   }
 }
