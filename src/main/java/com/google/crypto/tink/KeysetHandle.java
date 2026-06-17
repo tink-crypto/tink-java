@@ -432,6 +432,10 @@ public final class KeysetHandle implements KeysetHandleInterface {
       if (primaryId == null) {
         throw new GeneralSecurityException("No primary was set");
       }
+      if (validateKeysetsOnParsing(RegistryConfiguration.get())) {
+        validateNoDuplicateIds(handleEntries);
+      }
+
       KeysetHandle unmonitoredKeyset = new KeysetHandle(handleEntries, annotationsMap);
       return addMonitoringIfNeeded(unmonitoredKeyset);
     }
@@ -706,12 +710,8 @@ public final class KeysetHandle implements KeysetHandleInterface {
 
   private KeysetHandle(List<Entry> entries, Map<Class<?>, Annotations> annotationsMap)
       throws GeneralSecurityException {
-    Configuration config = RegistryConfiguration.get();
     this.entries = entries;
     this.annotationsMap = annotationsMap;
-    if (validateKeysetsOnParsing(config)) {
-      validateNoDuplicateIds(entries);
-    }
     this.unmonitoredHandle = null;
   }
 
@@ -757,6 +757,9 @@ public final class KeysetHandle implements KeysetHandleInterface {
   static final KeysetHandle fromKeyset(Keyset keyset) throws GeneralSecurityException {
     assertEnoughKeyMaterial(keyset);
     List<Entry> entries = getEntriesFromKeyset(keyset);
+    if (validateKeysetsOnParsing(RegistryConfiguration.get())) {
+      validateNoDuplicateIds(entries);
+    }
 
     return new KeysetHandle(entries, new HashMap<>());
   }
@@ -771,6 +774,10 @@ public final class KeysetHandle implements KeysetHandleInterface {
     List<Entry> entries = getEntriesFromKeyset(keyset);
     Map<Class<?>, Annotations> annotationsMap = new HashMap<>();
     annotationsMap.put(MonitoringAnnotations.class, annotations);
+    if (validateKeysetsOnParsing(RegistryConfiguration.get())) {
+      validateNoDuplicateIds(entries);
+    }
+
     return addMonitoringIfNeeded(new KeysetHandle(entries, annotationsMap));
   }
 
@@ -1186,6 +1193,9 @@ public final class KeysetHandle implements KeysetHandleInterface {
       validateKeyId(publicKey, entry.getId());
 
       publicEntries.add(publicEntry);
+    }
+    if (validateKeysetsOnParsing(RegistryConfiguration.get())) {
+      validateNoDuplicateIds(entries);
     }
     return addMonitoringIfNeeded(new KeysetHandle(publicEntries, annotationsMap));
   }
