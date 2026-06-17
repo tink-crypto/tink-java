@@ -585,15 +585,15 @@ public final class KeysetHandle implements KeysetHandleInterface {
    * <p>If a status is unparseable or parsing of a key fails, there will be "null" in the
    * corresponding entry.
    */
-  private static List<Entry> getEntriesFromKeyset(Keyset keyset) throws GeneralSecurityException {
-    Configuration config = RegistryConfiguration.get();
+  private static List<Entry> getEntriesFromKeyset(Keyset keyset, Configuration config)
+      throws GeneralSecurityException {
     List<Entry> result = new ArrayList<>(keyset.getKeyCount());
     for (Keyset.Key protoKey : keyset.getKeyList()) {
       int id = protoKey.getKeyId();
       Key key;
       boolean keyParsingFailed;
       try {
-        key = toKey(protoKey);
+        key = toKey(protoKey, config);
         keyParsingFailed = false;
       } catch (GeneralSecurityException e) {
         if (validateKeysetsOnParsing(config)) {
@@ -755,9 +755,10 @@ public final class KeysetHandle implements KeysetHandleInterface {
    * @throws GeneralSecurityException if the keyset is null or empty.
    */
   static final KeysetHandle fromKeyset(Keyset keyset) throws GeneralSecurityException {
+    Configuration configuration = RegistryConfiguration.get();
     assertEnoughKeyMaterial(keyset);
-    List<Entry> entries = getEntriesFromKeyset(keyset);
-    if (validateKeysetsOnParsing(RegistryConfiguration.get())) {
+    List<Entry> entries = getEntriesFromKeyset(keyset, configuration);
+    if (validateKeysetsOnParsing(configuration)) {
       validateNoDuplicateIds(entries);
     }
 
@@ -770,11 +771,12 @@ public final class KeysetHandle implements KeysetHandleInterface {
    */
   static final KeysetHandle fromKeysetAndAnnotations(
       Keyset keyset, MonitoringAnnotations annotations) throws GeneralSecurityException {
+    Configuration configuration = RegistryConfiguration.get();
     assertEnoughKeyMaterial(keyset);
-    List<Entry> entries = getEntriesFromKeyset(keyset);
+    List<Entry> entries = getEntriesFromKeyset(keyset, configuration);
     Map<Class<?>, Annotations> annotationsMap = new HashMap<>();
     annotationsMap.put(MonitoringAnnotations.class, annotations);
-    if (validateKeysetsOnParsing(RegistryConfiguration.get())) {
+    if (validateKeysetsOnParsing(configuration)) {
       validateNoDuplicateIds(entries);
     }
 
@@ -1367,10 +1369,10 @@ public final class KeysetHandle implements KeysetHandleInterface {
   }
 
   @LowLevelCryptoCaller
-  private static Key toKey(Keyset.Key protoKey) throws GeneralSecurityException {
+  private static Key toKey(Keyset.Key protoKey, Configuration configuration)
+      throws GeneralSecurityException {
     ProtoKeySerialization protoKeySerialization = toProtoKeySerialization(protoKey);
-    @Nullable
-    ProtoKeySerializer serializer = RegistryConfiguration.get().getOrNull(ProtoKeySerializer.class);
+    @Nullable ProtoKeySerializer serializer = configuration.getOrNull(ProtoKeySerializer.class);
     if (serializer == null) {
       throw new GeneralSecurityException(
           "Passed in configuration cannot be used to serialize into proto keyset format.");
