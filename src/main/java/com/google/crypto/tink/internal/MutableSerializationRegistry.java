@@ -19,6 +19,7 @@ package com.google.crypto.tink.internal;
 import static com.google.crypto.tink.internal.TinkBugException.exceptionIsBug;
 
 import com.google.crypto.tink.Key;
+import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.ProtoKeySerialization;
 import com.google.crypto.tink.ProtoParametersSerialization;
@@ -37,6 +38,7 @@ import javax.annotation.Nullable;
  *
  * should register such an object into a global, mutable registry.
  */
+@LowLevelCryptoCaller
 public final class MutableSerializationRegistry {
   private static MutableSerializationRegistry createGlobalInstance()
       throws GeneralSecurityException {

@@ -19,6 +19,7 @@ package com.google.crypto.tink.internal;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.ProtoKeySerialization;
+import com.google.crypto.tink.ProtoKeySerializer;
 import com.google.crypto.tink.ProtoParametersSerialization;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -31,7 +32,7 @@ import javax.annotation.Nullable;
  * Allows registering {@code KeySerializer}, {@code KeyParser}, {@code ParametersSerializer}, and
  * {@link ParametersParser} objects, and parsing/serializing keys and key formats with such objects.
  */
-public final class SerializationRegistry {
+public final class SerializationRegistry implements ProtoKeySerializer {
   // Maps the class of a key to a serializer for this key.
   private final Map<Class<?>, KeySerializer<?>> keySerializerMap;
   private final Map<String, KeyParser> keyParserMap;
@@ -183,6 +184,7 @@ public final class SerializationRegistry {
    * class, and the used object identifier (as indicated by {@code
    * serializedKey.getObjectIdentifier()}), and then parse the object with this parsers.
    */
+  @Override
   public Key parseKey(ProtoKeySerialization serializedKey, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     String index = serializedKey.getTypeUrl();
@@ -202,13 +204,7 @@ public final class SerializationRegistry {
         && serializationClass.equals(ProtoKeySerialization.class);
   }
 
-  /**
-   * Serializes a given Key into a "SerializationT" object.
-   *
-   * <p>This will look up a previously registered serializer for the requested {@code
-   * SerializationT} class and the passed in key type, and then call serializeKey on the result.
-   */
-  public <KeyT extends Key> ProtoKeySerialization serializeKey(
+  private <KeyT extends Key> ProtoKeySerialization serializeKeyTyped(
       KeyT key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     if (!keySerializerMap.containsKey(key.getClass())) {
       throw new GeneralSecurityException("No Key serializer for " + key.getClass() + " available");
@@ -216,6 +212,18 @@ public final class SerializationRegistry {
     @SuppressWarnings("unchecked") // We know we only insert like this.
     KeySerializer<KeyT> serializer = (KeySerializer<KeyT>) keySerializerMap.get(key.getClass());
     return serializer.serializeKey(key, access);
+  }
+
+  /**
+   * Serializes a given Key into a "SerializationT" object.
+   *
+   * <p>This will look up a previously registered serializer for the requested {@code
+   * SerializationT} class and the passed in key type, and then call serializeKey on the result.
+   */
+  @Override
+  public ProtoKeySerialization serializeKey(Key key, @Nullable SecretKeyAccess access)
+      throws GeneralSecurityException {
+    return serializeKeyTyped(key, access);
   }
 
   /** Returns true if a parser for this {@code serializedKey} has been registered. */
@@ -230,6 +238,7 @@ public final class SerializationRegistry {
    * class, and the used object identifier (as indicated by {@code
    * serializedKey.getObjectIdentifier()}), and then parse the object with this parsers.
    */
+  @Override
   public Parameters parseParameters(ProtoParametersSerialization serializedParameters)
       throws GeneralSecurityException {
     String index = serializedParameters.getTypeUrl();
@@ -250,13 +259,7 @@ public final class SerializationRegistry {
         && serializationClass.equals(ProtoParametersSerialization.class);
   }
 
-  /**
-   * Serializes a given Parameters object into a "SerializationT" object.
-   *
-   * <p>This will look up a previously registered serializer for the requested {@code
-   * SerializationT} class and the passed in key type, and then call serializeKey on the result.
-   */
-  public <ParametersT extends Parameters> ProtoParametersSerialization serializeParameters(
+  private <ParametersT extends Parameters> ProtoParametersSerialization serializeParametersTyped(
       ParametersT parameters) throws GeneralSecurityException {
     if (!parametersSerializerMap.containsKey(parameters.getClass())) {
       throw new GeneralSecurityException(
@@ -267,5 +270,17 @@ public final class SerializationRegistry {
         (ParametersSerializer<ParametersT>)
             parametersSerializerMap.get(parameters.getClass());
     return serializer.serializeParameters(parameters);
+  }
+
+  /**
+   * Serializes a given Parameters object into a "SerializationT" object.
+   *
+   * <p>This will look up a previously registered serializer for the requested {@code
+   * SerializationT} class and the passed in key type, and then call serializeKey on the result.
+   */
+  @Override
+  public ProtoParametersSerialization serializeParameters(Parameters parameters)
+      throws GeneralSecurityException {
+    return serializeParametersTyped(parameters);
   }
 }
