@@ -16,8 +16,10 @@
 
 package com.google.crypto.tink;
 
+import com.google.crypto.tink.config.GlobalTinkFlags;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
+import com.google.crypto.tink.internal.SkipValidateKeysetsOnParsingTag;
 import java.security.GeneralSecurityException;
 import javax.annotation.Nullable;
 
@@ -74,6 +76,14 @@ public class RegistryConfiguration {
         public <P> P getOrNull(Class<P> clazz) {
           if (clazz.equals(ProtoKeySerializer.class)) {
             return clazz.cast(SERIALIZER);
+          }
+          if (clazz.equals(SkipValidateKeysetsOnParsingTag.class)) {
+            if (GlobalTinkFlags.validateKeysetsOnParsing.getValue()) {
+              return null;
+            } else {
+              // This causes Tink to ignore some errors when a keyset is parsed.
+              return clazz.cast(new SkipValidateKeysetsOnParsingTag() {});
+            }
           }
           return null;
         }

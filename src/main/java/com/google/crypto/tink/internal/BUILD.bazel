@@ -892,3 +892,13 @@ java_library(
         "@maven//:com_google_code_findbugs_jsr305",
     ],
 )
+
+android_library(
+    name = "skip_validate_keysets_on_parsing_tag-android",
+    srcs = ["SkipValidateKeysetsOnParsingTag.java"],
+)
+
+java_library(
+    name = "skip_validate_keysets_on_parsing_tag",
+    srcs = ["SkipValidateKeysetsOnParsingTag.java"],
+)

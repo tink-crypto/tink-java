@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink;
 
-import com.google.crypto.tink.config.GlobalTinkFlags;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MonitoringClient;
@@ -24,6 +23,7 @@ import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.internal.ProtoConversions;
+import com.google.crypto.tink.internal.SkipValidateKeysetsOnParsingTag;
 import com.google.crypto.tink.internal.TinkBugException;
 import com.google.crypto.tink.proto.EncryptedKeyset;
 import com.google.crypto.tink.proto.KeyData;
@@ -571,6 +571,10 @@ public final class KeysetHandle implements KeysetHandleInterface {
     throw new IllegalStateException("Unknown key status");
   }
 
+  private static boolean validateKeysetsOnParsing(Configuration config) {
+    return config.getOrNull(SkipValidateKeysetsOnParsingTag.class) == null;
+  }
+
   /**
    * Returns an immutable list of key objects for this keyset.
    *
@@ -578,6 +582,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
    * corresponding entry.
    */
   private static List<Entry> getEntriesFromKeyset(Keyset keyset) throws GeneralSecurityException {
+    Configuration config = RegistryConfiguration.get();
     List<Entry> result = new ArrayList<>(keyset.getKeyCount());
     for (Keyset.Key protoKey : keyset.getKeyList()) {
       int id = protoKey.getKeyId();
@@ -587,7 +592,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
         key = toKey(protoKey);
         keyParsingFailed = false;
       } catch (GeneralSecurityException e) {
-        if (GlobalTinkFlags.validateKeysetsOnParsing.getValue()) {
+        if (validateKeysetsOnParsing(config)) {
           throw e;
         } else {
           // toKey(.) can throw if a parser is available *and* parsing fails. Legacy behavior
@@ -597,8 +602,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
           keyParsingFailed = true;
         }
       }
-      if (GlobalTinkFlags.validateKeysetsOnParsing.getValue()
-          && !isValidKeyStatusType(protoKey.getStatus())) {
+      if (validateKeysetsOnParsing(config) && !isValidKeyStatusType(protoKey.getStatus())) {
         throw new GeneralSecurityException(
             "Parsing of a single key failed (wrong status) and Tink is configured via"
                 + " validateKeysetsOnParsing to reject such keysets.");
@@ -702,9 +706,10 @@ public final class KeysetHandle implements KeysetHandleInterface {
 
   private KeysetHandle(List<Entry> entries, Map<Class<?>, Annotations> annotationsMap)
       throws GeneralSecurityException {
+    Configuration config = RegistryConfiguration.get();
     this.entries = entries;
     this.annotationsMap = annotationsMap;
-    if (GlobalTinkFlags.validateKeysetsOnParsing.getValue()) {
+    if (validateKeysetsOnParsing(config)) {
       validateNoDuplicateIds(entries);
     }
     this.unmonitoredHandle = null;

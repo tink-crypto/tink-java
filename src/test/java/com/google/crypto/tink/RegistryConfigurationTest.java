@@ -20,9 +20,12 @@ import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
+import com.google.crypto.tink.config.GlobalTinkFlags;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.LegacyProtoParameters;
+import com.google.crypto.tink.internal.SkipValidateKeysetsOnParsingTag;
+import com.google.crypto.tink.internal.testing.SetTinkFlag;
 import com.google.crypto.tink.mac.HmacKey;
 import com.google.crypto.tink.mac.HmacParameters;
 import com.google.crypto.tink.mac.HmacParameters.HashType;
@@ -34,12 +37,15 @@ import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public class RegistryConfigurationTest {
+  @Rule public SetTinkFlag setTinkFlag = new SetTinkFlag();
+
   private static final int HMAC_KEY_SIZE = 20;
   private static final int HMAC_TAG_SIZE = 10;
 
@@ -171,5 +177,19 @@ public class RegistryConfigurationTest {
                 com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK,
                 ByteString.EMPTY));
     assertThat(parameters).isInstanceOf(LegacyProtoParameters.class);
+  }
+
+  @Test
+  public void getSkipValidateKeysetsOnParsingTag_flagTrue_returnsNull() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, true);
+    assertThat(RegistryConfiguration.get().getOrNull(SkipValidateKeysetsOnParsingTag.class))
+        .isNull();
+  }
+
+  @Test
+  public void getSkipValidateKeysetsOnParsingTag_flagFalse_returnsNonNull() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
+    assertThat(RegistryConfiguration.get().getOrNull(SkipValidateKeysetsOnParsingTag.class))
+        .isNotNull();
   }
 }
