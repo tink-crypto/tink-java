@@ -1,4 +1,5 @@
 load("@build_bazel_rules_android//android:rules.bzl", "android_library")
+load("//:internal/java_8_library.bzl", java_library = "java_8_library")
 
 licenses(["notice"])
 

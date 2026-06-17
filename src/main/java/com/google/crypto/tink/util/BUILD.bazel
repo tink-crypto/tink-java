@@ -1,8 +1,19 @@
 load("@build_bazel_rules_android//android:rules.bzl", "android_library")
+load("//:internal/java_8_library.bzl", java_library = "java_8_library")
 
 licenses(["notice"])
 
 package(default_visibility = ["//visibility:public"])
+
+java_library(
+    name = "maps",
+    srcs = ["Maps.java"],
+)
+
+android_library(
+    name = "maps-android",
+    srcs = ["Maps.java"],
+)
 
 java_library(
     name = "keys_downloader",
