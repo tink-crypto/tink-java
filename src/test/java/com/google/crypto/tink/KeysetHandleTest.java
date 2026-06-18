@@ -532,7 +532,8 @@ public class KeysetHandleTest {
     byte[] message = Random.randBytes(123);
     MonitoringAnnotations annotations =
         MonitoringAnnotations.newBuilder().add("annotation_name", "annotation_value").build();
-    KeysetHandle handleWithAnnotations = KeysetHandle.fromKeysetAndAnnotations(keyset, annotations);
+    KeysetHandle handleWithAnnotations =
+        KeysetHandle.fromKeysetAndAnnotations(keyset, annotations, RegistryConfiguration.get());
     EncryptOnly encryptOnlyWithAnnotations =
         handleWithAnnotations.getPrimitive(RegistryConfiguration.get(), EncryptOnly.class);
     Object unused = encryptOnlyWithAnnotations.encrypt(message);

@@ -767,8 +767,8 @@ public final class KeysetHandle implements KeysetHandleInterface {
    * @throws GeneralSecurityException if the keyset is null or empty.
    */
   static final KeysetHandle fromKeysetAndAnnotations(
-      Keyset keyset, MonitoringAnnotations annotations) throws GeneralSecurityException {
-    Configuration configuration = RegistryConfiguration.get();
+      Keyset keyset, MonitoringAnnotations annotations, Configuration configuration)
+      throws GeneralSecurityException {
     assertEnoughKeyMaterial(keyset);
     List<Entry> entries = getEntriesFromKeyset(keyset, configuration);
     Map<Class<?>, Annotations> annotationsMap = new HashMap<>();

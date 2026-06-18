@@ -77,7 +77,9 @@ public final class CleartextKeysetHandle {
       KeysetReader reader, Map<String, String> monitoringAnnotations)
       throws GeneralSecurityException, IOException {
     return KeysetHandle.fromKeysetAndAnnotations(
-        reader.read(), MonitoringAnnotations.newBuilder().addAll(monitoringAnnotations).build());
+        reader.read(),
+        MonitoringAnnotations.newBuilder().addAll(monitoringAnnotations).build(),
+        RegistryConfiguration.get());
   }
 
   /**
