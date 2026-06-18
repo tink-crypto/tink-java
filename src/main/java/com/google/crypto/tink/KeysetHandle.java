@@ -1261,12 +1261,20 @@ public final class KeysetHandle implements KeysetHandleInterface {
     Util.validateKeyset(keyset);
     for (int i = 0; i < size(); ++i) {
       if (entries.get(i).keyParsingFailed || !isValidKeyStatusType(entries.get(i).keyStatusType)) {
-        Keyset.Key protoKey = keyset.getKey(i);
+        // Do not use "getKey" to avoid logging key export
+        Key k = entries.get(i).key;
+        String typeUrl = "(unknown)";
+        if (k instanceof LegacyProtoKey) {
+          // When key parsing failed, k should always be a legacy proto key. But we still want to
+          // avoid relying on this since KeysetHandle is getting complicated.
+          typeUrl =
+              ((LegacyProtoKey) k).getSerialization(InsecureSecretKeyAccess.get()).getTypeUrl();
+        }
         throw new GeneralSecurityException(
             "Key parsing of key with index "
                 + i
                 + " and type_url "
-                + protoKey.getKeyData().getTypeUrl()
+                + typeUrl
                 + " failed, unable to get primitive");
       }
     }
