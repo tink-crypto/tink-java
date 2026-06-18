@@ -41,9 +41,10 @@ public final class NoSecretKeysetHandle {
   public static final KeysetHandle parseFrom(final byte[] serialized)
       throws GeneralSecurityException {
     try {
+      Configuration configuration = RegistryConfiguration.get();
       Keyset keyset = Keyset.parseFrom(serialized, ExtensionRegistryLite.getEmptyRegistry());
       validate(keyset);
-      return KeysetHandle.fromKeyset(keyset);
+      return KeysetHandle.fromKeyset(keyset, configuration);
     } catch (InvalidProtocolBufferException e) {
       throw new GeneralSecurityException("invalid keyset");
     }
@@ -55,9 +56,10 @@ public final class NoSecretKeysetHandle {
    */
   public static final KeysetHandle read(KeysetReader reader)
       throws GeneralSecurityException, IOException {
+    Configuration configuration = RegistryConfiguration.get();
     Keyset keyset = reader.read();
     validate(keyset);
-    return KeysetHandle.fromKeyset(keyset);
+    return KeysetHandle.fromKeyset(keyset, configuration);
   }
 
   /**

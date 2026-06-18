@@ -46,8 +46,9 @@ public final class CleartextKeysetHandle {
   public static final KeysetHandle parseFrom(final byte[] serialized)
       throws GeneralSecurityException {
     try {
+      Configuration configuration = RegistryConfiguration.get();
       Keyset keyset = Keyset.parseFrom(serialized, ExtensionRegistryLite.getEmptyRegistry());
-      return KeysetHandle.fromKeyset(keyset);
+      return KeysetHandle.fromKeyset(keyset, configuration);
     } catch (InvalidProtocolBufferException e) {
       throw new GeneralSecurityException("invalid keyset");
     }
@@ -59,7 +60,7 @@ public final class CleartextKeysetHandle {
    */
   public static KeysetHandle read(KeysetReader reader)
       throws GeneralSecurityException, IOException {
-    return KeysetHandle.fromKeyset(reader.read());
+    return KeysetHandle.fromKeyset(reader.read(), RegistryConfiguration.get());
   }
 
   /**
@@ -96,7 +97,8 @@ public final class CleartextKeysetHandle {
    */
   @Deprecated
   public static KeysetHandle fromKeyset(Keyset keyset) throws GeneralSecurityException {
-    return KeysetHandle.fromKeyset(keyset);
+    Configuration configuration = RegistryConfiguration.get();
+    return KeysetHandle.fromKeyset(keyset, configuration);
   }
 
   /**

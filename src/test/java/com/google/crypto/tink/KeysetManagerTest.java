@@ -79,7 +79,9 @@ public class KeysetManagerTest {
   public void testEnable_shouldEnableKey() throws Exception {
     setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     int keyId = 42;
-    KeysetHandle handle = KeysetHandle.fromKeyset(TestUtil.createKeyset(createDisabledKey(keyId)));
+    KeysetHandle handle =
+        KeysetHandle.fromKeyset(
+            TestUtil.createKeyset(createDisabledKey(keyId)), RegistryConfiguration.get());
 
     Keyset keyset =
         KeysetManager.withKeysetHandle(handle).enable(keyId).getKeysetHandle().getKeyset();
@@ -94,7 +96,8 @@ public class KeysetManagerTest {
     setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     int keyId = 42;
     KeysetHandle handle =
-        KeysetHandle.fromKeyset(TestUtil.createKeyset(createUnknownStatusKey(keyId)));
+        KeysetHandle.fromKeyset(
+            TestUtil.createKeyset(createUnknownStatusKey(keyId)), RegistryConfiguration.get());
 
     GeneralSecurityException e =
         assertThrows(
@@ -107,7 +110,9 @@ public class KeysetManagerTest {
   public void testEnable_keyDestroyed_shouldThrowException() throws Exception {
     setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     int keyId = 42;
-    KeysetHandle handle = KeysetHandle.fromKeyset(TestUtil.createKeyset(createDestroyedKey(keyId)));
+    KeysetHandle handle =
+        KeysetHandle.fromKeyset(
+            TestUtil.createKeyset(createDestroyedKey(keyId)), RegistryConfiguration.get());
 
     GeneralSecurityException e =
         assertThrows(
@@ -120,7 +125,9 @@ public class KeysetManagerTest {
   public void testEnable_keyNotFound_shouldThrowException() throws Exception {
     setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     int keyId = 42;
-    KeysetHandle handle = KeysetHandle.fromKeyset(TestUtil.createKeyset(createDisabledKey(keyId)));
+    KeysetHandle handle =
+        KeysetHandle.fromKeyset(
+            TestUtil.createKeyset(createDisabledKey(keyId)), RegistryConfiguration.get());
 
     GeneralSecurityException e =
         assertThrows(
@@ -205,7 +212,8 @@ public class KeysetManagerTest {
     KeysetHandle handle =
         KeysetHandle.fromKeyset(
             TestUtil.createKeyset(
-                createEnabledKey(primaryKeyId), createDestroyedKey(newPrimaryKeyId)));
+                createEnabledKey(primaryKeyId), createDestroyedKey(newPrimaryKeyId)),
+            RegistryConfiguration.get());
     GeneralSecurityException e =
         assertThrows(
             GeneralSecurityException.class,
@@ -221,7 +229,8 @@ public class KeysetManagerTest {
     KeysetHandle handle =
         KeysetHandle.fromKeyset(
             TestUtil.createKeyset(
-                createEnabledKey(primaryKeyId), createUnknownStatusKey(newPrimaryKeyId)));
+                createEnabledKey(primaryKeyId), createUnknownStatusKey(newPrimaryKeyId)),
+            RegistryConfiguration.get());
     GeneralSecurityException e =
         assertThrows(
             GeneralSecurityException.class,
@@ -305,7 +314,8 @@ public class KeysetManagerTest {
     KeysetHandle handle =
         KeysetHandle.fromKeyset(
             TestUtil.createKeyset(
-                createEnabledKey(primaryKeyId), createDestroyedKey(newPrimaryKeyId)));
+                createEnabledKey(primaryKeyId), createDestroyedKey(newPrimaryKeyId)),
+            RegistryConfiguration.get());
     GeneralSecurityException e =
         assertThrows(
             GeneralSecurityException.class,
@@ -321,7 +331,8 @@ public class KeysetManagerTest {
     KeysetHandle handle =
         KeysetHandle.fromKeyset(
             TestUtil.createKeyset(
-                createEnabledKey(primaryKeyId), createUnknownStatusKey(newPrimaryKeyId)));
+                createEnabledKey(primaryKeyId), createUnknownStatusKey(newPrimaryKeyId)),
+            RegistryConfiguration.get());
     GeneralSecurityException e =
         assertThrows(
             GeneralSecurityException.class,
@@ -383,7 +394,8 @@ public class KeysetManagerTest {
     int otherKeyId = 43;
     KeysetHandle handle =
         KeysetHandle.fromKeyset(
-            TestUtil.createKeyset(createEnabledKey(primaryKeyId), createDestroyedKey(otherKeyId)));
+            TestUtil.createKeyset(createEnabledKey(primaryKeyId), createDestroyedKey(otherKeyId)),
+            RegistryConfiguration.get());
     GeneralSecurityException e =
         assertThrows(
             GeneralSecurityException.class,
@@ -469,7 +481,8 @@ public class KeysetManagerTest {
     KeysetHandle handle =
         KeysetHandle.fromKeyset(
             TestUtil.createKeyset(
-                createEnabledKey(primaryKeyId), createUnknownStatusKey(otherKeyId)));
+                createEnabledKey(primaryKeyId), createUnknownStatusKey(otherKeyId)),
+            RegistryConfiguration.get());
     GeneralSecurityException e =
         assertThrows(
             GeneralSecurityException.class,
@@ -485,7 +498,9 @@ public class KeysetManagerTest {
   public void testDestroy_keyNotFound_shouldThrowException() throws Exception {
     setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     int keyId = 42;
-    KeysetHandle handle = KeysetHandle.fromKeyset(TestUtil.createKeyset(createDisabledKey(keyId)));
+    KeysetHandle handle =
+        KeysetHandle.fromKeyset(
+            TestUtil.createKeyset(createDisabledKey(keyId)), RegistryConfiguration.get());
 
     GeneralSecurityException e =
         assertThrows(
@@ -1018,7 +1033,8 @@ public class KeysetManagerTest {
             TestUtil.createKeyset(
                 createEnabledKey(primaryKeyId),
                 createEnabledKey(keyId2),
-                createDisabledKey(keyId3)));
+                createDisabledKey(keyId3)),
+            RegistryConfiguration.get());
     final KeysetManager manager = KeysetManager.withKeysetHandle(handle);
 
     Thread thread1 =
@@ -1080,7 +1096,8 @@ public class KeysetManagerTest {
             TestUtil.createKeyset(
                 createEnabledKey(primaryKeyId),
                 createEnabledKey(keyId2),
-                createDisabledKey(keyId3)));
+                createDisabledKey(keyId3)),
+            RegistryConfiguration.get());
     final KeysetManager manager = KeysetManager.withKeysetHandle(handle);
 
     Thread thread2 =
@@ -1132,7 +1149,8 @@ public class KeysetManagerTest {
             TestUtil.createKeyset(
                 createEnabledKey(primaryKeyId),
                 createEnabledKey(keyId2),
-                createDisabledKey(keyId3)));
+                createDisabledKey(keyId3)),
+            RegistryConfiguration.get());
     final KeysetManager manager = KeysetManager.withKeysetHandle(handle);
 
     Thread thread2 =

@@ -751,8 +751,8 @@ public final class KeysetHandle implements KeysetHandleInterface {
    * @return a new {@link KeysetHandle} from a {@code keyset}.
    * @throws GeneralSecurityException if the keyset is null or empty.
    */
-  static final KeysetHandle fromKeyset(Keyset keyset) throws GeneralSecurityException {
-    Configuration configuration = RegistryConfiguration.get();
+  static final KeysetHandle fromKeyset(Keyset keyset, Configuration configuration)
+      throws GeneralSecurityException {
     assertEnoughKeyMaterial(keyset);
     List<Entry> entries = getEntriesFromKeyset(keyset, configuration);
     if (validateKeysetsOnParsing(configuration)) {
@@ -1029,9 +1029,11 @@ public final class KeysetHandle implements KeysetHandleInterface {
   public static final KeysetHandle readWithAssociatedData(
       KeysetReader reader, Aead masterKey, byte[] associatedData)
       throws GeneralSecurityException, IOException {
+    Configuration configuration = RegistryConfiguration.get();
     EncryptedKeyset encryptedKeyset = reader.readEncrypted();
     assertEnoughEncryptedKeyMaterial(encryptedKeyset);
-    return KeysetHandle.fromKeyset(decrypt(encryptedKeyset, masterKey, associatedData));
+    return KeysetHandle.fromKeyset(
+        decrypt(encryptedKeyset, masterKey, associatedData), configuration);
   }
 
   /**
@@ -1078,9 +1080,10 @@ public final class KeysetHandle implements KeysetHandleInterface {
   public static final KeysetHandle readNoSecret(final byte[] serialized)
       throws GeneralSecurityException {
     try {
+      Configuration configuration = RegistryConfiguration.get();
       Keyset keyset = Keyset.parseFrom(serialized, ExtensionRegistryLite.getEmptyRegistry());
       assertNoSecretKeyMaterial(keyset);
-      return KeysetHandle.fromKeyset(keyset);
+      return KeysetHandle.fromKeyset(keyset, configuration);
     } catch (InvalidProtocolBufferException e) {
       // Do not propagate InvalidProtocolBufferException to guarantee no key material is leaked
       throw new GeneralSecurityException("invalid keyset");

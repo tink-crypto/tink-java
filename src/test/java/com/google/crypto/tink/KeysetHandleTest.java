@@ -327,7 +327,7 @@ public class KeysetHandleTest {
                 42,
                 KeyStatusType.ENABLED,
                 OutputPrefixType.TINK));
-    KeysetHandle handle = KeysetHandle.fromKeyset(keyset);
+    KeysetHandle handle = KeysetHandle.fromKeyset(keyset, RegistryConfiguration.get());
 
     String keysetInfo = handle.toString();
 
@@ -493,7 +493,7 @@ public class KeysetHandleTest {
                 KeyStatusType.ENABLED,
                 OutputPrefixType.TINK),
             TestUtil.createKey(rawKeyData, 43, KeyStatusType.ENABLED, OutputPrefixType.RAW));
-    KeysetHandle handle = KeysetHandle.fromKeyset(keyset);
+    KeysetHandle handle = KeysetHandle.fromKeyset(keyset, RegistryConfiguration.get());
     byte[] message = Random.randBytes(20);
     byte[] aad = Random.randBytes(20);
     Aead aeadToEncrypt = Registry.getPrimitive(rawKeyData, Aead.class);
@@ -752,7 +752,7 @@ public class KeysetHandleTest {
                 42,
                 KeyStatusType.ENABLED,
                 OutputPrefixType.TINK));
-    KeysetHandle handle = KeysetHandle.fromKeyset(keyset);
+    KeysetHandle handle = KeysetHandle.fromKeyset(keyset, RegistryConfiguration.get());
 
     assertThrows(GeneralSecurityException.class, () -> handle.writeNoSecret(/* writer= */ null));
   }
@@ -792,7 +792,8 @@ public class KeysetHandleTest {
                 KeyStatusType.ENABLED,
                 OutputPrefixType.TINK));
     KeysetHandle handle =
-        KeysetHandle.fromKeyset(Keyset.newBuilder(keyset).setPrimaryKeyId(77).build());
+        KeysetHandle.fromKeyset(
+            Keyset.newBuilder(keyset).setPrimaryKeyId(77).build(), RegistryConfiguration.get());
 
     assertThrows(GeneralSecurityException.class, handle::primaryKey);
   }
@@ -807,7 +808,7 @@ public class KeysetHandleTest {
                 42,
                 KeyStatusType.ENABLED,
                 OutputPrefixType.TINK));
-    KeysetHandle handle = KeysetHandle.fromKeyset(keyset);
+    KeysetHandle handle = KeysetHandle.fromKeyset(keyset, RegistryConfiguration.get());
     assertThat(handle.size()).isEqualTo(1);
     KeysetHandle.Entry entry = handle.getAt(0);
     assertThat(entry.getId()).isEqualTo(42);
@@ -837,7 +838,7 @@ public class KeysetHandleTest {
                 42,
                 KeyStatusType.ENABLED,
                 OutputPrefixType.TINK));
-    KeysetHandle handle = KeysetHandle.fromKeyset(keyset);
+    KeysetHandle handle = KeysetHandle.fromKeyset(keyset, RegistryConfiguration.get());
     assertThat(handle.size()).isEqualTo(1);
     assertThrows(IllegalStateException.class, () -> handle.getAt(0));
   }
@@ -858,7 +859,7 @@ public class KeysetHandleTest {
                 42,
                 KeyStatusType.ENABLED,
                 OutputPrefixType.RAW));
-    KeysetHandle handle = KeysetHandle.fromKeyset(keyset);
+    KeysetHandle handle = KeysetHandle.fromKeyset(keyset, RegistryConfiguration.get());
     assertThat(handle.size()).isEqualTo(1);
     KeysetHandle.Entry entry = handle.getAt(0);
     assertThat(entry.getId()).isEqualTo(42);
@@ -889,7 +890,8 @@ public class KeysetHandleTest {
             OutputPrefixType.TINK);
     Keyset keyset = TestUtil.createKeyset(key1, key2, key3);
     KeysetHandle handle =
-        KeysetHandle.fromKeyset(Keyset.newBuilder(keyset).setPrimaryKeyId(44).build());
+        KeysetHandle.fromKeyset(
+            Keyset.newBuilder(keyset).setPrimaryKeyId(44).build(), RegistryConfiguration.get());
 
     assertThat(handle.size()).isEqualTo(3);
     assertThat(handle.getAt(0).getId()).isEqualTo(42);
@@ -927,7 +929,8 @@ public class KeysetHandleTest {
             OutputPrefixType.TINK);
     Keyset keyset = TestUtil.createKeyset(key1, key2, key3);
     KeysetHandle handle =
-        KeysetHandle.fromKeyset(Keyset.newBuilder(keyset).setPrimaryKeyId(44).build());
+        KeysetHandle.fromKeyset(
+            Keyset.newBuilder(keyset).setPrimaryKeyId(44).build(), RegistryConfiguration.get());
     KeysetHandle.Entry primary = handle.getPrimary();
     assertThat(primary.getId()).isEqualTo(44);
     assertThat(primary.getStatus()).isEqualTo(KeyStatus.ENABLED);
@@ -945,7 +948,8 @@ public class KeysetHandleTest {
             OutputPrefixType.TINK);
     Keyset keyset = TestUtil.createKeyset(key1);
     KeysetHandle handle =
-        KeysetHandle.fromKeyset(Keyset.newBuilder(keyset).setPrimaryKeyId(77).build());
+        KeysetHandle.fromKeyset(
+            Keyset.newBuilder(keyset).setPrimaryKeyId(77).build(), RegistryConfiguration.get());
 
     assertThrows(IllegalStateException.class, handle::getPrimary);
   }
@@ -961,7 +965,8 @@ public class KeysetHandleTest {
             OutputPrefixType.TINK);
     Keyset keyset = TestUtil.createKeyset(key1);
     KeysetHandle handle =
-        KeysetHandle.fromKeyset(Keyset.newBuilder(keyset).setPrimaryKeyId(16).build());
+        KeysetHandle.fromKeyset(
+            Keyset.newBuilder(keyset).setPrimaryKeyId(16).build(), RegistryConfiguration.get());
 
     assertThrows(IllegalStateException.class, handle::getPrimary);
   }
@@ -974,7 +979,8 @@ public class KeysetHandleTest {
             42,
             KeyStatusType.ENABLED,
             OutputPrefixType.TINK);
-    KeysetHandle handle = KeysetHandle.fromKeyset(TestUtil.createKeyset(key1));
+    KeysetHandle handle =
+        KeysetHandle.fromKeyset(TestUtil.createKeyset(key1), RegistryConfiguration.get());
 
     assertThrows(IndexOutOfBoundsException.class, () -> handle.getAt(-1));
     assertThrows(IndexOutOfBoundsException.class, () -> handle.getAt(1));
@@ -989,7 +995,8 @@ public class KeysetHandleTest {
             42,
             KeyStatusType.UNKNOWN_STATUS,
             OutputPrefixType.TINK);
-    KeysetHandle handle = KeysetHandle.fromKeyset(TestUtil.createKeyset(key1));
+    KeysetHandle handle =
+        KeysetHandle.fromKeyset(TestUtil.createKeyset(key1), RegistryConfiguration.get());
 
     assertThrows(IllegalStateException.class, () -> handle.getAt(0));
 
@@ -1016,7 +1023,9 @@ public class KeysetHandleTest {
                     .build())
             .setPrimaryKeyId(123)
             .build();
-    assertThrows(GeneralSecurityException.class, () -> KeysetHandle.fromKeyset(keyset));
+    Configuration configuration = RegistryConfiguration.get();
+    assertThrows(
+        GeneralSecurityException.class, () -> KeysetHandle.fromKeyset(keyset, configuration));
   }
 
   @Immutable
@@ -1074,7 +1083,7 @@ public class KeysetHandleTest {
                     .setStatus(KeyStatusType.ENABLED)
                     .setKeyData(KeyData.newBuilder().setTypeUrl("testKeyTypeUrl").setValue(value)))
             .build();
-    KeysetHandle handle = KeysetHandle.fromKeyset(keyset);
+    KeysetHandle handle = KeysetHandle.fromKeyset(keyset, RegistryConfiguration.get());
     assertThat(((TestKey) handle.getPrimary().getKey()).getKeyMaterial()).isEqualTo(value);
   }
 
@@ -1443,7 +1452,8 @@ public class KeysetHandleTest {
                             .setTypeUrl("type.googleapis.com/google.crypto.tink.AesGcmKey")
                             .setValue(ByteString.EMPTY)))
             .build();
-    KeysetHandle.Builder builder = KeysetHandle.newBuilder(KeysetHandle.fromKeyset(keyset));
+    KeysetHandle.Builder builder =
+        KeysetHandle.newBuilder(KeysetHandle.fromKeyset(keyset, RegistryConfiguration.get()));
     GeneralSecurityException thrown = assertThrows(GeneralSecurityException.class, builder::build);
     assertThat(thrown)
         .hasCauseThat()
@@ -1465,7 +1475,8 @@ public class KeysetHandleTest {
     Keyset keysetWithoutPrimary = keyset.toBuilder().setPrimaryKeyId(3843).build();
 
     KeysetHandle.Builder builder =
-        KeysetHandle.newBuilder(KeysetHandle.fromKeyset(keysetWithoutPrimary));
+        KeysetHandle.newBuilder(
+            KeysetHandle.fromKeyset(keysetWithoutPrimary, RegistryConfiguration.get()));
     GeneralSecurityException thrown = assertThrows(GeneralSecurityException.class, builder::build);
     assertThat(thrown).hasMessageThat().contains("No primary was set");
   }
@@ -1630,7 +1641,7 @@ public class KeysetHandleTest {
                     .setOutputPrefixType(OutputPrefixType.TINK)
                     .setKeyData(KeyData.newBuilder().setTypeUrl("unregisteredTypeUrl")))
             .build();
-    KeysetHandle handle = KeysetHandle.fromKeyset(keyset);
+    KeysetHandle handle = KeysetHandle.fromKeyset(keyset, RegistryConfiguration.get());
     GeneralSecurityException e =
         assertThrows(
             GeneralSecurityException.class,
@@ -1941,7 +1952,8 @@ public class KeysetHandleTest {
             42,
             KeyStatusType.UNKNOWN_STATUS,
             OutputPrefixType.TINK);
-    KeysetHandle badKeyset = KeysetHandle.fromKeyset(TestUtil.createKeyset(key1));
+    KeysetHandle badKeyset =
+        KeysetHandle.fromKeyset(TestUtil.createKeyset(key1), RegistryConfiguration.get());
     assertFalse(badKeyset.equalsKeyset(badKeyset));
   }
 
@@ -1956,7 +1968,8 @@ public class KeysetHandleTest {
             OutputPrefixType.TINK);
     Keyset keyset = TestUtil.createKeyset(key1);
     KeysetHandle badKeyset =
-        KeysetHandle.fromKeyset(Keyset.newBuilder(keyset).setPrimaryKeyId(77).build());
+        KeysetHandle.fromKeyset(
+            Keyset.newBuilder(keyset).setPrimaryKeyId(77).build(), RegistryConfiguration.get());
     assertFalse(badKeyset.equalsKeyset(badKeyset));
   }
 

@@ -61,7 +61,7 @@ public final class KeysetManager {
 
   /** @return a {@link KeysetHandle} of the managed keyset */
   public synchronized KeysetHandle getKeysetHandle() throws GeneralSecurityException {
-    return KeysetHandle.fromKeyset(keysetBuilder.build());
+    return KeysetHandle.fromKeyset(keysetBuilder.build(), RegistryConfiguration.get());
   }
 
   /**
