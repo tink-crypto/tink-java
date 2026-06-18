@@ -72,7 +72,7 @@ docker run \
   --env-file /tmp/env_variables.txt \
   --rm \
   "${CONTAINER_IMAGE}" \
-  bash -c "/tink_orig_dir/tink_java/kokoro/testutils/build_maven_bundle.sh"
+  bash -c "/tink_orig_dir/tink_java/tools/build_maven_bundle.sh"
 
 cd "${KOKORO_ARTIFACTS_DIR}"
 mkdir -p kokoro_upload_dir/release
