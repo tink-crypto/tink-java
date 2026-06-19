@@ -22,6 +22,7 @@ import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory;
+import com.google.crypto.tink.internal.Util;
 import java.security.GeneralSecurityException;
 
 /**
@@ -33,13 +34,13 @@ import java.security.GeneralSecurityException;
  */
 public final class WrappedHybridEncrypt {
   private static class HybridEncryptWithId {
-    public HybridEncryptWithId(HybridEncrypt hybridEncrypt, int id) {
+    HybridEncryptWithId(HybridEncrypt hybridEncrypt, int id) {
       this.hybridEncrypt = hybridEncrypt;
       this.id = id;
     }
 
-    public final HybridEncrypt hybridEncrypt;
-    public final int id;
+    final HybridEncrypt hybridEncrypt;
+    final int id;
   }
 
   private static class WrappedHybridEncryptImpl implements HybridEncrypt {
@@ -72,6 +73,9 @@ public final class WrappedHybridEncrypt {
   public static HybridEncrypt create(
       KeysetHandleInterface keysetHandle, PrimitiveFactory<HybridEncrypt> factory)
       throws GeneralSecurityException {
+    if (!Util.hasEnabledPrimaryKey(keysetHandle)) {
+      throw new GeneralSecurityException("keyset doesn't contain a valid primary key");
+    }
     MonitoringClient.Logger encLogger;
     MonitoringAnnotations annotations =
         keysetHandle.getAnnotationsOrNull(MonitoringAnnotations.class);

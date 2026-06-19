@@ -26,7 +26,6 @@ import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
-import com.google.crypto.tink.config.GlobalTinkFlags;
 import com.google.crypto.tink.hybrid.HpkeParameters;
 import com.google.crypto.tink.hybrid.HpkePrivateKey;
 import com.google.crypto.tink.hybrid.HpkePublicKey;
@@ -151,8 +150,8 @@ public class WrappedHybridEncryptTest {
   }
 
   @Test
+  @SuppressWarnings("AssertThrowsMinimizer") // Intended
   public void getPrimitiveNoPrimary_throwsNullPointerException() throws Exception {
-    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     HpkeParameters parameters =
         HpkeParameters.builder()
             .setVariant(HpkeParameters.Variant.NO_PREFIX)
@@ -167,8 +166,9 @@ public class WrappedHybridEncryptTest {
             TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle),
             ExtensionRegistryLite.getEmptyRegistry());
     Keyset keysetWithoutPrimary = keyset.toBuilder().clearPrimaryKeyId().build();
+    // Test that one of parsing or getPrimitive throws (depends on validateKeysetsOnParsing)
     assertThrows(
-        IllegalStateException.class,
+        GeneralSecurityException.class,
         () ->
             TinkProtoKeysetFormat.parseKeysetWithoutSecret(keysetWithoutPrimary.toByteArray())
                 .getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class));
