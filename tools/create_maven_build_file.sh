@@ -54,6 +54,7 @@ create_build_file() {
   cat <<EOF > "${OUT_FILE}"
 # Build file for generating tink and tink-android Maven artifacts.
 
+load("@rules_java//java:defs.bzl", "java_import")
 load("//:tink_version.bzl", "get_tink_version_label")
 load("//tools:gen_maven_jar_rules.bzl", "gen_maven_jar_rules", "maven_bundle")
 

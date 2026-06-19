@@ -1,5 +1,7 @@
 module(name = "examples")
 
+bazel_dep(name = "rules_java", version = "8.16.1")
+
 bazel_dep(name = "tink_java")
 local_path_override(
     module_name = "tink_java",
