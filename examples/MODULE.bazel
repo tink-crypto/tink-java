@@ -14,11 +14,13 @@ maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
 maven.install(
     artifacts = [
         "args4j:args4j:2.33",
+        "com.google.truth:truth:1.4.5",
     ],
     repositories = [
         "https://maven.google.com",
         "https://repo1.maven.org/maven2",
     ],
+    known_contributing_modules = ["examples", "protobuf", "tink_java"],
 )
 
 use_repo(maven, "maven")

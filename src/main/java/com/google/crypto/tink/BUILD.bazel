@@ -1,4 +1,4 @@
-load("@build_bazel_rules_android//android:rules.bzl", "android_library")
+load("@rules_android//android:rules.bzl", "android_library")
 load("@rules_java//java:defs.bzl", "java_library")
 load("//:template_rule.bzl", "template_rule")
 load("//:tink_version.bzl", "get_tink_version_label")
