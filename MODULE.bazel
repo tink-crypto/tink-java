@@ -2,6 +2,9 @@
 
 module(name = "tink_java", version = "1.22.0")
 
+_PROTOBUF_VERSION = "33.6"
+
+bazel_dep(name = "protobuf", version = _PROTOBUF_VERSION)
 bazel_dep(name = "bazel_skylib", version = "1.8.1")
 bazel_dep(name = "rules_java", version = "8.16.1")
 bazel_dep(name = "rules_jvm_external", version = "6.7")
@@ -17,8 +20,8 @@ maven.install(
         "com.google.code.gson:gson:2.13.2",
         "com.google.errorprone:error_prone_annotations:2.41.0",
         "com.google.http-client:google-http-client:1.43.3",
-        "com.google.protobuf:protobuf-java:4.33.6",
-        "com.google.protobuf:protobuf-javalite:4.33.6",
+        "com.google.protobuf:protobuf-java:4.%s" % _PROTOBUF_VERSION,
+        "com.google.protobuf:protobuf-javalite:4.%s" % _PROTOBUF_VERSION,
         "androidx.annotation:annotation:1.8.2",
         "org.conscrypt:conscrypt-openjdk-uber:2.6-alpha2",
         "org.pantsbuild:jarjar:1.7.2",
