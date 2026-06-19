@@ -43,36 +43,7 @@ export ANDROID_HOME=/tmp/android-sdk-30
 
 echo "Java home: ${JAVA_HOME}"
 
-## We only test MacOS with bzlmod. We can then update to Java 11 properly.
-cat > .bazelmod << EOF
-always --noenable_bzlmod
-always --enable_workspace
-# Minumum C++ version. Override it building this project with
-# `bazel build --cxxopt='-std=c++<XY>' --host_cxxopt='c++<XY>' ...`
-# (Both -std and --host_cxxopt must be set to force the desired version.)
-build --cxxopt='-std=c++17' --host_cxxopt='-std=c++17'
-build --java_language_version=11
-build --java_runtime_version=remotejdk_11
-# Silence all C/C++ warnings in external code.
-#
-# Note that this will not silence warnings from external headers included
-# in project code.
-build --per_file_copt=external/.*@-w
-build --host_per_file_copt=external/.*@-w
-test --test_output=errors
-EOF
-
-sed -i.bak "sXandroid-sdk-30Xtmp/android-sdk-30Xg" MODULE.bazel
-
-echo ">>>> .bazelrc"
-cat .bazelrc
-echo "<<<<"
-
-echo ">>>> MODULE.bazel"
-cat MODULE.bazel
-echo "<<<<"
-
 echo "---------- BUILDING MAIN (bzlmod)"
 time bazelisk build "${CACHE_FLAGS[@]}" -- ...
 echo "---------- TESTING MAIN (bzlmod)"
-time bazelisk test "${CACHE_FLAGS[@]}" -- ...
+time bazelisk test --test_output=errors "${CACHE_FLAGS[@]}" -- ...
