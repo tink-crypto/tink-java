@@ -16,6 +16,8 @@
 
 package com.google.crypto.tink.internal;
 
+import com.google.crypto.tink.KeyStatus;
+import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
@@ -157,6 +159,25 @@ public final class Util {
       throw new GeneralSecurityException("Reading pseudorandomness failed");
     }
     return SecretBytes.copyFrom(output, access);
+  }
+
+  /**
+   * Returns true if the keyset has a primary key which is enabled.
+   *
+   * <p>This function is only needed because the flag {@code
+   * GlobalTinkFlags.validateKeysetsOnParsing} might still be off, allowing keysets without a
+   * primary key even exist. Once the flag is removed and keysets without a primary key are always
+   * rejected on parsing, this check will be redundant because {@code keysetHandle.getPrimary()}
+   * will always return a valid primary key.
+   */
+  public static boolean hasEnabledPrimaryKey(KeysetHandleInterface keysetHandle) {
+    for (int i = 0; i < keysetHandle.size(); i++) {
+      KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
+      if (entry.isPrimary() && entry.getStatus().equals(KeyStatus.ENABLED)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private Util() {}

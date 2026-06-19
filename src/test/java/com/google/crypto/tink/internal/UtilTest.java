@@ -21,7 +21,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
+import com.google.crypto.tink.Annotations;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.Key;
+import com.google.crypto.tink.KeyStatus;
+import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import java.io.InputStream;
@@ -168,5 +172,96 @@ public final class UtilTest {
     assertThrows(
         GeneralSecurityException.class,
         () -> Util.readIntoSecretBytes(shortInputStream, 4, InsecureSecretKeyAccess.get()));
+  }
+
+  private static KeysetHandleInterface.Entry createEntry(
+      final KeyStatus status, final boolean isPrimary) {
+    return new KeysetHandleInterface.Entry() {
+      @Override
+      public Key getKey() {
+        return null;
+      }
+
+      @Override
+      public KeyStatus getStatus() {
+        return status;
+      }
+
+      @Override
+      public int getId() {
+        return 0;
+      }
+
+      @Override
+      public boolean isPrimary() {
+        return isPrimary;
+      }
+    };
+  }
+
+  private static KeysetHandleInterface createKeysetHandle(
+      final KeysetHandleInterface.Entry... entries) {
+    return new KeysetHandleInterface() {
+      @Override
+      public Entry getPrimary() {
+        for (Entry entry : entries) {
+          if (entry.isPrimary()) {
+            return entry;
+          }
+        }
+        return null;
+      }
+
+      @Override
+      public int size() {
+        return entries.length;
+      }
+
+      @Override
+      public Entry getAt(int i) {
+        return entries[i];
+      }
+
+      @Override
+      public <T extends Annotations> T getAnnotationsOrNull(Class<T> t) {
+        return null;
+      }
+    };
+  }
+
+  @Test
+  public void testHasEnabledPrimaryKey_true() {
+    KeysetHandleInterface handle =
+        createKeysetHandle(
+            createEntry(KeyStatus.ENABLED, false),
+            createEntry(KeyStatus.ENABLED, true),
+            createEntry(KeyStatus.DISABLED, false));
+    assertTrue(Util.hasEnabledPrimaryKey(handle));
+  }
+
+  @Test
+  public void testHasEnabledPrimaryKey_primaryDisabled_false() {
+    KeysetHandleInterface handle =
+        createKeysetHandle(
+            createEntry(KeyStatus.ENABLED, false),
+            createEntry(KeyStatus.DISABLED, true),
+            createEntry(KeyStatus.DISABLED, false));
+    assertFalse(Util.hasEnabledPrimaryKey(handle));
+  }
+
+  @Test
+  public void testHasEnabledPrimaryKey_noPrimary_false() {
+    KeysetHandleInterface handle =
+        createKeysetHandle(
+            createEntry(KeyStatus.ENABLED, false),
+            createEntry(KeyStatus.ENABLED, false),
+            createEntry(KeyStatus.DISABLED, false));
+    assertFalse(Util.hasEnabledPrimaryKey(handle));
+  }
+
+  @Test
+  public void testHasEnabledPrimaryKey_empty_false() {
+    KeysetHandleInterface handle = createKeysetHandle();
+    assertFalse(Util.hasEnabledPrimaryKey(handle));
   }
 }

@@ -45,6 +45,8 @@ java_library(
         ":build_dispatched_code",
         ":random",
         ":tink_bug_exception",
+        "//src/main/java/com/google/crypto/tink:key_status",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface",
         "//src/main/java/com/google/crypto/tink:secret_key_access",
         "//src/main/java/com/google/crypto/tink/util:bytes",
         "//src/main/java/com/google/crypto/tink/util:secret_bytes",
@@ -58,6 +60,8 @@ android_library(
     deps = [
         ":random-android",
         ":tink_bug_exception-android",
+        "//src/main/java/com/google/crypto/tink:key_status-android",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface-android",
         "//src/main/java/com/google/crypto/tink:secret_key_access-android",
         "//src/main/java/com/google/crypto/tink/util:bytes-android",
         "//src/main/java/com/google/crypto/tink/util:secret_bytes-android",
