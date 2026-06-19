@@ -26,6 +26,7 @@ import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
 import com.google.crypto.tink.Registry;
 import com.google.crypto.tink.RegistryConfiguration;
+import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.LegacyKeyManagerImpl;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
@@ -36,8 +37,10 @@ import com.google.crypto.tink.mac.HmacParameters.HashType;
 import com.google.crypto.tink.mac.internal.AesCmacProtoSerialization;
 import com.google.crypto.tink.mac.internal.HmacProtoSerialization;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
+import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.util.SecretBytes;
+import com.google.protobuf.ExtensionRegistryLite;
 import java.security.GeneralSecurityException;
 import java.util.List;
 import org.junit.BeforeClass;
@@ -617,5 +620,33 @@ public class MacWrapperTest {
     // 4 is tinkKey0's id.
     assertThat(verifyFailure2.getKeysetInfo().getPrimary().getId()).isEqualTo(4);
     assertThat(verifyFailure2.getAnnotations()).isEqualTo(annotations);
+  }
+
+  @Test
+  @SuppressWarnings("AssertThrowsMinimizer") // Intended
+  public void getPrimitive_keysetWithoutPrimary_throws() throws Exception {
+    MutablePrimitiveRegistry.resetGlobalInstanceTestOnly();
+    MacConfig.register();
+
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(rawKey0).withFixedId(1234).makePrimary())
+            .build();
+    byte[] serialized =
+        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+    Keyset keyset = Keyset.parseFrom(serialized, ExtensionRegistryLite.getEmptyRegistry());
+    Keyset keysetWithoutPrimary =
+        Keyset.newBuilder()
+            .addAllKey(keyset.getKeyList())
+            .setPrimaryKeyId(keyset.getPrimaryKeyId() + 1)
+            .build();
+
+    // Test that one of parsing or getPrimitive throws (depends on validateKeysetsOnParsing)
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            TinkProtoKeysetFormat.parseKeyset(
+                    keysetWithoutPrimary.toByteArray(), InsecureSecretKeyAccess.get())
+                .getPrimitive(RegistryConfiguration.get(), Mac.class));
   }
 }

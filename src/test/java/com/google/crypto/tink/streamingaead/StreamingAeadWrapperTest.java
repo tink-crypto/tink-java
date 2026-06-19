@@ -34,7 +34,9 @@ import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.testing.StreamingTestUtil;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.ExtensionRegistryLite;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -345,5 +347,47 @@ public class StreamingAeadWrapperTest {
         () ->
             StreamingTestUtil.testEncryptDecryptDifferentInstances(
                 streamingAeadWithKeyPrimary, streamingAeadWithKeyDisabled, 0, 20, 5));
+  }
+
+  @Test
+  @SuppressWarnings("AssertThrowsMinimizer") // Intended
+  public void getPrimitive_keysetWithoutPrimary_throws() throws Exception {
+    StreamingAeadConfig.register();
+
+    AesCtrHmacStreamingParameters parameters =
+        AesCtrHmacStreamingParameters.builder()
+            .setKeySizeBytes(32)
+            .setDerivedKeySizeBytes(32)
+            .setHkdfHashType(AesCtrHmacStreamingParameters.HashType.SHA256)
+            .setHmacHashType(AesCtrHmacStreamingParameters.HashType.SHA256)
+            .setHmacTagSizeBytes(16)
+            .setCiphertextSegmentSizeBytes(64)
+            .build();
+    AesCtrHmacStreamingKey key =
+        AesCtrHmacStreamingKey.create(
+            parameters,
+            SecretBytes.copyFrom(
+                Hex.decode("abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd"),
+                InsecureSecretKeyAccess.get()));
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withFixedId(42).makePrimary())
+            .build();
+    byte[] serialized =
+        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+    Keyset keyset = Keyset.parseFrom(serialized, ExtensionRegistryLite.getEmptyRegistry());
+    Keyset keysetWithoutPrimary =
+        Keyset.newBuilder()
+            .addAllKey(keyset.getKeyList())
+            .setPrimaryKeyId(keyset.getPrimaryKeyId() + 1)
+            .build();
+
+    // Test that one of parsing or getPrimitive throws (depends on validateKeysetsOnParsing)
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            TinkProtoKeysetFormat.parseKeyset(
+                    keysetWithoutPrimary.toByteArray(), InsecureSecretKeyAccess.get())
+                .getPrimitive(RegistryConfiguration.get(), StreamingAead.class));
   }
 }

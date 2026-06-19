@@ -28,6 +28,7 @@ import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
 import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.Registry;
 import com.google.crypto.tink.RegistryConfiguration;
+import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.LegacyKeyManagerImpl;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
@@ -39,10 +40,12 @@ import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
 import com.google.crypto.tink.prf.HkdfPrfParameters.HashType;
 import com.google.crypto.tink.prf.internal.HkdfPrfProtoSerialization;
 import com.google.crypto.tink.proto.HkdfPrfParams;
+import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.errorprone.annotations.Immutable;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.ExtensionRegistryLite;
 import java.security.GeneralSecurityException;
 import java.util.List;
 import org.junit.BeforeClass;
@@ -389,5 +392,33 @@ public class PrfSetWrapperTest {
     assertThrows(
         GeneralSecurityException.class,
         () -> keysetHandle.getPrimitive(RegistryConfiguration.get(), PrfSet.class));
+  }
+
+  @Test
+  @SuppressWarnings("AssertThrowsMinimizer") // Intended
+  public void getPrimitive_keysetWithoutPrimary_throws() throws Exception {
+    MutablePrimitiveRegistry.resetGlobalInstanceTestOnly();
+    PrfConfig.register();
+
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(hkdfPrfKey0).withFixedId(1234).makePrimary())
+            .build();
+    byte[] serialized =
+        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+    Keyset keyset = Keyset.parseFrom(serialized, ExtensionRegistryLite.getEmptyRegistry());
+    Keyset keysetWithoutPrimary =
+        Keyset.newBuilder()
+            .addAllKey(keyset.getKeyList())
+            .setPrimaryKeyId(keyset.getPrimaryKeyId() + 1)
+            .build();
+
+    // Test that one of parsing or getPrimitive throws (depends on validateKeysetsOnParsing)
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            TinkProtoKeysetFormat.parseKeyset(
+                    keysetWithoutPrimary.toByteArray(), InsecureSecretKeyAccess.get())
+                .getPrimitive(RegistryConfiguration.get(), PrfSet.class));
   }
 }

@@ -24,12 +24,15 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.RegistryConfiguration;
+import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.mac.AesCmacParameters.Variant;
 import com.google.crypto.tink.mac.HmacParameters.HashType;
 import com.google.crypto.tink.mac.internal.AesCmacProtoSerialization;
 import com.google.crypto.tink.mac.internal.HmacProtoSerialization;
+import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.util.SecretBytes;
+import com.google.protobuf.ExtensionRegistryLite;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import org.junit.BeforeClass;
@@ -473,5 +476,30 @@ public class ChunkedMacWrapperTest {
             .createVerification(tag);
     tinkKey0DisabledMac.update(ByteBuffer.wrap(plaintext));
     assertThrows(GeneralSecurityException.class, () -> tinkKey0DisabledMac.verifyMac());
+  }
+
+  @Test
+  @SuppressWarnings("AssertThrowsMinimizer") // Intended
+  public void getPrimitive_keysetWithoutPrimary_throws() throws Exception {
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(rawKey0).withFixedId(1234).makePrimary())
+            .build();
+    byte[] serialized =
+        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+    Keyset keyset = Keyset.parseFrom(serialized, ExtensionRegistryLite.getEmptyRegistry());
+    Keyset keysetWithoutPrimary =
+        Keyset.newBuilder()
+            .addAllKey(keyset.getKeyList())
+            .setPrimaryKeyId(keyset.getPrimaryKeyId() + 1)
+            .build();
+
+    // Test that one of parsing or getPrimitive throws (depends on validateKeysetsOnParsing)
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            TinkProtoKeysetFormat.parseKeyset(
+                    keysetWithoutPrimary.toByteArray(), InsecureSecretKeyAccess.get())
+                .getPrimitive(RegistryConfiguration.get(), ChunkedMac.class));
   }
 }

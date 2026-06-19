@@ -452,6 +452,7 @@ public class AeadWrapperTest {
   }
 
   @Test
+  @SuppressWarnings("AssertThrowsMinimizer") // Intended
   public void getPrimitiveFromKeysetHandleWithoutPrimary_throws() throws Exception {
     MutablePrimitiveRegistry.resetGlobalInstanceTestOnly();
     AeadConfig.register();
@@ -471,6 +472,7 @@ public class AeadWrapperTest {
             KeyStatusType.ENABLED,
             OutputPrefixType.TINK);
     Keyset keysetWithoutPrimary = Keyset.newBuilder().addKey(key).build();
+    // Test that one of parsing or getPrimitive throws (depends on validateKeysetsOnParsing)
     assertThrows(
         GeneralSecurityException.class,
         () ->

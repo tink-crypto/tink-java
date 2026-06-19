@@ -23,17 +23,21 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
 
 import com.google.crypto.tink.DeterministicAead;
+import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.RegistryConfiguration;
+import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.daead.internal.AesSivProtoSerialization;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
+import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.subtle.Random;
 import com.google.crypto.tink.util.SecretBytes;
+import com.google.protobuf.ExtensionRegistryLite;
 import java.security.GeneralSecurityException;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -428,4 +432,30 @@ public class DeterministicAeadWrapperTest {
     assertThat(decFailure.getAnnotations()).isEqualTo(annotations);
   }
 
+  @Test
+  @SuppressWarnings("AssertThrowsMinimizer") // Intended
+  public void getPrimitive_keysetWithoutPrimary_throws() throws Exception {
+    MutablePrimitiveRegistry.resetGlobalInstanceTestOnly();
+    DeterministicAeadConfig.register();
+
+    AesSivKey tinkKey = createKey(AesSivParameters.Variant.TINK, 42);
+    KeysetHandle handle =
+        KeysetHandle.newBuilder().addEntry(KeysetHandle.importKey(tinkKey).makePrimary()).build();
+    byte[] serialized =
+        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+    Keyset keyset = Keyset.parseFrom(serialized, ExtensionRegistryLite.getEmptyRegistry());
+    Keyset keysetWithoutPrimary =
+        Keyset.newBuilder()
+            .addAllKey(keyset.getKeyList())
+            .setPrimaryKeyId(keyset.getPrimaryKeyId() + 1)
+            .build();
+
+    // Test that one of parsing or getPrimitive throws (depends on validateKeysetsOnParsing)
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            TinkProtoKeysetFormat.parseKeyset(
+                    keysetWithoutPrimary.toByteArray(), InsecureSecretKeyAccess.get())
+                .getPrimitive(RegistryConfiguration.get(), DeterministicAead.class));
+  }
 }

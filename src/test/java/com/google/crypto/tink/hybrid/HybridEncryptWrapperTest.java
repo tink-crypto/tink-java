@@ -147,7 +147,8 @@ public class HybridEncryptWrapperTest {
   }
 
   @Test
-  public void getPrimitiveNoPrimary_throwsNullPointerException() throws Exception {
+  @SuppressWarnings("AssertThrowsMinimizer") // Intended
+  public void getPrimitiveNoPrimary_throws() throws Exception {
     setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     HpkeParameters parameters =
         HpkeParameters.builder()
@@ -163,6 +164,7 @@ public class HybridEncryptWrapperTest {
             TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle),
             ExtensionRegistryLite.getEmptyRegistry());
     Keyset keysetWithoutPrimary = keyset.toBuilder().clearPrimaryKeyId().build();
+    // This will throw with an IllegalStateException in getPrimitive (since the flag is set).
     assertThrows(
         IllegalStateException.class,
         () ->

@@ -169,7 +169,8 @@ public class PublicKeySignWrapperTest {
   }
 
   @Theory
-  public void getPrimitiveNoPrimary_throwsNullPointerException() throws Exception {
+  @SuppressWarnings("AssertThrowsMinimizer") // Intended
+  public void getPrimitiveNoPrimary_throws() throws Exception {
     EcdsaParameters parameters =
         EcdsaParameters.builder()
             .setSignatureEncoding(EcdsaParameters.SignatureEncoding.IEEE_P1363)
@@ -184,6 +185,8 @@ public class PublicKeySignWrapperTest {
             TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get()),
             ExtensionRegistryLite.getEmptyRegistry());
     Keyset keysetWithoutPrimary = keyset.toBuilder().clearPrimaryKeyId().build();
+
+    // Test that one of parsing or getPrimitive throws (depends on validateKeysetsOnParsing)
     assertThrows(
         GeneralSecurityException.class,
         () ->
