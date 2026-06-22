@@ -22,6 +22,7 @@ import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.PrefixMap;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
+import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.mac.ChunkedMac;
 import com.google.crypto.tink.mac.ChunkedMacComputation;
 import com.google.crypto.tink.mac.ChunkedMacVerification;
@@ -124,10 +125,10 @@ public final class WrappedChunkedMac {
   public static ChunkedMac create(
       KeysetHandleInterface keysetHandle, PrimitiveWrapper.PrimitiveFactory<ChunkedMac> factory)
       throws GeneralSecurityException {
-    KeysetHandleInterface.Entry primaryEntry = keysetHandle.getPrimary();
-    if (primaryEntry == null) {
-      throw new GeneralSecurityException("no primary in primitive set");
+    if (!Util.hasEnabledPrimaryKey(keysetHandle)) {
+      throw new GeneralSecurityException("keyset doesn't contain a valid primary key");
     }
+    KeysetHandleInterface.Entry primaryEntry = keysetHandle.getPrimary();
     PrefixMap.Builder<ChunkedMac> allChunkedMacsBuilder = new PrefixMap.Builder<ChunkedMac>();
     for (int i = 0; i < keysetHandle.size(); i++) {
       KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);

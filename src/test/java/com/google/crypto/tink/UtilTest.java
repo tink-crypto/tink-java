@@ -142,26 +142,7 @@ public class UtilTest {
     assertExceptionContains(e, "keyset contains multiple primary keys");
   }
 
-  @Test
-  public void testValidateKeyset_primaryKeyIsDisabled_shouldFail() throws Exception {
-    String keyValue = "0123456789012345";
-    // Primary key is disabled.
-    Keyset invalidKeyset =
-        TestUtil.createKeyset(
-            TestUtil.createKey(
-                TestUtil.createHmacKeyData(keyValue.getBytes(UTF_8), 16),
-                42,
-                KeyStatusType.DISABLED,
-                OutputPrefixType.TINK),
-            TestUtil.createKey(
-                TestUtil.createHmacKeyData(keyValue.getBytes(UTF_8), 16),
-                43,
-                KeyStatusType.ENABLED,
-                OutputPrefixType.TINK));
-    GeneralSecurityException e =
-        assertThrows(GeneralSecurityException.class, () -> Util.validateKeyset(invalidKeyset));
-    assertExceptionContains(e, "keyset doesn't contain a valid primary key");
-  }
+
 
   @Test
   public void testValidateKeyset_noEnabledKey_shouldFail() throws Exception {
@@ -184,24 +165,7 @@ public class UtilTest {
     assertExceptionContains(e, "keyset must contain at least one ENABLED key");
   }
 
-  @Test
-  public void testValidateKeyset_noPrimaryKey_shouldFail() throws Exception {
-    String keyValue = "0123456789012345";
-    // No primary key.
-    Keyset invalidKeyset =
-        Keyset.newBuilder()
-            .addKey(
-                Keyset.Key.newBuilder()
-                    .setKeyData(TestUtil.createHmacKeyData(keyValue.getBytes(UTF_8), 16))
-                    .setKeyId(1)
-                    .setStatus(KeyStatusType.ENABLED)
-                    .setOutputPrefixType(OutputPrefixType.TINK)
-                    .build())
-            .build();
-    GeneralSecurityException e =
-        assertThrows(GeneralSecurityException.class, () -> Util.validateKeyset(invalidKeyset));
-    assertExceptionContains(e, "keyset doesn't contain a valid primary key");
-  }
+
 
   @Test
   public void testValidateKeyset_noPrimaryKey_keysetContainsOnlyPublicKeys_shouldWork()

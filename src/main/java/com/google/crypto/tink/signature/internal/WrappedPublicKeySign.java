@@ -23,6 +23,7 @@ import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
+import com.google.crypto.tink.internal.Util;
 import java.security.GeneralSecurityException;
 
 /** Provides a method "create", creating a public key sign from a keyset. */
@@ -64,6 +65,9 @@ public final class WrappedPublicKeySign {
   public static PublicKeySign create(
       KeysetHandleInterface keysetHandle, PrimitiveWrapper.PrimitiveFactory<PublicKeySign> factory)
       throws GeneralSecurityException {
+    if (!Util.hasEnabledPrimaryKey(keysetHandle)) {
+      throw new GeneralSecurityException("keyset doesn't contain a valid primary key");
+    }
     MonitoringClient.Logger logger;
     MonitoringAnnotations annotations =
         keysetHandle.getAnnotationsOrNull(MonitoringAnnotations.class);

@@ -20,6 +20,7 @@ import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.StreamingAead;
 import com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory;
+import com.google.crypto.tink.internal.Util;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,9 @@ public class WrappedStreamingAead {
   public static StreamingAead wrap(
       KeysetHandleInterface handle, PrimitiveFactory<StreamingAead> factory)
       throws GeneralSecurityException {
+    if (!Util.hasEnabledPrimaryKey(handle)) {
+      throw new GeneralSecurityException("keyset doesn't contain a valid primary key");
+    }
     List<StreamingAead> allStreamingAeads = new ArrayList<>();
     for (int i = 0; i < handle.size(); i++) {
       KeysetHandleInterface.Entry entry = handle.getAt(i);

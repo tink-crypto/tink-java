@@ -148,6 +148,7 @@ java_library(
         "//src/main/java/com/google/crypto/tink/internal:mutable_monitoring_registry",
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper",
+        "//src/main/java/com/google/crypto/tink/internal:util",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
@@ -525,6 +526,7 @@ java_library(
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry",
         "//src/main/java/com/google/crypto/tink/internal:primitive_registry",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper",
+        "//src/main/java/com/google/crypto/tink/internal:util",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
@@ -543,6 +545,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper-android",
+        "//src/main/java/com/google/crypto/tink/internal:util-android",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
@@ -647,6 +650,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink/internal:mutable_monitoring_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:mutable_primitive_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper-android",
+        "//src/main/java/com/google/crypto/tink/internal:util-android",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )

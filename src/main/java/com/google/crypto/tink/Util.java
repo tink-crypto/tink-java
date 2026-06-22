@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc.
+// Copyright 2017 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package com.google.crypto.tink;
 
-import com.google.crypto.tink.proto.KeyData;
 import com.google.crypto.tink.proto.KeyStatusType;
 import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.proto.KeysetInfo;
@@ -79,7 +78,6 @@ final class Util {
   public static void validateKeyset(Keyset keyset) throws GeneralSecurityException {
     int primaryKeyId = keyset.getPrimaryKeyId();
     boolean hasPrimaryKey = false;
-    boolean containsOnlyPublicKeyMaterial = true;
     int numEnabledKeys = 0;
     for (Keyset.Key key : keyset.getKeyList()) {
       if (key.getStatus() != KeyStatusType.ENABLED) {
@@ -92,17 +90,10 @@ final class Util {
         }
         hasPrimaryKey = true;
       }
-      if (key.getKeyData().getKeyMaterialType() != KeyData.KeyMaterialType.ASYMMETRIC_PUBLIC) {
-        containsOnlyPublicKeyMaterial = false;
-      }
       numEnabledKeys++;
     }
     if (numEnabledKeys == 0) {
       throw new GeneralSecurityException("keyset must contain at least one ENABLED key");
-    }
-    // Checks that a keyset contains a primary key, except when it contains only public keys.
-    if (!hasPrimaryKey && !containsOnlyPublicKeyMaterial) {
-      throw new GeneralSecurityException("keyset doesn't contain a valid primary key");
     }
   }
 

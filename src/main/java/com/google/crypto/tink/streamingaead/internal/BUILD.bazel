@@ -210,6 +210,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink:keyset_handle_interface-android",
         "//src/main/java/com/google/crypto/tink:streaming_aead-android",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper-android",
+        "//src/main/java/com/google/crypto/tink/internal:util-android",
     ],
 )
 
@@ -262,5 +263,6 @@ java_library(
         "//src/main/java/com/google/crypto/tink:keyset_handle_interface",
         "//src/main/java/com/google/crypto/tink:streaming_aead",
         "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper",
+        "//src/main/java/com/google/crypto/tink/internal:util",
     ],
 )

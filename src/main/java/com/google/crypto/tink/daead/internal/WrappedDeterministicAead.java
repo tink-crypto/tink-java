@@ -28,6 +28,7 @@ import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.PrefixMap;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
+import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.util.Bytes;
 import java.security.GeneralSecurityException;
 
@@ -108,6 +109,9 @@ public final class WrappedDeterministicAead {
   public static DeterministicAead create(
       KeysetHandleInterface handle, PrimitiveWrapper.PrimitiveFactory<DeterministicAead> factory)
       throws GeneralSecurityException {
+    if (!Util.hasEnabledPrimaryKey(handle)) {
+      throw new GeneralSecurityException("keyset doesn't contain a valid primary key");
+    }
     PrefixMap.Builder<DeterministicAeadWithId> builder = new PrefixMap.Builder<>();
     for (int i = 0; i < handle.size(); i++) {
       KeysetHandleInterface.Entry entry = handle.getAt(i);

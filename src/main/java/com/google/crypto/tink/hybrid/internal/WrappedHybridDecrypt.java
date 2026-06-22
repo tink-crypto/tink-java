@@ -27,6 +27,7 @@ import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.PrefixMap;
 import com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory;
+import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.util.Bytes;
 import java.security.GeneralSecurityException;
 
@@ -97,7 +98,10 @@ public class WrappedHybridDecrypt {
   public static HybridDecrypt create(
       KeysetHandleInterface keysetHandle, PrimitiveFactory<HybridDecrypt> factory)
       throws GeneralSecurityException {
-    PrefixMap.Builder<HybridDecryptWithId> builder = new PrefixMap.Builder<>();
+    if (!Util.hasEnabledPrimaryKey(keysetHandle)) {
+      throw new GeneralSecurityException("keyset doesn't contain a valid primary key");
+    }
+    PrefixMap.Builder<WrappedHybridDecrypt.HybridDecryptWithId> builder = new PrefixMap.Builder<>();
     for (int i = 0; i < keysetHandle.size(); i++) {
       KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);
       if (entry.getStatus().equals(KeyStatus.ENABLED)) {

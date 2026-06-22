@@ -23,6 +23,7 @@ import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
+import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.keyderivation.KeysetDeriver;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
@@ -47,8 +48,8 @@ public final class KeysetDeriverWrapper implements PrimitiveWrapper<KeyDeriver, 
   public static final KeysetDeriverWrapper WRAPPER = new KeysetDeriverWrapper();
 
   private static void validate(KeysetHandleInterface keysetHandle) throws GeneralSecurityException {
-    if (keysetHandle.getPrimary() == null) {
-      throw new GeneralSecurityException("Primitive set has no primary.");
+    if (!Util.hasEnabledPrimaryKey(keysetHandle)) {
+      throw new GeneralSecurityException("keyset doesn't contain a valid primary key");
     }
   }
 

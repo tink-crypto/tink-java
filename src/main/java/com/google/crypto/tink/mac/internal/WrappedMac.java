@@ -27,6 +27,7 @@ import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.PrefixMap;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
+import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.mac.MacKey;
 import com.google.crypto.tink.util.Bytes;
 import java.security.GeneralSecurityException;
@@ -106,6 +107,9 @@ public final class WrappedMac {
   public static Mac create(
       KeysetHandleInterface keysetHandle, PrimitiveWrapper.PrimitiveFactory<Mac> factory)
       throws GeneralSecurityException {
+    if (!Util.hasEnabledPrimaryKey(keysetHandle)) {
+      throw new GeneralSecurityException("keyset doesn't contain a valid primary key");
+    }
     PrefixMap.Builder<MacWithId> builder = new PrefixMap.Builder<>();
     for (int i = 0; i < keysetHandle.size(); i++) {
       KeysetHandleInterface.Entry entry = keysetHandle.getAt(i);

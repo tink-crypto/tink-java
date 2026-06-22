@@ -24,6 +24,7 @@ import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
+import com.google.crypto.tink.internal.Util;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 
@@ -51,6 +52,9 @@ class JwtPublicKeySignWrapper implements PrimitiveWrapper<JwtPublicKeySign, JwtP
     WrappedJwtPublicKeySign(
         KeysetHandleInterface keysetHandle, PrimitiveFactory<JwtPublicKeySign> factory)
         throws GeneralSecurityException {
+      if (!Util.hasEnabledPrimaryKey(keysetHandle)) {
+        throw new GeneralSecurityException("keyset doesn't contain a valid primary key");
+      }
       this.primary = factory.create(keysetHandle.getPrimary());
       this.primaryKeyId = keysetHandle.getPrimary().getId();
       MonitoringAnnotations annotations =

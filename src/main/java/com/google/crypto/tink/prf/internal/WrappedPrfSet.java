@@ -23,6 +23,7 @@ import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
+import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.prf.Prf;
 import com.google.crypto.tink.prf.PrfSet;
 import com.google.errorprone.annotations.Immutable;
@@ -87,6 +88,9 @@ public final class WrappedPrfSet {
   public static PrfSet create(
       KeysetHandleInterface keysetHandle, PrimitiveWrapper.PrimitiveFactory<Prf> factory)
       throws GeneralSecurityException {
+    if (!Util.hasEnabledPrimaryKey(keysetHandle)) {
+      throw new GeneralSecurityException("keyset doesn't contain a valid primary key");
+    }
     MonitoringClient.Logger logger;
     MonitoringAnnotations annotations =
         keysetHandle.getAnnotationsOrNull(MonitoringAnnotations.class);

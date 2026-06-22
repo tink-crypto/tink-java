@@ -24,6 +24,7 @@ import com.google.crypto.tink.internal.MonitoringUtil;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
+import com.google.crypto.tink.internal.Util;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -46,8 +47,8 @@ class JwtMacWrapper implements PrimitiveWrapper<JwtMac, JwtMac> {
   private static final JwtMacWrapper WRAPPER = new JwtMacWrapper();
 
   private static void validate(KeysetHandleInterface keysetHandle) throws GeneralSecurityException {
-    if (keysetHandle.getPrimary() == null) {
-      throw new GeneralSecurityException("Primitive set has no primary.");
+    if (!Util.hasEnabledPrimaryKey(keysetHandle)) {
+      throw new GeneralSecurityException("keyset doesn't contain a valid primary key");
     }
   }
 
