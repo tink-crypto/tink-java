@@ -1,20 +1,5 @@
-load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
-
 package(default_visibility = ["//:__subpackages__"])
 
 licenses(["notice"])
-
-filegroup(
-    name = "maven_settings",
-    srcs = ["settings.xml"],
-)
-
-sh_binary(
-    name = "maven_deploy_library",
-    srcs = ["maven_deploy_library.sh"],
-    target_compatible_with = [
-        "@platforms//os:linux",
-    ],
-)
 
 exports_files(glob(["*.pom.xml"]))
