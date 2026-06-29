@@ -22,7 +22,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
 
+import com.google.crypto.tink.config.GlobalTinkFlags;
 import com.google.crypto.tink.internal.SlowInputStream;
+import com.google.crypto.tink.internal.testing.SetTinkFlag;
 import com.google.crypto.tink.proto.KeyData;
 import com.google.crypto.tink.proto.KeyStatusType;
 import com.google.crypto.tink.proto.Keyset;
@@ -33,6 +35,7 @@ import com.google.crypto.tink.testing.TestUtil;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -40,6 +43,7 @@ import org.junit.runners.JUnit4;
 /** Tests for Util. */
 @RunWith(JUnit4.class)
 public class UtilTest {
+  @Rule public final SetTinkFlag setTinkFlag = new SetTinkFlag();
 
   @Test
   public void testValidateKey_success() throws Exception {
@@ -98,6 +102,7 @@ public class UtilTest {
 
   @Test
   public void testValidateKeyset_shouldWork() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     String keyValue = "0123456789012345";
     Keyset keyset =
         TestUtil.createKeyset(
@@ -106,8 +111,10 @@ public class UtilTest {
                 -42,
                 KeyStatusType.ENABLED,
                 OutputPrefixType.TINK));
+    KeysetHandle handle =
+        TinkProtoKeysetFormat.parseKeyset(keyset.toByteArray(), InsecureSecretKeyAccess.get());
     try {
-      Util.validateKeyset(keyset);
+      Util.validateKeyset(handle);
     } catch (GeneralSecurityException e) {
       fail("Valid keyset; should not throw Exception: " + e);
     }
@@ -115,6 +122,7 @@ public class UtilTest {
 
   @Test
   public void testValidateKeyset_multiplePrimaryKeys_shouldFail() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     String keyValue = "0123456789012345";
     // Multiple primary keys.
     Keyset invalidKeyset =
@@ -129,14 +137,18 @@ public class UtilTest {
                 42,
                 KeyStatusType.ENABLED,
                 OutputPrefixType.TINK));
+    KeysetHandle handle =
+        TinkProtoKeysetFormat.parseKeyset(
+            invalidKeyset.toByteArray(), InsecureSecretKeyAccess.get());
     GeneralSecurityException e =
-        assertThrows(GeneralSecurityException.class, () -> Util.validateKeyset(invalidKeyset));
+        assertThrows(GeneralSecurityException.class, () -> Util.validateKeyset(handle));
     assertExceptionContains(e, "keyset contains multiple primary keys");
   }
 
   @Test
   public void testValidateKeyset_noPrimaryKey_keysetContainsOnlyPublicKeys_shouldWork()
       throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     // No primary key, but contains only public key material.
     Keyset validKeyset =
         Keyset.newBuilder()
@@ -152,8 +164,10 @@ public class UtilTest {
                     .setOutputPrefixType(OutputPrefixType.TINK)
                     .build())
             .build();
+    KeysetHandle handle =
+        TinkProtoKeysetFormat.parseKeyset(validKeyset.toByteArray(), InsecureSecretKeyAccess.get());
     try {
-      Util.validateKeyset(validKeyset);
+      Util.validateKeyset(handle);
     } catch (GeneralSecurityException e) {
       fail("Valid keyset, should not fail: " + e);
     }
@@ -161,6 +175,7 @@ public class UtilTest {
 
   @Test
   public void testValidateKeyset_withDestroyedKey_shouldWork() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     String keyValue = "0123456789012345";
     Keyset validKeyset =
         TestUtil.createKeyset(
@@ -174,29 +189,13 @@ public class UtilTest {
                 42,
                 KeyStatusType.DESTROYED,
                 OutputPrefixType.TINK));
+    KeysetHandle handle =
+        TinkProtoKeysetFormat.parseKeyset(validKeyset.toByteArray(), InsecureSecretKeyAccess.get());
     try {
-      Util.validateKeyset(validKeyset);
+      Util.validateKeyset(handle);
     } catch (GeneralSecurityException e) {
       fail("Valid keyset, should not fail: " + e);
     }
-  }
-
-  @Test
-  public void testValidateKeyset_withUnknownStatusKey_works() throws Exception {
-    String keyValue = "0123456789012345";
-    Keyset keyset =
-        TestUtil.createKeyset(
-            /* primary= */ TestUtil.createKey(
-                TestUtil.createHmacKeyData(keyValue.getBytes(UTF_8), 16),
-                42,
-                KeyStatusType.ENABLED,
-                OutputPrefixType.TINK),
-            TestUtil.createKey(
-                TestUtil.createHmacKeyData(keyValue.getBytes(UTF_8), 16),
-                123,
-                KeyStatusType.UNKNOWN_STATUS,
-                OutputPrefixType.TINK));
-    Util.validateKeyset(keyset);
   }
 
   @Test

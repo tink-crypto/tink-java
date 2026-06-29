@@ -1267,8 +1267,6 @@ public final class KeysetHandle implements KeysetHandleInterface {
     if (!hasEnabled) {
       throw new GeneralSecurityException("keyset must contain at least one ENABLED key");
     }
-    Keyset keyset = getUnmonitoredHandle().getKeyset();
-    Util.validateKeyset(keyset);
     for (int i = 0; i < size(); ++i) {
       if (entries.get(i).keyParsingFailed || !isValidKeyStatusType(entries.get(i).keyStatusType)) {
         // Do not use "getKey" to avoid logging key export
@@ -1288,6 +1286,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
                 + " failed, unable to get primitive");
       }
     }
+    Util.validateKeyset(getUnmonitoredHandle());
     return configuration.createPrimitive(getUnmonitoredHandle(), targetClassObject);
   }
 

@@ -372,13 +372,21 @@ android_library(
 java_library(
     name = "util",
     srcs = ["Util.java"],
-    deps = ["//proto:tink_java_proto"],
+    deps = [
+        ":key_status",
+        ":keyset_handle_interface",
+        "//proto:tink_java_proto",
+    ],
 )
 
 android_library(
     name = "util-android",
     srcs = ["Util.java"],
-    deps = ["//proto:tink_java_proto_lite"],
+    deps = [
+        ":key_status-android",
+        ":keyset_handle_interface-android",
+        "//proto:tink_java_proto_lite",
+    ],
 )
 
 java_library(

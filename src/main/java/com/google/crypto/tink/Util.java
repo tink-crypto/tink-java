@@ -71,19 +71,18 @@ final class Util {
   }
 
   /**
-   * Validates a {@code Keyset}.
+   * Validates a {@code KeysetHandleInterface}.
    *
    * @throws GeneralSecurityException if {@code keyset} is invalid.
    */
-  public static void validateKeyset(Keyset keyset) throws GeneralSecurityException {
-    int primaryKeyId = keyset.getPrimaryKeyId();
+  public static void validateKeyset(KeysetHandleInterface keyset) throws GeneralSecurityException {
     boolean hasPrimaryKey = false;
-    for (Keyset.Key key : keyset.getKeyList()) {
-      if (key.getStatus() != KeyStatusType.ENABLED) {
+    for (int i = 0; i < keyset.size(); i++) {
+      KeysetHandleInterface.Entry entry = keyset.getAt(i);
+      if (entry.getStatus() != KeyStatus.ENABLED) {
         continue;
       }
-      validateKey(key);
-      if (key.getKeyId() == primaryKeyId) {
+      if (entry.isPrimary()) {
         if (hasPrimaryKey) {
           throw new GeneralSecurityException("keyset contains multiple primary keys");
         }
