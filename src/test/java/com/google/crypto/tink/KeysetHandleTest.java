@@ -17,6 +17,7 @@
 package com.google.crypto.tink;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.crypto.tink.testing.TestUtil.assertExceptionContains;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
@@ -478,6 +479,32 @@ public class KeysetHandleTest {
     Aead aead = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     assertThat(aead.decrypt(aead.encrypt(message, aad), aad)).isEqualTo(message);
+  }
+
+  @Test
+  public void getPrimitive_noEnabledKey_throws() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
+    String keyValue = "0123456789012345";
+    Keyset invalidKeyset =
+        TestUtil.createKeyset(
+            TestUtil.createKey(
+                TestUtil.createHmacKeyData(keyValue.getBytes(UTF_8), 16),
+                42,
+                KeyStatusType.DISABLED,
+                OutputPrefixType.TINK),
+            TestUtil.createKey(
+                TestUtil.createHmacKeyData(keyValue.getBytes(UTF_8), 16),
+                42,
+                KeyStatusType.DESTROYED,
+                OutputPrefixType.TINK));
+    KeysetHandle handle =
+        TinkProtoKeysetFormat.parseKeyset(
+            invalidKeyset.toByteArray(), InsecureSecretKeyAccess.get());
+    GeneralSecurityException e =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> handle.getPrimitive(RegistryConfiguration.get(), Mac.class));
+    assertExceptionContains(e, "keyset must contain at least one ENABLED key");
   }
 
   // Tests that getPrimitive does correct wrapping and not just return the primary. For this, we

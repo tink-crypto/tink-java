@@ -114,14 +114,6 @@ public class UtilTest {
   }
 
   @Test
-  public void testValidateKeyset_emptyKeyset_shouldFail() throws Exception {
-    GeneralSecurityException e =
-        assertThrows(
-            GeneralSecurityException.class, () -> Util.validateKeyset(Keyset.getDefaultInstance()));
-    assertExceptionContains(e, "keyset must contain at least one ENABLED key");
-  }
-
-  @Test
   public void testValidateKeyset_multiplePrimaryKeys_shouldFail() throws Exception {
     String keyValue = "0123456789012345";
     // Multiple primary keys.
@@ -141,31 +133,6 @@ public class UtilTest {
         assertThrows(GeneralSecurityException.class, () -> Util.validateKeyset(invalidKeyset));
     assertExceptionContains(e, "keyset contains multiple primary keys");
   }
-
-
-
-  @Test
-  public void testValidateKeyset_noEnabledKey_shouldFail() throws Exception {
-    String keyValue = "0123456789012345";
-    // No ENABLED key.
-    Keyset invalidKeyset =
-        TestUtil.createKeyset(
-            TestUtil.createKey(
-                TestUtil.createHmacKeyData(keyValue.getBytes(UTF_8), 16),
-                42,
-                KeyStatusType.DISABLED,
-                OutputPrefixType.TINK),
-            TestUtil.createKey(
-                TestUtil.createHmacKeyData(keyValue.getBytes(UTF_8), 16),
-                42,
-                KeyStatusType.DESTROYED,
-                OutputPrefixType.TINK));
-    GeneralSecurityException e =
-        assertThrows(GeneralSecurityException.class, () -> Util.validateKeyset(invalidKeyset));
-    assertExceptionContains(e, "keyset must contain at least one ENABLED key");
-  }
-
-
 
   @Test
   public void testValidateKeyset_noPrimaryKey_keysetContainsOnlyPublicKeys_shouldWork()

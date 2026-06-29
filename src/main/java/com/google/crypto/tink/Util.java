@@ -78,7 +78,6 @@ final class Util {
   public static void validateKeyset(Keyset keyset) throws GeneralSecurityException {
     int primaryKeyId = keyset.getPrimaryKeyId();
     boolean hasPrimaryKey = false;
-    int numEnabledKeys = 0;
     for (Keyset.Key key : keyset.getKeyList()) {
       if (key.getStatus() != KeyStatusType.ENABLED) {
         continue;
@@ -90,10 +89,6 @@ final class Util {
         }
         hasPrimaryKey = true;
       }
-      numEnabledKeys++;
-    }
-    if (numEnabledKeys == 0) {
-      throw new GeneralSecurityException("keyset must contain at least one ENABLED key");
     }
   }
 

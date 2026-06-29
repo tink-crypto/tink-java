@@ -1257,6 +1257,16 @@ public final class KeysetHandle implements KeysetHandleInterface {
    */
   public <P> P getPrimitive(Configuration configuration, Class<P> targetClassObject)
       throws GeneralSecurityException {
+    boolean hasEnabled = false;
+    for (int i = 0; i < size(); ++i) {
+      if (entries.get(i).getStatus() == KeyStatus.ENABLED) {
+        hasEnabled = true;
+        break;
+      }
+    }
+    if (!hasEnabled) {
+      throw new GeneralSecurityException("keyset must contain at least one ENABLED key");
+    }
     Keyset keyset = getUnmonitoredHandle().getKeyset();
     Util.validateKeyset(keyset);
     for (int i = 0; i < size(); ++i) {
