@@ -3,6 +3,46 @@ load("@rules_java//java:defs.bzl", "java_test")
 licenses(["notice"])
 
 java_test(
+    name = "EcdsaSignerTest",
+    size = "small",
+    srcs = ["EcdsaSignerTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink:public_key_sign",
+        "//src/main/java/com/google/crypto/tink:public_key_verify",
+        "//src/main/java/com/google/crypto/tink/signature:ecdsa_private_key",
+        "//src/main/java/com/google/crypto/tink/signature/internal/testing:ecdsa_test_util",
+        "//src/main/java/com/google/crypto/tink/signature/internal/testing:signature_test_vector",
+        "//src/main/java/com/google/crypto/tink/signature/subtle:ecdsa_signer",
+        "//src/main/java/com/google/crypto/tink/signature/subtle:ecdsa_verifier",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
+    name = "EcdsaVerifierTest",
+    size = "small",
+    srcs = ["EcdsaVerifierTest.java"],
+    data = ["//third_party/wycheproof:testvectors_v1"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink:public_key_verify",
+        "//src/main/java/com/google/crypto/tink/signature:ecdsa_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:ecdsa_private_key",
+        "//src/main/java/com/google/crypto/tink/signature:ecdsa_public_key",
+        "//src/main/java/com/google/crypto/tink/signature/internal/testing:ecdsa_test_util",
+        "//src/main/java/com/google/crypto/tink/signature/internal/testing:signature_test_vector",
+        "//src/main/java/com/google/crypto/tink/signature/subtle:ecdsa_verifier",
+        "//src/main/java/com/google/crypto/tink/subtle:bytes",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "//src/main/java/com/google/crypto/tink/testing:test_util",
+        "//src/main/java/com/google/crypto/tink/testing:wycheproof_test_util",
+        "@maven//:com_google_code_gson_gson",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
     name = "Ed25519VerifierTest",
     size = "small",
     srcs = ["Ed25519VerifierTest.java"],
