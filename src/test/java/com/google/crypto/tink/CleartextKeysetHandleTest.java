@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc.
+// Copyright 2017 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,8 +26,10 @@ import static org.junit.Assert.assertTrue;
 import com.google.crypto.tink.config.TinkConfig;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
+import com.google.crypto.tink.internal.TinkBugException;
 import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
 import com.google.crypto.tink.proto.Keyset;
+import com.google.errorprone.annotations.Immutable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -35,6 +37,7 @@ import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nullable;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -175,5 +178,44 @@ public class CleartextKeysetHandleTest {
     MonitoringAnnotations expectedAnnotations =
         MonitoringAnnotations.newBuilder().add("annotation_name", "annotation_value").build();
     assertThat(entry.getAnnotations()).isEqualTo(expectedAnnotations);
+  }
+
+  @Immutable
+  private static final class TestKey extends Key {
+    @Override
+    public Parameters getParameters() {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    @Nullable
+    public Integer getIdRequirementOrNull() {
+      return null;
+    }
+
+    @Override
+    public boolean equalsKey(Key other) {
+      throw new UnsupportedOperationException();
+    }
+  }
+
+  @Test
+  public void testGetKeyset_throwsIllegalArgumentExceptionIfKeyCannotBeSerialized()
+      throws Exception {
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(new TestKey()).withFixedId(123).makePrimary())
+            .build();
+    assertThrows(TinkBugException.class, () -> CleartextKeysetHandle.getKeyset(handle));
+  }
+
+  @Test
+  public void testWrite_throwsIllegalArgumentExceptionIfKeyCannotBeSerialized() throws Exception {
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(new TestKey()).withFixedId(123).makePrimary())
+            .build();
+    KeysetWriter keysetWriter = BinaryKeysetWriter.withOutputStream(new ByteArrayOutputStream());
+    assertThrows(TinkBugException.class, () -> CleartextKeysetHandle.write(handle, keysetWriter));
   }
 }

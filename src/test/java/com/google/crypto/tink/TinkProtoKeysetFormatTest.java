@@ -23,6 +23,7 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.aead.AeadConfig;
 import com.google.crypto.tink.aead.AesGcmParameters;
 import com.google.crypto.tink.config.GlobalTinkFlags;
+import com.google.crypto.tink.internal.TinkBugException;
 import com.google.crypto.tink.internal.testing.SetTinkFlag;
 import com.google.crypto.tink.mac.MacConfig;
 import com.google.crypto.tink.proto.KeyData;
@@ -34,6 +35,7 @@ import com.google.crypto.tink.subtle.Hex;
 import com.google.protobuf.ByteString;
 import java.io.ByteArrayOutputStream;
 import java.security.GeneralSecurityException;
+import javax.annotation.Nullable;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -461,5 +463,35 @@ public final class TinkProtoKeysetFormatTest {
     // as a protobuf bytes field. So, it should only be slightly larger than {@code
     // rawEncryptedKeyset}.
     assertThat(encryptedKeyset.length).isLessThan(rawEncryptedKeyset.length + 6);
+  }
+
+  private static final class TestKey extends Key {
+    @Override
+    public Parameters getParameters() {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    @Nullable
+    public Integer getIdRequirementOrNull() {
+      return null;
+    }
+
+    @Override
+    public boolean equalsKey(Key other) {
+      throw new UnsupportedOperationException();
+    }
+  }
+
+  @Test
+  public void serializeKeyset_withUnserializableKey_throwsGeneralSecurityException()
+      throws Exception {
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(new TestKey()).withFixedId(123).makePrimary())
+            .build();
+    SecretKeyAccess access = InsecureSecretKeyAccess.get();
+    assertThrows(
+        TinkBugException.class, () -> TinkProtoKeysetFormat.serializeKeyset(handle, access));
   }
 }

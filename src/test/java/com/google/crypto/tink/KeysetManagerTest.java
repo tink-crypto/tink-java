@@ -25,6 +25,7 @@ import com.google.common.truth.Expect;
 import com.google.crypto.tink.aead.AesGcmKeyManager;
 import com.google.crypto.tink.config.GlobalTinkFlags;
 import com.google.crypto.tink.config.TinkConfig;
+import com.google.crypto.tink.internal.TinkBugException;
 import com.google.crypto.tink.internal.testing.SetTinkFlag;
 import com.google.crypto.tink.mac.PredefinedMacParameters;
 import com.google.crypto.tink.proto.KeyStatusType;
@@ -41,6 +42,7 @@ import com.google.protobuf.ExtensionRegistryLite;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
+import javax.annotation.Nullable;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -1180,5 +1182,33 @@ public class KeysetManagerTest {
     assertThat(keyset.getKeyCount()).isEqualTo(1);
     assertThat(keyset.getKey(0).getKeyId()).isEqualTo(keyset.getPrimaryKeyId());
     assertThat(keyset.getKey(0).getStatus()).isEqualTo(KeyStatusType.ENABLED);
+  }
+
+  private static final class TestKey extends com.google.crypto.tink.Key {
+    @Override
+    public Parameters getParameters() {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    @Nullable
+    public Integer getIdRequirementOrNull() {
+      return null;
+    }
+
+    @Override
+    public boolean equalsKey(com.google.crypto.tink.Key other) {
+      throw new UnsupportedOperationException();
+    }
+  }
+
+  @Test
+  public void testWithKeysetHandle_throwsTinkBugExceptionIfKeyCannotBeSerialized()
+      throws Exception {
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(new TestKey()).withFixedId(123).makePrimary())
+            .build();
+    assertThrows(TinkBugException.class, () -> KeysetManager.withKeysetHandle(handle));
   }
 }

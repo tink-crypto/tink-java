@@ -40,6 +40,7 @@ import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
+import com.google.crypto.tink.internal.TinkBugException;
 import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
 import com.google.crypto.tink.internal.testing.SetTinkFlag;
 import com.google.crypto.tink.jwt.JwtSignatureConfig;
@@ -1060,6 +1061,10 @@ public class KeysetHandleTest {
   private static final class TestKey extends Key {
     private final ByteString keymaterial;
 
+    public TestKey() {
+      this(ByteString.EMPTY);
+    }
+
     public TestKey(ByteString keymaterial) {
       this.keymaterial = keymaterial;
     }
@@ -1072,7 +1077,7 @@ public class KeysetHandleTest {
     @Override
     @Nullable
     public Integer getIdRequirementOrNull() {
-      throw new UnsupportedOperationException("Not needed in test");
+      return null;
     }
 
     @Override
@@ -2521,5 +2526,65 @@ public class KeysetHandleTest {
             .build();
     assertThat(handle.getAnnotationsOrNull(Annotations1.class)).isNotNull();
     assertThat(handle.getAnnotationsOrNull(Annotations2.class)).isNotNull();
+  }
+
+  @Test
+  public void getKeys_throwsIllegalArgumentExceptionIfKeyCannotBeSerialized() throws Exception {
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(new TestKey()).withFixedId(123).makePrimary())
+            .build();
+    assertThrows(TinkBugException.class, handle::getKeys);
+  }
+
+  @Test
+  public void getKeysetInfo_throwsIllegalArgumentExceptionIfKeyCannotBeSerialized()
+      throws Exception {
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(new TestKey()).withFixedId(123).makePrimary())
+            .build();
+    assertThrows(TinkBugException.class, handle::getKeysetInfo);
+  }
+
+  @Test
+  public void writeWithAssociatedData_throwsGeneralSecurityExceptionIfKeyCannotBeSerialized()
+      throws Exception {
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(new TestKey()).withFixedId(123).makePrimary())
+            .build();
+    Aead aead =
+        KeysetHandle.generateNew(KeyTemplates.get("AES128_GCM"))
+            .getPrimitive(RegistryConfiguration.get(), Aead.class);
+    assertThrows(
+        TinkBugException.class,
+        () ->
+            handle.writeWithAssociatedData(
+                BinaryKeysetWriter.withOutputStream(new ByteArrayOutputStream()),
+                aead,
+                new byte[0]));
+  }
+
+  @Test
+  public void writeNoSecret_throwsGeneralSecurityExceptionIfKeyCannotBeSerialized()
+      throws Exception {
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(new TestKey()).withFixedId(123).makePrimary())
+            .build();
+    assertThrows(
+        TinkBugException.class,
+        () ->
+            handle.writeNoSecret(BinaryKeysetWriter.withOutputStream(new ByteArrayOutputStream())));
+  }
+
+  @Test
+  public void primaryKey_throwsGeneralSecurityExceptionIfKeyCannotBeSerialized() throws Exception {
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(new TestKey()).withFixedId(123).makePrimary())
+            .build();
+    assertThrows(TinkBugException.class, handle::primaryKey);
   }
 }
