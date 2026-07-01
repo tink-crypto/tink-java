@@ -1,0 +1,37 @@
+load("@rules_java//java:defs.bzl", "java_test")
+
+package(default_visibility = ["//visibility:public"])
+
+licenses(["notice"])
+
+java_test(
+    name = "JwtEcdsaPublicKeySignTest",
+    size = "small",
+    srcs = ["JwtEcdsaPublicKeySignTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:public_key_sign",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_ecdsa_parameters",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_ecdsa_private_key",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_invalid_exception",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_public_key_sign",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_public_key_verify",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_signature_private_key",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_validator",
+        "//src/main/java/com/google/crypto/tink/jwt:raw_jwt",
+        "//src/main/java/com/google/crypto/tink/jwt:verified_jwt",
+        "//src/main/java/com/google/crypto/tink/jwt/internal:json_util",
+        "//src/main/java/com/google/crypto/tink/jwt/internal:jwt_format",
+        "//src/main/java/com/google/crypto/tink/jwt/internal/testing:jwt_signature_test_util",
+        "//src/main/java/com/google/crypto/tink/jwt/subtle:jwt_ecdsa_public_key_sign",
+        "//src/main/java/com/google/crypto/tink/jwt/subtle:jwt_ecdsa_public_key_verify",
+        "//src/main/java/com/google/crypto/tink/signature:ecdsa_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:ecdsa_private_key",
+        "//src/main/java/com/google/crypto/tink/signature:ecdsa_public_key",
+        "//src/main/java/com/google/crypto/tink/subtle:base64",
+        "//src/main/java/com/google/crypto/tink/subtle:ecdsa_sign_jce",
+        "//src/main/java/com/google/crypto/tink/testing:test_util",
+        "@maven//:com_google_code_gson_gson",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
