@@ -1,0 +1,16 @@
+load("@rules_java//java:defs.bzl", "java_test")
+
+licenses(["notice"])
+
+java_test(
+    name = "JwtSignatureTestUtilTest",
+    size = "small",
+    srcs = ["JwtSignatureTestUtilTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:public_key_sign",
+        "//src/main/java/com/google/crypto/tink/jwt/internal/testing:jwt_signature_test_util",
+        "@maven//:com_google_code_gson_gson",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
