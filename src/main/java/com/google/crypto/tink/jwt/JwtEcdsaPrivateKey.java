@@ -103,7 +103,7 @@ public final class JwtEcdsaPrivateKey extends JwtSignaturePrivateKey {
       link = "https://developers.google.com/tink/design/access_control#accessing_partial_keys",
       allowedOnPath = ".*Test\\.java",
       allowlistAnnotations = {AccessesPartialKey.class})
-  EcdsaPrivateKey getEcdsaPrivateKey() {
+  public EcdsaPrivateKey getEcdsaPrivateKey() {
     return ecdsaPrivateKey;
   }
 }
