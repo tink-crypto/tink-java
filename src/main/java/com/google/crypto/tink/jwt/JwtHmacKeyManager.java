@@ -86,7 +86,7 @@ public final class JwtHmacKeyManager {
           jwtHmacKey.getKid(),
           jwtHmacKey.getParameters().allowKidAbsent());
       RawJwt token = RawJwt.fromJsonPayload(JwtFormat.getTypeHeader(parsedHeader), parts.payload);
-      return validator.validate(token);
+      return validator.unsafeValidate(token);
     }
   }
 

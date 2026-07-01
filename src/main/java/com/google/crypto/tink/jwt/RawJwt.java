@@ -20,6 +20,7 @@ import com.google.crypto.tink.jwt.internal.JsonUtil;
 import com.google.crypto.tink.jwt.internal.JwtNames;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Immutable;
+import com.google.errorprone.annotations.RestrictedApi;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
@@ -121,7 +122,13 @@ public final class RawJwt {
     }
   }
 
-  static RawJwt fromJsonPayload(Optional<String> typeHeader, String jsonPayload)
+  /**
+   * Creates a RawJwt object from the serialized JSON payload.
+   *
+   * <p>WARNING: Users are STRONGLY advised to use the
+   * Builder instead, since this relies on the JSON parsing logic.
+   */
+  public static RawJwt fromJsonPayload(Optional<String> typeHeader, String jsonPayload)
       throws JwtInvalidException {
     return new RawJwt(typeHeader, jsonPayload);
   }

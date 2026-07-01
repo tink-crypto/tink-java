@@ -290,9 +290,14 @@ public final class JwtValidator {
 
   /**
    * Validates that all claims in this validator are also present in {@code target}.
+   *
+   * IMPORTANT: although public, this class should only be used internally within Tink.
+   * Please prefer {@link JwtPublicKeyVerify#verifyAndDecode} or
+   * {@link JwtMac#verifyMacAndDecode} instead.
+   *
    * @throws JwtInvalidException when {@code target} contains an invalid claim or header
    */
-  VerifiedJwt validate(RawJwt target) throws JwtInvalidException {
+  public VerifiedJwt unsafeValidate(RawJwt target) throws JwtInvalidException {
     validateTimestampClaims(target);
     validateTypeHeader(target);
     validateIssuer(target);

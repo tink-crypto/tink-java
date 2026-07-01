@@ -62,7 +62,7 @@ class JwtEcdsaVerifyKeyManager {
             publicKey.getKid(),
             publicKey.getParameters().allowKidAbsent());
         RawJwt token = RawJwt.fromJsonPayload(JwtFormat.getTypeHeader(parsedHeader), parts.payload);
-        return validator.validate(token);
+        return validator.unsafeValidate(token);
       }
     };
   }
