@@ -40,7 +40,6 @@ import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.PrimitiveWrapper;
-import com.google.crypto.tink.internal.TinkBugException;
 import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
 import com.google.crypto.tink.internal.testing.SetTinkFlag;
 import com.google.crypto.tink.jwt.JwtSignatureConfig;
@@ -2534,7 +2533,7 @@ public class KeysetHandleTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(new TestKey()).withFixedId(123).makePrimary())
             .build();
-    assertThrows(TinkBugException.class, handle::getKeys);
+    assertThrows(IllegalArgumentException.class, handle::getKeys);
   }
 
   @Test
@@ -2544,7 +2543,7 @@ public class KeysetHandleTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(new TestKey()).withFixedId(123).makePrimary())
             .build();
-    assertThrows(TinkBugException.class, handle::getKeysetInfo);
+    assertThrows(IllegalArgumentException.class, handle::getKeysetInfo);
   }
 
   @Test
@@ -2558,7 +2557,7 @@ public class KeysetHandleTest {
         KeysetHandle.generateNew(KeyTemplates.get("AES128_GCM"))
             .getPrimitive(RegistryConfiguration.get(), Aead.class);
     assertThrows(
-        TinkBugException.class,
+        GeneralSecurityException.class,
         () ->
             handle.writeWithAssociatedData(
                 BinaryKeysetWriter.withOutputStream(new ByteArrayOutputStream()),
@@ -2574,7 +2573,7 @@ public class KeysetHandleTest {
             .addEntry(KeysetHandle.importKey(new TestKey()).withFixedId(123).makePrimary())
             .build();
     assertThrows(
-        TinkBugException.class,
+        GeneralSecurityException.class,
         () ->
             handle.writeNoSecret(BinaryKeysetWriter.withOutputStream(new ByteArrayOutputStream())));
   }
@@ -2585,6 +2584,6 @@ public class KeysetHandleTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(new TestKey()).withFixedId(123).makePrimary())
             .build();
-    assertThrows(TinkBugException.class, handle::primaryKey);
+    assertThrows(GeneralSecurityException.class, handle::primaryKey);
   }
 }

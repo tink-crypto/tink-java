@@ -49,9 +49,18 @@ public final class KeysetManager {
     keysetBuilder = val;
   }
 
-  /** @return a {@link KeysetManager} for the keyset manged by {@code val} */
+  /**
+   * @return a {@link KeysetManager} for the keyset manged by {@code val}
+   * @throws IllegalArgumentException if {@code val} contains keys that cannot be serialized into
+   *     the Tink proto format (for example, custom {@link Key} subclasses without a registered
+   *     serializer).
+   */
   public static KeysetManager withKeysetHandle(KeysetHandle val) {
-    return new KeysetManager(val.getKeyset().toBuilder());
+    try {
+      return new KeysetManager(val.getKeyset().toBuilder());
+    } catch (GeneralSecurityException e) {
+      throw new IllegalArgumentException("Cannot create KeysetManager: key cannot be serialized", e);
+    }
   }
 
   /** @return a {@link KeysetManager} for an empty keyset. */

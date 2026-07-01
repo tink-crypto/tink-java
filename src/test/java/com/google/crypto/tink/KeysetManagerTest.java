@@ -25,7 +25,6 @@ import com.google.common.truth.Expect;
 import com.google.crypto.tink.aead.AesGcmKeyManager;
 import com.google.crypto.tink.config.GlobalTinkFlags;
 import com.google.crypto.tink.config.TinkConfig;
-import com.google.crypto.tink.internal.TinkBugException;
 import com.google.crypto.tink.internal.testing.SetTinkFlag;
 import com.google.crypto.tink.mac.PredefinedMacParameters;
 import com.google.crypto.tink.proto.KeyStatusType;
@@ -1203,12 +1202,12 @@ public class KeysetManagerTest {
   }
 
   @Test
-  public void testWithKeysetHandle_throwsTinkBugExceptionIfKeyCannotBeSerialized()
+  public void testWithKeysetHandle_throwsIllegalArgumentExceptionIfKeyCannotBeSerialized()
       throws Exception {
     KeysetHandle handle =
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(new TestKey()).withFixedId(123).makePrimary())
             .build();
-    assertThrows(TinkBugException.class, () -> KeysetManager.withKeysetHandle(handle));
+    assertThrows(IllegalArgumentException.class, () -> KeysetManager.withKeysetHandle(handle));
   }
 }

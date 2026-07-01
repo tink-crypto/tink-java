@@ -26,7 +26,6 @@ import static org.junit.Assert.assertTrue;
 import com.google.crypto.tink.config.TinkConfig;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
-import com.google.crypto.tink.internal.TinkBugException;
 import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
 import com.google.crypto.tink.proto.Keyset;
 import com.google.errorprone.annotations.Immutable;
@@ -206,7 +205,7 @@ public class CleartextKeysetHandleTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(new TestKey()).withFixedId(123).makePrimary())
             .build();
-    assertThrows(TinkBugException.class, () -> CleartextKeysetHandle.getKeyset(handle));
+    assertThrows(IllegalArgumentException.class, () -> CleartextKeysetHandle.getKeyset(handle));
   }
 
   @Test
@@ -216,6 +215,6 @@ public class CleartextKeysetHandleTest {
             .addEntry(KeysetHandle.importKey(new TestKey()).withFixedId(123).makePrimary())
             .build();
     KeysetWriter keysetWriter = BinaryKeysetWriter.withOutputStream(new ByteArrayOutputStream());
-    assertThrows(TinkBugException.class, () -> CleartextKeysetHandle.write(handle, keysetWriter));
+    assertThrows(IllegalArgumentException.class, () -> CleartextKeysetHandle.write(handle, keysetWriter));
   }
 }

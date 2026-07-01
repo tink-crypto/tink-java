@@ -24,7 +24,6 @@ import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.internal.ProtoConversions;
 import com.google.crypto.tink.internal.SkipValidateKeysetsOnParsingTag;
-import com.google.crypto.tink.internal.TinkBugException;
 import com.google.crypto.tink.proto.EncryptedKeyset;
 import com.google.crypto.tink.proto.KeyData;
 import com.google.crypto.tink.proto.KeyStatusType;
@@ -781,22 +780,18 @@ public final class KeysetHandle implements KeysetHandleInterface {
   }
 
   /** Returns the actual keyset data. */
-  Keyset getKeyset() {
-    try {
-      Configuration configuration = RegistryConfiguration.get();
-      Keyset.Builder builder = Keyset.newBuilder();
-      for (Entry entry : entries) {
-        Keyset.Key protoKey =
-            createKeysetKey(entry.getKey(), entry.keyStatusType, entry.getId(), configuration);
-        builder.addKey(protoKey);
-        if (entry.isPrimary()) {
-          builder.setPrimaryKeyId(entry.getId());
-        }
+  Keyset getKeyset() throws GeneralSecurityException {
+    Configuration configuration = RegistryConfiguration.get();
+    Keyset.Builder builder = Keyset.newBuilder();
+    for (Entry entry : entries) {
+      Keyset.Key protoKey =
+          createKeysetKey(entry.getKey(), entry.keyStatusType, entry.getId(), configuration);
+      builder.addKey(protoKey);
+      if (entry.isPrimary()) {
+        builder.setPrimaryKeyId(entry.getId());
       }
-      return builder.build();
-    } catch (GeneralSecurityException e) {
-      throw new TinkBugException(e);
     }
+    return builder.build();
   }
 
   /** Creates a new builder. */
@@ -898,35 +893,49 @@ public final class KeysetHandle implements KeysetHandleInterface {
    *
    * <p>Please do not use this function in new code. Instead, use {@link #getAt}.
    *
+   * @throws IllegalArgumentException if this keyset handle contains keys that cannot be serialized
+   *     into the Tink proto format (for example, custom {@link Key} subclasses without a registered
+   *     serializer).
    * @deprecated Use "getAt" instead.
    */
   @Deprecated
   public List<KeyHandle> getKeys() {
-    ArrayList<KeyHandle> result = new ArrayList<>();
-    Keyset keyset = getKeyset();
-    for (Keyset.Key key : keyset.getKeyList()) {
-      KeyData keyData = key.getKeyData();
-      result.add(
-          new InternalKeyHandle(
-              new ProtoKey(keyData, KeyTemplate.fromProto(key.getOutputPrefixType())),
-              key.getStatus(),
-              key.getKeyId()));
+    try {
+      ArrayList<KeyHandle> result = new ArrayList<>();
+      Keyset keyset = getKeyset();
+      for (Keyset.Key key : keyset.getKeyList()) {
+        KeyData keyData = key.getKeyData();
+        result.add(
+            new InternalKeyHandle(
+                new ProtoKey(keyData, KeyTemplate.fromProto(key.getOutputPrefixType())),
+                key.getStatus(),
+                key.getKeyId()));
+      }
+      return Collections.unmodifiableList(result);
+    } catch (GeneralSecurityException e) {
+      throw new IllegalArgumentException("Cannot get keys: key cannot be serialized", e);
     }
-    return Collections.unmodifiableList(result);
   }
 
   /**
    * Returns the {@link com.google.crypto.tink.proto.KeysetInfo} that doesn't contain actual key
    * material.
    *
+   * @throws IllegalArgumentException if this keyset handle contains keys that cannot be serialized
+   *     into the Tink proto format (for example, custom {@link Key} subclasses without a registered
+   *     serializer).
    * @deprecated Most information can be obtained by calling {@link #getPrimary} or {@link #getAt}
    *     and inspecting the result. For legacy code, {@code LegacyKeysetSerialization.getKeysetInfo}
    *     gives the exact same output.
    */
   @Deprecated
   public KeysetInfo getKeysetInfo() {
-    Keyset keyset = getKeyset();
-    return Util.getKeysetInfo(keyset);
+    try {
+      Keyset keyset = getKeyset();
+      return Util.getKeysetInfo(keyset);
+    } catch (GeneralSecurityException e) {
+      throw new IllegalArgumentException("Cannot get keyset info: key cannot be serialized", e);
+    }
   }
 
   /**
@@ -1107,6 +1116,10 @@ public final class KeysetHandle implements KeysetHandleInterface {
    * Serializes, encrypts with {@code masterKey} and writes the keyset to {@code outputStream} using
    * the provided associated data.
    *
+   * @throws GeneralSecurityException if this keyset handle contains keys that cannot be serialized
+   *     into the Tink proto format (for example, custom {@link Key} subclasses without a registered
+   *     serializer).
+   * @throws IOException
    * @deprecated New users should prefer TinkProtoKeysetFormat. Existing users can use
    *     LegacyKeysetSerialization for exactly the same behavior.
    */
@@ -1126,7 +1139,9 @@ public final class KeysetHandle implements KeysetHandleInterface {
    * <p>This can be used to persist public keysets or envelope encryption keysets. Users that need
    * to persist cleartext keysets can use {@link CleartextKeysetHandle}.
    *
-   * @throws GeneralSecurityException if the keyset contains any secret key material
+   * @throws GeneralSecurityException if this keyset handle contains keys that cannot be serialized
+   *     into the Tink proto format (for example, custom {@link Key} subclasses without a registered
+   *     serializer), or if the keyset contains any secret key material
    * @deprecated New users should prefer TinkProtoKeysetFormat. Existing users can use
    *     LegacyKeysetSerialization for exactly the same behavior.
    */
@@ -1313,6 +1328,9 @@ public final class KeysetHandle implements KeysetHandleInterface {
    *
    * <p>Please do not use this function in new code. Instead, use {@link #getPrimary}.
    *
+   * @throws GeneralSecurityException if this keyset handle contains keys that cannot be serialized
+   *     into the Tink proto format (for example, custom {@link Key} subclasses without a registered
+   *     serializer).
    * @deprecated Use {@link #getPrimary} instead.
    */
   @Deprecated

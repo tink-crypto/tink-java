@@ -84,12 +84,19 @@ public final class CleartextKeysetHandle {
 
   /**
    * @return the keyset underlying this {@code keysetHandle}.
+   * @throws IllegalArgumentException if the {@code keysetHandle} contains keys that cannot be
+   *     serialized into the Tink proto format (for example, custom {@link Key} subclasses without a
+   *     registered serializer).
    * @deprecated Instead, call "KeysetHandle.getAt()" to get information about individual keys or
    *     TinkProtoKeysetFormat if you need a serialized keyset.
    */
   @Deprecated
   public static Keyset getKeyset(KeysetHandle keysetHandle) {
-    return keysetHandle.getKeyset();
+    try {
+      return keysetHandle.getKeyset();
+    } catch (GeneralSecurityException e) {
+      throw new IllegalArgumentException("Cannot get keyset: key cannot be serialized", e);
+    }
   }
 
   /**
@@ -106,10 +113,17 @@ public final class CleartextKeysetHandle {
   /**
    * Serializes and writes the {@link Keyset} managed by {@code handle} to {@code keysetWriter}.
    *
+   * @throws IllegalArgumentException if the {@code handle} contains keys that cannot be serialized
+   *     into the Tink proto format (for example, custom {@link Key} subclasses without a registered
+   *     serializer).
    * @throws IOException
    */
   public static void write(KeysetHandle handle, KeysetWriter keysetWriter) throws IOException {
-    keysetWriter.write(handle.getKeyset());
+    try {
+      keysetWriter.write(handle.getKeyset());
+    } catch (GeneralSecurityException e) {
+      throw new IllegalArgumentException("Cannot write keyset: key cannot be serialized", e);
+    }
   }
 
   private CleartextKeysetHandle() {}

@@ -23,7 +23,6 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.aead.AeadConfig;
 import com.google.crypto.tink.aead.AesGcmParameters;
 import com.google.crypto.tink.config.GlobalTinkFlags;
-import com.google.crypto.tink.internal.TinkBugException;
 import com.google.crypto.tink.internal.testing.SetTinkFlag;
 import com.google.crypto.tink.mac.MacConfig;
 import com.google.crypto.tink.proto.KeyData;
@@ -492,6 +491,6 @@ public final class TinkProtoKeysetFormatTest {
             .build();
     SecretKeyAccess access = InsecureSecretKeyAccess.get();
     assertThrows(
-        TinkBugException.class, () -> TinkProtoKeysetFormat.serializeKeyset(handle, access));
+        GeneralSecurityException.class, () -> TinkProtoKeysetFormat.serializeKeyset(handle, access));
   }
 }

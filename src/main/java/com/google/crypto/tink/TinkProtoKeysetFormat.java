@@ -46,8 +46,8 @@ public final class TinkProtoKeysetFormat {
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
       CleartextKeysetHandle.write(keysetHandle, BinaryKeysetWriter.withOutputStream(outputStream));
       return outputStream.toByteArray();
-    } catch (IOException e) {
-      throw new GeneralSecurityException("Serialize keyset failed");
+    } catch (IllegalArgumentException | IOException e) {
+      throw new GeneralSecurityException("Serialize keyset failed", e);
     }
   }
 
@@ -64,8 +64,8 @@ public final class TinkProtoKeysetFormat {
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
       keysetHandle.writeNoSecret(BinaryKeysetWriter.withOutputStream(outputStream));
       return outputStream.toByteArray();
-    } catch (IOException e) {
-      throw new GeneralSecurityException("Serialize keyset failed");
+    } catch (IllegalArgumentException | IOException e) {
+      throw new GeneralSecurityException("Serialize keyset failed", e);
     }
   }
 
@@ -92,8 +92,8 @@ public final class TinkProtoKeysetFormat {
       keysetHandle.writeWithAssociatedData(
           BinaryKeysetWriter.withOutputStream(outputStream), keysetEncryptionAead, associatedData);
       return outputStream.toByteArray();
-    } catch (IOException e) {
-      throw new GeneralSecurityException("Serialize keyset failed");
+    } catch (IllegalArgumentException | IOException e) {
+      throw new GeneralSecurityException("Serialize keyset failed", e);
     }
   }
 
