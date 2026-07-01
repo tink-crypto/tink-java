@@ -93,7 +93,8 @@ public final class CleartextKeysetHandle {
   @Deprecated
   public static Keyset getKeyset(KeysetHandle keysetHandle) {
     try {
-      return keysetHandle.getKeyset();
+      Configuration configuration = RegistryConfiguration.get();
+      return keysetHandle.getKeyset(configuration);
     } catch (GeneralSecurityException e) {
       throw new IllegalArgumentException("Cannot get keyset: key cannot be serialized", e);
     }
@@ -120,7 +121,8 @@ public final class CleartextKeysetHandle {
    */
   public static void write(KeysetHandle handle, KeysetWriter keysetWriter) throws IOException {
     try {
-      keysetWriter.write(handle.getKeyset());
+      Configuration configuration = RegistryConfiguration.get();
+      keysetWriter.write(handle.getKeyset(configuration));
     } catch (GeneralSecurityException e) {
       throw new IllegalArgumentException("Cannot write keyset: key cannot be serialized", e);
     }

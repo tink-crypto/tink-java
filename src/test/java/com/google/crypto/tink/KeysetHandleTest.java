@@ -208,7 +208,7 @@ public class KeysetHandleTest {
                     .makePrimary())
             .addEntry(KeysetHandle.generateEntryFromParametersName("AES128_EAX").withRandomId())
             .build();
-    Keyset keyset = handle.getKeyset();
+    Keyset keyset = handle.getKeyset(RegistryConfiguration.get());
 
     List<KeyHandle> keysetKeys = handle.getKeys();
 
@@ -296,7 +296,7 @@ public class KeysetHandleTest {
       KeysetHandle handle = KeysetHandle.generateNew(template);
       AesEaxKey aesEaxKey =
           AesEaxKey.parseFrom(
-              handle.getKeyset().getKey(0).getKeyData().getValue(),
+              handle.getKeyset(RegistryConfiguration.get()).getKey(0).getKeyData().getValue(),
               ExtensionRegistryLite.getEmptyRegistry());
       keys.add(aesEaxKey.getKeyValue().toStringUtf8());
     }
@@ -333,7 +333,7 @@ public class KeysetHandleTest {
     String keysetInfo = handle.toString();
 
     expect.that(keysetInfo).doesNotContain(keyValue);
-    expect.that(handle.getKeyset().toString()).contains(keyValue);
+    expect.that(handle.getKeyset(RegistryConfiguration.get()).toString()).contains(keyValue);
   }
 
   @Test
@@ -349,7 +349,8 @@ public class KeysetHandleTest {
     KeysetReader reader = BinaryKeysetReader.withInputStream(inputStream);
     KeysetHandle handle2 = KeysetHandle.read(reader, masterKey);
 
-    assertThat(handle.getKeyset()).isEqualTo(handle2.getKeyset());
+    assertThat(handle.getKeyset(RegistryConfiguration.get()))
+        .isEqualTo(handle2.getKeyset(RegistryConfiguration.get()));
   }
 
   @Test
@@ -366,7 +367,8 @@ public class KeysetHandleTest {
     KeysetHandle handle2 =
         KeysetHandle.readWithAssociatedData(reader, masterKey, new byte[] {0x01, 0x02});
 
-    assertThat(handle.getKeyset()).isEqualTo(handle2.getKeyset());
+    assertThat(handle.getKeyset(RegistryConfiguration.get()))
+        .isEqualTo(handle2.getKeyset(RegistryConfiguration.get()));
   }
 
   @Test
@@ -424,18 +426,20 @@ public class KeysetHandleTest {
   @Test
   public void getPublicKeysetHandle_shouldWork() throws Exception {
     KeysetHandle privateHandle = KeysetHandle.generateNew(KeyTemplates.get("ECDSA_P256"));
-    KeyData privateKeyData = privateHandle.getKeyset().getKey(0).getKeyData();
+    KeyData privateKeyData =
+        privateHandle.getKeyset(RegistryConfiguration.get()).getKey(0).getKeyData();
     EcdsaPrivateKey privateKey =
         EcdsaPrivateKey.parseFrom(
             privateKeyData.getValue(), ExtensionRegistryLite.getEmptyRegistry());
 
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
 
-    expect.that(publicHandle.getKeyset().getKeyCount()).isEqualTo(1);
+    expect.that(publicHandle.getKeyset(RegistryConfiguration.get()).getKeyCount()).isEqualTo(1);
     expect
-        .that(privateHandle.getKeyset().getPrimaryKeyId())
-        .isEqualTo(publicHandle.getKeyset().getPrimaryKeyId());
-    KeyData publicKeyData = publicHandle.getKeyset().getKey(0).getKeyData();
+        .that(privateHandle.getKeyset(RegistryConfiguration.get()).getPrimaryKeyId())
+        .isEqualTo(publicHandle.getKeyset(RegistryConfiguration.get()).getPrimaryKeyId());
+    KeyData publicKeyData =
+        publicHandle.getKeyset(RegistryConfiguration.get()).getKey(0).getKeyData();
     expect.that(publicKeyData.getTypeUrl()).isEqualTo(SignatureConfig.ECDSA_PUBLIC_KEY_TYPE_URL);
     expect
         .that(publicKeyData.getKeyMaterialType())
@@ -653,14 +657,15 @@ public class KeysetHandleTest {
       throws Exception {
     // Public keyset should have the same output
     KeysetHandle privateHandle = KeysetHandle.generateNew(KeyTemplates.get("ECDSA_P256"));
-    byte[] serializedPublicKeyset = privateHandle.getPublicKeysetHandle().getKeyset().toByteArray();
+    byte[] serializedPublicKeyset =
+        privateHandle.getPublicKeysetHandle().getKeyset(RegistryConfiguration.get()).toByteArray();
 
     KeysetHandle readNoSecretOutput = KeysetHandle.readNoSecret(serializedPublicKeyset);
     KeysetHandle parseKeysetWithoutSecretOutput =
         TinkProtoKeysetFormat.parseKeysetWithoutSecret(serializedPublicKeyset);
     expect
-        .that(readNoSecretOutput.getKeyset())
-        .isEqualTo(parseKeysetWithoutSecretOutput.getKeyset());
+        .that(readNoSecretOutput.getKeyset(RegistryConfiguration.get()))
+        .isEqualTo(parseKeysetWithoutSecretOutput.getKeyset(RegistryConfiguration.get()));
 
     // Symmetric Keyset should fail
     byte[] serializedSymmetricKeyset =
@@ -678,7 +683,8 @@ public class KeysetHandleTest {
         () -> TinkProtoKeysetFormat.parseKeysetWithoutSecret(serializedSymmetricKeyset));
 
     // Private Keyset should fail
-    byte[] serializedPrivateKeyset = privateHandle.getKeyset().toByteArray();
+    byte[] serializedPrivateKeyset =
+        privateHandle.getKeyset(RegistryConfiguration.get()).toByteArray();
     assertThrows(
         GeneralSecurityException.class, () -> KeysetHandle.readNoSecret(serializedPrivateKeyset));
     assertThrows(
@@ -702,11 +708,12 @@ public class KeysetHandleTest {
   @Test
   public void readNoSecretWithBinaryKeysetReader_shouldWork() throws Exception {
     KeysetHandle privateHandle = KeysetHandle.generateNew(KeyTemplates.get("ECDSA_P256"));
-    Keyset keyset = privateHandle.getPublicKeysetHandle().getKeyset();
+    Keyset keyset = privateHandle.getPublicKeysetHandle().getKeyset(RegistryConfiguration.get());
     byte[] serializedKeyset = keyset.toByteArray();
 
     Keyset readKeyset =
-        KeysetHandle.readNoSecret(BinaryKeysetReader.withBytes(serializedKeyset)).getKeyset();
+        KeysetHandle.readNoSecret(BinaryKeysetReader.withBytes(serializedKeyset))
+            .getKeyset(RegistryConfiguration.get());
 
     expect.that(readKeyset).isEqualTo(keyset);
   }
@@ -731,7 +738,9 @@ public class KeysetHandleTest {
   public void readNoSecretWithBinaryKeysetReader_withTypeAsymmetricPrivate_shouldThrow()
       throws Exception {
     byte[] serializedKeyset =
-        KeysetHandle.generateNew(KeyTemplates.get("ECDSA_P256")).getKeyset().toByteArray();
+        KeysetHandle.generateNew(KeyTemplates.get("ECDSA_P256"))
+            .getKeyset(RegistryConfiguration.get())
+            .toByteArray();
 
     assertThrows(
         GeneralSecurityException.class,
@@ -760,12 +769,12 @@ public class KeysetHandleTest {
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     KeysetWriter writer = BinaryKeysetWriter.withOutputStream(outputStream);
-    Keyset keyset = publicHandle.getKeyset();
+    Keyset keyset = publicHandle.getKeyset(RegistryConfiguration.get());
 
     publicHandle.writeNoSecret(writer);
     ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
     KeysetReader reader = BinaryKeysetReader.withInputStream(inputStream);
-    Keyset keyset2 = KeysetHandle.readNoSecret(reader).getKeyset();
+    Keyset keyset2 = KeysetHandle.readNoSecret(reader).getKeyset(RegistryConfiguration.get());
 
     assertThat(keyset).isEqualTo(keyset2);
   }
@@ -1503,7 +1512,7 @@ public class KeysetHandleTest {
                     .makePrimary()
                     .withFixedId(778))
             .build();
-    Keyset keyset = original.getKeyset();
+    Keyset keyset = original.getKeyset(RegistryConfiguration.get());
     Keyset keysetWithoutPrimary = keyset.toBuilder().setPrimaryKeyId(3843).build();
 
     KeysetHandle.Builder builder =

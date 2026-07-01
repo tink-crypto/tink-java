@@ -780,8 +780,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
   }
 
   /** Returns the actual keyset data. */
-  Keyset getKeyset() throws GeneralSecurityException {
-    Configuration configuration = RegistryConfiguration.get();
+  Keyset getKeyset(Configuration configuration) throws GeneralSecurityException {
     Keyset.Builder builder = Keyset.newBuilder();
     for (Entry entry : entries) {
       Keyset.Key protoKey =
@@ -901,8 +900,9 @@ public final class KeysetHandle implements KeysetHandleInterface {
   @Deprecated
   public List<KeyHandle> getKeys() {
     try {
+      Configuration configuration = RegistryConfiguration.get();
       ArrayList<KeyHandle> result = new ArrayList<>();
-      Keyset keyset = getKeyset();
+      Keyset keyset = getKeyset(configuration);
       for (Keyset.Key key : keyset.getKeyList()) {
         KeyData keyData = key.getKeyData();
         result.add(
@@ -931,7 +931,8 @@ public final class KeysetHandle implements KeysetHandleInterface {
   @Deprecated
   public KeysetInfo getKeysetInfo() {
     try {
-      Keyset keyset = getKeyset();
+      Configuration configuration = RegistryConfiguration.get();
+      Keyset keyset = getKeyset(configuration);
       return Util.getKeysetInfo(keyset);
     } catch (GeneralSecurityException e) {
       throw new IllegalArgumentException("Cannot get keyset info: key cannot be serialized", e);
@@ -1128,7 +1129,8 @@ public final class KeysetHandle implements KeysetHandleInterface {
   public void writeWithAssociatedData(
       KeysetWriter keysetWriter, Aead masterKey, byte[] associatedData)
       throws GeneralSecurityException, IOException {
-    Keyset keyset = getKeyset();
+    Configuration configuration = RegistryConfiguration.get();
+    Keyset keyset = getKeyset(configuration);
     EncryptedKeyset encryptedKeyset = encrypt(keyset, masterKey, associatedData);
     keysetWriter.write(encryptedKeyset);
   }
@@ -1147,7 +1149,8 @@ public final class KeysetHandle implements KeysetHandleInterface {
    */
   @Deprecated /* b/372397203 */
   public void writeNoSecret(KeysetWriter writer) throws GeneralSecurityException, IOException {
-    Keyset keyset = getKeyset();
+    Configuration configuration = RegistryConfiguration.get();
+    Keyset keyset = getKeyset(configuration);
     assertNoSecretKeyMaterial(keyset);
     writer.write(keyset);
   }
@@ -1335,7 +1338,8 @@ public final class KeysetHandle implements KeysetHandleInterface {
    */
   @Deprecated
   public KeyHandle primaryKey() throws GeneralSecurityException {
-    Keyset keyset = getKeyset();
+    Configuration configuration = RegistryConfiguration.get();
+    Keyset keyset = getKeyset(configuration);
     int primaryKeyId = keyset.getPrimaryKeyId();
     for (Keyset.Key key : keyset.getKeyList()) {
       if (key.getKeyId() == primaryKeyId) {

@@ -57,7 +57,7 @@ public class CleartextKeysetHandleTest {
     KeysetHandle handle = KeysetHandle.generateNew(template);
     Keyset keyset = CleartextKeysetHandle.getKeyset(handle);
     handle = CleartextKeysetHandle.parseFrom(keyset.toByteArray());
-    assertEquals(keyset, handle.getKeyset());
+    assertEquals(keyset, handle.getKeyset(RegistryConfiguration.get()));
     Object unused = handle.getPrimitive(RegistryConfiguration.get(), Mac.class);
   }
 
@@ -66,11 +66,11 @@ public class CleartextKeysetHandleTest {
     // Create a keyset that contains a single HmacKey.
     KeyTemplate template = KeyTemplates.get("HMAC_SHA256_128BITTAG");
     KeysetHandle handle = KeysetHandle.generateNew(template);
-    Keyset keyset1 = handle.getKeyset();
+    Keyset keyset1 = handle.getKeyset(RegistryConfiguration.get());
 
     KeysetHandle handle1 =
         CleartextKeysetHandle.read(BinaryKeysetReader.withBytes(keyset1.toByteArray()));
-    assertEquals(keyset1, handle1.getKeyset());
+    assertEquals(keyset1, handle1.getKeyset(RegistryConfiguration.get()));
 
     assertThat(handle1.size()).isEqualTo(1);
     assertThat(handle1.getAt(0).getId()).isEqualTo(handle.getAt(0).getId());
@@ -109,7 +109,7 @@ public class CleartextKeysetHandleTest {
   public void testReadInvalidKeyset() throws Exception {
     // Create a keyset that contains a single HmacKey.
     KeyTemplate template = KeyTemplates.get("HMAC_SHA256_128BITTAG");
-    Keyset keyset = KeysetHandle.generateNew(template).getKeyset();
+    Keyset keyset = KeysetHandle.generateNew(template).getKeyset(RegistryConfiguration.get());
 
     byte[] proto = keyset.toByteArray();
     proto[0] = (byte) ~proto[0];

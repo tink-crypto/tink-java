@@ -45,7 +45,8 @@ public class BinaryKeysetReaderTest {
     Mac mac2 = handle2.getPrimitive(RegistryConfiguration.get(), Mac.class);
     byte[] message = "message".getBytes(UTF_8);
 
-    assertThat(handle2.getKeyset()).isEqualTo(handle1.getKeyset());
+    assertThat(handle2.getKeyset(RegistryConfiguration.get()))
+        .isEqualTo(handle1.getKeyset(RegistryConfiguration.get()));
     mac2.verifyMac(mac1.computeMac(message), message);
   }
 

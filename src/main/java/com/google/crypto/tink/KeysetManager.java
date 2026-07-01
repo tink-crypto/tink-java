@@ -57,9 +57,11 @@ public final class KeysetManager {
    */
   public static KeysetManager withKeysetHandle(KeysetHandle val) {
     try {
-      return new KeysetManager(val.getKeyset().toBuilder());
+      Configuration configuration = RegistryConfiguration.get();
+      return new KeysetManager(val.getKeyset(configuration).toBuilder());
     } catch (GeneralSecurityException e) {
-      throw new IllegalArgumentException("Cannot create KeysetManager: key cannot be serialized", e);
+      throw new IllegalArgumentException(
+          "Cannot create KeysetManager: key cannot be serialized", e);
     }
   }
 

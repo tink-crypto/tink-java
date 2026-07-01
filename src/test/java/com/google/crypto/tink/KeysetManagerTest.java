@@ -85,7 +85,10 @@ public class KeysetManagerTest {
             TestUtil.createKeyset(createDisabledKey(keyId)), RegistryConfiguration.get());
 
     Keyset keyset =
-        KeysetManager.withKeysetHandle(handle).enable(keyId).getKeysetHandle().getKeyset();
+        KeysetManager.withKeysetHandle(handle)
+            .enable(keyId)
+            .getKeysetHandle()
+            .getKeyset(RegistryConfiguration.get());
 
     assertThat(keyset.getKeyCount()).isEqualTo(1);
     assertThat(keyset.getKey(0).getKeyId()).isEqualTo(keyId);
@@ -155,7 +158,7 @@ public class KeysetManagerTest {
         KeysetManager.withKeysetHandle(handle)
             .setPrimary(newPrimaryKeyId)
             .getKeysetHandle()
-            .getKeyset();
+            .getKeyset(RegistryConfiguration.get());
 
     assertThat(keyset.getKeyCount()).isEqualTo(2);
     assertThat(keyset.getPrimaryKeyId()).isEqualTo(newPrimaryKeyId);
@@ -258,7 +261,7 @@ public class KeysetManagerTest {
         KeysetManager.withKeysetHandle(handle)
             .promote(newPrimaryKeyId)
             .getKeysetHandle()
-            .getKeyset();
+            .getKeyset(RegistryConfiguration.get());
 
     assertThat(keyset.getKeyCount()).isEqualTo(2);
     assertThat(keyset.getPrimaryKeyId()).isEqualTo(newPrimaryKeyId);
@@ -355,7 +358,10 @@ public class KeysetManagerTest {
                 KeysetHandle.generateEntryFromParametersName("AES128_GCM").withFixedId(otherKeyId))
             .build();
     Keyset keyset =
-        KeysetManager.withKeysetHandle(handle).disable(otherKeyId).getKeysetHandle().getKeyset();
+        KeysetManager.withKeysetHandle(handle)
+            .disable(otherKeyId)
+            .getKeysetHandle()
+            .getKeyset(RegistryConfiguration.get());
 
     assertThat(keyset.getKeyCount()).isEqualTo(2);
     assertThat(keyset.getKey(0).getKeyId()).isEqualTo(primaryKeyId);
@@ -384,7 +390,7 @@ public class KeysetManagerTest {
                 KeysetManager.withKeysetHandle(handle)
                     .disable(primaryKeyId)
                     .getKeysetHandle()
-                    .getKeyset());
+                    .getKeyset(RegistryConfiguration.get()));
     assertThat(e.toString()).contains("cannot disable the primary key");
   }
 
@@ -404,7 +410,7 @@ public class KeysetManagerTest {
                 KeysetManager.withKeysetHandle(handle)
                     .disable(otherKeyId)
                     .getKeysetHandle()
-                    .getKeyset());
+                    .getKeyset(RegistryConfiguration.get()));
     assertThat(e.toString()).contains("cannot disable key");
   }
 
@@ -440,7 +446,10 @@ public class KeysetManagerTest {
                 KeysetHandle.generateEntryFromParametersName("AES128_GCM").withFixedId(otherKeyId))
             .build();
     Keyset keyset =
-        KeysetManager.withKeysetHandle(handle).destroy(otherKeyId).getKeysetHandle().getKeyset();
+        KeysetManager.withKeysetHandle(handle)
+            .destroy(otherKeyId)
+            .getKeysetHandle()
+            .getKeyset(RegistryConfiguration.get());
 
     assertThat(keyset.getKeyCount()).isEqualTo(2);
     assertThat(keyset.getKey(0).getKeyId()).isEqualTo(primaryKeyId);
@@ -470,7 +479,7 @@ public class KeysetManagerTest {
                 KeysetManager.withKeysetHandle(handle)
                     .destroy(primaryKeyId)
                     .getKeysetHandle()
-                    .getKeyset());
+                    .getKeyset(RegistryConfiguration.get()));
     assertThat(e.toString()).contains("cannot destroy the primary key");
   }
 
@@ -491,7 +500,7 @@ public class KeysetManagerTest {
                 KeysetManager.withKeysetHandle(handle)
                     .destroy(otherKeyId)
                     .getKeysetHandle()
-                    .getKeyset());
+                    .getKeyset(RegistryConfiguration.get()));
     assertThat(e.toString()).contains("cannot destroy key");
   }
 
@@ -524,7 +533,10 @@ public class KeysetManagerTest {
                 KeysetHandle.generateEntryFromParametersName("AES128_GCM").withFixedId(otherKeyId))
             .build();
     Keyset keyset =
-        KeysetManager.withKeysetHandle(handle).delete(otherKeyId).getKeysetHandle().getKeyset();
+        KeysetManager.withKeysetHandle(handle)
+            .delete(otherKeyId)
+            .getKeysetHandle()
+            .getKeyset(RegistryConfiguration.get());
 
     assertThat(keyset.getKeyCount()).isEqualTo(1);
     assertThat(keyset.getKey(0).getKeyId()).isEqualTo(primaryKeyId);
@@ -551,7 +563,7 @@ public class KeysetManagerTest {
                 KeysetManager.withKeysetHandle(handle)
                     .delete(primaryKeyId)
                     .getKeysetHandle()
-                    .getKeyset());
+                    .getKeyset(RegistryConfiguration.get()));
     assertThat(e.toString()).contains("cannot delete the primary key");
   }
 
@@ -711,7 +723,7 @@ public class KeysetManagerTest {
             TinkProtoParametersFormat.serialize(PredefinedMacParameters.HMAC_SHA256_256BITTAG),
             ExtensionRegistryLite.getEmptyRegistry());
     KeysetHandle existing = KeysetManager.withEmptyKeyset().rotate(template1).getKeysetHandle();
-    int existingPrimaryKeyId = existing.getKeyset().getPrimaryKeyId();
+    int existingPrimaryKeyId = existing.getKeyset(RegistryConfiguration.get()).getPrimaryKeyId();
     KeysetHandle keyset = KeysetManager.withKeysetHandle(existing).add(template2).getKeysetHandle();
 
     assertThat(keyset.size()).isEqualTo(2);
@@ -924,7 +936,7 @@ public class KeysetManagerTest {
     KeysetManager keysetManager = KeysetManager.withEmptyKeyset();
     keysetManager.addNewKey(template, true);
     int primaryKeyId = keysetManager.addNewKey(template, true);
-    Keyset keyset = keysetManager.getKeysetHandle().getKeyset();
+    Keyset keyset = keysetManager.getKeysetHandle().getKeyset(RegistryConfiguration.get());
     assertThat(keyset.getKeyCount()).isEqualTo(2);
     assertThat(keyset.getPrimaryKeyId()).isEqualTo(primaryKeyId);
   }
@@ -939,7 +951,7 @@ public class KeysetManagerTest {
     KeysetManager keysetManager = KeysetManager.withEmptyKeyset();
     int primaryKeyId = keysetManager.addNewKey(template, true);
     keysetManager.addNewKey(template, false);
-    Keyset keyset = keysetManager.getKeysetHandle().getKeyset();
+    Keyset keyset = keysetManager.getKeysetHandle().getKeyset(RegistryConfiguration.get());
     assertThat(keyset.getKeyCount()).isEqualTo(2);
     assertThat(keyset.getPrimaryKeyId()).isEqualTo(primaryKeyId);
   }
@@ -955,7 +967,7 @@ public class KeysetManagerTest {
     keysetManager.addNewKey(template, true);
     int secondaryKeyId = keysetManager.addNewKey(template, false);
     keysetManager.destroy(secondaryKeyId);
-    Keyset keyset = keysetManager.getKeysetHandle().getKeyset();
+    Keyset keyset = keysetManager.getKeysetHandle().getKeyset(RegistryConfiguration.get());
     assertThat(keyset.getKeyCount()).isEqualTo(2);
     // One of the two keys is destroyed and doesn't have keyData anymore.
     assertTrue(
@@ -1010,7 +1022,7 @@ public class KeysetManagerTest {
     thread1.join();
     thread2.join();
     thread3.join();
-    Keyset keyset = manager.getKeysetHandle().getKeyset();
+    Keyset keyset = manager.getKeysetHandle().getKeyset(RegistryConfiguration.get());
 
     assertThat(keyset.getKeyCount()).isEqualTo(12);
   }
@@ -1070,7 +1082,7 @@ public class KeysetManagerTest {
     thread1.join();
     thread2.join();
     thread3.join();
-    Keyset keyset = manager.getKeysetHandle().getKeyset();
+    Keyset keyset = manager.getKeysetHandle().getKeyset(RegistryConfiguration.get());
 
     assertThat(keyset.getKeyCount()).isEqualTo(3);
     assertThat(keyset.getKey(0).getStatus()).isEqualTo(KeyStatusType.ENABLED);
@@ -1123,7 +1135,7 @@ public class KeysetManagerTest {
     // Wait until all threads finished.
     thread2.join();
     thread3.join();
-    Keyset keyset = manager.getKeysetHandle().getKeyset();
+    Keyset keyset = manager.getKeysetHandle().getKeyset(RegistryConfiguration.get());
 
     assertThat(keyset.getKeyCount()).isEqualTo(3);
     assertThat(keyset.getKey(0).getStatus()).isEqualTo(KeyStatusType.ENABLED);
@@ -1176,7 +1188,7 @@ public class KeysetManagerTest {
     // Wait until all threads finished.
     thread2.join();
     thread3.join();
-    Keyset keyset = manager.getKeysetHandle().getKeyset();
+    Keyset keyset = manager.getKeysetHandle().getKeyset(RegistryConfiguration.get());
 
     assertThat(keyset.getKeyCount()).isEqualTo(1);
     assertThat(keyset.getKey(0).getKeyId()).isEqualTo(keyset.getPrimaryKeyId());

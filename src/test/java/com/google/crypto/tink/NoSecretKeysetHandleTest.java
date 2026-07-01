@@ -48,15 +48,19 @@ public class NoSecretKeysetHandleTest {
   public void withTypeAsymmetricPublic_deprecated_noSecretKeysetHandle_sameAs_readNoSecret()
       throws Exception {
     KeysetHandle privateHandle = KeysetHandle.generateNew(KeyTemplates.get("ECDSA_P256"));
-    Keyset keyset = privateHandle.getPublicKeysetHandle().getKeyset();
+    Keyset keyset = privateHandle.getPublicKeysetHandle().getKeyset(RegistryConfiguration.get());
 
-    Keyset keyset2 = NoSecretKeysetHandle.parseFrom(keyset.toByteArray()).getKeyset();
+    Keyset keyset2 =
+        NoSecretKeysetHandle.parseFrom(keyset.toByteArray()).getKeyset(RegistryConfiguration.get());
     Keyset keyset3 =
-        NoSecretKeysetHandle.read(BinaryKeysetReader.withBytes(keyset.toByteArray())).getKeyset();
+        NoSecretKeysetHandle.read(BinaryKeysetReader.withBytes(keyset.toByteArray()))
+            .getKeyset(RegistryConfiguration.get());
 
-    Keyset keyset4 = KeysetHandle.readNoSecret(keyset.toByteArray()).getKeyset();
+    Keyset keyset4 =
+        KeysetHandle.readNoSecret(keyset.toByteArray()).getKeyset(RegistryConfiguration.get());
     Keyset keyset5 =
-        KeysetHandle.readNoSecret(BinaryKeysetReader.withBytes(keyset.toByteArray())).getKeyset();
+        KeysetHandle.readNoSecret(BinaryKeysetReader.withBytes(keyset.toByteArray()))
+            .getKeyset(RegistryConfiguration.get());
 
     expect.that(keyset).isEqualTo(keyset2);
     expect.that(keyset).isEqualTo(keyset3);
@@ -94,7 +98,9 @@ public class NoSecretKeysetHandleTest {
   @Test
   public void withTypeAsymmetricPrivate_deprecated_noSecretKeysetHandle_sameAs_readNoSecret()
       throws Exception {
-    Keyset keyset = KeysetHandle.generateNew(KeyTemplates.get("ECDSA_P256")).getKeyset();
+    Keyset keyset =
+        KeysetHandle.generateNew(KeyTemplates.get("ECDSA_P256"))
+            .getKeyset(RegistryConfiguration.get());
 
     assertThrows(
         GeneralSecurityException.class, () -> NoSecretKeysetHandle.parseFrom(keyset.toByteArray()));
