@@ -520,24 +520,6 @@ java_library(
 )
 
 android_library(
-    name = "mac_configuration_v1-android",
-    srcs = ["MacConfigurationV1.java"],
-    deps = [
-        ":mac_configuration2026-android",
-        "//src/main/java/com/google/crypto/tink:configuration-android",
-    ],
-)
-
-java_library(
-    name = "mac_configuration_v1",
-    srcs = ["MacConfigurationV1.java"],
-    deps = [
-        ":mac_configuration2026",
-        "//src/main/java/com/google/crypto/tink:configuration",
-    ],
-)
-
-android_library(
     name = "mac_configuration2026-android",
     srcs = ["MacConfiguration2026.java"],
     deps = [
