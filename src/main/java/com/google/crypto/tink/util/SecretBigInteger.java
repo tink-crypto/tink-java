@@ -20,6 +20,7 @@ import com.google.crypto.tink.SecretKeyAccess;
 import com.google.errorprone.annotations.Immutable;
 import java.math.BigInteger;
 import java.security.MessageDigest;
+import java.util.Arrays;
 
 /** A class storing a secret BigInteger, protecting the value via {@link SecretKeyAccess}. */
 @Immutable
@@ -65,6 +66,11 @@ public final class SecretBigInteger {
     // BigInteger of the same values return different encodings.
     byte[] myArray = value.toByteArray();
     byte[] otherArray = other.value.toByteArray();
-    return MessageDigest.isEqual(myArray, otherArray);
+    try {
+      return MessageDigest.isEqual(myArray, otherArray);
+    } finally {
+      Arrays.fill(myArray, (byte) 0);
+      Arrays.fill(otherArray, (byte) 0);
+    }
   }
 }

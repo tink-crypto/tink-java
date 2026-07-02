@@ -25,6 +25,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
+import java.util.Arrays;
 
 /** Diffie-Hellman-based P-256, P-384 and P-521 HPKE KEM variant. */
 @Immutable
@@ -150,8 +151,12 @@ final class NistCurvesHpkeKem implements HpkeKem {
     ECPublicKey publicKey =
         EllipticCurves.getEcPublicKey(curve, PointFormatType.UNCOMPRESSED, encapsulatedKey);
     byte[] dhSharedSecret = EllipticCurves.computeSharedSecret(privateKey, publicKey);
-    return deriveKemSharedSecret(
-        dhSharedSecret, encapsulatedKey, recipientPrivateKey.getSerializedPublic().toByteArray());
+    try {
+      return deriveKemSharedSecret(
+          dhSharedSecret, encapsulatedKey, recipientPrivateKey.getSerializedPublic().toByteArray());
+    } finally {
+      Arrays.fill(dhSharedSecret, (byte) 0);
+    }
   }
 
   @Override
@@ -171,11 +176,15 @@ final class NistCurvesHpkeKem implements HpkeKem {
                 privateKey,
                 EllipticCurves.getEcPublicKey(
                     curve, PointFormatType.UNCOMPRESSED, senderPublicKey)));
-    return deriveKemSharedSecret(
-        dhSharedSecret,
-        encapsulatedKey,
-        recipientPrivateKey.getSerializedPublic().toByteArray(),
-        senderPublicKey);
+    try {
+      return deriveKemSharedSecret(
+          dhSharedSecret,
+          encapsulatedKey,
+          recipientPrivateKey.getSerializedPublic().toByteArray(),
+          senderPublicKey);
+    } finally {
+      Arrays.fill(dhSharedSecret, (byte) 0);
+    }
   }
 
   @Override
