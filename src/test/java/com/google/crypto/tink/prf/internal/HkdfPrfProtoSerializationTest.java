@@ -88,6 +88,49 @@ public final class HkdfPrfProtoSerializationTest {
   public static final Bytes[] SALTS =
       new Bytes[] {Bytes.copyFrom(Hex.decode("2023af")), Bytes.copyFrom(Hex.decode(""))};
 
+  @Test
+  public void register_serializationRegistryBuilderParameters() throws Exception {
+    com.google.crypto.tink.internal.SerializationRegistry.Builder builder =
+        new com.google.crypto.tink.internal.SerializationRegistry.Builder();
+    HkdfPrfProtoSerialization.register(builder);
+    com.google.crypto.tink.internal.SerializationRegistry serializationRegistry = builder.build();
+
+    HkdfPrfParameters parameters =
+        HkdfPrfParameters.builder()
+            .setKeySizeBytes(16)
+            .setHashType(HkdfPrfParameters.HashType.SHA256)
+            .build();
+    ProtoParametersSerialization serializedParams =
+        serializationRegistry.serializeParameters(parameters);
+    assertThat(serializationRegistry.parseParameters(serializedParams)).isEqualTo(parameters);
+  }
+
+  @Test
+  public void register_serializationRegistryBuilderKeys() throws Exception {
+    com.google.crypto.tink.internal.SerializationRegistry.Builder builder =
+        new com.google.crypto.tink.internal.SerializationRegistry.Builder();
+    HkdfPrfProtoSerialization.register(builder);
+    com.google.crypto.tink.internal.SerializationRegistry serializationRegistry = builder.build();
+
+    HkdfPrfParameters parameters =
+        HkdfPrfParameters.builder()
+            .setKeySizeBytes(16)
+            .setHashType(HkdfPrfParameters.HashType.SHA256)
+            .build();
+    HkdfPrfKey key =
+        HkdfPrfKey.builder()
+            .setParameters(parameters)
+            .setKeyBytes(SECRET_16)
+            .build();
+    ProtoKeySerialization serializedKey =
+        serializationRegistry.serializeKey(key, InsecureSecretKeyAccess.get());
+    assertThat(
+            serializationRegistry
+                .parseKey(serializedKey, InsecureSecretKeyAccess.get())
+                .equalsKey(key))
+        .isTrue();
+  }
+
   @Theory
   public void serializeAndParseParameters(
       @FromDataPoints("hashTypes") HashType hashType, @FromDataPoints("salts") Bytes salt)

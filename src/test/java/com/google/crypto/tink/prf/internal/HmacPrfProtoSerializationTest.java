@@ -90,6 +90,49 @@ public final class HmacPrfProtoSerializationTest {
     com.google.crypto.tink.prf.internal.HmacPrfProtoSerialization.register(registry);
   }
 
+  @Test
+  public void register_serializationRegistryBuilderParameters() throws Exception {
+    com.google.crypto.tink.internal.SerializationRegistry.Builder builder =
+        new com.google.crypto.tink.internal.SerializationRegistry.Builder();
+    com.google.crypto.tink.prf.internal.HmacPrfProtoSerialization.register(builder);
+    com.google.crypto.tink.internal.SerializationRegistry serializationRegistry = builder.build();
+
+    HmacPrfParameters parameters =
+        HmacPrfParameters.builder()
+            .setKeySizeBytes(16)
+            .setHashType(HmacPrfParameters.HashType.SHA256)
+            .build();
+    ProtoParametersSerialization serializedParams =
+        serializationRegistry.serializeParameters(parameters);
+    assertThat(serializationRegistry.parseParameters(serializedParams)).isEqualTo(parameters);
+  }
+
+  @Test
+  public void register_serializationRegistryBuilderKeys() throws Exception {
+    com.google.crypto.tink.internal.SerializationRegistry.Builder builder =
+        new com.google.crypto.tink.internal.SerializationRegistry.Builder();
+    com.google.crypto.tink.prf.internal.HmacPrfProtoSerialization.register(builder);
+    com.google.crypto.tink.internal.SerializationRegistry serializationRegistry = builder.build();
+
+    HmacPrfParameters parameters =
+        HmacPrfParameters.builder()
+            .setKeySizeBytes(16)
+            .setHashType(HmacPrfParameters.HashType.SHA256)
+            .build();
+    HmacPrfKey key =
+        HmacPrfKey.builder()
+            .setParameters(parameters)
+            .setKeyBytes(KEY_BYTES_16)
+            .build();
+    ProtoKeySerialization serializedKey =
+        serializationRegistry.serializeKey(key, InsecureSecretKeyAccess.get());
+    assertThat(
+            serializationRegistry
+                .parseKey(serializedKey, InsecureSecretKeyAccess.get())
+                .equalsKey(key))
+        .isTrue();
+  }
+
   @Theory
   public void serializeAndParseParameters(@FromDataPoints("hashTypes") HashType hashType)
       throws Exception {

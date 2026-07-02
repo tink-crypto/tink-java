@@ -67,6 +67,37 @@ public final class AesCmacPrfProtoSerializationTest {
     AesCmacPrfProtoSerialization.register(registry);
   }
 
+  @Test
+  public void register_serializationRegistryBuilderParameters() throws Exception {
+    com.google.crypto.tink.internal.SerializationRegistry.Builder builder =
+        new com.google.crypto.tink.internal.SerializationRegistry.Builder();
+    AesCmacPrfProtoSerialization.register(builder);
+    com.google.crypto.tink.internal.SerializationRegistry serializationRegistry = builder.build();
+
+    AesCmacPrfParameters parameters = AesCmacPrfParameters.create(32);
+    ProtoParametersSerialization serializedParams =
+        serializationRegistry.serializeParameters(parameters);
+    assertThat(serializationRegistry.parseParameters(serializedParams)).isEqualTo(parameters);
+  }
+
+  @Test
+  public void register_serializationRegistryBuilderKeys() throws Exception {
+    com.google.crypto.tink.internal.SerializationRegistry.Builder builder =
+        new com.google.crypto.tink.internal.SerializationRegistry.Builder();
+    AesCmacPrfProtoSerialization.register(builder);
+    com.google.crypto.tink.internal.SerializationRegistry serializationRegistry = builder.build();
+
+    AesCmacPrfKey key =
+        AesCmacPrfKey.create(AesCmacPrfParameters.create(32), SecretBytes.randomBytes(32));
+    ProtoKeySerialization serializedKey =
+        serializationRegistry.serializeKey(key, InsecureSecretKeyAccess.get());
+    assertThat(
+            serializationRegistry
+                .parseKey(serializedKey, InsecureSecretKeyAccess.get())
+                .equalsKey(key))
+        .isTrue();
+  }
+
   @Theory
   public void serializeAndParseParameters(@FromDataPoints("keySizes") int keySize)
       throws Exception {

@@ -157,5 +157,15 @@ public final class AesCmacPrfProtoSerialization {
     registry.registerKeyParser(KEY_PARSER);
   }
 
+  public static void register(
+      com.google.crypto.tink.internal.SerializationRegistry.Builder registryBuilder)
+      throws GeneralSecurityException {
+    registryBuilder.registerParametersSerializer(PARAMETERS_SERIALIZER);
+    registryBuilder.registerParametersParser(PARAMETERS_PARSER);
+    registryBuilder.registerKeySerializer(KEY_SERIALIZER);
+    registryBuilder.registerKeyParser(KEY_PARSER);
+  }
+
   private AesCmacPrfProtoSerialization() {}
 }
+
