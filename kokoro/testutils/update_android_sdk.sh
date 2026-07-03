@@ -40,13 +40,13 @@ unzip cmdline-tools.zip -d "${ANDROID_HOME}"
 # Discard STDOUT due to noisy progress bar which can't be silenced.
 (yes || true) | "${ANDROID_HOME}/cmdline-tools/bin/sdkmanager" \
   "--sdk_root=${ANDROID_HOME}" \
-  "build-tools;30.0.3" \
+  "build-tools;35.0.0" \
   "platforms;android-23" \
   "platforms;android-26" \
   > /dev/null
 (yes || true) | "${ANDROID_HOME}/cmdline-tools/bin/sdkmanager" \
   "--sdk_root=/tmp/android-sdk-30" \
-  "build-tools;30.0.3" \
+  "build-tools;35.0.0" \
   "platforms;android-30" \
   > /dev/null
 rm -rf cmdline-tools.zip
