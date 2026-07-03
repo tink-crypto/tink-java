@@ -67,6 +67,39 @@ public final class XAesGcmProtoSerializationTest {
   }
 
   @Test
+  public void parametersSerializationRegisteredWithBuilder() throws Exception {
+    com.google.crypto.tink.internal.SerializationRegistry.Builder builder =
+        new com.google.crypto.tink.internal.SerializationRegistry.Builder();
+    XAesGcmProtoSerialization.register(builder);
+    com.google.crypto.tink.internal.SerializationRegistry serializationRegistry = builder.build();
+
+    XAesGcmParameters parameters =
+        XAesGcmParameters.create(XAesGcmParameters.Variant.NO_PREFIX, 10);
+    ProtoParametersSerialization serializedParameters =
+        serializationRegistry.serializeParameters(parameters);
+    assertThat(serializationRegistry.parseParameters(serializedParameters)).isEqualTo(parameters);
+  }
+
+  @Test
+  public void keySerializationRegisteredWithBuilder() throws Exception {
+    com.google.crypto.tink.internal.SerializationRegistry.Builder builder =
+        new com.google.crypto.tink.internal.SerializationRegistry.Builder();
+    XAesGcmProtoSerialization.register(builder);
+    com.google.crypto.tink.internal.SerializationRegistry serializationRegistry = builder.build();
+
+    XAesGcmParameters parameters =
+        XAesGcmParameters.create(XAesGcmParameters.Variant.NO_PREFIX, 10);
+    XAesGcmKey key = XAesGcmKey.create(parameters, KEY_BYTES_32, null);
+    ProtoKeySerialization serializedKey =
+        serializationRegistry.serializeKey(key, InsecureSecretKeyAccess.get());
+    assertThat(
+            serializationRegistry
+                .parseKey(serializedKey, InsecureSecretKeyAccess.get())
+                .equalsKey(key))
+        .isTrue();
+  }
+
+  @Test
   public void serializeParseParameters_noPrefix() throws Exception {
     XAesGcmParameters parameters = XAesGcmParameters.create(XAesGcmParameters.Variant.NO_PREFIX, 8);
     ProtoParametersSerialization serialization =

@@ -67,6 +67,54 @@ public final class AesEaxProtoSerializationTest {
   }
 
   @Test
+  public void parametersSerializationRegisteredWithBuilder() throws Exception {
+    com.google.crypto.tink.internal.SerializationRegistry.Builder builder =
+        new com.google.crypto.tink.internal.SerializationRegistry.Builder();
+    AesEaxProtoSerialization.register(builder);
+    com.google.crypto.tink.internal.SerializationRegistry serializationRegistry = builder.build();
+
+    AesEaxParameters parameters =
+        AesEaxParameters.builder()
+            .setKeySizeBytes(16)
+            .setTagSizeBytes(16)
+            .setIvSizeBytes(16)
+            .setVariant(AesEaxParameters.Variant.NO_PREFIX)
+            .build();
+    ProtoParametersSerialization serializedParameters =
+        serializationRegistry.serializeParameters(parameters);
+    assertThat(serializationRegistry.parseParameters(serializedParameters))
+        .isEqualTo(parameters);
+  }
+
+  @Test
+  public void keySerializationRegisteredWithBuilder() throws Exception {
+    com.google.crypto.tink.internal.SerializationRegistry.Builder builder =
+        new com.google.crypto.tink.internal.SerializationRegistry.Builder();
+    AesEaxProtoSerialization.register(builder);
+    com.google.crypto.tink.internal.SerializationRegistry serializationRegistry = builder.build();
+
+    AesEaxParameters parameters =
+        AesEaxParameters.builder()
+            .setKeySizeBytes(16)
+            .setTagSizeBytes(16)
+            .setIvSizeBytes(16)
+            .setVariant(AesEaxParameters.Variant.NO_PREFIX)
+            .build();
+    AesEaxKey key =
+        AesEaxKey.builder()
+            .setParameters(parameters)
+            .setKeyBytes(KEY_BYTES_16)
+            .build();
+    ProtoKeySerialization serializedKey =
+        serializationRegistry.serializeKey(key, InsecureSecretKeyAccess.get());
+    assertThat(
+            serializationRegistry
+                .parseKey(serializedKey, InsecureSecretKeyAccess.get())
+                .equalsKey(key))
+        .isTrue();
+  }
+
+  @Test
   public void serializeParseParameters_noPrefix() throws Exception {
     AesEaxParameters parameters =
         AesEaxParameters.builder()

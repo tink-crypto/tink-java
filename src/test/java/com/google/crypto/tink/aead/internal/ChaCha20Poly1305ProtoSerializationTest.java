@@ -67,6 +67,39 @@ public final class ChaCha20Poly1305ProtoSerializationTest {
   }
 
   @Test
+  public void parametersSerializationRegisteredWithBuilder() throws Exception {
+    com.google.crypto.tink.internal.SerializationRegistry.Builder builder =
+        new com.google.crypto.tink.internal.SerializationRegistry.Builder();
+    ChaCha20Poly1305ProtoSerialization.register(builder);
+    com.google.crypto.tink.internal.SerializationRegistry serializationRegistry = builder.build();
+
+    ChaCha20Poly1305Parameters parameters =
+        ChaCha20Poly1305Parameters.create(ChaCha20Poly1305Parameters.Variant.NO_PREFIX);
+    ProtoParametersSerialization serializedParameters =
+        serializationRegistry.serializeParameters(parameters);
+    assertThat(serializationRegistry.parseParameters(serializedParameters))
+        .isEqualTo(parameters);
+  }
+
+  @Test
+  public void keySerializationRegisteredWithBuilder() throws Exception {
+    com.google.crypto.tink.internal.SerializationRegistry.Builder builder =
+        new com.google.crypto.tink.internal.SerializationRegistry.Builder();
+    ChaCha20Poly1305ProtoSerialization.register(builder);
+    com.google.crypto.tink.internal.SerializationRegistry serializationRegistry = builder.build();
+
+    ChaCha20Poly1305Key key =
+        ChaCha20Poly1305Key.create(ChaCha20Poly1305Parameters.Variant.NO_PREFIX, KEY_BYTES_32, null);
+    ProtoKeySerialization serializedKey =
+        serializationRegistry.serializeKey(key, InsecureSecretKeyAccess.get());
+    assertThat(
+            serializationRegistry
+                .parseKey(serializedKey, InsecureSecretKeyAccess.get())
+                .equalsKey(key))
+        .isTrue();
+  }
+
+  @Test
   public void serializeParseParameters_noPrefix() throws Exception {
     ChaCha20Poly1305Parameters parameters = ChaCha20Poly1305Parameters.create();
 

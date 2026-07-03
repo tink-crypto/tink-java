@@ -66,6 +66,50 @@ public final class AesGcmSivProtoSerializationTest {
   }
 
   @Test
+  public void parametersSerializationRegisteredWithBuilder() throws Exception {
+    com.google.crypto.tink.internal.SerializationRegistry.Builder builder =
+        new com.google.crypto.tink.internal.SerializationRegistry.Builder();
+    AesGcmSivProtoSerialization.register(builder);
+    com.google.crypto.tink.internal.SerializationRegistry serializationRegistry = builder.build();
+
+    AesGcmSivParameters parameters =
+        AesGcmSivParameters.builder()
+            .setKeySizeBytes(16)
+            .setVariant(AesGcmSivParameters.Variant.NO_PREFIX)
+            .build();
+    ProtoParametersSerialization serializedParameters =
+        serializationRegistry.serializeParameters(parameters);
+    assertThat(serializationRegistry.parseParameters(serializedParameters))
+        .isEqualTo(parameters);
+  }
+
+  @Test
+  public void keySerializationRegisteredWithBuilder() throws Exception {
+    com.google.crypto.tink.internal.SerializationRegistry.Builder builder =
+        new com.google.crypto.tink.internal.SerializationRegistry.Builder();
+    AesGcmSivProtoSerialization.register(builder);
+    com.google.crypto.tink.internal.SerializationRegistry serializationRegistry = builder.build();
+
+    AesGcmSivParameters parameters =
+        AesGcmSivParameters.builder()
+            .setKeySizeBytes(16)
+            .setVariant(AesGcmSivParameters.Variant.NO_PREFIX)
+            .build();
+    AesGcmSivKey key =
+        AesGcmSivKey.builder()
+            .setParameters(parameters)
+            .setKeyBytes(KEY_BYTES_16)
+            .build();
+    ProtoKeySerialization serializedKey =
+        serializationRegistry.serializeKey(key, InsecureSecretKeyAccess.get());
+    assertThat(
+            serializationRegistry
+                .parseKey(serializedKey, InsecureSecretKeyAccess.get())
+                .equalsKey(key))
+        .isTrue();
+  }
+
+  @Test
   public void serializeParseParameters_noPrefix() throws Exception {
     AesGcmSivParameters parameters =
         AesGcmSivParameters.builder()

@@ -66,6 +66,54 @@ public final class AesGcmProtoSerializationTest {
   }
 
   @Test
+  public void parametersSerializationRegisteredWithBuilder() throws Exception {
+    com.google.crypto.tink.internal.SerializationRegistry.Builder builder =
+        new com.google.crypto.tink.internal.SerializationRegistry.Builder();
+    AesGcmProtoSerialization.register(builder);
+    com.google.crypto.tink.internal.SerializationRegistry serializationRegistry = builder.build();
+
+    AesGcmParameters parameters =
+        AesGcmParameters.builder()
+            .setKeySizeBytes(16)
+            .setIvSizeBytes(12)
+            .setTagSizeBytes(16)
+            .setVariant(AesGcmParameters.Variant.NO_PREFIX)
+            .build();
+    ProtoParametersSerialization serializedParameters =
+        serializationRegistry.serializeParameters(parameters);
+    assertThat(serializationRegistry.parseParameters(serializedParameters))
+        .isEqualTo(parameters);
+  }
+  
+  @Test
+  public void keySerializationRegisteredWithBuilder() throws Exception {
+    com.google.crypto.tink.internal.SerializationRegistry.Builder builder =
+        new com.google.crypto.tink.internal.SerializationRegistry.Builder();
+    AesGcmProtoSerialization.register(builder);
+    com.google.crypto.tink.internal.SerializationRegistry serializationRegistry = builder.build();
+
+    AesGcmParameters parameters =
+        AesGcmParameters.builder()
+            .setKeySizeBytes(16)
+            .setIvSizeBytes(12)
+            .setTagSizeBytes(16)
+            .setVariant(AesGcmParameters.Variant.NO_PREFIX)
+            .build();
+    AesGcmKey key =
+        AesGcmKey.builder()
+            .setParameters(parameters)
+            .setKeyBytes(KEY_BYTES_16)
+            .build();
+    ProtoKeySerialization serializedKey =
+        serializationRegistry.serializeKey(key, InsecureSecretKeyAccess.get());
+    assertThat(
+            serializationRegistry
+                .parseKey(serializedKey, InsecureSecretKeyAccess.get())
+                .equalsKey(key))
+        .isTrue();
+  }
+
+  @Test
   public void serializeParseParameters_noPrefix() throws Exception {
     AesGcmParameters parameters =
         AesGcmParameters.builder()

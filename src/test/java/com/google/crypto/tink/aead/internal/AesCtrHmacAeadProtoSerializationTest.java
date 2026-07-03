@@ -127,6 +127,59 @@ public final class AesCtrHmacAeadProtoSerializationTest {
   }
 
   @Test
+  public void parametersSerializationRegisteredWithBuilder() throws Exception {
+    com.google.crypto.tink.internal.SerializationRegistry.Builder builder =
+        new com.google.crypto.tink.internal.SerializationRegistry.Builder();
+    AesCtrHmacAeadProtoSerialization.register(builder);
+    com.google.crypto.tink.internal.SerializationRegistry serializationRegistry = builder.build();
+
+    AesCtrHmacAeadParameters parameters =
+        AesCtrHmacAeadParameters.builder()
+            .setAesKeySizeBytes(16)
+            .setHmacKeySizeBytes(16)
+            .setIvSizeBytes(16)
+            .setTagSizeBytes(16)
+            .setHashType(AesCtrHmacAeadParameters.HashType.SHA256)
+            .setVariant(AesCtrHmacAeadParameters.Variant.NO_PREFIX)
+            .build();
+    ProtoParametersSerialization serializedParameters =
+        serializationRegistry.serializeParameters(parameters);
+    assertThat(serializationRegistry.parseParameters(serializedParameters))
+        .isEqualTo(parameters);
+  }
+
+  @Test
+  public void keySerializationRegisteredWithBuilder() throws Exception {
+    com.google.crypto.tink.internal.SerializationRegistry.Builder builder =
+        new com.google.crypto.tink.internal.SerializationRegistry.Builder();
+    AesCtrHmacAeadProtoSerialization.register(builder);
+    com.google.crypto.tink.internal.SerializationRegistry serializationRegistry = builder.build();
+
+    AesCtrHmacAeadParameters parameters =
+        AesCtrHmacAeadParameters.builder()
+            .setAesKeySizeBytes(16)
+            .setHmacKeySizeBytes(16)
+            .setIvSizeBytes(16)
+            .setTagSizeBytes(16)
+            .setHashType(AesCtrHmacAeadParameters.HashType.SHA256)
+            .setVariant(AesCtrHmacAeadParameters.Variant.NO_PREFIX)
+            .build();
+    AesCtrHmacAeadKey key =
+        AesCtrHmacAeadKey.builder()
+            .setParameters(parameters)
+            .setAesKeyBytes(KEY_BYTES_16)
+            .setHmacKeyBytes(KEY_BYTES_16)
+            .build();
+    ProtoKeySerialization serializedKey =
+        serializationRegistry.serializeKey(key, InsecureSecretKeyAccess.get());
+    assertThat(
+            serializationRegistry
+                .parseKey(serializedKey, InsecureSecretKeyAccess.get())
+                .equalsKey(key))
+        .isTrue();
+  }
+
+  @Test
   public void serializeParseParameters_noPrefix_sha1_equal() throws Exception {
     AesCtrHmacAeadParameters parameters =
         AesCtrHmacAeadParameters.builder()

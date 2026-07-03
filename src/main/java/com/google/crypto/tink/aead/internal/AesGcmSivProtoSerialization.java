@@ -29,6 +29,7 @@ import com.google.crypto.tink.internal.KeySerializer;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ParametersParser;
 import com.google.crypto.tink.internal.ParametersSerializer;
+import com.google.crypto.tink.internal.SerializationRegistry;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ExtensionRegistryLite;
@@ -184,6 +185,14 @@ public final class AesGcmSivProtoSerialization {
     registry.registerParametersParser(PARAMETERS_PARSER);
     registry.registerKeySerializer(KEY_SERIALIZER);
     registry.registerKeyParser(KEY_PARSER);
+  }
+
+  public static void register(SerializationRegistry.Builder registryBuilder)
+      throws GeneralSecurityException {
+    registryBuilder.registerParametersSerializer(PARAMETERS_SERIALIZER);
+    registryBuilder.registerParametersParser(PARAMETERS_PARSER);
+    registryBuilder.registerKeySerializer(KEY_SERIALIZER);
+    registryBuilder.registerKeyParser(KEY_PARSER);
   }
 
   private AesGcmSivProtoSerialization() {}
