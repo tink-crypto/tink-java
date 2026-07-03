@@ -15,65 +15,23 @@
 ////////////////////////////////////////////////////////////////////////////////
 package com.google.crypto.tink.jwt;
 
-import static java.nio.charset.StandardCharsets.US_ASCII;
-
-import com.google.crypto.tink.AccessesPartialKey;
-import com.google.crypto.tink.PublicKeyVerify;
+import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
-import com.google.crypto.tink.jwt.internal.JsonUtil;
-import com.google.crypto.tink.jwt.internal.JwtFormat;
+import com.google.crypto.tink.jwt.subtle.JwtEcdsaPublicKeyVerify;
 import com.google.crypto.tink.proto.JwtEcdsaAlgorithm;
-import com.google.crypto.tink.signature.EcdsaPublicKey;
-import com.google.crypto.tink.subtle.EcdsaVerifyJce;
 import com.google.crypto.tink.subtle.EllipticCurves;
 import com.google.crypto.tink.subtle.Enums;
-import com.google.gson.JsonObject;
 import java.security.GeneralSecurityException;
 
 /**
  * This key manager produces new instances of {@code JwtEcdsaVerify}. It doesn't support key
  * generation.
  */
+@LowLevelCryptoCaller
 class JwtEcdsaVerifyKeyManager {
-
-
-  @AccessesPartialKey
-  static EcdsaPublicKey toEcdsaPublicKey(com.google.crypto.tink.jwt.JwtEcdsaPublicKey publicKey)
-      throws GeneralSecurityException {
-    return publicKey.getEcdsaPublicKey();
-  }
-
-  @SuppressWarnings("Immutable") // EcdsaVerifyJce.create returns an immutable verifier.
-  static JwtPublicKeyVerify createFullPrimitive(
-      com.google.crypto.tink.jwt.JwtEcdsaPublicKey publicKey) throws GeneralSecurityException {
-    EcdsaPublicKey ecdsaPublicKey = toEcdsaPublicKey(publicKey);
-    final PublicKeyVerify verifier = EcdsaVerifyJce.create(ecdsaPublicKey);
-
-    return new JwtPublicKeyVerify() {
-      @Override
-      public VerifiedJwt verifyAndDecode(String compact, JwtValidator validator)
-          throws GeneralSecurityException {
-        JwtFormat.Parts parts = JwtFormat.splitSignedCompact(compact);
-        verifier.verify(parts.signatureOrMac, parts.unsignedCompact.getBytes(US_ASCII));
-        JsonObject parsedHeader = JsonUtil.parseJson(parts.header);
-        JwtFormat.validateHeader(
-            parsedHeader,
-            publicKey.getParameters().getAlgorithm().getStandardName(),
-            publicKey.getKid(),
-            publicKey.getParameters().allowKidAbsent());
-        RawJwt token = RawJwt.fromJsonPayload(JwtFormat.getTypeHeader(parsedHeader), parts.payload);
-        return validator.unsafeValidate(token);
-      }
-    };
-  }
-
-  static final PrimitiveConstructor<
-          com.google.crypto.tink.jwt.JwtEcdsaPublicKey, JwtPublicKeyVerify>
-      PRIMITIVE_CONSTRUCTOR =
-          PrimitiveConstructor.create(
-              JwtEcdsaVerifyKeyManager::createFullPrimitive,
-              com.google.crypto.tink.jwt.JwtEcdsaPublicKey.class,
-              JwtPublicKeyVerify.class);
+  static final PrimitiveConstructor<JwtEcdsaPublicKey, JwtPublicKeyVerify> PRIMITIVE_CONSTRUCTOR =
+      PrimitiveConstructor.create(
+          JwtEcdsaPublicKeyVerify::create, JwtEcdsaPublicKey.class, JwtPublicKeyVerify.class);
 
   static final EllipticCurves.CurveType getCurve(JwtEcdsaAlgorithm algorithm)
       throws GeneralSecurityException {
@@ -114,5 +72,4 @@ class JwtEcdsaVerifyKeyManager {
   static String getKeyType() {
     return "type.googleapis.com/google.crypto.tink.JwtEcdsaPublicKey";
   }
-
 }

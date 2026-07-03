@@ -18,6 +18,7 @@ package com.google.crypto.tink.jwt;
 
 import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Arrays.stream;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assume.assumeTrue;
 
@@ -35,14 +36,12 @@ import com.google.crypto.tink.jwt.internal.JwtEcdsaProtoSerialization;
 import com.google.crypto.tink.jwt.internal.JwtFormat;
 import com.google.crypto.tink.jwt.internal.JwtRsaSsaPkcs1ProtoSerialization;
 import com.google.crypto.tink.jwt.internal.JwtRsaSsaPssProtoSerialization;
-import com.google.crypto.tink.signature.EcdsaPrivateKey;
-import com.google.crypto.tink.signature.EcdsaSignKeyManager;
+import com.google.crypto.tink.jwt.internal.testing.JwtSignatureTestUtil;
 import com.google.crypto.tink.signature.PublicKeySignWrapper;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPkcs1SignKeyManager;
 import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPssSignKeyManager;
-import com.google.crypto.tink.signature.internal.EcdsaProtoSerialization;
 import com.google.crypto.tink.signature.internal.RsaSsaPkcs1ProtoSerialization;
 import com.google.crypto.tink.signature.internal.RsaSsaPssProtoSerialization;
 import com.google.crypto.tink.subtle.Base64;
@@ -52,7 +51,7 @@ import com.google.crypto.tink.util.SecretBytes;
 import com.google.gson.JsonObject;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
-import java.security.spec.ECPoint;
+import java.util.stream.Stream;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -63,48 +62,6 @@ import org.junit.runner.RunWith;
 
 @RunWith(Theories.class)
 public class JwtSignatureConfigurationV0Test {
-
-  // Test case from https://www.ietf.org/rfc/rfc6979.txt, A.2.5
-  private static final ECPoint P256_PUBLIC_POINT =
-      new ECPoint(
-          new BigInteger("60FED4BA255A9D31C961EB74C6356D68C049B8923B61FA6CE669622E60F29FB6", 16),
-          new BigInteger("7903FE1008B8BC99A41AE9E95628BC64F2F1B20C2D7E9F5177A3C294D4462299", 16));
-  private static final BigInteger P256_PRIVATE_VALUE =
-      new BigInteger("C9AFA9D845BA75166B5C215767B1D6934E50C3DB36E89B127B8A622B120F6721", 16);
-
-  // Test case from https://www.ietf.org/rfc/rfc6979.txt, A.2.7
-  private static final ECPoint P521_PUBLIC_POINT =
-      new ECPoint(
-          new BigInteger(
-              "1894550D0785932E00EAA23B694F213F8C3121F86DC97A04E5A7167DB4E5BCD3"
-                  + "71123D46E45DB6B5D5370A7F20FB633155D38FFA16D2BD761DCAC474B9A2F502"
-                  + "3A4",
-              16),
-          new BigInteger(
-              "0493101C962CD4D2FDDF782285E64584139C2F91B47F87FF82354D6630F746A2"
-                  + "8A0DB25741B5B34A828008B22ACC23F924FAAFBD4D33F81EA66956DFEAA2BFDF"
-                  + "CF5",
-              16));
-  private static final BigInteger P521_PRIVATE_VALUE =
-      new BigInteger(
-          "0FAD06DAA62BA3B25D2FB40133DA757205DE67F5BB0018FEE8C86E1B68C7E75C"
-              + "AA896EB32F1F47C70855836A6D16FCC1466F6D8FBEC67DB89EC0C08B0E996B83"
-              + "538",
-          16);
-
-  // Test case from https://www.ietf.org/rfc/rfc6979.txt, A.2.6
-  private static final ECPoint P384_PUBLIC_POINT =
-      new ECPoint(
-          new BigInteger(
-              "EC3A4E415B4E19A4568618029F427FA5DA9A8BC4AE92E02E06AAE5286B300C64DEF8F0EA9055866064A254515480BC13",
-              16),
-          new BigInteger(
-              "8015D9B72D7D57244EA8EF9AC0C621896708A59367F9DFB9F54CA84B3F1C9DB1288B231C3AE0D4FE7344FD2533264720",
-              16));
-  private static final BigInteger P384_PRIVATE_VALUE =
-      new BigInteger(
-          "6B9D3DAD2E1B8C1C05B19875B6659F4DE23C3B667BF297BA9AA47740787137D896D5724E4C70A825F872C9EA60D2EDF5",
-          16);
 
   private static final String CUSTOM_KID_VALUE =
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
@@ -318,177 +275,6 @@ public class JwtSignatureConfigurationV0Test {
 
   private static void createTestKeys() {
     try {
-      JwtEcdsaParameters jwtEcdsaEs256RawParameters =
-          JwtEcdsaParameters.builder()
-              .setKidStrategy(JwtEcdsaParameters.KidStrategy.IGNORED)
-              .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
-              .build();
-      JwtEcdsaPublicKey jwtEcdsaEs256RawPublicKey =
-          JwtEcdsaPublicKey.builder()
-              .setParameters(jwtEcdsaEs256RawParameters)
-              .setPublicPoint(P256_PUBLIC_POINT)
-              .build();
-      EcdsaPrivateKey ecdsaEs256PrivateKey =
-          EcdsaPrivateKey.builder()
-              .setPublicKey(jwtEcdsaEs256RawPublicKey.getEcdsaPublicKey())
-              .setPrivateValue(
-                  SecretBigInteger.fromBigInteger(
-                      P256_PRIVATE_VALUE, InsecureSecretKeyAccess.get()))
-              .build();
-      JwtEcdsaPrivateKey jwtEcdsaEs256RawPrivateKey =
-          JwtEcdsaPrivateKey.create(jwtEcdsaEs256RawPublicKey, ecdsaEs256PrivateKey);
-
-      JwtEcdsaParameters jwtEcdsaEs256Parameters =
-          JwtEcdsaParameters.builder()
-              .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
-              .setKidStrategy(JwtEcdsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
-              .build();
-      JwtEcdsaPublicKey jwtEcdsaEs256PublicKey =
-          JwtEcdsaPublicKey.builder()
-              .setParameters(jwtEcdsaEs256Parameters)
-              .setPublicPoint(P256_PUBLIC_POINT)
-              .setIdRequirement(123)
-              .build();
-      JwtEcdsaPrivateKey jwtEcdsaEs256PrivateKey =
-          JwtEcdsaPrivateKey.create(jwtEcdsaEs256PublicKey, ecdsaEs256PrivateKey);
-
-      JwtEcdsaParameters jwtEcdsaEs256CustomKidParameters =
-          JwtEcdsaParameters.builder()
-              .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
-              .setKidStrategy(JwtEcdsaParameters.KidStrategy.CUSTOM)
-              .build();
-      JwtEcdsaPublicKey jwtEcdsaEs256CustomKidPublicKey =
-          JwtEcdsaPublicKey.builder()
-              .setParameters(jwtEcdsaEs256CustomKidParameters)
-              .setPublicPoint(P256_PUBLIC_POINT)
-              .setCustomKid(CUSTOM_KID_VALUE)
-              .build();
-      JwtEcdsaPrivateKey jwtEcdsaEs256CustomKidPrivateKey =
-          JwtEcdsaPrivateKey.create(jwtEcdsaEs256CustomKidPublicKey, ecdsaEs256PrivateKey);
-
-      JwtEcdsaPublicKey jwtEcdsaEs256WrongKidPublicKey =
-          JwtEcdsaPublicKey.builder()
-              .setParameters(jwtEcdsaEs256CustomKidParameters)
-              .setPublicPoint(P256_PUBLIC_POINT)
-              .setCustomKid("wrong")
-              .build();
-      JwtEcdsaPrivateKey jwtEcdsaEs256WrongKidPrivateKey =
-          JwtEcdsaPrivateKey.create(jwtEcdsaEs256WrongKidPublicKey, ecdsaEs256PrivateKey);
-
-      JwtEcdsaParameters jwtEcdsaEs512RawParameters =
-          JwtEcdsaParameters.builder()
-              .setAlgorithm(JwtEcdsaParameters.Algorithm.ES512)
-              .setKidStrategy(JwtEcdsaParameters.KidStrategy.IGNORED)
-              .build();
-      JwtEcdsaPublicKey jwtEcdsaEs512RawPublicKey =
-          JwtEcdsaPublicKey.builder()
-              .setParameters(jwtEcdsaEs512RawParameters)
-              .setPublicPoint(P521_PUBLIC_POINT)
-              .build();
-      EcdsaPrivateKey ecdsaEs512PrivateKey =
-          EcdsaPrivateKey.builder()
-              .setPublicKey(jwtEcdsaEs512RawPublicKey.getEcdsaPublicKey())
-              .setPrivateValue(
-                  SecretBigInteger.fromBigInteger(
-                      P521_PRIVATE_VALUE, InsecureSecretKeyAccess.get()))
-              .build();
-      JwtEcdsaPrivateKey jwtEcdsaEs512RawPrivateKey =
-          JwtEcdsaPrivateKey.create(jwtEcdsaEs512RawPublicKey, ecdsaEs512PrivateKey);
-
-      JwtEcdsaParameters jwtEcdsaEs512Parameters =
-          JwtEcdsaParameters.builder()
-              .setAlgorithm(JwtEcdsaParameters.Algorithm.ES512)
-              .setKidStrategy(JwtEcdsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
-              .build();
-      JwtEcdsaPublicKey jwtEcdsaEs512PublicKey =
-          JwtEcdsaPublicKey.builder()
-              .setParameters(jwtEcdsaEs512Parameters)
-              .setPublicPoint(P521_PUBLIC_POINT)
-              .setIdRequirement(123)
-              .build();
-      JwtEcdsaPrivateKey jwtEcdsaEs512PrivateKey =
-          JwtEcdsaPrivateKey.create(jwtEcdsaEs512PublicKey, ecdsaEs512PrivateKey);
-
-      JwtEcdsaParameters jwtEcdsaEs512CustomKidParameters =
-          JwtEcdsaParameters.builder()
-              .setAlgorithm(JwtEcdsaParameters.Algorithm.ES512)
-              .setKidStrategy(JwtEcdsaParameters.KidStrategy.CUSTOM)
-              .build();
-      JwtEcdsaPublicKey jwtEcdsaEs512CustomKidPublicKey =
-          JwtEcdsaPublicKey.builder()
-              .setParameters(jwtEcdsaEs512CustomKidParameters)
-              .setPublicPoint(P521_PUBLIC_POINT)
-              .setCustomKid(CUSTOM_KID_VALUE)
-              .build();
-      JwtEcdsaPrivateKey jwtEcdsaEs512CustomKidPrivateKey =
-          JwtEcdsaPrivateKey.create(jwtEcdsaEs512CustomKidPublicKey, ecdsaEs512PrivateKey);
-
-      JwtEcdsaPublicKey jwtEcdsaEs512WrongKidPublicKey =
-          JwtEcdsaPublicKey.builder()
-              .setParameters(jwtEcdsaEs512CustomKidParameters)
-              .setPublicPoint(P521_PUBLIC_POINT)
-              .setCustomKid("wrong")
-              .build();
-      JwtEcdsaPrivateKey jwtEcdsaEs512WrongKidPrivateKey =
-          JwtEcdsaPrivateKey.create(jwtEcdsaEs512WrongKidPublicKey, ecdsaEs512PrivateKey);
-
-      JwtEcdsaParameters jwtEcdsaEs384RawParameters =
-          JwtEcdsaParameters.builder()
-              .setAlgorithm(JwtEcdsaParameters.Algorithm.ES384)
-              .setKidStrategy(JwtEcdsaParameters.KidStrategy.IGNORED)
-              .build();
-      JwtEcdsaPublicKey jwtEcdsaEs384RawPublicKey =
-          JwtEcdsaPublicKey.builder()
-              .setParameters(jwtEcdsaEs384RawParameters)
-              .setPublicPoint(P384_PUBLIC_POINT)
-              .build();
-      EcdsaPrivateKey ecdsaEs384PrivateKey =
-          EcdsaPrivateKey.builder()
-              .setPublicKey(jwtEcdsaEs384RawPublicKey.getEcdsaPublicKey())
-              .setPrivateValue(
-                  SecretBigInteger.fromBigInteger(
-                      P384_PRIVATE_VALUE, InsecureSecretKeyAccess.get()))
-              .build();
-      JwtEcdsaPrivateKey jwtEcdsaEs384RawPrivateKey =
-          JwtEcdsaPrivateKey.create(jwtEcdsaEs384RawPublicKey, ecdsaEs384PrivateKey);
-
-      JwtEcdsaParameters jwtEcdsaEs384Parameters =
-          JwtEcdsaParameters.builder()
-              .setAlgorithm(JwtEcdsaParameters.Algorithm.ES384)
-              .setKidStrategy(JwtEcdsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
-              .build();
-      JwtEcdsaPublicKey jwtEcdsaEs384PublicKey =
-          JwtEcdsaPublicKey.builder()
-              .setParameters(jwtEcdsaEs384Parameters)
-              .setPublicPoint(P384_PUBLIC_POINT)
-              .setIdRequirement(123)
-              .build();
-      JwtEcdsaPrivateKey jwtEcdsaEs384PrivateKey =
-          JwtEcdsaPrivateKey.create(jwtEcdsaEs384PublicKey, ecdsaEs384PrivateKey);
-
-      JwtEcdsaParameters jwtEcdsaEs384CustomKidParameters =
-          JwtEcdsaParameters.builder()
-              .setAlgorithm(JwtEcdsaParameters.Algorithm.ES384)
-              .setKidStrategy(JwtEcdsaParameters.KidStrategy.CUSTOM)
-              .build();
-      JwtEcdsaPublicKey jwtEcdsaEs384CustomKidPublicKey =
-          JwtEcdsaPublicKey.builder()
-              .setParameters(jwtEcdsaEs384CustomKidParameters)
-              .setPublicPoint(P384_PUBLIC_POINT)
-              .setCustomKid(CUSTOM_KID_VALUE)
-              .build();
-      JwtEcdsaPrivateKey jwtEcdsaEs384CustomKidPrivateKey =
-          JwtEcdsaPrivateKey.create(jwtEcdsaEs384CustomKidPublicKey, ecdsaEs384PrivateKey);
-
-      JwtEcdsaPublicKey jwtEcdsaEs384WrongKidPublicKey =
-          JwtEcdsaPublicKey.builder()
-              .setParameters(jwtEcdsaEs384CustomKidParameters)
-              .setPublicPoint(P384_PUBLIC_POINT)
-              .setCustomKid("wrong")
-              .build();
-      JwtEcdsaPrivateKey jwtEcdsaEs384WrongKidPrivateKey =
-          JwtEcdsaPrivateKey.create(jwtEcdsaEs384WrongKidPublicKey, ecdsaEs384PrivateKey);
-
       JwtRsaSsaPkcs1Parameters jwtRsaSsaPkcs1Raw2048Parameters =
           JwtRsaSsaPkcs1Parameters.builder()
               .setModulusSizeBits(2048)
@@ -908,44 +694,33 @@ public class JwtSignatureConfigurationV0Test {
               .build();
 
       jwtPrivateKeys =
-          new JwtSignaturePrivateKey[] {
-            jwtEcdsaEs256RawPrivateKey,
-            jwtEcdsaEs256PrivateKey,
-            jwtEcdsaEs384RawPrivateKey,
-            jwtEcdsaEs384PrivateKey,
-            jwtEcdsaEs512RawPrivateKey,
-            jwtEcdsaEs512PrivateKey,
-            jwtRsaSsaPkcs1Raw2048PrivateKey,
-            jwtRsaSsaPkcs1Kid2048PrivateKey,
-            jwtRsaSsaPkcs1CustomKid2048PrivateKey,
-            jwtRsaSsaPkcs1Raw3072PrivateKey,
-            jwtRsaSsaPkcs1Kid3072PrivateKey,
-            jwtRsaSsaPkcs1CustomKid3072PrivateKey,
-            jwtRsaSsaPkcs1Raw4096PrivateKey,
-            jwtRsaSsaPkcs1Kid4096PrivateKey,
-            jwtRsaSsaPkcs1CustomKid4096PrivateKey,
-            jwtRsaSsaPssRaw2048PrivateKey,
-            jwtRsaSsaPssKid2048PrivateKey,
-            jwtRsaSsaPssCustomKid2048PrivateKey,
-            jwtRsaSsaPssRaw3072PrivateKey,
-            jwtRsaSsaPssKid3072PrivateKey,
-            jwtRsaSsaPssCustomKid3072PrivateKey,
-            jwtRsaSsaPssRaw4096PrivateKey,
-            jwtRsaSsaPssKid4096PrivateKey,
-            jwtRsaSsaPssCustomKid4096PrivateKey,
-          };
+          Stream.concat(
+                  JwtSignatureTestUtil.createJwtEcdsaPrivateKeys().stream(),
+                  stream(
+                      new JwtSignaturePrivateKey[] {
+                        jwtRsaSsaPkcs1Raw2048PrivateKey,
+                        jwtRsaSsaPkcs1Kid2048PrivateKey,
+                        jwtRsaSsaPkcs1CustomKid2048PrivateKey,
+                        jwtRsaSsaPkcs1Raw3072PrivateKey,
+                        jwtRsaSsaPkcs1Kid3072PrivateKey,
+                        jwtRsaSsaPkcs1CustomKid3072PrivateKey,
+                        jwtRsaSsaPkcs1Raw4096PrivateKey,
+                        jwtRsaSsaPkcs1Kid4096PrivateKey,
+                        jwtRsaSsaPkcs1CustomKid4096PrivateKey,
+                        jwtRsaSsaPssRaw2048PrivateKey,
+                        jwtRsaSsaPssKid2048PrivateKey,
+                        jwtRsaSsaPssCustomKid2048PrivateKey,
+                        jwtRsaSsaPssRaw3072PrivateKey,
+                        jwtRsaSsaPssKid3072PrivateKey,
+                        jwtRsaSsaPssCustomKid3072PrivateKey,
+                        jwtRsaSsaPssRaw4096PrivateKey,
+                        jwtRsaSsaPssKid4096PrivateKey,
+                        jwtRsaSsaPssCustomKid4096PrivateKey,
+                      }))
+              .toArray(JwtSignaturePrivateKey[]::new);
 
       jwtPrivateKeyPairs =
           new JwtSignaturePrivateKey[][] {
-            new JwtSignaturePrivateKey[] {
-              jwtEcdsaEs256RawPrivateKey, jwtEcdsaEs256CustomKidPrivateKey,
-            },
-            new JwtSignaturePrivateKey[] {
-              jwtEcdsaEs384RawPrivateKey, jwtEcdsaEs384CustomKidPrivateKey,
-            },
-            new JwtSignaturePrivateKey[] {
-              jwtEcdsaEs512RawPrivateKey, jwtEcdsaEs512CustomKidPrivateKey,
-            },
             new JwtSignaturePrivateKey[] {
               jwtRsaSsaPkcs1Raw2048PrivateKey, jwtRsaSsaPkcs1CustomKid2048PrivateKey,
             },
@@ -968,15 +743,6 @@ public class JwtSignatureConfigurationV0Test {
 
       jwtPrivateKeyPairsDifferentKids =
           new JwtSignaturePrivateKey[][] {
-            new JwtSignaturePrivateKey[] {
-              jwtEcdsaEs256CustomKidPrivateKey, jwtEcdsaEs256WrongKidPrivateKey
-            },
-            new JwtSignaturePrivateKey[] {
-              jwtEcdsaEs384CustomKidPrivateKey, jwtEcdsaEs384WrongKidPrivateKey
-            },
-            new JwtSignaturePrivateKey[] {
-              jwtEcdsaEs512CustomKidPrivateKey, jwtEcdsaEs512WrongKidPrivateKey
-            },
             new JwtSignaturePrivateKey[] {
               jwtRsaSsaPkcs1Raw2048PrivateKey, jwtRsaSsaPkcs1Kid2048PrivateKey
             },
@@ -1036,7 +802,6 @@ public class JwtSignatureConfigurationV0Test {
     createTestKeys();
 
     JwtEcdsaProtoSerialization.register();
-    EcdsaProtoSerialization.register();
     JwtRsaSsaPkcs1ProtoSerialization.register();
     RsaSsaPkcs1ProtoSerialization.register();
     JwtRsaSsaPssProtoSerialization.register();
@@ -1045,7 +810,6 @@ public class JwtSignatureConfigurationV0Test {
 
     // Needed until we replaced RegistryConfiguration with SignatureConfiguration.
     PublicKeySignWrapper.register();
-    EcdsaSignKeyManager.registerPair(false);
     RsaSsaPkcs1SignKeyManager.registerPair(false);
     RsaSsaPssSignKeyManager.registerPair(false);
   }
@@ -1221,160 +985,6 @@ public class JwtSignatureConfigurationV0Test {
     String unsignedCompact = headerBase64 + "." + payloadBase64;
     String signature = Base64.urlSafeEncode(rawSigner.sign(unsignedCompact.getBytes(UTF_8)));
     return unsignedCompact + "." + signature;
-  }
-
-  @Theory
-  public void getPrimitive_signVerifyEcdsaRawDifferentHeaders(
-      @FromDataPoints("jwtPrivateKeys") JwtSignaturePrivateKey key) throws Exception {
-    assumeTrue(
-        key instanceof JwtEcdsaPrivateKey
-            && ((JwtEcdsaPrivateKey) key).getParameters().getKidStrategy()
-                == JwtEcdsaParameters.KidStrategy.IGNORED);
-    if (TestUtil.isTsan()) {
-      // creating keys is too slow in Tsan.
-      // We do not use assume because Theories expects to find something which is not skipped.
-      return;
-    }
-    JwtEcdsaPrivateKey jwtEcdsaPrivateKey = (JwtEcdsaPrivateKey) key;
-
-    KeysetHandle keysetHandle =
-        KeysetHandle.newBuilder()
-            .addEntry(KeysetHandle.importKey(jwtEcdsaPrivateKey).withFixedId(123).makePrimary())
-            .build();
-    EcdsaPrivateKey nonJwtPrivateKey = jwtEcdsaPrivateKey.getEcdsaPrivateKey();
-    // This nonJwtSigner computes signatures in the same way as one obtained from handle -- except
-    // that it doesn't do any of the JWT stuff.
-    PublicKeySign nonJwtSigner =
-        KeysetHandle.newBuilder()
-            .addEntry(KeysetHandle.importKey(nonJwtPrivateKey).withRandomId().makePrimary())
-            .build()
-            .getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
-
-    JsonObject payload = new JsonObject();
-    payload.addProperty("jid", "jwtId");
-    JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
-    JwtPublicKeyVerify verifier =
-        keysetHandle
-            .getPublicKeysetHandle()
-            .getPrimitive(JwtSignatureConfigurationV0.get(), JwtPublicKeyVerify.class);
-
-    // Normal, valid signed compact.
-    JsonObject normalHeader = new JsonObject();
-    normalHeader.addProperty(
-        "alg", jwtEcdsaPrivateKey.getParameters().getAlgorithm().getStandardName());
-    String normalSignedCompact = generateSignedCompact(nonJwtSigner, normalHeader, payload);
-    Object unused = verifier.verifyAndDecode(normalSignedCompact, validator);
-
-    // valid token, with "typ" set in the header
-    JsonObject goodHeader = new JsonObject();
-    goodHeader.addProperty(
-        "alg", jwtEcdsaPrivateKey.getParameters().getAlgorithm().getStandardName());
-    goodHeader.addProperty("typ", "typeHeader");
-    String goodSignedCompact = generateSignedCompact(nonJwtSigner, goodHeader, payload);
-    unused =
-        verifier.verifyAndDecode(
-            goodSignedCompact,
-            JwtValidator.newBuilder()
-                .expectTypeHeader("typeHeader")
-                .allowMissingExpiration()
-                .build());
-
-    // invalid token with an empty header
-    JsonObject emptyHeader = new JsonObject();
-    String emptyHeaderSignedCompact = generateSignedCompact(nonJwtSigner, emptyHeader, payload);
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> verifier.verifyAndDecode(emptyHeaderSignedCompact, validator));
-
-    // invalid token with a valid but incorrect algorithm in the header
-    JsonObject badAlgoHeader = new JsonObject();
-    badAlgoHeader.addProperty("alg", "RS256");
-    String badAlgoSignedCompact = generateSignedCompact(nonJwtSigner, badAlgoHeader, payload);
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> verifier.verifyAndDecode(badAlgoSignedCompact, validator));
-
-    // for raw keys, the validation should work even if a "kid" header is present.
-    JsonObject unknownKidHeader = new JsonObject();
-    unknownKidHeader.addProperty(
-        "alg", jwtEcdsaPrivateKey.getParameters().getAlgorithm().getStandardName());
-    unknownKidHeader.addProperty("kid", "unknown");
-    String unknownKidSignedCompact = generateSignedCompact(nonJwtSigner, unknownKidHeader, payload);
-    unused = verifier.verifyAndDecode(unknownKidSignedCompact, validator);
-  }
-
-  @Theory
-  public void getPrimitive_signVerifyEcdsaTinkDifferentHeaders(
-      @FromDataPoints("jwtPrivateKeys") JwtSignaturePrivateKey key) throws Exception {
-    assumeTrue(
-        key instanceof JwtEcdsaPrivateKey
-            && ((JwtEcdsaPrivateKey) key).getParameters().getKidStrategy()
-                != JwtEcdsaParameters.KidStrategy.IGNORED);
-    if (TestUtil.isTsan()) {
-      // creating keys is too slow in Tsan.
-      // We do not use assume because Theories expects to find something which is not skipped.
-      return;
-    }
-    JwtEcdsaPrivateKey jwtEcdsaPrivateKey = (JwtEcdsaPrivateKey) key;
-
-    KeysetHandle keysetHandle =
-        KeysetHandle.newBuilder()
-            .addEntry(KeysetHandle.importKey(jwtEcdsaPrivateKey).withFixedId(123).makePrimary())
-            .build();
-    EcdsaPrivateKey nonJwtPrivateKey = jwtEcdsaPrivateKey.getEcdsaPrivateKey();
-    // This nonJwtSigner computes signatures in the same way as one obtained from handle -- except
-    // that it doesn't do any of the JWT stuff.
-    PublicKeySign nonJwtSigner =
-        KeysetHandle.newBuilder()
-            .addEntry(KeysetHandle.importKey(nonJwtPrivateKey).withRandomId().makePrimary())
-            .build()
-            .getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
-
-    String kid = jwtEcdsaPrivateKey.getPublicKey().getKid().get();
-
-    JsonObject payload = new JsonObject();
-    payload.addProperty("jti", "jwtId");
-    JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
-    JwtPublicKeyVerify verifier =
-        keysetHandle
-            .getPublicKeysetHandle()
-            .getPrimitive(JwtSignatureConfigurationV0.get(), JwtPublicKeyVerify.class);
-
-    // Normal, valid signed token.
-    JsonObject normalHeader = new JsonObject();
-    normalHeader.addProperty(
-        "alg", jwtEcdsaPrivateKey.getParameters().getAlgorithm().getStandardName());
-    normalHeader.addProperty("kid", kid);
-    String normalToken = generateSignedCompact(nonJwtSigner, normalHeader, payload);
-    Object unused = verifier.verifyAndDecode(normalToken, validator);
-
-    // token without kid are rejected, even if they are valid.
-    JsonObject headerWithoutKid = new JsonObject();
-    headerWithoutKid.addProperty(
-        "alg", jwtEcdsaPrivateKey.getParameters().getAlgorithm().getStandardName());
-    String tokenWithoutKid = generateSignedCompact(nonJwtSigner, headerWithoutKid, payload);
-    assertThrows(
-        GeneralSecurityException.class, () -> verifier.verifyAndDecode(tokenWithoutKid, validator));
-
-    // token without algorithm in the header
-    JsonObject headerWithoutAlg = new JsonObject();
-    headerWithoutAlg.addProperty("kid", kid);
-    String tokenWithoutAlg = generateSignedCompact(nonJwtSigner, headerWithoutAlg, payload);
-    assertThrows(
-        GeneralSecurityException.class, () -> verifier.verifyAndDecode(tokenWithoutAlg, validator));
-
-    // token with an incorrect algorithm in the header
-    JsonObject headerWithBadAlg = new JsonObject();
-    headerWithBadAlg.addProperty("kid", kid);
-    headerWithBadAlg.addProperty(
-        "alg",
-        // "RS{256,384,512}"
-        new StringBuilder(jwtEcdsaPrivateKey.getParameters().getAlgorithm().getStandardName())
-            .replace(0, 1, "R")
-            .toString());
-    String badAlgToken = generateSignedCompact(nonJwtSigner, headerWithBadAlg, payload);
-    assertThrows(
-        GeneralSecurityException.class, () -> verifier.verifyAndDecode(badAlgToken, validator));
   }
 
   private static String getRsaSsaPkcs1Alg(JwtRsaSsaPkcs1Parameters parameters)
