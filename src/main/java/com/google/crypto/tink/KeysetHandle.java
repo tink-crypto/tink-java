@@ -19,7 +19,6 @@ package com.google.crypto.tink;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MonitoringClient;
-import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.internal.ProtoConversions;
@@ -211,6 +210,18 @@ public final class KeysetHandle implements KeysetHandleInterface {
     private final List<KeysetHandle.Builder.Entry> entries = new ArrayList<>();
     // If set, throw this error on BUILD instead of actually building.
     @Nullable private GeneralSecurityException errorToThrow = null;
+
+    private static Configuration getDefaultConfiguration() {
+      try {
+        return RegistryConfiguration.get();
+      } catch (GeneralSecurityException e) {
+        throw new IllegalStateException(e);
+      }
+    }
+
+    // TODO (b/500300385): This should be initialized to null and users should call a function
+    // to initialize it.
+    private Configuration configuration = getDefaultConfiguration();
     private final Map<Class<?>, Annotations> annotationsMap = new HashMap<>();
     private boolean buildCalled = false;
 
@@ -405,9 +416,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
                   KeysetHandle.Entry.NO_LOGGING);
         } else {
           Integer idRequirement = builderEntry.parameters.hasIdRequirement() ? id : null;
-          Key key =
-              MutableKeyCreationRegistry.globalInstance()
-                  .createKey(builderEntry.parameters, idRequirement);
+          Key key = configuration.createKey(builderEntry.parameters, idRequirement);
           handleEntry =
               new KeysetHandle.Entry(
                   key,
