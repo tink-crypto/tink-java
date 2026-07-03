@@ -71,6 +71,50 @@ public final class AesGcmHkdfStreamingProtoSerializationTest {
     AesGcmHkdfStreamingProtoSerialization.register(registry);
   }
 
+  @Test
+  public void parametersSerializationRegisteredWithBuilder() throws Exception {
+    com.google.crypto.tink.internal.SerializationRegistry.Builder builder =
+        new com.google.crypto.tink.internal.SerializationRegistry.Builder();
+    AesGcmHkdfStreamingProtoSerialization.register(builder);
+    com.google.crypto.tink.internal.SerializationRegistry serializationRegistry = builder.build();
+
+    AesGcmHkdfStreamingParameters parameters =
+        AesGcmHkdfStreamingParameters.builder()
+            .setKeySizeBytes(37)
+            .setDerivedAesGcmKeySizeBytes(16)
+            .setHkdfHashType(AesGcmHkdfStreamingParameters.HashType.SHA256)
+            .setCiphertextSegmentSizeBytes(1024 * 1024)
+            .build();
+    ProtoParametersSerialization serializedParameters =
+        serializationRegistry.serializeParameters(parameters);
+    assertThat(serializationRegistry.parseParameters(serializedParameters))
+        .isEqualTo(parameters);
+  }
+
+  @Test
+  public void keySerializationRegisteredWithBuilder() throws Exception {
+    com.google.crypto.tink.internal.SerializationRegistry.Builder builder =
+        new com.google.crypto.tink.internal.SerializationRegistry.Builder();
+    AesGcmHkdfStreamingProtoSerialization.register(builder);
+    com.google.crypto.tink.internal.SerializationRegistry serializationRegistry = builder.build();
+
+    AesGcmHkdfStreamingParameters parameters =
+        AesGcmHkdfStreamingParameters.builder()
+            .setKeySizeBytes(37)
+            .setDerivedAesGcmKeySizeBytes(16)
+            .setHkdfHashType(AesGcmHkdfStreamingParameters.HashType.SHA256)
+            .setCiphertextSegmentSizeBytes(1024 * 1024)
+            .build();
+    AesGcmHkdfStreamingKey key = AesGcmHkdfStreamingKey.create(parameters, KEY_BYTES_37);
+    ProtoKeySerialization serializedKey =
+        serializationRegistry.serializeKey(key, InsecureSecretKeyAccess.get());
+    assertThat(
+            serializationRegistry
+                .parseKey(serializedKey, InsecureSecretKeyAccess.get())
+                .equalsKey(key))
+        .isTrue();
+  }
+
   // PARAMETERS ====================================================================================
   @Test
   public void serializeParseParameters_simple() throws Exception {

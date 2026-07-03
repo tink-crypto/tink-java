@@ -72,6 +72,54 @@ public final class AesCtrHmacStreamingProtoSerializationTest {
     AesCtrHmacStreamingProtoSerialization.register(registry);
   }
 
+  @Test
+  public void parametersSerializationRegisteredWithBuilder() throws Exception {
+    com.google.crypto.tink.internal.SerializationRegistry.Builder builder =
+        new com.google.crypto.tink.internal.SerializationRegistry.Builder();
+    AesCtrHmacStreamingProtoSerialization.register(builder);
+    com.google.crypto.tink.internal.SerializationRegistry serializationRegistry = builder.build();
+
+    AesCtrHmacStreamingParameters parameters =
+        AesCtrHmacStreamingParameters.builder()
+            .setKeySizeBytes(37)
+            .setDerivedKeySizeBytes(16)
+            .setHkdfHashType(AesCtrHmacStreamingParameters.HashType.SHA256)
+            .setHmacHashType(AesCtrHmacStreamingParameters.HashType.SHA1)
+            .setHmacTagSizeBytes(16)
+            .setCiphertextSegmentSizeBytes(1024 * 1024)
+            .build();
+    ProtoParametersSerialization serializedParameters =
+        serializationRegistry.serializeParameters(parameters);
+    assertThat(serializationRegistry.parseParameters(serializedParameters))
+        .isEqualTo(parameters);
+  }
+
+  @Test
+  public void keySerializationRegisteredWithBuilder() throws Exception {
+    com.google.crypto.tink.internal.SerializationRegistry.Builder builder =
+        new com.google.crypto.tink.internal.SerializationRegistry.Builder();
+    AesCtrHmacStreamingProtoSerialization.register(builder);
+    com.google.crypto.tink.internal.SerializationRegistry serializationRegistry = builder.build();
+
+    AesCtrHmacStreamingParameters parameters =
+        AesCtrHmacStreamingParameters.builder()
+            .setKeySizeBytes(37)
+            .setDerivedKeySizeBytes(16)
+            .setHkdfHashType(AesCtrHmacStreamingParameters.HashType.SHA256)
+            .setHmacHashType(AesCtrHmacStreamingParameters.HashType.SHA1)
+            .setHmacTagSizeBytes(16)
+            .setCiphertextSegmentSizeBytes(1024 * 1024)
+            .build();
+    AesCtrHmacStreamingKey key = AesCtrHmacStreamingKey.create(parameters, KEY_BYTES_37);
+    ProtoKeySerialization serializedKey =
+        serializationRegistry.serializeKey(key, InsecureSecretKeyAccess.get());
+    assertThat(
+            serializationRegistry
+                .parseKey(serializedKey, InsecureSecretKeyAccess.get())
+                .equalsKey(key))
+        .isTrue();
+  }
+
   // PARAMETERS ====================================================================================
   @Test
   public void serializeParseParameters_simple() throws Exception {
