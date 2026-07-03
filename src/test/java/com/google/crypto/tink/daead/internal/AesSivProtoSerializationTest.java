@@ -66,6 +66,47 @@ public final class AesSivProtoSerializationTest {
   }
 
   @Test
+  public void parametersSerializationRegisteredWithBuilder() throws Exception {
+    com.google.crypto.tink.internal.SerializationRegistry.Builder builder =
+        new com.google.crypto.tink.internal.SerializationRegistry.Builder();
+    AesSivProtoSerialization.register(builder);
+    com.google.crypto.tink.internal.SerializationRegistry serializationRegistry = builder.build();
+
+    AesSivParameters parameters =
+        AesSivParameters.builder()
+            .setKeySizeBytes(32)
+            .setVariant(AesSivParameters.Variant.NO_PREFIX)
+            .build();
+    ProtoParametersSerialization serializedParameters =
+        serializationRegistry.serializeParameters(parameters);
+    assertThat(serializationRegistry.parseParameters(serializedParameters))
+        .isEqualTo(parameters);
+  }
+
+  @Test
+  public void keySerializationRegisteredWithBuilder() throws Exception {
+    com.google.crypto.tink.internal.SerializationRegistry.Builder builder =
+        new com.google.crypto.tink.internal.SerializationRegistry.Builder();
+    AesSivProtoSerialization.register(builder);
+    com.google.crypto.tink.internal.SerializationRegistry serializationRegistry = builder.build();
+
+    AesSivParameters parameters =
+        AesSivParameters.builder()
+            .setKeySizeBytes(32)
+            .setVariant(AesSivParameters.Variant.NO_PREFIX)
+            .build();
+    AesSivKey key = AesSivKey.builder().setParameters(parameters).setKeyBytes(KEY_BYTES_32).build();
+    ProtoKeySerialization serializedKey =
+        serializationRegistry.serializeKey(key, InsecureSecretKeyAccess.get());
+    assertThat(
+            serializationRegistry
+                .parseKey(serializedKey, InsecureSecretKeyAccess.get())
+                .equalsKey(key))
+        .isTrue();
+  }
+
+
+  @Test
   public void serializeParseParameters_noPrefix() throws Exception {
     AesSivParameters parameters =
         AesSivParameters.builder()
