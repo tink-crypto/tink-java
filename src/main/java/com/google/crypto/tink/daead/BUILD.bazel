@@ -317,14 +317,8 @@ android_library(
     name = "deterministic_aead_configuration_v1-android",
     srcs = ["DeterministicAeadConfigurationV1.java"],
     deps = [
-        ":aes_siv_key-android",
-        ":deterministic_aead_wrapper-android",
+        ":deterministic_aead_configuration2026-android",
         "//src/main/java/com/google/crypto/tink:configuration-android",
-        "//src/main/java/com/google/crypto/tink:deterministic_aead-android",
-        "//src/main/java/com/google/crypto/tink:key-android",
-        "//src/main/java/com/google/crypto/tink:keyset_handle_interface-android",
-        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util-android",
-        "//src/main/java/com/google/crypto/tink/subtle:aes_siv-android",
     ],
 )
 
@@ -332,13 +326,53 @@ java_library(
     name = "deterministic_aead_configuration_v1",
     srcs = ["DeterministicAeadConfigurationV1.java"],
     deps = [
+        ":deterministic_aead_configuration2026",
+        "//src/main/java/com/google/crypto/tink:configuration",
+    ],
+)
+
+android_library(
+    name = "deterministic_aead_configuration2026-android",
+    srcs = ["DeterministicAeadConfiguration2026.java"],
+    deps = [
+        ":aes_siv_key-android",
+        ":aes_siv_parameters-android",
+        ":deterministic_aead_wrapper-android",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
+        "//src/main/java/com/google/crypto/tink:configuration-android",
+        "//src/main/java/com/google/crypto/tink:deterministic_aead-android",
+        "//src/main/java/com/google/crypto/tink:key-android",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface-android",
+        "//src/main/java/com/google/crypto/tink:parameters-android",
+        "//src/main/java/com/google/crypto/tink:proto_key_serializer-android",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util-android",
+        "//src/main/java/com/google/crypto/tink/daead/internal:aes_siv_proto_serialization-android",
+        "//src/main/java/com/google/crypto/tink/internal:serialization_registry-android",
+        "//src/main/java/com/google/crypto/tink/subtle:aes_siv-android",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes-android",
+        "@maven//:com_google_code_findbugs_jsr305",
+    ],
+)
+
+java_library(
+    name = "deterministic_aead_configuration2026",
+    srcs = ["DeterministicAeadConfiguration2026.java"],
+    deps = [
         ":aes_siv_key",
+        ":aes_siv_parameters",
         ":deterministic_aead_wrapper",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
         "//src/main/java/com/google/crypto/tink:configuration",
         "//src/main/java/com/google/crypto/tink:deterministic_aead",
         "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink:keyset_handle_interface",
+        "//src/main/java/com/google/crypto/tink:parameters",
+        "//src/main/java/com/google/crypto/tink:proto_key_serializer",
         "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
+        "//src/main/java/com/google/crypto/tink/daead/internal:aes_siv_proto_serialization",
+        "//src/main/java/com/google/crypto/tink/internal:serialization_registry",
         "//src/main/java/com/google/crypto/tink/subtle:aes_siv",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
+        "@maven//:com_google_code_findbugs_jsr305",
     ],
 )
