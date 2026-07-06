@@ -796,8 +796,11 @@ java_library(
         ":binary_keyset_reader",
         ":binary_keyset_writer",
         ":cleartext_keyset_handle",
+        ":configuration",
         ":registry_cluster",
+        ":registry_configuration",
         ":secret_key_access",
+        "//proto:tink_java_proto",
     ],
 )
 
@@ -809,8 +812,11 @@ android_library(
         ":binary_keyset_reader-android",
         ":binary_keyset_writer-android",
         ":cleartext_keyset_handle-android",
+        ":configuration-android",
         ":registry_cluster-android",
+        ":registry_configuration-android",
         ":secret_key_access-android",
+        "//proto:tink_java_proto_lite",
     ],
 )
 

@@ -73,11 +73,30 @@ public final class TinkProtoKeysetFormat {
   public static KeysetHandle parseEncryptedKeyset(
       byte[] serializedEncryptedKeyset, Aead keysetEncryptionAead, byte[] associatedData)
       throws GeneralSecurityException {
+    return parseEncryptedKeyset(
+        serializedEncryptedKeyset,
+        keysetEncryptionAead,
+        associatedData,
+        RegistryConfiguration.get());
+  }
+
+  /**
+   * Parses an encrypted keyset in Tink's binary format based on Protobufs, using the provided
+   * {@link Configuration}.
+   */
+  @SuppressWarnings("UnusedException")
+  public static KeysetHandle parseEncryptedKeyset(
+      byte[] serializedEncryptedKeyset,
+      Aead keysetEncryptionAead,
+      byte[] associatedData,
+      Configuration configuration)
+      throws GeneralSecurityException {
     try {
       return KeysetHandle.readWithAssociatedData(
           BinaryKeysetReader.withBytes(serializedEncryptedKeyset),
           keysetEncryptionAead,
-          associatedData);
+          associatedData,
+          configuration);
     } catch (IOException e) {
       throw new GeneralSecurityException("Parse keyset failed");
     }
@@ -87,10 +106,28 @@ public final class TinkProtoKeysetFormat {
   public static byte[] serializeEncryptedKeyset(
       KeysetHandle keysetHandle, Aead keysetEncryptionAead, byte[] associatedData)
       throws GeneralSecurityException {
+    return serializeEncryptedKeyset(
+        keysetHandle, keysetEncryptionAead, associatedData, RegistryConfiguration.get());
+  }
+
+  /**
+   * Serializes an encrypted keyset in Tink's binary format based on Protobufs, using the provided
+   * {@link Configuration}.
+   */
+  @SuppressWarnings("UnusedException")
+  public static byte[] serializeEncryptedKeyset(
+      KeysetHandle keysetHandle,
+      Aead keysetEncryptionAead,
+      byte[] associatedData,
+      Configuration configuration)
+      throws GeneralSecurityException {
     try {
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
       keysetHandle.writeWithAssociatedData(
-          BinaryKeysetWriter.withOutputStream(outputStream), keysetEncryptionAead, associatedData);
+          BinaryKeysetWriter.withOutputStream(outputStream),
+          keysetEncryptionAead,
+          associatedData,
+          configuration);
       return outputStream.toByteArray();
     } catch (IllegalArgumentException | IOException e) {
       throw new GeneralSecurityException("Serialize keyset failed", e);

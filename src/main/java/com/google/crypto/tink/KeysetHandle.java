@@ -1053,7 +1053,19 @@ public final class KeysetHandle implements KeysetHandleInterface {
   public static final KeysetHandle readWithAssociatedData(
       KeysetReader reader, Aead masterKey, byte[] associatedData)
       throws GeneralSecurityException, IOException {
-    Configuration configuration = RegistryConfiguration.get();
+    return readWithAssociatedData(reader, masterKey, associatedData, RegistryConfiguration.get());
+  }
+
+  /**
+   * Tries to create a {@link KeysetHandle} from an encrypted keyset, obtained via {@code reader},
+   * using the provided {@link Configuration}.
+   *
+   * @throws GeneralSecurityException if cannot decrypt the keyset or it doesn't contain encrypted
+   *     key material
+   */
+  static KeysetHandle readWithAssociatedData(
+      KeysetReader reader, Aead masterKey, byte[] associatedData, Configuration configuration)
+      throws GeneralSecurityException, IOException {
     EncryptedKeyset encryptedKeyset = reader.readEncrypted();
     assertEnoughEncryptedKeyMaterial(encryptedKeyset);
     return KeysetHandle.fromKeyset(
@@ -1143,7 +1155,21 @@ public final class KeysetHandle implements KeysetHandleInterface {
   public void writeWithAssociatedData(
       KeysetWriter keysetWriter, Aead masterKey, byte[] associatedData)
       throws GeneralSecurityException, IOException {
-    Configuration configuration = RegistryConfiguration.get();
+    writeWithAssociatedData(keysetWriter, masterKey, associatedData, RegistryConfiguration.get());
+  }
+
+  /**
+   * Serializes, encrypts with {@code masterKey} and writes the keyset to {@code outputStream} using
+   * the provided associated data and {@link Configuration}.
+   *
+   * @throws GeneralSecurityException if this keyset handle contains keys that cannot be serialized
+   *     into the Tink proto format (for example, custom {@link Key} subclasses without a registered
+   *     serializer).
+   * @throws IOException
+   */
+  void writeWithAssociatedData(
+      KeysetWriter keysetWriter, Aead masterKey, byte[] associatedData, Configuration configuration)
+      throws GeneralSecurityException, IOException {
     Keyset keyset = getKeyset(configuration);
     EncryptedKeyset encryptedKeyset = encrypt(keyset, masterKey, associatedData);
     keysetWriter.write(encryptedKeyset);

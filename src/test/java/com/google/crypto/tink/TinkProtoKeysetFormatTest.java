@@ -23,18 +23,25 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.aead.AeadConfig;
 import com.google.crypto.tink.aead.AesGcmParameters;
 import com.google.crypto.tink.config.GlobalTinkFlags;
+import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.daead.AesSivKey;
+import com.google.crypto.tink.daead.AesSivParameters;
+import com.google.crypto.tink.daead.DeterministicAeadConfiguration2026;
 import com.google.crypto.tink.internal.testing.SetTinkFlag;
 import com.google.crypto.tink.mac.MacConfig;
+import com.google.crypto.tink.mac.MacConfiguration2026;
 import com.google.crypto.tink.proto.KeyData;
 import com.google.crypto.tink.proto.KeyStatusType;
 import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.signature.SignatureConfig;
 import com.google.crypto.tink.subtle.Hex;
+import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import java.io.ByteArrayOutputStream;
 import java.security.GeneralSecurityException;
 import javax.annotation.Nullable;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -213,6 +220,142 @@ public final class TinkProtoKeysetFormatTest {
             serializedKeyset, keyEncryptionAead, associatedData);
 
     assertKeysetHandleAreEqual(keysetHandle, parseKeysetHandle);
+  }
+
+  @Test
+  public void serializeEncryptedAndParseEncrypted_withConfiguration_success() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    Aead keyEncryptionAead = generateAead();
+    AesSivKey key =
+        AesSivKey.builder()
+            .setParameters(
+                AesSivParameters.builder()
+                    .setKeySizeBytes(64)
+                    .setVariant(AesSivParameters.Variant.TINK)
+                    .build())
+            .setKeyBytes(SecretBytes.randomBytes(64))
+            .setIdRequirement(101)
+            .build();
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withFixedId(101).makePrimary())
+            .build();
+    byte[] associatedData = "associatedData".getBytes(UTF_8);
+
+    byte[] serializedKeyset =
+        TinkProtoKeysetFormat.serializeEncryptedKeyset(
+            keysetHandle,
+            keyEncryptionAead,
+            associatedData,
+            DeterministicAeadConfiguration2026.get());
+    KeysetHandle parseKeysetHandle =
+        TinkProtoKeysetFormat.parseEncryptedKeyset(
+            serializedKeyset,
+            keyEncryptionAead,
+            associatedData,
+            DeterministicAeadConfiguration2026.get());
+
+    assertKeysetHandleAreEqual(keysetHandle, parseKeysetHandle);
+
+    // The MacConfiguration doesn't allow to parse/serialize this keyset. Explicitly testing this
+    // ensures that we don't mistakenly go to the RegistryConfiguration.
+    Configuration macConfiguration = MacConfiguration2026.get();
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            TinkProtoKeysetFormat.serializeEncryptedKeyset(
+                keysetHandle, keyEncryptionAead, associatedData, macConfiguration));
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            TinkProtoKeysetFormat.parseEncryptedKeyset(
+                serializedKeyset, keyEncryptionAead, associatedData, macConfiguration));
+  }
+
+  @Test
+  public void parseEncryptedKeyset_withInvalidSerializedKeysetAndConfiguration_fails()
+      throws Exception {
+    Aead keyEncryptionAead = generateAead();
+    byte[] invalidSerializedKeyset = "invalid".getBytes(UTF_8);
+    byte[] associatedData = "associatedData".getBytes(UTF_8);
+    Configuration configuration = DeterministicAeadConfiguration2026.get();
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            TinkProtoKeysetFormat.parseEncryptedKeyset(
+                invalidSerializedKeyset, keyEncryptionAead, associatedData, configuration));
+  }
+
+  @Test
+  public void parseEncryptedKeyset_withWrongAead_fails() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+    Configuration configuration = DeterministicAeadConfiguration2026.get();
+
+    Aead keyEncryptionAead = generateAead();
+    Aead invalidKeyEncryptionAead = generateAead();
+    AesSivKey key =
+        AesSivKey.builder()
+            .setParameters(
+                AesSivParameters.builder()
+                    .setKeySizeBytes(64)
+                    .setVariant(AesSivParameters.Variant.TINK)
+                    .build())
+            .setKeyBytes(SecretBytes.randomBytes(64))
+            .setIdRequirement(101)
+            .build();
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withFixedId(101).makePrimary())
+            .build();
+    byte[] associatedData = "associatedData".getBytes(UTF_8);
+
+    byte[] serializedKeyset =
+        TinkProtoKeysetFormat.serializeEncryptedKeyset(
+            keysetHandle, keyEncryptionAead, associatedData, configuration);
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            TinkProtoKeysetFormat.parseEncryptedKeyset(
+                serializedKeyset, invalidKeyEncryptionAead, associatedData, configuration));
+  }
+
+  @Test
+  public void parseEncryptedKeyset_withWrongAssociatedData_fails() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+    Configuration configuration = DeterministicAeadConfiguration2026.get();
+
+    Aead keyEncryptionAead = generateAead();
+    AesSivKey key =
+        AesSivKey.builder()
+            .setParameters(
+                AesSivParameters.builder()
+                    .setKeySizeBytes(64)
+                    .setVariant(AesSivParameters.Variant.TINK)
+                    .build())
+            .setKeyBytes(SecretBytes.randomBytes(64))
+            .setIdRequirement(101)
+            .build();
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withFixedId(101).makePrimary())
+            .build();
+    byte[] associatedData = "associatedData".getBytes(UTF_8);
+
+    byte[] serializedKeyset =
+        TinkProtoKeysetFormat.serializeEncryptedKeyset(
+            keysetHandle, keyEncryptionAead, associatedData, configuration);
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            TinkProtoKeysetFormat.parseEncryptedKeyset(
+                serializedKeyset,
+                keyEncryptionAead,
+                "invalidAssociatedData".getBytes(UTF_8),
+                configuration));
   }
 
   @Test
@@ -492,5 +635,25 @@ public final class TinkProtoKeysetFormatTest {
     SecretKeyAccess access = InsecureSecretKeyAccess.get();
     assertThrows(
         GeneralSecurityException.class, () -> TinkProtoKeysetFormat.serializeKeyset(handle, access));
+  }
+
+  @Test
+  public void
+      serializeEncryptedKeyset_withUnserializableKeyAndConfiguration_throwsGeneralSecurityException()
+          throws Exception {
+    Aead keyEncryptionAead = generateAead();
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(new TestKey()).withFixedId(123).makePrimary())
+            .build();
+    byte[] associatedData = "associatedData".getBytes(UTF_8);
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            TinkProtoKeysetFormat.serializeEncryptedKeyset(
+                handle,
+                keyEncryptionAead,
+                associatedData,
+                DeterministicAeadConfiguration2026.get()));
   }
 }
