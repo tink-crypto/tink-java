@@ -101,7 +101,22 @@ public final class LegacyKeysetSerialization {
    * and casting the result to the appropriate key type.
    */
   public static KeysetInfo getKeysetInfo(KeysetHandle handle) {
-    return handle.getKeysetInfo();
+    try {
+      return getKeysetInfo(handle, RegistryConfiguration.get());
+    } catch (GeneralSecurityException e) {
+      throw new IllegalArgumentException(e);
+    }
+  }
+
+  /**
+   * Returns the {@link KeysetInfo} proto of the given {@link KeysetHandle}.
+   *
+   * <p>Note: in most cases you can get more information by calling {@code handle.getAt(i).getKey()}
+   * and casting the result to the appropriate key type.
+   */
+  public static KeysetInfo getKeysetInfo(KeysetHandle handle, Configuration configuration)
+      throws GeneralSecurityException {
+    return handle.getKeysetInfo(configuration);
   }
 
   private LegacyKeysetSerialization() {}

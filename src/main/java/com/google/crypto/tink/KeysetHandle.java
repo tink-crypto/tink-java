@@ -933,19 +933,24 @@ public final class KeysetHandle implements KeysetHandleInterface {
    * @throws IllegalArgumentException if this keyset handle contains keys that cannot be serialized
    *     into the Tink proto format (for example, custom {@link Key} subclasses without a registered
    *     serializer).
-   * @deprecated Most information can be obtained by calling {@link #getPrimary} or {@link #getAt}
-   *     and inspecting the result. For legacy code, {@code LegacyKeysetSerialization.getKeysetInfo}
-   *     gives the exact same output.
+   * @deprecated Existing code: {@code LegacyKeysetSerialization.getKeysetInfo(handle,
+   *     RegistryConfiguration.get());} gives the exact same output but correctly declares that a
+   *     {@code GeneralSecurityException} may be thrown. New code: more information can be obtained
+   *     by calling {@code keysetHandle.getPrimary().getKey().getParameters()} or {@code
+   *     keysetHandle.getAt(i).getKey().getParameters()}.
    */
   @Deprecated
   public KeysetInfo getKeysetInfo() {
     try {
-      Configuration configuration = RegistryConfiguration.get();
-      Keyset keyset = getKeyset(configuration);
-      return Util.getKeysetInfo(keyset);
+      return getKeysetInfo(RegistryConfiguration.get());
     } catch (GeneralSecurityException e) {
       throw new IllegalArgumentException("Cannot get keyset info: key cannot be serialized", e);
     }
+  }
+
+  KeysetInfo getKeysetInfo(Configuration configuration) throws GeneralSecurityException {
+      Keyset keyset = getKeyset(configuration);
+      return Util.getKeysetInfo(keyset);
   }
 
   /**

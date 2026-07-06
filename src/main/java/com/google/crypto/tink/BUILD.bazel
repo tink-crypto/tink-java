@@ -898,9 +898,11 @@ android_library(
     deps = [
         ":aead-android",
         ":cleartext_keyset_handle-android",
+        ":configuration-android",
         ":keyset_reader-android",
         ":keyset_writer-android",
         ":registry_cluster-android",
+        ":registry_configuration-android",
         ":secret_key_access-android",
         "//proto:tink_java_proto_lite",
     ],
@@ -912,9 +914,11 @@ java_library(
     deps = [
         ":aead",
         ":cleartext_keyset_handle",
+        ":configuration",
         ":keyset_reader",
         ":keyset_writer",
         ":registry_cluster",
+        ":registry_configuration",
         ":secret_key_access",
         "//proto:tink_java_proto",
     ],

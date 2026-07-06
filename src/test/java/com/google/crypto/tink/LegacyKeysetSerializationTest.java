@@ -21,14 +21,21 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import com.google.crypto.tink.aead.AeadConfig;
+import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.daead.AesSivKey;
+import com.google.crypto.tink.daead.AesSivParameters;
+import com.google.crypto.tink.daead.DeterministicAeadConfiguration2026;
 import com.google.crypto.tink.mac.MacConfig;
+import com.google.crypto.tink.mac.MacConfiguration2026;
 import com.google.crypto.tink.proto.KeyStatusType;
 import com.google.crypto.tink.proto.KeysetInfo;
 import com.google.crypto.tink.proto.KeysetInfo.KeyInfo;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.signature.SignatureConfig;
+import com.google.crypto.tink.util.SecretBytes;
 import java.io.ByteArrayOutputStream;
 import java.security.GeneralSecurityException;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -321,5 +328,111 @@ public final class LegacyKeysetSerializationTest {
                         .setKeyId(-201)
                         .build())
                 .build());
+  }
+
+  @Test
+  public void getKeysetInfo_withConfiguration_works() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    AesSivKey tinkKey =
+        AesSivKey.builder()
+            .setParameters(
+                AesSivParameters.builder()
+                    .setKeySizeBytes(64)
+                    .setVariant(AesSivParameters.Variant.TINK)
+                    .build())
+            .setKeyBytes(SecretBytes.randomBytes(64))
+            .setIdRequirement(101)
+            .build();
+    AesSivKey crunchyKey =
+        AesSivKey.builder()
+            .setParameters(
+                AesSivParameters.builder()
+                    .setKeySizeBytes(64)
+                    .setVariant(AesSivParameters.Variant.CRUNCHY)
+                    .build())
+            .setKeyBytes(SecretBytes.randomBytes(64))
+            .setIdRequirement(301)
+            .build();
+    AesSivKey rawKey =
+        AesSivKey.builder()
+            .setParameters(
+                AesSivParameters.builder()
+                    .setKeySizeBytes(64)
+                    .setVariant(AesSivParameters.Variant.NO_PREFIX)
+                    .build())
+            .setKeyBytes(SecretBytes.randomBytes(64))
+            .setIdRequirement(null)
+            .build();
+
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.importKey(tinkKey).withFixedId(101).setStatus(KeyStatus.DISABLED))
+            .addEntry(KeysetHandle.importKey(crunchyKey).withFixedId(301).makePrimary())
+            .addEntry(
+                KeysetHandle.importKey(rawKey).withFixedId(201).setStatus(KeyStatus.DESTROYED))
+            .build();
+
+    KeysetInfo keysetInfo =
+        LegacyKeysetSerialization.getKeysetInfo(handle, DeterministicAeadConfiguration2026.get());
+
+    assertThat(keysetInfo)
+        .isEqualTo(
+            KeysetInfo.newBuilder()
+                .setPrimaryKeyId(301)
+                .addKeyInfo(
+                    KeyInfo.newBuilder()
+                        .setTypeUrl("type.googleapis.com/google.crypto.tink.AesSivKey")
+                        .setStatus(KeyStatusType.DISABLED)
+                        .setOutputPrefixType(OutputPrefixType.TINK)
+                        .setKeyId(101)
+                        .build())
+                .addKeyInfo(
+                    KeyInfo.newBuilder()
+                        .setTypeUrl("type.googleapis.com/google.crypto.tink.AesSivKey")
+                        .setStatus(KeyStatusType.ENABLED)
+                        .setOutputPrefixType(OutputPrefixType.CRUNCHY)
+                        .setKeyId(301)
+                        .build())
+                .addKeyInfo(
+                    KeyInfo.newBuilder()
+                        .setTypeUrl("type.googleapis.com/google.crypto.tink.AesSivKey")
+                        .setStatus(KeyStatusType.DESTROYED)
+                        .setOutputPrefixType(OutputPrefixType.RAW)
+                        .setKeyId(201)
+                        .build())
+                .build());
+
+    // We want to ensure that the prod code not mistakenly uses the RegistryConfiguration. So we
+    // double check that this would fail.
+    Configuration configuration = RegistryConfiguration.get();
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> LegacyKeysetSerialization.getKeysetInfo(handle, configuration));
+  }
+
+  @Test
+  public void getKeysetInfo_wrongConfiguration_throws() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    AesSivKey key =
+        AesSivKey.builder()
+            .setParameters(
+                AesSivParameters.builder()
+                    .setKeySizeBytes(64)
+                    .setVariant(AesSivParameters.Variant.NO_PREFIX)
+                    .build())
+            .setKeyBytes(SecretBytes.randomBytes(64))
+            .build();
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withFixedId(101).makePrimary())
+            .build();
+
+    Configuration nonDeterministicAeadConfiguration = MacConfiguration2026.get();
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> LegacyKeysetSerialization.getKeysetInfo(handle, nonDeterministicAeadConfiguration));
   }
 }
