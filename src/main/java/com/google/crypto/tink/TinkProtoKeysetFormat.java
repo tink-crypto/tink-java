@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink;
 
+import com.google.errorprone.annotations.InlineMe;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -102,7 +103,21 @@ public final class TinkProtoKeysetFormat {
     }
   }
 
-  @SuppressWarnings("UnusedException")
+  /**
+   * Serializes an encrypted keyset in Tink's binary format based on Protobufs, using the {@link
+   * RegistryConfiguration}.
+   *
+   * @deprecated This function should be inlined.
+   */
+  @InlineMe(
+      replacement =
+          "TinkProtoKeysetFormat.serializeEncryptedKeyset(keysetHandle, keysetEncryptionAead,"
+              + " associatedData, RegistryConfiguration.get())",
+      imports = {
+        "com.google.crypto.tink.RegistryConfiguration",
+        "com.google.crypto.tink.TinkProtoKeysetFormat"
+      })
+  @Deprecated // This function should be inlined.
   public static byte[] serializeEncryptedKeyset(
       KeysetHandle keysetHandle, Aead keysetEncryptionAead, byte[] associatedData)
       throws GeneralSecurityException {
