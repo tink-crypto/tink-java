@@ -70,7 +70,21 @@ public final class TinkProtoKeysetFormat {
     }
   }
 
-  @SuppressWarnings("UnusedException")
+  /**
+   * Parses an encrypted keyset in Tink's binary format based on Protobufs, using the {@link
+   * RegistryConfiguration}.
+   *
+   * @deprecated This function should be inlined.
+   */
+  @InlineMe(
+      replacement =
+          "TinkProtoKeysetFormat.parseEncryptedKeyset(serializedEncryptedKeyset,"
+              + " keysetEncryptionAead, associatedData, RegistryConfiguration.get())",
+      imports = {
+        "com.google.crypto.tink.RegistryConfiguration",
+        "com.google.crypto.tink.TinkProtoKeysetFormat"
+      })
+  @Deprecated // This function should be inlined.
   public static KeysetHandle parseEncryptedKeyset(
       byte[] serializedEncryptedKeyset, Aead keysetEncryptionAead, byte[] associatedData)
       throws GeneralSecurityException {
