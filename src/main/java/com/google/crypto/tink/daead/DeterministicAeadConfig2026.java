@@ -33,15 +33,15 @@ import java.security.InvalidAlgorithmParameterException;
 import javax.annotation.Nullable;
 
 /**
- * DeterministicAeadConfiguration2026 contains the following primitives and algorithms for
+ * DeterministicAeadConfig2026 contains the following primitives and algorithms for
  * DeterministicAEAD:
  *
  * <ul>
  *   <li>AesSiv
  * </ul>
  */
-public class DeterministicAeadConfiguration2026 {
-  private DeterministicAeadConfiguration2026() {}
+public class DeterministicAeadConfig2026 {
+  private DeterministicAeadConfig2026() {}
 
   private static final DeterministicAeadWrapper DETERMINISTIC_AEAD_WRAPPER =
       new DeterministicAeadWrapper();
@@ -52,7 +52,7 @@ public class DeterministicAeadConfiguration2026 {
   public static Configuration get() throws GeneralSecurityException {
     if (TinkFipsUtil.useOnlyFips()) {
       throw new GeneralSecurityException(
-          "Cannot use non-FIPS-compliant DeterministicAeadConfiguration2026 in FIPS mode");
+          "Cannot use non-FIPS-compliant DeterministicAeadConfig2026 in FIPS mode");
     }
     return CONFIGURATION;
   }
@@ -65,10 +65,10 @@ public class DeterministicAeadConfiguration2026 {
         if (clazz.equals(DeterministicAead.class)) {
           return clazz.cast(
               DETERMINISTIC_AEAD_WRAPPER.wrap(
-                  keysetHandle, DeterministicAeadConfiguration2026::createDeterministicAead));
+                  keysetHandle, DeterministicAeadConfig2026::createDeterministicAead));
         }
         throw new GeneralSecurityException(
-            "DeterministicAeadConfiguration2026 can only create DeterministicAead primitive");
+            "DeterministicAeadConfig2026 can only create DeterministicAead primitive");
       }
 
       @Override
@@ -84,7 +84,7 @@ public class DeterministicAeadConfiguration2026 {
               .build();
         }
         throw new GeneralSecurityException(
-            "Unrecognized parameters for DeterministicAeadConfiguration2026: " + parameters);
+            "Unrecognized parameters for DeterministicAeadConfig2026: " + parameters);
       }
 
       @Override

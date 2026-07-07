@@ -317,7 +317,7 @@ android_library(
     name = "deterministic_aead_configuration_v1-android",
     srcs = ["DeterministicAeadConfigurationV1.java"],
     deps = [
-        ":deterministic_aead_configuration2026-android",
+        ":deterministic_aead_config2026-android",
         "//src/main/java/com/google/crypto/tink:configuration-android",
     ],
 )
@@ -326,14 +326,14 @@ java_library(
     name = "deterministic_aead_configuration_v1",
     srcs = ["DeterministicAeadConfigurationV1.java"],
     deps = [
-        ":deterministic_aead_configuration2026",
+        ":deterministic_aead_config2026",
         "//src/main/java/com/google/crypto/tink:configuration",
     ],
 )
 
 android_library(
-    name = "deterministic_aead_configuration2026-android",
-    srcs = ["DeterministicAeadConfiguration2026.java"],
+    name = "deterministic_aead_config2026-android",
+    srcs = ["DeterministicAeadConfig2026.java"],
     deps = [
         ":aes_siv_key-android",
         ":aes_siv_parameters-android",
@@ -355,8 +355,8 @@ android_library(
 )
 
 java_library(
-    name = "deterministic_aead_configuration2026",
-    srcs = ["DeterministicAeadConfiguration2026.java"],
+    name = "deterministic_aead_config2026",
+    srcs = ["DeterministicAeadConfig2026.java"],
     deps = [
         ":aes_siv_key",
         ":aes_siv_parameters",

@@ -32,7 +32,7 @@ import java.security.GeneralSecurityException;
   private PrfConfigurationV1() {}
 
   public static Configuration get() throws GeneralSecurityException {
-    return PrfConfiguration2026.get();
+    return PrfConfig2026.get();
   }
 }
 

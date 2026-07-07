@@ -39,12 +39,12 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
-public class DeterministicAeadConfiguration2026Test {
+public class DeterministicAeadConfig2026Test {
   @Test
   public void config_throwsIfInFipsMode() throws Exception {
     Assume.assumeTrue(TinkFipsUtil.useOnlyFips());
 
-    assertThrows(GeneralSecurityException.class, DeterministicAeadConfiguration2026::get);
+    assertThrows(GeneralSecurityException.class, DeterministicAeadConfig2026::get);
   }
 
   @Test
@@ -66,7 +66,7 @@ public class DeterministicAeadConfiguration2026Test {
 
     assertThat(
             keysetHandle.getPrimitive(
-                DeterministicAeadConfiguration2026.get(), DeterministicAead.class))
+                DeterministicAeadConfig2026.get(), DeterministicAead.class))
         .isNotNull();
   }
 
@@ -87,7 +87,7 @@ public class DeterministicAeadConfiguration2026Test {
             .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
             .build();
 
-    Configuration config = DeterministicAeadConfiguration2026.get();
+    Configuration config = DeterministicAeadConfig2026.get();
     assertThrows(
         GeneralSecurityException.class,
         () -> keysetHandle.getPrimitive(config, DeterministicAead.class));
@@ -100,7 +100,7 @@ public class DeterministicAeadConfiguration2026Test {
             .setKeySizeBytes(64)
             .setVariant(AesSivParameters.Variant.TINK)
             .build();
-    Key key = DeterministicAeadConfiguration2026.get().createKey(parameters, 42);
+    Key key = DeterministicAeadConfig2026.get().createKey(parameters, 42);
     assertThat(key).isInstanceOf(AesSivKey.class);
     AesSivKey aesSivKey = (AesSivKey) key;
     assertThat(aesSivKey.getParameters()).isEqualTo(parameters);
@@ -116,7 +116,7 @@ public class DeterministicAeadConfiguration2026Test {
             return false;
           }
         };
-    Configuration config = DeterministicAeadConfiguration2026.get();
+    Configuration config = DeterministicAeadConfig2026.get();
     assertThrows(GeneralSecurityException.class, () -> config.createKey(parameters, null));
   }
 
@@ -142,7 +142,7 @@ public class DeterministicAeadConfiguration2026Test {
             .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
             .build();
 
-    Configuration config = DeterministicAeadConfiguration2026.get();
+    Configuration config = DeterministicAeadConfig2026.get();
     assertThrows(
         GeneralSecurityException.class,
         () -> keysetHandle.getPrimitive(config, DummyPrimitive.class));
@@ -155,7 +155,7 @@ public class DeterministicAeadConfiguration2026Test {
             .setKeySizeBytes(64)
             .setVariant(AesSivParameters.Variant.NO_PREFIX)
             .build();
-    Key key = DeterministicAeadConfiguration2026.get().createKey(parameters, null);
+    Key key = DeterministicAeadConfig2026.get().createKey(parameters, null);
     assertThat(key).isInstanceOf(AesSivKey.class);
     AesSivKey aesSivKey = (AesSivKey) key;
     assertThat(aesSivKey.getParameters()).isEqualTo(parameters);
@@ -169,14 +169,14 @@ public class DeterministicAeadConfiguration2026Test {
             .setKeySizeBytes(64)
             .setVariant(AesSivParameters.Variant.TINK)
             .build();
-    Configuration config = DeterministicAeadConfiguration2026.get();
+    Configuration config = DeterministicAeadConfig2026.get();
     assertThrows(GeneralSecurityException.class, () -> config.createKey(parameters, null));
   }
 
   @Test
   public void getOrNull_protoKeySerializer_serializeAndParseParameters() throws Exception {
     ProtoKeySerializer serializer =
-        DeterministicAeadConfiguration2026.get().getOrNull(ProtoKeySerializer.class);
+        DeterministicAeadConfig2026.get().getOrNull(ProtoKeySerializer.class);
     assertThat(serializer).isNotNull();
 
     AesSivParameters parameters =
@@ -193,7 +193,7 @@ public class DeterministicAeadConfiguration2026Test {
   @Test
   public void getOrNull_protoKeySerializer_serializeAndParseKey() throws Exception {
     ProtoKeySerializer serializer =
-        DeterministicAeadConfiguration2026.get().getOrNull(ProtoKeySerializer.class);
+        DeterministicAeadConfig2026.get().getOrNull(ProtoKeySerializer.class);
     assertThat(serializer).isNotNull();
 
     AesSivParameters parameters =
@@ -218,6 +218,6 @@ public class DeterministicAeadConfiguration2026Test {
 
   @Test
   public void getOrNull_unsupportedClass_returnsNull() throws Exception {
-    assertThat(DeterministicAeadConfiguration2026.get().getOrNull(String.class)).isNull();
+    assertThat(DeterministicAeadConfig2026.get().getOrNull(String.class)).isNull();
   }
 }

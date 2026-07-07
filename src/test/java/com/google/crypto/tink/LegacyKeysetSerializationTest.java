@@ -24,9 +24,9 @@ import com.google.crypto.tink.aead.AeadConfig;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.daead.AesSivKey;
 import com.google.crypto.tink.daead.AesSivParameters;
-import com.google.crypto.tink.daead.DeterministicAeadConfiguration2026;
+import com.google.crypto.tink.daead.DeterministicAeadConfig2026;
 import com.google.crypto.tink.mac.MacConfig;
-import com.google.crypto.tink.mac.MacConfiguration2026;
+import com.google.crypto.tink.mac.MacConfig2026;
 import com.google.crypto.tink.proto.KeyStatusType;
 import com.google.crypto.tink.proto.KeysetInfo;
 import com.google.crypto.tink.proto.KeysetInfo.KeyInfo;
@@ -375,7 +375,7 @@ public final class LegacyKeysetSerializationTest {
             .build();
 
     KeysetInfo keysetInfo =
-        LegacyKeysetSerialization.getKeysetInfo(handle, DeterministicAeadConfiguration2026.get());
+        LegacyKeysetSerialization.getKeysetInfo(handle, DeterministicAeadConfig2026.get());
 
     assertThat(keysetInfo)
         .isEqualTo(
@@ -430,7 +430,7 @@ public final class LegacyKeysetSerializationTest {
             .addEntry(KeysetHandle.importKey(key).withFixedId(101).makePrimary())
             .build();
 
-    Configuration nonDeterministicAeadConfiguration = MacConfiguration2026.get();
+    Configuration nonDeterministicAeadConfiguration = MacConfig2026.get();
     assertThrows(
         GeneralSecurityException.class,
         () -> LegacyKeysetSerialization.getKeysetInfo(handle, nonDeterministicAeadConfiguration));

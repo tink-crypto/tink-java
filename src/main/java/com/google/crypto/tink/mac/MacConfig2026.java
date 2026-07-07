@@ -35,15 +35,15 @@ import java.security.GeneralSecurityException;
 import javax.annotation.Nullable;
 
 /**
- * MacConfiguration2026 contains the following primitives and algorithms for MAC and ChunkedMAC:
+ * MacConfig2026 contains the following primitives and algorithms for MAC and ChunkedMAC:
  *
  * <ul>
  *   <li>AesCmac
  *   <li>Hmac
  * </ul>
  */
-public class MacConfiguration2026 {
-  private MacConfiguration2026() {}
+public class MacConfig2026 {
+  private MacConfig2026() {}
 
   private static final MacWrapper MAC_WRAPPER = new MacWrapper();
   private static final ChunkedMacWrapper CHUNKED_MAC_WRAPPER = new ChunkedMacWrapper();
@@ -54,7 +54,7 @@ public class MacConfiguration2026 {
   public static Configuration get() throws GeneralSecurityException {
     if (TinkFipsUtil.useOnlyFips()) {
       throw new GeneralSecurityException(
-          "Cannot use non-FIPS-compliant MacConfiguration2026 in FIPS mode");
+          "Cannot use non-FIPS-compliant MacConfig2026 in FIPS mode");
     }
     return CONFIGURATION;
   }
@@ -65,14 +65,14 @@ public class MacConfiguration2026 {
       public <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
           throws GeneralSecurityException {
         if (clazz == Mac.class) {
-          return clazz.cast(MAC_WRAPPER.wrap(keysetHandle, MacConfiguration2026::createMac));
+          return clazz.cast(MAC_WRAPPER.wrap(keysetHandle, MacConfig2026::createMac));
         }
         if (clazz == ChunkedMac.class) {
           return clazz.cast(
-              CHUNKED_MAC_WRAPPER.wrap(keysetHandle, MacConfiguration2026::createChunkedMac));
+              CHUNKED_MAC_WRAPPER.wrap(keysetHandle, MacConfig2026::createChunkedMac));
         }
         throw new GeneralSecurityException(
-            "MacConfiguration2026 can only create MAC and ChunkedMAC");
+            "MacConfig2026 can only create MAC and ChunkedMAC");
       }
 
       @Override
@@ -96,7 +96,7 @@ public class MacConfiguration2026 {
               .build();
         }
         throw new GeneralSecurityException(
-            "Unrecognized parameters for MacConfiguration2026:" + parameters);
+            "Unrecognized parameters for MacConfig2026:" + parameters);
       }
 
       @Override

@@ -35,12 +35,12 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
-public class MacConfiguration2026Test {
+public class MacConfig2026Test {
   @Test
   public void config_throwsIfInFipsMode() throws Exception {
     Assume.assumeTrue(TinkFipsUtil.useOnlyFips());
 
-    assertThrows(GeneralSecurityException.class, MacConfiguration2026::get);
+    assertThrows(GeneralSecurityException.class, MacConfig2026::get);
   }
 
   @Test
@@ -65,7 +65,7 @@ public class MacConfiguration2026Test {
             .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
             .build();
 
-    assertThat(keysetHandle.getPrimitive(MacConfiguration2026.get(), Mac.class)).isNotNull();
+    assertThat(keysetHandle.getPrimitive(MacConfig2026.get(), Mac.class)).isNotNull();
   }
 
   @Test
@@ -90,7 +90,7 @@ public class MacConfiguration2026Test {
             .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
             .build();
 
-    assertThat(keysetHandle.getPrimitive(MacConfiguration2026.get(), ChunkedMac.class)).isNotNull();
+    assertThat(keysetHandle.getPrimitive(MacConfig2026.get(), ChunkedMac.class)).isNotNull();
   }
 
   @Test
@@ -114,7 +114,7 @@ public class MacConfiguration2026Test {
             .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
             .build();
 
-    assertThat(keysetHandle.getPrimitive(MacConfiguration2026.get(), Mac.class)).isNotNull();
+    assertThat(keysetHandle.getPrimitive(MacConfig2026.get(), Mac.class)).isNotNull();
   }
 
   @Test
@@ -138,7 +138,7 @@ public class MacConfiguration2026Test {
             .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
             .build();
 
-    Configuration config = MacConfiguration2026.get();
+    Configuration config = MacConfig2026.get();
     assertThrows(
         GeneralSecurityException.class, () -> keysetHandle.getPrimitive(config, Mac.class));
   }
@@ -164,7 +164,7 @@ public class MacConfiguration2026Test {
             .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
             .build();
 
-    assertThat(keysetHandle.getPrimitive(MacConfiguration2026.get(), ChunkedMac.class)).isNotNull();
+    assertThat(keysetHandle.getPrimitive(MacConfig2026.get(), ChunkedMac.class)).isNotNull();
   }
 
   @Test
@@ -188,7 +188,7 @@ public class MacConfiguration2026Test {
             .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
             .build();
 
-    Configuration config = MacConfiguration2026.get();
+    Configuration config = MacConfig2026.get();
     assertThrows(
         GeneralSecurityException.class, () -> keysetHandle.getPrimitive(config, ChunkedMac.class));
   }
@@ -201,7 +201,7 @@ public class MacConfiguration2026Test {
             .setTagSizeBytes(16)
             .setVariant(AesCmacParameters.Variant.TINK)
             .build();
-    Key key = MacConfiguration2026.get().createKey(parameters, 42);
+    Key key = MacConfig2026.get().createKey(parameters, 42);
     assertThat(key).isInstanceOf(AesCmacKey.class);
     AesCmacKey aesCmacKey = (AesCmacKey) key;
     assertThat(aesCmacKey.getParameters()).isEqualTo(parameters);
@@ -217,7 +217,7 @@ public class MacConfiguration2026Test {
             .setHashType(HmacParameters.HashType.SHA256)
             .setVariant(HmacParameters.Variant.TINK)
             .build();
-    Key key = MacConfiguration2026.get().createKey(parameters, 42);
+    Key key = MacConfig2026.get().createKey(parameters, 42);
     assertThat(key).isInstanceOf(HmacKey.class);
     HmacKey hmacKey = (HmacKey) key;
     assertThat(hmacKey.getParameters()).isEqualTo(parameters);
@@ -233,7 +233,7 @@ public class MacConfiguration2026Test {
             return false;
           }
         };
-    Configuration config = MacConfiguration2026.get();
+    Configuration config = MacConfig2026.get();
     assertThrows(GeneralSecurityException.class, () -> config.createKey(parameters, null));
   }
 
@@ -261,7 +261,7 @@ public class MacConfiguration2026Test {
             .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
             .build();
 
-    Configuration config = MacConfiguration2026.get();
+    Configuration config = MacConfig2026.get();
     assertThrows(
         GeneralSecurityException.class,
         () -> keysetHandle.getPrimitive(config, DummyPrimitive.class));
@@ -275,7 +275,7 @@ public class MacConfiguration2026Test {
             .setTagSizeBytes(16)
             .setVariant(AesCmacParameters.Variant.NO_PREFIX)
             .build();
-    Key key = MacConfiguration2026.get().createKey(parameters, null);
+    Key key = MacConfig2026.get().createKey(parameters, null);
     assertThat(key).isInstanceOf(AesCmacKey.class);
     AesCmacKey aesCmacKey = (AesCmacKey) key;
     assertThat(aesCmacKey.getParameters()).isEqualTo(parameters);
@@ -290,7 +290,7 @@ public class MacConfiguration2026Test {
             .setTagSizeBytes(16)
             .setVariant(AesCmacParameters.Variant.TINK)
             .build();
-    Configuration config = MacConfiguration2026.get();
+    Configuration config = MacConfig2026.get();
     assertThrows(GeneralSecurityException.class, () -> config.createKey(parameters, null));
   }
 
@@ -303,7 +303,7 @@ public class MacConfiguration2026Test {
             .setHashType(HmacParameters.HashType.SHA256)
             .setVariant(HmacParameters.Variant.NO_PREFIX)
             .build();
-    Key key = MacConfiguration2026.get().createKey(parameters, null);
+    Key key = MacConfig2026.get().createKey(parameters, null);
     assertThat(key).isInstanceOf(HmacKey.class);
     HmacKey hmacKey = (HmacKey) key;
     assertThat(hmacKey.getParameters()).isEqualTo(parameters);
@@ -319,7 +319,7 @@ public class MacConfiguration2026Test {
             .setHashType(HmacParameters.HashType.SHA256)
             .setVariant(HmacParameters.Variant.TINK)
             .build();
-    Configuration config = MacConfiguration2026.get();
+    Configuration config = MacConfig2026.get();
     assertThrows(GeneralSecurityException.class, () -> config.createKey(parameters, null));
   }
 }

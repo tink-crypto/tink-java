@@ -35,12 +35,12 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
-public class PrfConfiguration2026Test {
+public class PrfConfig2026Test {
   @Test
   public void config_throwsIfInFipsMode() throws Exception {
     Assume.assumeTrue(TinkFipsUtil.useOnlyFips());
 
-    assertThrows(GeneralSecurityException.class, PrfConfiguration2026::get);
+    assertThrows(GeneralSecurityException.class, PrfConfig2026::get);
   }
 
   @Test
@@ -62,7 +62,7 @@ public class PrfConfiguration2026Test {
             .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
             .build();
 
-    assertThat(keysetHandle.getPrimitive(PrfConfiguration2026.get(), PrfSet.class)).isNotNull();
+    assertThat(keysetHandle.getPrimitive(PrfConfig2026.get(), PrfSet.class)).isNotNull();
   }
 
   @Test
@@ -84,7 +84,7 @@ public class PrfConfiguration2026Test {
             .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
             .build();
 
-    assertThat(keysetHandle.getPrimitive(PrfConfiguration2026.get(), PrfSet.class)).isNotNull();
+    assertThat(keysetHandle.getPrimitive(PrfConfig2026.get(), PrfSet.class)).isNotNull();
   }
 
   @Test
@@ -99,7 +99,7 @@ public class PrfConfiguration2026Test {
             .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
             .build();
 
-    assertThat(keysetHandle.getPrimitive(PrfConfiguration2026.get(), PrfSet.class)).isNotNull();
+    assertThat(keysetHandle.getPrimitive(PrfConfig2026.get(), PrfSet.class)).isNotNull();
   }
 
   @Test
@@ -116,7 +116,7 @@ public class PrfConfiguration2026Test {
 
     assertThrows(
         GeneralSecurityException.class,
-        () -> keysetHandle.getPrimitive(PrfConfiguration2026.get(), PrfSet.class));
+        () -> keysetHandle.getPrimitive(PrfConfig2026.get(), PrfSet.class));
   }
   @Test
   public void wrongHkdfPrfKeySize_throws() throws Exception {
@@ -137,7 +137,7 @@ public class PrfConfiguration2026Test {
             .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
             .build();
 
-    Configuration config = PrfConfiguration2026.get();
+    Configuration config = PrfConfig2026.get();
     assertThrows(
         GeneralSecurityException.class, () -> keysetHandle.getPrimitive(config, PrfSet.class));
   }
@@ -161,7 +161,7 @@ public class PrfConfiguration2026Test {
             .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
             .build();
 
-    Configuration configuration = PrfConfiguration2026.get();
+    Configuration configuration = PrfConfig2026.get();
     assertThrows(
         GeneralSecurityException.class,
         () -> keysetHandle.getPrimitive(configuration, PrfSet.class));
@@ -174,7 +174,7 @@ public class PrfConfiguration2026Test {
             .setKeySizeBytes(32)
             .setHashType(HmacPrfParameters.HashType.SHA256)
             .build();
-    Key key = PrfConfiguration2026.get().createKey(parameters, null);
+    Key key = PrfConfig2026.get().createKey(parameters, null);
     assertThat(key).isInstanceOf(HmacPrfKey.class);
     HmacPrfKey hmacPrfKey = (HmacPrfKey) key;
     assertThat(hmacPrfKey.getParameters()).isEqualTo(parameters);
@@ -187,7 +187,7 @@ public class PrfConfiguration2026Test {
             .setKeySizeBytes(32)
             .setHashType(HkdfPrfParameters.HashType.SHA256)
             .build();
-    Key key = PrfConfiguration2026.get().createKey(parameters, null);
+    Key key = PrfConfig2026.get().createKey(parameters, null);
     assertThat(key).isInstanceOf(HkdfPrfKey.class);
     HkdfPrfKey hkdfPrfKey = (HkdfPrfKey) key;
     assertThat(hkdfPrfKey.getParameters()).isEqualTo(parameters);
@@ -196,7 +196,7 @@ public class PrfConfiguration2026Test {
   @Test
   public void createKey_aesCmacPrfParameters() throws Exception {
     AesCmacPrfParameters parameters = AesCmacPrfParameters.create(32);
-    Key key = PrfConfiguration2026.get().createKey(parameters, null);
+    Key key = PrfConfig2026.get().createKey(parameters, null);
     assertThat(key).isInstanceOf(AesCmacPrfKey.class);
     AesCmacPrfKey aesCmacPrfKey = (AesCmacPrfKey) key;
     assertThat(aesCmacPrfKey.getParameters()).isEqualTo(parameters);
@@ -209,7 +209,7 @@ public class PrfConfiguration2026Test {
             .setKeySizeBytes(32)
             .setHashType(HkdfPrfParameters.HashType.SHA256)
             .build();
-    Configuration config = PrfConfiguration2026.get();
+    Configuration config = PrfConfig2026.get();
     assertThrows(GeneralSecurityException.class, () -> config.createKey(parameters, 123));
   }
 
@@ -222,7 +222,7 @@ public class PrfConfiguration2026Test {
             return false;
           }
         };
-    Configuration config = PrfConfiguration2026.get();
+    Configuration config = PrfConfig2026.get();
     assertThrows(GeneralSecurityException.class, () -> config.createKey(parameters, null));
   }
 
@@ -248,7 +248,7 @@ public class PrfConfiguration2026Test {
             .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
             .build();
 
-    Configuration config = PrfConfiguration2026.get();
+    Configuration config = PrfConfig2026.get();
     assertThrows(
         GeneralSecurityException.class,
         () -> keysetHandle.getPrimitive(config, DummyPrimitive.class));

@@ -30,6 +30,6 @@ import java.security.GeneralSecurityException;
   private DeterministicAeadConfigurationV1() {}
 
   public static Configuration get() throws GeneralSecurityException {
-    return DeterministicAeadConfiguration2026.get();
+    return DeterministicAeadConfig2026.get();
   }
 }

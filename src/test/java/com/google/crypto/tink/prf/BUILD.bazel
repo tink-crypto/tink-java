@@ -359,9 +359,9 @@ java_test(
 )
 
 java_test(
-    name = "PrfConfiguration2026Test",
+    name = "PrfConfig2026Test",
     size = "small",
-    srcs = ["PrfConfiguration2026Test.java"],
+    srcs = ["PrfConfig2026Test.java"],
     deps = [
         "//src/main/java/com/google/crypto/tink:configuration",
         "//src/main/java/com/google/crypto/tink:key",
@@ -374,7 +374,7 @@ java_test(
         "//src/main/java/com/google/crypto/tink/prf:hkdf_prf_parameters",
         "//src/main/java/com/google/crypto/tink/prf:hmac_prf_key",
         "//src/main/java/com/google/crypto/tink/prf:hmac_prf_parameters",
-        "//src/main/java/com/google/crypto/tink/prf:prf_configuration2026",
+        "//src/main/java/com/google/crypto/tink/prf:prf_config2026",
         "//src/main/java/com/google/crypto/tink/prf:prf_set",
         "//src/main/java/com/google/crypto/tink/prf/internal:aes_cmac_prf_proto_serialization",
         "//src/main/java/com/google/crypto/tink/prf/internal:hkdf_prf_proto_serialization",

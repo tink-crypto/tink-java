@@ -36,7 +36,7 @@ import java.security.GeneralSecurityException;
 import javax.annotation.Nullable;
 
 /**
- * PrfConfiguration2026 contains the following primitives and algorithms for PrfSet:
+ * PrfConfig2026 contains the following primitives and algorithms for PrfSet:
  *
  * <ul>
  *   <li>HmacPrf
@@ -44,8 +44,8 @@ import javax.annotation.Nullable;
  *   <li>AesCmacPrf
  * </ul>
  */
-public class PrfConfiguration2026 {
-  private PrfConfiguration2026() {}
+public class PrfConfig2026 {
+  private PrfConfig2026() {}
 
   private static final PrfSetWrapper PRF_SET_WRAPPER = new PrfSetWrapper();
   private static final Configuration CONFIGURATION = create();
@@ -55,7 +55,7 @@ public class PrfConfiguration2026 {
   public static Configuration get() throws GeneralSecurityException {
     if (TinkFipsUtil.useOnlyFips()) {
       throw new GeneralSecurityException(
-          "Cannot use non-FIPS-compliant PrfConfiguration2026 in FIPS mode");
+          "Cannot use non-FIPS-compliant PrfConfig2026 in FIPS mode");
     }
     return CONFIGURATION;
   }
@@ -66,9 +66,9 @@ public class PrfConfiguration2026 {
       public <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
           throws GeneralSecurityException {
         if (clazz.equals(PrfSet.class)) {
-          return clazz.cast(PRF_SET_WRAPPER.wrap(keysetHandle, PrfConfiguration2026::createPrf));
+          return clazz.cast(PRF_SET_WRAPPER.wrap(keysetHandle, PrfConfig2026::createPrf));
         }
-        throw new GeneralSecurityException("PrfConfiguration2026 can only create PrfSet primitive");
+        throw new GeneralSecurityException("PrfConfig2026 can only create PrfSet primitive");
       }
 
       @Override
@@ -99,7 +99,7 @@ public class PrfConfiguration2026 {
               SecretBytes.randomBytes(aesCmacPrfParameters.getKeySizeBytes()));
         }
         throw new GeneralSecurityException(
-            "Unrecognized parameters for PrfConfiguration2026:" + parameters);
+            "Unrecognized parameters for PrfConfig2026:" + parameters);
       }
 
       @Override

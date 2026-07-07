@@ -520,8 +520,8 @@ java_library(
 )
 
 android_library(
-    name = "mac_configuration2026-android",
-    srcs = ["MacConfiguration2026.java"],
+    name = "mac_config2026-android",
+    srcs = ["MacConfig2026.java"],
     deps = [
         ":aes_cmac_key-android",
         ":aes_cmac_parameters-android",
@@ -550,8 +550,8 @@ android_library(
 )
 
 java_library(
-    name = "mac_configuration2026",
-    srcs = ["MacConfiguration2026.java"],
+    name = "mac_config2026",
+    srcs = ["MacConfig2026.java"],
     deps = [
         ":aes_cmac_key",
         ":aes_cmac_parameters",
