@@ -43,10 +43,18 @@ unzip cmdline-tools.zip -d "${ANDROID_HOME}"
   "build-tools;35.0.0" \
   "platforms;android-23" \
   "platforms;android-26" \
+  "platforms;android-37.0" \
   > /dev/null
+mv "${ANDROID_HOME}/platforms/android-37.0" "${ANDROID_HOME}/platforms/android-37"
 (yes || true) | "${ANDROID_HOME}/cmdline-tools/bin/sdkmanager" \
   "--sdk_root=/tmp/android-sdk-30" \
   "build-tools;35.0.0" \
   "platforms;android-30" \
   > /dev/null
+(yes || true) | "${ANDROID_HOME}/cmdline-tools/bin/sdkmanager" \
+  "--sdk_root=/tmp/android-sdk-37" \
+  "build-tools;35.0.0" \
+  "platforms;android-37.0" \
+  > /dev/null
+mv "/tmp/android-sdk-37/platforms/android-37.0" "/tmp/android-sdk-37/platforms/android-37"
 rm -rf cmdline-tools.zip
