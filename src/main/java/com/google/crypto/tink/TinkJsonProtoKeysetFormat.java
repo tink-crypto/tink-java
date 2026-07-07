@@ -18,6 +18,7 @@ package com.google.crypto.tink;
 
 import static com.google.crypto.tink.internal.Util.UTF_8;
 
+import com.google.errorprone.annotations.InlineMe;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -75,28 +76,93 @@ public final class TinkJsonProtoKeysetFormat {
     }
   }
 
-  @SuppressWarnings("UnusedException")
+  /**
+   * Parses an encrypted keyset in Tink's JSON format based on Protobufs, using the {@link
+   * RegistryConfiguration}.
+   *
+   * @deprecated This function should be inlined.
+   */
+  @InlineMe(
+      replacement =
+          "TinkJsonProtoKeysetFormat.parseEncryptedKeyset(serializedEncryptedKeyset,"
+              + " keysetEncryptionAead, associatedData, RegistryConfiguration.get())",
+      imports = {
+        "com.google.crypto.tink.RegistryConfiguration",
+        "com.google.crypto.tink.TinkJsonProtoKeysetFormat"
+      })
+  @Deprecated // This function should be inlined.
   public static KeysetHandle parseEncryptedKeyset(
       String serializedEncryptedKeyset, Aead keysetEncryptionAead, byte[] associatedData)
+      throws GeneralSecurityException {
+    return parseEncryptedKeyset(
+        serializedEncryptedKeyset,
+        keysetEncryptionAead,
+        associatedData,
+        RegistryConfiguration.get());
+  }
+
+  /**
+   * Parses an encrypted keyset in Tink's JSON format based on Protobufs, using the provided {@link
+   * Configuration}.
+   */
+  @SuppressWarnings("UnusedException")
+  public static KeysetHandle parseEncryptedKeyset(
+      String serializedEncryptedKeyset,
+      Aead keysetEncryptionAead,
+      byte[] associatedData,
+      Configuration configuration)
       throws GeneralSecurityException {
     try {
       return KeysetHandle.readWithAssociatedData(
           JsonKeysetReader.withString(serializedEncryptedKeyset),
           keysetEncryptionAead,
-          associatedData);
+          associatedData,
+          configuration);
     } catch (IOException e) {
       throw new GeneralSecurityException("Parse keyset failed");
     }
   }
 
-  @SuppressWarnings("UnusedException")
+  /**
+   * Serializes an encrypted keyset in Tink's JSON format based on Protobufs, using the {@link
+   * RegistryConfiguration}.
+   *
+   * @deprecated This function should be inlined.
+   */
+  @InlineMe(
+      replacement =
+          "TinkJsonProtoKeysetFormat.serializeEncryptedKeyset(keysetHandle, keysetEncryptionAead,"
+              + " associatedData, RegistryConfiguration.get())",
+      imports = {
+        "com.google.crypto.tink.RegistryConfiguration",
+        "com.google.crypto.tink.TinkJsonProtoKeysetFormat"
+      })
+  @Deprecated // This function should be inlined.
   public static String serializeEncryptedKeyset(
       KeysetHandle keysetHandle, Aead keysetEncryptionAead, byte[] associatedData)
+      throws GeneralSecurityException {
+    return serializeEncryptedKeyset(
+        keysetHandle, keysetEncryptionAead, associatedData, RegistryConfiguration.get());
+  }
+
+  /**
+   * Serializes an encrypted keyset in Tink's JSON format based on Protobufs, using the provided
+   * {@link Configuration}.
+   */
+  @SuppressWarnings("UnusedException")
+  public static String serializeEncryptedKeyset(
+      KeysetHandle keysetHandle,
+      Aead keysetEncryptionAead,
+      byte[] associatedData,
+      Configuration configuration)
       throws GeneralSecurityException {
     try {
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
       keysetHandle.writeWithAssociatedData(
-          JsonKeysetWriter.withOutputStream(outputStream), keysetEncryptionAead, associatedData);
+          JsonKeysetWriter.withOutputStream(outputStream),
+          keysetEncryptionAead,
+          associatedData,
+          configuration);
       return new String(outputStream.toByteArray(), UTF_8);
     } catch (IOException e) {
       throw new GeneralSecurityException("Serialize keyset failed");
