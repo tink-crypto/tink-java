@@ -44,7 +44,8 @@ import java.security.GeneralSecurityException;
  *   <li>RsaSsaPss
  *   <li>RsaSsaPkcs1
  *   <li>Ed25519
- *   <li>MlDsa65
+ *   <li>MlDsa
+ *   <li>SlhDsa
  * </ul>
  */
 public final class SignatureConfig2026 {
