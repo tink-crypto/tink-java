@@ -42,7 +42,7 @@ set -euo pipefail
 
 # TODO: b/442549419 Add mvn to the standard path in the Docker image.
 export PATH=/usr/local/apache-maven/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-export ANDROID_HOME=/android-sdk-30
+export ANDROID_HOME=/android-sdk-37
 
 # Compare the dependencies of the ":tink" target with the declared dependencies.
 # These should match the dependencies declared in tink-java.pom.xml, since

@@ -39,7 +39,7 @@ readonly CACHE_FLAGS
 
 echo "------------- Installing Android SDK"
 source ./kokoro/testutils/update_android_sdk.sh
-export ANDROID_HOME=/tmp/android-sdk-30
+export ANDROID_HOME=/tmp/android-sdk-37
 
 echo "Java home: ${JAVA_HOME}"
 

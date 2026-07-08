@@ -85,7 +85,7 @@ if [[ -n "${BAZEL_REMOTE_CACHE_NAME:-}" ]]; then
 fi
 readonly CACHE_FLAGS
 
-export ANDROID_HOME=/android-sdk-30
+export ANDROID_HOME=/android-sdk-37
 
 echo "---------- BUILDING MAIN"
 time bazelisk build "${CACHE_FLAGS[@]}" -- ...

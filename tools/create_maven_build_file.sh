@@ -105,7 +105,7 @@ maven_bundle(
 # TODO - b/447329832: Switch to API level 24.
 java_import(
     name = "android_jar_needed_for_javadoc",
-    jars = ["@androidsdk//:platforms/android-30/android.jar"],
+    jars = ["@androidsdk//:platforms/android-37/android.jar"],
 )
 
 gen_maven_jar_rules(

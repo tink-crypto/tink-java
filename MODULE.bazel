@@ -55,7 +55,7 @@ use_repo(android_sdk_repository_extension, "androidsdk")
 
 # TODO - b/447329832: Switch to API level 24.
 # This will search in ANDROID_HOME.
-android_sdk_repository_extension.configure(build_tools_version = "35.0.0", api_level = 30)
+android_sdk_repository_extension.configure(build_tools_version = "35.0.0", api_level = 37)
 
 register_toolchains("@androidsdk//:sdk-toolchain", "@androidsdk//:all")
 
