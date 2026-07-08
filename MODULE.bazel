@@ -1,6 +1,6 @@
 """Tink Java Bazel Module definition."""
 
-module(name = "tink_java", version = "1.22.0")
+module(name = "tink_java", version = "1.23.0")
 
 _PROTOBUF_VERSION = "33.6"
 
