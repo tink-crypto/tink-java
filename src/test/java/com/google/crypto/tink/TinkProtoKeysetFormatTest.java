@@ -126,6 +126,76 @@ public final class TinkProtoKeysetFormatTest {
   }
 
   @Test
+  public void serializeAndParse_withConfiguration_success() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    AesSivKey key =
+        AesSivKey.builder()
+            .setParameters(
+                AesSivParameters.builder()
+                    .setKeySizeBytes(64)
+                    .setVariant(AesSivParameters.Variant.TINK)
+                    .build())
+            .setKeyBytes(SecretBytes.randomBytes(64))
+            .setIdRequirement(101)
+            .build();
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withFixedId(101).makePrimary())
+            .build();
+
+    byte[] serializedKeyset =
+        TinkProtoKeysetFormat.serializeKeyset(
+            keysetHandle, InsecureSecretKeyAccess.get(), DeterministicAeadConfig2026.get());
+    KeysetHandle parseKeysetHandle =
+        TinkProtoKeysetFormat.parseKeyset(
+            serializedKeyset, InsecureSecretKeyAccess.get(), DeterministicAeadConfig2026.get());
+
+    assertKeysetHandleAreEqual(keysetHandle, parseKeysetHandle);
+
+    // The MacConfiguration doesn't allow to parse/serialize this keyset. Explicitly testing this
+    // ensures that we don't mistakenly go to the RegistryConfiguration.
+    Configuration macConfiguration = MacConfig2026.get();
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            TinkProtoKeysetFormat.serializeKeyset(
+                keysetHandle, InsecureSecretKeyAccess.get(), macConfiguration));
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            TinkProtoKeysetFormat.parseKeyset(
+                serializedKeyset, InsecureSecretKeyAccess.get(), macConfiguration));
+  }
+
+  @Test
+  public void parseKeyset_withInvalidSerializedKeysetAndConfiguration_fails() throws Exception {
+    byte[] invalidSerializedKeyset = "invalid".getBytes(UTF_8);
+    Configuration configuration = DeterministicAeadConfig2026.get();
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            TinkProtoKeysetFormat.parseKeyset(
+                invalidSerializedKeyset, InsecureSecretKeyAccess.get(), configuration));
+  }
+
+  @Test
+  public void serializeKeyset_withUnserializableKeyAndConfiguration_throwsGeneralSecurityException()
+      throws Exception {
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(new TestKey()).withFixedId(123).makePrimary())
+            .build();
+    Configuration configuration = DeterministicAeadConfig2026.get();
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            TinkProtoKeysetFormat.serializeKeyset(
+                handle, InsecureSecretKeyAccess.get(), configuration));
+  }
+
+  @Test
   public void serializeKeyset_withoutInsecureSecretKeyAccess_fails() throws Exception {
     KeysetHandle keysetHandle = generateKeyset();
 
@@ -542,6 +612,31 @@ public final class TinkProtoKeysetFormatTest {
         TinkProtoKeysetFormat.parseKeyset(serializedKeyset, InsecureSecretKeyAccess.get());
     Mac mac = handle.getPrimitive(RegistryConfiguration.get(), Mac.class);
     mac.verifyMac(Hex.decode("016986f2956092d259136923c6f4323557714ec499"), "data".getBytes(UTF_8));
+  }
+
+  @Test
+  public void parseKeyset_withConfiguration_fromTestVector_success() throws Exception {
+    // This contains one HMAC key.
+    byte[] serializedKeyset =
+        Hex.decode(
+            "0895e59bcc0612680a5c0a2e747970652e676f6f676c65617069732e636f6d2f676f6f676c652e63"
+                + "727970746f2e74696e6b2e486d61634b657912281a20cca20f02278003b3513f5d01759ac1302f7d"
+                + "883f2f4a40025532ee1b11f9e587120410100803180110011895e59bcc062001");
+
+    // Parse with MacConfig2026 which supports HMAC keys.
+    KeysetHandle handle =
+        TinkProtoKeysetFormat.parseKeyset(
+            serializedKeyset, InsecureSecretKeyAccess.get(), MacConfig2026.get());
+    Mac mac = handle.getPrimitive(MacConfig2026.get(), Mac.class);
+    mac.verifyMac(Hex.decode("016986f2956092d259136923c6f4323557714ec499"), "data".getBytes(UTF_8));
+
+    // Parse with DeterministicAeadConfig2026 which does not support HMAC keys.
+    Configuration configuration = DeterministicAeadConfig2026.get();
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            TinkProtoKeysetFormat.parseKeyset(
+                serializedKeyset, InsecureSecretKeyAccess.get(), configuration));
   }
 
   @Test
