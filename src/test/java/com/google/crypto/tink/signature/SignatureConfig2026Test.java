@@ -16,11 +16,17 @@
 
 package com.google.crypto.tink.signature;
 
+import static com.google.common.truth.Truth.assertThat;
 import static java.util.Arrays.stream;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.Configuration;
+import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.ProtoKeySerialization;
+import com.google.crypto.tink.ProtoKeySerializer;
+import com.google.crypto.tink.ProtoParametersSerialization;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
@@ -226,6 +232,57 @@ public class SignatureConfig2026Test {
     assertThrows(
         GeneralSecurityException.class,
         () -> verifier.verify(signature, modifyInput(testVector.getMessage())));
+  }
+
+  @Theory
+  public void test_serializeAndParsePrivateKey(
+      @FromDataPoints("signatureTests") SignatureTestVector testVector) throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    ProtoKeySerializer serializer = SignatureConfig2026.get().getOrNull(ProtoKeySerializer.class);
+    assertThat(serializer).isNotNull();
+
+    SignaturePrivateKey key = testVector.getPrivateKey();
+    ProtoKeySerialization serializedKey =
+        serializer.serializeKey(key, InsecureSecretKeyAccess.get());
+
+    Key parsedKey = serializer.parseKey(serializedKey, InsecureSecretKeyAccess.get());
+    assertThat(parsedKey.equalsKey(key)).isTrue();
+  }
+
+  @Theory
+  public void test_serializeAndParsePublicKey(
+      @FromDataPoints("signatureTests") SignatureTestVector testVector) throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    ProtoKeySerializer serializer = SignatureConfig2026.get().getOrNull(ProtoKeySerializer.class);
+    assertThat(serializer).isNotNull();
+
+    SignaturePublicKey key = testVector.getPrivateKey().getPublicKey();
+    ProtoKeySerialization serializedKey = serializer.serializeKey(key, null);
+
+    Key parsedKey = serializer.parseKey(serializedKey, null);
+    assertThat(parsedKey.equalsKey(key)).isTrue();
+  }
+
+  @Theory
+  public void test_serializeAndParseParameters(
+      @FromDataPoints("signatureTests") SignatureTestVector testVector) throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+    Assume.assumeTrue(shouldBeSupported(testVector));
+
+    ProtoKeySerializer serializer = SignatureConfig2026.get().getOrNull(ProtoKeySerializer.class);
+    assertThat(serializer).isNotNull();
+
+    SignatureParameters parameters = testVector.getPrivateKey().getParameters();
+    ProtoParametersSerialization serializedParameters = serializer.serializeParameters(parameters);
+
+    assertThat(serializer.parseParameters(serializedParameters)).isEqualTo(parameters);
+  }
+
+  @Test
+  public void getOrNull_unsupportedClass_returnsNull() throws Exception {
+    assertThat(SignatureConfig2026.get().getOrNull(String.class)).isNull();
   }
 
   @DataPoints("signatureTests")

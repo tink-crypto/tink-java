@@ -19,11 +19,19 @@ package com.google.crypto.tink.signature;
 import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeysetHandleInterface;
+import com.google.crypto.tink.ProtoKeySerializer;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.SerializationRegistry;
+import com.google.crypto.tink.signature.internal.EcdsaProtoSerialization;
+import com.google.crypto.tink.signature.internal.Ed25519ProtoSerialization;
+import com.google.crypto.tink.signature.internal.MlDsaProtoSerialization;
 import com.google.crypto.tink.signature.internal.MlDsaSignConscrypt;
 import com.google.crypto.tink.signature.internal.MlDsaVerifyConscrypt;
+import com.google.crypto.tink.signature.internal.RsaSsaPkcs1ProtoSerialization;
+import com.google.crypto.tink.signature.internal.RsaSsaPssProtoSerialization;
+import com.google.crypto.tink.signature.internal.SlhDsaProtoSerialization;
 import com.google.crypto.tink.signature.internal.SlhDsaSignConscrypt;
 import com.google.crypto.tink.signature.internal.SlhDsaVerifyConscrypt;
 import com.google.crypto.tink.subtle.EcdsaSignJce;
@@ -55,6 +63,7 @@ public final class SignatureConfig2026 {
   private static final PublicKeyVerifyWrapper PUBLIC_KEY_VERIFY_WRAPPER =
       new PublicKeyVerifyWrapper();
   private static final Configuration CONFIGURATION = create();
+  private static final ProtoKeySerializer SERIALIZER = createProtoKeySerializer();
 
   private static Configuration create() {
     return new Configuration() {
@@ -72,6 +81,14 @@ public final class SignatureConfig2026 {
         }
         throw new GeneralSecurityException(
             "SignatureConfig2026 can only create PublicKeySign and PublicKeyVerify");
+      }
+
+      @Override
+      public <P> P getOrNull(Class<P> clazz) {
+        if (clazz.equals(ProtoKeySerializer.class)) {
+          return clazz.cast(SERIALIZER);
+        }
+        return null;
       }
     };
   }
@@ -131,5 +148,20 @@ public final class SignatureConfig2026 {
       return SlhDsaVerifyConscrypt.create((SlhDsaPublicKey) key);
     }
     throw new GeneralSecurityException("Unknown key class: " + key.getClass());
+  }
+
+  private static ProtoKeySerializer createProtoKeySerializer() {
+    try {
+      SerializationRegistry.Builder builder = new SerializationRegistry.Builder();
+      EcdsaProtoSerialization.register(builder);
+      Ed25519ProtoSerialization.register(builder);
+      MlDsaProtoSerialization.register(builder);
+      RsaSsaPkcs1ProtoSerialization.register(builder);
+      RsaSsaPssProtoSerialization.register(builder);
+      SlhDsaProtoSerialization.register(builder);
+      return builder.build();
+    } catch (GeneralSecurityException e) {
+      throw new IllegalStateException(e);
+    }
   }
 }
