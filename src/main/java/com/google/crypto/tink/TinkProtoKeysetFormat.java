@@ -106,18 +106,68 @@ public final class TinkProtoKeysetFormat {
     }
   }
 
+  /**
+   * Parses a keyset without secret key material in Tink's binary format based on Protobufs, using
+   * the {@link RegistryConfiguration}.
+   *
+   * @deprecated This function should be inlined.
+   */
+  @InlineMe(
+      replacement =
+          "TinkProtoKeysetFormat.parseKeysetWithoutSecret(serializedKeyset,"
+              + " RegistryConfiguration.get())",
+      imports = {
+        "com.google.crypto.tink.RegistryConfiguration",
+        "com.google.crypto.tink.TinkProtoKeysetFormat"
+      })
+  @Deprecated // This function should be inlined.
   @SuppressWarnings("UnusedException")
   public static KeysetHandle parseKeysetWithoutSecret(byte[] serializedKeyset)
       throws GeneralSecurityException {
-    return KeysetHandle.readNoSecret(serializedKeyset);
+    return parseKeysetWithoutSecret(serializedKeyset, RegistryConfiguration.get());
   }
 
+  /**
+   * Parses a keyset without secret key material in Tink's binary format based on Protobufs, using
+   * the provided {@link Configuration}.
+   */
+  @SuppressWarnings("UnusedException")
+  public static KeysetHandle parseKeysetWithoutSecret(
+      byte[] serializedKeyset, Configuration configuration) throws GeneralSecurityException {
+    return KeysetHandle.readNoSecret(serializedKeyset, configuration);
+  }
+
+  /**
+   * Serializes a keyset without secret key material in Tink's binary format based on Protobufs,
+   * using the {@link RegistryConfiguration}.
+   *
+   * @deprecated This function should be inlined.
+   */
+  @InlineMe(
+      replacement =
+          "TinkProtoKeysetFormat.serializeKeysetWithoutSecret(keysetHandle,"
+              + " RegistryConfiguration.get())",
+      imports = {
+        "com.google.crypto.tink.RegistryConfiguration",
+        "com.google.crypto.tink.TinkProtoKeysetFormat"
+      })
+  @Deprecated // This function should be inlined.
   @SuppressWarnings("UnusedException")
   public static byte[] serializeKeysetWithoutSecret(KeysetHandle keysetHandle)
       throws GeneralSecurityException {
+    return serializeKeysetWithoutSecret(keysetHandle, RegistryConfiguration.get());
+  }
+
+  /**
+   * Serializes a keyset without secret key material in Tink's binary format based on Protobufs,
+   * using the provided {@link Configuration}.
+   */
+  @SuppressWarnings("UnusedException")
+  public static byte[] serializeKeysetWithoutSecret(
+      KeysetHandle keysetHandle, Configuration configuration) throws GeneralSecurityException {
     try {
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-      keysetHandle.writeNoSecret(BinaryKeysetWriter.withOutputStream(outputStream));
+      keysetHandle.writeNoSecret(BinaryKeysetWriter.withOutputStream(outputStream), configuration);
       return outputStream.toByteArray();
     } catch (IllegalArgumentException | IOException e) {
       throw new GeneralSecurityException("Serialize keyset failed", e);

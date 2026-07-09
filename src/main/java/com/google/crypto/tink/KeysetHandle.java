@@ -1111,12 +1111,16 @@ public final class KeysetHandle implements KeysetHandleInterface {
    * @throws GeneralSecurityException if the keyset is invalid
    * @deprecated Call {TinkProtoKeysetFormat.parseKeysetWithoutSecret} instead.
    */
-  @SuppressWarnings("UnusedException")
   @Deprecated
   public static final KeysetHandle readNoSecret(final byte[] serialized)
       throws GeneralSecurityException {
+    return readNoSecret(serialized, RegistryConfiguration.get());
+  }
+
+  @SuppressWarnings("UnusedException")
+  static KeysetHandle readNoSecret(final byte[] serialized, Configuration configuration)
+      throws GeneralSecurityException {
     try {
-      Configuration configuration = RegistryConfiguration.get();
       Keyset keyset = Keyset.parseFrom(serialized, ExtensionRegistryLite.getEmptyRegistry());
       assertNoSecretKeyMaterial(keyset);
       return KeysetHandle.fromKeyset(keyset, configuration);
@@ -1189,7 +1193,11 @@ public final class KeysetHandle implements KeysetHandleInterface {
    */
   @Deprecated /* b/372397203 */
   public void writeNoSecret(KeysetWriter writer) throws GeneralSecurityException, IOException {
-    Configuration configuration = RegistryConfiguration.get();
+    writeNoSecret(writer, RegistryConfiguration.get());
+  }
+
+  void writeNoSecret(KeysetWriter writer, Configuration configuration)
+      throws GeneralSecurityException, IOException {
     Keyset keyset = getKeyset(configuration);
     assertNoSecretKeyMaterial(keyset);
     writer.write(keyset);
