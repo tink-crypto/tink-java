@@ -242,7 +242,7 @@ public final class JwtRsaSsaPssPublicKey extends JwtSignaturePublicKey {
       link = "https://developers.google.com/tink/design/access_control#accessing_partial_keys",
       allowedOnPath = ".*Test\\.java",
       allowlistAnnotations = {AccessesPartialKey.class})
-  RsaSsaPssPublicKey getRsaSsaPssPublicKey() {
+  public RsaSsaPssPublicKey getRsaSsaPssPublicKey() {
     return rsaSsaPssPublicKey;
   }
 }
