@@ -26,28 +26,81 @@ import java.security.GeneralSecurityException;
 /** Functions to parse and serialize Keyset in Tink's JSON format based on Protobufs. */
 public final class TinkJsonProtoKeysetFormat {
 
+  /**
+   * Parses a keyset in Tink's JSON format based on Protobufs, using the {@link
+   * RegistryConfiguration}.
+   *
+   * @deprecated This function should be inlined.
+   */
+  @InlineMe(
+      replacement =
+          "TinkJsonProtoKeysetFormat.parseKeyset(serializedKeyset, RegistryConfiguration.get(),"
+              + " access)",
+      imports = {
+        "com.google.crypto.tink.RegistryConfiguration",
+        "com.google.crypto.tink.TinkJsonProtoKeysetFormat"
+      })
+  @Deprecated // This function should be inlined.
   @SuppressWarnings("UnusedException")
   public static KeysetHandle parseKeyset(String serializedKeyset, SecretKeyAccess access)
+      throws GeneralSecurityException {
+    return parseKeyset(serializedKeyset, RegistryConfiguration.get(), access);
+  }
+
+  /**
+   * Parses a keyset in Tink's JSON format based on Protobufs, using the provided {@link
+   * Configuration}.
+   */
+  @SuppressWarnings("UnusedException")
+  public static KeysetHandle parseKeyset(
+      String serializedKeyset, Configuration configuration, SecretKeyAccess access)
       throws GeneralSecurityException {
     if (access == null) {
       throw new NullPointerException("SecretKeyAccess cannot be null");
     }
     try {
-      return CleartextKeysetHandle.read(JsonKeysetReader.withString(serializedKeyset));
+      return KeysetHandle.fromKeyset(
+          JsonKeysetReader.withString(serializedKeyset).read(), configuration);
     } catch (IOException e) {
       throw new GeneralSecurityException("Parse keyset failed");
     }
   }
 
+  /**
+   * Serializes a keyset in Tink's JSON format based on Protobufs, using the {@link
+   * RegistryConfiguration}.
+   *
+   * @deprecated This function should be inlined.
+   */
+  @InlineMe(
+      replacement =
+          "TinkJsonProtoKeysetFormat.serializeKeyset(keysetHandle, RegistryConfiguration.get(),"
+              + " access)",
+      imports = {
+        "com.google.crypto.tink.RegistryConfiguration",
+        "com.google.crypto.tink.TinkJsonProtoKeysetFormat"
+      })
+  @Deprecated // This function should be inlined.
   @SuppressWarnings("UnusedException")
   public static String serializeKeyset(KeysetHandle keysetHandle, SecretKeyAccess access)
+      throws GeneralSecurityException {
+    return serializeKeyset(keysetHandle, RegistryConfiguration.get(), access);
+  }
+
+  /**
+   * Serializes a keyset in Tink's JSON format based on Protobufs, using the provided {@link
+   * Configuration}.
+   */
+  @SuppressWarnings({"UnusedException", "deprecation"})
+  public static String serializeKeyset(
+      KeysetHandle keysetHandle, Configuration configuration, SecretKeyAccess access)
       throws GeneralSecurityException {
     if (access == null) {
       throw new NullPointerException("SecretKeyAccess cannot be null");
     }
     try {
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-      CleartextKeysetHandle.write(keysetHandle, JsonKeysetWriter.withOutputStream(outputStream));
+      JsonKeysetWriter.withOutputStream(outputStream).write(keysetHandle.getKeyset(configuration));
       return new String(outputStream.toByteArray(), UTF_8);
     } catch (IOException e) {
       throw new GeneralSecurityException("Serialize keyset failed");

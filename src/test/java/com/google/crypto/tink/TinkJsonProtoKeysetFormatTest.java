@@ -140,6 +140,87 @@ public final class TinkJsonProtoKeysetFormatTest {
   }
 
   @Test
+  public void serializeAndParse_withConfiguration_success() throws Exception {
+    KeysetHandle keysetHandle = generateKeyset();
+
+    String serializedKeyset =
+        TinkJsonProtoKeysetFormat.serializeKeyset(
+            keysetHandle, MacConfig2026.get(), InsecureSecretKeyAccess.get());
+    KeysetHandle parseKeysetHandle =
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            serializedKeyset, MacConfig2026.get(), InsecureSecretKeyAccess.get());
+
+    assertKeysetHandleAreEqual(keysetHandle, parseKeysetHandle);
+
+    Configuration signatureConfiguration = SignatureConfig2026.get();
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            TinkJsonProtoKeysetFormat.serializeKeyset(
+                keysetHandle, signatureConfiguration, InsecureSecretKeyAccess.get()));
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            TinkJsonProtoKeysetFormat.parseKeyset(
+                serializedKeyset, signatureConfiguration, InsecureSecretKeyAccess.get()));
+  }
+
+  @Test
+  public void serializeKeyset_withConfiguration_withoutInsecureSecretKeyAccess_fails()
+      throws Exception {
+    KeysetHandle keysetHandle = generateKeyset();
+
+    Configuration configuration = MacConfig2026.get();
+    assertThrows(
+        NullPointerException.class,
+        () -> TinkJsonProtoKeysetFormat.serializeKeyset(keysetHandle, configuration, null));
+  }
+
+  @Test
+  public void parseKeyset_withConfiguration_withoutInsecureSecretKeyAccess_fails()
+      throws Exception {
+    String serializedKeyset =
+        TinkJsonProtoKeysetFormat.serializeKeyset(
+            generateKeyset(), MacConfig2026.get(), InsecureSecretKeyAccess.get());
+
+    Configuration configuration = MacConfig2026.get();
+    assertThrows(
+        NullPointerException.class,
+        () -> TinkJsonProtoKeysetFormat.parseKeyset(serializedKeyset, configuration, null));
+  }
+
+  @Test
+  public void parseKeyset_withConfiguration_fromTestVector_success() throws Exception {
+    // The same key as in JsonKeysetReaderTest.
+    String serializedKeyset =
+        "{"
+            + "\"primaryKeyId\": 547623039,"
+            + "\"key\": [{"
+            + "\"keyData\": {"
+            + "\"typeUrl\": \"type.googleapis.com/google.crypto.tink.HmacKey\","
+            + "\"keyMaterialType\": \"SYMMETRIC\","
+            + "\"value\": \"EgQIAxAQGiBYhMkitTWFVefTIBg6kpvac+bwFOGSkENGmU+1EYgocg==\""
+            + "},"
+            + "\"outputPrefixType\": \"TINK\","
+            + "\"keyId\": 547623039,"
+            + "\"status\": \"ENABLED\""
+            + "}]}";
+    KeysetHandle handle =
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            serializedKeyset, MacConfig2026.get(), InsecureSecretKeyAccess.get());
+    Mac mac = handle.getPrimitive(MacConfig2026.get(), Mac.class);
+    mac.verifyMac(Hex.decode("0120a4107f3549e4fb3137415a63f5c8a0524f8ca7"), "data".getBytes(UTF_8));
+
+    Configuration configuration = SignatureConfig2026.get();
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            TinkJsonProtoKeysetFormat.parseKeyset(
+                serializedKeyset, configuration, InsecureSecretKeyAccess.get()));
+  }
+
+  @Test
   public void parseInvalidSerializedKeyset_fails() throws Exception {
     String invalidSerializedKeyset = "invalid";
     assertThrows(
