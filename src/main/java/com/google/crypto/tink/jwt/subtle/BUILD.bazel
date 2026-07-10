@@ -78,6 +78,78 @@ android_library(
 )
 
 android_library(
+    name = "jwt_rsa_ssa_pkcs1_public_key_sign-android",
+    srcs = ["JwtRsaSsaPkcs1PublicKeySign.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink:public_key_sign-android",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_public_key_sign-android",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_rsa_ssa_pkcs1_private_key-android",
+        "//src/main/java/com/google/crypto/tink/jwt:raw_jwt-android",
+        "//src/main/java/com/google/crypto/tink/jwt/internal:jwt_format-android",
+        "//src/main/java/com/google/crypto/tink/subtle:rsa_ssa_pkcs1_sign_jce-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "jwt_rsa_ssa_pkcs1_public_key_sign",
+    srcs = ["JwtRsaSsaPkcs1PublicKeySign.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink:public_key_sign",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_public_key_sign",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_rsa_ssa_pkcs1_private_key",
+        "//src/main/java/com/google/crypto/tink/jwt:raw_jwt",
+        "//src/main/java/com/google/crypto/tink/jwt/internal:jwt_format",
+        "//src/main/java/com/google/crypto/tink/subtle:rsa_ssa_pkcs1_sign_jce",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "jwt_rsa_ssa_pkcs1_public_key_verify",
+    srcs = ["JwtRsaSsaPkcs1PublicKeyVerify.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink:public_key_verify",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_public_key_verify",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_rsa_ssa_pkcs1_public_key",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_validator",
+        "//src/main/java/com/google/crypto/tink/jwt:raw_jwt",
+        "//src/main/java/com/google/crypto/tink/jwt:verified_jwt",
+        "//src/main/java/com/google/crypto/tink/jwt/internal:json_util",
+        "//src/main/java/com/google/crypto/tink/jwt/internal:jwt_format",
+        "//src/main/java/com/google/crypto/tink/subtle:rsa_ssa_pkcs1_verify_jce",
+        "@maven//:com_google_code_gson_gson",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
+    name = "jwt_rsa_ssa_pkcs1_public_key_verify-android",
+    srcs = ["JwtRsaSsaPkcs1PublicKeyVerify.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink:public_key_verify-android",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_public_key_verify-android",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_rsa_ssa_pkcs1_public_key-android",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_validator-android",
+        "//src/main/java/com/google/crypto/tink/jwt:raw_jwt-android",
+        "//src/main/java/com/google/crypto/tink/jwt:verified_jwt-android",
+        "//src/main/java/com/google/crypto/tink/jwt/internal:json_util-android",
+        "//src/main/java/com/google/crypto/tink/jwt/internal:jwt_format-android",
+        "//src/main/java/com/google/crypto/tink/subtle:rsa_ssa_pkcs1_verify_jce-android",
+        "@maven//:com_google_code_gson_gson",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
     name = "jwt_rsa_ssa_pss_public_key_sign-android",
     srcs = ["JwtRsaSsaPssPublicKeySign.java"],
     deps = [
