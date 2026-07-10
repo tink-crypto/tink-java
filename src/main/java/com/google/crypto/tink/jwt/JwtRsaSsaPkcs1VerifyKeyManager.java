@@ -15,16 +15,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 package com.google.crypto.tink.jwt;
 
-import static java.nio.charset.StandardCharsets.US_ASCII;
-
-import com.google.crypto.tink.AccessesPartialKey;
-import com.google.crypto.tink.PublicKeyVerify;
+import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
-import com.google.crypto.tink.jwt.internal.JsonUtil;
-import com.google.crypto.tink.jwt.internal.JwtFormat;
-import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
-import com.google.crypto.tink.subtle.RsaSsaPkcs1VerifyJce;
-import com.google.gson.JsonObject;
+import com.google.crypto.tink.jwt.subtle.JwtRsaSsaPkcs1PublicKeyVerify;
 import java.security.GeneralSecurityException;
 
 /**
@@ -33,34 +26,11 @@ import java.security.GeneralSecurityException;
  */
 final class JwtRsaSsaPkcs1VerifyKeyManager {
 
-  @AccessesPartialKey
-  static RsaSsaPkcs1PublicKey toRsaSsaPkcs1PublicKey(JwtRsaSsaPkcs1PublicKey publicKey) {
-    return publicKey.getRsaSsaPkcs1PublicKey();
-  }
-
-  @SuppressWarnings("Immutable") // RsaSsaPkcs1VerifyJce.create is immutable.
+  @LowLevelCryptoCaller
   static JwtPublicKeyVerify createFullPrimitive(
       com.google.crypto.tink.jwt.JwtRsaSsaPkcs1PublicKey publicKey)
       throws GeneralSecurityException {
-    RsaSsaPkcs1PublicKey rsaSsaPkcs1PublicKey = toRsaSsaPkcs1PublicKey(publicKey);
-    final PublicKeyVerify verifier = RsaSsaPkcs1VerifyJce.create(rsaSsaPkcs1PublicKey);
-
-    return new JwtPublicKeyVerify() {
-      @Override
-      public VerifiedJwt verifyAndDecode(String compact, JwtValidator validator)
-          throws GeneralSecurityException {
-        JwtFormat.Parts parts = JwtFormat.splitSignedCompact(compact);
-        verifier.verify(parts.signatureOrMac, parts.unsignedCompact.getBytes(US_ASCII));
-        JsonObject parsedHeader = JsonUtil.parseJson(parts.header);
-        JwtFormat.validateHeader(
-            parsedHeader,
-            publicKey.getParameters().getAlgorithm().getStandardName(),
-            publicKey.getKid(),
-            publicKey.getParameters().allowKidAbsent());
-        RawJwt token = RawJwt.fromJsonPayload(JwtFormat.getTypeHeader(parsedHeader), parts.payload);
-        return validator.unsafeValidate(token);
-      }
-    };
+    return JwtRsaSsaPkcs1PublicKeyVerify.create(publicKey);
   }
 
   static final PrimitiveConstructor<

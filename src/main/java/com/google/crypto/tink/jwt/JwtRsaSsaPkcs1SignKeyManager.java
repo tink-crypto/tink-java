@@ -15,14 +15,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 package com.google.crypto.tink.jwt;
 
-import static java.nio.charset.StandardCharsets.US_ASCII;
-
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyManager;
+import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.PrivateKeyManager;
-import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.KeyCreator;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
@@ -31,12 +29,10 @@ import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
 import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
-import com.google.crypto.tink.jwt.internal.JwtFormat;
 import com.google.crypto.tink.jwt.internal.JwtRsaSsaPkcs1ProtoSerialization;
+import com.google.crypto.tink.jwt.subtle.JwtRsaSsaPkcs1PublicKeySign;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
 import com.google.crypto.tink.subtle.EngineFactory;
-import com.google.crypto.tink.subtle.RsaSsaPkcs1SignJce;
 import com.google.crypto.tink.util.SecretBigInteger;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
@@ -66,28 +62,11 @@ public final class JwtRsaSsaPkcs1SignKeyManager {
           KeyMaterialType.ASYMMETRIC_PUBLIC,
           com.google.crypto.tink.proto.JwtRsaSsaPkcs1PublicKey.parser());
 
-  @AccessesPartialKey
-  static RsaSsaPkcs1PrivateKey toRsaSsaPkcs1PrivateKey(JwtRsaSsaPkcs1PrivateKey privateKey)
-      throws GeneralSecurityException {
-    return privateKey.getRsaSsaPkcs1PrivateKey();
-  }
-
-  @SuppressWarnings("Immutable") // RsaSsaPkcs1SignJce.create returns an immutable signer.
+  @LowLevelCryptoCaller
   static JwtPublicKeySign createFullPrimitive(
       com.google.crypto.tink.jwt.JwtRsaSsaPkcs1PrivateKey privateKey)
       throws GeneralSecurityException {
-    RsaSsaPkcs1PrivateKey rsaSsaPkcs1PrivateKey = toRsaSsaPkcs1PrivateKey(privateKey);
-    final PublicKeySign signer = RsaSsaPkcs1SignJce.create(rsaSsaPkcs1PrivateKey);
-    String algorithm = privateKey.getParameters().getAlgorithm().getStandardName();
-    return new JwtPublicKeySign() {
-      @Override
-      public String signAndEncode(RawJwt rawJwt) throws GeneralSecurityException {
-        String unsignedCompact =
-            JwtFormat.createUnsignedCompact(algorithm, privateKey.getPublicKey().getKid(), rawJwt);
-        return JwtFormat.createSignedCompact(
-            unsignedCompact, signer.sign(unsignedCompact.getBytes(US_ASCII)));
-      }
-    };
+    return JwtRsaSsaPkcs1PublicKeySign.create(privateKey);
   }
 
   private static final PrimitiveConstructor<
