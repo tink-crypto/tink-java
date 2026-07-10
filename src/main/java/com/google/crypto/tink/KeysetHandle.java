@@ -1105,6 +1105,19 @@ public final class KeysetHandle implements KeysetHandleInterface {
     return readNoSecret(serializedKeyset);
   }
 
+  @SuppressWarnings("UnusedException")
+  static final KeysetHandle readNoSecret(KeysetReader reader, Configuration configuration)
+      throws GeneralSecurityException, IOException {
+    byte[] serializedKeyset;
+    try {
+      serializedKeyset = reader.read().toByteArray();
+    } catch (InvalidProtocolBufferException e) {
+      // Do not propagate InvalidProtocolBufferException to guarantee no key material is leaked
+      throw new GeneralSecurityException("invalid keyset");
+    }
+    return readNoSecret(serializedKeyset, configuration);
+  }
+
   /**
    * Tries to create a {@link KeysetHandle} from a serialized keyset which contains no secret key
    * material.
@@ -1125,7 +1138,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
   }
 
   @SuppressWarnings("UnusedException")
-  static KeysetHandle readNoSecret(final byte[] serialized, Configuration configuration)
+  static final KeysetHandle readNoSecret(final byte[] serialized, Configuration configuration)
       throws GeneralSecurityException {
     try {
       Keyset keyset = Keyset.parseFrom(serialized, ExtensionRegistryLite.getEmptyRegistry());

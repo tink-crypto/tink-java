@@ -17,6 +17,7 @@
 package com.google.crypto.tink;
 
 import com.google.crypto.tink.proto.KeysetInfo;
+import com.google.errorprone.annotations.InlineMe;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
@@ -36,10 +37,32 @@ public final class LegacyKeysetSerialization {
    * Parse a KeysetHandle from the reader.
    *
    * <p>This method is used for keysets containing no secret key material.
+   *
+   * @deprecated This function should be inlined.
    */
+  @InlineMe(
+      replacement =
+          "LegacyKeysetSerialization.parseKeysetWithoutSecret("
+              + "reader, RegistryConfiguration.get())",
+      imports = {
+        "com.google.crypto.tink.LegacyKeysetSerialization",
+        "com.google.crypto.tink.RegistryConfiguration"
+      })
+  @Deprecated // This function should be inlined.
   public static KeysetHandle parseKeysetWithoutSecret(KeysetReader reader)
       throws GeneralSecurityException, IOException {
-    return KeysetHandle.readNoSecret(reader);
+    return parseKeysetWithoutSecret(reader, RegistryConfiguration.get());
+  }
+
+  /**
+   * Parse a KeysetHandle from the reader using the provided {@code configuration}.
+   *
+   * <p>This method is used for keysets containing no secret key material.
+   */
+  public static KeysetHandle parseKeysetWithoutSecret(
+      KeysetReader reader, Configuration configuration)
+      throws GeneralSecurityException, IOException {
+    return KeysetHandle.readNoSecret(reader, configuration);
   }
 
   /**
@@ -67,10 +90,32 @@ public final class LegacyKeysetSerialization {
    * Serialize a keyset to the writer.
    *
    * <p>This method is used for keysets containing no secret key material.
+   *
+   * @deprecated This function should be inlined.
    */
+  @InlineMe(
+      replacement =
+          "LegacyKeysetSerialization.serializeKeysetWithoutSecret("
+              + "keysetHandle, writer, RegistryConfiguration.get())",
+      imports = {
+        "com.google.crypto.tink.LegacyKeysetSerialization",
+        "com.google.crypto.tink.RegistryConfiguration"
+      })
+  @Deprecated // This function should be inlined.
   public static void serializeKeysetWithoutSecret(KeysetHandle keysetHandle, KeysetWriter writer)
       throws GeneralSecurityException, IOException {
-    keysetHandle.writeNoSecret(writer);
+    serializeKeysetWithoutSecret(keysetHandle, writer, RegistryConfiguration.get());
+  }
+
+  /**
+   * Serialize a keyset to the writer using the provided {@code configuration}.
+   *
+   * <p>This method is used for keysets containing no secret key material.
+   */
+  public static void serializeKeysetWithoutSecret(
+      KeysetHandle keysetHandle, KeysetWriter writer, Configuration configuration)
+      throws GeneralSecurityException, IOException {
+    keysetHandle.writeNoSecret(writer, configuration);
   }
 
   /**

@@ -31,10 +31,16 @@ import com.google.crypto.tink.proto.KeyStatusType;
 import com.google.crypto.tink.proto.KeysetInfo;
 import com.google.crypto.tink.proto.KeysetInfo.KeyInfo;
 import com.google.crypto.tink.proto.OutputPrefixType;
+import com.google.crypto.tink.signature.EcdsaParameters;
+import com.google.crypto.tink.signature.EcdsaPublicKey;
 import com.google.crypto.tink.signature.SignatureConfig;
+import com.google.crypto.tink.signature.SignatureConfig2026;
+import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.util.SecretBytes;
 import java.io.ByteArrayOutputStream;
+import java.math.BigInteger;
 import java.security.GeneralSecurityException;
+import java.security.spec.ECPoint;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -434,5 +440,171 @@ public final class LegacyKeysetSerializationTest {
     assertThrows(
         GeneralSecurityException.class,
         () -> LegacyKeysetSerialization.getKeysetInfo(handle, nonDeterministicAeadConfiguration));
+  }
+
+  @Test
+  public void parseKeysetWithoutSecret_withConfiguration_works() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    KeysetHandle keysetHandle = generatePublicKeyset();
+    byte[] serializedKeyset =
+        TinkProtoKeysetFormat.serializeKeysetWithoutSecret(keysetHandle, SignatureConfig2026.get());
+
+    KeysetHandle parsedKeysetHandle =
+        LegacyKeysetSerialization.parseKeysetWithoutSecret(
+            BinaryKeysetReader.withBytes(serializedKeyset), SignatureConfig2026.get());
+
+    assertTrue(keysetHandle.equalsKeyset(parsedKeysetHandle));
+  }
+
+  @Test
+  public void parseKeysetWithoutSecret_withWrongConfiguration_throws() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    KeysetHandle keysetHandle = generatePublicKeyset();
+    byte[] serializedKeyset =
+        TinkProtoKeysetFormat.serializeKeysetWithoutSecret(keysetHandle, SignatureConfig2026.get());
+
+    KeysetReader reader = BinaryKeysetReader.withBytes(serializedKeyset);
+    Configuration configuration = MacConfig2026.get();
+    // MacConfig2026 does not support ECDSA keys.
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> LegacyKeysetSerialization.parseKeysetWithoutSecret(reader, configuration));
+  }
+
+  @Test
+  public void serializeKeysetWithoutSecret_withConfiguration_works() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    KeysetHandle keysetHandle = generatePublicKeyset();
+
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    KeysetWriter writer = BinaryKeysetWriter.withOutputStream(outputStream);
+    LegacyKeysetSerialization.serializeKeysetWithoutSecret(
+        keysetHandle, writer, SignatureConfig2026.get());
+    byte[] serializedKeyset = outputStream.toByteArray();
+
+    KeysetHandle parsedKeyset =
+        TinkProtoKeysetFormat.parseKeysetWithoutSecret(serializedKeyset, SignatureConfig2026.get());
+
+    assertTrue(keysetHandle.equalsKeyset(parsedKeyset));
+  }
+
+  @Test
+  public void serializeKeysetWithoutSecret_withWrongConfiguration_throws() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    KeysetHandle keysetHandle = generatePublicKeyset();
+
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    KeysetWriter writer = BinaryKeysetWriter.withOutputStream(outputStream);
+    Configuration configuration = MacConfig2026.get();
+    // MacConfig2026 does not support ECDSA keys.
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            LegacyKeysetSerialization.serializeKeysetWithoutSecret(
+                keysetHandle, writer, configuration));
+  }
+
+  @Test
+  public void parseKeysetWithoutSecret_withConfiguration_fromTestVector_success() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    // This contains public keys (ECDSA).
+    byte[] serializedKeyset =
+        Hex.decode(
+            "0896ffd7e60b1296010a89010a35747970652e676f6f676c65617069732e636f6d2f676f6f676c652e63"
+                + "727970746f2e74696e6b2e45636473615075626c69634b6579124e12060803100218011a2100090f"
+                + "1f3c958f333ce7615cbe0ccfee9bdaa89596e6954a16a2ac1558b12bd98e2221006cb19e2cf35e68"
+                + "e528a336e2ba7816aca3b3729e9ce0a529143e0c0d03c0d7991803100218a4d5cabe042003129601"
+                + "0a89010a35747970652e676f6f676c65617069732e636f6d2f676f6f676c652e63727970746f2e74"
+                + "696e6b2e45636473615075626c69634b6579124e12060803100218021a2100594fb5489202ed790f"
+                + "18cc3f79d77b5271a5225479166827e0d28b6aa2741c52222100ba1d0fbbe9aaef905287b7bb72d8"
+                + "ba33ea7a220cc335049d8a9cae02471df114180310011896ffd7e60b200112db010ace010a357479"
+                + "70652e676f6f676c65617069732e636f6d2f676f6f676c652e63727970746f2e74696e6b2e456364"
+                + "73615075626c69634b657912920112060804100418021a4300001d78d36f4e3fcd64536489e204e6"
+                + "78e0452eada95bdc4e3e6e9af9c7639025fc2d1c2a8c290793e4dcc9d526ed1b5e19a6fd5787c0ef"
+                + "cd1e3736d6459212a233cd22430000825ef8e20dd2f819541a10d40774cc81fb8e63c872285d7ba2"
+                + "dda6c8d99d00e4a155a1060d191fd5fc2241142dec8c5b5371db1a2a630432ce100f4f6a665d72a7"
+                + "1803100318eeb58fd1082001");
+
+    KeysetHandle handle =
+        LegacyKeysetSerialization.parseKeysetWithoutSecret(
+            BinaryKeysetReader.withBytes(serializedKeyset), SignatureConfig2026.get());
+
+    assertThat(handle.size()).isEqualTo(3);
+
+    EcdsaParameters key0Params =
+        EcdsaParameters.builder()
+            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.IEEE_P1363)
+            .setCurveType(EcdsaParameters.CurveType.NIST_P256)
+            .setHashType(EcdsaParameters.HashType.SHA256)
+            .setVariant(EcdsaParameters.Variant.NO_PREFIX)
+            .build();
+    EcdsaPublicKey key0 =
+        EcdsaPublicKey.builder()
+            .setParameters(key0Params)
+            .setPublicPoint(
+                new ECPoint(
+                    new BigInteger(
+                        "090f1f3c958f333ce7615cbe0ccfee9bdaa89596e6954a16a2ac1558b12bd98e", 16),
+                    new BigInteger(
+                        "6cb19e2cf35e68e528a336e2ba7816aca3b3729e9ce0a529143e0c0d03c0d799", 16)))
+            .build();
+
+    EcdsaParameters key1Params =
+        EcdsaParameters.builder()
+            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
+            .setCurveType(EcdsaParameters.CurveType.NIST_P256)
+            .setHashType(EcdsaParameters.HashType.SHA256)
+            .setVariant(EcdsaParameters.Variant.TINK)
+            .build();
+    EcdsaPublicKey key1 =
+        EcdsaPublicKey.builder()
+            .setParameters(key1Params)
+            .setPublicPoint(
+                new ECPoint(
+                    new BigInteger(
+                        "594fb5489202ed790f18cc3f79d77b5271a5225479166827e0d28b6aa2741c52", 16),
+                    new BigInteger(
+                        "00ba1d0fbbe9aaef905287b7bb72d8ba33ea7a220cc335049d8a9cae02471df114", 16)))
+            .setIdRequirement(-1126826090)
+            .build();
+
+    EcdsaParameters key2Params =
+        EcdsaParameters.builder()
+            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
+            .setCurveType(EcdsaParameters.CurveType.NIST_P521)
+            .setHashType(EcdsaParameters.HashType.SHA512)
+            .setVariant(EcdsaParameters.Variant.TINK)
+            .build();
+    EcdsaPublicKey key2 =
+        EcdsaPublicKey.builder()
+            .setParameters(key2Params)
+            .setPublicPoint(
+                new ECPoint(
+                    new BigInteger(
+                        "1d78d36f4e3fcd64536489e204e678e0452eada95bdc4e3e6e9af9c7639025fc2d1c2a8c290793e4dcc9d526ed1b5e19a6fd5787c0efcd1e3736d6459212a233cd",
+                        16),
+                    new BigInteger(
+                        "00825ef8e20dd2f819541a10d40774cc81fb8e63c872285d7ba2dda6c8d99d00e4a155a1060d191fd5fc2241142dec8c5b5371db1a2a630432ce100f4f6a665d72a7",
+                        16)))
+            .setIdRequirement(-1977361682)
+            .build();
+
+    KeysetHandle expectedHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.importKey(key0).withFixedId(1204988580).setStatus(KeyStatus.DISABLED))
+            .addEntry(KeysetHandle.importKey(key1).withFixedId(-1126826090).makePrimary())
+            .addEntry(
+                KeysetHandle.importKey(key2)
+                    .withFixedId(-1977361682)
+                    .setStatus(KeyStatus.DESTROYED))
+            .build();
+
+    assertThat(handle.equalsKeyset(expectedHandle)).isTrue();
   }
 }

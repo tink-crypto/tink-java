@@ -917,6 +917,7 @@ android_library(
         ":registry_configuration-android",
         ":secret_key_access-android",
         "//proto:tink_java_proto_lite",
+        "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
 
@@ -933,6 +934,7 @@ java_library(
         ":registry_configuration",
         ":secret_key_access",
         "//proto:tink_java_proto",
+        "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
 
