@@ -54,22 +54,74 @@ public final class TinkJsonProtoKeysetFormat {
     }
   }
 
+  /**
+   * Parses a keyset without secret key material in Tink's JSON format based on Protobufs, using the
+   * {@link RegistryConfiguration}.
+   *
+   * @deprecated This function should be inlined.
+   */
+  @InlineMe(
+      replacement =
+          "TinkJsonProtoKeysetFormat.parseKeysetWithoutSecret(serializedKeyset,"
+              + " RegistryConfiguration.get())",
+      imports = {
+        "com.google.crypto.tink.RegistryConfiguration",
+        "com.google.crypto.tink.TinkJsonProtoKeysetFormat"
+      })
+  @Deprecated // This function should be inlined.
   @SuppressWarnings("UnusedException")
   public static KeysetHandle parseKeysetWithoutSecret(String serializedKeyset)
       throws GeneralSecurityException {
+    return parseKeysetWithoutSecret(serializedKeyset, RegistryConfiguration.get());
+  }
+
+  /**
+   * Parses a keyset without secret key material in Tink's JSON format based on Protobufs, using the
+   * provided {@link Configuration}.
+   */
+  @SuppressWarnings("UnusedException")
+  public static KeysetHandle parseKeysetWithoutSecret(
+      String serializedKeyset, Configuration configuration) throws GeneralSecurityException {
     try {
-      return KeysetHandle.readNoSecret(JsonKeysetReader.withString(serializedKeyset));
+      KeysetReader reader = JsonKeysetReader.withString(serializedKeyset);
+      byte[] serializedKeysetBytes = reader.read().toByteArray();
+      return KeysetHandle.readNoSecret(serializedKeysetBytes, configuration);
     } catch (IOException e) {
       throw new GeneralSecurityException("Parse keyset failed");
     }
   }
 
+  /**
+   * Serializes a keyset without secret key material in Tink's JSON format based on Protobufs, using
+   * the {@link RegistryConfiguration}.
+   *
+   * @deprecated This function should be inlined.
+   */
+  @InlineMe(
+      replacement =
+          "TinkJsonProtoKeysetFormat.serializeKeysetWithoutSecret(keysetHandle,"
+              + " RegistryConfiguration.get())",
+      imports = {
+        "com.google.crypto.tink.RegistryConfiguration",
+        "com.google.crypto.tink.TinkJsonProtoKeysetFormat"
+      })
+  @Deprecated // This function should be inlined.
   @SuppressWarnings("UnusedException")
   public static String serializeKeysetWithoutSecret(KeysetHandle keysetHandle)
       throws GeneralSecurityException {
+    return serializeKeysetWithoutSecret(keysetHandle, RegistryConfiguration.get());
+  }
+
+  /**
+   * Serializes a keyset without secret key material in Tink's JSON format based on Protobufs, using
+   * the provided {@link Configuration}.
+   */
+  @SuppressWarnings({"UnusedException", "deprecation"})
+  public static String serializeKeysetWithoutSecret(
+      KeysetHandle keysetHandle, Configuration configuration) throws GeneralSecurityException {
     try {
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-      keysetHandle.writeNoSecret(JsonKeysetWriter.withOutputStream(outputStream));
+      keysetHandle.writeNoSecret(JsonKeysetWriter.withOutputStream(outputStream), configuration);
       return new String(outputStream.toByteArray(), UTF_8);
     } catch (IOException e) {
       throw new GeneralSecurityException("Serialize keyset failed");

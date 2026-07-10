@@ -28,11 +28,16 @@ import com.google.crypto.tink.daead.DeterministicAeadConfig;
 import com.google.crypto.tink.daead.DeterministicAeadConfig2026;
 import com.google.crypto.tink.mac.MacConfig;
 import com.google.crypto.tink.mac.MacConfig2026;
+import com.google.crypto.tink.signature.EcdsaParameters;
+import com.google.crypto.tink.signature.EcdsaPublicKey;
 import com.google.crypto.tink.signature.SignatureConfig;
+import com.google.crypto.tink.signature.SignatureConfig2026;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.util.SecretBytes;
 import java.io.ByteArrayOutputStream;
+import java.math.BigInteger;
 import java.security.GeneralSecurityException;
+import java.security.spec.ECPoint;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -573,5 +578,175 @@ public final class TinkJsonProtoKeysetFormatTest {
             encryptedKeyset, keysetEncryptionAead, associatedData, RegistryConfiguration.get());
 
     assertThat(decryptedKeysetHandle.equalsKeyset(expectedKeysetHandle)).isTrue();
+  }
+
+  @Test
+  public void serializeAndParseWithoutSecret_withConfiguration_success() throws Exception {
+    KeysetHandle publicKeysetHandle = generatePublicKeyset();
+
+    String serializedKeyset =
+        TinkJsonProtoKeysetFormat.serializeKeysetWithoutSecret(
+            publicKeysetHandle, SignatureConfig2026.get());
+    KeysetHandle parsePublicKeysetHandle =
+        TinkJsonProtoKeysetFormat.parseKeysetWithoutSecret(
+            serializedKeyset, SignatureConfig2026.get());
+
+    assertKeysetHandleAreEqual(publicKeysetHandle, parsePublicKeysetHandle);
+
+    // The MacConfiguration doesn't allow to parse/serialize this keyset. Explicitly testing this
+    // ensures that we don't mistakenly go to the RegistryConfiguration.
+    Configuration macConfiguration = MacConfig2026.get();
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            TinkJsonProtoKeysetFormat.serializeKeysetWithoutSecret(
+                publicKeysetHandle, macConfiguration));
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            TinkJsonProtoKeysetFormat.parseKeysetWithoutSecret(serializedKeyset, macConfiguration));
+  }
+
+  @Test
+  public void serializeWithoutSecret_keysetWithSecretKeysAndConfiguration_fails() throws Exception {
+    KeysetHandle secretKeysetHandle = generateKeyset();
+    Configuration configuration = SignatureConfig2026.get();
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            TinkJsonProtoKeysetFormat.serializeKeysetWithoutSecret(
+                secretKeysetHandle, configuration));
+  }
+
+  @Test
+  public void parseWithoutSecret_keysetWithSecretKeysAndConfiguration_fails() throws Exception {
+    KeysetHandle secretKeysetHandle = generateKeyset();
+    String serializedSecretKeyset =
+        TinkJsonProtoKeysetFormat.serializeKeyset(
+            secretKeysetHandle, InsecureSecretKeyAccess.get());
+    Configuration configuration = SignatureConfig2026.get();
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            TinkJsonProtoKeysetFormat.parseKeysetWithoutSecret(
+                serializedSecretKeyset, configuration));
+  }
+
+  @Test
+  public void parseWithoutSecret_withInvalidSerializedKeysetAndConfiguration_fails()
+      throws Exception {
+    String invalidSerializedKeyset = "invalid";
+    Configuration configuration = SignatureConfig2026.get();
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            TinkJsonProtoKeysetFormat.parseKeysetWithoutSecret(
+                invalidSerializedKeyset, configuration));
+  }
+
+  @Test
+  public void parseKeysetWithoutSecret_withConfiguration_fromTestVector_success() throws Exception {
+    EcdsaParameters key0Params =
+        EcdsaParameters.builder()
+            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.IEEE_P1363)
+            .setCurveType(EcdsaParameters.CurveType.NIST_P256)
+            .setHashType(EcdsaParameters.HashType.SHA256)
+            .setVariant(EcdsaParameters.Variant.NO_PREFIX)
+            .build();
+    EcdsaPublicKey key0 =
+        EcdsaPublicKey.builder()
+            .setParameters(key0Params)
+            .setPublicPoint(
+                new ECPoint(
+                    new BigInteger(
+                        "090f1f3c958f333ce7615cbe0ccfee9bdaa89596e6954a16a2ac1558b12bd98e", 16),
+                    new BigInteger(
+                        "6cb19e2cf35e68e528a336e2ba7816aca3b3729e9ce0a529143e0c0d03c0d799", 16)))
+            .build();
+
+    EcdsaParameters key1Params =
+        EcdsaParameters.builder()
+            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
+            .setCurveType(EcdsaParameters.CurveType.NIST_P256)
+            .setHashType(EcdsaParameters.HashType.SHA256)
+            .setVariant(EcdsaParameters.Variant.TINK)
+            .build();
+    EcdsaPublicKey key1 =
+        EcdsaPublicKey.builder()
+            .setParameters(key1Params)
+            .setPublicPoint(
+                new ECPoint(
+                    new BigInteger(
+                        "594fb5489202ed790f18cc3f79d77b5271a5225479166827e0d28b6aa2741c52", 16),
+                    new BigInteger(
+                        "00ba1d0fbbe9aaef905287b7bb72d8ba33ea7a220cc335049d8a9cae02471df114", 16)))
+            .setIdRequirement(-1126826090)
+            .build();
+
+    EcdsaParameters key2Params =
+        EcdsaParameters.builder()
+            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
+            .setCurveType(EcdsaParameters.CurveType.NIST_P521)
+            .setHashType(EcdsaParameters.HashType.SHA512)
+            .setVariant(EcdsaParameters.Variant.TINK)
+            .build();
+    EcdsaPublicKey key2 =
+        EcdsaPublicKey.builder()
+            .setParameters(key2Params)
+            .setPublicPoint(
+                new ECPoint(
+                    new BigInteger(
+                        "1d78d36f4e3fcd64536489e204e678e0452eada95bdc4e3e6e9af9c7639025fc2d1c2a8c290793e4dcc9d526ed1b5e19a6fd5787c0efcd1e3736d6459212a233cd",
+                        16),
+                    new BigInteger(
+                        "00825ef8e20dd2f819541a10d40774cc81fb8e63c872285d7ba2dda6c8d99d00e4a155a1060d191fd5fc2241142dec8c5b5371db1a2a630432ce100f4f6a665d72a7",
+                        16)))
+            .setIdRequirement(-1977361682)
+            .build();
+
+    KeysetHandle expectedHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.importKey(key0).withFixedId(1204988580).setStatus(KeyStatus.DISABLED))
+            .addEntry(KeysetHandle.importKey(key1).withFixedId(-1126826090).makePrimary())
+            .addEntry(
+                KeysetHandle.importKey(key2)
+                    .withFixedId(-1977361682)
+                    .setStatus(KeyStatus.DESTROYED))
+            .build();
+
+    String jsonSerialized =
+        "{\"primaryKeyId\":3168141206,\"key\":["
+            + "{\"keyData\":{\"typeUrl\":\"type.googleapis.com/google.crypto.tink.EcdsaPublicKey\","
+            + "\"value\":\"EgYIAxACGAEaIQAJDx88lY8zPOdhXL4Mz+6b2qiVluaVShairBVYsSvZjiIhAGyxnizzXmjl"
+            + "KKM24rp4Fqyjs3KenOClKRQ+DA0DwNeZ\","
+            + "\"keyMaterialType\":\"ASYMMETRIC_PUBLIC\"},\"status\":\"DISABLED\","
+            + "\"keyId\":1204988580,\"outputPrefixType\":\"RAW\"},"
+            + "{\"keyData\":{\"typeUrl\":\"type.googleapis.com/google.crypto.tink.EcdsaPublicKey\","
+            + "\"value\":\"EgYIAxACGAIaIQBZT7VIkgLteQ8YzD9513tScaUiVHkWaCfg0otqonQcUiIhALodD7vpqu+Q"
+            + "Uoe3u3LYujPqeiIMwzUEnYqcrgJHHfEU\","
+            + "\"keyMaterialType\":\"ASYMMETRIC_PUBLIC\"},\"status\":\"ENABLED\","
+            + "\"keyId\":3168141206,\"outputPrefixType\":\"TINK\"},"
+            + "{\"keyData\":{\"typeUrl\":\"type.googleapis.com/google.crypto.tink.EcdsaPublicKey\","
+            + "\"value\":\"EgYIBBAEGAIaQwAAHXjTb04/zWRTZIniBOZ44EUuralb3E4+bpr5x2OQJfwtHCqMKQeT5N"
+            + "zJ1SbtG14Zpv1Xh8DvzR43NtZFkhKiM80iQwAAgl744g3S+BlUGhDUB3TMgfuOY8hyKF17ot2myNmdAOShV"
+            + "aEGDRkf1fwiQRQt7IxbU3HbGipjBDLOEA9PamZdcqc=\","
+            + "\"keyMaterialType\":\"ASYMMETRIC_PUBLIC\"},\"status\":\"DESTROYED\","
+            + "\"keyId\":2317605614,\"outputPrefixType\":\"TINK\"}]}";
+
+    KeysetHandle handle =
+        TinkJsonProtoKeysetFormat.parseKeysetWithoutSecret(
+            jsonSerialized, SignatureConfig2026.get());
+
+    assertThat(handle.equalsKeyset(expectedHandle)).isTrue();
+
+    // Parse with MacConfig2026 which does not support ECDSA keys.
+    Configuration configuration = MacConfig2026.get();
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> TinkJsonProtoKeysetFormat.parseKeysetWithoutSecret(jsonSerialized, configuration));
   }
 }
