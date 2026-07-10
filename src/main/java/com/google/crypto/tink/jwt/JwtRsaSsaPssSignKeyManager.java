@@ -15,14 +15,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 package com.google.crypto.tink.jwt;
 
-import static java.nio.charset.StandardCharsets.US_ASCII;
-
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyManager;
+import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.PrivateKeyManager;
-import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.KeyCreator;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
@@ -31,12 +29,10 @@ import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
 import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
-import com.google.crypto.tink.jwt.internal.JwtFormat;
 import com.google.crypto.tink.jwt.internal.JwtRsaSsaPssProtoSerialization;
+import com.google.crypto.tink.jwt.subtle.JwtRsaSsaPssPublicKeySign;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
 import com.google.crypto.tink.subtle.EngineFactory;
-import com.google.crypto.tink.subtle.RsaSsaPssSignJce;
 import com.google.crypto.tink.util.SecretBigInteger;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
@@ -54,6 +50,7 @@ import javax.annotation.Nullable;
  * This key manager generates new {@code JwtRsaSsaPssPrivateKey} keys and produces new instances of
  * {@code JwtPublicKeySign}.
  */
+@LowLevelCryptoCaller
 public final class JwtRsaSsaPssSignKeyManager {
   private static final PrivateKeyManager<Void> legacyPrivateKeyManager =
       LegacyKeyManagerImpl.createPrivateKeyManager(
@@ -110,35 +107,11 @@ public final class JwtRsaSsaPssSignKeyManager {
   private static final KeyCreator<JwtRsaSsaPssParameters> KEY_CREATOR =
       JwtRsaSsaPssSignKeyManager::createKey;
 
-  @AccessesPartialKey
-  private static RsaSsaPssPrivateKey toRsaSsaPssPrivateKey(
-      com.google.crypto.tink.jwt.JwtRsaSsaPssPrivateKey privateKey) {
-    return privateKey.getRsaSsaPssPrivateKey();
-  }
-
-  @SuppressWarnings("Immutable") // RsaSsaPssVerifyJce.create returns an immutable verifier.
-  static JwtPublicKeySign createFullPrimitive(
-      com.google.crypto.tink.jwt.JwtRsaSsaPssPrivateKey privateKey)
-      throws GeneralSecurityException {
-    RsaSsaPssPrivateKey rsaSsaPssPrivateKey = toRsaSsaPssPrivateKey(privateKey);
-    final PublicKeySign signer = RsaSsaPssSignJce.create(rsaSsaPssPrivateKey);
-    String algorithm = privateKey.getParameters().getAlgorithm().getStandardName();
-    return new JwtPublicKeySign() {
-      @Override
-      public String signAndEncode(RawJwt rawJwt) throws GeneralSecurityException {
-        String unsignedCompact =
-            JwtFormat.createUnsignedCompact(algorithm, privateKey.getPublicKey().getKid(), rawJwt);
-        return JwtFormat.createSignedCompact(
-            unsignedCompact, signer.sign(unsignedCompact.getBytes(US_ASCII)));
-      }
-    };
-  }
-
   private static final PrimitiveConstructor<
           com.google.crypto.tink.jwt.JwtRsaSsaPssPrivateKey, JwtPublicKeySign>
       PRIMITIVE_CONSTRUCTOR =
           PrimitiveConstructor.create(
-              JwtRsaSsaPssSignKeyManager::createFullPrimitive,
+              JwtRsaSsaPssPublicKeySign::create,
               com.google.crypto.tink.jwt.JwtRsaSsaPssPrivateKey.class,
               JwtPublicKeySign.class);
 
@@ -151,72 +124,72 @@ public final class JwtRsaSsaPssSignKeyManager {
    * the template with the "_RAW" suffix if you want to generate tokens without a "kid" header.
    */
   private static Map<String, Parameters> namedParameters() throws GeneralSecurityException {
-        Map<String, Parameters> result = new HashMap<>();
-        result.put(
-            "JWT_PS256_2048_F4_RAW",
-            JwtRsaSsaPssParameters.builder()
-                .setModulusSizeBits(2048)
-                .setPublicExponent(JwtRsaSsaPssParameters.F4)
-                .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
-                .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.IGNORED)
-                .build());
-        result.put(
-            "JWT_PS256_2048_F4",
-            JwtRsaSsaPssParameters.builder()
-                .setModulusSizeBits(2048)
-                .setPublicExponent(JwtRsaSsaPssParameters.F4)
-                .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
-                .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
-                .build());
-        result.put(
-            "JWT_PS256_3072_F4_RAW",
-            JwtRsaSsaPssParameters.builder()
-                .setModulusSizeBits(3072)
-                .setPublicExponent(JwtRsaSsaPssParameters.F4)
-                .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
-                .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.IGNORED)
-                .build());
-        result.put(
-            "JWT_PS256_3072_F4",
-            JwtRsaSsaPssParameters.builder()
-                .setModulusSizeBits(3072)
-                .setPublicExponent(JwtRsaSsaPssParameters.F4)
-                .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
-                .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
-                .build());
-        result.put(
-            "JWT_PS384_3072_F4_RAW",
-            JwtRsaSsaPssParameters.builder()
-                .setModulusSizeBits(3072)
-                .setPublicExponent(JwtRsaSsaPssParameters.F4)
-                .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS384)
-                .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.IGNORED)
-                .build());
-        result.put(
-            "JWT_PS384_3072_F4",
-            JwtRsaSsaPssParameters.builder()
-                .setModulusSizeBits(3072)
-                .setPublicExponent(JwtRsaSsaPssParameters.F4)
-                .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS384)
-                .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
-                .build());
-        result.put(
-            "JWT_PS512_4096_F4_RAW",
-            JwtRsaSsaPssParameters.builder()
-                .setModulusSizeBits(4096)
-                .setPublicExponent(JwtRsaSsaPssParameters.F4)
-                .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS512)
-                .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.IGNORED)
-                .build());
-        result.put(
-            "JWT_PS512_4096_F4",
-            JwtRsaSsaPssParameters.builder()
-                .setModulusSizeBits(4096)
-                .setPublicExponent(JwtRsaSsaPssParameters.F4)
-                .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS512)
-                .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
-                .build());
-        return Collections.unmodifiableMap(result);
+    Map<String, Parameters> result = new HashMap<>();
+    result.put(
+        "JWT_PS256_2048_F4_RAW",
+        JwtRsaSsaPssParameters.builder()
+            .setModulusSizeBits(2048)
+            .setPublicExponent(JwtRsaSsaPssParameters.F4)
+            .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
+            .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.IGNORED)
+            .build());
+    result.put(
+        "JWT_PS256_2048_F4",
+        JwtRsaSsaPssParameters.builder()
+            .setModulusSizeBits(2048)
+            .setPublicExponent(JwtRsaSsaPssParameters.F4)
+            .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
+            .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+            .build());
+    result.put(
+        "JWT_PS256_3072_F4_RAW",
+        JwtRsaSsaPssParameters.builder()
+            .setModulusSizeBits(3072)
+            .setPublicExponent(JwtRsaSsaPssParameters.F4)
+            .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
+            .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.IGNORED)
+            .build());
+    result.put(
+        "JWT_PS256_3072_F4",
+        JwtRsaSsaPssParameters.builder()
+            .setModulusSizeBits(3072)
+            .setPublicExponent(JwtRsaSsaPssParameters.F4)
+            .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
+            .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+            .build());
+    result.put(
+        "JWT_PS384_3072_F4_RAW",
+        JwtRsaSsaPssParameters.builder()
+            .setModulusSizeBits(3072)
+            .setPublicExponent(JwtRsaSsaPssParameters.F4)
+            .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS384)
+            .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.IGNORED)
+            .build());
+    result.put(
+        "JWT_PS384_3072_F4",
+        JwtRsaSsaPssParameters.builder()
+            .setModulusSizeBits(3072)
+            .setPublicExponent(JwtRsaSsaPssParameters.F4)
+            .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS384)
+            .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+            .build());
+    result.put(
+        "JWT_PS512_4096_F4_RAW",
+        JwtRsaSsaPssParameters.builder()
+            .setModulusSizeBits(4096)
+            .setPublicExponent(JwtRsaSsaPssParameters.F4)
+            .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS512)
+            .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.IGNORED)
+            .build());
+    result.put(
+        "JWT_PS512_4096_F4",
+        JwtRsaSsaPssParameters.builder()
+            .setModulusSizeBits(4096)
+            .setPublicExponent(JwtRsaSsaPssParameters.F4)
+            .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS512)
+            .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+            .build());
+    return Collections.unmodifiableMap(result);
   }
 
   private static final TinkFipsUtil.AlgorithmFipsCompatibility FIPS =

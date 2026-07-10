@@ -30,14 +30,12 @@ import com.google.crypto.tink.jwt.internal.JsonUtil;
 import com.google.crypto.tink.jwt.internal.JwtFormat;
 import com.google.crypto.tink.jwt.subtle.JwtEcdsaPublicKeySign;
 import com.google.crypto.tink.jwt.subtle.JwtEcdsaPublicKeyVerify;
+import com.google.crypto.tink.jwt.subtle.JwtRsaSsaPssPublicKeySign;
+import com.google.crypto.tink.jwt.subtle.JwtRsaSsaPssPublicKeyVerify;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
-import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
-import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
 import com.google.crypto.tink.subtle.RsaSsaPkcs1SignJce;
 import com.google.crypto.tink.subtle.RsaSsaPkcs1VerifyJce;
-import com.google.crypto.tink.subtle.RsaSsaPssSignJce;
-import com.google.crypto.tink.subtle.RsaSsaPssVerifyJce;
 import com.google.gson.JsonObject;
 import java.security.GeneralSecurityException;
 
@@ -105,25 +103,6 @@ import java.security.GeneralSecurityException;
   }
 
   @AccessesPartialKey
-  private static RsaSsaPssPrivateKey toRsaSsaPssPrivateKey(JwtRsaSsaPssPrivateKey privateKey) {
-    return privateKey.getRsaSsaPssPrivateKey();
-  }
-
-  @SuppressWarnings("Immutable") // RsaSsaPssVerifyJce.create returns an immutable verifier.
-  private static JwtPublicKeySign createJwtRsaSsaPssSign(JwtRsaSsaPssPrivateKey privateKey)
-      throws GeneralSecurityException {
-    RsaSsaPssPrivateKey rsaSsaPssPrivateKey = toRsaSsaPssPrivateKey(privateKey);
-    final PublicKeySign signer = RsaSsaPssSignJce.create(rsaSsaPssPrivateKey);
-    String algorithm = privateKey.getParameters().getAlgorithm().getStandardName();
-    return rawJwt -> {
-      String unsignedCompact =
-          JwtFormat.createUnsignedCompact(algorithm, privateKey.getPublicKey().getKid(), rawJwt);
-      return JwtFormat.createSignedCompact(
-          unsignedCompact, signer.sign(unsignedCompact.getBytes(US_ASCII)));
-    };
-  }
-
-  @AccessesPartialKey
   private static RsaSsaPkcs1PublicKey toRsaSsaPkcs1PublicKey(JwtRsaSsaPkcs1PublicKey publicKey) {
     return publicKey.getRsaSsaPkcs1PublicKey();
   }
@@ -133,31 +112,6 @@ import java.security.GeneralSecurityException;
       throws GeneralSecurityException {
     RsaSsaPkcs1PublicKey rsaSsaPkcs1PublicKey = toRsaSsaPkcs1PublicKey(publicKey);
     final PublicKeyVerify verifier = RsaSsaPkcs1VerifyJce.create(rsaSsaPkcs1PublicKey);
-
-    return (compact, validator) -> {
-      JwtFormat.Parts parts = JwtFormat.splitSignedCompact(compact);
-      verifier.verify(parts.signatureOrMac, parts.unsignedCompact.getBytes(US_ASCII));
-      JsonObject parsedHeader = JsonUtil.parseJson(parts.header);
-      JwtFormat.validateHeader(
-          parsedHeader,
-          publicKey.getParameters().getAlgorithm().getStandardName(),
-          publicKey.getKid(),
-          publicKey.getParameters().allowKidAbsent());
-      RawJwt token = RawJwt.fromJsonPayload(JwtFormat.getTypeHeader(parsedHeader), parts.payload);
-      return validator.unsafeValidate(token);
-    };
-  }
-
-  @AccessesPartialKey
-  private static RsaSsaPssPublicKey toRsaSsaPssPublicKey(JwtRsaSsaPssPublicKey publicKey) {
-    return publicKey.getRsaSsaPssPublicKey();
-  }
-
-  @SuppressWarnings("Immutable") // RsaSsaPssVerifyJce.create returns an immutable verifier.
-  private static JwtPublicKeyVerify createJwtRsaSsaPssVerify(JwtRsaSsaPssPublicKey publicKey)
-      throws GeneralSecurityException {
-    RsaSsaPssPublicKey rsaSsaPssPublicKey = toRsaSsaPssPublicKey(publicKey);
-    final PublicKeyVerify verifier = RsaSsaPssVerifyJce.create(rsaSsaPssPublicKey);
 
     return (compact, validator) -> {
       JwtFormat.Parts parts = JwtFormat.splitSignedCompact(compact);
@@ -183,7 +137,7 @@ import java.security.GeneralSecurityException;
       return createJwtRsaSsaPkcs1Sign((JwtRsaSsaPkcs1PrivateKey) key);
     }
     if (key instanceof JwtRsaSsaPssPrivateKey) {
-      return createJwtRsaSsaPssSign((JwtRsaSsaPssPrivateKey) key);
+      return JwtRsaSsaPssPublicKeySign.create((JwtRsaSsaPssPrivateKey) key);
     }
     throw new GeneralSecurityException("Unknown key class: " + key.getClass());
   }
@@ -198,7 +152,7 @@ import java.security.GeneralSecurityException;
       return createJwtRsaSsaPkcs1Verify((JwtRsaSsaPkcs1PublicKey) key);
     }
     if (key instanceof JwtRsaSsaPssPublicKey) {
-      return createJwtRsaSsaPssVerify((JwtRsaSsaPssPublicKey) key);
+      return JwtRsaSsaPssPublicKeyVerify.create((JwtRsaSsaPssPublicKey) key);
     }
     throw new GeneralSecurityException("Unknown key class: " + key.getClass());
   }
