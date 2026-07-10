@@ -23,7 +23,7 @@ _image_prefix() {
 
 # Linux container images for Tink Java libraries.
 readonly TINK_JAVA_BASE_IMAGE_NAME="linux-tink-java-base"
-readonly TINK_JAVA_BASE_IMAGE_HASH="407dc63373c3c9f7353b194cd8ab52903d5f9cd48dc725a7f0f6380a9430a726"
+readonly TINK_JAVA_BASE_IMAGE_HASH="f176f04d4885f40a1152357f59eefffc44f6c50c0148d5505c07049c448c29de"
 readonly TINK_JAVA_BASE_IMAGE="$(_image_prefix)/${TINK_JAVA_BASE_IMAGE_NAME}@sha256:${TINK_JAVA_BASE_IMAGE_HASH}"
 
 unset -f _image_prefix
