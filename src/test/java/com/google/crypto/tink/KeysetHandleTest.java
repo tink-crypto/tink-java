@@ -51,6 +51,7 @@ import com.google.crypto.tink.mac.ChunkedMacComputation;
 import com.google.crypto.tink.mac.HmacKey;
 import com.google.crypto.tink.mac.HmacParameters;
 import com.google.crypto.tink.mac.MacConfig;
+import com.google.crypto.tink.mac.MacConfig2026;
 import com.google.crypto.tink.prf.PrfConfig;
 import com.google.crypto.tink.proto.AesEaxKey;
 import com.google.crypto.tink.proto.EcdsaPrivateKey;
@@ -2594,5 +2595,43 @@ public class KeysetHandleTest {
             .addEntry(KeysetHandle.importKey(new TestKey()).withFixedId(123).makePrimary())
             .build();
     assertThrows(GeneralSecurityException.class, handle::primaryKey);
+  }
+
+  @Test
+  public void creatingKeyWithConfig_works() throws Exception {
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.generateEntryFromParameters(
+                        AesCmacParameters.builder()
+                            .setVariant(Variant.TINK)
+                            .setKeySizeBytes(32)
+                            .setTagSizeBytes(16)
+                            .build())
+                    .withFixedId(42)
+                    .makePrimary())
+            .setConfiguration(MacConfig2026.get())
+            .build();
+    assertThat(handle.size()).isEqualTo(1);
+    assertThat(handle.getAt(0).getId()).isEqualTo(42);
+  }
+
+  @Test
+  public void creatingKeyWithConfig_failsIfConfigHasNoKey() throws Exception {
+    KeysetHandle.Builder builder =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.generateEntryFromParameters(
+                        AesCmacParameters.builder()
+                            .setVariant(Variant.TINK)
+                            .setKeySizeBytes(32)
+                            .setTagSizeBytes(16)
+                            .build())
+                    .withFixedId(42)
+                    .makePrimary())
+            // Use a configuration which has the default implementation for everything, hence does
+            // not support creating new keys.
+            .setConfiguration(new Configuration() {});
+    assertThrows(GeneralSecurityException.class, () -> builder.build());
   }
 }

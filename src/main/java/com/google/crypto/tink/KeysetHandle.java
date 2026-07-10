@@ -281,6 +281,13 @@ public final class KeysetHandle implements KeysetHandleInterface {
       return this;
     }
 
+    /** Sets the configuration for the builder. */
+    @CanIgnoreReturnValue
+    public Builder setConfiguration(Configuration configuration) {
+      this.configuration = configuration;
+      return this;
+    }
+
     /** Returns the number of entries in this builder. */
     public int size() {
       return entries.size();
