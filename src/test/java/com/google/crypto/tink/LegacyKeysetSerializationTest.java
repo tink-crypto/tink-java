@@ -17,6 +17,7 @@
 package com.google.crypto.tink;
 
 import static com.google.common.truth.Truth.assertThat;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
@@ -711,5 +712,125 @@ public final class LegacyKeysetSerializationTest {
                 BinaryKeysetReader.withBytes(serializedKeyset),
                 InsecureSecretKeyAccess.get(),
                 configuration));
+  }
+
+  @Test
+  public void parseEncryptedKeyset_withConfiguration_works() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    Aead aead = generateAead();
+    byte[] associatedData = new byte[] {1, 2, 3};
+
+    KeysetHandle keysetHandle = generateKeyset();
+    byte[] serializedKeyset =
+        TinkProtoKeysetFormat.serializeEncryptedKeyset(
+            keysetHandle, aead, associatedData, MacConfig2026.get());
+
+    KeysetHandle parsedKeysetHandle =
+        LegacyKeysetSerialization.parseEncryptedKeyset(
+            BinaryKeysetReader.withBytes(serializedKeyset),
+            aead,
+            associatedData,
+            MacConfig2026.get());
+
+    assertTrue(keysetHandle.equalsKeyset(parsedKeysetHandle));
+  }
+
+  @Test
+  public void parseEncryptedKeyset_withWrongConfiguration_throws() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    Aead aead = generateAead();
+    byte[] associatedData = new byte[] {1, 2, 3};
+
+    KeysetHandle keysetHandle = generateKeyset();
+    byte[] serializedKeyset =
+        TinkProtoKeysetFormat.serializeEncryptedKeyset(
+            keysetHandle, aead, associatedData, MacConfig2026.get());
+
+    KeysetReader reader = BinaryKeysetReader.withBytes(serializedKeyset);
+    Configuration configuration = SignatureConfig2026.get();
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            LegacyKeysetSerialization.parseEncryptedKeyset(
+                reader, aead, associatedData, configuration));
+  }
+
+  @Test
+  public void serializeEncryptedKeyset_withConfiguration_works() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    Aead aead = generateAead();
+    byte[] associatedData = new byte[] {1, 2, 3};
+
+    KeysetHandle keysetHandle = generateKeyset();
+
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    KeysetWriter writer = BinaryKeysetWriter.withOutputStream(outputStream);
+    LegacyKeysetSerialization.serializeEncryptedKeyset(
+        keysetHandle, writer, aead, associatedData, MacConfig2026.get());
+    byte[] serializedKeyset = outputStream.toByteArray();
+    KeysetHandle parsedKeyset =
+        TinkProtoKeysetFormat.parseEncryptedKeyset(
+            serializedKeyset, aead, associatedData, MacConfig2026.get());
+
+    assertTrue(keysetHandle.equalsKeyset(parsedKeyset));
+  }
+
+  @Test
+  public void serializeEncryptedKeyset_withWrongConfiguration_throws() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    Aead aead = generateAead();
+    byte[] associatedData = new byte[] {1, 2, 3};
+
+    KeysetHandle keysetHandle = generateKeyset();
+
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    KeysetWriter writer = BinaryKeysetWriter.withOutputStream(outputStream);
+    Configuration configuration = SignatureConfig2026.get();
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            LegacyKeysetSerialization.serializeEncryptedKeyset(
+                keysetHandle, writer, aead, associatedData, configuration));
+  }
+
+  @Test
+  public void parseEncryptedKeysetFromTestVector() throws Exception {
+    // This is the same test vector as in KeysetHandleTest.
+    // An AEAD key, with which we encrypted the mac keyset below.
+    final byte[] serializedKeysetEncryptionKeyset =
+        Hex.decode(
+            "08cd9bdff30312540a480a30747970652e676f6f676c65617069732e636f6d2f676f6f676c652e63727970"
+                + "746f2e74696e6b2e41657347636d4b657912121a1082bbe6de4bf9a7655305615af46e594c180110"
+                + "0118cd9bdff3032001");
+    KeysetHandle keysetEncryptionHandle =
+        TinkProtoKeysetFormat.parseKeyset(
+            serializedKeysetEncryptionKeyset, InsecureSecretKeyAccess.get());
+    Aead keysetEncryptionAead =
+        keysetEncryptionHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
+
+    // A keyset that contains one HMAC key, encrypted with the above, using associatedData
+    final byte[] encryptedSerializedKeyset =
+        Hex.decode(
+            "129101013e77cdcd28f57ffb418afa7f25d48a74efe720246e9aa538f33a702888bb7c48bce0e5a016a0c8"
+                + "e9085066d67c7c7fb40dceb176a3a10c7f7ab30c564dd8e2d918a2fc2d2e9a0245c537ff6d1fd756"
+                + "ff9d6de5cf4eb7f229de215e6e892f32fd703d0c9c3d2168813ad5bbc6ce108fcbfed0d9e3b14faa"
+                + "e3e3789a891346d983b1ecca082f0546163351339aa142f574");
+    final byte[] associatedData = "associatedData".getBytes(UTF_8);
+
+    KeysetHandle parsedKeysetHandle =
+        LegacyKeysetSerialization.parseEncryptedKeyset(
+            BinaryKeysetReader.withBytes(encryptedSerializedKeyset),
+            keysetEncryptionAead,
+            associatedData,
+            MacConfig2026.get());
+
+    Mac mac = parsedKeysetHandle.getPrimitive(MacConfig2026.get(), Mac.class);
+    final byte[] message = "data".getBytes(UTF_8);
+    final byte[] tag = Hex.decode("018f2d72de5055e622591fcf0fb85a7b4158e96f68");
+    mac.verifyMac(tag, message);
   }
 }

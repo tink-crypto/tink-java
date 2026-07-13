@@ -101,11 +101,31 @@ public final class LegacyKeysetSerialization {
     return KeysetHandle.fromKeyset(reader.read(), configuration);
   }
 
-  /** Parse an encrypted keyset from the reader. */
+  /**
+   * Parse an encrypted keyset from the reader.
+   *
+   * @deprecated This function should be inlined.
+   */
+  @InlineMe(
+      replacement =
+          "LegacyKeysetSerialization.parseEncryptedKeyset("
+              + "reader, aead, associatedData, RegistryConfiguration.get())",
+      imports = {
+        "com.google.crypto.tink.LegacyKeysetSerialization",
+        "com.google.crypto.tink.RegistryConfiguration"
+      })
+  @Deprecated // This function should be inlined.
   public static KeysetHandle parseEncryptedKeyset(
       KeysetReader reader, Aead aead, byte[] associatedData)
       throws GeneralSecurityException, IOException {
-    return KeysetHandle.readWithAssociatedData(reader, aead, associatedData);
+    return parseEncryptedKeyset(reader, aead, associatedData, RegistryConfiguration.get());
+  }
+
+  /** Parse an encrypted keyset from the reader using the provided {@code configuration}. */
+  public static KeysetHandle parseEncryptedKeyset(
+      KeysetReader reader, Aead aead, byte[] associatedData, Configuration configuration)
+      throws GeneralSecurityException, IOException {
+    return KeysetHandle.readWithAssociatedData(reader, aead, associatedData, configuration);
   }
 
   /**
@@ -176,11 +196,39 @@ public final class LegacyKeysetSerialization {
     writer.write(keysetHandle.getKeyset(configuration));
   }
 
-  /** Serialize a keyset in an encrypted format to the writer. */
+  /**
+   * Serialize a keyset in an encrypted format to the writer.
+   *
+   * @deprecated This function should be inlined.
+   */
+  @InlineMe(
+      replacement =
+          "LegacyKeysetSerialization.serializeEncryptedKeyset("
+              + "keysetHandle, writer, aead, associatedData, RegistryConfiguration.get())",
+      imports = {
+        "com.google.crypto.tink.LegacyKeysetSerialization",
+        "com.google.crypto.tink.RegistryConfiguration"
+      })
+  @Deprecated // This function should be inlined.
   public static void serializeEncryptedKeyset(
       KeysetHandle keysetHandle, KeysetWriter writer, Aead aead, byte[] associatedData)
       throws GeneralSecurityException, IOException {
-    keysetHandle.writeWithAssociatedData(writer, aead, associatedData);
+    serializeEncryptedKeyset(
+        keysetHandle, writer, aead, associatedData, RegistryConfiguration.get());
+  }
+
+  /**
+   * Serialize a keyset in an encrypted format to the writer using the provided {@code
+   * configuration}.
+   */
+  public static void serializeEncryptedKeyset(
+      KeysetHandle keysetHandle,
+      KeysetWriter writer,
+      Aead aead,
+      byte[] associatedData,
+      Configuration configuration)
+      throws GeneralSecurityException, IOException {
+    keysetHandle.writeWithAssociatedData(writer, aead, associatedData, configuration);
   }
 
   /**
