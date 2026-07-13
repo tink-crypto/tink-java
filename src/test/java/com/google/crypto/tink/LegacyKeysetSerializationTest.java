@@ -39,6 +39,7 @@ import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.util.SecretBytes;
 import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.spec.ECPoint;
 import org.junit.Assume;
@@ -606,5 +607,109 @@ public final class LegacyKeysetSerializationTest {
             .build();
 
     assertThat(handle.equalsKeyset(expectedHandle)).isTrue();
+  }
+
+  @Test
+  public void parseKeyset_withConfiguration_works() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    KeysetHandle keysetHandle = generateKeyset();
+    byte[] serializedKeyset =
+        TinkProtoKeysetFormat.serializeKeyset(
+            keysetHandle, InsecureSecretKeyAccess.get(), MacConfig2026.get());
+
+    KeysetHandle parsedKeysetHandle =
+        LegacyKeysetSerialization.parseKeyset(
+            BinaryKeysetReader.withBytes(serializedKeyset),
+            InsecureSecretKeyAccess.get(),
+            MacConfig2026.get());
+
+    assertTrue(keysetHandle.equalsKeyset(parsedKeysetHandle));
+  }
+
+  @Test
+  public void parseKeyset_withWrongConfiguration_throws() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    KeysetHandle keysetHandle = generateKeyset();
+    byte[] serializedKeyset =
+        TinkProtoKeysetFormat.serializeKeyset(
+            keysetHandle, InsecureSecretKeyAccess.get(), MacConfig2026.get());
+
+    KeysetReader reader = BinaryKeysetReader.withBytes(serializedKeyset);
+    Configuration configuration = SignatureConfig2026.get();
+    // SignatureConfig2026 does not support HMAC/CMAC keys.
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            LegacyKeysetSerialization.parseKeyset(
+                reader, InsecureSecretKeyAccess.get(), configuration));
+  }
+
+  @Test
+  public void serializeKeyset_withConfiguration_works() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    KeysetHandle keysetHandle = generateKeyset();
+
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    KeysetWriter writer = BinaryKeysetWriter.withOutputStream(outputStream);
+    LegacyKeysetSerialization.serializeKeyset(
+        keysetHandle, writer, InsecureSecretKeyAccess.get(), MacConfig2026.get());
+    byte[] serializedKeyset = outputStream.toByteArray();
+
+    KeysetHandle parsedKeyset =
+        TinkProtoKeysetFormat.parseKeyset(
+            serializedKeyset, InsecureSecretKeyAccess.get(), MacConfig2026.get());
+
+    assertTrue(keysetHandle.equalsKeyset(parsedKeyset));
+  }
+
+  @Test
+  public void serializeKeyset_withWrongConfiguration_throws() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    KeysetHandle keysetHandle = generateKeyset();
+
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    KeysetWriter writer = BinaryKeysetWriter.withOutputStream(outputStream);
+    Configuration configuration = SignatureConfig2026.get();
+    // SignatureConfig2026 does not support HMAC/CMAC keys.
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            LegacyKeysetSerialization.serializeKeyset(
+                keysetHandle, writer, InsecureSecretKeyAccess.get(), configuration));
+  }
+
+  @Test
+  public void parseKeyset_withConfiguration_fromTestVector_success() throws Exception {
+    // This contains one HMAC key.
+    byte[] serializedKeyset =
+        Hex.decode(
+            "0895e59bcc0612680a5c0a2e747970652e676f6f676c65617069732e636f6d2f676f6f676c652e63"
+                + "727970746f2e74696e6b2e486d61634b657912281a20cca20f02278003b3513f5d01759ac1302f7d"
+                + "883f2f4a40025532ee1b11f9e587120410100803180110011895e59bcc062001");
+
+    // Parse with MacConfig2026 which supports HMAC keys.
+    KeysetHandle handle =
+        LegacyKeysetSerialization.parseKeyset(
+            BinaryKeysetReader.withBytes(serializedKeyset),
+            InsecureSecretKeyAccess.get(),
+            MacConfig2026.get());
+    Mac mac = handle.getPrimitive(MacConfig2026.get(), Mac.class);
+    mac.verifyMac(
+        Hex.decode("016986f2956092d259136923c6f4323557714ec499"),
+        "data".getBytes(StandardCharsets.UTF_8));
+
+    // Parse with DeterministicAeadConfig2026 which does not support HMAC keys.
+    Configuration configuration = DeterministicAeadConfig2026.get();
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            LegacyKeysetSerialization.parseKeyset(
+                BinaryKeysetReader.withBytes(serializedKeyset),
+                InsecureSecretKeyAccess.get(),
+                configuration));
   }
 }

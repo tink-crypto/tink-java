@@ -70,13 +70,35 @@ public final class LegacyKeysetSerialization {
    *
    * <p>This is used to parse keysets that may contain secret key material. The second argument has
    * to be {@code InsecureSecretKeyAccess.get()}.
+   *
+   * @deprecated This function should be inlined.
    */
+  @InlineMe(
+      replacement =
+          "LegacyKeysetSerialization.parseKeyset(" + "reader, access, RegistryConfiguration.get())",
+      imports = {
+        "com.google.crypto.tink.LegacyKeysetSerialization",
+        "com.google.crypto.tink.RegistryConfiguration"
+      })
+  @Deprecated // This function should be inlined.
   public static KeysetHandle parseKeyset(KeysetReader reader, SecretKeyAccess access)
+      throws GeneralSecurityException, IOException {
+    return parseKeyset(reader, access, RegistryConfiguration.get());
+  }
+
+  /**
+   * Parse a keyset from the reader using the provided {@code configuration}.
+   *
+   * <p>This is used to parse keysets that may contain secret key material. The second argument has
+   * to be {@code InsecureSecretKeyAccess.get()}.
+   */
+  public static KeysetHandle parseKeyset(
+      KeysetReader reader, SecretKeyAccess access, Configuration configuration)
       throws GeneralSecurityException, IOException {
     if (access == null) {
       throw new NullPointerException("SecretKeyAccess cannot be null");
     }
-    return CleartextKeysetHandle.read(reader);
+    return KeysetHandle.fromKeyset(reader.read(), configuration);
   }
 
   /** Parse an encrypted keyset from the reader. */
@@ -123,13 +145,35 @@ public final class LegacyKeysetSerialization {
    *
    * <p>This method is used to serialize keysets that may contain secret key material. The last
    * argument must be {@code InsecureSecretKeyAccess.get()}.
+   *
+   * @deprecated This function should be inlined.
    */
+  @Deprecated // This function should be inlined.
   public static void serializeKeyset(
       KeysetHandle keysetHandle, KeysetWriter writer, SecretKeyAccess access) throws IOException {
+    try {
+      serializeKeyset(keysetHandle, writer, access, RegistryConfiguration.get());
+    } catch (GeneralSecurityException e) {
+      throw new IOException("Cannot write keyset: key cannot be serialized", e);
+    }
+  }
+
+  /**
+   * Serialize a keyset to the writer using the provided {@code configuration}.
+   *
+   * <p>This method is used to serialize keysets that may contain secret key material. The third
+   * argument must be {@code InsecureSecretKeyAccess.get()}.
+   */
+  public static void serializeKeyset(
+      KeysetHandle keysetHandle,
+      KeysetWriter writer,
+      SecretKeyAccess access,
+      Configuration configuration)
+      throws GeneralSecurityException, IOException {
     if (access == null) {
       throw new NullPointerException("SecretKeyAccess cannot be null");
     }
-    CleartextKeysetHandle.write(keysetHandle, writer);
+    writer.write(keysetHandle.getKeyset(configuration));
   }
 
   /** Serialize a keyset in an encrypted format to the writer. */

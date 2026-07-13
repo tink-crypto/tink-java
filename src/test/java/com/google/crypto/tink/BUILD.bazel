@@ -611,6 +611,7 @@ java_test(
         "//src/main/java/com/google/crypto/tink:keyset_reader",
         "//src/main/java/com/google/crypto/tink:keyset_writer",
         "//src/main/java/com/google/crypto/tink:legacy_keyset_serialization",
+        "//src/main/java/com/google/crypto/tink:mac",
         "//src/main/java/com/google/crypto/tink:registry_cluster",
         "//src/main/java/com/google/crypto/tink:registry_configuration",
         "//src/main/java/com/google/crypto/tink:tink_proto_keyset_format",

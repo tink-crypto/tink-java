@@ -909,7 +909,6 @@ android_library(
     srcs = ["LegacyKeysetSerialization.java"],
     deps = [
         ":aead-android",
-        ":cleartext_keyset_handle-android",
         ":configuration-android",
         ":keyset_reader-android",
         ":keyset_writer-android",
@@ -926,7 +925,6 @@ java_library(
     srcs = ["LegacyKeysetSerialization.java"],
     deps = [
         ":aead",
-        ":cleartext_keyset_handle",
         ":configuration",
         ":keyset_reader",
         ":keyset_writer",
