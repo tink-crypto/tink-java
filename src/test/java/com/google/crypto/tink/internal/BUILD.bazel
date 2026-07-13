@@ -305,6 +305,25 @@ java_test(
 )
 
 java_test(
+    name = "ProtoBasedConfigurationBuilderTest",
+    size = "small",
+    srcs = ["ProtoBasedConfigurationBuilderTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:configuration",
+        "//src/main/java/com/google/crypto/tink:key",
+        "//src/main/java/com/google/crypto/tink:parameters",
+        "//src/main/java/com/google/crypto/tink/aead:cha_cha20_poly1305_key",
+        "//src/main/java/com/google/crypto/tink/aead:cha_cha20_poly1305_parameters",
+        "//src/main/java/com/google/crypto/tink/aead:x_cha_cha20_poly1305_key",
+        "//src/main/java/com/google/crypto/tink/aead:x_cha_cha20_poly1305_parameters",
+        "//src/main/java/com/google/crypto/tink/internal:proto_based_configuration_builder",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
     name = "PrimitiveConstructorTest",
     size = "small",
     srcs = ["PrimitiveConstructorTest.java"],
