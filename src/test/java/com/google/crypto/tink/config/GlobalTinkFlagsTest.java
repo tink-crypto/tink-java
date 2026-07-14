@@ -33,6 +33,7 @@ public final class GlobalTinkFlagsTest {
   private static Set<String> expectedFlagNames() {
     Set<String> result = new HashSet<>();
     result.add("validateKeysetsOnParsing");
+    result.add("requireConfigInBuilder");
     return result;
   }
 

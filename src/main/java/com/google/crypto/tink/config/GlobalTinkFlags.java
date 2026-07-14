@@ -37,6 +37,18 @@ public final class GlobalTinkFlags {
    */
   public static final TinkFlag validateKeysetsOnParsing = new TinkFlagImpl(false);
 
+  /**
+   * If true, the KeysetHandleBuilder will require a config to be set explicitly in case one wants
+   * to add a Key by specifying parameters. If false, then the builder defaults to the
+   * RegistryConfiguration.
+   *
+   * <ul>
+   *   <li>Introduced in: Tink 1.23.
+   *   <li>Earliest change to {@code true}: Tink 2.0
+   * </ul>
+   */
+  public static final TinkFlag requireConfigInBuilder = new TinkFlagImpl(false);
+
   private static class TinkFlagImpl implements TinkFlag {
     private final AtomicBoolean b;
 

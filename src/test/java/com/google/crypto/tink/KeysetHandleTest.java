@@ -2634,4 +2634,78 @@ public class KeysetHandleTest {
             .setConfiguration(new Configuration() {});
     assertThrows(GeneralSecurityException.class, () -> builder.build());
   }
+
+  @Test
+  public void requireConfigInBuilder_flagFalse_worksWithoutExplicitConfig() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.requireConfigInBuilder, false);
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.generateEntryFromParameters(
+                        AesCmacParameters.builder()
+                            .setVariant(Variant.TINK)
+                            .setKeySizeBytes(32)
+                            .setTagSizeBytes(16)
+                            .build())
+                    .withFixedId(42)
+                    .makePrimary())
+            .build();
+    assertThat(handle.size()).isEqualTo(1);
+    assertThat(handle.getAt(0).getId()).isEqualTo(42);
+  }
+
+  @Test
+  public void requireConfigInBuilder_flagTrue_failsWithoutExplicitConfig() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.requireConfigInBuilder, true);
+    KeysetHandle.Builder builder =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.generateEntryFromParameters(
+                        AesCmacParameters.builder()
+                            .setVariant(Variant.TINK)
+                            .setKeySizeBytes(32)
+                            .setTagSizeBytes(16)
+                            .build())
+                    .withFixedId(42)
+                    .makePrimary());
+    assertThrows(GeneralSecurityException.class, () -> builder.build());
+  }
+
+  @Test
+  public void requireConfigInBuilder_flagTrue_worksWithExplicitConfig() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.requireConfigInBuilder, true);
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.generateEntryFromParameters(
+                        AesCmacParameters.builder()
+                            .setVariant(Variant.TINK)
+                            .setKeySizeBytes(32)
+                            .setTagSizeBytes(16)
+                            .build())
+                    .withFixedId(42)
+                    .makePrimary())
+            .setConfiguration(MacConfig2026.get())
+            .build();
+    assertThat(handle.size()).isEqualTo(1);
+    assertThat(handle.getAt(0).getId()).isEqualTo(42);
+  }
+
+  @Test
+  public void requireConfigInBuilder_flagTrue_failsWithExplicitBadConfig() throws Exception {
+    setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.requireConfigInBuilder, true);
+    KeysetHandle.Builder builder =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.generateEntryFromParameters(
+                        AesCmacParameters.builder()
+                            .setVariant(Variant.TINK)
+                            .setKeySizeBytes(32)
+                            .setTagSizeBytes(16)
+                            .build())
+                    .withFixedId(42)
+                    .makePrimary())
+            .setConfiguration(new Configuration() {});
+    assertThrows(GeneralSecurityException.class, () -> builder.build());
+  }
 }

@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink;
 
+import com.google.crypto.tink.config.GlobalTinkFlags;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MonitoringClient;
@@ -219,9 +220,8 @@ public final class KeysetHandle implements KeysetHandleInterface {
       }
     }
 
-    // TODO (b/500300385): This should be initialized to null and users should call a function
-    // to initialize it.
-    private Configuration configuration = getDefaultConfiguration();
+    private Configuration configuration =
+        GlobalTinkFlags.requireConfigInBuilder.getValue() ? null : getDefaultConfiguration();
     private final Map<Class<?>, Annotations> annotationsMap = new HashMap<>();
     private boolean buildCalled = false;
 
@@ -422,6 +422,11 @@ public final class KeysetHandle implements KeysetHandleInterface {
                   /* keyParsingFailed= */ false,
                   KeysetHandle.Entry.NO_LOGGING);
         } else {
+          if (configuration == null) {
+            throw new GeneralSecurityException(
+                "Cannot build keyset: a target Configuration is required to generate a key from"
+                    + " Parameters. Use Builder#setConfiguration.");
+          }
           Integer idRequirement = builderEntry.parameters.hasIdRequirement() ? id : null;
           Key key = configuration.createKey(builderEntry.parameters, idRequirement);
           handleEntry =
@@ -956,8 +961,8 @@ public final class KeysetHandle implements KeysetHandleInterface {
   }
 
   KeysetInfo getKeysetInfo(Configuration configuration) throws GeneralSecurityException {
-      Keyset keyset = getKeyset(configuration);
-      return Util.getKeysetInfo(keyset);
+    Keyset keyset = getKeyset(configuration);
+    return Util.getKeysetInfo(keyset);
   }
 
   /**
