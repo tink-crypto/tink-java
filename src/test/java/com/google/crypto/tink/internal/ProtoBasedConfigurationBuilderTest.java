@@ -105,4 +105,13 @@ public final class ProtoBasedConfigurationBuilderTest {
     Key creator2Key = config.createKey(ChaCha20Poly1305Parameters.create(), null);
     assertThat(creator2Key.getParameters()).isEqualTo(ChaCha20Poly1305Parameters.create());
   }
+
+  @Test
+  public void testCreateKey_withUnregisteredParameters_throws() throws Exception {
+    Configuration config = new ProtoBasedConfigurationBuilder().build();
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> config.createKey(ChaCha20Poly1305Parameters.create(), null));
+  }
 }

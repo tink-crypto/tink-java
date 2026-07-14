@@ -42,6 +42,9 @@ public final class ProtoBasedConfigurationBuilder {
       @SuppressWarnings("unchecked") // We create the map so that it satisfies this.
       KeyCreator<Parameters> creator =
           (KeyCreator<Parameters>) keyCreators.get(parameters.getClass());
+      if (creator == null) {
+        throw new GeneralSecurityException("No KeyCreator registered for " + parameters.getClass());
+      }
       return creator.createKey(parameters, idRequirement);
     }
   }
