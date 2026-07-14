@@ -95,7 +95,7 @@ public final class SlhDsaSignKeyManager {
   @SuppressWarnings({"CheckedExceptionNotThrown", "JdkImmutableCollections"})
   private static Map<String, Parameters> namedParameters() throws GeneralSecurityException {
     return Map.of(
-        "SLH_DSA_SHA2_128S_TINK",
+        "SLH_DSA_SHA2_128S",
         SlhDsaParameters.createSlhDsaWithSha2And128S(SlhDsaParameters.Variant.TINK),
         "SLH_DSA_SHA2_128S_RAW",
         SlhDsaParameters.createSlhDsaWithSha2And128S(SlhDsaParameters.Variant.NO_PREFIX));
@@ -108,7 +108,7 @@ public final class SlhDsaSignKeyManager {
    *   <li> parsing and serializing SLH-DSA keys with {@code TinkProtoKeysetFormat}
    *   <li> creation of new SLH-DSA keys with {@code KeysetHandle#generateEntryFromParameters}
    *   <li> creation of new SLH-DSA keys with {@code KeysetHandle#generateEntryFromParametersName}
-   *        (currently "SLH_DSA_SHA2_128S_TINK" and "SLH_DSA_SHA2_128S_RAW" available)
+   *        (currently "SLH_DSA_SHA2_128S" and "SLH_DSA_SHA2_128S_RAW" available)
    * </ul>
    *
    * Currently the key creation functionality will only work if the Conscrypt provider was

@@ -69,7 +69,7 @@ public class SlhDsaSignKeyManagerConscryptTest {
 
   @DataPoints("templateNames")
   public static final String[] keyTemplates =
-      new String[] {"SLH_DSA_SHA2_128S_TINK", "SLH_DSA_SHA2_128S_RAW"};
+      new String[] {"SLH_DSA_SHA2_128S", "SLH_DSA_SHA2_128S_RAW"};
 
   @Theory
   public void testTemplates(@FromDataPoints("templateNames") String templateName) throws Exception {
