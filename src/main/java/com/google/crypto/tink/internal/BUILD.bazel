@@ -907,8 +907,11 @@ android_library(
     srcs = ["ProtoBasedConfigurationBuilder.java"],
     deps = [
         ":key_creator-android",
+        ":primitive_constructor-android",
+        ":primitive_wrapper-android",
         "//src/main/java/com/google/crypto/tink:configuration-android",
         "//src/main/java/com/google/crypto/tink:key-android",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface-android",
         "//src/main/java/com/google/crypto/tink:parameters-android",
         "@maven//:com_google_code_findbugs_jsr305",
         "@maven//:com_google_errorprone_error_prone_annotations",
@@ -920,8 +923,11 @@ java_library(
     srcs = ["ProtoBasedConfigurationBuilder.java"],
     deps = [
         ":key_creator",
+        ":primitive_constructor",
+        ":primitive_wrapper",
         "//src/main/java/com/google/crypto/tink:configuration",
         "//src/main/java/com/google/crypto/tink:key",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface",
         "//src/main/java/com/google/crypto/tink:parameters",
         "@maven//:com_google_code_findbugs_jsr305",
         "@maven//:com_google_errorprone_error_prone_annotations",
