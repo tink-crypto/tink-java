@@ -110,7 +110,8 @@ public final class ChaCha20Poly1305ProtoSerializationTest {
             com.google.crypto.tink.proto.ChaCha20Poly1305KeyFormat.getDefaultInstance()
                 .toByteString());
 
-    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
+    ProtoParametersSerialization serialized =
+        ChaCha20Poly1305ProtoSerialization.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.ChaCha20Poly1305KeyFormat.parser(), serialized, serialization);
 
@@ -130,7 +131,8 @@ public final class ChaCha20Poly1305ProtoSerializationTest {
             com.google.crypto.tink.proto.ChaCha20Poly1305KeyFormat.getDefaultInstance()
                 .toByteString());
 
-    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
+    ProtoParametersSerialization serialized =
+        ChaCha20Poly1305ProtoSerialization.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.ChaCha20Poly1305KeyFormat.parser(), serialized, serialization);
 
@@ -150,7 +152,8 @@ public final class ChaCha20Poly1305ProtoSerializationTest {
             com.google.crypto.tink.proto.ChaCha20Poly1305KeyFormat.getDefaultInstance()
                 .toByteString());
 
-    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
+    ProtoParametersSerialization serialized =
+        ChaCha20Poly1305ProtoSerialization.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.ChaCha20Poly1305KeyFormat.parser(), serialized, serialization);
 
@@ -177,7 +180,8 @@ public final class ChaCha20Poly1305ProtoSerializationTest {
             OutputPrefixType.TINK,
             /* idRequirement= */ 123);
 
-    ProtoKeySerialization serialized = registry.serializeKey(key, InsecureSecretKeyAccess.get());
+    ProtoKeySerialization serialized =
+        ChaCha20Poly1305ProtoSerialization.serializeKey(key, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.ChaCha20Poly1305Key.parser(), serialized, serialization);
 
@@ -204,11 +208,13 @@ public final class ChaCha20Poly1305ProtoSerializationTest {
             OutputPrefixType.CRUNCHY,
             /* idRequirement= */ 123);
 
-    ProtoKeySerialization serialized = registry.serializeKey(key, InsecureSecretKeyAccess.get());
+    ProtoKeySerialization serialized =
+        ChaCha20Poly1305ProtoSerialization.serializeKey(key, InsecureSecretKeyAccess.get());
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.ChaCha20Poly1305Key.parser(), serialized, serialization);
 
-    Key parsed = registry.parseKey(serialization, InsecureSecretKeyAccess.get());
+    Key parsed =
+        ChaCha20Poly1305ProtoSerialization.parseKey(serialization, InsecureSecretKeyAccess.get());
     assertThat(parsed.equalsKey(key)).isTrue();
   }
 
@@ -226,7 +232,9 @@ public final class ChaCha20Poly1305ProtoSerializationTest {
             KeyMaterialType.SYMMETRIC,
             OutputPrefixType.TINK,
             /* idRequirement= */ 123);
-    assertThrows(GeneralSecurityException.class, () -> registry.parseKey(serialization, null));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> ChaCha20Poly1305ProtoSerialization.parseKey(serialization, null));
   }
 
   @Test
@@ -243,7 +251,8 @@ public final class ChaCha20Poly1305ProtoSerializationTest {
             OutputPrefixType.LEGACY,
             1479);
     // Legacy keys are parsed to crunchy
-    Key parsed = registry.parseKey(serialization, InsecureSecretKeyAccess.get());
+    Key parsed =
+        ChaCha20Poly1305ProtoSerialization.parseKey(serialization, InsecureSecretKeyAccess.get());
     assertThat(((ChaCha20Poly1305Parameters) parsed.getParameters()).getVariant())
         .isEqualTo(ChaCha20Poly1305Parameters.Variant.CRUNCHY);
   }
@@ -251,7 +260,9 @@ public final class ChaCha20Poly1305ProtoSerializationTest {
   @Test
   public void testSerializeKeys_noAccess_throws() throws Exception {
     ChaCha20Poly1305Key key = ChaCha20Poly1305Key.create(KEY_BYTES_32);
-    assertThrows(GeneralSecurityException.class, () -> registry.serializeKey(key, null));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> ChaCha20Poly1305ProtoSerialization.serializeKey(key, null));
   }
 
   private static ProtoParametersSerialization[] createInvalidParametersSerialization() {
@@ -279,7 +290,8 @@ public final class ChaCha20Poly1305ProtoSerializationTest {
           ProtoParametersSerialization serializedParameters)
       throws Exception {
     assertThrows(
-        GeneralSecurityException.class, () -> registry.parseParameters(serializedParameters));
+        GeneralSecurityException.class,
+        () -> ChaCha20Poly1305ProtoSerialization.parseParameters(serializedParameters));
   }
 
   private static ProtoKeySerialization[] createInvalidKeySerializations() {
@@ -334,6 +346,42 @@ public final class ChaCha20Poly1305ProtoSerializationTest {
       throws Exception {
     assertThrows(
         GeneralSecurityException.class,
-        () -> registry.parseKey(serialization, InsecureSecretKeyAccess.get()));
+        () ->
+            ChaCha20Poly1305ProtoSerialization.parseKey(
+                serialization, InsecureSecretKeyAccess.get()));
+  }
+
+  @Test
+  public void parseParameters_wrongTypeUrl_throws() throws Exception {
+    ProtoParametersSerialization serialization =
+        ProtoParametersSerialization.create(
+            "wrongTypeUrl",
+            OutputPrefixType.RAW,
+            com.google.crypto.tink.proto.ChaCha20Poly1305KeyFormat.getDefaultInstance()
+                .toByteString());
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> ChaCha20Poly1305ProtoSerialization.parseParameters(serialization));
+  }
+
+  @Test
+  public void parseKey_wrongTypeUrl_throws() throws Exception {
+    com.google.crypto.tink.proto.ChaCha20Poly1305Key protoChaCha20Poly1305Key =
+        com.google.crypto.tink.proto.ChaCha20Poly1305Key.newBuilder()
+            .setVersion(0)
+            .setKeyValue(KEY_BYTES_32_AS_BYTE_STRING)
+            .build();
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "wrongTypeUrl",
+            protoChaCha20Poly1305Key.toByteString(),
+            KeyMaterialType.SYMMETRIC,
+            OutputPrefixType.TINK,
+            /* idRequirement= */ 123);
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            ChaCha20Poly1305ProtoSerialization.parseKey(
+                serialization, InsecureSecretKeyAccess.get()));
   }
 }
