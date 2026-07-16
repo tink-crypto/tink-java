@@ -38,6 +38,18 @@ java_library(
 )
 
 java_library(
+    name = "aes_eax_aead",
+    srcs = ["AesEaxAead.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:aead",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink/aead:aes_eax_key",
+        "//src/main/java/com/google/crypto/tink/subtle:aes_eax_jce",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
     name = "aes_gcm_aead",
     srcs = ["AesGcmAead.java"],
     deps = [
@@ -83,6 +95,18 @@ android_library(
         "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
         "//src/main/java/com/google/crypto/tink/aead:aes_ctr_hmac_aead_key-android",
         "//src/main/java/com/google/crypto/tink/subtle:encrypt_then_authenticate-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
+    name = "aes_eax_aead-android",
+    srcs = ["AesEaxAead.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:aead-android",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink/aead:aes_eax_key-android",
+        "//src/main/java/com/google/crypto/tink/subtle:aes_eax_jce-android",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
