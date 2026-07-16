@@ -6,6 +6,26 @@ licenses(["notice"])
 # with Bazel.
 
 java_test(
+    name = "AesCtrHmacAeadTest",
+    size = "small",
+    srcs = ["AesCtrHmacAeadTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:aead",
+        "//src/main/java/com/google/crypto/tink:crypto_format",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink/aead:aes_ctr_hmac_aead_key",
+        "//src/main/java/com/google/crypto/tink/aead:aes_ctr_hmac_aead_parameters",
+        "//src/main/java/com/google/crypto/tink/aead/subtle:aes_ctr_hmac_aead",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "//src/main/java/com/google/crypto/tink/subtle:random",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
     name = "AesGcmAeadTest",
     size = "small",
     srcs = ["AesGcmAeadTest.java"],
