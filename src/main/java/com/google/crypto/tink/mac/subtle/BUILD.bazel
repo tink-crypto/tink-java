@@ -1,0 +1,30 @@
+load("@rules_android//android:rules.bzl", "android_library")
+load("@rules_java//java:defs.bzl", "java_library")
+
+licenses(["notice"])
+
+package(default_visibility = ["//visibility:public"])
+
+android_library(
+    name = "aes_cmac_mac-android",
+    srcs = ["AesCmacMac.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink:mac-android",
+        "//src/main/java/com/google/crypto/tink/mac:aes_cmac_key-android",
+        "//src/main/java/com/google/crypto/tink/subtle:prf_mac-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "aes_cmac_mac",
+    srcs = ["AesCmacMac.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink:mac",
+        "//src/main/java/com/google/crypto/tink/mac:aes_cmac_key",
+        "//src/main/java/com/google/crypto/tink/subtle:prf_mac",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
