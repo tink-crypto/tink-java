@@ -19,7 +19,12 @@ package com.google.crypto.tink.internal;
 import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeysetHandleInterface;
+import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization;
+import com.google.crypto.tink.ProtoKeySerializer;
+import com.google.crypto.tink.ProtoParametersSerialization;
+import com.google.crypto.tink.SecretKeyAccess;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
@@ -40,6 +45,33 @@ public final class ProtoBasedConfigurationBuilder {
   @FunctionalInterface
   public interface WrapFunction<B, P> {
     P wrap(KeysetHandleInterface keysetHandle, PrimitiveWrapper.PrimitiveFactory<B> factory)
+        throws GeneralSecurityException;
+  }
+
+  /** Functional interface to serialize a Key for the Protobuf format. */
+  @FunctionalInterface
+  public interface KeySerializer<K extends Key> {
+    ProtoKeySerialization serializeKey(K key, @Nullable SecretKeyAccess access)
+        throws GeneralSecurityException;
+  }
+
+  /** Functional interface to serialize a Parameters object for the Protobuf format. */
+  @FunctionalInterface
+  public interface ParametersSerializer<P extends Parameters> {
+    ProtoParametersSerialization serializeParameters(P parameters) throws GeneralSecurityException;
+  }
+
+  /** Functional interface to parse a Key object from the Protobuf format. */
+  @FunctionalInterface
+  public interface KeyParser {
+    Key parseKey(ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
+        throws GeneralSecurityException;
+  }
+
+  /** Functional interface to parse a Parameters object from the Protobuf format. */
+  @FunctionalInterface
+  public interface ParametersParser {
+    Parameters parseParameters(ProtoParametersSerialization serialization)
         throws GeneralSecurityException;
   }
 
@@ -79,15 +111,18 @@ public final class ProtoBasedConfigurationBuilder {
     private final Map<Class<? extends Parameters>, KeyCreator<?>> keyCreators;
     private final Map<PrimitiveConstructorKey, PrimitiveConstructor<?, ?>> primitiveConstructors;
     private final Map<Class<?>, WrapFunctionAndInputPrimitiveClass<?, ?>> wrappers;
+    private final InternalProtoKeySerializer protoKeySerializer;
 
     InternalProtoBasedConfiguration(
         Map<Class<? extends Parameters>, KeyCreator<?>> keyCreators,
         Map<PrimitiveConstructorKey, PrimitiveConstructor<?, ?>> primitiveConstructors,
-        Map<Class<?>, WrapFunctionAndInputPrimitiveClass<?, ?>> wrappers) {
+        Map<Class<?>, WrapFunctionAndInputPrimitiveClass<?, ?>> wrappers,
+        InternalProtoKeySerializer protoKeySerializer) {
       this.keyCreators = Collections.unmodifiableMap(new HashMap<>(keyCreators));
       this.primitiveConstructors =
           Collections.unmodifiableMap(new HashMap<>(primitiveConstructors));
       this.wrappers = Collections.unmodifiableMap(new HashMap<>(wrappers));
+      this.protoKeySerializer = protoKeySerializer;
     }
 
     @Override
@@ -142,6 +177,15 @@ public final class ProtoBasedConfigurationBuilder {
       }
       return constructor.constructPrimitive(key);
     }
+
+    @Override
+    @Nullable
+    public <P> P getOrNull(Class<P> clazz) {
+      if (clazz.equals(ProtoKeySerializer.class)) {
+        return clazz.cast(protoKeySerializer);
+      }
+      return null;
+    }
   }
 
   /**
@@ -163,6 +207,11 @@ public final class ProtoBasedConfigurationBuilder {
   private final Map<PrimitiveConstructorKey, PrimitiveConstructor<?, ?>> primitiveConstructors =
       new HashMap<>();
   private final Map<Class<?>, WrapFunctionAndInputPrimitiveClass<?, ?>> wrappers = new HashMap<>();
+  private final Map<Class<? extends Key>, KeySerializer<?>> keySerializerMap = new HashMap<>();
+  private final Map<Class<? extends Parameters>, ParametersSerializer<?>> parametersSerializerMap =
+      new HashMap<>();
+  private final Map<String, KeyParser> keyParserMap = new HashMap<>();
+  private final Map<String, ParametersParser> parametersParserMap = new HashMap<>();
 
   public ProtoBasedConfigurationBuilder() {}
 
@@ -213,7 +262,124 @@ public final class ProtoBasedConfigurationBuilder {
     return this;
   }
 
+  @CanIgnoreReturnValue
+  public <K extends Key> ProtoBasedConfigurationBuilder addKeySerializer(
+      Class<K> keyClass, KeySerializer<K> serializer) {
+    if (keySerializerMap.containsKey(keyClass)) {
+      throw new IllegalArgumentException("KeySerializer for " + keyClass + " already added.");
+    }
+    keySerializerMap.put(keyClass, serializer);
+    return this;
+  }
+
+  @CanIgnoreReturnValue
+  public <P extends Parameters> ProtoBasedConfigurationBuilder addParametersSerializer(
+      Class<P> parametersClass, ParametersSerializer<P> serializer) {
+    if (parametersSerializerMap.containsKey(parametersClass)) {
+      throw new IllegalArgumentException(
+          "ParametersSerializer for " + parametersClass + " already added.");
+    }
+    parametersSerializerMap.put(parametersClass, serializer);
+    return this;
+  }
+
+  @CanIgnoreReturnValue
+  public ProtoBasedConfigurationBuilder addKeyParser(String typeUrl, KeyParser parser) {
+    if (keyParserMap.containsKey(typeUrl)) {
+      throw new IllegalArgumentException("KeyParser for " + typeUrl + " already added.");
+    }
+    keyParserMap.put(typeUrl, parser);
+    return this;
+  }
+
+  @CanIgnoreReturnValue
+  public ProtoBasedConfigurationBuilder addParametersParser(
+      String typeUrl, ParametersParser parser) {
+    if (parametersParserMap.containsKey(typeUrl)) {
+      throw new IllegalArgumentException("ParametersParser for " + typeUrl + " already added.");
+    }
+    parametersParserMap.put(typeUrl, parser);
+    return this;
+  }
+
   public Configuration build() {
-    return new InternalProtoBasedConfiguration(keyCreators, primitiveConstructors, wrappers);
+    InternalProtoKeySerializer protoKeySerializer =
+        new InternalProtoKeySerializer(
+            keySerializerMap, parametersSerializerMap, keyParserMap, parametersParserMap);
+    return new InternalProtoBasedConfiguration(
+        keyCreators, primitiveConstructors, wrappers, protoKeySerializer);
+  }
+
+  private static final class InternalProtoKeySerializer implements ProtoKeySerializer {
+    private final Map<Class<? extends Key>, KeySerializer<?>> keySerializerMap;
+    private final Map<Class<? extends Parameters>, ParametersSerializer<?>> parametersSerializerMap;
+    private final Map<String, KeyParser> keyParserMap;
+    private final Map<String, ParametersParser> parametersParserMap;
+
+    InternalProtoKeySerializer(
+        Map<Class<? extends Key>, KeySerializer<?>> keySerializerMap,
+        Map<Class<? extends Parameters>, ParametersSerializer<?>> parametersSerializerMap,
+        Map<String, KeyParser> keyParserMap,
+        Map<String, ParametersParser> parametersParserMap) {
+      this.keySerializerMap = Collections.unmodifiableMap(new HashMap<>(keySerializerMap));
+      this.parametersSerializerMap =
+          Collections.unmodifiableMap(new HashMap<>(parametersSerializerMap));
+      this.keyParserMap = Collections.unmodifiableMap(new HashMap<>(keyParserMap));
+      this.parametersParserMap = Collections.unmodifiableMap(new HashMap<>(parametersParserMap));
+    }
+
+    @LowLevelCryptoCaller
+    @Override
+    public Key parseKey(ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
+        throws GeneralSecurityException {
+      String typeUrl = serialization.getTypeUrl();
+      KeyParser delegate = keyParserMap.get(typeUrl);
+      if (delegate == null) {
+        throw new GeneralSecurityException(
+            "No Key Parser for requested key type " + typeUrl + " available");
+      }
+      return delegate.parseKey(serialization, access);
+    }
+
+    @LowLevelCryptoCaller
+    @Override
+    public ProtoKeySerialization serializeKey(Key key, @Nullable SecretKeyAccess access)
+        throws GeneralSecurityException {
+      Class<? extends Key> keyClass = key.getClass();
+      @SuppressWarnings("unchecked") // Checked at map creation
+      KeySerializer<Key> delegate = (KeySerializer<Key>) keySerializerMap.get(keyClass);
+      if (delegate == null) {
+        throw new GeneralSecurityException("No Key serializer for " + keyClass + " available");
+      }
+      return delegate.serializeKey(key, access);
+    }
+
+    @LowLevelCryptoCaller
+    @Override
+    public ProtoParametersSerialization serializeParameters(Parameters parameters)
+        throws GeneralSecurityException {
+      Class<? extends Parameters> parametersClass = parameters.getClass();
+      @SuppressWarnings("unchecked") // Checked at map creation
+      ParametersSerializer<Parameters> delegate =
+          (ParametersSerializer<Parameters>) parametersSerializerMap.get(parametersClass);
+      if (delegate == null) {
+        throw new GeneralSecurityException(
+            "No Key Format serializer for " + parametersClass + " available");
+      }
+      return delegate.serializeParameters(parameters);
+    }
+
+    @LowLevelCryptoCaller
+    @Override
+    public Parameters parseParameters(ProtoParametersSerialization serialization)
+        throws GeneralSecurityException {
+      String typeUrl = serialization.getTypeUrl();
+      ParametersParser delegate = parametersParserMap.get(typeUrl);
+      if (delegate == null) {
+        throw new GeneralSecurityException(
+            "No Parameters Parser for requested key type " + typeUrl + " available");
+      }
+      return delegate.parseParameters(serialization);
+    }
   }
 }

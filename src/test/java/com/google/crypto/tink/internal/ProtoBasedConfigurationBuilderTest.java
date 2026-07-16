@@ -20,14 +20,19 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.Configuration;
+import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.ProtoKeySerialization;
+import com.google.crypto.tink.ProtoKeySerializer;
+import com.google.crypto.tink.ProtoParametersSerialization;
 import com.google.crypto.tink.aead.ChaCha20Poly1305Key;
 import com.google.crypto.tink.aead.ChaCha20Poly1305Parameters;
 import com.google.crypto.tink.aead.XChaCha20Poly1305Key;
 import com.google.crypto.tink.aead.XChaCha20Poly1305Parameters;
+import com.google.crypto.tink.aead.internal.ChaCha20Poly1305ProtoSerialization;
 import com.google.crypto.tink.mac.AesCmacKey;
 import com.google.crypto.tink.mac.AesCmacParameters;
 import com.google.crypto.tink.mac.ChunkedMac;
@@ -38,6 +43,7 @@ import com.google.crypto.tink.mac.internal.WrappedChunkedMac;
 import com.google.crypto.tink.mac.internal.WrappedMac;
 import com.google.crypto.tink.subtle.PrfMac;
 import com.google.crypto.tink.util.SecretBytes;
+import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -273,5 +279,169 @@ public final class ProtoBasedConfigurationBuilderTest {
     assertThat(aesCmac).isNotNull();
     byte[] tag2 = aesCmac.computeMac(new byte[0]);
     aesCmac.verifyMac(tag2, new byte[0]);
+  }
+
+  @Test
+  public void testParametersParsingSerialization_works() throws Exception {
+    Configuration config =
+        new ProtoBasedConfigurationBuilder()
+            .addParametersSerializer(
+                ChaCha20Poly1305Parameters.class,
+                ChaCha20Poly1305ProtoSerialization::serializeParameters)
+            .addParametersParser(
+                "type.googleapis.com/google.crypto.tink.ChaCha20Poly1305Key",
+                ChaCha20Poly1305ProtoSerialization::parseParameters)
+            .build();
+
+    ProtoKeySerializer serializer = config.getOrNull(ProtoKeySerializer.class);
+    assertThat(serializer).isNotNull();
+
+    ChaCha20Poly1305Parameters parameters =
+        ChaCha20Poly1305Parameters.create(ChaCha20Poly1305Parameters.Variant.TINK);
+    Parameters reParsed = serializer.parseParameters(serializer.serializeParameters(parameters));
+
+    assertThat(reParsed).isEqualTo(parameters);
+  }
+
+  @Test
+  public void testKeySerialization_works() throws Exception {
+    Configuration config =
+        new ProtoBasedConfigurationBuilder()
+            .addKeySerializer(
+                ChaCha20Poly1305Key.class, ChaCha20Poly1305ProtoSerialization::serializeKey)
+            .addKeyParser(
+                "type.googleapis.com/google.crypto.tink.ChaCha20Poly1305Key",
+                ChaCha20Poly1305ProtoSerialization::parseKey)
+            .build();
+
+    ProtoKeySerializer serializer = config.getOrNull(ProtoKeySerializer.class);
+    assertThat(serializer).isNotNull();
+
+    byte[] keyMaterial = SecretBytes.randomBytes(32).toByteArray(InsecureSecretKeyAccess.get());
+    ChaCha20Poly1305Key key =
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.TINK,
+            SecretBytes.copyFrom(keyMaterial, InsecureSecretKeyAccess.get()),
+            /* idRequirement= */ 123);
+
+    ProtoKeySerialization serialization =
+        serializer.serializeKey(key, InsecureSecretKeyAccess.get());
+    Key reParsed = serializer.parseKey(serialization, InsecureSecretKeyAccess.get());
+    assertThat(key.equalsKey(reParsed)).isEqualTo(true);
+  }
+
+  @Test
+  public void testAddKeySerializer_twiceForSameClass_throws() throws Exception {
+    ProtoBasedConfigurationBuilder builder =
+        new ProtoBasedConfigurationBuilder()
+            .addKeySerializer(
+                ChaCha20Poly1305Key.class, ChaCha20Poly1305ProtoSerialization::serializeKey);
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            builder.addKeySerializer(
+                ChaCha20Poly1305Key.class, ChaCha20Poly1305ProtoSerialization::serializeKey));
+  }
+
+  @Test
+  public void testAddParametersSerializer_twiceForSameClass_throws() throws Exception {
+    ProtoBasedConfigurationBuilder builder =
+        new ProtoBasedConfigurationBuilder()
+            .addParametersSerializer(
+                ChaCha20Poly1305Parameters.class,
+                ChaCha20Poly1305ProtoSerialization::serializeParameters);
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            builder.addParametersSerializer(
+                ChaCha20Poly1305Parameters.class,
+                ChaCha20Poly1305ProtoSerialization::serializeParameters));
+  }
+
+  @Test
+  public void testAddKeyParser_twiceForSameTypeUrl_throws() throws Exception {
+    ProtoBasedConfigurationBuilder builder =
+        new ProtoBasedConfigurationBuilder()
+            .addKeyParser(
+                "type.googleapis.com/google.crypto.tink.ChaCha20Poly1305Key",
+                ChaCha20Poly1305ProtoSerialization::parseKey);
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            builder.addKeyParser(
+                "type.googleapis.com/google.crypto.tink.ChaCha20Poly1305Key",
+                ChaCha20Poly1305ProtoSerialization::parseKey));
+  }
+
+  @Test
+  public void testAddParametersParser_twiceForSameTypeUrl_throws() throws Exception {
+    ProtoBasedConfigurationBuilder builder =
+        new ProtoBasedConfigurationBuilder()
+            .addParametersParser(
+                "type.googleapis.com/google.crypto.tink.ChaCha20Poly1305Key",
+                ChaCha20Poly1305ProtoSerialization::parseParameters);
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            builder.addParametersParser(
+                "type.googleapis.com/google.crypto.tink.ChaCha20Poly1305Key",
+                ChaCha20Poly1305ProtoSerialization::parseParameters));
+  }
+
+  @Test
+  public void testSerializeKey_unregisteredKey_throws() throws Exception {
+    Configuration config = new ProtoBasedConfigurationBuilder().build();
+    ProtoKeySerializer serializer = config.getOrNull(ProtoKeySerializer.class);
+    ChaCha20Poly1305Key key =
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.TINK,
+            SecretBytes.randomBytes(32),
+            /* idRequirement= */ 123);
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> serializer.serializeKey(key, InsecureSecretKeyAccess.get()));
+  }
+
+  @Test
+  public void testSerializeParameters_unregisteredParameters_throws() throws Exception {
+    Configuration config = new ProtoBasedConfigurationBuilder().build();
+    ProtoKeySerializer serializer = config.getOrNull(ProtoKeySerializer.class);
+    ChaCha20Poly1305Parameters parameters =
+        ChaCha20Poly1305Parameters.create(ChaCha20Poly1305Parameters.Variant.TINK);
+    assertThrows(GeneralSecurityException.class, () -> serializer.serializeParameters(parameters));
+  }
+
+  @Test
+  public void testParseKey_unregisteredTypeUrl_throws() throws Exception {
+    Configuration config = new ProtoBasedConfigurationBuilder().build();
+    ProtoKeySerializer serializer = config.getOrNull(ProtoKeySerializer.class);
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "type.googleapis.com/google.crypto.tink.ChaCha20Poly1305Key",
+            ByteString.EMPTY,
+            ProtoKeySerialization.KeyMaterialType.SYMMETRIC,
+            ProtoKeySerialization.OutputPrefixType.RAW,
+            /* idRequirement= */ null);
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> serializer.parseKey(serialization, InsecureSecretKeyAccess.get()));
+  }
+
+  @Test
+  public void testParseParameters_unregisteredTypeUrl_throws() throws Exception {
+    Configuration config = new ProtoBasedConfigurationBuilder().build();
+    ProtoKeySerializer serializer = config.getOrNull(ProtoKeySerializer.class);
+    ProtoParametersSerialization serialization =
+        ProtoParametersSerialization.create(
+            "type.googleapis.com/google.crypto.tink.ChaCha20Poly1305Key",
+            ProtoKeySerialization.OutputPrefixType.RAW,
+            ByteString.EMPTY);
+    assertThrows(GeneralSecurityException.class, () -> serializer.parseParameters(serialization));
+  }
+
+  @Test
+  public void testGetOrNull_unknownClass_returnsNull() throws Exception {
+    Configuration config = new ProtoBasedConfigurationBuilder().build();
+    assertThat(config.getOrNull(String.class)).isNull();
   }
 }
