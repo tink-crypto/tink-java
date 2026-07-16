@@ -16,3 +16,27 @@ java_library(
     srcs = ["DeterministicAeads.java"],
     deps = ["//src/main/java/com/google/crypto/tink:deterministic_aead"],
 )
+
+android_library(
+    name = "aes_siv_deterministic_aead-android",
+    srcs = ["AesSivDeterministicAead.java"],
+    deps = [
+        ":deterministic_aeads-android",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink/daead:aes_siv_key-android",
+        "//src/main/java/com/google/crypto/tink/subtle:aes_siv-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "aes_siv_deterministic_aead",
+    srcs = ["AesSivDeterministicAead.java"],
+    deps = [
+        ":deterministic_aeads",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink/daead:aes_siv_key",
+        "//src/main/java/com/google/crypto/tink/subtle:aes_siv",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
