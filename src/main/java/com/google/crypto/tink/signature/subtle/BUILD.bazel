@@ -149,3 +149,50 @@ java_library(
     ],
 )
 
+android_library(
+    name = "rsa_ssa_pss_signer-android",
+    srcs = ["RsaSsaPssSigner.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink:public_key_sign-android",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_private_key-android",
+        "//src/main/java/com/google/crypto/tink/subtle:rsa_ssa_pss_sign_jce-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "rsa_ssa_pss_signer",
+    srcs = ["RsaSsaPssSigner.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink:public_key_sign",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_private_key",
+        "//src/main/java/com/google/crypto/tink/subtle:rsa_ssa_pss_sign_jce",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
+    name = "rsa_ssa_pss_verifier-android",
+    srcs = ["RsaSsaPssVerifier.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink:public_key_verify-android",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_public_key-android",
+        "//src/main/java/com/google/crypto/tink/subtle:rsa_ssa_pss_verify_jce-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "rsa_ssa_pss_verifier",
+    srcs = ["RsaSsaPssVerifier.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink:public_key_verify",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_public_key",
+        "//src/main/java/com/google/crypto/tink/subtle:rsa_ssa_pss_verify_jce",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
