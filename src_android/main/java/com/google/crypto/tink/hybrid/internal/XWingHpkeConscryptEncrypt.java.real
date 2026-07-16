@@ -20,13 +20,14 @@ import static com.google.crypto.tink.subtle.Bytes.concat;
 
 import android.crypto.hpke.Hpke;
 import android.crypto.hpke.Message;
+import android.os.Build;
+import android.os.ext.SdkExtensions;
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.config.internal.TinkFipsUtil.AlgorithmFipsCompatibility;
 import com.google.crypto.tink.hybrid.HpkeParameters;
 import com.google.crypto.tink.hybrid.HpkePublicKey;
 import com.google.crypto.tink.internal.ConscryptUtil;
-import com.google.crypto.tink.internal.Util;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.Provider;
@@ -108,8 +109,17 @@ public final class XWingHpkeConscryptEncrypt implements HybridEncrypt {
     if (!FIPS.isCompatible()) {
       return false;
     }
+    boolean isHpkeSupported = false;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CINNAMON_BUN) {
+      // Android 37+ supports HPKE.
+      isHpkeSupported = true;
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+      if (SdkExtensionChecker.isHpkeSupportedViaExtension()) {
+        isHpkeSupported = true;
+      }
+    }
 
-    if (Util.getAndroidApiLevel() == null || Util.getAndroidApiLevel() < 37) {
+    if (!isHpkeSupported) {
       return false;
     }
 
@@ -123,6 +133,15 @@ public final class XWingHpkeConscryptEncrypt implements HybridEncrypt {
       return true;
     } catch (GeneralSecurityException e) {
       return false;
+    }
+  }
+
+  @SuppressWarnings("NewApi")
+  private static class SdkExtensionChecker {
+    static boolean isHpkeSupportedViaExtension() {
+      // The ART module was introduced in S and the android.crypto.hpke.Hpke class was introduced in
+      // SDK extension 22 (found in prebuilts/sdk/extensions/22/public/api/art.txt).
+      return SdkExtensions.getExtensionVersion(Build.VERSION_CODES.S) >= 22;
     }
   }
 
