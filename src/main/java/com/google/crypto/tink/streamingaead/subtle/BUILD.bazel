@@ -1,0 +1,30 @@
+load("@rules_android//android:rules.bzl", "android_library")
+load("@rules_java//java:defs.bzl", "java_library")
+
+licenses(["notice"])
+
+package(default_visibility = ["//:__subpackages__"])
+
+java_library(
+    name = "aes_ctr_hmac_streaming_aead",
+    srcs = ["AesCtrHmacStreamingAead.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink:streaming_aead",
+        "//src/main/java/com/google/crypto/tink/streamingaead:aes_ctr_hmac_streaming_key",
+        "//src/main/java/com/google/crypto/tink/subtle:aes_ctr_hmac_streaming",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
+    name = "aes_ctr_hmac_streaming_aead-android",
+    srcs = ["AesCtrHmacStreamingAead.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink:streaming_aead-android",
+        "//src/main/java/com/google/crypto/tink/streamingaead:aes_ctr_hmac_streaming_key-android",
+        "//src/main/java/com/google/crypto/tink/subtle:aes_ctr_hmac_streaming-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)

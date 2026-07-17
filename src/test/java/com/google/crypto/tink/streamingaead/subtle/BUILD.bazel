@@ -1,0 +1,28 @@
+load("@rules_java//java:defs.bzl", "java_test")
+
+licenses(["notice"])
+
+package(default_visibility = ["//:__subpackages__"])
+
+java_test(
+    name = "AesCtrHmacStreamingAeadTest",
+    size = "small",
+    srcs = ["AesCtrHmacStreamingAeadTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink:streaming_aead",
+        "//src/main/java/com/google/crypto/tink/config:tink_fips",
+        "//src/main/java/com/google/crypto/tink/streamingaead:aes_ctr_hmac_streaming_key",
+        "//src/main/java/com/google/crypto/tink/streamingaead:aes_ctr_hmac_streaming_parameters",
+        "//src/main/java/com/google/crypto/tink/streamingaead/subtle:aes_ctr_hmac_streaming_aead",
+        "//src/main/java/com/google/crypto/tink/subtle:aes_ctr_hmac_streaming",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "//src/main/java/com/google/crypto/tink/subtle:random",
+        "//src/main/java/com/google/crypto/tink/testing:streaming_test_util",
+        "//src/main/java/com/google/crypto/tink/testing:test_util",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
