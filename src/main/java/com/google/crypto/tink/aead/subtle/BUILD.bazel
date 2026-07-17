@@ -74,6 +74,32 @@ java_library(
 )
 
 java_library(
+    name = "cha_cha20_poly1305_aead",
+    srcs = ["ChaCha20Poly1305Aead.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:aead",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink/aead:cha_cha20_poly1305_key",
+        "//src/main/java/com/google/crypto/tink/aead/internal:cha_cha20_poly1305_jce",
+        "//src/main/java/com/google/crypto/tink/subtle:cha_cha20_poly1305",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "x_cha_cha20_poly1305_aead",
+    srcs = ["XChaCha20Poly1305Aead.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:aead",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink/aead:x_cha_cha20_poly1305_key",
+        "//src/main/java/com/google/crypto/tink/aead/internal:x_cha_cha20_poly1305_jce",
+        "//src/main/java/com/google/crypto/tink/subtle:x_cha_cha20_poly1305",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
     name = "aes_gcm_siv",
     srcs = ["AesGcmSiv.java"],
     deps = [
@@ -143,6 +169,32 @@ android_library(
         "//src/main/java/com/google/crypto/tink:aead-android",
         "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
         "//src/main/java/com/google/crypto/tink/aead:aes_gcm_siv_key-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
+    name = "cha_cha20_poly1305_aead-android",
+    srcs = ["ChaCha20Poly1305Aead.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:aead-android",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink/aead:cha_cha20_poly1305_key-android",
+        "//src/main/java/com/google/crypto/tink/aead/internal:cha_cha20_poly1305_jce-android",
+        "//src/main/java/com/google/crypto/tink/subtle:cha_cha20_poly1305-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
+    name = "x_cha_cha20_poly1305_aead-android",
+    srcs = ["XChaCha20Poly1305Aead.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:aead-android",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink/aead:x_cha_cha20_poly1305_key-android",
+        "//src/main/java/com/google/crypto/tink/aead/internal:x_cha_cha20_poly1305_jce-android",
+        "//src/main/java/com/google/crypto/tink/subtle:x_cha_cha20_poly1305-android",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )

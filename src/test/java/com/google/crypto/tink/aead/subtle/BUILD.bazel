@@ -78,6 +78,57 @@ java_test(
 )
 
 java_test(
+    name = "ChaCha20Poly1305AeadTest",
+    size = "small",
+    srcs = ["ChaCha20Poly1305AeadTest.java"],
+    data = ["//third_party/wycheproof:testvectors_v1"],
+    tags = [
+        "fips",
+        "notsan",
+    ],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:aead",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink/aead:cha_cha20_poly1305_key",
+        "//src/main/java/com/google/crypto/tink/aead:cha_cha20_poly1305_parameters",
+        "//src/main/java/com/google/crypto/tink/aead/subtle:cha_cha20_poly1305_aead",
+        "//src/main/java/com/google/crypto/tink/config:tink_fips",
+        "//src/main/java/com/google/crypto/tink/subtle:bytes",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "//src/main/java/com/google/crypto/tink/subtle:random",
+        "//src/main/java/com/google/crypto/tink/testing:test_util",
+        "//src/main/java/com/google/crypto/tink/testing:wycheproof_test_util",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
+        "@maven//:com_google_code_gson_gson",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
+    name = "XChaCha20Poly1305AeadTest",
+    size = "large",
+    srcs = ["XChaCha20Poly1305AeadTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:aead",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink/aead:x_cha_cha20_poly1305_key",
+        "//src/main/java/com/google/crypto/tink/aead:x_cha_cha20_poly1305_parameters",
+        "//src/main/java/com/google/crypto/tink/aead/subtle:x_cha_cha20_poly1305_aead",
+        "//src/main/java/com/google/crypto/tink/config:tink_fips",
+        "//src/main/java/com/google/crypto/tink/subtle:bytes",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "//src/main/java/com/google/crypto/tink/subtle:random",
+        "//src/main/java/com/google/crypto/tink/testing:test_util",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
     name = "AesGcmAeadTest",
     size = "small",
     srcs = ["AesGcmAeadTest.java"],
