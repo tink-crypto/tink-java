@@ -110,7 +110,7 @@ public final class AesGcmProtoSerialization {
     }
   }
 
-  private static ProtoParametersSerialization serializeParameters(AesGcmParameters parameters)
+  public static ProtoParametersSerialization serializeParameters(AesGcmParameters parameters)
       throws GeneralSecurityException {
     validateParameters(parameters);
     return ProtoParametersSerialization.create(
@@ -122,7 +122,7 @@ public final class AesGcmProtoSerialization {
             .toByteString());
   }
 
-  private static ProtoKeySerialization serializeKey(AesGcmKey key, @Nullable SecretKeyAccess access)
+  public static ProtoKeySerialization serializeKey(AesGcmKey key, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     validateParameters(key.getParameters());
     return ProtoKeySerialization.create(
@@ -138,7 +138,7 @@ public final class AesGcmProtoSerialization {
         key.getIdRequirementOrNull());
   }
 
-  private static AesGcmParameters parseParameters(ProtoParametersSerialization serialization)
+  public static AesGcmParameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
       throw new IllegalArgumentException(
@@ -170,7 +170,7 @@ public final class AesGcmProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException")
-  private static AesGcmKey parseKey(
+  public static AesGcmKey parseKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
