@@ -28,3 +28,27 @@ java_library(
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
+
+android_library(
+    name = "hmac_prf-android",
+    srcs = ["HmacPrf.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink/prf:hmac_prf_key-android",
+        "//src/main/java/com/google/crypto/tink/prf:prf_set-android",
+        "//src/main/java/com/google/crypto/tink/subtle:prf_hmac_jce-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "hmac_prf",
+    srcs = ["HmacPrf.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink/prf:hmac_prf_key",
+        "//src/main/java/com/google/crypto/tink/prf:prf_set",
+        "//src/main/java/com/google/crypto/tink/subtle:prf_hmac_jce",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
