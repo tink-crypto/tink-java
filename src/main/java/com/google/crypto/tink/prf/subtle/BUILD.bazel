@@ -1,0 +1,30 @@
+load("@rules_android//android:rules.bzl", "android_library")
+load("@rules_java//java:defs.bzl", "java_library")
+
+licenses(["notice"])
+
+package(default_visibility = ["//visibility:public"])
+
+android_library(
+    name = "aes_cmac_prf-android",
+    srcs = ["AesCmacPrf.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink/prf:aes_cmac_prf_key-android",
+        "//src/main/java/com/google/crypto/tink/prf:prf_set-android",
+        "//src/main/java/com/google/crypto/tink/subtle:prf_aes_cmac-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "aes_cmac_prf",
+    srcs = ["AesCmacPrf.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink/prf:aes_cmac_prf_key",
+        "//src/main/java/com/google/crypto/tink/prf:prf_set",
+        "//src/main/java/com/google/crypto/tink/subtle:prf_aes_cmac",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)

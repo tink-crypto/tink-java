@@ -1,0 +1,27 @@
+load("@rules_java//java:defs.bzl", "java_test")
+
+licenses(["notice"])
+
+package(default_visibility = ["//visibility:public"])
+
+java_test(
+    name = "AesCmacPrfTest",
+    size = "small",
+    srcs = ["AesCmacPrfTest.java"],
+    data = ["//third_party/wycheproof:testvectors_v1"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink/prf:aes_cmac_prf_key",
+        "//src/main/java/com/google/crypto/tink/prf:aes_cmac_prf_parameters",
+        "//src/main/java/com/google/crypto/tink/prf:prf_set",
+        "//src/main/java/com/google/crypto/tink/prf/internal:aes_cmac_prf_test_util",
+        "//src/main/java/com/google/crypto/tink/prf/internal:aes_cmac_prf_wycheproof_test_util",
+        "//src/main/java/com/google/crypto/tink/prf/subtle:aes_cmac_prf",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "//src/main/java/com/google/crypto/tink/subtle:random",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
