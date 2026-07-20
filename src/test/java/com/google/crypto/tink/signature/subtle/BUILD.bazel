@@ -226,3 +226,55 @@ java_test(
     ],
 )
 
+java_test(
+    name = "SlhDsaSignerTest",
+    size = "small",
+    srcs = ["SlhDsaSignerTest.java"],
+    data = ["//third_party/wycheproof:testvectors_v1"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink:public_key_sign",
+        "//src/main/java/com/google/crypto/tink:public_key_verify",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
+        "//src/main/java/com/google/crypto/tink/signature:slh_dsa_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:slh_dsa_private_key",
+        "//src/main/java/com/google/crypto/tink/signature:slh_dsa_public_key",
+        "//src/main/java/com/google/crypto/tink/signature/internal:slh_dsa_verify_conscrypt",
+        "//src/main/java/com/google/crypto/tink/signature/subtle:slh_dsa_signer",
+        "//src/main/java/com/google/crypto/tink/signature/subtle:slh_dsa_verifier",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+        "@maven//:org_conscrypt_conscrypt_openjdk_uber",
+    ],
+)
+
+java_test(
+    name = "SlhDsaVerifierTest",
+    size = "small",
+    srcs = ["SlhDsaVerifierTest.java"],
+    data = ["//third_party/wycheproof:testvectors_v1"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink:public_key_sign",
+        "//src/main/java/com/google/crypto/tink:public_key_verify",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
+        "//src/main/java/com/google/crypto/tink/signature:slh_dsa_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:slh_dsa_private_key",
+        "//src/main/java/com/google/crypto/tink/signature:slh_dsa_public_key",
+        "//src/main/java/com/google/crypto/tink/signature/internal:slh_dsa_verify_conscrypt",
+        "//src/main/java/com/google/crypto/tink/signature/subtle:slh_dsa_signer",
+        "//src/main/java/com/google/crypto/tink/signature/subtle:slh_dsa_verifier",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+        "@maven//:org_conscrypt_conscrypt_openjdk_uber",
+    ],
+)
+

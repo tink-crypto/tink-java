@@ -245,3 +245,51 @@ android_library(
     ],
 )
 
+java_library(
+    name = "slh_dsa_signer",
+    srcs = ["SlhDsaSigner.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink:public_key_sign",
+        "//src/main/java/com/google/crypto/tink/signature:slh_dsa_private_key",
+        "//src/main/java/com/google/crypto/tink/signature/internal:slh_dsa_sign_conscrypt",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
+    name = "slh_dsa_signer-android",
+    srcs = ["SlhDsaSigner.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink:public_key_sign-android",
+        "//src/main/java/com/google/crypto/tink/signature:slh_dsa_private_key-android",
+        "//src/main/java/com/google/crypto/tink/signature/internal:slh_dsa_sign_conscrypt-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "slh_dsa_verifier",
+    srcs = ["SlhDsaVerifier.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink:public_key_verify",
+        "//src/main/java/com/google/crypto/tink/signature:slh_dsa_public_key",
+        "//src/main/java/com/google/crypto/tink/signature/internal:slh_dsa_verify_conscrypt",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
+    name = "slh_dsa_verifier-android",
+    srcs = ["SlhDsaVerifier.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink:public_key_verify-android",
+        "//src/main/java/com/google/crypto/tink/signature:slh_dsa_public_key-android",
+        "//src/main/java/com/google/crypto/tink/signature/internal:slh_dsa_verify_conscrypt-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
