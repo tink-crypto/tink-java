@@ -16,48 +16,52 @@
 
 package com.google.crypto.tink;
 
-import com.google.crypto.tink.internal.LegacyProtoParameters;
-import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoConversions;
 import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.protobuf.ExtensionRegistryLite;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import javax.annotation.Nullable;
 
 /** Functions to parse and serialize Parameters in Tink's binary format based on Protobufs. */
 public final class TinkProtoParametersFormat {
-  /**
-   * Serializes a Parameters object into a byte[] according to Tink's binary format.
-   */
+  /** Serializes a Parameters object into a byte[] according to Tink's binary format. */
+  @LowLevelCryptoCaller
   public static byte[] serialize(Parameters parameters) throws GeneralSecurityException {
-    ProtoParametersSerialization s;
-    if (parameters instanceof LegacyProtoParameters) {
-      s = ((LegacyProtoParameters) parameters).getSerialization();
-    } else {
-      s = MutableSerializationRegistry.globalInstance().serializeParameters(parameters);
+    Configuration configuration = RegistryConfiguration.get();
+    @Nullable ProtoKeySerializer serializer = configuration.getOrNull(ProtoKeySerializer.class);
+    if (serializer == null) {
+      throw new GeneralSecurityException(
+          "Provided configuration cannot be used to serialize in ProtoParametersFormat.");
     }
+    ProtoParametersSerialization serialization = serializer.serializeParameters(parameters);
     return KeyTemplate.newBuilder()
-        .setTypeUrl(s.getTypeUrl())
-        .setValue(s.getValue())
-        .setOutputPrefixType(ProtoConversions.toProto(s.getOutputPrefixType()))
+        .setTypeUrl(serialization.getTypeUrl())
+        .setValue(serialization.getValue())
+        .setOutputPrefixType(ProtoConversions.toProto(serialization.getOutputPrefixType()))
         .build()
         .toByteArray();
   }
 
-  /**
-   * Parses a byte[] into a Parameters object according to Tink's binary format.
-   */
+  /** Parses a byte[] into a Parameters object according to Tink's binary format. */
+  @LowLevelCryptoCaller
   public static Parameters parse(byte[] serializedParameters) throws GeneralSecurityException {
+    Configuration configuration = RegistryConfiguration.get();
+    @Nullable ProtoKeySerializer serializer = configuration.getOrNull(ProtoKeySerializer.class);
+    if (serializer == null) {
+      throw new GeneralSecurityException(
+          "Provided configuration cannot be used to parse ProtoParametersFormat.");
+    }
+
     KeyTemplate t;
     try {
       t = KeyTemplate.parseFrom(serializedParameters, ExtensionRegistryLite.getEmptyRegistry());
     } catch (IOException e) {
       throw new GeneralSecurityException("Failed to parse proto", e);
     }
-    return MutableSerializationRegistry.globalInstance()
-        .parseParametersWithLegacyFallback(
-            ProtoParametersSerialization.create(
-                t.getTypeUrl(), ProtoConversions.fromProto(t.getOutputPrefixType()), t.getValue()));
+    return serializer.parseParameters(
+        ProtoParametersSerialization.create(
+            t.getTypeUrl(), ProtoConversions.fromProto(t.getOutputPrefixType()), t.getValue()));
   }
 
   private TinkProtoParametersFormat() {}
