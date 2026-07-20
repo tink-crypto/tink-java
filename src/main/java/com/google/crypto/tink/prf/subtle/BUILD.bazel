@@ -52,3 +52,29 @@ java_library(
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
+
+android_library(
+    name = "hkdf_prf-android",
+    srcs = ["HkdfPrf.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink/prf:hkdf_prf_key-android",
+        "//src/main/java/com/google/crypto/tink/prf:prf_set-android",
+        "//src/main/java/com/google/crypto/tink/subtle/prf:hkdf_streaming_prf-android",
+        "//src/main/java/com/google/crypto/tink/subtle/prf:prf_impl-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "hkdf_prf",
+    srcs = ["HkdfPrf.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink/prf:hkdf_prf_key",
+        "//src/main/java/com/google/crypto/tink/prf:prf_set",
+        "//src/main/java/com/google/crypto/tink/subtle/prf:hkdf_streaming_prf",
+        "//src/main/java/com/google/crypto/tink/subtle/prf:prf_impl",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
