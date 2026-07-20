@@ -17,6 +17,18 @@ java_library(
     ],
 )
 
+java_library(
+    name = "aes_gcm_hkdf_streaming_aead",
+    srcs = ["AesGcmHkdfStreamingAead.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink:streaming_aead",
+        "//src/main/java/com/google/crypto/tink/streamingaead:aes_gcm_hkdf_streaming_key",
+        "//src/main/java/com/google/crypto/tink/subtle:aes_gcm_hkdf_streaming",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
 android_library(
     name = "aes_ctr_hmac_streaming_aead-android",
     srcs = ["AesCtrHmacStreamingAead.java"],
@@ -25,6 +37,18 @@ android_library(
         "//src/main/java/com/google/crypto/tink:streaming_aead-android",
         "//src/main/java/com/google/crypto/tink/streamingaead:aes_ctr_hmac_streaming_key-android",
         "//src/main/java/com/google/crypto/tink/subtle:aes_ctr_hmac_streaming-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
+    name = "aes_gcm_hkdf_streaming_aead-android",
+    srcs = ["AesGcmHkdfStreamingAead.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink:streaming_aead-android",
+        "//src/main/java/com/google/crypto/tink/streamingaead:aes_gcm_hkdf_streaming_key-android",
+        "//src/main/java/com/google/crypto/tink/subtle:aes_gcm_hkdf_streaming-android",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )

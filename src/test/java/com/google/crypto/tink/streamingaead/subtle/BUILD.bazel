@@ -8,6 +8,7 @@ java_test(
     name = "AesCtrHmacStreamingAeadTest",
     size = "small",
     srcs = ["AesCtrHmacStreamingAeadTest.java"],
+    tags = ["notsan"],
     deps = [
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
@@ -23,6 +24,26 @@ java_test(
         "//src/main/java/com/google/crypto/tink/testing:test_util",
         "//src/main/java/com/google/crypto/tink/util:secret_bytes",
         "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
+    name = "AesGcmHkdfStreamingAeadTest",
+    size = "large",
+    srcs = ["AesGcmHkdfStreamingAeadTest.java"],
+    tags = ["notsan"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink:streaming_aead",
+        "//src/main/java/com/google/crypto/tink/streamingaead:aes_gcm_hkdf_streaming_key",
+        "//src/main/java/com/google/crypto/tink/streamingaead:aes_gcm_hkdf_streaming_parameters",
+        "//src/main/java/com/google/crypto/tink/streamingaead/subtle:aes_gcm_hkdf_streaming_aead",
+        "//src/main/java/com/google/crypto/tink/subtle:aes_gcm_hkdf_streaming",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "//src/main/java/com/google/crypto/tink/testing:streaming_test_util",
+        "//src/main/java/com/google/crypto/tink/testing:test_util",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
         "@maven//:junit_junit",
     ],
 )
