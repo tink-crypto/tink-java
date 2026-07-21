@@ -220,3 +220,49 @@ java_library(
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
+
+android_library(
+    name = "jwt_hmac-android",
+    srcs = ["JwtHmac.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink:mac-android",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_hmac_key-android",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_hmac_parameters-android",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_mac-android",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_validator-android",
+        "//src/main/java/com/google/crypto/tink/jwt:raw_jwt-android",
+        "//src/main/java/com/google/crypto/tink/jwt:verified_jwt-android",
+        "//src/main/java/com/google/crypto/tink/jwt/internal:json_util-android",
+        "//src/main/java/com/google/crypto/tink/jwt/internal:jwt_format-android",
+        "//src/main/java/com/google/crypto/tink/mac:hmac_key-android",
+        "//src/main/java/com/google/crypto/tink/mac:hmac_parameters-android",
+        "//src/main/java/com/google/crypto/tink/subtle:prf_mac-android",
+        "@maven//:com_google_code_gson_gson",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "jwt_hmac",
+    srcs = ["JwtHmac.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink:mac",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_hmac_key",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_hmac_parameters",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_mac",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_validator",
+        "//src/main/java/com/google/crypto/tink/jwt:raw_jwt",
+        "//src/main/java/com/google/crypto/tink/jwt:verified_jwt",
+        "//src/main/java/com/google/crypto/tink/jwt/internal:json_util",
+        "//src/main/java/com/google/crypto/tink/jwt/internal:jwt_format",
+        "//src/main/java/com/google/crypto/tink/mac:hmac_key",
+        "//src/main/java/com/google/crypto/tink/mac:hmac_parameters",
+        "//src/main/java/com/google/crypto/tink/subtle:prf_mac",
+        "@maven//:com_google_code_gson_gson",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
