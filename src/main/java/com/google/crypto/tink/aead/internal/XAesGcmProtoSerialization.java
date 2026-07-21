@@ -84,8 +84,7 @@ public final class XAesGcmProtoSerialization {
     throw new GeneralSecurityException("Unable to parse OutputPrefixType: " + outputPrefixType);
   }
 
-
-  private static ProtoParametersSerialization serializeParameters(XAesGcmParameters parameters)
+  public static ProtoParametersSerialization serializeParameters(XAesGcmParameters parameters)
       throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
         TYPE_URL,
@@ -99,8 +98,8 @@ public final class XAesGcmProtoSerialization {
             .toByteString());
   }
 
-  private static ProtoKeySerialization serializeKey(
-      XAesGcmKey key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
+  public static ProtoKeySerialization serializeKey(XAesGcmKey key, @Nullable SecretKeyAccess access)
+      throws GeneralSecurityException {
     return ProtoKeySerialization.create(
         TYPE_URL,
         com.google.crypto.tink.proto.XAesGcmKey.newBuilder()
@@ -118,7 +117,7 @@ public final class XAesGcmProtoSerialization {
         key.getIdRequirementOrNull());
   }
 
-  private static XAesGcmParameters parseParameters(ProtoParametersSerialization serialization)
+  public static XAesGcmParameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
       throw new IllegalArgumentException(
@@ -142,7 +141,7 @@ public final class XAesGcmProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException")
-  private static XAesGcmKey parseKey(
+  public static XAesGcmKey parseKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
