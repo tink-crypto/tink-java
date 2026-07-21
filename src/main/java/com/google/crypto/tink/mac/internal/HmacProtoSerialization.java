@@ -111,7 +111,7 @@ public final class HmacProtoSerialization {
         .build();
   }
 
-  private static ProtoParametersSerialization serializeParameters(HmacParameters parameters)
+  public static ProtoParametersSerialization serializeParameters(HmacParameters parameters)
       throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
         TYPE_URL,
@@ -123,7 +123,7 @@ public final class HmacProtoSerialization {
             .toByteString());
   }
 
-  private static ProtoKeySerialization serializeKey(HmacKey key, @Nullable SecretKeyAccess access)
+  public static ProtoKeySerialization serializeKey(HmacKey key, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     return ProtoKeySerialization.create(
         TYPE_URL,
@@ -139,7 +139,7 @@ public final class HmacProtoSerialization {
         key.getIdRequirementOrNull());
   }
 
-  private static HmacParameters parseParameters(ProtoParametersSerialization serialization)
+  public static HmacParameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
       throw new IllegalArgumentException(
@@ -167,7 +167,7 @@ public final class HmacProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException")
-  private static HmacKey parseKey(
+  public static HmacKey parseKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
