@@ -519,6 +519,7 @@ java_test(
     deps = [
         "//proto:aes_cmac_java_proto",
         "//proto:tink_java_proto",
+        "//src/main/java/com/google/crypto/tink:configuration",
         "//src/main/java/com/google/crypto/tink:parameters",
         "//src/main/java/com/google/crypto/tink:proto_parameters_serialization",
         "//src/main/java/com/google/crypto/tink:tink_proto_parameters_format",
@@ -526,6 +527,8 @@ java_test(
         "//src/main/java/com/google/crypto/tink/internal:proto_conversions",
         "//src/main/java/com/google/crypto/tink/mac:aes_cmac_parameters",
         "//src/main/java/com/google/crypto/tink/mac:mac_config",
+        "//src/main/java/com/google/crypto/tink/mac:mac_config2026",
+        "//src/main/java/com/google/crypto/tink/signature:signature_config_2026",
         "//src/main/java/com/google/crypto/tink/subtle:hex",
         "@maven//:com_google_protobuf_protobuf_java",
         "@maven//:com_google_truth_truth",

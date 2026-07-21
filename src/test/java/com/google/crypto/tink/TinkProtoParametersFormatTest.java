@@ -17,15 +17,18 @@
 package com.google.crypto.tink;
 
 import static com.google.common.truth.Truth.assertThat;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.internal.LegacyProtoParameters;
 import com.google.crypto.tink.mac.AesCmacParameters;
 import com.google.crypto.tink.mac.MacConfig;
+import com.google.crypto.tink.mac.MacConfig2026;
 import com.google.crypto.tink.proto.AesCmacKeyFormat;
 import com.google.crypto.tink.proto.AesCmacParams;
 import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.proto.OutputPrefixType;
+import com.google.crypto.tink.signature.SignatureConfig2026;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ExtensionRegistryLite;
@@ -164,5 +167,40 @@ public final class TinkProtoParametersFormatTest {
     assertThrows(
         GeneralSecurityException.class,
         () -> TinkProtoParametersFormat.parse(template.toByteArray()));
+  }
+
+  @Test
+  public void serializeAndParse_withConfiguration_success() throws Exception {
+    AesCmacParameters params =
+        AesCmacParameters.builder()
+            .setKeySizeBytes(32)
+            .setTagSizeBytes(16)
+            .setVariant(AesCmacParameters.Variant.TINK)
+            .build();
+
+    byte[] serialized = TinkProtoParametersFormat.serialize(params, MacConfig2026.get());
+    Parameters parsed = TinkProtoParametersFormat.parse(serialized, MacConfig2026.get());
+
+    assertThat(parsed).isEqualTo(params);
+
+    // The SignatureConfig2026 doesn't allow to parse/serialize these parameters. Explicitly testing
+    // this ensures that we don't mistakenly go to the RegistryConfiguration.
+    Configuration signatureConfiguration = SignatureConfig2026.get();
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> TinkProtoParametersFormat.serialize(params, signatureConfiguration));
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> TinkProtoParametersFormat.parse(serialized, signatureConfiguration));
+  }
+
+  @Test
+  public void parse_withInvalidSerializedParametersAndConfiguration_fails() throws Exception {
+    byte[] invalidSerializedParameters = "invalid".getBytes(UTF_8);
+    Configuration configuration = SignatureConfig2026.get();
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> TinkProtoParametersFormat.parse(invalidSerializedParameters, configuration));
   }
 }
