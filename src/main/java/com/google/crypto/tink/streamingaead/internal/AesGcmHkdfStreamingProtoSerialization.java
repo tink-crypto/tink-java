@@ -102,7 +102,7 @@ public final class AesGcmHkdfStreamingProtoSerialization {
         .build();
   }
 
-  private static ProtoParametersSerialization serializeParameters(
+  public static ProtoParametersSerialization serializeParameters(
       AesGcmHkdfStreamingParameters parameters) throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
         TYPE_URL,
@@ -114,7 +114,7 @@ public final class AesGcmHkdfStreamingProtoSerialization {
             .toByteString());
   }
 
-  private static ProtoKeySerialization serializeKey(
+  public static ProtoKeySerialization serializeKey(
       AesGcmHkdfStreamingKey key, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     return ProtoKeySerialization.create(
@@ -142,7 +142,7 @@ public final class AesGcmHkdfStreamingProtoSerialization {
         .build();
   }
 
-  private static AesGcmHkdfStreamingParameters parseParameters(
+  public static AesGcmHkdfStreamingParameters parseParameters(
       ProtoParametersSerialization serialization) throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
       throw new IllegalArgumentException(
@@ -164,7 +164,7 @@ public final class AesGcmHkdfStreamingProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException")
-  private static AesGcmHkdfStreamingKey parseKey(
+  public static AesGcmHkdfStreamingKey parseKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
