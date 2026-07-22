@@ -92,8 +92,7 @@ public final class AesGcmSivProtoSerialization {
     throw new GeneralSecurityException("Unable to parse OutputPrefixType: " + outputPrefixType);
   }
 
-
-  private static ProtoParametersSerialization serializeParameters(AesGcmSivParameters parameters)
+  public static ProtoParametersSerialization serializeParameters(AesGcmSivParameters parameters)
       throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
         TYPE_URL,
@@ -104,7 +103,7 @@ public final class AesGcmSivProtoSerialization {
             .toByteString());
   }
 
-  private static ProtoKeySerialization serializeKey(
+  public static ProtoKeySerialization serializeKey(
       AesGcmSivKey key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     return ProtoKeySerialization.create(
         TYPE_URL,
@@ -119,7 +118,7 @@ public final class AesGcmSivProtoSerialization {
         key.getIdRequirementOrNull());
   }
 
-  private static AesGcmSivParameters parseParameters(ProtoParametersSerialization serialization)
+  public static AesGcmSivParameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
       throw new IllegalArgumentException(
@@ -144,7 +143,7 @@ public final class AesGcmSivProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException")
-  private static AesGcmSivKey parseKey(
+  public static AesGcmSivKey parseKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {

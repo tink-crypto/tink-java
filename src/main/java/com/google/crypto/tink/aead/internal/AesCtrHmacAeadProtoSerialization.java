@@ -140,7 +140,7 @@ public final class AesCtrHmacAeadProtoSerialization {
         .build();
   }
 
-  private static ProtoParametersSerialization serializeParameters(
+  public static ProtoParametersSerialization serializeParameters(
       AesCtrHmacAeadParameters parameters) throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
         TYPE_URL,
@@ -163,7 +163,7 @@ public final class AesCtrHmacAeadProtoSerialization {
             .toByteString());
   }
 
-  private static ProtoKeySerialization serializeKey(
+  public static ProtoKeySerialization serializeKey(
       AesCtrHmacAeadKey key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     return ProtoKeySerialization.create(
         TYPE_URL,
@@ -194,8 +194,8 @@ public final class AesCtrHmacAeadProtoSerialization {
         key.getIdRequirementOrNull());
   }
 
-  private static AesCtrHmacAeadParameters parseParameters(
-      ProtoParametersSerialization serialization) throws GeneralSecurityException {
+  public static AesCtrHmacAeadParameters parseParameters(ProtoParametersSerialization serialization)
+      throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
       throw new IllegalArgumentException(
           "Wrong type URL in call to AesCtrHmacAeadProtoSerialization.parseParameters: "
@@ -224,7 +224,7 @@ public final class AesCtrHmacAeadProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException")
-  private static AesCtrHmacAeadKey parseKey(
+  public static AesCtrHmacAeadKey parseKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {

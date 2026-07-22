@@ -105,7 +105,7 @@ public final class AesEaxProtoSerialization {
         .build();
   }
 
-  private static ProtoParametersSerialization serializeParameters(AesEaxParameters parameters)
+  public static ProtoParametersSerialization serializeParameters(AesEaxParameters parameters)
       throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
         TYPE_URL,
@@ -117,7 +117,7 @@ public final class AesEaxProtoSerialization {
             .toByteString());
   }
 
-  private static ProtoKeySerialization serializeKey(AesEaxKey key, @Nullable SecretKeyAccess access)
+  public static ProtoKeySerialization serializeKey(AesEaxKey key, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     return ProtoKeySerialization.create(
         TYPE_URL,
@@ -133,7 +133,7 @@ public final class AesEaxProtoSerialization {
         key.getIdRequirementOrNull());
   }
 
-  private static AesEaxParameters parseParameters(ProtoParametersSerialization serialization)
+  public static AesEaxParameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
       throw new IllegalArgumentException(
@@ -158,7 +158,7 @@ public final class AesEaxProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException")
-  private static AesEaxKey parseKey(
+  public static AesEaxKey parseKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
