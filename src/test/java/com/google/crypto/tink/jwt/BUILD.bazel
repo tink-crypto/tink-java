@@ -645,3 +645,26 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "JwtMlDsaPrivateKeyTest",
+    size = "small",
+    srcs = ["JwtMlDsaPrivateKeyTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink/aead:cha_cha20_poly1305_key",
+        "//src/main/java/com/google/crypto/tink/internal:key_tester",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_ml_dsa_parameters",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_ml_dsa_private_key",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_ml_dsa_public_key",
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_private_key",
+        "//src/main/java/com/google/crypto/tink/subtle:random",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
+        "@maven//:com_google_code_findbugs_jsr305",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+
