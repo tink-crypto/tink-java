@@ -20,10 +20,8 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assume.assumeTrue;
 
-import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.Mac;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.mac.ChunkedMac;
@@ -33,7 +31,6 @@ import com.google.crypto.tink.mac.HmacKey;
 import com.google.crypto.tink.mac.HmacParameters;
 import com.google.crypto.tink.mac.HmacParameters.HashType;
 import com.google.crypto.tink.mac.HmacParameters.Variant;
-import com.google.crypto.tink.mac.MacConfig;
 import com.google.crypto.tink.mac.internal.HmacTestUtil;
 import com.google.crypto.tink.mac.internal.HmacTestUtil.HmacTestVector;
 import com.google.crypto.tink.subtle.Random;
@@ -56,8 +53,6 @@ import org.junit.runner.RunWith;
 public class HmacChunkedMacTest {
   @BeforeClass
   public static void setUp() throws Exception {
-    MacConfig.register();
-
     // If Tink is built in FIPS-only mode, register Conscrypt for the tests.
     if (TinkFips.useOnlyFips()) {
       try {
@@ -159,17 +154,13 @@ public class HmacChunkedMacTest {
   public void testCompatibility(@FromDataPoints("parameters") HmacParameters params)
       throws Exception {
     assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
-    KeysetHandle keysetHandle =
-        KeysetHandle
-            .newBuilder()
-            .addEntry(
-                KeysetHandle
-                    .generateEntryFromParameters(params)
-                    .withFixedId(1234)
-                    .makePrimary()
-            ).build();
-    Mac mac = keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
-    HmacKey key = (HmacKey) keysetHandle.getAt(0).getKey();
+    HmacKey key =
+        HmacKey.builder()
+            .setParameters(params)
+            .setKeyBytes(SecretBytes.randomBytes(params.getKeySizeBytes()))
+            .setIdRequirement(params.hasIdRequirement() ? 1234 : null)
+            .build();
+    Mac mac = HmacMac.create(key);
     ChunkedMac chunkedMac = HmacChunkedMac.create(key);
     ChunkedMacComputation chunkedMacComputation = chunkedMac.createComputation();
 
