@@ -470,6 +470,25 @@ public class JsonKeysetReaderTest {
   }
 
   @Test
+  public void readKeyset_nonPrimitiveStatusField_throwsIOException() throws Exception {
+    // "status" is a JSON object, so gson's getAsString() raises UnsupportedOperationException while
+    // parsing the key. read() must surface that as an IOException rather than let it escape
+    // uncaught to the caller.
+    String jsonKeysetString =
+        "{\"key\":[{\"keyData\":{},\"status\":{},\"keyId\":1,\"outputPrefixType\":\"TINK\"}]}";
+    assertThrows(IOException.class, () -> JsonKeysetReader.withString(jsonKeysetString).read());
+  }
+
+  @Test
+  public void readEncrypted_nonPrimitiveEncryptedKeysetField_throwsIOException() throws Exception {
+    // "encryptedKeyset" is a JSON object, so getAsString() raises UnsupportedOperationException.
+    // readEncrypted() must surface that as an IOException rather than let it escape uncaught.
+    String jsonEncryptedKeyset = "{\"encryptedKeyset\":{}}";
+    assertThrows(
+        IOException.class, () -> JsonKeysetReader.withString(jsonEncryptedKeyset).readEncrypted());
+  }
+
+  @Test
   public void testReadKeyset_withDuplicatedMapKey_throws() throws Exception {
     String jsonKeysetString = "{"
         + "\"primaryKeyId\": 123,"

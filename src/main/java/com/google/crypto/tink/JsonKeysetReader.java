@@ -163,7 +163,7 @@ public final class JsonKeysetReader implements KeysetReader {
     try {
       return keysetFromJson(
           JsonParser.parse(new String(Util.readAll(inputStream), UTF_8)).getAsJsonObject());
-    } catch (JsonParseException | IllegalStateException e) {
+    } catch (JsonParseException | IllegalStateException | UnsupportedOperationException e) {
       throw new IOException(e);
     } finally {
       if (inputStream != null) {
@@ -177,7 +177,7 @@ public final class JsonKeysetReader implements KeysetReader {
     try {
       return encryptedKeysetFromJson(
           JsonParser.parse(new String(Util.readAll(inputStream), UTF_8)).getAsJsonObject());
-    } catch (JsonParseException | IllegalStateException e) {
+    } catch (JsonParseException | IllegalStateException | UnsupportedOperationException e) {
       throw new IOException(e);
     } finally {
       if (inputStream != null) {
