@@ -318,3 +318,71 @@ android_library(
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
+
+java_library(
+    name = "cha_cha20_poly1305_proto_serialization",
+    srcs = ["ChaCha20Poly1305ProtoSerialization.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization",
+        "//src/main/java/com/google/crypto/tink:proto_parameters_serialization",
+        "//src/main/java/com/google/crypto/tink:secret_key_access",
+        "//src/main/java/com/google/crypto/tink/aead:cha_cha20_poly1305_key",
+        "//src/main/java/com/google/crypto/tink/aead:cha_cha20_poly1305_parameters",
+        "//src/main/java/com/google/crypto/tink/aead/internal:cha_cha20_poly1305_proto_serialization",
+        "@maven//:com_google_code_findbugs_jsr305",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
+    name = "cha_cha20_poly1305_proto_serialization-android",
+    srcs = ["ChaCha20Poly1305ProtoSerialization.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization-android",
+        "//src/main/java/com/google/crypto/tink:proto_parameters_serialization-android",
+        "//src/main/java/com/google/crypto/tink:secret_key_access-android",
+        "//src/main/java/com/google/crypto/tink/aead:cha_cha20_poly1305_key-android",
+        "//src/main/java/com/google/crypto/tink/aead:cha_cha20_poly1305_parameters-android",
+        "//src/main/java/com/google/crypto/tink/aead/internal:cha_cha20_poly1305_proto_serialization-android",
+        "@maven//:com_google_code_findbugs_jsr305",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "x_cha_cha20_poly1305_proto_serialization",
+    srcs = ["XChaCha20Poly1305ProtoSerialization.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization",
+        "//src/main/java/com/google/crypto/tink:proto_parameters_serialization",
+        "//src/main/java/com/google/crypto/tink:secret_key_access",
+        "//src/main/java/com/google/crypto/tink/aead:x_cha_cha20_poly1305_key",
+        "//src/main/java/com/google/crypto/tink/aead:x_cha_cha20_poly1305_parameters",
+        "//src/main/java/com/google/crypto/tink/aead/internal:x_cha_cha20_poly1305_proto_serialization",
+        "@maven//:com_google_code_findbugs_jsr305",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
+    name = "x_cha_cha20_poly1305_proto_serialization-android",
+    srcs = ["XChaCha20Poly1305ProtoSerialization.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization-android",
+        "//src/main/java/com/google/crypto/tink:proto_parameters_serialization-android",
+        "//src/main/java/com/google/crypto/tink:secret_key_access-android",
+        "//src/main/java/com/google/crypto/tink/aead:x_cha_cha20_poly1305_key-android",
+        "//src/main/java/com/google/crypto/tink/aead:x_cha_cha20_poly1305_parameters-android",
+        "//src/main/java/com/google/crypto/tink/aead/internal:x_cha_cha20_poly1305_proto_serialization-android",
+        "@maven//:com_google_code_findbugs_jsr305",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)

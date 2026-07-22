@@ -95,7 +95,7 @@ public final class XChaCha20Poly1305ProtoSerialization {
     throw new GeneralSecurityException("Unable to parse OutputPrefixType: " + outputPrefixType);
   }
 
-  private static ProtoParametersSerialization serializeParameters(
+  public static ProtoParametersSerialization serializeParameters(
       XChaCha20Poly1305Parameters parameters) throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
         TYPE_URL,
@@ -104,7 +104,7 @@ public final class XChaCha20Poly1305ProtoSerialization {
             .toByteString());
   }
 
-  private static ProtoKeySerialization serializeKey(
+  public static ProtoKeySerialization serializeKey(
       XChaCha20Poly1305Key key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     return ProtoKeySerialization.create(
         TYPE_URL,
@@ -119,7 +119,7 @@ public final class XChaCha20Poly1305ProtoSerialization {
         key.getIdRequirementOrNull());
   }
 
-  private static XChaCha20Poly1305Parameters parseParameters(
+  public static XChaCha20Poly1305Parameters parseParameters(
       ProtoParametersSerialization serialization) throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
       throw new IllegalArgumentException(
@@ -142,7 +142,7 @@ public final class XChaCha20Poly1305ProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException")
-  private static XChaCha20Poly1305Key parseKey(
+  public static XChaCha20Poly1305Key parseKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
