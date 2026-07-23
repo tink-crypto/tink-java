@@ -102,7 +102,7 @@ public final class AesCmacProtoSerialization {
         .build();
   }
 
-  private static ProtoParametersSerialization serializeParameters(AesCmacParameters parameters)
+  public static ProtoParametersSerialization serializeParameters(AesCmacParameters parameters)
       throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
         TYPE_URL,
@@ -114,8 +114,8 @@ public final class AesCmacProtoSerialization {
             .toByteString());
   }
 
-  private static ProtoKeySerialization serializeKey(
-      AesCmacKey key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
+  public static ProtoKeySerialization serializeKey(AesCmacKey key, @Nullable SecretKeyAccess access)
+      throws GeneralSecurityException {
     return ProtoKeySerialization.create(
         TYPE_URL,
         com.google.crypto.tink.proto.AesCmacKey.newBuilder()
@@ -130,7 +130,7 @@ public final class AesCmacProtoSerialization {
         key.getIdRequirementOrNull());
   }
 
-  private static AesCmacParameters parseParameters(ProtoParametersSerialization serialization)
+  public static AesCmacParameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
       throw new IllegalArgumentException(
@@ -154,7 +154,7 @@ public final class AesCmacProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException")
-  private static AesCmacKey parseKey(
+  public static AesCmacKey parseKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {

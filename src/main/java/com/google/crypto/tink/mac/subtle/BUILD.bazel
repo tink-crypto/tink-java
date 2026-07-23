@@ -134,3 +134,37 @@ android_library(
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
+
+java_library(
+    name = "aes_cmac_proto_serialization",
+    srcs = ["AesCmacProtoSerialization.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization",
+        "//src/main/java/com/google/crypto/tink:proto_parameters_serialization",
+        "//src/main/java/com/google/crypto/tink:secret_key_access",
+        "//src/main/java/com/google/crypto/tink/mac:aes_cmac_key",
+        "//src/main/java/com/google/crypto/tink/mac:aes_cmac_parameters",
+        "//src/main/java/com/google/crypto/tink/mac/internal:aes_cmac_proto_serialization",
+        "@maven//:com_google_code_findbugs_jsr305",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
+    name = "aes_cmac_proto_serialization-android",
+    srcs = ["AesCmacProtoSerialization.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization-android",
+        "//src/main/java/com/google/crypto/tink:proto_parameters_serialization-android",
+        "//src/main/java/com/google/crypto/tink:secret_key_access-android",
+        "//src/main/java/com/google/crypto/tink/mac:aes_cmac_key-android",
+        "//src/main/java/com/google/crypto/tink/mac:aes_cmac_parameters-android",
+        "//src/main/java/com/google/crypto/tink/mac/internal:aes_cmac_proto_serialization-android",
+        "@maven//:com_google_code_findbugs_jsr305",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
