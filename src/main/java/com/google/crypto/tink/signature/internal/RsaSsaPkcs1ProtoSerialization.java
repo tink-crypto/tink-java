@@ -142,7 +142,7 @@ public final class RsaSsaPkcs1ProtoSerialization {
         .build();
   }
 
-  private static ProtoParametersSerialization serializeParameters(RsaSsaPkcs1Parameters parameters)
+  public static ProtoParametersSerialization serializeParameters(RsaSsaPkcs1Parameters parameters)
       throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
         PRIVATE_TYPE_URL,
@@ -155,7 +155,7 @@ public final class RsaSsaPkcs1ProtoSerialization {
             .toByteString());
   }
 
-  private static ProtoKeySerialization serializePublicKey(
+  public static ProtoKeySerialization serializePublicKey(
       RsaSsaPkcs1PublicKey key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     return ProtoKeySerialization.create(
         PUBLIC_TYPE_URL,
@@ -169,7 +169,7 @@ public final class RsaSsaPkcs1ProtoSerialization {
     return encodeBigInteger(i.getBigInteger(access));
   }
 
-  private static ProtoKeySerialization serializePrivateKey(
+  public static ProtoKeySerialization serializePrivateKey(
       RsaSsaPkcs1PrivateKey key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     SecretKeyAccess a = SecretKeyAccess.requireAccess(access);
     com.google.crypto.tink.proto.RsaSsaPkcs1PrivateKey protoPrivateKey =
@@ -195,7 +195,7 @@ public final class RsaSsaPkcs1ProtoSerialization {
     return BigIntegerEncoding.fromUnsignedBigEndianBytes(data.toByteArray());
   }
 
-  private static RsaSsaPkcs1Parameters parseParameters(ProtoParametersSerialization serialization)
+  public static RsaSsaPkcs1Parameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(PRIVATE_TYPE_URL)) {
       throw new IllegalArgumentException(
@@ -220,7 +220,7 @@ public final class RsaSsaPkcs1ProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException")
-  private static RsaSsaPkcs1PublicKey parsePublicKey(
+  public static RsaSsaPkcs1PublicKey parsePublicKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(PUBLIC_TYPE_URL)) {
@@ -260,7 +260,7 @@ public final class RsaSsaPkcs1ProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException")
-  private static RsaSsaPkcs1PrivateKey parsePrivateKey(
+  public static RsaSsaPkcs1PrivateKey parsePrivateKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(PRIVATE_TYPE_URL)) {
