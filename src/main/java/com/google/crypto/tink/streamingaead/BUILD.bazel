@@ -456,3 +456,51 @@ java_library(
         "//src/main/java/com/google/crypto/tink/subtle:aes_gcm_hkdf_streaming",
     ],
 )
+
+java_library(
+    name = "streaming_aead_config2026",
+    srcs = ["StreamingAeadConfig2026.java"],
+    deps = [
+        ":aes_ctr_hmac_streaming_key",
+        ":aes_ctr_hmac_streaming_parameters",
+        ":aes_gcm_hkdf_streaming_key",
+        ":aes_gcm_hkdf_streaming_parameters",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:configuration",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink:streaming_aead",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
+        "//src/main/java/com/google/crypto/tink/internal:proto_based_configuration_builder",
+        "//src/main/java/com/google/crypto/tink/streamingaead/internal:wrapped_streaming_aead",
+        "//src/main/java/com/google/crypto/tink/streamingaead/subtle:aes_ctr_hmac_streaming_aead",
+        "//src/main/java/com/google/crypto/tink/streamingaead/subtle:aes_ctr_hmac_streaming_proto_serialization",
+        "//src/main/java/com/google/crypto/tink/streamingaead/subtle:aes_gcm_hkdf_streaming_aead",
+        "//src/main/java/com/google/crypto/tink/streamingaead/subtle:aes_gcm_hkdf_streaming_proto_serialization",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
+        "@maven//:com_google_code_findbugs_jsr305",
+    ],
+)
+
+android_library(
+    name = "streaming_aead_config2026-android",
+    srcs = ["StreamingAeadConfig2026.java"],
+    deps = [
+        ":aes_ctr_hmac_streaming_key-android",
+        ":aes_ctr_hmac_streaming_parameters-android",
+        ":aes_gcm_hkdf_streaming_key-android",
+        ":aes_gcm_hkdf_streaming_parameters-android",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
+        "//src/main/java/com/google/crypto/tink:configuration-android",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink:streaming_aead-android",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util-android",
+        "//src/main/java/com/google/crypto/tink/internal:proto_based_configuration_builder-android",
+        "//src/main/java/com/google/crypto/tink/streamingaead/internal:wrapped_streaming_aead-android",
+        "//src/main/java/com/google/crypto/tink/streamingaead/subtle:aes_ctr_hmac_streaming_aead-android",
+        "//src/main/java/com/google/crypto/tink/streamingaead/subtle:aes_ctr_hmac_streaming_proto_serialization-android",
+        "//src/main/java/com/google/crypto/tink/streamingaead/subtle:aes_gcm_hkdf_streaming_aead-android",
+        "//src/main/java/com/google/crypto/tink/streamingaead/subtle:aes_gcm_hkdf_streaming_proto_serialization-android",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes-android",
+        "@maven//:com_google_code_findbugs_jsr305",
+    ],
+)
