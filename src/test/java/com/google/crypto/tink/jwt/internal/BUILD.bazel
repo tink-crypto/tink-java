@@ -130,7 +130,7 @@ java_test(
         "//src/main/java/com/google/crypto/tink/jwt:jwt_ml_dsa_private_key",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_ml_dsa_public_key",
         "//src/main/java/com/google/crypto/tink/jwt/internal:jwt_ml_dsa_proto_serialization",
-        "//src/main/java/com/google/crypto/tink/subtle:random",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
         "//src/main/java/com/google/crypto/tink/util:bytes",
         "//src/main/java/com/google/crypto/tink/util:secret_bytes",
         "@maven//:com_google_code_findbugs_jsr305",
