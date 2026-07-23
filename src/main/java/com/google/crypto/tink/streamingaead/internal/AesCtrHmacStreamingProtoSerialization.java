@@ -107,7 +107,7 @@ public final class AesCtrHmacStreamingProtoSerialization {
         .build();
   }
 
-  private static ProtoParametersSerialization serializeParameters(
+  public static ProtoParametersSerialization serializeParameters(
       AesCtrHmacStreamingParameters parameters) throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
         TYPE_URL,
@@ -119,7 +119,7 @@ public final class AesCtrHmacStreamingProtoSerialization {
             .toByteString());
   }
 
-  private static ProtoKeySerialization serializeKey(
+  public static ProtoKeySerialization serializeKey(
       AesCtrHmacStreamingKey key, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     return ProtoKeySerialization.create(
@@ -149,7 +149,7 @@ public final class AesCtrHmacStreamingProtoSerialization {
         .build();
   }
 
-  private static AesCtrHmacStreamingParameters parseParameters(
+  public static AesCtrHmacStreamingParameters parseParameters(
       ProtoParametersSerialization serialization) throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
       throw new IllegalArgumentException(
@@ -168,7 +168,7 @@ public final class AesCtrHmacStreamingProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException")
-  private static AesCtrHmacStreamingKey parseKey(
+  public static AesCtrHmacStreamingKey parseKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
