@@ -59,7 +59,7 @@ public final class AesCmacPrfProtoSerialization {
   private static final KeyParser KEY_PARSER =
       KeyParser.create(AesCmacPrfProtoSerialization::parseKey, TYPE_URL);
 
-  private static ProtoParametersSerialization serializeParameters(AesCmacPrfParameters parameters)
+  public static ProtoParametersSerialization serializeParameters(AesCmacPrfParameters parameters)
       throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
         TYPE_URL,
@@ -70,7 +70,7 @@ public final class AesCmacPrfProtoSerialization {
             .toByteString());
   }
 
-  private static ProtoKeySerialization serializeKey(
+  public static ProtoKeySerialization serializeKey(
       AesCmacPrfKey key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     return ProtoKeySerialization.create(
         TYPE_URL,
@@ -85,7 +85,7 @@ public final class AesCmacPrfProtoSerialization {
         key.getIdRequirementOrNull());
   }
 
-  private static AesCmacPrfParameters parseParameters(ProtoParametersSerialization serialization)
+  public static AesCmacPrfParameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
       throw new IllegalArgumentException(
@@ -112,7 +112,7 @@ public final class AesCmacPrfProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException") // Proto parsing error adds no relevant information
-  private static AesCmacPrfKey parseKey(
+  public static AesCmacPrfKey parseKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {

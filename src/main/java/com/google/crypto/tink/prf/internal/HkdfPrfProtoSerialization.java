@@ -110,7 +110,7 @@ public final class HkdfPrfProtoSerialization {
     return builder.build();
   }
 
-  private static ProtoParametersSerialization serializeParameters(HkdfPrfParameters parameters)
+  public static ProtoParametersSerialization serializeParameters(HkdfPrfParameters parameters)
       throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
         TYPE_URL,
@@ -122,7 +122,7 @@ public final class HkdfPrfProtoSerialization {
             .toByteString());
   }
 
-  private static ProtoKeySerialization serializeKey(
+  public static ProtoKeySerialization serializeKey(
       HkdfPrfKey key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     return ProtoKeySerialization.create(
         TYPE_URL,
@@ -138,7 +138,7 @@ public final class HkdfPrfProtoSerialization {
         key.getIdRequirementOrNull());
   }
 
-  private static HkdfPrfParameters parseParameters(ProtoParametersSerialization serialization)
+  public static HkdfPrfParameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
       throw new IllegalArgumentException(
@@ -169,7 +169,7 @@ public final class HkdfPrfProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException")
-  private static HkdfPrfKey parseKey(
+  public static HkdfPrfKey parseKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {

@@ -104,7 +104,7 @@ public final class HmacPrfProtoSerialization {
         .build();
   }
 
-  private static ProtoParametersSerialization serializeParameters(HmacPrfParameters parameters)
+  public static ProtoParametersSerialization serializeParameters(HmacPrfParameters parameters)
       throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
         TYPE_URL,
@@ -116,7 +116,7 @@ public final class HmacPrfProtoSerialization {
             .toByteString());
   }
 
-  private static ProtoKeySerialization serializeKey(
+  public static ProtoKeySerialization serializeKey(
       HmacPrfKey key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     return ProtoKeySerialization.create(
         TYPE_URL,
@@ -132,7 +132,7 @@ public final class HmacPrfProtoSerialization {
         key.getIdRequirementOrNull());
   }
 
-  private static HmacPrfParameters parseParameters(ProtoParametersSerialization serialization)
+  public static HmacPrfParameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
       throw new IllegalArgumentException(
@@ -162,7 +162,7 @@ public final class HmacPrfProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException")
-  private static HmacPrfKey parseKey(
+  public static HmacPrfKey parseKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
