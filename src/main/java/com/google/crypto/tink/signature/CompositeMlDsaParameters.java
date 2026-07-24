@@ -50,11 +50,10 @@ public final class CompositeMlDsaParameters extends SignatureParameters {
 
   /**
    * Describes the parameters set of ML-DSA that is used.
-   *
-   * <p>ML-DSA-44 is not supported.
    */
   @Immutable
   public static final class MlDsaInstance {
+    public static final MlDsaInstance ML_DSA_44 = new MlDsaInstance("ML_DSA_44");
     public static final MlDsaInstance ML_DSA_65 = new MlDsaInstance("ML_DSA_65");
     public static final MlDsaInstance ML_DSA_87 = new MlDsaInstance("ML_DSA_87");
 
@@ -77,8 +76,10 @@ public final class CompositeMlDsaParameters extends SignatureParameters {
     public static final ClassicalAlgorithm ECDSA_P256 = new ClassicalAlgorithm("ECDSA_P256");
     public static final ClassicalAlgorithm ECDSA_P384 = new ClassicalAlgorithm("ECDSA_P384");
     public static final ClassicalAlgorithm ECDSA_P521 = new ClassicalAlgorithm("ECDSA_P521");
+    public static final ClassicalAlgorithm RSA2048_PSS = new ClassicalAlgorithm("RSA2048_PSS");
     public static final ClassicalAlgorithm RSA3072_PSS = new ClassicalAlgorithm("RSA3072_PSS");
     public static final ClassicalAlgorithm RSA4096_PSS = new ClassicalAlgorithm("RSA4096_PSS");
+    public static final ClassicalAlgorithm RSA2048_PKCS1 = new ClassicalAlgorithm("RSA2048_PKCS1");
     public static final ClassicalAlgorithm RSA3072_PKCS1 = new ClassicalAlgorithm("RSA3072_PKCS1");
     public static final ClassicalAlgorithm RSA4096_PKCS1 = new ClassicalAlgorithm("RSA4096_PKCS1");
 
@@ -104,6 +105,12 @@ public final class CompositeMlDsaParameters extends SignatureParameters {
    * the user to set it here (and it is also not a part of the protos).
    */
   public static final class Builder {
+    private static final List<ClassicalAlgorithm> mlDsa44CompatibleClassicalAlgorithms =
+        Arrays.asList(
+            ClassicalAlgorithm.ED25519,
+            ClassicalAlgorithm.RSA2048_PSS,
+            ClassicalAlgorithm.RSA2048_PKCS1,
+            ClassicalAlgorithm.ECDSA_P256);
     private static final List<ClassicalAlgorithm> mlDsa65CompatibleClassicalAlgorithms =
         Arrays.asList(
             ClassicalAlgorithm.ED25519,
@@ -154,6 +161,12 @@ public final class CompositeMlDsaParameters extends SignatureParameters {
       if (variant == null) {
         throw new GeneralSecurityException("Variant is not set");
       }
+      if (mlDsaInstance == MlDsaInstance.ML_DSA_44
+          && !mlDsa44CompatibleClassicalAlgorithms.contains(classicalAlgorithm)) {
+        throw new GeneralSecurityException(
+            "ML-DSA-44 is not compatible with the provided classical algorithm "
+                + classicalAlgorithm);
+      }
       if (mlDsaInstance == MlDsaInstance.ML_DSA_65
           && !mlDsa65CompatibleClassicalAlgorithms.contains(classicalAlgorithm)) {
         throw new GeneralSecurityException(
@@ -166,7 +179,7 @@ public final class CompositeMlDsaParameters extends SignatureParameters {
             "ML-DSA-87 is not compatible with the provided classical algorithm "
                 + classicalAlgorithm);
       }
-      if (mlDsaInstance != MlDsaInstance.ML_DSA_65 && mlDsaInstance != MlDsaInstance.ML_DSA_87) {
+      if (mlDsaInstance != MlDsaInstance.ML_DSA_44 && mlDsaInstance != MlDsaInstance.ML_DSA_65 && mlDsaInstance != MlDsaInstance.ML_DSA_87) {
         throw new GeneralSecurityException("Unknown ML-DSA instance: " + mlDsaInstance);
       }
       return new CompositeMlDsaParameters(mlDsaInstance, classicalAlgorithm, variant);

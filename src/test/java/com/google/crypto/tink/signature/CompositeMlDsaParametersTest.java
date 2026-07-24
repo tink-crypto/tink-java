@@ -31,6 +31,62 @@ import org.junit.runners.JUnit4;
 public class CompositeMlDsaParametersTest {
 
   @Test
+  public void build_mldsa44_ed25519_works() throws Exception {
+    CompositeMlDsaParameters parameters =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ED25519)
+            .setVariant(Variant.NO_PREFIX)
+            .build();
+    assertThat(parameters.getMlDsaInstance()).isEqualTo(MlDsaInstance.ML_DSA_44);
+    assertThat(parameters.getClassicalAlgorithm()).isEqualTo(ClassicalAlgorithm.ED25519);
+    assertThat(parameters.getVariant()).isEqualTo(Variant.NO_PREFIX);
+    assertThat(parameters.hasIdRequirement()).isFalse();
+  }
+
+  @Test
+  public void build_mldsa44_ecdsaP256_works() throws Exception {
+    CompositeMlDsaParameters parameters =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P256)
+            .setVariant(Variant.TINK)
+            .build();
+    assertThat(parameters.getMlDsaInstance()).isEqualTo(MlDsaInstance.ML_DSA_44);
+    assertThat(parameters.getClassicalAlgorithm()).isEqualTo(ClassicalAlgorithm.ECDSA_P256);
+    assertThat(parameters.getVariant()).isEqualTo(Variant.TINK);
+    assertThat(parameters.hasIdRequirement()).isTrue();
+  }
+
+  @Test
+  public void build_mldsa44_rsa2048Pss_works() throws Exception {
+    CompositeMlDsaParameters parameters =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA2048_PSS)
+            .setVariant(Variant.NO_PREFIX)
+            .build();
+    assertThat(parameters.getMlDsaInstance()).isEqualTo(MlDsaInstance.ML_DSA_44);
+    assertThat(parameters.getClassicalAlgorithm()).isEqualTo(ClassicalAlgorithm.RSA2048_PSS);
+    assertThat(parameters.getVariant()).isEqualTo(Variant.NO_PREFIX);
+    assertThat(parameters.hasIdRequirement()).isFalse();
+  }
+
+  @Test
+  public void build_mldsa44_rsa2048Pkcs1_works() throws Exception {
+    CompositeMlDsaParameters parameters =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA2048_PKCS1)
+            .setVariant(Variant.NO_PREFIX)
+            .build();
+    assertThat(parameters.getMlDsaInstance()).isEqualTo(MlDsaInstance.ML_DSA_44);
+    assertThat(parameters.getClassicalAlgorithm()).isEqualTo(ClassicalAlgorithm.RSA2048_PKCS1);
+    assertThat(parameters.getVariant()).isEqualTo(Variant.NO_PREFIX);
+    assertThat(parameters.hasIdRequirement()).isFalse();
+  }
+
+  @Test
   public void build_mldsa65_ed25519_works() throws Exception {
     CompositeMlDsaParameters parameters =
         CompositeMlDsaParameters.builder()
@@ -214,6 +270,17 @@ public class CompositeMlDsaParametersTest {
   }
 
   @Test
+  public void build_mldsa44_incompatibleAlgorithm_fails() throws Exception {
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            CompositeMlDsaParameters.builder()
+                .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+                .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P521)
+                .build());
+  }
+
+  @Test
   public void build_mldsa65_incompatibleAlgorithm_fails() throws Exception {
     assertThrows(
         GeneralSecurityException.class,
@@ -221,6 +288,28 @@ public class CompositeMlDsaParametersTest {
             CompositeMlDsaParameters.builder()
                 .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
                 .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P521) // Incompatible
+                .build());
+  }
+
+  @Test
+  public void build_mldsa65_rsa2048Pss_fails() throws Exception {
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            CompositeMlDsaParameters.builder()
+                .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+                .setClassicalAlgorithm(ClassicalAlgorithm.RSA2048_PSS) // Incompatible
+                .build());
+  }
+
+  @Test
+  public void build_mldsa87_rsa2048Pkcs1_fails() throws Exception {
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            CompositeMlDsaParameters.builder()
+                .setMlDsaInstance(MlDsaInstance.ML_DSA_87)
+                .setClassicalAlgorithm(ClassicalAlgorithm.RSA2048_PKCS1) // Incompatible
                 .build());
   }
 

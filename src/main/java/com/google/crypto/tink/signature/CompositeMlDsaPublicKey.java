@@ -61,6 +61,14 @@ public final class CompositeMlDsaPublicKey extends SignaturePublicKey {
               .setSignatureEncoding(EcdsaParameters.SignatureEncoding.IEEE_P1363)
               .setVariant(EcdsaParameters.Variant.NO_PREFIX)
               .build(),
+          CompositeMlDsaParameters.ClassicalAlgorithm.RSA2048_PSS,
+          RsaSsaPssParameters.builder()
+              .setModulusSizeBits(2048)
+              .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
+              .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
+              .setSaltLengthBytes(32)
+              .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+              .build(),
           CompositeMlDsaParameters.ClassicalAlgorithm.RSA3072_PSS,
           RsaSsaPssParameters.builder()
               .setModulusSizeBits(3072)
@@ -76,6 +84,12 @@ public final class CompositeMlDsaPublicKey extends SignaturePublicKey {
               .setMgf1HashType(RsaSsaPssParameters.HashType.SHA384)
               .setSaltLengthBytes(48)
               .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+              .build(),
+          CompositeMlDsaParameters.ClassicalAlgorithm.RSA2048_PKCS1,
+          RsaSsaPkcs1Parameters.builder()
+              .setModulusSizeBits(2048)
+              .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
+              .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
               .build(),
           CompositeMlDsaParameters.ClassicalAlgorithm.RSA3072_PKCS1,
           RsaSsaPkcs1Parameters.builder()
@@ -165,7 +179,10 @@ public final class CompositeMlDsaPublicKey extends SignaturePublicKey {
                 + mlDsaPublicKey.getParameters().getVariant()
                 + " instead");
       }
-      if (!((parameters.getMlDsaInstance() == CompositeMlDsaParameters.MlDsaInstance.ML_DSA_65
+      if (!((parameters.getMlDsaInstance() == CompositeMlDsaParameters.MlDsaInstance.ML_DSA_44
+              && mlDsaPublicKey.getParameters().getMlDsaInstance()
+                  == MlDsaParameters.MlDsaInstance.ML_DSA_44)
+          || (parameters.getMlDsaInstance() == CompositeMlDsaParameters.MlDsaInstance.ML_DSA_65
               && mlDsaPublicKey.getParameters().getMlDsaInstance()
                   == MlDsaParameters.MlDsaInstance.ML_DSA_65)
           || (parameters.getMlDsaInstance() == CompositeMlDsaParameters.MlDsaInstance.ML_DSA_87
