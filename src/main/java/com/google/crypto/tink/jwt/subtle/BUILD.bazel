@@ -266,3 +266,39 @@ java_library(
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
+
+java_library(
+    name = "jwt_ecdsa_proto_serialization",
+    srcs = ["JwtEcdsaProtoSerialization.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization",
+        "//src/main/java/com/google/crypto/tink:proto_parameters_serialization",
+        "//src/main/java/com/google/crypto/tink:secret_key_access",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_ecdsa_parameters",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_ecdsa_private_key",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_ecdsa_public_key",
+        "//src/main/java/com/google/crypto/tink/jwt/internal:jwt_ecdsa_proto_serialization",
+        "@maven//:com_google_code_findbugs_jsr305",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
+    name = "jwt_ecdsa_proto_serialization-android",
+    srcs = ["JwtEcdsaProtoSerialization.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization-android",
+        "//src/main/java/com/google/crypto/tink:proto_parameters_serialization-android",
+        "//src/main/java/com/google/crypto/tink:secret_key_access-android",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_ecdsa_parameters-android",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_ecdsa_private_key-android",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_ecdsa_public_key-android",
+        "//src/main/java/com/google/crypto/tink/jwt/internal:jwt_ecdsa_proto_serialization-android",
+        "@maven//:com_google_code_findbugs_jsr305",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)

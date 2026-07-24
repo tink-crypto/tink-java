@@ -117,7 +117,7 @@ public final class JwtEcdsaProtoSerialization {
         .build();
   }
 
-  private static ProtoParametersSerialization serializeParameters(JwtEcdsaParameters parameters)
+  public static ProtoParametersSerialization serializeParameters(JwtEcdsaParameters parameters)
       throws GeneralSecurityException {
     OutputPrefixType outputPrefixType = OutputPrefixType.TINK;
     if (parameters.getKidStrategy().equals(JwtEcdsaParameters.KidStrategy.IGNORED)) {
@@ -127,7 +127,7 @@ public final class JwtEcdsaProtoSerialization {
         TYPE_URL, outputPrefixType, serializeToJwtEcdsaKeyFormat(parameters).toByteString());
   }
 
-  private static JwtEcdsaParameters parseParameters(ProtoParametersSerialization serialization)
+  public static JwtEcdsaParameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
       throw new IllegalArgumentException(
@@ -229,7 +229,7 @@ public final class JwtEcdsaProtoSerialization {
     return builder.build();
   }
 
-  private static ProtoKeySerialization serializePublicKey(
+  public static ProtoKeySerialization serializePublicKey(
       JwtEcdsaPublicKey key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     return ProtoKeySerialization.create(
         PUBLIC_TYPE_URL,
@@ -279,7 +279,7 @@ public final class JwtEcdsaProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException")
-  private static JwtEcdsaPublicKey parsePublicKey(
+  public static JwtEcdsaPublicKey parsePublicKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(PUBLIC_TYPE_URL)) {
@@ -312,7 +312,7 @@ public final class JwtEcdsaProtoSerialization {
         .build();
   }
 
-  private static ProtoKeySerialization serializePrivateKey(
+  public static ProtoKeySerialization serializePrivateKey(
       JwtEcdsaPrivateKey key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     return ProtoKeySerialization.create(
         TYPE_URL,
@@ -323,7 +323,7 @@ public final class JwtEcdsaProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException")
-  private static JwtEcdsaPrivateKey parsePrivateKey(
+  public static JwtEcdsaPrivateKey parsePrivateKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
