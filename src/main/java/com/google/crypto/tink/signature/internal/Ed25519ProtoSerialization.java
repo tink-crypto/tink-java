@@ -142,7 +142,7 @@ public final class Ed25519ProtoSerialization {
         .build();
   }
 
-  private static ProtoParametersSerialization serializeParameters(Ed25519Parameters parameters)
+  public static ProtoParametersSerialization serializeParameters(Ed25519Parameters parameters)
       throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
         PRIVATE_TYPE_URL,
@@ -156,7 +156,7 @@ public final class Ed25519ProtoSerialization {
    * @param access may be null for public key material
    * @throws GeneralSecurityException if the key cannot be serialized (e.g. unknown variant)
    */
-  private static ProtoKeySerialization serializePublicKey(
+  public static ProtoKeySerialization serializePublicKey(
       Ed25519PublicKey key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     return ProtoKeySerialization.create(
         PUBLIC_TYPE_URL,
@@ -166,7 +166,7 @@ public final class Ed25519ProtoSerialization {
         key.getIdRequirementOrNull());
   }
 
-  private static ProtoKeySerialization serializePrivateKey(
+  public static ProtoKeySerialization serializePrivateKey(
       Ed25519PrivateKey key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     return ProtoKeySerialization.create(
         PRIVATE_TYPE_URL,
@@ -182,7 +182,7 @@ public final class Ed25519ProtoSerialization {
         key.getIdRequirementOrNull());
   }
 
-  private static Ed25519Parameters parseParameters(ProtoParametersSerialization serialization)
+  public static Ed25519Parameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(PRIVATE_TYPE_URL)) {
       throw new IllegalArgumentException(
@@ -205,7 +205,7 @@ public final class Ed25519ProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException")
-  private static Ed25519PublicKey parsePublicKey(
+  public static Ed25519PublicKey parsePublicKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(PUBLIC_TYPE_URL)) {
@@ -231,7 +231,7 @@ public final class Ed25519ProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException") // Prevents leaking key material
-  private static Ed25519PrivateKey parsePrivateKey(
+  public static Ed25519PrivateKey parsePrivateKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(PRIVATE_TYPE_URL)) {

@@ -234,7 +234,7 @@ public final class EcdsaProtoSerialization {
         .build();
   }
 
-  private static ProtoParametersSerialization serializeParameters(EcdsaParameters parameters)
+  public static ProtoParametersSerialization serializeParameters(EcdsaParameters parameters)
       throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
         PRIVATE_TYPE_URL,
@@ -245,7 +245,7 @@ public final class EcdsaProtoSerialization {
             .toByteString());
   }
 
-  private static ProtoKeySerialization serializePublicKey(
+  public static ProtoKeySerialization serializePublicKey(
       EcdsaPublicKey key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     return ProtoKeySerialization.create(
         PUBLIC_TYPE_URL,
@@ -255,7 +255,7 @@ public final class EcdsaProtoSerialization {
         key.getIdRequirementOrNull());
   }
 
-  private static ProtoKeySerialization serializePrivateKey(
+  public static ProtoKeySerialization serializePrivateKey(
       EcdsaPrivateKey key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     int encLength = getEncodingLength(key.getParameters().getCurveType());
     return ProtoKeySerialization.create(
@@ -274,7 +274,7 @@ public final class EcdsaProtoSerialization {
         key.getIdRequirementOrNull());
   }
 
-  private static EcdsaParameters parseParameters(ProtoParametersSerialization serialization)
+  public static EcdsaParameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(PRIVATE_TYPE_URL)) {
       throw new IllegalArgumentException(
@@ -298,7 +298,7 @@ public final class EcdsaProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException")
-  private static EcdsaPublicKey parsePublicKey(
+  public static EcdsaPublicKey parsePublicKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(PUBLIC_TYPE_URL)) {
@@ -334,7 +334,7 @@ public final class EcdsaProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException")
-  private static EcdsaPrivateKey parsePrivateKey(
+  public static EcdsaPrivateKey parsePrivateKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(PRIVATE_TYPE_URL)) {
