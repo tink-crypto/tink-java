@@ -139,7 +139,7 @@ public final class JwtRsaSsaPkcs1ProtoSerialization {
         .build();
   }
 
-  private static ProtoParametersSerialization serializeParameters(
+  public static ProtoParametersSerialization serializeParameters(
       JwtRsaSsaPkcs1Parameters parameters) throws GeneralSecurityException {
     OutputPrefixType outputPrefixType = toProtoOutputPrefixType(parameters);
     return ProtoParametersSerialization.create(
@@ -163,7 +163,7 @@ public final class JwtRsaSsaPkcs1ProtoSerialization {
     return builder.build();
   }
 
-  private static ProtoKeySerialization serializePublicKey(
+  public static ProtoKeySerialization serializePublicKey(
       JwtRsaSsaPkcs1PublicKey key, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     return ProtoKeySerialization.create(
@@ -178,7 +178,7 @@ public final class JwtRsaSsaPkcs1ProtoSerialization {
     return encodeBigInteger(i.getBigInteger(access));
   }
 
-  private static ProtoKeySerialization serializePrivateKey(
+  public static ProtoKeySerialization serializePrivateKey(
       JwtRsaSsaPkcs1PrivateKey key, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     SecretKeyAccess a = SecretKeyAccess.requireAccess(access);
@@ -211,8 +211,8 @@ public final class JwtRsaSsaPkcs1ProtoSerialization {
     }
   }
 
-  private static JwtRsaSsaPkcs1Parameters parseParameters(
-      ProtoParametersSerialization serialization) throws GeneralSecurityException {
+  public static JwtRsaSsaPkcs1Parameters parseParameters(ProtoParametersSerialization serialization)
+      throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(PRIVATE_TYPE_URL)) {
       throw new IllegalArgumentException(
           "Wrong type URL in call to JwtRsaSsaPkcs1ProtoSerialization.parseParameters: "
@@ -288,7 +288,7 @@ public final class JwtRsaSsaPkcs1ProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException")
-  private static JwtRsaSsaPkcs1PublicKey parsePublicKey(
+  public static JwtRsaSsaPkcs1PublicKey parsePublicKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(PUBLIC_TYPE_URL)) {
@@ -315,7 +315,7 @@ public final class JwtRsaSsaPkcs1ProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException")
-  private static JwtRsaSsaPkcs1PrivateKey parsePrivateKey(
+  public static JwtRsaSsaPkcs1PrivateKey parsePrivateKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(PRIVATE_TYPE_URL)) {
