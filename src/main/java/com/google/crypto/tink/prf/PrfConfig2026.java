@@ -18,25 +18,22 @@ package com.google.crypto.tink.prf;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.Configuration;
-import com.google.crypto.tink.Key;
-import com.google.crypto.tink.KeysetHandleInterface;
-import com.google.crypto.tink.Parameters;
-import com.google.crypto.tink.ProtoKeySerializer;
+import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
-import com.google.crypto.tink.internal.SerializationRegistry;
-import com.google.crypto.tink.prf.internal.AesCmacPrfProtoSerialization;
-import com.google.crypto.tink.prf.internal.HkdfPrfProtoSerialization;
-import com.google.crypto.tink.prf.internal.HmacPrfProtoSerialization;
-import com.google.crypto.tink.subtle.PrfAesCmac;
-import com.google.crypto.tink.subtle.PrfHmacJce;
-import com.google.crypto.tink.subtle.prf.HkdfStreamingPrf;
-import com.google.crypto.tink.subtle.prf.PrfImpl;
+import com.google.crypto.tink.internal.ProtoBasedConfigurationBuilder;
+import com.google.crypto.tink.prf.internal.WrappedPrfSet;
+import com.google.crypto.tink.prf.subtle.AesCmacPrf;
+import com.google.crypto.tink.prf.subtle.AesCmacPrfProtoSerialization;
+import com.google.crypto.tink.prf.subtle.HkdfPrf;
+import com.google.crypto.tink.prf.subtle.HkdfPrfProtoSerialization;
+import com.google.crypto.tink.prf.subtle.HmacPrf;
+import com.google.crypto.tink.prf.subtle.HmacPrfProtoSerialization;
 import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
 import javax.annotation.Nullable;
 
 /**
- * PrfConfig2026 contains the following primitives and algorithms for PrfSet:
+ * PrfConfig2026 contains the following primitives and algorithms for {@link PrfSet}:
  *
  * <ul>
  *   <li>HmacPrf
@@ -47,9 +44,7 @@ import javax.annotation.Nullable;
 public class PrfConfig2026 {
   private PrfConfig2026() {}
 
-  private static final PrfSetWrapper PRF_SET_WRAPPER = new PrfSetWrapper();
   private static final Configuration CONFIGURATION = create();
-  private static final ProtoKeySerializer SERIALIZER = createProtoKeySerializer();
 
   /** Returns the {@link Configuration} instance. */
   public static Configuration get() throws GeneralSecurityException {
@@ -60,77 +55,47 @@ public class PrfConfig2026 {
     return CONFIGURATION;
   }
 
-  private static Configuration create() {
-    return new Configuration() {
-      @Override
-      public <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
-          throws GeneralSecurityException {
-        if (clazz.equals(PrfSet.class)) {
-          return clazz.cast(PRF_SET_WRAPPER.wrap(keysetHandle, PrfConfig2026::createPrf));
-        }
-        throw new GeneralSecurityException("PrfConfig2026 can only create PrfSet primitive");
-      }
+  private static final String HMAC_PRF_TYPE_URL =
+      "type.googleapis.com/google.crypto.tink.HmacPrfKey";
+  private static final String HKDF_PRF_TYPE_URL =
+      "type.googleapis.com/google.crypto.tink.HkdfPrfKey";
+  private static final String AES_CMAC_PRF_TYPE_URL =
+      "type.googleapis.com/google.crypto.tink.AesCmacPrfKey";
 
-      @Override
-      @AccessesPartialKey
-      public Key createKey(Parameters parameters, @Nullable Integer idRequirement)
-          throws GeneralSecurityException {
-        if (idRequirement != null) {
-          throw new GeneralSecurityException("PRF Keys are not expected to have an id Requirement");
-        }
-        if (parameters instanceof HmacPrfParameters) {
-          HmacPrfParameters hmacPrfParameters = (HmacPrfParameters) parameters;
-          return HmacPrfKey.builder()
-              .setParameters(hmacPrfParameters)
-              .setKeyBytes(SecretBytes.randomBytes(hmacPrfParameters.getKeySizeBytes()))
-              .build();
-        }
-        if (parameters instanceof HkdfPrfParameters) {
-          HkdfPrfParameters hkdfPrfParameters = (HkdfPrfParameters) parameters;
-          return HkdfPrfKey.builder()
-              .setParameters(hkdfPrfParameters)
-              .setKeyBytes(SecretBytes.randomBytes(hkdfPrfParameters.getKeySizeBytes()))
-              .build();
-        }
-        if (parameters instanceof AesCmacPrfParameters) {
-          AesCmacPrfParameters aesCmacPrfParameters = (AesCmacPrfParameters) parameters;
-          return AesCmacPrfKey.create(
-              aesCmacPrfParameters,
-              SecretBytes.randomBytes(aesCmacPrfParameters.getKeySizeBytes()));
-        }
-        throw new GeneralSecurityException(
-            "Unrecognized parameters for PrfConfig2026:" + parameters);
-      }
-
-      @Override
-      public <P> P getOrNull(Class<P> clazz) {
-        if (clazz.equals(ProtoKeySerializer.class)) {
-          return clazz.cast(SERIALIZER);
-        }
-        return null;
-      }
-    };
-  }
-
-  private static Prf createPrf(KeysetHandleInterface.Entry entry) throws GeneralSecurityException {
-    Key key = entry.getKey();
-    if (key instanceof HmacPrfKey) {
-      return PrfHmacJce.create((HmacPrfKey) key);
-    }
-    if (key instanceof HkdfPrfKey) {
-      return createHkdfPrf((HkdfPrfKey) key);
-    }
-    if (key instanceof AesCmacPrfKey) {
-      return createAesCmacPrf((AesCmacPrfKey) key);
-    }
-    throw new GeneralSecurityException("Unknown key class: " + key.getClass());
-  }
-
-  // We use a somewhat larger minimum key size than usual, because PRFs might be used by many users,
-  // in which case the security can degrade by a factor depending on the number of users. (Discussed
-  // for example in https://eprint.iacr.org/2012/159)
   private static final int MIN_HKDF_PRF_KEY_SIZE = 32;
 
+  @LowLevelCryptoCaller
+  private static Configuration create() {
+    return new ProtoBasedConfigurationBuilder()
+        .addPrimitiveWrapper(PrfSet.class, Prf.class, WrappedPrfSet::create)
+        // HmacPrf
+        .addKeyCreator(HmacPrfParameters.class, PrfConfig2026::createHmacPrfKey)
+        .addPrimitiveConstructor(HmacPrf::create, HmacPrfKey.class, Prf.class)
+        .addKeySerializer(HmacPrfKey.class, HmacPrfProtoSerialization::serializeKey)
+        .addParametersSerializer(
+            HmacPrfParameters.class, HmacPrfProtoSerialization::serializeParameters)
+        .addKeyParser(HMAC_PRF_TYPE_URL, HmacPrfProtoSerialization::parseKey)
+        .addParametersParser(HMAC_PRF_TYPE_URL, HmacPrfProtoSerialization::parseParameters)
+        // HkdfPrf
+        .addKeyCreator(HkdfPrfParameters.class, PrfConfig2026::createHkdfPrfKey)
+        .addPrimitiveConstructor(PrfConfig2026::createHkdfPrf, HkdfPrfKey.class, Prf.class)
+        .addKeySerializer(HkdfPrfKey.class, HkdfPrfProtoSerialization::serializeKey)
+        .addParametersSerializer(
+            HkdfPrfParameters.class, HkdfPrfProtoSerialization::serializeParameters)
+        .addKeyParser(HKDF_PRF_TYPE_URL, HkdfPrfProtoSerialization::parseKey)
+        .addParametersParser(HKDF_PRF_TYPE_URL, HkdfPrfProtoSerialization::parseParameters)
+        // AesCmacPrf
+        .addKeyCreator(AesCmacPrfParameters.class, PrfConfig2026::createAesCmacPrfKey)
+        .addPrimitiveConstructor(PrfConfig2026::createAesCmacPrf, AesCmacPrfKey.class, Prf.class)
+        .addKeySerializer(AesCmacPrfKey.class, AesCmacPrfProtoSerialization::serializeKey)
+        .addParametersSerializer(
+            AesCmacPrfParameters.class, AesCmacPrfProtoSerialization::serializeParameters)
+        .addKeyParser(AES_CMAC_PRF_TYPE_URL, AesCmacPrfProtoSerialization::parseKey)
+        .addParametersParser(AES_CMAC_PRF_TYPE_URL, AesCmacPrfProtoSerialization::parseParameters)
+        .build();
+  }
+
+  @LowLevelCryptoCaller
   private static Prf createHkdfPrf(HkdfPrfKey key) throws GeneralSecurityException {
     if (key.getParameters().getKeySizeBytes() < MIN_HKDF_PRF_KEY_SIZE) {
       throw new GeneralSecurityException(
@@ -140,25 +105,50 @@ public class PrfConfig2026 {
         && key.getParameters().getHashType() != HkdfPrfParameters.HashType.SHA512) {
       throw new GeneralSecurityException("HkdfPrf hash type must be SHA256 or SHA512");
     }
-    return PrfImpl.wrap(HkdfStreamingPrf.create(key));
+    return HkdfPrf.create(key);
   }
 
+  @LowLevelCryptoCaller
   private static Prf createAesCmacPrf(AesCmacPrfKey key) throws GeneralSecurityException {
     if (key.getParameters().getKeySizeBytes() != 32) {
       throw new GeneralSecurityException("AesCmacPrf key size must be 32 bytes");
     }
-    return PrfAesCmac.create(key);
+    return AesCmacPrf.create(key);
   }
 
-  private static ProtoKeySerializer createProtoKeySerializer() {
-    try {
-      SerializationRegistry.Builder builder = new SerializationRegistry.Builder();
-      HmacPrfProtoSerialization.register(builder);
-      HkdfPrfProtoSerialization.register(builder);
-      AesCmacPrfProtoSerialization.register(builder);
-      return builder.build();
-    } catch (GeneralSecurityException e) {
-      throw new IllegalStateException(e);
+  @AccessesPartialKey
+  private static HmacPrfKey createHmacPrfKey(
+      HmacPrfParameters parameters, @Nullable Integer idRequirement)
+      throws GeneralSecurityException {
+    if (idRequirement != null) {
+      throw new GeneralSecurityException("PRF Keys are not expected to have an id Requirement");
     }
+    return HmacPrfKey.builder()
+        .setParameters(parameters)
+        .setKeyBytes(SecretBytes.randomBytes(parameters.getKeySizeBytes()))
+        .build();
+  }
+
+  @AccessesPartialKey
+  private static HkdfPrfKey createHkdfPrfKey(
+      HkdfPrfParameters parameters, @Nullable Integer idRequirement)
+      throws GeneralSecurityException {
+    if (idRequirement != null) {
+      throw new GeneralSecurityException("PRF Keys are not expected to have an id Requirement");
+    }
+    return HkdfPrfKey.builder()
+        .setParameters(parameters)
+        .setKeyBytes(SecretBytes.randomBytes(parameters.getKeySizeBytes()))
+        .build();
+  }
+
+  @AccessesPartialKey
+  private static AesCmacPrfKey createAesCmacPrfKey(
+      AesCmacPrfParameters parameters, @Nullable Integer idRequirement)
+      throws GeneralSecurityException {
+    if (idRequirement != null) {
+      throw new GeneralSecurityException("PRF Keys are not expected to have an id Requirement");
+    }
+    return AesCmacPrfKey.create(parameters, SecretBytes.randomBytes(parameters.getKeySizeBytes()));
   }
 }
