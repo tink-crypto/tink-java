@@ -1,0 +1,252 @@
+// Copyright 2023 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+////////////////////////////////////////////////////////////////////////////////
+
+package com.google.crypto.tink.jwt.subtle;
+
+import com.google.crypto.tink.AccessesPartialKey;
+import com.google.crypto.tink.LowLevelCryptoCaller;
+import com.google.crypto.tink.ProtoKeySerialization;
+import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
+import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
+import com.google.crypto.tink.ProtoParametersSerialization;
+import com.google.crypto.tink.SecretKeyAccess;
+import com.google.crypto.tink.jwt.JwtHmacKey;
+import com.google.crypto.tink.jwt.JwtHmacParameters;
+import com.google.crypto.tink.proto.JwtHmacAlgorithm;
+import com.google.crypto.tink.proto.JwtHmacKey.CustomKid;
+import com.google.crypto.tink.util.SecretBytes;
+import com.google.errorprone.annotations.RestrictedApi;
+import com.google.protobuf.ByteString;
+import com.google.protobuf.ExtensionRegistryLite;
+import com.google.protobuf.InvalidProtocolBufferException;
+import java.security.GeneralSecurityException;
+import javax.annotation.Nullable;
+
+/**
+ * Methods to serialize and parse {@link JwtHmacKey} objects and {@link JwtHmacParameters} objects.
+ */
+@AccessesPartialKey
+@SuppressWarnings("UnnecessarilyFullyQualified") // Fully specifying proto types is more readable
+public final class JwtHmacProtoSerialization {
+  private static final String TYPE_URL = "type.googleapis.com/google.crypto.tink.JwtHmacKey";
+
+  private static JwtHmacAlgorithm toProtoAlgorithm(JwtHmacParameters.Algorithm hashType)
+      throws GeneralSecurityException {
+    if (JwtHmacParameters.Algorithm.HS256.equals(hashType)) {
+      return JwtHmacAlgorithm.HS256;
+    }
+    if (JwtHmacParameters.Algorithm.HS384.equals(hashType)) {
+      return JwtHmacAlgorithm.HS384;
+    }
+    if (JwtHmacParameters.Algorithm.HS512.equals(hashType)) {
+      return JwtHmacAlgorithm.HS512;
+    }
+    throw new GeneralSecurityException("Unable to serialize HashType " + hashType);
+  }
+
+  private static JwtHmacParameters.Algorithm toAlgorithm(JwtHmacAlgorithm hashType)
+      throws GeneralSecurityException {
+    switch (hashType) {
+      case HS256:
+        return JwtHmacParameters.Algorithm.HS256;
+      case HS384:
+        return JwtHmacParameters.Algorithm.HS384;
+      case HS512:
+        return JwtHmacParameters.Algorithm.HS512;
+      default:
+        throw new GeneralSecurityException("Unable to parse HashType: " + hashType.getNumber());
+    }
+  }
+
+  private static com.google.crypto.tink.proto.JwtHmacKeyFormat serializeToJwtHmacKeyFormat(
+      JwtHmacParameters parameters) throws GeneralSecurityException {
+    if (parameters.getKidStrategy().equals(JwtHmacParameters.KidStrategy.CUSTOM)) {
+      throw new GeneralSecurityException(
+          "Unable to serialize Parameters object with KidStrategy CUSTOM");
+    }
+    return com.google.crypto.tink.proto.JwtHmacKeyFormat.newBuilder()
+        .setVersion(0)
+        .setAlgorithm(toProtoAlgorithm(parameters.getAlgorithm()))
+        .setKeySize(parameters.getKeySizeBytes())
+        .build();
+  }
+
+  @RestrictedApi(
+      explanation =
+          "LowLevelCryptoCaller APIs are useful for implementing protocols, or higher level"
+              + " cryptographic primitives. However, most users should use Keyset APIs in order to"
+              + " be prepared for key rotation",
+      allowedOnPath = ".*Test\\.java",
+      allowlistAnnotations = {LowLevelCryptoCaller.class})
+  public static ProtoParametersSerialization serializeParameters(JwtHmacParameters parameters)
+      throws GeneralSecurityException {
+    OutputPrefixType outputPrefixType = OutputPrefixType.TINK;
+    if (parameters.getKidStrategy().equals(JwtHmacParameters.KidStrategy.IGNORED)) {
+      outputPrefixType = OutputPrefixType.RAW;
+    }
+    return ProtoParametersSerialization.create(
+        TYPE_URL, outputPrefixType, serializeToJwtHmacKeyFormat(parameters).toByteString());
+  }
+
+  @RestrictedApi(
+      explanation =
+          "LowLevelCryptoCaller APIs are useful for implementing protocols, or higher level"
+              + " cryptographic primitives. However, most users should use Keyset APIs in order to"
+              + " be prepared for key rotation",
+      allowedOnPath = ".*Test\\.java",
+      allowlistAnnotations = {LowLevelCryptoCaller.class})
+  public static ProtoKeySerialization serializeKey(JwtHmacKey key, @Nullable SecretKeyAccess access)
+      throws GeneralSecurityException {
+    com.google.crypto.tink.proto.JwtHmacKey.Builder protoKeyBuilder =
+        com.google.crypto.tink.proto.JwtHmacKey.newBuilder();
+    protoKeyBuilder
+        .setVersion(0)
+        .setAlgorithm(toProtoAlgorithm(key.getParameters().getAlgorithm()))
+        .setKeyValue(
+            ByteString.copyFrom(
+                key.getKeyBytes().toByteArray(SecretKeyAccess.requireAccess(access))));
+    OutputPrefixType outputPrefixType = null;
+    if (key.getParameters().getKidStrategy().equals(JwtHmacParameters.KidStrategy.CUSTOM)) {
+      protoKeyBuilder.setCustomKid(CustomKid.newBuilder().setValue(key.getKid().get()));
+      outputPrefixType = OutputPrefixType.RAW;
+    }
+    if (key.getParameters().getKidStrategy().equals(JwtHmacParameters.KidStrategy.IGNORED)) {
+      outputPrefixType = OutputPrefixType.RAW;
+    }
+    if (key.getParameters()
+        .getKidStrategy()
+        .equals(JwtHmacParameters.KidStrategy.BASE64_ENCODED_KEY_ID)) {
+      outputPrefixType = OutputPrefixType.TINK;
+    }
+    if (outputPrefixType == null) {
+      throw new GeneralSecurityException(
+          "Unknown KID Strategy in " + key.getParameters().getKidStrategy());
+    }
+
+    return ProtoKeySerialization.create(
+        TYPE_URL,
+        protoKeyBuilder.build().toByteString(),
+        KeyMaterialType.SYMMETRIC,
+        outputPrefixType,
+        key.getIdRequirementOrNull());
+  }
+
+  @RestrictedApi(
+      explanation =
+          "LowLevelCryptoCaller APIs are useful for implementing protocols, or higher level"
+              + " cryptographic primitives. However, most users should use Keyset APIs in order to"
+              + " be prepared for key rotation",
+      allowedOnPath = ".*Test\\.java",
+      allowlistAnnotations = {LowLevelCryptoCaller.class})
+  public static JwtHmacParameters parseParameters(ProtoParametersSerialization serialization)
+      throws GeneralSecurityException {
+    if (!serialization.getTypeUrl().equals(TYPE_URL)) {
+      throw new IllegalArgumentException(
+          "Wrong type URL in call to JwtHmacProtoSerialization.parseParameters: "
+              + serialization.getTypeUrl());
+    }
+    com.google.crypto.tink.proto.JwtHmacKeyFormat format;
+    try {
+      format =
+          com.google.crypto.tink.proto.JwtHmacKeyFormat.parseFrom(
+              serialization.getValue(), ExtensionRegistryLite.getEmptyRegistry());
+    } catch (InvalidProtocolBufferException e) {
+      throw new GeneralSecurityException("Parsing JwtHmacParameters failed: ", e);
+    }
+    if (format.getVersion() != 0) {
+      throw new GeneralSecurityException(
+          "Parsing JwtHmacParameters failed: unknown Version " + format.getVersion());
+    }
+    JwtHmacParameters.KidStrategy kidStrategy = null;
+    if (serialization.getOutputPrefixType().equals(OutputPrefixType.TINK)) {
+      kidStrategy = JwtHmacParameters.KidStrategy.BASE64_ENCODED_KEY_ID;
+    }
+    if (serialization.getOutputPrefixType().equals(OutputPrefixType.RAW)) {
+      kidStrategy = JwtHmacParameters.KidStrategy.IGNORED;
+    }
+    if (kidStrategy == null) {
+      throw new GeneralSecurityException("Invalid OutputPrefixType for JwtHmacKeyFormat");
+    }
+    return JwtHmacParameters.builder()
+        .setAlgorithm(toAlgorithm(format.getAlgorithm()))
+        .setKeySizeBytes(format.getKeySize())
+        .setKidStrategy(kidStrategy)
+        .build();
+  }
+
+  @RestrictedApi(
+      explanation =
+          "LowLevelCryptoCaller APIs are useful for implementing protocols, or higher level"
+              + " cryptographic primitives. However, most users should use Keyset APIs in order to"
+              + " be prepared for key rotation",
+      allowedOnPath = ".*Test\\.java",
+      allowlistAnnotations = {LowLevelCryptoCaller.class})
+  @SuppressWarnings("UnusedException")
+  public static JwtHmacKey parseKey(
+      ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
+      throws GeneralSecurityException {
+    if (!serialization.getTypeUrl().equals(TYPE_URL)) {
+      throw new IllegalArgumentException(
+          "Wrong type URL in call to JwtHmacProtoSerialization.parseKey");
+    }
+    try {
+      com.google.crypto.tink.proto.JwtHmacKey protoKey =
+          com.google.crypto.tink.proto.JwtHmacKey.parseFrom(
+              serialization.getValue(), ExtensionRegistryLite.getEmptyRegistry());
+      if (protoKey.getVersion() != 0) {
+        throw new GeneralSecurityException("Only version 0 keys are accepted");
+      }
+      JwtHmacParameters.Builder parametersBuilder = JwtHmacParameters.builder();
+      JwtHmacKey.Builder keyBuilder = JwtHmacKey.builder();
+      if (serialization
+          .getOutputPrefixType()
+          .equals(com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK)) {
+        if (protoKey.hasCustomKid()) {
+          throw new GeneralSecurityException(
+              "Keys serialized with OutputPrefixType TINK should not have a custom kid");
+        }
+        @Nullable Integer idRequirement = serialization.getIdRequirementOrNull();
+        if (idRequirement == null) {
+          throw new GeneralSecurityException(
+              "Keys serialized with OutputPrefixType TINK need an ID Requirement");
+        }
+        parametersBuilder.setKidStrategy(JwtHmacParameters.KidStrategy.BASE64_ENCODED_KEY_ID);
+        keyBuilder.setIdRequirement(idRequirement);
+      } else if (serialization
+          .getOutputPrefixType()
+          .equals(com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW)) {
+        if (protoKey.hasCustomKid()) {
+          parametersBuilder.setKidStrategy(JwtHmacParameters.KidStrategy.CUSTOM);
+          keyBuilder.setCustomKid(protoKey.getCustomKid().getValue());
+        } else {
+          parametersBuilder.setKidStrategy(JwtHmacParameters.KidStrategy.IGNORED);
+        }
+      }
+      parametersBuilder.setAlgorithm(toAlgorithm(protoKey.getAlgorithm()));
+      parametersBuilder.setKeySizeBytes(protoKey.getKeyValue().size());
+      return keyBuilder
+          .setKeyBytes(
+              SecretBytes.copyFrom(
+                  protoKey.getKeyValue().toByteArray(), SecretKeyAccess.requireAccess(access)))
+          .setParameters(parametersBuilder.build())
+          .build();
+    } catch (InvalidProtocolBufferException | IllegalArgumentException e) {
+      throw new GeneralSecurityException("Parsing JwtHmacKey failed");
+    }
+  }
+
+  private JwtHmacProtoSerialization() {}
+}

@@ -17,223 +17,39 @@
 package com.google.crypto.tink.jwt;
 
 import com.google.crypto.tink.AccessesPartialKey;
-import com.google.crypto.tink.ProtoKeySerialization;
-import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
-import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
-import com.google.crypto.tink.ProtoParametersSerialization;
-import com.google.crypto.tink.SecretKeyAccess;
+import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.internal.KeyParser;
 import com.google.crypto.tink.internal.KeySerializer;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ParametersParser;
 import com.google.crypto.tink.internal.ParametersSerializer;
-import com.google.crypto.tink.proto.JwtHmacAlgorithm;
-import com.google.crypto.tink.proto.JwtHmacKey.CustomKid;
-import com.google.crypto.tink.util.SecretBytes;
-import com.google.protobuf.ByteString;
-import com.google.protobuf.ExtensionRegistryLite;
-import com.google.protobuf.InvalidProtocolBufferException;
 import java.security.GeneralSecurityException;
-import javax.annotation.Nullable;
 
 /**
  * Methods to serialize and parse {@link JwtHmacKey} objects and {@link JwtHmacParameters} objects.
  */
 @AccessesPartialKey
-@SuppressWarnings("UnnecessarilyFullyQualified") // Fully specifying proto types is more readable
+@LowLevelCryptoCaller
 final class JwtHmacProtoSerialization {
   private static final String TYPE_URL = "type.googleapis.com/google.crypto.tink.JwtHmacKey";
 
-  private static final ParametersSerializer<JwtHmacParameters>
-      PARAMETERS_SERIALIZER =
-          ParametersSerializer.create(
-              JwtHmacProtoSerialization::serializeParameters, JwtHmacParameters.class);
+  private static final ParametersSerializer<JwtHmacParameters> PARAMETERS_SERIALIZER =
+      ParametersSerializer.create(
+          com.google.crypto.tink.jwt.subtle.JwtHmacProtoSerialization::serializeParameters,
+          JwtHmacParameters.class);
 
   private static final ParametersParser PARAMETERS_PARSER =
-      ParametersParser.create(JwtHmacProtoSerialization::parseParameters, TYPE_URL);
+      ParametersParser.create(
+          com.google.crypto.tink.jwt.subtle.JwtHmacProtoSerialization::parseParameters, TYPE_URL);
 
   private static final KeySerializer<JwtHmacKey> KEY_SERIALIZER =
-      KeySerializer.create(JwtHmacProtoSerialization::serializeKey, JwtHmacKey.class);
+      KeySerializer.create(
+          com.google.crypto.tink.jwt.subtle.JwtHmacProtoSerialization::serializeKey,
+          JwtHmacKey.class);
 
   private static final KeyParser KEY_PARSER =
-      KeyParser.create(JwtHmacProtoSerialization::parseKey, TYPE_URL);
-
-  private static JwtHmacAlgorithm toProtoAlgorithm(JwtHmacParameters.Algorithm hashType)
-      throws GeneralSecurityException {
-    if (JwtHmacParameters.Algorithm.HS256.equals(hashType)) {
-      return JwtHmacAlgorithm.HS256;
-    }
-    if (JwtHmacParameters.Algorithm.HS384.equals(hashType)) {
-      return JwtHmacAlgorithm.HS384;
-    }
-    if (JwtHmacParameters.Algorithm.HS512.equals(hashType)) {
-      return JwtHmacAlgorithm.HS512;
-    }
-    throw new GeneralSecurityException("Unable to serialize HashType " + hashType);
-  }
-
-  private static JwtHmacParameters.Algorithm toAlgorithm(JwtHmacAlgorithm hashType)
-      throws GeneralSecurityException {
-    switch (hashType) {
-      case HS256:
-        return JwtHmacParameters.Algorithm.HS256;
-      case HS384:
-        return JwtHmacParameters.Algorithm.HS384;
-      case HS512:
-        return JwtHmacParameters.Algorithm.HS512;
-      default:
-        throw new GeneralSecurityException("Unable to parse HashType: " + hashType.getNumber());
-    }
-  }
-
-  private static com.google.crypto.tink.proto.JwtHmacKeyFormat serializeToJwtHmacKeyFormat(
-      JwtHmacParameters parameters) throws GeneralSecurityException {
-    if (parameters.getKidStrategy().equals(JwtHmacParameters.KidStrategy.CUSTOM)) {
-      throw new GeneralSecurityException(
-          "Unable to serialize Parameters object with KidStrategy CUSTOM");
-    }
-    return com.google.crypto.tink.proto.JwtHmacKeyFormat.newBuilder()
-        .setVersion(0)
-        .setAlgorithm(toProtoAlgorithm(parameters.getAlgorithm()))
-        .setKeySize(parameters.getKeySizeBytes())
-        .build();
-  }
-
-  private static ProtoParametersSerialization serializeParameters(JwtHmacParameters parameters)
-      throws GeneralSecurityException {
-    OutputPrefixType outputPrefixType = OutputPrefixType.TINK;
-    if (parameters.getKidStrategy().equals(JwtHmacParameters.KidStrategy.IGNORED)) {
-      outputPrefixType = OutputPrefixType.RAW;
-    }
-    return ProtoParametersSerialization.create(
-        TYPE_URL, outputPrefixType, serializeToJwtHmacKeyFormat(parameters).toByteString());
-  }
-
-  private static ProtoKeySerialization serializeKey(
-      JwtHmacKey key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
-    com.google.crypto.tink.proto.JwtHmacKey.Builder protoKeyBuilder =
-        com.google.crypto.tink.proto.JwtHmacKey.newBuilder();
-    protoKeyBuilder
-        .setVersion(0)
-        .setAlgorithm(toProtoAlgorithm(key.getParameters().getAlgorithm()))
-        .setKeyValue(
-            ByteString.copyFrom(
-                key.getKeyBytes().toByteArray(SecretKeyAccess.requireAccess(access))));
-    OutputPrefixType outputPrefixType = null;
-    if (key.getParameters().getKidStrategy().equals(JwtHmacParameters.KidStrategy.CUSTOM)) {
-      protoKeyBuilder.setCustomKid(CustomKid.newBuilder().setValue(key.getKid().get()));
-      outputPrefixType = OutputPrefixType.RAW;
-    }
-    if (key.getParameters().getKidStrategy().equals(JwtHmacParameters.KidStrategy.IGNORED)) {
-      outputPrefixType = OutputPrefixType.RAW;
-    }
-    if (key.getParameters()
-        .getKidStrategy()
-        .equals(JwtHmacParameters.KidStrategy.BASE64_ENCODED_KEY_ID)) {
-      outputPrefixType = OutputPrefixType.TINK;
-    }
-    if (outputPrefixType == null) {
-      throw new GeneralSecurityException(
-          "Unknown KID Strategy in " + key.getParameters().getKidStrategy());
-    }
-
-    return ProtoKeySerialization.create(
-        TYPE_URL,
-        protoKeyBuilder.build().toByteString(),
-        KeyMaterialType.SYMMETRIC,
-        outputPrefixType,
-        key.getIdRequirementOrNull());
-  }
-
-  private static JwtHmacParameters parseParameters(ProtoParametersSerialization serialization)
-      throws GeneralSecurityException {
-    if (!serialization.getTypeUrl().equals(TYPE_URL)) {
-      throw new IllegalArgumentException(
-          "Wrong type URL in call to JwtHmacProtoSerialization.parseParameters: "
-              + serialization.getTypeUrl());
-    }
-    com.google.crypto.tink.proto.JwtHmacKeyFormat format;
-    try {
-      format =
-          com.google.crypto.tink.proto.JwtHmacKeyFormat.parseFrom(
-              serialization.getValue(), ExtensionRegistryLite.getEmptyRegistry());
-    } catch (InvalidProtocolBufferException e) {
-      throw new GeneralSecurityException("Parsing HmacParameters failed: ", e);
-    }
-    if (format.getVersion() != 0) {
-      throw new GeneralSecurityException(
-          "Parsing HmacParameters failed: unknown Version " + format.getVersion());
-    }
-    JwtHmacParameters.KidStrategy kidStrategy = null;
-    if (serialization.getOutputPrefixType().equals(OutputPrefixType.TINK)) {
-      kidStrategy = JwtHmacParameters.KidStrategy.BASE64_ENCODED_KEY_ID;
-    }
-    if (serialization.getOutputPrefixType().equals(OutputPrefixType.RAW)) {
-      kidStrategy = JwtHmacParameters.KidStrategy.IGNORED;
-    }
-    if (kidStrategy == null) {
-      throw new GeneralSecurityException("Invalid OutputPrefixType for JwtHmacKeyFormat");
-    }
-    return JwtHmacParameters.builder()
-        .setAlgorithm(toAlgorithm(format.getAlgorithm()))
-        .setKeySizeBytes(format.getKeySize())
-        .setKidStrategy(kidStrategy)
-        .build();
-  }
-
-  @SuppressWarnings("UnusedException")
-  private static JwtHmacKey parseKey(
-      ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
-      throws GeneralSecurityException {
-    if (!serialization.getTypeUrl().equals(TYPE_URL)) {
-      throw new IllegalArgumentException(
-          "Wrong type URL in call to HmacProtoSerialization.parseKey");
-    }
-    try {
-      com.google.crypto.tink.proto.JwtHmacKey protoKey =
-          com.google.crypto.tink.proto.JwtHmacKey.parseFrom(
-              serialization.getValue(), ExtensionRegistryLite.getEmptyRegistry());
-      if (protoKey.getVersion() != 0) {
-        throw new GeneralSecurityException("Only version 0 keys are accepted");
-      }
-      JwtHmacParameters.Builder parametersBuilder = JwtHmacParameters.builder();
-      JwtHmacKey.Builder keyBuilder = JwtHmacKey.builder();
-      if (serialization
-          .getOutputPrefixType()
-          .equals(com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK)) {
-        if (protoKey.hasCustomKid()) {
-          throw new GeneralSecurityException(
-              "Keys serialized with OutputPrefixType TINK should not have a custom kid");
-        }
-        @Nullable Integer idRequirement = serialization.getIdRequirementOrNull();
-        if (idRequirement == null) {
-          throw new GeneralSecurityException(
-              "Keys serialized with OutputPrefixType TINK need an ID Requirement");
-        }
-        parametersBuilder.setKidStrategy(JwtHmacParameters.KidStrategy.BASE64_ENCODED_KEY_ID);
-        keyBuilder.setIdRequirement(idRequirement);
-      } else if (serialization
-          .getOutputPrefixType()
-          .equals(com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW)) {
-        if (protoKey.hasCustomKid()) {
-          parametersBuilder.setKidStrategy(JwtHmacParameters.KidStrategy.CUSTOM);
-          keyBuilder.setCustomKid(protoKey.getCustomKid().getValue());
-        } else {
-          parametersBuilder.setKidStrategy(JwtHmacParameters.KidStrategy.IGNORED);
-        }
-      }
-      parametersBuilder.setAlgorithm(toAlgorithm(protoKey.getAlgorithm()));
-      parametersBuilder.setKeySizeBytes(protoKey.getKeyValue().size());
-      return keyBuilder
-          .setKeyBytes(
-              SecretBytes.copyFrom(
-                  protoKey.getKeyValue().toByteArray(), SecretKeyAccess.requireAccess(access)))
-          .setParameters(parametersBuilder.build())
-          .build();
-    } catch (InvalidProtocolBufferException | IllegalArgumentException e) {
-      throw new GeneralSecurityException("Parsing HmacKey failed");
-    }
-  }
+      KeyParser.create(
+          com.google.crypto.tink.jwt.subtle.JwtHmacProtoSerialization::parseKey, TYPE_URL);
 
   public static void register() throws GeneralSecurityException {
     register(MutableSerializationRegistry.globalInstance());
