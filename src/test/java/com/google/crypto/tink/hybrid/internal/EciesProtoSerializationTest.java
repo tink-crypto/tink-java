@@ -29,7 +29,10 @@ import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
 import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.ProtoParametersSerialization;
 import com.google.crypto.tink.aead.AeadConfig;
+import com.google.crypto.tink.aead.AesCtrHmacAeadParameters;
+import com.google.crypto.tink.aead.AesGcmParameters;
 import com.google.crypto.tink.aead.XChaCha20Poly1305Parameters;
+import com.google.crypto.tink.daead.AesSivParameters;
 import com.google.crypto.tink.hybrid.EciesParameters;
 import com.google.crypto.tink.hybrid.EciesParameters.Variant;
 import com.google.crypto.tink.hybrid.EciesPrivateKey;
@@ -1182,5 +1185,61 @@ public final class EciesProtoSerializationTest {
     assertThrows(
         GeneralSecurityException.class,
         () -> registry.parseKey(serialization, InsecureSecretKeyAccess.get()));
+  }
+
+  @Test
+  public void serializeAndParseParameters_allDemParameters_works() throws Exception {
+    Parameters[] demParametersList =
+        new Parameters[] {
+          AesGcmParameters.builder()
+              .setIvSizeBytes(12)
+              .setKeySizeBytes(16)
+              .setTagSizeBytes(16)
+              .setVariant(AesGcmParameters.Variant.NO_PREFIX)
+              .build(),
+          AesGcmParameters.builder()
+              .setIvSizeBytes(12)
+              .setKeySizeBytes(32)
+              .setTagSizeBytes(16)
+              .setVariant(AesGcmParameters.Variant.NO_PREFIX)
+              .build(),
+          AesCtrHmacAeadParameters.builder()
+              .setAesKeySizeBytes(16)
+              .setHmacKeySizeBytes(32)
+              .setTagSizeBytes(16)
+              .setIvSizeBytes(16)
+              .setHashType(AesCtrHmacAeadParameters.HashType.SHA256)
+              .setVariant(AesCtrHmacAeadParameters.Variant.NO_PREFIX)
+              .build(),
+          AesCtrHmacAeadParameters.builder()
+              .setAesKeySizeBytes(32)
+              .setHmacKeySizeBytes(32)
+              .setTagSizeBytes(32)
+              .setIvSizeBytes(16)
+              .setHashType(AesCtrHmacAeadParameters.HashType.SHA256)
+              .setVariant(AesCtrHmacAeadParameters.Variant.NO_PREFIX)
+              .build(),
+          XChaCha20Poly1305Parameters.create(),
+          AesSivParameters.builder()
+              .setKeySizeBytes(64)
+              .setVariant(AesSivParameters.Variant.NO_PREFIX)
+              .build(),
+        };
+
+    for (Parameters demParameters : demParametersList) {
+      EciesParameters parameters =
+          EciesParameters.builder()
+              .setCurveType(EciesParameters.CurveType.NIST_P256)
+              .setHashType(EciesParameters.HashType.SHA256)
+              .setNistCurvePointFormat(EciesParameters.PointFormat.UNCOMPRESSED)
+              .setVariant(EciesParameters.Variant.NO_PREFIX)
+              .setDemParameters(demParameters)
+              .setSalt(SALT)
+              .build();
+
+      ProtoParametersSerialization serialization = registry.serializeParameters(parameters);
+      EciesParameters parsed = (EciesParameters) registry.parseParameters(serialization);
+      assertThat(parsed).isEqualTo(parameters);
+    }
   }
 }

@@ -17,12 +17,22 @@
 package com.google.crypto.tink.hybrid.internal;
 
 import com.google.crypto.tink.AccessesPartialKey;
+import com.google.crypto.tink.Configuration;
+import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.ProtoKeySerialization;
 import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
 import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.ProtoParametersSerialization;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.TinkProtoParametersFormat;
+import com.google.crypto.tink.aead.AesCtrHmacAeadParameters;
+import com.google.crypto.tink.aead.AesGcmParameters;
+import com.google.crypto.tink.aead.XChaCha20Poly1305Parameters;
+import com.google.crypto.tink.aead.subtle.AesCtrHmacAeadProtoSerialization;
+import com.google.crypto.tink.aead.subtle.AesGcmProtoSerialization;
+import com.google.crypto.tink.aead.subtle.XChaCha20Poly1305ProtoSerialization;
+import com.google.crypto.tink.daead.AesSivParameters;
+import com.google.crypto.tink.daead.subtle.AesSivProtoSerialization;
 import com.google.crypto.tink.hybrid.EciesParameters;
 import com.google.crypto.tink.hybrid.EciesPrivateKey;
 import com.google.crypto.tink.hybrid.EciesPublicKey;
@@ -33,6 +43,7 @@ import com.google.crypto.tink.internal.KeySerializer;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ParametersParser;
 import com.google.crypto.tink.internal.ParametersSerializer;
+import com.google.crypto.tink.internal.ProtoBasedConfigurationBuilder;
 import com.google.crypto.tink.proto.EcPointFormat;
 import com.google.crypto.tink.proto.EciesAeadHkdfKeyFormat;
 import com.google.crypto.tink.proto.EciesAeadHkdfParams;
@@ -50,6 +61,7 @@ import javax.annotation.Nullable;
 
 /** Methods to serialize and parse {@link EciesParameters} objects. */
 @AccessesPartialKey
+@LowLevelCryptoCaller
 @SuppressWarnings("UnnecessarilyFullyQualified") // Fully specifying proto types is more readable
 public final class EciesProtoSerialization {
   private static final String PRIVATE_TYPE_URL =
@@ -57,6 +69,35 @@ public final class EciesProtoSerialization {
 
   private static final String PUBLIC_TYPE_URL =
       "type.googleapis.com/google.crypto.tink.EciesAeadHkdfPublicKey";
+
+  private static final String AES_GCM_TYPE_URL = "type.googleapis.com/google.crypto.tink.AesGcmKey";
+  private static final String AES_CTR_HMAC_AEAD_TYPE_URL =
+      "type.googleapis.com/google.crypto.tink.AesCtrHmacAeadKey";
+  private static final String XCHACHA20_POLY1305_TYPE_URL =
+      "type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key";
+  private static final String AES_SIV_TYPE_URL = "type.googleapis.com/google.crypto.tink.AesSivKey";
+
+  private static final Configuration DEM_PARAMETERS_CONFIG = createDemParametersConfig();
+
+  private static Configuration createDemParametersConfig() {
+    return new ProtoBasedConfigurationBuilder()
+        .addParametersSerializer(
+            AesGcmParameters.class, AesGcmProtoSerialization::serializeParameters)
+        .addParametersParser(AES_GCM_TYPE_URL, AesGcmProtoSerialization::parseParameters)
+        .addParametersSerializer(
+            AesCtrHmacAeadParameters.class, AesCtrHmacAeadProtoSerialization::serializeParameters)
+        .addParametersParser(
+            AES_CTR_HMAC_AEAD_TYPE_URL, AesCtrHmacAeadProtoSerialization::parseParameters)
+        .addParametersSerializer(
+            XChaCha20Poly1305Parameters.class,
+            XChaCha20Poly1305ProtoSerialization::serializeParameters)
+        .addParametersParser(
+            XCHACHA20_POLY1305_TYPE_URL, XChaCha20Poly1305ProtoSerialization::parseParameters)
+        .addParametersSerializer(
+            AesSivParameters.class, AesSivProtoSerialization::serializeParameters)
+        .addParametersParser(AES_SIV_TYPE_URL, AesSivProtoSerialization::parseParameters)
+        .build();
+  }
 
   private static final ParametersSerializer<EciesParameters>
       PARAMETERS_SERIALIZER =
@@ -170,7 +211,8 @@ public final class EciesProtoSerialization {
     try {
       com.google.crypto.tink.proto.KeyTemplate demKeyTemplate =
           com.google.crypto.tink.proto.KeyTemplate.parseFrom(
-              TinkProtoParametersFormat.serialize(parameters.getDemParameters()),
+              TinkProtoParametersFormat.serialize(
+                  parameters.getDemParameters(), DEM_PARAMETERS_CONFIG),
               ExtensionRegistryLite.getEmptyRegistry());
       demProtoParams =
           // Always set OutputPrefixType to TINK when serializing. This is to maintain consistency
@@ -217,7 +259,9 @@ public final class EciesProtoSerialization {
                 CURVE_TYPE_CONVERTER.fromProtoEnum(protoParams.getKemParams().getCurveType()))
             .setHashType(
                 HASH_TYPE_CONVERTER.fromProtoEnum(protoParams.getKemParams().getHkdfHashType()))
-            .setDemParameters(TinkProtoParametersFormat.parse(aeadKeyTemplate.toByteArray()))
+            .setDemParameters(
+                TinkProtoParametersFormat.parse(
+                    aeadKeyTemplate.toByteArray(), DEM_PARAMETERS_CONFIG))
             .setSalt(Bytes.copyFrom(protoParams.getKemParams().getHkdfSalt().toByteArray()));
     if (!protoParams.getKemParams().getCurveType().equals(EllipticCurveType.CURVE25519)) {
       builder.setNistCurvePointFormat(
