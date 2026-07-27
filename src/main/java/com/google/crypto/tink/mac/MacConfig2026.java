@@ -18,18 +18,18 @@ package com.google.crypto.tink.mac;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.Configuration;
-import com.google.crypto.tink.Key;
-import com.google.crypto.tink.KeysetHandleInterface;
+import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.Mac;
-import com.google.crypto.tink.Parameters;
-import com.google.crypto.tink.ProtoKeySerializer;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
-import com.google.crypto.tink.internal.SerializationRegistry;
-import com.google.crypto.tink.mac.internal.AesCmacProtoSerialization;
-import com.google.crypto.tink.mac.internal.ChunkedAesCmacImpl;
-import com.google.crypto.tink.mac.internal.ChunkedHmacImpl;
-import com.google.crypto.tink.mac.internal.HmacProtoSerialization;
-import com.google.crypto.tink.subtle.PrfMac;
+import com.google.crypto.tink.internal.ProtoBasedConfigurationBuilder;
+import com.google.crypto.tink.mac.internal.WrappedChunkedMac;
+import com.google.crypto.tink.mac.internal.WrappedMac;
+import com.google.crypto.tink.mac.subtle.AesCmacChunkedMac;
+import com.google.crypto.tink.mac.subtle.AesCmacMac;
+import com.google.crypto.tink.mac.subtle.AesCmacProtoSerialization;
+import com.google.crypto.tink.mac.subtle.HmacChunkedMac;
+import com.google.crypto.tink.mac.subtle.HmacMac;
+import com.google.crypto.tink.mac.subtle.HmacProtoSerialization;
 import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
 import javax.annotation.Nullable;
@@ -45,10 +45,7 @@ import javax.annotation.Nullable;
 public class MacConfig2026 {
   private MacConfig2026() {}
 
-  private static final MacWrapper MAC_WRAPPER = new MacWrapper();
-  private static final ChunkedMacWrapper CHUNKED_MAC_WRAPPER = new ChunkedMacWrapper();
   private static final Configuration CONFIGURATION = create();
-  private static final ProtoKeySerializer SERIALIZER = createProtoKeySerializer();
 
   /** Returns the {@link Configuration} instance. */
   public static Configuration get() throws GeneralSecurityException {
@@ -59,104 +56,73 @@ public class MacConfig2026 {
     return CONFIGURATION;
   }
 
+  private static final String AES_CMAC_TYPE_URL =
+      "type.googleapis.com/google.crypto.tink.AesCmacKey";
+  private static final String HMAC_TYPE_URL = "type.googleapis.com/google.crypto.tink.HmacKey";
+
+  @LowLevelCryptoCaller
   private static Configuration create() {
-    return new Configuration() {
-      @Override
-      public <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
-          throws GeneralSecurityException {
-        if (clazz == Mac.class) {
-          return clazz.cast(MAC_WRAPPER.wrap(keysetHandle, MacConfig2026::createMac));
-        }
-        if (clazz == ChunkedMac.class) {
-          return clazz.cast(
-              CHUNKED_MAC_WRAPPER.wrap(keysetHandle, MacConfig2026::createChunkedMac));
-        }
-        throw new GeneralSecurityException(
-            "MacConfig2026 can only create MAC and ChunkedMAC");
-      }
-
-      @Override
-      @AccessesPartialKey
-      public Key createKey(Parameters parameters, @Nullable Integer idRequirement)
-          throws GeneralSecurityException {
-        if (parameters instanceof AesCmacParameters) {
-          AesCmacParameters aesCmacParameters = (AesCmacParameters) parameters;
-          return AesCmacKey.builder()
-              .setParameters(aesCmacParameters)
-              .setAesKeyBytes(SecretBytes.randomBytes(aesCmacParameters.getKeySizeBytes()))
-              .setIdRequirement(idRequirement)
-              .build();
-        }
-        if (parameters instanceof HmacParameters) {
-          HmacParameters hmacParameters = (HmacParameters) parameters;
-          return HmacKey.builder()
-              .setParameters(hmacParameters)
-              .setKeyBytes(SecretBytes.randomBytes(hmacParameters.getKeySizeBytes()))
-              .setIdRequirement(idRequirement)
-              .build();
-        }
-        throw new GeneralSecurityException(
-            "Unrecognized parameters for MacConfig2026:" + parameters);
-      }
-
-      @Override
-      public <P> P getOrNull(Class<P> clazz) {
-        if (clazz.equals(ProtoKeySerializer.class)) {
-          return clazz.cast(SERIALIZER);
-        }
-        return null;
-      }
-    };
+    return new ProtoBasedConfigurationBuilder()
+        .addPrimitiveWrapper(Mac.class, Mac.class, WrappedMac::create)
+        .addPrimitiveWrapper(ChunkedMac.class, ChunkedMac.class, WrappedChunkedMac::create)
+        // AesCmac
+        .addKeyCreator(AesCmacParameters.class, MacConfig2026::createAesCmacKey)
+        .addPrimitiveConstructor(MacConfig2026::createAesCmac, AesCmacKey.class, Mac.class)
+        .addPrimitiveConstructor(
+            MacConfig2026::createChunkedAesCmac, AesCmacKey.class, ChunkedMac.class)
+        .addKeySerializer(AesCmacKey.class, AesCmacProtoSerialization::serializeKey)
+        .addParametersSerializer(
+            AesCmacParameters.class, AesCmacProtoSerialization::serializeParameters)
+        .addKeyParser(AES_CMAC_TYPE_URL, AesCmacProtoSerialization::parseKey)
+        .addParametersParser(AES_CMAC_TYPE_URL, AesCmacProtoSerialization::parseParameters)
+        // Hmac
+        .addKeyCreator(HmacParameters.class, MacConfig2026::createHmacKey)
+        .addPrimitiveConstructor(HmacMac::create, HmacKey.class, Mac.class)
+        .addPrimitiveConstructor(HmacChunkedMac::create, HmacKey.class, ChunkedMac.class)
+        .addKeySerializer(HmacKey.class, HmacProtoSerialization::serializeKey)
+        .addParametersSerializer(HmacParameters.class, HmacProtoSerialization::serializeParameters)
+        .addKeyParser(HMAC_TYPE_URL, HmacProtoSerialization::parseKey)
+        .addParametersParser(HMAC_TYPE_URL, HmacProtoSerialization::parseParameters)
+        .build();
   }
 
-  private static Mac createMac(KeysetHandleInterface.Entry entry) throws GeneralSecurityException {
-    Key key = entry.getKey();
-    if (key instanceof AesCmacKey) {
-      return createAesCmac((AesCmacKey) key);
-    }
-    if (key instanceof HmacKey) {
-      return PrfMac.create((HmacKey) key);
-    }
-    throw new GeneralSecurityException("Unknown key class: " + key.getClass());
-  }
-
-  private static ChunkedMac createChunkedMac(KeysetHandleInterface.Entry entry)
+  @AccessesPartialKey
+  private static AesCmacKey createAesCmacKey(
+      AesCmacParameters parameters, @Nullable Integer idRequirement)
       throws GeneralSecurityException {
-    Key key = entry.getKey();
-    if (key instanceof AesCmacKey) {
-      return createChunkedAesCmac((AesCmacKey) key);
-    }
-    if (key instanceof HmacKey) {
-      return new ChunkedHmacImpl((HmacKey) key);
-    }
-    throw new GeneralSecurityException("Unknown key class: " + key.getClass());
+    return AesCmacKey.builder()
+        .setParameters(parameters)
+        .setAesKeyBytes(SecretBytes.randomBytes(parameters.getKeySizeBytes()))
+        .setIdRequirement(idRequirement)
+        .build();
+  }
+
+  @AccessesPartialKey
+  private static HmacKey createHmacKey(HmacParameters parameters, @Nullable Integer idRequirement)
+      throws GeneralSecurityException {
+    return HmacKey.builder()
+        .setParameters(parameters)
+        .setKeyBytes(SecretBytes.randomBytes(parameters.getKeySizeBytes()))
+        .setIdRequirement(idRequirement)
+        .build();
   }
 
   // We only allow 32-byte AesCmac keys.
   private static final int AES_CMAC_KEY_SIZE_BYTES = 32;
 
+  @LowLevelCryptoCaller
   private static ChunkedMac createChunkedAesCmac(AesCmacKey key) throws GeneralSecurityException {
     if (key.getParameters().getKeySizeBytes() != AES_CMAC_KEY_SIZE_BYTES) {
       throw new GeneralSecurityException("AesCmac key size is not 32 bytes");
     }
-    return ChunkedAesCmacImpl.create(key);
+    return AesCmacChunkedMac.create(key);
   }
 
+  @LowLevelCryptoCaller
   private static Mac createAesCmac(AesCmacKey key) throws GeneralSecurityException {
     if (key.getParameters().getKeySizeBytes() != AES_CMAC_KEY_SIZE_BYTES) {
       throw new GeneralSecurityException("AesCmac key size is not 32 bytes");
     }
-    return PrfMac.create(key);
-  }
-
-  private static ProtoKeySerializer createProtoKeySerializer() {
-    try {
-      SerializationRegistry.Builder builder = new SerializationRegistry.Builder();
-      HmacProtoSerialization.register(builder);
-      AesCmacProtoSerialization.register(builder);
-      return builder.build();
-    } catch (GeneralSecurityException e) {
-      throw new IllegalStateException(e);
-    }
+    return AesCmacMac.create(key);
   }
 }
