@@ -196,6 +196,34 @@ public final class JwtFormatTest {
   }
 
   @Test
+  public void validateAlgorithm_onlySupportedAlgorithms_validate() throws Exception {
+    String[] validAlgorithms = {
+      "HS256",
+      "HS384",
+      "HS512",
+      "ES256",
+      "ES384",
+      "ES512",
+      "RS256",
+      "RS384",
+      "RS512",
+      "PS256",
+      "PS384",
+      "PS512",
+      "ML-DSA-44",
+      "ML-DSA-65",
+      "ML-DSA-87",
+    };
+    for (String algo : validAlgorithms) {
+      Object unused = JwtFormat.createHeader(algo, Optional.empty(), Optional.empty());
+    }
+
+    assertThrows(
+        InvalidAlgorithmParameterException.class,
+        () -> JwtFormat.createHeader("INVALID_ALGORITHM", Optional.empty(), Optional.empty()));
+  }
+
+  @Test
   public void validateHeaderWithWrongAlgorithm_fails() throws Exception {
     String header =
         JwtFormat.decodeHeader(JwtFormat.createHeader("HS256", Optional.empty(), Optional.empty()));

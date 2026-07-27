@@ -96,6 +96,9 @@ public final class JwtFormat {
       case "PS256":
       case "PS384":
       case "PS512":
+      case "ML-DSA-44":
+      case "ML-DSA-65":
+      case "ML-DSA-87":
         return;
       default:
         throw new InvalidAlgorithmParameterException("invalid algorithm: " + algo);
