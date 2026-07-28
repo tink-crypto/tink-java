@@ -342,7 +342,7 @@ public final class EciesProtoSerialization {
     return builder.build();
   }
 
-  private static ProtoParametersSerialization serializeParameters(EciesParameters parameters)
+  public static ProtoParametersSerialization serializeParameters(EciesParameters parameters)
       throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
         PRIVATE_TYPE_URL,
@@ -353,7 +353,7 @@ public final class EciesProtoSerialization {
             .toByteString());
   }
 
-  private static ProtoKeySerialization serializePublicKey(
+  public static ProtoKeySerialization serializePublicKey(
       EciesPublicKey key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     return ProtoKeySerialization.create(
         PUBLIC_TYPE_URL,
@@ -363,7 +363,7 @@ public final class EciesProtoSerialization {
         key.getIdRequirementOrNull());
   }
 
-  private static ProtoKeySerialization serializePrivateKey(
+  public static ProtoKeySerialization serializePrivateKey(
       EciesPrivateKey key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     return ProtoKeySerialization.create(
         PRIVATE_TYPE_URL,
@@ -373,7 +373,7 @@ public final class EciesProtoSerialization {
         key.getIdRequirementOrNull());
   }
 
-  private static EciesParameters parseParameters(ProtoParametersSerialization serialization)
+  public static EciesParameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(PRIVATE_TYPE_URL)) {
       throw new IllegalArgumentException(
@@ -392,7 +392,7 @@ public final class EciesProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException")
-  private static EciesPublicKey parsePublicKey(
+  public static EciesPublicKey parsePublicKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(PUBLIC_TYPE_URL)) {
@@ -431,7 +431,7 @@ public final class EciesProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException")
-  private static EciesPrivateKey parsePrivateKey(
+  public static EciesPrivateKey parsePrivateKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(PRIVATE_TYPE_URL)) {
