@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 public final class ConscryptUtil {
 
   private static final String[] conscryptProviderNames =
-      new String[] {"GmsCore_OpenSSL", "AndroidOpenSSL", "Conscrypt"};
+      new String[] {"AndroidOpenSSL", "GmsCore_OpenSSL", "Conscrypt"};
 
   @Nullable
   public static Provider providerOrNull() {
