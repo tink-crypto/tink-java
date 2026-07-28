@@ -301,3 +301,14 @@ android_library(
         "//src/main/java/com/google/crypto/tink/util:secret_bytes-android",
     ],
 )
+
+android_library(
+    name = "composite_ml_dsa_test_util-android",
+    srcs = ["CompositeMlDsaTestUtil.java"],
+)
+
+java_library(
+    name = "composite_ml_dsa_test_util",
+    testonly = 1,
+    srcs = ["CompositeMlDsaTestUtil.java"],
+)

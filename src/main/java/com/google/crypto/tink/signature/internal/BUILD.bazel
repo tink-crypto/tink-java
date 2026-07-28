@@ -970,3 +970,75 @@ java_library(
         "//src/main/java/com/google/crypto/tink/util:bytes",
     ],
 )
+
+android_library(
+    name = "composite_ml_dsa_sign_conscrypt-android",
+    srcs = ["CompositeMlDsaSignConscrypt.java"],
+    deps = [
+        ":composite_ml_dsa_verify_conscrypt-android",
+        ":ml_dsa_verify_conscrypt-android",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access-android",
+        "//src/main/java/com/google/crypto/tink:public_key_sign-android",
+        "//src/main/java/com/google/crypto/tink:public_key_verify-android",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util-android",
+        "//src/main/java/com/google/crypto/tink/internal:conscrypt_util-android",
+        "//src/main/java/com/google/crypto/tink/signature:composite_ml_dsa_parameters-android",
+        "//src/main/java/com/google/crypto/tink/signature:composite_ml_dsa_private_key-android",
+        "//src/main/java/com/google/crypto/tink/signature:ed25519_private_key-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
+    name = "composite_ml_dsa_verify_conscrypt-android",
+    srcs = ["CompositeMlDsaVerifyConscrypt.java"],
+    deps = [
+        ":ml_dsa_verify_conscrypt-android",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
+        "//src/main/java/com/google/crypto/tink:public_key_verify-android",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util-android",
+        "//src/main/java/com/google/crypto/tink/internal:conscrypt_util-android",
+        "//src/main/java/com/google/crypto/tink/internal:util-android",
+        "//src/main/java/com/google/crypto/tink/signature:composite_ml_dsa_parameters-android",
+        "//src/main/java/com/google/crypto/tink/signature:composite_ml_dsa_public_key-android",
+        "//src/main/java/com/google/crypto/tink/signature:ed25519_public_key-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "composite_ml_dsa_sign_conscrypt",
+    srcs = ["CompositeMlDsaSignConscrypt.java"],
+    deps = [
+        ":composite_ml_dsa_verify_conscrypt",
+        ":ml_dsa_verify_conscrypt",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink:public_key_sign",
+        "//src/main/java/com/google/crypto/tink:public_key_verify",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
+        "//src/main/java/com/google/crypto/tink/internal:conscrypt_util",
+        "//src/main/java/com/google/crypto/tink/signature:composite_ml_dsa_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:composite_ml_dsa_private_key",
+        "//src/main/java/com/google/crypto/tink/signature:ed25519_private_key",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "composite_ml_dsa_verify_conscrypt",
+    srcs = ["CompositeMlDsaVerifyConscrypt.java"],
+    deps = [
+        ":ml_dsa_verify_conscrypt",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:public_key_verify",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
+        "//src/main/java/com/google/crypto/tink/internal:conscrypt_util",
+        "//src/main/java/com/google/crypto/tink/internal:util",
+        "//src/main/java/com/google/crypto/tink/signature:composite_ml_dsa_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:composite_ml_dsa_public_key",
+        "//src/main/java/com/google/crypto/tink/signature:ed25519_public_key",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
