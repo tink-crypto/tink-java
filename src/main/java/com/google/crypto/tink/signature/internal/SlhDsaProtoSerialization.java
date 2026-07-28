@@ -166,7 +166,7 @@ public final class SlhDsaProtoSerialization {
         .build();
   }
 
-  private static ProtoParametersSerialization serializeParameters(SlhDsaParameters parameters)
+  public static ProtoParametersSerialization serializeParameters(SlhDsaParameters parameters)
       throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
         PRIVATE_TYPE_URL,
@@ -184,7 +184,7 @@ public final class SlhDsaProtoSerialization {
    * @param access may be null for public key material
    * @throws GeneralSecurityException if the key cannot be serialized (e.g. unknown variant)
    */
-  private static ProtoKeySerialization serializePublicKey(
+  public static ProtoKeySerialization serializePublicKey(
       SlhDsaPublicKey key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     return ProtoKeySerialization.create(
         PUBLIC_TYPE_URL,
@@ -194,7 +194,7 @@ public final class SlhDsaProtoSerialization {
         key.getIdRequirementOrNull());
   }
 
-  private static ProtoKeySerialization serializePrivateKey(
+  public static ProtoKeySerialization serializePrivateKey(
       SlhDsaPrivateKey key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     return ProtoKeySerialization.create(
         PRIVATE_TYPE_URL,
@@ -211,7 +211,7 @@ public final class SlhDsaProtoSerialization {
         key.getIdRequirementOrNull());
   }
 
-  private static SlhDsaParameters parseParameters(ProtoParametersSerialization serialization)
+  public static SlhDsaParameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(PRIVATE_TYPE_URL)) {
       throw new IllegalArgumentException(
@@ -247,7 +247,7 @@ public final class SlhDsaProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException")
-  private static SlhDsaPublicKey parsePublicKey(
+  public static SlhDsaPublicKey parsePublicKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(PUBLIC_TYPE_URL)) {
@@ -292,7 +292,7 @@ public final class SlhDsaProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException") // Prevents leaking key material
-  private static SlhDsaPrivateKey parsePrivateKey(
+  public static SlhDsaPrivateKey parsePrivateKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(PRIVATE_TYPE_URL)) {

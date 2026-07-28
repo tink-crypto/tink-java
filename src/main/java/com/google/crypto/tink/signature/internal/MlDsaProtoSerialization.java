@@ -160,7 +160,7 @@ public final class MlDsaProtoSerialization {
         .build();
   }
 
-  private static ProtoParametersSerialization serializeParameters(MlDsaParameters parameters)
+  public static ProtoParametersSerialization serializeParameters(MlDsaParameters parameters)
       throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
         PRIVATE_TYPE_URL,
@@ -178,7 +178,7 @@ public final class MlDsaProtoSerialization {
    * @param access may be null for public key material
    * @throws GeneralSecurityException if the key cannot be serialized (e.g. unknown variant)
    */
-  private static ProtoKeySerialization serializePublicKey(
+  public static ProtoKeySerialization serializePublicKey(
       MlDsaPublicKey key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     return ProtoKeySerialization.create(
         PUBLIC_TYPE_URL,
@@ -188,7 +188,7 @@ public final class MlDsaProtoSerialization {
         key.getIdRequirementOrNull());
   }
 
-  private static ProtoKeySerialization serializePrivateKey(
+  public static ProtoKeySerialization serializePrivateKey(
       MlDsaPrivateKey key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     return ProtoKeySerialization.create(
         PRIVATE_TYPE_URL,
@@ -205,7 +205,7 @@ public final class MlDsaProtoSerialization {
         key.getIdRequirementOrNull());
   }
 
-  private static MlDsaParameters parseParameters(ProtoParametersSerialization serialization)
+  public static MlDsaParameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(PRIVATE_TYPE_URL)) {
       throw new IllegalArgumentException(
@@ -229,7 +229,7 @@ public final class MlDsaProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException")
-  private static MlDsaPublicKey parsePublicKey(
+  public static MlDsaPublicKey parsePublicKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(PUBLIC_TYPE_URL)) {
@@ -268,7 +268,7 @@ public final class MlDsaProtoSerialization {
   }
 
   @SuppressWarnings("UnusedException") // Prevents leaking key material
-  private static MlDsaPrivateKey parsePrivateKey(
+  public static MlDsaPrivateKey parsePrivateKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(PRIVATE_TYPE_URL)) {
