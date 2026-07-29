@@ -385,6 +385,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
      *   <li>The primary key is not enabled
      * </ul>
      */
+    @LowLevelCryptoCaller
     public KeysetHandle build() throws GeneralSecurityException {
       if (errorToThrow != null) {
         throw new GeneralSecurityException(

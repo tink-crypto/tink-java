@@ -898,8 +898,10 @@ android_library(
     deps = [
         ":key-android",
         ":keyset_handle_interface-android",
+        ":low_level_crypto_caller-android",
         ":parameters-android",
         "@maven//:com_google_code_findbugs_jsr305",
+        "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
 
@@ -909,8 +911,10 @@ java_library(
     deps = [
         ":key",
         ":keyset_handle_interface",
+        ":low_level_crypto_caller",
         ":parameters",
         "@maven//:com_google_code_findbugs_jsr305",
+        "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
 
