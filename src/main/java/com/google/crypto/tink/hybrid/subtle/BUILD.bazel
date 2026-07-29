@@ -196,3 +196,51 @@ android_library(
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
+
+java_library(
+    name = "ecies_decrypt",
+    srcs = ["EciesDecrypt.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:hybrid_decrypt",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink/hybrid:ecies_private_key",
+        "//src/main/java/com/google/crypto/tink/subtle:ecies_aead_hkdf_hybrid_decrypt",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "ecies_encrypt",
+    srcs = ["EciesEncrypt.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:hybrid_encrypt",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink/hybrid:ecies_public_key",
+        "//src/main/java/com/google/crypto/tink/subtle:ecies_aead_hkdf_hybrid_encrypt",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
+    name = "ecies_decrypt-android",
+    srcs = ["EciesDecrypt.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:hybrid_decrypt-android",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink/hybrid:ecies_private_key-android",
+        "//src/main/java/com/google/crypto/tink/subtle:ecies_aead_hkdf_hybrid_decrypt-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
+    name = "ecies_encrypt-android",
+    srcs = ["EciesEncrypt.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:hybrid_encrypt-android",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink/hybrid:ecies_public_key-android",
+        "//src/main/java/com/google/crypto/tink/subtle:ecies_aead_hkdf_hybrid_encrypt-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
