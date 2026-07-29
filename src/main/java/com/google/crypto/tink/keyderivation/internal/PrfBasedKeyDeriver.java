@@ -20,7 +20,6 @@ import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.internal.MutableKeyDerivationRegistry;
-import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.keyderivation.PrfBasedKeyDerivationKey;
 import com.google.crypto.tink.subtle.prf.StreamingPrf;
 import com.google.errorprone.annotations.Immutable;
@@ -45,14 +44,6 @@ public final class PrfBasedKeyDeriver implements KeyDeriver {
   private PrfBasedKeyDeriver(StreamingPrf prf, PrfBasedKeyDerivationKey key) {
     this.prf = prf;
     this.key = key;
-  }
-
-  @AccessesPartialKey
-  public static KeyDeriver create(PrfBasedKeyDerivationKey key) throws GeneralSecurityException {
-    return createWithPrfGetter(
-        prfKey ->
-            MutablePrimitiveRegistry.globalInstance().getPrimitive(prfKey, StreamingPrf.class),
-        key);
   }
 
   @AccessesPartialKey

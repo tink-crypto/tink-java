@@ -37,6 +37,7 @@ import com.google.crypto.tink.proto.KeyData;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.crypto.tink.proto.PrfBasedDeriverKey;
 import com.google.crypto.tink.proto.PrfBasedDeriverKeyFormat;
+import com.google.crypto.tink.subtle.prf.StreamingPrf;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ExtensionRegistryLite;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -72,10 +73,19 @@ import javax.annotation.Nullable;
  * when these functions are called.
  */
 public final class PrfBasedDeriverKeyManager implements KeyManager<Void> {
+  @AccessesPartialKey
+  private static KeyDeriver createPrfBasedKeyDeriver(PrfBasedKeyDerivationKey key)
+      throws GeneralSecurityException {
+    return PrfBasedKeyDeriver.createWithPrfGetter(
+        k -> MutablePrimitiveRegistry.globalInstance().getPrimitive(k, StreamingPrf.class), key);
+  }
+
   private static final PrimitiveConstructor<PrfBasedKeyDerivationKey, KeyDeriver>
       PRIMITIVE_CONSTRUCTOR =
           PrimitiveConstructor.create(
-              PrfBasedKeyDeriver::create, PrfBasedKeyDerivationKey.class, KeyDeriver.class);
+              PrfBasedDeriverKeyManager::createPrfBasedKeyDeriver,
+              PrfBasedKeyDerivationKey.class,
+              KeyDeriver.class);
 
   @AccessesPartialKey
   private static final PrfBasedKeyDerivationKey createNewKey(

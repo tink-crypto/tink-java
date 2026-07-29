@@ -36,6 +36,7 @@ import com.google.crypto.tink.aead.XChaCha20Poly1305Parameters;
 import com.google.crypto.tink.config.TinkConfig;
 import com.google.crypto.tink.daead.AesSivKey;
 import com.google.crypto.tink.daead.PredefinedDeterministicAeadParameters;
+import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.internal.Util;
@@ -135,7 +136,10 @@ public final class PrfBasedKeyDeriverTest {
     PrfBasedKeyDerivationKey keyDerivationKey =
         PrfBasedKeyDerivationKey.create(derivationParameters, prfKey, /* idRequirement= */ null);
 
-    KeyDeriver deriver = PrfBasedKeyDeriver.create(keyDerivationKey);
+    KeyDeriver deriver =
+        PrfBasedKeyDeriver.createWithPrfGetter(
+            k -> MutablePrimitiveRegistry.globalInstance().getPrimitive(k, StreamingPrf.class),
+            keyDerivationKey);
 
     Key derivedKey = deriver.deriveKey(new byte[] {1});
     Key expectedKey =
@@ -194,7 +198,12 @@ public final class PrfBasedKeyDeriverTest {
     PrfBasedKeyDerivationKey keyDerivationKey =
         PrfBasedKeyDerivationKey.create(derivationParameters, prfKey, /* idRequirement= */ null);
 
-    assertThrows(GeneralSecurityException.class, () -> PrfBasedKeyDeriver.create(keyDerivationKey));
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            PrfBasedKeyDeriver.createWithPrfGetter(
+                k -> MutablePrimitiveRegistry.globalInstance().getPrimitive(k, StreamingPrf.class),
+                keyDerivationKey));
   }
 
   @Test
@@ -227,7 +236,12 @@ public final class PrfBasedKeyDeriverTest {
     PrfBasedKeyDerivationKey keyDerivationKey =
         PrfBasedKeyDerivationKey.create(derivationParameters, prfKey, /* idRequirement= */ null);
 
-    assertThrows(GeneralSecurityException.class, () -> PrfBasedKeyDeriver.create(keyDerivationKey));
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            PrfBasedKeyDeriver.createWithPrfGetter(
+                k -> MutablePrimitiveRegistry.globalInstance().getPrimitive(k, StreamingPrf.class),
+                keyDerivationKey));
   }
 
   private static final PrfKey FIXED_PRF_KEY =
@@ -412,7 +426,10 @@ public final class PrfBasedKeyDeriverTest {
     @Nullable Integer idRequirement = t.expectedKey.getIdRequirementOrNull();
     PrfBasedKeyDerivationKey keyDerivationKey =
         PrfBasedKeyDerivationKey.create(derivationParameters, t.prfKey, idRequirement);
-    KeyDeriver deriver = PrfBasedKeyDeriver.create(keyDerivationKey);
+    KeyDeriver deriver =
+        PrfBasedKeyDeriver.createWithPrfGetter(
+            k -> MutablePrimitiveRegistry.globalInstance().getPrimitive(k, StreamingPrf.class),
+            keyDerivationKey);
 
     Key derivedKey = deriver.deriveKey(Hex.decode(t.inputHex));
 
@@ -452,7 +469,10 @@ public final class PrfBasedKeyDeriverTest {
     @Nullable Integer idRequirement = t.expectedKey.getIdRequirementOrNull();
     PrfBasedKeyDerivationKey keyDerivationKey =
         PrfBasedKeyDerivationKey.create(derivationParameters, t.prfKey, idRequirement);
-    KeyDeriver deriver = PrfBasedKeyDeriver.create(keyDerivationKey);
+    KeyDeriver deriver =
+        PrfBasedKeyDeriver.createWithPrfGetter(
+            k -> MutablePrimitiveRegistry.globalInstance().getPrimitive(k, StreamingPrf.class),
+            keyDerivationKey);
 
     Key derivedKey = deriver.deriveKey(Hex.decode(t.inputHex));
 

@@ -22,6 +22,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
+import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyStatus;
@@ -76,6 +77,7 @@ import com.google.crypto.tink.streamingaead.AesGcmHkdfStreamingKey;
 import com.google.crypto.tink.streamingaead.PredefinedStreamingAeadParameters;
 import com.google.crypto.tink.streamingaead.StreamingAeadConfig;
 import com.google.crypto.tink.subtle.Hex;
+import com.google.crypto.tink.subtle.prf.StreamingPrf;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
@@ -93,10 +95,19 @@ import org.junit.runner.RunWith;
 
 @RunWith(Theories.class)
 public final class KeysetDeriverWrapperTest {
+  @AccessesPartialKey
+  private static KeyDeriver createPrfBasedKeyDeriver(PrfBasedKeyDerivationKey key)
+      throws GeneralSecurityException {
+    return PrfBasedKeyDeriver.createWithPrfGetter(
+        k -> MutablePrimitiveRegistry.globalInstance().getPrimitive(k, StreamingPrf.class), key);
+  }
+
   private static final PrimitiveConstructor<PrfBasedKeyDerivationKey, KeyDeriver>
       PRIMITIVE_CONSTRUCTOR =
           PrimitiveConstructor.create(
-              PrfBasedKeyDeriver::create, PrfBasedKeyDerivationKey.class, KeyDeriver.class);
+              KeysetDeriverWrapperTest::createPrfBasedKeyDeriver,
+              PrfBasedKeyDerivationKey.class,
+              KeyDeriver.class);
 
   private static final KeysetDeriverWrapper KEYSET_DERIVER_WRAPPER = new KeysetDeriverWrapper();
 
