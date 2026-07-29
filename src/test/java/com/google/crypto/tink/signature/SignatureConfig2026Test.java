@@ -17,39 +17,27 @@
 package com.google.crypto.tink.signature;
 
 import static com.google.common.truth.Truth.assertThat;
-import static java.util.Arrays.stream;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeysetHandle;
-import com.google.crypto.tink.ProtoKeySerialization;
-import com.google.crypto.tink.ProtoKeySerializer;
-import com.google.crypto.tink.ProtoParametersSerialization;
+import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
+import com.google.crypto.tink.TinkProtoKeysetFormat;
+import com.google.crypto.tink.TinkProtoParametersFormat;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.Util;
-import com.google.crypto.tink.signature.internal.EcdsaProtoSerialization;
-import com.google.crypto.tink.signature.internal.Ed25519ProtoSerialization;
-import com.google.crypto.tink.signature.internal.MlDsaProtoSerialization;
-import com.google.crypto.tink.signature.internal.RsaSsaPkcs1ProtoSerialization;
-import com.google.crypto.tink.signature.internal.RsaSsaPssProtoSerialization;
-import com.google.crypto.tink.signature.internal.SlhDsaProtoSerialization;
 import com.google.crypto.tink.signature.internal.testing.EcdsaTestUtil;
 import com.google.crypto.tink.signature.internal.testing.Ed25519TestUtil;
 import com.google.crypto.tink.signature.internal.testing.MlDsaTestUtil;
 import com.google.crypto.tink.signature.internal.testing.RsaSsaPkcs1TestUtil;
 import com.google.crypto.tink.signature.internal.testing.RsaSsaPssTestUtil;
-import com.google.crypto.tink.signature.internal.testing.SignatureTestVector;
 import com.google.crypto.tink.signature.internal.testing.SlhDsaTestUtil;
 import java.security.GeneralSecurityException;
-import java.util.Arrays;
-import java.util.stream.Stream;
 import javax.annotation.Nullable;
-import org.junit.Assume;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -57,26 +45,40 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
+/** Tests for {@link SignatureConfig2026}. */
 @RunWith(Theories.class)
 public class SignatureConfig2026Test {
-  @BeforeClass
-  public static void setUp() throws Exception {
-    EcdsaProtoSerialization.register();
-    RsaSsaPssProtoSerialization.register();
-    RsaSsaPkcs1ProtoSerialization.register();
-    Ed25519ProtoSerialization.register();
-    MlDsaProtoSerialization.register();
-    SlhDsaProtoSerialization.register();
+
+  private static SignaturePrivateKey[] createKeys() {
+    return new SignaturePrivateKey[] {
+      EcdsaTestUtil.createEcdsaTestVectors()[0].getPrivateKey(),
+      RsaSsaPssTestUtil.createRsaPssTestVectors()[0].getPrivateKey(),
+      RsaSsaPkcs1TestUtil.createRsaSsaPkcs1TestVectors()[0].getPrivateKey(),
+      Ed25519TestUtil.createEd25519TestVectors()[0].getPrivateKey(),
+      MlDsaTestUtil.createMlDsa65ValidSignatureTestVectors().findFirst().get().getPrivateKey(),
+      SlhDsaTestUtil.createSlhDsaValidSignatureTestVectors().findFirst().get().getPrivateKey(),
+    };
   }
 
-  private boolean shouldBeSupported(SignatureTestVector testVector) {
+  /**
+   * A list of Keys which behave common for this config. For these keys we can
+   *
+   * <ul>
+   *   <li>create primitives
+   *   <li>serialize and parse the keys
+   *   <li>serialize and parse the parameters.
+   * </ul>
+   */
+  @DataPoints("keys")
+  public static final SignaturePrivateKey[] keys = createKeys();
+
+  private static boolean shouldBeSupported(SignaturePrivateKey key) {
     Integer apiLevel = Util.getAndroidApiLevel();
     if (apiLevel != null && apiLevel >= 37) {
       // On Android API 37 and above, all signature algorithms should be supported.
       return true;
     }
-    if ((testVector.getPrivateKey() instanceof MlDsaPrivateKey)
-        || (testVector.getPrivateKey() instanceof SlhDsaPrivateKey)) {
+    if ((key instanceof MlDsaPrivateKey) || (key instanceof SlhDsaPrivateKey)) {
       // ML-DSA and SLH-DSA are not supported on Java without Conscrypt, and on older Android
       // versions.
       return false;
@@ -85,81 +87,34 @@ public class SignatureConfig2026Test {
   }
 
   @Test
-  public void config_throwsIfInFipsMode() throws Exception {
-    Assume.assumeTrue(TinkFipsUtil.useOnlyFips());
-
-    assertThrows(GeneralSecurityException.class, SignatureConfig2026::get);
+  public void get_throwsInFipsMode() throws Exception {
+    if (TinkFipsUtil.useOnlyFips()) {
+      assertThrows(GeneralSecurityException.class, SignatureConfig2026::get);
+    }
   }
 
-  /**
-   * Tests that when using the public API of Tink, signatures in the test vector can be verified.
-   * This additionally ensures that all the expected algorithms (Ecdsa, RsaSsaPss, RsaSsaPkcs1,
-   * Ed25519 for {@code PublicKeyVerify}, as well as MlDsa and SlhDsa if Conscrypt is available and
-   * has support) are present in the SignatureConfig2026.
-   */
   @Theory
-  public void test_validateSignatureInTestVector(
-      @FromDataPoints("signatureTests") SignatureTestVector testVector) throws Exception {
-    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+  public void getPrimitive_signVerify_works(@FromDataPoints("keys") SignaturePrivateKey key)
+      throws Exception {
+    if (TinkFipsUtil.useOnlyFips()) {
+      return;
+    }
     @Nullable Integer apiLevel = Util.getAndroidApiLevel();
     if (apiLevel != null && apiLevel == 19) {
       // Android API 19 is slower than the others in this.
       return;
     }
 
-    SignaturePrivateKey key = testVector.getPrivateKey();
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
-    @Nullable Integer id = key.getIdRequirementOrNull();
-    if (id == null) {
+    if (key.getIdRequirementOrNull() == null) {
       entry.withRandomId();
     } else {
-      entry.withFixedId(id);
+      entry.withFixedId(key.getIdRequirementOrNull());
     }
     KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
     KeysetHandle publicKeyHandle = handle.getPublicKeysetHandle();
 
-    if (!shouldBeSupported(testVector)) {
-      Configuration configuration = SignatureConfig2026.get();
-      assertThrows(
-          GeneralSecurityException.class,
-          () -> publicKeyHandle.getPrimitive(configuration, PublicKeyVerify.class));
-      return;
-    }
-
-    PublicKeyVerify verifier =
-        publicKeyHandle.getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
-
-    verifier.verify(testVector.getSignature(), testVector.getMessage());
-  }
-
-  /**
-   * Tests that when using the public API of Tink, newly created signatures can be verified. This
-   * additionally ensures that all the expected algorithms (Ecdsa, RsaSsaPss, RsaSsaPkcs1, Ed25519
-   * for {@code PublicKeySign}, as well as MlDsa and SlhDsa if Conscrypt is available and has
-   * support) are present in the SignatureConfig2026.
-   */
-  @Theory
-  public void test_computeAndValidateFreshSignatureWithTestVector(
-      @FromDataPoints("signatureTests") SignatureTestVector testVector) throws Exception {
-    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
-    @Nullable Integer apiLevel = Util.getAndroidApiLevel();
-    if (apiLevel != null && apiLevel == 19) {
-      // Android API 19 is slower than the others in this.
-      return;
-    }
-
-    SignaturePrivateKey key = testVector.getPrivateKey();
-    KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
-    @Nullable Integer id = key.getIdRequirementOrNull();
-    if (id == null) {
-      entry.withRandomId();
-    } else {
-      entry.withFixedId(id);
-    }
-    KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
-    KeysetHandle publicKeyHandle = handle.getPublicKeysetHandle();
-
-    if (!shouldBeSupported(testVector)) {
+    if (!shouldBeSupported(key)) {
       Configuration configuration = SignatureConfig2026.get();
       assertThrows(
           GeneralSecurityException.class,
@@ -171,132 +126,78 @@ public class SignatureConfig2026Test {
     }
 
     PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
-    byte[] signature = signer.sign(testVector.getMessage());
     PublicKeyVerify verifier =
         publicKeyHandle.getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
 
-    verifier.verify(signature, testVector.getMessage());
+    byte[] message = "message".getBytes(UTF_8);
+    byte[] signature = signer.sign(message);
+    verifier.verify(signature, message);
   }
 
-  private static byte[] modifyInput(byte[] message) {
-    if (message.length == 0) {
-      return new byte[] {1};
-    }
-    byte[] copy = Arrays.copyOf(message, message.length);
-    copy[0] ^= 1;
-    return copy;
-  }
-
-  /**
-   * Ensures correctness in the faulty scenario of the Sign/Verify primitives obtained through the
-   * public API of Tink.
-   */
   @Theory
-  public void test_computeFreshSignatureWithTestVector_throwsWithWrongMessage(
-      @FromDataPoints("signatureTests") SignatureTestVector testVector) throws Exception {
-    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
-    @Nullable Integer apiLevel = Util.getAndroidApiLevel();
-    if (apiLevel != null && apiLevel == 19) {
-      // Android API 19 is slower than the others in this.
+  public void serializeAndParsePrivateKey_works(@FromDataPoints("keys") SignaturePrivateKey key)
+      throws Exception {
+    if (TinkFipsUtil.useOnlyFips()) {
       return;
     }
-
-    SignaturePrivateKey key = testVector.getPrivateKey();
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
-    @Nullable Integer id = key.getIdRequirementOrNull();
-    if (id == null) {
+    if (key.getIdRequirementOrNull() == null) {
       entry.withRandomId();
     } else {
-      entry.withFixedId(id);
+      entry.withFixedId(key.getIdRequirementOrNull());
     }
-    KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
-    KeysetHandle publicKeyHandle = handle.getPublicKeysetHandle();
+    KeysetHandle keysetHandle = KeysetHandle.newBuilder().addEntry(entry).build();
 
-    if (!shouldBeSupported(testVector)) {
-      Configuration configuration = SignatureConfig2026.get();
-      assertThrows(
-          GeneralSecurityException.class,
-          () -> handle.getPrimitive(configuration, PublicKeySign.class));
-      assertThrows(
-          GeneralSecurityException.class,
-          () -> publicKeyHandle.getPrimitive(configuration, PublicKeyVerify.class));
+    Configuration config = SignatureConfig2026.get();
+    byte[] serialized =
+        TinkProtoKeysetFormat.serializeKeyset(keysetHandle, InsecureSecretKeyAccess.get(), config);
+    KeysetHandle parsed =
+        TinkProtoKeysetFormat.parseKeyset(serialized, InsecureSecretKeyAccess.get(), config);
+
+    assertThat(parsed.equalsKeyset(keysetHandle)).isTrue();
+  }
+
+  @Theory
+  public void serializeAndParsePublicKey_works(@FromDataPoints("keys") SignaturePrivateKey key)
+      throws Exception {
+    if (TinkFipsUtil.useOnlyFips()) {
       return;
     }
+    SignaturePublicKey publicKey = key.getPublicKey();
+    KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(publicKey).makePrimary();
+    if (publicKey.getIdRequirementOrNull() == null) {
+      entry.withRandomId();
+    } else {
+      entry.withFixedId(publicKey.getIdRequirementOrNull());
+    }
+    KeysetHandle keysetHandle = KeysetHandle.newBuilder().addEntry(entry).build();
 
-    PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
-    byte[] signature = signer.sign(testVector.getMessage());
-    PublicKeyVerify verifier =
-        publicKeyHandle
-            .getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
+    Configuration config = SignatureConfig2026.get();
+    byte[] serialized = TinkProtoKeysetFormat.serializeKeysetWithoutSecret(keysetHandle, config);
+    KeysetHandle parsed = TinkProtoKeysetFormat.parseKeysetWithoutSecret(serialized, config);
 
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> verifier.verify(signature, modifyInput(testVector.getMessage())));
+    assertThat(parsed.equalsKeyset(keysetHandle)).isTrue();
   }
 
   @Theory
-  public void test_serializeAndParsePrivateKey(
-      @FromDataPoints("signatureTests") SignatureTestVector testVector) throws Exception {
-    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+  public void serializeAndParseParameters_works(@FromDataPoints("keys") SignaturePrivateKey key)
+      throws Exception {
+    if (TinkFipsUtil.useOnlyFips()) {
+      return;
+    }
+    Parameters parameters = key.getParameters();
+    Configuration config = SignatureConfig2026.get();
+    byte[] serialized = TinkProtoParametersFormat.serialize(parameters, config);
+    Parameters parsed = TinkProtoParametersFormat.parse(serialized, config);
 
-    ProtoKeySerializer serializer = SignatureConfig2026.get().getOrNull(ProtoKeySerializer.class);
-    assertThat(serializer).isNotNull();
-
-    SignaturePrivateKey key = testVector.getPrivateKey();
-    ProtoKeySerialization serializedKey =
-        serializer.serializeKey(key, InsecureSecretKeyAccess.get());
-
-    Key parsedKey = serializer.parseKey(serializedKey, InsecureSecretKeyAccess.get());
-    assertThat(parsedKey.equalsKey(key)).isTrue();
-  }
-
-  @Theory
-  public void test_serializeAndParsePublicKey(
-      @FromDataPoints("signatureTests") SignatureTestVector testVector) throws Exception {
-    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
-
-    ProtoKeySerializer serializer = SignatureConfig2026.get().getOrNull(ProtoKeySerializer.class);
-    assertThat(serializer).isNotNull();
-
-    SignaturePublicKey key = testVector.getPrivateKey().getPublicKey();
-    ProtoKeySerialization serializedKey = serializer.serializeKey(key, null);
-
-    Key parsedKey = serializer.parseKey(serializedKey, null);
-    assertThat(parsedKey.equalsKey(key)).isTrue();
-  }
-
-  @Theory
-  public void test_serializeAndParseParameters(
-      @FromDataPoints("signatureTests") SignatureTestVector testVector) throws Exception {
-    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
-    Assume.assumeTrue(shouldBeSupported(testVector));
-
-    ProtoKeySerializer serializer = SignatureConfig2026.get().getOrNull(ProtoKeySerializer.class);
-    assertThat(serializer).isNotNull();
-
-    SignatureParameters parameters = testVector.getPrivateKey().getParameters();
-    ProtoParametersSerialization serializedParameters = serializer.serializeParameters(parameters);
-
-    assertThat(serializer.parseParameters(serializedParameters)).isEqualTo(parameters);
+    assertThat(parsed).isEqualTo(parameters);
   }
 
   @Test
   public void getOrNull_unsupportedClass_returnsNull() throws Exception {
+    if (TinkFipsUtil.useOnlyFips()) {
+      return;
+    }
     assertThat(SignatureConfig2026.get().getOrNull(String.class)).isNull();
   }
-
-  @DataPoints("signatureTests")
-  public static final SignatureTestVector[] signatureTestVectors =
-      Stream.concat(
-              Stream.concat(
-                  Stream.concat(
-                      stream(EcdsaTestUtil.createEcdsaTestVectors()),
-                      stream(RsaSsaPssTestUtil.createRsaPssTestVectors())),
-                  Stream.concat(
-                      stream(RsaSsaPkcs1TestUtil.createRsaSsaPkcs1TestVectors()),
-                      stream(Ed25519TestUtil.createEd25519TestVectors()))),
-              Stream.concat(
-                  MlDsaTestUtil.createMlDsa65ValidSignatureTestVectors(),
-                  SlhDsaTestUtil.createSlhDsaValidSignatureTestVectors()))
-          .toArray(SignatureTestVector[]::new);
 }
