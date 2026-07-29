@@ -148,3 +148,51 @@ android_library(
         "//src/main/java/com/google/crypto/tink/subtle:hkdf-android",
     ],
 )
+
+java_library(
+    name = "hpke_decrypt",
+    srcs = ["HpkeDecrypt.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:hybrid_decrypt",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink/hybrid:hpke_private_key",
+        "//src/main/java/com/google/crypto/tink/hybrid/internal:hpke_decrypt",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "hpke_encrypt",
+    srcs = ["HpkeEncrypt.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:hybrid_encrypt",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink/hybrid:hpke_public_key",
+        "//src/main/java/com/google/crypto/tink/hybrid/internal:hpke_encrypt",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
+    name = "hpke_decrypt-android",
+    srcs = ["HpkeDecrypt.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:hybrid_decrypt-android",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink/hybrid:hpke_private_key-android",
+        "//src/main/java/com/google/crypto/tink/hybrid/internal:hpke_decrypt-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+android_library(
+    name = "hpke_encrypt-android",
+    srcs = ["HpkeEncrypt.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:hybrid_encrypt-android",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink/hybrid:hpke_public_key-android",
+        "//src/main/java/com/google/crypto/tink/hybrid/internal:hpke_encrypt-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
