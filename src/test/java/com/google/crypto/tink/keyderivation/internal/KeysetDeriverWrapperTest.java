@@ -98,7 +98,7 @@ public final class KeysetDeriverWrapperTest {
   @AccessesPartialKey
   private static KeyDeriver createPrfBasedKeyDeriver(PrfBasedKeyDerivationKey key)
       throws GeneralSecurityException {
-    return PrfBasedKeyDeriver.createWithPrfGetter(
+    return PrfBasedKeyDeriver.create(
         k -> MutablePrimitiveRegistry.globalInstance().getPrimitive(k, StreamingPrf.class), key);
   }
 

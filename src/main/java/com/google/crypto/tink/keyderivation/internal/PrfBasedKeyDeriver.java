@@ -47,7 +47,7 @@ public final class PrfBasedKeyDeriver implements KeyDeriver {
   }
 
   @AccessesPartialKey
-  public static KeyDeriver createWithPrfGetter(PrfGetter prfGetter, PrfBasedKeyDerivationKey key)
+  public static KeyDeriver create(PrfGetter prfGetter, PrfBasedKeyDerivationKey key)
       throws GeneralSecurityException {
     StreamingPrf prf = prfGetter.get(key.getPrfKey());
     PrfBasedKeyDeriver deriver = new PrfBasedKeyDeriver(prf, key);
