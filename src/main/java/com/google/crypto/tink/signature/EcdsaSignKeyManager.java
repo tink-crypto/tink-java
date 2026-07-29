@@ -18,8 +18,6 @@ package com.google.crypto.tink.signature;
 
 import static com.google.crypto.tink.internal.TinkBugException.exceptionIsBug;
 
-import com.google.crypto.tink.AccessesPartialKey;
-import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.Parameters;
@@ -35,19 +33,14 @@ import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
+import com.google.crypto.tink.signature.internal.EcdsaKeyCreator;
 import com.google.crypto.tink.signature.internal.EcdsaProtoSerialization;
 import com.google.crypto.tink.subtle.EcdsaSignJce;
 import com.google.crypto.tink.subtle.EcdsaVerifyJce;
-import com.google.crypto.tink.subtle.EllipticCurves;
-import com.google.crypto.tink.util.SecretBigInteger;
 import java.security.GeneralSecurityException;
-import java.security.KeyPair;
-import java.security.interfaces.ECPrivateKey;
-import java.security.interfaces.ECPublicKey;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nullable;
 
 /**
  * This key manager generates new {@code EcdsaPrivateKey} keys and produces new instances of {@code
@@ -79,30 +72,9 @@ public final class EcdsaSignKeyManager {
     return "type.googleapis.com/google.crypto.tink.EcdsaPrivateKey";
   }
 
-  @AccessesPartialKey
-  private static EcdsaPrivateKey createKey(
-      EcdsaParameters parameters, @Nullable Integer idRequirement) throws GeneralSecurityException {
-    KeyPair keyPair = EllipticCurves.generateKeyPair(parameters.getCurveType().toParameterSpec());
-    ECPublicKey pubKey = (ECPublicKey) keyPair.getPublic();
-    ECPrivateKey privKey = (ECPrivateKey) keyPair.getPrivate();
-
-    EcdsaPublicKey publicKey =
-        EcdsaPublicKey.builder()
-            .setParameters(parameters)
-            .setIdRequirement(idRequirement)
-            .setPublicPoint(pubKey.getW())
-            .build();
-
-    return EcdsaPrivateKey.builder()
-        .setPublicKey(publicKey)
-        .setPrivateValue(
-            SecretBigInteger.fromBigInteger(privKey.getS(), InsecureSecretKeyAccess.get()))
-        .build();
-  }
-
   @SuppressWarnings("InlineLambdaConstant") // We need a correct Object#equals in registration.
   private static final KeyCreator<EcdsaParameters> KEY_CREATOR =
-      EcdsaSignKeyManager::createKey;
+      EcdsaKeyCreator::createKey;
 
   private static Map<String, Parameters> namedParameters() throws GeneralSecurityException {
         Map<String, Parameters> result = new HashMap<>();
