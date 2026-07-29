@@ -86,7 +86,9 @@ import java.security.GeneralSecurityException;
       throws GeneralSecurityException {
     // TODO(b/463439649): create the object that would make use of a local
     //   KeyDerivationRegistry.
-    KeyDeriver deriver = PrfBasedKeyDeriver.createWithPrfPrimitiveRegistry(PRF_REGISTRY, key);
+    KeyDeriver deriver =
+        PrfBasedKeyDeriver.createWithPrfGetter(
+            k -> PRF_REGISTRY.getPrimitive(k, StreamingPrf.class), key);
     Object unused = deriver.deriveKey(new byte[] {1});
     return deriver;
   }

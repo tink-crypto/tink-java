@@ -21,7 +21,6 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.internal.MutableKeyDerivationRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
-import com.google.crypto.tink.internal.PrimitiveRegistry;
 import com.google.crypto.tink.keyderivation.PrfBasedKeyDerivationKey;
 import com.google.crypto.tink.subtle.prf.StreamingPrf;
 import com.google.errorprone.annotations.Immutable;
@@ -37,6 +36,12 @@ public final class PrfBasedKeyDeriver implements KeyDeriver {
   final StreamingPrf prf;
   final PrfBasedKeyDerivationKey key;
 
+  /** Functional interface to get a StreamingPrf from a Key. */
+  @FunctionalInterface
+  public interface PrfGetter {
+    StreamingPrf get(Key key) throws GeneralSecurityException;
+  }
+
   private PrfBasedKeyDeriver(StreamingPrf prf, PrfBasedKeyDerivationKey key) {
     this.prf = prf;
     this.key = key;
@@ -44,18 +49,16 @@ public final class PrfBasedKeyDeriver implements KeyDeriver {
 
   @AccessesPartialKey
   public static KeyDeriver create(PrfBasedKeyDerivationKey key) throws GeneralSecurityException {
-    StreamingPrf prf =
-        MutablePrimitiveRegistry.globalInstance().getPrimitive(key.getPrfKey(), StreamingPrf.class);
-    PrfBasedKeyDeriver deriver = new PrfBasedKeyDeriver(prf, key);
-    Object unused = deriver.deriveKey(new byte[] {1});
-    return deriver;
+    return createWithPrfGetter(
+        prfKey ->
+            MutablePrimitiveRegistry.globalInstance().getPrimitive(prfKey, StreamingPrf.class),
+        key);
   }
 
   @AccessesPartialKey
-  public static KeyDeriver createWithPrfPrimitiveRegistry(
-      PrimitiveRegistry primitiveRegistry, PrfBasedKeyDerivationKey key)
+  public static KeyDeriver createWithPrfGetter(PrfGetter prfGetter, PrfBasedKeyDerivationKey key)
       throws GeneralSecurityException {
-    StreamingPrf prf = primitiveRegistry.getPrimitive(key.getPrfKey(), StreamingPrf.class);
+    StreamingPrf prf = prfGetter.get(key.getPrfKey());
     PrfBasedKeyDeriver deriver = new PrfBasedKeyDeriver(prf, key);
     Object unused = deriver.deriveKey(new byte[] {1});
     return deriver;

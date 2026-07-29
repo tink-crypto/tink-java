@@ -491,7 +491,9 @@ public final class PrfBasedKeyDeriverTest {
     PrfBasedKeyDerivationKey keyDerivationKey =
         PrfBasedKeyDerivationKey.create(derivationParameters, t.prfKey, idRequirement);
 
-    assertThat(PrfBasedKeyDeriver.createWithPrfPrimitiveRegistry(prfRegistry, keyDerivationKey))
+    assertThat(
+            PrfBasedKeyDeriver.createWithPrfGetter(
+                k -> prfRegistry.getPrimitive(k, StreamingPrf.class), keyDerivationKey))
         .isNotNull();
   }
 
@@ -514,6 +516,8 @@ public final class PrfBasedKeyDeriverTest {
 
     assertThrows(
         GeneralSecurityException.class,
-        () -> PrfBasedKeyDeriver.createWithPrfPrimitiveRegistry(wrongRegistry, keyDerivationKey));
+        () ->
+            PrfBasedKeyDeriver.createWithPrfGetter(
+                k -> wrongRegistry.getPrimitive(k, StreamingPrf.class), keyDerivationKey));
   }
 }
