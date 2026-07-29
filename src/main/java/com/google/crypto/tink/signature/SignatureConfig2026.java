@@ -17,31 +17,29 @@
 package com.google.crypto.tink.signature;
 
 import com.google.crypto.tink.Configuration;
-import com.google.crypto.tink.Key;
-import com.google.crypto.tink.KeysetHandleInterface;
-import com.google.crypto.tink.ProtoKeySerializer;
+import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
-import com.google.crypto.tink.internal.SerializationRegistry;
-import com.google.crypto.tink.signature.internal.EcdsaProtoSerialization;
-import com.google.crypto.tink.signature.internal.Ed25519ProtoSerialization;
-import com.google.crypto.tink.signature.internal.MlDsaProtoSerialization;
-import com.google.crypto.tink.signature.internal.MlDsaSignConscrypt;
-import com.google.crypto.tink.signature.internal.MlDsaVerifyConscrypt;
-import com.google.crypto.tink.signature.internal.RsaSsaPkcs1ProtoSerialization;
-import com.google.crypto.tink.signature.internal.RsaSsaPssProtoSerialization;
-import com.google.crypto.tink.signature.internal.SlhDsaProtoSerialization;
-import com.google.crypto.tink.signature.internal.SlhDsaSignConscrypt;
-import com.google.crypto.tink.signature.internal.SlhDsaVerifyConscrypt;
-import com.google.crypto.tink.subtle.EcdsaSignJce;
-import com.google.crypto.tink.subtle.EcdsaVerifyJce;
-import com.google.crypto.tink.subtle.Ed25519Sign;
-import com.google.crypto.tink.subtle.Ed25519Verify;
-import com.google.crypto.tink.subtle.RsaSsaPkcs1SignJce;
-import com.google.crypto.tink.subtle.RsaSsaPkcs1VerifyJce;
-import com.google.crypto.tink.subtle.RsaSsaPssSignJce;
-import com.google.crypto.tink.subtle.RsaSsaPssVerifyJce;
+import com.google.crypto.tink.internal.ProtoBasedConfigurationBuilder;
+import com.google.crypto.tink.signature.subtle.EcdsaProtoSerialization;
+import com.google.crypto.tink.signature.subtle.EcdsaSigner;
+import com.google.crypto.tink.signature.subtle.EcdsaVerifier;
+import com.google.crypto.tink.signature.subtle.Ed25519ProtoSerialization;
+import com.google.crypto.tink.signature.subtle.Ed25519Signer;
+import com.google.crypto.tink.signature.subtle.Ed25519Verifier;
+import com.google.crypto.tink.signature.subtle.MlDsaProtoSerialization;
+import com.google.crypto.tink.signature.subtle.MlDsaSigner;
+import com.google.crypto.tink.signature.subtle.MlDsaVerifier;
+import com.google.crypto.tink.signature.subtle.RsaSsaPkcs1ProtoSerialization;
+import com.google.crypto.tink.signature.subtle.RsaSsaPkcs1Signer;
+import com.google.crypto.tink.signature.subtle.RsaSsaPkcs1Verifier;
+import com.google.crypto.tink.signature.subtle.RsaSsaPssProtoSerialization;
+import com.google.crypto.tink.signature.subtle.RsaSsaPssSigner;
+import com.google.crypto.tink.signature.subtle.RsaSsaPssVerifier;
+import com.google.crypto.tink.signature.subtle.SlhDsaProtoSerialization;
+import com.google.crypto.tink.signature.subtle.SlhDsaSigner;
+import com.google.crypto.tink.signature.subtle.SlhDsaVerifier;
 import java.security.GeneralSecurityException;
 
 /**
@@ -63,35 +61,6 @@ public final class SignatureConfig2026 {
   private static final PublicKeyVerifyWrapper PUBLIC_KEY_VERIFY_WRAPPER =
       new PublicKeyVerifyWrapper();
   private static final Configuration CONFIGURATION = create();
-  private static final ProtoKeySerializer SERIALIZER = createProtoKeySerializer();
-
-  private static Configuration create() {
-    return new Configuration() {
-      @Override
-      public <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
-          throws GeneralSecurityException {
-        if (clazz == PublicKeySign.class) {
-          return clazz.cast(
-              PUBLIC_KEY_SIGN_WRAPPER.wrap(keysetHandle, SignatureConfig2026::createPublicKeySign));
-        }
-        if (clazz == PublicKeyVerify.class) {
-          return clazz.cast(
-              PUBLIC_KEY_VERIFY_WRAPPER.wrap(
-                  keysetHandle, SignatureConfig2026::createPublicKeyVerify));
-        }
-        throw new GeneralSecurityException(
-            "SignatureConfig2026 can only create PublicKeySign and PublicKeyVerify");
-      }
-
-      @Override
-      public <P> P getOrNull(Class<P> clazz) {
-        if (clazz.equals(ProtoKeySerializer.class)) {
-          return clazz.cast(SERIALIZER);
-        }
-        return null;
-      }
-    };
-  }
 
   /** Returns an instance of the {@code SignatureConfig2026}. */
   public static Configuration get() throws GeneralSecurityException {
@@ -102,66 +71,120 @@ public final class SignatureConfig2026 {
     return CONFIGURATION;
   }
 
-  private static PublicKeySign createPublicKeySign(KeysetHandleInterface.Entry entry)
-      throws GeneralSecurityException {
-    Key key = entry.getKey();
-    if (key instanceof EcdsaPrivateKey) {
-      return EcdsaSignJce.create((EcdsaPrivateKey) key);
-    }
-    if (key instanceof RsaSsaPssPrivateKey) {
-      return RsaSsaPssSignJce.create((RsaSsaPssPrivateKey) key);
-    }
-    if (key instanceof RsaSsaPkcs1PrivateKey) {
-      return RsaSsaPkcs1SignJce.create((RsaSsaPkcs1PrivateKey) key);
-    }
-    if (key instanceof Ed25519PrivateKey) {
-      return Ed25519Sign.create((Ed25519PrivateKey) key);
-    }
-    if (key instanceof MlDsaPrivateKey) {
-      return MlDsaSignConscrypt.create((MlDsaPrivateKey) key);
-    }
-    if (key instanceof SlhDsaPrivateKey) {
-      return SlhDsaSignConscrypt.create((SlhDsaPrivateKey) key);
-    }
-    throw new GeneralSecurityException("Unknown key class: " + key.getClass());
-  }
+  private static final String ECDSA_PRIVATE_KEY_TYPE_URL =
+      "type.googleapis.com/google.crypto.tink.EcdsaPrivateKey";
+  private static final String ECDSA_PUBLIC_KEY_TYPE_URL =
+      "type.googleapis.com/google.crypto.tink.EcdsaPublicKey";
 
-  private static PublicKeyVerify createPublicKeyVerify(KeysetHandleInterface.Entry entry)
-      throws GeneralSecurityException {
-    Key key = entry.getKey();
-    if (key instanceof EcdsaPublicKey) {
-      return EcdsaVerifyJce.create((EcdsaPublicKey) key);
-    }
-    if (key instanceof RsaSsaPssPublicKey) {
-      return RsaSsaPssVerifyJce.create((RsaSsaPssPublicKey) key);
-    }
-    if (key instanceof RsaSsaPkcs1PublicKey) {
-      return RsaSsaPkcs1VerifyJce.create((RsaSsaPkcs1PublicKey) key);
-    }
-    if (key instanceof Ed25519PublicKey) {
-      return Ed25519Verify.create((Ed25519PublicKey) key);
-    }
-    if (key instanceof MlDsaPublicKey) {
-      return MlDsaVerifyConscrypt.create((MlDsaPublicKey) key);
-    }
-    if (key instanceof SlhDsaPublicKey) {
-      return SlhDsaVerifyConscrypt.create((SlhDsaPublicKey) key);
-    }
-    throw new GeneralSecurityException("Unknown key class: " + key.getClass());
-  }
+  private static final String ED25519_PRIVATE_KEY_TYPE_URL =
+      "type.googleapis.com/google.crypto.tink.Ed25519PrivateKey";
+  private static final String ED25519_PUBLIC_KEY_TYPE_URL =
+      "type.googleapis.com/google.crypto.tink.Ed25519PublicKey";
 
-  private static ProtoKeySerializer createProtoKeySerializer() {
-    try {
-      SerializationRegistry.Builder builder = new SerializationRegistry.Builder();
-      EcdsaProtoSerialization.register(builder);
-      Ed25519ProtoSerialization.register(builder);
-      MlDsaProtoSerialization.register(builder);
-      RsaSsaPkcs1ProtoSerialization.register(builder);
-      RsaSsaPssProtoSerialization.register(builder);
-      SlhDsaProtoSerialization.register(builder);
-      return builder.build();
-    } catch (GeneralSecurityException e) {
-      throw new IllegalStateException(e);
-    }
+  private static final String MLDSA_PRIVATE_KEY_TYPE_URL =
+      "type.googleapis.com/google.crypto.tink.MlDsaPrivateKey";
+  private static final String MLDSA_PUBLIC_KEY_TYPE_URL =
+      "type.googleapis.com/google.crypto.tink.MlDsaPublicKey";
+
+  private static final String RSA_SSA_PKCS1_PRIVATE_KEY_TYPE_URL =
+      "type.googleapis.com/google.crypto.tink.RsaSsaPkcs1PrivateKey";
+  private static final String RSA_SSA_PKCS1_PUBLIC_KEY_TYPE_URL =
+      "type.googleapis.com/google.crypto.tink.RsaSsaPkcs1PublicKey";
+
+  private static final String RSA_SSA_PSS_PRIVATE_KEY_TYPE_URL =
+      "type.googleapis.com/google.crypto.tink.RsaSsaPssPrivateKey";
+  private static final String RSA_SSA_PSS_PUBLIC_KEY_TYPE_URL =
+      "type.googleapis.com/google.crypto.tink.RsaSsaPssPublicKey";
+
+  private static final String SLHDSA_PRIVATE_KEY_TYPE_URL =
+      "type.googleapis.com/google.crypto.tink.SlhDsaPrivateKey";
+  private static final String SLHDSA_PUBLIC_KEY_TYPE_URL =
+      "type.googleapis.com/google.crypto.tink.SlhDsaPublicKey";
+
+  @LowLevelCryptoCaller
+  private static Configuration create() {
+    return new ProtoBasedConfigurationBuilder()
+        .addPrimitiveWrapper(
+            PublicKeySign.class, PublicKeySign.class, PUBLIC_KEY_SIGN_WRAPPER::wrap)
+        .addPrimitiveWrapper(
+            PublicKeyVerify.class, PublicKeyVerify.class, PUBLIC_KEY_VERIFY_WRAPPER::wrap)
+        // Ecdsa
+        .addPrimitiveConstructor(EcdsaSigner::create, EcdsaPrivateKey.class, PublicKeySign.class)
+        .addPrimitiveConstructor(EcdsaVerifier::create, EcdsaPublicKey.class, PublicKeyVerify.class)
+        .addKeySerializer(EcdsaPrivateKey.class, EcdsaProtoSerialization::serializePrivateKey)
+        .addKeySerializer(EcdsaPublicKey.class, EcdsaProtoSerialization::serializePublicKey)
+        .addParametersSerializer(
+            EcdsaParameters.class, EcdsaProtoSerialization::serializeParameters)
+        .addKeyParser(ECDSA_PRIVATE_KEY_TYPE_URL, EcdsaProtoSerialization::parsePrivateKey)
+        .addKeyParser(ECDSA_PUBLIC_KEY_TYPE_URL, EcdsaProtoSerialization::parsePublicKey)
+        .addParametersParser(ECDSA_PRIVATE_KEY_TYPE_URL, EcdsaProtoSerialization::parseParameters)
+        // Ed25519
+        .addPrimitiveConstructor(
+            Ed25519Signer::create, Ed25519PrivateKey.class, PublicKeySign.class)
+        .addPrimitiveConstructor(
+            Ed25519Verifier::create, Ed25519PublicKey.class, PublicKeyVerify.class)
+        .addKeySerializer(Ed25519PrivateKey.class, Ed25519ProtoSerialization::serializePrivateKey)
+        .addKeySerializer(Ed25519PublicKey.class, Ed25519ProtoSerialization::serializePublicKey)
+        .addParametersSerializer(
+            Ed25519Parameters.class, Ed25519ProtoSerialization::serializeParameters)
+        .addKeyParser(ED25519_PRIVATE_KEY_TYPE_URL, Ed25519ProtoSerialization::parsePrivateKey)
+        .addKeyParser(ED25519_PUBLIC_KEY_TYPE_URL, Ed25519ProtoSerialization::parsePublicKey)
+        .addParametersParser(
+            ED25519_PRIVATE_KEY_TYPE_URL, Ed25519ProtoSerialization::parseParameters)
+        // MlDsa
+        .addPrimitiveConstructor(MlDsaSigner::create, MlDsaPrivateKey.class, PublicKeySign.class)
+        .addPrimitiveConstructor(MlDsaVerifier::create, MlDsaPublicKey.class, PublicKeyVerify.class)
+        .addKeySerializer(MlDsaPrivateKey.class, MlDsaProtoSerialization::serializePrivateKey)
+        .addKeySerializer(MlDsaPublicKey.class, MlDsaProtoSerialization::serializePublicKey)
+        .addParametersSerializer(
+            MlDsaParameters.class, MlDsaProtoSerialization::serializeParameters)
+        .addKeyParser(MLDSA_PRIVATE_KEY_TYPE_URL, MlDsaProtoSerialization::parsePrivateKey)
+        .addKeyParser(MLDSA_PUBLIC_KEY_TYPE_URL, MlDsaProtoSerialization::parsePublicKey)
+        .addParametersParser(MLDSA_PRIVATE_KEY_TYPE_URL, MlDsaProtoSerialization::parseParameters)
+        // RsaSsaPkcs1
+        .addPrimitiveConstructor(
+            RsaSsaPkcs1Signer::create, RsaSsaPkcs1PrivateKey.class, PublicKeySign.class)
+        .addPrimitiveConstructor(
+            RsaSsaPkcs1Verifier::create, RsaSsaPkcs1PublicKey.class, PublicKeyVerify.class)
+        .addKeySerializer(
+            RsaSsaPkcs1PrivateKey.class, RsaSsaPkcs1ProtoSerialization::serializePrivateKey)
+        .addKeySerializer(
+            RsaSsaPkcs1PublicKey.class, RsaSsaPkcs1ProtoSerialization::serializePublicKey)
+        .addParametersSerializer(
+            RsaSsaPkcs1Parameters.class, RsaSsaPkcs1ProtoSerialization::serializeParameters)
+        .addKeyParser(
+            RSA_SSA_PKCS1_PRIVATE_KEY_TYPE_URL, RsaSsaPkcs1ProtoSerialization::parsePrivateKey)
+        .addKeyParser(
+            RSA_SSA_PKCS1_PUBLIC_KEY_TYPE_URL, RsaSsaPkcs1ProtoSerialization::parsePublicKey)
+        .addParametersParser(
+            RSA_SSA_PKCS1_PRIVATE_KEY_TYPE_URL, RsaSsaPkcs1ProtoSerialization::parseParameters)
+        // RsaSsaPss
+        .addPrimitiveConstructor(
+            RsaSsaPssSigner::create, RsaSsaPssPrivateKey.class, PublicKeySign.class)
+        .addPrimitiveConstructor(
+            RsaSsaPssVerifier::create, RsaSsaPssPublicKey.class, PublicKeyVerify.class)
+        .addKeySerializer(
+            RsaSsaPssPrivateKey.class, RsaSsaPssProtoSerialization::serializePrivateKey)
+        .addKeySerializer(RsaSsaPssPublicKey.class, RsaSsaPssProtoSerialization::serializePublicKey)
+        .addParametersSerializer(
+            RsaSsaPssParameters.class, RsaSsaPssProtoSerialization::serializeParameters)
+        .addKeyParser(
+            RSA_SSA_PSS_PRIVATE_KEY_TYPE_URL, RsaSsaPssProtoSerialization::parsePrivateKey)
+        .addKeyParser(RSA_SSA_PSS_PUBLIC_KEY_TYPE_URL, RsaSsaPssProtoSerialization::parsePublicKey)
+        .addParametersParser(
+            RSA_SSA_PSS_PRIVATE_KEY_TYPE_URL, RsaSsaPssProtoSerialization::parseParameters)
+        // SlhDsa
+        .addPrimitiveConstructor(SlhDsaSigner::create, SlhDsaPrivateKey.class, PublicKeySign.class)
+        .addPrimitiveConstructor(
+            SlhDsaVerifier::create, SlhDsaPublicKey.class, PublicKeyVerify.class)
+        .addKeySerializer(SlhDsaPrivateKey.class, SlhDsaProtoSerialization::serializePrivateKey)
+        .addKeySerializer(SlhDsaPublicKey.class, SlhDsaProtoSerialization::serializePublicKey)
+        .addParametersSerializer(
+            SlhDsaParameters.class, SlhDsaProtoSerialization::serializeParameters)
+        .addKeyParser(SLHDSA_PRIVATE_KEY_TYPE_URL, SlhDsaProtoSerialization::parsePrivateKey)
+        .addKeyParser(SLHDSA_PUBLIC_KEY_TYPE_URL, SlhDsaProtoSerialization::parsePublicKey)
+        .addParametersParser(SLHDSA_PRIVATE_KEY_TYPE_URL, SlhDsaProtoSerialization::parseParameters)
+        .build();
   }
 }
+
