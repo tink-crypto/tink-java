@@ -82,9 +82,8 @@ public final class CompositeMlDsaSignConscrypt implements PublicKeySign {
   public static PublicKeySign createWithProvider(
       CompositeMlDsaPrivateKey privateKey, Provider provider) throws GeneralSecurityException {
     Provider nonNullProvider = Objects.requireNonNull(provider);
-    if (!FIPS.isCompatible()) {
-      throw new GeneralSecurityException(
-          "Can not use Composite ML-DSA in FIPS-mode, as it is not yet certified in Conscrypt.");
+    if (!CompositeMlDsaVerifyConscrypt.isSupported()) {
+      throw new GeneralSecurityException("Composite ML-DSA is not supported in this environment.");
     }
     CompositeMlDsaParameters params = privateKey.getParameters();
     if (params.getClassicalAlgorithm() != ClassicalAlgorithm.ED25519) {

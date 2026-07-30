@@ -18,6 +18,7 @@ package com.google.crypto.tink.signature.internal;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
 
 import com.google.crypto.tink.AccessesPartialKey;
@@ -25,7 +26,6 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
-import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters;
 import com.google.crypto.tink.signature.CompositeMlDsaPrivateKey;
 import com.google.crypto.tink.signature.Ed25519Parameters;
@@ -40,14 +40,12 @@ import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.Provider;
 import java.security.Security;
 import java.util.Arrays;
 import java.util.List;
 import org.conscrypt.Conscrypt;
 import org.junit.BeforeClass;
+import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
 import org.junit.experimental.theories.Theories;
@@ -144,7 +142,7 @@ public final class CompositeMlDsaSignVerifyConscryptTest {
   public void signAndVerify_success(
       @FromDataPoints("testVectors") CompositeMlDsaTestVector testVector) throws Exception {
     assumeTrue(testVector.tcId.contains("Ed25519"));
-    if (!isCompositeMlDsaAvailable()) {
+    if (!CompositeMlDsaVerifyConscrypt.isSupported()) {
       // Cannot test if Composite ML-DSA is not available.
       return;
     }
@@ -167,7 +165,7 @@ public final class CompositeMlDsaSignVerifyConscryptTest {
   public void verifyTestVector_success(
       @FromDataPoints("testVectors") CompositeMlDsaTestVector testVector) throws Exception {
     assumeTrue(testVector.tcId.contains("Ed25519"));
-    if (!isCompositeMlDsaAvailable()) {
+    if (!CompositeMlDsaVerifyConscrypt.isSupported()) {
       // Cannot test if Composite ML-DSA is not available.
       return;
     }
@@ -188,7 +186,7 @@ public final class CompositeMlDsaSignVerifyConscryptTest {
   public void verify_modifiedMessage_throws(
       @FromDataPoints("testVectors") CompositeMlDsaTestVector testVector) throws Exception {
     assumeTrue(testVector.tcId.contains("Ed25519"));
-    if (!isCompositeMlDsaAvailable()) {
+    if (!CompositeMlDsaVerifyConscrypt.isSupported()) {
       // Cannot test if Composite ML-DSA is not available.
       return;
     }
@@ -212,7 +210,7 @@ public final class CompositeMlDsaSignVerifyConscryptTest {
   public void verify_modifiedSignature_throws(
       @FromDataPoints("testVectors") CompositeMlDsaTestVector testVector) throws Exception {
     assumeTrue(testVector.tcId.contains("Ed25519"));
-    if (!isCompositeMlDsaAvailable()) {
+    if (!CompositeMlDsaVerifyConscrypt.isSupported()) {
       // Cannot test if Composite ML-DSA is not available.
       return;
     }
@@ -239,7 +237,7 @@ public final class CompositeMlDsaSignVerifyConscryptTest {
       @FromDataPoints("testVectors") CompositeMlDsaTestVector testVector) throws Exception {
     assumeTrue(testVector.tcId.contains("Ed25519"));
     assumeTrue(testVector.idRequirement != null);
-    if (!isCompositeMlDsaAvailable()) {
+    if (!CompositeMlDsaVerifyConscrypt.isSupported()) {
       // Cannot test if Composite ML-DSA is not available.
       return;
     }
@@ -268,7 +266,7 @@ public final class CompositeMlDsaSignVerifyConscryptTest {
   public void verify_wrongSignatureLength_throws(
       @FromDataPoints("testVectors") CompositeMlDsaTestVector testVector) throws Exception {
     assumeTrue(testVector.tcId.contains("Ed25519"));
-    if (!isCompositeMlDsaAvailable()) {
+    if (!CompositeMlDsaVerifyConscrypt.isSupported()) {
       // Cannot test if Composite ML-DSA is not available.
       return;
     }
@@ -292,17 +290,20 @@ public final class CompositeMlDsaSignVerifyConscryptTest {
     assertThrows(GeneralSecurityException.class, () -> verifier.verify(longSignature, message));
   }
 
-  private static boolean isCompositeMlDsaAvailable() {
-    Provider provider = ConscryptUtil.providerOrNull();
-    if (provider == null) {
-      return false;
-    }
-    try {
-      KeyFactory unused = KeyFactory.getInstance("MLDSA44-Ed25519-SHA512", provider);
-      return true;
-    } catch (NoSuchAlgorithmException e) {
-      // Cannot test if Composite ML-DSA is not available.
-      return false;
-    }
+  @Test
+  public void throwsIfNotAvailable() throws Exception {
+    assumeFalse(CompositeMlDsaVerifyConscrypt.isSupported());
+    CompositeMlDsaPrivateKey privateKey =
+        createCompositeKeyFromRawBytes(
+            testVectors.get(2).tcId,
+            Hex.decode(testVectors.get(2).pk),
+            Hex.decode(testVectors.get(2).sk),
+            testVectors.get(2).idRequirement);
+
+    assertThrows(
+        GeneralSecurityException.class, () -> CompositeMlDsaSignConscrypt.create(privateKey));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> CompositeMlDsaVerifyConscrypt.create(privateKey.getPublicKey()));
   }
 }

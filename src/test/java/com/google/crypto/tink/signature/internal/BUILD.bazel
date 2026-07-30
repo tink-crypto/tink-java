@@ -700,7 +700,6 @@ java_test(
         "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
         "//src/main/java/com/google/crypto/tink:public_key_sign",
         "//src/main/java/com/google/crypto/tink:public_key_verify",
-        "//src/main/java/com/google/crypto/tink/internal:conscrypt_util",
         "//src/main/java/com/google/crypto/tink/signature:composite_ml_dsa_parameters",
         "//src/main/java/com/google/crypto/tink/signature:composite_ml_dsa_private_key",
         "//src/main/java/com/google/crypto/tink/signature:ed25519_parameters",

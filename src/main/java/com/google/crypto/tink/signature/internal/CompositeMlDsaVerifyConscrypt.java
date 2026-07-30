@@ -150,4 +150,26 @@ public final class CompositeMlDsaVerifyConscrypt implements PublicKeyVerify {
       throw new GeneralSecurityException("Invalid signature");
     }
   }
+
+  /**
+   * Returns true if we're not in FIPS, and Conscrypt is available and supports Composite ML-DSA.
+   */
+  public static boolean isSupported() {
+    if (!FIPS.isCompatible()) {
+      return false;
+    }
+
+    Provider provider = ConscryptUtil.providerOrNull();
+    if (provider == null) {
+      return false;
+    }
+
+    try {
+      KeyFactory unusedKeyFactory44 =
+          KeyFactory.getInstance(MLDSA44_ED25519_SHA512_ALGORITHM, provider);
+      return true;
+    } catch (GeneralSecurityException e) {
+      return false;
+    }
+  }
 }
