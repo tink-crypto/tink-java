@@ -567,3 +567,27 @@ java_test(
         "@maven//:org_conscrypt_conscrypt_openjdk_uber",
     ],
 )
+
+java_test(
+    name = "HybridConfig2026Test",
+    size = "small",
+    srcs = ["HybridConfig2026Test.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:configuration",
+        "//src/main/java/com/google/crypto/tink:hybrid_decrypt",
+        "//src/main/java/com/google/crypto/tink:hybrid_encrypt",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink:parameters",
+        "//src/main/java/com/google/crypto/tink:registry_cluster",
+        "//src/main/java/com/google/crypto/tink:tink_proto_keyset_format",
+        "//src/main/java/com/google/crypto/tink:tink_proto_parameters_format",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
+        "//src/main/java/com/google/crypto/tink/hybrid:hybrid_config_2026",
+        "//src/main/java/com/google/crypto/tink/hybrid:hybrid_private_key",
+        "//src/main/java/com/google/crypto/tink/hybrid:hybrid_public_key",
+        "//src/main/java/com/google/crypto/tink/hybrid/internal/testing:ecies_aead_hkdf_test_util",
+        "//src/main/java/com/google/crypto/tink/hybrid/internal/testing:hpke_test_util",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
