@@ -272,3 +272,24 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "JwtMlDsaProtoSerializationTest",
+    size = "small",
+    srcs = ["JwtMlDsaProtoSerializationTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink:parameters",
+        "//src/main/java/com/google/crypto/tink:proto_key_serialization",
+        "//src/main/java/com/google/crypto/tink:proto_parameters_serialization",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_ml_dsa_parameters",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_ml_dsa_private_key",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_ml_dsa_public_key",
+        "//src/main/java/com/google/crypto/tink/jwt/subtle:jwt_ml_dsa_proto_serialization",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
