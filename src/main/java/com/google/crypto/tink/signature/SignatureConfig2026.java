@@ -22,6 +22,7 @@ import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.ProtoBasedConfigurationBuilder;
+import com.google.crypto.tink.signature.internal.EcdsaKeyCreator;
 import com.google.crypto.tink.signature.subtle.EcdsaProtoSerialization;
 import com.google.crypto.tink.signature.subtle.EcdsaSigner;
 import com.google.crypto.tink.signature.subtle.EcdsaVerifier;
@@ -117,6 +118,7 @@ public final class SignatureConfig2026 {
             EcdsaParameters.class, EcdsaProtoSerialization::serializeParameters)
         .addKeyParser(ECDSA_PRIVATE_KEY_TYPE_URL, EcdsaProtoSerialization::parsePrivateKey)
         .addKeyParser(ECDSA_PUBLIC_KEY_TYPE_URL, EcdsaProtoSerialization::parsePublicKey)
+        .addKeyCreator(EcdsaParameters.class, EcdsaKeyCreator::createKey)
         .addParametersParser(ECDSA_PRIVATE_KEY_TYPE_URL, EcdsaProtoSerialization::parseParameters)
         // Ed25519
         .addPrimitiveConstructor(

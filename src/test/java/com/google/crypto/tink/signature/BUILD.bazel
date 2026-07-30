@@ -755,6 +755,7 @@ java_test(
         "//src/main/java/com/google/crypto/tink:tink_proto_parameters_format",
         "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
         "//src/main/java/com/google/crypto/tink/internal:util",
+        "//src/main/java/com/google/crypto/tink/signature:ecdsa_parameters",
         "//src/main/java/com/google/crypto/tink/signature:ml_dsa_private_key",
         "//src/main/java/com/google/crypto/tink/signature:signature_config_2026",
         "//src/main/java/com/google/crypto/tink/signature:signature_private_key",

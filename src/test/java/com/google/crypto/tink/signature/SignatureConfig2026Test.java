@@ -193,6 +193,28 @@ public class SignatureConfig2026Test {
     assertThat(parsed).isEqualTo(parameters);
   }
 
+  @Theory
+  public void createKey_works(@FromDataPoints("keys") SignaturePrivateKey key) throws Exception {
+    Configuration config = SignatureConfig2026.get();
+    if (key.getParameters().getClass() != EcdsaParameters.class) {
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> config.createKey(key.getParameters(), key.getIdRequirementOrNull()));
+      return;
+    }
+
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.generateEntryFromParameters(key.getParameters())
+                    .withFixedId(42)
+                    .makePrimary())
+            .setConfiguration(config)
+            .build();
+
+    assertThat(handle.getPrimary().getKey().getParameters()).isEqualTo(key.getParameters());
+  }
+
   @Test
   public void getOrNull_unsupportedClass_returnsNull() throws Exception {
     if (TinkFipsUtil.useOnlyFips()) {
