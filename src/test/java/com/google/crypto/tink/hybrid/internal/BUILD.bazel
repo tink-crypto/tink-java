@@ -181,6 +181,23 @@ java_test(
 )
 
 java_test(
+    name = "EciesKeyCreatorTest",
+    size = "small",
+    srcs = ["EciesKeyCreatorTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink/aead:aes_gcm_parameters",
+        "//src/main/java/com/google/crypto/tink/hybrid:ecies_parameters",
+        "//src/main/java/com/google/crypto/tink/hybrid:ecies_private_key",
+        "//src/main/java/com/google/crypto/tink/hybrid:predefined_hybrid_parameters",
+        "//src/main/java/com/google/crypto/tink/hybrid/internal:ecies_key_creator",
+        "//src/main/java/com/google/crypto/tink/testing:test_util",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
     name = "NistCurvesHpkeKemTest",
     size = "small",
     srcs = ["NistCurvesHpkeKemTest.java"],
