@@ -30,7 +30,7 @@ import com.google.crypto.tink.signature.CompositeMlDsaParameters.ClassicalAlgori
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.MlDsaInstance;
 import com.google.crypto.tink.signature.CompositeMlDsaPrivateKey;
 import com.google.crypto.tink.signature.Ed25519PrivateKey;
-import com.google.crypto.tink.signature.internal.MlDsaVerifyConscrypt.RawKeySpec;
+import com.google.crypto.tink.signature.internal.CompositeMlDsaVerifyConscrypt.RawKeySpec;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;

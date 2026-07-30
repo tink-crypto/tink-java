@@ -28,13 +28,13 @@ import com.google.crypto.tink.signature.CompositeMlDsaParameters.ClassicalAlgori
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.MlDsaInstance;
 import com.google.crypto.tink.signature.CompositeMlDsaPublicKey;
 import com.google.crypto.tink.signature.Ed25519PublicKey;
-import com.google.crypto.tink.signature.internal.MlDsaVerifyConscrypt.RawKeySpec;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.Provider;
 import java.security.PublicKey;
 import java.security.Signature;
+import java.security.spec.EncodedKeySpec;
 import java.util.Objects;
 
 /** Composite ML-DSA verifying with Conscrypt. */
@@ -170,6 +170,18 @@ public final class CompositeMlDsaVerifyConscrypt implements PublicKeyVerify {
       return true;
     } catch (GeneralSecurityException e) {
       return false;
+    }
+  }
+
+  /** Representation of the raw keys for interoperability with Conscrypt. */
+  public static final class RawKeySpec extends EncodedKeySpec {
+    public RawKeySpec(byte[] encoded) {
+      super(encoded);
+    }
+
+    @Override
+    public String getFormat() {
+      return "raw";
     }
   }
 }
