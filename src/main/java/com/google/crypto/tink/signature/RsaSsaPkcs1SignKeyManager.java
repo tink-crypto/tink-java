@@ -18,8 +18,6 @@ package com.google.crypto.tink.signature;
 
 import static com.google.crypto.tink.internal.TinkBugException.exceptionIsBug;
 
-import com.google.crypto.tink.AccessesPartialKey;
-import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.Parameters;
@@ -35,21 +33,13 @@ import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
+import com.google.crypto.tink.signature.internal.RsaSsaPkcs1KeyCreator;
 import com.google.crypto.tink.signature.internal.RsaSsaPkcs1ProtoSerialization;
-import com.google.crypto.tink.subtle.EngineFactory;
 import com.google.crypto.tink.subtle.RsaSsaPkcs1SignJce;
 import com.google.crypto.tink.subtle.RsaSsaPkcs1VerifyJce;
-import com.google.crypto.tink.util.SecretBigInteger;
-import java.math.BigInteger;
 import java.security.GeneralSecurityException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.interfaces.RSAPrivateCrtKey;
-import java.security.interfaces.RSAPublicKey;
-import java.security.spec.RSAKeyGenParameterSpec;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nullable;
 
 /**
  * This key manager generates new {@code RsaSsaPkcs1PrivateKey} keys and produces new instances of
@@ -83,51 +73,9 @@ public final class RsaSsaPkcs1SignKeyManager {
     return "type.googleapis.com/google.crypto.tink.RsaSsaPkcs1PrivateKey";
   }
 
-  @AccessesPartialKey
-  private static RsaSsaPkcs1PrivateKey createKey(
-      RsaSsaPkcs1Parameters parameters, @Nullable Integer idRequirement)
-      throws GeneralSecurityException {
-        KeyPairGenerator keyGen = EngineFactory.KEY_PAIR_GENERATOR.getInstance("RSA");
-    RSAKeyGenParameterSpec spec =
-        new RSAKeyGenParameterSpec(
-            parameters.getModulusSizeBits(),
-            new BigInteger(1, parameters.getPublicExponent().toByteArray()));
-    keyGen.initialize(spec);
-    KeyPair keyPair = keyGen.generateKeyPair();
-    RSAPublicKey pubKey = (RSAPublicKey) keyPair.getPublic();
-    RSAPrivateCrtKey privKey = (RSAPrivateCrtKey) keyPair.getPrivate();
-
-    // Creates RsaSsaPkcs1PublicKey.
-    RsaSsaPkcs1PublicKey rsaSsaPkcs1PublicKey =
-        RsaSsaPkcs1PublicKey.builder()
-            .setParameters(parameters)
-            .setModulus(pubKey.getModulus())
-            .setIdRequirement(idRequirement)
-            .build();
-
-    // Creates RsaSsaPkcs1PrivateKey.
-    return RsaSsaPkcs1PrivateKey.builder()
-        .setPublicKey(rsaSsaPkcs1PublicKey)
-        .setPrimes(
-            SecretBigInteger.fromBigInteger(privKey.getPrimeP(), InsecureSecretKeyAccess.get()),
-            SecretBigInteger.fromBigInteger(privKey.getPrimeQ(), InsecureSecretKeyAccess.get()))
-        .setPrivateExponent(
-            SecretBigInteger.fromBigInteger(
-                privKey.getPrivateExponent(), InsecureSecretKeyAccess.get()))
-        .setPrimeExponents(
-            SecretBigInteger.fromBigInteger(
-                privKey.getPrimeExponentP(), InsecureSecretKeyAccess.get()),
-            SecretBigInteger.fromBigInteger(
-                privKey.getPrimeExponentQ(), InsecureSecretKeyAccess.get()))
-        .setCrtCoefficient(
-            SecretBigInteger.fromBigInteger(
-                privKey.getCrtCoefficient(), InsecureSecretKeyAccess.get()))
-        .build();
-  }
-
   @SuppressWarnings("InlineLambdaConstant") // We need a correct Object#equals in registration.
   private static final KeyCreator<RsaSsaPkcs1Parameters> KEY_CREATOR =
-      RsaSsaPkcs1SignKeyManager::createKey;
+      RsaSsaPkcs1KeyCreator::createKey;
 
   private static Map<String, Parameters> namedParameters() throws GeneralSecurityException {
     Map<String, Parameters> result = new HashMap<>();

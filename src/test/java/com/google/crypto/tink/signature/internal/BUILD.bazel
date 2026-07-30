@@ -90,6 +90,38 @@ java_test(
 )
 
 java_test(
+    name = "RsaSsaPkcs1KeyCreatorTest",
+    size = "small",
+    srcs = ["RsaSsaPkcs1KeyCreatorTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink/signature:predefined_signature_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_private_key",
+        "//src/main/java/com/google/crypto/tink/signature/internal:rsa_ssa_pkcs1_key_creator",
+        "//src/main/java/com/google/crypto/tink/testing:test_util",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
+    name = "RsaSsaPssKeyCreatorTest",
+    size = "small",
+    srcs = ["RsaSsaPssKeyCreatorTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink/signature:predefined_signature_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_private_key",
+        "//src/main/java/com/google/crypto/tink/signature/internal:rsa_ssa_pss_key_creator",
+        "//src/main/java/com/google/crypto/tink/testing:test_util",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
     name = "RsaSsaPkcs1ProtoSerializationTest",
     size = "small",
     srcs = ["RsaSsaPkcs1ProtoSerializationTest.java"],
