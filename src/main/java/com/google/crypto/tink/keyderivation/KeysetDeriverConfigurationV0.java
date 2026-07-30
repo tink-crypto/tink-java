@@ -16,12 +16,14 @@
 
 package com.google.crypto.tink.keyderivation;
 
+import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.LegacyProtoKey;
+import com.google.crypto.tink.internal.MutableKeyDerivationRegistry;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
@@ -85,13 +87,17 @@ import java.security.GeneralSecurityException;
     return CONFIGURATION;
   }
 
+  @SuppressWarnings("Immutable") // b/540692422
+  @AccessesPartialKey
   private static KeyDeriver createHkdfPrfBasedKeyDeriver(PrfBasedKeyDerivationKey key)
       throws GeneralSecurityException {
     // TODO(b/463439649): create the object that would make use of a local
     //   KeyDerivationRegistry.
     KeyDeriver deriver =
         PrfBasedKeyDeriver.create(
-            k -> PRF_REGISTRY.getPrimitive(k, StreamingPrf.class), key);
+            k -> PRF_REGISTRY.getPrimitive(k, StreamingPrf.class),
+            MutableKeyDerivationRegistry.globalInstance()::createKeyFromRandomness,
+            key);
     Object unused = deriver.deriveKey(new byte[] {1});
     return deriver;
   }

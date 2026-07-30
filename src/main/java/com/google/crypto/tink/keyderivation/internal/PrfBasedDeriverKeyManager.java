@@ -26,6 +26,7 @@ import com.google.crypto.tink.ProtoParametersSerialization;
 import com.google.crypto.tink.internal.KeyCreator;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
+import com.google.crypto.tink.internal.MutableKeyDerivationRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
@@ -74,10 +75,13 @@ import javax.annotation.Nullable;
  */
 public final class PrfBasedDeriverKeyManager implements KeyManager<Void> {
   @AccessesPartialKey
+  @SuppressWarnings("Immutable") // b/540692422
   private static KeyDeriver createPrfBasedKeyDeriver(PrfBasedKeyDerivationKey key)
       throws GeneralSecurityException {
     return PrfBasedKeyDeriver.create(
-        k -> MutablePrimitiveRegistry.globalInstance().getPrimitive(k, StreamingPrf.class), key);
+        k -> MutablePrimitiveRegistry.globalInstance().getPrimitive(k, StreamingPrf.class),
+        MutableKeyDerivationRegistry.globalInstance()::createKeyFromRandomness,
+        key);
   }
 
   private static final PrimitiveConstructor<PrfBasedKeyDerivationKey, KeyDeriver>

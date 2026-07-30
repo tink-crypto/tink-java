@@ -42,6 +42,7 @@ import com.google.crypto.tink.aead.XChaCha20Poly1305Parameters;
 import com.google.crypto.tink.daead.AesSivKey;
 import com.google.crypto.tink.daead.DeterministicAeadConfig;
 import com.google.crypto.tink.daead.PredefinedDeterministicAeadParameters;
+import com.google.crypto.tink.internal.MutableKeyDerivationRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.Util;
@@ -96,10 +97,13 @@ import org.junit.runner.RunWith;
 @RunWith(Theories.class)
 public final class KeysetDeriverWrapperTest {
   @AccessesPartialKey
+  @SuppressWarnings("Immutable") // b/540692422
   private static KeyDeriver createPrfBasedKeyDeriver(PrfBasedKeyDerivationKey key)
       throws GeneralSecurityException {
     return PrfBasedKeyDeriver.create(
-        k -> MutablePrimitiveRegistry.globalInstance().getPrimitive(k, StreamingPrf.class), key);
+        k -> MutablePrimitiveRegistry.globalInstance().getPrimitive(k, StreamingPrf.class),
+        MutableKeyDerivationRegistry.globalInstance()::createKeyFromRandomness,
+        key);
   }
 
   private static final PrimitiveConstructor<PrfBasedKeyDerivationKey, KeyDeriver>

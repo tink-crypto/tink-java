@@ -21,10 +21,12 @@ import static com.google.crypto.tink.internal.TinkBugException.exceptionIsBug;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
+import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.aead.AesCtrHmacAeadKey;
 import com.google.crypto.tink.aead.AesGcmKey;
 import com.google.crypto.tink.aead.AesGcmParameters;
@@ -36,6 +38,7 @@ import com.google.crypto.tink.aead.XChaCha20Poly1305Parameters;
 import com.google.crypto.tink.config.TinkConfig;
 import com.google.crypto.tink.daead.AesSivKey;
 import com.google.crypto.tink.daead.PredefinedDeterministicAeadParameters;
+import com.google.crypto.tink.internal.MutableKeyDerivationRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.PrimitiveRegistry;
@@ -136,9 +139,11 @@ public final class PrfBasedKeyDeriverTest {
     PrfBasedKeyDerivationKey keyDerivationKey =
         PrfBasedKeyDerivationKey.create(derivationParameters, prfKey, /* idRequirement= */ null);
 
+    @SuppressWarnings("Immutable") // b/540692422
     KeyDeriver deriver =
         PrfBasedKeyDeriver.create(
             k -> MutablePrimitiveRegistry.globalInstance().getPrimitive(k, StreamingPrf.class),
+            MutableKeyDerivationRegistry.globalInstance()::createKeyFromRandomness,
             keyDerivationKey);
 
     Key derivedKey = deriver.deriveKey(new byte[] {1});
@@ -155,6 +160,7 @@ public final class PrfBasedKeyDeriverTest {
   }
 
   @Test
+  @SuppressWarnings("Immutable") // b/540692422
   public void create_prfKeyHasNoStreamingPrf_throws() throws Exception {
     PrfParameters prfParameters =
         new PrfParameters() {
@@ -203,10 +209,12 @@ public final class PrfBasedKeyDeriverTest {
         () ->
             PrfBasedKeyDeriver.create(
                 k -> MutablePrimitiveRegistry.globalInstance().getPrimitive(k, StreamingPrf.class),
+                MutableKeyDerivationRegistry.globalInstance()::createKeyFromRandomness,
                 keyDerivationKey));
   }
 
   @Test
+  @SuppressWarnings("Immutable") // b/540692422
   public void create_derivedParametersHasNoKeyDerivationFactory_throws() throws Exception {
     HkdfPrfParameters hkdfPrfParameters =
         HkdfPrfParameters.builder()
@@ -241,6 +249,7 @@ public final class PrfBasedKeyDeriverTest {
         () ->
             PrfBasedKeyDeriver.create(
                 k -> MutablePrimitiveRegistry.globalInstance().getPrimitive(k, StreamingPrf.class),
+                MutableKeyDerivationRegistry.globalInstance()::createKeyFromRandomness,
                 keyDerivationKey));
   }
 
@@ -416,6 +425,7 @@ public final class PrfBasedKeyDeriverTest {
   public static final TestVector[] ALL_TEST_VECTORS = exceptionIsBug(() -> createTestVectors());
 
   @Theory
+  @SuppressWarnings("Immutable") // b/540692422
   public void deriveKeyset_isAsExpected(@FromDataPoints("allTests") TestVector t) throws Exception {
     PrfBasedKeyDerivationParameters derivationParameters =
         PrfBasedKeyDerivationParameters.builder()
@@ -429,6 +439,7 @@ public final class PrfBasedKeyDeriverTest {
     KeyDeriver deriver =
         PrfBasedKeyDeriver.create(
             k -> MutablePrimitiveRegistry.globalInstance().getPrimitive(k, StreamingPrf.class),
+            MutableKeyDerivationRegistry.globalInstance()::createKeyFromRandomness,
             keyDerivationKey);
 
     Key derivedKey = deriver.deriveKey(Hex.decode(t.inputHex));
@@ -469,9 +480,14 @@ public final class PrfBasedKeyDeriverTest {
     @Nullable Integer idRequirement = t.expectedKey.getIdRequirementOrNull();
     PrfBasedKeyDerivationKey keyDerivationKey =
         PrfBasedKeyDerivationKey.create(derivationParameters, t.prfKey, idRequirement);
+    // The PrfBasedKeyDeriver was annotated with @Immutable when the offending call happened in
+    // the deriver itself, which the error prone checker did not catch. Since my are anyhow moving
+    // to an Immutable class I don't want to change this.
+    @SuppressWarnings("Immutable")
     KeyDeriver deriver =
         PrfBasedKeyDeriver.create(
             k -> MutablePrimitiveRegistry.globalInstance().getPrimitive(k, StreamingPrf.class),
+            MutableKeyDerivationRegistry.globalInstance()::createKeyFromRandomness,
             keyDerivationKey);
 
     Key derivedKey = deriver.deriveKey(Hex.decode(t.inputHex));
@@ -494,6 +510,7 @@ public final class PrfBasedKeyDeriverTest {
   }
 
   @Theory
+  @SuppressWarnings("Immutable") // b/540692422
   public void createWithPrfPrimitiveRegistry_works(@FromDataPoints("allTests") TestVector t)
       throws Exception {
     PrimitiveRegistry prfRegistry =
@@ -513,11 +530,14 @@ public final class PrfBasedKeyDeriverTest {
 
     assertThat(
             PrfBasedKeyDeriver.create(
-                k -> prfRegistry.getPrimitive(k, StreamingPrf.class), keyDerivationKey))
+                k -> prfRegistry.getPrimitive(k, StreamingPrf.class),
+                MutableKeyDerivationRegistry.globalInstance()::createKeyFromRandomness,
+                keyDerivationKey))
         .isNotNull();
   }
 
   @Test
+  @SuppressWarnings("Immutable") // b/540692422
   public void createWithPrfPrimitiveRegistry_wrongRegistryThrows() throws Exception {
     PrimitiveRegistry wrongRegistry =
         PrimitiveRegistry.builder()
@@ -538,6 +558,108 @@ public final class PrfBasedKeyDeriverTest {
         GeneralSecurityException.class,
         () ->
             PrfBasedKeyDeriver.create(
-                k -> wrongRegistry.getPrimitive(k, StreamingPrf.class), keyDerivationKey));
+                k -> wrongRegistry.getPrimitive(k, StreamingPrf.class),
+                MutableKeyDerivationRegistry.globalInstance()::createKeyFromRandomness,
+                keyDerivationKey));
+  }
+
+  @AccessesPartialKey
+  private static Key createKeyFromRandomnessForAesGcm(
+      Parameters parameters,
+      InputStream stream,
+      @Nullable Integer idRequirement,
+      SecretKeyAccess access)
+      throws GeneralSecurityException {
+    if (!(parameters instanceof AesGcmParameters)) {
+      throw new GeneralSecurityException("Expected AesGcmParameters");
+    }
+    AesGcmParameters aesGcmParameters = (AesGcmParameters) parameters;
+    return AesGcmKey.builder()
+        .setParameters(aesGcmParameters)
+        .setIdRequirement(idRequirement)
+        .setKeyBytes(Util.readIntoSecretBytes(stream, aesGcmParameters.getKeySizeBytes(), access))
+        .build();
+  }
+
+  @Test
+  public void create_usesKeyFromRandomness() throws Exception {
+    HkdfPrfParameters hkdfPrfParameters =
+        HkdfPrfParameters.builder()
+            .setKeySizeBytes(32)
+            .setHashType(HkdfPrfParameters.HashType.SHA256)
+            .build();
+    HkdfPrfKey prfKey =
+        HkdfPrfKey.builder()
+            .setParameters(hkdfPrfParameters)
+            .setKeyBytes(
+                SecretBytes.copyFrom(
+                    Hex.decode("0102030405060708091011121314151617181920212123242526272829303132"),
+                    InsecureSecretKeyAccess.get()))
+            .build();
+    AesGcmParameters derivedKeyParameters =
+        AesGcmParameters.builder()
+            .setKeySizeBytes(16)
+            .setIvSizeBytes(12)
+            .setTagSizeBytes(16)
+            .setVariant(AesGcmParameters.Variant.NO_PREFIX)
+            .build();
+    PrfBasedKeyDerivationParameters derivationParameters =
+        PrfBasedKeyDerivationParameters.builder()
+            .setDerivedKeyParameters(derivedKeyParameters)
+            .setPrfParameters(hkdfPrfParameters)
+            .build();
+    PrfBasedKeyDerivationKey keyDerivationKey =
+        PrfBasedKeyDerivationKey.create(derivationParameters, prfKey, /* idRequirement= */ null);
+
+    KeyDeriver deriver =
+        PrfBasedKeyDeriver.create(
+            k -> MutablePrimitiveRegistry.globalInstance().getPrimitive(k, StreamingPrf.class),
+            PrfBasedKeyDeriverTest::createKeyFromRandomnessForAesGcm,
+            keyDerivationKey);
+
+    Key derivedKey = deriver.deriveKey(new byte[] {1});
+    Key expectedKey =
+        AesGcmKey.builder()
+            .setParameters(derivedKeyParameters)
+            .setKeyBytes(
+                SecretBytes.copyFrom(
+                    Hex.decode("4A8984211468FF8B78399156F0989A31"), InsecureSecretKeyAccess.get()))
+            .build();
+
+    assertThat(derivedKey.getParameters()).isEqualTo(derivedKeyParameters);
+    assertThat(derivedKey.equalsKey(expectedKey)).isTrue();
+  }
+
+  @Test
+  public void create_keyFromRandomnessForAesGcm_nonAesGcmParameters_throws() throws Exception {
+    HkdfPrfParameters hkdfPrfParameters =
+        HkdfPrfParameters.builder()
+            .setKeySizeBytes(32)
+            .setHashType(HkdfPrfParameters.HashType.SHA256)
+            .build();
+    HkdfPrfKey prfKey =
+        HkdfPrfKey.builder()
+            .setParameters(hkdfPrfParameters)
+            .setKeyBytes(
+                SecretBytes.copyFrom(
+                    Hex.decode("0102030405060708091011121314151617181920212123242526272829303132"),
+                    InsecureSecretKeyAccess.get()))
+            .build();
+    Parameters nonAesGcmParameters = XChaCha20Poly1305Parameters.create();
+    PrfBasedKeyDerivationParameters derivationParameters =
+        PrfBasedKeyDerivationParameters.builder()
+            .setDerivedKeyParameters(nonAesGcmParameters)
+            .setPrfParameters(hkdfPrfParameters)
+            .build();
+    PrfBasedKeyDerivationKey keyDerivationKey =
+        PrfBasedKeyDerivationKey.create(derivationParameters, prfKey, /* idRequirement= */ null);
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            PrfBasedKeyDeriver.create(
+                k -> MutablePrimitiveRegistry.globalInstance().getPrimitive(k, StreamingPrf.class),
+                PrfBasedKeyDeriverTest::createKeyFromRandomnessForAesGcm,
+                keyDerivationKey));
   }
 }

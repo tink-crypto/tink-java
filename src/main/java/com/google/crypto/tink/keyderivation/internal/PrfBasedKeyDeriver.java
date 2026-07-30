@@ -19,20 +19,23 @@ package com.google.crypto.tink.keyderivation.internal;
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
-import com.google.crypto.tink.internal.MutableKeyDerivationRegistry;
+import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.keyderivation.PrfBasedKeyDerivationKey;
 import com.google.crypto.tink.subtle.prf.StreamingPrf;
 import com.google.errorprone.annotations.Immutable;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
+import javax.annotation.Nullable;
 
 /**
- * Implements the KeyDeriver interface by first applying a Prf and then using the global registry to
- * create the correct key.
+ * Implements the KeyDeriver interface by first applying a Prf and then using a KeyFromRandomness
+ * function to create the correct key.
  */
 @Immutable
 public final class PrfBasedKeyDeriver implements KeyDeriver {
   final StreamingPrf prf;
+  final KeyFromRandomness keyFromRandomness;
   final PrfBasedKeyDerivationKey key;
 
   /** Functional interface to get a StreamingPrf from a Key. */
@@ -41,16 +44,31 @@ public final class PrfBasedKeyDeriver implements KeyDeriver {
     StreamingPrf get(Key key) throws GeneralSecurityException;
   }
 
-  private PrfBasedKeyDeriver(StreamingPrf prf, PrfBasedKeyDerivationKey key) {
+  /** Functional interface to create a Key from randomness. */
+  @FunctionalInterface
+  @Immutable
+  public interface KeyFromRandomness {
+    Key createKeyFromRandomness(
+        Parameters parameters,
+        InputStream inputStream,
+        @Nullable Integer idRequirement,
+        SecretKeyAccess access)
+        throws GeneralSecurityException;
+  }
+
+  private PrfBasedKeyDeriver(
+      StreamingPrf prf, KeyFromRandomness keyFromRandomness, PrfBasedKeyDerivationKey key) {
     this.prf = prf;
+    this.keyFromRandomness = keyFromRandomness;
     this.key = key;
   }
 
   @AccessesPartialKey
-  public static KeyDeriver create(PrfGetter prfGetter, PrfBasedKeyDerivationKey key)
+  public static KeyDeriver create(
+      PrfGetter prfGetter, KeyFromRandomness keyFromRandomness, PrfBasedKeyDerivationKey key)
       throws GeneralSecurityException {
     StreamingPrf prf = prfGetter.get(key.getPrfKey());
-    PrfBasedKeyDeriver deriver = new PrfBasedKeyDeriver(prf, key);
+    PrfBasedKeyDeriver deriver = new PrfBasedKeyDeriver(prf, keyFromRandomness, key);
     Object unused = deriver.deriveKey(new byte[] {1});
     return deriver;
   }
@@ -59,11 +77,10 @@ public final class PrfBasedKeyDeriver implements KeyDeriver {
   @AccessesPartialKey
   public Key deriveKey(byte[] salt) throws GeneralSecurityException {
     InputStream inputStream = prf.computePrf(salt);
-    return MutableKeyDerivationRegistry.globalInstance()
-        .createKeyFromRandomness(
-            key.getParameters().getDerivedKeyParameters(),
-            inputStream,
-            key.getIdRequirementOrNull(),
-            InsecureSecretKeyAccess.get());
+    return keyFromRandomness.createKeyFromRandomness(
+        key.getParameters().getDerivedKeyParameters(),
+        inputStream,
+        key.getIdRequirementOrNull(),
+        InsecureSecretKeyAccess.get());
   }
 }
