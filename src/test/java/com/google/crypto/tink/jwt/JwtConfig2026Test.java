@@ -169,6 +169,19 @@ public class JwtConfig2026Test {
               .setKeyBytes(SecretBytes.randomBytes(32))
               .build();
 
+      JwtHmacParameters jwtHmacKidParameters =
+          JwtHmacParameters.builder()
+              .setKeySizeBytes(32)
+              .setKidStrategy(JwtHmacParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+              .setAlgorithm(JwtHmacParameters.Algorithm.HS256)
+              .build();
+      JwtHmacKey jwtHmacKidKey =
+          JwtHmacKey.builder()
+              .setParameters(jwtHmacKidParameters)
+              .setKeyBytes(SecretBytes.randomBytes(32))
+              .setIdRequirement(123)
+              .build();
+
       JwtEcdsaParameters jwtEcdsaParameters =
           JwtEcdsaParameters.builder()
               .setKidStrategy(JwtEcdsaParameters.KidStrategy.IGNORED)
@@ -301,7 +314,10 @@ public class JwtConfig2026Test {
             jwtMlDsaPrivateKey,
             jwtMlDsaKidPrivateKey,
           };
-      jwtMacKey = jwtHmacKey;
+      jwtHmacKeys =
+          new JwtHmacKey[] {
+            jwtHmacKey, jwtHmacKidKey,
+          };
     } catch (GeneralSecurityException e) {
       throw new RuntimeException(e);
     }
@@ -311,8 +327,9 @@ public class JwtConfig2026Test {
   @DataPoints("jwtPrivateKeys")
   public static JwtSignaturePrivateKey[] jwtPrivateKeys;
 
-  @SuppressWarnings("NonFinalStaticField")
-  public static JwtHmacKey jwtMacKey;
+  @SuppressWarnings("NonFinalStaticField") // has to be static because of @DataPoints
+  @DataPoints("jwtHmacKeys")
+  public static JwtHmacKey[] jwtHmacKeys;
 
   @BeforeClass
   public static void setUp() throws Exception {
@@ -332,16 +349,20 @@ public class JwtConfig2026Test {
     }
   }
 
-  @Test
-  public void jwtMac_computeVerify_works() throws Exception {
+  @Theory
+  public void jwtMac_computeVerify_works(@FromDataPoints("jwtHmacKeys") JwtHmacKey key)
+      throws Exception {
     if (TinkFipsUtil.useOnlyFips() || TestUtil.isTsan()) {
       return;
     }
 
-    KeysetHandle keysetHandle =
-        KeysetHandle.newBuilder()
-            .addEntry(KeysetHandle.importKey(jwtMacKey).withRandomId().makePrimary())
-            .build();
+    KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
+    if (key.getIdRequirementOrNull() == null) {
+      entry.withRandomId();
+    } else {
+      entry.withFixedId(key.getIdRequirementOrNull());
+    }
+    KeysetHandle keysetHandle = KeysetHandle.newBuilder().addEntry(entry).build();
 
     JwtMac jwtMac = keysetHandle.getPrimitive(JwtConfig2026.get(), JwtMac.class);
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
@@ -445,15 +466,19 @@ public class JwtConfig2026Test {
     assertThat(parsed).isEqualTo(parameters);
   }
 
-  @Test
-  public void serializeAndParseJwtHmacKey_works() throws Exception {
+  @Theory
+  public void serializeAndParseJwtHmacKey_works(@FromDataPoints("jwtHmacKeys") JwtHmacKey key)
+      throws Exception {
     if (TinkFipsUtil.useOnlyFips()) {
       return;
     }
-    KeysetHandle keysetHandle =
-        KeysetHandle.newBuilder()
-            .addEntry(KeysetHandle.importKey(jwtMacKey).withRandomId().makePrimary())
-            .build();
+    KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
+    if (key.getIdRequirementOrNull() == null) {
+      entry.withRandomId();
+    } else {
+      entry.withFixedId(key.getIdRequirementOrNull());
+    }
+    KeysetHandle keysetHandle = KeysetHandle.newBuilder().addEntry(entry).build();
 
     Configuration config = JwtConfig2026.get();
     byte[] serialized =
@@ -464,12 +489,13 @@ public class JwtConfig2026Test {
     assertThat(parsed.equalsKeyset(keysetHandle)).isTrue();
   }
 
-  @Test
-  public void serializeAndParseJwtHmacParameters_works() throws Exception {
+  @Theory
+  public void serializeAndParseJwtHmacParameters_works(
+      @FromDataPoints("jwtHmacKeys") JwtHmacKey key) throws Exception {
     if (TinkFipsUtil.useOnlyFips()) {
       return;
     }
-    Parameters parameters = jwtMacKey.getParameters();
+    Parameters parameters = key.getParameters();
     Configuration config = JwtConfig2026.get();
     byte[] serialized = TinkProtoParametersFormat.serialize(parameters, config);
     Parameters parsed = TinkProtoParametersFormat.parse(serialized, config);
