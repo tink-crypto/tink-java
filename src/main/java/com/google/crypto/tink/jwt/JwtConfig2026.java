@@ -25,6 +25,9 @@ import com.google.crypto.tink.jwt.subtle.JwtEcdsaPublicKeySign;
 import com.google.crypto.tink.jwt.subtle.JwtEcdsaPublicKeyVerify;
 import com.google.crypto.tink.jwt.subtle.JwtHmac;
 import com.google.crypto.tink.jwt.subtle.JwtHmacProtoSerialization;
+import com.google.crypto.tink.jwt.subtle.JwtMlDsaProtoSerialization;
+import com.google.crypto.tink.jwt.subtle.JwtMlDsaPublicKeySign;
+import com.google.crypto.tink.jwt.subtle.JwtMlDsaPublicKeyVerify;
 import com.google.crypto.tink.jwt.subtle.JwtRsaSsaPkcs1ProtoSerialization;
 import com.google.crypto.tink.jwt.subtle.JwtRsaSsaPkcs1PublicKeySign;
 import com.google.crypto.tink.jwt.subtle.JwtRsaSsaPkcs1PublicKeyVerify;
@@ -46,6 +49,7 @@ import java.security.GeneralSecurityException;
  *         <li>JwtEcdsa
  *         <li>JwtRsaSsaPkcs1
  *         <li>JwtRsaSsaPss
+ *         <li>JwtMlDsa
  *       </ul>
  * </ul>
  */
@@ -147,6 +151,26 @@ public class JwtConfig2026 {
         .addParametersParser(
             "type.googleapis.com/google.crypto.tink.JwtRsaSsaPssPrivateKey",
             JwtRsaSsaPssProtoSerialization::parseParameters)
+        // JwtMlDsa
+        .addPrimitiveConstructor(
+            JwtMlDsaPublicKeySign::create, JwtMlDsaPrivateKey.class, JwtPublicKeySign.class)
+        .addPrimitiveConstructor(
+            JwtMlDsaPublicKeyVerify::create, JwtMlDsaPublicKey.class, JwtPublicKeyVerify.class)
+        .addKeySerializer(
+            JwtMlDsaPrivateKey.class, JwtMlDsaProtoSerialization::serializePrivateKey)
+        .addKeySerializer(
+            JwtMlDsaPublicKey.class, JwtMlDsaProtoSerialization::serializePublicKey)
+        .addKeyParser(
+            "type.googleapis.com/google.crypto.tink.JwtMlDsaPrivateKey",
+            JwtMlDsaProtoSerialization::parsePrivateKey)
+        .addKeyParser(
+            "type.googleapis.com/google.crypto.tink.JwtMlDsaPublicKey",
+            JwtMlDsaProtoSerialization::parsePublicKey)
+        .addParametersSerializer(
+            JwtMlDsaParameters.class, JwtMlDsaProtoSerialization::serializeParameters)
+        .addParametersParser(
+            "type.googleapis.com/google.crypto.tink.JwtMlDsaPrivateKey",
+            JwtMlDsaProtoSerialization::parseParameters)
         .build();
   }
 
