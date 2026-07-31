@@ -191,3 +191,33 @@ java_test(
         "@maven//:org_conscrypt_conscrypt_openjdk_uber",
     ],
 )
+
+java_test(
+    name = "JwtRsaSsaPkcs1KeyCreatorTest",
+    size = "small",
+    srcs = ["JwtRsaSsaPkcs1KeyCreatorTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_rsa_ssa_pkcs1_parameters",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_rsa_ssa_pkcs1_private_key",
+        "//src/main/java/com/google/crypto/tink/jwt/internal:jwt_rsa_ssa_pkcs1_key_creator",
+        "//src/main/java/com/google/crypto/tink/testing:test_util",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
+    name = "JwtRsaSsaPssKeyCreatorTest",
+    size = "small",
+    srcs = ["JwtRsaSsaPssKeyCreatorTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_rsa_ssa_pss_parameters",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_rsa_ssa_pss_private_key",
+        "//src/main/java/com/google/crypto/tink/jwt/internal:jwt_rsa_ssa_pss_key_creator",
+        "//src/main/java/com/google/crypto/tink/testing:test_util",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)

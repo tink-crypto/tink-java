@@ -15,8 +15,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 package com.google.crypto.tink.jwt;
 
-import com.google.crypto.tink.AccessesPartialKey;
-import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.Parameters;
@@ -29,22 +27,14 @@ import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
 import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
+import com.google.crypto.tink.jwt.internal.JwtRsaSsaPssKeyCreator;
 import com.google.crypto.tink.jwt.internal.JwtRsaSsaPssProtoSerialization;
 import com.google.crypto.tink.jwt.subtle.JwtRsaSsaPssPublicKeySign;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.subtle.EngineFactory;
-import com.google.crypto.tink.util.SecretBigInteger;
-import java.math.BigInteger;
 import java.security.GeneralSecurityException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.interfaces.RSAPrivateCrtKey;
-import java.security.interfaces.RSAPublicKey;
-import java.security.spec.RSAKeyGenParameterSpec;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nullable;
 
 /**
  * This key manager generates new {@code JwtRsaSsaPssPrivateKey} keys and produces new instances of
@@ -63,49 +53,9 @@ public final class JwtRsaSsaPssSignKeyManager {
           KeyMaterialType.ASYMMETRIC_PUBLIC,
           com.google.crypto.tink.proto.JwtRsaSsaPssPublicKey.parser());
 
-  @AccessesPartialKey
-  private static JwtRsaSsaPssPrivateKey createKey(
-      JwtRsaSsaPssParameters parameters, @Nullable Integer idRequirement)
-      throws GeneralSecurityException {
-    KeyPairGenerator keyGen = EngineFactory.KEY_PAIR_GENERATOR.getInstance("RSA");
-    RSAKeyGenParameterSpec spec =
-        new RSAKeyGenParameterSpec(
-            parameters.getModulusSizeBits(),
-            new BigInteger(1, parameters.getPublicExponent().toByteArray()));
-    keyGen.initialize(spec);
-    KeyPair keyPair = keyGen.generateKeyPair();
-    RSAPublicKey pubKey = (RSAPublicKey) keyPair.getPublic();
-    RSAPrivateCrtKey privKey = (RSAPrivateCrtKey) keyPair.getPrivate();
-
-    JwtRsaSsaPssPublicKey.Builder jwtRsaSsaPssPublicKeyBuilder =
-        JwtRsaSsaPssPublicKey.builder().setParameters(parameters).setModulus(pubKey.getModulus());
-    if (idRequirement != null) {
-      jwtRsaSsaPssPublicKeyBuilder.setIdRequirement(idRequirement);
-    }
-    JwtRsaSsaPssPublicKey jwtRsaSsaPssPublicKey = jwtRsaSsaPssPublicKeyBuilder.build();
-
-    return JwtRsaSsaPssPrivateKey.builder()
-        .setPublicKey(jwtRsaSsaPssPublicKey)
-        .setPrimes(
-            SecretBigInteger.fromBigInteger(privKey.getPrimeP(), InsecureSecretKeyAccess.get()),
-            SecretBigInteger.fromBigInteger(privKey.getPrimeQ(), InsecureSecretKeyAccess.get()))
-        .setPrivateExponent(
-            SecretBigInteger.fromBigInteger(
-                privKey.getPrivateExponent(), InsecureSecretKeyAccess.get()))
-        .setPrimeExponents(
-            SecretBigInteger.fromBigInteger(
-                privKey.getPrimeExponentP(), InsecureSecretKeyAccess.get()),
-            SecretBigInteger.fromBigInteger(
-                privKey.getPrimeExponentQ(), InsecureSecretKeyAccess.get()))
-        .setCrtCoefficient(
-            SecretBigInteger.fromBigInteger(
-                privKey.getCrtCoefficient(), InsecureSecretKeyAccess.get()))
-        .build();
-  }
-
   @SuppressWarnings("InlineLambdaConstant") // We need a correct Object#equals in registration.
   private static final KeyCreator<JwtRsaSsaPssParameters> KEY_CREATOR =
-      JwtRsaSsaPssSignKeyManager::createKey;
+      JwtRsaSsaPssKeyCreator::createKey;
 
   private static final PrimitiveConstructor<
           com.google.crypto.tink.jwt.JwtRsaSsaPssPrivateKey, JwtPublicKeySign>

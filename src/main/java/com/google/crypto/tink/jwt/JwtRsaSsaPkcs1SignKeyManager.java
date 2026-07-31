@@ -15,8 +15,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 package com.google.crypto.tink.jwt;
 
-import com.google.crypto.tink.AccessesPartialKey;
-import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.Parameters;
@@ -29,22 +27,14 @@ import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
 import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
+import com.google.crypto.tink.jwt.internal.JwtRsaSsaPkcs1KeyCreator;
 import com.google.crypto.tink.jwt.internal.JwtRsaSsaPkcs1ProtoSerialization;
 import com.google.crypto.tink.jwt.subtle.JwtRsaSsaPkcs1PublicKeySign;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.subtle.EngineFactory;
-import com.google.crypto.tink.util.SecretBigInteger;
-import java.math.BigInteger;
 import java.security.GeneralSecurityException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.interfaces.RSAPrivateCrtKey;
-import java.security.interfaces.RSAPublicKey;
-import java.security.spec.RSAKeyGenParameterSpec;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nullable;
 
 /**
  * This key manager generates new {@code JwtRsaSsaPkcs1PrivateKey} keys and produces new instances
@@ -81,51 +71,9 @@ public final class JwtRsaSsaPkcs1SignKeyManager {
     return "type.googleapis.com/google.crypto.tink.JwtRsaSsaPkcs1PrivateKey";
   }
 
-  @AccessesPartialKey
-  private static JwtRsaSsaPkcs1PrivateKey createKey(
-      JwtRsaSsaPkcs1Parameters parameters, @Nullable Integer idRequirement)
-      throws GeneralSecurityException {
-    KeyPairGenerator keyGen = EngineFactory.KEY_PAIR_GENERATOR.getInstance("RSA");
-    RSAKeyGenParameterSpec spec =
-        new RSAKeyGenParameterSpec(
-            parameters.getModulusSizeBits(),
-            new BigInteger(1, parameters.getPublicExponent().toByteArray()));
-    keyGen.initialize(spec);
-    KeyPair keyPair = keyGen.generateKeyPair();
-    RSAPublicKey pubKey = (RSAPublicKey) keyPair.getPublic();
-    RSAPrivateCrtKey privKey = (RSAPrivateCrtKey) keyPair.getPrivate();
-
-    // Creates JwtRsaSsaPkcs1PublicKey.
-    JwtRsaSsaPkcs1PublicKey.Builder jwtRsaSsaPkcs1PublicKeyBuilder =
-        JwtRsaSsaPkcs1PublicKey.builder().setParameters(parameters).setModulus(pubKey.getModulus());
-    if (idRequirement != null) {
-      jwtRsaSsaPkcs1PublicKeyBuilder.setIdRequirement(idRequirement);
-    }
-    JwtRsaSsaPkcs1PublicKey jwtRsaSsaPkcs1PublicKey = jwtRsaSsaPkcs1PublicKeyBuilder.build();
-
-    // Creates RsaSsaPkcs1PrivateKey.
-    return JwtRsaSsaPkcs1PrivateKey.builder()
-        .setPublicKey(jwtRsaSsaPkcs1PublicKey)
-        .setPrimes(
-            SecretBigInteger.fromBigInteger(privKey.getPrimeP(), InsecureSecretKeyAccess.get()),
-            SecretBigInteger.fromBigInteger(privKey.getPrimeQ(), InsecureSecretKeyAccess.get()))
-        .setPrivateExponent(
-            SecretBigInteger.fromBigInteger(
-                privKey.getPrivateExponent(), InsecureSecretKeyAccess.get()))
-        .setPrimeExponents(
-            SecretBigInteger.fromBigInteger(
-                privKey.getPrimeExponentP(), InsecureSecretKeyAccess.get()),
-            SecretBigInteger.fromBigInteger(
-                privKey.getPrimeExponentQ(), InsecureSecretKeyAccess.get()))
-        .setCrtCoefficient(
-            SecretBigInteger.fromBigInteger(
-                privKey.getCrtCoefficient(), InsecureSecretKeyAccess.get()))
-        .build();
-  }
-
   @SuppressWarnings("InlineLambdaConstant") // We need a correct Object#equals in registration.
   private static final KeyCreator<JwtRsaSsaPkcs1Parameters> KEY_CREATOR =
-      JwtRsaSsaPkcs1SignKeyManager::createKey;
+      JwtRsaSsaPkcs1KeyCreator::createKey;
 
   /**
    * List of default templates to generate tokens with algorithms "RS256", "RS384" or "RS512". Use
