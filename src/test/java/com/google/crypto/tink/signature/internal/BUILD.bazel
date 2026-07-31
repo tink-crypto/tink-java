@@ -15,6 +15,35 @@ java_test(
 )
 
 java_test(
+    name = "Ed25519KeyCreatorTest",
+    size = "small",
+    srcs = ["Ed25519KeyCreatorTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/signature:ed25519_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:ed25519_private_key",
+        "//src/main/java/com/google/crypto/tink/signature/internal:ed25519_key_creator",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
+    name = "MlDsaKeyCreatorTest",
+    size = "small",
+    srcs = ["MlDsaKeyCreatorTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/internal:util",
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_private_key",
+        "//src/main/java/com/google/crypto/tink/signature/internal:ml_dsa_key_creator",
+        "//src/main/java/com/google/crypto/tink/signature/internal:ml_dsa_verify_conscrypt",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+        "@maven//:org_conscrypt_conscrypt_openjdk_uber",
+    ],
+)
+
+java_test(
     name = "EcdsaProtoSerializationTest",
     size = "small",
     srcs = ["EcdsaProtoSerializationTest.java"],

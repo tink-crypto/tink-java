@@ -19,7 +19,6 @@ package com.google.crypto.tink.signature;
 import static com.google.crypto.tink.internal.TinkBugException.exceptionIsBug;
 
 import com.google.crypto.tink.AccessesPartialKey;
-import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.Parameters;
@@ -38,6 +37,7 @@ import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
+import com.google.crypto.tink.signature.internal.Ed25519KeyCreator;
 import com.google.crypto.tink.signature.internal.Ed25519ProtoSerialization;
 import com.google.crypto.tink.subtle.Ed25519Sign;
 import com.google.crypto.tink.subtle.Ed25519Verify;
@@ -104,21 +104,8 @@ public final class Ed25519PrivateKeyManager {
   private static final MutableKeyDerivationRegistry.InsecureKeyCreator<Ed25519Parameters>
       KEY_DERIVER = Ed25519PrivateKeyManager::createEd25519KeyFromRandomness;
 
-  @AccessesPartialKey
-  static com.google.crypto.tink.signature.Ed25519PrivateKey createEd25519Key(
-      Ed25519Parameters parameters, @Nullable Integer idRequirement)
-      throws GeneralSecurityException {
-    Ed25519Sign.KeyPair keyPair = Ed25519Sign.KeyPair.newKeyPair();
-    com.google.crypto.tink.signature.Ed25519PublicKey publicKey =
-        com.google.crypto.tink.signature.Ed25519PublicKey.create(
-            parameters.getVariant(), Bytes.copyFrom(keyPair.getPublicKey()), idRequirement);
-    return com.google.crypto.tink.signature.Ed25519PrivateKey.create(
-        publicKey, SecretBytes.copyFrom(keyPair.getPrivateKey(), InsecureSecretKeyAccess.get()));
-  }
-
   @SuppressWarnings("InlineLambdaConstant") // We need a correct Object#equals in registration.
-  private static final KeyCreator<Ed25519Parameters> KEY_CREATOR =
-      Ed25519PrivateKeyManager::createEd25519Key;
+  private static final KeyCreator<Ed25519Parameters> KEY_CREATOR = Ed25519KeyCreator::createKey;
 
   private static Map<String, Parameters> namedParameters() throws GeneralSecurityException {
         Map<String, Parameters> result = new HashMap<>();
