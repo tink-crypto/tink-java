@@ -15,8 +15,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 package com.google.crypto.tink.jwt;
 
-import com.google.crypto.tink.AccessesPartialKey;
-import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.Parameters;
@@ -29,19 +27,14 @@ import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
 import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.PrimitiveConstructor;
+import com.google.crypto.tink.jwt.internal.JwtEcdsaKeyCreator;
 import com.google.crypto.tink.jwt.internal.JwtEcdsaProtoSerialization;
 import com.google.crypto.tink.jwt.subtle.JwtEcdsaPublicKeySign;
 import com.google.crypto.tink.proto.KeyData.KeyMaterialType;
-import com.google.crypto.tink.subtle.EllipticCurves;
-import com.google.crypto.tink.util.SecretBigInteger;
 import java.security.GeneralSecurityException;
-import java.security.KeyPair;
-import java.security.interfaces.ECPrivateKey;
-import java.security.interfaces.ECPublicKey;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nullable;
 
 /**
  * This key manager generates new {@code JwtEcdsaSignKey} keys and produces new instances of {@code
@@ -68,28 +61,9 @@ public final class JwtEcdsaSignKeyManager {
               com.google.crypto.tink.jwt.JwtEcdsaPrivateKey.class,
               JwtPublicKeySign.class);
 
-  @AccessesPartialKey
-  private static JwtEcdsaPrivateKey createKey(
-      JwtEcdsaParameters parameters, @Nullable Integer idRequirement)
-      throws GeneralSecurityException {
-    KeyPair keyPair =
-        EllipticCurves.generateKeyPair(parameters.getAlgorithm().getEcParameterSpec());
-    ECPublicKey pubKey = (ECPublicKey) keyPair.getPublic();
-    ECPrivateKey privKey = (ECPrivateKey) keyPair.getPrivate();
-
-    JwtEcdsaPublicKey.Builder publicKeyBuilder =
-        JwtEcdsaPublicKey.builder().setParameters(parameters).setPublicPoint(pubKey.getW());
-    if (idRequirement != null) {
-      publicKeyBuilder.setIdRequirement(idRequirement);
-    }
-    return JwtEcdsaPrivateKey.create(
-        publicKeyBuilder.build(),
-        SecretBigInteger.fromBigInteger(privKey.getS(), InsecureSecretKeyAccess.get()));
-  }
-
   @SuppressWarnings("InlineLambdaConstant") // We need a correct Object#equals in registration.
   private static final KeyCreator<JwtEcdsaParameters> KEY_CREATOR =
-      JwtEcdsaSignKeyManager::createKey;
+      JwtEcdsaKeyCreator::createKey;
 
   private JwtEcdsaSignKeyManager() {}
 

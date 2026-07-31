@@ -240,3 +240,18 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "JwtEcdsaKeyCreatorTest",
+    size = "small",
+    srcs = ["JwtEcdsaKeyCreatorTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_ecdsa_parameters",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_ecdsa_private_key",
+        "//src/main/java/com/google/crypto/tink/jwt/internal:jwt_ecdsa_key_creator",
+        "//src/main/java/com/google/crypto/tink/testing:test_util",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
