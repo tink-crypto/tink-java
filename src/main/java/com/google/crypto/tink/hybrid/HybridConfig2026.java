@@ -21,6 +21,8 @@ import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.hybrid.internal.EciesKeyCreator;
+import com.google.crypto.tink.hybrid.internal.HpkeKeyCreator;
 import com.google.crypto.tink.hybrid.subtle.EciesDecrypt;
 import com.google.crypto.tink.hybrid.subtle.EciesEncrypt;
 import com.google.crypto.tink.hybrid.subtle.EciesProtoSerialization;
@@ -78,6 +80,7 @@ public final class HybridConfig2026 {
             EciesParameters.class, EciesProtoSerialization::serializeParameters)
         .addKeyParser(ECIES_PRIVATE_KEY_TYPE_URL, EciesProtoSerialization::parsePrivateKey)
         .addKeyParser(ECIES_PUBLIC_KEY_TYPE_URL, EciesProtoSerialization::parsePublicKey)
+        .addKeyCreator(EciesParameters.class, EciesKeyCreator::createKey)
         .addParametersParser(ECIES_PRIVATE_KEY_TYPE_URL, EciesProtoSerialization::parseParameters)
         // Hpke
         .addPrimitiveConstructor(HpkeDecrypt::create, HpkePrivateKey.class, HybridDecrypt.class)
@@ -87,6 +90,7 @@ public final class HybridConfig2026 {
         .addParametersSerializer(HpkeParameters.class, HpkeProtoSerialization::serializeParameters)
         .addKeyParser(HPKE_PRIVATE_KEY_TYPE_URL, HpkeProtoSerialization::parsePrivateKey)
         .addKeyParser(HPKE_PUBLIC_KEY_TYPE_URL, HpkeProtoSerialization::parsePublicKey)
+        .addKeyCreator(HpkeParameters.class, HpkeKeyCreator::createKey)
         .addParametersParser(HPKE_PRIVATE_KEY_TYPE_URL, HpkeProtoSerialization::parseParameters)
         .build();
   }

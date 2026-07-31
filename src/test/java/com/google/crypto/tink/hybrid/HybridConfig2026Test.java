@@ -161,6 +161,21 @@ public class HybridConfig2026Test {
     assertThat(parsed).isEqualTo(parameters);
   }
 
+  @Theory
+  public void createKey_works(@FromDataPoints("keys") HybridPrivateKey key) throws Exception {
+    Configuration config = HybridConfig2026.get();
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.generateEntryFromParameters(key.getParameters())
+                    .withFixedId(42)
+                    .makePrimary())
+            .setConfiguration(config)
+            .build();
+
+    assertThat(handle.getPrimary().getKey().getParameters()).isEqualTo(key.getParameters());
+  }
+
   @Test
   public void getOrNull_unsupportedClass_returnsNull() throws Exception {
     if (TinkFipsUtil.useOnlyFips()) {
