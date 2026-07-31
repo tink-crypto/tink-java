@@ -1,0 +1,83 @@
+load("@rules_android//android:rules.bzl", "android_library")
+load("@rules_java//java:defs.bzl", "java_library")
+
+licenses(["notice"])
+
+package(
+    default_testonly = 1,
+    default_visibility = ["//:__subpackages__"],
+)
+
+java_library(
+    name = "prf_based_key_deriver_test_vectors",
+    srcs = ["PrfBasedKeyDeriverTestVectors.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink:key",
+        "//src/main/java/com/google/crypto/tink:parameters",
+        "//src/main/java/com/google/crypto/tink/aead:aes_ctr_hmac_aead_key",
+        "//src/main/java/com/google/crypto/tink/aead:aes_gcm_key",
+        "//src/main/java/com/google/crypto/tink/aead:aes_gcm_siv_key",
+        "//src/main/java/com/google/crypto/tink/aead:aes_gcm_siv_parameters",
+        "//src/main/java/com/google/crypto/tink/aead:predefined_aead_parameters",
+        "//src/main/java/com/google/crypto/tink/aead:x_cha_cha20_poly1305_key",
+        "//src/main/java/com/google/crypto/tink/aead:x_cha_cha20_poly1305_parameters",
+        "//src/main/java/com/google/crypto/tink/daead:aes_siv_key",
+        "//src/main/java/com/google/crypto/tink/daead:predefined_deterministic_aead_parameters",
+        "//src/main/java/com/google/crypto/tink/internal:tink_bug_exception",
+        "//src/main/java/com/google/crypto/tink/mac:hmac_key",
+        "//src/main/java/com/google/crypto/tink/mac:predefined_mac_parameters",
+        "//src/main/java/com/google/crypto/tink/prf:hkdf_prf_key",
+        "//src/main/java/com/google/crypto/tink/prf:hkdf_prf_parameters",
+        "//src/main/java/com/google/crypto/tink/prf:hmac_prf_key",
+        "//src/main/java/com/google/crypto/tink/prf:predefined_prf_parameters",
+        "//src/main/java/com/google/crypto/tink/prf:prf_key",
+        "//src/main/java/com/google/crypto/tink/signature:ed25519_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:ed25519_private_key",
+        "//src/main/java/com/google/crypto/tink/signature:ed25519_public_key",
+        "//src/main/java/com/google/crypto/tink/signature:predefined_signature_parameters",
+        "//src/main/java/com/google/crypto/tink/streamingaead:aes_gcm_hkdf_streaming_key",
+        "//src/main/java/com/google/crypto/tink/streamingaead:predefined_streaming_aead_parameters",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
+    ],
+)
+
+android_library(
+    name = "prf_based_key_deriver_test_vectors-android",
+    srcs = ["PrfBasedKeyDeriverTestVectors.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access-android",
+        "//src/main/java/com/google/crypto/tink:key-android",
+        "//src/main/java/com/google/crypto/tink:parameters-android",
+        "//src/main/java/com/google/crypto/tink/aead:aes_ctr_hmac_aead_key-android",
+        "//src/main/java/com/google/crypto/tink/aead:aes_gcm_key-android",
+        "//src/main/java/com/google/crypto/tink/aead:aes_gcm_siv_key-android",
+        "//src/main/java/com/google/crypto/tink/aead:aes_gcm_siv_parameters-android",
+        "//src/main/java/com/google/crypto/tink/aead:predefined_aead_parameters-android",
+        "//src/main/java/com/google/crypto/tink/aead:x_cha_cha20_poly1305_key-android",
+        "//src/main/java/com/google/crypto/tink/aead:x_cha_cha20_poly1305_parameters-android",
+        "//src/main/java/com/google/crypto/tink/daead:aes_siv_key-android",
+        "//src/main/java/com/google/crypto/tink/daead:predefined_deterministic_aead_parameters-android",
+        "//src/main/java/com/google/crypto/tink/internal:tink_bug_exception-android",
+        "//src/main/java/com/google/crypto/tink/mac:hmac_key-android",
+        "//src/main/java/com/google/crypto/tink/mac:predefined_mac_parameters-android",
+        "//src/main/java/com/google/crypto/tink/prf:hkdf_prf_key-android",
+        "//src/main/java/com/google/crypto/tink/prf:hkdf_prf_parameters-android",
+        "//src/main/java/com/google/crypto/tink/prf:hmac_prf_key-android",
+        "//src/main/java/com/google/crypto/tink/prf:predefined_prf_parameters-android",
+        "//src/main/java/com/google/crypto/tink/prf:prf_key-android",
+        "//src/main/java/com/google/crypto/tink/signature:ed25519_parameters-android",
+        "//src/main/java/com/google/crypto/tink/signature:ed25519_private_key-android",
+        "//src/main/java/com/google/crypto/tink/signature:ed25519_public_key-android",
+        "//src/main/java/com/google/crypto/tink/signature:predefined_signature_parameters-android",
+        "//src/main/java/com/google/crypto/tink/streamingaead:aes_gcm_hkdf_streaming_key-android",
+        "//src/main/java/com/google/crypto/tink/streamingaead:predefined_streaming_aead_parameters-android",
+        "//src/main/java/com/google/crypto/tink/subtle:hex-android",
+        "//src/main/java/com/google/crypto/tink/util:bytes-android",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes-android",
+    ],
+)

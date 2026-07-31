@@ -21,13 +21,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
-import com.google.crypto.tink.aead.AesGcmKey;
-import com.google.crypto.tink.aead.PredefinedAeadParameters;
 import com.google.crypto.tink.aead.XChaCha20Poly1305Parameters;
 import com.google.crypto.tink.config.TinkConfig;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
@@ -35,9 +32,9 @@ import com.google.crypto.tink.keyderivation.KeyDerivationConfig;
 import com.google.crypto.tink.keyderivation.KeysetDeriver;
 import com.google.crypto.tink.keyderivation.PrfBasedKeyDerivationKey;
 import com.google.crypto.tink.keyderivation.PrfBasedKeyDerivationParameters;
+import com.google.crypto.tink.keyderivation.internal.test.PrfBasedKeyDeriverTestVectors;
 import com.google.crypto.tink.prf.HkdfPrfParameters;
 import com.google.crypto.tink.prf.PrfConfig;
-import com.google.crypto.tink.prf.PrfKey;
 import com.google.crypto.tink.proto.AesGcmKeyFormat;
 import com.google.crypto.tink.proto.HashType;
 import com.google.crypto.tink.proto.HkdfPrfKey;
@@ -51,7 +48,6 @@ import com.google.crypto.tink.proto.PrfBasedDeriverKey;
 import com.google.crypto.tink.proto.PrfBasedDeriverKeyFormat;
 import com.google.crypto.tink.proto.PrfBasedDeriverParams;
 import com.google.crypto.tink.subtle.Hex;
-import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ExtensionRegistryLite;
 import java.security.GeneralSecurityException;
@@ -312,46 +308,31 @@ public class PrfBasedDeriverKeyManagerTest {
 
   @Test
   public void createPrimitiveAndUseIt_works() throws Exception {
-    // Test vector from PrfBasedDeriverSecondTest. (FIXED_PRF_KEY)
-    PrfKey prfKey =
-        com.google.crypto.tink.prf.HkdfPrfKey.builder()
-            .setParameters(
-                HkdfPrfParameters.builder()
-                    .setKeySizeBytes(32)
-                    .setHashType(HkdfPrfParameters.HashType.SHA256)
-                    .build())
-            .setKeyBytes(
-                SecretBytes.copyFrom(
-                    Hex.decode("0102030405060708091011121314151617181920212123242526272829303132"),
-                    InsecureSecretKeyAccess.get()))
-            .build();
+    PrfBasedKeyDeriverTestVectors.TestVector t =
+        PrfBasedKeyDeriverTestVectors.createTestVectors()[0];
 
     PrfBasedKeyDerivationParameters derivationParameters =
         PrfBasedKeyDerivationParameters.builder()
-            .setDerivedKeyParameters(PredefinedAeadParameters.AES128_GCM)
-            .setPrfParameters(prfKey.getParameters())
+            .setDerivedKeyParameters(t.derivedKeyParameters)
+            .setPrfParameters(t.prfKey.getParameters())
             .build();
     PrfBasedKeyDerivationKey keyDerivationKey =
-        PrfBasedKeyDerivationKey.create(derivationParameters, prfKey, 123);
+        PrfBasedKeyDerivationKey.create(
+            derivationParameters, t.prfKey, t.expectedKey.getIdRequirementOrNull());
 
     KeysetHandle handle =
         KeysetHandle.newBuilder()
-            .addEntry(KeysetHandle.importKey(keyDerivationKey).makePrimary().withFixedId(123))
+            .addEntry(
+                KeysetHandle.importKey(keyDerivationKey)
+                    .makePrimary()
+                    .withFixedId(t.expectedKey.getIdRequirementOrNull()))
             .build();
     KeysetDeriver deriver = handle.getPrimitive(RegistryConfiguration.get(), KeysetDeriver.class);
 
-    Key expectedKey =
-        AesGcmKey.builder()
-            .setParameters(PredefinedAeadParameters.AES128_GCM)
-            .setIdRequirement(123)
-            .setKeyBytes(
-                SecretBytes.copyFrom(
-                    Hex.decode("1b73bdf5293cc533d635f263e35913ec"), InsecureSecretKeyAccess.get()))
-            .build();
-    KeysetHandle derivedKeysetHandle = deriver.deriveKeyset(new byte[0]);
+    KeysetHandle derivedKeysetHandle = deriver.deriveKeyset(Hex.decode(t.inputHex));
     assertThat(derivedKeysetHandle.getAt(0).getKey().getParameters())
-        .isEqualTo(PredefinedAeadParameters.AES128_GCM);
-    assertThat(derivedKeysetHandle.getAt(0).getKey().equalsKey(expectedKey)).isTrue();
+        .isEqualTo(t.derivedKeyParameters);
+    assertThat(derivedKeysetHandle.getAt(0).getKey().equalsKey(t.expectedKey)).isTrue();
   }
 
   @Test
