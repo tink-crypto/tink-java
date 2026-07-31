@@ -305,10 +305,40 @@ android_library(
 android_library(
     name = "composite_ml_dsa_test_util-android",
     srcs = ["CompositeMlDsaTestUtil.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access-android",
+        "//src/main/java/com/google/crypto/tink/signature:composite_ml_dsa_parameters-android",
+        "//src/main/java/com/google/crypto/tink/signature:composite_ml_dsa_private_key-android",
+        "//src/main/java/com/google/crypto/tink/signature:ed25519_parameters-android",
+        "//src/main/java/com/google/crypto/tink/signature:ed25519_private_key-android",
+        "//src/main/java/com/google/crypto/tink/signature:ed25519_public_key-android",
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_parameters-android",
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_private_key-android",
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_public_key-android",
+        "//src/main/java/com/google/crypto/tink/subtle:hex-android",
+        "//src/main/java/com/google/crypto/tink/util:bytes-android",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes-android",
+    ],
 )
 
 java_library(
     name = "composite_ml_dsa_test_util",
     testonly = 1,
     srcs = ["CompositeMlDsaTestUtil.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink/signature:composite_ml_dsa_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:composite_ml_dsa_private_key",
+        "//src/main/java/com/google/crypto/tink/signature:ed25519_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:ed25519_private_key",
+        "//src/main/java/com/google/crypto/tink/signature:ed25519_public_key",
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_private_key",
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_public_key",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
+        "//src/main/java/com/google/crypto/tink/util:secret_bytes",
+    ],
 )

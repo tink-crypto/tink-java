@@ -22,24 +22,14 @@ import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
 
 import com.google.crypto.tink.AccessesPartialKey;
-import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
-import com.google.crypto.tink.signature.CompositeMlDsaParameters;
 import com.google.crypto.tink.signature.CompositeMlDsaPrivateKey;
-import com.google.crypto.tink.signature.Ed25519Parameters;
-import com.google.crypto.tink.signature.Ed25519PrivateKey;
-import com.google.crypto.tink.signature.Ed25519PublicKey;
-import com.google.crypto.tink.signature.MlDsaParameters;
-import com.google.crypto.tink.signature.MlDsaPrivateKey;
-import com.google.crypto.tink.signature.MlDsaPublicKey;
 import com.google.crypto.tink.signature.internal.CompositeMlDsaVerifyConscrypt;
 import com.google.crypto.tink.signature.internal.testing.CompositeMlDsaTestUtil;
 import com.google.crypto.tink.signature.internal.testing.CompositeMlDsaTestUtil.CompositeMlDsaTestVector;
 import com.google.crypto.tink.subtle.Hex;
-import com.google.crypto.tink.util.Bytes;
-import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
 import java.security.Security;
 import java.util.Arrays;
@@ -72,73 +62,6 @@ public final class CompositeMlDsaSignerVerifierTest {
     }
   }
 
-  private static CompositeMlDsaPrivateKey createCompositeKeyFromRawBytes(
-      String tcId, byte[] pkBytes, byte[] skBytes, Integer idRequirement) throws Exception {
-    CompositeMlDsaParameters.MlDsaInstance mlDsaInstance;
-    MlDsaParameters.MlDsaInstance innerMlDsaInstance;
-    int mlDsaPubSize;
-    if (tcId.contains("MLDSA44")) {
-      mlDsaInstance = CompositeMlDsaParameters.MlDsaInstance.ML_DSA_44;
-      innerMlDsaInstance = MlDsaParameters.MlDsaInstance.ML_DSA_44;
-      mlDsaPubSize = 1312;
-    } else if (tcId.contains("MLDSA65")) {
-      mlDsaInstance = CompositeMlDsaParameters.MlDsaInstance.ML_DSA_65;
-      innerMlDsaInstance = MlDsaParameters.MlDsaInstance.ML_DSA_65;
-      mlDsaPubSize = 1952;
-    } else if (tcId.contains("MLDSA87")) {
-      mlDsaInstance = CompositeMlDsaParameters.MlDsaInstance.ML_DSA_87;
-      innerMlDsaInstance = MlDsaParameters.MlDsaInstance.ML_DSA_87;
-      mlDsaPubSize = 2592;
-    } else {
-      // Should never happen.
-      throw new IllegalArgumentException("Unsupported ML-DSA algorithm: " + tcId);
-    }
-
-    byte[] mlDsaPubBytes = Arrays.copyOf(pkBytes, mlDsaPubSize);
-    byte[] tradPublicKeyBytes = Arrays.copyOfRange(pkBytes, mlDsaPubSize, pkBytes.length);
-
-    byte[] mlDsaSeedBytes = Arrays.copyOf(skBytes, 32);
-    byte[] tradPrivateKeyBytes = Arrays.copyOfRange(skBytes, 32, skBytes.length);
-
-    MlDsaPublicKey mlDsaPublicKey =
-        MlDsaPublicKey.builder()
-            .setParameters(
-                MlDsaParameters.create(innerMlDsaInstance, MlDsaParameters.Variant.NO_PREFIX))
-            .setSerializedPublicKey(Bytes.copyFrom(mlDsaPubBytes))
-            .build();
-    MlDsaPrivateKey mlDsaPrivateKey =
-        MlDsaPrivateKey.createWithoutVerification(
-            mlDsaPublicKey, SecretBytes.copyFrom(mlDsaSeedBytes, InsecureSecretKeyAccess.get()));
-
-    Ed25519PublicKey edPublicKey =
-        Ed25519PublicKey.create(
-            Ed25519Parameters.Variant.NO_PREFIX, Bytes.copyFrom(tradPublicKeyBytes), null);
-    Ed25519PrivateKey edPrivateKey =
-        Ed25519PrivateKey.create(
-            edPublicKey, SecretBytes.copyFrom(tradPrivateKeyBytes, InsecureSecretKeyAccess.get()));
-
-    CompositeMlDsaParameters.Variant variant =
-        idRequirement == null
-            ? CompositeMlDsaParameters.Variant.NO_PREFIX
-            : CompositeMlDsaParameters.Variant.TINK;
-    CompositeMlDsaParameters parameters =
-        CompositeMlDsaParameters.builder()
-            .setMlDsaInstance(mlDsaInstance)
-            .setClassicalAlgorithm(CompositeMlDsaParameters.ClassicalAlgorithm.ED25519)
-            .setVariant(variant)
-            .build();
-
-    CompositeMlDsaPrivateKey.Builder builder =
-        CompositeMlDsaPrivateKey.builder()
-            .setParameters(parameters)
-            .setMlDsaPrivateKey(mlDsaPrivateKey)
-            .setClassicalPrivateKey(edPrivateKey);
-    if (idRequirement != null) {
-      builder.setIdRequirement(idRequirement);
-    }
-    return builder.build();
-  }
-
   @Theory
   public void signAndVerify_success(
       @FromDataPoints("testVectors") CompositeMlDsaTestVector testVector) throws Exception {
@@ -148,11 +71,7 @@ public final class CompositeMlDsaSignerVerifierTest {
       return;
     }
     CompositeMlDsaPrivateKey privateKey =
-        createCompositeKeyFromRawBytes(
-            testVector.tcId,
-            Hex.decode(testVector.pk),
-            Hex.decode(testVector.sk),
-            testVector.idRequirement);
+        CompositeMlDsaTestUtil.createCompositeKeyFromTestVector(testVector);
     byte[] message = "test message".getBytes(UTF_8);
 
     PublicKeySign signer = CompositeMlDsaSigner.create(privateKey);
@@ -171,11 +90,7 @@ public final class CompositeMlDsaSignerVerifierTest {
       return;
     }
     CompositeMlDsaPrivateKey privateKey =
-        createCompositeKeyFromRawBytes(
-            testVector.tcId,
-            Hex.decode(testVector.pk),
-            Hex.decode(testVector.sk),
-            testVector.idRequirement);
+        CompositeMlDsaTestUtil.createCompositeKeyFromTestVector(testVector);
     byte[] message = Hex.decode(testVector.m);
 
     PublicKeyVerify verifier = CompositeMlDsaVerifier.create(privateKey.getPublicKey());
@@ -192,11 +107,7 @@ public final class CompositeMlDsaSignerVerifierTest {
       return;
     }
     CompositeMlDsaPrivateKey privateKey =
-        createCompositeKeyFromRawBytes(
-            testVector.tcId,
-            Hex.decode(testVector.pk),
-            Hex.decode(testVector.sk),
-            testVector.idRequirement);
+        CompositeMlDsaTestUtil.createCompositeKeyFromTestVector(testVector);
     byte[] message = "test message".getBytes(UTF_8);
     byte[] modifiedMessage = "test message!".getBytes(UTF_8);
 
@@ -216,11 +127,7 @@ public final class CompositeMlDsaSignerVerifierTest {
       return;
     }
     CompositeMlDsaPrivateKey privateKey =
-        createCompositeKeyFromRawBytes(
-            testVector.tcId,
-            Hex.decode(testVector.pk),
-            Hex.decode(testVector.sk),
-            testVector.idRequirement);
+        CompositeMlDsaTestUtil.createCompositeKeyFromTestVector(testVector);
     byte[] message = "test message".getBytes(UTF_8);
 
     PublicKeySign signer = CompositeMlDsaSigner.create(privateKey);
@@ -244,11 +151,7 @@ public final class CompositeMlDsaSignerVerifierTest {
     }
 
     CompositeMlDsaPrivateKey privateKey =
-        createCompositeKeyFromRawBytes(
-            testVector.tcId,
-            Hex.decode(testVector.pk),
-            Hex.decode(testVector.sk),
-            testVector.idRequirement);
+        CompositeMlDsaTestUtil.createCompositeKeyFromTestVector(testVector);
     byte[] message = "test message".getBytes(UTF_8);
 
     PublicKeySign signer = CompositeMlDsaSigner.create(privateKey);
@@ -273,11 +176,7 @@ public final class CompositeMlDsaSignerVerifierTest {
     }
 
     CompositeMlDsaPrivateKey privateKey =
-        createCompositeKeyFromRawBytes(
-            testVector.tcId,
-            Hex.decode(testVector.pk),
-            Hex.decode(testVector.sk),
-            testVector.idRequirement);
+        CompositeMlDsaTestUtil.createCompositeKeyFromTestVector(testVector);
     byte[] message = "test message".getBytes(UTF_8);
 
     PublicKeySign signer = CompositeMlDsaSigner.create(privateKey);
@@ -295,11 +194,7 @@ public final class CompositeMlDsaSignerVerifierTest {
   public void throwsIfNotAvailable() throws Exception {
     assumeFalse(CompositeMlDsaVerifyConscrypt.isSupported());
     CompositeMlDsaPrivateKey privateKey =
-        createCompositeKeyFromRawBytes(
-            testVectors.get(2).tcId,
-            Hex.decode(testVectors.get(2).pk),
-            Hex.decode(testVectors.get(2).sk),
-            testVectors.get(2).idRequirement);
+        CompositeMlDsaTestUtil.createCompositeKeyFromTestVector(testVectors.get(2));
 
     assertThrows(GeneralSecurityException.class, () -> CompositeMlDsaSigner.create(privateKey));
     assertThrows(
