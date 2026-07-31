@@ -124,6 +124,7 @@ public final class CompositeMlDsaProtoSerialization {
   private static final EnumTypeProtoConverter<MlDsaInstance, CompositeMlDsaParameters.MlDsaInstance>
       INSTANCE_CONVERTER =
           EnumTypeProtoConverter.<MlDsaInstance, CompositeMlDsaParameters.MlDsaInstance>builder()
+              .add(MlDsaInstance.ML_DSA_44, CompositeMlDsaParameters.MlDsaInstance.ML_DSA_44)
               .add(MlDsaInstance.ML_DSA_65, CompositeMlDsaParameters.MlDsaInstance.ML_DSA_65)
               .add(MlDsaInstance.ML_DSA_87, CompositeMlDsaParameters.MlDsaInstance.ML_DSA_87)
               .build();

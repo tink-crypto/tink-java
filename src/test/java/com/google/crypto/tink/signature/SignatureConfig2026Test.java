@@ -30,6 +30,8 @@ import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.TinkProtoParametersFormat;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.Util;
+import com.google.crypto.tink.signature.internal.CompositeMlDsaVerifyConscrypt;
+import com.google.crypto.tink.signature.internal.testing.CompositeMlDsaTestUtil;
 import com.google.crypto.tink.signature.internal.testing.EcdsaTestUtil;
 import com.google.crypto.tink.signature.internal.testing.Ed25519TestUtil;
 import com.google.crypto.tink.signature.internal.testing.MlDsaTestUtil;
@@ -57,7 +59,19 @@ public class SignatureConfig2026Test {
       Ed25519TestUtil.createEd25519TestVectors()[0].getPrivateKey(),
       MlDsaTestUtil.createMlDsa65ValidSignatureTestVectors().findFirst().get().getPrivateKey(),
       SlhDsaTestUtil.createSlhDsaValidSignatureTestVectors().findFirst().get().getPrivateKey(),
+      createCompositeMlDsaKey(),
     };
+  }
+
+  private static SignaturePrivateKey createCompositeMlDsaKey() {
+    try {
+      // #2 is the first test vector with Ed25519 classical component.
+      return CompositeMlDsaTestUtil.createCompositeKeyFromTestVector(
+          CompositeMlDsaTestUtil.compositeMlDsaTestVectors.get(2));
+    } catch (GeneralSecurityException e) {
+      throw new IllegalStateException(
+          "Failed to create CompositeMlDsaPrivateKey from test vector", e);
+    }
   }
 
   /**
@@ -73,6 +87,9 @@ public class SignatureConfig2026Test {
   public static final SignaturePrivateKey[] keys = createKeys();
 
   private static boolean shouldBeSupported(SignaturePrivateKey key) {
+    if (key instanceof CompositeMlDsaPrivateKey) {
+      return CompositeMlDsaVerifyConscrypt.isSupported();
+    }
     Integer apiLevel = Util.getAndroidApiLevel();
     if (apiLevel != null && apiLevel >= 37) {
       // On Android API 37 and above, all signature algorithms should be supported.
@@ -196,7 +213,9 @@ public class SignatureConfig2026Test {
   @Theory
   public void createKey_works(@FromDataPoints("keys") SignaturePrivateKey key) throws Exception {
     Configuration config = SignatureConfig2026.get();
-    if (key.getParameters().getClass() != EcdsaParameters.class) {
+    if ((key.getParameters().getClass() != EcdsaParameters.class
+            && key.getParameters().getClass() != CompositeMlDsaParameters.class)
+        || !shouldBeSupported(key)) {
       assertThrows(
           GeneralSecurityException.class,
           () -> config.createKey(key.getParameters(), key.getIdRequirementOrNull()));

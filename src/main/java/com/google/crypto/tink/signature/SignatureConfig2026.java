@@ -22,7 +22,11 @@ import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.ProtoBasedConfigurationBuilder;
+import com.google.crypto.tink.signature.internal.CompositeMlDsaKeyCreator;
 import com.google.crypto.tink.signature.internal.EcdsaKeyCreator;
+import com.google.crypto.tink.signature.subtle.CompositeMlDsaProtoSerialization;
+import com.google.crypto.tink.signature.subtle.CompositeMlDsaSigner;
+import com.google.crypto.tink.signature.subtle.CompositeMlDsaVerifier;
 import com.google.crypto.tink.signature.subtle.EcdsaProtoSerialization;
 import com.google.crypto.tink.signature.subtle.EcdsaSigner;
 import com.google.crypto.tink.signature.subtle.EcdsaVerifier;
@@ -53,6 +57,7 @@ import java.security.GeneralSecurityException;
  *   <li>Ed25519
  *   <li>MlDsa
  *   <li>SlhDsa
+ *   <li>CompositeMlDsa
  * </ul>
  */
 public final class SignatureConfig2026 {
@@ -101,6 +106,11 @@ public final class SignatureConfig2026 {
       "type.googleapis.com/google.crypto.tink.SlhDsaPrivateKey";
   private static final String SLHDSA_PUBLIC_KEY_TYPE_URL =
       "type.googleapis.com/google.crypto.tink.SlhDsaPublicKey";
+
+  private static final String COMPOSITE_MLDSA_PRIVATE_KEY_TYPE_URL =
+      "type.googleapis.com/google.crypto.tink.CompositeMlDsaPrivateKey";
+  private static final String COMPOSITE_MLDSA_PUBLIC_KEY_TYPE_URL =
+      "type.googleapis.com/google.crypto.tink.CompositeMlDsaPublicKey";
 
   @LowLevelCryptoCaller
   private static Configuration create() {
@@ -186,7 +196,24 @@ public final class SignatureConfig2026 {
         .addKeyParser(SLHDSA_PRIVATE_KEY_TYPE_URL, SlhDsaProtoSerialization::parsePrivateKey)
         .addKeyParser(SLHDSA_PUBLIC_KEY_TYPE_URL, SlhDsaProtoSerialization::parsePublicKey)
         .addParametersParser(SLHDSA_PRIVATE_KEY_TYPE_URL, SlhDsaProtoSerialization::parseParameters)
+        // CompositeMlDsa
+        .addPrimitiveConstructor(
+            CompositeMlDsaSigner::create, CompositeMlDsaPrivateKey.class, PublicKeySign.class)
+        .addPrimitiveConstructor(
+            CompositeMlDsaVerifier::create, CompositeMlDsaPublicKey.class, PublicKeyVerify.class)
+        .addKeySerializer(
+            CompositeMlDsaPrivateKey.class, CompositeMlDsaProtoSerialization::serializePrivateKey)
+        .addKeySerializer(
+            CompositeMlDsaPublicKey.class, CompositeMlDsaProtoSerialization::serializePublicKey)
+        .addParametersSerializer(
+            CompositeMlDsaParameters.class, CompositeMlDsaProtoSerialization::serializeParameters)
+        .addKeyParser(
+            COMPOSITE_MLDSA_PRIVATE_KEY_TYPE_URL, CompositeMlDsaProtoSerialization::parsePrivateKey)
+        .addKeyParser(
+            COMPOSITE_MLDSA_PUBLIC_KEY_TYPE_URL, CompositeMlDsaProtoSerialization::parsePublicKey)
+        .addParametersParser(
+            COMPOSITE_MLDSA_PRIVATE_KEY_TYPE_URL, CompositeMlDsaProtoSerialization::parseParameters)
+        .addKeyCreator(CompositeMlDsaParameters.class, CompositeMlDsaKeyCreator::createKey)
         .build();
   }
 }
-
