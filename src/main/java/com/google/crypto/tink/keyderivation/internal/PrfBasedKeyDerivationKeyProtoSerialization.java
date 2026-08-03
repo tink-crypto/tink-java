@@ -17,16 +17,21 @@
 package com.google.crypto.tink.keyderivation.internal;
 
 import com.google.crypto.tink.AccessesPartialKey;
+import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.Key;
+import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.ProtoKeySerialization;
 import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
 import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
+import com.google.crypto.tink.ProtoKeySerializer;
 import com.google.crypto.tink.ProtoParametersSerialization;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.TinkProtoParametersFormat;
 import com.google.crypto.tink.internal.KeyParser;
 import com.google.crypto.tink.internal.KeySerializer;
+import com.google.crypto.tink.internal.LegacyProtoParameters;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ParametersParser;
 import com.google.crypto.tink.internal.ParametersSerializer;
@@ -72,6 +77,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
 
   private static PrfBasedKeyDerivationParameters parseParameters(
       ProtoParametersSerialization serialization) throws GeneralSecurityException {
+    Configuration config = RegistryConfiguration.get();
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
       throw new IllegalArgumentException(
           "Wrong type URL in call to PrfBasedKeyDerivationKeyProtoSerialization.parseParameters: "
@@ -87,9 +93,10 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
     }
 
     Parameters derivedKeyParameters =
-        TinkProtoParametersFormat.parse(format.getParams().getDerivedKeyTemplate().toByteArray());
+        TinkProtoParametersFormat.parse(
+            format.getParams().getDerivedKeyTemplate().toByteArray(), config);
     Parameters prfParameters =
-        TinkProtoParametersFormat.parse(format.getPrfKeyTemplate().toByteArray());
+        TinkProtoParametersFormat.parse(format.getPrfKeyTemplate().toByteArray(), config);
     if (!(prfParameters instanceof PrfParameters)) {
       throw new GeneralSecurityException("Non-PRF parameters stored in the field prf_key_template");
     }
@@ -108,13 +115,14 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
 
   private static ProtoParametersSerialization serializeParameters(
       PrfBasedKeyDerivationParameters parameters) throws GeneralSecurityException {
+    Configuration config = RegistryConfiguration.get();
     try {
       byte[] serializedPrfParameters =
-          TinkProtoParametersFormat.serialize(parameters.getPrfParameters());
+          TinkProtoParametersFormat.serialize(parameters.getPrfParameters(), config);
       KeyTemplate prfKeyTemplate =
           KeyTemplate.parseFrom(serializedPrfParameters, ExtensionRegistryLite.getEmptyRegistry());
       byte[] serializedDerivedKeyParameters =
-          TinkProtoParametersFormat.serialize(parameters.getDerivedKeyParameters());
+          TinkProtoParametersFormat.serialize(parameters.getDerivedKeyParameters(), config);
       KeyTemplate derivedKeyTemplate =
           KeyTemplate.parseFrom(
               serializedDerivedKeyParameters, ExtensionRegistryLite.getEmptyRegistry());
@@ -134,14 +142,20 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
   }
 
   @AccessesPartialKey
+  @LowLevelCryptoCaller
   private static ProtoKeySerialization serializeKey(
       PrfBasedKeyDerivationKey key, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
-    ProtoKeySerialization prfKeySerialization =
-        MutableSerializationRegistry.globalInstance().serializeKey(key.getPrfKey(), access);
+    Configuration configuration = RegistryConfiguration.get();
+    @Nullable
+    ProtoKeySerializer serializer = configuration.getOrNull(ProtoKeySerializer.class);
+    if (serializer == null) {
+      throw new GeneralSecurityException(
+          "Passed in configuration cannot be used to serialize keys.");
+    }
+    ProtoKeySerialization prfKeySerialization = serializer.serializeKey(key.getPrfKey(), access);
     ProtoParametersSerialization derivedKeyParametersSerialization =
-        MutableSerializationRegistry.globalInstance()
-            .serializeParameters(key.getParameters().getDerivedKeyParameters());
+        serializer.serializeParameters(key.getParameters().getDerivedKeyParameters());
     return ProtoKeySerialization.create(
         TYPE_URL,
         PrfBasedDeriverKey.newBuilder()
@@ -169,10 +183,16 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
   }
 
   @AccessesPartialKey
+  @LowLevelCryptoCaller
   @SuppressWarnings("UnusedException")
   private static PrfBasedKeyDerivationKey parseKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
+    Configuration configuration = RegistryConfiguration.get();
+    @Nullable ProtoKeySerializer serializer = configuration.getOrNull(ProtoKeySerializer.class);
+    if (serializer == null) {
+      throw new GeneralSecurityException("Passed in configuration cannot be used to parse keys.");
+    }
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
       throw new IllegalArgumentException(
           "Wrong type URL in call to PrfBasedKeyDerivationKey.parseKey");
@@ -188,8 +208,7 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
               ProtoConversions.fromProto(protoKey.getPrfKey().getKeyMaterialType()),
               OutputPrefixType.RAW,
               /* idRequirement= */ null);
-      Key prfKeyUncast =
-          MutableSerializationRegistry.globalInstance().parseKey(prfKeySerialization, access);
+      Key prfKeyUncast = serializer.parseKey(prfKeySerialization, access);
       if (!(prfKeyUncast instanceof PrfKey)) {
         throw new GeneralSecurityException("Non-PRF key stored in the field prf_key");
       }
@@ -201,8 +220,14 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
               ProtoConversions.fromProto(derivedKeyTemplate.getOutputPrefixType()),
               derivedKeyTemplate.getValue());
       Parameters derivedKeyParameters =
-          MutableSerializationRegistry.globalInstance()
-              .parseParameters(derivedKeyParametersSerialization);
+          serializer.parseParameters(derivedKeyParametersSerialization);
+      // Some configurations (in particular the RegistryConfiguration) falls back to parsing
+      // into LegacyProtoParameters in case parsing fails. We don't want this here: this would
+      // be a regression and it was fixed earlier. Hence we reject this.
+      if (derivedKeyParameters instanceof LegacyProtoParameters) {
+        throw new GeneralSecurityException(
+            "Parsing of parameters failed for " + derivedKeyTemplate.getTypeUrl());
+      }
       PrfBasedKeyDerivationParameters parameters =
           PrfBasedKeyDerivationParameters.builder()
               .setDerivedKeyParameters(derivedKeyParameters)
