@@ -502,4 +502,47 @@ public class JwtConfig2026Test {
 
     assertThat(parsed).isEqualTo(parameters);
   }
+
+  @Theory
+  public void createKey_works(@FromDataPoints("jwtPrivateKeys") JwtSignaturePrivateKey key)
+      throws Exception {
+    if (TinkFipsUtil.useOnlyFips() || TestUtil.isTsan()) {
+      return;
+    }
+    if ((key instanceof JwtMlDsaPrivateKey) && !MlDsaVerifyConscrypt.isSupported()) {
+      return;
+    }
+
+    Configuration config = JwtConfig2026.get();
+    KeysetHandle.Builder.Entry entry =
+        KeysetHandle.generateEntryFromParameters(key.getParameters()).makePrimary();
+    if (key.getIdRequirementOrNull() == null) {
+      entry.withRandomId();
+    } else {
+      entry.withFixedId(key.getIdRequirementOrNull());
+    }
+    KeysetHandle handle =
+        KeysetHandle.newBuilder().addEntry(entry).setConfiguration(config).build();
+
+    assertThat(handle.getPrimary().getKey().getParameters()).isEqualTo(key.getParameters());
+  }
+
+  @Theory
+  public void createJwtHmacKey_works(@FromDataPoints("jwtHmacKeys") JwtHmacKey key)
+      throws Exception {
+    if (TinkFipsUtil.useOnlyFips() || TestUtil.isTsan()) {
+      return;
+    }
+    Configuration config = JwtConfig2026.get();
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.generateEntryFromParameters(key.getParameters())
+                    .withRandomId()
+                    .makePrimary())
+            .setConfiguration(config)
+            .build();
+
+    assertThat(handle.getPrimary().getKey().getParameters()).isEqualTo(key.getParameters());
+  }
 }

@@ -16,10 +16,15 @@
 
 package com.google.crypto.tink.jwt;
 
+import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.ProtoBasedConfigurationBuilder;
+import com.google.crypto.tink.jwt.internal.JwtEcdsaKeyCreator;
+import com.google.crypto.tink.jwt.internal.JwtMlDsaKeyCreator;
+import com.google.crypto.tink.jwt.internal.JwtRsaSsaPkcs1KeyCreator;
+import com.google.crypto.tink.jwt.internal.JwtRsaSsaPssKeyCreator;
 import com.google.crypto.tink.jwt.subtle.JwtEcdsaProtoSerialization;
 import com.google.crypto.tink.jwt.subtle.JwtEcdsaPublicKeySign;
 import com.google.crypto.tink.jwt.subtle.JwtEcdsaPublicKeyVerify;
@@ -34,7 +39,9 @@ import com.google.crypto.tink.jwt.subtle.JwtRsaSsaPkcs1PublicKeyVerify;
 import com.google.crypto.tink.jwt.subtle.JwtRsaSsaPssProtoSerialization;
 import com.google.crypto.tink.jwt.subtle.JwtRsaSsaPssPublicKeySign;
 import com.google.crypto.tink.jwt.subtle.JwtRsaSsaPssPublicKeyVerify;
+import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
+import javax.annotation.Nullable;
 
 /**
  * JwtConfig2026 contains the following primitives and algorithms for JWT:
@@ -68,6 +75,7 @@ public class JwtConfig2026 {
             JwtMac.class,
             (handle, factory) -> new JwtMacWrapper().wrap(handle, factory))
         // JwtHmacMac
+        .addKeyCreator(JwtHmacParameters.class, JwtConfig2026::createHmacKey)
         .addPrimitiveConstructor(JwtHmac::create, JwtHmacKey.class, JwtMac.class)
         .addKeySerializer(JwtHmacKey.class, JwtHmacProtoSerialization::serializeKey)
         .addKeyParser(
@@ -102,6 +110,7 @@ public class JwtConfig2026 {
             JwtEcdsaProtoSerialization::parsePublicKey)
         .addParametersSerializer(
             JwtEcdsaParameters.class, JwtEcdsaProtoSerialization::serializeParameters)
+        .addKeyCreator(JwtEcdsaParameters.class, JwtEcdsaKeyCreator::createKey)
         .addParametersParser(
             "type.googleapis.com/google.crypto.tink.JwtEcdsaPrivateKey",
             JwtEcdsaProtoSerialization::parseParameters)
@@ -126,6 +135,7 @@ public class JwtConfig2026 {
             JwtRsaSsaPkcs1ProtoSerialization::parsePublicKey)
         .addParametersSerializer(
             JwtRsaSsaPkcs1Parameters.class, JwtRsaSsaPkcs1ProtoSerialization::serializeParameters)
+        .addKeyCreator(JwtRsaSsaPkcs1Parameters.class, JwtRsaSsaPkcs1KeyCreator::createKey)
         .addParametersParser(
             "type.googleapis.com/google.crypto.tink.JwtRsaSsaPkcs1PrivateKey",
             JwtRsaSsaPkcs1ProtoSerialization::parseParameters)
@@ -148,6 +158,7 @@ public class JwtConfig2026 {
             JwtRsaSsaPssProtoSerialization::parsePublicKey)
         .addParametersSerializer(
             JwtRsaSsaPssParameters.class, JwtRsaSsaPssProtoSerialization::serializeParameters)
+        .addKeyCreator(JwtRsaSsaPssParameters.class, JwtRsaSsaPssKeyCreator::createKey)
         .addParametersParser(
             "type.googleapis.com/google.crypto.tink.JwtRsaSsaPssPrivateKey",
             JwtRsaSsaPssProtoSerialization::parseParameters)
@@ -156,10 +167,8 @@ public class JwtConfig2026 {
             JwtMlDsaPublicKeySign::create, JwtMlDsaPrivateKey.class, JwtPublicKeySign.class)
         .addPrimitiveConstructor(
             JwtMlDsaPublicKeyVerify::create, JwtMlDsaPublicKey.class, JwtPublicKeyVerify.class)
-        .addKeySerializer(
-            JwtMlDsaPrivateKey.class, JwtMlDsaProtoSerialization::serializePrivateKey)
-        .addKeySerializer(
-            JwtMlDsaPublicKey.class, JwtMlDsaProtoSerialization::serializePublicKey)
+        .addKeySerializer(JwtMlDsaPrivateKey.class, JwtMlDsaProtoSerialization::serializePrivateKey)
+        .addKeySerializer(JwtMlDsaPublicKey.class, JwtMlDsaProtoSerialization::serializePublicKey)
         .addKeyParser(
             "type.googleapis.com/google.crypto.tink.JwtMlDsaPrivateKey",
             JwtMlDsaProtoSerialization::parsePrivateKey)
@@ -168,10 +177,25 @@ public class JwtConfig2026 {
             JwtMlDsaProtoSerialization::parsePublicKey)
         .addParametersSerializer(
             JwtMlDsaParameters.class, JwtMlDsaProtoSerialization::serializeParameters)
+        .addKeyCreator(JwtMlDsaParameters.class, JwtMlDsaKeyCreator::createKey)
         .addParametersParser(
             "type.googleapis.com/google.crypto.tink.JwtMlDsaPrivateKey",
             JwtMlDsaProtoSerialization::parseParameters)
         .build();
+  }
+
+  @AccessesPartialKey
+  private static JwtHmacKey createHmacKey(
+      JwtHmacParameters parameters, @Nullable Integer idRequirement)
+      throws GeneralSecurityException {
+    JwtHmacKey.Builder builder =
+        JwtHmacKey.builder()
+            .setParameters(parameters)
+            .setKeyBytes(SecretBytes.randomBytes(parameters.getKeySizeBytes()));
+    if (idRequirement != null) {
+      builder.setIdRequirement(idRequirement);
+    }
+    return builder.build();
   }
 
   public static Configuration get() throws GeneralSecurityException {
