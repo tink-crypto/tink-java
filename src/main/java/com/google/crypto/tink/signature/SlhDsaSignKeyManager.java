@@ -15,26 +15,16 @@
 ////////////////////////////////////////////////////////////////////////////////
 package com.google.crypto.tink.signature;
 
-import com.google.crypto.tink.AccessesPartialKey;
-import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.config.internal.TinkFipsUtil.AlgorithmFipsCompatibility;
-import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.internal.KeyCreator;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
 import com.google.crypto.tink.internal.MutableParametersRegistry;
+import com.google.crypto.tink.signature.internal.SlhDsaKeyCreator;
 import com.google.crypto.tink.signature.internal.SlhDsaProtoSerialization;
-import com.google.crypto.tink.signature.internal.SlhDsaVerifyConscrypt;
-import com.google.crypto.tink.util.Bytes;
-import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.Provider;
 import java.util.Map;
-import javax.annotation.Nullable;
 
 /**
  * SlhDsaSignKeyManager hosts the {@code registerPair()} method. The method registers the {@link
@@ -42,51 +32,10 @@ import javax.annotation.Nullable;
  * parsing, and serialization of SLH-DSA keys in KeysetHandles.
  */
 public final class SlhDsaSignKeyManager {
-  static final String SLH_DSA_SHA2_128S_ALGORITHM = "SLH-DSA-SHA2-128S";
 
-  private static final KeyCreator<SlhDsaParameters> KEY_CREATOR = SlhDsaSignKeyManager::createKey;
+  private static final KeyCreator<SlhDsaParameters> KEY_CREATOR = SlhDsaKeyCreator::createKey;
   private static final TinkFipsUtil.AlgorithmFipsCompatibility FIPS =
       AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS;
-
-  @AccessesPartialKey
-  private static SlhDsaPrivateKey createKey(
-      SlhDsaParameters parameters, @Nullable Integer idRequirement)
-      throws GeneralSecurityException {
-    if (parameters.getPrivateKeySize() != SlhDsaParameters.SLH_DSA_128_PRIVATE_KEY_SIZE_BYTES
-        || parameters.getHashType() != SlhDsaParameters.HashType.SHA2
-        || parameters.getSignatureType() != SlhDsaParameters.SignatureType.SMALL_SIGNATURE) {
-      throw new GeneralSecurityException("Unsupported SLH-DSA parameters");
-    }
-
-    Provider provider = ConscryptUtil.providerOrNull();
-    if (provider == null) {
-      throw new GeneralSecurityException("Obtaining Conscrypt provider failed");
-    }
-
-    KeyPairGenerator keyPairGenerator =
-        KeyPairGenerator.getInstance(SLH_DSA_SHA2_128S_ALGORITHM, provider);
-    KeyPair keyPair = keyPairGenerator.generateKeyPair();
-    KeyFactory keyFactory = KeyFactory.getInstance(SLH_DSA_SHA2_128S_ALGORITHM, provider);
-
-    SlhDsaPublicKey publicKey =
-        SlhDsaPublicKey.builder()
-            .setSerializedPublicKey(
-                Bytes.copyFrom(
-                    keyFactory
-                        .getKeySpec(keyPair.getPublic(), SlhDsaVerifyConscrypt.RawKeySpec.class)
-                        .getEncoded()))
-            .setParameters(parameters)
-            .setIdRequirement(idRequirement)
-            .build();
-    SecretBytes privateKeyBytes =
-        SecretBytes.copyFrom(
-            keyFactory
-                .getKeySpec(keyPair.getPrivate(), SlhDsaVerifyConscrypt.RawKeySpec.class)
-                .getEncoded(),
-            InsecureSecretKeyAccess.get());
-
-    return SlhDsaPrivateKey.createWithoutVerification(publicKey, privateKeyBytes);
-  }
 
   /*
    * 1. other `namedParameters()` methods do, and this one might too in the future
