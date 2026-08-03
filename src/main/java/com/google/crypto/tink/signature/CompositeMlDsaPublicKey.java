@@ -24,6 +24,8 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Immutable;
 import com.google.errorprone.annotations.RestrictedApi;
 import java.security.GeneralSecurityException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import javax.annotation.Nullable;
@@ -36,31 +38,36 @@ public final class CompositeMlDsaPublicKey extends SignaturePublicKey {
 
   private static Map<CompositeMlDsaParameters.ClassicalAlgorithm, SignatureParameters>
       createSupportedClassicalParameters() {
+    Map<CompositeMlDsaParameters.ClassicalAlgorithm, SignatureParameters> map = new HashMap<>();
     try {
-      return Map.of(
+      map.put(
           CompositeMlDsaParameters.ClassicalAlgorithm.ED25519,
-          Ed25519Parameters.create(Ed25519Parameters.Variant.NO_PREFIX),
+          Ed25519Parameters.create(Ed25519Parameters.Variant.NO_PREFIX));
+      map.put(
           CompositeMlDsaParameters.ClassicalAlgorithm.ECDSA_P256,
           EcdsaParameters.builder()
               .setHashType(EcdsaParameters.HashType.SHA256)
               .setCurveType(EcdsaParameters.CurveType.NIST_P256)
               .setVariant(EcdsaParameters.Variant.NO_PREFIX)
               .setSignatureEncoding(EcdsaParameters.SignatureEncoding.IEEE_P1363)
-              .build(),
+              .build());
+      map.put(
           CompositeMlDsaParameters.ClassicalAlgorithm.ECDSA_P384,
           EcdsaParameters.builder()
               .setHashType(EcdsaParameters.HashType.SHA384)
               .setCurveType(EcdsaParameters.CurveType.NIST_P384)
               .setSignatureEncoding(EcdsaParameters.SignatureEncoding.IEEE_P1363)
               .setVariant(EcdsaParameters.Variant.NO_PREFIX)
-              .build(),
+              .build());
+      map.put(
           CompositeMlDsaParameters.ClassicalAlgorithm.ECDSA_P521,
           EcdsaParameters.builder()
               .setHashType(EcdsaParameters.HashType.SHA512)
               .setCurveType(EcdsaParameters.CurveType.NIST_P521)
               .setSignatureEncoding(EcdsaParameters.SignatureEncoding.IEEE_P1363)
               .setVariant(EcdsaParameters.Variant.NO_PREFIX)
-              .build(),
+              .build());
+      map.put(
           CompositeMlDsaParameters.ClassicalAlgorithm.RSA2048_PSS,
           RsaSsaPssParameters.builder()
               .setModulusSizeBits(2048)
@@ -68,7 +75,8 @@ public final class CompositeMlDsaPublicKey extends SignaturePublicKey {
               .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
               .setSaltLengthBytes(32)
               .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
-              .build(),
+              .build());
+      map.put(
           CompositeMlDsaParameters.ClassicalAlgorithm.RSA3072_PSS,
           RsaSsaPssParameters.builder()
               .setModulusSizeBits(3072)
@@ -76,7 +84,8 @@ public final class CompositeMlDsaPublicKey extends SignaturePublicKey {
               .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
               .setSaltLengthBytes(32)
               .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
-              .build(),
+              .build());
+      map.put(
           CompositeMlDsaParameters.ClassicalAlgorithm.RSA4096_PSS,
           RsaSsaPssParameters.builder()
               .setModulusSizeBits(4096)
@@ -84,25 +93,29 @@ public final class CompositeMlDsaPublicKey extends SignaturePublicKey {
               .setMgf1HashType(RsaSsaPssParameters.HashType.SHA384)
               .setSaltLengthBytes(48)
               .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
-              .build(),
+              .build());
+      map.put(
           CompositeMlDsaParameters.ClassicalAlgorithm.RSA2048_PKCS1,
           RsaSsaPkcs1Parameters.builder()
               .setModulusSizeBits(2048)
               .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
               .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
-              .build(),
+              .build());
+      map.put(
           CompositeMlDsaParameters.ClassicalAlgorithm.RSA3072_PKCS1,
           RsaSsaPkcs1Parameters.builder()
               .setModulusSizeBits(3072)
               .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
               .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
-              .build(),
+              .build());
+      map.put(
           CompositeMlDsaParameters.ClassicalAlgorithm.RSA4096_PKCS1,
           RsaSsaPkcs1Parameters.builder()
               .setModulusSizeBits(4096)
               .setHashType(RsaSsaPkcs1Parameters.HashType.SHA384)
               .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
               .build());
+      return Collections.unmodifiableMap(map);
     } catch (GeneralSecurityException e) {
       throw new IllegalStateException("Could not create supported classical parameters", e);
     }
