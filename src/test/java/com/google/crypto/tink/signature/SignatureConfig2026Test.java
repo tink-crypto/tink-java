@@ -213,9 +213,7 @@ public class SignatureConfig2026Test {
   @Theory
   public void createKey_works(@FromDataPoints("keys") SignaturePrivateKey key) throws Exception {
     Configuration config = SignatureConfig2026.get();
-    if ((key.getParameters().getClass() != EcdsaParameters.class
-            && key.getParameters().getClass() != CompositeMlDsaParameters.class)
-        || !shouldBeSupported(key)) {
+    if (!shouldBeSupported(key)) {
       assertThrows(
           GeneralSecurityException.class,
           () -> config.createKey(key.getParameters(), key.getIdRequirementOrNull()));

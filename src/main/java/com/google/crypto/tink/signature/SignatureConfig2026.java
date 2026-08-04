@@ -24,6 +24,11 @@ import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.ProtoBasedConfigurationBuilder;
 import com.google.crypto.tink.signature.internal.CompositeMlDsaKeyCreator;
 import com.google.crypto.tink.signature.internal.EcdsaKeyCreator;
+import com.google.crypto.tink.signature.internal.Ed25519KeyCreator;
+import com.google.crypto.tink.signature.internal.MlDsaKeyCreator;
+import com.google.crypto.tink.signature.internal.RsaSsaPkcs1KeyCreator;
+import com.google.crypto.tink.signature.internal.RsaSsaPssKeyCreator;
+import com.google.crypto.tink.signature.internal.SlhDsaKeyCreator;
 import com.google.crypto.tink.signature.subtle.CompositeMlDsaProtoSerialization;
 import com.google.crypto.tink.signature.subtle.CompositeMlDsaSigner;
 import com.google.crypto.tink.signature.subtle.CompositeMlDsaVerifier;
@@ -141,6 +146,7 @@ public final class SignatureConfig2026 {
             Ed25519Parameters.class, Ed25519ProtoSerialization::serializeParameters)
         .addKeyParser(ED25519_PRIVATE_KEY_TYPE_URL, Ed25519ProtoSerialization::parsePrivateKey)
         .addKeyParser(ED25519_PUBLIC_KEY_TYPE_URL, Ed25519ProtoSerialization::parsePublicKey)
+        .addKeyCreator(Ed25519Parameters.class, Ed25519KeyCreator::createKey)
         .addParametersParser(
             ED25519_PRIVATE_KEY_TYPE_URL, Ed25519ProtoSerialization::parseParameters)
         // MlDsa
@@ -152,6 +158,7 @@ public final class SignatureConfig2026 {
             MlDsaParameters.class, MlDsaProtoSerialization::serializeParameters)
         .addKeyParser(MLDSA_PRIVATE_KEY_TYPE_URL, MlDsaProtoSerialization::parsePrivateKey)
         .addKeyParser(MLDSA_PUBLIC_KEY_TYPE_URL, MlDsaProtoSerialization::parsePublicKey)
+        .addKeyCreator(MlDsaParameters.class, MlDsaKeyCreator::createKey)
         .addParametersParser(MLDSA_PRIVATE_KEY_TYPE_URL, MlDsaProtoSerialization::parseParameters)
         // RsaSsaPkcs1
         .addPrimitiveConstructor(
@@ -168,6 +175,7 @@ public final class SignatureConfig2026 {
             RSA_SSA_PKCS1_PRIVATE_KEY_TYPE_URL, RsaSsaPkcs1ProtoSerialization::parsePrivateKey)
         .addKeyParser(
             RSA_SSA_PKCS1_PUBLIC_KEY_TYPE_URL, RsaSsaPkcs1ProtoSerialization::parsePublicKey)
+        .addKeyCreator(RsaSsaPkcs1Parameters.class, RsaSsaPkcs1KeyCreator::createKey)
         .addParametersParser(
             RSA_SSA_PKCS1_PRIVATE_KEY_TYPE_URL, RsaSsaPkcs1ProtoSerialization::parseParameters)
         // RsaSsaPss
@@ -183,6 +191,7 @@ public final class SignatureConfig2026 {
         .addKeyParser(
             RSA_SSA_PSS_PRIVATE_KEY_TYPE_URL, RsaSsaPssProtoSerialization::parsePrivateKey)
         .addKeyParser(RSA_SSA_PSS_PUBLIC_KEY_TYPE_URL, RsaSsaPssProtoSerialization::parsePublicKey)
+        .addKeyCreator(RsaSsaPssParameters.class, RsaSsaPssKeyCreator::createKey)
         .addParametersParser(
             RSA_SSA_PSS_PRIVATE_KEY_TYPE_URL, RsaSsaPssProtoSerialization::parseParameters)
         // SlhDsa
@@ -195,6 +204,7 @@ public final class SignatureConfig2026 {
             SlhDsaParameters.class, SlhDsaProtoSerialization::serializeParameters)
         .addKeyParser(SLHDSA_PRIVATE_KEY_TYPE_URL, SlhDsaProtoSerialization::parsePrivateKey)
         .addKeyParser(SLHDSA_PUBLIC_KEY_TYPE_URL, SlhDsaProtoSerialization::parsePublicKey)
+        .addKeyCreator(SlhDsaParameters.class, SlhDsaKeyCreator::createKey)
         .addParametersParser(SLHDSA_PRIVATE_KEY_TYPE_URL, SlhDsaProtoSerialization::parseParameters)
         // CompositeMlDsa
         .addPrimitiveConstructor(
