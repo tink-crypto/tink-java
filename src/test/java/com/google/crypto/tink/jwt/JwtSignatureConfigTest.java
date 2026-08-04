@@ -23,6 +23,7 @@ import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.signature.internal.MlDsaVerifyConscrypt;
 import com.google.crypto.tink.testing.TestUtil;
 import java.security.GeneralSecurityException;
 import java.security.Security;
@@ -71,5 +72,16 @@ public class JwtSignatureConfigTest {
       assertNotNull(KeysetHandle.generateNew(KeyTemplates.get("JWT_RS256_2048_F4")));
       assertNotNull(KeysetHandle.generateNew(KeyTemplates.get("JWT_PS256_2048_F4")));
     }
+  }
+
+  @Test
+  public void generateJwtMlDsa_nonFips() throws Exception {
+    if (!MlDsaVerifyConscrypt.isSupported() || TestUtil.isTsan()) {
+      // createKey is too slow in Tsan.
+      return;
+    }
+
+    JwtSignatureConfig.register();
+    assertNotNull(KeysetHandle.generateNew(KeyTemplates.get("JWT_ML_DSA_44")));
   }
 }

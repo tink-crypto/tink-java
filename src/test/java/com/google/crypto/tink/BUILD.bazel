@@ -582,6 +582,7 @@ java_test(
         "//src/main/java/com/google/crypto/tink/jwt:jwt_ecdsa_parameters",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_hmac_parameters",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_mac_config",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_ml_dsa_parameters",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_rsa_ssa_pkcs1_parameters",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_rsa_ssa_pss_parameters",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_signature_config",

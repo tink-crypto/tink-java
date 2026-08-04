@@ -34,6 +34,7 @@ import com.google.crypto.tink.hybrid.HpkeParameters;
 import com.google.crypto.tink.jwt.JwtEcdsaParameters;
 import com.google.crypto.tink.jwt.JwtHmacParameters;
 import com.google.crypto.tink.jwt.JwtMacConfig;
+import com.google.crypto.tink.jwt.JwtMlDsaParameters;
 import com.google.crypto.tink.jwt.JwtRsaSsaPkcs1Parameters;
 import com.google.crypto.tink.jwt.JwtRsaSsaPssParameters;
 import com.google.crypto.tink.jwt.JwtSignatureConfig;
@@ -848,6 +849,42 @@ public final class KeyTemplatesAsParametersTest {
                 .setAlgorithm(JwtRsaSsaPkcs1Parameters.Algorithm.RS512)
                 .setKidStrategy(JwtRsaSsaPkcs1Parameters.KidStrategy.IGNORED)
                 .build()));
+    result.add(
+        new Pair(
+            "JWT_ML_DSA_44",
+            JwtMlDsaParameters.create(
+                JwtMlDsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID,
+                JwtMlDsaParameters.Algorithm.ML_DSA_44)));
+    result.add(
+        new Pair(
+            "JWT_ML_DSA_44_RAW",
+            JwtMlDsaParameters.create(
+                JwtMlDsaParameters.KidStrategy.IGNORED,
+                JwtMlDsaParameters.Algorithm.ML_DSA_44)));
+    result.add(
+        new Pair(
+            "JWT_ML_DSA_65",
+            JwtMlDsaParameters.create(
+                JwtMlDsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID,
+                JwtMlDsaParameters.Algorithm.ML_DSA_65)));
+    result.add(
+        new Pair(
+            "JWT_ML_DSA_65_RAW",
+            JwtMlDsaParameters.create(
+                JwtMlDsaParameters.KidStrategy.IGNORED,
+                JwtMlDsaParameters.Algorithm.ML_DSA_65)));
+    result.add(
+        new Pair(
+            "JWT_ML_DSA_87",
+            JwtMlDsaParameters.create(
+                JwtMlDsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID,
+                JwtMlDsaParameters.Algorithm.ML_DSA_87)));
+    result.add(
+        new Pair(
+            "JWT_ML_DSA_87_RAW",
+            JwtMlDsaParameters.create(
+                JwtMlDsaParameters.KidStrategy.IGNORED,
+                JwtMlDsaParameters.Algorithm.ML_DSA_87)));
 
     result.add(
         new Pair(
