@@ -228,6 +228,7 @@ public class KeysetHandleTest {
     }
   }
 
+  @SuppressWarnings("deprecation") // Need to test the deprecated function
   @Test
   public void generateNew_tink_shouldWork() throws Exception {
     KeyTemplate template = KeyTemplates.get("AES128_EAX");
@@ -238,6 +239,7 @@ public class KeysetHandleTest {
     assertThat(handle.getAt(0).getKey().getParameters()).isEqualTo(template.toParameters());
   }
 
+  @SuppressWarnings("deprecation") // Need to test the deprecated function
   @Test
   public void testKeysetHandleGenerateNew_parameters_works() throws Exception {
     AesCmacParameters parameters =
@@ -251,6 +253,7 @@ public class KeysetHandleTest {
     assertThat(h.getAt(0).getKey().getParameters()).isEqualTo(parameters);
   }
 
+  @SuppressWarnings("deprecation") // Need to test the deprecated function
   @Test
   public void testKeysetHandleGenerateNew_parameters_fails() throws Exception {
     Parameters p =
@@ -264,7 +267,34 @@ public class KeysetHandleTest {
     assertThrows(GeneralSecurityException.class, () -> KeysetHandle.generateNew(p));
   }
 
+  @Test
+  public void testKeysetHandleGenerateNew_parametersWithConfiguration_works() throws Exception {
+    AesCmacParameters parameters =
+        AesCmacParameters.builder()
+            .setVariant(Variant.CRUNCHY)
+            .setKeySizeBytes(32)
+            .setTagSizeBytes(16)
+            .build();
+    KeysetHandle h = KeysetHandle.generateNew(parameters, MacConfig2026.get());
+    assertThat(h.size()).isEqualTo(1);
+    assertThat(h.getAt(0).getKey().getParameters()).isEqualTo(parameters);
+  }
 
+  @Test
+  public void testKeysetHandleGenerateNew_parametersWithConfiguration_failsIfConfigHasNoKey()
+      throws Exception {
+    AesCmacParameters parameters =
+        AesCmacParameters.builder()
+            .setVariant(Variant.CRUNCHY)
+            .setKeySizeBytes(32)
+            .setTagSizeBytes(16)
+            .build();
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> KeysetHandle.generateNew(parameters, new Configuration() {}));
+  }
+
+  @SuppressWarnings("deprecation") // Need to test the deprecated function
   @Test
   public void generateNew_raw_shouldWork() throws Exception {
     KeyTemplate template = KeyTemplates.get("AES128_EAX_RAW");
