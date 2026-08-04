@@ -58,26 +58,28 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
   private static final String TYPE_URL =
       "type.googleapis.com/google.crypto.tink.PrfBasedDeriverKey";
 
-  private static final ParametersSerializer<PrfBasedKeyDerivationParameters>
-      PARAMETERS_SERIALIZER =
-          ParametersSerializer.create(
-              PrfBasedKeyDerivationKeyProtoSerialization::serializeParameters,
-              PrfBasedKeyDerivationParameters.class);
+  private static final ParametersSerializer<PrfBasedKeyDerivationParameters> PARAMETERS_SERIALIZER =
+      ParametersSerializer.create(
+          (parameters) -> serializeParameters(parameters, RegistryConfiguration.get()),
+          PrfBasedKeyDerivationParameters.class);
 
   private static final ParametersParser PARAMETERS_PARSER =
       ParametersParser.create(
-          PrfBasedKeyDerivationKeyProtoSerialization::parseParameters, TYPE_URL);
+          (serialization) -> parseParameters(serialization, RegistryConfiguration.get()), TYPE_URL);
 
   private static final KeySerializer<PrfBasedKeyDerivationKey> KEY_SERIALIZER =
       KeySerializer.create(
-          PrfBasedKeyDerivationKeyProtoSerialization::serializeKey, PrfBasedKeyDerivationKey.class);
+          (key, access) -> serializeKey(key, access, RegistryConfiguration.get()),
+          PrfBasedKeyDerivationKey.class);
 
   private static final KeyParser KEY_PARSER =
-      KeyParser.create(PrfBasedKeyDerivationKeyProtoSerialization::parseKey, TYPE_URL);
+      KeyParser.create(
+          (serialization, access) -> parseKey(serialization, access, RegistryConfiguration.get()),
+          TYPE_URL);
 
-  private static PrfBasedKeyDerivationParameters parseParameters(
-      ProtoParametersSerialization serialization) throws GeneralSecurityException {
-    Configuration config = RegistryConfiguration.get();
+  public static PrfBasedKeyDerivationParameters parseParameters(
+      ProtoParametersSerialization serialization, Configuration config)
+      throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
       throw new IllegalArgumentException(
           "Wrong type URL in call to PrfBasedKeyDerivationKeyProtoSerialization.parseParameters: "
@@ -113,9 +115,9 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
         .build();
   }
 
-  private static ProtoParametersSerialization serializeParameters(
-      PrfBasedKeyDerivationParameters parameters) throws GeneralSecurityException {
-    Configuration config = RegistryConfiguration.get();
+  public static ProtoParametersSerialization serializeParameters(
+      PrfBasedKeyDerivationParameters parameters, Configuration config)
+      throws GeneralSecurityException {
     try {
       byte[] serializedPrfParameters =
           TinkProtoParametersFormat.serialize(parameters.getPrfParameters(), config);
@@ -143,12 +145,10 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
 
   @AccessesPartialKey
   @LowLevelCryptoCaller
-  private static ProtoKeySerialization serializeKey(
-      PrfBasedKeyDerivationKey key, @Nullable SecretKeyAccess access)
+  public static ProtoKeySerialization serializeKey(
+      PrfBasedKeyDerivationKey key, @Nullable SecretKeyAccess access, Configuration config)
       throws GeneralSecurityException {
-    Configuration configuration = RegistryConfiguration.get();
-    @Nullable
-    ProtoKeySerializer serializer = configuration.getOrNull(ProtoKeySerializer.class);
+    @Nullable ProtoKeySerializer serializer = config.getOrNull(ProtoKeySerializer.class);
     if (serializer == null) {
       throw new GeneralSecurityException(
           "Passed in configuration cannot be used to serialize keys.");
@@ -185,11 +185,10 @@ public final class PrfBasedKeyDerivationKeyProtoSerialization {
   @AccessesPartialKey
   @LowLevelCryptoCaller
   @SuppressWarnings("UnusedException")
-  private static PrfBasedKeyDerivationKey parseKey(
-      ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
+  public static PrfBasedKeyDerivationKey parseKey(
+      ProtoKeySerialization serialization, @Nullable SecretKeyAccess access, Configuration config)
       throws GeneralSecurityException {
-    Configuration configuration = RegistryConfiguration.get();
-    @Nullable ProtoKeySerializer serializer = configuration.getOrNull(ProtoKeySerializer.class);
+    @Nullable ProtoKeySerializer serializer = config.getOrNull(ProtoKeySerializer.class);
     if (serializer == null) {
       throw new GeneralSecurityException("Passed in configuration cannot be used to parse keys.");
     }
