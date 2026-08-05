@@ -953,3 +953,29 @@ java_library(
     name = "skip_validate_keysets_on_parsing_tag",
     srcs = ["SkipValidateKeysetsOnParsingTag.java"],
 )
+
+android_library(
+    name = "asn1_util-android",
+    srcs = ["Asn1Util.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access-android",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_private_key-android",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_public_key-android",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_private_key-android",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_public_key-android",
+    ],
+)
+
+java_library(
+    name = "asn1_util",
+    srcs = ["Asn1Util.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_private_key",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_public_key",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_private_key",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_public_key",
+    ],
+)
