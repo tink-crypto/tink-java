@@ -23,6 +23,8 @@ import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.jwt.subtle.JwtEcdsaPublicKeySign;
 import com.google.crypto.tink.jwt.subtle.JwtEcdsaPublicKeyVerify;
+import com.google.crypto.tink.jwt.subtle.JwtMlDsaPublicKeySign;
+import com.google.crypto.tink.jwt.subtle.JwtMlDsaPublicKeyVerify;
 import com.google.crypto.tink.jwt.subtle.JwtRsaSsaPkcs1PublicKeySign;
 import com.google.crypto.tink.jwt.subtle.JwtRsaSsaPkcs1PublicKeyVerify;
 import com.google.crypto.tink.jwt.subtle.JwtRsaSsaPssPublicKeySign;
@@ -34,6 +36,7 @@ import java.security.GeneralSecurityException;
  *
  * <ul>
  *   <li>EcdsaSign/Verify
+ *   <li>MlDsaSign/Verify
  *   <li>RsaSsaPkcs1Sign/Verify
  *   <li>RsaSsaPssSign/Verify
  * </ul>
@@ -78,6 +81,9 @@ import java.security.GeneralSecurityException;
     if (key instanceof JwtEcdsaPrivateKey) {
       return JwtEcdsaPublicKeySign.create((JwtEcdsaPrivateKey) key);
     }
+    if (key instanceof JwtMlDsaPrivateKey) {
+      return JwtMlDsaPublicKeySign.create((JwtMlDsaPrivateKey) key);
+    }
     if (key instanceof JwtRsaSsaPkcs1PrivateKey) {
       return JwtRsaSsaPkcs1PublicKeySign.create((JwtRsaSsaPkcs1PrivateKey) key);
     }
@@ -92,6 +98,9 @@ import java.security.GeneralSecurityException;
     Key key = entry.getKey();
     if (key instanceof JwtEcdsaPublicKey) {
       return JwtEcdsaPublicKeyVerify.create((JwtEcdsaPublicKey) key);
+    }
+    if (key instanceof JwtMlDsaPublicKey) {
+      return JwtMlDsaPublicKeyVerify.create((JwtMlDsaPublicKey) key);
     }
     if (key instanceof JwtRsaSsaPkcs1PublicKey) {
       return JwtRsaSsaPkcs1PublicKeyVerify.create((JwtRsaSsaPkcs1PublicKey) key);

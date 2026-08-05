@@ -586,6 +586,9 @@ java_test(
         "//src/main/java/com/google/crypto/tink/aead/internal:x_cha_cha20_poly1305_proto_serialization",
         "//src/main/java/com/google/crypto/tink/config:tink_fips",
         "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_ml_dsa_parameters",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_ml_dsa_private_key",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_ml_dsa_public_key",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_public_key_sign",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_public_key_verify",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_rsa_ssa_pkcs1_parameters",
@@ -600,6 +603,7 @@ java_test(
         "//src/main/java/com/google/crypto/tink/jwt:raw_jwt",
         "//src/main/java/com/google/crypto/tink/jwt:verified_jwt",
         "//src/main/java/com/google/crypto/tink/jwt/internal:jwt_ecdsa_proto_serialization",
+        "//src/main/java/com/google/crypto/tink/jwt/internal:jwt_ml_dsa_proto_serialization",
         "//src/main/java/com/google/crypto/tink/jwt/internal:jwt_rsa_ssa_pkcs1_proto_serialization",
         "//src/main/java/com/google/crypto/tink/jwt/internal:jwt_rsa_ssa_pss_proto_serialization",
         "//src/main/java/com/google/crypto/tink/jwt/internal/testing:jwt_signature_test_util",
@@ -608,14 +612,18 @@ java_test(
         "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_sign_key_manager",
         "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_private_key",
         "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_sign_key_manager",
+        "//src/main/java/com/google/crypto/tink/signature/internal:ml_dsa_verify_conscrypt",
         "//src/main/java/com/google/crypto/tink/signature/internal:rsa_ssa_pkcs1_proto_serialization",
         "//src/main/java/com/google/crypto/tink/signature/internal:rsa_ssa_pss_proto_serialization",
         "//src/main/java/com/google/crypto/tink/subtle:base64",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
         "//src/main/java/com/google/crypto/tink/testing:test_util",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
         "//src/main/java/com/google/crypto/tink/util:secret_big_integer",
         "//src/main/java/com/google/crypto/tink/util:secret_bytes",
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
+        "@maven//:org_conscrypt_conscrypt_openjdk_uber",
     ],
 )
 
@@ -720,4 +728,3 @@ java_test(
         "@maven//:org_conscrypt_conscrypt_openjdk_uber",
     ],
 )
-
