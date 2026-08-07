@@ -900,6 +900,38 @@ public final class JwkSetConverterTest {
   }
 
   @Test
+  public void withoutKeysField_toPublicKeysetHandleFailsWithGeneralSecurityException()
+      throws Exception {
+    // Well-formed JSON, but missing the top-level "keys" array entirely. Before the fix, this
+    // threw an uncaught NullPointerException instead of the documented GeneralSecurityException,
+    // since jsonKeyset.get("keys") returns null for a Gson JsonObject that has no such member.
+    String jwksString = "{}";
+    assertThrows(
+        GeneralSecurityException.class, () -> JwkSetConverter.toPublicKeysetHandle(jwksString));
+  }
+
+  @Test
+  public void keysFieldIsNotAnArray_toPublicKeysetHandleFailsWithGeneralSecurityException()
+      throws Exception {
+    // Before the fix, this threw an uncaught IllegalStateException (from
+    // JsonElement.getAsJsonArray()) instead of the documented GeneralSecurityException, because
+    // the "keys" value is read and converted outside of the method's only try/catch block.
+    String jwksString = "{\"keys\":\"not an array\"}";
+    assertThrows(
+        GeneralSecurityException.class, () -> JwkSetConverter.toPublicKeysetHandle(jwksString));
+  }
+
+  @Test
+  public void keysArrayContainsNonObjectElement_toPublicKeysetHandleFailsWithGeneralSecurityException()
+      throws Exception {
+    // Before the fix, this threw an uncaught IllegalStateException (from
+    // JsonElement.getAsJsonObject()) instead of the documented GeneralSecurityException.
+    String jwksString = "{\"keys\":[\"not an object\"]}";
+    assertThrows(
+        GeneralSecurityException.class, () -> JwkSetConverter.toPublicKeysetHandle(jwksString));
+  }
+
+  @Test
   public void ecdsaWithoutAlg_toPublicKeysetHandleFails() throws Exception {
     String jwksString =
         "{"
