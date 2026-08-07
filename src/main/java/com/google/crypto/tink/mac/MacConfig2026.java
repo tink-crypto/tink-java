@@ -49,10 +49,6 @@ public class MacConfig2026 {
 
   /** Returns the {@link Configuration} instance. */
   public static Configuration get() throws GeneralSecurityException {
-    if (TinkFipsUtil.useOnlyFips()) {
-      throw new GeneralSecurityException(
-          "Cannot use non-FIPS-compliant MacConfig2026 in FIPS mode");
-    }
     return CONFIGURATION;
   }
 
@@ -90,6 +86,9 @@ public class MacConfig2026 {
   private static AesCmacKey createAesCmacKey(
       AesCmacParameters parameters, @Nullable Integer idRequirement)
       throws GeneralSecurityException {
+    if (TinkFipsUtil.useOnlyFips()) {
+      throw new GeneralSecurityException("Cannot create new AesCmacKey in FIPS mode");
+    }
     return AesCmacKey.builder()
         .setParameters(parameters)
         .setAesKeyBytes(SecretBytes.randomBytes(parameters.getKeySizeBytes()))
@@ -100,6 +99,9 @@ public class MacConfig2026 {
   @AccessesPartialKey
   private static HmacKey createHmacKey(HmacParameters parameters, @Nullable Integer idRequirement)
       throws GeneralSecurityException {
+    if (TinkFipsUtil.useOnlyFips() && !TinkFipsUtil.fipsModuleAvailable()) {
+      throw new GeneralSecurityException("Cannot create HmacKey in FIPS mode without FIPS module");
+    }
     return HmacKey.builder()
         .setParameters(parameters)
         .setKeyBytes(SecretBytes.randomBytes(parameters.getKeySizeBytes()))
