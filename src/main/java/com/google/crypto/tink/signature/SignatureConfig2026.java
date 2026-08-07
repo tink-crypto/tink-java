@@ -51,6 +51,7 @@ import com.google.crypto.tink.signature.subtle.SlhDsaProtoSerialization;
 import com.google.crypto.tink.signature.subtle.SlhDsaSigner;
 import com.google.crypto.tink.signature.subtle.SlhDsaVerifier;
 import java.security.GeneralSecurityException;
+import javax.annotation.Nullable;
 
 /**
  * SignatureConfig2026 contains the following algorithms for PublicKeySign/Verify:
@@ -75,10 +76,6 @@ public final class SignatureConfig2026 {
 
   /** Returns an instance of the {@code SignatureConfig2026}. */
   public static Configuration get() throws GeneralSecurityException {
-    if (TinkFipsUtil.useOnlyFips()) {
-      throw new GeneralSecurityException(
-          "Cannot use non-FIPS-compliant SignatureConfig2026 in FIPS mode");
-    }
     return CONFIGURATION;
   }
 
@@ -175,7 +172,7 @@ public final class SignatureConfig2026 {
             RSA_SSA_PKCS1_PRIVATE_KEY_TYPE_URL, RsaSsaPkcs1ProtoSerialization::parsePrivateKey)
         .addKeyParser(
             RSA_SSA_PKCS1_PUBLIC_KEY_TYPE_URL, RsaSsaPkcs1ProtoSerialization::parsePublicKey)
-        .addKeyCreator(RsaSsaPkcs1Parameters.class, RsaSsaPkcs1KeyCreator::createKey)
+        .addKeyCreator(RsaSsaPkcs1Parameters.class, SignatureConfig2026::createRsaSSaPkcs1Key)
         .addParametersParser(
             RSA_SSA_PKCS1_PRIVATE_KEY_TYPE_URL, RsaSsaPkcs1ProtoSerialization::parseParameters)
         // RsaSsaPss
@@ -191,7 +188,7 @@ public final class SignatureConfig2026 {
         .addKeyParser(
             RSA_SSA_PSS_PRIVATE_KEY_TYPE_URL, RsaSsaPssProtoSerialization::parsePrivateKey)
         .addKeyParser(RSA_SSA_PSS_PUBLIC_KEY_TYPE_URL, RsaSsaPssProtoSerialization::parsePublicKey)
-        .addKeyCreator(RsaSsaPssParameters.class, RsaSsaPssKeyCreator::createKey)
+        .addKeyCreator(RsaSsaPssParameters.class, SignatureConfig2026::createRsaSSaPssKey)
         .addParametersParser(
             RSA_SSA_PSS_PRIVATE_KEY_TYPE_URL, RsaSsaPssProtoSerialization::parseParameters)
         // SlhDsa
@@ -225,5 +222,37 @@ public final class SignatureConfig2026 {
             COMPOSITE_MLDSA_PRIVATE_KEY_TYPE_URL, CompositeMlDsaProtoSerialization::parseParameters)
         .addKeyCreator(CompositeMlDsaParameters.class, CompositeMlDsaKeyCreator::createKey)
         .build();
+  }
+
+  private static RsaSsaPkcs1PrivateKey createRsaSSaPkcs1Key(
+      RsaSsaPkcs1Parameters parameters, @Nullable Integer idRequirement)
+      throws GeneralSecurityException {
+    if (TinkFipsUtil.useOnlyFips()) {
+      if (!TinkFipsUtil.fipsModuleAvailable()) {
+        throw new GeneralSecurityException(
+            "Cannot create RsaSsaPkcs1Key with non-FIPS modulus in FIPS mode");
+      }
+      if (parameters.getModulusSizeBits() != 2048 && parameters.getModulusSizeBits() != 3072) {
+        throw new GeneralSecurityException(
+            "Cannot create FIPS compatible RsaSsaPkcs1Key: wrong key modulus size");
+      }
+    }
+    return RsaSsaPkcs1KeyCreator.createKey(parameters, idRequirement);
+  }
+
+  private static RsaSsaPssPrivateKey createRsaSSaPssKey(
+      RsaSsaPssParameters parameters, @Nullable Integer idRequirement)
+      throws GeneralSecurityException {
+    if (TinkFipsUtil.useOnlyFips()) {
+      if (!TinkFipsUtil.fipsModuleAvailable()) {
+        throw new GeneralSecurityException(
+            "Cannot create RsaSsaPssKey with non-FIPS modulus in FIPS mode");
+      }
+      if (parameters.getModulusSizeBits() != 2048 && parameters.getModulusSizeBits() != 3072) {
+        throw new GeneralSecurityException(
+            "Cannot create FIPS compatible RsaSsRsaSsaPssKey: wrong key modulus size");
+      }
+    }
+    return RsaSsaPssKeyCreator.createKey(parameters, idRequirement);
   }
 }

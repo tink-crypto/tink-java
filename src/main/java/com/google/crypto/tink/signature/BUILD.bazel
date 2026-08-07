@@ -1160,6 +1160,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink/signature/subtle:slh_dsa_proto_serialization-android",
         "//src/main/java/com/google/crypto/tink/signature/subtle:slh_dsa_signer-android",
         "//src/main/java/com/google/crypto/tink/signature/subtle:slh_dsa_verifier-android",
+        "@maven//:com_google_code_findbugs_jsr305",
     ],
 )
 
@@ -1234,6 +1235,7 @@ java_library(
         "//src/main/java/com/google/crypto/tink/signature/subtle:slh_dsa_proto_serialization",
         "//src/main/java/com/google/crypto/tink/signature/subtle:slh_dsa_signer",
         "//src/main/java/com/google/crypto/tink/signature/subtle:slh_dsa_verifier",
+        "@maven//:com_google_code_findbugs_jsr305",
     ],
 )
 

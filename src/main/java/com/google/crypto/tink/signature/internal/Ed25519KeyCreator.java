@@ -18,6 +18,7 @@ package com.google.crypto.tink.signature.internal;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.signature.Ed25519Parameters;
 import com.google.crypto.tink.signature.Ed25519PrivateKey;
 import com.google.crypto.tink.signature.Ed25519PublicKey;
@@ -34,6 +35,10 @@ public final class Ed25519KeyCreator {
   public static Ed25519PrivateKey createKey(
       Ed25519Parameters parameters, @Nullable Integer idRequirement)
       throws GeneralSecurityException {
+    if (TinkFipsUtil.useOnlyFips()) {
+      throw new GeneralSecurityException(
+          "Cannot create a new Ed25519 Key as FIPS mode is enabled.");
+    }
     Ed25519Sign.KeyPair keyPair = Ed25519Sign.KeyPair.newKeyPair();
     Ed25519PublicKey publicKey =
         Ed25519PublicKey.create(

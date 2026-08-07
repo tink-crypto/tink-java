@@ -18,6 +18,7 @@ package com.google.crypto.tink.signature.internal;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.signature.MlDsaParameters;
 import com.google.crypto.tink.signature.MlDsaParameters.MlDsaInstance;
@@ -42,6 +43,9 @@ public final class MlDsaKeyCreator {
   @AccessesPartialKey
   public static MlDsaPrivateKey createKey(
       MlDsaParameters parameters, @Nullable Integer idRequirement) throws GeneralSecurityException {
+    if (TinkFipsUtil.useOnlyFips()) {
+      throw new GeneralSecurityException("Cannot create new MlDsaPrivateKeys in FIPS mode");
+    }
     Provider provider = ConscryptUtil.providerOrNull();
     if (provider == null) {
       throw new GeneralSecurityException("Obtaining Conscrypt provider failed");
