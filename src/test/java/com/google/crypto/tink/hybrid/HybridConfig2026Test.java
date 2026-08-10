@@ -163,15 +163,7 @@ public class HybridConfig2026Test {
 
   @Theory
   public void createKey_works(@FromDataPoints("keys") HybridPrivateKey key) throws Exception {
-    Configuration config = HybridConfig2026.get();
-    KeysetHandle handle =
-        KeysetHandle.newBuilder()
-            .addEntry(
-                KeysetHandle.generateEntryFromParameters(key.getParameters())
-                    .withFixedId(42)
-                    .makePrimary())
-            .setConfiguration(config)
-            .build();
+    KeysetHandle handle = KeysetHandle.generateNew(key.getParameters(), HybridConfig2026.get());
 
     assertThat(handle.getPrimary().getKey().getParameters()).isEqualTo(key.getParameters());
   }

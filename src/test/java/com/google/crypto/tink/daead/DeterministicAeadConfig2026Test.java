@@ -84,12 +84,10 @@ public class DeterministicAeadConfig2026Test {
       // Skip this if we are fips only (Theory doesn't allow Assume here).
       return;
     }
-    Key createdKey =
-        DeterministicAeadConfig2026.get()
-            .createKey(key.getParameters(), key.getIdRequirementOrNull());
+    KeysetHandle handle =
+        KeysetHandle.generateNew(key.getParameters(), DeterministicAeadConfig2026.get());
 
-    assertThat(createdKey.getParameters()).isEqualTo(key.getParameters());
-    assertThat(createdKey.getIdRequirementOrNull()).isEqualTo(key.getIdRequirementOrNull());
+    assertThat(handle.getPrimary().getKey().getParameters()).isEqualTo(key.getParameters());
   }
 
   @Theory
@@ -222,22 +220,14 @@ public class DeterministicAeadConfig2026Test {
   @Test
   public void smallKey_createNewKey_works() throws Exception {
     Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
-    Key createdKey =
-        DeterministicAeadConfig2026.get()
-            .createKey(
-                AesSivParameters.builder()
-                    .setKeySizeBytes(32)
-                    .setVariant(AesSivParameters.Variant.TINK)
-                    .build(),
-                1234);
+    AesSivParameters parameters =
+        AesSivParameters.builder()
+            .setKeySizeBytes(32)
+            .setVariant(AesSivParameters.Variant.TINK)
+            .build();
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, DeterministicAeadConfig2026.get());
 
-    assertThat(createdKey.getParameters())
-        .isEqualTo(
-            AesSivParameters.builder()
-                .setKeySizeBytes(32)
-                .setVariant(AesSivParameters.Variant.TINK)
-                .build());
-    assertThat(createdKey.getIdRequirementOrNull()).isEqualTo(1234);
+    assertThat(handle.getPrimary().getKey().getParameters()).isEqualTo(parameters);
   }
 
   @Test

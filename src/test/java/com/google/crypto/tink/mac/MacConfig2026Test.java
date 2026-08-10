@@ -107,11 +107,9 @@ public class MacConfig2026Test {
     if (TinkFipsUtil.useOnlyFips()) {
       return;
     }
-    Key createdKey =
-        MacConfig2026.get().createKey(key.getParameters(), key.getIdRequirementOrNull());
+    KeysetHandle handle = KeysetHandle.generateNew(key.getParameters(), MacConfig2026.get());
 
-    assertThat(createdKey.getParameters()).isEqualTo(key.getParameters());
-    assertThat(createdKey.getIdRequirementOrNull()).isEqualTo(key.getIdRequirementOrNull());
+    assertThat(handle.getPrimary().getKey().getParameters()).isEqualTo(key.getParameters());
   }
 
   @Theory
@@ -256,7 +254,8 @@ public class MacConfig2026Test {
           }
         };
     Configuration config = MacConfig2026.get();
-    assertThrows(GeneralSecurityException.class, () -> config.createKey(parameters, null));
+    assertThrows(
+        GeneralSecurityException.class, () -> KeysetHandle.generateNew(parameters, config));
   }
 
   private static interface DummyPrimitive {}

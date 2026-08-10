@@ -210,22 +210,14 @@ public class AeadConfig2026Test {
     if (TinkFipsUtil.useOnlyFips() && !keyAndFipsBit.fipsCompatibility.isCompatible()) {
       assertThrows(
           GeneralSecurityException.class,
-          () ->
-              AeadConfig2026.get()
-                  .createKey(
-                      keyAndFipsBit.key.getParameters(),
-                      keyAndFipsBit.key.getIdRequirementOrNull()));
+          () -> KeysetHandle.generateNew(keyAndFipsBit.key.getParameters(), AeadConfig2026.get()));
       return;
     }
-    Key createdKey =
-        AeadConfig2026.get()
-            .createKey(
-                keyAndFipsBit.key.getParameters(),
-                keyAndFipsBit.key.getIdRequirementOrNull());
+    KeysetHandle handle =
+        KeysetHandle.generateNew(keyAndFipsBit.key.getParameters(), AeadConfig2026.get());
 
-    assertThat(createdKey.getParameters()).isEqualTo(keyAndFipsBit.key.getParameters());
-    assertThat(createdKey.getIdRequirementOrNull())
-        .isEqualTo(keyAndFipsBit.key.getIdRequirementOrNull());
+    assertThat(handle.getPrimary().getKey().getParameters())
+        .isEqualTo(keyAndFipsBit.key.getParameters());
   }
 
   @Theory
@@ -299,9 +291,8 @@ public class AeadConfig2026Test {
             .setKeySizeBytes(16)
             .setVariant(AesGcmSivParameters.Variant.TINK)
             .build();
-    Key createdKey = AeadConfig2026.get().createKey(parameters, 1234);
-    assertThat(createdKey.getParameters()).isEqualTo(parameters);
-    assertThat(createdKey.getIdRequirementOrNull()).isEqualTo(1234);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, AeadConfig2026.get());
+    assertThat(handle.getPrimary().getKey().getParameters()).isEqualTo(parameters);
   }
 
   @Test

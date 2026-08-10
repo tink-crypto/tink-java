@@ -20,7 +20,6 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
@@ -90,11 +89,10 @@ public class KeyDerivationConfig2026Test {
       return;
     }
     PrfBasedKeyDerivationKey key = createTestKey();
-    Key createdKey =
-        KeyDerivationConfig2026.get().createKey(key.getParameters(), key.getIdRequirementOrNull());
+    KeysetHandle handle =
+        KeysetHandle.generateNew(key.getParameters(), KeyDerivationConfig2026.get());
 
-    assertThat(createdKey.getParameters()).isEqualTo(key.getParameters());
-    assertThat(createdKey.getIdRequirementOrNull()).isEqualTo(key.getIdRequirementOrNull());
+    assertThat(handle.getPrimary().getKey().getParameters()).isEqualTo(key.getParameters());
   }
 
   @Test

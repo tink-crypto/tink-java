@@ -513,16 +513,7 @@ public class JwtConfig2026Test {
       return;
     }
 
-    Configuration config = JwtConfig2026.get();
-    KeysetHandle.Builder.Entry entry =
-        KeysetHandle.generateEntryFromParameters(key.getParameters()).makePrimary();
-    if (key.getIdRequirementOrNull() == null) {
-      entry.withRandomId();
-    } else {
-      entry.withFixedId(key.getIdRequirementOrNull());
-    }
-    KeysetHandle handle =
-        KeysetHandle.newBuilder().addEntry(entry).setConfiguration(config).build();
+    KeysetHandle handle = KeysetHandle.generateNew(key.getParameters(), JwtConfig2026.get());
 
     assertThat(handle.getPrimary().getKey().getParameters()).isEqualTo(key.getParameters());
   }
@@ -533,15 +524,7 @@ public class JwtConfig2026Test {
     if (TinkFipsUtil.useOnlyFips() || TestUtil.isTsan()) {
       return;
     }
-    Configuration config = JwtConfig2026.get();
-    KeysetHandle handle =
-        KeysetHandle.newBuilder()
-            .addEntry(
-                KeysetHandle.generateEntryFromParameters(key.getParameters())
-                    .withRandomId()
-                    .makePrimary())
-            .setConfiguration(config)
-            .build();
+    KeysetHandle handle = KeysetHandle.generateNew(key.getParameters(), JwtConfig2026.get());
 
     assertThat(handle.getPrimary().getKey().getParameters()).isEqualTo(key.getParameters());
   }

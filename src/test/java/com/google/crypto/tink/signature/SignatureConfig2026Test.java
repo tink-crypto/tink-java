@@ -216,18 +216,11 @@ public class SignatureConfig2026Test {
     if (!shouldBeSupported(key)) {
       assertThrows(
           GeneralSecurityException.class,
-          () -> config.createKey(key.getParameters(), key.getIdRequirementOrNull()));
+          () -> KeysetHandle.generateNew(key.getParameters(), config));
       return;
     }
 
-    KeysetHandle handle =
-        KeysetHandle.newBuilder()
-            .addEntry(
-                KeysetHandle.generateEntryFromParameters(key.getParameters())
-                    .withFixedId(42)
-                    .makePrimary())
-            .setConfiguration(config)
-            .build();
+    KeysetHandle handle = KeysetHandle.generateNew(key.getParameters(), config);
 
     assertThat(handle.getPrimary().getKey().getParameters()).isEqualTo(key.getParameters());
   }
