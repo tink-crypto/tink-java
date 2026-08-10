@@ -732,7 +732,10 @@ java_test(
     name = "JwtConfig2026FipsTest",
     size = "small",
     srcs = ["JwtConfig2026FipsTest.java"],
-    tags = ["fips"],
+    tags = [
+        "fips",
+        "notsan",
+    ],
     deps = [
         "//src/main/java/com/google/crypto/tink:accesses_partial_key",
         "//src/main/java/com/google/crypto/tink:configuration",
