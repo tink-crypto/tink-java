@@ -48,10 +48,6 @@ public class PrfConfig2026 {
 
   /** Returns the {@link Configuration} instance. */
   public static Configuration get() throws GeneralSecurityException {
-    if (TinkFipsUtil.useOnlyFips()) {
-      throw new GeneralSecurityException(
-          "Cannot use non-FIPS-compliant PrfConfig2026 in FIPS mode");
-    }
     return CONFIGURATION;
   }
 
@@ -97,6 +93,9 @@ public class PrfConfig2026 {
 
   @LowLevelCryptoCaller
   private static Prf createHkdfPrf(HkdfPrfKey key) throws GeneralSecurityException {
+    if (TinkFipsUtil.useOnlyFips()) {
+      throw new GeneralSecurityException("Cannot use HkdfPrf in FIPS mode");
+    }
     if (key.getParameters().getKeySizeBytes() < MIN_HKDF_PRF_KEY_SIZE) {
       throw new GeneralSecurityException(
           "HkdfPrf key size must be at least " + MIN_HKDF_PRF_KEY_SIZE);
@@ -123,6 +122,10 @@ public class PrfConfig2026 {
     if (idRequirement != null) {
       throw new GeneralSecurityException("PRF Keys are not expected to have an id Requirement");
     }
+    if (TinkFipsUtil.useOnlyFips() && !TinkFipsUtil.fipsModuleAvailable()) {
+      throw new GeneralSecurityException(
+          "Cannot create HmacPrfKey in FIPS mode without FIPS module");
+    }
     return HmacPrfKey.builder()
         .setParameters(parameters)
         .setKeyBytes(SecretBytes.randomBytes(parameters.getKeySizeBytes()))
@@ -136,6 +139,9 @@ public class PrfConfig2026 {
     if (idRequirement != null) {
       throw new GeneralSecurityException("PRF Keys are not expected to have an id Requirement");
     }
+    if (TinkFipsUtil.useOnlyFips()) {
+      throw new GeneralSecurityException("Cannot create new HkdfPrfKey in FIPS mode");
+    }
     return HkdfPrfKey.builder()
         .setParameters(parameters)
         .setKeyBytes(SecretBytes.randomBytes(parameters.getKeySizeBytes()))
@@ -148,6 +154,9 @@ public class PrfConfig2026 {
       throws GeneralSecurityException {
     if (idRequirement != null) {
       throw new GeneralSecurityException("PRF Keys are not expected to have an id Requirement");
+    }
+    if (TinkFipsUtil.useOnlyFips()) {
+      throw new GeneralSecurityException("Cannot create new AesCmacPrfKey in FIPS mode");
     }
     return AesCmacPrfKey.create(parameters, SecretBytes.randomBytes(parameters.getKeySizeBytes()));
   }
