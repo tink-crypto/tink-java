@@ -755,9 +755,7 @@ java_test(
         "//src/main/java/com/google/crypto/tink:tink_proto_parameters_format",
         "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
         "//src/main/java/com/google/crypto/tink/internal:util",
-        "//src/main/java/com/google/crypto/tink/signature:composite_ml_dsa_parameters",
         "//src/main/java/com/google/crypto/tink/signature:composite_ml_dsa_private_key",
-        "//src/main/java/com/google/crypto/tink/signature:ecdsa_parameters",
         "//src/main/java/com/google/crypto/tink/signature:ml_dsa_private_key",
         "//src/main/java/com/google/crypto/tink/signature:signature_config_2026",
         "//src/main/java/com/google/crypto/tink/signature:signature_private_key",
@@ -1078,7 +1076,10 @@ java_test(
     name = "SignatureConfig2026FipsTest",
     size = "small",
     srcs = ["SignatureConfig2026FipsTest.java"],
-    tags = ["fips"],
+    tags = [
+        "fips",
+        "notsan",
+    ],
     deps = [
         "//src/main/java/com/google/crypto/tink:configuration",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
