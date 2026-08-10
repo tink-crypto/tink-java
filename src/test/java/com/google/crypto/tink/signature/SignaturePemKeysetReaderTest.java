@@ -717,6 +717,44 @@ public final class SignaturePemKeysetReaderTest {
   }
 
   @Test
+  public void buildPublicKeysetHandle_invalidBase64Body_throws() throws Exception {
+    String invalidBase64Pem =
+        "-----BEGIN PUBLIC KEY-----\n"
+            + "A\n"
+            + "-----END PUBLIC KEY-----\n";
+
+    GeneralSecurityException e =
+        assertThrows(
+            GeneralSecurityException.class,
+            () ->
+                SignaturePemKeysetReader.newBuilder()
+                    .addPem(invalidBase64Pem, PemKeyType.RSA_PSS_2048_SHA256)
+                    .buildPublicKeysetHandle());
+    assertThat(e).hasMessageThat().contains("cannot parse PEM key");
+  }
+
+  @Test
+  public void buildPublicKeysetHandle_validKeyFollowedByInvalidBase64_returnsValidKey()
+      throws Exception {
+    String pem =
+            "-----BEGIN PUBLIC KEY-----\n"
+            + "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7BiT5K5pivl4Qfrt9hRhRREMUzj/\n"
+            + "8suEJ7GlMxZfvdcpbi/GhYPuJi8Gn2H1NaMJZcLZo5MLPKyyGT5u3u1VBQ==\n"
+            + "-----END PUBLIC KEY-----\n"
+            + "-----BEGIN PUBLIC KEY-----\n"
+            + "A\n"
+            + "-----END PUBLIC KEY-----\n";
+
+    KeysetHandle handle =
+        SignaturePemKeysetReader.newBuilder()
+            .addPem(pem, PemKeyType.ECDSA_P256_SHA256)
+            .buildPublicKeysetHandle();
+
+    assertThat(handle.size()).isEqualTo(1);
+  }
+
+
+  @Test
   public void buildPublicKeysetHandle_withRsaPrivateKey_isIgnored() throws Exception {
     String rsaPublicKeyPem =
         "-----BEGIN PUBLIC KEY-----\n"

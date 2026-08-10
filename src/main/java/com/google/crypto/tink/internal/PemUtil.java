@@ -76,8 +76,8 @@ public final class PemUtil {
         return new PKCS8EncodedKeySpec(key);
       }
       return null;
-    } catch (IOException e) {
-      // reader.readLine() failed. Probably never happens.
+    } catch (IOException | IllegalArgumentException e) {
+      // reader.readLine() failed, or Base64.decode() rejected the body.
       return null;
     }
   }
