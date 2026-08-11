@@ -18,6 +18,7 @@ package com.google.crypto.tink.jwt;
 
 import static com.google.common.truth.Truth.assertWithMessage;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assume.assumeFalse;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.Configuration;
@@ -383,9 +384,6 @@ public class JwtConfig2026FipsTest {
    * `use_only_fips=True` and `BORINGSSL_FIPS=0` then this is the empty list.
    */
   private static List<JwtHmacKey> createHmacKeysWhichShouldWork() {
-    if (TestUtil.isAndroid()) {
-      return new ArrayList<>();
-    }
     ArrayList<JwtHmacKey> result = new ArrayList<>();
     if (TinkFipsUtil.fipsModuleAvailable() || !TinkFipsUtil.useOnlyFips()) {
       result.add(createHmacKeyOrNull());
@@ -398,9 +396,6 @@ public class JwtConfig2026FipsTest {
 
   /** Returns HMAC keys which should fail. */
   private static List<JwtHmacKey> createHmacKeysWhichShouldFail() {
-    if (TestUtil.isAndroid()) {
-      return new ArrayList<>();
-    }
     ArrayList<JwtHmacKey> result = new ArrayList<>();
     if (TinkFipsUtil.useOnlyFips() && !TinkFipsUtil.fipsModuleAvailable()) {
       JwtHmacKey hmacKey = createHmacKeyOrNull();
@@ -419,9 +414,6 @@ public class JwtConfig2026FipsTest {
    * and `BORINGSSL_FIPS=0` then this is the empty list.
    */
   private static List<JwtSignaturePrivateKey> createSignatureKeysWhichShouldWork() {
-    if (TestUtil.isAndroid()) {
-      return new ArrayList<>();
-    }
     ArrayList<JwtSignaturePrivateKey> result = new ArrayList<>();
     if (TinkFipsUtil.fipsModuleAvailable() || !TinkFipsUtil.useOnlyFips()) {
       result.add(createEcdsaPrivateKeyOrNull());
@@ -442,9 +434,6 @@ public class JwtConfig2026FipsTest {
 
   /** Returns Signature keys which should fail. */
   private static List<JwtSignaturePrivateKey> createSignatureKeysWhichShouldFail() {
-    if (TestUtil.isAndroid()) {
-      return new ArrayList<>();
-    }
     ArrayList<JwtSignaturePrivateKey> result = new ArrayList<>();
     if (TinkFipsUtil.useOnlyFips() && !TinkFipsUtil.fipsModuleAvailable()) {
       JwtSignaturePrivateKey ecdsaKey = createEcdsaPrivateKeyOrNull();
@@ -480,6 +469,7 @@ public class JwtConfig2026FipsTest {
 
   @Test
   public void getPrimitive_jwtMac_works() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
     for (JwtHmacKey key : createHmacKeysWhichShouldWork()) {
       KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
       if (key.getIdRequirementOrNull() == null) {
@@ -502,6 +492,7 @@ public class JwtConfig2026FipsTest {
 
   @Test
   public void getPrimitive_signVerify_works() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
     for (JwtSignaturePrivateKey key : createSignatureKeysWhichShouldWork()) {
       KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
       if (key.getIdRequirementOrNull() == null) {
@@ -527,6 +518,7 @@ public class JwtConfig2026FipsTest {
 
   @Test
   public void serializeAndParseHmacKey_works() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
     for (JwtHmacKey key : createHmacKeysWhichShouldWork()) {
       KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
       if (key.getIdRequirementOrNull() == null) {
@@ -549,6 +541,7 @@ public class JwtConfig2026FipsTest {
 
   @Test
   public void serializeAndParsePrivateKey_works() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
     for (JwtSignaturePrivateKey key : createSignatureKeysWhichShouldWork()) {
       KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
       if (key.getIdRequirementOrNull() == null) {
@@ -571,6 +564,7 @@ public class JwtConfig2026FipsTest {
 
   @Test
   public void serializeAndParsePublicKey_works() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
     for (JwtSignaturePrivateKey key : createSignatureKeysWhichShouldWork()) {
       JwtSignaturePublicKey publicKey = key.getPublicKey();
       KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(publicKey).makePrimary();
@@ -591,6 +585,7 @@ public class JwtConfig2026FipsTest {
 
   @Test
   public void serializeAndParseParameters_works() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
     for (JwtHmacKey key : createHmacKeysWhichShouldWork()) {
       Parameters parameters = key.getParameters();
       Configuration config = JwtConfig2026.get();
@@ -611,6 +606,7 @@ public class JwtConfig2026FipsTest {
 
   @Test
   public void createKey_works() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
     for (JwtHmacKey key : createHmacKeysWhichShouldWork()) {
       Configuration config = JwtConfig2026.get();
 
@@ -633,6 +629,7 @@ public class JwtConfig2026FipsTest {
 
   @Test
   public void getPrimitive_nonFipsKeys_throws() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
     for (JwtHmacKey key : createHmacKeysWhichShouldFail()) {
       KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
       if (key.getIdRequirementOrNull() == null) {
@@ -672,6 +669,7 @@ public class JwtConfig2026FipsTest {
 
   @Test
   public void createKey_nonFipsKeys_throws() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
     for (JwtHmacKey key : createHmacKeysWhichShouldFail()) {
       Configuration config = JwtConfig2026.get();
 

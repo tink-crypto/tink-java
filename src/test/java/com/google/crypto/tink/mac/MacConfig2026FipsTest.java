@@ -19,6 +19,7 @@ package com.google.crypto.tink.mac;
 import static com.google.common.truth.Truth.assertWithMessage;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assume.assumeFalse;
 
 import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
@@ -90,10 +91,6 @@ public class MacConfig2026FipsTest {
    * this is the empty list.
    */
   private static List<MacKey> createKeysWhichShouldWork() {
-    // On Android we don't want to run this test.
-    if (TestUtil.isAndroid()) {
-      return new ArrayList<>();
-    }
     ArrayList<MacKey> result = new ArrayList<>();
     if (TinkFipsUtil.fipsModuleAvailable() || !TinkFipsUtil.useOnlyFips()) {
       result.add(createHmacKeyOrNull());
@@ -120,10 +117,6 @@ public class MacConfig2026FipsTest {
    * and `BORINGSSL_FIPS=0` then this is all keys which can still be created.
    */
   private static List<MacKey> createKeysWhichShouldFail() {
-    // On Android we don't want to run this test.
-    if (TestUtil.isAndroid()) {
-      return new ArrayList<>();
-    }
     ArrayList<MacKey> result = new ArrayList<>();
     if (TinkFipsUtil.useOnlyFips() && !TinkFipsUtil.fipsModuleAvailable()) {
       MacKey hmacKey = createHmacKeyOrNull();
@@ -143,6 +136,7 @@ public class MacConfig2026FipsTest {
 
   @Test
   public void getPrimitive_mac_works() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
     for (MacKey key : createKeysWhichShouldWork()) {
       KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
       if (key.getIdRequirementOrNull() == null) {
@@ -166,6 +160,7 @@ public class MacConfig2026FipsTest {
 
   @Test
   public void getPrimitive_chunkedMac_works() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
     for (MacKey key : createKeysWhichShouldWork()) {
       KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
       if (key.getIdRequirementOrNull() == null) {
@@ -193,6 +188,7 @@ public class MacConfig2026FipsTest {
 
   @Test
   public void serializeAndParseKey_works() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
     for (MacKey key : createKeysWhichShouldWork()) {
       KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
       if (key.getIdRequirementOrNull() == null) {
@@ -215,6 +211,7 @@ public class MacConfig2026FipsTest {
 
   @Test
   public void serializeAndParseParameters_works() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
     for (MacKey key : createKeysWhichShouldWork()) {
       Parameters parameters = key.getParameters();
       Configuration config = MacConfig2026.get();
@@ -227,6 +224,7 @@ public class MacConfig2026FipsTest {
 
   @Test
   public void createKey_works() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
     for (MacKey key : createKeysWhichShouldWork()) {
       Configuration config = MacConfig2026.get();
 
@@ -240,6 +238,7 @@ public class MacConfig2026FipsTest {
 
   @Test
   public void getPrimitive_nonFipsKeys_throws() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
     for (MacKey key : createKeysWhichShouldFail()) {
       KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
       if (key.getIdRequirementOrNull() == null) {
@@ -263,6 +262,7 @@ public class MacConfig2026FipsTest {
 
   @Test
   public void createKey_nonFipsKeys_throws() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
     for (MacKey key : createKeysWhichShouldFail()) {
       Configuration config = MacConfig2026.get();
 

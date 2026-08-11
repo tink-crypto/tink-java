@@ -19,6 +19,7 @@ package com.google.crypto.tink.signature;
 import static com.google.common.truth.Truth.assertWithMessage;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assume.assumeFalse;
 
 import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
@@ -181,10 +182,6 @@ public class SignatureConfig2026FipsTest {
    * this is the empty list.
    */
   private static ArrayList<SignaturePrivateKey> createKeysWhichShouldWork() {
-    // On Android we don't want to run this test.
-    if (TestUtil.isAndroid()) {
-      return new ArrayList<>();
-    }
     ArrayList<SignaturePrivateKey> result = new ArrayList<>();
     if (TinkFipsUtil.fipsModuleAvailable() || !TinkFipsUtil.useOnlyFips()) {
       result.add(createEcdsaPrivateKeyOrNull());
@@ -220,10 +217,6 @@ public class SignatureConfig2026FipsTest {
    * and `BORINGSSL_FIPS=0` then this is all keys which can still be created.
    */
   private static ArrayList<SignaturePrivateKey> createKeysWhichShouldFail() {
-    // On Android we don't want to run this test.
-    if (TestUtil.isAndroid()) {
-      return new ArrayList<>();
-    }
     ArrayList<SignaturePrivateKey> result = new ArrayList<>();
     if (TinkFipsUtil.useOnlyFips() && !TinkFipsUtil.fipsModuleAvailable()) {
       SignaturePrivateKey ecdsaKey = createEcdsaPrivateKeyOrNull();
@@ -271,6 +264,7 @@ public class SignatureConfig2026FipsTest {
 
   @Test
   public void getPrimitive_signVerify_works() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
     for (SignaturePrivateKey key : createKeysWhichShouldWork()) {
       KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
       if (key.getIdRequirementOrNull() == null) {
@@ -293,6 +287,7 @@ public class SignatureConfig2026FipsTest {
 
   @Test
   public void serializeAndParsePrivateKey_works() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
     for (SignaturePrivateKey key : createKeysWhichShouldWork()) {
       KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
       if (key.getIdRequirementOrNull() == null) {
@@ -315,6 +310,7 @@ public class SignatureConfig2026FipsTest {
 
   @Test
   public void serializeAndParsePublicKey_works() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
     for (SignaturePrivateKey key : createKeysWhichShouldWork()) {
       SignaturePublicKey publicKey = key.getPublicKey();
       KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(publicKey).makePrimary();
@@ -335,6 +331,7 @@ public class SignatureConfig2026FipsTest {
 
   @Test
   public void serializeAndParseParameters_works() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
     for (SignaturePrivateKey key : createKeysWhichShouldWork()) {
       Parameters parameters = key.getParameters();
       Configuration config = SignatureConfig2026.get();
@@ -347,6 +344,7 @@ public class SignatureConfig2026FipsTest {
 
   @Test
   public void createKey_works() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
     for (SignaturePrivateKey key : createKeysWhichShouldWork()) {
       Configuration config = SignatureConfig2026.get();
 
@@ -360,6 +358,7 @@ public class SignatureConfig2026FipsTest {
 
   @Test
   public void getPrimitive_nonFipsKeys_throws() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
     for (SignaturePrivateKey key : createKeysWhichShouldFail()) {
       KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
       if (key.getIdRequirementOrNull() == null) {
@@ -384,6 +383,7 @@ public class SignatureConfig2026FipsTest {
 
   @Test
   public void createKey_nonFipsKeys_throws() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
     for (SignaturePrivateKey key : createKeysWhichShouldFail()) {
       Configuration config = SignatureConfig2026.get();
 
