@@ -28,7 +28,6 @@ import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.TinkProtoParametersFormat;
-import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.signature.internal.CompositeMlDsaVerifyConscrypt;
 import com.google.crypto.tink.signature.internal.testing.CompositeMlDsaTestUtil;
@@ -103,19 +102,10 @@ public class SignatureConfig2026Test {
     return true;
   }
 
-  @Test
-  public void get_throwsInFipsMode() throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      assertThrows(GeneralSecurityException.class, SignatureConfig2026::get);
-    }
-  }
 
   @Theory
   public void getPrimitive_signVerify_works(@FromDataPoints("keys") SignaturePrivateKey key)
       throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     @Nullable Integer apiLevel = Util.getAndroidApiLevel();
     if (apiLevel != null && apiLevel == 19) {
       // Android API 19 is slower than the others in this.
@@ -154,9 +144,6 @@ public class SignatureConfig2026Test {
   @Theory
   public void serializeAndParsePrivateKey_works(@FromDataPoints("keys") SignaturePrivateKey key)
       throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
     if (key.getIdRequirementOrNull() == null) {
       entry.withRandomId();
@@ -177,9 +164,6 @@ public class SignatureConfig2026Test {
   @Theory
   public void serializeAndParsePublicKey_works(@FromDataPoints("keys") SignaturePrivateKey key)
       throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     SignaturePublicKey publicKey = key.getPublicKey();
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(publicKey).makePrimary();
     if (publicKey.getIdRequirementOrNull() == null) {
@@ -199,9 +183,6 @@ public class SignatureConfig2026Test {
   @Theory
   public void serializeAndParseParameters_works(@FromDataPoints("keys") SignaturePrivateKey key)
       throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     Parameters parameters = key.getParameters();
     Configuration config = SignatureConfig2026.get();
     byte[] serialized = TinkProtoParametersFormat.serialize(parameters, config);
@@ -227,9 +208,6 @@ public class SignatureConfig2026Test {
 
   @Test
   public void getOrNull_unsupportedClass_returnsNull() throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     assertThat(SignatureConfig2026.get().getOrNull(String.class)).isNull();
   }
 }

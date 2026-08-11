@@ -75,7 +75,7 @@ public final class SignatureConfig2026 {
   private static final Configuration CONFIGURATION = create();
 
   /** Returns an instance of the {@code SignatureConfig2026}. */
-  public static Configuration get() throws GeneralSecurityException {
+  public static Configuration get() {
     return CONFIGURATION;
   }
 
