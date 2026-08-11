@@ -28,13 +28,11 @@ import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.TinkProtoParametersFormat;
-import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
 import java.security.Security;
 import org.conscrypt.Conscrypt;
-import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -59,21 +57,6 @@ public class AeadConfig2026Test {
     }
     return Conscrypt.isAvailable();
   }
-  public static final class KeyAndFipsBit {
-    public final Key key;
-    public final TinkFipsUtil.AlgorithmFipsCompatibility fipsCompatibility;
-
-    public KeyAndFipsBit(
-        Key key, TinkFipsUtil.AlgorithmFipsCompatibility fipsCompatibility) {
-      this.key = key;
-      this.fipsCompatibility = fipsCompatibility;
-    }
-
-    @Override
-    public String toString() {
-      return key.toString() + ", " + fipsCompatibility;
-    }
-  }
 
   /**
    * A list of Keys which behave common for this config. For these keys we can
@@ -85,120 +68,96 @@ public class AeadConfig2026Test {
    *   <li>serialize and parse the parameters.
    * </ul>
    */
-  @DataPoints public static final KeyAndFipsBit[] keys = createKeys();
+  @DataPoints public static final Key[] keys = createKeys();
 
-  private static KeyAndFipsBit[] createKeys() {
+  private static Key[] createKeys() {
     try {
-      return new KeyAndFipsBit[] {
-        new KeyAndFipsBit(
-            AesCtrHmacAeadKey.builder()
-                .setParameters(
-                    AesCtrHmacAeadParameters.builder()
-                        .setAesKeySizeBytes(16)
-                        .setHmacKeySizeBytes(32)
-                        .setTagSizeBytes(16)
-                        .setIvSizeBytes(16)
-                        .setHashType(AesCtrHmacAeadParameters.HashType.SHA256)
-                        .setVariant(AesCtrHmacAeadParameters.Variant.TINK)
-                        .build())
-                .setAesKeyBytes(SecretBytes.randomBytes(16))
-                .setHmacKeyBytes(SecretBytes.randomBytes(32))
-                .setIdRequirement(1234)
-                .build(),
-            TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_REQUIRES_BORINGCRYPTO),
-        new KeyAndFipsBit(
-            AesCtrHmacAeadKey.builder()
-                .setParameters(
-                    AesCtrHmacAeadParameters.builder()
-                        .setAesKeySizeBytes(16)
-                        .setHmacKeySizeBytes(32)
-                        .setTagSizeBytes(16)
-                        .setIvSizeBytes(16)
-                        .setHashType(AesCtrHmacAeadParameters.HashType.SHA256)
-                        .setVariant(AesCtrHmacAeadParameters.Variant.NO_PREFIX)
-                        .build())
-                .setAesKeyBytes(SecretBytes.randomBytes(16))
-                .setHmacKeyBytes(SecretBytes.randomBytes(32))
-                .build(),
-            TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_REQUIRES_BORINGCRYPTO),
-        new KeyAndFipsBit(
-            AesGcmKey.builder()
-                .setParameters(
-                    AesGcmParameters.builder()
-                        .setKeySizeBytes(16)
-                        .setIvSizeBytes(12)
-                        .setTagSizeBytes(16)
-                        .setVariant(AesGcmParameters.Variant.TINK)
-                        .build())
-                .setKeyBytes(SecretBytes.randomBytes(16))
-                .setIdRequirement(1234)
-                .build(),
-            TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_REQUIRES_BORINGCRYPTO),
-        new KeyAndFipsBit(
-            AesGcmKey.builder()
-                .setParameters(
-                    AesGcmParameters.builder()
-                        .setKeySizeBytes(16)
-                        .setIvSizeBytes(12)
-                        .setTagSizeBytes(16)
-                        .setVariant(AesGcmParameters.Variant.NO_PREFIX)
-                        .build())
-                .setKeyBytes(SecretBytes.randomBytes(16))
-                .build(),
-            TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_REQUIRES_BORINGCRYPTO),
-        new KeyAndFipsBit(
-            AesEaxKey.builder()
-                .setParameters(
-                    AesEaxParameters.builder()
-                        .setKeySizeBytes(16)
-                        .setIvSizeBytes(16)
-                        .setTagSizeBytes(16)
-                        .setVariant(AesEaxParameters.Variant.TINK)
-                        .build())
-                .setKeyBytes(SecretBytes.randomBytes(16))
-                .setIdRequirement(1234)
-                .build(),
-            TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS),
-        new KeyAndFipsBit(
-            AesEaxKey.builder()
-                .setParameters(
-                    AesEaxParameters.builder()
-                        .setKeySizeBytes(16)
-                        .setIvSizeBytes(16)
-                        .setTagSizeBytes(16)
-                        .setVariant(AesEaxParameters.Variant.NO_PREFIX)
-                        .build())
-                .setKeyBytes(SecretBytes.randomBytes(16))
-                .build(),
-            TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS),
-        new KeyAndFipsBit(
-            ChaCha20Poly1305Key.create(
-                ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 1234),
-            TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS),
-        new KeyAndFipsBit(
-            ChaCha20Poly1305Key.create(
-                ChaCha20Poly1305Parameters.Variant.NO_PREFIX, SecretBytes.randomBytes(32), null),
-            TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS),
-        new KeyAndFipsBit(
-            XChaCha20Poly1305Key.create(
-                XChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 1234),
-            TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS),
-        new KeyAndFipsBit(
-            XChaCha20Poly1305Key.create(
-                XChaCha20Poly1305Parameters.Variant.NO_PREFIX, SecretBytes.randomBytes(32), null),
-            TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS),
-        new KeyAndFipsBit(
-            XAesGcmKey.create(
-                XAesGcmParameters.create(XAesGcmParameters.Variant.TINK, 12),
-                SecretBytes.randomBytes(32),
-                1234),
-            TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS),
-        new KeyAndFipsBit(
-            XAesGcmKey.create(
-                XAesGcmParameters.create(XAesGcmParameters.Variant.NO_PREFIX, 12),
-                SecretBytes.randomBytes(32),
-                null),
-            TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS),
+      return new Key[] {
+        AesCtrHmacAeadKey.builder()
+            .setParameters(
+                AesCtrHmacAeadParameters.builder()
+                    .setAesKeySizeBytes(16)
+                    .setHmacKeySizeBytes(32)
+                    .setTagSizeBytes(16)
+                    .setIvSizeBytes(16)
+                    .setHashType(AesCtrHmacAeadParameters.HashType.SHA256)
+                    .setVariant(AesCtrHmacAeadParameters.Variant.TINK)
+                    .build())
+            .setAesKeyBytes(SecretBytes.randomBytes(16))
+            .setHmacKeyBytes(SecretBytes.randomBytes(32))
+            .setIdRequirement(1234)
+            .build(),
+        AesCtrHmacAeadKey.builder()
+            .setParameters(
+                AesCtrHmacAeadParameters.builder()
+                    .setAesKeySizeBytes(16)
+                    .setHmacKeySizeBytes(32)
+                    .setTagSizeBytes(16)
+                    .setIvSizeBytes(16)
+                    .setHashType(AesCtrHmacAeadParameters.HashType.SHA256)
+                    .setVariant(AesCtrHmacAeadParameters.Variant.NO_PREFIX)
+                    .build())
+            .setAesKeyBytes(SecretBytes.randomBytes(16))
+            .setHmacKeyBytes(SecretBytes.randomBytes(32))
+            .build(),
+        AesGcmKey.builder()
+            .setParameters(
+                AesGcmParameters.builder()
+                    .setKeySizeBytes(16)
+                    .setIvSizeBytes(12)
+                    .setTagSizeBytes(16)
+                    .setVariant(AesGcmParameters.Variant.TINK)
+                    .build())
+            .setKeyBytes(SecretBytes.randomBytes(16))
+            .setIdRequirement(1234)
+            .build(),
+        AesGcmKey.builder()
+            .setParameters(
+                AesGcmParameters.builder()
+                    .setKeySizeBytes(16)
+                    .setIvSizeBytes(12)
+                    .setTagSizeBytes(16)
+                    .setVariant(AesGcmParameters.Variant.NO_PREFIX)
+                    .build())
+            .setKeyBytes(SecretBytes.randomBytes(16))
+            .build(),
+        AesEaxKey.builder()
+            .setParameters(
+                AesEaxParameters.builder()
+                    .setKeySizeBytes(16)
+                    .setIvSizeBytes(16)
+                    .setTagSizeBytes(16)
+                    .setVariant(AesEaxParameters.Variant.TINK)
+                    .build())
+            .setKeyBytes(SecretBytes.randomBytes(16))
+            .setIdRequirement(1234)
+            .build(),
+        AesEaxKey.builder()
+            .setParameters(
+                AesEaxParameters.builder()
+                    .setKeySizeBytes(16)
+                    .setIvSizeBytes(16)
+                    .setTagSizeBytes(16)
+                    .setVariant(AesEaxParameters.Variant.NO_PREFIX)
+                    .build())
+            .setKeyBytes(SecretBytes.randomBytes(16))
+            .build(),
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 1234),
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.NO_PREFIX, SecretBytes.randomBytes(32), null),
+        XChaCha20Poly1305Key.create(
+            XChaCha20Poly1305Parameters.Variant.TINK, SecretBytes.randomBytes(32), 1234),
+        XChaCha20Poly1305Key.create(
+            XChaCha20Poly1305Parameters.Variant.NO_PREFIX, SecretBytes.randomBytes(32), null),
+        XAesGcmKey.create(
+            XAesGcmParameters.create(XAesGcmParameters.Variant.TINK, 12),
+            SecretBytes.randomBytes(32),
+            1234),
+        XAesGcmKey.create(
+            XAesGcmParameters.create(XAesGcmParameters.Variant.NO_PREFIX, 12),
+            SecretBytes.randomBytes(32),
+            null),
       };
     } catch (GeneralSecurityException e) {
       throw new RuntimeException(e);
@@ -206,26 +165,13 @@ public class AeadConfig2026Test {
   }
 
   @Theory
-  public void createKey_works(KeyAndFipsBit keyAndFipsBit) throws Exception {
-    if (TinkFipsUtil.useOnlyFips() && !keyAndFipsBit.fipsCompatibility.isCompatible()) {
-      assertThrows(
-          GeneralSecurityException.class,
-          () -> KeysetHandle.generateNew(keyAndFipsBit.key.getParameters(), AeadConfig2026.get()));
-      return;
-    }
-    KeysetHandle handle =
-        KeysetHandle.generateNew(keyAndFipsBit.key.getParameters(), AeadConfig2026.get());
-
-    assertThat(handle.getPrimary().getKey().getParameters())
-        .isEqualTo(keyAndFipsBit.key.getParameters());
+  public void createKey_works(Key key) throws Exception {
+    KeysetHandle handle = KeysetHandle.generateNew(key.getParameters(), AeadConfig2026.get());
+    assertThat(handle.getPrimary().getKey().getParameters()).isEqualTo(key.getParameters());
   }
 
   @Theory
-  public void serializeAndParseKey_works(KeyAndFipsBit keyAndFipsBit) throws Exception {
-    if (TinkFipsUtil.useOnlyFips() && !keyAndFipsBit.fipsCompatibility.isCompatible()) {
-      return;
-    }
-    Key key = keyAndFipsBit.key;
+  public void serializeAndParseKey_works(Key key) throws Exception {
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
     if (key.getIdRequirementOrNull() == null) {
       entry.withRandomId();
@@ -244,11 +190,8 @@ public class AeadConfig2026Test {
   }
 
   @Theory
-  public void serializeAndParseParameters_works(KeyAndFipsBit keyAndFipsBit) throws Exception {
-    if (TinkFipsUtil.useOnlyFips() && !keyAndFipsBit.fipsCompatibility.isCompatible()) {
-      return;
-    }
-    Parameters parameters = keyAndFipsBit.key.getParameters();
+  public void serializeAndParseParameters_works(Key key) throws Exception {
+    Parameters parameters = key.getParameters();
     Configuration config = AeadConfig2026.get();
     byte[] serialized = TinkProtoParametersFormat.serialize(parameters, config);
     Parameters parsed = TinkProtoParametersFormat.parse(serialized, config);
@@ -257,8 +200,7 @@ public class AeadConfig2026Test {
   }
 
   @Theory
-  public void getPrimitive_works(KeyAndFipsBit keyAndFipsBit) throws Exception {
-    Key key = keyAndFipsBit.key;
+  public void getPrimitive_works(Key key) throws Exception {
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
     if (key.getIdRequirementOrNull() == null) {
       entry.withRandomId();
@@ -266,13 +208,6 @@ public class AeadConfig2026Test {
       entry.withFixedId(key.getIdRequirementOrNull());
     }
     KeysetHandle keysetHandle = KeysetHandle.newBuilder().addEntry(entry).build();
-
-    if (TinkFipsUtil.useOnlyFips() && !keyAndFipsBit.fipsCompatibility.isCompatible()) {
-      assertThrows(
-          GeneralSecurityException.class,
-          () -> keysetHandle.getPrimitive(AeadConfig2026.get(), Aead.class));
-      return;
-    }
 
     Aead aead = keysetHandle.getPrimitive(AeadConfig2026.get(), Aead.class);
     byte[] plaintext = "plaintext".getBytes(UTF_8);
@@ -285,7 +220,6 @@ public class AeadConfig2026Test {
 
   @Test
   public void aesGcmSiv_createKey_works() throws Exception {
-    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
     AesGcmSivParameters parameters =
         AesGcmSivParameters.builder()
             .setKeySizeBytes(16)
@@ -297,7 +231,6 @@ public class AeadConfig2026Test {
 
   @Test
   public void aesGcmSiv_serializeAndParseKey_works() throws Exception {
-    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
     AesGcmSivKey key =
         AesGcmSivKey.builder()
             .setParameters(
@@ -322,7 +255,6 @@ public class AeadConfig2026Test {
 
   @Test
   public void aesGcmSiv_serializeAndParseParameters_works() throws Exception {
-    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
     AesGcmSivParameters parameters =
         AesGcmSivParameters.builder()
             .setKeySizeBytes(16)
@@ -336,7 +268,6 @@ public class AeadConfig2026Test {
 
   @Test
   public void aesGcmSiv_getPrimitive_works() throws Exception {
-    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
     AesGcmSivKey key =
         AesGcmSivKey.builder()
             .setParameters(
@@ -378,12 +309,5 @@ public class AeadConfig2026Test {
             .build();
     Configuration config = AeadConfig2026.get();
     assertThrows(GeneralSecurityException.class, () -> config.createKey(parameters, null));
-  }
-
-  @Test
-  public void get_worksInFipsMode() throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      assertThat(AeadConfig2026.get()).isNotNull();
-    }
   }
 }
