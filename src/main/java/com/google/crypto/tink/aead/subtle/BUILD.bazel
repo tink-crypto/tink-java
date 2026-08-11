@@ -69,6 +69,7 @@ java_library(
         "//src/main/java/com/google/crypto/tink:aead",
         "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
         "//src/main/java/com/google/crypto/tink/aead:aes_gcm_siv_key",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
@@ -181,6 +182,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink:aead-android",
         "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
         "//src/main/java/com/google/crypto/tink/aead:aes_gcm_siv_key-android",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util-android",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
