@@ -302,6 +302,82 @@ public final class ProtoBasedConfigurationBuilder {
     return this;
   }
 
+  /**
+   * Merges all registrations from the given configuration into this builder.
+   *
+   * @throws IllegalArgumentException if the configuration is not created by a {@link
+   *     ProtoBasedConfigurationBuilder}, or if an element to be merged is already registered in
+   *     this builder.
+   */
+  @CanIgnoreReturnValue
+  public ProtoBasedConfigurationBuilder mergeProtoBasedConfiguration(Configuration c) {
+    if (!(c instanceof InternalProtoBasedConfiguration)) {
+      throw new IllegalArgumentException(
+          "Configuration parameter must be created by a ProtoBasedConfigurationBuilder");
+    }
+    InternalProtoBasedConfiguration config = (InternalProtoBasedConfiguration) c;
+    for (Map.Entry<Class<? extends Parameters>, KeyCreator<?>> entry :
+        config.keyCreators.entrySet()) {
+      if (keyCreators.containsKey(entry.getKey())) {
+        throw new IllegalArgumentException("KeyCreator for " + entry.getKey() + " already added.");
+      }
+      keyCreators.put(entry.getKey(), entry.getValue());
+    }
+    for (Map.Entry<PrimitiveConstructorKey, PrimitiveConstructor<?, ?>> entry :
+        config.primitiveConstructors.entrySet()) {
+      PrimitiveConstructorKey key = entry.getKey();
+      if (primitiveConstructors.containsKey(key)) {
+        throw new IllegalArgumentException(
+            "PrimitiveConstructor for "
+                + key.keyClass
+                + " and primitive "
+                + key.primitiveClass
+                + " already added.");
+      }
+      primitiveConstructors.put(key, entry.getValue());
+    }
+    for (Map.Entry<Class<?>, WrapFunctionAndInputPrimitiveClass<?, ?>> entry :
+        config.wrappers.entrySet()) {
+      Class<?> primitiveClass = entry.getKey();
+      if (wrappers.containsKey(primitiveClass)) {
+        throw new IllegalArgumentException(
+            "PrimitiveWrapper for " + primitiveClass + " already added.");
+      }
+      wrappers.put(primitiveClass, entry.getValue());
+    }
+    for (Map.Entry<Class<? extends Key>, KeySerializer<?>> entry :
+        config.protoKeySerializer.keySerializerMap.entrySet()) {
+      if (keySerializerMap.containsKey(entry.getKey())) {
+        throw new IllegalArgumentException(
+            "KeySerializer for " + entry.getKey() + " already added.");
+      }
+      keySerializerMap.put(entry.getKey(), entry.getValue());
+    }
+    for (Map.Entry<Class<? extends Parameters>, ParametersSerializer<?>> entry :
+        config.protoKeySerializer.parametersSerializerMap.entrySet()) {
+      if (parametersSerializerMap.containsKey(entry.getKey())) {
+        throw new IllegalArgumentException(
+            "ParametersSerializer for " + entry.getKey() + " already added.");
+      }
+      parametersSerializerMap.put(entry.getKey(), entry.getValue());
+    }
+    for (Map.Entry<String, KeyParser> entry : config.protoKeySerializer.keyParserMap.entrySet()) {
+      if (keyParserMap.containsKey(entry.getKey())) {
+        throw new IllegalArgumentException("KeyParser for " + entry.getKey() + " already added.");
+      }
+      keyParserMap.put(entry.getKey(), entry.getValue());
+    }
+    for (Map.Entry<String, ParametersParser> entry :
+        config.protoKeySerializer.parametersParserMap.entrySet()) {
+      if (parametersParserMap.containsKey(entry.getKey())) {
+        throw new IllegalArgumentException(
+            "ParametersParser for " + entry.getKey() + " already added.");
+      }
+      parametersParserMap.put(entry.getKey(), entry.getValue());
+    }
+    return this;
+  }
+
   public Configuration build() {
     InternalProtoKeySerializer protoKeySerializer =
         new InternalProtoKeySerializer(

@@ -318,6 +318,7 @@ java_test(
         "//src/main/java/com/google/crypto/tink:proto_key_serializer",
         "//src/main/java/com/google/crypto/tink:proto_parameters_serialization",
         "//src/main/java/com/google/crypto/tink:registry_cluster",
+        "//src/main/java/com/google/crypto/tink:registry_configuration",
         "//src/main/java/com/google/crypto/tink/aead:cha_cha20_poly1305_key",
         "//src/main/java/com/google/crypto/tink/aead:cha_cha20_poly1305_parameters",
         "//src/main/java/com/google/crypto/tink/aead:x_cha_cha20_poly1305_key",
