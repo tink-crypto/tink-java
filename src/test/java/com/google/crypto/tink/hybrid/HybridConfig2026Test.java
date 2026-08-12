@@ -18,7 +18,6 @@ package com.google.crypto.tink.hybrid;
 
 import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.HybridDecrypt;
@@ -68,10 +67,8 @@ public class HybridConfig2026Test {
   public static final List<HybridPrivateKey> keys = createKeys();
 
   @Test
-  public void get_throwsInFipsMode() throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      assertThrows(GeneralSecurityException.class, HybridConfig2026::get);
-    }
+  public void get_isNotNull() throws Exception {
+    assertThat(HybridConfig2026.get()).isNotNull();
   }
 
   @Theory

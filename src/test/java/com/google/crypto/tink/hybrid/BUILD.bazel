@@ -591,3 +591,18 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "HybridConfig2026FipsTest",
+    size = "small",
+    srcs = ["HybridConfig2026FipsTest.java"],
+    tags = ["fips"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:registry_cluster",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
+        "//src/main/java/com/google/crypto/tink/hybrid:hpke_parameters",
+        "//src/main/java/com/google/crypto/tink/hybrid:hybrid_config_2026",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
