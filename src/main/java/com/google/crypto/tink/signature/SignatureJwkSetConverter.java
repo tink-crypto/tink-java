@@ -92,9 +92,18 @@ public final class SignatureJwkSetConverter {
     } catch (IllegalStateException | IOException ex) {
       throw new GeneralSecurityException("JWK set is invalid JSON", ex);
     }
+    if (!jsonKeyset.has("keys")) {
+      throw new GeneralSecurityException("keys not found");
+    }
+    if (!jsonKeyset.get("keys").isJsonArray()) {
+      throw new GeneralSecurityException("keys is not an array");
+    }
     KeysetHandle.Builder builder = KeysetHandle.newBuilder();
     JsonArray jsonKeys = jsonKeyset.get("keys").getAsJsonArray();
     for (JsonElement element : jsonKeys) {
+      if (!element.isJsonObject()) {
+        throw new GeneralSecurityException("key is not a JSON object");
+      }
       JsonObject jsonKey = element.getAsJsonObject();
       String kty = getStringItem(jsonKey, "kty");
       switch (kty) {

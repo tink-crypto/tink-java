@@ -1,0 +1,135 @@
+diff --git a/src/main/java/com/google/crypto/tink/jwt/JwkSetConverter.java b/src/main/java/com/google/crypto/tink/jwt/JwkSetConverter.java
+index e480a09..9c272cd 100644
+--- a/src/main/java/com/google/crypto/tink/jwt/JwkSetConverter.java
++++ b/src/main/java/com/google/crypto/tink/jwt/JwkSetConverter.java
+@@ -93,9 +93,18 @@ public final class JwkSetConverter {
+     } catch (IllegalStateException | IOException ex) {
+       throw new GeneralSecurityException("JWK set is invalid JSON", ex);
+     }
++    if (!jsonKeyset.has("keys")) {
++      throw new GeneralSecurityException("keys not found");
++    }
++    if (!jsonKeyset.get("keys").isJsonArray()) {
++      throw new GeneralSecurityException("keys is not an array");
++    }
+     KeysetHandle.Builder builder = KeysetHandle.newBuilder();
+     JsonArray jsonKeys = jsonKeyset.get("keys").getAsJsonArray();
+     for (JsonElement element : jsonKeys) {
++      if (!element.isJsonObject()) {
++        throw new GeneralSecurityException("key is not a JSON object");
++      }
+       JsonObject jsonKey = element.getAsJsonObject();
+       String algPrefix = getStringItem(jsonKey, "alg").substring(0, 2);
+       switch (algPrefix) {
+diff --git a/src/main/java/com/google/crypto/tink/signature/SignatureJwkSetConverter.java b/src/main/java/com/google/crypto/tink/signature/SignatureJwkSetConverter.java
+index ac5bb94..314384a 100644
+--- a/src/main/java/com/google/crypto/tink/signature/SignatureJwkSetConverter.java
++++ b/src/main/java/com/google/crypto/tink/signature/SignatureJwkSetConverter.java
+@@ -92,9 +92,18 @@ public final class SignatureJwkSetConverter {
+     } catch (IllegalStateException | IOException ex) {
+       throw new GeneralSecurityException("JWK set is invalid JSON", ex);
+     }
++    if (!jsonKeyset.has("keys")) {
++      throw new GeneralSecurityException("keys not found");
++    }
++    if (!jsonKeyset.get("keys").isJsonArray()) {
++      throw new GeneralSecurityException("keys is not an array");
++    }
+     KeysetHandle.Builder builder = KeysetHandle.newBuilder();
+     JsonArray jsonKeys = jsonKeyset.get("keys").getAsJsonArray();
+     for (JsonElement element : jsonKeys) {
++      if (!element.isJsonObject()) {
++        throw new GeneralSecurityException("key is not a JSON object");
++      }
+       JsonObject jsonKey = element.getAsJsonObject();
+       String kty = getStringItem(jsonKey, "kty");
+       switch (kty) {
+diff --git a/src/test/java/com/google/crypto/tink/jwt/JwkSetConverterTest.java b/src/test/java/com/google/crypto/tink/jwt/JwkSetConverterTest.java
+index 5f0e03e..d79a70b 100644
+--- a/src/test/java/com/google/crypto/tink/jwt/JwkSetConverterTest.java
++++ b/src/test/java/com/google/crypto/tink/jwt/JwkSetConverterTest.java
+@@ -899,6 +899,38 @@ public final class JwkSetConverterTest {
+     Object unused = JwkSetConverter.toPublicKeysetHandle(jwksString);
+   }
+
++  @Test
++  public void withoutKeysField_toPublicKeysetHandleFailsWithGeneralSecurityException()
++      throws Exception {
++    // Well-formed JSON, but missing the top-level "keys" array entirely. Before the fix, this
++    // threw an uncaught NullPointerException instead of the documented GeneralSecurityException,
++    // since jsonKeyset.get("keys") returns null for a Gson JsonObject that has no such member.
++    String jwksString = "{}";
++    assertThrows(
++        GeneralSecurityException.class, () -> JwkSetConverter.toPublicKeysetHandle(jwksString));
++  }
++
++  @Test
++  public void keysFieldIsNotAnArray_toPublicKeysetHandleFailsWithGeneralSecurityException()
++      throws Exception {
++    // Before the fix, this threw an uncaught IllegalStateException (from
++    // JsonElement.getAsJsonArray()) instead of the documented GeneralSecurityException, because
++    // the "keys" value is read and converted outside of the method's only try/catch block.
++    String jwksString = "{\"keys\":\"not an array\"}";
++    assertThrows(
++        GeneralSecurityException.class, () -> JwkSetConverter.toPublicKeysetHandle(jwksString));
++  }
++
++  @Test
++  public void keysArrayContainsNonObjectElement_toPublicKeysetHandleFailsWithGeneralSecurityException()
++      throws Exception {
++    // Before the fix, this threw an uncaught IllegalStateException (from
++    // JsonElement.getAsJsonObject()) instead of the documented GeneralSecurityException.
++    String jwksString = "{\"keys\":[\"not an object\"]}";
++    assertThrows(
++        GeneralSecurityException.class, () -> JwkSetConverter.toPublicKeysetHandle(jwksString));
++  }
++
+   @Test
+   public void ecdsaWithoutAlg_toPublicKeysetHandleFails() throws Exception {
+     String jwksString =
+diff --git a/src/test/java/com/google/crypto/tink/signature/SignatureJwkSetConverterTest.java b/src/test/java/com/google/crypto/tink/signature/SignatureJwkSetConverterTest.java
+index c93d325..1b64b25 100644
+--- a/src/test/java/com/google/crypto/tink/signature/SignatureJwkSetConverterTest.java
++++ b/src/test/java/com/google/crypto/tink/signature/SignatureJwkSetConverterTest.java
+@@ -139,6 +139,41 @@ public final class SignatureJwkSetConverterTest {
+         GeneralSecurityException.class, () -> SignatureJwkSetConverter.fromPublicKeysetHandle(publicHandle));
+   }
+
++  @Test
++  public void withoutKeysField_toPublicKeysetHandleFailsWithGeneralSecurityException()
++      throws Exception {
++    // Well-formed JSON, but missing the top-level "keys" array entirely. Before the fix, this
++    // threw an uncaught NullPointerException instead of the documented GeneralSecurityException,
++    // since jsonKeyset.get("keys") returns null for a Gson JsonObject that has no such member.
++    String jwksString = "{}";
++    assertThrows(
++        GeneralSecurityException.class,
++        () -> SignatureJwkSetConverter.toPublicKeysetHandle(jwksString));
++  }
++
++  @Test
++  public void keysFieldIsNotAnArray_toPublicKeysetHandleFailsWithGeneralSecurityException()
++      throws Exception {
++    // Before the fix, this threw an uncaught IllegalStateException (from
++    // JsonElement.getAsJsonArray()) instead of the documented GeneralSecurityException, because
++    // the "keys" value is read and converted outside of the method's only try/catch block.
++    String jwksString = "{\"keys\":\"not an array\"}";
++    assertThrows(
++        GeneralSecurityException.class,
++        () -> SignatureJwkSetConverter.toPublicKeysetHandle(jwksString));
++  }
++
++  @Test
++  public void keysArrayContainsNonObjectElement_toPublicKeysetHandleFailsWithGeneralSecurityException()
++      throws Exception {
++    // Before the fix, this threw an uncaught IllegalStateException (from
++    // JsonElement.getAsJsonObject()) instead of the documented GeneralSecurityException.
++    String jwksString = "{\"keys\":[\"not an object\"]}";
++    assertThrows(
++        GeneralSecurityException.class,
++        () -> SignatureJwkSetConverter.toPublicKeysetHandle(jwksString));
++  }
++
+   @Test
+   public void testExportEcdsaDerEncodingThrows() throws Exception {
+     // PredefinedSignatureParameters.ECDSA_P256 is TINK variant, but even if we make it RAW,
