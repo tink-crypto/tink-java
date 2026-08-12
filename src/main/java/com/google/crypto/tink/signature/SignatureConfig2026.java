@@ -172,7 +172,7 @@ public final class SignatureConfig2026 {
             RSA_SSA_PKCS1_PRIVATE_KEY_TYPE_URL, RsaSsaPkcs1ProtoSerialization::parsePrivateKey)
         .addKeyParser(
             RSA_SSA_PKCS1_PUBLIC_KEY_TYPE_URL, RsaSsaPkcs1ProtoSerialization::parsePublicKey)
-        .addKeyCreator(RsaSsaPkcs1Parameters.class, SignatureConfig2026::createRsaSSaPkcs1Key)
+        .addKeyCreator(RsaSsaPkcs1Parameters.class, SignatureConfig2026::createRsaSsaPkcs1Key)
         .addParametersParser(
             RSA_SSA_PKCS1_PRIVATE_KEY_TYPE_URL, RsaSsaPkcs1ProtoSerialization::parseParameters)
         // RsaSsaPss
@@ -188,7 +188,7 @@ public final class SignatureConfig2026 {
         .addKeyParser(
             RSA_SSA_PSS_PRIVATE_KEY_TYPE_URL, RsaSsaPssProtoSerialization::parsePrivateKey)
         .addKeyParser(RSA_SSA_PSS_PUBLIC_KEY_TYPE_URL, RsaSsaPssProtoSerialization::parsePublicKey)
-        .addKeyCreator(RsaSsaPssParameters.class, SignatureConfig2026::createRsaSSaPssKey)
+        .addKeyCreator(RsaSsaPssParameters.class, SignatureConfig2026::createRsaSsaPssKey)
         .addParametersParser(
             RSA_SSA_PSS_PRIVATE_KEY_TYPE_URL, RsaSsaPssProtoSerialization::parseParameters)
         // SlhDsa
@@ -224,7 +224,7 @@ public final class SignatureConfig2026 {
         .build();
   }
 
-  private static RsaSsaPkcs1PrivateKey createRsaSSaPkcs1Key(
+  private static RsaSsaPkcs1PrivateKey createRsaSsaPkcs1Key(
       RsaSsaPkcs1Parameters parameters, @Nullable Integer idRequirement)
       throws GeneralSecurityException {
     if (TinkFipsUtil.useOnlyFips()) {
@@ -240,7 +240,7 @@ public final class SignatureConfig2026 {
     return RsaSsaPkcs1KeyCreator.createKey(parameters, idRequirement);
   }
 
-  private static RsaSsaPssPrivateKey createRsaSSaPssKey(
+  private static RsaSsaPssPrivateKey createRsaSsaPssKey(
       RsaSsaPssParameters parameters, @Nullable Integer idRequirement)
       throws GeneralSecurityException {
     if (TinkFipsUtil.useOnlyFips()) {
@@ -250,7 +250,7 @@ public final class SignatureConfig2026 {
       }
       if (parameters.getModulusSizeBits() != 2048 && parameters.getModulusSizeBits() != 3072) {
         throw new GeneralSecurityException(
-            "Cannot create FIPS compatible RsaSsRsaSsaPssKey: wrong key modulus size");
+            "Cannot create FIPS compatible RsaSsaPssKey: wrong key modulus size");
       }
     }
     return RsaSsaPssKeyCreator.createKey(parameters, idRequirement);
