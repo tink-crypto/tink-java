@@ -28,7 +28,6 @@ import com.google.crypto.tink.Mac;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.TinkProtoParametersFormat;
-import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.util.SecretBytes;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
@@ -104,9 +103,6 @@ public class MacConfig2026Test {
 
   @Theory
   public void createKey_works(Key key) throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     KeysetHandle handle = KeysetHandle.generateNew(key.getParameters(), MacConfig2026.get());
 
     assertThat(handle.getPrimary().getKey().getParameters()).isEqualTo(key.getParameters());
@@ -114,9 +110,6 @@ public class MacConfig2026Test {
 
   @Theory
   public void serializeAndParseKey_works(Key key) throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
     if (key.getIdRequirementOrNull() == null) {
       entry.withRandomId();
@@ -136,9 +129,6 @@ public class MacConfig2026Test {
 
   @Theory
   public void serializeAndParseParameters_works(Key key) throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     Parameters parameters = key.getParameters();
     Configuration config = MacConfig2026.get();
     byte[] serialized = TinkProtoParametersFormat.serialize(parameters, config);
@@ -149,9 +139,6 @@ public class MacConfig2026Test {
 
   @Theory
   public void getPrimitive_mac_works(Key key) throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
     if (key.getIdRequirementOrNull() == null) {
       entry.withRandomId();
@@ -168,9 +155,6 @@ public class MacConfig2026Test {
 
   @Theory
   public void getPrimitive_chunkedMac_works(Key key) throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
     if (key.getIdRequirementOrNull() == null) {
       entry.withRandomId();
@@ -191,9 +175,6 @@ public class MacConfig2026Test {
 
   @Test
   public void config_disallowsNon32ByteAesCmacKeyForMac() throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     AesCmacParameters parameters =
         AesCmacParameters.builder()
             .setKeySizeBytes(16)
@@ -217,9 +198,6 @@ public class MacConfig2026Test {
 
   @Test
   public void config_disallowsNon32ByteAesCmacKeyForChunkedMac() throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     AesCmacParameters parameters =
         AesCmacParameters.builder()
             .setKeySizeBytes(16)
@@ -243,9 +221,6 @@ public class MacConfig2026Test {
 
   @Test
   public void createKey_unrecognizedParameters_throws() throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     Parameters parameters =
         new Parameters() {
           @Override
@@ -262,9 +237,6 @@ public class MacConfig2026Test {
 
   @Test
   public void createPrimitive_unsupportedPrimitiveClass_throws() throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     HmacParameters parameters =
         HmacParameters.builder()
             .setTagSizeBytes(16)
@@ -290,9 +262,6 @@ public class MacConfig2026Test {
 
   @Test
   public void createKey_aesCmacParametersWithIdRequirementButPassedNull_throws() throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     AesCmacParameters parameters =
         AesCmacParameters.builder()
             .setKeySizeBytes(32)
@@ -305,9 +274,6 @@ public class MacConfig2026Test {
 
   @Test
   public void createKey_hmacParametersWithIdRequirementButPassedNull_throws() throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     HmacParameters parameters =
         HmacParameters.builder()
             .setKeySizeBytes(32)
@@ -317,12 +283,5 @@ public class MacConfig2026Test {
             .build();
     Configuration config = MacConfig2026.get();
     assertThrows(GeneralSecurityException.class, () -> config.createKey(parameters, null));
-  }
-
-  @Test
-  public void get_throwsInFipsMode() throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      assertThrows(GeneralSecurityException.class, MacConfig2026::get);
-    }
   }
 }

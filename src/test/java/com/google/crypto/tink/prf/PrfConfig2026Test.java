@@ -27,7 +27,6 @@ import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.TinkProtoParametersFormat;
-import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
 import org.junit.Test;
@@ -79,9 +78,6 @@ public class PrfConfig2026Test {
 
   @Theory
   public void createKey_works(Key key) throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     KeysetHandle handle = KeysetHandle.generateNew(key.getParameters(), PrfConfig2026.get());
 
     assertThat(handle.getPrimary().getKey().getParameters()).isEqualTo(key.getParameters());
@@ -89,9 +85,6 @@ public class PrfConfig2026Test {
 
   @Theory
   public void serializeAndParseKey_works(Key key) throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
     if (key.getIdRequirementOrNull() == null) {
       entry.withRandomId();
@@ -111,9 +104,6 @@ public class PrfConfig2026Test {
 
   @Theory
   public void serializeAndParseParameters_works(Key key) throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     Parameters parameters = key.getParameters();
     Configuration config = PrfConfig2026.get();
     byte[] serialized = TinkProtoParametersFormat.serialize(parameters, config);
@@ -124,9 +114,6 @@ public class PrfConfig2026Test {
 
   @Theory
   public void getPrimitive_works(Key key) throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
     if (key.getIdRequirementOrNull() == null) {
       entry.withRandomId();
@@ -143,9 +130,6 @@ public class PrfConfig2026Test {
 
   @Test
   public void createKey_withNonNullIdRequirement_throws() throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     HkdfPrfParameters parameters =
         HkdfPrfParameters.builder()
             .setKeySizeBytes(32)
@@ -157,9 +141,6 @@ public class PrfConfig2026Test {
 
   @Test
   public void wrongAesCmacPrfKeySize_getPrimitive_throws() throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     AesCmacPrfKey key =
         AesCmacPrfKey.create(AesCmacPrfParameters.create(16), SecretBytes.randomBytes(16));
     KeysetHandle keysetHandle =
@@ -174,9 +155,6 @@ public class PrfConfig2026Test {
 
   @Test
   public void wrongHkdfPrfKeySize_getPrimitive_throws() throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     HkdfPrfKey key =
         HkdfPrfKey.builder()
             .setParameters(
@@ -198,9 +176,6 @@ public class PrfConfig2026Test {
 
   @Test
   public void wrongHkdfPrfHashFunction_getPrimitive_throws() throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     HkdfPrfKey key =
         HkdfPrfKey.builder()
             .setParameters(
@@ -223,9 +198,6 @@ public class PrfConfig2026Test {
 
   @Test
   public void createKey_unrecognizedParameters_throws() throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     Parameters parameters =
         new Parameters() {
           @Override
@@ -242,9 +214,6 @@ public class PrfConfig2026Test {
 
   @Test
   public void createPrimitive_unsupportedPrimitiveClass_throws() throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     HmacPrfParameters parameters =
         HmacPrfParameters.builder()
             .setKeySizeBytes(32)
@@ -264,12 +233,5 @@ public class PrfConfig2026Test {
     assertThrows(
         GeneralSecurityException.class,
         () -> keysetHandle.getPrimitive(config, DummyPrimitive.class));
-  }
-
-  @Test
-  public void get_throwsInFipsMode() throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      assertThrows(GeneralSecurityException.class, PrfConfig2026::get);
-    }
   }
 }

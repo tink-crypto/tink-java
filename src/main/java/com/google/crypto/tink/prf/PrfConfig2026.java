@@ -47,7 +47,7 @@ public class PrfConfig2026 {
   private static final Configuration CONFIGURATION = create();
 
   /** Returns the {@link Configuration} instance. */
-  public static Configuration get() throws GeneralSecurityException {
+  public static Configuration get() {
     return CONFIGURATION;
   }
 

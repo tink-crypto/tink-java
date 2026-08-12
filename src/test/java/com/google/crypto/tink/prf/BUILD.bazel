@@ -370,7 +370,6 @@ java_test(
         "//src/main/java/com/google/crypto/tink:registry_cluster",
         "//src/main/java/com/google/crypto/tink:tink_proto_keyset_format",
         "//src/main/java/com/google/crypto/tink:tink_proto_parameters_format",
-        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
         "//src/main/java/com/google/crypto/tink/prf:aes_cmac_prf_key",
         "//src/main/java/com/google/crypto/tink/prf:aes_cmac_prf_parameters",
         "//src/main/java/com/google/crypto/tink/prf:hkdf_prf_key",
