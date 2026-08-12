@@ -194,9 +194,7 @@ public class StreamingAeadConfig2026Test {
   }
 
   @Test
-  public void get_throwsInFipsMode() throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      assertThrows(GeneralSecurityException.class, StreamingAeadConfig2026::get);
-    }
+  public void get_isNotNull() throws Exception {
+    assertThat(StreamingAeadConfig2026.get()).isNotNull();
   }
 }

@@ -231,10 +231,8 @@ public class DeterministicAeadConfig2026Test {
   }
 
   @Test
-  public void getThrowsIfFips() throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      assertThrows(GeneralSecurityException.class, () -> DeterministicAeadConfig2026.get());
-    }
+  public void get_isNotNull() throws Exception {
+    assertThat(DeterministicAeadConfig2026.get()).isNotNull();
   }
 }
 

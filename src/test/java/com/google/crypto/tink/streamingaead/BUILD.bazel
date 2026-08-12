@@ -354,7 +354,6 @@ java_test(
     name = "StreamingAeadConfig2026Test",
     size = "small",
     srcs = ["StreamingAeadConfig2026Test.java"],
-    tags = ["fips"],
     deps = [
         "//src/main/java/com/google/crypto/tink:configuration",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
@@ -371,6 +370,21 @@ java_test(
         "//src/main/java/com/google/crypto/tink/streamingaead:aes_gcm_hkdf_streaming_parameters",
         "//src/main/java/com/google/crypto/tink/streamingaead:streaming_aead_config2026",
         "//src/main/java/com/google/crypto/tink/util:secret_bytes",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
+    name = "StreamingAeadConfig2026FipsTest",
+    size = "small",
+    srcs = ["StreamingAeadConfig2026FipsTest.java"],
+    tags = ["fips"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:registry_cluster",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
+        "//src/main/java/com/google/crypto/tink/streamingaead:aes_gcm_hkdf_streaming_parameters",
+        "//src/main/java/com/google/crypto/tink/streamingaead:streaming_aead_config2026",
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
     ],

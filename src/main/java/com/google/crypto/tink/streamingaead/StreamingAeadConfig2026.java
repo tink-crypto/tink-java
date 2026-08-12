@@ -44,12 +44,13 @@ public class StreamingAeadConfig2026 {
   private StreamingAeadConfig2026() {}
 
   private static final Configuration CONFIGURATION = create();
+  private static final Configuration EMPTY_CONFIGURATION =
+      new ProtoBasedConfigurationBuilder().build();
 
   /** Returns the {@link Configuration} instance. */
-  public static Configuration get() throws GeneralSecurityException {
+  public static Configuration get() {
     if (TinkFipsUtil.useOnlyFips()) {
-      throw new GeneralSecurityException(
-          "Cannot use non-FIPS-compliant StreamingAeadConfig2026 in FIPS mode");
+      return EMPTY_CONFIGURATION;
     }
     return CONFIGURATION;
   }
