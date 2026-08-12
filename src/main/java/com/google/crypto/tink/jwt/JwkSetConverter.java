@@ -94,11 +94,20 @@ public final class JwkSetConverter {
       throw new GeneralSecurityException("JWK set is invalid JSON", ex);
     }
     KeysetHandle.Builder builder = KeysetHandle.newBuilder();
-    JsonArray jsonKeys = jsonKeyset.get("keys").getAsJsonArray();
-    for (JsonElement element : jsonKeys) {
+    JsonElement keysElem = jsonKeyset.get("keys");
+    if (keysElem == null || !keysElem.isJsonArray()) {
+      throw new GeneralSecurityException("JWK set must contain a 'keys' array");
+    }
+    for (JsonElement element : keysElem.getAsJsonArray()) {
+      if (!element.isJsonObject()) {
+        throw new GeneralSecurityException("JWK set entry is not a JSON object");
+      }
       JsonObject jsonKey = element.getAsJsonObject();
-      String algPrefix = getStringItem(jsonKey, "alg").substring(0, 2);
-      switch (algPrefix) {
+      String alg = getStringItem(jsonKey, "alg");
+      if (alg.length() < 2) {
+        throw new GeneralSecurityException("unexpected alg value: " + alg);
+      }
+      switch (alg.substring(0, 2)) {
         case "RS":
           builder.addEntry(KeysetHandle.importKey(convertToRsaSsaPkcs1Key(jsonKey)).withRandomId());
           break;
@@ -109,8 +118,7 @@ public final class JwkSetConverter {
           builder.addEntry(KeysetHandle.importKey(convertToEcdsaKey(jsonKey)).withRandomId());
           break;
         default:
-          throw new GeneralSecurityException(
-              "unexpected alg value: " + getStringItem(jsonKey, "alg"));
+          throw new GeneralSecurityException("unexpected alg value: " + alg);
       }
     }
     if (builder.size() <= 0) {

@@ -1280,6 +1280,65 @@ public final class JwkSetConverterTest {
   }
 
   @Test
+  public void toPublicKeysetHandle_missingOrInvalidKeysArray_throwsGeneralSecurityException()
+      throws Exception {
+    GeneralSecurityException e1 =
+        assertThrows(
+            GeneralSecurityException.class, () -> JwkSetConverter.toPublicKeysetHandle("{}"));
+    assertThat(e1).hasMessageThat().contains("JWK set must contain a 'keys' array");
+
+    GeneralSecurityException e2 =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> JwkSetConverter.toPublicKeysetHandle("{\"a\":1}"));
+    assertThat(e2).hasMessageThat().contains("JWK set must contain a 'keys' array");
+
+    GeneralSecurityException e3 =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> JwkSetConverter.toPublicKeysetHandle("{\"keys\":\"x\"}"));
+    assertThat(e3).hasMessageThat().contains("JWK set must contain a 'keys' array");
+
+    GeneralSecurityException e4 =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> JwkSetConverter.toPublicKeysetHandle("{\"keys\":{}}"));
+    assertThat(e4).hasMessageThat().contains("JWK set must contain a 'keys' array");
+  }
+
+  @Test
+  public void toPublicKeysetHandle_keyEntryNotJsonObject_throwsGeneralSecurityException()
+      throws Exception {
+    GeneralSecurityException e1 =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> JwkSetConverter.toPublicKeysetHandle("{\"keys\":[\"x\"]}"));
+    assertThat(e1).hasMessageThat().contains("JWK set entry is not a JSON object");
+
+    GeneralSecurityException e2 =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> JwkSetConverter.toPublicKeysetHandle("{\"keys\":[[]]}"));
+    assertThat(e2).hasMessageThat().contains("JWK set entry is not a JSON object");
+  }
+
+  @Test
+  public void toPublicKeysetHandle_invalidAlgString_throwsGeneralSecurityException()
+      throws Exception {
+    GeneralSecurityException e1 =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> JwkSetConverter.toPublicKeysetHandle("{\"keys\":[{\"alg\":\"\"}]}"));
+    assertThat(e1).hasMessageThat().contains("unexpected alg value: ");
+
+    GeneralSecurityException e2 =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> JwkSetConverter.toPublicKeysetHandle("{\"keys\":[{\"alg\":\"E\"}]}"));
+    assertThat(e2).hasMessageThat().contains("unexpected alg value: E");
+  }
+
+  @Test
   @SuppressWarnings("InlineMeInliner")
   public void deprecatedFromKeysetHandle_sameAs_fromPublicKeysetHandle()
       throws Exception {
