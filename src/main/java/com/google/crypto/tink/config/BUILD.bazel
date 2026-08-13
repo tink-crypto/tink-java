@@ -32,6 +32,44 @@ android_library(
     ],
 )
 
+java_library(
+    name = "tink_config_2026",
+    srcs = ["TinkConfig2026.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:configuration",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink/aead:aead_config2026",
+        "//src/main/java/com/google/crypto/tink/daead:deterministic_aead_config2026",
+        "//src/main/java/com/google/crypto/tink/hybrid:hybrid_config_2026",
+        "//src/main/java/com/google/crypto/tink/internal:proto_based_configuration_builder",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_config2026",
+        "//src/main/java/com/google/crypto/tink/keyderivation:key_derivation_config2026",
+        "//src/main/java/com/google/crypto/tink/mac:mac_config2026",
+        "//src/main/java/com/google/crypto/tink/prf:prf_config2026",
+        "//src/main/java/com/google/crypto/tink/signature:signature_config_2026",
+        "//src/main/java/com/google/crypto/tink/streamingaead:streaming_aead_config2026",
+    ],
+)
+
+android_library(
+    name = "tink_config_2026-android",
+    srcs = ["TinkConfig2026.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:configuration-android",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink/aead:aead_config2026-android",
+        "//src/main/java/com/google/crypto/tink/daead:deterministic_aead_config2026-android",
+        "//src/main/java/com/google/crypto/tink/hybrid:hybrid_config_2026-android",
+        "//src/main/java/com/google/crypto/tink/internal:proto_based_configuration_builder-android",
+        "//src/main/java/com/google/crypto/tink/jwt:jwt_config2026-android",
+        "//src/main/java/com/google/crypto/tink/keyderivation:key_derivation_config2026-android",
+        "//src/main/java/com/google/crypto/tink/mac:mac_config2026-android",
+        "//src/main/java/com/google/crypto/tink/prf:prf_config2026-android",
+        "//src/main/java/com/google/crypto/tink/signature:signature_config_2026-android",
+        "//src/main/java/com/google/crypto/tink/streamingaead:streaming_aead_config2026-android",
+    ],
+)
+
 bool_flag(
     name = "use_only_fips",
     build_setting_default = False,
