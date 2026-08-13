@@ -17,7 +17,6 @@
 package com.google.crypto.tink.keyderivation;
 
 import com.google.crypto.tink.Configuration;
-import java.security.GeneralSecurityException;
 
 /**
  * KeyDerivationConfig2026 contains the following primitives and algorithms for {@link
@@ -31,7 +30,7 @@ public class KeyDerivationConfig2026 {
   private KeyDerivationConfig2026() {}
 
   /** Returns the {@link Configuration} instance. */
-  public static Configuration get() throws GeneralSecurityException {
+  public static Configuration get() {
     return com.google.crypto.tink.keyderivation.internal.KeyDerivationConfig2026.get();
   }
 }

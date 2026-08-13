@@ -197,12 +197,13 @@ public class KeyDerivationConfig2026 {
                   PrfBasedKeyDerivationKeyProtoSerialization.parseParameters(
                       serialization, CONFIG_FOR_KEY))
           .build();
+  private static final Configuration EMPTY_CONFIGURATION =
+      new ProtoBasedConfigurationBuilder().build();
 
   /** Returns the {@link Configuration} instance. */
-  public static Configuration get() throws GeneralSecurityException {
+  public static Configuration get() {
     if (TinkFipsUtil.useOnlyFips()) {
-      throw new GeneralSecurityException(
-          "Cannot use non-FIPS-compliant KeyDerivationConfig2026 in FIPS mode");
+      return EMPTY_CONFIGURATION;
     }
     return CONFIGURATION;
   }

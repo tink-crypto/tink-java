@@ -17,7 +17,6 @@
 package com.google.crypto.tink.keyderivation;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
@@ -33,7 +32,6 @@ import com.google.crypto.tink.prf.HkdfPrfParameters;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
-import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -77,10 +75,8 @@ public class KeyDerivationConfig2026Test {
   }
 
   @Test
-  public void config_throwsIfInFipsMode() throws Exception {
-    Assume.assumeTrue(TinkFipsUtil.useOnlyFips());
-
-    assertThrows(GeneralSecurityException.class, KeyDerivationConfig2026::get);
+  public void get_isNotNull() throws Exception {
+    assertThat(KeyDerivationConfig2026.get()).isNotNull();
   }
 
   @Test
