@@ -877,7 +877,7 @@ public final class JwkSetConverterTest {
             + "\"alg\":\"ES256\""
             + "}]}";
     assertThrows(
-        UnsupportedOperationException.class,
+        GeneralSecurityException.class,
         () -> JwkSetConverter.toPublicKeysetHandle(jwksString));
   }
 
@@ -1123,12 +1123,12 @@ public final class JwkSetConverterTest {
             + "\"alg\":\"RS256\","
             + "\"kid\":\"2011-04-29\"}]}";
     assertThrows(
-        UnsupportedOperationException.class,
+        GeneralSecurityException.class,
         () -> JwkSetConverter.toPublicKeysetHandle(jwksString));
 
     String psJwksString = jwksString.replace("RS256", "PS256");
     assertThrows(
-        UnsupportedOperationException.class,
+        GeneralSecurityException.class,
         () -> JwkSetConverter.toPublicKeysetHandle(psJwksString));
   }
 
@@ -1358,5 +1358,41 @@ public final class JwkSetConverterTest {
     assertEqualJwkSets(
       JwkSetConverter.fromPublicKeysetHandle(handle),
       JwkSetConverter.fromPublicKeysetHandle(deprecatedHandle));
+  }
+
+  @Test
+  public void toPublicKeysetHandle_ecdsaPrivateKey_throwsGeneralSecurityException()
+      throws Exception {
+    GeneralSecurityException e =
+        assertThrows(
+            GeneralSecurityException.class,
+            () ->
+                JwkSetConverter.toPublicKeysetHandle(
+                    "{\"keys\":[{\"alg\":\"ES256\",\"kty\":\"EC\",\"crv\":\"P-256\",\"d\":\"AAAA\"}]}"));
+    assertThat(e).hasMessageThat().contains("importing ECDSA private keys is not implemented");
+  }
+
+  @Test
+  public void toPublicKeysetHandle_rsaPrivateKey_throwsGeneralSecurityException()
+      throws Exception {
+    GeneralSecurityException e =
+        assertThrows(
+            GeneralSecurityException.class,
+            () ->
+                JwkSetConverter.toPublicKeysetHandle(
+                    "{\"keys\":[{\"alg\":\"RS256\",\"kty\":\"RSA\",\"n\":\"AAAA\",\"e\":\"AQAB\",\"d\":\"AAAA\"}]}"));
+    assertThat(e).hasMessageThat().contains("importing RSA private keys is not implemented");
+  }
+
+  @Test
+  public void toPublicKeysetHandle_badBase64InKey_throwsGeneralSecurityException()
+      throws Exception {
+    GeneralSecurityException e =
+        assertThrows(
+            GeneralSecurityException.class,
+            () ->
+                JwkSetConverter.toPublicKeysetHandle(
+                    "{\"keys\":[{\"alg\":\"ES256\",\"kty\":\"EC\",\"crv\":\"P-256\",\"x\":\"A\",\"y\":\"AA\"}]}"));
+    assertThat(e).hasMessageThat().contains("invalid JWK key entry");
   }
 }
