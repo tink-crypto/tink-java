@@ -76,7 +76,7 @@ import javax.annotation.Nullable;
  * </ul>
  */
 @LowLevelCryptoCaller
-public class KeyDerivationConfig2026 {
+public final class KeyDerivationConfig2026 {
   private KeyDerivationConfig2026() {}
 
   // This is the configuration which the {@link PrfBasedKeyDerivationKeyProtoSerialization} uses to

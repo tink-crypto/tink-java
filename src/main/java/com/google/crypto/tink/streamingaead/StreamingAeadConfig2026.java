@@ -40,7 +40,7 @@ import javax.annotation.Nullable;
  *   <li>AesGcmHkdfStreaming
  * </ul>
  */
-public class StreamingAeadConfig2026 {
+public final class StreamingAeadConfig2026 {
   private StreamingAeadConfig2026() {}
 
   private static final Configuration CONFIGURATION = create();

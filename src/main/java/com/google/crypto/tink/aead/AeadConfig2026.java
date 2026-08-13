@@ -74,7 +74,7 @@ import javax.annotation.Nullable;
  *       throw a {@link GeneralSecurityException}.
  * </ul>
  */
-public class AeadConfig2026 {
+public final class AeadConfig2026 {
   private AeadConfig2026() {}
 
   private static final Configuration CONFIGURATION = create();

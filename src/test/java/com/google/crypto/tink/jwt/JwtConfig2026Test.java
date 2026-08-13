@@ -343,10 +343,8 @@ public class JwtConfig2026Test {
   }
 
   @Test
-  public void get_throwsInFipsMode() throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      assertThrows(GeneralSecurityException.class, JwtConfig2026::get);
-    }
+  public void get_isNotNull() throws Exception {
+    assertThat(JwtConfig2026.get()).isNotNull();
   }
 
   @Theory

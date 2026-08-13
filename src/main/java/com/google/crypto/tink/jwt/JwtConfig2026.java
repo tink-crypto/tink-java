@@ -60,15 +60,15 @@ import javax.annotation.Nullable;
  *       </ul>
  * </ul>
  */
-public class JwtConfig2026 {
+public final class JwtConfig2026 {
 
   private JwtConfig2026() {}
 
-  private static final Configuration CONFIG = buildConfiguration();
+  private static final Configuration CONFIGURATION = buildConfiguration();
 
   /** Returns the {@link Configuration} instance. */
   public static Configuration get() {
-    return CONFIG;
+    return CONFIGURATION;
   }
 
   @LowLevelCryptoCaller

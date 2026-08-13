@@ -38,7 +38,7 @@ import javax.annotation.Nullable;
  *   <li>AesSiv
  * </ul>
  */
-public class DeterministicAeadConfig2026 {
+public final class DeterministicAeadConfig2026 {
   private DeterministicAeadConfig2026() {}
 
   private static final Configuration CONFIGURATION = create();

@@ -42,7 +42,7 @@ import javax.annotation.Nullable;
  *   <li>Hmac
  * </ul>
  */
-public class MacConfig2026 {
+public final class MacConfig2026 {
   private MacConfig2026() {}
 
   private static final Configuration CONFIGURATION = create();

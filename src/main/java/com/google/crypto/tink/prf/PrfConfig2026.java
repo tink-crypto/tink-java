@@ -41,7 +41,7 @@ import javax.annotation.Nullable;
  *   <li>AesCmacPrf
  * </ul>
  */
-public class PrfConfig2026 {
+public final class PrfConfig2026 {
   private PrfConfig2026() {}
 
   private static final Configuration CONFIGURATION = create();

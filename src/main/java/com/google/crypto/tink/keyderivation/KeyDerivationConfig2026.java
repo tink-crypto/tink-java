@@ -26,7 +26,7 @@ import com.google.crypto.tink.Configuration;
  *   <li>HKDF-PRF-based key derivation
  * </ul>
  */
-public class KeyDerivationConfig2026 {
+public final class KeyDerivationConfig2026 {
   private KeyDerivationConfig2026() {}
 
   /** Returns the {@link Configuration} instance. */
