@@ -1280,3 +1280,23 @@ java_library(
         "@maven//:com_google_code_findbugs_jsr305",
     ],
 )
+
+android_library(
+    name = "composite_ml_dsa_util-android",
+    srcs = ["CompositeMlDsaUtil.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/signature:composite_ml_dsa_parameters-android",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_parameters-android",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_parameters-android",
+    ],
+)
+
+java_library(
+    name = "composite_ml_dsa_util",
+    srcs = ["CompositeMlDsaUtil.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/signature:composite_ml_dsa_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_parameters",
+    ],
+)

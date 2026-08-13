@@ -789,3 +789,20 @@ java_test(
         "@maven//:org_conscrypt_conscrypt_openjdk_uber",
     ],
 )
+
+java_test(
+    name = "CompositeMlDsaUtilTest",
+    size = "small",
+    srcs = ["CompositeMlDsaUtilTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink/internal:util",
+        "//src/main/java/com/google/crypto/tink/signature:composite_ml_dsa_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_parameters",
+        "//src/main/java/com/google/crypto/tink/signature/internal:composite_ml_dsa_util",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+        "@maven//:org_conscrypt_conscrypt_openjdk_uber",
+    ],
+)
