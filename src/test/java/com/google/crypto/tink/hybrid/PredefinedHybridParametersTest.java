@@ -20,6 +20,11 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.hybrid.internal.XWingHpkeConscryptEncrypt;
+import java.security.Security;
+import org.conscrypt.Conscrypt;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -33,20 +38,37 @@ public final class PredefinedHybridParametersTest {
   @BeforeClass
   public static void setUp() throws Exception {
     HybridConfig.register();
+    try {
+      Conscrypt.checkAvailability();
+      Security.addProvider(Conscrypt.newProvider());
+    } catch (Throwable cause) {
+      // Conscrypt would be needed for X-Wing.
+    }
   }
 
   @DataPoints("AllParameters")
-  public static final HybridParameters[] TEMPLATES =
+  public static final HybridParameters[] templates =
       new HybridParameters[] {
         PredefinedHybridParameters.ECIES_P256_HKDF_HMAC_SHA256_AES128_GCM,
         PredefinedHybridParameters.ECIES_P256_HKDF_HMAC_SHA256_AES128_GCM_COMPRESSED_WITHOUT_PREFIX,
         PredefinedHybridParameters.ECIES_P256_HKDF_HMAC_SHA256_AES128_CTR_HMAC_SHA256,
+        PredefinedHybridParameters.HPKE_X25519_HKDF_SHA256_AES_128_GCM,
+        PredefinedHybridParameters.HPKE_P256_HKDF_SHA256_AES_128_GCM,
       };
 
   @Theory
   public void testInstantiation(@FromDataPoints("AllParameters") HybridParameters parameters)
       throws Exception {
     Key key = KeysetHandle.generateNew(parameters).getAt(0).getKey();
+    assertThat(key.getParameters()).isEqualTo(parameters);
+  }
+
+  @Test
+  public void testInstantiationWithHpkeXwing() throws Exception {
+    Assume.assumeTrue(XWingHpkeConscryptEncrypt.isSupported());
+
+    Parameters parameters = PredefinedHybridParameters.HPKE_XWING_HKDF_SHA256_CHACHA20_POLY1305;
+    Key key = KeysetHandle.generateNew(parameters, HybridConfig2026.get()).getAt(0).getKey();
     assertThat(key.getParameters()).isEqualTo(parameters);
   }
 
@@ -59,5 +81,8 @@ public final class PredefinedHybridParametersTest {
         .isNotNull();
     assertThat(PredefinedHybridParameters.ECIES_P256_HKDF_HMAC_SHA256_AES128_CTR_HMAC_SHA256)
         .isNotNull();
+    assertThat(PredefinedHybridParameters.HPKE_X25519_HKDF_SHA256_AES_128_GCM).isNotNull();
+    assertThat(PredefinedHybridParameters.HPKE_P256_HKDF_SHA256_AES_128_GCM).isNotNull();
+    assertThat(PredefinedHybridParameters.HPKE_XWING_HKDF_SHA256_CHACHA20_POLY1305).isNotNull();
   }
 }

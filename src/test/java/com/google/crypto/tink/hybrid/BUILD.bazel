@@ -413,12 +413,16 @@ java_test(
     srcs = ["PredefinedHybridParametersTest.java"],
     deps = [
         "//src/main/java/com/google/crypto/tink:key",
+        "//src/main/java/com/google/crypto/tink:parameters",
         "//src/main/java/com/google/crypto/tink:registry_cluster",
         "//src/main/java/com/google/crypto/tink/hybrid:hybrid_config",
+        "//src/main/java/com/google/crypto/tink/hybrid:hybrid_config_2026",
         "//src/main/java/com/google/crypto/tink/hybrid:hybrid_parameters",
         "//src/main/java/com/google/crypto/tink/hybrid:predefined_hybrid_parameters",
+        "//src/main/java/com/google/crypto/tink/hybrid/internal:xwing_hpke_conscrypt_encrypt",
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
+        "@maven//:org_conscrypt_conscrypt_openjdk_uber",
     ],
 )
 
