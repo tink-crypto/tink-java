@@ -549,24 +549,6 @@ java_library(
     ],
 )
 
-android_library(
-    name = "prf_configuration_v1-android",
-    srcs = ["PrfConfigurationV1.java"],
-    deps = [
-        ":prf_config2026-android",
-        "//src/main/java/com/google/crypto/tink:configuration-android",
-    ],
-)
-
-java_library(
-    name = "prf_configuration_v1",
-    srcs = ["PrfConfigurationV1.java"],
-    deps = [
-        ":prf_config2026",
-        "//src/main/java/com/google/crypto/tink:configuration",
-    ],
-)
-
 java_library(
     name = "prf_config2026",
     srcs = ["PrfConfig2026.java"],
