@@ -113,7 +113,7 @@ public final class MacConfig2026 {
   private static final int AES_CMAC_KEY_SIZE_BYTES = 32;
 
   @LowLevelCryptoCaller
-  private static ChunkedMac createChunkedAesCmac(AesCmacKey key) throws GeneralSecurityException {
+  static ChunkedMac createChunkedAesCmac(AesCmacKey key) throws GeneralSecurityException {
     if (key.getParameters().getKeySizeBytes() != AES_CMAC_KEY_SIZE_BYTES) {
       throw new GeneralSecurityException("AesCmac key size is not 32 bytes");
     }
@@ -121,7 +121,7 @@ public final class MacConfig2026 {
   }
 
   @LowLevelCryptoCaller
-  private static Mac createAesCmac(AesCmacKey key) throws GeneralSecurityException {
+  static Mac createAesCmac(AesCmacKey key) throws GeneralSecurityException {
     if (key.getParameters().getKeySizeBytes() != AES_CMAC_KEY_SIZE_BYTES) {
       throw new GeneralSecurityException("AesCmac key size is not 32 bytes");
     }

@@ -19,14 +19,14 @@ package com.google.crypto.tink.mac;
 import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
-import com.google.crypto.tink.KeysetHandleInterface;
+import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.Mac;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.LegacyProtoKey;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
-import com.google.crypto.tink.mac.internal.ChunkedAesCmacImpl;
-import com.google.crypto.tink.mac.internal.ChunkedHmacImpl;
-import com.google.crypto.tink.subtle.PrfMac;
+import com.google.crypto.tink.internal.ProtoBasedConfigurationBuilder;
+import com.google.crypto.tink.mac.subtle.HmacChunkedMac;
+import com.google.crypto.tink.mac.subtle.HmacMac;
 import java.security.GeneralSecurityException;
 
 /**
@@ -40,27 +40,9 @@ import java.security.GeneralSecurityException;
 /* Placeholder for internally public; DO NOT CHANGE. */ class MacConfigurationV0 {
   private MacConfigurationV0() {}
 
-  private static final MacWrapper MAC_WRAPPER = new MacWrapper();
-  private static final ChunkedMacWrapper CHUNKED_MAC_WRAPPER = new ChunkedMacWrapper();
   private static final Configuration CONFIGURATION = create();
 
-  private static Configuration create() {
-    return new Configuration() {
-      @Override
-      public <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
-          throws GeneralSecurityException {
-        if (clazz == Mac.class) {
-          return clazz.cast(MAC_WRAPPER.wrap(keysetHandle, MacConfigurationV0::createMac));
-        }
-        if (clazz == ChunkedMac.class) {
-          return clazz.cast(
-              CHUNKED_MAC_WRAPPER.wrap(keysetHandle, MacConfigurationV0::createChunkedMac));
-        }
-        throw new GeneralSecurityException("MacConfigurationV0 can only create MAC and ChunkedMAC");
-      }
-    };
-  }
-
+  /** Returns the {@link Configuration} instance. */
   public static Configuration get() throws GeneralSecurityException {
     if (TinkFipsUtil.useOnlyFips()) {
       throw new GeneralSecurityException(
@@ -69,61 +51,51 @@ import java.security.GeneralSecurityException;
     return CONFIGURATION;
   }
 
-  private static Mac createMac(KeysetHandleInterface.Entry entry) throws GeneralSecurityException {
-    Key key = entry.getKey();
-    if (key instanceof LegacyProtoKey) {
-      Key reparsedKey =
-          MutableSerializationRegistry.globalInstance()
-              .parseKey(
-                  ((LegacyProtoKey) key).getSerialization(InsecureSecretKeyAccess.get()),
-                  InsecureSecretKeyAccess.get());
-      key = reparsedKey;
-    }
-
-    if (key instanceof AesCmacKey) {
-      return createAesCmac((AesCmacKey) key);
-    }
-    if (key instanceof HmacKey) {
-      return PrfMac.create((HmacKey) key);
-    }
-    throw new GeneralSecurityException("Unknown key class: " + key.getClass());
+  @LowLevelCryptoCaller
+  private static Configuration create() {
+    // The MacConfigurationV0 is the same as the MacConfig, but if a key has been parsed
+    // as a LegacyProtoKey (which happens if we use the RegistryConfig and the corresponding
+    // algorithm was not registered), we try to parse it again.
+    return new ProtoBasedConfigurationBuilder()
+        .mergeProtoBasedConfiguration(MacConfig2026.get())
+        .addPrimitiveConstructor(
+            MacConfigurationV0::createMacFromLegacyProtoKey, LegacyProtoKey.class, Mac.class)
+        .addPrimitiveConstructor(
+            MacConfigurationV0::createChunkedMacFromLegacyProtoKey,
+            LegacyProtoKey.class,
+            ChunkedMac.class)
+        .build();
   }
 
-  private static ChunkedMac createChunkedMac(KeysetHandleInterface.Entry entry)
+  @LowLevelCryptoCaller
+  private static Mac createMacFromLegacyProtoKey(LegacyProtoKey key)
       throws GeneralSecurityException {
-    Key key = entry.getKey();
-    if (key instanceof LegacyProtoKey) {
-      Key reparsedKey =
-          MutableSerializationRegistry.globalInstance()
-              .parseKey(
-                  ((LegacyProtoKey) key).getSerialization(InsecureSecretKeyAccess.get()),
-                  InsecureSecretKeyAccess.get());
-      key = reparsedKey;
+    Key reparsedKey =
+        MutableSerializationRegistry.globalInstance()
+            .parseKey(
+                key.getSerialization(InsecureSecretKeyAccess.get()), InsecureSecretKeyAccess.get());
+    if (reparsedKey instanceof AesCmacKey) {
+      return MacConfig2026.createAesCmac((AesCmacKey) reparsedKey);
     }
-
-    if (key instanceof AesCmacKey) {
-      return createChunkedAesCmac((AesCmacKey) key);
+    if (reparsedKey instanceof HmacKey) {
+      return HmacMac.create((HmacKey) reparsedKey);
     }
-    if (key instanceof HmacKey) {
-      return new ChunkedHmacImpl((HmacKey) key);
-    }
-    throw new GeneralSecurityException("Unknown key class: " + key.getClass());
+    throw new GeneralSecurityException("Unknown key class: " + reparsedKey.getClass());
   }
 
-  // We only allow 32-byte AesCmac keys.
-  private static final int AES_CMAC_KEY_SIZE_BYTES = 32;
-
-  private static ChunkedMac createChunkedAesCmac(AesCmacKey key) throws GeneralSecurityException {
-    if (key.getParameters().getKeySizeBytes() != AES_CMAC_KEY_SIZE_BYTES) {
-      throw new GeneralSecurityException("AesCmac key size is not 32 bytes");
+  @LowLevelCryptoCaller
+  private static ChunkedMac createChunkedMacFromLegacyProtoKey(LegacyProtoKey key)
+      throws GeneralSecurityException {
+    Key reparsedKey =
+        MutableSerializationRegistry.globalInstance()
+            .parseKey(
+                key.getSerialization(InsecureSecretKeyAccess.get()), InsecureSecretKeyAccess.get());
+    if (reparsedKey instanceof AesCmacKey) {
+      return MacConfig2026.createChunkedAesCmac((AesCmacKey) reparsedKey);
     }
-    return ChunkedAesCmacImpl.create(key);
-  }
-
-  private static Mac createAesCmac(AesCmacKey key) throws GeneralSecurityException {
-    if (key.getParameters().getKeySizeBytes() != AES_CMAC_KEY_SIZE_BYTES) {
-      throw new GeneralSecurityException("AesCmac key size is not 32 bytes");
+    if (reparsedKey instanceof HmacKey) {
+      return HmacChunkedMac.create((HmacKey) reparsedKey);
     }
-    return PrfMac.create(key);
+    throw new GeneralSecurityException("Unknown key class: " + reparsedKey.getClass());
   }
 }
