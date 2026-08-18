@@ -198,7 +198,7 @@ public final class XWingHpkeTest {
                 KeysetHandle.importKey(HPKE_NO_PREFIX_PRIVATE_KEY).withRandomId().makePrimary())
             .build();
 
-    HybridDecrypt decrypter = handle.getPrimitive(HybridConfigurationV1.get(), HybridDecrypt.class);
+    HybridDecrypt decrypter = handle.getPrimitive(HybridConfig2026.get(), HybridDecrypt.class);
 
     byte[] decrypted = decrypter.decrypt(Hex.decode(ciphertextHex), Hex.decode(associatedData));
     assertThat(decrypted).isEqualTo(Hex.decode(plaintext));
@@ -255,7 +255,7 @@ public final class XWingHpkeTest {
                     .makePrimary())
             .build();
 
-    HybridDecrypt decrypter = handle.getPrimitive(HybridConfigurationV1.get(), HybridDecrypt.class);
+    HybridDecrypt decrypter = handle.getPrimitive(HybridConfig2026.get(), HybridDecrypt.class);
 
     byte[] decrypted = decrypter.decrypt(Hex.decode(ciphertextHex), Hex.decode(associatedData));
     assertThat(decrypted).isEqualTo(Hex.decode(plaintext));
@@ -312,7 +312,7 @@ public final class XWingHpkeTest {
                     .makePrimary())
             .build();
 
-    HybridDecrypt decrypter = handle.getPrimitive(HybridConfigurationV1.get(), HybridDecrypt.class);
+    HybridDecrypt decrypter = handle.getPrimitive(HybridConfig2026.get(), HybridDecrypt.class);
 
     byte[] decrypted = decrypter.decrypt(Hex.decode(ciphertextHex), Hex.decode(associatedData));
     assertThat(decrypted).isEqualTo(Hex.decode(plaintext));
@@ -381,7 +381,7 @@ public final class XWingHpkeTest {
             .addEntry(KeysetHandle.importKey(privateKey).makePrimary())
             .build();
 
-    HybridDecrypt decrypter = handle.getPrimitive(HybridConfigurationV1.get(), HybridDecrypt.class);
+    HybridDecrypt decrypter = handle.getPrimitive(HybridConfig2026.get(), HybridDecrypt.class);
 
     byte[] decrypted = decrypter.decrypt(Hex.decode(ciphertextHex), Hex.decode(associatedData));
     assertThat(decrypted).isEqualTo(Hex.decode(plaintext));
@@ -397,11 +397,9 @@ public final class XWingHpkeTest {
                 KeysetHandle.importKey(HPKE_NO_PREFIX_PRIVATE_KEY).withRandomId().makePrimary())
             .build();
 
-    HybridDecrypt decrypter = handle.getPrimitive(HybridConfigurationV1.get(), HybridDecrypt.class);
+    HybridDecrypt decrypter = handle.getPrimitive(HybridConfig2026.get(), HybridDecrypt.class);
     HybridEncrypt encrypter =
-        handle
-            .getPublicKeysetHandle()
-            .getPrimitive(HybridConfigurationV1.get(), HybridEncrypt.class);
+        handle.getPublicKeysetHandle().getPrimitive(HybridConfig2026.get(), HybridEncrypt.class);
 
     byte[] plaintext = "Hello World".getBytes(UTF_8);
     byte[] contextInfo = "AAD".getBytes(UTF_8);
@@ -432,11 +430,9 @@ public final class XWingHpkeTest {
             .addEntry(KeysetHandle.importKey(privateKey).makePrimary())
             .build();
 
-    HybridDecrypt decrypter = handle.getPrimitive(HybridConfigurationV1.get(), HybridDecrypt.class);
+    HybridDecrypt decrypter = handle.getPrimitive(HybridConfig2026.get(), HybridDecrypt.class);
     HybridEncrypt encrypter =
-        handle
-            .getPublicKeysetHandle()
-            .getPrimitive(HybridConfigurationV1.get(), HybridEncrypt.class);
+        handle.getPublicKeysetHandle().getPrimitive(HybridConfig2026.get(), HybridEncrypt.class);
 
     byte[] plaintext = "Hello World".getBytes(UTF_8);
     byte[] contextInfo = "AAD".getBytes(UTF_8);
@@ -455,9 +451,7 @@ public final class XWingHpkeTest {
                 KeysetHandle.importKey(HPKE_NO_PREFIX_PRIVATE_KEY).withRandomId().makePrimary())
             .build();
     HybridEncrypt encrypter =
-        handle
-            .getPublicKeysetHandle()
-            .getPrimitive(HybridConfigurationV1.get(), HybridEncrypt.class);
+        handle.getPublicKeysetHandle().getPrimitive(HybridConfig2026.get(), HybridEncrypt.class);
     byte[] contextInfo = "contextInfo".getBytes(UTF_8);
 
     assertThrows(NullPointerException.class, () -> encrypter.encrypt(null, contextInfo));
@@ -472,7 +466,7 @@ public final class XWingHpkeTest {
             .addEntry(
                 KeysetHandle.importKey(HPKE_NO_PREFIX_PRIVATE_KEY).withRandomId().makePrimary())
             .build();
-    HybridDecrypt decrypter = handle.getPrimitive(HybridConfigurationV1.get(), HybridDecrypt.class);
+    HybridDecrypt decrypter = handle.getPrimitive(HybridConfig2026.get(), HybridDecrypt.class);
     byte[] contextInfo = "contextInfo".getBytes(UTF_8);
 
     assertThrows(NullPointerException.class, () -> decrypter.decrypt(null, contextInfo));
@@ -488,10 +482,8 @@ public final class XWingHpkeTest {
                 KeysetHandle.importKey(HPKE_NO_PREFIX_PRIVATE_KEY).withRandomId().makePrimary())
             .build();
     HybridEncrypt encrypter =
-        handle
-            .getPublicKeysetHandle()
-            .getPrimitive(HybridConfigurationV1.get(), HybridEncrypt.class);
-    HybridDecrypt decrypter = handle.getPrimitive(HybridConfigurationV1.get(), HybridDecrypt.class);
+        handle.getPublicKeysetHandle().getPrimitive(HybridConfig2026.get(), HybridEncrypt.class);
+    HybridDecrypt decrypter = handle.getPrimitive(HybridConfig2026.get(), HybridDecrypt.class);
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] contextInfo = "contextInfo".getBytes(UTF_8);
     byte[] ciphertext = encrypter.encrypt(plaintext, contextInfo);
@@ -510,10 +502,8 @@ public final class XWingHpkeTest {
                 KeysetHandle.importKey(HPKE_NO_PREFIX_PRIVATE_KEY).withRandomId().makePrimary())
             .build();
     HybridEncrypt encrypter =
-        handle
-            .getPublicKeysetHandle()
-            .getPrimitive(HybridConfigurationV1.get(), HybridEncrypt.class);
-    HybridDecrypt decrypter = handle.getPrimitive(HybridConfigurationV1.get(), HybridDecrypt.class);
+        handle.getPublicKeysetHandle().getPrimitive(HybridConfig2026.get(), HybridEncrypt.class);
+    HybridDecrypt decrypter = handle.getPrimitive(HybridConfig2026.get(), HybridDecrypt.class);
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] contextInfo = "contextInfo".getBytes(UTF_8);
     byte[] wrongContextInfo = "wrongContextInfo".getBytes(UTF_8);
@@ -533,10 +523,8 @@ public final class XWingHpkeTest {
                 KeysetHandle.importKey(HPKE_NO_PREFIX_PRIVATE_KEY).withRandomId().makePrimary())
             .build();
     HybridEncrypt encrypter =
-        handle
-            .getPublicKeysetHandle()
-            .getPrimitive(HybridConfigurationV1.get(), HybridEncrypt.class);
-    HybridDecrypt decrypter = handle.getPrimitive(HybridConfigurationV1.get(), HybridDecrypt.class);
+        handle.getPublicKeysetHandle().getPrimitive(HybridConfig2026.get(), HybridEncrypt.class);
+    HybridDecrypt decrypter = handle.getPrimitive(HybridConfig2026.get(), HybridDecrypt.class);
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] contextInfo = null;
 
@@ -556,10 +544,8 @@ public final class XWingHpkeTest {
                 KeysetHandle.importKey(HPKE_NO_PREFIX_PRIVATE_KEY).withRandomId().makePrimary())
             .build();
     HybridEncrypt encrypter =
-        handle
-            .getPublicKeysetHandle()
-            .getPrimitive(HybridConfigurationV1.get(), HybridEncrypt.class);
-    HybridDecrypt decrypter = handle.getPrimitive(HybridConfigurationV1.get(), HybridDecrypt.class);
+        handle.getPublicKeysetHandle().getPrimitive(HybridConfig2026.get(), HybridEncrypt.class);
+    HybridDecrypt decrypter = handle.getPrimitive(HybridConfig2026.get(), HybridDecrypt.class);
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] contextInfo = "contextInfo".getBytes(UTF_8);
 
@@ -579,10 +565,8 @@ public final class XWingHpkeTest {
                 KeysetHandle.importKey(HPKE_NO_PREFIX_PRIVATE_KEY).withRandomId().makePrimary())
             .build();
     HybridEncrypt encrypter =
-        handle
-            .getPublicKeysetHandle()
-            .getPrimitive(HybridConfigurationV1.get(), HybridEncrypt.class);
-    HybridDecrypt decrypter = handle.getPrimitive(HybridConfigurationV1.get(), HybridDecrypt.class);
+        handle.getPublicKeysetHandle().getPrimitive(HybridConfig2026.get(), HybridEncrypt.class);
+    HybridDecrypt decrypter = handle.getPrimitive(HybridConfig2026.get(), HybridDecrypt.class);
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] contextInfo = "contextInfo".getBytes(UTF_8);
     byte[] ciphertext = encrypter.encrypt(plaintext, contextInfo);
