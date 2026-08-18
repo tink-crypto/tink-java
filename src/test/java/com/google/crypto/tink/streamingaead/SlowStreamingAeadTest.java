@@ -132,9 +132,11 @@ public final class SlowStreamingAeadTest {
   @Theory
   public void encryptDecrypt_withSlowChannels_works(
       @FromDataPoints("templates") String templateName) throws Exception {
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), StreamingAeadConfig2026.get());
     StreamingAead streamingAead =
-        handle.getPrimitive(StreamingAeadConfigurationV1.get(), StreamingAead.class);
+        handle.getPrimitive(StreamingAeadConfig2026.get(), StreamingAead.class);
 
     byte[] plaintext = new byte[42 * 1024];
     byte[] associatedData = "associatedData".getBytes(UTF_8);
