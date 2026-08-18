@@ -245,6 +245,7 @@ java_library(
         "//src/main/java/com/google/crypto/tink/internal:mutable_serialization_registry",
         "//src/main/java/com/google/crypto/tink/internal:parameters_parser",
         "//src/main/java/com/google/crypto/tink/internal:parameters_serializer",
+        "//src/main/java/com/google/crypto/tink/internal:serialization_registry",
     ],
 )
 
@@ -544,6 +545,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink/internal:mutable_serialization_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:parameters_parser-android",
         "//src/main/java/com/google/crypto/tink/internal:parameters_serializer-android",
+        "//src/main/java/com/google/crypto/tink/internal:serialization_registry-android",
     ],
 )
 

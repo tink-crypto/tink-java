@@ -23,6 +23,7 @@ import com.google.crypto.tink.internal.KeySerializer;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ParametersParser;
 import com.google.crypto.tink.internal.ParametersSerializer;
+import com.google.crypto.tink.internal.SerializationRegistry;
 import java.security.GeneralSecurityException;
 
 /**
@@ -86,6 +87,16 @@ public final class HpkeProtoSerialization {
     registry.registerKeyParser(PUBLIC_KEY_PARSER);
     registry.registerKeySerializer(PRIVATE_KEY_SERIALIZER);
     registry.registerKeyParser(PRIVATE_KEY_PARSER);
+  }
+
+  public static void register(SerializationRegistry.Builder registryBuilder)
+      throws GeneralSecurityException {
+    registryBuilder.registerParametersSerializer(PARAMETERS_SERIALIZER);
+    registryBuilder.registerParametersParser(PARAMETERS_PARSER);
+    registryBuilder.registerKeySerializer(PUBLIC_KEY_SERIALIZER);
+    registryBuilder.registerKeyParser(PUBLIC_KEY_PARSER);
+    registryBuilder.registerKeySerializer(PRIVATE_KEY_SERIALIZER);
+    registryBuilder.registerKeyParser(PRIVATE_KEY_PARSER);
   }
 
   private HpkeProtoSerialization() {}
