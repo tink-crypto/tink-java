@@ -1,0 +1,187 @@
+// Copyright 2026 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+////////////////////////////////////////////////////////////////////////////////
+
+package com.google.crypto.tink.internal;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.assertThrows;
+
+import com.google.crypto.tink.subtle.Hex;
+import java.math.BigInteger;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+
+@RunWith(JUnit4.class)
+public final class Asn1StatefulParserTest {
+
+  @Test
+  public void parseInteger_singleByte_works() throws Exception {
+    byte[] data = Hex.decode("020105");
+
+    try (Asn1StatefulParser parser = new Asn1StatefulParser(data)) {
+      assertThat(parser.consumeInteger()).isEqualTo(BigInteger.valueOf(5));
+    }
+  }
+
+  @Test
+  public void parseInteger_zero_works() throws Exception {
+    byte[] data = Hex.decode("020100");
+
+    try (Asn1StatefulParser parser = new Asn1StatefulParser(data)) {
+      assertThat(parser.consumeInteger()).isEqualTo(BigInteger.ZERO);
+    }
+  }
+
+  @Test
+  public void parseInteger_multiByte_works() throws Exception {
+    byte[] data = Hex.decode("0203010001");
+
+    try (Asn1StatefulParser parser = new Asn1StatefulParser(data)) {
+      assertThat(parser.consumeInteger()).isEqualTo(BigInteger.valueOf(65537));
+    }
+  }
+
+  @Test
+  public void parseTwoIntegers_works() throws Exception {
+    byte[] data = Hex.decode("02010502010a");
+
+    try (Asn1StatefulParser parser = new Asn1StatefulParser(data)) {
+      assertThat(parser.consumeInteger()).isEqualTo(BigInteger.valueOf(5));
+      assertThat(parser.consumeInteger()).isEqualTo(BigInteger.valueOf(10));
+    }
+  }
+
+  @Test
+  public void parseNegativeInteger_works() throws Exception {
+    byte[] data = Hex.decode("0201ff");
+
+    try (Asn1StatefulParser parser = new Asn1StatefulParser(data)) {
+      assertThat(parser.consumeInteger()).isEqualTo(BigInteger.valueOf(-1));
+    }
+  }
+
+  @Test
+  @SuppressWarnings("MustBeClosed")
+  public void tagMismatch_throws() {
+    byte[] data = Hex.decode("300b0609608648016503040311");
+    Asn1StatefulParser parser = new Asn1StatefulParser(data);
+
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::consumeInteger);
+  }
+
+  @Test
+  @SuppressWarnings("MustBeClosed") // Cannot use try-with-resources because close() will throw.
+  public void truncatedData_throws() {
+    byte[] data = Hex.decode("02050102");
+
+    Asn1StatefulParser parser = new Asn1StatefulParser(data);
+
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::consumeInteger);
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::close);
+  }
+
+  @Test
+  @SuppressWarnings("MustBeClosed")
+  public void zeroLengthInteger_throws() throws Exception {
+    byte[] data = Hex.decode("0200");
+
+    Asn1StatefulParser parser = new Asn1StatefulParser(data);
+
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::consumeInteger);
+    parser.close(); // works here due to short payload
+  }
+
+  @Test
+  @SuppressWarnings("MustBeClosed") // Cannot use try-with-resources because close() will throw.
+  public void nonMinimalInteger_redundantLeadingZero_throws() {
+    // INTEGER with leading 0x00 when next byte is 0x05 (< 0x80)
+    byte[] data = Hex.decode("02020005");
+
+    Asn1StatefulParser parser = new Asn1StatefulParser(data);
+
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::consumeInteger);
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::close);
+  }
+
+  @Test
+  @SuppressWarnings("MustBeClosed") // Cannot use try-with-resources because close() will throw.
+  public void indefiniteLength_throws() {
+    // Indefinite length 0x80
+    byte[] data = Hex.decode("02800201010000");
+
+    Asn1StatefulParser parser = new Asn1StatefulParser(data);
+
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::consumeInteger);
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::close);
+  }
+
+  @Test
+  @SuppressWarnings("MustBeClosed") // Cannot use try-with-resources because close() will throw.
+  public void nonMinimalLengthEncoding_throws() {
+    // Length 1 encoded in long form 0x8101
+    byte[] data = Hex.decode("02810105");
+
+    Asn1StatefulParser parser = new Asn1StatefulParser(data);
+
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::consumeInteger);
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::close);
+  }
+
+  @Test
+  public void tryWithResources_successfulParsing() throws Exception {
+    byte[] data = Hex.decode("020105");
+
+    try (Asn1StatefulParser parser = new Asn1StatefulParser(data)) {
+      assertThat(parser.consumeInteger()).isEqualTo(BigInteger.valueOf(5));
+    }
+  }
+
+  @Test
+  @SuppressWarnings("MustBeClosed") // Cannot use try-with-resources because close() throws.
+  public void tryWithResources_unconsumedBytes_throwsOnClose() throws Exception {
+    byte[] data = Hex.decode("02010500");
+
+    Asn1StatefulParser parser = new Asn1StatefulParser(data);
+
+    assertThat(parser.consumeInteger()).isEqualTo(BigInteger.valueOf(5));
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::close);
+  }
+
+  @Test
+  @SuppressWarnings("MustBeClosed")
+  public void close_isIdempotent() throws Exception {
+    byte[] data = Hex.decode("020105");
+
+    Asn1StatefulParser parser = new Asn1StatefulParser(data);
+
+    assertThat(parser.consumeInteger()).isEqualTo(BigInteger.valueOf(5));
+    parser.close();
+    parser.close();
+  }
+
+  @Test
+  @SuppressWarnings("MustBeClosed")
+  public void operationsAfterClose_throwIllegalStateException() throws Exception {
+    byte[] data = Hex.decode("020105");
+
+    Asn1StatefulParser parser = new Asn1StatefulParser(data);
+
+    assertThat(parser.consumeInteger()).isEqualTo(BigInteger.valueOf(5));
+    parser.close();
+    assertThrows(IllegalStateException.class, parser::consumeInteger);
+  }
+}

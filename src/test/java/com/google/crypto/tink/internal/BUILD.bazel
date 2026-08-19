@@ -762,3 +762,15 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "Asn1StatefulParserTest",
+    size = "small",
+    srcs = ["Asn1StatefulParserTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/internal:asn1_stateful_parser",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
