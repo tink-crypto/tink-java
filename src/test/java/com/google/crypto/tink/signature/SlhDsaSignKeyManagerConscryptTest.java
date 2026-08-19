@@ -94,11 +94,11 @@ public class SlhDsaSignKeyManagerConscryptTest {
     }
 
     KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
-    PublicKeySign signer = handle.getPrimitive(SignatureConfigurationV1.get(), PublicKeySign.class);
+    PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
         handle
             .getPublicKeysetHandle()
-            .getPrimitive(SignatureConfigurationV1.get(), PublicKeyVerify.class);
+            .getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
     byte[] data = "data".getBytes(UTF_8);
 
     byte[] signature = signer.sign(data);
@@ -115,11 +115,11 @@ public class SlhDsaSignKeyManagerConscryptTest {
     }
 
     KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
-    PublicKeySign signer = handle.getPrimitive(SignatureConfigurationV1.get(), PublicKeySign.class);
+    PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
         handle
             .getPublicKeysetHandle()
-            .getPrimitive(SignatureConfigurationV1.get(), PublicKeyVerify.class);
+            .getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
     byte[] data = "data".getBytes(UTF_8);
     byte[] wrongData = "wrong data".getBytes(UTF_8);
 
@@ -154,11 +154,11 @@ public class SlhDsaSignKeyManagerConscryptTest {
     SlhDsaParameters parameters =
         SlhDsaParameters.createSlhDsaWithSha2And128S(Variant.NO_PREFIX);
     KeysetHandle handle = KeysetHandle.generateNew(parameters);
-    PublicKeySign signer = handle.getPrimitive(SignatureConfigurationV1.get(), PublicKeySign.class);
+    PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
         handle
             .getPublicKeysetHandle()
-            .getPrimitive(SignatureConfigurationV1.get(), PublicKeyVerify.class);
+            .getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
     byte[] data = "data".getBytes(UTF_8);
 
     byte[] signature = signer.sign(data);
@@ -176,11 +176,11 @@ public class SlhDsaSignKeyManagerConscryptTest {
     SlhDsaParameters parameters =
         SlhDsaParameters.createSlhDsaWithSha2And128S(Variant.NO_PREFIX);
     KeysetHandle handle = KeysetHandle.generateNew(parameters);
-    PublicKeySign signer = handle.getPrimitive(SignatureConfigurationV1.get(), PublicKeySign.class);
+    PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
         handle
             .getPublicKeysetHandle()
-            .getPrimitive(SignatureConfigurationV1.get(), PublicKeyVerify.class);
+            .getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
     byte[] data = "data".getBytes(UTF_8);
     byte[] wrongData = "wrong data".getBytes(UTF_8);
 

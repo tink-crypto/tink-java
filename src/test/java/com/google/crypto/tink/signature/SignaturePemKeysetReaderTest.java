@@ -1502,7 +1502,7 @@ public final class SignaturePemKeysetReaderTest {
     assertThat(handle.size()).isEqualTo(1);
 
     PublicKeyVerify verifier =
-        handle.getPrimitive(SignatureConfigurationV1.get(), PublicKeyVerify.class);
+        handle.getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
 
     verifier.verify(pemTestVector.signature, pemTestVector.message);
   }
@@ -1527,7 +1527,7 @@ public final class SignaturePemKeysetReaderTest {
 
     PublicKeyVerify verifier;
     try {
-      verifier = handle.getPrimitive(SignatureConfigurationV1.get(), PublicKeyVerify.class);
+      verifier = handle.getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
     } catch (GeneralSecurityException e) {
       // Ignore.
       // Older versions of Conscrypt don't support ML-DSA. We only test
@@ -1557,7 +1557,7 @@ public final class SignaturePemKeysetReaderTest {
 
     PublicKeyVerify verifier;
     try {
-      verifier = handle.getPrimitive(SignatureConfigurationV1.get(), PublicKeyVerify.class);
+      verifier = handle.getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
     } catch (GeneralSecurityException e) {
       // Ignore.
       // Older versions of Conscrypt don't support ML-DSA. We only test

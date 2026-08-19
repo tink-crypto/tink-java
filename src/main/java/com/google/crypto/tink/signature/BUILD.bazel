@@ -1090,16 +1090,6 @@ java_library(
 )
 
 android_library(
-    name = "signature_configuration_v1-android",
-    srcs = ["SignatureConfigurationV1.java"],
-    deps = [
-        ":signature_config_2026-android",
-        "//src/main/java/com/google/crypto/tink:configuration-android",
-        "@maven//:com_google_errorprone_error_prone_annotations",
-    ],
-)
-
-android_library(
     name = "signature_config_2026-android",
     srcs = ["SignatureConfig2026.java"],
     deps = [
@@ -1161,16 +1151,6 @@ android_library(
         "//src/main/java/com/google/crypto/tink/signature/subtle:slh_dsa_signer-android",
         "//src/main/java/com/google/crypto/tink/signature/subtle:slh_dsa_verifier-android",
         "@maven//:com_google_code_findbugs_jsr305",
-    ],
-)
-
-java_library(
-    name = "signature_configuration_v1",
-    srcs = ["SignatureConfigurationV1.java"],
-    deps = [
-        ":signature_config_2026",
-        "//src/main/java/com/google/crypto/tink:configuration",
-        "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
 
