@@ -75,6 +75,38 @@ public final class Asn1StatefulParserTest {
   }
 
   @Test
+  public void parseLongFormLength_works() throws Exception {
+    // 0x02 (tag INTEGER), 0x81 (long form, 1 byte length), 0x80 (length 128)
+    byte[] header = Hex.decode("028180");
+    byte[] payload = new byte[128];
+    payload[0] = 0x01;
+    byte[] data = new byte[header.length + payload.length];
+    System.arraycopy(header, 0, data, 0, header.length);
+    System.arraycopy(payload, 0, data, header.length, payload.length);
+
+    try (Asn1StatefulParser parser = new Asn1StatefulParser(data)) {
+      BigInteger expected = BigInteger.ONE.shiftLeft(127 * 8);
+      assertThat(parser.consumeInteger()).isEqualTo(expected);
+    }
+  }
+
+  @Test
+  public void parseLongFormLength_twoLengthBytes_works() throws Exception {
+    // 0x02 (tag INTEGER), 0x82 (long form, 2 bytes length), 0x0100 (length 256)
+    byte[] header = Hex.decode("02820100");
+    byte[] payload = new byte[256];
+    payload[0] = 0x01;
+    byte[] data = new byte[header.length + payload.length];
+    System.arraycopy(header, 0, data, 0, header.length);
+    System.arraycopy(payload, 0, data, header.length, payload.length);
+
+    try (Asn1StatefulParser parser = new Asn1StatefulParser(data)) {
+      BigInteger expected = BigInteger.ONE.shiftLeft(255 * 8);
+      assertThat(parser.consumeInteger()).isEqualTo(expected);
+    }
+  }
+
+  @Test
   @SuppressWarnings("MustBeClosed")
   public void tagMismatch_throws() {
     byte[] data = Hex.decode("300b0609608648016503040311");
