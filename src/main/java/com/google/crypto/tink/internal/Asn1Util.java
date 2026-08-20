@@ -18,11 +18,15 @@ package com.google.crypto.tink.internal;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
+import com.google.crypto.tink.signature.RsaSsaPssParameters;
 import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
+import com.google.crypto.tink.util.SecretBigInteger;
 import java.math.BigInteger;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -279,5 +283,127 @@ public final class Asn1Util {
     elements.add(rsaEncryptionOid);
     elements.add(createOctetString(pkcs1Key));
     return createSequence(elements);
+  }
+
+  /**
+   * Parses a PKCS#1 encoded RSA private key and constructs a Tink {@link RsaSsaPssPrivateKey} using
+   * the provided {@link RsaSsaPssParameters}.
+   *
+   * <p>Only allows F4 exponent.
+   */
+  @AccessesPartialKey
+  public static RsaSsaPssPrivateKey pkcs1RsaKeyToRsaSsaPssPrivateKey(
+      byte[] pkcs1Key, RsaSsaPssParameters parameters) throws GeneralSecurityException {
+    BigInteger version;
+    BigInteger modulus;
+    BigInteger publicExponent;
+    BigInteger privateExponent;
+    BigInteger primeP;
+    BigInteger primeQ;
+    BigInteger primeExponentP;
+    BigInteger primeExponentQ;
+    BigInteger crtCoefficient;
+    try (Asn1StatefulParser parser = new Asn1StatefulParser(pkcs1Key);
+        Asn1StatefulParser sequenceParser = parser.consumeSequence()) {
+      version = sequenceParser.consumeInteger();
+      if (!version.equals(BigInteger.ZERO)) {
+        throw new GeneralSecurityException(
+            "Unsupported PKCS#1 RSA private key version: " + version);
+      }
+      modulus = sequenceParser.consumeInteger();
+      publicExponent = sequenceParser.consumeInteger();
+      privateExponent = sequenceParser.consumeInteger();
+      primeP = sequenceParser.consumeInteger();
+      primeQ = sequenceParser.consumeInteger();
+      primeExponentP = sequenceParser.consumeInteger();
+      primeExponentQ = sequenceParser.consumeInteger();
+      crtCoefficient = sequenceParser.consumeInteger();
+    } catch (Asn1StatefulParser.Asn1ParserException e) {
+      throw new GeneralSecurityException("Failed to parse PKCS#1 RSA private key", e);
+    }
+
+    // There is no need to additionally check the public exponent in the Parameters, since the
+    // Builder there only allows F4.
+    if (!publicExponent.equals(RsaSsaPssParameters.F4)) {
+      throw new GeneralSecurityException(
+          "Unsupported public exponent for RSA key: " + publicExponent.toString(16));
+    }
+
+    RsaSsaPssPublicKey publicKey =
+        RsaSsaPssPublicKey.builder().setParameters(parameters).setModulus(modulus).build();
+    return RsaSsaPssPrivateKey.builder()
+        .setPublicKey(publicKey)
+        .setPrimes(
+            SecretBigInteger.fromBigInteger(primeP, InsecureSecretKeyAccess.get()),
+            SecretBigInteger.fromBigInteger(primeQ, InsecureSecretKeyAccess.get()))
+        .setPrivateExponent(
+            SecretBigInteger.fromBigInteger(privateExponent, InsecureSecretKeyAccess.get()))
+        .setPrimeExponents(
+            SecretBigInteger.fromBigInteger(primeExponentP, InsecureSecretKeyAccess.get()),
+            SecretBigInteger.fromBigInteger(primeExponentQ, InsecureSecretKeyAccess.get()))
+        .setCrtCoefficient(
+            SecretBigInteger.fromBigInteger(crtCoefficient, InsecureSecretKeyAccess.get()))
+        .build();
+  }
+
+  /**
+   * Parses a PKCS#1 encoded RSA private key and constructs a Tink {@link RsaSsaPkcs1PrivateKey}
+   * using the provided {@link RsaSsaPkcs1Parameters}.
+   *
+   * <p>Only allows F4 exponent.
+   */
+  @AccessesPartialKey
+  public static RsaSsaPkcs1PrivateKey pkcs1RsaKeyToRsaSsaPkcs1PrivateKey(
+      byte[] pkcs1Key, RsaSsaPkcs1Parameters parameters) throws GeneralSecurityException {
+    BigInteger version;
+    BigInteger modulus;
+    BigInteger publicExponent;
+    BigInteger privateExponent;
+    BigInteger primeP;
+    BigInteger primeQ;
+    BigInteger primeExponentP;
+    BigInteger primeExponentQ;
+    BigInteger crtCoefficient;
+    try (Asn1StatefulParser parser = new Asn1StatefulParser(pkcs1Key);
+        Asn1StatefulParser sequenceParser = parser.consumeSequence()) {
+      version = sequenceParser.consumeInteger();
+      if (!version.equals(BigInteger.ZERO)) {
+        throw new GeneralSecurityException(
+            "Unsupported PKCS#1 RSA private key version: " + version);
+      }
+      modulus = sequenceParser.consumeInteger();
+      publicExponent = sequenceParser.consumeInteger();
+      privateExponent = sequenceParser.consumeInteger();
+      primeP = sequenceParser.consumeInteger();
+      primeQ = sequenceParser.consumeInteger();
+      primeExponentP = sequenceParser.consumeInteger();
+      primeExponentQ = sequenceParser.consumeInteger();
+      crtCoefficient = sequenceParser.consumeInteger();
+    } catch (Asn1StatefulParser.Asn1ParserException e) {
+      throw new GeneralSecurityException("Failed to parse PKCS#1 RSA private key", e);
+    }
+
+    // There is no need to additionally check the public exponent in the Parameters, since the
+    // Builder there only allows F4.
+    if (!publicExponent.equals(RsaSsaPkcs1Parameters.F4)) {
+      throw new GeneralSecurityException(
+          "Unsupported public exponent for RSA key: " + publicExponent.toString(16));
+    }
+
+    RsaSsaPkcs1PublicKey publicKey =
+        RsaSsaPkcs1PublicKey.builder().setParameters(parameters).setModulus(modulus).build();
+    return RsaSsaPkcs1PrivateKey.builder()
+        .setPublicKey(publicKey)
+        .setPrimes(
+            SecretBigInteger.fromBigInteger(primeP, InsecureSecretKeyAccess.get()),
+            SecretBigInteger.fromBigInteger(primeQ, InsecureSecretKeyAccess.get()))
+        .setPrivateExponent(
+            SecretBigInteger.fromBigInteger(privateExponent, InsecureSecretKeyAccess.get()))
+        .setPrimeExponents(
+            SecretBigInteger.fromBigInteger(primeExponentP, InsecureSecretKeyAccess.get()),
+            SecretBigInteger.fromBigInteger(primeExponentQ, InsecureSecretKeyAccess.get()))
+        .setCrtCoefficient(
+            SecretBigInteger.fromBigInteger(crtCoefficient, InsecureSecretKeyAccess.get()))
+        .build();
   }
 }

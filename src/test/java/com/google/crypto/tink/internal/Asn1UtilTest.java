@@ -17,8 +17,10 @@
 package com.google.crypto.tink.internal;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.AccessesPartialKey;
+import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
@@ -28,6 +30,7 @@ import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
 import com.google.crypto.tink.signature.internal.testing.RsaSsaPkcs1TestUtil;
 import com.google.crypto.tink.signature.internal.testing.RsaSsaPssTestUtil;
 import com.google.crypto.tink.subtle.Hex;
+import java.security.GeneralSecurityException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -172,5 +175,88 @@ public final class Asn1UtilTest {
     byte[] result = Asn1Util.createPkcs8RsaKeyFromPkcs1RsaKey(inputPkcs1);
 
     assertThat(Hex.encode(result)).isEqualTo(expectedOutputHex);
+  }
+
+  @Test
+  public void pkcs1RsaKeyToRsaSsaPssPrivateKey_works() throws Exception {
+    RsaSsaPssParameters params =
+        RsaSsaPssParameters.builder()
+            .setModulusSizeBits(2048)
+            .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
+            .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
+            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+            .setSaltLengthBytes(32)
+            .build();
+    RsaSsaPssPrivateKey expectedPrivateKey =
+        RsaSsaPssTestUtil.privateKeyFor2048BitParameters(params, null);
+    byte[] inputPkcs1 = Hex.decode(HARDCODED_PRIVATE_KEY_HEX);
+
+    RsaSsaPssPrivateKey parsedKey = Asn1Util.pkcs1RsaKeyToRsaSsaPssPrivateKey(inputPkcs1, params);
+
+    assertThat(parsedKey.getParameters()).isEqualTo(params);
+    assertThat(parsedKey.getPublicKey().getModulus())
+        .isEqualTo(expectedPrivateKey.getPublicKey().getModulus());
+    assertThat(parsedKey.getPrivateExponent().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(
+            expectedPrivateKey.getPrivateExponent().getBigInteger(InsecureSecretKeyAccess.get()));
+  }
+
+  @Test
+  public void pkcs1RsaKeyToRsaSsaPkcs1PrivateKey_works() throws Exception {
+    RsaSsaPkcs1Parameters params =
+        RsaSsaPkcs1Parameters.builder()
+            .setModulusSizeBits(2048)
+            .setPublicExponent(RsaSsaPkcs1Parameters.F4)
+            .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
+            .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
+            .build();
+    RsaSsaPkcs1PrivateKey expectedPrivateKey =
+        RsaSsaPkcs1TestUtil.privateKeyFor2048BitParameters(params, null);
+    byte[] inputPkcs1 = Hex.decode(HARDCODED_PRIVATE_KEY_HEX);
+
+    RsaSsaPkcs1PrivateKey parsedKey =
+        Asn1Util.pkcs1RsaKeyToRsaSsaPkcs1PrivateKey(inputPkcs1, params);
+
+    assertThat(parsedKey.getParameters()).isEqualTo(params);
+    assertThat(parsedKey.getPublicKey().getModulus())
+        .isEqualTo(expectedPrivateKey.getPublicKey().getModulus());
+    assertThat(parsedKey.getPrivateExponent().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(
+            expectedPrivateKey.getPrivateExponent().getBigInteger(InsecureSecretKeyAccess.get()));
+  }
+
+  @Test
+  public void pkcs1RsaKeyToRsaSsaPssPrivateKey_nonF4Exponent_throws() throws Exception {
+    RsaSsaPssParameters params =
+        RsaSsaPssParameters.builder()
+            .setModulusSizeBits(2048)
+            .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
+            .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
+            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+            .setSaltLengthBytes(32)
+            .build();
+    byte[] nonF4Pkcs1Key =
+        Hex.decode(HARDCODED_PRIVATE_KEY_HEX.replace("0203010001", "0203000003"));
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> Asn1Util.pkcs1RsaKeyToRsaSsaPssPrivateKey(nonF4Pkcs1Key, params));
+  }
+
+  @Test
+  public void pkcs1RsaKeyToRsaSsaPkcs1PrivateKey_nonF4Exponent_throws() throws Exception {
+    RsaSsaPkcs1Parameters params =
+        RsaSsaPkcs1Parameters.builder()
+            .setModulusSizeBits(2048)
+            .setPublicExponent(RsaSsaPkcs1Parameters.F4)
+            .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
+            .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
+            .build();
+    byte[] nonF4Pkcs1Key =
+        Hex.decode(HARDCODED_PRIVATE_KEY_HEX.replace("0203010001", "0203000003"));
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> Asn1Util.pkcs1RsaKeyToRsaSsaPkcs1PrivateKey(nonF4Pkcs1Key, params));
   }
 }
