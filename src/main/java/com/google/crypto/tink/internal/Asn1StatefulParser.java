@@ -31,6 +31,7 @@ public final class Asn1StatefulParser implements AutoCloseable {
   private static final byte TAG_INTEGER = 0x02;
   private static final byte TAG_BIT_STRING = 0x03;
   private static final byte TAG_OCTET_STRING = 0x04;
+  private static final byte TAG_SEQUENCE = 0x30;
 
   /**
    * Exception thrown when ASN.1 DER parsing fails.
@@ -63,6 +64,12 @@ public final class Asn1StatefulParser implements AutoCloseable {
     this.closed = false;
   }
 
+  private Asn1StatefulParser(byte[] data, int offset, int limit) {
+    this.data = data;
+    this.offset = offset;
+    this.limit = limit;
+  }
+
   private void checkNotClosed() {
     if (closed) {
       throw new IllegalStateException("Parser is closed");
@@ -87,6 +94,21 @@ public final class Asn1StatefulParser implements AutoCloseable {
     if (hasRemaining()) {
       throw new Asn1ParserException("Failed to parse ASN.1 DER encoded key");
     }
+  }
+
+  /**
+   * Consumes a DER SEQUENCE and returns a new {@link Asn1StatefulParser} scoped to the sequence
+   * content.
+   *
+   * @throws Asn1ParserException if the tag is not SEQUENCE or DER encoding is invalid.
+   * @throws IllegalStateException if this parser is closed.
+   */
+  public Asn1StatefulParser consumeSequence() throws Asn1ParserException {
+    checkNotClosed();
+    int length = consumeTagAndLength(TAG_SEQUENCE);
+    int sequenceContentStart = offset;
+    offset += length;
+    return new Asn1StatefulParser(data, sequenceContentStart, sequenceContentStart + length);
   }
 
   /**

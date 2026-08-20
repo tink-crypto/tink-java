@@ -74,8 +74,7 @@ public final class Asn1StatefulParserTest {
     }
   }
 
-  @Test
-  public void parseLongFormLength_works() throws Exception {
+  @Test  public void parseLongFormLength_works() throws Exception {
     // 0x02 (tag INTEGER), 0x81 (long form, 1 byte length), 0x80 (length 128)
     byte[] header = Hex.decode("028180");
     byte[] payload = new byte[128];
@@ -104,6 +103,44 @@ public final class Asn1StatefulParserTest {
       BigInteger expected = BigInteger.ONE.shiftLeft(255 * 8);
       assertThat(parser.consumeInteger()).isEqualTo(expected);
     }
+  }
+
+  @Test
+  public void parseSequence_ofIntegers_works() throws Exception {
+    // SEQUENCE { INTEGER 1, INTEGER 2 }
+    byte[] data = Hex.decode("3006020101020102");
+
+    try (Asn1StatefulParser parser = new Asn1StatefulParser(data);
+        Asn1StatefulParser seqParser = parser.consumeSequence()) {
+      assertThat(seqParser.consumeInteger()).isEqualTo(BigInteger.valueOf(1));
+      assertThat(seqParser.consumeInteger()).isEqualTo(BigInteger.valueOf(2));
+    }
+  }
+
+  @Test
+  @SuppressWarnings("MustBeClosed") // Cannot use try-with-resources because close() will throw.
+  public void parseSequence_lengthTooLong_throws() throws Exception {
+    byte[] data = Hex.decode("3007020101020102");
+
+    Asn1StatefulParser parser = new Asn1StatefulParser(data);
+
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::consumeSequence);
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::close);
+  }
+
+  @Test
+  @SuppressWarnings("MustBeClosed") // Cannot use try-with-resources because close() will throw.
+  public void parseSequence_notAllInnerBytesConsumed_innerParserThrows() throws Exception {
+    // SEQUENCE { INTEGER 1, INTEGER 2 }
+    byte[] data = Hex.decode("30080201010201020000");
+
+    Asn1StatefulParser parser = new Asn1StatefulParser(data);
+    Asn1StatefulParser seqParser = parser.consumeSequence();
+
+    assertThat(seqParser.consumeInteger()).isEqualTo(BigInteger.valueOf(1));
+    assertThat(seqParser.consumeInteger()).isEqualTo(BigInteger.valueOf(2));
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, seqParser::close);
+    parser.close();
   }
 
   @Test
