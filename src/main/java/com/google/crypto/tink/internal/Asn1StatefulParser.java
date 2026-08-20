@@ -30,6 +30,7 @@ import java.util.Arrays;
 public final class Asn1StatefulParser implements AutoCloseable {
   private static final byte TAG_INTEGER = 0x02;
   private static final byte TAG_BIT_STRING = 0x03;
+  private static final byte TAG_OCTET_STRING = 0x04;
 
   /**
    * Exception thrown when ASN.1 DER parsing fails.
@@ -116,6 +117,20 @@ public final class Asn1StatefulParser implements AutoCloseable {
     byte[] intBytes = Arrays.copyOfRange(data, offset, offset + length);
     offset += length;
     return new BigInteger(intBytes);
+  }
+
+  /**
+   * Consumes an ASN.1 DER OCTET STRING and returns the raw bytes.
+   *
+   * @throws Asn1ParserException if the tag is not OCTET STRING or DER encoding is invalid.
+   * @throws IllegalStateException if this parser is closed.
+   */
+  public byte[] consumeOctetString() throws Asn1ParserException {
+    checkNotClosed();
+    int length = consumeTagAndLength(TAG_OCTET_STRING);
+    byte[] result = Arrays.copyOfRange(data, offset, offset + length);
+    offset += length;
+    return result;
   }
 
   /**

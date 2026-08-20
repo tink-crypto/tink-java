@@ -107,6 +107,26 @@ public final class Asn1StatefulParserTest {
   }
 
   @Test
+  public void parseOctetString_works() throws Exception {
+    byte[] data = Hex.decode("040401020304");
+
+    try (Asn1StatefulParser parser = new Asn1StatefulParser(data)) {
+      assertThat(parser.consumeOctetString()).isEqualTo(Hex.decode("01020304"));
+    }
+  }
+
+  @Test
+  @SuppressWarnings("MustBeClosed") // Cannot use try-with-resources because close() will throw.
+  public void parseOctetString_lengthTooLong_throws() throws Exception {
+    byte[] data = Hex.decode("040501020304");
+
+    Asn1StatefulParser parser = new Asn1StatefulParser(data);
+
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::consumeOctetString);
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::close);
+  }
+
+  @Test
   public void parseBitString_works() throws Exception {
     // BIT STRING with 0 unused bits
     byte[] data = Hex.decode("03050001020304");
