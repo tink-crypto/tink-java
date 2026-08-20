@@ -94,109 +94,112 @@ public final class KeyDerivationConfig2026 {
   //  * AesGcmSiv
   //  * AesGcmHkdfStreaming
   //  * Ed25519
-  private static final Configuration CONFIG_FOR_KEY =
-      new ProtoBasedConfigurationBuilder()
-          // HkdfPrf
-          .addKeySerializer(HkdfPrfKey.class, HkdfPrfProtoSerialization::serializeKey)
-          .addParametersSerializer(
-              HkdfPrfParameters.class, HkdfPrfProtoSerialization::serializeParameters)
-          .addKeyParser(
-              "type.googleapis.com/google.crypto.tink.HkdfPrfKey",
-              HkdfPrfProtoSerialization::parseKey)
-          .addParametersParser(
-              "type.googleapis.com/google.crypto.tink.HkdfPrfKey",
-              HkdfPrfProtoSerialization::parseParameters)
-          // Hmac
-          .addParametersSerializer(
-              HmacParameters.class, HmacProtoSerialization::serializeParameters)
-          .addParametersParser(
-              "type.googleapis.com/google.crypto.tink.HmacKey",
-              HmacProtoSerialization::parseParameters)
-          // HmacPrf
-          .addParametersSerializer(
-              HmacPrfParameters.class, HmacPrfProtoSerialization::serializeParameters)
-          .addParametersParser(
-              "type.googleapis.com/google.crypto.tink.HmacPrfKey",
-              HmacPrfProtoSerialization::parseParameters)
-          // AesGcm
-          .addParametersSerializer(
-              AesGcmParameters.class, AesGcmProtoSerialization::serializeParameters)
-          .addParametersParser(
-              "type.googleapis.com/google.crypto.tink.AesGcmKey",
-              AesGcmProtoSerialization::parseParameters)
-          // AesCtrHmacAead
-          .addParametersSerializer(
-              AesCtrHmacAeadParameters.class, AesCtrHmacAeadProtoSerialization::serializeParameters)
-          .addParametersParser(
-              "type.googleapis.com/google.crypto.tink.AesCtrHmacAeadKey",
-              AesCtrHmacAeadProtoSerialization::parseParameters)
-          // XChaCha20Poly1305
-          .addParametersSerializer(
-              XChaCha20Poly1305Parameters.class,
-              XChaCha20Poly1305ProtoSerialization::serializeParameters)
-          .addParametersParser(
-              "type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key",
-              XChaCha20Poly1305ProtoSerialization::parseParameters)
-          // AesSiv
-          .addParametersSerializer(
-              AesSivParameters.class, AesSivProtoSerialization::serializeParameters)
-          .addParametersParser(
-              "type.googleapis.com/google.crypto.tink.AesSivKey",
-              AesSivProtoSerialization::parseParameters)
-          // AesGcmSiv
-          .addParametersSerializer(
-              AesGcmSivParameters.class, AesGcmSivProtoSerialization::serializeParameters)
-          .addParametersParser(
-              "type.googleapis.com/google.crypto.tink.AesGcmSivKey",
-              AesGcmSivProtoSerialization::parseParameters)
-          // AesGcmHkdfStreaming
-          .addParametersSerializer(
-              AesGcmHkdfStreamingParameters.class,
-              AesGcmHkdfStreamingProtoSerialization::serializeParameters)
-          .addParametersParser(
-              "type.googleapis.com/google.crypto.tink.AesGcmHkdfStreamingKey",
-              AesGcmHkdfStreamingProtoSerialization::parseParameters)
-          // Ed25519
-          .addParametersSerializer(
-              Ed25519Parameters.class, Ed25519ProtoSerialization::serializeParameters)
-          .addParametersParser(
-              "type.googleapis.com/google.crypto.tink.Ed25519PrivateKey",
-              Ed25519ProtoSerialization::parseParameters)
-          .build();
+  private static ProtoBasedConfigurationBuilder configForKeyBuilder() {
+    return new ProtoBasedConfigurationBuilder()
+        // HkdfPrf
+        .addKeySerializer(HkdfPrfKey.class, HkdfPrfProtoSerialization::serializeKey)
+        .addParametersSerializer(
+            HkdfPrfParameters.class, HkdfPrfProtoSerialization::serializeParameters)
+        .addKeyParser(
+            "type.googleapis.com/google.crypto.tink.HkdfPrfKey",
+            HkdfPrfProtoSerialization::parseKey)
+        .addParametersParser(
+            "type.googleapis.com/google.crypto.tink.HkdfPrfKey",
+            HkdfPrfProtoSerialization::parseParameters)
+        // Hmac
+        .addParametersSerializer(HmacParameters.class, HmacProtoSerialization::serializeParameters)
+        .addParametersParser(
+            "type.googleapis.com/google.crypto.tink.HmacKey",
+            HmacProtoSerialization::parseParameters)
+        // HmacPrf
+        .addParametersSerializer(
+            HmacPrfParameters.class, HmacPrfProtoSerialization::serializeParameters)
+        .addParametersParser(
+            "type.googleapis.com/google.crypto.tink.HmacPrfKey",
+            HmacPrfProtoSerialization::parseParameters)
+        // AesGcm
+        .addParametersSerializer(
+            AesGcmParameters.class, AesGcmProtoSerialization::serializeParameters)
+        .addParametersParser(
+            "type.googleapis.com/google.crypto.tink.AesGcmKey",
+            AesGcmProtoSerialization::parseParameters)
+        // AesCtrHmacAead
+        .addParametersSerializer(
+            AesCtrHmacAeadParameters.class, AesCtrHmacAeadProtoSerialization::serializeParameters)
+        .addParametersParser(
+            "type.googleapis.com/google.crypto.tink.AesCtrHmacAeadKey",
+            AesCtrHmacAeadProtoSerialization::parseParameters)
+        // XChaCha20Poly1305
+        .addParametersSerializer(
+            XChaCha20Poly1305Parameters.class,
+            XChaCha20Poly1305ProtoSerialization::serializeParameters)
+        .addParametersParser(
+            "type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key",
+            XChaCha20Poly1305ProtoSerialization::parseParameters)
+        // AesSiv
+        .addParametersSerializer(
+            AesSivParameters.class, AesSivProtoSerialization::serializeParameters)
+        .addParametersParser(
+            "type.googleapis.com/google.crypto.tink.AesSivKey",
+            AesSivProtoSerialization::parseParameters)
+        // AesGcmSiv
+        .addParametersSerializer(
+            AesGcmSivParameters.class, AesGcmSivProtoSerialization::serializeParameters)
+        .addParametersParser(
+            "type.googleapis.com/google.crypto.tink.AesGcmSivKey",
+            AesGcmSivProtoSerialization::parseParameters)
+        // AesGcmHkdfStreaming
+        .addParametersSerializer(
+            AesGcmHkdfStreamingParameters.class,
+            AesGcmHkdfStreamingProtoSerialization::serializeParameters)
+        .addParametersParser(
+            "type.googleapis.com/google.crypto.tink.AesGcmHkdfStreamingKey",
+            AesGcmHkdfStreamingProtoSerialization::parseParameters)
+        // Ed25519
+        .addParametersSerializer(
+            Ed25519Parameters.class, Ed25519ProtoSerialization::serializeParameters)
+        .addParametersParser(
+            "type.googleapis.com/google.crypto.tink.Ed25519PrivateKey",
+            Ed25519ProtoSerialization::parseParameters);
+  }
 
-  private static final Configuration CONFIGURATION =
-      new ProtoBasedConfigurationBuilder()
-          .addPrimitiveWrapper(
-              KeysetDeriver.class, KeyDeriver.class, KeysetDeriverWrapper.WRAPPER::wrap)
-          // PrfBasedKeyDerivation
-          .addKeyCreator(
-              PrfBasedKeyDerivationParameters.class,
-              KeyDerivationConfig2026::createPrfBasedKeyDerivationKey)
-          .addPrimitiveConstructor(
-              KeyDerivationConfig2026::createPrfBasedKeyDeriver,
-              PrfBasedKeyDerivationKey.class,
-              KeyDeriver.class)
-          .addKeySerializer(
-              PrfBasedKeyDerivationKey.class,
-              (key, access) ->
-                  PrfBasedKeyDerivationKeyProtoSerialization.serializeKey(
-                      key, access, CONFIG_FOR_KEY))
-          .addParametersSerializer(
-              PrfBasedKeyDerivationParameters.class,
-              parameters ->
-                  PrfBasedKeyDerivationKeyProtoSerialization.serializeParameters(
-                      parameters, CONFIG_FOR_KEY))
-          .addKeyParser(
-              "type.googleapis.com/google.crypto.tink.PrfBasedDeriverKey",
-              (serialization, access) ->
-                  PrfBasedKeyDerivationKeyProtoSerialization.parseKey(
-                      serialization, access, CONFIG_FOR_KEY))
-          .addParametersParser(
-              "type.googleapis.com/google.crypto.tink.PrfBasedDeriverKey",
-              serialization ->
-                  PrfBasedKeyDerivationKeyProtoSerialization.parseParameters(
-                      serialization, CONFIG_FOR_KEY))
-          .build();
+  private static Configuration createConfiguration(Configuration configForKey) {
+    return new ProtoBasedConfigurationBuilder()
+        .addPrimitiveWrapper(
+            KeysetDeriver.class, KeyDeriver.class, KeysetDeriverWrapper.WRAPPER::wrap)
+        // PrfBasedKeyDerivation
+        .addKeyCreator(
+            PrfBasedKeyDerivationParameters.class,
+            KeyDerivationConfig2026::createPrfBasedKeyDerivationKey)
+        .addPrimitiveConstructor(
+            KeyDerivationConfig2026::createPrfBasedKeyDeriver,
+            PrfBasedKeyDerivationKey.class,
+            KeyDeriver.class)
+        .addKeySerializer(
+            PrfBasedKeyDerivationKey.class,
+            (key, access) ->
+                PrfBasedKeyDerivationKeyProtoSerialization.serializeKey(key, access, configForKey))
+        .addParametersSerializer(
+            PrfBasedKeyDerivationParameters.class,
+            parameters ->
+                PrfBasedKeyDerivationKeyProtoSerialization.serializeParameters(
+                    parameters, configForKey))
+        .addKeyParser(
+            "type.googleapis.com/google.crypto.tink.PrfBasedDeriverKey",
+            (serialization, access) ->
+                PrfBasedKeyDerivationKeyProtoSerialization.parseKey(
+                    serialization, access, configForKey))
+        .addParametersParser(
+            "type.googleapis.com/google.crypto.tink.PrfBasedDeriverKey",
+            serialization ->
+                PrfBasedKeyDerivationKeyProtoSerialization.parseParameters(
+                    serialization, configForKey))
+        .build();
+  }
+
+  private static final Configuration CONFIG_FOR_KEY = configForKeyBuilder().build();
+
+  private static final Configuration CONFIGURATION = createConfiguration(CONFIG_FOR_KEY);
   private static final Configuration EMPTY_CONFIGURATION =
       new ProtoBasedConfigurationBuilder().build();
 
