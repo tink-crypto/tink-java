@@ -16,11 +16,15 @@
 
 package com.google.crypto.tink.signature.internal;
 
+import com.google.crypto.tink.AccessesPartialKey;
+import com.google.crypto.tink.internal.Asn1Util;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.ClassicalAlgorithm;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.MlDsaInstance;
 import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
+import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPssParameters;
+import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
 import java.security.GeneralSecurityException;
 
 /** Utility methods for Composite ML-DSA signatures. Requires Conscrypt. */
@@ -182,6 +186,52 @@ public final class CompositeMlDsaUtil {
       throw new GeneralSecurityException(
           "Unsupported RSA algorithm for composite signatures: " + classicalAlgorithm);
     }
+  }
+
+  @AccessesPartialKey
+  public static RsaSsaPssPrivateKey pkcs1RsaKeyToRsaSsaPssPrivateKey(
+      byte[] pkcs1Key, CompositeMlDsaParameters compositeParameters)
+      throws GeneralSecurityException {
+    if (!compositeParameters.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA2048_PSS)
+        && !compositeParameters.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA3072_PSS)
+        && !compositeParameters.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA4096_PSS)) {
+      throw new GeneralSecurityException(
+          "Not an RSA-PSS classical algorithm: " + compositeParameters.getClassicalAlgorithm());
+    }
+
+    RsaSsaPssParameters rsaParameters =
+        RsaSsaPssParameters.builder()
+            .setModulusSizeBits(getRsaModulusSizeBits(compositeParameters))
+            // This might not technically be true, but we'll verify in Asn1Util call below.
+            .setPublicExponent(RsaSsaPssParameters.F4)
+            .setMgf1HashType(getRsaMgf1HashType(compositeParameters))
+            .setSigHashType(getRsaPssSigHashType(compositeParameters))
+            .setSaltLengthBytes(getRsaSaltLengthBytes(compositeParameters))
+            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+            .build();
+    return Asn1Util.pkcs1RsaKeyToRsaSsaPssPrivateKey(pkcs1Key, rsaParameters);
+  }
+
+  @AccessesPartialKey
+  public static RsaSsaPkcs1PrivateKey pkcs1RsaKeyToRsaSsaPkcs1PrivateKey(
+      byte[] pkcs1Key, CompositeMlDsaParameters compositeParameters)
+      throws GeneralSecurityException {
+    if (!compositeParameters.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA2048_PKCS1)
+        && !compositeParameters.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA3072_PKCS1)
+        && !compositeParameters.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA4096_PKCS1)) {
+      throw new GeneralSecurityException(
+          "Not an RSA-PKCS1 classical algorithm: " + compositeParameters.getClassicalAlgorithm());
+    }
+
+    RsaSsaPkcs1Parameters rsaParameters =
+        RsaSsaPkcs1Parameters.builder()
+            .setModulusSizeBits(getRsaModulusSizeBits(compositeParameters))
+            // This might not technically be true, but we'll verify in Asn1Util call below.
+            .setPublicExponent(RsaSsaPkcs1Parameters.F4)
+            .setHashType(getRsaPkcs1SigHashType(compositeParameters))
+            .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
+            .build();
+    return Asn1Util.pkcs1RsaKeyToRsaSsaPkcs1PrivateKey(pkcs1Key, rsaParameters);
   }
 
   // Values from

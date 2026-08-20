@@ -20,12 +20,18 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.AccessesPartialKey;
+import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.internal.Asn1Util;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.ClassicalAlgorithm;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.MlDsaInstance;
 import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
+import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPssParameters;
+import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
+import com.google.crypto.tink.signature.internal.testing.RsaSsaPkcs1TestUtil;
+import com.google.crypto.tink.signature.internal.testing.RsaSsaPssTestUtil;
 import java.security.GeneralSecurityException;
 import java.security.Security;
 import org.conscrypt.Conscrypt;
@@ -443,5 +449,64 @@ public final class CompositeMlDsaUtilTest {
             .setClassicalAlgorithm(ClassicalAlgorithm.RSA4096_PSS)
             .build();
     assertThat(CompositeMlDsaUtil.getSignatureLength(mlDsa87Rsa4096Pss)).isEqualTo(5139);
+  }
+
+  @Test
+  public void pkcs1RsaKeyToRsaSsaPssPrivateKey_works() throws Exception {
+    RsaSsaPssParameters pssParams =
+        RsaSsaPssParameters.builder()
+            .setModulusSizeBits(2048)
+            .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
+            .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
+            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+            .setSaltLengthBytes(32)
+            .build();
+    RsaSsaPssPrivateKey tinkPrivateKey =
+        RsaSsaPssTestUtil.privateKeyFor2048BitParameters(pssParams, null);
+    byte[] pkcs1Bytes = Asn1Util.rsaSsaPssPrivateKeyToPkcs1Bytes(tinkPrivateKey);
+
+    CompositeMlDsaParameters compositeParams =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA2048_PSS)
+            .build();
+
+    RsaSsaPssPrivateKey parsedKey =
+        CompositeMlDsaUtil.pkcs1RsaKeyToRsaSsaPssPrivateKey(pkcs1Bytes, compositeParams);
+
+    assertThat(parsedKey.getPublicKey().getModulus())
+        .isEqualTo(tinkPrivateKey.getPublicKey().getModulus());
+    assertThat(parsedKey.getPrivateExponent().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(
+            tinkPrivateKey.getPrivateExponent().getBigInteger(InsecureSecretKeyAccess.get()));
+  }
+
+  @Test
+  public void pkcs1RsaKeyToRsaSsaPkcs1PrivateKey_works() throws Exception {
+    RsaSsaPkcs1Parameters pkcs1Params =
+        RsaSsaPkcs1Parameters.builder()
+            .setModulusSizeBits(2048)
+            .setPublicExponent(RsaSsaPkcs1Parameters.F4)
+            .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
+            .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
+            .build();
+    RsaSsaPkcs1PrivateKey tinkPrivateKey =
+        RsaSsaPkcs1TestUtil.privateKeyFor2048BitParameters(pkcs1Params, null);
+    byte[] pkcs1Bytes = Asn1Util.rsaSsaPkcs1PrivateKeyToPkcs1Bytes(tinkPrivateKey);
+
+    CompositeMlDsaParameters compositeParams =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA2048_PKCS1)
+            .build();
+
+    RsaSsaPkcs1PrivateKey parsedKey =
+        CompositeMlDsaUtil.pkcs1RsaKeyToRsaSsaPkcs1PrivateKey(pkcs1Bytes, compositeParams);
+
+    assertThat(parsedKey.getPublicKey().getModulus())
+        .isEqualTo(tinkPrivateKey.getPublicKey().getModulus());
+    assertThat(parsedKey.getPrivateExponent().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(
+            tinkPrivateKey.getPrivateExponent().getBigInteger(InsecureSecretKeyAccess.get()));
   }
 }
