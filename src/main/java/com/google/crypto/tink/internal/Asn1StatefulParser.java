@@ -29,6 +29,7 @@ import java.util.Arrays;
  */
 public final class Asn1StatefulParser implements AutoCloseable {
   private static final byte TAG_INTEGER = 0x02;
+  private static final byte TAG_BIT_STRING = 0x03;
 
   /**
    * Exception thrown when ASN.1 DER parsing fails.
@@ -115,6 +116,31 @@ public final class Asn1StatefulParser implements AutoCloseable {
     byte[] intBytes = Arrays.copyOfRange(data, offset, offset + length);
     offset += length;
     return new BigInteger(intBytes);
+  }
+
+  /**
+   * Consumes an ASN.1 DER BIT STRING and returns the raw bytes (excluding the unused bits
+   * indicator).
+   *
+   * @throws Asn1ParserException if the tag is not BIT STRING or DER encoding is invalid.
+   * @throws IllegalStateException if this parser is closed.
+   */
+  public byte[] consumeBitString() throws Asn1ParserException {
+    checkNotClosed();
+    int length = consumeTagAndLength(TAG_BIT_STRING);
+    if (length == 0) {
+      throw new Asn1ParserException("Invalid ASN.1 DER: BIT STRING length is 0");
+    }
+    byte unusedBits = data[offset];
+    if (unusedBits != 0) {
+      throw new Asn1ParserException(
+          "Non-zero number of unused bits in ASN.1 DER BIT STRING is not supported."
+              + " Number of unused bits provided was: "
+              + unusedBits);
+    }
+    byte[] result = Arrays.copyOfRange(data, offset + 1, offset + length);
+    offset += length;
+    return result;
   }
 
   private int consumeTagAndLength(byte expectedTag) throws Asn1ParserException {

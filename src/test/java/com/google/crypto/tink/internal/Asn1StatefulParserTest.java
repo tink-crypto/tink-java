@@ -107,6 +107,49 @@ public final class Asn1StatefulParserTest {
   }
 
   @Test
+  public void parseBitString_works() throws Exception {
+    // BIT STRING with 0 unused bits
+    byte[] data = Hex.decode("03050001020304");
+
+    try (Asn1StatefulParser parser = new Asn1StatefulParser(data)) {
+      assertThat(parser.consumeBitString()).isEqualTo(Hex.decode("01020304"));
+    }
+  }
+
+  @Test
+  @SuppressWarnings("MustBeClosed") // Cannot use try-with-resources because close() will throw.
+  public void parseBitString_zeroLength_throws() throws Exception {
+    byte[] data = Hex.decode("0300");
+
+    Asn1StatefulParser parser = new Asn1StatefulParser(data);
+
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::consumeBitString);
+    parser.close(); // works here due to short payload
+  }
+
+  @Test
+  @SuppressWarnings("MustBeClosed") // Cannot use try-with-resources because close() will throw.
+  public void parseBitString_nonZeroUnusedBits_throws() throws Exception {
+    byte[] data = Hex.decode("03020100");
+
+    Asn1StatefulParser parser = new Asn1StatefulParser(data);
+
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::consumeBitString);
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::close);
+  }
+
+  @Test
+  @SuppressWarnings("MustBeClosed") // Cannot use try-with-resources because close() will throw.
+  public void parseBitString_lengthTooLong_throws() throws Exception {
+    byte[] data = Hex.decode("03050100");
+
+    Asn1StatefulParser parser = new Asn1StatefulParser(data);
+
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::consumeBitString);
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::close);
+  }
+
+  @Test
   @SuppressWarnings("MustBeClosed")
   public void tagMismatch_throws() {
     byte[] data = Hex.decode("300b0609608648016503040311");
