@@ -226,6 +226,136 @@ public final class KeyDerivationConfig2026 {
   //  * AesGcmHkdfStreaming
   //  * Ed25519
   @AccessesPartialKey
+  private static Key createHmacKey(
+      HmacParameters hmacParameters,
+      InputStream stream,
+      @Nullable Integer idRequirement,
+      SecretKeyAccess access)
+      throws GeneralSecurityException {
+    return HmacKey.builder()
+        .setParameters(hmacParameters)
+        .setIdRequirement(idRequirement)
+        .setKeyBytes(Util.readIntoSecretBytes(stream, hmacParameters.getKeySizeBytes(), access))
+        .build();
+  }
+
+  @AccessesPartialKey
+  private static Key createHmacPrfKey(
+      HmacPrfParameters hmacPrfParameters,
+      InputStream stream,
+      @SuppressWarnings("unused") @Nullable Integer idRequirement,
+      SecretKeyAccess access)
+      throws GeneralSecurityException {
+    return HmacPrfKey.builder()
+        .setParameters(hmacPrfParameters)
+        .setKeyBytes(Util.readIntoSecretBytes(stream, hmacPrfParameters.getKeySizeBytes(), access))
+        .build();
+  }
+
+  @AccessesPartialKey
+  private static Key createAesGcmKey(
+      AesGcmParameters aesGcmParameters,
+      InputStream stream,
+      @Nullable Integer idRequirement,
+      SecretKeyAccess access)
+      throws GeneralSecurityException {
+    return AesGcmKey.builder()
+        .setParameters(aesGcmParameters)
+        .setIdRequirement(idRequirement)
+        .setKeyBytes(Util.readIntoSecretBytes(stream, aesGcmParameters.getKeySizeBytes(), access))
+        .build();
+  }
+
+  @AccessesPartialKey
+  private static Key createAesCtrHmacAeadKey(
+      AesCtrHmacAeadParameters aesCtrHmacParameters,
+      InputStream stream,
+      @Nullable Integer idRequirement,
+      SecretKeyAccess access)
+      throws GeneralSecurityException {
+    return AesCtrHmacAeadKey.builder()
+        .setParameters(aesCtrHmacParameters)
+        .setIdRequirement(idRequirement)
+        .setAesKeyBytes(
+            Util.readIntoSecretBytes(stream, aesCtrHmacParameters.getAesKeySizeBytes(), access))
+        .setHmacKeyBytes(
+            Util.readIntoSecretBytes(stream, aesCtrHmacParameters.getHmacKeySizeBytes(), access))
+        .build();
+  }
+
+  @AccessesPartialKey
+  private static Key createXChaCha20Poly1305Key(
+      XChaCha20Poly1305Parameters xChaCha20Poly1305Parameters,
+      InputStream stream,
+      @Nullable Integer idRequirement,
+      SecretKeyAccess access)
+      throws GeneralSecurityException {
+    return XChaCha20Poly1305Key.create(
+        xChaCha20Poly1305Parameters.getVariant(),
+        Util.readIntoSecretBytes(stream, 32, access),
+        idRequirement);
+  }
+
+  @AccessesPartialKey
+  private static Key createAesSivKey(
+      AesSivParameters aesSivParameters,
+      InputStream stream,
+      @Nullable Integer idRequirement,
+      SecretKeyAccess access)
+      throws GeneralSecurityException {
+    return AesSivKey.builder()
+        .setParameters(aesSivParameters)
+        .setIdRequirement(idRequirement)
+        .setKeyBytes(Util.readIntoSecretBytes(stream, aesSivParameters.getKeySizeBytes(), access))
+        .build();
+  }
+
+  @AccessesPartialKey
+  private static Key createAesGcmSivKey(
+      AesGcmSivParameters aesGcmSivParameters,
+      InputStream stream,
+      @Nullable Integer idRequirement,
+      SecretKeyAccess access)
+      throws GeneralSecurityException {
+    return AesGcmSivKey.builder()
+        .setParameters(aesGcmSivParameters)
+        .setIdRequirement(idRequirement)
+        .setKeyBytes(
+            Util.readIntoSecretBytes(stream, aesGcmSivParameters.getKeySizeBytes(), access))
+        .build();
+  }
+
+  @AccessesPartialKey
+  private static Key createAesGcmHkdfStreamingKey(
+      AesGcmHkdfStreamingParameters streamingParameters,
+      InputStream stream,
+      @SuppressWarnings("unused") @Nullable Integer idRequirement,
+      SecretKeyAccess access)
+      throws GeneralSecurityException {
+    return AesGcmHkdfStreamingKey.create(
+        streamingParameters,
+        Util.readIntoSecretBytes(stream, streamingParameters.getKeySizeBytes(), access));
+  }
+
+  @AccessesPartialKey
+  private static Key createEd25519Key(
+      Ed25519Parameters ed25519Parameters,
+      InputStream stream,
+      @Nullable Integer idRequirement,
+      SecretKeyAccess access)
+      throws GeneralSecurityException {
+    SecretBytes pseudorandomness =
+        Util.readIntoSecretBytes(stream, Ed25519Sign.SECRET_KEY_LEN, access);
+    Ed25519Sign.KeyPair keyPair =
+        Ed25519Sign.KeyPair.newKeyPairFromSeed(pseudorandomness.toByteArray(access));
+    Ed25519PublicKey publicKey =
+        Ed25519PublicKey.create(
+            ed25519Parameters.getVariant(), Bytes.copyFrom(keyPair.getPublicKey()), idRequirement);
+    return Ed25519PrivateKey.create(
+        publicKey, SecretBytes.copyFrom(keyPair.getPrivateKey(), access));
+  }
+
+  @AccessesPartialKey
   private static Key createKeyFromRandomness(
       Parameters parameters,
       InputStream stream,
@@ -233,85 +363,34 @@ public final class KeyDerivationConfig2026 {
       SecretKeyAccess access)
       throws GeneralSecurityException {
     if (parameters instanceof HmacParameters) {
-      HmacParameters hmacParameters = (HmacParameters) parameters;
-      return HmacKey.builder()
-          .setParameters(hmacParameters)
-          .setIdRequirement(idRequirement)
-          .setKeyBytes(Util.readIntoSecretBytes(stream, hmacParameters.getKeySizeBytes(), access))
-          .build();
+      return createHmacKey((HmacParameters) parameters, stream, idRequirement, access);
     }
     if (parameters instanceof HmacPrfParameters) {
-      HmacPrfParameters hmacPrfParameters = (HmacPrfParameters) parameters;
-      return HmacPrfKey.builder()
-          .setParameters(hmacPrfParameters)
-          .setKeyBytes(
-              Util.readIntoSecretBytes(stream, hmacPrfParameters.getKeySizeBytes(), access))
-          .build();
+      return createHmacPrfKey((HmacPrfParameters) parameters, stream, idRequirement, access);
     }
     if (parameters instanceof AesGcmParameters) {
-      AesGcmParameters aesGcmParameters = (AesGcmParameters) parameters;
-      return AesGcmKey.builder()
-          .setParameters(aesGcmParameters)
-          .setIdRequirement(idRequirement)
-          .setKeyBytes(Util.readIntoSecretBytes(stream, aesGcmParameters.getKeySizeBytes(), access))
-          .build();
+      return createAesGcmKey((AesGcmParameters) parameters, stream, idRequirement, access);
     }
     if (parameters instanceof AesCtrHmacAeadParameters) {
-      AesCtrHmacAeadParameters aesCtrHmacParameters = (AesCtrHmacAeadParameters) parameters;
-      return AesCtrHmacAeadKey.builder()
-          .setParameters(aesCtrHmacParameters)
-          .setIdRequirement(idRequirement)
-          .setAesKeyBytes(
-              Util.readIntoSecretBytes(stream, aesCtrHmacParameters.getAesKeySizeBytes(), access))
-          .setHmacKeyBytes(
-              Util.readIntoSecretBytes(stream, aesCtrHmacParameters.getHmacKeySizeBytes(), access))
-          .build();
+      return createAesCtrHmacAeadKey(
+          (AesCtrHmacAeadParameters) parameters, stream, idRequirement, access);
     }
     if (parameters instanceof XChaCha20Poly1305Parameters) {
-      XChaCha20Poly1305Parameters xChaCha20Poly1305Parameters =
-          (XChaCha20Poly1305Parameters) parameters;
-      return XChaCha20Poly1305Key.create(
-          xChaCha20Poly1305Parameters.getVariant(),
-          Util.readIntoSecretBytes(stream, 32, access),
-          idRequirement);
+      return createXChaCha20Poly1305Key(
+          (XChaCha20Poly1305Parameters) parameters, stream, idRequirement, access);
     }
     if (parameters instanceof AesSivParameters) {
-      AesSivParameters aesSivParameters = (AesSivParameters) parameters;
-      return AesSivKey.builder()
-          .setParameters(aesSivParameters)
-          .setIdRequirement(idRequirement)
-          .setKeyBytes(Util.readIntoSecretBytes(stream, aesSivParameters.getKeySizeBytes(), access))
-          .build();
+      return createAesSivKey((AesSivParameters) parameters, stream, idRequirement, access);
     }
     if (parameters instanceof AesGcmSivParameters) {
-      AesGcmSivParameters aesGcmSivParameters = (AesGcmSivParameters) parameters;
-      return AesGcmSivKey.builder()
-          .setParameters(aesGcmSivParameters)
-          .setIdRequirement(idRequirement)
-          .setKeyBytes(
-              Util.readIntoSecretBytes(stream, aesGcmSivParameters.getKeySizeBytes(), access))
-          .build();
+      return createAesGcmSivKey((AesGcmSivParameters) parameters, stream, idRequirement, access);
     }
     if (parameters instanceof AesGcmHkdfStreamingParameters) {
-      AesGcmHkdfStreamingParameters streamingParameters =
-          (AesGcmHkdfStreamingParameters) parameters;
-      return AesGcmHkdfStreamingKey.create(
-          streamingParameters,
-          Util.readIntoSecretBytes(stream, streamingParameters.getKeySizeBytes(), access));
+      return createAesGcmHkdfStreamingKey(
+          (AesGcmHkdfStreamingParameters) parameters, stream, idRequirement, access);
     }
     if (parameters instanceof Ed25519Parameters) {
-      Ed25519Parameters ed25519Parameters = (Ed25519Parameters) parameters;
-      SecretBytes pseudorandomness =
-          Util.readIntoSecretBytes(stream, Ed25519Sign.SECRET_KEY_LEN, access);
-      Ed25519Sign.KeyPair keyPair =
-          Ed25519Sign.KeyPair.newKeyPairFromSeed(pseudorandomness.toByteArray(access));
-      Ed25519PublicKey publicKey =
-          Ed25519PublicKey.create(
-              ed25519Parameters.getVariant(),
-              Bytes.copyFrom(keyPair.getPublicKey()),
-              idRequirement);
-      return Ed25519PrivateKey.create(
-          publicKey, SecretBytes.copyFrom(keyPair.getPrivateKey(), access));
+      return createEd25519Key((Ed25519Parameters) parameters, stream, idRequirement, access);
     }
     throw new GeneralSecurityException(
         "Cannot use key derivation to derive key for parameters "
@@ -322,17 +401,15 @@ public final class KeyDerivationConfig2026 {
   @AccessesPartialKey
   private static KeyDeriver createPrfBasedKeyDeriver(PrfBasedKeyDerivationKey key)
       throws GeneralSecurityException {
-    KeyDeriver deriver =
-        PrfBasedKeyDeriver.create(
-            k -> {
-              if (k instanceof HkdfPrfKey) {
-                return HkdfStreamingPrf.create((HkdfPrfKey) k);
-              }
-              throw new GeneralSecurityException("Unsupported PRF key type: " + k.getClass());
-            },
-            KeyDerivationConfig2026::createKeyFromRandomness,
-            key);
-    return deriver;
+    return PrfBasedKeyDeriver.create(
+        k -> {
+          if (k instanceof HkdfPrfKey) {
+            return HkdfStreamingPrf.create((HkdfPrfKey) k);
+          }
+          throw new GeneralSecurityException("Unsupported PRF key type: " + k.getClass());
+        },
+        KeyDerivationConfig2026::createKeyFromRandomness,
+        key);
   }
 
   @AccessesPartialKey
