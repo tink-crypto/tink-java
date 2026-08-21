@@ -33,7 +33,7 @@ import java.security.PublicKey;
 import java.security.Signature;
 import java.security.spec.EncodedKeySpec;
 
-/** ML-DSA verifying with Conscypt. */
+/** ML-DSA verifying with Conscrypt. */
 @Immutable
 public final class MlDsaVerifyConscrypt implements PublicKeyVerify {
   public static final TinkFipsUtil.AlgorithmFipsCompatibility FIPS =
@@ -48,7 +48,7 @@ public final class MlDsaVerifyConscrypt implements PublicKeyVerify {
   @SuppressWarnings("Immutable") // We do not change the output prefix
   private final byte[] outputPrefix;
 
-  @SuppressWarnings("Immutable") // We do not change the private key
+  @SuppressWarnings("Immutable") // We do not change the public key
   private final PublicKey publicKey;
 
   private final String algorithm;
@@ -89,19 +89,22 @@ public final class MlDsaVerifyConscrypt implements PublicKeyVerify {
       algorithm = ML_DSA_44_ALGORITHM;
       publicKey =
           KeyFactory.getInstance(ML_DSA_44_ALGORITHM, provider)
-              .generatePublic(new RawKeySpec(mlDsaPublicKey.getSerializedPublicKey().toByteArray()));
+              .generatePublic(
+                  new RawKeySpec(mlDsaPublicKey.getSerializedPublicKey().toByteArray()));
       signatureLength = ML_DSA_44_SIG_LENGTH;
     } else if (mlDsaInstance == MlDsaInstance.ML_DSA_65) {
       algorithm = ML_DSA_65_ALGORITHM;
       publicKey =
           KeyFactory.getInstance(ML_DSA_65_ALGORITHM, provider)
-              .generatePublic(new RawKeySpec(mlDsaPublicKey.getSerializedPublicKey().toByteArray()));
+              .generatePublic(
+                  new RawKeySpec(mlDsaPublicKey.getSerializedPublicKey().toByteArray()));
       signatureLength = ML_DSA_65_SIG_LENGTH;
     } else if (mlDsaInstance == MlDsaInstance.ML_DSA_87) {
       algorithm = ML_DSA_87_ALGORITHM;
       publicKey =
           KeyFactory.getInstance(ML_DSA_87_ALGORITHM, provider)
-              .generatePublic(new RawKeySpec(mlDsaPublicKey.getSerializedPublicKey().toByteArray()));
+              .generatePublic(
+                  new RawKeySpec(mlDsaPublicKey.getSerializedPublicKey().toByteArray()));
       signatureLength = ML_DSA_87_SIG_LENGTH;
     } else {
       throw new GeneralSecurityException("Unsupported ML-DSA instance: " + mlDsaInstance);
@@ -145,7 +148,9 @@ public final class MlDsaVerifyConscrypt implements PublicKeyVerify {
     }
   }
 
-  /** Returns true if we're not in FIPS, and Conscrypt is available and supports ML-DSA-{44, 65, 87}. */
+  /**
+   * Returns true if we're not in FIPS, and Conscrypt is available and supports ML-DSA-{44, 65, 87}.
+   */
   public static boolean isSupported() {
     if (!FIPS.isCompatible()) {
       return false;
