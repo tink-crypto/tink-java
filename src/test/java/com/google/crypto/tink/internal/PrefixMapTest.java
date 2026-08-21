@@ -21,6 +21,7 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.util.Bytes;
 import java.security.GeneralSecurityException;
+import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -150,8 +151,20 @@ public final class PrefixMapTest {
 
   @Test
   public void oneBytePrefixThrows() throws Exception {
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> new PrefixMap.Builder<Integer>().put(Bytes.copyFrom(new byte[] {1}), 12).build());
+    PrefixMap.Builder<Integer> builder = new PrefixMap.Builder<>();
+    Bytes prefix = Bytes.copyFrom(new byte[] {1});
+    assertThrows(GeneralSecurityException.class, () -> builder.put(prefix, 12));
+  }
+
+  @Test
+  public void returnedListIsUnmodifiable() throws Exception {
+    PrefixMap<Integer> map =
+        new PrefixMap.Builder<Integer>()
+            .put(Bytes.copyFrom(new byte[] {1, 2, 3, 4, 5}), 123)
+            .put(Bytes.copyFrom(new byte[0]), 456)
+            .build();
+    List<Integer> matching = map.getAllWithMatchingPrefix(new byte[] {1, 2, 3, 4, 5, 6});
+    assertThrows(UnsupportedOperationException.class, () -> matching.add(789));
   }
 }
+

@@ -31,18 +31,19 @@ import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.util.Bytes;
 import java.security.GeneralSecurityException;
+import java.util.List;
 
 /** An implementation of an {@link Aead} based on a {@link KeysetHandleInterface}. */
 public final class WrappedAead {
 
   private static final class AeadWithId {
-    public AeadWithId(Aead aead, int id) {
+    AeadWithId(Aead aead, int id) {
       this.aead = aead;
       this.id = id;
     }
 
-    public final Aead aead;
-    public final int id;
+    final Aead aead;
+    final int id;
   }
 
   private static Bytes getOutputPrefix(Key key) throws GeneralSecurityException {
@@ -92,7 +93,9 @@ public final class WrappedAead {
     @Override
     public byte[] decrypt(final byte[] ciphertext, final byte[] associatedData)
         throws GeneralSecurityException {
-      for (AeadWithId aeadWithId : allAeads.getAllWithMatchingPrefix(ciphertext)) {
+      List<AeadWithId> matching = allAeads.getAllWithMatchingPrefix(ciphertext);
+      for (int i = 0; i < matching.size(); i++) {
+        AeadWithId aeadWithId = matching.get(i);
         try {
           byte[] result = aeadWithId.aead.decrypt(ciphertext, associatedData);
           decLogger.log(aeadWithId.id, ciphertext.length);
