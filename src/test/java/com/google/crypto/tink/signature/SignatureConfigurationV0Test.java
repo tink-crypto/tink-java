@@ -186,14 +186,13 @@ public class SignatureConfigurationV0Test {
 
   @DataPoints("signatureTests")
   public static final SignatureTestVector[] signatureTestVectors =
-      Stream.concat(
-              Stream.concat(
-                  Arrays.stream(EcdsaTestUtil.createEcdsaTestVectors()),
-                  Arrays.stream(RsaSsaPssTestUtil.createRsaPssTestVectors())),
-              Stream.concat(
-                  Arrays.stream(RsaSsaPkcs1TestUtil.createRsaSsaPkcs1TestVectors()),
-                  Arrays.stream(Ed25519TestUtil.createEd25519TestVectors())))
-          .toArray(SignatureTestVector[]::new);
+      Stream.of(
+          Arrays.stream(EcdsaTestUtil.createEcdsaTestVectors()),
+          Arrays.stream(RsaSsaPssTestUtil.createRsaPssTestVectors()),
+          Arrays.stream(RsaSsaPkcs1TestUtil.createRsaSsaPkcs1TestVectors()),
+          Arrays.stream(Ed25519TestUtil.createEd25519TestVectors()))
+      .flatMap(s -> s)
+      .toArray(SignatureTestVector[]::new);
 
   @Test
   public void config_handlesEd25519LegacyKeyForPublicKeySign() throws Exception {

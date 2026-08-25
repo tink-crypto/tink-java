@@ -318,14 +318,13 @@ public final class SignatureJwkSetConverterTest {
 
   @DataPoints("signatureTests")
   public static final SignatureTestVector[] signatureTestVectors =
-      Stream.concat(
-              Stream.concat(
-                  Stream.concat(
-                      stream(EcdsaTestUtil.createEcdsaTestVectors()),
-                      stream(RsaSsaPssTestUtil.createRsaPssTestVectors())),
-                  stream(RsaSsaPkcs1TestUtil.createRsaSsaPkcs1TestVectors())),
-              stream(Ed25519TestUtil.createEd25519TestVectors()))
-          .toArray(SignatureTestVector[]::new);
+      Stream.of(
+          stream(EcdsaTestUtil.createEcdsaTestVectors()),
+          stream(RsaSsaPssTestUtil.createRsaPssTestVectors()),
+          stream(RsaSsaPkcs1TestUtil.createRsaSsaPkcs1TestVectors()),
+          stream(Ed25519TestUtil.createEd25519TestVectors()))
+      .flatMap(s -> s)
+      .toArray(SignatureTestVector[]::new);
 
   private static final String ES256_JWK_SET =
       "{\"keys\":[{"
