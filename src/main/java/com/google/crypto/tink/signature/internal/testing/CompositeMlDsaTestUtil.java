@@ -26,12 +26,16 @@ import com.google.crypto.tink.signature.Ed25519PublicKey;
 import com.google.crypto.tink.signature.MlDsaParameters;
 import com.google.crypto.tink.signature.MlDsaPrivateKey;
 import com.google.crypto.tink.signature.MlDsaPublicKey;
+import com.google.crypto.tink.signature.SignaturePrivateKey;
+import com.google.crypto.tink.signature.internal.CompositeMlDsaUtil;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings({"JdkImmutableCollections"})
 public class CompositeMlDsaTestUtil {
@@ -275,8 +279,23 @@ public class CompositeMlDsaTestUtil {
               "8ba5974586f76d98188f26530244f318e1b7471aa52b1ec7e66be3138b004a303050020101044200f57f902c9a94916949615399247b8a7913170935e4e71d7c63431d1396f4659c6d2e393cea7ac17f5759c3dbe36dee8a1164db8f38fdd953277b1d0e90971a0160a00706052b81040023",
               "01123456781ab3b068a06a054be404a946d2a96ef9f1d7bfc2194a8b251cc44a81479423127db47943b798670f89e37e24b61ecad73918553f288558a00286c560066c93fe386b03eff82ea87325336ce8e27146753bd9fc42f79a26c6397e1467766db9d2d7afb255215d03179f62c2f33c415265bfdc617dad69117647e4117cded8285eec5529dedc856c3e2a309d3c61430cc1a8ad85b1f422a11cd820d1e2e9e33d8f32ea429c86b548971c54ad81519608ef435e8a4c78968e18e37bde4f42a55596a3dc658af0d6e6578b22e8ce2ab7ec51646f14ced1e66b0de815f47ab3a5f34ab9c705b5c98fd49dc8e6c6f3e7ef0812eb6647bdd34ccb01a54f515e0e0b1da16b53b0e26cf5e19a9b753c3ec356c6b2be899d2d03d5fa09827427fb00230d89cd11ec89cc959951dbff362e82a4b6a32aed3de7c203776c2c63f8a4222576e348d330fc6be48e19a618873274ab0649cf8ab1ab65bd70c914208766a10131c4e33966086029b2ae24bbf4c19db127980cd528d0a02a35cba7aeceb3883db61c2453c973bf536545abcc89543b8d294d9912a9deb69f55d73793b14fe09cf54d647dfb35cff60b1225b49e8937713f00c99addbd17bf8223482965a7ac221d8b4ac7ad9cd5028c72901a51a9dd260dd1f618d268a004d3488d2591f216ad3287c065c4687f7ca202a979080575fb8b6934ce70f2b001d7eed274c1f1da65c00f04c1a49cda8204c10b44f8af939ddf87722e53e4b150fe9a37adabff576c1a724318869b745d26ae433d668f109cea59325ef6bf372aa170614fba79e181d728daee0b789b062c693723a4c5932b479a7ee7556d3bf6d2a2267de4aa1de9fe68750e4b788e05a47a0ad4d510af0483e0418f41346d1f5fa0a7b14966967051bfd7994784076659b595eff646460f03dc8887f7b7f166fc1fed6826fbc283567fb97176c425cd9f81d9d4c1e3d7471dcc170d824904253bef57c0306058c66069413d5de734cdc00ff8ec14df0ba555a48cda0fe91a19e4531287227f9f99974d903211f3e396230abe9e6993fb151f39d05b3e46fa32f01dd46bfc058555028b0694e8a4fe4114e01ac2ee558927211eb967bdf40c7ca96af037dc173c50f6b785a079567bce17493a9def0cb7edf74c259aaefc926f568ee0b935f8599db7ad191df0d24277cbc49ff5608a0647c847fa301315ba8ba5ad3fdd6a5f1217bc99a3ec0575aeff6b624e3dfcb064c0257572d43f2af063c51c823c6a197693a471b28a4493bad7623bf7244127ac2163eac720a27e0a05e6282709d1e7862ad939fcdf936f7e3ab99d1f8655aaac6e82994177f0f306818201c85e58002daa27cba3e8879c9b2e4de8070754d6103f26397092c1de6f8fa79f87894f79ff010f6cf858b2355423205b4f045829e3a73c4d3a3765840b9ecb30eda2ea32d78eb776cdcbbe78aaa686f81491cdcdc529c5b5ee34c58b85045126d695b14cce48d681cd880c00dc648d247ab598143aafe3729d0673fe236f6451c017aebd12e9d6af27050446f649bfb74827f4078bffeba0f50860e24290cd2f7699b3b2cf8049a09a27670b94a6dd3e76989d61ba0a5578e7ebabfec37b2035a1e13d8976803a75845d7248338da0f05bdf66521a5ac019b476bbdd4917db03d316664686869be14eefc253481ce081acaee064d32a626c756184b03fd553d2f4a3ab8680cc711acfe4676c217831931e6ca8cdc5e657722dea55d241ed7c4561a2bcdbd8b1f96b7c02cb428ccdea1d4bc1753bb1ca309e14eed168d3ec503bf0924b389502705750b28c67f4d33c9fc241b1f19a2e5e28779e137db720d08f46d8a8cff6883afc2766902eab30295d6e5e72626f5374ba988548d88e235f9e60753b84a644748522ecd1f6687f7d53005f1b00c21e2a260c94c31a2276929c09f7ccc98f8b21753d2ec919cc6595f1f5ecd650dd9b08f5417a104146dddeab998bfe98c03c0704d7d848fafb16cd37c2f279bf6eff901eb33075970e82eaf69d248f530aedf31c65ec6ba8a3ce3485949aa704fab1eb7a80d226d7d7ad1cb268cbcbf0b8c8c159799aa6ba7c16269b7e155d3099a22e0e79d72b8dcee192cc797c2b44e844d52da58f14bde34ecd47a26d82d4ef6235aecc91a0a54cb5f69a134b634363c512a947a5fde905033ce0fd6737d33675fef37e41ac6cec5ed3eda0aaf7ea7ddd2296bb2e6b2caf7fd881ebd82f15d158b592e1ca88d8245069a572c2ec316fd2c81a5592363098b20b311b091d6ba3369bcd42a2554970e2fd507bf6112ea665c9465860d83e7ccb8af30113ddb096862f4b7c41de90e40813ee437dbdd9e16e02bf7e5165bfb4a2bcf4b30c7f5116103a3108c6ab50481367fdecad41c5cc36a29238dcef1f8704d4739083cb31125b6f3b432953fbc5746eeabd6d87f6c7e9eabba665ccdac07bd0b0d5647d3c64606f972a8953ba29ccd46953bff31c874780c8578bb43af68eb817d7ad5aca65210595bb9cfe237c172f7d60d4279689c8bbb33fcd0962281914ba6cb504b3e44ebbc1d386573f9415a4aa37437b42056afb14faf59e113bf5ce15f763bb3cb3c811bbeee355b1efd2e5789fc2368549f4ac5cc76864879c3167b98b9b6e9e1e9ad984fce9e812500bad2a593ddd121d393a299948a1c9b4661bc187d0fc570f9a2148fb9e1e4e52ce58607afe2bd7068b46be109e7744f28fd8b84ba751d8c42ac6f7e262b39ddaebf2799b02cb70f5a344c58222aca5115d39c748e8decf9add20505875f742cf627c1ba9277b489db844af39fad2c36c1f0d9580f5c4e49c69f1d6d6d660c0a48d7c7bb03637e8ac52137751b5c5722c7e16235d17aa4d4204af0312711723441047eb0ac1bd371bfefb91696858d9970d2943875d9c1bfcef341e5a82e3209fe4da9d7532d62ceb8eab69c85bf0bc3fcb56de02bf5855e02b93dc6cc301261c8ce5a2c32a67bcd72428aef6a60637f090e9ef513ec274c73ef9b24ee26a45c714a62cb7e0dfc719b5f3e850f3c93b2a548d8323c4df42d0fa71678db8218f432b047bdf3fbab10e87d1d8fbe1a03d38d7f02462d85eed76183ccf87123d2889da30efa44b8aa923ff20d32cf3430aa36b8faab290f8aedc91ac4e93860add1fc7dff64128e6d2b6b46f8e395f7013190ca0b3fc2b73c3c231cd5e731839366767547fde835e0ae130577783ea9de94a6d59fa6f972eb2840f4c9e42bdffb582f339faa4946958f18d2289ad22457e1e65bad7a1a496ac4733e1304e374ed803b7dbc41fd68544abdd343aa678e2222f14e9c8593d5e115a8b3e63a2cb4c27baafe7fa1f492574e0671db20b1204c236ac7cad1cb19d28d0d59da53097add805efe164ef1944b9f9da87a8f201d7eee9106ec01f0c3330107c7e4aa94fa819282920c95ec1c7cc47d71db98825eebced85f38afa862b3328656c94eb4402bf2c2de3270771ca10e8e3235f27360b973d4be43bb137eb976c464308abeacf84911f429f60fbb0ec4e45cad848aef0c37fbe864276d1d6d6d40b9ae47268d7783fa1e43c830f089f5bdb6dcd2646184c258440989f379c529e7cb374196a7fe8b506243a274a4676121e09cac23c02dee82e28000630f4000638758b67361763db886632bca33736306e8e45fe7a425037684a4b892ad47b9cf2d9ffc24bdd87bc065009c9820111a738b5a3d60f39cb6017997a1bfff14c8821ab4d93fad21cd7703e7d351f06e401588622486561ebf46f528d08bc3505f06e17253961d255097e8186b6d2aa5ab91dffca71848dc392899322e85a0170572910bdc564602930a624b92cc2af6b018b0500d1e59d3564e7f6d768e57b2f37a045109d8dda77cc2ecbafb66640e10f878a2d9cd46e70eca694d863a55bfd98e17fee4c67c47d68629cec7cc479e456a63a1d0bd8161a763551455eefeba0af44d1dd72e91631865c47e1a21a40fe7258be14c5882e9bbc4f7e94fa4f75cb48e17d46dc5959b60ba39fd9540828584fb584e63d31fe3053c4424ca39067ffdbd74564e1ed99cb5a80fc82cef4b41e4903edac1ca44a425cca32eac5bb44db23221b55de4139c78985a5ae48b1190bdabc4c246050e79e7231eb870bba0b46d91effbdaa18de21750cf0de7f8ef748673e594fe065d7774a63f144b890cbf7dc1074ffc4eb376ba416609616f7e451dac2359848a6cefa408548823de096daa34645b0829020d28d14a6603c29270c3847fa4260d0c869f50e2cdde8381457c120d467c7b0947a23bb53ae75f8e7c8994e0cb8c3930d341d3b2ea33129ef38a9a66dbd7cea64fa962072000febb631e99df7ddb10e3a7b4e3d9a25aab968d7895ab68e6ee1dca2bc4be9c241d79f43c5e058e82d491e66ce66159ff3425f7bda5c9346b0bd668461789af5df34909ac97b0353298167f77424cec9f294098d5c1080afc4228954d0e835311737c1f0cb9c1537388dc67aeba6acc8000d0502cb6a344e86d63fbf0bc7b08af23b20d609117801f8cd267bca66b2a34a1f272e4608b107a14f40d0f451915d41b731dff52a6eee316144b4d64692c2b68129aa80d60d76262fb0df23c2e2a10ae2f5322d9decbfe271d5c4964e84c30b68d4c142e622d571709e83284c8d3ca44d17c86e43787d5c3d5289f239ca39cc20d7e79eb606c89bf46ec1c51059d0c1dc07a509c312ba3fa0d9a2810fbff38bc8e0778ed342c59b8f45efd8690d4dd00847295a77eaa820a8cb6eb662c0ea6cd8a05acbfa89e84fa5af212a50d6c1804a3859318214082545846d4b76913b5fb92a2073c255f0b142bc899d6f372a83ff6f9c231dd55a2f06efb7f7921c78997edfbb04094fb0fec94f92663fba4f31c110f8dd0e5393ccbdf6c7360509668733c0a911f61970dd4c4abfc7222b130fc390c6db07862f5cf433ca3a5a698b1e03867c66a3024df797d84de6c37b8301fbd0c8b0c6bce504f037167f6526490c1c16174b8173d852327624547bf1af76fb9111d072bf1338e0a56fb45775fb558d19740e3fc0f8b5bcb50fd8d7592b06fe49b0af8fde5c075c840fbc73a29612d398af1b977e5d91b78b11a81644f0dcd3b85a215eec03826e58af9fdb0c2bc3bcb874437b152d2d35a63f875c8b4559e11bd52b89625b72e56bc084ff9e90968ba2158708fd7ec4322f2df8dfccfc15deb6573d28564d25bbbb0a7f46a31d66c941c9e344630445f31e9bab101920eb3d2fc5d04551758b0e4f5c2725d68b6a89ec02bfc9786aea5777cf829b4c31d23292cef6fa2f1b0b8fd908fa842dbcb2a32f418ae27551d68d322a2c16b66e2da8dab963c97483945c9665fb996b34689b931d9f6a44670d9ce1c94222ae6f7bf5f2dcd008d8d73622464048d58ed93ffc8e57c1b36c4a92761a7d9634e3f5cb6f305e7a2d103d0d53698d73819fd5bbe2c008ca021843cc27b5049c3acfb77b653598908f056be5dbc38fcee3b21b510b0d3264e9a9cd078553ac6398924daff6a1698f92099fe3853fa5a0f86b6f15c32c1c3e45aa5754a3219cd893e51a6409a404163e5bb0ef6bf5edc9a791e9c4e745a93453e2382a7a6f934cbcf77ad660462263cded97e143368ff42c97a4e1a340af7f1c9319462a4acde84e6f46a711c967e858b0aa326483625d1ff0b29c1e0bffa79832bdcdd51c9910cc5e549230196b65598c95ccebe35fe7582f37a240129b577901bccf04f7bcbe29d346180a8c0511822fbdd7e1de9bbcb4bc49c18cb52836f95528b805de001c13cbe8ff8514e8fb62e39b5aa47a73cc21944359ee4939d33822467eac6e02ab31167c601bc7ecc04bd00ef78dfa28637990a007b98717e4eee2ffaa72a1268690765afc226460e64ffd5863394b5b53a41c9a44fa8f3f59a4b8e1187bc6303655644fe430838873ba34537ae0416a3bf045f521619235f95998344f005518308f847f47917c9d7692911942886f55b8e40ad5a91729b6e96425626f73a98b17bc868d88dd8a52011ab837672a7d9af06ebd6a9fb3bb60ef8c804609d14eafd19dbe7e6e59211de8dae427b00aa0052cb399967079b7f4a8c0488d2b531dc13b0da644115808b87980474950679c579d5191b2d2a0b1c0e1cbb4f3925f83c35d208f4f0b288118867da0a8e7934a072f23b56a795ac4ae9c387bf65c318a469aa6513ff7c1a46fb2b676a1cb61f2cd88f3da21f16f7321092fa81232291cf7e835f830b33558f3bd025def4dbdf626397995447d03cd6b867efc98baef9d5f2c6f66f3ff83ccdaba0a1e45fbe0a3aa87e6c996213a618526bd8539bb4839cde018fd05f926fada2b42d2ff0b5e177fc9f8cf07eb8b3a782a448147cc9d527bda9c964cdf3b9a52a4f0eda2f6edc9a0fd1bf05e3a57e65005671d97eb83e2a5aaafc0485ca844b0a292ba4243cfe20c232a3a6bb0d0e247a9acff0a101d5da9d3e6808d97dbed161f646576bbd12543565c8198e1f7042b3ea4d9f6fb0000000000000000000000000000000000000000000000000000030b0f161b222a313081870241710e6ddf1a34daad4dd04826a0ec9ceb9aec0c6b869ddf65d0b979d4bfb0c711a32918447572802a10ca619ff9ae16de84e037e0231428e13c8a37c804cd6300ab02420145d39d0e280ca4db32d616f26de22f2ee427876448d6177aeefee12ac19b354ad81c7d6982503d19cf1d581a46216e85d99146d4ae244c942329f5c5b02117349f"));
 
+  private static final Map<CompositeMlDsaTestVector, CompositeMlDsaPrivateKey> keyCache =
+      new ConcurrentHashMap<>();
+
   @AccessesPartialKey
   public static CompositeMlDsaPrivateKey createCompositeKeyFromTestVector(
+      CompositeMlDsaTestVector testVector) throws GeneralSecurityException {
+    CompositeMlDsaPrivateKey cached = keyCache.get(testVector);
+    if (cached != null) {
+      return cached;
+    }
+    CompositeMlDsaPrivateKey created = createCompositeKeyFromTestVectorInternal(testVector);
+    keyCache.put(testVector, created);
+    return created;
+  }
+
+  @AccessesPartialKey
+  private static CompositeMlDsaPrivateKey createCompositeKeyFromTestVectorInternal(
       CompositeMlDsaTestVector testVector) throws GeneralSecurityException {
     CompositeMlDsaParameters.MlDsaInstance mlDsaInstance;
     MlDsaParameters.MlDsaInstance innerMlDsaInstance;
@@ -297,15 +316,40 @@ public class CompositeMlDsaTestUtil {
       // Should never happen.
       throw new IllegalArgumentException("Unsupported ML-DSA algorithm: " + testVector.tcId);
     }
+    CompositeMlDsaParameters.Variant variant =
+        testVector.idRequirement == null
+            ? CompositeMlDsaParameters.Variant.NO_PREFIX
+            : CompositeMlDsaParameters.Variant.TINK;
+    CompositeMlDsaParameters.ClassicalAlgorithm classicalAlgorithm;
+    if (testVector.tcId.contains("Ed25519")) {
+      classicalAlgorithm = CompositeMlDsaParameters.ClassicalAlgorithm.ED25519;
+    } else if (testVector.tcId.contains("RSA2048-PSS")) {
+      classicalAlgorithm = CompositeMlDsaParameters.ClassicalAlgorithm.RSA2048_PSS;
+    } else if (testVector.tcId.contains("RSA2048-PKCS15")) {
+      classicalAlgorithm = CompositeMlDsaParameters.ClassicalAlgorithm.RSA2048_PKCS1;
+    } else if (testVector.tcId.contains("RSA3072-PSS")) {
+      classicalAlgorithm = CompositeMlDsaParameters.ClassicalAlgorithm.RSA3072_PSS;
+    } else if (testVector.tcId.contains("RSA3072-PKCS15")) {
+      classicalAlgorithm = CompositeMlDsaParameters.ClassicalAlgorithm.RSA3072_PKCS1;
+    } else if (testVector.tcId.contains("RSA4096-PSS")) {
+      classicalAlgorithm = CompositeMlDsaParameters.ClassicalAlgorithm.RSA4096_PSS;
+    } else if (testVector.tcId.contains("RSA4096-PKCS15")) {
+      classicalAlgorithm = CompositeMlDsaParameters.ClassicalAlgorithm.RSA4096_PKCS1;
+    } else {
+      throw new GeneralSecurityException("Unsupported classical algorithm in " + testVector.tcId);
+    }
+    CompositeMlDsaParameters parameters =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(mlDsaInstance)
+            .setClassicalAlgorithm(classicalAlgorithm)
+            .setVariant(variant)
+            .build();
+
     byte[] pkBytes = Hex.decode(testVector.pk);
     byte[] skBytes = Hex.decode(testVector.sk);
 
     byte[] mlDsaPubBytes = Arrays.copyOfRange(pkBytes, 0, mlDsaPubSize);
-    byte[] tradPublicKeyBytes = Arrays.copyOfRange(pkBytes, mlDsaPubSize, pkBytes.length);
-
     byte[] mlDsaSeedBytes = Arrays.copyOfRange(skBytes, 0, 32);
-    byte[] tradPrivateKeyBytes = Arrays.copyOfRange(skBytes, 32, skBytes.length);
-
     MlDsaPublicKey mlDsaPublicKey =
         MlDsaPublicKey.builder()
             .setParameters(
@@ -316,29 +360,32 @@ public class CompositeMlDsaTestUtil {
         MlDsaPrivateKey.createWithoutVerification(
             mlDsaPublicKey, SecretBytes.copyFrom(mlDsaSeedBytes, InsecureSecretKeyAccess.get()));
 
-    Ed25519PublicKey edPublicKey =
-        Ed25519PublicKey.create(
-            Ed25519Parameters.Variant.NO_PREFIX, Bytes.copyFrom(tradPublicKeyBytes), null);
-    Ed25519PrivateKey edPrivateKey =
-        Ed25519PrivateKey.create(
-            edPublicKey, SecretBytes.copyFrom(tradPrivateKeyBytes, InsecureSecretKeyAccess.get()));
-
-    CompositeMlDsaParameters.Variant variant =
-        testVector.idRequirement == null
-            ? CompositeMlDsaParameters.Variant.NO_PREFIX
-            : CompositeMlDsaParameters.Variant.TINK;
-    CompositeMlDsaParameters parameters =
-        CompositeMlDsaParameters.builder()
-            .setMlDsaInstance(mlDsaInstance)
-            .setClassicalAlgorithm(CompositeMlDsaParameters.ClassicalAlgorithm.ED25519)
-            .setVariant(variant)
-            .build();
+    byte[] tradPublicKeyBytes = Arrays.copyOfRange(pkBytes, mlDsaPubSize, pkBytes.length);
+    byte[] tradPrivateKeyBytes = Arrays.copyOfRange(skBytes, 32, skBytes.length);
+    SignaturePrivateKey classicalKey;
+    if (testVector.tcId.contains("Ed25519")) {
+      Ed25519PublicKey edPublicKey =
+          Ed25519PublicKey.create(
+              Ed25519Parameters.Variant.NO_PREFIX, Bytes.copyFrom(tradPublicKeyBytes), null);
+      classicalKey =
+          Ed25519PrivateKey.create(
+              edPublicKey,
+              SecretBytes.copyFrom(tradPrivateKeyBytes, InsecureSecretKeyAccess.get()));
+    } else if (testVector.tcId.contains("PSS")) {
+      classicalKey =
+          CompositeMlDsaUtil.pkcs1RsaKeyToRsaSsaPssPrivateKey(tradPrivateKeyBytes, parameters);
+    } else if (testVector.tcId.contains("PKCS15")) {
+      classicalKey =
+          CompositeMlDsaUtil.pkcs1RsaKeyToRsaSsaPkcs1PrivateKey(tradPrivateKeyBytes, parameters);
+    } else {
+      throw new GeneralSecurityException("Unsupported classical algorithm in " + testVector.tcId);
+    }
 
     CompositeMlDsaPrivateKey.Builder builder =
         CompositeMlDsaPrivateKey.builder()
             .setParameters(parameters)
             .setMlDsaPrivateKey(mlDsaPrivateKey)
-            .setClassicalPrivateKey(edPrivateKey);
+            .setClassicalPrivateKey(classicalKey);
     if (testVector.idRequirement != null) {
       builder.setIdRequirement(testVector.idRequirement);
     }

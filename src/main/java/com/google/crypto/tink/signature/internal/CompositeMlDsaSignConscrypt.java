@@ -24,12 +24,14 @@ import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.config.internal.TinkFipsUtil.AlgorithmFipsCompatibility;
+import com.google.crypto.tink.internal.Asn1Util;
 import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.ClassicalAlgorithm;
-import com.google.crypto.tink.signature.CompositeMlDsaParameters.MlDsaInstance;
 import com.google.crypto.tink.signature.CompositeMlDsaPrivateKey;
 import com.google.crypto.tink.signature.Ed25519PrivateKey;
+import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
+import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
 import com.google.crypto.tink.signature.internal.CompositeMlDsaVerifyConscrypt.RawKeySpec;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
@@ -46,12 +48,6 @@ public final class CompositeMlDsaSignConscrypt implements PublicKeySign {
       AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS;
 
   private static final String TEST_WORKLOAD = "test workload";
-
-  private static final String MLDSA44_ED25519_SHA512_ALGORITHM = "MLDSA44-Ed25519-SHA512";
-  private static final int MLDSA44_ED25519_SHA512_SIG_LENGTH = 2420 + 64;
-
-  private static final String MLDSA65_ED25519_SHA512_ALGORITHM = "MLDSA65-Ed25519-SHA512";
-  private static final int MLDSA65_ED25519_SHA512_SIG_LENGTH = 3309 + 64;
 
   @SuppressWarnings("Immutable") // We do not change the output prefix
   private final byte[] outputPrefix;
@@ -78,6 +74,7 @@ public final class CompositeMlDsaSignConscrypt implements PublicKeySign {
     this.provider = provider;
   }
 
+  @SuppressWarnings("InsecureCryptoUsage") // We do not use ECB
   @AccessesPartialKey
   public static PublicKeySign createWithProvider(
       CompositeMlDsaPrivateKey privateKey, Provider provider) throws GeneralSecurityException {
@@ -86,45 +83,52 @@ public final class CompositeMlDsaSignConscrypt implements PublicKeySign {
       throw new GeneralSecurityException("Composite ML-DSA is not supported in this environment.");
     }
     CompositeMlDsaParameters params = privateKey.getParameters();
-    if (params.getClassicalAlgorithm() != ClassicalAlgorithm.ED25519) {
+    if (params.getClassicalAlgorithm().equals(ClassicalAlgorithm.ECDSA_P256)
+        || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.ECDSA_P384)
+        || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.ECDSA_P521)) {
       throw new GeneralSecurityException(
-          "Only Ed25519 is supported for composite signatures at this time");
+          "ECDSA is not supported for composite signatures at this time");
     }
 
     byte[] mlDsaSeed =
         privateKey.getMlDsaPrivateKey().getPrivateSeed().toByteArray(InsecureSecretKeyAccess.get());
-    byte[] ed25519Seed =
-        ((Ed25519PrivateKey) privateKey.getClassicalPrivateKey())
-            .getPrivateKeyBytes()
-            .toByteArray(InsecureSecretKeyAccess.get());
-
-    byte[] rawKeyBytes = new byte[mlDsaSeed.length + ed25519Seed.length];
-    System.arraycopy(mlDsaSeed, 0, rawKeyBytes, 0, mlDsaSeed.length);
-    System.arraycopy(ed25519Seed, 0, rawKeyBytes, mlDsaSeed.length, ed25519Seed.length);
-
-    String algorithm;
-    int signatureLength;
-    PrivateKey conscryptPrivateKey;
-    if (params.getMlDsaInstance() == MlDsaInstance.ML_DSA_44) {
-      algorithm = MLDSA44_ED25519_SHA512_ALGORITHM;
-      signatureLength = MLDSA44_ED25519_SHA512_SIG_LENGTH;
-      conscryptPrivateKey =
-          KeyFactory.getInstance(MLDSA44_ED25519_SHA512_ALGORITHM, nonNullProvider)
-              .generatePrivate(new RawKeySpec(rawKeyBytes));
-    } else if (params.getMlDsaInstance() == MlDsaInstance.ML_DSA_65) {
-      algorithm = MLDSA65_ED25519_SHA512_ALGORITHM;
-      signatureLength = MLDSA65_ED25519_SHA512_SIG_LENGTH;
-      conscryptPrivateKey =
-          KeyFactory.getInstance(MLDSA65_ED25519_SHA512_ALGORITHM, nonNullProvider)
-              .generatePrivate(new RawKeySpec(rawKeyBytes));
+    byte[] classicalPrivateKeyBytes;
+    if (params.getClassicalAlgorithm().equals(ClassicalAlgorithm.ED25519)) {
+      classicalPrivateKeyBytes =
+          ((Ed25519PrivateKey) privateKey.getClassicalPrivateKey())
+              .getPrivateKeyBytes()
+              .toByteArray(InsecureSecretKeyAccess.get());
+    } else if (params.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA2048_PSS)
+        || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA3072_PSS)
+        || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA4096_PSS)) {
+      classicalPrivateKeyBytes =
+          Asn1Util.rsaSsaPssPrivateKeyToPkcs1Bytes(
+              (RsaSsaPssPrivateKey) privateKey.getClassicalPrivateKey());
+    } else if (params.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA2048_PKCS1)
+        || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA3072_PKCS1)
+        || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA4096_PKCS1)) {
+      classicalPrivateKeyBytes =
+          Asn1Util.rsaSsaPkcs1PrivateKeyToPkcs1Bytes(
+              (RsaSsaPkcs1PrivateKey) privateKey.getClassicalPrivateKey());
     } else {
       throw new GeneralSecurityException(
-          "Unsupported ML-DSA instance: " + params.getMlDsaInstance());
+          "Unsupported classical algorithm: " + params.getClassicalAlgorithm());
     }
 
-    // Verify that the public key and the private key match by creating and verifying a dummy
-    // signature (this was not verified when the private key was constructed as JCE doesn't
-    // provide this functionality).
+    byte[] rawKeyBytes = new byte[mlDsaSeed.length + classicalPrivateKeyBytes.length];
+    System.arraycopy(mlDsaSeed, 0, rawKeyBytes, 0, mlDsaSeed.length);
+    System.arraycopy(
+        classicalPrivateKeyBytes,
+        0,
+        rawKeyBytes,
+        mlDsaSeed.length,
+        classicalPrivateKeyBytes.length);
+
+    String algorithm = CompositeMlDsaUtil.getAlgorithmName(params);
+    KeyFactory keyFactory = KeyFactory.getInstance(algorithm, nonNullProvider);
+    PrivateKey conscryptPrivateKey = keyFactory.generatePrivate(new RawKeySpec(rawKeyBytes));
+    int signatureLength = CompositeMlDsaUtil.getSignatureLength(params);
+
     byte[] testSignature =
         signInternal(
             TEST_WORKLOAD.getBytes(UTF_8),
@@ -161,6 +165,7 @@ public final class CompositeMlDsaSignConscrypt implements PublicKeySign {
     return signInternal(data, outputPrefix, privateKey, algorithm, signatureLength, provider);
   }
 
+  @SuppressWarnings("InsecureCryptoUsage") // We do not use ECB
   private static byte[] signInternal(
       byte[] data,
       byte[] outputPrefix,
@@ -172,8 +177,6 @@ public final class CompositeMlDsaSignConscrypt implements PublicKeySign {
     Signature signer = Signature.getInstance(algorithm, provider);
     signer.initSign(privateKey);
     signer.update(data);
-    // We allocate the signature array in advance to avoid copying the ~2-3KB signature array when
-    // we don't have to.
     byte[] signature = new byte[outputPrefix.length + signatureLength];
     if (outputPrefix.length > 0) {
       System.arraycopy(outputPrefix, 0, signature, 0, outputPrefix.length);

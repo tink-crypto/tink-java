@@ -737,7 +737,6 @@ java_test(
 
 java_test(
     name = "CompositeMlDsaSignVerifyConscryptTest",
-    size = "small",
     srcs = ["CompositeMlDsaSignVerifyConscryptTest.java"],
     deps = [
         "//src/main/java/com/google/crypto/tink:accesses_partial_key",

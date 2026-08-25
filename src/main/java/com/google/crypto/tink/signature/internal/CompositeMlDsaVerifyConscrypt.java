@@ -22,12 +22,14 @@ import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.config.internal.TinkFipsUtil.AlgorithmFipsCompatibility;
+import com.google.crypto.tink.internal.Asn1Util;
 import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.ClassicalAlgorithm;
-import com.google.crypto.tink.signature.CompositeMlDsaParameters.MlDsaInstance;
 import com.google.crypto.tink.signature.CompositeMlDsaPublicKey;
 import com.google.crypto.tink.signature.Ed25519PublicKey;
+import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
+import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
@@ -44,10 +46,6 @@ public final class CompositeMlDsaVerifyConscrypt implements PublicKeyVerify {
       AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS;
 
   private static final String MLDSA44_ED25519_SHA512_ALGORITHM = "MLDSA44-Ed25519-SHA512";
-  private static final int MLDSA44_ED25519_SHA512_SIG_LENGTH = 2420 + 64;
-
-  private static final String MLDSA65_ED25519_SHA512_ALGORITHM = "MLDSA65-Ed25519-SHA512";
-  private static final int MLDSA65_ED25519_SHA512_SIG_LENGTH = 3309 + 64;
 
   @SuppressWarnings("Immutable") // We do not change the output prefix
   private final byte[] outputPrefix;
@@ -74,6 +72,7 @@ public final class CompositeMlDsaVerifyConscrypt implements PublicKeyVerify {
     this.provider = provider;
   }
 
+  @SuppressWarnings("InsecureCryptoUsage") // We do not use ECB
   @AccessesPartialKey
   public static PublicKeyVerify createWithProvider(
       CompositeMlDsaPublicKey publicKey, Provider provider) throws GeneralSecurityException {
@@ -83,38 +82,44 @@ public final class CompositeMlDsaVerifyConscrypt implements PublicKeyVerify {
           "Can not use Composite ML-DSA in FIPS-mode, as it is not yet certified in Conscrypt.");
     }
     CompositeMlDsaParameters params = publicKey.getParameters();
-    if (params.getClassicalAlgorithm() != ClassicalAlgorithm.ED25519) {
+    if (params.getClassicalAlgorithm().equals(ClassicalAlgorithm.ECDSA_P256)
+        || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.ECDSA_P384)
+        || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.ECDSA_P521)) {
       throw new GeneralSecurityException(
-          "Only Ed25519 is supported for composite signatures at this time");
+          "ECDSA is not supported for composite signatures at this time");
     }
 
     byte[] mlDsaBytes = publicKey.getMlDsaPublicKey().getSerializedPublicKey().toByteArray();
-    byte[] ed25519Bytes =
-        ((Ed25519PublicKey) publicKey.getClassicalPublicKey()).getPublicKeyBytes().toByteArray();
-
-    byte[] rawKeyBytes = new byte[mlDsaBytes.length + ed25519Bytes.length];
-    System.arraycopy(mlDsaBytes, 0, rawKeyBytes, 0, mlDsaBytes.length);
-    System.arraycopy(ed25519Bytes, 0, rawKeyBytes, mlDsaBytes.length, ed25519Bytes.length);
-
-    String algorithm;
-    int signatureLength;
-    PublicKey conscryptPublicKey;
-    if (params.getMlDsaInstance() == MlDsaInstance.ML_DSA_44) {
-      algorithm = MLDSA44_ED25519_SHA512_ALGORITHM;
-      signatureLength = MLDSA44_ED25519_SHA512_SIG_LENGTH;
-      conscryptPublicKey =
-          KeyFactory.getInstance(MLDSA44_ED25519_SHA512_ALGORITHM, nonNullProvider)
-              .generatePublic(new RawKeySpec(rawKeyBytes));
-    } else if (params.getMlDsaInstance() == MlDsaInstance.ML_DSA_65) {
-      algorithm = MLDSA65_ED25519_SHA512_ALGORITHM;
-      signatureLength = MLDSA65_ED25519_SHA512_SIG_LENGTH;
-      conscryptPublicKey =
-          KeyFactory.getInstance(MLDSA65_ED25519_SHA512_ALGORITHM, nonNullProvider)
-              .generatePublic(new RawKeySpec(rawKeyBytes));
+    byte[] classicalPublicKeyBytes;
+    if (params.getClassicalAlgorithm().equals(ClassicalAlgorithm.ED25519)) {
+      classicalPublicKeyBytes =
+          ((Ed25519PublicKey) publicKey.getClassicalPublicKey()).getPublicKeyBytes().toByteArray();
+    } else if (params.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA2048_PSS)
+        || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA3072_PSS)
+        || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA4096_PSS)) {
+      classicalPublicKeyBytes =
+          Asn1Util.rsaSsaPssPublicKeyToPkcs1Bytes(
+              (RsaSsaPssPublicKey) publicKey.getClassicalPublicKey());
+    } else if (params.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA2048_PKCS1)
+        || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA3072_PKCS1)
+        || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA4096_PKCS1)) {
+      classicalPublicKeyBytes =
+          Asn1Util.rsaSsaPkcs1PublicKeyToPkcs1Bytes(
+              (RsaSsaPkcs1PublicKey) publicKey.getClassicalPublicKey());
     } else {
       throw new GeneralSecurityException(
-          "Unsupported ML-DSA instance: " + params.getMlDsaInstance());
+          "Unsupported classical algorithm: " + params.getClassicalAlgorithm());
     }
+
+    byte[] rawKeyBytes = new byte[mlDsaBytes.length + classicalPublicKeyBytes.length];
+    System.arraycopy(mlDsaBytes, 0, rawKeyBytes, 0, mlDsaBytes.length);
+    System.arraycopy(
+        classicalPublicKeyBytes, 0, rawKeyBytes, mlDsaBytes.length, classicalPublicKeyBytes.length);
+
+    String algorithm = CompositeMlDsaUtil.getAlgorithmName(params);
+    KeyFactory keyFactory = KeyFactory.getInstance(algorithm, nonNullProvider);
+    PublicKey conscryptPublicKey = keyFactory.generatePublic(new RawKeySpec(rawKeyBytes));
+    int signatureLength = CompositeMlDsaUtil.getSignatureLength(params);
 
     return new CompositeMlDsaVerifyConscrypt(
         publicKey.getOutputPrefix().toByteArray(),
@@ -134,6 +139,7 @@ public final class CompositeMlDsaVerifyConscrypt implements PublicKeyVerify {
     return createWithProvider(publicKey, provider);
   }
 
+  @SuppressWarnings("InsecureCryptoUsage") // We do not use ECB
   @Override
   public void verify(byte[] signature, byte[] data) throws GeneralSecurityException {
     if (!isPrefix(outputPrefix, signature)) {

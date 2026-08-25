@@ -64,7 +64,7 @@ public final class CompositeMlDsaSignVerifyConscryptTest {
   @Theory
   public void signAndVerify_success(
       @FromDataPoints("testVectors") CompositeMlDsaTestVector testVector) throws Exception {
-    assumeTrue(testVector.tcId.contains("Ed25519"));
+    assumeFalse(testVector.tcId.contains("ECDSA"));
     if (!CompositeMlDsaVerifyConscrypt.isSupported()) {
       // Cannot test if Composite ML-DSA is not available.
       return;
@@ -83,7 +83,7 @@ public final class CompositeMlDsaSignVerifyConscryptTest {
   @Theory
   public void verifyTestVector_success(
       @FromDataPoints("testVectors") CompositeMlDsaTestVector testVector) throws Exception {
-    assumeTrue(testVector.tcId.contains("Ed25519"));
+    assumeFalse(testVector.tcId.contains("ECDSA"));
     if (!CompositeMlDsaVerifyConscrypt.isSupported()) {
       // Cannot test if Composite ML-DSA is not available.
       return;
@@ -100,7 +100,7 @@ public final class CompositeMlDsaSignVerifyConscryptTest {
   @Theory
   public void verify_modifiedMessage_throws(
       @FromDataPoints("testVectors") CompositeMlDsaTestVector testVector) throws Exception {
-    assumeTrue(testVector.tcId.contains("Ed25519"));
+    assumeFalse(testVector.tcId.contains("ECDSA"));
     if (!CompositeMlDsaVerifyConscrypt.isSupported()) {
       // Cannot test if Composite ML-DSA is not available.
       return;
@@ -120,7 +120,7 @@ public final class CompositeMlDsaSignVerifyConscryptTest {
   @Theory
   public void verify_modifiedSignature_throws(
       @FromDataPoints("testVectors") CompositeMlDsaTestVector testVector) throws Exception {
-    assumeTrue(testVector.tcId.contains("Ed25519"));
+    assumeFalse(testVector.tcId.contains("ECDSA"));
     if (!CompositeMlDsaVerifyConscrypt.isSupported()) {
       // Cannot test if Composite ML-DSA is not available.
       return;
@@ -142,7 +142,7 @@ public final class CompositeMlDsaSignVerifyConscryptTest {
   @Theory
   public void verify_wrongOutputPrefix_throws(
       @FromDataPoints("testVectors") CompositeMlDsaTestVector testVector) throws Exception {
-    assumeTrue(testVector.tcId.contains("Ed25519"));
+    assumeFalse(testVector.tcId.contains("ECDSA"));
     assumeTrue(testVector.idRequirement != null);
     if (!CompositeMlDsaVerifyConscrypt.isSupported()) {
       // Cannot test if Composite ML-DSA is not available.
@@ -168,7 +168,7 @@ public final class CompositeMlDsaSignVerifyConscryptTest {
   @Theory
   public void verify_wrongSignatureLength_throws(
       @FromDataPoints("testVectors") CompositeMlDsaTestVector testVector) throws Exception {
-    assumeTrue(testVector.tcId.contains("Ed25519"));
+    assumeFalse(testVector.tcId.contains("ECDSA"));
     if (!CompositeMlDsaVerifyConscrypt.isSupported()) {
       // Cannot test if Composite ML-DSA is not available.
       return;
