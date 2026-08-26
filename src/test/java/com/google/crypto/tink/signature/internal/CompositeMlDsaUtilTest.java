@@ -26,6 +26,7 @@ import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.ClassicalAlgorithm;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.MlDsaInstance;
+import com.google.crypto.tink.signature.MlDsaParameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPssParameters;
@@ -50,6 +51,59 @@ public final class CompositeMlDsaUtilTest {
     if (!Util.isAndroid() && Conscrypt.isAvailable()) {
       Security.addProvider(Conscrypt.newProvider());
     }
+  }
+
+  @Test
+  public void getMlDsaParametersMlDsaInstance_returnsExpectedInstance() throws Exception {
+    CompositeMlDsaParameters mlDsa44Params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ED25519)
+            .build();
+    assertThat(CompositeMlDsaUtil.getMlDsaParametersMlDsaInstance(mlDsa44Params))
+        .isEqualTo(MlDsaParameters.MlDsaInstance.ML_DSA_44);
+
+    CompositeMlDsaParameters mlDsa65Params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ED25519)
+            .build();
+    assertThat(CompositeMlDsaUtil.getMlDsaParametersMlDsaInstance(mlDsa65Params))
+        .isEqualTo(MlDsaParameters.MlDsaInstance.ML_DSA_65);
+
+    CompositeMlDsaParameters mlDsa87Params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_87)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA3072_PSS)
+            .build();
+    assertThat(CompositeMlDsaUtil.getMlDsaParametersMlDsaInstance(mlDsa87Params))
+        .isEqualTo(MlDsaParameters.MlDsaInstance.ML_DSA_87);
+  }
+
+  // Values from
+  // https://lamps-wg.github.io/draft-composite-sigs/draft-ietf-lamps-pq-composite-sigs.html#name-maximum-key-and-signature-s
+  @Test
+  public void getMlDsaPublicKeySize_returnsExpectedSizes() throws Exception {
+    CompositeMlDsaParameters mlDsa44Params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ED25519)
+            .build();
+    assertThat(CompositeMlDsaUtil.getMlDsaPublicKeySize(mlDsa44Params)).isEqualTo(1312);
+
+    CompositeMlDsaParameters mlDsa65Params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ED25519)
+            .build();
+    assertThat(CompositeMlDsaUtil.getMlDsaPublicKeySize(mlDsa65Params)).isEqualTo(1952);
+
+    CompositeMlDsaParameters mlDsa87Params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_87)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA3072_PSS)
+            .build();
+    assertThat(CompositeMlDsaUtil.getMlDsaPublicKeySize(mlDsa87Params)).isEqualTo(2592);
   }
 
   @Test

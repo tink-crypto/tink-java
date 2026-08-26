@@ -21,6 +21,7 @@ import com.google.crypto.tink.internal.Asn1Util;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.ClassicalAlgorithm;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.MlDsaInstance;
+import com.google.crypto.tink.signature.MlDsaParameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPssParameters;
@@ -99,6 +100,36 @@ public final class CompositeMlDsaUtil {
         throw new GeneralSecurityException(
             "Unsupported classical algorithm for ML-DSA-87: " + classicalAlgorithm);
       }
+    } else {
+      throw new GeneralSecurityException("Unsupported ML-DSA instance: " + mlDsaInstance);
+    }
+  }
+
+  public static MlDsaParameters.MlDsaInstance getMlDsaParametersMlDsaInstance(
+      CompositeMlDsaParameters parameters) throws GeneralSecurityException {
+    CompositeMlDsaParameters.MlDsaInstance mlDsaInstance = parameters.getMlDsaInstance();
+    if (mlDsaInstance.equals(MlDsaInstance.ML_DSA_44)) {
+      return MlDsaParameters.MlDsaInstance.ML_DSA_44;
+    } else if (mlDsaInstance.equals(MlDsaInstance.ML_DSA_65)) {
+      return MlDsaParameters.MlDsaInstance.ML_DSA_65;
+    } else if (mlDsaInstance.equals(MlDsaInstance.ML_DSA_87)) {
+      return MlDsaParameters.MlDsaInstance.ML_DSA_87;
+    } else {
+      throw new GeneralSecurityException("Unsupported ML-DSA instance: " + mlDsaInstance);
+    }
+  }
+
+  // As per
+  // https://lamps-wg.github.io/draft-composite-sigs/draft-ietf-lamps-pq-composite-sigs.html#name-maximum-key-and-signature-s
+  public static int getMlDsaPublicKeySize(CompositeMlDsaParameters parameters)
+      throws GeneralSecurityException {
+    CompositeMlDsaParameters.MlDsaInstance mlDsaInstance = parameters.getMlDsaInstance();
+    if (mlDsaInstance.equals(MlDsaInstance.ML_DSA_44)) {
+      return 1312;
+    } else if (mlDsaInstance.equals(MlDsaInstance.ML_DSA_65)) {
+      return 1952;
+    } else if (mlDsaInstance.equals(MlDsaInstance.ML_DSA_87)) {
+      return 2592;
     } else {
       throw new GeneralSecurityException("Unsupported ML-DSA instance: " + mlDsaInstance);
     }
