@@ -166,5 +166,23 @@ public final class PrefixMapTest {
     List<Integer> matching = map.getAllWithMatchingPrefix(new byte[] {1, 2, 3, 4, 5, 6});
     assertThrows(UnsupportedOperationException.class, () -> matching.add(789));
   }
+
+  @Test
+  public void fiveByteAllZeroPrefix_distinguishedFromEmptyPrefix() throws Exception {
+    PrefixMap<Integer> map =
+        new PrefixMap.Builder<Integer>()
+            .put(Bytes.copyFrom(new byte[] {0, 0, 0, 0, 0}), 500)
+            .put(Bytes.copyFrom(new byte[0]), 100)
+            .build();
+    // 5-byte zero prefix matches both the 5-byte zero entry and the RAW entry fallback.
+    assertThat(map.getAllWithMatchingPrefix(new byte[] {0, 0, 0, 0, 0, 1, 2}))
+        .containsExactly(500, 100)
+        .inOrder();
+    // Different 5-byte prefix only gets the RAW entry.
+    assertThat(map.getAllWithMatchingPrefix(new byte[] {0, 0, 0, 0, 1, 1, 2})).containsExactly(100);
+    // Short byte array (< 5 bytes) only gets the RAW entry.
+    assertThat(map.getAllWithMatchingPrefix(new byte[] {0, 0, 0})).containsExactly(100);
+    assertThat(map.getAllWithMatchingPrefix(new byte[0])).containsExactly(100);
+  }
 }
 
