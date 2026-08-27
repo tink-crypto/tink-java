@@ -1221,6 +1221,7 @@ android_library(
     name = "composite_ml_dsa_key_creator-android",
     srcs = ["CompositeMlDsaKeyCreator.java"],
     deps = [
+        ":composite_ml_dsa_util-android",
         ":composite_ml_dsa_verify_conscrypt-android",
         "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access-android",
@@ -1233,6 +1234,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink/signature:ml_dsa_parameters-android",
         "//src/main/java/com/google/crypto/tink/signature:ml_dsa_private_key-android",
         "//src/main/java/com/google/crypto/tink/signature:ml_dsa_public_key-android",
+        "//src/main/java/com/google/crypto/tink/signature:signature_private_key-android",
         "//src/main/java/com/google/crypto/tink/util:bytes-android",
         "//src/main/java/com/google/crypto/tink/util:secret_bytes-android",
         "@maven//:com_google_code_findbugs_jsr305",
@@ -1243,6 +1245,7 @@ java_library(
     name = "composite_ml_dsa_key_creator",
     srcs = ["CompositeMlDsaKeyCreator.java"],
     deps = [
+        ":composite_ml_dsa_util",
         ":composite_ml_dsa_verify_conscrypt",
         "//src/main/java/com/google/crypto/tink:accesses_partial_key",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
@@ -1255,6 +1258,7 @@ java_library(
         "//src/main/java/com/google/crypto/tink/signature:ml_dsa_parameters",
         "//src/main/java/com/google/crypto/tink/signature:ml_dsa_private_key",
         "//src/main/java/com/google/crypto/tink/signature:ml_dsa_public_key",
+        "//src/main/java/com/google/crypto/tink/signature:signature_private_key",
         "//src/main/java/com/google/crypto/tink/util:bytes",
         "//src/main/java/com/google/crypto/tink/util:secret_bytes",
         "@maven//:com_google_code_findbugs_jsr305",
