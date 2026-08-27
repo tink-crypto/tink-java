@@ -56,7 +56,10 @@ public class SignatureConfig2026Test {
       RsaSsaPssTestUtil.createRsaPssTestVectors()[0].getPrivateKey(),
       RsaSsaPkcs1TestUtil.createRsaSsaPkcs1TestVectors()[0].getPrivateKey(),
       Ed25519TestUtil.createEd25519TestVectors()[0].getPrivateKey(),
-      MlDsaTestUtil.createMlDsa65ValidSignatureTestVectors().findFirst().get().getPrivateKey(),
+      MlDsaTestUtil.getMlDsaValidSignatureTestVector(
+              MlDsaParameters.create(
+                  MlDsaParameters.MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.NO_PREFIX))
+          .getPrivateKey(),
       SlhDsaTestUtil.createSlhDsaValidSignatureTestVectors().findFirst().get().getPrivateKey(),
       createCompositeMlDsaKey(),
     };

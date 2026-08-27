@@ -141,9 +141,9 @@ public class SignatureConfig2026FipsTest {
   @Nullable
   private static SignaturePrivateKey createMlDsaPrivateKeyOrNull() {
     try {
-      return MlDsaTestUtil.createMlDsa65ValidSignatureTestVectors()
-          .findFirst()
-          .get()
+      return MlDsaTestUtil.getMlDsaValidSignatureTestVector(
+              MlDsaParameters.create(
+                  MlDsaParameters.MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.NO_PREFIX))
           .getPrivateKey();
     } catch (IllegalStateException e) {
       return null;
