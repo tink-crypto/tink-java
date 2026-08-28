@@ -81,6 +81,20 @@ public final class Asn1StatefulParser implements AutoCloseable {
   }
 
   /**
+   * Peeks at the next tag byte without advancing the offset.
+   *
+   * @throws Asn1ParserException if there are no more bytes to read.
+   * @throws IllegalStateException if this parser is closed.
+   */
+  public byte peekTag() throws Asn1ParserException {
+    checkNotClosed();
+    if (offset >= limit) {
+      throw new Asn1ParserException("Failed to parse ASN.1 DER encoded key");
+    }
+    return data[offset];
+  }
+
+  /**
    * Closes this parser and asserts that all bytes have been consumed.
    *
    * @throws Asn1ParserException if there are unconsumed trailing bytes.

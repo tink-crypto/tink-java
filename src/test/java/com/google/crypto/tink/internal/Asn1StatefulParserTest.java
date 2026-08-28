@@ -316,4 +316,30 @@ public final class Asn1StatefulParserTest {
     parser.close();
     assertThrows(IllegalStateException.class, parser::consumeInteger);
   }
+
+  @Test
+  public void peekTag_works() throws Exception {
+    byte[] data = Hex.decode("02010504020102");
+
+    try (Asn1StatefulParser parser = new Asn1StatefulParser(data)) {
+      assertThat(parser.peekTag()).isEqualTo((byte) 0x02);
+      assertThat(parser.consumeInteger()).isEqualTo(BigInteger.valueOf(5));
+
+      assertThat(parser.peekTag()).isEqualTo((byte) 0x04);
+      assertThat(parser.consumeOctetString()).isEqualTo(Hex.decode("0102"));
+
+      assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::peekTag);
+    }
+  }
+
+  @Test
+  @SuppressWarnings("MustBeClosed")
+  public void peekTag_afterClose_throws() throws Exception {
+    byte[] data = Hex.decode("020105");
+
+    Asn1StatefulParser parser = new Asn1StatefulParser(data);
+    assertThat(parser.consumeInteger()).isEqualTo(BigInteger.valueOf(5));
+    parser.close();
+    assertThrows(IllegalStateException.class, parser::peekTag);
+  }
 }
