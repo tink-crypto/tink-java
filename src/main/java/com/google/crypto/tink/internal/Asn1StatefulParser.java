@@ -76,7 +76,7 @@ public final class Asn1StatefulParser implements AutoCloseable {
     }
   }
 
-  private boolean hasRemaining() {
+  boolean hasRemaining() {
     return offset < limit;
   }
 
@@ -123,6 +123,21 @@ public final class Asn1StatefulParser implements AutoCloseable {
     int sequenceContentStart = offset;
     offset += length;
     return new Asn1StatefulParser(data, sequenceContentStart, sequenceContentStart + length);
+  }
+
+  /**
+   * Consumes an explicitly tagged DER field with the given {@code expectedOneByteTag} and returns a
+   * new {@link Asn1StatefulParser} scoped to the field content.
+   *
+   * @throws Asn1ParserException if the tag does not match or DER encoding is invalid.
+   * @throws IllegalStateException if this parser is closed.
+   */
+  public Asn1StatefulParser consumeTaggedBytes(byte expectedOneByteTag) throws Asn1ParserException {
+    checkNotClosed();
+    int length = consumeTagAndLength(expectedOneByteTag);
+    int contentStart = offset;
+    offset += length;
+    return new Asn1StatefulParser(data, contentStart, contentStart + length);
   }
 
   /**

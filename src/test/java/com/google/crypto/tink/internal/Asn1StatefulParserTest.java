@@ -316,7 +316,6 @@ public final class Asn1StatefulParserTest {
     parser.close();
     assertThrows(IllegalStateException.class, parser::consumeInteger);
   }
-
   @Test
   public void peekTag_works() throws Exception {
     byte[] data = Hex.decode("02010504020102");
@@ -341,5 +340,53 @@ public final class Asn1StatefulParserTest {
     assertThat(parser.consumeInteger()).isEqualTo(BigInteger.valueOf(5));
     parser.close();
     assertThrows(IllegalStateException.class, parser::peekTag);
+  }
+
+  @Test
+  public void consumeTaggedBytes_works() throws Exception {
+    // [0] EXPLICIT { INTEGER 5, OCTET STRING 0102 }: a0 07 02 01 05 04 02 01 02
+    byte[] data = Hex.decode("a00702010504020102");
+
+    try (Asn1StatefulParser parser = new Asn1StatefulParser(data);
+        Asn1StatefulParser taggedParser = parser.consumeTaggedBytes((byte) 0xa0)) {
+      assertThat(taggedParser.consumeInteger()).isEqualTo(BigInteger.valueOf(5));
+      assertThat(taggedParser.consumeOctetString()).isEqualTo(Hex.decode("0102"));
+    }
+  }
+
+  @Test
+  @SuppressWarnings("MustBeClosed")
+  public void consumeTaggedBytes_wrongTag_throws() throws Exception {
+    byte[] data = Hex.decode("a003020105");
+
+    Asn1StatefulParser parser = new Asn1StatefulParser(data);
+    assertThrows(
+        Asn1StatefulParser.Asn1ParserException.class, () -> parser.consumeTaggedBytes((byte) 0xa1));
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::close);
+  }
+
+  @Test
+  @SuppressWarnings("MustBeClosed")
+  public void consumeTaggedBytes_lengthTooLong_throws() throws Exception {
+    // Length 0x05 declared, but only 3 bytes of payload provided: a0 05 02 01 05
+    byte[] data = Hex.decode("a005020105");
+
+    Asn1StatefulParser parser = new Asn1StatefulParser(data);
+    assertThrows(
+        Asn1StatefulParser.Asn1ParserException.class, () -> parser.consumeTaggedBytes((byte) 0xa0));
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::close);
+  }
+
+  @Test
+  @SuppressWarnings("MustBeClosed")
+  public void consumeTaggedBytes_afterClose_throws() throws Exception {
+    byte[] data = Hex.decode("a003020105");
+
+    Asn1StatefulParser parser = new Asn1StatefulParser(data);
+    try (Asn1StatefulParser taggedParser = parser.consumeTaggedBytes((byte) 0xa0)) {
+      assertThat(taggedParser.consumeInteger()).isEqualTo(BigInteger.valueOf(5));
+    }
+    parser.close();
+    assertThrows(IllegalStateException.class, () -> parser.consumeTaggedBytes((byte) 0xa0));
   }
 }
