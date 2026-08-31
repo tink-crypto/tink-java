@@ -80,11 +80,11 @@ public final class KeyDerivationConfig2026 {
   private KeyDerivationConfig2026() {}
 
   // This is the configuration which the {@link PrfBasedKeyDerivationKeyProtoSerialization} uses to
-  // internally serialize PRF keys and derived parameters. It hence includes the following key
-  // types:
+  // internally serialize PRF keys and derived parameters, as well as derive keys from randomness.
+  // It hence includes the following key types:
   // ==== Key types which can be used to derive new keys (need key and parameter serialization)
   //  * HkdfPrf
-  // ==== Key types which can only be derived (only need parameter serialization)
+  // ==== Key types which can only be derived (need parameter serialization and KeyFromRandomness)
   //  * Hmac
   //  * HmacPrf
   //  * AesGcm
@@ -94,8 +94,8 @@ public final class KeyDerivationConfig2026 {
   //  * AesGcmSiv
   //  * AesGcmHkdfStreaming
   //  * Ed25519
-  private static ProtoBasedConfigurationBuilder configForKeyBuilder() {
-    return new ProtoBasedConfigurationBuilder()
+  private static PrfBasedKeyDerivationKeyConfig keyDerivationKeyConfig() {
+    return new PrfBasedKeyDerivationKeyConfigBuilder()
         // HkdfPrf
         .addKeySerializer(HkdfPrfKey.class, HkdfPrfProtoSerialization::serializeKey)
         .addParametersSerializer(
@@ -111,24 +111,29 @@ public final class KeyDerivationConfig2026 {
         .addParametersParser(
             "type.googleapis.com/google.crypto.tink.HmacKey",
             HmacProtoSerialization::parseParameters)
+        .addKeyFromRandomness(HmacParameters.class, KeyDerivationConfig2026::createHmacKey)
         // HmacPrf
         .addParametersSerializer(
             HmacPrfParameters.class, HmacPrfProtoSerialization::serializeParameters)
         .addParametersParser(
             "type.googleapis.com/google.crypto.tink.HmacPrfKey",
             HmacPrfProtoSerialization::parseParameters)
+        .addKeyFromRandomness(HmacPrfParameters.class, KeyDerivationConfig2026::createHmacPrfKey)
         // AesGcm
         .addParametersSerializer(
             AesGcmParameters.class, AesGcmProtoSerialization::serializeParameters)
         .addParametersParser(
             "type.googleapis.com/google.crypto.tink.AesGcmKey",
             AesGcmProtoSerialization::parseParameters)
+        .addKeyFromRandomness(AesGcmParameters.class, KeyDerivationConfig2026::createAesGcmKey)
         // AesCtrHmacAead
         .addParametersSerializer(
             AesCtrHmacAeadParameters.class, AesCtrHmacAeadProtoSerialization::serializeParameters)
         .addParametersParser(
             "type.googleapis.com/google.crypto.tink.AesCtrHmacAeadKey",
             AesCtrHmacAeadProtoSerialization::parseParameters)
+        .addKeyFromRandomness(
+            AesCtrHmacAeadParameters.class, KeyDerivationConfig2026::createAesCtrHmacAeadKey)
         // XChaCha20Poly1305
         .addParametersSerializer(
             XChaCha20Poly1305Parameters.class,
@@ -136,18 +141,23 @@ public final class KeyDerivationConfig2026 {
         .addParametersParser(
             "type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key",
             XChaCha20Poly1305ProtoSerialization::parseParameters)
+        .addKeyFromRandomness(
+            XChaCha20Poly1305Parameters.class, KeyDerivationConfig2026::createXChaCha20Poly1305Key)
         // AesSiv
         .addParametersSerializer(
             AesSivParameters.class, AesSivProtoSerialization::serializeParameters)
         .addParametersParser(
             "type.googleapis.com/google.crypto.tink.AesSivKey",
             AesSivProtoSerialization::parseParameters)
+        .addKeyFromRandomness(AesSivParameters.class, KeyDerivationConfig2026::createAesSivKey)
         // AesGcmSiv
         .addParametersSerializer(
             AesGcmSivParameters.class, AesGcmSivProtoSerialization::serializeParameters)
         .addParametersParser(
             "type.googleapis.com/google.crypto.tink.AesGcmSivKey",
             AesGcmSivProtoSerialization::parseParameters)
+        .addKeyFromRandomness(
+            AesGcmSivParameters.class, KeyDerivationConfig2026::createAesGcmSivKey)
         // AesGcmHkdfStreaming
         .addParametersSerializer(
             AesGcmHkdfStreamingParameters.class,
@@ -155,15 +165,21 @@ public final class KeyDerivationConfig2026 {
         .addParametersParser(
             "type.googleapis.com/google.crypto.tink.AesGcmHkdfStreamingKey",
             AesGcmHkdfStreamingProtoSerialization::parseParameters)
+        .addKeyFromRandomness(
+            AesGcmHkdfStreamingParameters.class,
+            KeyDerivationConfig2026::createAesGcmHkdfStreamingKey)
         // Ed25519
         .addParametersSerializer(
             Ed25519Parameters.class, Ed25519ProtoSerialization::serializeParameters)
         .addParametersParser(
             "type.googleapis.com/google.crypto.tink.Ed25519PrivateKey",
-            Ed25519ProtoSerialization::parseParameters);
+            Ed25519ProtoSerialization::parseParameters)
+        .addKeyFromRandomness(Ed25519Parameters.class, KeyDerivationConfig2026::createEd25519Key)
+        .build();
   }
 
-  private static Configuration createConfiguration(Configuration configForKey) {
+  private static Configuration createConfiguration(
+      PrfBasedKeyDerivationKeyConfig keyDerivationKeyConfig) {
     return new ProtoBasedConfigurationBuilder()
         .addPrimitiveWrapper(
             KeysetDeriver.class, KeyDeriver.class, KeysetDeriverWrapper.WRAPPER::wrap)
@@ -172,34 +188,35 @@ public final class KeyDerivationConfig2026 {
             PrfBasedKeyDerivationParameters.class,
             KeyDerivationConfig2026::createPrfBasedKeyDerivationKey)
         .addPrimitiveConstructor(
-            KeyDerivationConfig2026::createPrfBasedKeyDeriver,
+            (PrfBasedKeyDerivationKey key) ->
+                createPrfBasedKeyDeriver(key, keyDerivationKeyConfig),
             PrfBasedKeyDerivationKey.class,
             KeyDeriver.class)
         .addKeySerializer(
             PrfBasedKeyDerivationKey.class,
             (key, access) ->
-                PrfBasedKeyDerivationKeyProtoSerialization.serializeKey(key, access, configForKey))
+                PrfBasedKeyDerivationKeyProtoSerialization.serializeKey(
+                    key, access, keyDerivationKeyConfig.getConfiguration()))
         .addParametersSerializer(
             PrfBasedKeyDerivationParameters.class,
             parameters ->
                 PrfBasedKeyDerivationKeyProtoSerialization.serializeParameters(
-                    parameters, configForKey))
+                    parameters, keyDerivationKeyConfig.getConfiguration()))
         .addKeyParser(
             "type.googleapis.com/google.crypto.tink.PrfBasedDeriverKey",
             (serialization, access) ->
                 PrfBasedKeyDerivationKeyProtoSerialization.parseKey(
-                    serialization, access, configForKey))
+                    serialization, access, keyDerivationKeyConfig.getConfiguration()))
         .addParametersParser(
             "type.googleapis.com/google.crypto.tink.PrfBasedDeriverKey",
             serialization ->
                 PrfBasedKeyDerivationKeyProtoSerialization.parseParameters(
-                    serialization, configForKey))
+                    serialization, keyDerivationKeyConfig.getConfiguration()))
         .build();
   }
 
-  private static final Configuration CONFIG_FOR_KEY = configForKeyBuilder().build();
-
-  private static final Configuration CONFIGURATION = createConfiguration(CONFIG_FOR_KEY);
+  private static final Configuration CONFIGURATION =
+      createConfiguration(keyDerivationKeyConfig());
   private static final Configuration EMPTY_CONFIGURATION =
       new ProtoBasedConfigurationBuilder().build();
 
@@ -356,50 +373,8 @@ public final class KeyDerivationConfig2026 {
   }
 
   @AccessesPartialKey
-  private static Key createKeyFromRandomness(
-      Parameters parameters,
-      InputStream stream,
-      @Nullable Integer idRequirement,
-      SecretKeyAccess access)
-      throws GeneralSecurityException {
-    if (parameters instanceof HmacParameters) {
-      return createHmacKey((HmacParameters) parameters, stream, idRequirement, access);
-    }
-    if (parameters instanceof HmacPrfParameters) {
-      return createHmacPrfKey((HmacPrfParameters) parameters, stream, idRequirement, access);
-    }
-    if (parameters instanceof AesGcmParameters) {
-      return createAesGcmKey((AesGcmParameters) parameters, stream, idRequirement, access);
-    }
-    if (parameters instanceof AesCtrHmacAeadParameters) {
-      return createAesCtrHmacAeadKey(
-          (AesCtrHmacAeadParameters) parameters, stream, idRequirement, access);
-    }
-    if (parameters instanceof XChaCha20Poly1305Parameters) {
-      return createXChaCha20Poly1305Key(
-          (XChaCha20Poly1305Parameters) parameters, stream, idRequirement, access);
-    }
-    if (parameters instanceof AesSivParameters) {
-      return createAesSivKey((AesSivParameters) parameters, stream, idRequirement, access);
-    }
-    if (parameters instanceof AesGcmSivParameters) {
-      return createAesGcmSivKey((AesGcmSivParameters) parameters, stream, idRequirement, access);
-    }
-    if (parameters instanceof AesGcmHkdfStreamingParameters) {
-      return createAesGcmHkdfStreamingKey(
-          (AesGcmHkdfStreamingParameters) parameters, stream, idRequirement, access);
-    }
-    if (parameters instanceof Ed25519Parameters) {
-      return createEd25519Key((Ed25519Parameters) parameters, stream, idRequirement, access);
-    }
-    throw new GeneralSecurityException(
-        "Cannot use key derivation to derive key for parameters "
-            + parameters
-            + ": unsupported parameters class");
-  }
-
-  @AccessesPartialKey
-  private static KeyDeriver createPrfBasedKeyDeriver(PrfBasedKeyDerivationKey key)
+  private static KeyDeriver createPrfBasedKeyDeriver(
+      PrfBasedKeyDerivationKey key, PrfBasedKeyDerivationKeyConfig keyDerivationKeyConfig)
       throws GeneralSecurityException {
     return PrfBasedKeyDeriver.create(
         k -> {
@@ -408,7 +383,7 @@ public final class KeyDerivationConfig2026 {
           }
           throw new GeneralSecurityException("Unsupported PRF key type: " + k.getClass());
         },
-        KeyDerivationConfig2026::createKeyFromRandomness,
+        keyDerivationKeyConfig::createKeyFromRandomness,
         key);
   }
 

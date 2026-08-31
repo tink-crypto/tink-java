@@ -265,6 +265,7 @@ java_library(
     deps = [
         ":key_deriver",
         ":keyset_deriver_wrapper",
+        ":prf_based_key_derivation_key_config_builder",
         ":prf_based_key_derivation_key_proto_serialization",
         ":prf_based_key_deriver",
         "//src/main/java/com/google/crypto/tink:accesses_partial_key",
@@ -324,6 +325,7 @@ android_library(
     deps = [
         ":key_deriver-android",
         ":keyset_deriver_wrapper-android",
+        ":prf_based_key_derivation_key_config_builder-android",
         ":prf_based_key_derivation_key_proto_serialization-android",
         ":prf_based_key_deriver-android",
         "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
