@@ -389,4 +389,46 @@ public final class Asn1StatefulParserTest {
     parser.close();
     assertThrows(IllegalStateException.class, () -> parser.consumeTaggedBytes((byte) 0xa0));
   }
+
+  @Test
+  public void consumeOid_works() throws Exception {
+    // OBJECT IDENTIFIER 1.2.840.10045.3.1.7 (NIST P-256): 06 08 2a 86 48 ce 3d 03 01 07
+    byte[] data = Hex.decode("06082a8648ce3d030107");
+
+    try (Asn1StatefulParser parser = new Asn1StatefulParser(data)) {
+      assertThat(parser.consumeOid()).isEqualTo(Hex.decode("2a8648ce3d030107"));
+    }
+  }
+
+  @Test
+  @SuppressWarnings("MustBeClosed")
+  public void consumeOid_wrongTag_throws() throws Exception {
+    byte[] data = Hex.decode("04082a8648ce3d030107");
+
+    Asn1StatefulParser parser = new Asn1StatefulParser(data);
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::consumeOid);
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::close);
+  }
+
+  @Test
+  @SuppressWarnings("MustBeClosed")
+  public void consumeOid_lengthTooLong_throws() throws Exception {
+    // Length 9 declared, but only 8 bytes provided: 06 09 2a 86 48 ce 3d 03 01 07
+    byte[] data = Hex.decode("06092a8648ce3d030107");
+
+    Asn1StatefulParser parser = new Asn1StatefulParser(data);
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::consumeOid);
+    assertThrows(Asn1StatefulParser.Asn1ParserException.class, parser::close);
+  }
+
+  @Test
+  @SuppressWarnings("MustBeClosed")
+  public void consumeOid_afterClose_throws() throws Exception {
+    byte[] data = Hex.decode("06082a8648ce3d030107");
+
+    Asn1StatefulParser parser = new Asn1StatefulParser(data);
+    assertThat(parser.consumeOid()).isEqualTo(Hex.decode("2a8648ce3d030107"));
+    parser.close();
+    assertThrows(IllegalStateException.class, parser::consumeOid);
+  }
 }

@@ -31,6 +31,7 @@ public final class Asn1StatefulParser implements AutoCloseable {
   private static final byte TAG_INTEGER = 0x02;
   private static final byte TAG_BIT_STRING = 0x03;
   private static final byte TAG_OCTET_STRING = 0x04;
+  private static final byte TAG_OBJECT_IDENTIFIER = 0x06;
   private static final byte TAG_SEQUENCE = 0x30;
 
   /**
@@ -205,6 +206,20 @@ public final class Asn1StatefulParser implements AutoCloseable {
               + unusedBits);
     }
     byte[] result = Arrays.copyOfRange(data, offset + 1, offset + length);
+    offset += length;
+    return result;
+  }
+
+  /**
+   * Consumes an ASN.1 DER OBJECT IDENTIFIER and returns the raw OID content bytes.
+   *
+   * @throws Asn1ParserException if the tag is not OBJECT IDENTIFIER or DER encoding is invalid.
+   * @throws IllegalStateException if this parser is closed.
+   */
+  public byte[] consumeOid() throws Asn1ParserException {
+    checkNotClosed();
+    int length = consumeTagAndLength(TAG_OBJECT_IDENTIFIER);
+    byte[] result = Arrays.copyOfRange(data, offset, offset + length);
     offset += length;
     return result;
   }
