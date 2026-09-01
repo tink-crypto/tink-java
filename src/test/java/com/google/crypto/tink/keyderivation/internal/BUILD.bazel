@@ -207,6 +207,7 @@ java_test(
     size = "small",
     srcs = ["KeyDerivationConfig2026Test.java"],
     deps = [
+        "//src/main/java/com/google/crypto/tink:configuration",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink:parameters",
         "//src/main/java/com/google/crypto/tink:registry_cluster",
@@ -219,6 +220,7 @@ java_test(
         "//src/main/java/com/google/crypto/tink/keyderivation:prf_based_key_derivation_key",
         "//src/main/java/com/google/crypto/tink/keyderivation:prf_based_key_derivation_parameters",
         "//src/main/java/com/google/crypto/tink/keyderivation/internal:key_derivation_config2026",
+        "//src/main/java/com/google/crypto/tink/keyderivation/internal:prf_based_key_derivation_key_config_builder",
         "//src/main/java/com/google/crypto/tink/keyderivation/internal/test:prf_based_key_deriver_test_vectors",
         "//src/main/java/com/google/crypto/tink/prf:hkdf_prf_key",
         "//src/main/java/com/google/crypto/tink/prf:hkdf_prf_parameters",

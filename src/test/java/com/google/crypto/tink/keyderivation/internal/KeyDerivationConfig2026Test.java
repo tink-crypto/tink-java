@@ -18,6 +18,7 @@ package com.google.crypto.tink.keyderivation.internal;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
@@ -80,6 +81,29 @@ public class KeyDerivationConfig2026Test {
   @Test
   public void get_isNotNull() throws Exception {
     assertThat(KeyDerivationConfig2026.get()).isNotNull();
+  }
+
+  @Test
+  public void keyDerivationKeyConfigBuilder_createConfiguration_works() throws Exception {
+    if (TinkFipsUtil.useOnlyFips()) {
+      return;
+    }
+    PrfBasedKeyDerivationKeyConfig config =
+        KeyDerivationConfig2026.keyDerivationKeyConfigBuilder().build();
+    assertThat(config).isNotNull();
+
+    Configuration configuration = KeyDerivationConfig2026.createConfiguration(config);
+    assertThat(configuration).isNotNull();
+
+    PrfBasedKeyDerivationKey key = createTestKey();
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withFixedId(123).makePrimary())
+            .build();
+    KeysetDeriver deriver = handle.getPrimitive(configuration, KeysetDeriver.class);
+    assertThat(deriver).isNotNull();
+    KeysetHandle derivedKeyset = deriver.deriveKeyset(new byte[] {1, 2, 3});
+    assertThat(derivedKeyset.size()).isEqualTo(1);
   }
 
   @Test

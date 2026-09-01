@@ -94,7 +94,11 @@ public final class KeyDerivationConfig2026 {
   //  * AesGcmSiv
   //  * AesGcmHkdfStreaming
   //  * Ed25519
-  private static PrfBasedKeyDerivationKeyConfig keyDerivationKeyConfig() {
+  /**
+   * Returns a {@link PrfBasedKeyDerivationKeyConfigBuilder} pre-configured with the default 2026
+   * algorithms for PRF-based key derivation.
+   */
+  public static PrfBasedKeyDerivationKeyConfigBuilder keyDerivationKeyConfigBuilder() {
     return new PrfBasedKeyDerivationKeyConfigBuilder()
         // HkdfPrf
         .addKeySerializer(HkdfPrfKey.class, HkdfPrfProtoSerialization::serializeKey)
@@ -174,11 +178,15 @@ public final class KeyDerivationConfig2026 {
         .addParametersParser(
             "type.googleapis.com/google.crypto.tink.Ed25519PrivateKey",
             Ed25519ProtoSerialization::parseParameters)
-        .addKeyFromRandomness(Ed25519Parameters.class, KeyDerivationConfig2026::createEd25519Key)
-        .build();
+        .addKeyFromRandomness(Ed25519Parameters.class, KeyDerivationConfig2026::createEd25519Key);
   }
 
-  private static Configuration createConfiguration(
+  private static PrfBasedKeyDerivationKeyConfig keyDerivationKeyConfig() {
+    return keyDerivationKeyConfigBuilder().build();
+  }
+
+  /** Creates a {@link Configuration} from the given {@link PrfBasedKeyDerivationKeyConfig}. */
+  public static Configuration createConfiguration(
       PrfBasedKeyDerivationKeyConfig keyDerivationKeyConfig) {
     return new ProtoBasedConfigurationBuilder()
         .addPrimitiveWrapper(
