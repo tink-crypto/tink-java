@@ -20,6 +20,7 @@ import com.google.crypto.tink.aead.AesCtrHmacAeadKey;
 import com.google.crypto.tink.aead.AesGcmKey;
 import com.google.crypto.tink.aead.internal.WrappedAead;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.ProtoBasedConfigurationBuilder;
 import com.google.crypto.tink.internal.Random;
 import com.google.crypto.tink.mac.ChunkedMac;
 import com.google.crypto.tink.mac.HmacKey;
@@ -70,107 +71,47 @@ public class ConfigurationFips140v2 {
   }
 
   private static Configuration create() {
-    return new Configuration() {
-      @Override
-      public <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
-          throws GeneralSecurityException {
-        if (clazz.equals(Aead.class)) {
-          return clazz.cast(WrappedAead.create(keysetHandle, ConfigurationFips140v2::createAead));
-        }
-        if (clazz.equals(Mac.class)) {
-          return clazz.cast(WrappedMac.create(keysetHandle, ConfigurationFips140v2::createMac));
-        }
-        if (clazz.equals(ChunkedMac.class)) {
-          return clazz.cast(
-              WrappedChunkedMac.create(keysetHandle, ConfigurationFips140v2::createChunkedMac));
-        }
-        if (clazz.equals(PrfSet.class)) {
-          return clazz.cast(WrappedPrfSet.create(keysetHandle, ConfigurationFips140v2::createPrf));
-        }
-        if (clazz.equals(PublicKeySign.class)) {
-          return clazz.cast(
-              WrappedPublicKeySign.create(
-                  keysetHandle, ConfigurationFips140v2::createPublicKeySign));
-        }
-        if (clazz.equals(PublicKeyVerify.class)) {
-          return clazz.cast(
-              WrappedPublicKeyVerify.create(
-                  keysetHandle, ConfigurationFips140v2::createPublicKeyVerify));
-        }
-        throw new GeneralSecurityException(
-            "No primitive creator for " + clazz.getName() + " available in ConfigurationFips140v2");
-      }
-    };
-  }
-
-  private static Aead createAead(KeysetHandleInterface.Entry entry)
-      throws GeneralSecurityException {
-    Key key = entry.getKey();
-    if (key instanceof AesCtrHmacAeadKey) {
-      return EncryptThenAuthenticate.create((AesCtrHmacAeadKey) key);
-    }
-    if (key instanceof AesGcmKey) {
-      return AesGcmJce.create((AesGcmKey) key);
-    }
-    throw new GeneralSecurityException("Key type" + key.getClass() + " not supported for AEAD");
-  }
-
-  private static Mac createMac(KeysetHandleInterface.Entry entry) throws GeneralSecurityException {
-    Key key = entry.getKey();
-    if (key instanceof HmacKey) {
-      return PrfMac.create((HmacKey) key);
-    }
-    throw new GeneralSecurityException("Key type" + key.getClass() + " not supported for MAC");
-  }
-
-  private static ChunkedMac createChunkedMac(KeysetHandleInterface.Entry entry)
-      throws GeneralSecurityException {
-    Key key = entry.getKey();
-    if (key instanceof HmacKey) {
-      return new ChunkedHmacImpl((HmacKey) key);
-    }
-    throw new GeneralSecurityException(
-        "Key type" + key.getClass() + " not supported for ChunkedMac");
-  }
-
-  private static Prf createPrf(KeysetHandleInterface.Entry entry) throws GeneralSecurityException {
-    Key key = entry.getKey();
-    if (key instanceof HmacPrfKey) {
-      return PrfHmacJce.create((HmacPrfKey) key);
-    }
-    throw new GeneralSecurityException("Key type" + key.getClass() + " not supported for Prf");
-  }
-
-  private static PublicKeySign createPublicKeySign(KeysetHandleInterface.Entry entry)
-      throws GeneralSecurityException {
-    Key key = entry.getKey();
-    if (key instanceof EcdsaPrivateKey) {
-      return EcdsaSignJce.create((EcdsaPrivateKey) key);
-    }
-    if (key instanceof RsaSsaPkcs1PrivateKey) {
-      return rsaSsaPkcs1SignCreate((RsaSsaPkcs1PrivateKey) key);
-    }
-    if (key instanceof RsaSsaPssPrivateKey) {
-      return rsaSsaPssSignCreate((RsaSsaPssPrivateKey) key);
-    }
-    throw new GeneralSecurityException(
-        "Key type" + key.getClass() + " not supported for PublicKeySign");
-  }
-
-  private static PublicKeyVerify createPublicKeyVerify(KeysetHandleInterface.Entry entry)
-      throws GeneralSecurityException {
-    Key key = entry.getKey();
-    if (key instanceof EcdsaPublicKey) {
-      return EcdsaVerifyJce.create((EcdsaPublicKey) key);
-    }
-    if (key instanceof RsaSsaPkcs1PublicKey) {
-      return rsaSsaPkcs1VerifyCreate((RsaSsaPkcs1PublicKey) key);
-    }
-    if (key instanceof RsaSsaPssPublicKey) {
-      return rsaSsaPssVerifyCreate((RsaSsaPssPublicKey) key);
-    }
-    throw new GeneralSecurityException(
-        "Key type" + key.getClass() + " not supported for PublicKeyVerify");
+    return new ProtoBasedConfigurationBuilder()
+        .addPrimitiveWrapper(Aead.class, Aead.class, WrappedAead::create)
+        .addPrimitiveWrapper(Mac.class, Mac.class, WrappedMac::create)
+        .addPrimitiveWrapper(ChunkedMac.class, ChunkedMac.class, WrappedChunkedMac::create)
+        .addPrimitiveWrapper(PrfSet.class, Prf.class, WrappedPrfSet::create)
+        .addPrimitiveWrapper(
+            PublicKeySign.class, PublicKeySign.class, WrappedPublicKeySign::create)
+        .addPrimitiveWrapper(
+            PublicKeyVerify.class, PublicKeyVerify.class, WrappedPublicKeyVerify::create)
+        // AEAD
+        .addPrimitiveConstructor(
+            EncryptThenAuthenticate::create, AesCtrHmacAeadKey.class, Aead.class)
+        .addPrimitiveConstructor(AesGcmJce::create, AesGcmKey.class, Aead.class)
+        // Mac
+        .addPrimitiveConstructor(PrfMac::create, HmacKey.class, Mac.class)
+        .addPrimitiveConstructor(ChunkedHmacImpl::new, HmacKey.class, ChunkedMac.class)
+        // PRF
+        .addPrimitiveConstructor(PrfHmacJce::create, HmacPrfKey.class, Prf.class)
+        // PublicKeySign
+        .addPrimitiveConstructor(
+            EcdsaSignJce::create, EcdsaPrivateKey.class, PublicKeySign.class)
+        .addPrimitiveConstructor(
+            ConfigurationFips140v2::rsaSsaPkcs1SignCreate,
+            RsaSsaPkcs1PrivateKey.class,
+            PublicKeySign.class)
+        .addPrimitiveConstructor(
+            ConfigurationFips140v2::rsaSsaPssSignCreate,
+            RsaSsaPssPrivateKey.class,
+            PublicKeySign.class)
+        // PublicKeyVerify
+        .addPrimitiveConstructor(
+            EcdsaVerifyJce::create, EcdsaPublicKey.class, PublicKeyVerify.class)
+        .addPrimitiveConstructor(
+            ConfigurationFips140v2::rsaSsaPkcs1VerifyCreate,
+            RsaSsaPkcs1PublicKey.class,
+            PublicKeyVerify.class)
+        .addPrimitiveConstructor(
+            ConfigurationFips140v2::rsaSsaPssVerifyCreate,
+            RsaSsaPssPublicKey.class,
+            PublicKeyVerify.class)
+        .build();
   }
 
   private ConfigurationFips140v2() {}
