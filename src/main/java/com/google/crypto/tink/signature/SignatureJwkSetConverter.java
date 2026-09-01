@@ -281,21 +281,25 @@ public final class SignatureJwkSetConverter {
       throws GeneralSecurityException {
     EcdsaParameters.CurveType curveType;
     EcdsaParameters.HashType hashType;
+    int fieldLength;
     switch (getStringItem(jsonKey, "alg")) {
       case "ES256":
         expectStringItem(jsonKey, "crv", "P-256");
         curveType = EcdsaParameters.CurveType.NIST_P256;
         hashType = EcdsaParameters.HashType.SHA256;
+        fieldLength = 32;
         break;
       case "ES384":
         expectStringItem(jsonKey, "crv", "P-384");
         curveType = EcdsaParameters.CurveType.NIST_P384;
         hashType = EcdsaParameters.HashType.SHA384;
+        fieldLength = 48;
         break;
       case "ES512":
         expectStringItem(jsonKey, "crv", "P-521");
         curveType = EcdsaParameters.CurveType.NIST_P521;
         hashType = EcdsaParameters.HashType.SHA512;
+        fieldLength = 66;
         break;
       default:
         throw new GeneralSecurityException(
@@ -308,8 +312,16 @@ public final class SignatureJwkSetConverter {
     validateUseIsSig(jsonKey);
     validateKeyOpsIsVerify(jsonKey);
 
-    BigInteger x = new BigInteger(1, Base64.urlSafeDecode(getStringItem(jsonKey, "x")));
-    BigInteger y = new BigInteger(1, Base64.urlSafeDecode(getStringItem(jsonKey, "y")));
+    byte[] decodedX = Base64.urlSafeDecode(getStringItem(jsonKey, "x"));
+    if (decodedX.length != fieldLength) {
+      throw new GeneralSecurityException("invalid length of x");
+    }
+    byte[] decodedY = Base64.urlSafeDecode(getStringItem(jsonKey, "y"));
+    if (decodedY.length != fieldLength) {
+      throw new GeneralSecurityException("invalid length of y");
+    }
+    BigInteger x = new BigInteger(1, decodedX);
+    BigInteger y = new BigInteger(1, decodedY);
     ECPoint publicPoint = new ECPoint(x, y);
 
     return EcdsaPublicKey.builder()

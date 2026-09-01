@@ -34,6 +34,7 @@ import com.google.gson.JsonParser;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.spec.ECPoint;
+import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -1394,5 +1395,106 @@ public final class JwkSetConverterTest {
                 JwkSetConverter.toPublicKeysetHandle(
                     "{\"keys\":[{\"alg\":\"ES256\",\"kty\":\"EC\",\"crv\":\"P-256\",\"x\":\"A\",\"y\":\"AA\"}]}"));
     assertThat(e).hasMessageThat().contains("invalid JWK key entry");
+  }
+
+  private static String makeEs256Jwk(String x, String y) {
+    return "{\"keys\":[{\"kty\":\"EC\",\"crv\":\"P-256\",\"alg\":\"ES256\",\"use\":\"sig\","
+        + "\"key_ops\":[\"verify\"],\"x\":\""
+        + x
+        + "\",\"y\":\""
+        + y
+        + "\"}]}";
+  }
+
+  // Canonical P-256 coordinates whose x-coordinate has a leading 0x00 byte (32 bytes when decoded).
+  private static final String CANONICAL_X = "AGlFjtbwLgtzRDh7dV9sYmW4IWl3ZKA-WghvrQPiCNo";
+  private static final String CANONICAL_Y = "QnylBczID8nLBoZZP4geZbG5Vhap3GQ-xRIcuFJCbnU";
+
+  @Test
+  public void toPublicKeysetHandle_canonicalCoordinates_success() throws Exception {
+    KeysetHandle handle =
+        JwkSetConverter.toPublicKeysetHandle(makeEs256Jwk(CANONICAL_X, CANONICAL_Y));
+    assertThat(handle.size()).isEqualTo(1);
+    String exported = JwkSetConverter.fromPublicKeysetHandle(handle);
+    JsonObject jsonKey =
+        JsonParser.parseString(exported)
+            .getAsJsonObject()
+            .get("keys")
+            .getAsJsonArray()
+            .get(0)
+            .getAsJsonObject();
+    assertThat(jsonKey.get("x").getAsString()).isEqualTo(CANONICAL_X);
+    assertThat(jsonKey.get("y").getAsString()).isEqualTo(CANONICAL_Y);
+  }
+
+  @Test
+  public void toPublicKeysetHandle_strippedLeadingZeroXCoordinate_rejected() throws Exception {
+    // RFC 7518 §6.2.1.2 mandates that x-coordinate octet sequences MUST be the full size of a
+    // coordinate for the curve (32 octets for P-256). Must reject a 31-byte coordinate.
+    byte[] rawX = Base64.urlSafeDecode(CANONICAL_X);
+    assertThat(rawX).hasLength(32);
+    assertThat(rawX[0]).isEqualTo((byte) 0);
+
+    byte[] x31 = Arrays.copyOfRange(rawX, 1, rawX.length);
+    String x31B64 = Base64.urlSafeEncode(x31);
+
+    GeneralSecurityException e =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> JwkSetConverter.toPublicKeysetHandle(makeEs256Jwk(x31B64, CANONICAL_Y)));
+    assertThat(e).hasMessageThat().contains("invalid length of x");
+  }
+
+  @Test
+  public void toPublicKeysetHandle_extraLeadingZeroXCoordinate_rejected() throws Exception {
+    // Extra leading 0x00 byte yields 33 bytes for P-256.
+    // RFC 7518 §6.2.1.2 requires exactly 32 octets. Must reject a 33-byte x-coordinate.
+    byte[] rawX = Base64.urlSafeDecode(CANONICAL_X);
+    assertThat(rawX).hasLength(32);
+
+    byte[] x33 = new byte[33];
+    System.arraycopy(rawX, 0, x33, 1, rawX.length);
+    String x33B64 = Base64.urlSafeEncode(x33);
+
+    GeneralSecurityException e =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> JwkSetConverter.toPublicKeysetHandle(makeEs256Jwk(x33B64, CANONICAL_Y)));
+    assertThat(e).hasMessageThat().contains("invalid length of x");
+  }
+
+  @Test
+  public void toPublicKeysetHandle_strippedLeadingZeroYCoordinate_rejected() throws Exception {
+    // RFC 7518 §6.2.1.3 mandates that y-coordinate octet sequences MUST be the full size of a
+    // coordinate for the curve (32 octets for P-256). Must reject a 31-byte coordinate.
+    byte[] rawY = Base64.urlSafeDecode(CANONICAL_Y);
+    assertThat(rawY).hasLength(32);
+
+    byte[] y31 = Arrays.copyOfRange(rawY, 1, rawY.length);
+    String y31B64 = Base64.urlSafeEncode(y31);
+
+    GeneralSecurityException e =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> JwkSetConverter.toPublicKeysetHandle(makeEs256Jwk(CANONICAL_X, y31B64)));
+    assertThat(e).hasMessageThat().contains("invalid length of y");
+  }
+
+  @Test
+  public void toPublicKeysetHandle_extraLeadingZeroYCoordinate_rejected() throws Exception {
+    // Extra leading 0x00 byte yields 33 bytes for P-256.
+    // RFC 7518 §6.2.1.3 requires exactly 32 octets. Must reject a 33-byte y-coordinate.
+    byte[] rawY = Base64.urlSafeDecode(CANONICAL_Y);
+    assertThat(rawY).hasLength(32);
+
+    byte[] y33 = new byte[33];
+    System.arraycopy(rawY, 0, y33, 1, rawY.length);
+    String y33B64 = Base64.urlSafeEncode(y33);
+
+    GeneralSecurityException e =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> JwkSetConverter.toPublicKeysetHandle(makeEs256Jwk(CANONICAL_Y, y33B64)));
+    assertThat(e).hasMessageThat().contains("invalid length of y");
   }
 }
