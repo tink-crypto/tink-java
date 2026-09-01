@@ -753,6 +753,181 @@ public final class SignaturePemKeysetReaderTest {
     assertThat(handle.size()).isEqualTo(1);
   }
 
+  @Test
+  public void buildPublicKeysetHandle_multiKeyPemWithInvalidKeyBetweenValidKeys_loadsBothValidKeys()
+      throws Exception {
+    String rsa2048PublicKeyPem1 =
+        "-----BEGIN PUBLIC KEY-----\n"
+            + "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAv90Xf/NN1lRGBofJQzJf\n"
+            + "lHvo6GAf25GGQGaMmD9T1ZP71CCbJ69lGIS/6akFBg6ECEHGM2EZ4WFLCdr5byUq\n"
+            + "GCf4mY4WuOn+AcwzwAoDz9ASIFcQOoPclO7JYdfo2SOaumumdb5S/7FkKJ70TGYW\n"
+            + "j9aTOYWsCcaojbjGDY/JEXz3BSRIngcgOvXBmV1JokcJ/LsrJD263WE9iUknZDhB\n"
+            + "K7y4ChjHNqL8yJcw/D8xLNiJtIyuxiZ00p/lOVUInr8C/a2C1UGCgEGuXZAEGAdO\n"
+            + "NVez52n5TLvQP3hRd4MTi7YvfhezRcA4aXyIDOv+TYi4p+OVTYQ+FMbkgoWBm5bq\n"
+            + "wQIDAQAB\n"
+            + "-----END PUBLIC KEY-----\n";
+    String rsa1024PublicKeyPem =
+        "-----BEGIN PUBLIC KEY-----\n"
+            + "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDGVkgAY7vlB46UsGavIHlwPdoi\n"
+            + "rAYryEK1exl2pttZweuc4F637nFAd3iVJ0OGqUl+wb/Evq0VysqeDjKsgfeKqVxH\n"
+            + "C8GTs2USqofK0zK7ddXVDbvCvD5iHIMmpVMGu1KlGvDH3Galzitv4iRbKeelCY4X\n"
+            + "UNSc3HqqA6rJLYGuZwIDAQAB\n"
+            + "-----END PUBLIC KEY-----\n";
+    String rsa2048PublicKeyPem2 =
+        "-----BEGIN PUBLIC KEY-----\n"
+            + "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkHT+woDZHckRv316VyUw\n"
+            + "WnQ8lR7C1rOj+KPuBnAPMQTW8htNG0gfjYEb01ZRvZM8ezOunDnpBqvYPeATKTGu\n"
+            + "YD7/Tq1gkcFGf59aG2vgi8I/+0OkYNyWwuYLKm34t50TKMvQwiIBr0IZfaGnzF/5\n"
+            + "43wqtE6rvcZTavlR0q3ftJQ6OEFXnOzShRctQf7nIn2Mi2mks3cLoWpqLJe0rSiM\n"
+            + "TYqas+fiLd5K5p55H2woBpoRPBmNEBMd2r+P0caGNRd3XuO2OwOx/2XezZ0Lj9ms\n"
+            + "u7BDXM/No6dxLmrgwzokuRg0N/mF+PUCnNakbT1nyn/1uMopialAMDhYUEtZdFjw\n"
+            + "gwIDAQAB\n"
+            + "-----END PUBLIC KEY-----\n";
+
+    String multiKeyPem = rsa2048PublicKeyPem1 + rsa1024PublicKeyPem + rsa2048PublicKeyPem2;
+
+    KeysetHandle handle =
+        SignaturePemKeysetReader.newBuilder()
+            .addPem(multiKeyPem, PemKeyType.RSA_PSS_2048_SHA256)
+            .buildPublicKeysetHandle();
+
+    // Invalid/incompatible keys (1024-bit RSA) are skipped so that subsequent valid keys
+    // in the same multi-key PEM bundle are loaded.
+    assertThat(handle.size()).isEqualTo(2);
+  }
+
+  @Test
+  public void buildPublicKeysetHandle_multiKeyPemWithInvalidKeyFirst_loadsSubsequentValidKey()
+      throws Exception {
+    String rsa1024PublicKeyPem =
+        "-----BEGIN PUBLIC KEY-----\n"
+            + "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDGVkgAY7vlB46UsGavIHlwPdoi\n"
+            + "rAYryEK1exl2pttZweuc4F637nFAd3iVJ0OGqUl+wb/Evq0VysqeDjKsgfeKqVxH\n"
+            + "C8GTs2USqofK0zK7ddXVDbvCvD5iHIMmpVMGu1KlGvDH3Galzitv4iRbKeelCY4X\n"
+            + "UNSc3HqqA6rJLYGuZwIDAQAB\n"
+            + "-----END PUBLIC KEY-----\n";
+    String rsa2048PublicKeyPem =
+        "-----BEGIN PUBLIC KEY-----\n"
+            + "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAv90Xf/NN1lRGBofJQzJf\n"
+            + "lHvo6GAf25GGQGaMmD9T1ZP71CCbJ69lGIS/6akFBg6ECEHGM2EZ4WFLCdr5byUq\n"
+            + "GCf4mY4WuOn+AcwzwAoDz9ASIFcQOoPclO7JYdfo2SOaumumdb5S/7FkKJ70TGYW\n"
+            + "j9aTOYWsCcaojbjGDY/JEXz3BSRIngcgOvXBmV1JokcJ/LsrJD263WE9iUknZDhB\n"
+            + "K7y4ChjHNqL8yJcw/D8xLNiJtIyuxiZ00p/lOVUInr8C/a2C1UGCgEGuXZAEGAdO\n"
+            + "NVez52n5TLvQP3hRd4MTi7YvfhezRcA4aXyIDOv+TYi4p+OVTYQ+FMbkgoWBm5bq\n"
+            + "wQIDAQAB\n"
+            + "-----END PUBLIC KEY-----\n";
+
+    String multiKeyPem = rsa1024PublicKeyPem + rsa2048PublicKeyPem;
+
+    // If the first key is invalid, it is ignored and subsequent valid keys are loaded.
+    KeysetHandle handle =
+        SignaturePemKeysetReader.newBuilder()
+            .addPem(multiKeyPem, PemKeyType.RSA_PSS_2048_SHA256)
+            .buildPublicKeysetHandle();
+
+    assertThat(handle.size()).isEqualTo(1);
+  }
+
+  @Test
+  public void
+      buildPublicKeysetHandle_multiKeyPemWithPrivateKeyBetweenPublicKeys_loadsBothPublicKeys()
+          throws Exception {
+    String rsa2048PublicKeyPem1 =
+        "-----BEGIN PUBLIC KEY-----\n"
+            + "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAv90Xf/NN1lRGBofJQzJf\n"
+            + "lHvo6GAf25GGQGaMmD9T1ZP71CCbJ69lGIS/6akFBg6ECEHGM2EZ4WFLCdr5byUq\n"
+            + "GCf4mY4WuOn+AcwzwAoDz9ASIFcQOoPclO7JYdfo2SOaumumdb5S/7FkKJ70TGYW\n"
+            + "j9aTOYWsCcaojbjGDY/JEXz3BSRIngcgOvXBmV1JokcJ/LsrJD263WE9iUknZDhB\n"
+            + "K7y4ChjHNqL8yJcw/D8xLNiJtIyuxiZ00p/lOVUInr8C/a2C1UGCgEGuXZAEGAdO\n"
+            + "NVez52n5TLvQP3hRd4MTi7YvfhezRcA4aXyIDOv+TYi4p+OVTYQ+FMbkgoWBm5bq\n"
+            + "wQIDAQAB\n"
+            + "-----END PUBLIC KEY-----\n";
+    String rsaPrivateKeyPem =
+        "-----BEGIN RSA PRIVATE KEY-----\n"
+            + "MIIEpAIBAAKCAQEAsll1i7Arx1tosXYSyb9oxfoFlYozTGHhZ7wgvMdXV8Em6JIQ\n"
+            + "ud85iQcs9iYOaIPHzUr00x3emRW2mzAfvvli3oxxvS217GJdollxL4ao3D0kHpaI\n"
+            + "yCORt78evDWDEfVcJr6RC3b2H+pAjtaS8alXimIsgsD89vae82cOOL/JD2PaTzu7\n"
+            + "0IjIrno8WlXmb2R01WLTLM57ft188BScoOlstlJegfu6gVqPEnSONOUTX1crLhe3\n"
+            + "ukMAgVl+b7kDPABYhNWTURjGDXWwEPb+zn7NzBy31Y0TiWk9Qzd/Tz3pScseQQXn\n"
+            + "krltfwSwzSYqwzz/xaiQ0mdCXmHBnpNjVQ8ihQIDAQABAoIBAHYrXf3bEXa6syh6\n"
+            + "AkLYZzRdz5tggVLHu9C+zrYmIlILsZsBRMHTDM0lCv5hAsTvI9B7LLJBJT8rKt2y\n"
+            + "SiaAGKk6RxZAljx0hHPQbXU+9N1QSYFW3nQ1VRR5NoUfs6OPfapSM8pz3OoSjQnX\n"
+            + "VG94c39GQxWzhyifCXxeuQaS1EY0F8g9HKkSdRbvsNVF/2j+rdmWeur8swtYBDCN\n"
+            + "nBymiDhEBj/Y1Ft3R6ywC14YM/af4aDWTbhQvZYPtITdoEtOWulGkqcx0j/NlMYU\n"
+            + "SZcaG3M/6UuKXGzibtO4w9LlI00HPlBDi3fQGbezk6WyLNjcE4xj/MKFg7VosgN7\n"
+            + "XDy68tUCgYEA6FovqDcya6JxivhyVZks98e22sPARwpowI3Nt+gsF5uPcqQMvbot\n"
+            + "ACzKHjqxRJyGbioMUI8Ao20/f2PxzeI5wAtH2HPNaN6bCbBXvxlCTMCAokbHSWjW\n"
+            + "stK2PXl2cqF/51ED7EPbgxABetGyfudsx22QowSR66Sq3I8UtZnQVUMCgYEAxIBC\n"
+            + "EW2oLh9ZUKxEeMuFlMN1FJCCqIx3zeVjUtAC3Vm/VvodEL0KM7w9Y123BfeoWMnG\n"
+            + "HaqNUEZRUO/bMvaiIXVykF19NTCxym4s6eKNBwGsdWvxroRm0k37uhflt9A7iVX6\n"
+            + "HmDVPYgjLJbPmLc8+Ms5ML6Od7qXKajRFOPmSJcCgYEA28JY6s/x9013+InNkdpD\n"
+            + "ZsNU1gpo9IgK1XwJQ1TrRxTRkwtIJbZN06mJLRg0C4HDv7QzW4o1f1zXvsQnsqOy\n"
+            + "HUpOFJJKiFJq7roD8/GO/Irh3xn0aSEoV4/l37Te68KF96FvhWoU1xwvWhu1qEN4\n"
+            + "ZhLhxt2OqgJfvCXz32LwYYMCgYBVEL0JNHJw/Qs6PEksDdcXLoI509FsS9r1XE9i\n"
+            + "I0CKOHb3nTEF9QA8o0nkAUbhI3RSc477esDQNpCvPBalelV3rJNa4c35P8pHuuhg\n"
+            + "m723gcb50i/+/7xPYIkP55Z/u3p6mqi7i+nkSFIJ1IOsNe8EOV3ZtzSPqkwUMcvJ\n"
+            + "gltHowKBgQDkB76QzH3xb4jABKehkCxVxqyGLKxU7SOZpLpCc/5OHbo12u/CwlwG\n"
+            + "uAeidKZk3SJEmj0F1+Aiir2KRv+RX543VvzCtEXNkVViVrirzvjZUGKPdkMWfbF8\n"
+            + "OdD7qHPPNu5jSyaroeN6VqfbELpewhYzulMEipckEZlU4+Dxu2k1eQ==\n"
+            + "-----END RSA PRIVATE KEY-----\n";
+    String rsa2048PublicKeyPem2 =
+        "-----BEGIN PUBLIC KEY-----\n"
+            + "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkHT+woDZHckRv316VyUw\n"
+            + "WnQ8lR7C1rOj+KPuBnAPMQTW8htNG0gfjYEb01ZRvZM8ezOunDnpBqvYPeATKTGu\n"
+            + "YD7/Tq1gkcFGf59aG2vgi8I/+0OkYNyWwuYLKm34t50TKMvQwiIBr0IZfaGnzF/5\n"
+            + "43wqtE6rvcZTavlR0q3ftJQ6OEFXnOzShRctQf7nIn2Mi2mks3cLoWpqLJe0rSiM\n"
+            + "TYqas+fiLd5K5p55H2woBpoRPBmNEBMd2r+P0caGNRd3XuO2OwOx/2XezZ0Lj9ms\n"
+            + "u7BDXM/No6dxLmrgwzokuRg0N/mF+PUCnNakbT1nyn/1uMopialAMDhYUEtZdFjw\n"
+            + "gwIDAQAB\n"
+            + "-----END PUBLIC KEY-----\n";
+
+    String multiKeyPem = rsa2048PublicKeyPem1 + rsaPrivateKeyPem + rsa2048PublicKeyPem2;
+
+    KeysetHandle handle =
+        SignaturePemKeysetReader.newBuilder()
+            .addPem(multiKeyPem, PemKeyType.RSA_PSS_2048_SHA256)
+            .buildPublicKeysetHandle();
+
+    // Private keys in a public bundle are skipped, and both valid public keys are loaded.
+    assertThat(handle.size()).isEqualTo(2);
+  }
+
+  @Test
+  public void
+      buildPublicKeysetHandle_multiKeyPemWithInvalidBase64BetweenValidKeys_loadsBothValidKeys()
+          throws Exception {
+    String rsa2048PublicKeyPem1 =
+        "-----BEGIN PUBLIC KEY-----\n"
+            + "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAv90Xf/NN1lRGBofJQzJf\n"
+            + "lHvo6GAf25GGQGaMmD9T1ZP71CCbJ69lGIS/6akFBg6ECEHGM2EZ4WFLCdr5byUq\n"
+            + "GCf4mY4WuOn+AcwzwAoDz9ASIFcQOoPclO7JYdfo2SOaumumdb5S/7FkKJ70TGYW\n"
+            + "j9aTOYWsCcaojbjGDY/JEXz3BSRIngcgOvXBmV1JokcJ/LsrJD263WE9iUknZDhB\n"
+            + "K7y4ChjHNqL8yJcw/D8xLNiJtIyuxiZ00p/lOVUInr8C/a2C1UGCgEGuXZAEGAdO\n"
+            + "NVez52n5TLvQP3hRd4MTi7YvfhezRcA4aXyIDOv+TYi4p+OVTYQ+FMbkgoWBm5bq\n"
+            + "wQIDAQAB\n"
+            + "-----END PUBLIC KEY-----\n";
+    String invalidBase64Pem = "-----BEGIN PUBLIC KEY-----\n" + "A\n" + "-----END PUBLIC KEY-----\n";
+    String rsa2048PublicKeyPem2 =
+        "-----BEGIN PUBLIC KEY-----\n"
+            + "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkHT+woDZHckRv316VyUw\n"
+            + "WnQ8lR7C1rOj+KPuBnAPMQTW8htNG0gfjYEb01ZRvZM8ezOunDnpBqvYPeATKTGu\n"
+            + "YD7/Tq1gkcFGf59aG2vgi8I/+0OkYNyWwuYLKm34t50TKMvQwiIBr0IZfaGnzF/5\n"
+            + "43wqtE6rvcZTavlR0q3ftJQ6OEFXnOzShRctQf7nIn2Mi2mks3cLoWpqLJe0rSiM\n"
+            + "TYqas+fiLd5K5p55H2woBpoRPBmNEBMd2r+P0caGNRd3XuO2OwOx/2XezZ0Lj9ms\n"
+            + "u7BDXM/No6dxLmrgwzokuRg0N/mF+PUCnNakbT1nyn/1uMopialAMDhYUEtZdFjw\n"
+            + "gwIDAQAB\n"
+            + "-----END PUBLIC KEY-----\n";
+
+    String multiKeyPem = rsa2048PublicKeyPem1 + invalidBase64Pem + rsa2048PublicKeyPem2;
+
+    KeysetHandle handle =
+        SignaturePemKeysetReader.newBuilder()
+            .addPem(multiKeyPem, PemKeyType.RSA_PSS_2048_SHA256)
+            .buildPublicKeysetHandle();
+
+    // Malformed Base64 blocks are skipped, and both valid keys are loaded.
+    assertThat(handle.size()).isEqualTo(2);
+  }
 
   @Test
   public void buildPublicKeysetHandle_withRsaPrivateKey_isIgnored() throws Exception {

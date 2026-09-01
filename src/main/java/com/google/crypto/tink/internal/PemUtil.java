@@ -19,6 +19,7 @@ package com.google.crypto.tink.internal;
 import com.google.crypto.tink.subtle.Base64;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.spec.EncodedKeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -34,50 +35,67 @@ public final class PemUtil {
   private static final String MARKER = "-----";
 
   /**
-   * Parses a single key from {@code reader}.
+   * Reads a single key spec from {@code reader}.
    *
-   * <p>For private keys, it will return a PKCS8EncodedKeySpec. For public keys, it will return a
-   * X509EncodedKeySpec.
+   * @return the {@link EncodedKeySpec}, or {@code null} if the end of the stream is reached without
+   *     finding another PEM block.
+   * @throws GeneralSecurityException if a PEM block was found but could not be parsed into a key
+   *     spec.
    */
   @Nullable
-  public static EncodedKeySpec parsePemToKeySpec(BufferedReader reader) {
-    try{
-      String line = reader.readLine();
-      while (line != null && !line.startsWith(BEGIN)) {
-        line = reader.readLine();
-      }
-      if (line == null) {
-        return null;
-      }
+  public static EncodedKeySpec parseKeySpecWithException(BufferedReader reader)
+      throws GeneralSecurityException, IOException {
+    String line = reader.readLine();
+    while (line != null && !line.startsWith(BEGIN)) {
+      line = reader.readLine();
+    }
+    if (line == null) {
+      return null;
+    }
 
-      line = line.trim().substring(BEGIN.length());
-      int index = line.indexOf(MARKER);
-      if (index < 0) {
-        return null;
-      }
-      String type = line.substring(0, index);
-      String endMarker = END + type + MARKER;
-      StringBuilder base64key = new StringBuilder();
+    line = line.trim().substring(BEGIN.length());
+    int index = line.indexOf(MARKER);
+    if (index < 0) {
+      throw new GeneralSecurityException("cannot parse PEM key");
+    }
+    String type = line.substring(0, index);
+    String endMarker = END + type + MARKER;
+    StringBuilder base64key = new StringBuilder();
 
-      while ((line = reader.readLine()) != null) {
-        if (line.indexOf(":") > 0) {
-          // header, ignore
-          continue;
-        }
-        if (line.contains(endMarker)) {
-          break;
-        }
-        base64key.append(line);
+    while ((line = reader.readLine()) != null) {
+      if (line.indexOf(":") > 0) {
+        // header, ignore
+        continue;
       }
+      if (line.contains(endMarker)) {
+        break;
+      }
+      base64key.append(line);
+    }
+    try {
       byte[] key = Base64.decode(base64key.toString(), Base64.DEFAULT);
       if (type.contains(PUBLIC_KEY)) {
         return new X509EncodedKeySpec(key);
       } else if (type.contains(PRIVATE_KEY)) {
         return new PKCS8EncodedKeySpec(key);
       }
-      return null;
-    } catch (IOException | IllegalArgumentException e) {
-      // reader.readLine() failed, or Base64.decode() rejected the body.
+      throw new GeneralSecurityException("cannot parse PEM key");
+    } catch (IllegalArgumentException e) {
+      throw new GeneralSecurityException("cannot parse PEM key", e);
+    }
+  }
+
+  /**
+   * Parses a single key from {@code reader}.
+   *
+   * <p>For private keys, it will return a PKCS8EncodedKeySpec. For public keys, it will return a
+   * X509EncodedKeySpec. Returns null if parsing fails or end of stream is reached.
+   */
+  @Nullable
+  public static EncodedKeySpec parsePemToKeySpec(BufferedReader reader) {
+    try {
+      return parseKeySpecWithException(reader);
+    } catch (GeneralSecurityException | IOException e) {
       return null;
     }
   }

@@ -17,10 +17,12 @@
 package com.google.crypto.tink.internal;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.subtle.Base64;
 import java.io.BufferedReader;
 import java.io.StringReader;
+import java.security.GeneralSecurityException;
 import java.security.spec.EncodedKeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -174,5 +176,51 @@ public final class PemUtilTest {
   public void emptyReader_shouldReturnNull() throws Exception {
     BufferedReader emptyReader = new BufferedReader(new StringReader(""));
     assertThat(PemUtil.parsePemToKeySpec(emptyReader)).isNull();
+  }
+
+  @Test
+  public void readKeySpec_validPublicKey_shouldReturnX509EncodedKeySpec() throws Exception {
+    String ecPublicKeyPem =
+        "-----BEGIN PUBLIC KEY-----\n"
+            + "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7BiT5K5pivl4Qfrt9hRhRREMUzj/\n"
+            + "8suEJ7GlMxZfvdcpbi/GhYPuJi8Gn2H1NaMJZcLZo5MLPKyyGT5u3u1VBQ==\n"
+            + "-----END PUBLIC KEY-----\n";
+    BufferedReader reader = new BufferedReader(new StringReader(ecPublicKeyPem));
+    EncodedKeySpec keySpec = PemUtil.parseKeySpecWithException(reader);
+    assertThat(keySpec).isInstanceOf(X509EncodedKeySpec.class);
+  }
+
+  @Test
+  public void readKeySpec_emptyReader_shouldReturnNull() throws Exception {
+    BufferedReader reader = new BufferedReader(new StringReader(""));
+    assertThat(PemUtil.parseKeySpecWithException(reader)).isNull();
+  }
+
+  @Test
+  public void readKeySpec_noBeginMarker_shouldReturnNull() throws Exception {
+    BufferedReader reader =
+        new BufferedReader(new StringReader("some random text without marker\n"));
+    assertThat(PemUtil.parseKeySpecWithException(reader)).isNull();
+  }
+
+  @Test
+  public void readKeySpec_unknownKey_shouldThrowGeneralSecurityException() throws Exception {
+    String unknownKeyPem = "-----BEGIN UNKNOWN KEY-----\nabcdef\n-----END UNKNOWN KEY-----\n";
+    BufferedReader reader = new BufferedReader(new StringReader(unknownKeyPem));
+    assertThrows(GeneralSecurityException.class, () -> PemUtil.parseKeySpecWithException(reader));
+  }
+
+  @Test
+  public void readKeySpec_invalidBase64_shouldThrowGeneralSecurityException() throws Exception {
+    String invalidBase64Pem = "-----BEGIN PUBLIC KEY-----\nA\n-----END PUBLIC KEY-----\n";
+    BufferedReader reader = new BufferedReader(new StringReader(invalidBase64Pem));
+    assertThrows(GeneralSecurityException.class, () -> PemUtil.parseKeySpecWithException(reader));
+  }
+
+  @Test
+  public void readKeySpec_incompleteHeader_shouldThrowGeneralSecurityException() throws Exception {
+    String incompleteHeaderPem = "-----BEGIN PUBLIC KEY";
+    BufferedReader reader = new BufferedReader(new StringReader(incompleteHeaderPem));
+    assertThrows(GeneralSecurityException.class, () -> PemUtil.parseKeySpecWithException(reader));
   }
 }
