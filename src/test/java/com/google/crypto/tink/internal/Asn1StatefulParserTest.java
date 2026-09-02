@@ -431,4 +431,28 @@ public final class Asn1StatefulParserTest {
     parser.close();
     assertThrows(IllegalStateException.class, parser::consumeOid);
   }
+
+  @Test
+  public void hasRemaining_works() throws Exception {
+    byte[] data = Hex.decode("02010504020102");
+
+    try (Asn1StatefulParser parser = new Asn1StatefulParser(data)) {
+      assertThat(parser.hasRemaining()).isTrue();
+      assertThat(parser.consumeInteger()).isEqualTo(BigInteger.valueOf(5));
+      assertThat(parser.hasRemaining()).isTrue();
+      assertThat(parser.consumeOctetString()).isEqualTo(Hex.decode("0102"));
+      assertThat(parser.hasRemaining()).isFalse();
+    }
+  }
+
+  @Test
+  @SuppressWarnings("MustBeClosed")
+  public void hasRemaining_afterClose_throws() throws Exception {
+    byte[] data = Hex.decode("020105");
+
+    Asn1StatefulParser parser = new Asn1StatefulParser(data);
+    assertThat(parser.consumeInteger()).isEqualTo(BigInteger.valueOf(5));
+    parser.close();
+    assertThrows(IllegalStateException.class, parser::hasRemaining);
+  }
 }

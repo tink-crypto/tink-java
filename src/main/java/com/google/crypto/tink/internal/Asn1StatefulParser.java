@@ -77,7 +77,13 @@ public final class Asn1StatefulParser implements AutoCloseable {
     }
   }
 
-  boolean hasRemaining() {
+  /**
+   * Returns true if there are remaining bytes to parse.
+   *
+   * @throws IllegalStateException if this parser is closed.
+   */
+  public boolean hasRemaining() {
+    checkNotClosed();
     return offset < limit;
   }
 
@@ -106,7 +112,7 @@ public final class Asn1StatefulParser implements AutoCloseable {
       return;
     }
     closed = true;
-    if (hasRemaining()) {
+    if (offset < limit) {
       throw new Asn1ParserException("Failed to parse ASN.1 DER encoded key");
     }
   }

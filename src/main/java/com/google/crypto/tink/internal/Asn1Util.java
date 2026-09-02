@@ -32,11 +32,11 @@ import java.util.List;
 
 /** Utility methods for ASN.1 encoding. */
 public final class Asn1Util {
-  private static final byte TAG_INTEGER = 0x02;
-  private static final byte TAG_SEQUENCE = 0x30;
-  private static final byte TAG_OCTET_STRING = 0x04;
-  private static final byte TAG_NULL = 0x05;
-  private static final byte TAG_OBJECT_IDENTIFIER = 0x06;
+  public static final byte TAG_INTEGER = 0x02;
+  public static final byte TAG_OCTET_STRING = 0x04;
+  public static final byte TAG_NULL = 0x05;
+  public static final byte TAG_OBJECT_IDENTIFIER = 0x06;
+  public static final byte TAG_SEQUENCE = 0x30;
   private static final byte NULL_BYTE = 0x00;
 
   private static final byte[] versionZero = new byte[] {TAG_INTEGER, 0x01, 0x00};
@@ -61,7 +61,8 @@ public final class Asn1Util {
 
   private Asn1Util() {}
 
-  private static byte[] createInteger(BigInteger val) {
+  /** ASN.1 encodes a BigInteger as an INTEGER. */
+  public static byte[] createInteger(BigInteger val) {
     byte[] bytes = val.toByteArray();
     byte[] lengthField = createLength(bytes.length);
     byte[] result = new byte[1 + lengthField.length + bytes.length];
@@ -93,7 +94,8 @@ public final class Asn1Util {
     return result;
   }
 
-  private static byte[] createSequence(List<byte[]> elements) {
+  /** ASN.1 encodes a list of DER encoded elements as a SEQUENCE. */
+  public static byte[] createSequence(List<byte[]> elements) {
     int totalLength = 0;
     for (byte[] el : elements) {
       totalLength += el.length;
@@ -110,8 +112,9 @@ public final class Asn1Util {
     }
     return result;
   }
-  
-  private static byte[] createOctetString(byte[] value) {
+
+  /** ASN.1 encodes a byte array as an OCTET STRING. */
+  public static byte[] createOctetString(byte[] value) {
     byte[] lengthField = createLength(value.length);
     byte[] result = new byte[1 + lengthField.length + value.length];
     result[0] = TAG_OCTET_STRING;
