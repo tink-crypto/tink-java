@@ -24,8 +24,6 @@ import com.google.crypto.tink.signature.RsaSsaPssParameters;
 import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
 import com.google.crypto.tink.testing.TestUtil;
 import java.math.BigInteger;
-import java.security.KeyPairGenerator;
-import java.security.Provider;
 import java.util.Set;
 import java.util.TreeSet;
 import org.junit.Test;
@@ -119,44 +117,5 @@ public final class RsaSsaPssKeyCreatorTest {
       primes.add(key.getPrimeQ().getBigInteger(InsecureSecretKeyAccess.get()));
     }
     assertThat(primes).hasSize(2 * numKeys);
-  }
-
-  @Test
-  public void createKey_withProvider_works() throws Exception {
-    if (TestUtil.isTsan()) {
-      // Key creation is too slow in Tsan.
-      return;
-    }
-    Provider provider = KeyPairGenerator.getInstance("RSA").getProvider();
-    RsaSsaPssParameters parameters =
-        PredefinedSignatureParameters.RSA_SSA_PSS_3072_SHA256_SHA256_32_F4;
-    RsaSsaPssPrivateKey key =
-        RsaSsaPssKeyCreator.createKey(parameters, /* idRequirement= */ 123, provider);
-
-    assertThat(key.getParameters()).isEqualTo(parameters);
-    assertThat(key.getIdRequirementOrNull()).isEqualTo(123);
-    assertThat(key.getOutputPrefix()).isNotNull();
-    assertThat(key.getPublicKey().getModulus().bitLength()).isEqualTo(3072);
-    assertThat(key.getPrimeP()).isNotNull();
-    assertThat(key.getPrimeQ()).isNotNull();
-  }
-
-  @Test
-  public void createKey_nullProvider_works() throws Exception {
-    if (TestUtil.isTsan()) {
-      // Key creation is too slow in Tsan.
-      return;
-    }
-    RsaSsaPssParameters parameters =
-        PredefinedSignatureParameters.RSA_SSA_PSS_3072_SHA256_SHA256_32_F4;
-    RsaSsaPssPrivateKey key =
-        RsaSsaPssKeyCreator.createKey(parameters, /* idRequirement= */ 123, /* provider= */ null);
-
-    assertThat(key.getParameters()).isEqualTo(parameters);
-    assertThat(key.getIdRequirementOrNull()).isEqualTo(123);
-    assertThat(key.getOutputPrefix()).isNotNull();
-    assertThat(key.getPublicKey().getModulus().bitLength()).isEqualTo(3072);
-    assertThat(key.getPrimeP()).isNotNull();
-    assertThat(key.getPrimeQ()).isNotNull();
   }
 }

@@ -21,12 +21,12 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.signature.RsaSsaPssParameters;
 import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
+import com.google.crypto.tink.subtle.EngineFactory;
 import com.google.crypto.tink.util.SecretBigInteger;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.Provider;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAKeyGenParameterSpec;
@@ -37,14 +37,9 @@ public final class RsaSsaPssKeyCreator {
 
   @AccessesPartialKey
   public static RsaSsaPssPrivateKey createKey(
-      RsaSsaPssParameters parameters,
-      @Nullable Integer idRequirement,
-      @Nullable Provider provider)
+      RsaSsaPssParameters parameters, @Nullable Integer idRequirement)
       throws GeneralSecurityException {
-    KeyPairGenerator keyGen =
-        provider == null
-            ? KeyPairGenerator.getInstance("RSA")
-            : KeyPairGenerator.getInstance("RSA", provider);
+    KeyPairGenerator keyGen = EngineFactory.KEY_PAIR_GENERATOR.getInstance("RSA");
     RSAKeyGenParameterSpec spec =
         new RSAKeyGenParameterSpec(
             parameters.getModulusSizeBits(),
@@ -80,13 +75,6 @@ public final class RsaSsaPssKeyCreator {
             SecretBigInteger.fromBigInteger(
                 privKey.getCrtCoefficient(), InsecureSecretKeyAccess.get()))
         .build();
-  }
-
-  @AccessesPartialKey
-  public static RsaSsaPssPrivateKey createKey(
-      RsaSsaPssParameters parameters, @Nullable Integer idRequirement)
-      throws GeneralSecurityException {
-    return createKey(parameters, idRequirement, null);
   }
 
   private RsaSsaPssKeyCreator() {}
