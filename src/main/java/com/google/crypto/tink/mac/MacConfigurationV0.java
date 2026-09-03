@@ -21,9 +21,9 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.Mac;
+import com.google.crypto.tink.ProtoKeySerializer;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.LegacyProtoKey;
-import com.google.crypto.tink.internal.MutableSerializationRegistry;
 import com.google.crypto.tink.internal.ProtoBasedConfigurationBuilder;
 import com.google.crypto.tink.mac.subtle.HmacChunkedMac;
 import com.google.crypto.tink.mac.subtle.HmacMac;
@@ -68,12 +68,20 @@ import java.security.GeneralSecurityException;
   }
 
   @LowLevelCryptoCaller
+  private static Key reparseKey(LegacyProtoKey key) throws GeneralSecurityException {
+    ProtoKeySerializer protoKeySerializer = get().getOrNull(ProtoKeySerializer.class);
+    if (protoKeySerializer == null) {
+      throw new GeneralSecurityException(
+          "Unexpected: CONFIGURATION does not support Proto Serialization");
+    }
+    return protoKeySerializer.parseKey(
+        key.getSerialization(InsecureSecretKeyAccess.get()), InsecureSecretKeyAccess.get());
+  }
+
+  @LowLevelCryptoCaller
   private static Mac createMacFromLegacyProtoKey(LegacyProtoKey key)
       throws GeneralSecurityException {
-    Key reparsedKey =
-        MutableSerializationRegistry.globalInstance()
-            .parseKey(
-                key.getSerialization(InsecureSecretKeyAccess.get()), InsecureSecretKeyAccess.get());
+    Key reparsedKey = reparseKey(key);
     if (reparsedKey instanceof AesCmacKey) {
       return MacConfig2026.createAesCmac((AesCmacKey) reparsedKey);
     }
@@ -86,10 +94,7 @@ import java.security.GeneralSecurityException;
   @LowLevelCryptoCaller
   private static ChunkedMac createChunkedMacFromLegacyProtoKey(LegacyProtoKey key)
       throws GeneralSecurityException {
-    Key reparsedKey =
-        MutableSerializationRegistry.globalInstance()
-            .parseKey(
-                key.getSerialization(InsecureSecretKeyAccess.get()), InsecureSecretKeyAccess.get());
+    Key reparsedKey = reparseKey(key);
     if (reparsedKey instanceof AesCmacKey) {
       return MacConfig2026.createChunkedAesCmac((AesCmacKey) reparsedKey);
     }
