@@ -18,16 +18,23 @@ package com.google.crypto.tink.signature.internal;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.SecretKeyAccess;
+import com.google.crypto.tink.internal.Asn1StatefulParser;
 import com.google.crypto.tink.internal.Asn1Util;
 import com.google.crypto.tink.internal.BigIntegerEncoding;
+import com.google.crypto.tink.internal.EllipticCurvesUtil;
 import com.google.crypto.tink.signature.EcdsaParameters;
 import com.google.crypto.tink.signature.EcdsaPrivateKey;
+import com.google.crypto.tink.signature.EcdsaPublicKey;
+import com.google.crypto.tink.subtle.EllipticCurves;
+import com.google.crypto.tink.util.SecretBigInteger;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
+import java.security.spec.ECPoint;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-/** ASN.1 SEC1 EC private key encoding helpers. */
+/** ASN.1 SEC1 EC private key encoding and decoding helpers. */
 public final class EcdsaAsn1Util {
   /**
    * The values of the tags below are specified in the Sections 8.1.2.2 -- 8.1.2.5 of ITU-T X.690,
@@ -54,6 +61,7 @@ public final class EcdsaAsn1Util {
    * be found in the Section 8.14.3 of ITU-T Rec. X.690.
    */
   private static final byte TAG_CONTEXT_SPECIFIC_0 = (byte) 0xa0;
+  private static final byte TAG_CONTEXT_SPECIFIC_1 = (byte) 0xa1;
 
   // Value from https://datatracker.ietf.org/doc/html/rfc5480#section-2.1.1.1
   private static final byte[] p256Oid =
@@ -152,5 +160,91 @@ public final class EcdsaAsn1Util {
                 fieldSize)));
     elements.add(oidTagged);
     return Asn1Util.createSequence(elements);
+  }
+
+  /**
+   * Parses an ASN.1 SEC1 encoded EC private key and constructs a Tink {@link EcdsaPrivateKey} using
+   * the provided {@link EcdsaParameters}.
+   */
+  @AccessesPartialKey
+  public static EcdsaPrivateKey sec1EcKeyToEcdsaPrivateKey(
+      byte[] sec1Key, EcdsaParameters parameters, SecretKeyAccess access)
+      throws GeneralSecurityException {
+    BigInteger version;
+    byte[] privateKeyBytes;
+    byte[] pubKeyBytes = null;
+    try (Asn1StatefulParser parser = new Asn1StatefulParser(sec1Key);
+        Asn1StatefulParser sequenceParser = parser.consumeSequence()) {
+      version = sequenceParser.consumeInteger();
+      if (!version.equals(BigInteger.ONE)) {
+        throw new GeneralSecurityException("Unsupported SEC1 EC private key version: " + version);
+      }
+      privateKeyBytes = sequenceParser.consumeOctetString();
+      if (sequenceParser.hasRemaining()) {
+        byte tag = sequenceParser.peekTag();
+        if (tag == TAG_CONTEXT_SPECIFIC_0) {
+          try (Asn1StatefulParser paramsParser =
+              sequenceParser.consumeTaggedBytes(TAG_CONTEXT_SPECIFIC_0)) {
+            byte[] oid = paramsParser.consumeOid();
+            validateCurveOid(oid, parameters.getCurveType());
+          }
+        }
+      }
+      if (sequenceParser.hasRemaining()) {
+        byte tag = sequenceParser.peekTag();
+        if (tag == TAG_CONTEXT_SPECIFIC_1) {
+          try (Asn1StatefulParser pubKeyParser =
+              sequenceParser.consumeTaggedBytes(TAG_CONTEXT_SPECIFIC_1)) {
+            pubKeyBytes = pubKeyParser.consumeBitString();
+          }
+        }
+      }
+    } catch (Asn1StatefulParser.Asn1ParserException e) {
+      throw new GeneralSecurityException("Failed to parse SEC1 EC private key", e);
+    }
+
+    BigInteger privateValue = BigIntegerEncoding.fromUnsignedBigEndianBytes(privateKeyBytes);
+    ECPoint publicPoint;
+    if (pubKeyBytes != null) {
+      EllipticCurves.PointFormatType format;
+      if (pubKeyBytes.length > 0 && pubKeyBytes[0] == 4) {
+        format = EllipticCurves.PointFormatType.UNCOMPRESSED;
+      } else if (pubKeyBytes.length > 0 && (pubKeyBytes[0] == 2 || pubKeyBytes[0] == 3)) {
+        format = EllipticCurves.PointFormatType.COMPRESSED;
+      } else {
+        throw new GeneralSecurityException("Invalid EC public key format");
+      }
+      publicPoint =
+          EllipticCurves.pointDecode(
+              parameters.getCurveType().toParameterSpec().getCurve(), format, pubKeyBytes);
+    } else {
+      publicPoint =
+          EllipticCurvesUtil.multiplyByGenerator(
+              privateValue, parameters.getCurveType().toParameterSpec());
+    }
+    EcdsaPublicKey publicKey =
+        EcdsaPublicKey.builder().setParameters(parameters).setPublicPoint(publicPoint).build();
+    return EcdsaPrivateKey.builder()
+        .setPublicKey(publicKey)
+        .setPrivateValue(
+            SecretBigInteger.fromBigInteger(privateValue, SecretKeyAccess.requireAccess(access)))
+        .build();
+  }
+
+  private static void validateCurveOid(byte[] oid, EcdsaParameters.CurveType curveType)
+      throws GeneralSecurityException {
+    byte[] expectedOid;
+    if (curveType == EcdsaParameters.CurveType.NIST_P256) {
+      expectedOid = p256Oid;
+    } else if (curveType == EcdsaParameters.CurveType.NIST_P384) {
+      expectedOid = p384Oid;
+    } else if (curveType == EcdsaParameters.CurveType.NIST_P521) {
+      expectedOid = p521Oid;
+    } else {
+      throw new GeneralSecurityException("Unsupported curve type: " + curveType);
+    }
+    if (!Arrays.equals(oid, expectedOid)) {
+      throw new GeneralSecurityException("Invalid EC curve OID in SEC1 key");
+    }
   }
 }

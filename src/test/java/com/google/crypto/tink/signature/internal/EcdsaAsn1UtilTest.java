@@ -46,11 +46,34 @@ public final class EcdsaAsn1UtilTest {
   private static final BigInteger HARDCODED_P256_PRIVATE_VALUE =
       new BigInteger("C9AFA9D845BA75166B5C215767B1D6934E50C3DB36E89B127B8A622B120F6721", 16);
 
+  private static final String HARDCODED_P256_SEC1_WITH_BOTH_HEX =
+      "3077" // SEQUENCE (119 bytes)
+          + "020101" // version: INTEGER 1
+          + "0420c9afa9d845ba75166b5c215767b1d6934e50c3db36e89b127b8a622b120f6721" // OCTET STRING
+          // 32 bytes
+          + "a00a06082a8648ce3d030107" // [0] parameters: P-256 OID 1.2.840.10045.3.1.7
+          + "a14403420004" // [1] publicKey: BIT STRING uncompressed point (04 || x || y)
+          + "60fed4ba255a9d31c961eb74c6356d68c049b8923b61fa6ce669622e60f29fb6"
+          + "7903fe1008b8bc99a41ae9e95628bc64f2f1b20c2d7e9f5177a3c294d4462299";
+
   private static final String HARDCODED_P256_SEC1_WITH_PARAMS_HEX =
       "3031" // SEQUENCE (49 bytes)
           + "020101" // version: INTEGER 1
           + "0420c9afa9d845ba75166b5c215767b1d6934e50c3db36e89b127b8a622b120f6721"
           + "a00a06082a8648ce3d030107";
+
+  private static final String HARDCODED_P256_SEC1_NO_OPTIONAL_HEX =
+      "3025" // SEQUENCE (37 bytes)
+          + "020101" // version: INTEGER 1
+          + "0420c9afa9d845ba75166b5c215767b1d6934e50c3db36e89b127b8a622b120f6721";
+
+  private static final String HARDCODED_P256_SEC1_WITH_PUBLIC_KEY_HEX =
+      "306b" // SEQUENCE (107 bytes)
+          + "020101" // version: INTEGER 1
+          + "0420c9afa9d845ba75166b5c215767b1d6934e50c3db36e89b127b8a622b120f6721"
+          + "a14403420004" // [1] publicKey
+          + "60fed4ba255a9d31c961eb74c6356d68c049b8923b61fa6ce669622e60f29fb6"
+          + "7903fe1008b8bc99a41ae9e95628bc64f2f1b20c2d7e9f5177a3c294d4462299";
 
   // Test case from RFC 6979 A.2.6 (NIST P-384)
   private static final ECPoint HARDCODED_P384_PUBLIC_POINT =
@@ -141,6 +164,75 @@ public final class EcdsaAsn1UtilTest {
         .setParameters(params)
         .setPublicPoint(HARDCODED_P521_PUBLIC_POINT)
         .build();
+  }
+
+  @Test
+  public void ecdsaSec1_p256_roundtrip_works() throws Exception {
+    EcdsaPublicKey pubKey = createHardcodedP256PublicKey();
+    EcdsaPrivateKey privKey =
+        EcdsaPrivateKey.builder()
+            .setPublicKey(pubKey)
+            .setPrivateValue(
+                SecretBigInteger.fromBigInteger(
+                    HARDCODED_P256_PRIVATE_VALUE, InsecureSecretKeyAccess.get()))
+            .build();
+
+    byte[] sec1Bytes =
+        EcdsaAsn1Util.ecdsaPrivateKeyToSec1Bytes(privKey, InsecureSecretKeyAccess.get());
+    EcdsaPrivateKey parsedKey =
+        EcdsaAsn1Util.sec1EcKeyToEcdsaPrivateKey(
+            sec1Bytes, pubKey.getParameters(), InsecureSecretKeyAccess.get());
+
+    assertThat(parsedKey.getParameters()).isEqualTo(pubKey.getParameters());
+    assertThat(parsedKey.getPublicKey().getPublicPoint()).isEqualTo(pubKey.getPublicPoint());
+    assertThat(parsedKey.getPrivateValue().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(privKey.getPrivateValue().getBigInteger(InsecureSecretKeyAccess.get()));
+  }
+
+  @Test
+  public void ecdsaSec1_p384_roundtrip_works() throws Exception {
+    EcdsaPublicKey pubKey = createHardcodedP384PublicKey();
+    EcdsaPrivateKey privKey =
+        EcdsaPrivateKey.builder()
+            .setPublicKey(pubKey)
+            .setPrivateValue(
+                SecretBigInteger.fromBigInteger(
+                    HARDCODED_P384_PRIVATE_VALUE, InsecureSecretKeyAccess.get()))
+            .build();
+
+    byte[] sec1Bytes =
+        EcdsaAsn1Util.ecdsaPrivateKeyToSec1Bytes(privKey, InsecureSecretKeyAccess.get());
+    EcdsaPrivateKey parsedKey =
+        EcdsaAsn1Util.sec1EcKeyToEcdsaPrivateKey(
+            sec1Bytes, pubKey.getParameters(), InsecureSecretKeyAccess.get());
+
+    assertThat(parsedKey.getParameters()).isEqualTo(pubKey.getParameters());
+    assertThat(parsedKey.getPublicKey().getPublicPoint()).isEqualTo(pubKey.getPublicPoint());
+    assertThat(parsedKey.getPrivateValue().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(privKey.getPrivateValue().getBigInteger(InsecureSecretKeyAccess.get()));
+  }
+
+  @Test
+  public void ecdsaSec1_p521_roundtrip_works() throws Exception {
+    EcdsaPublicKey pubKey = createHardcodedP521PublicKey();
+    EcdsaPrivateKey privKey =
+        EcdsaPrivateKey.builder()
+            .setPublicKey(pubKey)
+            .setPrivateValue(
+                SecretBigInteger.fromBigInteger(
+                    HARDCODED_P521_PRIVATE_VALUE, InsecureSecretKeyAccess.get()))
+            .build();
+
+    byte[] sec1Bytes =
+        EcdsaAsn1Util.ecdsaPrivateKeyToSec1Bytes(privKey, InsecureSecretKeyAccess.get());
+    EcdsaPrivateKey parsedKey =
+        EcdsaAsn1Util.sec1EcKeyToEcdsaPrivateKey(
+            sec1Bytes, pubKey.getParameters(), InsecureSecretKeyAccess.get());
+
+    assertThat(parsedKey.getParameters()).isEqualTo(pubKey.getParameters());
+    assertThat(parsedKey.getPublicKey().getPublicPoint()).isEqualTo(pubKey.getPublicPoint());
+    assertThat(parsedKey.getPrivateValue().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(privKey.getPrivateValue().getBigInteger(InsecureSecretKeyAccess.get()));
   }
 
   @Test
@@ -294,5 +386,139 @@ public final class EcdsaAsn1UtilTest {
     assertThrows(
         GeneralSecurityException.class,
         () -> EcdsaAsn1Util.ecdsaPrivateKeyToSec1Bytes(privKey, InsecureSecretKeyAccess.get()));
+  }
+
+  @Test
+  public void sec1EcKeyToEcdsaPrivateKey_nullAccess_throws() throws Exception {
+    EcdsaPublicKey pubKey = createHardcodedP256PublicKey();
+    byte[] sec1NoOptional = Hex.decode(HARDCODED_P256_SEC1_NO_OPTIONAL_HEX);
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            EcdsaAsn1Util.sec1EcKeyToEcdsaPrivateKey(
+                sec1NoOptional, pubKey.getParameters(), null));
+  }
+
+  @Test
+  public void sec1EcKeyToEcdsaPrivateKey_noOptionalFields_works() throws Exception {
+    EcdsaPublicKey pubKey = createHardcodedP256PublicKey();
+    byte[] sec1NoOptional = Hex.decode(HARDCODED_P256_SEC1_NO_OPTIONAL_HEX);
+
+    EcdsaPrivateKey parsedKey =
+        EcdsaAsn1Util.sec1EcKeyToEcdsaPrivateKey(
+            sec1NoOptional, pubKey.getParameters(), InsecureSecretKeyAccess.get());
+    assertThat(parsedKey.getPrivateValue().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(HARDCODED_P256_PRIVATE_VALUE);
+    assertThat(parsedKey.getPublicKey().getPublicPoint()).isEqualTo(pubKey.getPublicPoint());
+  }
+
+  @Test
+  public void sec1EcKeyToEcdsaPrivateKey_withBothParamsAndPublicKey_works() throws Exception {
+    EcdsaPublicKey pubKey = createHardcodedP256PublicKey();
+    byte[] sec1WithBoth = Hex.decode(HARDCODED_P256_SEC1_WITH_BOTH_HEX);
+
+    EcdsaPrivateKey parsedKey =
+        EcdsaAsn1Util.sec1EcKeyToEcdsaPrivateKey(
+            sec1WithBoth, pubKey.getParameters(), InsecureSecretKeyAccess.get());
+    assertThat(parsedKey.getPrivateValue().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(HARDCODED_P256_PRIVATE_VALUE);
+    assertThat(parsedKey.getPublicKey().getPublicPoint()).isEqualTo(pubKey.getPublicPoint());
+  }
+
+  @Test
+  public void sec1EcKeyToEcdsaPrivateKey_withOnlyPublicKey_works() throws Exception {
+    EcdsaPublicKey pubKey = createHardcodedP256PublicKey();
+    byte[] sec1OnlyPubKey = Hex.decode(HARDCODED_P256_SEC1_WITH_PUBLIC_KEY_HEX);
+
+    EcdsaPrivateKey parsedKey =
+        EcdsaAsn1Util.sec1EcKeyToEcdsaPrivateKey(
+            sec1OnlyPubKey, pubKey.getParameters(), InsecureSecretKeyAccess.get());
+    assertThat(parsedKey.getPrivateValue().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(HARDCODED_P256_PRIVATE_VALUE);
+    assertThat(parsedKey.getPublicKey().getPublicPoint()).isEqualTo(pubKey.getPublicPoint());
+  }
+
+  @Test
+  public void sec1EcKeyToEcdsaPrivateKey_withCompressedPublicKey_works() throws Exception {
+    EcdsaPublicKey pubKey = createHardcodedP256PublicKey();
+    byte[] sec1CompressedPubKey =
+        Hex.decode(
+            "304b" // SEQUENCE (75 bytes)
+                + "020101" // version: INTEGER 1
+                + "0420c9afa9d845ba75166b5c215767b1d6934e50c3db36e89b127b8a622b120f6721"
+                + "a12403220003" // [1] compressed publicKey (0x03 prefix)
+                + "60fed4ba255a9d31c961eb74c6356d68c049b8923b61fa6ce669622e60f29fb6");
+
+    EcdsaPrivateKey parsedKey =
+        EcdsaAsn1Util.sec1EcKeyToEcdsaPrivateKey(
+            sec1CompressedPubKey, pubKey.getParameters(), InsecureSecretKeyAccess.get());
+    assertThat(parsedKey.getPrivateValue().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(HARDCODED_P256_PRIVATE_VALUE);
+    assertThat(parsedKey.getPublicKey().getPublicPoint()).isEqualTo(pubKey.getPublicPoint());
+  }
+
+  @Test
+  public void sec1EcKeyToEcdsaPrivateKey_curveOidMismatch_throws() throws Exception {
+    EcdsaPublicKey pubKey = createHardcodedP256PublicKey();
+    byte[] invalidOidSec1 =
+        Hex.decode(
+            "302e"
+                + "020101"
+                + "0420c9afa9d845ba75166b5c215767b1d6934e50c3db36e89b127b8a622b120f6721"
+                + "a00706052b81040022");
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            EcdsaAsn1Util.sec1EcKeyToEcdsaPrivateKey(
+                invalidOidSec1, pubKey.getParameters(), InsecureSecretKeyAccess.get()));
+  }
+
+  @Test
+  public void sec1EcKeyToEcdsaPrivateKey_invalidVersion_throws() throws Exception {
+    EcdsaPublicKey pubKey = createHardcodedP256PublicKey();
+    byte[] invalidVersionSec1 =
+        Hex.decode(HARDCODED_P256_SEC1_WITH_PARAMS_HEX.replace("020101", "020102"));
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            EcdsaAsn1Util.sec1EcKeyToEcdsaPrivateKey(
+                invalidVersionSec1, pubKey.getParameters(), InsecureSecretKeyAccess.get()));
+  }
+
+  @Test
+  public void sec1EcKeyToEcdsaPrivateKey_invalidTrailingTag_throws() throws Exception {
+    EcdsaPublicKey pubKey = createHardcodedP256PublicKey();
+    byte[] sec1InvalidTag =
+        Hex.decode(
+            "302a" // SEQUENCE of 42 bytes
+                + "020101" // INTEGER 1
+                + "0420c9afa9d845ba75166b5c215767b1d6934e50c3db36e89b127b8a622b120f6721"
+                + "a203020101"); // [2] invalid tag
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            EcdsaAsn1Util.sec1EcKeyToEcdsaPrivateKey(
+                sec1InvalidTag, pubKey.getParameters(), InsecureSecretKeyAccess.get()));
+  }
+
+  @Test
+  public void sec1EcKeyToEcdsaPrivateKey_invalidPublicKey_throws() throws Exception {
+    EcdsaPublicKey pubKey = createHardcodedP256PublicKey();
+    byte[] sec1InvalidPubKey =
+        Hex.decode(
+            "302c"
+                + "020101"
+                + "0420c9afa9d845ba75166b5c215767b1d6934e50c3db36e89b127b8a622b120f6721"
+                + "a1050303000501"); // [1] BIT STRING with invalid format byte (0x05)
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            EcdsaAsn1Util.sec1EcKeyToEcdsaPrivateKey(
+                sec1InvalidPubKey, pubKey.getParameters(), InsecureSecretKeyAccess.get()));
   }
 }

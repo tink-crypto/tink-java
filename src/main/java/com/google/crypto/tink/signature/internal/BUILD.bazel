@@ -1337,10 +1337,15 @@ java_library(
     deps = [
         "//src/main/java/com/google/crypto/tink:accesses_partial_key",
         "//src/main/java/com/google/crypto/tink:secret_key_access",
+        "//src/main/java/com/google/crypto/tink/internal:asn1_stateful_parser",
         "//src/main/java/com/google/crypto/tink/internal:asn1_util",
         "//src/main/java/com/google/crypto/tink/internal:big_integer_encoding",
+        "//src/main/java/com/google/crypto/tink/internal:elliptic_curves_util",
         "//src/main/java/com/google/crypto/tink/signature:ecdsa_parameters",
         "//src/main/java/com/google/crypto/tink/signature:ecdsa_private_key",
+        "//src/main/java/com/google/crypto/tink/signature:ecdsa_public_key",
+        "//src/main/java/com/google/crypto/tink/subtle:elliptic_curves",
+        "//src/main/java/com/google/crypto/tink/util:secret_big_integer",
     ],
 )
 
@@ -1350,9 +1355,14 @@ android_library(
     deps = [
         "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
         "//src/main/java/com/google/crypto/tink:secret_key_access-android",
+        "//src/main/java/com/google/crypto/tink/internal:asn1_stateful_parser-android",
         "//src/main/java/com/google/crypto/tink/internal:asn1_util-android",
         "//src/main/java/com/google/crypto/tink/internal:big_integer_encoding-android",
+        "//src/main/java/com/google/crypto/tink/internal:elliptic_curves_util-android",
         "//src/main/java/com/google/crypto/tink/signature:ecdsa_parameters-android",
         "//src/main/java/com/google/crypto/tink/signature:ecdsa_private_key-android",
+        "//src/main/java/com/google/crypto/tink/signature:ecdsa_public_key-android",
+        "//src/main/java/com/google/crypto/tink/subtle:elliptic_curves-android",
+        "//src/main/java/com/google/crypto/tink/util:secret_big_integer-android",
     ],
 )
