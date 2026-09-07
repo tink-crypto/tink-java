@@ -17,16 +17,19 @@
 package com.google.crypto.tink.signature.internal;
 
 import com.google.crypto.tink.AccessesPartialKey;
+import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.internal.Asn1Util;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.ClassicalAlgorithm;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.MlDsaInstance;
 import com.google.crypto.tink.signature.EcdsaParameters;
+import com.google.crypto.tink.signature.EcdsaPrivateKey;
 import com.google.crypto.tink.signature.MlDsaParameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPssParameters;
 import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
+import com.google.crypto.tink.subtle.EllipticCurves;
 import java.security.GeneralSecurityException;
 
 /** Utility methods for Composite ML-DSA signatures. Requires Conscrypt. */
@@ -298,6 +301,29 @@ public final class CompositeMlDsaUtil {
     } else {
       throw new GeneralSecurityException("Not an ECDSA classical algorithm: " + alg);
     }
+  }
+
+  public static EllipticCurves.CurveType getEllipticCurveType(
+      CompositeMlDsaParameters compositeParameters) throws GeneralSecurityException {
+    ClassicalAlgorithm alg = compositeParameters.getClassicalAlgorithm();
+    if (alg.equals(ClassicalAlgorithm.ECDSA_P256)) {
+      return EllipticCurves.CurveType.NIST_P256;
+    } else if (alg.equals(ClassicalAlgorithm.ECDSA_P384)) {
+      return EllipticCurves.CurveType.NIST_P384;
+    } else if (alg.equals(ClassicalAlgorithm.ECDSA_P521)) {
+      return EllipticCurves.CurveType.NIST_P521;
+    } else {
+      throw new GeneralSecurityException("Not an ECDSA classical algorithm: " + alg);
+    }
+  }
+
+  @AccessesPartialKey
+  public static EcdsaPrivateKey sec1EcKeyToEcdsaPrivateKey(
+      byte[] sec1Key, CompositeMlDsaParameters compositeParameters)
+      throws GeneralSecurityException {
+    EcdsaParameters ecdsaParams = getEcdsaParameters(compositeParameters);
+    return EcdsaAsn1Util.sec1EcKeyToEcdsaPrivateKey(
+        sec1Key, ecdsaParams, InsecureSecretKeyAccess.get());
   }
 
   // Values from

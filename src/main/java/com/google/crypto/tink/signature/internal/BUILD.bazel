@@ -1305,15 +1305,19 @@ android_library(
     name = "composite_ml_dsa_util-android",
     srcs = ["CompositeMlDsaUtil.java"],
     deps = [
+        ":ecdsa_asn1_util-android",
         "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access-android",
         "//src/main/java/com/google/crypto/tink/internal:asn1_util-android",
         "//src/main/java/com/google/crypto/tink/signature:composite_ml_dsa_parameters-android",
         "//src/main/java/com/google/crypto/tink/signature:ecdsa_parameters-android",
+        "//src/main/java/com/google/crypto/tink/signature:ecdsa_private_key-android",
         "//src/main/java/com/google/crypto/tink/signature:ml_dsa_parameters-android",
         "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_parameters-android",
         "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_private_key-android",
         "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_parameters-android",
         "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_private_key-android",
+        "//src/main/java/com/google/crypto/tink/subtle:elliptic_curves-android",
     ],
 )
 
@@ -1321,15 +1325,19 @@ java_library(
     name = "composite_ml_dsa_util",
     srcs = ["CompositeMlDsaUtil.java"],
     deps = [
+        ":ecdsa_asn1_util",
         "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink/internal:asn1_util",
         "//src/main/java/com/google/crypto/tink/signature:composite_ml_dsa_parameters",
         "//src/main/java/com/google/crypto/tink/signature:ecdsa_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:ecdsa_private_key",
         "//src/main/java/com/google/crypto/tink/signature:ml_dsa_parameters",
         "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_parameters",
         "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_private_key",
         "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_parameters",
         "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_private_key",
+        "//src/main/java/com/google/crypto/tink/subtle:elliptic_curves",
     ],
 )
 

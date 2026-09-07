@@ -27,6 +27,7 @@ import com.google.crypto.tink.signature.CompositeMlDsaParameters;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.ClassicalAlgorithm;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.MlDsaInstance;
 import com.google.crypto.tink.signature.EcdsaParameters;
+import com.google.crypto.tink.signature.EcdsaPrivateKey;
 import com.google.crypto.tink.signature.MlDsaParameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
@@ -34,6 +35,9 @@ import com.google.crypto.tink.signature.RsaSsaPssParameters;
 import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
 import com.google.crypto.tink.signature.internal.testing.RsaSsaPkcs1TestUtil;
 import com.google.crypto.tink.signature.internal.testing.RsaSsaPssTestUtil;
+import com.google.crypto.tink.subtle.EllipticCurves;
+import com.google.crypto.tink.subtle.Hex;
+import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.Security;
 import org.conscrypt.Conscrypt;
@@ -626,5 +630,134 @@ public final class CompositeMlDsaUtilTest {
             .setClassicalAlgorithm(ClassicalAlgorithm.ED25519)
             .build();
     assertThrows(GeneralSecurityException.class, () -> CompositeMlDsaUtil.getEcdsaParameters(params));
+  }
+
+  // Test case from RFC 6979 A.2.5 (NIST P-256)
+  private static final String HARDCODED_P256_SEC1_WITH_BOTH_HEX =
+      "3077" // SEQUENCE (119 bytes)
+          + "020101" // version: INTEGER 1
+          + "0420c9afa9d845ba75166b5c215767b1d6934e50c3db36e89b127b8a622b120f6721" // OCTET STRING (32 bytes)
+          + "a00a06082a8648ce3d030107" // [0] parameters: P-256 OID 1.2.840.10045.3.1.7
+          + "a14403420004" // [1] publicKey: BIT STRING uncompressed point (04 || x || y)
+          + "60fed4ba255a9d31c961eb74c6356d68c049b8923b61fa6ce669622e60f29fb6"
+          + "7903fe1008b8bc99a41ae9e95628bc64f2f1b20c2d7e9f5177a3c294d4462299";
+
+  // Test case from RFC 6979 A.2.5 (NIST P-256) with only parameters field (publicKey absent)
+  private static final String HARDCODED_P256_SEC1_WITH_PARAMS_HEX =
+      "3031" // SEQUENCE (49 bytes)
+          + "020101" // version: INTEGER 1
+          + "0420c9afa9d845ba75166b5c215767b1d6934e50c3db36e89b127b8a622b120f6721"
+          + "a00a06082a8648ce3d030107";
+
+  @Test
+  public void sec1EcKeyToEcdsaPrivateKey_withBothParamsAndPublicKey_works() throws Exception {
+    CompositeMlDsaParameters compositeParams =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P256)
+            .build();
+
+    EcdsaPrivateKey parsedKey =
+        CompositeMlDsaUtil.sec1EcKeyToEcdsaPrivateKey(
+            Hex.decode(HARDCODED_P256_SEC1_WITH_BOTH_HEX), compositeParams);
+
+    assertThat(parsedKey.getParameters().getCurveType())
+        .isEqualTo(EcdsaParameters.CurveType.NIST_P256);
+    assertThat(parsedKey.getPrivateValue().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(
+            new BigInteger("C9AFA9D845BA75166B5C215767B1D6934E50C3DB36E89B127B8A622B120F6721", 16));
+  }
+
+  @Test
+  public void sec1EcKeyToEcdsaPrivateKey_withOnlyParams_works() throws Exception {
+    CompositeMlDsaParameters compositeParams =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P256)
+            .build();
+
+    EcdsaPrivateKey parsedKey =
+        CompositeMlDsaUtil.sec1EcKeyToEcdsaPrivateKey(
+            Hex.decode(HARDCODED_P256_SEC1_WITH_PARAMS_HEX), compositeParams);
+
+    assertThat(parsedKey.getParameters().getCurveType())
+        .isEqualTo(EcdsaParameters.CurveType.NIST_P256);
+    assertThat(parsedKey.getPrivateValue().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(
+            new BigInteger("C9AFA9D845BA75166B5C215767B1D6934E50C3DB36E89B127B8A622B120F6721", 16));
+  }
+
+  @Test
+  public void sec1EcKeyToEcdsaPrivateKey_curveMismatch_throws() throws Exception {
+    CompositeMlDsaParameters p384Params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P384)
+            .build();
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            CompositeMlDsaUtil.sec1EcKeyToEcdsaPrivateKey(
+                Hex.decode(HARDCODED_P256_SEC1_WITH_BOTH_HEX), p384Params));
+  }
+
+  @Test
+  public void sec1EcKeyToEcdsaPrivateKey_nonEcdsaAlgorithm_throws() throws Exception {
+    CompositeMlDsaParameters nonEcdsaParams =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ED25519)
+            .build();
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            CompositeMlDsaUtil.sec1EcKeyToEcdsaPrivateKey(
+                Hex.decode(HARDCODED_P256_SEC1_WITH_BOTH_HEX), nonEcdsaParams));
+  }
+
+  @Test
+  public void getEllipticCurveType_p256_works() throws Exception {
+    CompositeMlDsaParameters params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P256)
+            .build();
+    assertThat(CompositeMlDsaUtil.getEllipticCurveType(params))
+        .isEqualTo(EllipticCurves.CurveType.NIST_P256);
+  }
+
+  @Test
+  public void getEllipticCurveType_p384_works() throws Exception {
+    CompositeMlDsaParameters params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P384)
+            .build();
+    assertThat(CompositeMlDsaUtil.getEllipticCurveType(params))
+        .isEqualTo(EllipticCurves.CurveType.NIST_P384);
+  }
+
+  @Test
+  public void getEllipticCurveType_p521_works() throws Exception {
+    CompositeMlDsaParameters params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_87)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P521)
+            .build();
+    assertThat(CompositeMlDsaUtil.getEllipticCurveType(params))
+        .isEqualTo(EllipticCurves.CurveType.NIST_P521);
+  }
+
+  @Test
+  public void getEllipticCurveType_nonEcdsa_throws() throws Exception {
+    CompositeMlDsaParameters params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ED25519)
+            .build();
+    assertThrows(
+        GeneralSecurityException.class, () -> CompositeMlDsaUtil.getEllipticCurveType(params));
   }
 }
