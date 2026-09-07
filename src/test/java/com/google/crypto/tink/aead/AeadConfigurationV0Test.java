@@ -492,4 +492,33 @@ public class AeadConfigurationV0Test {
 
     assertThat(keysetHandle.getPrimitive(AeadConfigurationV0.get(), Aead.class)).isNotNull();
   }
+
+  @Test
+  public void config_handlesXAesGcmLegacyKeyForAead() throws Exception {
+    Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
+
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "type.googleapis.com/google.crypto.tink.XAesGcmKey",
+            com.google.crypto.tink.proto.XAesGcmKey.newBuilder()
+                .setKeyValue(random32ByteKeyValue)
+                .setParams(
+                    com.google.crypto.tink.proto.XAesGcmParams.newBuilder()
+                        .setSaltSize(12)
+                        .build())
+                .build()
+                .toByteString(),
+            KeyMaterialType.SYMMETRIC,
+            OutputPrefixType.RAW,
+            null);
+    LegacyProtoKey key = new LegacyProtoKey(serialization, InsecureSecretKeyAccess.get());
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
+            .build();
+
+    XAesGcmProtoSerialization.register();
+
+    assertThat(keysetHandle.getPrimitive(AeadConfigurationV0.get(), Aead.class)).isNotNull();
+  }
 }
