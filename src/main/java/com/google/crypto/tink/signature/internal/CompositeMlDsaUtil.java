@@ -21,6 +21,7 @@ import com.google.crypto.tink.internal.Asn1Util;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.ClassicalAlgorithm;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.MlDsaInstance;
+import com.google.crypto.tink.signature.EcdsaParameters;
 import com.google.crypto.tink.signature.MlDsaParameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
@@ -263,6 +264,40 @@ public final class CompositeMlDsaUtil {
             .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
             .build();
     return Asn1Util.pkcs1RsaKeyToRsaSsaPkcs1PrivateKey(pkcs1Key, rsaParameters);
+  }
+
+  /**
+   * Returns the {@link EcdsaParameters} corresponding to the classical ECDSA component of the given
+   * {@link CompositeMlDsaParameters}, as specified in
+   * https://lamps-wg.github.io/draft-composite-sigs/draft-ietf-lamps-pq-composite-sigs.html#name-algorithm-identifiers-and-p.
+   */
+  public static EcdsaParameters getEcdsaParameters(CompositeMlDsaParameters compositeParameters)
+      throws GeneralSecurityException {
+    ClassicalAlgorithm alg = compositeParameters.getClassicalAlgorithm();
+    if (alg.equals(ClassicalAlgorithm.ECDSA_P256)) {
+      return EcdsaParameters.builder()
+          .setHashType(EcdsaParameters.HashType.SHA256)
+          .setCurveType(EcdsaParameters.CurveType.NIST_P256)
+          .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
+          .setVariant(EcdsaParameters.Variant.NO_PREFIX)
+          .build();
+    } else if (alg.equals(ClassicalAlgorithm.ECDSA_P384)) {
+      return EcdsaParameters.builder()
+          .setHashType(EcdsaParameters.HashType.SHA384)
+          .setCurveType(EcdsaParameters.CurveType.NIST_P384)
+          .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
+          .setVariant(EcdsaParameters.Variant.NO_PREFIX)
+          .build();
+    } else if (alg.equals(ClassicalAlgorithm.ECDSA_P521)) {
+      return EcdsaParameters.builder()
+          .setHashType(EcdsaParameters.HashType.SHA512)
+          .setCurveType(EcdsaParameters.CurveType.NIST_P521)
+          .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
+          .setVariant(EcdsaParameters.Variant.NO_PREFIX)
+          .build();
+    } else {
+      throw new GeneralSecurityException("Not an ECDSA classical algorithm: " + alg);
+    }
   }
 
   // Values from

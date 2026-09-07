@@ -476,7 +476,7 @@ public final class CompositeMlDsaPrivateKeyTest {
 
     EcdsaParameters ecdsaParameters =
         EcdsaParameters.builder()
-            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.IEEE_P1363)
+            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
             .setCurveType(EcdsaParameters.CurveType.NIST_P256)
             .setHashType(EcdsaParameters.HashType.SHA256)
             .setVariant(EcdsaParameters.Variant.NO_PREFIX)

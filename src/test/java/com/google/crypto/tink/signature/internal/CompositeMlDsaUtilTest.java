@@ -26,6 +26,7 @@ import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.ClassicalAlgorithm;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.MlDsaInstance;
+import com.google.crypto.tink.signature.EcdsaParameters;
 import com.google.crypto.tink.signature.MlDsaParameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
@@ -562,5 +563,68 @@ public final class CompositeMlDsaUtilTest {
     assertThat(parsedKey.getPrivateExponent().getBigInteger(InsecureSecretKeyAccess.get()))
         .isEqualTo(
             tinkPrivateKey.getPrivateExponent().getBigInteger(InsecureSecretKeyAccess.get()));
+  }
+
+  @Test
+  public void getEcdsaParameters_p256_works() throws Exception {
+    CompositeMlDsaParameters params44 =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P256)
+            .build();
+    EcdsaParameters ecdsa44 = CompositeMlDsaUtil.getEcdsaParameters(params44);
+    assertThat(ecdsa44.getHashType()).isEqualTo(EcdsaParameters.HashType.SHA256);
+    assertThat(ecdsa44.getCurveType()).isEqualTo(EcdsaParameters.CurveType.NIST_P256);
+    assertThat(ecdsa44.getSignatureEncoding()).isEqualTo(EcdsaParameters.SignatureEncoding.DER);
+    assertThat(ecdsa44.getVariant()).isEqualTo(EcdsaParameters.Variant.NO_PREFIX);
+
+    CompositeMlDsaParameters params65 =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P256)
+            .build();
+    EcdsaParameters ecdsa65 = CompositeMlDsaUtil.getEcdsaParameters(params65);
+    assertThat(ecdsa65.getHashType()).isEqualTo(EcdsaParameters.HashType.SHA256);
+    assertThat(ecdsa65.getCurveType()).isEqualTo(EcdsaParameters.CurveType.NIST_P256);
+    assertThat(ecdsa65.getSignatureEncoding()).isEqualTo(EcdsaParameters.SignatureEncoding.DER);
+    assertThat(ecdsa65.getVariant()).isEqualTo(EcdsaParameters.Variant.NO_PREFIX);
+  }
+
+  @Test
+  public void getEcdsaParameters_p384_works() throws Exception {
+    CompositeMlDsaParameters params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P384)
+            .build();
+    EcdsaParameters ecdsa = CompositeMlDsaUtil.getEcdsaParameters(params);
+    assertThat(ecdsa.getHashType()).isEqualTo(EcdsaParameters.HashType.SHA384);
+    assertThat(ecdsa.getCurveType()).isEqualTo(EcdsaParameters.CurveType.NIST_P384);
+    assertThat(ecdsa.getSignatureEncoding()).isEqualTo(EcdsaParameters.SignatureEncoding.DER);
+    assertThat(ecdsa.getVariant()).isEqualTo(EcdsaParameters.Variant.NO_PREFIX);
+  }
+
+  @Test
+  public void getEcdsaParameters_p521_works() throws Exception {
+    CompositeMlDsaParameters params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_87)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P521)
+            .build();
+    EcdsaParameters ecdsa = CompositeMlDsaUtil.getEcdsaParameters(params);
+    assertThat(ecdsa.getHashType()).isEqualTo(EcdsaParameters.HashType.SHA512);
+    assertThat(ecdsa.getCurveType()).isEqualTo(EcdsaParameters.CurveType.NIST_P521);
+    assertThat(ecdsa.getSignatureEncoding()).isEqualTo(EcdsaParameters.SignatureEncoding.DER);
+    assertThat(ecdsa.getVariant()).isEqualTo(EcdsaParameters.Variant.NO_PREFIX);
+  }
+
+  @Test
+  public void getEcdsaParameters_nonEcdsa_throws() throws Exception {
+    CompositeMlDsaParameters params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ED25519)
+            .build();
+    assertThrows(GeneralSecurityException.class, () -> CompositeMlDsaUtil.getEcdsaParameters(params));
   }
 }

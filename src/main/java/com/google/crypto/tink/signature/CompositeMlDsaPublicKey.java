@@ -49,14 +49,14 @@ public final class CompositeMlDsaPublicKey extends SignaturePublicKey {
               .setHashType(EcdsaParameters.HashType.SHA256)
               .setCurveType(EcdsaParameters.CurveType.NIST_P256)
               .setVariant(EcdsaParameters.Variant.NO_PREFIX)
-              .setSignatureEncoding(EcdsaParameters.SignatureEncoding.IEEE_P1363)
+              .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
               .build());
       map.put(
           CompositeMlDsaParameters.ClassicalAlgorithm.ECDSA_P384,
           EcdsaParameters.builder()
               .setHashType(EcdsaParameters.HashType.SHA384)
               .setCurveType(EcdsaParameters.CurveType.NIST_P384)
-              .setSignatureEncoding(EcdsaParameters.SignatureEncoding.IEEE_P1363)
+              .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
               .setVariant(EcdsaParameters.Variant.NO_PREFIX)
               .build());
       map.put(
@@ -64,7 +64,7 @@ public final class CompositeMlDsaPublicKey extends SignaturePublicKey {
           EcdsaParameters.builder()
               .setHashType(EcdsaParameters.HashType.SHA512)
               .setCurveType(EcdsaParameters.CurveType.NIST_P521)
-              .setSignatureEncoding(EcdsaParameters.SignatureEncoding.IEEE_P1363)
+              .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
               .setVariant(EcdsaParameters.Variant.NO_PREFIX)
               .build());
       map.put(
