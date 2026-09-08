@@ -29,6 +29,7 @@ import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.ClassicalAlgorithm;
 import com.google.crypto.tink.signature.CompositeMlDsaPrivateKey;
+import com.google.crypto.tink.signature.EcdsaPrivateKey;
 import com.google.crypto.tink.signature.Ed25519PrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
@@ -83,12 +84,6 @@ public final class CompositeMlDsaSignConscrypt implements PublicKeySign {
       throw new GeneralSecurityException("Composite ML-DSA is not supported in this environment.");
     }
     CompositeMlDsaParameters params = privateKey.getParameters();
-    if (params.getClassicalAlgorithm().equals(ClassicalAlgorithm.ECDSA_P256)
-        || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.ECDSA_P384)
-        || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.ECDSA_P521)) {
-      throw new GeneralSecurityException(
-          "ECDSA is not supported for composite signatures at this time");
-    }
 
     byte[] mlDsaSeed =
         privateKey.getMlDsaPrivateKey().getPrivateSeed().toByteArray(InsecureSecretKeyAccess.get());
@@ -98,6 +93,12 @@ public final class CompositeMlDsaSignConscrypt implements PublicKeySign {
           ((Ed25519PrivateKey) privateKey.getClassicalPrivateKey())
               .getPrivateKeyBytes()
               .toByteArray(InsecureSecretKeyAccess.get());
+    } else if (params.getClassicalAlgorithm().equals(ClassicalAlgorithm.ECDSA_P256)
+        || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.ECDSA_P384)
+        || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.ECDSA_P521)) {
+      classicalPrivateKeyBytes =
+          EcdsaAsn1Util.ecdsaPrivateKeyToSec1Bytes(
+              (EcdsaPrivateKey) privateKey.getClassicalPrivateKey(), InsecureSecretKeyAccess.get());
     } else if (params.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA2048_PSS)
         || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA3072_PSS)
         || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA4096_PSS)) {
@@ -127,8 +128,10 @@ public final class CompositeMlDsaSignConscrypt implements PublicKeySign {
     String algorithm = CompositeMlDsaUtil.getAlgorithmName(params);
     KeyFactory keyFactory = KeyFactory.getInstance(algorithm, nonNullProvider);
     PrivateKey conscryptPrivateKey = keyFactory.generatePrivate(new RawKeySpec(rawKeyBytes));
-    int signatureLength = CompositeMlDsaUtil.getSignatureLength(params);
-
+    int signatureLength = 0;
+    if (!CompositeMlDsaUtil.isEcdsaAlgorithm(algorithm)) {
+      signatureLength = CompositeMlDsaUtil.getSignatureLength(params);
+    }
     byte[] testSignature =
         signInternal(
             TEST_WORKLOAD.getBytes(UTF_8),
@@ -177,6 +180,20 @@ public final class CompositeMlDsaSignConscrypt implements PublicKeySign {
     Signature signer = Signature.getInstance(algorithm, provider);
     signer.initSign(privateKey);
     signer.update(data);
+    // This branching happens because we do not know in advance the length of the ECDSA signature,
+    // and thus we have to copy the whole output when outputPrefix is present. For the other
+    // algorithms, since we know the length of the signature in advance, we can avoid the
+    // unnecessary copying.
+    if (CompositeMlDsaUtil.isEcdsaAlgorithm(algorithm)) {
+      byte[] rawSignature = signer.sign();
+      if (outputPrefix.length == 0) {
+        return rawSignature;
+      }
+      byte[] signature = new byte[outputPrefix.length + rawSignature.length];
+      System.arraycopy(outputPrefix, 0, signature, 0, outputPrefix.length);
+      System.arraycopy(rawSignature, 0, signature, outputPrefix.length, rawSignature.length);
+      return signature;
+    }
     byte[] signature = new byte[outputPrefix.length + signatureLength];
     if (outputPrefix.length > 0) {
       System.arraycopy(outputPrefix, 0, signature, 0, outputPrefix.length);

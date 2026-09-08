@@ -20,6 +20,7 @@ import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters;
 import com.google.crypto.tink.signature.CompositeMlDsaPrivateKey;
+import com.google.crypto.tink.signature.EcdsaParameters;
 import com.google.crypto.tink.signature.Ed25519Parameters;
 import com.google.crypto.tink.signature.Ed25519PrivateKey;
 import com.google.crypto.tink.signature.Ed25519PublicKey;
@@ -28,6 +29,7 @@ import com.google.crypto.tink.signature.MlDsaPrivateKey;
 import com.google.crypto.tink.signature.MlDsaPublicKey;
 import com.google.crypto.tink.signature.SignaturePrivateKey;
 import com.google.crypto.tink.signature.internal.CompositeMlDsaUtil;
+import com.google.crypto.tink.signature.internal.EcdsaAsn1Util;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
@@ -323,6 +325,12 @@ public class CompositeMlDsaTestUtil {
     CompositeMlDsaParameters.ClassicalAlgorithm classicalAlgorithm;
     if (testVector.tcId.contains("Ed25519")) {
       classicalAlgorithm = CompositeMlDsaParameters.ClassicalAlgorithm.ED25519;
+    } else if (testVector.tcId.contains("ECDSA-P256")) {
+      classicalAlgorithm = CompositeMlDsaParameters.ClassicalAlgorithm.ECDSA_P256;
+    } else if (testVector.tcId.contains("ECDSA-P384")) {
+      classicalAlgorithm = CompositeMlDsaParameters.ClassicalAlgorithm.ECDSA_P384;
+    } else if (testVector.tcId.contains("ECDSA-P521")) {
+      classicalAlgorithm = CompositeMlDsaParameters.ClassicalAlgorithm.ECDSA_P521;
     } else if (testVector.tcId.contains("RSA2048-PSS")) {
       classicalAlgorithm = CompositeMlDsaParameters.ClassicalAlgorithm.RSA2048_PSS;
     } else if (testVector.tcId.contains("RSA2048-PKCS15")) {
@@ -371,6 +379,11 @@ public class CompositeMlDsaTestUtil {
           Ed25519PrivateKey.create(
               edPublicKey,
               SecretBytes.copyFrom(tradPrivateKeyBytes, InsecureSecretKeyAccess.get()));
+    } else if (testVector.tcId.contains("ECDSA")) {
+      EcdsaParameters ecdsaParams = CompositeMlDsaUtil.getEcdsaParameters(parameters);
+      classicalKey =
+          EcdsaAsn1Util.sec1EcKeyToEcdsaPrivateKey(
+              tradPrivateKeyBytes, ecdsaParams, InsecureSecretKeyAccess.get());
     } else if (testVector.tcId.contains("PSS")) {
       classicalKey =
           CompositeMlDsaUtil.pkcs1RsaKeyToRsaSsaPssPrivateKey(tradPrivateKeyBytes, parameters);

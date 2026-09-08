@@ -27,9 +27,11 @@ import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.ClassicalAlgorithm;
 import com.google.crypto.tink.signature.CompositeMlDsaPublicKey;
+import com.google.crypto.tink.signature.EcdsaPublicKey;
 import com.google.crypto.tink.signature.Ed25519PublicKey;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
 import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
+import com.google.crypto.tink.subtle.EllipticCurves;
 import com.google.errorprone.annotations.Immutable;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
@@ -82,18 +84,24 @@ public final class CompositeMlDsaVerifyConscrypt implements PublicKeyVerify {
           "Can not use Composite ML-DSA in FIPS-mode, as it is not yet certified in Conscrypt.");
     }
     CompositeMlDsaParameters params = publicKey.getParameters();
-    if (params.getClassicalAlgorithm().equals(ClassicalAlgorithm.ECDSA_P256)
-        || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.ECDSA_P384)
-        || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.ECDSA_P521)) {
-      throw new GeneralSecurityException(
-          "ECDSA is not supported for composite signatures at this time");
-    }
 
     byte[] mlDsaBytes = publicKey.getMlDsaPublicKey().getSerializedPublicKey().toByteArray();
     byte[] classicalPublicKeyBytes;
     if (params.getClassicalAlgorithm().equals(ClassicalAlgorithm.ED25519)) {
       classicalPublicKeyBytes =
           ((Ed25519PublicKey) publicKey.getClassicalPublicKey()).getPublicKeyBytes().toByteArray();
+    } else if (params.getClassicalAlgorithm().equals(ClassicalAlgorithm.ECDSA_P256)
+        || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.ECDSA_P384)
+        || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.ECDSA_P521)) {
+      EcdsaPublicKey ecdsaPublicKey = (EcdsaPublicKey) publicKey.getClassicalPublicKey();
+      EllipticCurves.CurveType curveType = CompositeMlDsaUtil.getEllipticCurveType(params);
+      // Serialized as uncompressed point per
+      // https://lamps-wg.github.io/draft-composite-sigs/draft-ietf-lamps-pq-composite-sigs.html#name-serialization
+      classicalPublicKeyBytes =
+          EllipticCurves.pointEncode(
+              curveType,
+              EllipticCurves.PointFormatType.UNCOMPRESSED,
+              ecdsaPublicKey.getPublicPoint());
     } else if (params.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA2048_PSS)
         || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA3072_PSS)
         || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA4096_PSS)) {
@@ -119,7 +127,10 @@ public final class CompositeMlDsaVerifyConscrypt implements PublicKeyVerify {
     String algorithm = CompositeMlDsaUtil.getAlgorithmName(params);
     KeyFactory keyFactory = KeyFactory.getInstance(algorithm, nonNullProvider);
     PublicKey conscryptPublicKey = keyFactory.generatePublic(new RawKeySpec(rawKeyBytes));
-    int signatureLength = CompositeMlDsaUtil.getSignatureLength(params);
+    int signatureLength = 0;
+    if (!CompositeMlDsaUtil.isEcdsaAlgorithm(algorithm)) {
+      signatureLength = CompositeMlDsaUtil.getSignatureLength(params);
+    }
 
     return new CompositeMlDsaVerifyConscrypt(
         publicKey.getOutputPrefix().toByteArray(),
@@ -146,13 +157,14 @@ public final class CompositeMlDsaVerifyConscrypt implements PublicKeyVerify {
       throw new GeneralSecurityException("Invalid signature (output prefix mismatch)");
     }
     // We cannot check the signature length for ECDSA, but where we can, we do.
-    if (signature.length != outputPrefix.length + signatureLength) {
+    if (!CompositeMlDsaUtil.isEcdsaAlgorithm(algorithm)
+        && signature.length != outputPrefix.length + signatureLength) {
       throw new GeneralSecurityException("Invalid signature length");
     }
     Signature verifier = Signature.getInstance(algorithm, provider);
     verifier.initVerify(publicKey);
     verifier.update(data);
-    if (!verifier.verify(signature, outputPrefix.length, signatureLength)) {
+    if (!verifier.verify(signature, outputPrefix.length, signature.length - outputPrefix.length)) {
       throw new GeneralSecurityException("Invalid signature");
     }
   }
