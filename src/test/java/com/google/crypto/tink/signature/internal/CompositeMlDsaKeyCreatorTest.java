@@ -102,6 +102,81 @@ public class CompositeMlDsaKeyCreatorTest {
   }
 
   @Test
+  public void createKey_mlDsa44_ecdsaP256_works() throws Exception {
+    assumeTrue(CompositeMlDsaVerifyConscrypt.isSupported());
+
+    CompositeMlDsaParameters parameters =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P256)
+            .setVariant(Variant.NO_PREFIX)
+            .build();
+
+    CompositeMlDsaPrivateKey privateKey =
+        CompositeMlDsaKeyCreator.createKey(parameters, /* idRequirement= */ null);
+
+    assertThat(privateKey.getParameters()).isEqualTo(parameters);
+    assertThat(privateKey.getIdRequirementOrNull()).isNull();
+
+    PublicKeySign signer = CompositeMlDsaSignConscrypt.create(privateKey);
+    PublicKeyVerify verifier = CompositeMlDsaVerifyConscrypt.create(privateKey.getPublicKey());
+
+    byte[] data = "data".getBytes(UTF_8);
+    byte[] signature = signer.sign(data);
+    verifier.verify(signature, data);
+  }
+
+  @Test
+  public void createKey_mlDsa65_ecdsaP384_works() throws Exception {
+    assumeTrue(CompositeMlDsaVerifyConscrypt.isSupported());
+
+    CompositeMlDsaParameters parameters =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P384)
+            .setVariant(Variant.NO_PREFIX)
+            .build();
+
+    CompositeMlDsaPrivateKey privateKey =
+        CompositeMlDsaKeyCreator.createKey(parameters, /* idRequirement= */ null);
+
+    assertThat(privateKey.getParameters()).isEqualTo(parameters);
+    assertThat(privateKey.getIdRequirementOrNull()).isNull();
+
+    PublicKeySign signer = CompositeMlDsaSignConscrypt.create(privateKey);
+    PublicKeyVerify verifier = CompositeMlDsaVerifyConscrypt.create(privateKey.getPublicKey());
+
+    byte[] data = "data".getBytes(UTF_8);
+    byte[] signature = signer.sign(data);
+    verifier.verify(signature, data);
+  }
+
+  @Test
+  public void createKey_mlDsa87_ecdsaP521_works() throws Exception {
+    assumeTrue(CompositeMlDsaVerifyConscrypt.isSupported());
+
+    CompositeMlDsaParameters parameters =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_87)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P521)
+            .setVariant(Variant.NO_PREFIX)
+            .build();
+
+    CompositeMlDsaPrivateKey privateKey =
+        CompositeMlDsaKeyCreator.createKey(parameters, /* idRequirement= */ null);
+
+    assertThat(privateKey.getParameters()).isEqualTo(parameters);
+    assertThat(privateKey.getIdRequirementOrNull()).isNull();
+
+    PublicKeySign signer = CompositeMlDsaSignConscrypt.create(privateKey);
+    PublicKeyVerify verifier = CompositeMlDsaVerifyConscrypt.create(privateKey.getPublicKey());
+
+    byte[] data = "data".getBytes(UTF_8);
+    byte[] signature = signer.sign(data);
+    verifier.verify(signature, data);
+  }
+
+  @Test
   public void createKey_mlDsa44_rsa2048pss_works() throws Exception {
     assumeTrue(CompositeMlDsaVerifyConscrypt.isSupported());
 
@@ -327,22 +402,6 @@ public class CompositeMlDsaKeyCreatorTest {
         CompositeMlDsaParameters.builder()
             .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
             .setClassicalAlgorithm(ClassicalAlgorithm.ED25519)
-            .setVariant(Variant.NO_PREFIX)
-            .build();
-
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> CompositeMlDsaKeyCreator.createKey(parameters, /* idRequirement= */ null));
-  }
-
-  @Test
-  public void createKey_ecdsa_throws() throws Exception {
-    assumeTrue(CompositeMlDsaVerifyConscrypt.isSupported());
-
-    CompositeMlDsaParameters parameters =
-        CompositeMlDsaParameters.builder()
-            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
-            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P256)
             .setVariant(Variant.NO_PREFIX)
             .build();
 

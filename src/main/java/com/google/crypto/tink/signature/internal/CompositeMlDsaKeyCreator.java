@@ -22,6 +22,7 @@ import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.ClassicalAlgorithm;
 import com.google.crypto.tink.signature.CompositeMlDsaPrivateKey;
+import com.google.crypto.tink.signature.EcdsaParameters;
 import com.google.crypto.tink.signature.Ed25519Parameters;
 import com.google.crypto.tink.signature.Ed25519PrivateKey;
 import com.google.crypto.tink.signature.Ed25519PublicKey;
@@ -62,12 +63,6 @@ public final class CompositeMlDsaKeyCreator {
         && idRequirement != null) {
       throw new GeneralSecurityException("ID requirement must not be set for NO_PREFIX variant");
     }
-    if (parameters.getClassicalAlgorithm().equals(ClassicalAlgorithm.ECDSA_P256)
-        || parameters.getClassicalAlgorithm().equals(ClassicalAlgorithm.ECDSA_P384)
-        || parameters.getClassicalAlgorithm().equals(ClassicalAlgorithm.ECDSA_P521)) {
-      throw new GeneralSecurityException(
-          "ECDSA is not supported for composite signatures at this time");
-    }
 
     String algorithmName = CompositeMlDsaUtil.getAlgorithmName(parameters);
     KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(algorithmName, provider);
@@ -107,6 +102,13 @@ public final class CompositeMlDsaKeyCreator {
           Ed25519PrivateKey.create(
               edPublicKey,
               SecretBytes.copyFrom(classicalPrivateKeyBytes, InsecureSecretKeyAccess.get()));
+    } else if (parameters.getClassicalAlgorithm().equals(ClassicalAlgorithm.ECDSA_P256)
+        || parameters.getClassicalAlgorithm().equals(ClassicalAlgorithm.ECDSA_P384)
+        || parameters.getClassicalAlgorithm().equals(ClassicalAlgorithm.ECDSA_P521)) {
+      EcdsaParameters ecdsaParams = CompositeMlDsaUtil.getEcdsaParameters(parameters);
+      classicalPrivateKey =
+          EcdsaAsn1Util.sec1EcKeyToEcdsaPrivateKey(
+              classicalPrivateKeyBytes, ecdsaParams, InsecureSecretKeyAccess.get());
     } else if (parameters.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA2048_PSS)
         || parameters.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA3072_PSS)
         || parameters.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA4096_PSS)) {
