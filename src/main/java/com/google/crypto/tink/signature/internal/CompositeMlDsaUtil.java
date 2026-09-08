@@ -109,6 +109,14 @@ public final class CompositeMlDsaUtil {
     }
   }
 
+  public static boolean isEcdsaAlgorithm(String algorithm) {
+    return algorithm.equals(MLDSA44_ECDSA_P256_SHA256)
+        || algorithm.equals(MLDSA65_ECDSA_P256_SHA512)
+        || algorithm.equals(MLDSA65_ECDSA_P384_SHA512)
+        || algorithm.equals(MLDSA87_ECDSA_P384_SHA512)
+        || algorithm.equals(MLDSA87_ECDSA_P521_SHA512);
+  }
+
   public static MlDsaParameters.MlDsaInstance getMlDsaParametersMlDsaInstance(
       CompositeMlDsaParameters parameters) throws GeneralSecurityException {
     CompositeMlDsaParameters.MlDsaInstance mlDsaInstance = parameters.getMlDsaInstance();

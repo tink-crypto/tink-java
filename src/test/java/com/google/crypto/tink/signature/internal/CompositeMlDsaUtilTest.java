@@ -241,6 +241,28 @@ public final class CompositeMlDsaUtilTest {
   }
 
   @Test
+  public void isEcdsaAlgorithm_returnsExpected() throws Exception {
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA44-ECDSA-P256-SHA256")).isTrue();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA65-ECDSA-P256-SHA512")).isTrue();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA65-ECDSA-P384-SHA512")).isTrue();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA87-ECDSA-P384-SHA512")).isTrue();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA87-ECDSA-P521-SHA512")).isTrue();
+
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA44-Ed25519-SHA512")).isFalse();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA65-Ed25519-SHA512")).isFalse();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA44-RSA2048-PSS-SHA256")).isFalse();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA44-RSA2048-PKCS15-SHA256")).isFalse();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA65-RSA3072-PSS-SHA512")).isFalse();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA65-RSA4096-PSS-SHA512")).isFalse();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA65-RSA3072-PKCS15-SHA512")).isFalse();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA65-RSA4096-PKCS15-SHA512")).isFalse();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA87-RSA3072-PSS-SHA512")).isFalse();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA87-RSA4096-PSS-SHA512")).isFalse();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("UNKNOWN_ALGORITHM")).isFalse();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("")).isFalse();
+  }
+
+  @Test
   public void getRsaSaltLengthBytes_returnsExpected() throws Exception {
     CompositeMlDsaParameters rsa2048PssParams =
         CompositeMlDsaParameters.builder()
