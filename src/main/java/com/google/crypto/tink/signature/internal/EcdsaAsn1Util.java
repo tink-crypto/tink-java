@@ -19,6 +19,7 @@ package com.google.crypto.tink.signature.internal;
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.internal.Asn1StatefulParser;
+import com.google.crypto.tink.internal.Asn1TagConstants;
 import com.google.crypto.tink.internal.Asn1Util;
 import com.google.crypto.tink.internal.BigIntegerEncoding;
 import com.google.crypto.tink.internal.EllipticCurvesUtil;
@@ -76,7 +77,7 @@ public final class EcdsaAsn1Util {
   // https://www.rfc-editor.org/rfc/rfc5915.html#appendix-A (instructs the use of explicit tags).
   private static byte[] createExplicitlyTaggedOid(byte[] oid) {
     byte[] encodedOid = new byte[oid.length + 2];
-    encodedOid[0] = Asn1Util.TAG_OBJECT_IDENTIFIER;
+    encodedOid[0] = Asn1TagConstants.TAG_OBJECT_IDENTIFIER;
     encodedOid[1] = (byte) oid.length;
     System.arraycopy(oid, 0, encodedOid, 2, oid.length);
 

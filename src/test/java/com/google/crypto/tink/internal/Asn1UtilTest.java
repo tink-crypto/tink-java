@@ -17,7 +17,6 @@
 package com.google.crypto.tink.internal;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.AccessesPartialKey;
@@ -308,14 +307,5 @@ public final class Asn1UtilTest {
     assertThat(encodedSeq[1]).isEqualTo((byte) 0x81);
     assertThat(encodedSeq[2]).isEqualTo((byte) 0x82);
     assertThat(encodedSeq).hasLength(1 + 2 + 130);
-  }
-
-  @Test
-  public void tagConstants_matchAsn1Spec() {
-    assertEquals((byte) 0x02, Asn1Util.TAG_INTEGER);
-    assertEquals((byte) 0x04, Asn1Util.TAG_OCTET_STRING);
-    assertEquals((byte) 0x05, Asn1Util.TAG_NULL);
-    assertEquals((byte) 0x06, Asn1Util.TAG_OBJECT_IDENTIFIER);
-    assertEquals((byte) 0x30, Asn1Util.TAG_SEQUENCE);
   }
 }

@@ -775,3 +775,13 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "Asn1TagConstantsTest",
+    size = "small",
+    srcs = ["Asn1TagConstantsTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/internal:asn1_tag_constants",
+        "@maven//:junit_junit",
+    ],
+)

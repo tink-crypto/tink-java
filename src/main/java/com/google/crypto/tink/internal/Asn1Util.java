@@ -32,31 +32,26 @@ import java.util.List;
 
 /** Utility methods for ASN.1 encoding. */
 public final class Asn1Util {
-  public static final byte TAG_INTEGER = 0x02;
-  public static final byte TAG_OCTET_STRING = 0x04;
-  public static final byte TAG_NULL = 0x05;
-  public static final byte TAG_OBJECT_IDENTIFIER = 0x06;
-  public static final byte TAG_SEQUENCE = 0x30;
-  private static final byte NULL_BYTE = 0x00;
 
-  private static final byte[] versionZero = new byte[] {TAG_INTEGER, 0x01, 0x00};
+  private static final byte[] versionZero =
+      new byte[] {Asn1TagConstants.TAG_INTEGER, 0x01, 0x00};
   private static final byte[] rsaEncryptionOid =
       new byte[] {
-        TAG_SEQUENCE,
+        Asn1TagConstants.TAG_SEQUENCE,
         0x0d,
-        TAG_OBJECT_IDENTIFIER,
+        Asn1TagConstants.TAG_OBJECT_IDENTIFIER,
         0x09,
         0x2a,
         (byte) 0x86,
-        0x48,
+        (byte) 0x48,
         (byte) 0x86,
         (byte) 0xf7,
         0x0d,
         0x01,
         0x01,
         0x01,
-        TAG_NULL,
-        NULL_BYTE
+        Asn1TagConstants.TAG_NULL,
+        Asn1TagConstants.NULL_BYTE
       };
 
   private Asn1Util() {}
@@ -67,7 +62,7 @@ public final class Asn1Util {
     byte[] lengthField = createLength(bytes.length);
     byte[] result = new byte[1 + lengthField.length + bytes.length];
 
-    result[0] = TAG_INTEGER;
+    result[0] = Asn1TagConstants.TAG_INTEGER;
     System.arraycopy(lengthField, 0, result, 1, lengthField.length);
     System.arraycopy(bytes, 0, result, 1 + lengthField.length, bytes.length);
     return result;
@@ -103,7 +98,7 @@ public final class Asn1Util {
     byte[] lengthField = createLength(totalLength);
     byte[] result = new byte[1 + lengthField.length + totalLength];
 
-    result[0] = TAG_SEQUENCE;
+    result[0] = Asn1TagConstants.TAG_SEQUENCE;
     System.arraycopy(lengthField, 0, result, 1, lengthField.length);
     int offset = 1 + lengthField.length;
     for (byte[] el : elements) {
@@ -117,7 +112,7 @@ public final class Asn1Util {
   public static byte[] createOctetString(byte[] value) {
     byte[] lengthField = createLength(value.length);
     byte[] result = new byte[1 + lengthField.length + value.length];
-    result[0] = TAG_OCTET_STRING;
+    result[0] = Asn1TagConstants.TAG_OCTET_STRING;
     System.arraycopy(lengthField, 0, result, 1, lengthField.length);
     System.arraycopy(value, 0, result, 1 + lengthField.length, value.length);
     return result;

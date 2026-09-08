@@ -28,12 +28,6 @@ import java.util.Arrays;
  * (https://www.itu.int/rec/T-REC-X.690-202102-I/en).
  */
 public final class Asn1StatefulParser implements AutoCloseable {
-  private static final byte TAG_INTEGER = 0x02;
-  private static final byte TAG_BIT_STRING = 0x03;
-  private static final byte TAG_OCTET_STRING = 0x04;
-  private static final byte TAG_OBJECT_IDENTIFIER = 0x06;
-  private static final byte TAG_SEQUENCE = 0x30;
-
   /**
    * Exception thrown when ASN.1 DER parsing fails.
    *
@@ -126,7 +120,7 @@ public final class Asn1StatefulParser implements AutoCloseable {
    */
   public Asn1StatefulParser consumeSequence() throws Asn1ParserException {
     checkNotClosed();
-    int length = consumeTagAndLength(TAG_SEQUENCE);
+    int length = consumeTagAndLength(Asn1TagConstants.TAG_SEQUENCE);
     int sequenceContentStart = offset;
     offset += length;
     return new Asn1StatefulParser(data, sequenceContentStart, sequenceContentStart + length);
@@ -156,7 +150,7 @@ public final class Asn1StatefulParser implements AutoCloseable {
   @CanIgnoreReturnValue
   public BigInteger consumeInteger() throws Asn1ParserException {
     checkNotClosed();
-    int length = consumeTagAndLength(TAG_INTEGER);
+    int length = consumeTagAndLength(Asn1TagConstants.TAG_INTEGER);
     if (length == 0) {
       throw new Asn1ParserException("Failed to parse ASN.1 DER encoded key");
     }
@@ -185,7 +179,7 @@ public final class Asn1StatefulParser implements AutoCloseable {
    */
   public byte[] consumeOctetString() throws Asn1ParserException {
     checkNotClosed();
-    int length = consumeTagAndLength(TAG_OCTET_STRING);
+    int length = consumeTagAndLength(Asn1TagConstants.TAG_OCTET_STRING);
     byte[] result = Arrays.copyOfRange(data, offset, offset + length);
     offset += length;
     return result;
@@ -200,7 +194,7 @@ public final class Asn1StatefulParser implements AutoCloseable {
    */
   public byte[] consumeBitString() throws Asn1ParserException {
     checkNotClosed();
-    int length = consumeTagAndLength(TAG_BIT_STRING);
+    int length = consumeTagAndLength(Asn1TagConstants.TAG_BIT_STRING);
     if (length == 0) {
       throw new Asn1ParserException("Invalid ASN.1 DER: BIT STRING length is 0");
     }
@@ -224,7 +218,7 @@ public final class Asn1StatefulParser implements AutoCloseable {
    */
   public byte[] consumeOid() throws Asn1ParserException {
     checkNotClosed();
-    int length = consumeTagAndLength(TAG_OBJECT_IDENTIFIER);
+    int length = consumeTagAndLength(Asn1TagConstants.TAG_OBJECT_IDENTIFIER);
     byte[] result = Arrays.copyOfRange(data, offset, offset + length);
     offset += length;
     return result;
