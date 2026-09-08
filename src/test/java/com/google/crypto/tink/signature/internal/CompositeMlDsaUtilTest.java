@@ -21,7 +21,6 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.internal.Asn1Util;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.ClassicalAlgorithm;
@@ -544,7 +543,7 @@ public final class CompositeMlDsaUtilTest {
             .build();
     RsaSsaPssPrivateKey tinkPrivateKey =
         RsaSsaPssTestUtil.privateKeyFor2048BitParameters(pssParams, null);
-    byte[] pkcs1Bytes = Asn1Util.rsaSsaPssPrivateKeyToPkcs1Bytes(tinkPrivateKey);
+    byte[] pkcs1Bytes = RsaAsn1Util.rsaSsaPssPrivateKeyToPkcs1Bytes(tinkPrivateKey);
 
     CompositeMlDsaParameters compositeParams =
         CompositeMlDsaParameters.builder()
@@ -573,7 +572,7 @@ public final class CompositeMlDsaUtilTest {
             .build();
     RsaSsaPkcs1PrivateKey tinkPrivateKey =
         RsaSsaPkcs1TestUtil.privateKeyFor2048BitParameters(pkcs1Params, null);
-    byte[] pkcs1Bytes = Asn1Util.rsaSsaPkcs1PrivateKeyToPkcs1Bytes(tinkPrivateKey);
+    byte[] pkcs1Bytes = RsaAsn1Util.rsaSsaPkcs1PrivateKeyToPkcs1Bytes(tinkPrivateKey);
 
     CompositeMlDsaParameters compositeParams =
         CompositeMlDsaParameters.builder()

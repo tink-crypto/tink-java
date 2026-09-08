@@ -22,7 +22,6 @@ import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.config.internal.TinkFipsUtil.AlgorithmFipsCompatibility;
-import com.google.crypto.tink.internal.Asn1Util;
 import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.ClassicalAlgorithm;
@@ -106,13 +105,13 @@ public final class CompositeMlDsaVerifyConscrypt implements PublicKeyVerify {
         || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA3072_PSS)
         || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA4096_PSS)) {
       classicalPublicKeyBytes =
-          Asn1Util.rsaSsaPssPublicKeyToPkcs1Bytes(
+          RsaAsn1Util.rsaSsaPssPublicKeyToPkcs1Bytes(
               (RsaSsaPssPublicKey) publicKey.getClassicalPublicKey());
     } else if (params.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA2048_PKCS1)
         || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA3072_PKCS1)
         || params.getClassicalAlgorithm().equals(ClassicalAlgorithm.RSA4096_PKCS1)) {
       classicalPublicKeyBytes =
-          Asn1Util.rsaSsaPkcs1PublicKeyToPkcs1Bytes(
+          RsaAsn1Util.rsaSsaPkcs1PublicKeyToPkcs1Bytes(
               (RsaSsaPkcs1PublicKey) publicKey.getClassicalPublicKey());
     } else {
       throw new GeneralSecurityException(

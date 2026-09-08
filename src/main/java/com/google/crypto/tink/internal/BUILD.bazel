@@ -967,37 +967,13 @@ java_library(
 android_library(
     name = "asn1_util-android",
     srcs = ["Asn1Util.java"],
-    deps = [
-        ":asn1_stateful_parser-android",
-        ":asn1_tag_constants-android",
-        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
-        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access-android",
-        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_parameters-android",
-        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_private_key-android",
-        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_public_key-android",
-        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_parameters-android",
-        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_private_key-android",
-        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_public_key-android",
-        "//src/main/java/com/google/crypto/tink/util:secret_big_integer-android",
-    ],
+    deps = [":asn1_tag_constants-android"],
 )
 
 java_library(
     name = "asn1_util",
     srcs = ["Asn1Util.java"],
-    deps = [
-        ":asn1_stateful_parser",
-        ":asn1_tag_constants",
-        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
-        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
-        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_parameters",
-        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_private_key",
-        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_public_key",
-        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_parameters",
-        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_private_key",
-        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pss_public_key",
-        "//src/main/java/com/google/crypto/tink/util:secret_big_integer",
-    ],
+    deps = [":asn1_tag_constants"],
 )
 
 android_library(

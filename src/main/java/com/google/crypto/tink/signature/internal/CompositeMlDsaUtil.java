@@ -18,7 +18,6 @@ package com.google.crypto.tink.signature.internal;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.internal.Asn1Util;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.ClassicalAlgorithm;
 import com.google.crypto.tink.signature.CompositeMlDsaParameters.MlDsaInstance;
@@ -245,14 +244,14 @@ public final class CompositeMlDsaUtil {
     RsaSsaPssParameters rsaParameters =
         RsaSsaPssParameters.builder()
             .setModulusSizeBits(getRsaModulusSizeBits(compositeParameters))
-            // This might not technically be true, but we'll verify in Asn1Util call below.
+            // This might not technically be true, but we'll verify in RsaAsn1Util call below.
             .setPublicExponent(RsaSsaPssParameters.F4)
             .setMgf1HashType(getRsaMgf1HashType(compositeParameters))
             .setSigHashType(getRsaPssSigHashType(compositeParameters))
             .setSaltLengthBytes(getRsaSaltLengthBytes(compositeParameters))
             .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
             .build();
-    return Asn1Util.pkcs1RsaKeyToRsaSsaPssPrivateKey(pkcs1Key, rsaParameters);
+    return RsaAsn1Util.pkcs1RsaKeyToRsaSsaPssPrivateKey(pkcs1Key, rsaParameters);
   }
 
   @AccessesPartialKey
@@ -269,12 +268,12 @@ public final class CompositeMlDsaUtil {
     RsaSsaPkcs1Parameters rsaParameters =
         RsaSsaPkcs1Parameters.builder()
             .setModulusSizeBits(getRsaModulusSizeBits(compositeParameters))
-            // This might not technically be true, but we'll verify in Asn1Util call below.
+            // This might not technically be true, but we'll verify in RsaAsn1Util call below.
             .setPublicExponent(RsaSsaPkcs1Parameters.F4)
             .setHashType(getRsaPkcs1SigHashType(compositeParameters))
             .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
             .build();
-    return Asn1Util.pkcs1RsaKeyToRsaSsaPkcs1PrivateKey(pkcs1Key, rsaParameters);
+    return RsaAsn1Util.pkcs1RsaKeyToRsaSsaPkcs1PrivateKey(pkcs1Key, rsaParameters);
   }
 
   /**
