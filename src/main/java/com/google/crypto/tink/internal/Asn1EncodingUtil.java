@@ -20,9 +20,9 @@ import java.math.BigInteger;
 import java.util.List;
 
 /** Utility methods for ASN.1 encoding. */
-public final class Asn1Util {
+public final class Asn1EncodingUtil {
 
-  private Asn1Util() {}
+  private Asn1EncodingUtil() {}
 
   /** ASN.1 encodes a BigInteger as an INTEGER. */
   public static byte[] createInteger(BigInteger val) {

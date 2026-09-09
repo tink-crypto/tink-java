@@ -18,9 +18,9 @@ package com.google.crypto.tink.signature.internal;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.internal.Asn1EncodingUtil;
 import com.google.crypto.tink.internal.Asn1StatefulParser;
 import com.google.crypto.tink.internal.Asn1TagConstants;
-import com.google.crypto.tink.internal.Asn1Util;
 import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
@@ -82,26 +82,26 @@ public final class RsaAsn1Util {
   @AccessesPartialKey
   public static byte[] rsaSsaPssPrivateKeyToPkcs1Bytes(RsaSsaPssPrivateKey key) {
     List<byte[]> elements = new ArrayList<>();
-    elements.add(Asn1Util.createInteger(BigInteger.ZERO));
-    elements.add(Asn1Util.createInteger(key.getPublicKey().getModulus()));
-    elements.add(Asn1Util.createInteger(key.getPublicKey().getParameters().getPublicExponent()));
+    elements.add(Asn1EncodingUtil.createInteger(BigInteger.ZERO));
+    elements.add(Asn1EncodingUtil.createInteger(key.getPublicKey().getModulus()));
+    elements.add(Asn1EncodingUtil.createInteger(key.getPublicKey().getParameters().getPublicExponent()));
     elements.add(
-        Asn1Util.createInteger(
+        Asn1EncodingUtil.createInteger(
             key.getPrivateExponent().getBigInteger(InsecureSecretKeyAccess.get())));
     elements.add(
-        Asn1Util.createInteger(key.getPrimeP().getBigInteger(InsecureSecretKeyAccess.get())));
+        Asn1EncodingUtil.createInteger(key.getPrimeP().getBigInteger(InsecureSecretKeyAccess.get())));
     elements.add(
-        Asn1Util.createInteger(key.getPrimeQ().getBigInteger(InsecureSecretKeyAccess.get())));
+        Asn1EncodingUtil.createInteger(key.getPrimeQ().getBigInteger(InsecureSecretKeyAccess.get())));
     elements.add(
-        Asn1Util.createInteger(
+        Asn1EncodingUtil.createInteger(
             key.getPrimeExponentP().getBigInteger(InsecureSecretKeyAccess.get())));
     elements.add(
-        Asn1Util.createInteger(
+        Asn1EncodingUtil.createInteger(
             key.getPrimeExponentQ().getBigInteger(InsecureSecretKeyAccess.get())));
     elements.add(
-        Asn1Util.createInteger(
+        Asn1EncodingUtil.createInteger(
             key.getCrtCoefficient().getBigInteger(InsecureSecretKeyAccess.get())));
-    return Asn1Util.createSequence(elements);
+    return Asn1EncodingUtil.createSequence(elements);
   }
 
   /**
@@ -128,26 +128,26 @@ public final class RsaAsn1Util {
   @AccessesPartialKey
   public static byte[] rsaSsaPkcs1PrivateKeyToPkcs1Bytes(RsaSsaPkcs1PrivateKey key) {
     List<byte[]> elements = new ArrayList<>();
-    elements.add(Asn1Util.createInteger(BigInteger.ZERO));
-    elements.add(Asn1Util.createInteger(key.getPublicKey().getModulus()));
-    elements.add(Asn1Util.createInteger(key.getPublicKey().getParameters().getPublicExponent()));
+    elements.add(Asn1EncodingUtil.createInteger(BigInteger.ZERO));
+    elements.add(Asn1EncodingUtil.createInteger(key.getPublicKey().getModulus()));
+    elements.add(Asn1EncodingUtil.createInteger(key.getPublicKey().getParameters().getPublicExponent()));
     elements.add(
-        Asn1Util.createInteger(
+        Asn1EncodingUtil.createInteger(
             key.getPrivateExponent().getBigInteger(InsecureSecretKeyAccess.get())));
     elements.add(
-        Asn1Util.createInteger(key.getPrimeP().getBigInteger(InsecureSecretKeyAccess.get())));
+        Asn1EncodingUtil.createInteger(key.getPrimeP().getBigInteger(InsecureSecretKeyAccess.get())));
     elements.add(
-        Asn1Util.createInteger(key.getPrimeQ().getBigInteger(InsecureSecretKeyAccess.get())));
+        Asn1EncodingUtil.createInteger(key.getPrimeQ().getBigInteger(InsecureSecretKeyAccess.get())));
     elements.add(
-        Asn1Util.createInteger(
+        Asn1EncodingUtil.createInteger(
             key.getPrimeExponentP().getBigInteger(InsecureSecretKeyAccess.get())));
     elements.add(
-        Asn1Util.createInteger(
+        Asn1EncodingUtil.createInteger(
             key.getPrimeExponentQ().getBigInteger(InsecureSecretKeyAccess.get())));
     elements.add(
-        Asn1Util.createInteger(
+        Asn1EncodingUtil.createInteger(
             key.getCrtCoefficient().getBigInteger(InsecureSecretKeyAccess.get())));
-    return Asn1Util.createSequence(elements);
+    return Asn1EncodingUtil.createSequence(elements);
   }
 
   /**
@@ -164,9 +164,9 @@ public final class RsaAsn1Util {
   @AccessesPartialKey
   public static byte[] rsaSsaPssPublicKeyToPkcs1Bytes(RsaSsaPssPublicKey key) {
     List<byte[]> elements = new ArrayList<>();
-    elements.add(Asn1Util.createInteger(key.getModulus()));
-    elements.add(Asn1Util.createInteger(key.getParameters().getPublicExponent()));
-    return Asn1Util.createSequence(elements);
+    elements.add(Asn1EncodingUtil.createInteger(key.getModulus()));
+    elements.add(Asn1EncodingUtil.createInteger(key.getParameters().getPublicExponent()));
+    return Asn1EncodingUtil.createSequence(elements);
   }
 
   /**
@@ -183,9 +183,9 @@ public final class RsaAsn1Util {
   @AccessesPartialKey
   public static byte[] rsaSsaPkcs1PublicKeyToPkcs1Bytes(RsaSsaPkcs1PublicKey key) {
     List<byte[]> elements = new ArrayList<>();
-    elements.add(Asn1Util.createInteger(key.getModulus()));
-    elements.add(Asn1Util.createInteger(key.getParameters().getPublicExponent()));
-    return Asn1Util.createSequence(elements);
+    elements.add(Asn1EncodingUtil.createInteger(key.getModulus()));
+    elements.add(Asn1EncodingUtil.createInteger(key.getParameters().getPublicExponent()));
+    return Asn1EncodingUtil.createSequence(elements);
   }
 
   /**
@@ -212,7 +212,7 @@ public final class RsaAsn1Util {
     List<byte[]> elements = new ArrayList<>();
     elements.add(rsaEncryptionOid);
     elements.add(pkcs1Key);
-    return Asn1Util.createSequence(elements);
+    return Asn1EncodingUtil.createSequence(elements);
   }
 
   /**
@@ -231,8 +231,8 @@ public final class RsaAsn1Util {
     List<byte[]> elements = new ArrayList<>();
     elements.add(versionZero);
     elements.add(rsaEncryptionOid);
-    elements.add(Asn1Util.createOctetString(pkcs1Key));
-    return Asn1Util.createSequence(elements);
+    elements.add(Asn1EncodingUtil.createOctetString(pkcs1Key));
+    return Asn1EncodingUtil.createSequence(elements);
   }
 
   /**

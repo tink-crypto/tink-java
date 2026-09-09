@@ -743,11 +743,21 @@ java_test(
 )
 
 java_test(
-    name = "Asn1UtilTest",
+    name = "Asn1TagConstantsTest",
     size = "small",
-    srcs = ["Asn1UtilTest.java"],
+    srcs = ["Asn1TagConstantsTest.java"],
     deps = [
-        "//src/main/java/com/google/crypto/tink/internal:asn1_util",
+        "//src/main/java/com/google/crypto/tink/internal:asn1_tag_constants",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
+    name = "Asn1EncodingUtilTest",
+    size = "small",
+    srcs = ["Asn1EncodingUtilTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/internal:asn1_encoding_util",
         "//src/main/java/com/google/crypto/tink/subtle:hex",
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
@@ -762,16 +772,6 @@ java_test(
         "//src/main/java/com/google/crypto/tink/internal:asn1_stateful_parser",
         "//src/main/java/com/google/crypto/tink/subtle:hex",
         "@maven//:com_google_truth_truth",
-        "@maven//:junit_junit",
-    ],
-)
-
-java_test(
-    name = "Asn1TagConstantsTest",
-    size = "small",
-    srcs = ["Asn1TagConstantsTest.java"],
-    deps = [
-        "//src/main/java/com/google/crypto/tink/internal:asn1_tag_constants",
         "@maven//:junit_junit",
     ],
 )

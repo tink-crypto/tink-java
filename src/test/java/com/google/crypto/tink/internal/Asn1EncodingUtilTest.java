@@ -27,32 +27,32 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 /**
- * Unit tests for {@link Asn1Util}.
+ * Unit tests for {@link Asn1EncodingUtil}.
  *
  * <p>Verifies ASN.1 DER encoding operations against hardcoded expected byte arrays and hex strings.
  */
 @RunWith(JUnit4.class)
-public final class Asn1UtilTest {
+public final class Asn1EncodingUtilTest {
 
   @Test
   public void createInteger_encodesCorrectly() {
-    assertThat(Hex.encode(Asn1Util.createInteger(BigInteger.ZERO))).isEqualTo("020100");
-    assertThat(Hex.encode(Asn1Util.createInteger(BigInteger.ONE))).isEqualTo("020101");
-    assertThat(Hex.encode(Asn1Util.createInteger(BigInteger.valueOf(127)))).isEqualTo("02017f");
+    assertThat(Hex.encode(Asn1EncodingUtil.createInteger(BigInteger.ZERO))).isEqualTo("020100");
+    assertThat(Hex.encode(Asn1EncodingUtil.createInteger(BigInteger.ONE))).isEqualTo("020101");
+    assertThat(Hex.encode(Asn1EncodingUtil.createInteger(BigInteger.valueOf(127)))).isEqualTo("02017f");
     // Positive 128 requires leading 0x00 to avoid being interpreted as negative
-    assertThat(Hex.encode(Asn1Util.createInteger(BigInteger.valueOf(128)))).isEqualTo("02020080");
-    assertThat(Hex.encode(Asn1Util.createInteger(BigInteger.valueOf(256)))).isEqualTo("02020100");
+    assertThat(Hex.encode(Asn1EncodingUtil.createInteger(BigInteger.valueOf(128)))).isEqualTo("02020080");
+    assertThat(Hex.encode(Asn1EncodingUtil.createInteger(BigInteger.valueOf(256)))).isEqualTo("02020100");
   }
 
   @Test
   public void createOctetString_encodesCorrectly() {
-    assertThat(Hex.encode(Asn1Util.createOctetString(new byte[0]))).isEqualTo("0400");
+    assertThat(Hex.encode(Asn1EncodingUtil.createOctetString(new byte[0]))).isEqualTo("0400");
     byte[] input = new byte[] {0x01, 0x02, 0x03};
-    assertThat(Hex.encode(Asn1Util.createOctetString(input))).isEqualTo("0403010203");
+    assertThat(Hex.encode(Asn1EncodingUtil.createOctetString(input))).isEqualTo("0403010203");
 
     // Test length > 127 bytes (long form length encoding)
     byte[] longInput = new byte[130];
-    byte[] encodedLong = Asn1Util.createOctetString(longInput);
+    byte[] encodedLong = Asn1EncodingUtil.createOctetString(longInput);
     // 0x04 (TAG_OCTET_STRING), 0x81 (long length: 1 byte follows), 0x82 (130)
     assertThat(encodedLong[0]).isEqualTo((byte) 0x04);
     assertThat(encodedLong[1]).isEqualTo((byte) 0x81);
@@ -63,17 +63,17 @@ public final class Asn1UtilTest {
   @Test
   public void createSequence_encodesCorrectly() {
     // Empty sequence
-    assertThat(Hex.encode(Asn1Util.createSequence(Collections.emptyList()))).isEqualTo("3000");
+    assertThat(Hex.encode(Asn1EncodingUtil.createSequence(Collections.emptyList()))).isEqualTo("3000");
 
     // Sequence with elements
-    byte[] intElem = Asn1Util.createInteger(BigInteger.ONE);
-    byte[] octetElem = Asn1Util.createOctetString(new byte[] {0x01, 0x02});
-    assertThat(Hex.encode(Asn1Util.createSequence(Arrays.asList(intElem, octetElem))))
+    byte[] intElem = Asn1EncodingUtil.createInteger(BigInteger.ONE);
+    byte[] octetElem = Asn1EncodingUtil.createOctetString(new byte[] {0x01, 0x02});
+    assertThat(Hex.encode(Asn1EncodingUtil.createSequence(Arrays.asList(intElem, octetElem))))
         .isEqualTo("300702010104020102");
 
     // Sequence with length > 127 bytes
     byte[] longElem = new byte[130];
-    byte[] encodedSeq = Asn1Util.createSequence(Collections.singletonList(longElem));
+    byte[] encodedSeq = Asn1EncodingUtil.createSequence(Collections.singletonList(longElem));
     assertThat(encodedSeq[0]).isEqualTo((byte) 0x30);
     assertThat(encodedSeq[1]).isEqualTo((byte) 0x81);
     assertThat(encodedSeq[2]).isEqualTo((byte) 0x82);

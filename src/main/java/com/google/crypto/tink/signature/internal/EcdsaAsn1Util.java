@@ -18,9 +18,9 @@ package com.google.crypto.tink.signature.internal;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.SecretKeyAccess;
+import com.google.crypto.tink.internal.Asn1EncodingUtil;
 import com.google.crypto.tink.internal.Asn1StatefulParser;
 import com.google.crypto.tink.internal.Asn1TagConstants;
-import com.google.crypto.tink.internal.Asn1Util;
 import com.google.crypto.tink.internal.BigIntegerEncoding;
 import com.google.crypto.tink.internal.EllipticCurvesUtil;
 import com.google.crypto.tink.signature.EcdsaParameters;
@@ -153,14 +153,14 @@ public final class EcdsaAsn1Util {
       throw new GeneralSecurityException("Unsupported curve type: " + curveType);
     }
     List<byte[]> elements = new ArrayList<>();
-    elements.add(Asn1Util.createInteger(BigInteger.ONE));
+    elements.add(Asn1EncodingUtil.createInteger(BigInteger.ONE));
     elements.add(
-        Asn1Util.createOctetString(
+        Asn1EncodingUtil.createOctetString(
             BigIntegerEncoding.toBigEndianBytesOfFixedLength(
                 key.getPrivateValue().getBigInteger(SecretKeyAccess.requireAccess(access)),
                 fieldSize)));
     elements.add(oidTagged);
-    return Asn1Util.createSequence(elements);
+    return Asn1EncodingUtil.createSequence(elements);
   }
 
   /**

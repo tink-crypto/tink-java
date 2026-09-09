@@ -954,25 +954,25 @@ java_library(
     srcs = ["SkipValidateKeysetsOnParsingTag.java"],
 )
 
-android_library(
-    name = "asn1_tag_constants-android",
-    srcs = ["Asn1TagConstants.java"],
-)
-
 java_library(
     name = "asn1_tag_constants",
     srcs = ["Asn1TagConstants.java"],
 )
 
 android_library(
-    name = "asn1_util-android",
-    srcs = ["Asn1Util.java"],
+    name = "asn1_tag_constants-android",
+    srcs = ["Asn1TagConstants.java"],
+)
+
+android_library(
+    name = "asn1_encoding_util-android",
+    srcs = ["Asn1EncodingUtil.java"],
     deps = [":asn1_tag_constants-android"],
 )
 
 java_library(
-    name = "asn1_util",
-    srcs = ["Asn1Util.java"],
+    name = "asn1_encoding_util",
+    srcs = ["Asn1EncodingUtil.java"],
     deps = [":asn1_tag_constants"],
 )
 
