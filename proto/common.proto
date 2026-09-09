@@ -19,9 +19,12 @@ syntax = "proto3";
 
 package google.crypto.tink;
 
+// Placeholder for Tink proto options import.
+
 option java_package = "com.google.crypto.tink.proto";
 option java_multiple_files = true;
 option go_package = "github.com/tink-crypto/tink-go/v2/proto/common_go_proto";
+// Placeholder for tink proto custom namespace option.
 
 enum EllipticCurveType {
   UNKNOWN_CURVE = 0;
