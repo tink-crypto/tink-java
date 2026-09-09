@@ -1,4 +1,4 @@
-// Copyright 2026 Google LLC
+// Copyright 2018 Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,29 +14,25 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package com.google.crypto.tink.signature.subtle;
+package com.google.crypto.tink.signature.internal;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.PublicKeyVerify;
-import com.google.crypto.tink.internal.Util;
+import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
 import com.google.crypto.tink.signature.internal.testing.RsaSsaPkcs1TestUtil;
 import com.google.crypto.tink.signature.internal.testing.SignatureTestVector;
-import com.google.crypto.tink.subtle.Enums.HashType;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.testing.WycheproofTestUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
-import java.security.Provider;
-import java.security.Security;
 import java.util.ArrayList;
-import org.conscrypt.Conscrypt;
 import org.junit.Assume;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -45,32 +41,20 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
-/** Unit tests for RsaSsaPkcs1VerifierTest. */
+/** Unit tests for {@link RsaSsaPkcs1PureJava}. */
 @RunWith(Theories.class)
-public class RsaSsaPkcs1VerifierTest {
+public class RsaSsaPkcs1PureJavaTest {
 
   @DataPoints("allTests")
   public static final SignatureTestVector[] allTestVectors =
       RsaSsaPkcs1TestUtil.createRsaSsaPkcs1TestVectors();
 
-  private static HashType getSubtleHashType(RsaSsaPkcs1Parameters.HashType hash)
-      throws GeneralSecurityException {
-    if (hash == RsaSsaPkcs1Parameters.HashType.SHA256) {
-      return HashType.SHA256;
-    } else if (hash == RsaSsaPkcs1Parameters.HashType.SHA384) {
-      return HashType.SHA384;
-    } else if (hash == RsaSsaPkcs1Parameters.HashType.SHA512) {
-      return HashType.SHA512;
-    } else {
-      throw new GeneralSecurityException("Unsupported hash: " + hash);
-    }
-  }
-
   @Theory
   public void create_verifySignatureInTestVector_works(
       @FromDataPoints("allTests") SignatureTestVector testVector) throws Exception {
+    Assume.assumeFalse(TinkFips.useOnlyFips());
     PublicKeyVerify verify =
-        RsaSsaPkcs1Verifier.create(
+        RsaSsaPkcs1PureJava.create(
             (RsaSsaPkcs1PublicKey) testVector.getPrivateKey().getPublicKey());
     verify.verify(testVector.getSignature(), testVector.getMessage());
     assertThrows(
@@ -108,6 +92,7 @@ public class RsaSsaPkcs1VerifierTest {
   @Theory
   public void wycheproofVectors(@FromDataPoints("wycheproofTestVectorPaths") String path)
       throws Exception {
+    Assume.assumeFalse(TinkFips.useOnlyFips());
     JsonObject jsonObj = WycheproofTestUtil.readJson(path);
 
     ArrayList<String> errors = new ArrayList<>();
@@ -139,7 +124,7 @@ public class RsaSsaPkcs1VerifierTest {
                 .build();
         RsaSsaPkcs1PublicKey publicKey =
             RsaSsaPkcs1PublicKey.builder().setParameters(parameters).setModulus(modulus).build();
-        PublicKeyVerify verifier = RsaSsaPkcs1Verifier.create(publicKey);
+        PublicKeyVerify verifier = RsaSsaPkcs1PureJava.create(publicKey);
         byte[] msg = getMessage(testcase);
         byte[] sig = Hex.decode(testcase.get("sig").getAsString());
         String result = testcase.get("result").getAsString();
@@ -168,24 +153,13 @@ public class RsaSsaPkcs1VerifierTest {
   }
 
   @Test
-  public void usesConscryptImplementationIfInstalled() throws Exception {
-    Assume.assumeFalse(Util.isAndroid());
-    Assume.assumeTrue(Conscrypt.isAvailable());
+  public void testFailIfFipsOnly() throws Exception {
+    Assume.assumeTrue(TinkFips.useOnlyFips());
 
-    RsaSsaPkcs1PublicKey testPublicKey =
-        (RsaSsaPkcs1PublicKey) allTestVectors[0].getPrivateKey().getPublicKey();
-
-    // Conscrypt is not installed, so RsaSsaPkcs1PureJava is used.
-    PublicKeyVerify verifier = RsaSsaPkcs1Verifier.create(testPublicKey);
-    assertThat(verifier.getClass().getSimpleName()).isEqualTo("RsaSsaPkcs1PureJava");
-
-    Provider conscrypt = Conscrypt.newProvider();
-    Security.addProvider(conscrypt);
-
-    PublicKeyVerify verifier2 = RsaSsaPkcs1Verifier.create(testPublicKey);
-    assertThat(verifier2.getClass().getSimpleName()).isEqualTo("RsaSsaPkcs1VerifyConscrypt");
-
-    Security.removeProvider(conscrypt.getName());
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            RsaSsaPkcs1PureJava.create(
+                (RsaSsaPkcs1PublicKey) allTestVectors[0].getPrivateKey().getPublicKey()));
   }
 }
-

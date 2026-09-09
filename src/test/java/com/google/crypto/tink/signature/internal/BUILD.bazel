@@ -251,6 +251,29 @@ java_test(
 )
 
 java_test(
+    name = "RsaSsaPkcs1PureJavaTest",
+    size = "small",
+    srcs = ["RsaSsaPkcs1PureJavaTest.java"],
+    data = ["//third_party/wycheproof:testvectors_v1"],
+    tags = ["notsan"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:public_key_verify",
+        "//src/main/java/com/google/crypto/tink/config:tink_fips",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:rsa_ssa_pkcs1_public_key",
+        "//src/main/java/com/google/crypto/tink/signature/internal:rsa_ssa_pkcs1_pure_java",
+        "//src/main/java/com/google/crypto/tink/signature/internal/testing:rsa_ssa_pkcs1_test_util",
+        "//src/main/java/com/google/crypto/tink/signature/internal/testing:signature_test_vector",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "//src/main/java/com/google/crypto/tink/testing:wycheproof_test_util",
+        "@maven//:com_google_code_gson_gson",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
     name = "RsaSsaPkcs1SignVerifyConscryptTest",
     size = "small",
     srcs = ["RsaSsaPkcs1SignVerifyConscryptTest.java"],
