@@ -863,4 +863,96 @@ public final class SignatureJwkSetConverterTest {
             () -> SignatureJwkSetConverter.toPublicKeysetHandle(makeEs256Jwk(CANONICAL_X, y33B64)));
     assertThat(e).hasMessageThat().contains("invalid length of y");
   }
+
+  @Test
+  public void toPublicKeysetHandle_missingOrInvalidKeysArray_throwsGeneralSecurityException()
+      throws Exception {
+    GeneralSecurityException e1 =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> SignatureJwkSetConverter.toPublicKeysetHandle("{}"));
+    assertThat(e1).hasMessageThat().contains("JWK set must contain a 'keys' array");
+
+    GeneralSecurityException e2 =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> SignatureJwkSetConverter.toPublicKeysetHandle("{\"a\":1}"));
+    assertThat(e2).hasMessageThat().contains("JWK set must contain a 'keys' array");
+
+    GeneralSecurityException e3 =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> SignatureJwkSetConverter.toPublicKeysetHandle("{\"keys\":\"x\"}"));
+    assertThat(e3).hasMessageThat().contains("JWK set must contain a 'keys' array");
+
+    GeneralSecurityException e4 =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> SignatureJwkSetConverter.toPublicKeysetHandle("{\"keys\":{}}"));
+    assertThat(e4).hasMessageThat().contains("JWK set must contain a 'keys' array");
+  }
+
+  @Test
+  public void toPublicKeysetHandle_keyEntryNotJsonObject_throwsGeneralSecurityException()
+      throws Exception {
+    GeneralSecurityException e1 =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> SignatureJwkSetConverter.toPublicKeysetHandle("{\"keys\":[\"x\"]}"));
+    assertThat(e1).hasMessageThat().contains("JWK set entry is not a JSON object");
+
+    GeneralSecurityException e2 =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> SignatureJwkSetConverter.toPublicKeysetHandle("{\"keys\":[[]]}"));
+    assertThat(e2).hasMessageThat().contains("JWK set entry is not a JSON object");
+  }
+
+  @Test
+  public void toPublicKeysetHandle_ecdsaPrivateKey_throwsGeneralSecurityException()
+      throws Exception {
+    GeneralSecurityException e =
+        assertThrows(
+            GeneralSecurityException.class,
+            () ->
+                SignatureJwkSetConverter.toPublicKeysetHandle(
+                    "{\"keys\":[{\"alg\":\"ES256\",\"kty\":\"EC\",\"crv\":\"P-256\",\"d\":\"AAAA\"}]}"));
+    assertThat(e).hasMessageThat().contains("importing ECDSA private keys is not implemented");
+  }
+
+  @Test
+  public void toPublicKeysetHandle_rsaPrivateKey_throwsGeneralSecurityException()
+      throws Exception {
+    GeneralSecurityException e =
+        assertThrows(
+            GeneralSecurityException.class,
+            () ->
+                SignatureJwkSetConverter.toPublicKeysetHandle(
+                    "{\"keys\":[{\"alg\":\"RS256\",\"kty\":\"RSA\",\"n\":\"AAAA\",\"e\":\"AQAB\",\"d\":\"AAAA\"}]}"));
+    assertThat(e).hasMessageThat().contains("importing RSA private keys is not implemented");
+  }
+
+  @Test
+  public void toPublicKeysetHandle_eddsaPrivateKey_throwsGeneralSecurityException()
+      throws Exception {
+    GeneralSecurityException e =
+        assertThrows(
+            GeneralSecurityException.class,
+            () ->
+                SignatureJwkSetConverter.toPublicKeysetHandle(
+                    "{\"keys\":[{\"alg\":\"EdDSA\",\"kty\":\"OKP\",\"crv\":\"Ed25519\",\"d\":\"AAAA\"}]}"));
+    assertThat(e).hasMessageThat().contains("importing EdDSA private keys is not implemented");
+  }
+
+  @Test
+  public void toPublicKeysetHandle_badBase64InKey_throwsGeneralSecurityException()
+      throws Exception {
+    GeneralSecurityException e =
+        assertThrows(
+            GeneralSecurityException.class,
+            () ->
+                SignatureJwkSetConverter.toPublicKeysetHandle(
+                    "{\"keys\":[{\"alg\":\"EdDSA\",\"kty\":\"OKP\",\"crv\":\"Ed25519\",\"x\":\"A\"}]}"));
+    assertThat(e).hasMessageThat().contains("invalid JWK key entry");
+  }
 }

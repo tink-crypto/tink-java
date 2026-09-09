@@ -93,30 +93,40 @@ public final class SignatureJwkSetConverter {
       throw new GeneralSecurityException("JWK set is invalid JSON", ex);
     }
     KeysetHandle.Builder builder = KeysetHandle.newBuilder();
-    JsonArray jsonKeys = jsonKeyset.get("keys").getAsJsonArray();
-    for (JsonElement element : jsonKeys) {
+    JsonElement keysElem = jsonKeyset.get("keys");
+    if (keysElem == null || !keysElem.isJsonArray()) {
+      throw new GeneralSecurityException("JWK set must contain a 'keys' array");
+    }
+    for (JsonElement element : keysElem.getAsJsonArray()) {
+      if (!element.isJsonObject()) {
+        throw new GeneralSecurityException("JWK set entry is not a JSON object");
+      }
       JsonObject jsonKey = element.getAsJsonObject();
-      String kty = getStringItem(jsonKey, "kty");
-      switch (kty) {
-        case "EC":
-          builder.addEntry(KeysetHandle.importKey(convertToEcdsaKey(jsonKey)).withRandomId());
-          break;
-        case "OKP":
-          builder.addEntry(KeysetHandle.importKey(convertToEd25519Key(jsonKey)).withRandomId());
-          break;
-        case "RSA":
-          String alg = getStringItem(jsonKey, "alg");
-          if (alg.startsWith("RS")) {
-            builder.addEntry(
-                KeysetHandle.importKey(convertToRsaSsaPkcs1Key(jsonKey)).withRandomId());
-          } else if (alg.startsWith("PS")) {
-            builder.addEntry(KeysetHandle.importKey(convertToRsaSsaPssKey(jsonKey)).withRandomId());
-          } else {
-            throw new GeneralSecurityException("unexpected alg value for RSA key: " + alg);
-          }
-          break;
-        default:
-          throw new GeneralSecurityException("unexpected kty value: " + kty);
+      try {
+        String kty = getStringItem(jsonKey, "kty");
+        switch (kty) {
+          case "EC":
+            builder.addEntry(KeysetHandle.importKey(convertToEcdsaKey(jsonKey)).withRandomId());
+            break;
+          case "OKP":
+            builder.addEntry(KeysetHandle.importKey(convertToEd25519Key(jsonKey)).withRandomId());
+            break;
+          case "RSA":
+            String alg = getStringItem(jsonKey, "alg");
+            if (alg.startsWith("RS")) {
+              builder.addEntry(
+                  KeysetHandle.importKey(convertToRsaSsaPkcs1Key(jsonKey)).withRandomId());
+            } else if (alg.startsWith("PS")) {
+              builder.addEntry(KeysetHandle.importKey(convertToRsaSsaPssKey(jsonKey)).withRandomId());
+            } else {
+              throw new GeneralSecurityException("unexpected alg value for RSA key: " + alg);
+            }
+            break;
+          default:
+            throw new GeneralSecurityException("unexpected kty value: " + kty);
+        }
+      } catch (RuntimeException ex) {
+        throw new GeneralSecurityException("invalid JWK key entry", ex);
       }
     }
     if (builder.size() <= 0) {
@@ -306,7 +316,7 @@ public final class SignatureJwkSetConverter {
             "Unknown Ecdsa Algorithm: " + getStringItem(jsonKey, "alg"));
     }
     if (jsonKey.has("d")) {
-      throw new UnsupportedOperationException("importing ECDSA private keys is not implemented");
+      throw new GeneralSecurityException("importing ECDSA private keys is not implemented");
     }
     expectStringItem(jsonKey, "kty", "EC");
     validateUseIsSig(jsonKey);
@@ -343,7 +353,7 @@ public final class SignatureJwkSetConverter {
     expectStringItem(jsonKey, "alg", "EdDSA");
     expectStringItem(jsonKey, "crv", "Ed25519");
     if (jsonKey.has("d")) {
-      throw new UnsupportedOperationException("importing EdDSA private keys is not implemented");
+      throw new GeneralSecurityException("importing EdDSA private keys is not implemented");
     }
     validateUseIsSig(jsonKey);
     validateKeyOpsIsVerify(jsonKey);
@@ -377,7 +387,7 @@ public final class SignatureJwkSetConverter {
         || jsonKey.has("dq")
         || jsonKey.has("d")
         || jsonKey.has("qi")) {
-      throw new UnsupportedOperationException("importing RSA private keys is not implemented");
+      throw new GeneralSecurityException("importing RSA private keys is not implemented");
     }
     expectStringItem(jsonKey, "kty", "RSA");
     validateUseIsSig(jsonKey);
@@ -423,7 +433,7 @@ public final class SignatureJwkSetConverter {
         || jsonKey.has("dq")
         || jsonKey.has("d")
         || jsonKey.has("qi")) {
-      throw new UnsupportedOperationException("importing RSA private keys is not implemented");
+      throw new GeneralSecurityException("importing RSA private keys is not implemented");
     }
     expectStringItem(jsonKey, "kty", "RSA");
     validateUseIsSig(jsonKey);
