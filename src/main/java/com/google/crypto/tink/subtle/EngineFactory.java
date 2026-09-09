@@ -49,20 +49,20 @@ public final class EngineFactory<T_WRAPPER extends EngineWrapper<JcePrimitiveT>,
    * caller-specified preferred providers:
    *
    * <ul>
-   *   <li>In FIPS mode: [GmsCore_OpenSSL, AndroidOpenSSL, Conscrypt] (mandatory, ignores
+   *   <li>In FIPS mode: [AndroidOpenSSL, GmsCore_OpenSSL, Conscrypt] (mandatory, ignores
    *       preferredProviders).
-   *   <li>On Android: [GmsCore_OpenSSL, AndroidOpenSSL] (preferred, ignores preferredProviders).
+   *   <li>On Android: [AndroidOpenSSL, GmsCore_OpenSSL] (preferred, ignores preferredProviders).
    *   <li>Default JVM: preferredProviders.
    * </ul>
    */
   private static List<Provider> getProviders(List<Provider> preferredProviders) {
     if (TinkFipsUtil.useOnlyFips()) {
       // In Fips mode we ignore preferred providers (we assume we know better).
-      return toProviderList("GmsCore_OpenSSL", "AndroidOpenSSL", "Conscrypt");
+      return toProviderList("AndroidOpenSSL", "GmsCore_OpenSSL", "Conscrypt");
     }
     if (SubtleUtil.isAndroid()) {
       // On Android we also ignore preferred providers (probably due to legacy).
-      return toProviderList("GmsCore_OpenSSL", "AndroidOpenSSL");
+      return toProviderList("AndroidOpenSSL", "GmsCore_OpenSSL");
     }
     return preferredProviders;
   }
