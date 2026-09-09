@@ -38,7 +38,6 @@ import com.google.crypto.tink.signature.internal.testing.RsaSsaPkcs1TestUtil;
 import com.google.crypto.tink.signature.internal.testing.RsaSsaPssTestUtil;
 import com.google.crypto.tink.signature.internal.testing.SlhDsaTestUtil;
 import java.security.GeneralSecurityException;
-import javax.annotation.Nullable;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -109,11 +108,6 @@ public class SignatureConfig2026Test {
   @Theory
   public void getPrimitive_signVerify_works(@FromDataPoints("keys") SignaturePrivateKey key)
       throws Exception {
-    @Nullable Integer apiLevel = Util.getAndroidApiLevel();
-    if (apiLevel != null && apiLevel == 19) {
-      // Android API 19 is slower than the others in this.
-      return;
-    }
 
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
     if (key.getIdRequirementOrNull() == null) {
