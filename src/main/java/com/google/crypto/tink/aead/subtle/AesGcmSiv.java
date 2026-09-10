@@ -16,6 +16,8 @@
 
 package com.google.crypto.tink.aead.subtle;
 
+import static com.google.crypto.tink.aead.internal.AesGcmSiv.isAesGcmSivCipher;
+
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
@@ -41,6 +43,19 @@ import javax.crypto.Cipher;
 @Alpha
 public final class AesGcmSiv implements Aead {
 
+  @Nullable
+  private static Cipher createInitialCipherOrNull() {
+    try {
+      Cipher cipher = EngineFactory.CIPHER.getInstance("AES/GCM-SIV/NoPadding");
+      if (!isAesGcmSivCipher(cipher)) {
+        return null;
+      }
+      return cipher;
+    } catch (GeneralSecurityException ex) {
+      return null;
+    }
+  }
+
   // localAesGcmSivCipher.get() may be null if the cipher returned by EngineFactory is not a valid
   // AES GCM SIV cipher.
   private static final ThreadLocal<Cipher> localAesGcmSivCipher =
@@ -48,28 +63,16 @@ public final class AesGcmSiv implements Aead {
         @Nullable
         @Override
         protected Cipher initialValue() {
-          try {
-            Cipher cipher = EngineFactory.CIPHER.getInstance("AES/GCM-SIV/NoPadding");
-            if (!com.google.crypto.tink.aead.internal.AesGcmSiv.isAesGcmSivCipher(cipher)) {
-              return null;
-            }
-            return cipher;
-          } catch (GeneralSecurityException ex) {
-            throw new IllegalStateException(ex);
-          }
+          return createInitialCipherOrNull();
         }
       };
 
   private static Cipher cipherSupplier() throws GeneralSecurityException {
-    try {
-      Cipher cipher = localAesGcmSivCipher.get();
-      if (cipher == null) {
-        throw new GeneralSecurityException("AES GCM SIV cipher is invalid.");
-      }
-      return cipher;
-    } catch (IllegalStateException ex) {
-      throw new GeneralSecurityException("AES GCM SIV cipher is not available or is invalid.", ex);
+    Cipher cipher = localAesGcmSivCipher.get();
+    if (cipher == null) {
+      throw new GeneralSecurityException("AES GCM SIV cipher is not available or is invalid.");
     }
+    return cipher;
   }
 
   private final Aead aead;
