@@ -282,16 +282,17 @@ android_library(
     srcs = ["DeterministicAeadConfigurationV0.java"],
     deps = [
         ":aes_siv_key-android",
-        ":deterministic_aead_wrapper-android",
+        ":deterministic_aead_config2026-android",
         "//src/main/java/com/google/crypto/tink:configuration-android",
         "//src/main/java/com/google/crypto/tink:deterministic_aead-android",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access-android",
         "//src/main/java/com/google/crypto/tink:key-android",
-        "//src/main/java/com/google/crypto/tink:keyset_handle_interface-android",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink:proto_key_serializer-android",
         "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util-android",
+        "//src/main/java/com/google/crypto/tink/daead/subtle:aes_siv_deterministic_aead-android",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key-android",
-        "//src/main/java/com/google/crypto/tink/internal:mutable_serialization_registry-android",
-        "//src/main/java/com/google/crypto/tink/subtle:aes_siv-android",
+        "//src/main/java/com/google/crypto/tink/internal:proto_based_configuration_builder-android",
     ],
 )
 
@@ -300,16 +301,17 @@ java_library(
     srcs = ["DeterministicAeadConfigurationV0.java"],
     deps = [
         ":aes_siv_key",
-        ":deterministic_aead_wrapper",
+        ":deterministic_aead_config2026",
         "//src/main/java/com/google/crypto/tink:configuration",
         "//src/main/java/com/google/crypto/tink:deterministic_aead",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink:key",
-        "//src/main/java/com/google/crypto/tink:keyset_handle_interface",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink:proto_key_serializer",
         "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
+        "//src/main/java/com/google/crypto/tink/daead/subtle:aes_siv_deterministic_aead",
         "//src/main/java/com/google/crypto/tink/internal:legacy_proto_key",
-        "//src/main/java/com/google/crypto/tink/internal:mutable_serialization_registry",
-        "//src/main/java/com/google/crypto/tink/subtle:aes_siv",
+        "//src/main/java/com/google/crypto/tink/internal:proto_based_configuration_builder",
     ],
 )
 

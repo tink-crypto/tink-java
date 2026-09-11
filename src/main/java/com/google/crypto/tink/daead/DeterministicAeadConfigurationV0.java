@@ -20,11 +20,12 @@ import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
-import com.google.crypto.tink.KeysetHandleInterface;
+import com.google.crypto.tink.LowLevelCryptoCaller;
+import com.google.crypto.tink.ProtoKeySerializer;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.daead.subtle.AesSivDeterministicAead;
 import com.google.crypto.tink.internal.LegacyProtoKey;
-import com.google.crypto.tink.internal.MutableSerializationRegistry;
-import com.google.crypto.tink.subtle.AesSiv;
+import com.google.crypto.tink.internal.ProtoBasedConfigurationBuilder;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 
@@ -38,26 +39,9 @@ import java.security.InvalidAlgorithmParameterException;
 /* Placeholder for internally public; DO NOT CHANGE. */ class DeterministicAeadConfigurationV0 {
   private DeterministicAeadConfigurationV0() {}
 
-  private static final DeterministicAeadWrapper DETERMINISTIC_AEAD_WRAPPER =
-      new DeterministicAeadWrapper();
   private static final Configuration CONFIGURATION = create();
 
-  private static Configuration create() {
-    return new Configuration() {
-      @Override
-      public <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
-          throws GeneralSecurityException {
-        if (clazz.equals(DeterministicAead.class)) {
-          return clazz.cast(
-              DETERMINISTIC_AEAD_WRAPPER.wrap(
-                  keysetHandle, DeterministicAeadConfigurationV0::createDeterministicAead));
-        }
-        throw new GeneralSecurityException(
-            "DeterministicAeadConfigurationV0 can only create DeterministicAead primitive");
-      }
-    };
-  }
-
+  /** Returns the {@link Configuration} instance. */
   public static Configuration get() throws GeneralSecurityException {
     if (TinkFipsUtil.useOnlyFips()) {
       throw new GeneralSecurityException(
@@ -66,28 +50,46 @@ import java.security.InvalidAlgorithmParameterException;
     return CONFIGURATION;
   }
 
-  private static DeterministicAead createDeterministicAead(KeysetHandleInterface.Entry entry)
-      throws GeneralSecurityException {
-    Key key = entry.getKey();
-    if (key instanceof LegacyProtoKey) {
-      Key reparsedKey =
-          MutableSerializationRegistry.globalInstance()
-              .parseKey(
-                  ((LegacyProtoKey) key).getSerialization(InsecureSecretKeyAccess.get()),
-                  InsecureSecretKeyAccess.get());
-      key = reparsedKey;
-    }
+  @LowLevelCryptoCaller
+  private static Configuration create() {
+    // The DeterministicAeadConfigurationV0 is the same as the DeterministicAeadConfig, but if a key
+    // has been parsed as a LegacyProtoKey (which happens if we use the RegistryConfig and the
+    // corresponding algorithm was not registered), we try to parse it again.
+    return new ProtoBasedConfigurationBuilder()
+        .mergeProtoBasedConfiguration(DeterministicAeadConfig2026.get())
+        .addPrimitiveConstructor(
+            DeterministicAeadConfigurationV0::createDeterministicAeadFromLegacyProtoKey,
+            LegacyProtoKey.class,
+            DeterministicAead.class)
+        .build();
+  }
 
-    if (key instanceof AesSivKey) {
-      return createAesSiv((AesSivKey) key);
+  @LowLevelCryptoCaller
+  private static Key reparseKey(LegacyProtoKey key) throws GeneralSecurityException {
+    ProtoKeySerializer protoKeySerializer = get().getOrNull(ProtoKeySerializer.class);
+    if (protoKeySerializer == null) {
+      throw new GeneralSecurityException(
+          "Unexpected: CONFIGURATION does not support Proto Serialization");
     }
-    throw new GeneralSecurityException("Unknown key class: " + key.getClass());
+    return protoKeySerializer.parseKey(
+        key.getSerialization(InsecureSecretKeyAccess.get()), InsecureSecretKeyAccess.get());
   }
 
   // We only allow 64-byte keys for AesSiv, because 32-byte keys might not provide 128-bit security
   // level in multi-user setting.
   private static final int KEY_SIZE_IN_BYTES = 64;
 
+  @LowLevelCryptoCaller
+  private static DeterministicAead createDeterministicAeadFromLegacyProtoKey(LegacyProtoKey key)
+      throws GeneralSecurityException {
+    Key reparsedKey = reparseKey(key);
+    if (reparsedKey instanceof AesSivKey) {
+      return createAesSiv((AesSivKey) reparsedKey);
+    }
+    throw new GeneralSecurityException("Unknown key class: " + reparsedKey.getClass());
+  }
+
+  @LowLevelCryptoCaller
   private static DeterministicAead createAesSiv(AesSivKey key)
       throws GeneralSecurityException {
     if (key.getParameters().getKeySizeBytes() != KEY_SIZE_IN_BYTES) {
@@ -98,6 +100,6 @@ import java.security.InvalidAlgorithmParameterException;
               + KEY_SIZE_IN_BYTES
               + " bytes.");
     }
-    return AesSiv.create(key);
+    return AesSivDeterministicAead.create(key);
   }
 }
