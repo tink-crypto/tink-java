@@ -204,6 +204,19 @@ java_test(
 )
 
 java_test(
+    name = "AesGcmSivWithoutInstallingConscryptTest",
+    size = "small",
+    srcs = ["AesGcmSivWithoutInstallingConscryptTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/aead/subtle:aes_gcm_siv",
+        "//src/main/java/com/google/crypto/tink/subtle:random",
+        "//src/main/java/com/google/crypto/tink/testing:test_util",
+        "@maven//:junit_junit",
+        "@maven//:org_conscrypt_conscrypt_openjdk_uber",
+    ],
+)
+
+java_test(
     name = "AesGcmProtoSerializationTest",
     size = "small",
     srcs = ["AesGcmProtoSerializationTest.java"],
