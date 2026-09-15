@@ -529,4 +529,53 @@ public final class JwtFormatTest {
     assertThat(encodeSignature).isEqualTo("dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk");
     assertThat(JwtFormat.decodeSignature(encodeSignature)).isEqualTo(signatureBytes);
   }
+
+  @Test
+  public void decodeSignature_nonCanonical_fails() throws Exception {
+    // "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk" ends with 'k' (base64 36 = 100100_2).
+    // The last 2 bits are unused trailing bits. Modifying them to 'l' (100101_2), 'm' (100110_2),
+    // or 'n' (100111_2) yields non-canonical encodings of the same byte array.
+    assertThrows(
+        JwtInvalidException.class,
+        () -> JwtFormat.decodeSignature("dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXl"));
+    assertThrows(
+        JwtInvalidException.class,
+        () -> JwtFormat.decodeSignature("dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXm"));
+    assertThrows(
+        JwtInvalidException.class,
+        () -> JwtFormat.decodeSignature("dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXn"));
+  }
+
+  @Test
+  public void splitSignedCompact_nonCanonicalSignature_fails() throws Exception {
+    // Canonical token ends with 'c'. Mutating unused trailing bits to 'd', 'e', 'f'
+    // produces non-canonical encodings that must be rejected.
+    String canonicalToken =
+        "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJpc3N1ZXIifQ.iaGTePfFOHF_CsJTsktYwO3LOK6DIzq-aIgknPqgcVc";
+    assertThat(JwtFormat.splitSignedCompact(canonicalToken)).isNotNull();
+
+    assertThrows(
+        JwtInvalidException.class,
+        () ->
+            JwtFormat.splitSignedCompact(
+                "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJpc3N1ZXIifQ.iaGTePfFOHF_CsJTsktYwO3LOK6DIzq-aIgknPqgcVd"));
+    assertThrows(
+        JwtInvalidException.class,
+        () ->
+            JwtFormat.splitSignedCompact(
+                "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJpc3N1ZXIifQ.iaGTePfFOHF_CsJTsktYwO3LOK6DIzq-aIgknPqgcVe"));
+    assertThrows(
+        JwtInvalidException.class,
+        () ->
+            JwtFormat.splitSignedCompact(
+                "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJpc3N1ZXIifQ.iaGTePfFOHF_CsJTsktYwO3LOK6DIzq-aIgknPqgcVf"));
+  }
+
+  @Test
+  public void strictUrlSafeDecode_nonCanonical_fails() throws Exception {
+    // "AB" decodes to 1 byte (0x00), but has 4 non-zero unused trailing bits (canonical is "AA").
+    assertThrows(JwtInvalidException.class, () -> JwtFormat.strictUrlSafeDecode("AB"));
+    // "AAB" decodes to 2 bytes (0x00, 0x00), but has 2 non-zero unused trailing bits (canonical is "AAA").
+    assertThrows(JwtInvalidException.class, () -> JwtFormat.strictUrlSafeDecode("AAB"));
+  }
 }

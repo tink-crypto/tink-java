@@ -76,7 +76,11 @@ public final class JwtFormat {
       }
     }
     try {
-      return Base64.urlSafeDecode(encodedData);
+      byte[] data = Base64.urlSafeDecode(encodedData);
+      if (!Base64.urlSafeEncode(data).equals(encodedData)) {
+        throw new JwtInvalidException("invalid encoding: not canonical base64url");
+      }
+      return data;
     } catch (IllegalArgumentException ex) {
       throw new JwtInvalidException("invalid encoding: " + ex);
     }
