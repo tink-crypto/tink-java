@@ -30,6 +30,7 @@ import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.signature.SignaturePublicKey;
 import com.google.crypto.tink.util.Bytes;
 import java.security.GeneralSecurityException;
+import java.util.List;
 
 /** Provides a method "create", creating a public key verify from a keyset. */
 public final class WrappedPublicKeyVerify {
@@ -71,8 +72,10 @@ public final class WrappedPublicKeyVerify {
 
     @Override
     public void verify(final byte[] signature, final byte[] data) throws GeneralSecurityException {
-      for (PublicKeyVerifyWithId publicKeyVerifyWithId :
-          allPublicKeyVerifys.getAllWithMatchingPrefix(signature)) {
+      List<PublicKeyVerifyWithId> matching =
+          allPublicKeyVerifys.getAllWithMatchingPrefix(signature);
+      for (int i = 0; i < matching.size(); i++) {
+        PublicKeyVerifyWithId publicKeyVerifyWithId = matching.get(i);
         try {
           publicKeyVerifyWithId.publicKeyVerify.verify(signature, data);
           monitoringLogger.log(publicKeyVerifyWithId.id, data.length);

@@ -18,6 +18,7 @@ package com.google.crypto.tink.jwt.internal;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.jwt.JwtEcdsaParameters;
 import com.google.crypto.tink.jwt.JwtEcdsaPrivateKey;
 import com.google.crypto.tink.jwt.JwtEcdsaPublicKey;
@@ -36,6 +37,10 @@ public final class JwtEcdsaKeyCreator {
   public static JwtEcdsaPrivateKey createKey(
       JwtEcdsaParameters parameters, @Nullable Integer idRequirement)
       throws GeneralSecurityException {
+    if (TinkFipsUtil.useOnlyFips() && !TinkFipsUtil.fipsModuleAvailable()) {
+      throw new GeneralSecurityException(
+          "Cannot create JwtEcdsaPrivateKey in FIPS mode without FIPS module");
+    }
     KeyPair keyPair =
         EllipticCurves.generateKeyPair(parameters.getAlgorithm().getEcParameterSpec());
     ECPublicKey pubKey = (ECPublicKey) keyPair.getPublic();

@@ -1090,16 +1090,6 @@ java_library(
 )
 
 android_library(
-    name = "signature_configuration_v1-android",
-    srcs = ["SignatureConfigurationV1.java"],
-    deps = [
-        ":signature_config_2026-android",
-        "//src/main/java/com/google/crypto/tink:configuration-android",
-        "@maven//:com_google_errorprone_error_prone_annotations",
-    ],
-)
-
-android_library(
     name = "signature_config_2026-android",
     srcs = ["SignatureConfig2026.java"],
     deps = [
@@ -1134,6 +1124,11 @@ android_library(
         "//src/main/java/com/google/crypto/tink/internal:proto_based_configuration_builder-android",
         "//src/main/java/com/google/crypto/tink/signature/internal:composite_ml_dsa_key_creator-android",
         "//src/main/java/com/google/crypto/tink/signature/internal:ecdsa_key_creator-android",
+        "//src/main/java/com/google/crypto/tink/signature/internal:ed25519_key_creator-android",
+        "//src/main/java/com/google/crypto/tink/signature/internal:ml_dsa_key_creator-android",
+        "//src/main/java/com/google/crypto/tink/signature/internal:rsa_ssa_pkcs1_key_creator-android",
+        "//src/main/java/com/google/crypto/tink/signature/internal:rsa_ssa_pss_key_creator-android",
+        "//src/main/java/com/google/crypto/tink/signature/internal:slh_dsa_key_creator-android",
         "//src/main/java/com/google/crypto/tink/signature/subtle:composite_ml_dsa_proto_serialization-android",
         "//src/main/java/com/google/crypto/tink/signature/subtle:composite_ml_dsa_signer-android",
         "//src/main/java/com/google/crypto/tink/signature/subtle:composite_ml_dsa_verifier-android",
@@ -1155,16 +1150,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink/signature/subtle:slh_dsa_proto_serialization-android",
         "//src/main/java/com/google/crypto/tink/signature/subtle:slh_dsa_signer-android",
         "//src/main/java/com/google/crypto/tink/signature/subtle:slh_dsa_verifier-android",
-    ],
-)
-
-java_library(
-    name = "signature_configuration_v1",
-    srcs = ["SignatureConfigurationV1.java"],
-    deps = [
-        ":signature_config_2026",
-        "//src/main/java/com/google/crypto/tink:configuration",
-        "@maven//:com_google_errorprone_error_prone_annotations",
+        "@maven//:com_google_code_findbugs_jsr305",
     ],
 )
 
@@ -1203,6 +1189,11 @@ java_library(
         "//src/main/java/com/google/crypto/tink/internal:proto_based_configuration_builder",
         "//src/main/java/com/google/crypto/tink/signature/internal:composite_ml_dsa_key_creator",
         "//src/main/java/com/google/crypto/tink/signature/internal:ecdsa_key_creator",
+        "//src/main/java/com/google/crypto/tink/signature/internal:ed25519_key_creator",
+        "//src/main/java/com/google/crypto/tink/signature/internal:ml_dsa_key_creator",
+        "//src/main/java/com/google/crypto/tink/signature/internal:rsa_ssa_pkcs1_key_creator",
+        "//src/main/java/com/google/crypto/tink/signature/internal:rsa_ssa_pss_key_creator",
+        "//src/main/java/com/google/crypto/tink/signature/internal:slh_dsa_key_creator",
         "//src/main/java/com/google/crypto/tink/signature/subtle:composite_ml_dsa_proto_serialization",
         "//src/main/java/com/google/crypto/tink/signature/subtle:composite_ml_dsa_signer",
         "//src/main/java/com/google/crypto/tink/signature/subtle:composite_ml_dsa_verifier",
@@ -1224,6 +1215,7 @@ java_library(
         "//src/main/java/com/google/crypto/tink/signature/subtle:slh_dsa_proto_serialization",
         "//src/main/java/com/google/crypto/tink/signature/subtle:slh_dsa_signer",
         "//src/main/java/com/google/crypto/tink/signature/subtle:slh_dsa_verifier",
+        "@maven//:com_google_code_findbugs_jsr305",
     ],
 )
 

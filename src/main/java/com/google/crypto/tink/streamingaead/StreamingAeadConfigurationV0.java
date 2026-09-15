@@ -19,13 +19,14 @@ package com.google.crypto.tink.streamingaead;
 import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
-import com.google.crypto.tink.KeysetHandleInterface;
+import com.google.crypto.tink.LowLevelCryptoCaller;
+import com.google.crypto.tink.ProtoKeySerializer;
 import com.google.crypto.tink.StreamingAead;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.LegacyProtoKey;
-import com.google.crypto.tink.internal.MutableSerializationRegistry;
-import com.google.crypto.tink.subtle.AesCtrHmacStreaming;
-import com.google.crypto.tink.subtle.AesGcmHkdfStreaming;
+import com.google.crypto.tink.internal.ProtoBasedConfigurationBuilder;
+import com.google.crypto.tink.streamingaead.subtle.AesCtrHmacStreamingAead;
+import com.google.crypto.tink.streamingaead.subtle.AesGcmHkdfStreamingAead;
 import java.security.GeneralSecurityException;
 
 /**
@@ -39,52 +40,52 @@ import java.security.GeneralSecurityException;
 /* Placeholder for internally public; DO NOT CHANGE. */ class StreamingAeadConfigurationV0 {
   private StreamingAeadConfigurationV0() {}
 
-  private static final StreamingAeadWrapper STREAMING_AEAD_WRAPPER = new StreamingAeadWrapper();
   private static final Configuration CONFIGURATION = create();
 
-  private static Configuration create() {
-    return new Configuration() {
-      @Override
-      public <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
-          throws GeneralSecurityException {
-        if (clazz == StreamingAead.class) {
-          return clazz.cast(
-              STREAMING_AEAD_WRAPPER.wrap(
-                  keysetHandle, StreamingAeadConfigurationV0::createStreamingAead));
-        }
-        throw new GeneralSecurityException(
-            "StreamingAeadConfigurationV0 can only create StreamingAead");
-      }
-    };
-  }
-
-  /** Returns an instance of the {@code StreamingAeadConfigurationV0}. */
+  /** Returns the {@link Configuration} instance. */
   public static Configuration get() throws GeneralSecurityException {
     if (TinkFipsUtil.useOnlyFips()) {
       throw new GeneralSecurityException(
-          "Cannot use non-FIPS-compliant StreamingAead in FIPS mode");
+          "Cannot use non-FIPS-compliant StreamingAeadConfigurationV0 in FIPS mode");
     }
     return CONFIGURATION;
   }
 
-  private static StreamingAead createStreamingAead(KeysetHandleInterface.Entry entry)
-      throws GeneralSecurityException {
-    Key key = entry.getKey();
-    if (key instanceof LegacyProtoKey) {
-      Key reparsedKey =
-          MutableSerializationRegistry.globalInstance()
-              .parseKey(
-                  ((LegacyProtoKey) key).getSerialization(InsecureSecretKeyAccess.get()),
-                  InsecureSecretKeyAccess.get());
-      key = reparsedKey;
-    }
+  @LowLevelCryptoCaller
+  private static Configuration create() {
+    // The StreamingAeadConfigurationV0 is the same as the StreamingAeadConfig, but if a key has been parsed
+    // as a LegacyProtoKey (which happens if we use the RegistryConfig and the corresponding
+    // algorithm was not registered), we try to parse it again.
+    return new ProtoBasedConfigurationBuilder()
+        .mergeProtoBasedConfiguration(StreamingAeadConfig2026.get())
+        .addPrimitiveConstructor(
+            StreamingAeadConfigurationV0::createStreamingAeadFromLegacyProtoKey,
+            LegacyProtoKey.class,
+            StreamingAead.class)
+        .build();
+  }
 
-    if (key instanceof AesGcmHkdfStreamingKey) {
-      return AesGcmHkdfStreaming.create((AesGcmHkdfStreamingKey) key);
+  @LowLevelCryptoCaller
+  private static Key reparseKey(LegacyProtoKey key) throws GeneralSecurityException {
+    ProtoKeySerializer protoKeySerializer = get().getOrNull(ProtoKeySerializer.class);
+    if (protoKeySerializer == null) {
+      throw new GeneralSecurityException(
+          "Unexpected: CONFIGURATION does not support Proto Serialization");
     }
-    if (key instanceof AesCtrHmacStreamingKey) {
-      return AesCtrHmacStreaming.create((AesCtrHmacStreamingKey) key);
+    return protoKeySerializer.parseKey(
+        key.getSerialization(InsecureSecretKeyAccess.get()), InsecureSecretKeyAccess.get());
+  }
+
+  @LowLevelCryptoCaller
+  private static StreamingAead createStreamingAeadFromLegacyProtoKey(LegacyProtoKey key)
+      throws GeneralSecurityException {
+    Key reparsedKey = reparseKey(key);
+    if (reparsedKey instanceof AesGcmHkdfStreamingKey) {
+      return AesGcmHkdfStreamingAead.create((AesGcmHkdfStreamingKey) reparsedKey);
     }
-    throw new GeneralSecurityException("Unknown key class: " + key.getClass());
+    if (reparsedKey instanceof AesCtrHmacStreamingKey) {
+      return AesCtrHmacStreamingAead.create((AesCtrHmacStreamingKey) reparsedKey);
+    }
+    throw new GeneralSecurityException("Unknown key class: " + reparsedKey.getClass());
   }
 }

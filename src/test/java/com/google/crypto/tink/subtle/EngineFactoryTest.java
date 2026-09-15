@@ -95,13 +95,13 @@ public class EngineFactoryTest {
 
     // We expect that the Android policy will prefer Conscrypt if available is on that Android
     // device.
-    if (Security.getProvider("GmsCore_OpenSSL") != null) {
-      assertThat(EngineFactory.CIPHER.getInstance("AES/GCM/NoPadding").getProvider().getName())
-          .isEqualTo("GmsCore_OpenSSL");
-
-    } else if (Security.getProvider("AndroidOpenSSL") != null) {
+    if (Security.getProvider("AndroidOpenSSL") != null) {
       assertThat(EngineFactory.CIPHER.getInstance("AES/GCM/NoPadding").getProvider().getName())
           .isEqualTo("AndroidOpenSSL");
+
+    } else if (Security.getProvider("GmsCore_OpenSSL") != null) {
+      assertThat(EngineFactory.CIPHER.getInstance("AES/GCM/NoPadding").getProvider().getName())
+          .isEqualTo("GmsCore_OpenSSL");
     }
   }
 
@@ -113,21 +113,21 @@ public class EngineFactoryTest {
 
     // We expect that the Android policy will prefer Conscrypt if available is on that Android
     // device.
-    if (Security.getProvider("GmsCore_OpenSSL") != null) {
-      assertThat(
-              EngineFactory.CIPHER
-                  .getInstance("AES/GCM/NoPadding", preferredProviders)
-                  .getProvider()
-                  .getName())
-          .isEqualTo("GmsCore_OpenSSL");
-
-    } else if (Security.getProvider("AndroidOpenSSL") != null) {
+    if (Security.getProvider("AndroidOpenSSL") != null) {
       assertThat(
               EngineFactory.CIPHER
                   .getInstance("AES/GCM/NoPadding", preferredProviders)
                   .getProvider()
                   .getName())
           .isEqualTo("AndroidOpenSSL");
+
+    } else if (Security.getProvider("GmsCore_OpenSSL") != null) {
+      assertThat(
+              EngineFactory.CIPHER
+                  .getInstance("AES/GCM/NoPadding", preferredProviders)
+                  .getProvider()
+                  .getName())
+          .isEqualTo("GmsCore_OpenSSL");
     }
   }
 }

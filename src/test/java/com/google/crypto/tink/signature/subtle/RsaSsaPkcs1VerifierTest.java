@@ -33,11 +33,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
-import java.security.KeyFactory;
 import java.security.Provider;
 import java.security.Security;
-import java.security.interfaces.RSAPublicKey;
-import java.security.spec.RSAPublicKeySpec;
 import java.util.ArrayList;
 import org.conscrypt.Conscrypt;
 import org.junit.Assume;
@@ -178,9 +175,9 @@ public class RsaSsaPkcs1VerifierTest {
     RsaSsaPkcs1PublicKey testPublicKey =
         (RsaSsaPkcs1PublicKey) allTestVectors[0].getPrivateKey().getPublicKey();
 
-    // Conscrypt is not installed, so InternalJavaImpl is used.
+    // Conscrypt is not installed, so RsaSsaPkcs1PureJava is used.
     PublicKeyVerify verifier = RsaSsaPkcs1Verifier.create(testPublicKey);
-    assertThat(verifier.getClass().getSimpleName()).isEqualTo("InternalJavaImpl");
+    assertThat(verifier.getClass().getSimpleName()).isEqualTo("RsaSsaPkcs1PureJava");
 
     Provider conscrypt = Conscrypt.newProvider();
     Security.addProvider(conscrypt);

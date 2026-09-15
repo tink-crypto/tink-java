@@ -114,9 +114,10 @@ public final class WrappedChunkedMac {
     @Override
     public ChunkedMacVerification createVerification(final byte[] tag)
         throws GeneralSecurityException {
-      List<ChunkedMacVerification> allVerifications = new ArrayList<>();
-      for (ChunkedMac mac : allChunkedMacs.getAllWithMatchingPrefix(tag)) {
-        allVerifications.add(mac.createVerification(tag));
+      List<ChunkedMac> matching = allChunkedMacs.getAllWithMatchingPrefix(tag);
+      List<ChunkedMacVerification> allVerifications = new ArrayList<>(matching.size());
+      for (int i = 0; i < matching.size(); i++) {
+        allVerifications.add(matching.get(i).createVerification(tag));
       }
       return new WrappedChunkedMacVerification(allVerifications);
     }

@@ -318,6 +318,7 @@ java_test(
         "//src/main/java/com/google/crypto/tink:proto_key_serializer",
         "//src/main/java/com/google/crypto/tink:proto_parameters_serialization",
         "//src/main/java/com/google/crypto/tink:registry_cluster",
+        "//src/main/java/com/google/crypto/tink:registry_configuration",
         "//src/main/java/com/google/crypto/tink/aead:cha_cha20_poly1305_key",
         "//src/main/java/com/google/crypto/tink/aead:cha_cha20_poly1305_parameters",
         "//src/main/java/com/google/crypto/tink/aead:x_cha_cha20_poly1305_key",
@@ -736,6 +737,40 @@ java_test(
         "//src/main/java/com/google/crypto/tink:proto_key_serialization",
         "//src/main/java/com/google/crypto/tink/internal:proto_conversions",
         "//src/main/java/com/google/crypto/tink/util:bytes",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
+    name = "Asn1TagConstantsTest",
+    size = "small",
+    srcs = ["Asn1TagConstantsTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/internal:asn1_tag_constants",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
+    name = "Asn1EncodingUtilTest",
+    size = "small",
+    srcs = ["Asn1EncodingUtilTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/internal:asn1_encoding_util",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
+    name = "Asn1StatefulParserTest",
+    size = "small",
+    srcs = ["Asn1StatefulParserTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/internal:asn1_stateful_parser",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
     ],

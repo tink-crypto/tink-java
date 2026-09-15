@@ -31,17 +31,18 @@ import com.google.crypto.tink.internal.PrimitiveWrapper;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.util.Bytes;
 import java.security.GeneralSecurityException;
+import java.util.List;
 
 /** An implementation of an {@link DeterministicAead} based on a {@link KeysetHandleInterface}. */
 public final class WrappedDeterministicAead {
   private static class DeterministicAeadWithId {
-    public DeterministicAeadWithId(DeterministicAead daead, int id) {
+    DeterministicAeadWithId(DeterministicAead daead, int id) {
       this.daead = daead;
       this.id = id;
     }
 
-    public final DeterministicAead daead;
-    public final int id;
+    final DeterministicAead daead;
+    final int id;
   }
 
   private static Bytes getOutputPrefix(Key key) throws GeneralSecurityException {
@@ -91,7 +92,10 @@ public final class WrappedDeterministicAead {
     @Override
     public byte[] decryptDeterministically(final byte[] ciphertext, final byte[] associatedData)
         throws GeneralSecurityException {
-      for (DeterministicAeadWithId aeadWithId : allDaeads.getAllWithMatchingPrefix(ciphertext)) {
+      List<DeterministicAeadWithId> matching =
+          allDaeads.getAllWithMatchingPrefix(ciphertext);
+      for (int i = 0; i < matching.size(); i++) {
+        DeterministicAeadWithId aeadWithId = matching.get(i);
         try {
           byte[] result = aeadWithId.daead.decryptDeterministically(ciphertext, associatedData);
           decLogger.log(aeadWithId.id, ciphertext.length);

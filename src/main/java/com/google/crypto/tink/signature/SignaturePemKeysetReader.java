@@ -103,13 +103,22 @@ public final class SignaturePemKeysetReader implements KeysetReader {
 
     @Nullable
     private Key readKey(BufferedReader reader, PemKeyType pemKeyType) {
-      try {
-        return readKeyWithExceptions(reader, pemKeyType);
-      } catch (GeneralSecurityException e) {
-        if (firstException == null) {
-          firstException = e;
+      while (true) {
+        try {
+          Key key = readKeyWithExceptions(reader, pemKeyType);
+          if (key == null) {
+            return null;
+          }
+          return key;
+        } catch (GeneralSecurityException | IOException | RuntimeException e) {
+          if (firstException == null) {
+            firstException =
+                e instanceof GeneralSecurityException
+                    ? (GeneralSecurityException) e
+                    : new GeneralSecurityException(e);
+          }
+          // Continue to the next PEM block in this reader.
         }
-        return null;
       }
     }
 
@@ -227,12 +236,16 @@ public final class SignaturePemKeysetReader implements KeysetReader {
     return ecKey;
   }
 
-  /** Reads a single PEM key from {@code reader}. Throws an exception if parsing fails. */
+  /**
+   * Reads a single PEM key from {@code reader}. Returns {@code null} when the reader has no further
+   * PEM blocks; throws an exception if a block is present but cannot be converted.
+   */
+  @Nullable
   private static Key readKeyWithExceptions(BufferedReader reader, PemKeyType pemKeyType)
-      throws GeneralSecurityException {
-    EncodedKeySpec keySpec = PemUtil.parsePemToKeySpec(reader);
+      throws GeneralSecurityException, IOException {
+    EncodedKeySpec keySpec = PemUtil.parseKeySpecWithException(reader);
     if (keySpec == null) {
-      throw new GeneralSecurityException("cannot parse PEM key");
+      return null;
     }
     if (!(keySpec instanceof X509EncodedKeySpec)) {
       throw new GeneralSecurityException("PEM key is not a public key");

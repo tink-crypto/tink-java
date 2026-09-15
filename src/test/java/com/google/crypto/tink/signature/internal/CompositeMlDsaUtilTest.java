@@ -1,0 +1,784 @@
+// Copyright 2026 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+////////////////////////////////////////////////////////////////////////////////
+
+package com.google.crypto.tink.signature.internal;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.assertThrows;
+
+import com.google.crypto.tink.AccessesPartialKey;
+import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.internal.Util;
+import com.google.crypto.tink.signature.CompositeMlDsaParameters;
+import com.google.crypto.tink.signature.CompositeMlDsaParameters.ClassicalAlgorithm;
+import com.google.crypto.tink.signature.CompositeMlDsaParameters.MlDsaInstance;
+import com.google.crypto.tink.signature.EcdsaParameters;
+import com.google.crypto.tink.signature.EcdsaPrivateKey;
+import com.google.crypto.tink.signature.MlDsaParameters;
+import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
+import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
+import com.google.crypto.tink.signature.RsaSsaPssParameters;
+import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
+import com.google.crypto.tink.signature.internal.testing.RsaSsaPkcs1TestUtil;
+import com.google.crypto.tink.signature.internal.testing.RsaSsaPssTestUtil;
+import com.google.crypto.tink.subtle.EllipticCurves;
+import com.google.crypto.tink.subtle.Hex;
+import java.math.BigInteger;
+import java.security.GeneralSecurityException;
+import java.security.Security;
+import org.conscrypt.Conscrypt;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+
+/** Unit tests for {@link CompositeMlDsaUtil}. */
+@RunWith(JUnit4.class)
+@AccessesPartialKey
+public final class CompositeMlDsaUtilTest {
+
+  @BeforeClass
+  public static void setUp() throws Exception {
+    if (!Util.isAndroid() && Conscrypt.isAvailable()) {
+      Security.addProvider(Conscrypt.newProvider());
+    }
+  }
+
+  @Test
+  public void getMlDsaParametersMlDsaInstance_returnsExpectedInstance() throws Exception {
+    CompositeMlDsaParameters mlDsa44Params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ED25519)
+            .build();
+    assertThat(CompositeMlDsaUtil.getMlDsaParametersMlDsaInstance(mlDsa44Params))
+        .isEqualTo(MlDsaParameters.MlDsaInstance.ML_DSA_44);
+
+    CompositeMlDsaParameters mlDsa65Params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ED25519)
+            .build();
+    assertThat(CompositeMlDsaUtil.getMlDsaParametersMlDsaInstance(mlDsa65Params))
+        .isEqualTo(MlDsaParameters.MlDsaInstance.ML_DSA_65);
+
+    CompositeMlDsaParameters mlDsa87Params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_87)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA3072_PSS)
+            .build();
+    assertThat(CompositeMlDsaUtil.getMlDsaParametersMlDsaInstance(mlDsa87Params))
+        .isEqualTo(MlDsaParameters.MlDsaInstance.ML_DSA_87);
+  }
+
+  // Values from
+  // https://lamps-wg.github.io/draft-composite-sigs/draft-ietf-lamps-pq-composite-sigs.html#name-maximum-key-and-signature-s
+  @Test
+  public void getMlDsaPublicKeySize_returnsExpectedSizes() throws Exception {
+    CompositeMlDsaParameters mlDsa44Params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ED25519)
+            .build();
+    assertThat(CompositeMlDsaUtil.getMlDsaPublicKeySize(mlDsa44Params)).isEqualTo(1312);
+
+    CompositeMlDsaParameters mlDsa65Params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ED25519)
+            .build();
+    assertThat(CompositeMlDsaUtil.getMlDsaPublicKeySize(mlDsa65Params)).isEqualTo(1952);
+
+    CompositeMlDsaParameters mlDsa87Params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_87)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA3072_PSS)
+            .build();
+    assertThat(CompositeMlDsaUtil.getMlDsaPublicKeySize(mlDsa87Params)).isEqualTo(2592);
+  }
+
+  @Test
+  public void getAlgorithmName_mlDsa44() throws Exception {
+    assertThat(
+            CompositeMlDsaUtil.getAlgorithmName(
+                CompositeMlDsaParameters.builder()
+                    .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+                    .setClassicalAlgorithm(ClassicalAlgorithm.ED25519)
+                    .build()))
+        .isEqualTo("MLDSA44-Ed25519-SHA512");
+
+    assertThat(
+            CompositeMlDsaUtil.getAlgorithmName(
+                CompositeMlDsaParameters.builder()
+                    .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+                    .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P256)
+                    .build()))
+        .isEqualTo("MLDSA44-ECDSA-P256-SHA256");
+
+    assertThat(
+            CompositeMlDsaUtil.getAlgorithmName(
+                CompositeMlDsaParameters.builder()
+                    .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+                    .setClassicalAlgorithm(ClassicalAlgorithm.RSA2048_PSS)
+                    .build()))
+        .isEqualTo("MLDSA44-RSA2048-PSS-SHA256");
+
+    assertThat(
+            CompositeMlDsaUtil.getAlgorithmName(
+                CompositeMlDsaParameters.builder()
+                    .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+                    .setClassicalAlgorithm(ClassicalAlgorithm.RSA2048_PKCS1)
+                    .build()))
+        .isEqualTo("MLDSA44-RSA2048-PKCS15-SHA256");
+  }
+
+  @Test
+  public void getAlgorithmName_mlDsa65() throws Exception {
+    assertThat(
+            CompositeMlDsaUtil.getAlgorithmName(
+                CompositeMlDsaParameters.builder()
+                    .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+                    .setClassicalAlgorithm(ClassicalAlgorithm.ED25519)
+                    .build()))
+        .isEqualTo("MLDSA65-Ed25519-SHA512");
+
+    assertThat(
+            CompositeMlDsaUtil.getAlgorithmName(
+                CompositeMlDsaParameters.builder()
+                    .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+                    .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P256)
+                    .build()))
+        .isEqualTo("MLDSA65-ECDSA-P256-SHA512");
+
+    assertThat(
+            CompositeMlDsaUtil.getAlgorithmName(
+                CompositeMlDsaParameters.builder()
+                    .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+                    .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P384)
+                    .build()))
+        .isEqualTo("MLDSA65-ECDSA-P384-SHA512");
+
+    assertThat(
+            CompositeMlDsaUtil.getAlgorithmName(
+                CompositeMlDsaParameters.builder()
+                    .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+                    .setClassicalAlgorithm(ClassicalAlgorithm.RSA3072_PSS)
+                    .build()))
+        .isEqualTo("MLDSA65-RSA3072-PSS-SHA512");
+
+    assertThat(
+            CompositeMlDsaUtil.getAlgorithmName(
+                CompositeMlDsaParameters.builder()
+                    .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+                    .setClassicalAlgorithm(ClassicalAlgorithm.RSA4096_PSS)
+                    .build()))
+        .isEqualTo("MLDSA65-RSA4096-PSS-SHA512");
+
+    assertThat(
+            CompositeMlDsaUtil.getAlgorithmName(
+                CompositeMlDsaParameters.builder()
+                    .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+                    .setClassicalAlgorithm(ClassicalAlgorithm.RSA3072_PKCS1)
+                    .build()))
+        .isEqualTo("MLDSA65-RSA3072-PKCS15-SHA512");
+
+    assertThat(
+            CompositeMlDsaUtil.getAlgorithmName(
+                CompositeMlDsaParameters.builder()
+                    .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+                    .setClassicalAlgorithm(ClassicalAlgorithm.RSA4096_PKCS1)
+                    .build()))
+        .isEqualTo("MLDSA65-RSA4096-PKCS15-SHA512");
+  }
+
+  @Test
+  public void getAlgorithmName_mlDsa87() throws Exception {
+    assertThat(
+            CompositeMlDsaUtil.getAlgorithmName(
+                CompositeMlDsaParameters.builder()
+                    .setMlDsaInstance(MlDsaInstance.ML_DSA_87)
+                    .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P384)
+                    .build()))
+        .isEqualTo("MLDSA87-ECDSA-P384-SHA512");
+
+    assertThat(
+            CompositeMlDsaUtil.getAlgorithmName(
+                CompositeMlDsaParameters.builder()
+                    .setMlDsaInstance(MlDsaInstance.ML_DSA_87)
+                    .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P521)
+                    .build()))
+        .isEqualTo("MLDSA87-ECDSA-P521-SHA512");
+
+    assertThat(
+            CompositeMlDsaUtil.getAlgorithmName(
+                CompositeMlDsaParameters.builder()
+                    .setMlDsaInstance(MlDsaInstance.ML_DSA_87)
+                    .setClassicalAlgorithm(ClassicalAlgorithm.RSA3072_PSS)
+                    .build()))
+        .isEqualTo("MLDSA87-RSA3072-PSS-SHA512");
+
+    assertThat(
+            CompositeMlDsaUtil.getAlgorithmName(
+                CompositeMlDsaParameters.builder()
+                    .setMlDsaInstance(MlDsaInstance.ML_DSA_87)
+                    .setClassicalAlgorithm(ClassicalAlgorithm.RSA4096_PSS)
+                    .build()))
+        .isEqualTo("MLDSA87-RSA4096-PSS-SHA512");
+  }
+
+  @Test
+  public void isEcdsaAlgorithm_returnsExpected() throws Exception {
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA44-ECDSA-P256-SHA256")).isTrue();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA65-ECDSA-P256-SHA512")).isTrue();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA65-ECDSA-P384-SHA512")).isTrue();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA87-ECDSA-P384-SHA512")).isTrue();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA87-ECDSA-P521-SHA512")).isTrue();
+
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA44-Ed25519-SHA512")).isFalse();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA65-Ed25519-SHA512")).isFalse();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA44-RSA2048-PSS-SHA256")).isFalse();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA44-RSA2048-PKCS15-SHA256")).isFalse();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA65-RSA3072-PSS-SHA512")).isFalse();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA65-RSA4096-PSS-SHA512")).isFalse();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA65-RSA3072-PKCS15-SHA512")).isFalse();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA65-RSA4096-PKCS15-SHA512")).isFalse();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA87-RSA3072-PSS-SHA512")).isFalse();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("MLDSA87-RSA4096-PSS-SHA512")).isFalse();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("UNKNOWN_ALGORITHM")).isFalse();
+    assertThat(CompositeMlDsaUtil.isEcdsaAlgorithm("")).isFalse();
+  }
+
+  @Test
+  public void getRsaSaltLengthBytes_returnsExpected() throws Exception {
+    CompositeMlDsaParameters rsa2048PssParams =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA2048_PSS)
+            .build();
+    assertThat(CompositeMlDsaUtil.getRsaSaltLengthBytes(rsa2048PssParams)).isEqualTo(32);
+
+    CompositeMlDsaParameters rsa3072PssParams =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA3072_PSS)
+            .build();
+    assertThat(CompositeMlDsaUtil.getRsaSaltLengthBytes(rsa3072PssParams)).isEqualTo(32);
+
+    CompositeMlDsaParameters rsa4096PssParams =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA4096_PSS)
+            .build();
+    assertThat(CompositeMlDsaUtil.getRsaSaltLengthBytes(rsa4096PssParams)).isEqualTo(48);
+  }
+
+  @Test
+  public void getRsaMgf1HashType_returnsExpected() throws Exception {
+    CompositeMlDsaParameters rsa2048PssParams =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA2048_PSS)
+            .build();
+    assertThat(CompositeMlDsaUtil.getRsaMgf1HashType(rsa2048PssParams))
+        .isEqualTo(RsaSsaPssParameters.HashType.SHA256);
+
+    CompositeMlDsaParameters rsa3072PssParams =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA3072_PSS)
+            .build();
+    assertThat(CompositeMlDsaUtil.getRsaMgf1HashType(rsa3072PssParams))
+        .isEqualTo(RsaSsaPssParameters.HashType.SHA256);
+
+    CompositeMlDsaParameters rsa4096PssParams =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA4096_PSS)
+            .build();
+    assertThat(CompositeMlDsaUtil.getRsaMgf1HashType(rsa4096PssParams))
+        .isEqualTo(RsaSsaPssParameters.HashType.SHA384);
+  }
+
+  @Test
+  public void getRsaPssSigHashType_returnsExpected() throws Exception {
+    CompositeMlDsaParameters rsa2048PssParams =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA2048_PSS)
+            .build();
+    assertThat(CompositeMlDsaUtil.getRsaPssSigHashType(rsa2048PssParams))
+        .isEqualTo(RsaSsaPssParameters.HashType.SHA256);
+
+    CompositeMlDsaParameters rsa3072PssParams =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA3072_PSS)
+            .build();
+    assertThat(CompositeMlDsaUtil.getRsaPssSigHashType(rsa3072PssParams))
+        .isEqualTo(RsaSsaPssParameters.HashType.SHA256);
+
+    CompositeMlDsaParameters rsa4096PssParams =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA4096_PSS)
+            .build();
+    assertThat(CompositeMlDsaUtil.getRsaPssSigHashType(rsa4096PssParams))
+        .isEqualTo(RsaSsaPssParameters.HashType.SHA384);
+  }
+
+  @Test
+  public void getRsaPkcs1SigHashType_returnsExpected() throws Exception {
+    CompositeMlDsaParameters rsa2048Pkcs1Params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA2048_PKCS1)
+            .build();
+    assertThat(CompositeMlDsaUtil.getRsaPkcs1SigHashType(rsa2048Pkcs1Params))
+        .isEqualTo(RsaSsaPkcs1Parameters.HashType.SHA256);
+
+    CompositeMlDsaParameters rsa3072Pkcs1Params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA3072_PKCS1)
+            .build();
+    assertThat(CompositeMlDsaUtil.getRsaPkcs1SigHashType(rsa3072Pkcs1Params))
+        .isEqualTo(RsaSsaPkcs1Parameters.HashType.SHA256);
+
+    CompositeMlDsaParameters rsa4096Pkcs1Params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA4096_PKCS1)
+            .build();
+    assertThat(CompositeMlDsaUtil.getRsaPkcs1SigHashType(rsa4096Pkcs1Params))
+        .isEqualTo(RsaSsaPkcs1Parameters.HashType.SHA384);
+  }
+
+  @Test
+  public void getRsaModulusSizeBits_works() throws Exception {
+    CompositeMlDsaParameters rsa2048Pss =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA2048_PSS)
+            .build();
+    assertThat(CompositeMlDsaUtil.getRsaModulusSizeBits(rsa2048Pss)).isEqualTo(2048);
+
+    CompositeMlDsaParameters rsa2048Pkcs1 =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA2048_PKCS1)
+            .build();
+    assertThat(CompositeMlDsaUtil.getRsaModulusSizeBits(rsa2048Pkcs1)).isEqualTo(2048);
+
+    CompositeMlDsaParameters rsa3072Pss =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA3072_PSS)
+            .build();
+    assertThat(CompositeMlDsaUtil.getRsaModulusSizeBits(rsa3072Pss)).isEqualTo(3072);
+
+    CompositeMlDsaParameters rsa3072Pkcs1 =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA3072_PKCS1)
+            .build();
+    assertThat(CompositeMlDsaUtil.getRsaModulusSizeBits(rsa3072Pkcs1)).isEqualTo(3072);
+
+    CompositeMlDsaParameters rsa4096Pss =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA4096_PSS)
+            .build();
+    assertThat(CompositeMlDsaUtil.getRsaModulusSizeBits(rsa4096Pss)).isEqualTo(4096);
+
+    CompositeMlDsaParameters rsa4096Pkcs1 =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA4096_PKCS1)
+            .build();
+    assertThat(CompositeMlDsaUtil.getRsaModulusSizeBits(rsa4096Pkcs1)).isEqualTo(4096);
+  }
+
+  @Test
+  public void getSignatureLength_returnsExpectedLengths() throws Exception {
+    // ML-DSA-44 cases
+    CompositeMlDsaParameters mlDsa44Ed25519 =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ED25519)
+            .build();
+    assertThat(CompositeMlDsaUtil.getSignatureLength(mlDsa44Ed25519)).isEqualTo(2484);
+
+    CompositeMlDsaParameters mlDsa44Ecdsa =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P256)
+            .build();
+    assertThrows(
+        GeneralSecurityException.class, () -> CompositeMlDsaUtil.getSignatureLength(mlDsa44Ecdsa));
+
+    CompositeMlDsaParameters mlDsa44Rsa2048Pss =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA2048_PSS)
+            .build();
+    assertThat(CompositeMlDsaUtil.getSignatureLength(mlDsa44Rsa2048Pss)).isEqualTo(2676);
+
+    CompositeMlDsaParameters mlDsa44Rsa2048Pkcs1 =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA2048_PKCS1)
+            .build();
+    assertThat(CompositeMlDsaUtil.getSignatureLength(mlDsa44Rsa2048Pkcs1)).isEqualTo(2676);
+
+    // ML-DSA-65 cases
+    CompositeMlDsaParameters mlDsa65Ed25519 =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ED25519)
+            .build();
+    assertThat(CompositeMlDsaUtil.getSignatureLength(mlDsa65Ed25519)).isEqualTo(3373);
+
+    CompositeMlDsaParameters mlDsa65EcdsaP256 =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P256)
+            .build();
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> CompositeMlDsaUtil.getSignatureLength(mlDsa65EcdsaP256));
+
+    CompositeMlDsaParameters mlDsa65EcdsaP384 =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P384)
+            .build();
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> CompositeMlDsaUtil.getSignatureLength(mlDsa65EcdsaP384));
+
+    CompositeMlDsaParameters mlDsa65Rsa3072Pss =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA3072_PSS)
+            .build();
+    assertThat(CompositeMlDsaUtil.getSignatureLength(mlDsa65Rsa3072Pss)).isEqualTo(3693);
+
+    CompositeMlDsaParameters mlDsa65Rsa4096Pss =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA4096_PSS)
+            .build();
+    assertThat(CompositeMlDsaUtil.getSignatureLength(mlDsa65Rsa4096Pss)).isEqualTo(3821);
+
+    CompositeMlDsaParameters mlDsa65Rsa3072Pkcs1 =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA3072_PKCS1)
+            .build();
+    assertThat(CompositeMlDsaUtil.getSignatureLength(mlDsa65Rsa3072Pkcs1)).isEqualTo(3693);
+
+    CompositeMlDsaParameters mlDsa65Rsa4096Pkcs1 =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA4096_PKCS1)
+            .build();
+    assertThat(CompositeMlDsaUtil.getSignatureLength(mlDsa65Rsa4096Pkcs1)).isEqualTo(3821);
+
+    // ML-DSA-87 cases
+    CompositeMlDsaParameters mlDsa87EcdsaP384 =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_87)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P384)
+            .build();
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> CompositeMlDsaUtil.getSignatureLength(mlDsa87EcdsaP384));
+
+    CompositeMlDsaParameters mlDsa87EcdsaP521 =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_87)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P521)
+            .build();
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> CompositeMlDsaUtil.getSignatureLength(mlDsa87EcdsaP521));
+
+    CompositeMlDsaParameters mlDsa87Rsa3072Pss =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_87)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA3072_PSS)
+            .build();
+    assertThat(CompositeMlDsaUtil.getSignatureLength(mlDsa87Rsa3072Pss)).isEqualTo(5011);
+
+    CompositeMlDsaParameters mlDsa87Rsa4096Pss =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_87)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA4096_PSS)
+            .build();
+    assertThat(CompositeMlDsaUtil.getSignatureLength(mlDsa87Rsa4096Pss)).isEqualTo(5139);
+  }
+
+  @Test
+  public void pkcs1RsaKeyToRsaSsaPssPrivateKey_works() throws Exception {
+    RsaSsaPssParameters pssParams =
+        RsaSsaPssParameters.builder()
+            .setModulusSizeBits(2048)
+            .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
+            .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
+            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+            .setSaltLengthBytes(32)
+            .build();
+    RsaSsaPssPrivateKey tinkPrivateKey =
+        RsaSsaPssTestUtil.privateKeyFor2048BitParameters(pssParams, null);
+    byte[] pkcs1Bytes = RsaAsn1Util.rsaSsaPssPrivateKeyToPkcs1Bytes(tinkPrivateKey);
+
+    CompositeMlDsaParameters compositeParams =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA2048_PSS)
+            .build();
+
+    RsaSsaPssPrivateKey parsedKey =
+        CompositeMlDsaUtil.pkcs1RsaKeyToRsaSsaPssPrivateKey(pkcs1Bytes, compositeParams);
+
+    assertThat(parsedKey.getPublicKey().getModulus())
+        .isEqualTo(tinkPrivateKey.getPublicKey().getModulus());
+    assertThat(parsedKey.getPrivateExponent().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(
+            tinkPrivateKey.getPrivateExponent().getBigInteger(InsecureSecretKeyAccess.get()));
+  }
+
+  @Test
+  public void pkcs1RsaKeyToRsaSsaPkcs1PrivateKey_works() throws Exception {
+    RsaSsaPkcs1Parameters pkcs1Params =
+        RsaSsaPkcs1Parameters.builder()
+            .setModulusSizeBits(2048)
+            .setPublicExponent(RsaSsaPkcs1Parameters.F4)
+            .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
+            .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
+            .build();
+    RsaSsaPkcs1PrivateKey tinkPrivateKey =
+        RsaSsaPkcs1TestUtil.privateKeyFor2048BitParameters(pkcs1Params, null);
+    byte[] pkcs1Bytes = RsaAsn1Util.rsaSsaPkcs1PrivateKeyToPkcs1Bytes(tinkPrivateKey);
+
+    CompositeMlDsaParameters compositeParams =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.RSA2048_PKCS1)
+            .build();
+
+    RsaSsaPkcs1PrivateKey parsedKey =
+        CompositeMlDsaUtil.pkcs1RsaKeyToRsaSsaPkcs1PrivateKey(pkcs1Bytes, compositeParams);
+
+    assertThat(parsedKey.getPublicKey().getModulus())
+        .isEqualTo(tinkPrivateKey.getPublicKey().getModulus());
+    assertThat(parsedKey.getPrivateExponent().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(
+            tinkPrivateKey.getPrivateExponent().getBigInteger(InsecureSecretKeyAccess.get()));
+  }
+
+  @Test
+  public void getEcdsaParameters_p256_works() throws Exception {
+    CompositeMlDsaParameters params44 =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P256)
+            .build();
+    EcdsaParameters ecdsa44 = CompositeMlDsaUtil.getEcdsaParameters(params44);
+    assertThat(ecdsa44.getHashType()).isEqualTo(EcdsaParameters.HashType.SHA256);
+    assertThat(ecdsa44.getCurveType()).isEqualTo(EcdsaParameters.CurveType.NIST_P256);
+    assertThat(ecdsa44.getSignatureEncoding()).isEqualTo(EcdsaParameters.SignatureEncoding.DER);
+    assertThat(ecdsa44.getVariant()).isEqualTo(EcdsaParameters.Variant.NO_PREFIX);
+
+    CompositeMlDsaParameters params65 =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P256)
+            .build();
+    EcdsaParameters ecdsa65 = CompositeMlDsaUtil.getEcdsaParameters(params65);
+    assertThat(ecdsa65.getHashType()).isEqualTo(EcdsaParameters.HashType.SHA256);
+    assertThat(ecdsa65.getCurveType()).isEqualTo(EcdsaParameters.CurveType.NIST_P256);
+    assertThat(ecdsa65.getSignatureEncoding()).isEqualTo(EcdsaParameters.SignatureEncoding.DER);
+    assertThat(ecdsa65.getVariant()).isEqualTo(EcdsaParameters.Variant.NO_PREFIX);
+  }
+
+  @Test
+  public void getEcdsaParameters_p384_works() throws Exception {
+    CompositeMlDsaParameters params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P384)
+            .build();
+    EcdsaParameters ecdsa = CompositeMlDsaUtil.getEcdsaParameters(params);
+    assertThat(ecdsa.getHashType()).isEqualTo(EcdsaParameters.HashType.SHA384);
+    assertThat(ecdsa.getCurveType()).isEqualTo(EcdsaParameters.CurveType.NIST_P384);
+    assertThat(ecdsa.getSignatureEncoding()).isEqualTo(EcdsaParameters.SignatureEncoding.DER);
+    assertThat(ecdsa.getVariant()).isEqualTo(EcdsaParameters.Variant.NO_PREFIX);
+  }
+
+  @Test
+  public void getEcdsaParameters_p521_works() throws Exception {
+    CompositeMlDsaParameters params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_87)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P521)
+            .build();
+    EcdsaParameters ecdsa = CompositeMlDsaUtil.getEcdsaParameters(params);
+    assertThat(ecdsa.getHashType()).isEqualTo(EcdsaParameters.HashType.SHA512);
+    assertThat(ecdsa.getCurveType()).isEqualTo(EcdsaParameters.CurveType.NIST_P521);
+    assertThat(ecdsa.getSignatureEncoding()).isEqualTo(EcdsaParameters.SignatureEncoding.DER);
+    assertThat(ecdsa.getVariant()).isEqualTo(EcdsaParameters.Variant.NO_PREFIX);
+  }
+
+  @Test
+  public void getEcdsaParameters_nonEcdsa_throws() throws Exception {
+    CompositeMlDsaParameters params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ED25519)
+            .build();
+    assertThrows(GeneralSecurityException.class, () -> CompositeMlDsaUtil.getEcdsaParameters(params));
+  }
+
+  // Test case from RFC 6979 A.2.5 (NIST P-256)
+  private static final String HARDCODED_P256_SEC1_WITH_BOTH_HEX =
+      "3077" // SEQUENCE (119 bytes)
+          + "020101" // version: INTEGER 1
+          + "0420c9afa9d845ba75166b5c215767b1d6934e50c3db36e89b127b8a622b120f6721" // OCTET STRING (32 bytes)
+          + "a00a06082a8648ce3d030107" // [0] parameters: P-256 OID 1.2.840.10045.3.1.7
+          + "a14403420004" // [1] publicKey: BIT STRING uncompressed point (04 || x || y)
+          + "60fed4ba255a9d31c961eb74c6356d68c049b8923b61fa6ce669622e60f29fb6"
+          + "7903fe1008b8bc99a41ae9e95628bc64f2f1b20c2d7e9f5177a3c294d4462299";
+
+  // Test case from RFC 6979 A.2.5 (NIST P-256) with only parameters field (publicKey absent)
+  private static final String HARDCODED_P256_SEC1_WITH_PARAMS_HEX =
+      "3031" // SEQUENCE (49 bytes)
+          + "020101" // version: INTEGER 1
+          + "0420c9afa9d845ba75166b5c215767b1d6934e50c3db36e89b127b8a622b120f6721"
+          + "a00a06082a8648ce3d030107";
+
+  @Test
+  public void sec1EcKeyToEcdsaPrivateKey_withBothParamsAndPublicKey_works() throws Exception {
+    CompositeMlDsaParameters compositeParams =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P256)
+            .build();
+
+    EcdsaPrivateKey parsedKey =
+        CompositeMlDsaUtil.sec1EcKeyToEcdsaPrivateKey(
+            Hex.decode(HARDCODED_P256_SEC1_WITH_BOTH_HEX), compositeParams);
+
+    assertThat(parsedKey.getParameters().getCurveType())
+        .isEqualTo(EcdsaParameters.CurveType.NIST_P256);
+    assertThat(parsedKey.getPrivateValue().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(
+            new BigInteger("C9AFA9D845BA75166B5C215767B1D6934E50C3DB36E89B127B8A622B120F6721", 16));
+  }
+
+  @Test
+  public void sec1EcKeyToEcdsaPrivateKey_withOnlyParams_works() throws Exception {
+    CompositeMlDsaParameters compositeParams =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P256)
+            .build();
+
+    EcdsaPrivateKey parsedKey =
+        CompositeMlDsaUtil.sec1EcKeyToEcdsaPrivateKey(
+            Hex.decode(HARDCODED_P256_SEC1_WITH_PARAMS_HEX), compositeParams);
+
+    assertThat(parsedKey.getParameters().getCurveType())
+        .isEqualTo(EcdsaParameters.CurveType.NIST_P256);
+    assertThat(parsedKey.getPrivateValue().getBigInteger(InsecureSecretKeyAccess.get()))
+        .isEqualTo(
+            new BigInteger("C9AFA9D845BA75166B5C215767B1D6934E50C3DB36E89B127B8A622B120F6721", 16));
+  }
+
+  @Test
+  public void sec1EcKeyToEcdsaPrivateKey_curveMismatch_throws() throws Exception {
+    CompositeMlDsaParameters p384Params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P384)
+            .build();
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            CompositeMlDsaUtil.sec1EcKeyToEcdsaPrivateKey(
+                Hex.decode(HARDCODED_P256_SEC1_WITH_BOTH_HEX), p384Params));
+  }
+
+  @Test
+  public void sec1EcKeyToEcdsaPrivateKey_nonEcdsaAlgorithm_throws() throws Exception {
+    CompositeMlDsaParameters nonEcdsaParams =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ED25519)
+            .build();
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            CompositeMlDsaUtil.sec1EcKeyToEcdsaPrivateKey(
+                Hex.decode(HARDCODED_P256_SEC1_WITH_BOTH_HEX), nonEcdsaParams));
+  }
+
+  @Test
+  public void getEllipticCurveType_p256_works() throws Exception {
+    CompositeMlDsaParameters params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P256)
+            .build();
+    assertThat(CompositeMlDsaUtil.getEllipticCurveType(params))
+        .isEqualTo(EllipticCurves.CurveType.NIST_P256);
+  }
+
+  @Test
+  public void getEllipticCurveType_p384_works() throws Exception {
+    CompositeMlDsaParameters params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_65)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P384)
+            .build();
+    assertThat(CompositeMlDsaUtil.getEllipticCurveType(params))
+        .isEqualTo(EllipticCurves.CurveType.NIST_P384);
+  }
+
+  @Test
+  public void getEllipticCurveType_p521_works() throws Exception {
+    CompositeMlDsaParameters params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_87)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ECDSA_P521)
+            .build();
+    assertThat(CompositeMlDsaUtil.getEllipticCurveType(params))
+        .isEqualTo(EllipticCurves.CurveType.NIST_P521);
+  }
+
+  @Test
+  public void getEllipticCurveType_nonEcdsa_throws() throws Exception {
+    CompositeMlDsaParameters params =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(MlDsaInstance.ML_DSA_44)
+            .setClassicalAlgorithm(ClassicalAlgorithm.ED25519)
+            .build();
+    assertThrows(
+        GeneralSecurityException.class, () -> CompositeMlDsaUtil.getEllipticCurveType(params));
+  }
+}

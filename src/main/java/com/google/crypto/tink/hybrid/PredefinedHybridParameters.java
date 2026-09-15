@@ -128,5 +128,68 @@ public final class PredefinedHybridParameters {
                           .build())
                   .build());
 
+  /**
+   * A {@link Parameters} that generates new instances of {@link HpkePrivateKey} with the following
+   * parameters:
+   *
+   * <ul>
+   *   <li>Variant: TINK
+   *   <li>KEM: X25519 with HKDF-SHA256
+   *   <li>KDF: HKDF-SHA256
+   *   <li>AEAD: AES-128-GCM
+   * </ul>
+   */
+  public static final HpkeParameters HPKE_X25519_HKDF_SHA256_AES_128_GCM =
+      exceptionIsBug(
+          () ->
+              HpkeParameters.builder()
+                  .setVariant(HpkeParameters.Variant.TINK)
+                  .setKemId(HpkeParameters.KemId.DHKEM_X25519_HKDF_SHA256)
+                  .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+                  .setAeadId(HpkeParameters.AeadId.AES_128_GCM)
+                  .build());
+
+  /**
+   * A {@link Parameters} that generates new instances of {@link HpkePrivateKey} with the following
+   * parameters:
+   *
+   * <ul>
+   *   <li>Variant: TINK
+   *   <li>KEM: P256 with HKDF-SHA256
+   *   <li>KDF: HKDF-SHA256
+   *   <li>AEAD: AES-128-GCM
+   * </ul>
+   */
+  public static final HpkeParameters HPKE_P256_HKDF_SHA256_AES_128_GCM =
+      exceptionIsBug(
+          () ->
+              HpkeParameters.builder()
+                  .setVariant(HpkeParameters.Variant.TINK)
+                  .setKemId(HpkeParameters.KemId.DHKEM_P256_HKDF_SHA256)
+                  .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+                  .setAeadId(HpkeParameters.AeadId.AES_128_GCM)
+                  .build());
+
+  /**
+   * A {@link Parameters} that generates new instances of {@link HpkePrivateKey} with the following
+   * parameters:
+   *
+   * <ul>
+   *   <li>Variant: TINK
+   *   <li>KEM: X-Wing
+   *   <li>KDF: HKDF-SHA256
+   *   <li>AEAD: ChaCha20-Poly1305
+   * </ul>
+   */
+  public static final HpkeParameters HPKE_XWING_HKDF_SHA256_CHACHA20_POLY1305 =
+      exceptionIsBug(
+          () ->
+              HpkeParameters.builder()
+                  .setVariant(HpkeParameters.Variant.TINK)
+                  .setKemId(HpkeParameters.KemId.X_WING)
+                  .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+                  .setAeadId(HpkeParameters.AeadId.CHACHA20_POLY1305)
+                  .build());
+
   private PredefinedHybridParameters() {}
 }

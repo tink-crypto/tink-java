@@ -807,4 +807,110 @@ public class JsonKeysetReaderTest {
         assertThrows(IOException.class, () -> JsonKeysetReader.withString(jsonKeyset).read());
     assertThat(e).hasMessageThat().contains("unknown key material type: 123");
   }
+
+  @Test
+  public void readEncrypted_keyInfoMissingStatus_throwsIOException() throws Exception {
+    String json = "{\"encryptedKeyset\":\"AAAA\",\"keysetInfo\":{\"keyInfo\":[{}]}}";
+    IOException e =
+        assertThrows(
+            IOException.class, () -> JsonKeysetReader.withString(json).readEncrypted());
+    assertThat(e).hasCauseThat().isInstanceOf(NullPointerException.class);
+  }
+
+  @Test
+  public void readEncrypted_keyInfoMissingKeyId_throwsIOException() throws Exception {
+    String json =
+        "{\"encryptedKeyset\":\"AAAA\",\"keysetInfo\":{\"keyInfo\":[{\"status\":\"ENABLED\"}]}}";
+    IOException e =
+        assertThrows(
+            IOException.class, () -> JsonKeysetReader.withString(json).readEncrypted());
+    assertThat(e).hasCauseThat().isInstanceOf(NullPointerException.class);
+  }
+
+  @Test
+  public void readEncrypted_keyInfoMissingOutputPrefixType_throwsIOException()
+      throws Exception {
+    String json =
+        "{\"encryptedKeyset\":\"AAAA\","
+            + "\"keysetInfo\":{\"keyInfo\":[{\"status\":\"ENABLED\",\"keyId\":1}]}}";
+    IOException e =
+        assertThrows(
+            IOException.class, () -> JsonKeysetReader.withString(json).readEncrypted());
+    assertThat(e).hasCauseThat().isInstanceOf(NullPointerException.class);
+  }
+
+  @Test
+  public void readEncrypted_keyInfoMissingTypeUrl_throwsIOException() throws Exception {
+    String json =
+        "{\"encryptedKeyset\":\"AAAA\","
+            + "\"keysetInfo\":{\"keyInfo\":[{\"status\":\"ENABLED\",\"keyId\":1,"
+            + "\"outputPrefixType\":\"TINK\"}]}}";
+    IOException e =
+        assertThrows(
+            IOException.class, () -> JsonKeysetReader.withString(json).readEncrypted());
+    assertThat(e).hasCauseThat().isInstanceOf(NullPointerException.class);
+  }
+
+  @Test
+  public void readEncrypted_keysetInfoNotAnObject_throwsIOException() throws Exception {
+    String json = "{\"encryptedKeyset\":\"AAAA\",\"keysetInfo\":\"notAnObject\"}";
+    IOException e =
+        assertThrows(
+            IOException.class, () -> JsonKeysetReader.withString(json).readEncrypted());
+    assertThat(e).hasCauseThat().isInstanceOf(ClassCastException.class);
+  }
+
+  @Test
+  public void readEncrypted_keyInfoNotAnArray_throwsIOException() throws Exception {
+    String json = "{\"encryptedKeyset\":\"AAAA\",\"keysetInfo\":{\"keyInfo\":\"notAnArray\"}}";
+    IOException e =
+        assertThrows(
+            IOException.class, () -> JsonKeysetReader.withString(json).readEncrypted());
+    assertThat(e).hasCauseThat().isInstanceOf(ClassCastException.class);
+  }
+
+  @Test
+  public void readEncrypted_encryptedKeysetBadBase64_throwsIOException()
+      throws Exception {
+    String json = "{\"encryptedKeyset\":\"A\"}";
+    IOException e =
+        assertThrows(
+            IOException.class, () -> JsonKeysetReader.withString(json).readEncrypted());
+    assertThat(e).hasCauseThat().isInstanceOf(IllegalArgumentException.class);
+  }
+
+  @Test
+  public void readKeyset_keyDataValueBadBase64_throwsIOException() throws Exception {
+    String json =
+        "{\"primaryKeyId\":1,\"key\":[{"
+            + "\"keyData\":{\"typeUrl\":\"x\",\"value\":\"A\",\"keyMaterialType\":\"SYMMETRIC\"},"
+            + "\"status\":\"ENABLED\",\"keyId\":1,\"outputPrefixType\":\"TINK\"}]}";
+    IOException e =
+        assertThrows(IOException.class, () -> JsonKeysetReader.withString(json).read());
+    assertThat(e).hasCauseThat().isInstanceOf(IllegalArgumentException.class);
+  }
+
+  @Test
+  public void
+      readEncrypted_keysetHandleReadWithAssociatedData_tamperedKeysetInfo_throwsIOException()
+          throws Exception {
+    Aead unreachableAead =
+        new Aead() {
+          @Override
+          public byte[] encrypt(byte[] p, byte[] a) {
+            throw new AssertionError("unreachable");
+          }
+
+          @Override
+          public byte[] decrypt(byte[] c, byte[] a) {
+            throw new AssertionError("unreachable");
+          }
+        };
+    String json = "{\"encryptedKeyset\":\"AAAA\",\"keysetInfo\":{\"keyInfo\":[{}]}}";
+    assertThrows(
+        IOException.class,
+        () ->
+            KeysetHandle.readWithAssociatedData(
+                JsonKeysetReader.withString(json), unreachableAead, new byte[0]));
+  }
 }

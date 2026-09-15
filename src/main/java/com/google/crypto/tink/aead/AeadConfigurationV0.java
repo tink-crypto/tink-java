@@ -20,19 +20,18 @@ import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
-import com.google.crypto.tink.KeysetHandleInterface;
-import com.google.crypto.tink.aead.internal.ChaCha20Poly1305Jce;
-import com.google.crypto.tink.aead.internal.XAesGcm;
-import com.google.crypto.tink.aead.internal.XChaCha20Poly1305Jce;
-import com.google.crypto.tink.aead.subtle.AesGcmSiv;
+import com.google.crypto.tink.LowLevelCryptoCaller;
+import com.google.crypto.tink.ProtoKeySerializer;
+import com.google.crypto.tink.aead.subtle.AesCtrHmacAead;
+import com.google.crypto.tink.aead.subtle.AesEaxAead;
+import com.google.crypto.tink.aead.subtle.AesGcmAead;
+import com.google.crypto.tink.aead.subtle.AesGcmSivAead;
+import com.google.crypto.tink.aead.subtle.ChaCha20Poly1305Aead;
+import com.google.crypto.tink.aead.subtle.XAesGcmAead;
+import com.google.crypto.tink.aead.subtle.XChaCha20Poly1305Aead;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.LegacyProtoKey;
-import com.google.crypto.tink.internal.MutableSerializationRegistry;
-import com.google.crypto.tink.subtle.AesEaxJce;
-import com.google.crypto.tink.subtle.AesGcmJce;
-import com.google.crypto.tink.subtle.ChaCha20Poly1305;
-import com.google.crypto.tink.subtle.EncryptThenAuthenticate;
-import com.google.crypto.tink.subtle.XChaCha20Poly1305;
+import com.google.crypto.tink.internal.ProtoBasedConfigurationBuilder;
 import java.security.GeneralSecurityException;
 
 /**
@@ -51,58 +50,9 @@ import java.security.GeneralSecurityException;
 /* Placeholder for internally public; DO NOT CHANGE. */ class AeadConfigurationV0 {
   private AeadConfigurationV0() {}
 
-  private static final AeadWrapper WRAPPER = new AeadWrapper();
   private static final Configuration CONFIGURATION = create();
 
-  static Aead createAead(KeysetHandleInterface.Entry entry) throws GeneralSecurityException {
-    Key key = entry.getKey();
-    if (key instanceof LegacyProtoKey) {
-      Key reparsedKey =
-          MutableSerializationRegistry.globalInstance()
-              .parseKey(
-                  ((LegacyProtoKey) key).getSerialization(InsecureSecretKeyAccess.get()),
-                  InsecureSecretKeyAccess.get());
-      key = reparsedKey;
-    }
-
-    if (key instanceof AesCtrHmacAeadKey) {
-      return EncryptThenAuthenticate.create((AesCtrHmacAeadKey) key);
-    }
-    if (key instanceof AesGcmKey) {
-      return AesGcmJce.create((AesGcmKey) key);
-    }
-    if (key instanceof AesGcmSivKey) {
-      return AesGcmSiv.create((AesGcmSivKey) key);
-    }
-    if (key instanceof AesEaxKey) {
-      return AesEaxJce.create((AesEaxKey) key);
-    }
-    if (key instanceof ChaCha20Poly1305Key) {
-      return createChaCha20Poly1305((ChaCha20Poly1305Key) key);
-    }
-    if (key instanceof XChaCha20Poly1305Key) {
-      return createXChaCha20Poly1305((XChaCha20Poly1305Key) key);
-    }
-    if (key instanceof XAesGcmKey) {
-      return XAesGcm.create((XAesGcmKey) key);
-    }
-    throw new GeneralSecurityException("Unknown key class: " + key.getClass());
-  }
-
-  private static Configuration create() {
-    return new Configuration() {
-      @Override
-      public <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
-          throws GeneralSecurityException {
-        if (clazz != Aead.class) {
-          throw new GeneralSecurityException("AeadConfigurationV0 can only create AEADs");
-        }
-        return clazz.cast(WRAPPER.wrap(keysetHandle, AeadConfigurationV0::createAead));
-      }
-    };
-  }
-
-  /** Returns an instance of the {@code AeadConfigurationV0}. */
+  /** Returns the {@link Configuration} instance. */
   public static Configuration get() throws GeneralSecurityException {
     if (TinkFipsUtil.useOnlyFips()) {
       throw new GeneralSecurityException(
@@ -111,19 +61,54 @@ import java.security.GeneralSecurityException;
     return CONFIGURATION;
   }
 
-  private static Aead createChaCha20Poly1305(ChaCha20Poly1305Key key)
-      throws GeneralSecurityException {
-    if (ChaCha20Poly1305Jce.isSupported()) {
-      return ChaCha20Poly1305Jce.create(key);
-    }
-    return ChaCha20Poly1305.create(key);
+  @LowLevelCryptoCaller
+  private static Configuration create() {
+    // The AeadConfigurationV0 is the same as the AeadConfig, but if a key has been parsed
+    // as a LegacyProtoKey (which happens if we use the RegistryConfig and the corresponding
+    // algorithm was not registered), we try to parse it again.
+    return new ProtoBasedConfigurationBuilder()
+        .mergeProtoBasedConfiguration(AeadConfig2026.get())
+        .addPrimitiveConstructor(
+            AeadConfigurationV0::createAeadFromLegacyProtoKey, LegacyProtoKey.class, Aead.class)
+        .build();
   }
 
-  private static Aead createXChaCha20Poly1305(XChaCha20Poly1305Key key)
-      throws GeneralSecurityException {
-    if (XChaCha20Poly1305Jce.isSupported()) {
-      return XChaCha20Poly1305Jce.create(key);
+  @LowLevelCryptoCaller
+  private static Key reparseKey(LegacyProtoKey key) throws GeneralSecurityException {
+    ProtoKeySerializer protoKeySerializer = get().getOrNull(ProtoKeySerializer.class);
+    if (protoKeySerializer == null) {
+      throw new GeneralSecurityException(
+          "Unexpected: CONFIGURATION does not support Proto Serialization");
     }
-    return XChaCha20Poly1305.create(key);
+    return protoKeySerializer.parseKey(
+        key.getSerialization(InsecureSecretKeyAccess.get()), InsecureSecretKeyAccess.get());
+  }
+
+  @LowLevelCryptoCaller
+  private static Aead createAeadFromLegacyProtoKey(LegacyProtoKey key)
+      throws GeneralSecurityException {
+    Key reparsedKey = reparseKey(key);
+    if (reparsedKey instanceof AesCtrHmacAeadKey) {
+      return AesCtrHmacAead.create((AesCtrHmacAeadKey) reparsedKey);
+    }
+    if (reparsedKey instanceof AesGcmKey) {
+      return AesGcmAead.create((AesGcmKey) reparsedKey);
+    }
+    if (reparsedKey instanceof AesGcmSivKey) {
+      return AesGcmSivAead.create((AesGcmSivKey) reparsedKey);
+    }
+    if (reparsedKey instanceof AesEaxKey) {
+      return AesEaxAead.create((AesEaxKey) reparsedKey);
+    }
+    if (reparsedKey instanceof ChaCha20Poly1305Key) {
+      return ChaCha20Poly1305Aead.create((ChaCha20Poly1305Key) reparsedKey);
+    }
+    if (reparsedKey instanceof XChaCha20Poly1305Key) {
+      return XChaCha20Poly1305Aead.create((XChaCha20Poly1305Key) reparsedKey);
+    }
+    if (reparsedKey instanceof XAesGcmKey) {
+      return XAesGcmAead.create((XAesGcmKey) reparsedKey);
+    }
+    throw new GeneralSecurityException("Unknown key class: " + reparsedKey.getClass());
   }
 }

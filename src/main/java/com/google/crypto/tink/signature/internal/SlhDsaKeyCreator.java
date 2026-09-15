@@ -18,6 +18,7 @@ package com.google.crypto.tink.signature.internal;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.signature.SlhDsaParameters;
 import com.google.crypto.tink.signature.SlhDsaPrivateKey;
@@ -39,6 +40,9 @@ public final class SlhDsaKeyCreator {
   public static SlhDsaPrivateKey createKey(
       SlhDsaParameters parameters, @Nullable Integer idRequirement)
       throws GeneralSecurityException {
+    if (TinkFipsUtil.useOnlyFips()) {
+      throw new GeneralSecurityException("Cannot create new MlDsaPrivateKeys in FIPS mode");
+    }
     if (parameters.getPrivateKeySize() != SlhDsaParameters.SLH_DSA_128_PRIVATE_KEY_SIZE_BYTES
         || parameters.getHashType() != SlhDsaParameters.HashType.SHA2
         || parameters.getSignatureType() != SlhDsaParameters.SignatureType.SMALL_SIGNATURE) {

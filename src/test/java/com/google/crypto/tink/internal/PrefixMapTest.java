@@ -21,6 +21,7 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.util.Bytes;
 import java.security.GeneralSecurityException;
+import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -150,8 +151,38 @@ public final class PrefixMapTest {
 
   @Test
   public void oneBytePrefixThrows() throws Exception {
-    assertThrows(
-        GeneralSecurityException.class,
-        () -> new PrefixMap.Builder<Integer>().put(Bytes.copyFrom(new byte[] {1}), 12).build());
+    PrefixMap.Builder<Integer> builder = new PrefixMap.Builder<>();
+    Bytes prefix = Bytes.copyFrom(new byte[] {1});
+    assertThrows(GeneralSecurityException.class, () -> builder.put(prefix, 12));
+  }
+
+  @Test
+  public void returnedListIsUnmodifiable() throws Exception {
+    PrefixMap<Integer> map =
+        new PrefixMap.Builder<Integer>()
+            .put(Bytes.copyFrom(new byte[] {1, 2, 3, 4, 5}), 123)
+            .put(Bytes.copyFrom(new byte[0]), 456)
+            .build();
+    List<Integer> matching = map.getAllWithMatchingPrefix(new byte[] {1, 2, 3, 4, 5, 6});
+    assertThrows(UnsupportedOperationException.class, () -> matching.add(789));
+  }
+
+  @Test
+  public void fiveByteAllZeroPrefix_distinguishedFromEmptyPrefix() throws Exception {
+    PrefixMap<Integer> map =
+        new PrefixMap.Builder<Integer>()
+            .put(Bytes.copyFrom(new byte[] {0, 0, 0, 0, 0}), 500)
+            .put(Bytes.copyFrom(new byte[0]), 100)
+            .build();
+    // 5-byte zero prefix matches both the 5-byte zero entry and the RAW entry fallback.
+    assertThat(map.getAllWithMatchingPrefix(new byte[] {0, 0, 0, 0, 0, 1, 2}))
+        .containsExactly(500, 100)
+        .inOrder();
+    // Different 5-byte prefix only gets the RAW entry.
+    assertThat(map.getAllWithMatchingPrefix(new byte[] {0, 0, 0, 0, 1, 1, 2})).containsExactly(100);
+    // Short byte array (< 5 bytes) only gets the RAW entry.
+    assertThat(map.getAllWithMatchingPrefix(new byte[] {0, 0, 0})).containsExactly(100);
+    assertThat(map.getAllWithMatchingPrefix(new byte[0])).containsExactly(100);
   }
 }
+

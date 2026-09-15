@@ -228,7 +228,7 @@ public final class CompositeMlDsaPublicKeyTest {
         EcdsaParameters.builder()
             .setHashType(EcdsaParameters.HashType.SHA256)
             .setCurveType(EcdsaParameters.CurveType.NIST_P256)
-            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.IEEE_P1363)
+            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
             .setVariant(EcdsaParameters.Variant.NO_PREFIX)
             .build();
     EcdsaPublicKey ecdsaPublicKey =
@@ -301,7 +301,7 @@ public final class CompositeMlDsaPublicKeyTest {
         EcdsaParameters.builder()
             .setHashType(EcdsaParameters.HashType.SHA384)
             .setCurveType(EcdsaParameters.CurveType.NIST_P384)
-            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.IEEE_P1363)
+            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
             .setVariant(EcdsaParameters.Variant.NO_PREFIX)
             .build();
     EcdsaPublicKey ecdsaPublicKey =
@@ -476,6 +476,45 @@ public final class CompositeMlDsaPublicKeyTest {
             .setIdRequirement(123)
             .build();
 
+    EcdsaParameters ecdsaParameters =
+        EcdsaParameters.builder()
+            .setHashType(EcdsaParameters.HashType.SHA384)
+            .setCurveType(EcdsaParameters.CurveType.NIST_P384)
+            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
+            .setVariant(EcdsaParameters.Variant.NO_PREFIX)
+            .build();
+    EcdsaPublicKey ecdsaPublicKey =
+        EcdsaPublicKey.builder().setParameters(ecdsaParameters).setPublicPoint(P384_POINT).build();
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            CompositeMlDsaPublicKey.builder()
+                .setParameters(parameters)
+                .setMlDsaPublicKey(mlDsaPublicKey)
+                .setClassicalPublicKey(ecdsaPublicKey)
+                .build());
+  }
+
+  @Test
+  public void classicalEcdsaSignatureEncodingMismatch_fails() throws Exception {
+    CompositeMlDsaParameters parameters =
+        CompositeMlDsaParameters.builder()
+            .setMlDsaInstance(CompositeMlDsaParameters.MlDsaInstance.ML_DSA_87)
+            .setClassicalAlgorithm(CompositeMlDsaParameters.ClassicalAlgorithm.ECDSA_P384)
+            .setVariant(CompositeMlDsaParameters.Variant.NO_PREFIX)
+            .build();
+
+    MlDsaPublicKey mlDsaPublicKey =
+        MlDsaPublicKey.builder()
+            .setParameters(
+                MlDsaParameters.create(
+                    MlDsaParameters.MlDsaInstance.ML_DSA_87, MlDsaParameters.Variant.NO_PREFIX))
+            .setSerializedPublicKey(FAKE_MLDSA87_PUBLIC_KEY_BYTES)
+            .build();
+
+    // IEEE_P1363 signature encoding is incorrect for this composite parameter.
+    // The required encoding is DER.
     EcdsaParameters ecdsaParameters =
         EcdsaParameters.builder()
             .setHashType(EcdsaParameters.HashType.SHA384)

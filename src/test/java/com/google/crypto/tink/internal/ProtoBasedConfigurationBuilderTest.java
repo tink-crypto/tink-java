@@ -28,6 +28,7 @@ import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.ProtoKeySerialization;
 import com.google.crypto.tink.ProtoKeySerializer;
 import com.google.crypto.tink.ProtoParametersSerialization;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.aead.ChaCha20Poly1305Key;
 import com.google.crypto.tink.aead.ChaCha20Poly1305Parameters;
 import com.google.crypto.tink.aead.XChaCha20Poly1305Key;
@@ -443,5 +444,341 @@ public final class ProtoBasedConfigurationBuilderTest {
   public void testGetOrNull_unknownClass_returnsNull() throws Exception {
     Configuration config = new ProtoBasedConfigurationBuilder().build();
     assertThat(config.getOrNull(String.class)).isNull();
+  }
+
+  @Test
+  public void testMergeProtoBasedConfiguration_mergesKeyCreators() throws Exception {
+    ProtoBasedConfigurationBuilder builder =
+        new ProtoBasedConfigurationBuilder()
+            .addKeyCreator(
+                ChaCha20Poly1305Parameters.class,
+                (p, id) ->
+                    ChaCha20Poly1305Key.create(p.getVariant(), SecretBytes.randomBytes(32), id));
+    Configuration otherConfig =
+        new ProtoBasedConfigurationBuilder()
+            .addKeyCreator(
+                XChaCha20Poly1305Parameters.class,
+                (p, id) ->
+                    XChaCha20Poly1305Key.create(p.getVariant(), SecretBytes.randomBytes(32), id))
+            .build();
+
+    Configuration config = builder.mergeProtoBasedConfiguration(otherConfig).build();
+
+    Key chaChaKey = config.createKey(ChaCha20Poly1305Parameters.create(), null);
+    assertThat(chaChaKey.getParameters()).isEqualTo(ChaCha20Poly1305Parameters.create());
+    Key xChaChaKey = config.createKey(XChaCha20Poly1305Parameters.create(), null);
+    assertThat(xChaChaKey.getParameters()).isEqualTo(XChaCha20Poly1305Parameters.create());
+  }
+
+  @Test
+  public void testMergeProtoBasedConfiguration_mergesPrimitiveConstructors() throws Exception {
+    ProtoBasedConfigurationBuilder builder =
+        new ProtoBasedConfigurationBuilder()
+            .addPrimitiveConstructor(PrfMac::create, HmacKey.class, Mac.class)
+            .addPrimitiveWrapper(Mac.class, Mac.class, WrappedMac::create);
+    Configuration otherConfig =
+        new ProtoBasedConfigurationBuilder()
+            .addPrimitiveConstructor(ChunkedHmacImpl::new, HmacKey.class, ChunkedMac.class)
+            .addPrimitiveWrapper(ChunkedMac.class, ChunkedMac.class, WrappedChunkedMac::create)
+            .build();
+
+    Configuration config = builder.mergeProtoBasedConfiguration(otherConfig).build();
+
+    HmacParameters parameters =
+        HmacParameters.builder()
+            .setTagSizeBytes(16)
+            .setKeySizeBytes(32)
+            .setHashType(HmacParameters.HashType.SHA256)
+            .setVariant(HmacParameters.Variant.NO_PREFIX)
+            .build();
+    HmacKey hmacKey =
+        HmacKey.builder()
+            .setParameters(parameters)
+            .setKeyBytes(SecretBytes.randomBytes(32))
+            .build();
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(hmacKey).withRandomId().makePrimary())
+            .build();
+
+    Mac mac = keysetHandle.getPrimitive(config, Mac.class);
+    assertThat(mac).isNotNull();
+    ChunkedMac chunkedMac = keysetHandle.getPrimitive(config, ChunkedMac.class);
+    assertThat(chunkedMac).isNotNull();
+  }
+
+  @Test
+  public void testMergeProtoBasedConfiguration_mergesPrimitiveWrappers() throws Exception {
+    ProtoBasedConfigurationBuilder builder =
+        new ProtoBasedConfigurationBuilder()
+            .addPrimitiveConstructor(PrfMac::create, HmacKey.class, Mac.class);
+    Configuration otherConfig =
+        new ProtoBasedConfigurationBuilder()
+            .addPrimitiveWrapper(Mac.class, Mac.class, WrappedMac::create)
+            .build();
+
+    Configuration config = builder.mergeProtoBasedConfiguration(otherConfig).build();
+
+    HmacParameters parameters =
+        HmacParameters.builder()
+            .setTagSizeBytes(16)
+            .setKeySizeBytes(32)
+            .setHashType(HmacParameters.HashType.SHA256)
+            .setVariant(HmacParameters.Variant.NO_PREFIX)
+            .build();
+    HmacKey hmacKey =
+        HmacKey.builder()
+            .setParameters(parameters)
+            .setKeyBytes(SecretBytes.randomBytes(32))
+            .build();
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(hmacKey).withRandomId().makePrimary())
+            .build();
+
+    Mac mac = keysetHandle.getPrimitive(config, Mac.class);
+    assertThat(mac).isNotNull();
+  }
+
+  @Test
+  public void testMergeProtoBasedConfiguration_mergesKeySerializers() throws Exception {
+    ProtoBasedConfigurationBuilder builder =
+        new ProtoBasedConfigurationBuilder()
+            .addKeyParser(
+                "type.googleapis.com/google.crypto.tink.ChaCha20Poly1305Key",
+                ChaCha20Poly1305ProtoSerialization::parseKey);
+    Configuration otherConfig =
+        new ProtoBasedConfigurationBuilder()
+            .addKeySerializer(
+                ChaCha20Poly1305Key.class, ChaCha20Poly1305ProtoSerialization::serializeKey)
+            .build();
+
+    Configuration config = builder.mergeProtoBasedConfiguration(otherConfig).build();
+
+    ProtoKeySerializer serializer = config.getOrNull(ProtoKeySerializer.class);
+    assertThat(serializer).isNotNull();
+
+    byte[] keyMaterial = SecretBytes.randomBytes(32).toByteArray(InsecureSecretKeyAccess.get());
+    ChaCha20Poly1305Key key =
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.TINK,
+            SecretBytes.copyFrom(keyMaterial, InsecureSecretKeyAccess.get()),
+            /* idRequirement= */ 123);
+
+    ProtoKeySerialization serialization =
+        serializer.serializeKey(key, InsecureSecretKeyAccess.get());
+    Key reParsed = serializer.parseKey(serialization, InsecureSecretKeyAccess.get());
+    assertThat(key.equalsKey(reParsed)).isTrue();
+  }
+
+  @Test
+  public void testMergeProtoBasedConfiguration_mergesKeyParsers() throws Exception {
+    ProtoBasedConfigurationBuilder builder =
+        new ProtoBasedConfigurationBuilder()
+            .addKeySerializer(
+                ChaCha20Poly1305Key.class, ChaCha20Poly1305ProtoSerialization::serializeKey);
+    Configuration otherConfig =
+        new ProtoBasedConfigurationBuilder()
+            .addKeyParser(
+                "type.googleapis.com/google.crypto.tink.ChaCha20Poly1305Key",
+                ChaCha20Poly1305ProtoSerialization::parseKey)
+            .build();
+
+    Configuration config = builder.mergeProtoBasedConfiguration(otherConfig).build();
+
+    ProtoKeySerializer serializer = config.getOrNull(ProtoKeySerializer.class);
+    assertThat(serializer).isNotNull();
+
+    byte[] keyMaterial = SecretBytes.randomBytes(32).toByteArray(InsecureSecretKeyAccess.get());
+    ChaCha20Poly1305Key key =
+        ChaCha20Poly1305Key.create(
+            ChaCha20Poly1305Parameters.Variant.TINK,
+            SecretBytes.copyFrom(keyMaterial, InsecureSecretKeyAccess.get()),
+            /* idRequirement= */ 123);
+
+    ProtoKeySerialization serialization =
+        serializer.serializeKey(key, InsecureSecretKeyAccess.get());
+    Key reParsed = serializer.parseKey(serialization, InsecureSecretKeyAccess.get());
+    assertThat(key.equalsKey(reParsed)).isTrue();
+  }
+
+  @Test
+  public void testMergeProtoBasedConfiguration_mergesParametersSerializers() throws Exception {
+    ProtoBasedConfigurationBuilder builder =
+        new ProtoBasedConfigurationBuilder()
+            .addParametersParser(
+                "type.googleapis.com/google.crypto.tink.ChaCha20Poly1305Key",
+                ChaCha20Poly1305ProtoSerialization::parseParameters);
+    Configuration otherConfig =
+        new ProtoBasedConfigurationBuilder()
+            .addParametersSerializer(
+                ChaCha20Poly1305Parameters.class,
+                ChaCha20Poly1305ProtoSerialization::serializeParameters)
+            .build();
+
+    Configuration config = builder.mergeProtoBasedConfiguration(otherConfig).build();
+
+    ProtoKeySerializer serializer = config.getOrNull(ProtoKeySerializer.class);
+    assertThat(serializer).isNotNull();
+    ChaCha20Poly1305Parameters params =
+        ChaCha20Poly1305Parameters.create(ChaCha20Poly1305Parameters.Variant.TINK);
+    Parameters reParsedParams = serializer.parseParameters(serializer.serializeParameters(params));
+    assertThat(reParsedParams).isEqualTo(params);
+  }
+
+  @Test
+  public void testMergeProtoBasedConfiguration_mergesParametersParsers() throws Exception {
+    ProtoBasedConfigurationBuilder builder =
+        new ProtoBasedConfigurationBuilder()
+            .addParametersSerializer(
+                ChaCha20Poly1305Parameters.class,
+                ChaCha20Poly1305ProtoSerialization::serializeParameters);
+    Configuration otherConfig =
+        new ProtoBasedConfigurationBuilder()
+            .addParametersParser(
+                "type.googleapis.com/google.crypto.tink.ChaCha20Poly1305Key",
+                ChaCha20Poly1305ProtoSerialization::parseParameters)
+            .build();
+
+    Configuration config = builder.mergeProtoBasedConfiguration(otherConfig).build();
+
+    ProtoKeySerializer serializer = config.getOrNull(ProtoKeySerializer.class);
+    assertThat(serializer).isNotNull();
+    ChaCha20Poly1305Parameters params =
+        ChaCha20Poly1305Parameters.create(ChaCha20Poly1305Parameters.Variant.TINK);
+    Parameters reParsedParams = serializer.parseParameters(serializer.serializeParameters(params));
+    assertThat(reParsedParams).isEqualTo(params);
+  }
+
+  @Test
+  public void testMergeProtoBasedConfiguration_duplicateKeyCreator_throws() throws Exception {
+    ProtoBasedConfigurationBuilder builder1 =
+        new ProtoBasedConfigurationBuilder()
+            .addKeyCreator(
+                ChaCha20Poly1305Parameters.class,
+                (p, id) ->
+                    ChaCha20Poly1305Key.create(p.getVariant(), SecretBytes.randomBytes(32), id));
+    Configuration config2 =
+        new ProtoBasedConfigurationBuilder()
+            .addKeyCreator(
+                ChaCha20Poly1305Parameters.class,
+                (p, id) ->
+                    ChaCha20Poly1305Key.create(p.getVariant(), SecretBytes.randomBytes(32), id))
+            .build();
+
+    assertThrows(
+        IllegalArgumentException.class, () -> builder1.mergeProtoBasedConfiguration(config2));
+  }
+
+  @Test
+  public void testMergeProtoBasedConfiguration_duplicatePrimitiveConstructor_throws()
+      throws Exception {
+    ProtoBasedConfigurationBuilder builder1 =
+        new ProtoBasedConfigurationBuilder()
+            .addPrimitiveConstructor(PrfMac::create, HmacKey.class, Mac.class);
+    Configuration config2 =
+        new ProtoBasedConfigurationBuilder()
+            .addPrimitiveConstructor(PrfMac::create, HmacKey.class, Mac.class)
+            .build();
+
+    assertThrows(
+        IllegalArgumentException.class, () -> builder1.mergeProtoBasedConfiguration(config2));
+  }
+
+  @Test
+  public void testMergeProtoBasedConfiguration_duplicatePrimitiveWrapper_throws()
+      throws Exception {
+    ProtoBasedConfigurationBuilder builder1 =
+        new ProtoBasedConfigurationBuilder()
+            .addPrimitiveWrapper(Mac.class, Mac.class, WrappedMac::create);
+    Configuration config2 =
+        new ProtoBasedConfigurationBuilder()
+            .addPrimitiveWrapper(Mac.class, Mac.class, WrappedMac::create)
+            .build();
+
+    assertThrows(
+        IllegalArgumentException.class, () -> builder1.mergeProtoBasedConfiguration(config2));
+  }
+
+  @Test
+  public void testMergeProtoBasedConfiguration_duplicateKeySerializer_throws() throws Exception {
+    ProtoBasedConfigurationBuilder builder1 =
+        new ProtoBasedConfigurationBuilder()
+            .addKeySerializer(
+                ChaCha20Poly1305Key.class, ChaCha20Poly1305ProtoSerialization::serializeKey);
+    Configuration config2 =
+        new ProtoBasedConfigurationBuilder()
+            .addKeySerializer(
+                ChaCha20Poly1305Key.class, ChaCha20Poly1305ProtoSerialization::serializeKey)
+            .build();
+
+    assertThrows(
+        IllegalArgumentException.class, () -> builder1.mergeProtoBasedConfiguration(config2));
+  }
+
+  @Test
+  public void testMergeProtoBasedConfiguration_duplicateParametersSerializer_throws()
+      throws Exception {
+    ProtoBasedConfigurationBuilder builder1 =
+        new ProtoBasedConfigurationBuilder()
+            .addParametersSerializer(
+                ChaCha20Poly1305Parameters.class,
+                ChaCha20Poly1305ProtoSerialization::serializeParameters);
+    Configuration config2 =
+        new ProtoBasedConfigurationBuilder()
+            .addParametersSerializer(
+                ChaCha20Poly1305Parameters.class,
+                ChaCha20Poly1305ProtoSerialization::serializeParameters)
+            .build();
+
+    assertThrows(
+        IllegalArgumentException.class, () -> builder1.mergeProtoBasedConfiguration(config2));
+  }
+
+  @Test
+  public void testMergeProtoBasedConfiguration_duplicateKeyParser_throws() throws Exception {
+    ProtoBasedConfigurationBuilder builder1 =
+        new ProtoBasedConfigurationBuilder()
+            .addKeyParser(
+                "type.googleapis.com/google.crypto.tink.ChaCha20Poly1305Key",
+                ChaCha20Poly1305ProtoSerialization::parseKey);
+    Configuration config2 =
+        new ProtoBasedConfigurationBuilder()
+            .addKeyParser(
+                "type.googleapis.com/google.crypto.tink.ChaCha20Poly1305Key",
+                ChaCha20Poly1305ProtoSerialization::parseKey)
+            .build();
+
+    assertThrows(
+        IllegalArgumentException.class, () -> builder1.mergeProtoBasedConfiguration(config2));
+  }
+
+  @Test
+  public void testMergeProtoBasedConfiguration_duplicateParametersParser_throws()
+      throws Exception {
+    ProtoBasedConfigurationBuilder builder1 =
+        new ProtoBasedConfigurationBuilder()
+            .addParametersParser(
+                "type.googleapis.com/google.crypto.tink.ChaCha20Poly1305Key",
+                ChaCha20Poly1305ProtoSerialization::parseParameters);
+    Configuration config2 =
+        new ProtoBasedConfigurationBuilder()
+            .addParametersParser(
+                "type.googleapis.com/google.crypto.tink.ChaCha20Poly1305Key",
+                ChaCha20Poly1305ProtoSerialization::parseParameters)
+            .build();
+
+    assertThrows(
+        IllegalArgumentException.class, () -> builder1.mergeProtoBasedConfiguration(config2));
+  }
+
+  @Test
+  public void testMergeProtoBasedConfiguration_nonProtoBasedConfiguration_throws()
+      throws Exception {
+    ProtoBasedConfigurationBuilder builder = new ProtoBasedConfigurationBuilder();
+    Configuration otherConfig = RegistryConfiguration.get();
+
+    assertThrows(
+        IllegalArgumentException.class, () -> builder.mergeProtoBasedConfiguration(otherConfig));
   }
 }

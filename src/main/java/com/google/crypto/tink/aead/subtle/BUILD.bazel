@@ -69,6 +69,7 @@ java_library(
         "//src/main/java/com/google/crypto/tink:aead",
         "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
         "//src/main/java/com/google/crypto/tink/aead:aes_gcm_siv_key",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
@@ -122,6 +123,7 @@ java_library(
         "//src/main/java/com/google/crypto/tink/aead:aes_gcm_siv_parameters",
         "//src/main/java/com/google/crypto/tink/aead/internal:aes_gcm_siv",
         "//src/main/java/com/google/crypto/tink/annotations:alpha",
+        "//src/main/java/com/google/crypto/tink/internal:conscrypt_util",
         "//src/main/java/com/google/crypto/tink/subtle:subtle_util_cluster",
         "//src/main/java/com/google/crypto/tink/util:secret_bytes",
         "@maven//:com_google_code_findbugs_jsr305",
@@ -181,6 +183,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink:aead-android",
         "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
         "//src/main/java/com/google/crypto/tink/aead:aes_gcm_siv_key-android",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util-android",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
@@ -245,6 +248,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink/aead:aes_gcm_siv_parameters-android",
         "//src/main/java/com/google/crypto/tink/aead/internal:aes_gcm_siv-android",
         "//src/main/java/com/google/crypto/tink/annotations:alpha-android",
+        "//src/main/java/com/google/crypto/tink/internal:conscrypt_util-android",
         "//src/main/java/com/google/crypto/tink/subtle:subtle_util_cluster-android",
         "//src/main/java/com/google/crypto/tink/util:secret_bytes-android",
         "@maven//:com_google_code_findbugs_jsr305",

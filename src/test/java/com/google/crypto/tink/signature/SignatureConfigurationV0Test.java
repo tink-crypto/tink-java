@@ -28,7 +28,6 @@ import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.LegacyProtoKey;
-import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.proto.EllipticCurveType;
 import com.google.crypto.tink.signature.internal.EcdsaProtoSerialization;
 import com.google.crypto.tink.signature.internal.Ed25519ProtoSerialization;
@@ -83,11 +82,6 @@ public class SignatureConfigurationV0Test {
   public void test_validateSignatureInTestVector(
       @FromDataPoints("signatureTests") SignatureTestVector testVector) throws Exception {
     Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
-    @Nullable Integer apiLevel = Util.getAndroidApiLevel();
-    if (apiLevel != null && apiLevel == 19) {
-      // Android API 19 is slower than the others in this.
-      return;
-    }
     SignaturePrivateKey key = testVector.getPrivateKey();
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
     @Nullable Integer id = key.getIdRequirementOrNull();
@@ -115,11 +109,6 @@ public class SignatureConfigurationV0Test {
   public void test_computeAndValidateFreshSignatureWithTestVector(
       @FromDataPoints("signatureTests") SignatureTestVector testVector) throws Exception {
     Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
-    @Nullable Integer apiLevel = Util.getAndroidApiLevel();
-    if (apiLevel != null && apiLevel == 19) {
-      // Android API 19 is slower than the others in this.
-      return;
-    }
     SignaturePrivateKey key = testVector.getPrivateKey();
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
     @Nullable Integer id = key.getIdRequirementOrNull();
@@ -157,11 +146,6 @@ public class SignatureConfigurationV0Test {
   public void test_computeFreshSignatureWithTestVector_throwsWithWrongMessage(
       @FromDataPoints("signatureTests") SignatureTestVector testVector) throws Exception {
     Assume.assumeFalse(TinkFipsUtil.useOnlyFips());
-    @Nullable Integer apiLevel = Util.getAndroidApiLevel();
-    if (apiLevel != null && apiLevel == 19) {
-      // Android API 19 is slower than the others in this.
-      return;
-    }
     SignaturePrivateKey key = testVector.getPrivateKey();
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
     @Nullable Integer id = key.getIdRequirementOrNull();
@@ -186,14 +170,13 @@ public class SignatureConfigurationV0Test {
 
   @DataPoints("signatureTests")
   public static final SignatureTestVector[] signatureTestVectors =
-      Stream.concat(
-              Stream.concat(
-                  Arrays.stream(EcdsaTestUtil.createEcdsaTestVectors()),
-                  Arrays.stream(RsaSsaPssTestUtil.createRsaPssTestVectors())),
-              Stream.concat(
-                  Arrays.stream(RsaSsaPkcs1TestUtil.createRsaSsaPkcs1TestVectors()),
-                  Arrays.stream(Ed25519TestUtil.createEd25519TestVectors())))
-          .toArray(SignatureTestVector[]::new);
+      Stream.of(
+          Arrays.stream(EcdsaTestUtil.createEcdsaTestVectors()),
+          Arrays.stream(RsaSsaPssTestUtil.createRsaPssTestVectors()),
+          Arrays.stream(RsaSsaPkcs1TestUtil.createRsaSsaPkcs1TestVectors()),
+          Arrays.stream(Ed25519TestUtil.createEd25519TestVectors()))
+      .flatMap(s -> s)
+      .toArray(SignatureTestVector[]::new);
 
   @Test
   public void config_handlesEd25519LegacyKeyForPublicKeySign() throws Exception {

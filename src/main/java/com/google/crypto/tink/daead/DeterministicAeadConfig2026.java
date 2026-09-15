@@ -38,16 +38,17 @@ import javax.annotation.Nullable;
  *   <li>AesSiv
  * </ul>
  */
-public class DeterministicAeadConfig2026 {
+public final class DeterministicAeadConfig2026 {
   private DeterministicAeadConfig2026() {}
 
   private static final Configuration CONFIGURATION = create();
+  private static final Configuration EMPTY_CONFIGURATION =
+      new ProtoBasedConfigurationBuilder().build();
 
   /** Returns the {@link Configuration} instance. */
-  public static Configuration get() throws GeneralSecurityException {
+  public static Configuration get() {
     if (TinkFipsUtil.useOnlyFips()) {
-      throw new GeneralSecurityException(
-          "Cannot use non-FIPS-compliant DeterministicAeadConfig2026 in FIPS mode");
+      return EMPTY_CONFIGURATION;
     }
     return CONFIGURATION;
   }

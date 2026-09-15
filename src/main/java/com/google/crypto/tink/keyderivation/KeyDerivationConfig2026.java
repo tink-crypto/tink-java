@@ -1,4 +1,4 @@
-// Copyright 2025 Google LLC
+// Copyright 2026 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,25 +14,23 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package com.google.crypto.tink.prf;
+package com.google.crypto.tink.keyderivation;
 
 import com.google.crypto.tink.Configuration;
-import java.security.GeneralSecurityException;
 
 /**
- * PrfConfigurationV1 contains the following primitives and algorithms for PrfSet:
+ * KeyDerivationConfig2026 contains the following primitives and algorithms for {@link
+ * KeysetDeriver}:
  *
  * <ul>
- *   <li>HmacPrf
- *   <li>HkdfPrf
- *   <li>AesCmacPrf
+ *   <li>HKDF-PRF-based key derivation
  * </ul>
  */
-/* Placeholder for internally public; DO NOT CHANGE. */ class PrfConfigurationV1 {
-  private PrfConfigurationV1() {}
+public final class KeyDerivationConfig2026 {
+  private KeyDerivationConfig2026() {}
 
-  public static Configuration get() throws GeneralSecurityException {
-    return PrfConfig2026.get();
+  /** Returns the {@link Configuration} instance. */
+  public static Configuration get() {
+    return com.google.crypto.tink.keyderivation.internal.KeyDerivationConfig2026.get();
   }
 }
-

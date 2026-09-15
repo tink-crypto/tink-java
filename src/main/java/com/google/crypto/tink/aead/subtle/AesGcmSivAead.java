@@ -19,6 +19,7 @@ package com.google.crypto.tink.aead.subtle;
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.aead.AesGcmSivKey;
+import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.errorprone.annotations.RestrictedApi;
 import java.security.GeneralSecurityException;
 
@@ -40,6 +41,9 @@ public final class AesGcmSivAead {
       allowedOnPath = ".*Test\\.java",
       allowlistAnnotations = {LowLevelCryptoCaller.class})
   public static Aead create(AesGcmSivKey key) throws GeneralSecurityException {
+    if (!TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS.isCompatible()) {
+      throw new GeneralSecurityException("Cannot use AesGcmSiv in FIPS mode");
+    }
     return AesGcmSiv.create(key);
   }
 

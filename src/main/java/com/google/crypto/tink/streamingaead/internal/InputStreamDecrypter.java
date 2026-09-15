@@ -25,18 +25,18 @@ import java.util.List;
 import javax.annotation.concurrent.GuardedBy;
 
 /**
- * A decrypter for ciphertext given in a {@link InputStream}.
+ * A decrypter for ciphertext given in an {@link InputStream}.
  */
 final class InputStreamDecrypter extends InputStream {
   @GuardedBy("this")
-  boolean attemptedMatching;
+  private boolean attemptedMatching;
   @GuardedBy("this")
-  InputStream matchingStream;
+  private InputStream matchingStream;
   @GuardedBy("this")
-  InputStream ciphertextStream;
+  private final InputStream ciphertextStream;
 
-  List<StreamingAead> primitives;
-  byte[] associatedData;
+  private final List<StreamingAead> primitives;
+  private final byte[] associatedData;
 
   /**
    * Constructs a new decrypter for {@code ciphertextStream}.
@@ -44,18 +44,18 @@ final class InputStreamDecrypter extends InputStream {
    * <p>The decrypter picks a matching {@code StreamingAead}-primitive from {@code primitives}, and
    * uses it for decryption. The matching happens as follows: upon first {@code read()}-call each
    * candidate primitive reads an initial portion of the stream, until it can determine whether the
-   * stream matches the key of the primitive. If a canditate does not match, then the stream is
-   * reset to its initial position, and the next candiate can attempt matching. The first successful
+   * stream matches the key of the primitive. If a candidate does not match, then the stream is
+   * reset to its initial position, and the next candidate can attempt matching. The first successful
    * candidate is then used exclusively on subsequent {@code read()}-calls.
    *
    * <p>The matching process wraps {@code ciphertextStream} into a BufferedInputStream, unless
    * ciphertextStream supports rewinding (i.e. ciphertextStream.markSupported() == true). Buffering
    * of the ciphertext is disabled once a ciphertext block has been successfully decrypted.
    *
-   * @param primitives a list of possible {@link StreamingAeads} to try. Must not be mutateted by
-   * the caller. Will not be muteted by the {@code InputStreamDecrypter},
+   * @param primitives a list of possible {@link StreamingAead} instances to try. Must not be mutated
+   *     by the caller. Will not be mutated by the {@code InputStreamDecrypter}.
    * @param ciphertextStream the stream with the ciphertext
-   * @param associatedData The assocated data with this encryption
+   * @param associatedData The associated data with this encryption
    */
   public InputStreamDecrypter(
       List<StreamingAead> primitives, InputStream ciphertextStream, final byte[] associatedData) {
@@ -78,7 +78,7 @@ final class InputStreamDecrypter extends InputStream {
   }
 
   /**
-   * Rewinds the ciphetext stream to the beginning of the ciphertext.
+   * Rewinds the ciphertext stream to the beginning of the ciphertext.
    */
   @GuardedBy("this")
   private void rewind() throws IOException {
@@ -89,10 +89,10 @@ final class InputStreamDecrypter extends InputStream {
    * Disable rewinding.
    * This method is called once this class has found the correct key version.
    * TODO(bleichen): While BufferedInputStream stops buffering new bytes,
-   *   it does not shrink the intenal buffer.
+   *   it does not shrink the internal buffer.
    */
   @GuardedBy("this")
-  private void disableRewinding() throws IOException {
+  private void disableRewinding() {
     ciphertextStream.mark(0);
   }
 
@@ -111,9 +111,8 @@ final class InputStreamDecrypter extends InputStream {
   public synchronized int available() throws IOException {
     if (matchingStream == null) {
       return 0;
-    } else {
-      return matchingStream.available();
     }
+    return matchingStream.available();
   }
 
   @Override
@@ -140,41 +139,35 @@ final class InputStreamDecrypter extends InputStream {
     }
     if (matchingStream != null) {
       return matchingStream.read(b, offset, len);
-    } else {
-      if (attemptedMatching) {
-        throw new IOException("No matching key found for the ciphertext in the stream.");
-      }
-      attemptedMatching = true;
-      for (StreamingAead streamingAead : primitives) {
-        try {
-          InputStream attemptedStream =
-              streamingAead.newDecryptingStream(ciphertextStream, associatedData);
-          int retValue = attemptedStream.read(b, offset, len);
-          if (retValue == 0) {
-            // Read should never return 0 when len > 0.
-            throw new IOException("Could not read bytes from the ciphertext stream");
-          }
-          // Found a matching stream.
-          // If retValue > 0 then the first ciphertext segment has been decrypted and
-          // authenticated. If retValue == -1 then plaintext is empty and again this has been
-          // authenticated.
-          matchingStream = attemptedStream;
-          disableRewinding();
-          return retValue;
-        } catch (IOException e) {
-          // Try another key.
-          // IOException is thrown e.g. when MAC is incorrect, but also in case
-          // of I/O failures.
-          rewind();
-          continue;
-        } catch (GeneralSecurityException e) {
-          // Try another key.
-          rewind();
-          continue;
-        }
-      }
+    }
+    if (attemptedMatching) {
       throw new IOException("No matching key found for the ciphertext in the stream.");
     }
+    attemptedMatching = true;
+    for (StreamingAead streamingAead : primitives) {
+      try {
+        InputStream attemptedStream =
+            streamingAead.newDecryptingStream(ciphertextStream, associatedData);
+        int retValue = attemptedStream.read(b, offset, len);
+        if (retValue == 0) {
+          // Read should never return 0 when len > 0.
+          throw new IOException("Could not read bytes from the ciphertext stream");
+        }
+        // Found a matching stream.
+        // If retValue > 0 then the first ciphertext segment has been decrypted and
+        // authenticated. If retValue == -1 then plaintext is empty and again this has been
+        // authenticated.
+        matchingStream = attemptedStream;
+        disableRewinding();
+        return retValue;
+      } catch (IOException | GeneralSecurityException e) {
+        // Try another key.
+        // IOException is thrown e.g. when MAC is incorrect, but also in case
+        // of I/O failures.
+        rewind();
+      }
+    }
+    throw new IOException("No matching key found for the ciphertext in the stream.");
   }
 
   @Override

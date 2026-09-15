@@ -29,23 +29,30 @@ import com.google.crypto.tink.aead.internal.XChaCha20Poly1305ProtoSerialization;
 import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.jwt.internal.JwtEcdsaProtoSerialization;
+import com.google.crypto.tink.jwt.internal.JwtMlDsaProtoSerialization;
 import com.google.crypto.tink.jwt.internal.JwtRsaSsaPkcs1ProtoSerialization;
 import com.google.crypto.tink.jwt.internal.JwtRsaSsaPssProtoSerialization;
 import com.google.crypto.tink.jwt.internal.testing.JwtSignatureTestUtil;
+import com.google.crypto.tink.signature.MlDsaParameters;
+import com.google.crypto.tink.signature.MlDsaPrivateKey;
 import com.google.crypto.tink.signature.PublicKeySignWrapper;
 import com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPkcs1SignKeyManager;
 import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPssSignKeyManager;
+import com.google.crypto.tink.signature.internal.MlDsaVerifyConscrypt;
 import com.google.crypto.tink.signature.internal.RsaSsaPkcs1ProtoSerialization;
 import com.google.crypto.tink.signature.internal.RsaSsaPssProtoSerialization;
+import com.google.crypto.tink.signature.internal.testing.MlDsaTestUtil;
 import com.google.crypto.tink.subtle.Base64;
 import com.google.crypto.tink.testing.TestUtil;
 import com.google.crypto.tink.util.SecretBigInteger;
 import com.google.crypto.tink.util.SecretBytes;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
+import java.security.Security;
 import java.util.stream.Stream;
+import org.conscrypt.Conscrypt;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -687,11 +694,58 @@ public class JwtSignatureConfigurationV0Test {
               .setRsaSsaPssPrivateKey(rsaSsaPss4096PrivateKey)
               .build();
 
+      MlDsaPrivateKey mlDsa44PrivateKey =
+          (MlDsaPrivateKey)
+              MlDsaTestUtil.getMlDsaValidSignatureTestVector(
+                      MlDsaParameters.create(
+                          MlDsaParameters.MlDsaInstance.ML_DSA_44,
+                          MlDsaParameters.Variant.NO_PREFIX))
+                  .getPrivateKey();
+      JwtMlDsaParameters jwtMlDsaRaw44Parameters =
+          JwtMlDsaParameters.create(
+              JwtMlDsaParameters.KidStrategy.IGNORED, JwtMlDsaParameters.Algorithm.ML_DSA_44);
+      JwtMlDsaPublicKey jwtMlDsaRaw44PublicKey =
+          JwtMlDsaPublicKey.builder()
+              .setParameters(jwtMlDsaRaw44Parameters)
+              .setPublicKeyBytes(mlDsa44PrivateKey.getPublicKey().getSerializedPublicKey())
+              .build();
+      JwtMlDsaPrivateKey jwtMlDsaRaw44PrivateKey =
+          JwtMlDsaPrivateKey.create(jwtMlDsaRaw44PublicKey, mlDsa44PrivateKey.getPrivateSeed());
+
+      JwtMlDsaParameters jwtMlDsaKid44Parameters =
+          JwtMlDsaParameters.create(
+              JwtMlDsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID,
+              JwtMlDsaParameters.Algorithm.ML_DSA_44);
+      JwtMlDsaPublicKey jwtMlDsaKid44PublicKey =
+          JwtMlDsaPublicKey.builder()
+              .setParameters(jwtMlDsaKid44Parameters)
+              .setPublicKeyBytes(mlDsa44PrivateKey.getPublicKey().getSerializedPublicKey())
+              .setIdRequirement(123)
+              .build();
+      JwtMlDsaPrivateKey jwtMlDsaKid44PrivateKey =
+          JwtMlDsaPrivateKey.create(jwtMlDsaKid44PublicKey, mlDsa44PrivateKey.getPrivateSeed());
+
+      JwtMlDsaParameters jwtMlDsaCustomKid44Parameters =
+          JwtMlDsaParameters.create(
+              JwtMlDsaParameters.KidStrategy.CUSTOM, JwtMlDsaParameters.Algorithm.ML_DSA_44);
+      JwtMlDsaPublicKey jwtMlDsaCustomKid44PublicKey =
+          JwtMlDsaPublicKey.builder()
+              .setParameters(jwtMlDsaCustomKid44Parameters)
+              .setPublicKeyBytes(mlDsa44PrivateKey.getPublicKey().getSerializedPublicKey())
+              .setCustomKid(CUSTOM_KID_VALUE)
+              .build();
+      JwtMlDsaPrivateKey jwtMlDsaCustomKid44PrivateKey =
+          JwtMlDsaPrivateKey.create(
+              jwtMlDsaCustomKid44PublicKey, mlDsa44PrivateKey.getPrivateSeed());
+
       jwtPrivateKeys =
           Stream.concat(
                   JwtSignatureTestUtil.createJwtEcdsaPrivateKeys().stream(),
                   stream(
                       new JwtSignaturePrivateKey[] {
+                        jwtMlDsaRaw44PrivateKey,
+                        jwtMlDsaKid44PrivateKey,
+                        jwtMlDsaCustomKid44PrivateKey,
                         jwtRsaSsaPkcs1Raw2048PrivateKey,
                         jwtRsaSsaPkcs1Kid2048PrivateKey,
                         jwtRsaSsaPkcs1CustomKid2048PrivateKey,
@@ -716,6 +770,9 @@ public class JwtSignatureConfigurationV0Test {
       jwtPrivateKeyPairs =
           new JwtSignaturePrivateKey[][] {
             new JwtSignaturePrivateKey[] {
+              jwtMlDsaRaw44PrivateKey, jwtMlDsaCustomKid44PrivateKey,
+            },
+            new JwtSignaturePrivateKey[] {
               jwtRsaSsaPkcs1Raw2048PrivateKey, jwtRsaSsaPkcs1CustomKid2048PrivateKey,
             },
             new JwtSignaturePrivateKey[] {
@@ -737,6 +794,8 @@ public class JwtSignatureConfigurationV0Test {
 
       jwtPrivateKeyPairsDifferentKids =
           new JwtSignaturePrivateKey[][] {
+            new JwtSignaturePrivateKey[] {jwtMlDsaRaw44PrivateKey, jwtMlDsaKid44PrivateKey},
+            new JwtSignaturePrivateKey[] {jwtMlDsaCustomKid44PrivateKey, jwtMlDsaKid44PrivateKey},
             new JwtSignaturePrivateKey[] {
               jwtRsaSsaPkcs1Raw2048PrivateKey, jwtRsaSsaPkcs1Kid2048PrivateKey
             },
@@ -793,6 +852,13 @@ public class JwtSignatureConfigurationV0Test {
 
   @BeforeClass
   public static void setUp() throws Exception {
+    try {
+      Conscrypt.checkAvailability();
+      Security.addProvider(Conscrypt.newProvider());
+    } catch (Throwable cause) {
+      // If Conscrypt is not available, tests requiring Conscrypt will be skipped.
+    }
+
     createTestKeys();
 
     JwtEcdsaProtoSerialization.register();
@@ -800,6 +866,7 @@ public class JwtSignatureConfigurationV0Test {
     RsaSsaPkcs1ProtoSerialization.register();
     JwtRsaSsaPssProtoSerialization.register();
     RsaSsaPssProtoSerialization.register();
+    JwtMlDsaProtoSerialization.register();
     XChaCha20Poly1305ProtoSerialization.register();
 
     // Needed until we replaced RegistryConfiguration with SignatureConfiguration.
@@ -825,13 +892,16 @@ public class JwtSignatureConfigurationV0Test {
   // The following test functions are inspired by
   // src/test/java/com/google/crypto/tink/jwt/JwtEcdsaSignKeyManagerTest.java.
 
-  // This also tests that all the expected key types -- Ecdsa, RsaSsaPkcs1, and RsaSsaPss --
+  // This also tests that all the expected key types -- Ecdsa, MlDsa, RsaSsaPkcs1, and RsaSsaPss --
   // are indeed supported by the Configuration.
   @Theory
   public void getPrimitive_signVerify_works(
       @FromDataPoints("jwtPrivateKeys") JwtSignaturePrivateKey key) throws Exception {
     if (TestUtil.isTsan()) {
       // This test takes a long time under TSan.
+      return;
+    }
+    if ((key instanceof JwtMlDsaPrivateKey) && !MlDsaVerifyConscrypt.isSupported()) {
       return;
     }
 
@@ -872,6 +942,9 @@ public class JwtSignatureConfigurationV0Test {
       @FromDataPoints("jwtPrivateKeys") JwtSignaturePrivateKey key) throws Exception {
     if (TestUtil.isTsan()) {
       // This test takes a long time under TSan.
+      return;
+    }
+    if ((key instanceof JwtMlDsaPrivateKey) && !MlDsaVerifyConscrypt.isSupported()) {
       return;
     }
 

@@ -19,10 +19,13 @@ syntax = "proto3";
 
 package google.crypto.tink;
 
+// Placeholder for Tink proto options import.
+
 option java_package = "com.google.crypto.tink.proto";
 option java_multiple_files = true;
 option go_package = "github.com/tink-crypto/tink-go/v2/proto/tink_go_proto";
 option objc_class_prefix = "TINKPB";
+// Placeholder for tink proto custom namespace option.
 
 // Each instantiation of a Tink primitive is identified by type_url,
 // which is a global URL pointing to a *Key-proto that holds key material
@@ -50,6 +53,8 @@ option objc_class_prefix = "TINKPB";
 // to the name of the *Key-proto from type_url-field suffixed with "Format".
 
 message KeyTemplate {
+  // Placeholder for tink proto message_option to generate SerializeAsString.
+
   // Required. The type_url of the key type in format
   // type.googleapis.com/packagename.messagename -- see above for details.
   // This is typically the protobuf type URL of the *Key proto. In particular,
@@ -122,7 +127,7 @@ message KeyData {
   string type_url = 1;  // In format type.googleapis.com/packagename.messagename
   // Required.
   // Contains specific serialized *Key proto
-  bytes value = 2;  // Placeholder for ctype and debug_redact.
+  bytes value = 2;  // Placeholder for ctype, debug_redact and bytes_field_type.
   enum KeyMaterialType {
     UNKNOWN_KEYMATERIAL = 0;
     SYMMETRIC = 1;

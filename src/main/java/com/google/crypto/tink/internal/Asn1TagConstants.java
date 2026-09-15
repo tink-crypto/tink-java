@@ -1,4 +1,4 @@
-// Copyright 2025 Google LLC
+// Copyright 2026 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,22 +14,17 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package com.google.crypto.tink.daead;
+package com.google.crypto.tink.internal;
 
-import com.google.crypto.tink.Configuration;
-import java.security.GeneralSecurityException;
+/** ASN.1 tag and value constants. */
+public final class Asn1TagConstants {
+  public static final byte TAG_INTEGER = 0x02;
+  public static final byte TAG_BIT_STRING = 0x03;
+  public static final byte TAG_OCTET_STRING = 0x04;
+  public static final byte TAG_NULL = 0x05;
+  public static final byte TAG_OBJECT_IDENTIFIER = 0x06;
+  public static final byte TAG_SEQUENCE = 0x30;
+  public static final byte NULL_BYTE = 0x00;
 
-/**
- * DeterministicAeadConfigurationV1 contains the following algorithms for DeterministicAEAD:
- *
- * <ul>
- *   <li>AesSiv
- * </ul>
- */
-/* Placeholder for internally public; DO NOT CHANGE. */ class DeterministicAeadConfigurationV1 {
-  private DeterministicAeadConfigurationV1() {}
-
-  public static Configuration get() throws GeneralSecurityException {
-    return DeterministicAeadConfig2026.get();
-  }
+  private Asn1TagConstants() {}
 }

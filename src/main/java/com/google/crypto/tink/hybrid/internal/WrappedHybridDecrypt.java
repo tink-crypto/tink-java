@@ -30,6 +30,7 @@ import com.google.crypto.tink.internal.PrimitiveWrapper.PrimitiveFactory;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.util.Bytes;
 import java.security.GeneralSecurityException;
+import java.util.List;
 
 /**
  * The implementation of {@code PrimitiveWrapper<HybridDecrypt>}.
@@ -41,13 +42,13 @@ import java.security.GeneralSecurityException;
  */
 public class WrappedHybridDecrypt {
   private static class HybridDecryptWithId {
-    public HybridDecryptWithId(HybridDecrypt hybridDecrypt, int id) {
+    HybridDecryptWithId(HybridDecrypt hybridDecrypt, int id) {
       this.hybridDecrypt = hybridDecrypt;
       this.id = id;
     }
 
-    public final HybridDecrypt hybridDecrypt;
-    public final int id;
+    final HybridDecrypt hybridDecrypt;
+    final int id;
   }
 
   private static Bytes getOutputPrefix(Key key) throws GeneralSecurityException {
@@ -77,8 +78,10 @@ public class WrappedHybridDecrypt {
     @Override
     public byte[] decrypt(final byte[] ciphertext, final byte[] contextInfo)
         throws GeneralSecurityException {
-      for (HybridDecryptWithId hybridDecryptWithId :
-          allHybridDecrypts.getAllWithMatchingPrefix(ciphertext)) {
+      List<HybridDecryptWithId> matching =
+          allHybridDecrypts.getAllWithMatchingPrefix(ciphertext);
+      for (int i = 0; i < matching.size(); i++) {
+        HybridDecryptWithId hybridDecryptWithId = matching.get(i);
         try {
           byte[] result = hybridDecryptWithId.hybridDecrypt.decrypt(ciphertext, contextInfo);
           decLogger.log(hybridDecryptWithId.id, ciphertext.length);

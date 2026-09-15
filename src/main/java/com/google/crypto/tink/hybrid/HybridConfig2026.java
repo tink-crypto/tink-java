@@ -30,7 +30,6 @@ import com.google.crypto.tink.hybrid.subtle.HpkeDecrypt;
 import com.google.crypto.tink.hybrid.subtle.HpkeEncrypt;
 import com.google.crypto.tink.hybrid.subtle.HpkeProtoSerialization;
 import com.google.crypto.tink.internal.ProtoBasedConfigurationBuilder;
-import java.security.GeneralSecurityException;
 
 /**
  * HybridConfig2026 contains the following algorithms for HybridEncrypt/HybridDecrypt:
@@ -46,12 +45,13 @@ public final class HybridConfig2026 {
   private static final HybridDecryptWrapper HYBRID_DECRYPT_WRAPPER = new HybridDecryptWrapper();
   private static final HybridEncryptWrapper HYBRID_ENCRYPT_WRAPPER = new HybridEncryptWrapper();
   private static final Configuration CONFIGURATION = create();
+  private static final Configuration EMPTY_CONFIGURATION =
+      new ProtoBasedConfigurationBuilder().build();
 
   /** Returns an instance of the {@code HybridConfig2026}. */
-  public static Configuration get() throws GeneralSecurityException {
+  public static Configuration get() {
     if (TinkFipsUtil.useOnlyFips()) {
-      throw new GeneralSecurityException(
-          "Cannot use non-FIPS-compliant HybridConfig2026 in FIPS mode");
+      return EMPTY_CONFIGURATION;
     }
     return CONFIGURATION;
   }

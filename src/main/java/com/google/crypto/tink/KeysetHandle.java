@@ -968,14 +968,33 @@ public final class KeysetHandle implements KeysetHandleInterface {
 
   /**
    * Generates a new {@link KeysetHandle} that contains a single fresh key generated key with the
-   * given {@code Parameters} object.
+   * given {@code Parameters} object, using the {@link RegistryConfiguration}.
+   *
+   * @deprecated This function should be inlined.
+   */
+  @InlineMe(
+      replacement = "KeysetHandle.generateNew(parameters, RegistryConfiguration.get())",
+      imports = {
+        "com.google.crypto.tink.KeysetHandle",
+        "com.google.crypto.tink.RegistryConfiguration"
+      })
+  @Deprecated // This function should be inlined.
+  public static final KeysetHandle generateNew(Parameters parameters)
+      throws GeneralSecurityException {
+    return generateNew(parameters, RegistryConfiguration.get());
+  }
+
+  /**
+   * Generates a new {@link KeysetHandle} that contains a single fresh key generated key with the
+   * given {@code Parameters} object, using the provided {@link Configuration}.
    *
    * @throws GeneralSecurityException if no generation method for the given {@code parameters} has
    *     been registered.
    */
-  public static final KeysetHandle generateNew(Parameters parameters)
+  public static final KeysetHandle generateNew(Parameters parameters, Configuration configuration)
       throws GeneralSecurityException {
     return KeysetHandle.newBuilder()
+        .setConfiguration(configuration)
         .addEntry(KeysetHandle.generateEntryFromParameters(parameters).withRandomId().makePrimary())
         .build();
   }
@@ -994,12 +1013,23 @@ public final class KeysetHandle implements KeysetHandleInterface {
    * <p>If this is not possible, please inline the function in your code.
    *
    * @throws GeneralSecurityException if the key template is invalid.
-   * @deprecated Use the overload taking a Parameters object instead.
+   * @deprecated This function should be inlined.
    */
+  @InlineMe(
+      replacement =
+          "KeysetHandle.generateNew(TinkProtoParametersFormat.parse(keyTemplate.toByteArray(),"
+              + " RegistryConfiguration.get()), RegistryConfiguration.get())",
+      imports = {
+        "com.google.crypto.tink.KeysetHandle",
+        "com.google.crypto.tink.RegistryConfiguration",
+        "com.google.crypto.tink.TinkProtoParametersFormat"
+      })
   @Deprecated
   public static final KeysetHandle generateNew(
       com.google.crypto.tink.proto.KeyTemplate keyTemplate) throws GeneralSecurityException {
-    return generateNew(TinkProtoParametersFormat.parse(keyTemplate.toByteArray()));
+    return generateNew(
+        TinkProtoParametersFormat.parse(keyTemplate.toByteArray(), RegistryConfiguration.get()),
+        RegistryConfiguration.get());
   }
 
   /**
@@ -1010,10 +1040,19 @@ public final class KeysetHandle implements KeysetHandleInterface {
    * generateNew(t)} with {@code generateNew(t.toParameters())}.
    *
    * @throws GeneralSecurityException if the key template is invalid.
+   * @deprecated This function should be inlined.
    */
+  @InlineMe(
+      replacement =
+          "KeysetHandle.generateNew(keyTemplate.toParameters(), RegistryConfiguration.get())",
+      imports = {
+        "com.google.crypto.tink.KeysetHandle",
+        "com.google.crypto.tink.RegistryConfiguration"
+      })
+  @Deprecated // This function should be inlined.
   public static final KeysetHandle generateNew(KeyTemplate keyTemplate)
       throws GeneralSecurityException {
-    return generateNew(keyTemplate.toParameters());
+    return generateNew(keyTemplate.toParameters(), RegistryConfiguration.get());
   }
 
   /**

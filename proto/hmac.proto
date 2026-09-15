@@ -18,11 +18,13 @@ syntax = "proto3";
 
 package google.crypto.tink;
 
+// Placeholder for Tink proto options import.
 import "proto/common.proto";
 
 option java_package = "com.google.crypto.tink.proto";
 option java_multiple_files = true;
 option go_package = "github.com/tink-crypto/tink-go/v2/proto/hmac_go_proto";
+// Placeholder for tink proto custom namespace option.
 
 message HmacParams {
   HashType hash = 1;  // HashType is an enum.
@@ -33,10 +35,12 @@ message HmacParams {
 message HmacKey {
   uint32 version = 1;
   HmacParams params = 2;
-  bytes key_value = 3;  // Placeholder for ctype and debug_redact.
+  bytes key_value = 3;  // Placeholder for ctype, debug_redact and bytes_field_type.
 }
 
 message HmacKeyFormat {
+  // Placeholder for tink proto message_option to generate SerializeAsString.
+
   HmacParams params = 1;
   uint32 key_size = 2;
   uint32 version = 3;

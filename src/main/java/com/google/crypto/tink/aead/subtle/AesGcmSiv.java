@@ -16,15 +16,19 @@
 
 package com.google.crypto.tink.aead.subtle;
 
+import static com.google.crypto.tink.aead.internal.AesGcmSiv.isAesGcmSivCipher;
+
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.aead.AesGcmSivKey;
 import com.google.crypto.tink.aead.AesGcmSivParameters;
 import com.google.crypto.tink.annotations.Alpha;
+import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.subtle.EngineFactory;
 import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
+import java.security.Provider;
 import javax.annotation.Nullable;
 import javax.crypto.Cipher;
 
@@ -41,35 +45,49 @@ import javax.crypto.Cipher;
 @Alpha
 public final class AesGcmSiv implements Aead {
 
-  // localAesGcmSivCipher.get() may be null if the cipher returned by EngineFactory is not a valid
-  // AES GCM SIV cipher.
+  @Nullable
+  private static final Provider conscryptProvider = ConscryptUtil.providerWithReflectionOrNull();
+
+  @Nullable
+  private static Cipher createInitialCipherOrNull() {
+    try {
+      Cipher cipher = EngineFactory.CIPHER.getInstance("AES/GCM-SIV/NoPadding");
+      if (isAesGcmSivCipher(cipher)) {
+        return cipher;
+      }
+    } catch (GeneralSecurityException ex) {
+      // Ignored. We will try reflection next.
+    }
+    if (conscryptProvider != null) {
+      try {
+        Cipher cipher = Cipher.getInstance("AES/GCM-SIV/NoPadding", conscryptProvider);
+        if (isAesGcmSivCipher(cipher)) {
+          return cipher;
+        }
+      } catch (GeneralSecurityException ex) {
+        // Ignored.
+      }
+    }
+    return null;
+  }
+
+  // localAesGcmSivCipher.get() may be null if the cipher returned is not a valid AES GCM SIV
+  // cipher.
   private static final ThreadLocal<Cipher> localAesGcmSivCipher =
       new ThreadLocal<Cipher>() {
         @Nullable
         @Override
         protected Cipher initialValue() {
-          try {
-            Cipher cipher = EngineFactory.CIPHER.getInstance("AES/GCM-SIV/NoPadding");
-            if (!com.google.crypto.tink.aead.internal.AesGcmSiv.isAesGcmSivCipher(cipher)) {
-              return null;
-            }
-            return cipher;
-          } catch (GeneralSecurityException ex) {
-            throw new IllegalStateException(ex);
-          }
+          return createInitialCipherOrNull();
         }
       };
 
   private static Cipher cipherSupplier() throws GeneralSecurityException {
-    try {
-      Cipher cipher = localAesGcmSivCipher.get();
-      if (cipher == null) {
-        throw new GeneralSecurityException("AES GCM SIV cipher is invalid.");
-      }
-      return cipher;
-    } catch (IllegalStateException ex) {
-      throw new GeneralSecurityException("AES GCM SIV cipher is not available or is invalid.", ex);
+    Cipher cipher = localAesGcmSivCipher.get();
+    if (cipher == null) {
+      throw new GeneralSecurityException("AES GCM SIV cipher is not available or is invalid.");
     }
+    return cipher;
   }
 
   private final Aead aead;

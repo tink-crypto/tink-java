@@ -28,7 +28,6 @@ import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.TinkProtoParametersFormat;
-import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.signature.internal.CompositeMlDsaVerifyConscrypt;
 import com.google.crypto.tink.signature.internal.testing.CompositeMlDsaTestUtil;
@@ -39,7 +38,6 @@ import com.google.crypto.tink.signature.internal.testing.RsaSsaPkcs1TestUtil;
 import com.google.crypto.tink.signature.internal.testing.RsaSsaPssTestUtil;
 import com.google.crypto.tink.signature.internal.testing.SlhDsaTestUtil;
 import java.security.GeneralSecurityException;
-import javax.annotation.Nullable;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -57,7 +55,10 @@ public class SignatureConfig2026Test {
       RsaSsaPssTestUtil.createRsaPssTestVectors()[0].getPrivateKey(),
       RsaSsaPkcs1TestUtil.createRsaSsaPkcs1TestVectors()[0].getPrivateKey(),
       Ed25519TestUtil.createEd25519TestVectors()[0].getPrivateKey(),
-      MlDsaTestUtil.createMlDsa65ValidSignatureTestVectors().findFirst().get().getPrivateKey(),
+      MlDsaTestUtil.getMlDsaValidSignatureTestVector(
+              MlDsaParameters.create(
+                  MlDsaParameters.MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.NO_PREFIX))
+          .getPrivateKey(),
       SlhDsaTestUtil.createSlhDsaValidSignatureTestVectors().findFirst().get().getPrivateKey(),
       createCompositeMlDsaKey(),
     };
@@ -103,24 +104,10 @@ public class SignatureConfig2026Test {
     return true;
   }
 
-  @Test
-  public void get_throwsInFipsMode() throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      assertThrows(GeneralSecurityException.class, SignatureConfig2026::get);
-    }
-  }
 
   @Theory
   public void getPrimitive_signVerify_works(@FromDataPoints("keys") SignaturePrivateKey key)
       throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
-    @Nullable Integer apiLevel = Util.getAndroidApiLevel();
-    if (apiLevel != null && apiLevel == 19) {
-      // Android API 19 is slower than the others in this.
-      return;
-    }
 
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
     if (key.getIdRequirementOrNull() == null) {
@@ -154,9 +141,6 @@ public class SignatureConfig2026Test {
   @Theory
   public void serializeAndParsePrivateKey_works(@FromDataPoints("keys") SignaturePrivateKey key)
       throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
     if (key.getIdRequirementOrNull() == null) {
       entry.withRandomId();
@@ -177,9 +161,6 @@ public class SignatureConfig2026Test {
   @Theory
   public void serializeAndParsePublicKey_works(@FromDataPoints("keys") SignaturePrivateKey key)
       throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     SignaturePublicKey publicKey = key.getPublicKey();
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(publicKey).makePrimary();
     if (publicKey.getIdRequirementOrNull() == null) {
@@ -199,9 +180,6 @@ public class SignatureConfig2026Test {
   @Theory
   public void serializeAndParseParameters_works(@FromDataPoints("keys") SignaturePrivateKey key)
       throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     Parameters parameters = key.getParameters();
     Configuration config = SignatureConfig2026.get();
     byte[] serialized = TinkProtoParametersFormat.serialize(parameters, config);
@@ -213,32 +191,20 @@ public class SignatureConfig2026Test {
   @Theory
   public void createKey_works(@FromDataPoints("keys") SignaturePrivateKey key) throws Exception {
     Configuration config = SignatureConfig2026.get();
-    if ((key.getParameters().getClass() != EcdsaParameters.class
-            && key.getParameters().getClass() != CompositeMlDsaParameters.class)
-        || !shouldBeSupported(key)) {
+    if (!shouldBeSupported(key)) {
       assertThrows(
           GeneralSecurityException.class,
-          () -> config.createKey(key.getParameters(), key.getIdRequirementOrNull()));
+          () -> KeysetHandle.generateNew(key.getParameters(), config));
       return;
     }
 
-    KeysetHandle handle =
-        KeysetHandle.newBuilder()
-            .addEntry(
-                KeysetHandle.generateEntryFromParameters(key.getParameters())
-                    .withFixedId(42)
-                    .makePrimary())
-            .setConfiguration(config)
-            .build();
+    KeysetHandle handle = KeysetHandle.generateNew(key.getParameters(), config);
 
     assertThat(handle.getPrimary().getKey().getParameters()).isEqualTo(key.getParameters());
   }
 
   @Test
   public void getOrNull_unsupportedClass_returnsNull() throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      return;
-    }
     assertThat(SignatureConfig2026.get().getOrNull(String.class)).isNull();
   }
 }

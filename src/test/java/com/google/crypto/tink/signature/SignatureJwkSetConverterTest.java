@@ -37,6 +37,7 @@ import com.google.gson.JsonObject;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.spec.ECPoint;
+import java.util.Arrays;
 import java.util.stream.Stream;
 import org.junit.Assume;
 import org.junit.BeforeClass;
@@ -232,7 +233,8 @@ public final class SignatureJwkSetConverterTest {
   public void testImportMismatchedHashCurveThrows() throws Exception {
     // alg is ES256 (implies SHA256), but crv is P-384
     String mismatchedJwkSet =
-        "{\"keys\": [{\"kty\": \"EC\", \"alg\": \"ES256\", \"crv\": \"P-384\", \"x\": \"fake\", \"y\": \"fake\"}]}";
+        "{\"keys\": [{\"kty\": \"EC\", \"alg\": \"ES256\", \"crv\": \"P-384\", \"x\": \"fake\","
+            + " \"y\": \"fake\"}]}";
     assertThrows(
         GeneralSecurityException.class,
         () -> SignatureJwkSetConverter.toPublicKeysetHandle(mismatchedJwkSet));
@@ -353,14 +355,13 @@ public final class SignatureJwkSetConverterTest {
 
   @DataPoints("signatureTests")
   public static final SignatureTestVector[] signatureTestVectors =
-      Stream.concat(
-              Stream.concat(
-                  Stream.concat(
-                      stream(EcdsaTestUtil.createEcdsaTestVectors()),
-                      stream(RsaSsaPssTestUtil.createRsaPssTestVectors())),
-                  stream(RsaSsaPkcs1TestUtil.createRsaSsaPkcs1TestVectors())),
-              stream(Ed25519TestUtil.createEd25519TestVectors()))
-          .toArray(SignatureTestVector[]::new);
+      Stream.of(
+          stream(EcdsaTestUtil.createEcdsaTestVectors()),
+          stream(RsaSsaPssTestUtil.createRsaPssTestVectors()),
+          stream(RsaSsaPkcs1TestUtil.createRsaSsaPkcs1TestVectors()),
+          stream(Ed25519TestUtil.createEd25519TestVectors()))
+      .flatMap(s -> s)
+      .toArray(SignatureTestVector[]::new);
 
   private static final String ES256_JWK_SET =
       "{\"keys\":[{"
@@ -441,8 +442,7 @@ public final class SignatureJwkSetConverterTest {
           + "BbkjLaiWvNxNFBTap2IaBLKAni6x7pqYCeu1n9eMUi41oz9QM8xfOvpH-wubc2PjwyTsb1FDTLnhV36tQLTVGd"
           + "QdCDMF2Z8Agrnio3n1SFjSbYgFyVtpCwFKM2Z0zfO7k9jVbYYkzglzkJfp_lQrsuWqe4CVJjFE1H4BxcU7L0j8"
           + "755kGJI08h1b7LPgqJcPgtHjcqbxHFU2yOf7mNGlW7YTnoQBO0StzQUk7kEw3X0-niEwX_L8jqW4YMbxrGdAfk"
-          + "TnP\","
-          + "\"e\":\"AQAB\",\"use\":\"sig\",\"alg\":\"PS384\",\"key_ops\":[\"verify\"]}]}";
+          + "TnP\",\"e\":\"AQAB\",\"use\":\"sig\",\"alg\":\"PS384\",\"key_ops\":[\"verify\"]}]}";
 
   private static final String PS512_JWK_SET =
       "{\"keys\":[{\"kty\":\"RSA\","
@@ -796,5 +796,198 @@ public final class SignatureJwkSetConverterTest {
     return KeysetHandle.newBuilder()
         .addEntry(KeysetHandle.importKey(key).withFixedId(123).makePrimary())
         .build();
+  }
+
+  private static String makeEs256Jwk(String x, String y) {
+    return "{\"keys\":[{\"kty\":\"EC\",\"crv\":\"P-256\",\"alg\":\"ES256\",\"use\":\"sig\","
+        + "\"key_ops\":[\"verify\"],\"x\":\""
+        + x
+        + "\",\"y\":\""
+        + y
+        + "\"}]}";
+  }
+
+  // Canonical P-256 coordinates whose x-coordinate has a leading 0x00 byte (32 bytes when decoded).
+  private static final String CANONICAL_X = "AGlFjtbwLgtzRDh7dV9sYmW4IWl3ZKA-WghvrQPiCNo";
+  private static final String CANONICAL_Y = "QnylBczID8nLBoZZP4geZbG5Vhap3GQ-xRIcuFJCbnU";
+
+  @Test
+  public void toPublicKeysetHandle_canonicalCoordinates_success() throws Exception {
+    KeysetHandle handle =
+        SignatureJwkSetConverter.toPublicKeysetHandle(makeEs256Jwk(CANONICAL_X, CANONICAL_Y));
+    assertThat(handle.size()).isEqualTo(1);
+    String exported = SignatureJwkSetConverter.fromPublicKeysetHandle(handle);
+    JsonObject jsonKey =
+        JsonParser.parse(exported)
+            .getAsJsonObject()
+            .get("keys")
+            .getAsJsonArray()
+            .get(0)
+            .getAsJsonObject();
+    assertThat(jsonKey.get("x").getAsString()).isEqualTo(CANONICAL_X);
+    assertThat(jsonKey.get("y").getAsString()).isEqualTo(CANONICAL_Y);
+  }
+
+  @Test
+  public void toPublicKeysetHandle_strippedLeadingXZeroCoordinate_rejected() throws Exception {
+    // RFC 7518 §6.2.1.2 mandates that coordinate octet sequences MUST be the full size of an
+    // x-coordinate for the curve (32 octets for P-256). Must reject a 31-byte x-coordinate.
+    byte[] rawX = Base64.urlSafeDecode(CANONICAL_X);
+    assertThat(rawX).hasLength(32);
+    assertThat(rawX[0]).isEqualTo((byte) 0);
+
+    byte[] x31 = Arrays.copyOfRange(rawX, 1, rawX.length);
+    String x31B64 = Base64.urlSafeEncode(x31);
+
+    GeneralSecurityException e =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> SignatureJwkSetConverter.toPublicKeysetHandle(makeEs256Jwk(x31B64, CANONICAL_Y)));
+    assertThat(e).hasMessageThat().contains("invalid length of x");
+  }
+
+  @Test
+  public void toPublicKeysetHandle_extraLeadingXZeroCoordinate_rejected() throws Exception {
+    // Extra leading 0x00 byte yields 33 bytes for P-256.
+    // RFC 7518 §6.2.1.2 requires exactly 32 octets. Must reject a 33-byte x-coordinate.
+    byte[] rawX = Base64.urlSafeDecode(CANONICAL_X);
+    assertThat(rawX).hasLength(32);
+
+    byte[] x33 = new byte[33];
+    System.arraycopy(rawX, 0, x33, 1, rawX.length);
+    String x33B64 = Base64.urlSafeEncode(x33);
+
+    GeneralSecurityException e =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> SignatureJwkSetConverter.toPublicKeysetHandle(makeEs256Jwk(x33B64, CANONICAL_Y)));
+    assertThat(e).hasMessageThat().contains("invalid length of x");
+  }
+
+  @Test
+  public void toPublicKeysetHandle_strippedLeadingYZeroCoordinate_rejected() throws Exception {
+    // RFC 7518 §6.2.1.3 mandates that y-coordinate octet sequences MUST be the full size of a
+    // y-coordinate for the curve (32 octets for P-256). Must reject a 31-byte y-coordinate.
+    byte[] rawY = Base64.urlSafeDecode(CANONICAL_Y);
+    assertThat(rawY).hasLength(32);
+
+    byte[] y31 = Arrays.copyOfRange(rawY, 1, rawY.length);
+    String y31B64 = Base64.urlSafeEncode(y31);
+
+    GeneralSecurityException e =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> SignatureJwkSetConverter.toPublicKeysetHandle(makeEs256Jwk(CANONICAL_X, y31B64)));
+    assertThat(e).hasMessageThat().contains("invalid length of y");
+  }
+
+  @Test
+  public void toPublicKeysetHandle_extraLeadingYZeroCoordinate_rejected() throws Exception {
+    // Extra leading 0x00 byte yields 33 bytes for P-256.
+    // RFC 7518 §6.2.1.3 requires exactly 32 octets. Must reject a 33-byte y-coordinate.
+    byte[] rawY = Base64.urlSafeDecode(CANONICAL_Y);
+    assertThat(rawY).hasLength(32);
+
+    byte[] y33 = new byte[33];
+    System.arraycopy(rawY, 0, y33, 1, rawY.length);
+    String y33B64 = Base64.urlSafeEncode(y33);
+
+    GeneralSecurityException e =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> SignatureJwkSetConverter.toPublicKeysetHandle(makeEs256Jwk(CANONICAL_X, y33B64)));
+    assertThat(e).hasMessageThat().contains("invalid length of y");
+  }
+
+  @Test
+  public void toPublicKeysetHandle_missingOrInvalidKeysArray_throwsGeneralSecurityException()
+      throws Exception {
+    GeneralSecurityException e1 =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> SignatureJwkSetConverter.toPublicKeysetHandle("{}"));
+    assertThat(e1).hasMessageThat().contains("JWK set must contain a 'keys' array");
+
+    GeneralSecurityException e2 =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> SignatureJwkSetConverter.toPublicKeysetHandle("{\"a\":1}"));
+    assertThat(e2).hasMessageThat().contains("JWK set must contain a 'keys' array");
+
+    GeneralSecurityException e3 =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> SignatureJwkSetConverter.toPublicKeysetHandle("{\"keys\":\"x\"}"));
+    assertThat(e3).hasMessageThat().contains("JWK set must contain a 'keys' array");
+
+    GeneralSecurityException e4 =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> SignatureJwkSetConverter.toPublicKeysetHandle("{\"keys\":{}}"));
+    assertThat(e4).hasMessageThat().contains("JWK set must contain a 'keys' array");
+  }
+
+  @Test
+  public void toPublicKeysetHandle_keyEntryNotJsonObject_throwsGeneralSecurityException()
+      throws Exception {
+    GeneralSecurityException e1 =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> SignatureJwkSetConverter.toPublicKeysetHandle("{\"keys\":[\"x\"]}"));
+    assertThat(e1).hasMessageThat().contains("JWK set entry is not a JSON object");
+
+    GeneralSecurityException e2 =
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> SignatureJwkSetConverter.toPublicKeysetHandle("{\"keys\":[[]]}"));
+    assertThat(e2).hasMessageThat().contains("JWK set entry is not a JSON object");
+  }
+
+  @Test
+  public void toPublicKeysetHandle_ecdsaPrivateKey_throwsGeneralSecurityException()
+      throws Exception {
+    GeneralSecurityException e =
+        assertThrows(
+            GeneralSecurityException.class,
+            () ->
+                SignatureJwkSetConverter.toPublicKeysetHandle(
+                    "{\"keys\":[{\"alg\":\"ES256\",\"kty\":\"EC\",\"crv\":\"P-256\",\"d\":\"AAAA\"}]}"));
+    assertThat(e).hasMessageThat().contains("importing ECDSA private keys is not implemented");
+  }
+
+  @Test
+  public void toPublicKeysetHandle_rsaPrivateKey_throwsGeneralSecurityException()
+      throws Exception {
+    GeneralSecurityException e =
+        assertThrows(
+            GeneralSecurityException.class,
+            () ->
+                SignatureJwkSetConverter.toPublicKeysetHandle(
+                    "{\"keys\":[{\"alg\":\"RS256\",\"kty\":\"RSA\",\"n\":\"AAAA\",\"e\":\"AQAB\",\"d\":\"AAAA\"}]}"));
+    assertThat(e).hasMessageThat().contains("importing RSA private keys is not implemented");
+  }
+
+  @Test
+  public void toPublicKeysetHandle_eddsaPrivateKey_throwsGeneralSecurityException()
+      throws Exception {
+    GeneralSecurityException e =
+        assertThrows(
+            GeneralSecurityException.class,
+            () ->
+                SignatureJwkSetConverter.toPublicKeysetHandle(
+                    "{\"keys\":[{\"alg\":\"EdDSA\",\"kty\":\"OKP\",\"crv\":\"Ed25519\",\"d\":\"AAAA\"}]}"));
+    assertThat(e).hasMessageThat().contains("importing EdDSA private keys is not implemented");
+  }
+
+  @Test
+  public void toPublicKeysetHandle_badBase64InKey_throwsGeneralSecurityException()
+      throws Exception {
+    GeneralSecurityException e =
+        assertThrows(
+            GeneralSecurityException.class,
+            () ->
+                SignatureJwkSetConverter.toPublicKeysetHandle(
+                    "{\"keys\":[{\"alg\":\"EdDSA\",\"kty\":\"OKP\",\"crv\":\"Ed25519\",\"x\":\"A\"}]}"));
+    assertThat(e).hasMessageThat().contains("invalid JWK key entry");
   }
 }

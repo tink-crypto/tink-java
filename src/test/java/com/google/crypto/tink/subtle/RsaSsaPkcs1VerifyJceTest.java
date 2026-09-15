@@ -27,9 +27,6 @@ import com.google.crypto.tink.signature.RsaSsaPkcs1PublicKey;
 import com.google.crypto.tink.signature.internal.testing.RsaSsaPkcs1TestUtil;
 import com.google.crypto.tink.signature.internal.testing.SignatureTestVector;
 import com.google.crypto.tink.subtle.Enums.HashType;
-import com.google.crypto.tink.testing.WycheproofTestUtil;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
@@ -37,7 +34,6 @@ import java.security.Provider;
 import java.security.Security;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPublicKeySpec;
-import java.util.ArrayList;
 import org.conscrypt.Conscrypt;
 import org.junit.Assume;
 import org.junit.Test;
@@ -132,95 +128,6 @@ public class RsaSsaPkcs1VerifyJceTest {
         GeneralSecurityException.class, () -> new RsaSsaPkcs1VerifyJce(publicKey, HashType.SHA256));
   }
 
-  private static RsaSsaPkcs1Parameters.HashType getHashType(String sha) {
-    switch (sha) {
-      case "SHA-256":
-        return RsaSsaPkcs1Parameters.HashType.SHA256;
-      case "SHA-384":
-        return RsaSsaPkcs1Parameters.HashType.SHA384;
-      case "SHA-512":
-        return RsaSsaPkcs1Parameters.HashType.SHA512;
-      default:
-        throw new IllegalArgumentException("Unsupported hash: " + sha);
-    }
-  }
-
-  @DataPoints("wycheproofTestVectorPaths")
-  public static final String[] wycheproofTestVectorPaths =
-      new String[] {
-        "third_party/wycheproof/testvectors_v1/rsa_signature_2048_sha256_test.json",
-        "third_party/wycheproof/testvectors_v1/rsa_signature_2048_sha384_test.json",
-        "third_party/wycheproof/testvectors_v1/rsa_signature_2048_sha512_test.json",
-        "third_party/wycheproof/testvectors_v1/rsa_signature_3072_sha256_test.json",
-        "third_party/wycheproof/testvectors_v1/rsa_signature_3072_sha384_test.json",
-        "third_party/wycheproof/testvectors_v1/rsa_signature_3072_sha512_test.json",
-        "third_party/wycheproof/testvectors_v1/rsa_signature_4096_sha384_test.json",
-        "third_party/wycheproof/testvectors_v1/rsa_signature_4096_sha512_test.json"
-      };
-
-  @AccessesPartialKey
-  @Theory
-  public void wycheproofVectors(@FromDataPoints("wycheproofTestVectorPaths") String path)
-      throws Exception {
-    JsonObject jsonObj = WycheproofTestUtil.readJson(path);
-
-    ArrayList<String> errors = new ArrayList<>();
-    JsonArray testGroups = jsonObj.getAsJsonArray("testGroups");
-    for (int i = 0; i < testGroups.size(); i++) {
-      JsonObject group = testGroups.get(i).getAsJsonObject();
-      JsonObject publicKeyData = group.get("publicKey").getAsJsonObject();
-      BigInteger modulus = new BigInteger(publicKeyData.get("modulus").getAsString(), 16);
-      BigInteger exponent =
-          new BigInteger(1, Hex.decode(publicKeyData.get("publicExponent").getAsString()));
-      RsaSsaPkcs1Parameters.HashType hashType = getHashType(group.get("sha").getAsString());
-      JsonArray tests = group.getAsJsonArray("tests");
-      for (int j = 0; j < tests.size(); j++) {
-        JsonObject testcase = tests.get(j).getAsJsonObject();
-        // Do not perform the Wycheproof test if the RSA public exponent is small.
-        if (WycheproofTestUtil.checkFlags(testcase, "SmallPublicKey")) {
-          continue;
-        }
-        String tcId =
-            String.format(
-                "testcase %d (%s)",
-                testcase.get("tcId").getAsInt(), testcase.get("comment").getAsString());
-        RsaSsaPkcs1Parameters parameters =
-            RsaSsaPkcs1Parameters.builder()
-                .setModulusSizeBits(modulus.bitLength())
-                .setPublicExponent(exponent)
-                .setHashType(hashType)
-                .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
-                .build();
-        RsaSsaPkcs1PublicKey publicKey =
-            RsaSsaPkcs1PublicKey.builder().setParameters(parameters).setModulus(modulus).build();
-        PublicKeyVerify verifier = RsaSsaPkcs1VerifyJce.create(publicKey);
-        byte[] msg = getMessage(testcase);
-        byte[] sig = Hex.decode(testcase.get("sig").getAsString());
-        String result = testcase.get("result").getAsString();
-        try {
-          verifier.verify(sig, msg);
-          if (result.equals("invalid")) {
-            errors.add("FAIL " + tcId + ": accepting invalid signature");
-          }
-        } catch (GeneralSecurityException ex) {
-          if (result.equals("valid")) {
-            errors.add("FAIL " + tcId + ": rejecting valid signature, exception: " + ex);
-          }
-        }
-      }
-    }
-    assertThat(errors).isEmpty();
-  }
-
-  private static byte[] getMessage(JsonObject testcase) {
-    // Previous version of Wycheproof test vectors uses "message" while the new one uses "msg".
-    if (testcase.has("msg")) {
-      return Hex.decode(testcase.get("msg").getAsString());
-    } else {
-      return Hex.decode(testcase.get("message").getAsString());
-    }
-  }
-
   @Test
   public void usesConscryptImplementationIfInstalled() throws Exception {
     Assume.assumeFalse(Util.isAndroid());
@@ -228,10 +135,9 @@ public class RsaSsaPkcs1VerifyJceTest {
 
     RsaSsaPkcs1PublicKey testPublicKey =
         (RsaSsaPkcs1PublicKey) allTestVectors[0].getPrivateKey().getPublicKey();
-
-    // Conscrypt is not installed, so InternalJavaImpl is used.
+    // Conscrypt is not installed, so RsaSsaPkcs1PureJava is used.
     PublicKeyVerify verifier = RsaSsaPkcs1VerifyJce.create(testPublicKey);
-    assertThat(verifier.getClass().getSimpleName()).isEqualTo("InternalJavaImpl");
+    assertThat(verifier.getClass().getSimpleName()).isEqualTo("RsaSsaPkcs1PureJava");
 
     Provider conscrypt = Conscrypt.newProvider();
     Security.addProvider(conscrypt);

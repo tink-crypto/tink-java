@@ -31,17 +31,18 @@ import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.mac.MacKey;
 import com.google.crypto.tink.util.Bytes;
 import java.security.GeneralSecurityException;
+import java.util.List;
 
 /** An implementation of an {@link Mac} based on a {@link KeysetHandleInterface}. */
 public final class WrappedMac {
   private static class MacWithId {
-    public MacWithId(Mac mac, int id) {
+    MacWithId(Mac mac, int id) {
       this.mac = mac;
       this.id = id;
     }
 
-    public final Mac mac;
-    public final int id;
+    final Mac mac;
+    final int id;
   }
 
   private static Bytes getOutputPrefix(Key key) throws GeneralSecurityException {
@@ -89,7 +90,9 @@ public final class WrappedMac {
 
     @Override
     public void verifyMac(final byte[] mac, final byte[] data) throws GeneralSecurityException {
-      for (MacWithId macWithId : allMacs.getAllWithMatchingPrefix(mac)) {
+      List<MacWithId> matching = allMacs.getAllWithMatchingPrefix(mac);
+      for (int i = 0; i < matching.size(); i++) {
+        MacWithId macWithId = matching.get(i);
         try {
           macWithId.mac.verifyMac(mac, data);
           verifyLogger.log(macWithId.id, data.length);

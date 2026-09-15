@@ -90,11 +90,10 @@ public class StreamingAeadConfig2026Test {
     if (TinkFipsUtil.useOnlyFips()) {
       return;
     }
-    Key createdKey =
-        StreamingAeadConfig2026.get().createKey(key.getParameters(), key.getIdRequirementOrNull());
+    KeysetHandle handle =
+        KeysetHandle.generateNew(key.getParameters(), StreamingAeadConfig2026.get());
 
-    assertThat(createdKey.getParameters()).isEqualTo(key.getParameters());
-    assertThat(createdKey.getIdRequirementOrNull()).isEqualTo(key.getIdRequirementOrNull());
+    assertThat(handle.getPrimary().getKey().getParameters()).isEqualTo(key.getParameters());
   }
 
   @Theory
@@ -195,9 +194,7 @@ public class StreamingAeadConfig2026Test {
   }
 
   @Test
-  public void get_throwsInFipsMode() throws Exception {
-    if (TinkFipsUtil.useOnlyFips()) {
-      assertThrows(GeneralSecurityException.class, StreamingAeadConfig2026::get);
-    }
+  public void get_isNotNull() throws Exception {
+    assertThat(StreamingAeadConfig2026.get()).isNotNull();
   }
 }

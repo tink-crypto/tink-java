@@ -245,6 +245,7 @@ java_library(
         "//src/main/java/com/google/crypto/tink/internal:mutable_serialization_registry",
         "//src/main/java/com/google/crypto/tink/internal:parameters_parser",
         "//src/main/java/com/google/crypto/tink/internal:parameters_serializer",
+        "//src/main/java/com/google/crypto/tink/internal:serialization_registry",
     ],
 )
 
@@ -544,6 +545,7 @@ android_library(
         "//src/main/java/com/google/crypto/tink/internal:mutable_serialization_registry-android",
         "//src/main/java/com/google/crypto/tink/internal:parameters_parser-android",
         "//src/main/java/com/google/crypto/tink/internal:parameters_serializer-android",
+        "//src/main/java/com/google/crypto/tink/internal:serialization_registry-android",
     ],
 )
 
@@ -606,6 +608,7 @@ android_library(
     srcs = ["PredefinedHybridParameters.java"],
     deps = [
         ":ecies_parameters-android",
+        ":hpke_parameters-android",
         "//src/main/java/com/google/crypto/tink/aead:aes_ctr_hmac_aead_parameters-android",
         "//src/main/java/com/google/crypto/tink/aead:aes_gcm_parameters-android",
         "//src/main/java/com/google/crypto/tink/internal:tink_bug_exception-android",
@@ -617,6 +620,7 @@ java_library(
     srcs = ["PredefinedHybridParameters.java"],
     deps = [
         ":ecies_parameters",
+        ":hpke_parameters",
         "//src/main/java/com/google/crypto/tink/aead:aes_ctr_hmac_aead_parameters",
         "//src/main/java/com/google/crypto/tink/aead:aes_gcm_parameters",
         "//src/main/java/com/google/crypto/tink/internal:tink_bug_exception",
@@ -672,52 +676,6 @@ java_library(
         "//src/main/java/com/google/crypto/tink/internal:mutable_serialization_registry",
         "//src/main/java/com/google/crypto/tink/subtle:ecies_aead_hkdf_hybrid_decrypt",
         "//src/main/java/com/google/crypto/tink/subtle:ecies_aead_hkdf_hybrid_encrypt",
-    ],
-)
-
-java_library(
-    name = "hybrid_configuration_v1",
-    srcs = ["HybridConfigurationV1.java"],
-    deps = [
-        ":ecies_private_key",
-        ":ecies_public_key",
-        ":hpke_private_key",
-        ":hpke_public_key",
-        ":hybrid_decrypt_wrapper",
-        ":hybrid_encrypt_wrapper",
-        "//src/main/java/com/google/crypto/tink:configuration",
-        "//src/main/java/com/google/crypto/tink:hybrid_decrypt",
-        "//src/main/java/com/google/crypto/tink:hybrid_encrypt",
-        "//src/main/java/com/google/crypto/tink:key",
-        "//src/main/java/com/google/crypto/tink:keyset_handle_interface",
-        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
-        "//src/main/java/com/google/crypto/tink/hybrid/internal:hpke_decrypt",
-        "//src/main/java/com/google/crypto/tink/hybrid/internal:hpke_encrypt",
-        "//src/main/java/com/google/crypto/tink/subtle:ecies_aead_hkdf_hybrid_decrypt",
-        "//src/main/java/com/google/crypto/tink/subtle:ecies_aead_hkdf_hybrid_encrypt",
-    ],
-)
-
-android_library(
-    name = "hybrid_configuration_v1-android",
-    srcs = ["HybridConfigurationV1.java"],
-    deps = [
-        ":ecies_private_key-android",
-        ":ecies_public_key-android",
-        ":hpke_private_key-android",
-        ":hpke_public_key-android",
-        ":hybrid_decrypt_wrapper-android",
-        ":hybrid_encrypt_wrapper-android",
-        "//src/main/java/com/google/crypto/tink:configuration-android",
-        "//src/main/java/com/google/crypto/tink:hybrid_decrypt-android",
-        "//src/main/java/com/google/crypto/tink:hybrid_encrypt-android",
-        "//src/main/java/com/google/crypto/tink:key-android",
-        "//src/main/java/com/google/crypto/tink:keyset_handle_interface-android",
-        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util-android",
-        "//src/main/java/com/google/crypto/tink/hybrid/internal:hpke_decrypt-android",
-        "//src/main/java/com/google/crypto/tink/hybrid/internal:hpke_encrypt-android",
-        "//src/main/java/com/google/crypto/tink/subtle:ecies_aead_hkdf_hybrid_decrypt-android",
-        "//src/main/java/com/google/crypto/tink/subtle:ecies_aead_hkdf_hybrid_encrypt-android",
     ],
 )
 
