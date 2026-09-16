@@ -19,20 +19,21 @@ package com.google.crypto.tink.signature;
 import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
-import com.google.crypto.tink.KeysetHandleInterface;
+import com.google.crypto.tink.LowLevelCryptoCaller;
+import com.google.crypto.tink.ProtoKeySerializer;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.LegacyProtoKey;
-import com.google.crypto.tink.internal.MutableSerializationRegistry;
-import com.google.crypto.tink.subtle.EcdsaSignJce;
-import com.google.crypto.tink.subtle.EcdsaVerifyJce;
-import com.google.crypto.tink.subtle.Ed25519Sign;
-import com.google.crypto.tink.subtle.Ed25519Verify;
-import com.google.crypto.tink.subtle.RsaSsaPkcs1SignJce;
-import com.google.crypto.tink.subtle.RsaSsaPkcs1VerifyJce;
-import com.google.crypto.tink.subtle.RsaSsaPssSignJce;
-import com.google.crypto.tink.subtle.RsaSsaPssVerifyJce;
+import com.google.crypto.tink.internal.ProtoBasedConfigurationBuilder;
+import com.google.crypto.tink.signature.subtle.EcdsaSigner;
+import com.google.crypto.tink.signature.subtle.EcdsaVerifier;
+import com.google.crypto.tink.signature.subtle.Ed25519Signer;
+import com.google.crypto.tink.signature.subtle.Ed25519Verifier;
+import com.google.crypto.tink.signature.subtle.RsaSsaPkcs1Signer;
+import com.google.crypto.tink.signature.subtle.RsaSsaPkcs1Verifier;
+import com.google.crypto.tink.signature.subtle.RsaSsaPssSigner;
+import com.google.crypto.tink.signature.subtle.RsaSsaPssVerifier;
 import java.security.GeneralSecurityException;
 
 /**
@@ -48,31 +49,7 @@ import java.security.GeneralSecurityException;
 /* Placeholder for internally public; DO NOT CHANGE. */ class SignatureConfigurationV0 {
   private SignatureConfigurationV0() {}
 
-  private static final PublicKeySignWrapper PUBLIC_KEY_SIGN_WRAPPER = new PublicKeySignWrapper();
-  private static final PublicKeyVerifyWrapper PUBLIC_KEY_VERIFY_WRAPPER =
-      new PublicKeyVerifyWrapper();
   private static final Configuration CONFIGURATION = create();
-
-  private static Configuration create() {
-    return new Configuration() {
-      @Override
-      public <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
-          throws GeneralSecurityException {
-        if (clazz == PublicKeySign.class) {
-          return clazz.cast(
-              PUBLIC_KEY_SIGN_WRAPPER.wrap(
-                  keysetHandle, SignatureConfigurationV0::createPublicKeySign));
-        }
-        if (clazz == PublicKeyVerify.class) {
-          return clazz.cast(
-              PUBLIC_KEY_VERIFY_WRAPPER.wrap(
-                  keysetHandle, SignatureConfigurationV0::createPublicKeyVerify));
-        }
-        throw new GeneralSecurityException(
-            "SignatureConfigurationV0 can only create PublicKeySign and PublicKeyVerify");
-      }
-    };
-  }
 
   /** Returns an instance of the {@code SignatureConfigurationV0}. */
   public static Configuration get() throws GeneralSecurityException {
@@ -83,55 +60,70 @@ import java.security.GeneralSecurityException;
     return CONFIGURATION;
   }
 
-  private static PublicKeySign createPublicKeySign(KeysetHandleInterface.Entry entry)
-      throws GeneralSecurityException {
-    Key key = entry.getKey();
-    if (key instanceof LegacyProtoKey) {
-      Key reparsedKey =
-          MutableSerializationRegistry.globalInstance()
-              .parseKey(
-                  ((LegacyProtoKey) key).getSerialization(InsecureSecretKeyAccess.get()),
-                  InsecureSecretKeyAccess.get());
-      key = reparsedKey;
-    }
-    if (key instanceof EcdsaPrivateKey) {
-      return EcdsaSignJce.create((EcdsaPrivateKey) key);
-    }
-    if (key instanceof RsaSsaPssPrivateKey) {
-      return RsaSsaPssSignJce.create((RsaSsaPssPrivateKey) key);
-    }
-    if (key instanceof RsaSsaPkcs1PrivateKey) {
-      return RsaSsaPkcs1SignJce.create((RsaSsaPkcs1PrivateKey) key);
-    }
-    if (key instanceof Ed25519PrivateKey) {
-      return Ed25519Sign.create((Ed25519PrivateKey) key);
-    }
-    throw new GeneralSecurityException("Unknown key class: " + key.getClass());
+  @LowLevelCryptoCaller
+  private static Configuration create() {
+    // The SignatureConfigurationV0 is the same as the SignatureConfig, but if a key has been
+    // parsed as a LegacyProtoKey (which happens if we use the RegistryConfig and the corresponding
+    // algorithm was not registered), we try to parse it again.
+    return new ProtoBasedConfigurationBuilder()
+        .mergeProtoBasedConfiguration(SignatureConfig2026.get())
+        .addPrimitiveConstructor(
+            SignatureConfigurationV0::createPublicKeySignFromLegacyProtoKey,
+            LegacyProtoKey.class,
+            PublicKeySign.class)
+        .addPrimitiveConstructor(
+            SignatureConfigurationV0::createPublicKeyVerifyFromLegacyProtoKey,
+            LegacyProtoKey.class,
+            PublicKeyVerify.class)
+        .build();
   }
 
-  private static PublicKeyVerify createPublicKeyVerify(KeysetHandleInterface.Entry entry)
+  @LowLevelCryptoCaller
+  private static Key reparseKey(LegacyProtoKey key) throws GeneralSecurityException {
+    ProtoKeySerializer protoKeySerializer = get().getOrNull(ProtoKeySerializer.class);
+    if (protoKeySerializer == null) {
+      throw new GeneralSecurityException(
+          "Unexpected: CONFIGURATION does not support Proto Serialization");
+    }
+    return protoKeySerializer.parseKey(
+        key.getSerialization(InsecureSecretKeyAccess.get()), InsecureSecretKeyAccess.get());
+  }
+
+  @LowLevelCryptoCaller
+  private static PublicKeySign createPublicKeySignFromLegacyProtoKey(LegacyProtoKey key)
       throws GeneralSecurityException {
-    Key key = entry.getKey();
-    if (key instanceof LegacyProtoKey) {
-      Key reparsedKey =
-          MutableSerializationRegistry.globalInstance()
-              .parseKey(
-                  ((LegacyProtoKey) key).getSerialization(InsecureSecretKeyAccess.get()),
-                  InsecureSecretKeyAccess.get());
-      key = reparsedKey;
+    Key reparsedKey = reparseKey(key);
+    if (reparsedKey instanceof EcdsaPrivateKey) {
+      return EcdsaSigner.create((EcdsaPrivateKey) reparsedKey);
     }
-    if (key instanceof EcdsaPublicKey) {
-      return EcdsaVerifyJce.create((EcdsaPublicKey) key);
+    if (reparsedKey instanceof RsaSsaPssPrivateKey) {
+      return RsaSsaPssSigner.create((RsaSsaPssPrivateKey) reparsedKey);
     }
-    if (key instanceof RsaSsaPssPublicKey) {
-      return RsaSsaPssVerifyJce.create((RsaSsaPssPublicKey) key);
+    if (reparsedKey instanceof RsaSsaPkcs1PrivateKey) {
+      return RsaSsaPkcs1Signer.create((RsaSsaPkcs1PrivateKey) reparsedKey);
     }
-    if (key instanceof RsaSsaPkcs1PublicKey) {
-      return RsaSsaPkcs1VerifyJce.create((RsaSsaPkcs1PublicKey) key);
+    if (reparsedKey instanceof Ed25519PrivateKey) {
+      return Ed25519Signer.create((Ed25519PrivateKey) reparsedKey);
     }
-    if (key instanceof Ed25519PublicKey) {
-      return Ed25519Verify.create((Ed25519PublicKey) key);
+    throw new GeneralSecurityException("Unknown key class: " + reparsedKey.getClass());
+  }
+
+  @LowLevelCryptoCaller
+  private static PublicKeyVerify createPublicKeyVerifyFromLegacyProtoKey(LegacyProtoKey key)
+      throws GeneralSecurityException {
+    Key reparsedKey = reparseKey(key);
+    if (reparsedKey instanceof EcdsaPublicKey) {
+      return EcdsaVerifier.create((EcdsaPublicKey) reparsedKey);
     }
-    throw new GeneralSecurityException("Unknown key class: " + key.getClass());
+    if (reparsedKey instanceof RsaSsaPssPublicKey) {
+      return RsaSsaPssVerifier.create((RsaSsaPssPublicKey) reparsedKey);
+    }
+    if (reparsedKey instanceof RsaSsaPkcs1PublicKey) {
+      return RsaSsaPkcs1Verifier.create((RsaSsaPkcs1PublicKey) reparsedKey);
+    }
+    if (reparsedKey instanceof Ed25519PublicKey) {
+      return Ed25519Verifier.create((Ed25519PublicKey) reparsedKey);
+    }
+    throw new GeneralSecurityException("Unknown key class: " + reparsedKey.getClass());
   }
 }
