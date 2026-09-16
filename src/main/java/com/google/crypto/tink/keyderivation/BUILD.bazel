@@ -191,52 +191,6 @@ android_library(
     ],
 )
 
-android_library(
-    name = "keyset_deriver_configuration_v1-android",
-    srcs = ["KeysetDeriverConfigurationV1.java"],
-    deps = [
-        ":keyset_deriver-android",
-        ":prf_based_key_derivation_key-android",
-        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
-        "//src/main/java/com/google/crypto/tink:configuration-android",
-        "//src/main/java/com/google/crypto/tink:key-android",
-        "//src/main/java/com/google/crypto/tink:keyset_handle_interface-android",
-        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util-android",
-        "//src/main/java/com/google/crypto/tink/internal:mutable_key_derivation_registry-android",
-        "//src/main/java/com/google/crypto/tink/internal:primitive_constructor-android",
-        "//src/main/java/com/google/crypto/tink/internal:primitive_registry-android",
-        "//src/main/java/com/google/crypto/tink/keyderivation/internal:key_deriver-android",
-        "//src/main/java/com/google/crypto/tink/keyderivation/internal:keyset_deriver_wrapper-android",
-        "//src/main/java/com/google/crypto/tink/keyderivation/internal:prf_based_key_deriver-android",
-        "//src/main/java/com/google/crypto/tink/prf:hkdf_prf_key-android",
-        "//src/main/java/com/google/crypto/tink/subtle/prf:hkdf_streaming_prf-android",
-        "//src/main/java/com/google/crypto/tink/subtle/prf:streaming_prf-android",
-    ],
-)
-
-java_library(
-    name = "keyset_deriver_configuration_v1",
-    srcs = ["KeysetDeriverConfigurationV1.java"],
-    deps = [
-        ":keyset_deriver",
-        ":prf_based_key_derivation_key",
-        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
-        "//src/main/java/com/google/crypto/tink:configuration",
-        "//src/main/java/com/google/crypto/tink:key",
-        "//src/main/java/com/google/crypto/tink:keyset_handle_interface",
-        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
-        "//src/main/java/com/google/crypto/tink/internal:mutable_key_derivation_registry",
-        "//src/main/java/com/google/crypto/tink/internal:primitive_constructor",
-        "//src/main/java/com/google/crypto/tink/internal:primitive_registry",
-        "//src/main/java/com/google/crypto/tink/keyderivation/internal:key_deriver",
-        "//src/main/java/com/google/crypto/tink/keyderivation/internal:keyset_deriver_wrapper",
-        "//src/main/java/com/google/crypto/tink/keyderivation/internal:prf_based_key_deriver",
-        "//src/main/java/com/google/crypto/tink/prf:hkdf_prf_key",
-        "//src/main/java/com/google/crypto/tink/subtle/prf:hkdf_streaming_prf",
-        "//src/main/java/com/google/crypto/tink/subtle/prf:streaming_prf",
-    ],
-)
-
 java_library(
     name = "key_derivation_config2026",
     srcs = ["KeyDerivationConfig2026.java"],
