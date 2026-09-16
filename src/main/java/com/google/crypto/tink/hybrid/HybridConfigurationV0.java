@@ -21,14 +21,15 @@ import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
-import com.google.crypto.tink.KeysetHandleInterface;
+import com.google.crypto.tink.LowLevelCryptoCaller;
+import com.google.crypto.tink.ProtoKeySerializer;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
-import com.google.crypto.tink.hybrid.internal.HpkeDecrypt;
-import com.google.crypto.tink.hybrid.internal.HpkeEncrypt;
+import com.google.crypto.tink.hybrid.subtle.EciesDecrypt;
+import com.google.crypto.tink.hybrid.subtle.EciesEncrypt;
+import com.google.crypto.tink.hybrid.subtle.HpkeDecrypt;
+import com.google.crypto.tink.hybrid.subtle.HpkeEncrypt;
 import com.google.crypto.tink.internal.LegacyProtoKey;
-import com.google.crypto.tink.internal.MutableSerializationRegistry;
-import com.google.crypto.tink.subtle.EciesAeadHkdfHybridDecrypt;
-import com.google.crypto.tink.subtle.EciesAeadHkdfHybridEncrypt;
+import com.google.crypto.tink.internal.ProtoBasedConfigurationBuilder;
 import java.security.GeneralSecurityException;
 
 /**
@@ -42,70 +43,7 @@ import java.security.GeneralSecurityException;
 /* Placeholder for internally public; DO NOT CHANGE. */ class HybridConfigurationV0 {
   private HybridConfigurationV0() {}
 
-  private static final HybridEncryptWrapper HYBRID_ENCRYPT_WRAPPER = new HybridEncryptWrapper();
-  private static final HybridDecryptWrapper HYBRID_DECRYPT_WRAPPER = new HybridDecryptWrapper();
   private static final Configuration CONFIGURATION = create();
-
-  private static Configuration create() {
-    return new Configuration() {
-      @Override
-      public <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
-          throws GeneralSecurityException {
-        if (clazz.equals(HybridEncrypt.class)) {
-          return clazz.cast(
-              HYBRID_ENCRYPT_WRAPPER.wrap(
-                  keysetHandle, HybridConfigurationV0::createHybridEncrypt));
-        }
-        if (clazz.equals(HybridDecrypt.class)) {
-          return clazz.cast(
-              HYBRID_DECRYPT_WRAPPER.wrap(
-                  keysetHandle, HybridConfigurationV0::createHybridDecrypt));
-        }
-        throw new GeneralSecurityException(
-            "HybridConfigurationV0 can only create HybridEncrypt and HybridDecrypt primitives");
-      }
-    };
-  }
-
-  private static HybridEncrypt createHybridEncrypt(KeysetHandleInterface.Entry entry)
-      throws GeneralSecurityException {
-    Key key = entry.getKey();
-    if (key instanceof LegacyProtoKey) {
-      Key reparsedKey =
-          MutableSerializationRegistry.globalInstance()
-              .parseKey(
-                  ((LegacyProtoKey) key).getSerialization(InsecureSecretKeyAccess.get()),
-                  InsecureSecretKeyAccess.get());
-      key = reparsedKey;
-    }
-    if (key instanceof EciesPublicKey) {
-      return EciesAeadHkdfHybridEncrypt.create((EciesPublicKey) key);
-    }
-    if (key instanceof HpkePublicKey) {
-      return HpkeEncrypt.create((HpkePublicKey) key);
-    }
-    throw new GeneralSecurityException("Unknown key class: " + key.getClass());
-  }
-
-  private static HybridDecrypt createHybridDecrypt(KeysetHandleInterface.Entry entry)
-      throws GeneralSecurityException {
-    Key key = entry.getKey();
-    if (key instanceof LegacyProtoKey) {
-      Key reparsedKey =
-          MutableSerializationRegistry.globalInstance()
-              .parseKey(
-                  ((LegacyProtoKey) key).getSerialization(InsecureSecretKeyAccess.get()),
-                  InsecureSecretKeyAccess.get());
-      key = reparsedKey;
-    }
-    if (key instanceof EciesPrivateKey) {
-      return EciesAeadHkdfHybridDecrypt.create((EciesPrivateKey) key);
-    }
-    if (key instanceof HpkePrivateKey) {
-      return HpkeDecrypt.create((HpkePrivateKey) key);
-    }
-    throw new GeneralSecurityException("Unknown key class: " + key.getClass());
-  }
 
   /** Returns an instance of the {@code HybridConfigurationV0}. */
   public static Configuration get() throws GeneralSecurityException {
@@ -114,5 +52,60 @@ import java.security.GeneralSecurityException;
           "Cannot use non-FIPS-compliant HybridConfigurationV0 in FIPS mode");
     }
     return CONFIGURATION;
+  }
+
+  @LowLevelCryptoCaller
+  private static Configuration create() {
+    // The HybridConfigurationV0 is the same as the HybridConfig, but if a key has been parsed as a
+    // LegacyProtoKey (which happens if we use the RegistryConfig and the corresponding algorithm
+    // was not registered), we try to parse it again.
+    return new ProtoBasedConfigurationBuilder()
+        .mergeProtoBasedConfiguration(HybridConfig2026.get())
+        .addPrimitiveConstructor(
+            HybridConfigurationV0::createHybridEncryptFromLegacyProtoKey,
+            LegacyProtoKey.class,
+            HybridEncrypt.class)
+        .addPrimitiveConstructor(
+            HybridConfigurationV0::createHybridDecryptFromLegacyProtoKey,
+            LegacyProtoKey.class,
+            HybridDecrypt.class)
+        .build();
+  }
+
+  @LowLevelCryptoCaller
+  private static Key reparseKey(LegacyProtoKey key) throws GeneralSecurityException {
+    ProtoKeySerializer protoKeySerializer = get().getOrNull(ProtoKeySerializer.class);
+    if (protoKeySerializer == null) {
+      throw new GeneralSecurityException(
+          "Unexpected: CONFIGURATION does not support Proto Serialization");
+    }
+    return protoKeySerializer.parseKey(
+        key.getSerialization(InsecureSecretKeyAccess.get()), InsecureSecretKeyAccess.get());
+  }
+
+  @LowLevelCryptoCaller
+  private static HybridEncrypt createHybridEncryptFromLegacyProtoKey(LegacyProtoKey key)
+      throws GeneralSecurityException {
+    Key reparsedKey = reparseKey(key);
+    if (reparsedKey instanceof EciesPublicKey) {
+      return EciesEncrypt.create((EciesPublicKey) reparsedKey);
+    }
+    if (reparsedKey instanceof HpkePublicKey) {
+      return HpkeEncrypt.create((HpkePublicKey) reparsedKey);
+    }
+    throw new GeneralSecurityException("Unknown key class: " + reparsedKey.getClass());
+  }
+
+  @LowLevelCryptoCaller
+  private static HybridDecrypt createHybridDecryptFromLegacyProtoKey(LegacyProtoKey key)
+      throws GeneralSecurityException {
+    Key reparsedKey = reparseKey(key);
+    if (reparsedKey instanceof EciesPrivateKey) {
+      return EciesDecrypt.create((EciesPrivateKey) reparsedKey);
+    }
+    if (reparsedKey instanceof HpkePrivateKey) {
+      return HpkeDecrypt.create((HpkePrivateKey) reparsedKey);
+    }
+    throw new GeneralSecurityException("Unknown key class: " + reparsedKey.getClass());
   }
 }
