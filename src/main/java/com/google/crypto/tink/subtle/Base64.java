@@ -395,11 +395,26 @@ public final class Base64 {
           this.state = 6;
           return false;
         case 2:
+          // The final quantum carries twelve bits but only eight are used, so
+          // the low four bits must be zero: RFC 4648 section 3.5 requires the
+          // canonical encoding.  Without this check a non-canonical encoding of
+          // the same bytes is accepted, which makes two distinct strings decode
+          // to one value (signature malleability for JWS inputs).
+          if ((value & 0xF) != 0) {
+            this.state = 6;
+            return false;
+          }
           // Read two extra input bytes, enough to emit 1 more
           // output byte.  Fine.
           output[op++] = (byte) (value >> 4);
           break;
         case 3:
+          // The final quantum carries eighteen bits but only sixteen are used,
+          // so the low two bits must be zero (RFC 4648 section 3.5).
+          if ((value & 0x3) != 0) {
+            this.state = 6;
+            return false;
+          }
           // Read three extra input bytes, enough to emit 2 more
           // output bytes.  Fine.
           output[op++] = (byte) (value >> 10);
