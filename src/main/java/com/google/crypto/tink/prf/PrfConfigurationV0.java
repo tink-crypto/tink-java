@@ -19,14 +19,14 @@ package com.google.crypto.tink.prf;
 import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
-import com.google.crypto.tink.KeysetHandleInterface;
+import com.google.crypto.tink.LowLevelCryptoCaller;
+import com.google.crypto.tink.ProtoKeySerializer;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.LegacyProtoKey;
-import com.google.crypto.tink.internal.MutableSerializationRegistry;
-import com.google.crypto.tink.subtle.PrfAesCmac;
-import com.google.crypto.tink.subtle.PrfHmacJce;
-import com.google.crypto.tink.subtle.prf.HkdfStreamingPrf;
-import com.google.crypto.tink.subtle.prf.PrfImpl;
+import com.google.crypto.tink.internal.ProtoBasedConfigurationBuilder;
+import com.google.crypto.tink.prf.subtle.AesCmacPrf;
+import com.google.crypto.tink.prf.subtle.HkdfPrf;
+import com.google.crypto.tink.prf.subtle.HmacPrf;
 import java.security.GeneralSecurityException;
 
 /**
@@ -41,21 +41,7 @@ import java.security.GeneralSecurityException;
 /* Placeholder for internally public; DO NOT CHANGE. */ class PrfConfigurationV0 {
   private PrfConfigurationV0() {}
 
-  private static final PrfSetWrapper PRF_SET_WRAPPER = new PrfSetWrapper();
   private static final Configuration CONFIGURATION = create();
-
-  private static Configuration create() {
-    return new Configuration() {
-      @Override
-      public <P> P createPrimitive(KeysetHandleInterface keysetHandle, Class<P> clazz)
-          throws GeneralSecurityException {
-        if (clazz.equals(PrfSet.class)) {
-          return clazz.cast(PRF_SET_WRAPPER.wrap(keysetHandle, PrfConfigurationV0::createPrf));
-        }
-        throw new GeneralSecurityException("PrfConfigurationV0 can only create PrfSet primitive");
-      }
-    };
-  }
 
   /** Returns an instance of the {@code PrfConfigurationV0}. */
   public static Configuration get() throws GeneralSecurityException {
@@ -66,27 +52,29 @@ import java.security.GeneralSecurityException;
     return CONFIGURATION;
   }
 
-  private static Prf createPrf(KeysetHandleInterface.Entry entry) throws GeneralSecurityException {
-    Key key = entry.getKey();
-    if (key instanceof LegacyProtoKey) {
-      Key reparsedKey =
-          MutableSerializationRegistry.globalInstance()
-              .parseKey(
-                  ((LegacyProtoKey) key).getSerialization(InsecureSecretKeyAccess.get()),
-                  InsecureSecretKeyAccess.get());
-      key = reparsedKey;
-    }
+  @LowLevelCryptoCaller
+  private static Configuration create() {
+    // The PrfConfigurationV0 is the same as the PrfConfig, but if a key has been parsed as a
+    // LegacyProtoKey (which happens if we use the RegistryConfig and the corresponding algorithm
+    // was not registered), we try to parse it again.
+    return new ProtoBasedConfigurationBuilder()
+        .mergeProtoBasedConfiguration(PrfConfig2026.get())
+        .addPrimitiveConstructor(
+            PrfConfigurationV0::createPrfFromLegacyProtoKey,
+            LegacyProtoKey.class,
+            Prf.class)
+        .build();
+  }
 
-    if (key instanceof HmacPrfKey) {
-      return PrfHmacJce.create((HmacPrfKey) key);
+  @LowLevelCryptoCaller
+  private static Key reparseKey(LegacyProtoKey key) throws GeneralSecurityException {
+    ProtoKeySerializer protoKeySerializer = get().getOrNull(ProtoKeySerializer.class);
+    if (protoKeySerializer == null) {
+      throw new GeneralSecurityException(
+          "Unexpected: CONFIGURATION does not support Proto Serialization");
     }
-    if (key instanceof HkdfPrfKey) {
-      return createHkdfPrf((HkdfPrfKey) key);
-    }
-    if (key instanceof AesCmacPrfKey) {
-      return createAesCmacPrf((AesCmacPrfKey) key);
-    }
-    throw new GeneralSecurityException("Unknown key class: " + key.getClass());
+    return protoKeySerializer.parseKey(
+        key.getSerialization(InsecureSecretKeyAccess.get()), InsecureSecretKeyAccess.get());
   }
 
   // We use a somewhat larger minimum key size than usual, because PRFs might be used by many users,
@@ -94,6 +82,23 @@ import java.security.GeneralSecurityException;
   // for example in https://eprint.iacr.org/2012/159)
   private static final int MIN_HKDF_PRF_KEY_SIZE = 32;
 
+  @LowLevelCryptoCaller
+  private static Prf createPrfFromLegacyProtoKey(LegacyProtoKey key)
+      throws GeneralSecurityException {
+    Key reparsedKey = reparseKey(key);
+    if (reparsedKey instanceof HmacPrfKey) {
+      return HmacPrf.create((HmacPrfKey) reparsedKey);
+    }
+    if (reparsedKey instanceof HkdfPrfKey) {
+      return createHkdfPrf((HkdfPrfKey) reparsedKey);
+    }
+    if (reparsedKey instanceof AesCmacPrfKey) {
+      return createAesCmacPrf((AesCmacPrfKey) reparsedKey);
+    }
+    throw new GeneralSecurityException("Unknown key class: " + reparsedKey.getClass());
+  }
+
+  @LowLevelCryptoCaller
   private static Prf createHkdfPrf(HkdfPrfKey key) throws GeneralSecurityException {
     if (key.getParameters().getKeySizeBytes() < MIN_HKDF_PRF_KEY_SIZE) {
       throw new GeneralSecurityException(
@@ -103,13 +108,14 @@ import java.security.GeneralSecurityException;
         && key.getParameters().getHashType() != HkdfPrfParameters.HashType.SHA512) {
       throw new GeneralSecurityException("HkdfPrf hash type must be SHA256 or SHA512");
     }
-    return PrfImpl.wrap(HkdfStreamingPrf.create(key));
+    return HkdfPrf.create(key);
   }
 
+  @LowLevelCryptoCaller
   private static Prf createAesCmacPrf(AesCmacPrfKey key) throws GeneralSecurityException {
     if (key.getParameters().getKeySizeBytes() != 32) {
       throw new GeneralSecurityException("AesCmacPrf key size must be 32 bytes");
     }
-    return PrfAesCmac.create(key);
+    return AesCmacPrf.create(key);
   }
 }
