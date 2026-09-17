@@ -17,6 +17,7 @@
 package com.google.crypto.tink;
 
 import static com.google.common.truth.Truth.assertThat;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.aead.AesCtrHmacAeadKey;
@@ -691,6 +692,332 @@ public class ConfigurationFips140v2Test {
     assertThrows(
         GeneralSecurityException.class,
         () -> keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class));
+  }
+
+  @Test
+  public void getOrNull_protoKeySerializer_returnsNonNull() throws Exception {
+    Configuration config = ConfigurationFips140v2.get();
+    assertThat(config.getOrNull(ProtoKeySerializer.class)).isNotNull();
+  }
+
+  @Test
+  public void serializeAndParse_aesCtrHmacAeadKey_works() throws Exception {
+    Configuration config = ConfigurationFips140v2.get();
+    AesCtrHmacAeadParameters parameters =
+        AesCtrHmacAeadParameters.builder()
+            .setHashType(AesCtrHmacAeadParameters.HashType.SHA256)
+            .setTagSizeBytes(16)
+            .setHmacKeySizeBytes(32)
+            .setIvSizeBytes(16)
+            .setAesKeySizeBytes(32)
+            .setVariant(AesCtrHmacAeadParameters.Variant.TINK)
+            .build();
+    AesCtrHmacAeadKey key =
+        AesCtrHmacAeadKey.builder()
+            .setParameters(parameters)
+            .setHmacKeyBytes(SecretBytes.randomBytes(32))
+            .setAesKeyBytes(SecretBytes.randomBytes(32))
+            .setIdRequirement(1234)
+            .build();
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withFixedId(1234).makePrimary())
+            .build();
+
+    byte[] serializedKeyset =
+        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get(), config);
+    KeysetHandle parsedHandle =
+        TinkProtoKeysetFormat.parseKeyset(serializedKeyset, InsecureSecretKeyAccess.get(), config);
+    assertThat(parsedHandle.equalsKeyset(handle)).isTrue();
+
+    byte[] serializedParams = TinkProtoParametersFormat.serialize(parameters, config);
+    Parameters parsedParams = TinkProtoParametersFormat.parse(serializedParams, config);
+    assertThat(parsedParams).isEqualTo(parameters);
+
+    Aead aead = parsedHandle.getPrimitive(config, Aead.class);
+    byte[] plaintext = "hello".getBytes(UTF_8);
+    byte[] associatedData = "data".getBytes(UTF_8);
+    byte[] ciphertext = aead.encrypt(plaintext, associatedData);
+    assertThat(aead.decrypt(ciphertext, associatedData)).isEqualTo(plaintext);
+  }
+
+  @Test
+  public void serializeAndParse_aesGcmKey_works() throws Exception {
+    Configuration config = ConfigurationFips140v2.get();
+    AesGcmParameters parameters =
+        AesGcmParameters.builder()
+            .setIvSizeBytes(12)
+            .setKeySizeBytes(32)
+            .setTagSizeBytes(16)
+            .setVariant(AesGcmParameters.Variant.TINK)
+            .build();
+    AesGcmKey key =
+        AesGcmKey.builder()
+            .setParameters(parameters)
+            .setKeyBytes(SecretBytes.randomBytes(32))
+            .setIdRequirement(1234)
+            .build();
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withFixedId(1234).makePrimary())
+            .build();
+
+    byte[] serializedKeyset =
+        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get(), config);
+    KeysetHandle parsedHandle =
+        TinkProtoKeysetFormat.parseKeyset(serializedKeyset, InsecureSecretKeyAccess.get(), config);
+    assertThat(parsedHandle.equalsKeyset(handle)).isTrue();
+
+    byte[] serializedParams = TinkProtoParametersFormat.serialize(parameters, config);
+    Parameters parsedParams = TinkProtoParametersFormat.parse(serializedParams, config);
+    assertThat(parsedParams).isEqualTo(parameters);
+
+    Aead aead = parsedHandle.getPrimitive(config, Aead.class);
+    byte[] plaintext = "hello".getBytes(UTF_8);
+    byte[] associatedData = "data".getBytes(UTF_8);
+    byte[] ciphertext = aead.encrypt(plaintext, associatedData);
+    assertThat(aead.decrypt(ciphertext, associatedData)).isEqualTo(plaintext);
+  }
+
+  @Test
+  public void serializeAndParse_hmacKey_works() throws Exception {
+    Configuration config = ConfigurationFips140v2.get();
+    HmacParameters parameters =
+        HmacParameters.builder()
+            .setTagSizeBytes(16)
+            .setKeySizeBytes(32)
+            .setHashType(HmacParameters.HashType.SHA256)
+            .setVariant(HmacParameters.Variant.TINK)
+            .build();
+    HmacKey key =
+        HmacKey.builder()
+            .setParameters(parameters)
+            .setKeyBytes(SecretBytes.randomBytes(32))
+            .setIdRequirement(1234)
+            .build();
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withFixedId(1234).makePrimary())
+            .build();
+
+    byte[] serializedKeyset =
+        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get(), config);
+    KeysetHandle parsedHandle =
+        TinkProtoKeysetFormat.parseKeyset(serializedKeyset, InsecureSecretKeyAccess.get(), config);
+    assertThat(parsedHandle.equalsKeyset(handle)).isTrue();
+
+    byte[] serializedParams = TinkProtoParametersFormat.serialize(parameters, config);
+    Parameters parsedParams = TinkProtoParametersFormat.parse(serializedParams, config);
+    assertThat(parsedParams).isEqualTo(parameters);
+
+    Mac mac = parsedHandle.getPrimitive(config, Mac.class);
+    byte[] data = "data".getBytes(UTF_8);
+    byte[] tag = mac.computeMac(data);
+    mac.verifyMac(tag, data);
+  }
+
+  @Test
+  public void serializeAndParse_hmacPrfKey_works() throws Exception {
+    Configuration config = ConfigurationFips140v2.get();
+    HmacPrfParameters parameters =
+        HmacPrfParameters.builder()
+            .setKeySizeBytes(32)
+            .setHashType(HmacPrfParameters.HashType.SHA256)
+            .build();
+    HmacPrfKey key =
+        HmacPrfKey.builder()
+            .setParameters(parameters)
+            .setKeyBytes(SecretBytes.randomBytes(32))
+            .build();
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key).withRandomId().makePrimary())
+            .build();
+
+    byte[] serializedKeyset =
+        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get(), config);
+    KeysetHandle parsedHandle =
+        TinkProtoKeysetFormat.parseKeyset(serializedKeyset, InsecureSecretKeyAccess.get(), config);
+    assertThat(parsedHandle.equalsKeyset(handle)).isTrue();
+
+    byte[] serializedParams = TinkProtoParametersFormat.serialize(parameters, config);
+    Parameters parsedParams = TinkProtoParametersFormat.parse(serializedParams, config);
+    assertThat(parsedParams).isEqualTo(parameters);
+
+    PrfSet prfSet = parsedHandle.getPrimitive(config, PrfSet.class);
+    byte[] output = prfSet.computePrimary("hello".getBytes(UTF_8), 16);
+    assertThat(output).hasLength(16);
+  }
+
+  @Test
+  public void serializeAndParse_ecdsaKey_works() throws Exception {
+    Configuration config = ConfigurationFips140v2.get();
+    EcdsaParameters parameters =
+        EcdsaParameters.builder()
+            .setSignatureEncoding(EcdsaParameters.SignatureEncoding.IEEE_P1363)
+            .setCurveType(EcdsaParameters.CurveType.NIST_P256)
+            .setHashType(EcdsaParameters.HashType.SHA256)
+            .setVariant(EcdsaParameters.Variant.TINK)
+            .build();
+    EcdsaPublicKey publicKey =
+        EcdsaPublicKey.builder()
+            .setParameters(parameters)
+            .setPublicPoint(getP256Point())
+            .setIdRequirement(1234)
+            .build();
+    EcdsaPrivateKey privateKey =
+        EcdsaPrivateKey.builder()
+            .setPublicKey(publicKey)
+            .setPrivateValue(getPrivateP256Value())
+            .build();
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(privateKey).withFixedId(1234).makePrimary())
+            .build();
+
+    byte[] serializedKeyset =
+        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get(), config);
+    KeysetHandle parsedHandle =
+        TinkProtoKeysetFormat.parseKeyset(serializedKeyset, InsecureSecretKeyAccess.get(), config);
+    assertThat(parsedHandle.equalsKeyset(handle)).isTrue();
+
+    byte[] serializedParams = TinkProtoParametersFormat.serialize(parameters, config);
+    Parameters parsedParams = TinkProtoParametersFormat.parse(serializedParams, config);
+    assertThat(parsedParams).isEqualTo(parameters);
+
+    KeysetHandle publicHandle = handle.getPublicKeysetHandle();
+    byte[] serializedPublicKeyset =
+        TinkProtoKeysetFormat.serializeKeyset(publicHandle, InsecureSecretKeyAccess.get(), config);
+    KeysetHandle parsedPublicHandle =
+        TinkProtoKeysetFormat.parseKeyset(
+            serializedPublicKeyset, InsecureSecretKeyAccess.get(), config);
+    assertThat(parsedPublicHandle.equalsKeyset(publicHandle)).isTrue();
+
+    PublicKeySign signer = parsedHandle.getPrimitive(config, PublicKeySign.class);
+    PublicKeyVerify verifier = parsedPublicHandle.getPrimitive(config, PublicKeyVerify.class);
+    byte[] data = "message".getBytes(UTF_8);
+    byte[] signature = signer.sign(data);
+    verifier.verify(signature, data);
+  }
+
+  @Test
+  public void serializeAndParse_rsaSsaPkcs1Key_works() throws Exception {
+    Configuration config = ConfigurationFips140v2.get();
+    RsaSsaPkcs1Parameters parameters =
+        RsaSsaPkcs1Parameters.builder()
+            .setModulusSizeBits(2048)
+            .setPublicExponent(EXPONENT)
+            .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
+            .setVariant(RsaSsaPkcs1Parameters.Variant.TINK)
+            .build();
+    RsaSsaPkcs1PublicKey publicKey =
+        RsaSsaPkcs1PublicKey.builder()
+            .setParameters(parameters)
+            .setModulus(MODULUS)
+            .setIdRequirement(1234)
+            .build();
+    RsaSsaPkcs1PrivateKey privateKey =
+        RsaSsaPkcs1PrivateKey.builder()
+            .setPublicKey(publicKey)
+            .setPrimes(
+                SecretBigInteger.fromBigInteger(P, InsecureSecretKeyAccess.get()),
+                SecretBigInteger.fromBigInteger(Q, InsecureSecretKeyAccess.get()))
+            .setPrivateExponent(SecretBigInteger.fromBigInteger(D, InsecureSecretKeyAccess.get()))
+            .setPrimeExponents(
+                SecretBigInteger.fromBigInteger(DP, InsecureSecretKeyAccess.get()),
+                SecretBigInteger.fromBigInteger(DQ, InsecureSecretKeyAccess.get()))
+            .setCrtCoefficient(
+                SecretBigInteger.fromBigInteger(Q_INV, InsecureSecretKeyAccess.get()))
+            .build();
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(privateKey).withFixedId(1234).makePrimary())
+            .build();
+
+    byte[] serializedKeyset =
+        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get(), config);
+    KeysetHandle parsedHandle =
+        TinkProtoKeysetFormat.parseKeyset(serializedKeyset, InsecureSecretKeyAccess.get(), config);
+    assertThat(parsedHandle.equalsKeyset(handle)).isTrue();
+
+    byte[] serializedParams = TinkProtoParametersFormat.serialize(parameters, config);
+    Parameters parsedParams = TinkProtoParametersFormat.parse(serializedParams, config);
+    assertThat(parsedParams).isEqualTo(parameters);
+
+    KeysetHandle publicHandle = handle.getPublicKeysetHandle();
+    byte[] serializedPublicKeyset =
+        TinkProtoKeysetFormat.serializeKeyset(publicHandle, InsecureSecretKeyAccess.get(), config);
+    KeysetHandle parsedPublicHandle =
+        TinkProtoKeysetFormat.parseKeyset(
+            serializedPublicKeyset, InsecureSecretKeyAccess.get(), config);
+    assertThat(parsedPublicHandle.equalsKeyset(publicHandle)).isTrue();
+
+    PublicKeySign signer = parsedHandle.getPrimitive(config, PublicKeySign.class);
+    PublicKeyVerify verifier = parsedPublicHandle.getPrimitive(config, PublicKeyVerify.class);
+    byte[] data = "message".getBytes(UTF_8);
+    byte[] signature = signer.sign(data);
+    verifier.verify(signature, data);
+  }
+
+  @Test
+  public void serializeAndParse_rsaSsaPssKey_works() throws Exception {
+    Configuration config = ConfigurationFips140v2.get();
+    RsaSsaPssParameters parameters =
+        RsaSsaPssParameters.builder()
+            .setModulusSizeBits(2048)
+            .setPublicExponent(EXPONENT)
+            .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
+            .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
+            .setSaltLengthBytes(32)
+            .setVariant(RsaSsaPssParameters.Variant.TINK)
+            .build();
+    RsaSsaPssPublicKey publicKey =
+        RsaSsaPssPublicKey.builder()
+            .setParameters(parameters)
+            .setModulus(MODULUS)
+            .setIdRequirement(1234)
+            .build();
+    RsaSsaPssPrivateKey privateKey =
+        RsaSsaPssPrivateKey.builder()
+            .setPublicKey(publicKey)
+            .setPrimes(
+                SecretBigInteger.fromBigInteger(P, InsecureSecretKeyAccess.get()),
+                SecretBigInteger.fromBigInteger(Q, InsecureSecretKeyAccess.get()))
+            .setPrivateExponent(SecretBigInteger.fromBigInteger(D, InsecureSecretKeyAccess.get()))
+            .setPrimeExponents(
+                SecretBigInteger.fromBigInteger(DP, InsecureSecretKeyAccess.get()),
+                SecretBigInteger.fromBigInteger(DQ, InsecureSecretKeyAccess.get()))
+            .setCrtCoefficient(
+                SecretBigInteger.fromBigInteger(Q_INV, InsecureSecretKeyAccess.get()))
+            .build();
+    KeysetHandle handle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(privateKey).withFixedId(1234).makePrimary())
+            .build();
+
+    byte[] serializedKeyset =
+        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get(), config);
+    KeysetHandle parsedHandle =
+        TinkProtoKeysetFormat.parseKeyset(serializedKeyset, InsecureSecretKeyAccess.get(), config);
+    assertThat(parsedHandle.equalsKeyset(handle)).isTrue();
+
+    byte[] serializedParams = TinkProtoParametersFormat.serialize(parameters, config);
+    Parameters parsedParams = TinkProtoParametersFormat.parse(serializedParams, config);
+    assertThat(parsedParams).isEqualTo(parameters);
+
+    KeysetHandle publicHandle = handle.getPublicKeysetHandle();
+    byte[] serializedPublicKeyset =
+        TinkProtoKeysetFormat.serializeKeyset(publicHandle, InsecureSecretKeyAccess.get(), config);
+    KeysetHandle parsedPublicHandle =
+        TinkProtoKeysetFormat.parseKeyset(
+            serializedPublicKeyset, InsecureSecretKeyAccess.get(), config);
+    assertThat(parsedPublicHandle.equalsKeyset(publicHandle)).isTrue();
+
+    PublicKeySign signer = parsedHandle.getPrimitive(config, PublicKeySign.class);
+    PublicKeyVerify verifier = parsedPublicHandle.getPrimitive(config, PublicKeyVerify.class);
+    byte[] data = "message".getBytes(UTF_8);
+    byte[] signature = signer.sign(data);
+    verifier.verify(signature, data);
   }
 
   // Point from https://www.ietf.org/rfc/rfc6979.txt, A.2.5
