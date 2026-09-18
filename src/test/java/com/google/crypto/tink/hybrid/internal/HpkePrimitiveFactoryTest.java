@@ -18,6 +18,8 @@ package com.google.crypto.tink.hybrid.internal;
 
 import static org.junit.Assert.assertThrows;
 
+import java.security.GeneralSecurityException;
+
 import com.google.common.truth.Expect;
 import com.google.crypto.tink.hybrid.HpkeParameters;
 import org.junit.Rule;
@@ -147,7 +149,7 @@ public final class HpkePrimitiveFactoryTest {
     byte[] invalidKemId = new byte[] {0, 0};
 
     assertThrows(
-        IllegalArgumentException.class, () -> HpkePrimitiveFactory.createKem(invalidKemId));
+        GeneralSecurityException.class, () -> HpkePrimitiveFactory.createKem(invalidKemId));
   }
 
   @Theory
@@ -173,7 +175,7 @@ public final class HpkePrimitiveFactoryTest {
     byte[] invalidKdfId = new byte[] {0, 0};
 
     assertThrows(
-        IllegalArgumentException.class, () -> HpkePrimitiveFactory.createKdf(invalidKdfId));
+        GeneralSecurityException.class, () -> HpkePrimitiveFactory.createKdf(invalidKdfId));
   }
 
   @Theory
@@ -201,7 +203,7 @@ public final class HpkePrimitiveFactoryTest {
     byte[] invalidAeadId = new byte[] {0, 0};
 
     assertThrows(
-        IllegalArgumentException.class, () -> HpkePrimitiveFactory.createAead(invalidAeadId));
+        GeneralSecurityException.class, () -> HpkePrimitiveFactory.createAead(invalidAeadId));
   }
 
   @Theory
