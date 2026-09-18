@@ -26,10 +26,12 @@ import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.signature.CompositeMlDsaPrivateKey;
+import com.google.crypto.tink.signature.CompositeMlDsaPublicKey;
 import com.google.crypto.tink.signature.internal.testing.CompositeMlDsaTestUtil;
 import com.google.crypto.tink.signature.internal.testing.CompositeMlDsaTestUtil.CompositeMlDsaTestVector;
 import com.google.crypto.tink.subtle.Hex;
 import java.security.GeneralSecurityException;
+import java.security.Provider;
 import java.security.Security;
 import java.util.Arrays;
 import java.util.List;
@@ -194,5 +196,58 @@ public final class CompositeMlDsaSignVerifyConscryptTest {
     assertThrows(
         GeneralSecurityException.class,
         () -> CompositeMlDsaVerifyConscrypt.create(privateKey.getPublicKey()));
+  }
+
+  @Test
+  public void createWithProvider_worksWithoutGlobalConscryptProvider() throws Exception {
+    assumeTrue(CompositeMlDsaVerifyConscrypt.isSupported());
+    Provider conscryptProvider = Conscrypt.newProvider();
+    Security.removeProvider(conscryptProvider.getName());
+    try {
+      CompositeMlDsaPrivateKey privateKey =
+          CompositeMlDsaTestUtil.createCompositeKeyFromTestVector(testVectors.get(0));
+      byte[] message = "test message".getBytes(UTF_8);
+
+      PublicKeySign signer =
+          CompositeMlDsaSignConscrypt.createWithProvider(privateKey, conscryptProvider);
+      PublicKeyVerify verifier =
+          CompositeMlDsaVerifyConscrypt.createWithProvider(
+              privateKey.getPublicKey(), conscryptProvider);
+
+      byte[] signature = signer.sign(message);
+      verifier.verify(signature, message);
+    } finally {
+      Security.addProvider(conscryptProvider);
+    }
+  }
+
+  @Test
+  public void createWithProvider_nullProvider_throws() throws Exception {
+    CompositeMlDsaPrivateKey privateKey =
+        CompositeMlDsaTestUtil.createCompositeKeyFromTestVector(testVectors.get(0));
+
+    assertThrows(
+        NullPointerException.class,
+        () -> CompositeMlDsaSignConscrypt.createWithProvider(privateKey, null));
+    CompositeMlDsaPublicKey publicKey = privateKey.getPublicKey();
+    assertThrows(
+        NullPointerException.class,
+        () -> CompositeMlDsaVerifyConscrypt.createWithProvider(publicKey, null));
+  }
+
+  @Test
+  public void createWithProvider_nonConscryptProvider_throws() throws Exception {
+    CompositeMlDsaPrivateKey privateKey =
+        CompositeMlDsaTestUtil.createCompositeKeyFromTestVector(testVectors.get(0));
+    Provider nonConscryptProvider = new Provider("NotConscrypt", "1.0", "test provider") {};
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> CompositeMlDsaSignConscrypt.createWithProvider(privateKey, nonConscryptProvider));
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            CompositeMlDsaVerifyConscrypt.createWithProvider(
+                privateKey.getPublicKey(), nonConscryptProvider));
   }
 }
