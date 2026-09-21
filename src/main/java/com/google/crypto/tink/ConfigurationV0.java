@@ -148,7 +148,11 @@ import java.security.GeneralSecurityException;
  *   <li>RsaSsaPkcs1
  *   <li>RsaSsaPss
  * </ul>
+ *
+ * @deprecated Use {@code TinkConfig2026.get()} or a primitive-specific configuration (such as
+ *     {@code AeadConfig2026.get()}) instead.
  */
+@Deprecated
 public class ConfigurationV0 {
   private ConfigurationV0() {}
 
