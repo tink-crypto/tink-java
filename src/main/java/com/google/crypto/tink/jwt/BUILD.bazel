@@ -1120,38 +1120,6 @@ java_library(
 )
 
 android_library(
-    name = "jwt_signature_configuration_v0-android",
-    srcs = ["JwtSignatureConfigurationV0.java"],
-    deps = [
-        ":jwt_ecdsa_private_key-android",
-        ":jwt_ecdsa_public_key-android",
-        ":jwt_ml_dsa_private_key-android",
-        ":jwt_ml_dsa_public_key-android",
-        ":jwt_public_key_sign-android",
-        ":jwt_public_key_sign_wrapper-android",
-        ":jwt_public_key_verify-android",
-        ":jwt_public_key_verify_wrapper-android",
-        ":jwt_rsa_ssa_pkcs1_private_key-android",
-        ":jwt_rsa_ssa_pkcs1_public_key-android",
-        ":jwt_rsa_ssa_pss_private_key-android",
-        ":jwt_rsa_ssa_pss_public_key-android",
-        "//src/main/java/com/google/crypto/tink:configuration-android",
-        "//src/main/java/com/google/crypto/tink:key-android",
-        "//src/main/java/com/google/crypto/tink:keyset_handle_interface-android",
-        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
-        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util-android",
-        "//src/main/java/com/google/crypto/tink/jwt/subtle:jwt_ecdsa_public_key_sign-android",
-        "//src/main/java/com/google/crypto/tink/jwt/subtle:jwt_ecdsa_public_key_verify-android",
-        "//src/main/java/com/google/crypto/tink/jwt/subtle:jwt_ml_dsa_public_key_sign-android",
-        "//src/main/java/com/google/crypto/tink/jwt/subtle:jwt_ml_dsa_public_key_verify-android",
-        "//src/main/java/com/google/crypto/tink/jwt/subtle:jwt_rsa_ssa_pkcs1_public_key_sign-android",
-        "//src/main/java/com/google/crypto/tink/jwt/subtle:jwt_rsa_ssa_pkcs1_public_key_verify-android",
-        "//src/main/java/com/google/crypto/tink/jwt/subtle:jwt_rsa_ssa_pss_public_key_sign-android",
-        "//src/main/java/com/google/crypto/tink/jwt/subtle:jwt_rsa_ssa_pss_public_key_verify-android",
-    ],
-)
-
-android_library(
     name = "jwt_config2026-android",
     srcs = ["JwtConfig2026.java"],
     deps = [
@@ -1200,38 +1168,6 @@ android_library(
         "//src/main/java/com/google/crypto/tink/jwt/subtle:jwt_rsa_ssa_pss_public_key_verify-android",
         "//src/main/java/com/google/crypto/tink/util:secret_bytes-android",
         "@maven//:com_google_code_findbugs_jsr305",
-    ],
-)
-
-java_library(
-    name = "jwt_signature_configuration_v0",
-    srcs = ["JwtSignatureConfigurationV0.java"],
-    deps = [
-        ":jwt_ecdsa_private_key",
-        ":jwt_ecdsa_public_key",
-        ":jwt_ml_dsa_private_key",
-        ":jwt_ml_dsa_public_key",
-        ":jwt_public_key_sign",
-        ":jwt_public_key_sign_wrapper",
-        ":jwt_public_key_verify",
-        ":jwt_public_key_verify_wrapper",
-        ":jwt_rsa_ssa_pkcs1_private_key",
-        ":jwt_rsa_ssa_pkcs1_public_key",
-        ":jwt_rsa_ssa_pss_private_key",
-        ":jwt_rsa_ssa_pss_public_key",
-        "//src/main/java/com/google/crypto/tink:configuration",
-        "//src/main/java/com/google/crypto/tink:key",
-        "//src/main/java/com/google/crypto/tink:keyset_handle_interface",
-        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
-        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
-        "//src/main/java/com/google/crypto/tink/jwt/subtle:jwt_ecdsa_public_key_sign",
-        "//src/main/java/com/google/crypto/tink/jwt/subtle:jwt_ecdsa_public_key_verify",
-        "//src/main/java/com/google/crypto/tink/jwt/subtle:jwt_ml_dsa_public_key_sign",
-        "//src/main/java/com/google/crypto/tink/jwt/subtle:jwt_ml_dsa_public_key_verify",
-        "//src/main/java/com/google/crypto/tink/jwt/subtle:jwt_rsa_ssa_pkcs1_public_key_sign",
-        "//src/main/java/com/google/crypto/tink/jwt/subtle:jwt_rsa_ssa_pkcs1_public_key_verify",
-        "//src/main/java/com/google/crypto/tink/jwt/subtle:jwt_rsa_ssa_pss_public_key_sign",
-        "//src/main/java/com/google/crypto/tink/jwt/subtle:jwt_rsa_ssa_pss_public_key_verify",
     ],
 )
 
