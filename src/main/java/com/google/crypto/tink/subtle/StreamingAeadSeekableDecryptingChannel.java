@@ -342,6 +342,9 @@ class StreamingAeadSeekableDecryptingChannel implements SeekableByteChannel {
       }
     }
     int read = dst.position() - startPos;
+    if (read == 0 && !reachedEnd() && plaintextPosition >= plaintextSize) {
+      tryLoadSegment(numberOfSegments - 1);
+    }
     if (read == 0 && reachedEnd()) {
       return -1;
     }
