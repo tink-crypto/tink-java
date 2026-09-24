@@ -17,6 +17,7 @@
 package com.google.crypto.tink.signature;
 
 import static com.google.common.truth.Truth.assertThat;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.KeysetHandle;
@@ -32,8 +33,17 @@ import com.google.crypto.tink.subtle.Hex;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PublicKey;
 import java.security.Security;
+import java.security.Signature;
 import java.security.spec.ECPoint;
+import java.security.spec.MGF1ParameterSpec;
+import java.security.spec.PSSParameterSpec;
+import java.security.spec.RSAKeyGenParameterSpec;
+import java.security.spec.RSAPublicKeySpec;
 import org.conscrypt.Conscrypt;
 import org.junit.Assume;
 import org.junit.BeforeClass;
@@ -1740,5 +1750,88 @@ public final class SignaturePemKeysetReaderTest {
       return;
     }
     verifier.verify(pemTestVector.signature, pemTestVector.message);
+  }
+
+  @Test
+  public void buildPublicKeysetHandle_rsaWithNonF4PublicExponent_preservesExponentAndVerifies()
+      throws Exception {
+    Assume.assumeFalse(Util.isAndroid());
+
+    BigInteger customExponent = BigInteger.valueOf(65539);
+    KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+    keyGen.initialize(new RSAKeyGenParameterSpec(2048, customExponent));
+    KeyPair keyPair = keyGen.generateKeyPair();
+    String pem =
+        "-----BEGIN PUBLIC KEY-----\n"
+            + Base64.encode(keyPair.getPublic().getEncoded())
+            + "\n-----END PUBLIC KEY-----\n";
+    byte[] message = "hello".getBytes(UTF_8);
+
+    Signature pkcs1Signer = Signature.getInstance("SHA256withRSA");
+    pkcs1Signer.initSign(keyPair.getPrivate());
+    pkcs1Signer.update(message);
+    byte[] pkcs1Signature = pkcs1Signer.sign();
+
+    KeysetHandle pkcs1Handle =
+        SignaturePemKeysetReader.newBuilder()
+            .addPem(pem, PemKeyType.RSA_SIGN_PKCS1_2048_SHA256)
+            .buildPublicKeysetHandle();
+    RsaSsaPkcs1PublicKey pkcs1Key = (RsaSsaPkcs1PublicKey) pkcs1Handle.getAt(0).getKey();
+    assertThat(pkcs1Key.getParameters().getPublicExponent()).isEqualTo(customExponent);
+    PublicKeyVerify pkcs1Verifier =
+        pkcs1Handle.getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
+    pkcs1Verifier.verify(pkcs1Signature, message);
+
+    Signature pssSigner = Signature.getInstance("RSASSA-PSS");
+    pssSigner.setParameter(
+        new PSSParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA256, 32, 1));
+    pssSigner.initSign(keyPair.getPrivate());
+    pssSigner.update(message);
+    byte[] pssSignature = pssSigner.sign();
+
+    KeysetHandle pssHandle =
+        SignaturePemKeysetReader.newBuilder()
+            .addPem(pem, PemKeyType.RSA_PSS_2048_SHA256)
+            .buildPublicKeysetHandle();
+    RsaSsaPssPublicKey pssKey = (RsaSsaPssPublicKey) pssHandle.getAt(0).getKey();
+    assertThat(pssKey.getParameters().getPublicExponent()).isEqualTo(customExponent);
+    PublicKeyVerify pssVerifier =
+        pssHandle.getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
+    pssVerifier.verify(pssSignature, message);
+  }
+
+  @Test
+  public void buildPublicKeysetHandle_rsaWithInvalidSmallPublicExponent_throws() throws Exception {
+    Assume.assumeFalse(Util.isAndroid());
+
+    BigInteger modulus =
+        new BigInteger(
+            1,
+            Base64.urlSafeDecode(
+                "v90Xf_NN1lRGBofJQzJflHvo6GAf25GGQGaMmD9T1ZP71CCbJ69lGIS_6akFBg6ECEHGM2EZ4WFLCdr5"
+                    + "byUqGCf4mY4WuOn-AcwzwAoDz9ASIFcQOoPclO7JYdfo2SOaumumdb5S_7FkKJ70TGYWj9aTOY"
+                    + "WsCcaojbjGDY_JEXz3BSRIngcgOvXBmV1JokcJ_LsrJD263WE9iUknZDhBK7y4ChjHNqL8yJcw"
+                    + "_D8xLNiJtIyuxiZ00p_lOVUInr8C_a2C1UGCgEGuXZAEGAdONVez52n5TLvQP3hRd4MTi7Yvfh"
+                    + "ezRcA4aXyIDOv-TYi4p-OVTYQ-FMbkgoWBm5bqwQ"));
+    PublicKey rsaKeyWithExponent3 =
+        KeyFactory.getInstance("RSA")
+            .generatePublic(new RSAPublicKeySpec(modulus, BigInteger.valueOf(3)));
+    String pemWithExponent3 =
+        "-----BEGIN PUBLIC KEY-----\n"
+            + Base64.encode(rsaKeyWithExponent3.getEncoded())
+            + "\n-----END PUBLIC KEY-----\n";
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            SignaturePemKeysetReader.newBuilder()
+                .addPem(pemWithExponent3, PemKeyType.RSA_SIGN_PKCS1_2048_SHA256)
+                .buildPublicKeysetHandle());
+    assertThrows(
+        GeneralSecurityException.class,
+        () ->
+            SignaturePemKeysetReader.newBuilder()
+                .addPem(pemWithExponent3, PemKeyType.RSA_PSS_2048_SHA256)
+                .buildPublicKeysetHandle());
   }
 }

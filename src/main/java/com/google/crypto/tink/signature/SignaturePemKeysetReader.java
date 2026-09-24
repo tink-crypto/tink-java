@@ -35,6 +35,7 @@ import com.google.protobuf.ExtensionRegistryLite;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.interfaces.ECPublicKey;
@@ -280,34 +281,34 @@ public final class SignaturePemKeysetReader implements KeysetReader {
     }
   }
 
-  private static RsaSsaPkcs1Parameters getRsaPkcs1Parameters(PemKeyType pemKeyType)
-      throws GeneralSecurityException {
+  private static RsaSsaPkcs1Parameters getRsaPkcs1Parameters(
+      PemKeyType pemKeyType, BigInteger publicExponent) throws GeneralSecurityException {
     switch (pemKeyType) {
       case RSA_SIGN_PKCS1_2048_SHA256:
         return RsaSsaPkcs1Parameters.builder()
             .setModulusSizeBits(2048)
-            .setPublicExponent(RsaSsaPkcs1Parameters.F4)
+            .setPublicExponent(publicExponent)
             .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
             .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
             .build();
       case RSA_SIGN_PKCS1_3072_SHA256:
         return RsaSsaPkcs1Parameters.builder()
             .setModulusSizeBits(3072)
-            .setPublicExponent(RsaSsaPkcs1Parameters.F4)
+            .setPublicExponent(publicExponent)
             .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
             .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
             .build();
       case RSA_SIGN_PKCS1_4096_SHA256:
         return RsaSsaPkcs1Parameters.builder()
             .setModulusSizeBits(4096)
-            .setPublicExponent(RsaSsaPkcs1Parameters.F4)
+            .setPublicExponent(publicExponent)
             .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
             .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
             .build();
       case RSA_SIGN_PKCS1_4096_SHA512:
         return RsaSsaPkcs1Parameters.builder()
             .setModulusSizeBits(4096)
-            .setPublicExponent(RsaSsaPkcs1Parameters.F4)
+            .setPublicExponent(publicExponent)
             .setHashType(RsaSsaPkcs1Parameters.HashType.SHA512)
             .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
             .build();
@@ -321,18 +322,18 @@ public final class SignaturePemKeysetReader implements KeysetReader {
       throws GeneralSecurityException {
     RSAPublicKey key = parseRsaPublicKey(keySpec, pemKeyType.keySizeInBits);
     return RsaSsaPkcs1PublicKey.builder()
-        .setParameters(getRsaPkcs1Parameters(pemKeyType))
+        .setParameters(getRsaPkcs1Parameters(pemKeyType, key.getPublicExponent()))
         .setModulus(key.getModulus())
         .build();
   }
 
-  private static RsaSsaPssParameters getRsaPssParameters(PemKeyType pemKeyType)
-      throws GeneralSecurityException {
+  private static RsaSsaPssParameters getRsaPssParameters(
+      PemKeyType pemKeyType, BigInteger publicExponent) throws GeneralSecurityException {
     switch (pemKeyType) {
       case RSA_PSS_2048_SHA256:
         return RsaSsaPssParameters.builder()
             .setModulusSizeBits(2048)
-            .setPublicExponent(RsaSsaPssParameters.F4)
+            .setPublicExponent(publicExponent)
             .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
             .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
             .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
@@ -341,7 +342,7 @@ public final class SignaturePemKeysetReader implements KeysetReader {
       case RSA_PSS_3072_SHA256:
         return RsaSsaPssParameters.builder()
             .setModulusSizeBits(3072)
-            .setPublicExponent(RsaSsaPssParameters.F4)
+            .setPublicExponent(publicExponent)
             .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
             .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
             .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
@@ -350,7 +351,7 @@ public final class SignaturePemKeysetReader implements KeysetReader {
       case RSA_PSS_4096_SHA256:
         return RsaSsaPssParameters.builder()
             .setModulusSizeBits(4096)
-            .setPublicExponent(RsaSsaPssParameters.F4)
+            .setPublicExponent(publicExponent)
             .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
             .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
             .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
@@ -359,7 +360,7 @@ public final class SignaturePemKeysetReader implements KeysetReader {
       case RSA_PSS_4096_SHA512:
         return RsaSsaPssParameters.builder()
             .setModulusSizeBits(4096)
-            .setPublicExponent(RsaSsaPssParameters.F4)
+            .setPublicExponent(publicExponent)
             .setSigHashType(RsaSsaPssParameters.HashType.SHA512)
             .setMgf1HashType(RsaSsaPssParameters.HashType.SHA512)
             .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
@@ -375,7 +376,7 @@ public final class SignaturePemKeysetReader implements KeysetReader {
       throws GeneralSecurityException {
     RSAPublicKey key = parseRsaPublicKey(keySpec, pemKeyType.keySizeInBits);
     return RsaSsaPssPublicKey.builder()
-        .setParameters(getRsaPssParameters(pemKeyType))
+        .setParameters(getRsaPssParameters(pemKeyType, key.getPublicExponent()))
         .setModulus(key.getModulus())
         .build();
   }
