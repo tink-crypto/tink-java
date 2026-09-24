@@ -406,11 +406,6 @@ public class AesGcmHkdfStreamingKeyManagerTest {
         .isEqualTo(Arrays.copyOfRange(v.getPlaintext(), start, start + len));
     // There must be no more data available.
     ByteBuffer endOfStreamChecker = ByteBuffer.allocate(1);
-    if (v.getPlaintext().length != 0) {
-      assertThat(plaintextChannel.read(endOfStreamChecker)).isEqualTo(-1);
-    } else {
-      // TODO: b/390077226 - This should return -1.
-      assertThat(plaintextChannel.read(endOfStreamChecker)).isEqualTo(0);
-    }
+    assertThat(plaintextChannel.read(endOfStreamChecker)).isEqualTo(-1);
   }
 }

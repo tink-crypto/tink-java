@@ -16,7 +16,9 @@
 
 package com.google.crypto.tink.subtle;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
@@ -29,9 +31,12 @@ import com.google.crypto.tink.testing.StreamingTestUtil;
 import com.google.crypto.tink.testing.StreamingTestUtil.SeekableByteBufferChannel;
 import com.google.crypto.tink.testing.TestUtil;
 import com.google.crypto.tink.util.SecretBytes;
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.SeekableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -196,6 +201,75 @@ public class AesGcmHkdfStreamingTest {
     int plaintextSize = 1 << 20;
     StreamingTestUtil.testFileEncryption(
         defaultAesHkdfStreamingInstance, tmpFolder.newFile(), plaintextSize);
+  }
+
+  @Test
+  public void testSeekableDecryptingChannel_emptyPlaintext_returnsEof() throws Exception {
+    byte[] aad = Hex.decode("aabbccddeeff");
+    byte[] ciphertext =
+        StreamingTestUtil.encryptWithChannel(
+            defaultAesHkdfStreamingInstance, new byte[0], aad, /* firstSegmentOffset= */ 0);
+    try (SeekableByteChannel channel =
+        defaultAesHkdfStreamingInstance.newSeekableDecryptingChannel(
+            new SeekableByteBufferChannel(ciphertext), aad)) {
+      assertEquals(0, channel.size());
+      assertEquals(-1, channel.read(ByteBuffer.allocate(1)));
+      assertEquals(-1, channel.read(ByteBuffer.allocate(1)));
+    }
+  }
+
+  @Test
+  public void testSeekableDecryptingChannel_craftedEmptyPlaintextCiphertext_throwsIOException()
+      throws Exception {
+    byte[] aad = Hex.decode("aabbccddeeff");
+    // 24-byte header (first byte = headerLength = 24) + 16-byte forged tag = 40 bytes.
+    byte[] craftedCiphertext = new byte[40];
+    craftedCiphertext[0] = (byte) defaultAesHkdfStreamingInstance.getHeaderLength();
+    try (SeekableByteChannel channel =
+        defaultAesHkdfStreamingInstance.newSeekableDecryptingChannel(
+            new SeekableByteBufferChannel(craftedCiphertext), aad)) {
+      assertEquals(0, channel.size());
+      assertThrows(IOException.class, () -> channel.read(ByteBuffer.allocate(1)));
+    }
+  }
+
+  @Test
+  public void testSeekableDecryptingChannel_truncatedCiphertexts_throwsIOException()
+      throws Exception {
+    AesGcmHkdfStreaming ags =
+        new AesGcmHkdfStreaming(
+            Hex.decode("000102030405060708090a0b0c0d0e0f00112233445566778899aabbccddeeff"),
+            "HmacSha256",
+            /* keySizeInBytes= */ 32,
+            /* ciphertextSegmentSize= */ 64,
+            /* firstSegmentOffset= */ 0);
+    byte[] aad = Hex.decode("aabbccddeeff");
+    byte[] plaintext = StreamingTestUtil.generatePlaintext(70);
+    byte[] ciphertext =
+        StreamingTestUtil.encryptWithChannel(ags, plaintext, aad, /* firstSegmentOffset= */ 0);
+
+    // Every strict truncation of the 158-byte ciphertext (including segment+tag boundaries 56, 80,
+    // and 144) must fail with IOException when drained rather than hanging on 0 or returning -1.
+    for (int truncatedLen = 0; truncatedLen < ciphertext.length; truncatedLen++) {
+      final int len = truncatedLen;
+      byte[] truncated = Arrays.copyOf(ciphertext, len);
+      assertThrows(
+          "Expected IOException for truncated length " + len,
+          IOException.class,
+          () -> {
+            try (SeekableByteChannel channel =
+                ags.newSeekableDecryptingChannel(new SeekableByteBufferChannel(truncated), aad)) {
+              ByteBuffer buf = ByteBuffer.allocate(64);
+              int reads = 0;
+              while (channel.read(buf) != -1) {
+                buf.clear();
+                if (++reads > 100) {
+                  fail("Infinite read loop at truncated length " + len);
+                }
+              }
+            }
+          });
+    }
   }
 
   @BeforeClass

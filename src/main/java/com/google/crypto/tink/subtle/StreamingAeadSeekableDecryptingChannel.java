@@ -280,7 +280,7 @@ class StreamingAeadSeekableDecryptingChannel implements SeekableByteChannel {
    * and this has been verified, by decrypting the last segment.
    */
   private boolean reachedEnd() {
-    return (plaintextPosition == plaintextSize
+    return (plaintextPosition >= plaintextSize
         && isCurrentSegmentDecrypted
         && currentSegmentNr == numberOfSegments - 1
         && plaintextSegment.remaining() == 0);
@@ -342,6 +342,11 @@ class StreamingAeadSeekableDecryptingChannel implements SeekableByteChannel {
       }
     }
     int read = dst.position() - startPos;
+    if (plaintextPosition >= plaintextSize && !reachedEnd()) {
+      if (tryLoadSegment(numberOfSegments - 1)) {
+        plaintextSegment.position(plaintextSegment.limit());
+      }
+    }
     if (read == 0 && reachedEnd()) {
       return -1;
     }

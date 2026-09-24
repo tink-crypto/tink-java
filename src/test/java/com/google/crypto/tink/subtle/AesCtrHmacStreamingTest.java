@@ -31,6 +31,7 @@ import com.google.crypto.tink.testing.StreamingTestUtil;
 import com.google.crypto.tink.testing.StreamingTestUtil.SeekableByteBufferChannel;
 import com.google.crypto.tink.util.SecretBytes;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
@@ -791,5 +792,72 @@ public class AesCtrHmacStreamingTest {
     ByteBuffer empty = ByteBuffer.allocate(0);
     ptChannel.position(500);
     assertThat(ptChannel.read(empty)).isEqualTo(0);
+  }
+
+  @Test
+  public void testSeekableDecryptingChannel_emptyAndTruncatedCiphertexts() throws Exception {
+    Assume.assumeFalse(TinkFips.useOnlyFips());
+
+    byte[] ikm = Hex.decode("000102030405060708090a0b0c0d0e0f00112233445566778899aabbccddeeff");
+    AesCtrHmacStreamingParameters params =
+        AesCtrHmacStreamingParameters.builder()
+            .setKeySizeBytes(32)
+            .setDerivedKeySizeBytes(32)
+            .setHkdfHashType(AesCtrHmacStreamingParameters.HashType.SHA256)
+            .setHmacHashType(AesCtrHmacStreamingParameters.HashType.SHA256)
+            .setHmacTagSizeBytes(16)
+            .setCiphertextSegmentSizeBytes(64)
+            .build();
+    AesCtrHmacStreamingKey key =
+        AesCtrHmacStreamingKey.create(
+            params, SecretBytes.copyFrom(ikm, InsecureSecretKeyAccess.get()));
+    StreamingAead streamingAead = AesCtrHmacStreaming.create(key);
+    byte[] associatedData = Hex.decode("aabbccddeeff");
+
+    // 1. Valid empty-plaintext ciphertext returns -1 immediately.
+    byte[] emptyCiphertext =
+        StreamingTestUtil.encryptWithChannel(
+            streamingAead, new byte[0], associatedData, /* firstSegmentOffset= */ 0);
+    try (SeekableByteChannel ptChannel =
+        streamingAead.newSeekableDecryptingChannel(
+            new StreamingTestUtil.SeekableByteBufferChannel(emptyCiphertext), associatedData)) {
+      assertThat(ptChannel.size()).isEqualTo(0);
+      assertThat(ptChannel.read(ByteBuffer.allocate(1))).isEqualTo(-1);
+    }
+
+    // 2. Crafted 56-byte (40B header + 16B tag) ciphertext throws IOException instead of returning 0.
+    byte[] craftedCiphertext = new byte[56];
+    craftedCiphertext[0] = 40;
+    try (SeekableByteChannel ptChannel =
+        streamingAead.newSeekableDecryptingChannel(
+            new StreamingTestUtil.SeekableByteBufferChannel(craftedCiphertext), associatedData)) {
+      assertThat(ptChannel.size()).isEqualTo(0);
+      assertThrows(IOException.class, () -> ptChannel.read(ByteBuffer.allocate(1)));
+    }
+
+    // 3. Multi-segment ciphertext truncated to segment+tag boundaries (56, 80, 144) throws IOException.
+    byte[] plaintext = StreamingTestUtil.generatePlaintext(70);
+    byte[] fullCiphertext =
+        StreamingTestUtil.encryptWithChannel(
+            streamingAead, plaintext, associatedData, /* firstSegmentOffset= */ 0);
+    for (int truncatedLen : new int[] {56, 80, 144}) {
+      byte[] truncated = Arrays.copyOf(fullCiphertext, truncatedLen);
+      assertThrows(
+          IOException.class,
+          () -> {
+            try (SeekableByteChannel ptChannel =
+                streamingAead.newSeekableDecryptingChannel(
+                    new StreamingTestUtil.SeekableByteBufferChannel(truncated), associatedData)) {
+              ByteBuffer buf = ByteBuffer.allocate(64);
+              int reads = 0;
+              while (ptChannel.read(buf) != -1) {
+                buf.clear();
+                if (++reads > 100) {
+                  fail("Infinite read loop at truncated length " + truncatedLen);
+                }
+              }
+            }
+          });
+    }
   }
 }

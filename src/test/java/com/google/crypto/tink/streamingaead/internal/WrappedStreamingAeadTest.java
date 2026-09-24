@@ -16,6 +16,7 @@
 
 package com.google.crypto.tink.streamingaead.internal;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
@@ -43,6 +44,8 @@ import com.google.crypto.tink.testing.StreamingTestUtil;
 import com.google.crypto.tink.util.SecretBytes;
 import com.google.protobuf.ByteString;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.SeekableByteChannel;
 import java.security.GeneralSecurityException;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -362,6 +365,90 @@ public class WrappedStreamingAeadTest {
         () ->
             StreamingTestUtil.testEncryptDecryptDifferentInstances(
                 streamingAeadWithKeyPrimary, streamingAeadWithKeyDisabled, 0, 20, 5));
+  }
+
+  @Test
+  public void seekableDecrypt_emptyPlaintextWithNonPrimaryKey_returnsMinusOne() throws Exception {
+    AesGcmHkdfStreamingParameters params =
+        AesGcmHkdfStreamingParameters.builder()
+            .setKeySizeBytes(16)
+            .setDerivedAesGcmKeySizeBytes(16)
+            .setHkdfHashType(AesGcmHkdfStreamingParameters.HashType.SHA256)
+            .setCiphertextSegmentSizeBytes(64)
+            .build();
+    AesGcmHkdfStreamingKey primaryKey =
+        AesGcmHkdfStreamingKey.create(
+            params,
+            SecretBytes.copyFrom(
+                Hex.decode("000102030405060708090a0b0c0d0e0f"), InsecureSecretKeyAccess.get()));
+    AesGcmHkdfStreamingKey secondaryKey =
+        AesGcmHkdfStreamingKey.create(
+            params,
+            SecretBytes.copyFrom(
+                Hex.decode("f0e0d0c0b0a090807060504030201000"), InsecureSecretKeyAccess.get()));
+    KeysetHandle secondaryOnlyHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(secondaryKey).withFixedId(2).makePrimary())
+            .build();
+    KeysetHandle multiKeyHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(primaryKey).withFixedId(1).makePrimary())
+            .addEntry(KeysetHandle.importKey(secondaryKey).withFixedId(2))
+            .build();
+
+    StreamingAead secondaryAead =
+        WrappedStreamingAead.wrap(secondaryOnlyHandle, WrappedStreamingAeadTest::primitiveFactory);
+    StreamingAead multiKeyAead =
+        WrappedStreamingAead.wrap(multiKeyHandle, WrappedStreamingAeadTest::primitiveFactory);
+
+    byte[] aad = Hex.decode("aabbccddeeff");
+    byte[] emptyCiphertext =
+        StreamingTestUtil.encryptWithChannel(
+            secondaryAead, new byte[0], aad, /* firstSegmentOffset= */ 0);
+
+    try (SeekableByteChannel channel =
+        multiKeyAead.newSeekableDecryptingChannel(
+            new StreamingTestUtil.SeekableByteBufferChannel(emptyCiphertext), aad)) {
+      assertEquals(-1, channel.read(ByteBuffer.allocate(1)));
+      assertEquals(0, channel.size());
+    }
+  }
+
+  @Test
+  public void seekableDecrypt_craftedEmptyPlaintextCiphertext_throwsIOException() throws Exception {
+    AesGcmHkdfStreamingParameters params =
+        AesGcmHkdfStreamingParameters.builder()
+            .setKeySizeBytes(16)
+            .setDerivedAesGcmKeySizeBytes(16)
+            .setHkdfHashType(AesGcmHkdfStreamingParameters.HashType.SHA256)
+            .setCiphertextSegmentSizeBytes(4096)
+            .build();
+    AesGcmHkdfStreamingKey key1 =
+        AesGcmHkdfStreamingKey.create(
+            params,
+            SecretBytes.copyFrom(
+                Hex.decode("000102030405060708090a0b0c0d0e0f"), InsecureSecretKeyAccess.get()));
+    AesGcmHkdfStreamingKey key2 =
+        AesGcmHkdfStreamingKey.create(
+            params,
+            SecretBytes.copyFrom(
+                Hex.decode("f0e0d0c0b0a090807060504030201000"), InsecureSecretKeyAccess.get()));
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(KeysetHandle.importKey(key1).withFixedId(1).makePrimary())
+            .addEntry(KeysetHandle.importKey(key2).withFixedId(2))
+            .build();
+    StreamingAead streamingAead =
+        WrappedStreamingAead.wrap(keysetHandle, WrappedStreamingAeadTest::primitiveFactory);
+
+    // 40-byte crafted payload: [headerLength = 24] + 23 bytes arbitrary header + 16 bytes tag.
+    byte[] craftedCiphertext = new byte[40];
+    craftedCiphertext[0] = 24;
+    try (SeekableByteChannel channel =
+        streamingAead.newSeekableDecryptingChannel(
+            new StreamingTestUtil.SeekableByteBufferChannel(craftedCiphertext), new byte[0])) {
+      assertThrows(IOException.class, () -> channel.read(ByteBuffer.allocate(16)));
+    }
   }
 
   private static StreamingAead primitiveFactory(KeysetHandleInterface.Entry entry)
