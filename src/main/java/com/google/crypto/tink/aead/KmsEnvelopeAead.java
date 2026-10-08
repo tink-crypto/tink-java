@@ -20,14 +20,19 @@ import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
+import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.ProtoKeySerialization;
 import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
 import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
+import com.google.crypto.tink.ProtoKeySerializer;
 import com.google.crypto.tink.TinkProtoParametersFormat;
-import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
-import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
-import com.google.crypto.tink.internal.MutableSerializationRegistry;
+import com.google.crypto.tink.aead.subtle.AesCtrHmacAead;
+import com.google.crypto.tink.aead.subtle.AesEaxAead;
+import com.google.crypto.tink.aead.subtle.AesGcmAead;
+import com.google.crypto.tink.aead.subtle.AesGcmSivAead;
+import com.google.crypto.tink.aead.subtle.ChaCha20Poly1305Aead;
+import com.google.crypto.tink.aead.subtle.XChaCha20Poly1305Aead;
 import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ExtensionRegistryLite;
@@ -89,7 +94,7 @@ public final class KmsEnvelopeAead implements Aead {
         KeyTemplate.newBuilder(dekTemplate)
             .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
             .build();
-    return TinkProtoParametersFormat.parse(rawTemplate.toByteArray());
+    return TinkProtoParametersFormat.parse(rawTemplate.toByteArray(), AeadConfig2026.get());
   }
 
   /**
@@ -138,7 +143,7 @@ public final class KmsEnvelopeAead implements Aead {
     try {
       dekTemplate =
           KeyTemplate.parseFrom(
-              TinkProtoParametersFormat.serialize(dekParameters),
+              TinkProtoParametersFormat.serialize(dekParameters, AeadConfig2026.get()),
               ExtensionRegistryLite.getEmptyRegistry());
     } catch (InvalidProtocolBufferException e) {
       throw new GeneralSecurityException(e);
@@ -146,17 +151,41 @@ public final class KmsEnvelopeAead implements Aead {
     return new KmsEnvelopeAead(dekTemplate, remote);
   }
 
+  @LowLevelCryptoCaller
+  private static Aead createPrimitive(Key key) throws GeneralSecurityException {
+    if (key instanceof AesCtrHmacAeadKey) {
+      return AesCtrHmacAead.create((AesCtrHmacAeadKey) key);
+    }
+    if (key instanceof AesGcmKey) {
+      return AesGcmAead.create((AesGcmKey) key);
+    }
+    if (key instanceof AesGcmSivKey) {
+      return AesGcmSivAead.create((AesGcmSivKey) key);
+    }
+    if (key instanceof AesEaxKey) {
+      return AesEaxAead.create((AesEaxKey) key);
+    }
+    if (key instanceof ChaCha20Poly1305Key) {
+      return ChaCha20Poly1305Aead.create((ChaCha20Poly1305Key) key);
+    }
+    if (key instanceof XChaCha20Poly1305Key) {
+      return XChaCha20Poly1305Aead.create((XChaCha20Poly1305Key) key);
+    }
+    throw new GeneralSecurityException("Unsupported DEK key type: " + key.getClass());
+  }
+
   @Override
   @AccessesPartialKey
+  @LowLevelCryptoCaller
   public byte[] encrypt(final byte[] plaintext, final byte[] associatedData)
       throws GeneralSecurityException {
-    Key key =
-        MutableKeyCreationRegistry.globalInstance()
-            .createKey(parametersForNewKeys, /* idRequirement= */ null);
-
+    Key key = AeadConfig2026.get().createKey(parametersForNewKeys, /* idRequirement= */ null);
+    ProtoKeySerializer serializer = AeadConfig2026.get().getOrNull(ProtoKeySerializer.class);
+    if (serializer == null) {
+      throw new GeneralSecurityException("Unexpected: AeadConfig2026 has no ProtoKeySerializer");
+    }
     ProtoKeySerialization serialization =
-        MutableSerializationRegistry.globalInstance()
-            .serializeKey(key, InsecureSecretKeyAccess.get());
+        serializer.serializeKey(key, InsecureSecretKeyAccess.get());
     byte[] dek = serialization.getValue().toByteArray();
     // Wrap it with remote.
     byte[] encryptedDek = remote.encrypt(dek, EMPTY_AAD);
@@ -164,7 +193,7 @@ public final class KmsEnvelopeAead implements Aead {
       throw new GeneralSecurityException("length of encrypted DEK too large");
     }
     // Use DEK to encrypt plaintext.
-    Aead aead = MutablePrimitiveRegistry.globalInstance().getPrimitive(key, Aead.class);
+    Aead aead = createPrimitive(key);
     byte[] payload = aead.encrypt(plaintext, associatedData);
     // Build ciphertext protobuf and return result.
     return buildCiphertext(encryptedDek, payload);
@@ -172,6 +201,7 @@ public final class KmsEnvelopeAead implements Aead {
 
   @Override
   @AccessesPartialKey
+  @LowLevelCryptoCaller
   public byte[] decrypt(final byte[] ciphertext, final byte[] associatedData)
       throws GeneralSecurityException {
     try {
@@ -196,11 +226,13 @@ public final class KmsEnvelopeAead implements Aead {
               KeyMaterialType.SYMMETRIC,
               OutputPrefixType.RAW,
               /* idRequirement= */ null);
-      Key key =
-          MutableSerializationRegistry.globalInstance()
-              .parseKey(serialization, InsecureSecretKeyAccess.get());
+      ProtoKeySerializer serializer = AeadConfig2026.get().getOrNull(ProtoKeySerializer.class);
+      if (serializer == null) {
+        throw new GeneralSecurityException("Unexpected: AeadConfig2026 has no ProtoKeySerializer");
+      }
+      Key key = serializer.parseKey(serialization, InsecureSecretKeyAccess.get());
 
-      Aead aead = MutablePrimitiveRegistry.globalInstance().getPrimitive(key, Aead.class);
+      Aead aead = createPrimitive(key);
       return aead.decrypt(payload, associatedData);
     } catch (IndexOutOfBoundsException
              | BufferUnderflowException
