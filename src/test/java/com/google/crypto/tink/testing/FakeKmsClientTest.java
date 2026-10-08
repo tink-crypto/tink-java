@@ -21,10 +21,8 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.Aead;
-import com.google.crypto.tink.aead.AeadConfig;
 import com.google.crypto.tink.subtle.Random;
 import java.security.GeneralSecurityException;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -32,11 +30,6 @@ import org.junit.runners.JUnit4;
 /** Tests for {@code FakeKmsClient}. */
 @RunWith(JUnit4.class)
 public final class FakeKmsClientTest {
-
-  @Before
-  public void setUp() throws GeneralSecurityException {
-    AeadConfig.register();
-  }
 
   @Test
   public void createNewAead_success() throws GeneralSecurityException {

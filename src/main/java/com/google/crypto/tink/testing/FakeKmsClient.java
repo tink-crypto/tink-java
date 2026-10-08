@@ -18,12 +18,11 @@ package com.google.crypto.tink.testing;
 
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.KmsClient;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
-import com.google.crypto.tink.aead.AesCtrHmacAeadKeyManager;
+import com.google.crypto.tink.aead.AeadConfig2026;
+import com.google.crypto.tink.aead.PredefinedAeadParameters;
 import com.google.crypto.tink.subtle.Base64;
 import java.security.GeneralSecurityException;
 import java.util.Locale;
@@ -87,17 +86,20 @@ public final class FakeKmsClient implements KmsClient {
     String encodedKey = removePrefix(PREFIX, uri);
     byte[] bytes = Base64.urlSafeDecode(encodedKey);
     KeysetHandle keysetHandle =
-        TinkProtoKeysetFormat.parseKeyset(bytes, InsecureSecretKeyAccess.get());
-    return keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
+        TinkProtoKeysetFormat.parseKeyset(
+            bytes, InsecureSecretKeyAccess.get(), AeadConfig2026.get());
+    return keysetHandle.getPrimitive(AeadConfig2026.get(), Aead.class);
   }
 
   /** @return a new, random fake key_uri. */
   public static String createFakeKeyUri() throws GeneralSecurityException {
     // The key_uri contains an encoded keyset with a new aes128CtrHmacSha256 key.
-    KeyTemplate template = AesCtrHmacAeadKeyManager.aes128CtrHmacSha256Template();
-    KeysetHandle keysetHandle = KeysetHandle.generateNew(template);
+    KeysetHandle keysetHandle =
+        KeysetHandle.generateNew(
+            PredefinedAeadParameters.AES128_CTR_HMAC_SHA256, AeadConfig2026.get());
     byte[] serializedKeyset =
-        TinkProtoKeysetFormat.serializeKeyset(keysetHandle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            keysetHandle, InsecureSecretKeyAccess.get(), AeadConfig2026.get());
     return PREFIX + Base64.urlSafeEncode(serializedKeyset);
   }
 
