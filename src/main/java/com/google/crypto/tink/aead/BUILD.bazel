@@ -1235,6 +1235,7 @@ android_library(
     name = "legacy_kms_envelope_aead_proto_serialization-android",
     srcs = ["LegacyKmsEnvelopeAeadProtoSerialization.java"],
     deps = [
+        ":aead_config2026-android",
         ":aead_parameters-android",
         ":aes_ctr_hmac_aead_parameters-android",
         ":aes_eax_parameters-android",
@@ -1247,6 +1248,7 @@ android_library(
         "//proto:kms_envelope_java_proto_lite",
         "//proto:tink_java_proto_lite",
         "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
+        "//src/main/java/com/google/crypto/tink:configuration-android",
         "//src/main/java/com/google/crypto/tink:parameters-android",
         "//src/main/java/com/google/crypto/tink:proto_key_serialization-android",
         "//src/main/java/com/google/crypto/tink:proto_parameters_serialization-android",
@@ -1266,6 +1268,7 @@ java_library(
     name = "legacy_kms_envelope_aead_proto_serialization",
     srcs = ["LegacyKmsEnvelopeAeadProtoSerialization.java"],
     deps = [
+        ":aead_config2026",
         ":aead_parameters",
         ":aes_ctr_hmac_aead_parameters",
         ":aes_eax_parameters",
@@ -1278,6 +1281,7 @@ java_library(
         "//proto:kms_envelope_java_proto",
         "//proto:tink_java_proto",
         "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:configuration",
         "//src/main/java/com/google/crypto/tink:parameters",
         "//src/main/java/com/google/crypto/tink:proto_key_serialization",
         "//src/main/java/com/google/crypto/tink:proto_parameters_serialization",

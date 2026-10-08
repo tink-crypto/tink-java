@@ -26,9 +26,7 @@ import com.google.crypto.tink.ProtoKeySerialization;
 import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
 import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
 import com.google.crypto.tink.ProtoParametersSerialization;
-import com.google.crypto.tink.aead.internal.AesGcmSivProtoSerialization;
 import com.google.crypto.tink.internal.MutableSerializationRegistry;
-import com.google.crypto.tink.mac.MacConfig;
 import com.google.crypto.tink.proto.AesCmacKeyFormat;
 import com.google.crypto.tink.proto.AesCmacParams;
 import com.google.crypto.tink.proto.AesCtrHmacAeadKeyFormat;
@@ -68,12 +66,7 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
 
   @BeforeClass
   public static void setUp() throws Exception {
-    MacConfig.register();
-    AeadConfig.register();
     LegacyKmsEnvelopeAeadProtoSerialization.register(registry);
-    // Also register the AesGcmSivProtoSerialization if we don't have conscrypt.
-    // We anyhow only want to parse and serialize.
-    AesGcmSivProtoSerialization.register();
   }
 
   @Test

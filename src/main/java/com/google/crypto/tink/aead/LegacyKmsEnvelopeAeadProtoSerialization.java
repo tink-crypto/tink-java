@@ -109,7 +109,8 @@ public final class LegacyKmsEnvelopeAeadProtoSerialization {
   private static KmsEnvelopeAeadKeyFormat serializeParametersToKmsEnvelopeAeadKeyFormat(
       LegacyKmsEnvelopeAeadParameters parameters) throws GeneralSecurityException {
     byte[] serializedDekParameters =
-        TinkProtoParametersFormat.serialize(parameters.getDekParametersForNewKeys());
+        TinkProtoParametersFormat.serialize(
+            parameters.getDekParametersForNewKeys(), AeadConfig2026.get());
     try {
       KeyTemplate dekKeyTemplate =
           KeyTemplate.parseFrom(serializedDekParameters, ExtensionRegistryLite.getEmptyRegistry());
@@ -160,14 +161,21 @@ public final class LegacyKmsEnvelopeAeadProtoSerialization {
   private static LegacyKmsEnvelopeAeadParameters parseParameters(
       KmsEnvelopeAeadKeyFormat format, OutputPrefixType outputPrefixType)
       throws GeneralSecurityException {
-    Parameters aeadParameters =
-        TinkProtoParametersFormat.parse(
-            KeyTemplate.newBuilder()
-                .setTypeUrl(format.getDekTemplate().getTypeUrl())
-                .setValue(format.getDekTemplate().getValue())
-                .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
-                .build()
-                .toByteArray());
+    Parameters aeadParameters;
+    try {
+      aeadParameters =
+          TinkProtoParametersFormat.parse(
+              KeyTemplate.newBuilder()
+                  .setTypeUrl(format.getDekTemplate().getTypeUrl())
+                  .setValue(format.getDekTemplate().getValue())
+                  .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW)
+                  .build()
+                  .toByteArray(),
+              AeadConfig2026.get());
+    } catch (GeneralSecurityException e) {
+      throw new GeneralSecurityException(
+          "Unsupported DEK parameters when parsing " + format.getDekTemplate(), e);
+    }
 
     @Nullable LegacyKmsEnvelopeAeadParameters.DekParsingStrategy strategy;
 
