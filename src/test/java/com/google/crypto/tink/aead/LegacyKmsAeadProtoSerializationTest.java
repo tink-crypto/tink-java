@@ -64,12 +64,18 @@ public final class LegacyKmsAeadProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
+    ProtoParametersSerialization serialized =
+        LegacyKmsAeadProtoSerialization.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.KmsAeadKeyFormat.parser(), serialized, serialization);
+    assertEqualWhenValueParsed(
+        com.google.crypto.tink.proto.KmsAeadKeyFormat.parser(),
+        registry.serializeParameters(parameters),
+        serialization);
 
-    Parameters parsed = registry.parseParameters(serialization);
+    Parameters parsed = LegacyKmsAeadProtoSerialization.parseParameters(serialization);
     assertThat(parsed).isEqualTo(parameters);
+    assertThat(registry.parseParameters(serialization)).isEqualTo(parameters);
   }
 
   @Test
@@ -87,11 +93,12 @@ public final class LegacyKmsAeadProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
+    ProtoParametersSerialization serialized =
+        LegacyKmsAeadProtoSerialization.serializeParameters(parameters);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.KmsAeadKeyFormat.parser(), serialized, serialization);
 
-    Parameters parsed = registry.parseParameters(serialization);
+    Parameters parsed = LegacyKmsAeadProtoSerialization.parseParameters(serialization);
     assertThat(parsed).isEqualTo(parameters);
   }
 
@@ -106,7 +113,25 @@ public final class LegacyKmsAeadProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    assertThrows(GeneralSecurityException.class, () -> registry.parseParameters(serialization));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> LegacyKmsAeadProtoSerialization.parseParameters(serialization));
+  }
+
+  @Test
+  public void parseParameters_wrongTypeUrl_throws() throws Exception {
+    ProtoParametersSerialization serialization =
+        ProtoParametersSerialization.create(
+            "wrongTypeUrl",
+            OutputPrefixType.RAW,
+            com.google.crypto.tink.proto.KmsAeadKeyFormat.newBuilder()
+                .setKeyUri("someArbitrarykeyUri723")
+                .build()
+                .toByteString());
+
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> LegacyKmsAeadProtoSerialization.parseParameters(serialization));
   }
 
   @Test
@@ -127,12 +152,17 @@ public final class LegacyKmsAeadProtoSerializationTest {
             OutputPrefixType.RAW,
             null);
 
-    ProtoKeySerialization serialized = registry.serializeKey(key, null);
+    ProtoKeySerialization serialized = LegacyKmsAeadProtoSerialization.serializeKey(key, null);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.KmsAeadKey.parser(), serialized, serialization);
+    assertEqualWhenValueParsed(
+        com.google.crypto.tink.proto.KmsAeadKey.parser(),
+        registry.serializeKey(key, null),
+        serialization);
 
-    Key parsed = registry.parseKey(serialization, null);
+    Key parsed = LegacyKmsAeadProtoSerialization.parseKey(serialization, null);
     assertThat(parsed.equalsKey(key)).isTrue();
+    assertThat(registry.parseKey(serialization, null).equalsKey(key)).isTrue();
   }
 
   @Test
@@ -155,11 +185,11 @@ public final class LegacyKmsAeadProtoSerializationTest {
             OutputPrefixType.TINK,
             /* idRequirement= */ 123);
 
-    ProtoKeySerialization serialized = registry.serializeKey(key, null);
+    ProtoKeySerialization serialized = LegacyKmsAeadProtoSerialization.serializeKey(key, null);
     assertEqualWhenValueParsed(
         com.google.crypto.tink.proto.KmsAeadKey.parser(), serialized, serialization);
 
-    Key parsed = registry.parseKey(serialization, null);
+    Key parsed = LegacyKmsAeadProtoSerialization.parseKey(serialization, null);
     assertThat(parsed.equalsKey(key)).isTrue();
   }
 
@@ -179,7 +209,9 @@ public final class LegacyKmsAeadProtoSerializationTest {
             OutputPrefixType.RAW,
             null);
 
-    assertThrows(GeneralSecurityException.class, () -> registry.parseKey(serialization, null));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> LegacyKmsAeadProtoSerialization.parseKey(serialization, null));
   }
 
   @Test
@@ -196,7 +228,7 @@ public final class LegacyKmsAeadProtoSerializationTest {
             KeyMaterialType.UNKNOWN_KEYMATERIAL,
             OutputPrefixType.RAW,
             null);
-    Key parsed = registry.parseKey(serialization, null);
+    Key parsed = LegacyKmsAeadProtoSerialization.parseKey(serialization, null);
 
     LegacyKmsAeadKey expected = LegacyKmsAeadKey.create(
         LegacyKmsAeadParameters.create("someArbitraryKeyUri443"));
@@ -218,6 +250,28 @@ public final class LegacyKmsAeadProtoSerializationTest {
             OutputPrefixType.LEGACY,
             1234);
 
-    assertThrows(GeneralSecurityException.class, () -> registry.parseKey(serialization, null));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> LegacyKmsAeadProtoSerialization.parseKey(serialization, null));
+  }
+
+  @Test
+  public void parseKey_wrongTypeUrl_throws() throws Exception {
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "wrongTypeUrl",
+            com.google.crypto.tink.proto.KmsAeadKey.newBuilder()
+                .setParams(
+                    com.google.crypto.tink.proto.KmsAeadKeyFormat.newBuilder()
+                        .setKeyUri("someArbitraryKeyUri443"))
+                .build()
+                .toByteString(),
+            KeyMaterialType.REMOTE,
+            OutputPrefixType.RAW,
+            null);
+
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> LegacyKmsAeadProtoSerialization.parseKey(serialization, null));
   }
 }

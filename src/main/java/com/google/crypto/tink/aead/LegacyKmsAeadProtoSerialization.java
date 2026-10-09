@@ -75,7 +75,7 @@ final class LegacyKmsAeadProtoSerialization {
     throw new GeneralSecurityException("Unable to parse OutputPrefixType: " + outputPrefixType);
   }
 
-  private static ProtoParametersSerialization serializeParameters(
+  static ProtoParametersSerialization serializeParameters(
       LegacyKmsAeadParameters parameters) throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
         TYPE_URL,
@@ -83,7 +83,7 @@ final class LegacyKmsAeadProtoSerialization {
         KmsAeadKeyFormat.newBuilder().setKeyUri(parameters.keyUri()).build().toByteString());
   }
 
-  private static LegacyKmsAeadParameters parseParameters(ProtoParametersSerialization serialization)
+  static LegacyKmsAeadParameters parseParameters(ProtoParametersSerialization serialization)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
       throw new IllegalArgumentException(
@@ -104,7 +104,7 @@ final class LegacyKmsAeadProtoSerialization {
   }
 
   @AccessesPartialKey
-  private static ProtoKeySerialization serializeKey(
+  static ProtoKeySerialization serializeKey(
       LegacyKmsAeadKey key, @Nullable SecretKeyAccess access) throws GeneralSecurityException {
     return ProtoKeySerialization.create(
         TYPE_URL,
@@ -119,7 +119,7 @@ final class LegacyKmsAeadProtoSerialization {
   }
 
   @AccessesPartialKey
-  private static LegacyKmsAeadKey parseKey(
+  static LegacyKmsAeadKey parseKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {

@@ -72,8 +72,8 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
   @Test
   public void registerTwice() throws Exception {
     MutableSerializationRegistry registry = new MutableSerializationRegistry();
-    LegacyKmsAeadProtoSerialization.register(registry);
-    LegacyKmsAeadProtoSerialization.register(registry);
+    LegacyKmsEnvelopeAeadProtoSerialization.register(registry);
+    LegacyKmsEnvelopeAeadProtoSerialization.register(registry);
   }
 
   @Test
@@ -108,11 +108,15 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
+    ProtoParametersSerialization serialized =
+        LegacyKmsEnvelopeAeadProtoSerialization.serializeParameters(parameters);
     assertEqualWhenValueParsed(KmsEnvelopeAeadKeyFormat.parser(), serialized, serialization);
+    assertEqualWhenValueParsed(
+        KmsEnvelopeAeadKeyFormat.parser(), registry.serializeParameters(parameters), serialization);
 
-    Parameters parsed = registry.parseParameters(serialization);
+    Parameters parsed = LegacyKmsEnvelopeAeadProtoSerialization.parseParameters(serialization);
     assertThat(parsed).isEqualTo(parameters);
+    assertThat(registry.parseParameters(serialization)).isEqualTo(parameters);
   }
 
   @Test
@@ -139,10 +143,11 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
+    ProtoParametersSerialization serialized =
+        LegacyKmsEnvelopeAeadProtoSerialization.serializeParameters(parameters);
     assertEqualWhenValueParsed(KmsEnvelopeAeadKeyFormat.parser(), serialized, serialization);
 
-    Parameters parsed = registry.parseParameters(serialization);
+    Parameters parsed = LegacyKmsEnvelopeAeadProtoSerialization.parseParameters(serialization);
     assertThat(parsed).isEqualTo(parameters);
   }
 
@@ -166,10 +171,11 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
+    ProtoParametersSerialization serialized =
+        LegacyKmsEnvelopeAeadProtoSerialization.serializeParameters(parameters);
     assertEqualWhenValueParsed(KmsEnvelopeAeadKeyFormat.parser(), serialized, serialization);
 
-    Parameters parsed = registry.parseParameters(serialization);
+    Parameters parsed = LegacyKmsEnvelopeAeadProtoSerialization.parseParameters(serialization);
     assertThat(parsed).isEqualTo(parameters);
   }
 
@@ -221,10 +227,11 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
                         .build())
                 .build()
                 .toByteString());
-    Parameters parsed = registry.parseParameters(serialization);
+    Parameters parsed = LegacyKmsEnvelopeAeadProtoSerialization.parseParameters(serialization);
     assertThat(parsed).isEqualTo(parameters);
 
-    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
+    ProtoParametersSerialization serialized =
+        LegacyKmsEnvelopeAeadProtoSerialization.serializeParameters(parameters);
     assertEqualWhenValueParsed(KmsEnvelopeAeadKeyFormat.parser(), serialized, serialization);
   }
 
@@ -264,10 +271,11 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
+    ProtoParametersSerialization serialized =
+        LegacyKmsEnvelopeAeadProtoSerialization.serializeParameters(parameters);
     assertEqualWhenValueParsed(KmsEnvelopeAeadKeyFormat.parser(), serialized, serialization);
 
-    Parameters parsed = registry.parseParameters(serialization);
+    Parameters parsed = LegacyKmsEnvelopeAeadProtoSerialization.parseParameters(serialization);
     assertThat(parsed).isEqualTo(parameters);
   }
 
@@ -301,10 +309,11 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
+    ProtoParametersSerialization serialized =
+        LegacyKmsEnvelopeAeadProtoSerialization.serializeParameters(parameters);
     assertEqualWhenValueParsed(KmsEnvelopeAeadKeyFormat.parser(), serialized, serialization);
 
-    Parameters parsed = registry.parseParameters(serialization);
+    Parameters parsed = LegacyKmsEnvelopeAeadProtoSerialization.parseParameters(serialization);
     assertThat(parsed).isEqualTo(parameters);
   }
 
@@ -341,10 +350,11 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    ProtoParametersSerialization serialized = registry.serializeParameters(parameters);
+    ProtoParametersSerialization serialized =
+        LegacyKmsEnvelopeAeadProtoSerialization.serializeParameters(parameters);
     assertEqualWhenValueParsed(KmsEnvelopeAeadKeyFormat.parser(), serialized, serialization);
 
-    Parameters parsed = registry.parseParameters(serialization);
+    Parameters parsed = LegacyKmsEnvelopeAeadProtoSerialization.parseParameters(serialization);
     assertThat(parsed).isEqualTo(parameters);
   }
 
@@ -371,7 +381,9 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
                 .toByteString());
 
     GeneralSecurityException thrown =
-        assertThrows(GeneralSecurityException.class, () -> registry.parseParameters(serialization));
+        assertThrows(
+            GeneralSecurityException.class,
+            () -> LegacyKmsEnvelopeAeadProtoSerialization.parseParameters(serialization));
     // Check the message to ensure that the exception is not thrown when parsing the key template
     // but instead when computing the DekParsingStrategy from the class.
     assertThat(thrown).hasMessageThat().contains("Unsupported DEK parameters when");
@@ -406,7 +418,7 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    Parameters parsed = registry.parseParameters(serialization);
+    Parameters parsed = LegacyKmsEnvelopeAeadProtoSerialization.parseParameters(serialization);
     assertThat(parsed).isEqualTo(parameters);
   }
 
@@ -438,8 +450,21 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
                 .build()
                 .toByteString());
 
-    Parameters parsed = registry.parseParameters(serialization);
+    Parameters parsed = LegacyKmsEnvelopeAeadProtoSerialization.parseParameters(serialization);
     assertThat(parsed).isEqualTo(parameters);
+  }
+
+  @Test
+  public void parseParameters_wrongTypeUrl_throws() throws Exception {
+    ProtoParametersSerialization serialization =
+        ProtoParametersSerialization.create(
+            "wrongTypeUrl",
+            OutputPrefixType.RAW,
+            KmsEnvelopeAeadKeyFormat.getDefaultInstance().toByteString());
+
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> LegacyKmsEnvelopeAeadProtoSerialization.parseParameters(serialization));
   }
 
   @Test
@@ -470,11 +495,15 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
             OutputPrefixType.RAW,
             /* idRequirement= */ null);
 
-    ProtoKeySerialization serialized = registry.serializeKey(key, /* access= */ null);
+    ProtoKeySerialization serialized =
+        LegacyKmsEnvelopeAeadProtoSerialization.serializeKey(key, /* access= */ null);
     assertEqualWhenValueParsed(KmsEnvelopeAeadKey.parser(), serialized, serialization);
+    assertEqualWhenValueParsed(
+        KmsEnvelopeAeadKey.parser(), registry.serializeKey(key, /* access= */ null), serialization);
 
-    Key parsed = registry.parseKey(serialization, /* access= */ null);
+    Key parsed = LegacyKmsEnvelopeAeadProtoSerialization.parseKey(serialization, /* access= */ null);
     assertThat(parsed.equalsKey(key)).isTrue();
+    assertThat(registry.parseKey(serialization, /* access= */ null).equalsKey(key)).isTrue();
   }
 
   @Test
@@ -507,10 +536,11 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
             OutputPrefixType.TINK,
             /* idRequirement= */ 0x11223344);
 
-    ProtoKeySerialization serialized = registry.serializeKey(key, /* access= */ null);
+    ProtoKeySerialization serialized =
+        LegacyKmsEnvelopeAeadProtoSerialization.serializeKey(key, /* access= */ null);
     assertEqualWhenValueParsed(KmsEnvelopeAeadKey.parser(), serialized, serialization);
 
-    Key parsed = registry.parseKey(serialization, /* access= */ null);
+    Key parsed = LegacyKmsEnvelopeAeadProtoSerialization.parseKey(serialization, /* access= */ null);
     assertThat(parsed.equalsKey(key)).isTrue();
   }
 
@@ -534,7 +564,8 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
             /* idRequirement= */ null);
 
     assertThrows(
-        GeneralSecurityException.class, () -> registry.parseKey(serialization, /* access= */ null));
+        GeneralSecurityException.class,
+        () -> LegacyKmsEnvelopeAeadProtoSerialization.parseKey(serialization, /* access= */ null));
   }
 
   @Test
@@ -557,6 +588,31 @@ public final class LegacyKmsEnvelopeAeadProtoSerializationTest {
             /* idRequirement= */ 123);
 
     assertThrows(
-        GeneralSecurityException.class, () -> registry.parseKey(serialization, /* access= */ null));
+        GeneralSecurityException.class,
+        () -> LegacyKmsEnvelopeAeadProtoSerialization.parseKey(serialization, /* access= */ null));
+  }
+
+  @Test
+  public void parseKey_wrongTypeUrl_throws() throws Exception {
+    KmsEnvelopeAeadKeyFormat format =
+        KmsEnvelopeAeadKeyFormat.newBuilder()
+            .setKekUri("someKeyUriForKeyTests")
+            .setDekTemplate(
+                KeyTemplate.newBuilder()
+                    .setTypeUrl("type.googleapis.com/google.crypto.tink.XChaCha20Poly1305Key")
+                    .setOutputPrefixType(com.google.crypto.tink.proto.OutputPrefixType.RAW))
+            .build();
+
+    ProtoKeySerialization serialization =
+        ProtoKeySerialization.create(
+            "wrongTypeUrl",
+            KmsEnvelopeAeadKey.newBuilder().setParams(format).build().toByteString(),
+            KeyMaterialType.REMOTE,
+            OutputPrefixType.RAW,
+            /* idRequirement= */ null);
+
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> LegacyKmsEnvelopeAeadProtoSerialization.parseKey(serialization, /* access= */ null));
   }
 }

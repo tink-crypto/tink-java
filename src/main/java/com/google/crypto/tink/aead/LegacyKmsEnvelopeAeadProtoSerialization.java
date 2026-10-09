@@ -97,7 +97,7 @@ public final class LegacyKmsEnvelopeAeadProtoSerialization {
   }
 
   @AccessesPartialKey
-  private static ProtoParametersSerialization serializeParameters(
+  static ProtoParametersSerialization serializeParameters(
       LegacyKmsEnvelopeAeadParameters parameters) throws GeneralSecurityException {
     return ProtoParametersSerialization.create(
         TYPE_URL,
@@ -124,7 +124,7 @@ public final class LegacyKmsEnvelopeAeadProtoSerialization {
   }
 
   @AccessesPartialKey
-  private static ProtoKeySerialization serializeKey(
+  static ProtoKeySerialization serializeKey(
       LegacyKmsEnvelopeAeadKey key, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     return ProtoKeySerialization.create(
@@ -139,7 +139,7 @@ public final class LegacyKmsEnvelopeAeadProtoSerialization {
   }
 
   @AccessesPartialKey
-  private static LegacyKmsEnvelopeAeadParameters parseParameters(
+  static LegacyKmsEnvelopeAeadParameters parseParameters(
       ProtoParametersSerialization serialization) throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
       throw new IllegalArgumentException(
@@ -204,7 +204,7 @@ public final class LegacyKmsEnvelopeAeadProtoSerialization {
   }
 
   @AccessesPartialKey
-  private static LegacyKmsEnvelopeAeadKey parseKey(
+  static LegacyKmsEnvelopeAeadKey parseKey(
       ProtoKeySerialization serialization, @Nullable SecretKeyAccess access)
       throws GeneralSecurityException {
     if (!serialization.getTypeUrl().equals(TYPE_URL)) {
