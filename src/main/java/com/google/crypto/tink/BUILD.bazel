@@ -1417,3 +1417,13 @@ android_library(
         "@maven//:com_google_protobuf_protobuf_javalite",
     ],
 )
+
+android_library(
+    name = "prehash-android",
+    srcs = ["Prehash.java"],
+)
+
+java_library(
+    name = "prehash",
+    srcs = ["Prehash.java"],
+)
