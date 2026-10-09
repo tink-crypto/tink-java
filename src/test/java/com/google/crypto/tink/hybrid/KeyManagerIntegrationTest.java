@@ -137,12 +137,14 @@ public final class KeyManagerIntegrationTest {
             .build();
 
     KeysetHandle handle =
-        TinkProtoKeysetFormat.parseKeyset(keyset.toByteArray(), InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            keyset.toByteArray(), InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     KeysetHandle publicHandle = handle.getPublicKeysetHandle();
 
     Keyset publicKeyset =
         Keyset.parseFrom(
-            TinkProtoKeysetFormat.serializeKeysetWithoutSecret(publicHandle),
+            TinkProtoKeysetFormat.serializeKeysetWithoutSecret(
+                publicHandle, RegistryConfiguration.get()),
             ExtensionRegistryLite.getEmptyRegistry());
 
     assertThat(publicKeyset.getPrimaryKeyId()).isEqualTo(0x23456789);
@@ -215,7 +217,9 @@ public final class KeyManagerIntegrationTest {
             .setPrimaryKeyId(0x23456789)
             .build();
 
-    KeysetHandle handle = TinkProtoKeysetFormat.parseKeysetWithoutSecret(keyset.toByteArray());
+    KeysetHandle handle =
+        TinkProtoKeysetFormat.parseKeysetWithoutSecret(
+            keyset.toByteArray(), RegistryConfiguration.get());
     HybridEncrypt customEncrypter =
         handle.getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class);
 
@@ -273,7 +277,8 @@ public final class KeyManagerIntegrationTest {
             .build();
 
     KeysetHandle handle =
-        TinkProtoKeysetFormat.parseKeyset(keyset.toByteArray(), InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            keyset.toByteArray(), InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     HybridDecrypt customDecrypter =
         handle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
 

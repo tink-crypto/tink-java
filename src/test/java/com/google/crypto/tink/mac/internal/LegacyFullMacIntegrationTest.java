@@ -156,6 +156,7 @@ public class LegacyFullMacIntegrationTest {
             .build();
     return TinkProtoKeysetFormat.parseKeyset(
         Keyset.newBuilder().addKey(rawKeysetKey).setPrimaryKeyId(id).build().toByteArray(),
-        InsecureSecretKeyAccess.get());
+        InsecureSecretKeyAccess.get(),
+        RegistryConfiguration.get());
   }
 }

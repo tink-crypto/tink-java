@@ -93,7 +93,8 @@ public class LegacyFullStreamingAeadIntegrationTest {
                 .setPrimaryKeyId(0x0000002a)
                 .build()
                 .toByteArray(),
-            InsecureSecretKeyAccess.get());
+            InsecureSecretKeyAccess.get(),
+            RegistryConfiguration.get());
   }
 
   @Test
@@ -158,7 +159,8 @@ public class LegacyFullStreamingAeadIntegrationTest {
                 .setPrimaryKeyId(0x0000002a)
                 .build()
                 .toByteArray(),
-            InsecureSecretKeyAccess.get());
+            InsecureSecretKeyAccess.get(),
+            RegistryConfiguration.get());
 
     StreamingAead streamingAead =
         tinkKeysetHandle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
@@ -193,7 +195,8 @@ public class LegacyFullStreamingAeadIntegrationTest {
                 .setPrimaryKeyId(0x0000002a)
                 .build()
                 .toByteArray(),
-            InsecureSecretKeyAccess.get());
+            InsecureSecretKeyAccess.get(),
+            RegistryConfiguration.get());
 
     StreamingAead streamingAead =
         crunchyKeysetHandle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
@@ -228,7 +231,8 @@ public class LegacyFullStreamingAeadIntegrationTest {
                 .setPrimaryKeyId(0x0000002a)
                 .build()
                 .toByteArray(),
-            InsecureSecretKeyAccess.get());
+            InsecureSecretKeyAccess.get(),
+            RegistryConfiguration.get());
 
     StreamingAead streamingAead =
         legacyKeysetHandle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);

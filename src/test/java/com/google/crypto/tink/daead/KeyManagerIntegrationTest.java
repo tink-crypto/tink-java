@@ -83,7 +83,8 @@ public final class KeyManagerIntegrationTest {
 
     Keyset keyset =
         Keyset.parseFrom(
-            TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get()),
+            TinkProtoKeysetFormat.serializeKeyset(
+                handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get()),
             ExtensionRegistryLite.getEmptyRegistry());
 
     assertThat(keyset.getPrimaryKeyId()).isEqualTo(KEY_ID);
@@ -181,7 +182,8 @@ public final class KeyManagerIntegrationTest {
             .setPrimaryKeyId(KEY_ID)
             .build();
 
-    return TinkProtoKeysetFormat.parseKeyset(keyset.toByteArray(), InsecureSecretKeyAccess.get());
+    return TinkProtoKeysetFormat.parseKeyset(
+        keyset.toByteArray(), InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
   }
 
   private static com.google.crypto.tink.daead.AesSivKey createKey(OutputPrefixType outputPrefixType)

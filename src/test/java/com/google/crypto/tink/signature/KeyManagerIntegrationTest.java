@@ -117,12 +117,14 @@ public final class KeyManagerIntegrationTest {
             .build();
 
     KeysetHandle handle =
-        TinkProtoKeysetFormat.parseKeyset(keyset.toByteArray(), InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            keyset.toByteArray(), InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     KeysetHandle publicHandle = handle.getPublicKeysetHandle();
 
     Keyset publicKeyset =
         Keyset.parseFrom(
-            TinkProtoKeysetFormat.serializeKeysetWithoutSecret(publicHandle),
+            TinkProtoKeysetFormat.serializeKeysetWithoutSecret(
+                publicHandle, RegistryConfiguration.get()),
             ExtensionRegistryLite.getEmptyRegistry());
 
     assertThat(publicKeyset.getPrimaryKeyId()).isEqualTo(0x23456789);
@@ -202,7 +204,8 @@ public final class KeyManagerIntegrationTest {
             .build();
 
     KeysetHandle handle =
-        TinkProtoKeysetFormat.parseKeyset(keyset.toByteArray(), InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            keyset.toByteArray(), InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     PublicKeySign customSigner =
         handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
 
@@ -250,7 +253,9 @@ public final class KeyManagerIntegrationTest {
             .setPrimaryKeyId(0x23456789)
             .build();
 
-    KeysetHandle handle = TinkProtoKeysetFormat.parseKeysetWithoutSecret(keyset.toByteArray());
+    KeysetHandle handle =
+        TinkProtoKeysetFormat.parseKeysetWithoutSecret(
+            keyset.toByteArray(), RegistryConfiguration.get());
     PublicKeyVerify customVerifier =
         handle.getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
     @Nullable Integer idRequirement = outputPrefixType == OutputPrefixType.RAW ? null : 0x23456789;
@@ -295,7 +300,8 @@ public final class KeyManagerIntegrationTest {
 
       Keyset keyset =
           Keyset.parseFrom(
-              TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get()),
+              TinkProtoKeysetFormat.serializeKeyset(
+                  handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get()),
               ExtensionRegistryLite.getEmptyRegistry());
       assertThat(keyset.getPrimaryKeyId()).isEqualTo(0x88117722);
       assertThat(keyset.getKeyCount()).isEqualTo(1);

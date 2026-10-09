@@ -98,7 +98,8 @@ public class LegacyFullAeadIntegrationTest {
                 .setPrimaryKeyId(0x0000002a)
                 .build()
                 .toByteArray(),
-            InsecureSecretKeyAccess.get());
+            InsecureSecretKeyAccess.get(),
+            RegistryConfiguration.get());
 
     Keyset.Key tinkKeysetKey =
         Keyset.Key.newBuilder()
@@ -114,7 +115,8 @@ public class LegacyFullAeadIntegrationTest {
                 .setPrimaryKeyId(0x0000002a)
                 .build()
                 .toByteArray(),
-            InsecureSecretKeyAccess.get());
+            InsecureSecretKeyAccess.get(),
+            RegistryConfiguration.get());
 
     Keyset.Key crunchyKeysetKey =
         Keyset.Key.newBuilder()
@@ -130,7 +132,8 @@ public class LegacyFullAeadIntegrationTest {
                 .setPrimaryKeyId(0x0000002a)
                 .build()
                 .toByteArray(),
-            InsecureSecretKeyAccess.get());
+            InsecureSecretKeyAccess.get(),
+            RegistryConfiguration.get());
 
     Keyset.Key legacyKeysetKey =
         Keyset.Key.newBuilder()
@@ -146,7 +149,8 @@ public class LegacyFullAeadIntegrationTest {
                 .setPrimaryKeyId(0x0000002a)
                 .build()
                 .toByteArray(),
-            InsecureSecretKeyAccess.get());
+            InsecureSecretKeyAccess.get(),
+            RegistryConfiguration.get());
   }
 
   @Test

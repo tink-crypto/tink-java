@@ -151,7 +151,8 @@ public class LegacyFullPrfIntegrationTest {
             .build();
     return TinkProtoKeysetFormat.parseKeyset(
         Keyset.newBuilder().addKey(rawKeysetKey).setPrimaryKeyId(id).build().toByteArray(),
-        InsecureSecretKeyAccess.get());
+        InsecureSecretKeyAccess.get(),
+        RegistryConfiguration.get());
   }
 
   private static final class TestLegacyPrfWrapper implements PrimitiveWrapper<Prf, PrfSet> {

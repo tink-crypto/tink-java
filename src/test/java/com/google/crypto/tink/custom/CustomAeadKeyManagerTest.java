@@ -146,7 +146,8 @@ public final class CustomAeadKeyManagerTest {
                       .build())
               .setPrimaryKeyId(keyId)
               .build();
-      return TinkProtoKeysetFormat.parseKeyset(keyset.toByteArray(), InsecureSecretKeyAccess.get());
+      return TinkProtoKeysetFormat.parseKeyset(
+          keyset.toByteArray(), InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     }
   }
 
@@ -251,10 +252,12 @@ public final class CustomAeadKeyManagerTest {
     byte[] ciphertext = aead.encrypt(plaintext, associatedData);
 
     byte[] serializedKeyset =
-        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
 
     KeysetHandle handle2 =
-        TinkProtoKeysetFormat.parseKeyset(serializedKeyset, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            serializedKeyset, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     Aead aead2 = handle2.getPrimitive(RegistryConfiguration.get(), Aead.class);
     byte[] decrypted = aead2.decrypt(ciphertext, associatedData);
     assertThat(decrypted).isEqualTo(plaintext);
