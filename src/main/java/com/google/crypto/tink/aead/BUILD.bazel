@@ -1540,3 +1540,49 @@ android_library(
         "@maven//:com_google_code_findbugs_jsr305",
     ],
 )
+
+android_library(
+    name = "kms_aead_config2026-android",
+    srcs = ["KmsAeadConfig2026.java"],
+    deps = [
+        ":kms_envelope_aead-android",
+        ":legacy_kms_aead_key-android",
+        ":legacy_kms_aead_parameters-android",
+        ":legacy_kms_aead_proto_serialization-android",
+        ":legacy_kms_envelope_aead_key-android",
+        ":legacy_kms_envelope_aead_parameters-android",
+        ":legacy_kms_envelope_aead_proto_serialization-android",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
+        "//src/main/java/com/google/crypto/tink:aead-android",
+        "//src/main/java/com/google/crypto/tink:configuration-android",
+        "//src/main/java/com/google/crypto/tink:kms_client-android",
+        "//src/main/java/com/google/crypto/tink:kms_clients-android",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
+        "//src/main/java/com/google/crypto/tink/aead/internal:legacy_full_aead-android",
+        "//src/main/java/com/google/crypto/tink/aead/internal:wrapped_aead-android",
+        "//src/main/java/com/google/crypto/tink/internal:proto_based_configuration_builder-android",
+    ],
+)
+
+java_library(
+    name = "kms_aead_config2026",
+    srcs = ["KmsAeadConfig2026.java"],
+    deps = [
+        ":kms_envelope_aead",
+        ":legacy_kms_aead_key",
+        ":legacy_kms_aead_parameters",
+        ":legacy_kms_aead_proto_serialization",
+        ":legacy_kms_envelope_aead_key",
+        ":legacy_kms_envelope_aead_parameters",
+        ":legacy_kms_envelope_aead_proto_serialization",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:aead",
+        "//src/main/java/com/google/crypto/tink:configuration",
+        "//src/main/java/com/google/crypto/tink:kms_client",
+        "//src/main/java/com/google/crypto/tink:kms_clients",
+        "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
+        "//src/main/java/com/google/crypto/tink/aead/internal:legacy_full_aead",
+        "//src/main/java/com/google/crypto/tink/aead/internal:wrapped_aead",
+        "//src/main/java/com/google/crypto/tink/internal:proto_based_configuration_builder",
+    ],
+)
