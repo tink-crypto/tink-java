@@ -21,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import org.junit.BeforeClass;
@@ -50,8 +51,11 @@ public final class JwtRsaSsaPssVerifyKeyManagerTest {
     KeyTemplate template = KeyTemplates.get("JWT_PS256_2048_F4");
     KeysetHandle handle = KeysetHandle.generateNew(template).getPublicKeysetHandle();
 
-    byte[] serializedKeyset = TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle);
-    KeysetHandle parsed = TinkProtoKeysetFormat.parseKeysetWithoutSecret(serializedKeyset);
+    byte[] serializedKeyset =
+        TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle, RegistryConfiguration.get());
+    KeysetHandle parsed =
+        TinkProtoKeysetFormat.parseKeysetWithoutSecret(
+            serializedKeyset, RegistryConfiguration.get());
     assertTrue(parsed.equalsKeyset(handle));
   }
 }

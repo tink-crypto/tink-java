@@ -914,7 +914,8 @@ public class JwtHmacKeyManagerTest {
     // Create a new handle with the "kid" value set.
     Keyset keyset =
         Keyset.parseFrom(
-            TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get()),
+            TinkProtoKeysetFormat.serializeKeyset(
+                handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get()),
             ExtensionRegistryLite.getEmptyRegistry());
 
     JwtHmacKey hmacKey =
@@ -936,7 +937,10 @@ public class JwtHmacKeyManagerTest {
     assertThrows(
         GeneralSecurityException.class,
         () ->
-            TinkProtoKeysetFormat.parseKeyset(serializeKeysetWithKid, InsecureSecretKeyAccess.get())
+            TinkProtoKeysetFormat.parseKeyset(
+                    serializeKeysetWithKid,
+                    InsecureSecretKeyAccess.get(),
+                    RegistryConfiguration.get())
                 .getPrimitive(RegistryConfiguration.get(), JwtMac.class));
   }
 
@@ -945,9 +949,11 @@ public class JwtHmacKeyManagerTest {
     KeyTemplate template = KeyTemplates.get("JWT_HS256_RAW");
     KeysetHandle handle = KeysetHandle.generateNew(template);
     byte[] serialized =
-        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     KeysetHandle parsed =
-        TinkProtoKeysetFormat.parseKeyset(serialized, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            serialized, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     assertThat(parsed.equalsKeyset(handle)).isTrue();
   }
 

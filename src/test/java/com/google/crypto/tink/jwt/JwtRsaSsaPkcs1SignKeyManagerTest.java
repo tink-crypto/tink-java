@@ -292,9 +292,11 @@ public class JwtRsaSsaPkcs1SignKeyManagerTest {
     KeysetHandle handle = KeysetHandle.generateNew(template);
 
     byte[] serializedKeyset =
-        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     KeysetHandle parsed =
-        TinkProtoKeysetFormat.parseKeyset(serializedKeyset, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            serializedKeyset, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     assertTrue(parsed.equalsKeyset(handle));
   }
 
@@ -303,8 +305,11 @@ public class JwtRsaSsaPkcs1SignKeyManagerTest {
     KeyTemplate template = KeyTemplates.get("JWT_RS256_2048_F4");
     KeysetHandle handle = KeysetHandle.generateNew(template).getPublicKeysetHandle();
 
-    byte[] serializedKeyset = TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle);
-    KeysetHandle parsed = TinkProtoKeysetFormat.parseKeysetWithoutSecret(serializedKeyset);
+    byte[] serializedKeyset =
+        TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle, RegistryConfiguration.get());
+    KeysetHandle parsed =
+        TinkProtoKeysetFormat.parseKeysetWithoutSecret(
+            serializedKeyset, RegistryConfiguration.get());
     assertTrue(parsed.equalsKeyset(handle));
   }
 
