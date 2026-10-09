@@ -268,9 +268,11 @@ public class RsaSsaPkcs1SignKeyManagerTest {
     KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
 
     byte[] serializedHandle =
-        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     KeysetHandle parsedHandle =
-        TinkProtoKeysetFormat.parseKeyset(serializedHandle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            serializedHandle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     assertThat(parsedHandle.equalsKeyset(handle)).isTrue();
   }
 

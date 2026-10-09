@@ -20,6 +20,7 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.PublicKeyVerify;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import org.junit.Before;
@@ -49,8 +50,11 @@ public class Ed25519PublicKeyManagerTest {
   public void test_serializeAndParse_works() throws Exception {
     KeysetHandle handle =
         KeysetHandle.generateNew(Ed25519Parameters.create()).getPublicKeysetHandle();
-    byte[] serializedHandle = TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle);
-    KeysetHandle parsedHandle = TinkProtoKeysetFormat.parseKeysetWithoutSecret(serializedHandle);
+    byte[] serializedHandle =
+        TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle, RegistryConfiguration.get());
+    KeysetHandle parsedHandle =
+        TinkProtoKeysetFormat.parseKeysetWithoutSecret(
+            serializedHandle, RegistryConfiguration.get());
     assertThat(parsedHandle.equalsKeyset(handle)).isTrue();
   }
 }

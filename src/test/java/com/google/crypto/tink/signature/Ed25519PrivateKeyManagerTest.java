@@ -250,9 +250,11 @@ public class Ed25519PrivateKeyManagerTest {
   public void test_serializeAndParse_works() throws Exception {
     KeysetHandle handle = KeysetHandle.generateNew(Ed25519Parameters.create());
     byte[] serializedHandle =
-        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     KeysetHandle parsedHandle =
-        TinkProtoKeysetFormat.parseKeyset(serializedHandle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            serializedHandle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     assertThat(parsedHandle.equalsKeyset(handle)).isTrue();
   }
 }

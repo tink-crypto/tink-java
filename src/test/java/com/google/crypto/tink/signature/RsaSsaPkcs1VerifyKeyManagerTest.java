@@ -120,8 +120,11 @@ public final class RsaSsaPkcs1VerifyKeyManagerTest {
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).withFixedId(1951).makePrimary();
     KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
 
-    byte[] serializedHandle = TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle);
-    KeysetHandle parsedHandle = TinkProtoKeysetFormat.parseKeysetWithoutSecret(serializedHandle);
+    byte[] serializedHandle =
+        TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle, RegistryConfiguration.get());
+    KeysetHandle parsedHandle =
+        TinkProtoKeysetFormat.parseKeysetWithoutSecret(
+            serializedHandle, RegistryConfiguration.get());
     assertThat(parsedHandle.equalsKeyset(handle)).isTrue();
   }
 
