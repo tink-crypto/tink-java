@@ -21,10 +21,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.KeysetHandle;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
+import com.google.crypto.tink.aead.AeadConfig2026;
 import com.google.crypto.tink.aead.PredefinedAeadParameters;
-import com.google.crypto.tink.config.TinkConfig;
 import com.google.crypto.tink.integration.android.AndroidKeystore;
 import com.google.crypto.tink.subtle.Hex;
 import java.security.GeneralSecurityException;
@@ -48,9 +47,8 @@ public class TinkApplication extends Application {
   public final void onCreate() {
     super.onCreate();
     try {
-      TinkConfig.register();
       KeysetHandle handle = getOrCreateEncryptedKeysetWithRetry();
-      aead = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
+      aead = handle.getPrimitive(AeadConfig2026.get(), Aead.class);
     } catch (GeneralSecurityException e) {
       throw new IllegalStateException(e);
     }
@@ -116,13 +114,15 @@ public class TinkApplication extends Application {
       // Create a new KEK in Android Keystore.
       AndroidKeystore.generateNewAes256GcmKey(KEY_ENCRYPTION_KEY_ALIAS);
       // Create a new keyset. In this example, we create an AEAD key of type AES256_GCM.
-      KeysetHandle handle = KeysetHandle.generateNew(PredefinedAeadParameters.AES256_GCM);
+      KeysetHandle handle =
+          KeysetHandle.generateNew(PredefinedAeadParameters.AES256_GCM, AeadConfig2026.get());
       // Encrypt the keyset with the KEK.
       byte[] encryptedKeyset =
           TinkProtoKeysetFormat.serializeEncryptedKeyset(
               handle,
               AndroidKeystore.getAead(KEY_ENCRYPTION_KEY_ALIAS),
-              TINK_KEYSET_ASSOCIATED_DATA);
+              TINK_KEYSET_ASSOCIATED_DATA,
+              AeadConfig2026.get());
       // In this example, we store the encrypted keyset in the shared preferences.
       sharedPreferences.edit().putString(TINK_KEYSET_NAME, Hex.encode(encryptedKeyset)).commit();
     }
@@ -132,7 +132,8 @@ public class TinkApplication extends Application {
       return TinkProtoKeysetFormat.parseEncryptedKeyset(
           encryptedKeyset,
           AndroidKeystore.getAead(KEY_ENCRYPTION_KEY_ALIAS),
-          TINK_KEYSET_ASSOCIATED_DATA);
+          TINK_KEYSET_ASSOCIATED_DATA,
+          AeadConfig2026.get());
     } catch (BadPaddingException e) {
       // Note that {@link BadPaddingException} includes {@link AEADBadTagException}.
       // This may happen if the encrypted keyset is corrupted, or if it was encrypted

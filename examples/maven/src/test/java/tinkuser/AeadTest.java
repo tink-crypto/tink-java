@@ -20,8 +20,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.KeysetHandle;
-import com.google.crypto.tink.RegistryConfiguration;
-import com.google.crypto.tink.aead.AeadConfig;
+import com.google.crypto.tink.aead.AeadConfig2026;
 import com.google.crypto.tink.aead.PredefinedAeadParameters;
 import java.security.GeneralSecurityException;
 import org.junit.jupiter.api.Test;
@@ -33,10 +32,10 @@ import org.junit.jupiter.api.Test;
 public class AeadTest {
   @Test
   public void encryptThenDecryptWorks() throws GeneralSecurityException {
-    AeadConfig.register();
     byte[] plaintext = "Hello World".getBytes(UTF_8);
-    KeysetHandle keysetHandle = KeysetHandle.generateNew(PredefinedAeadParameters.AES256_GCM);
-    Aead aead = keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
+    KeysetHandle keysetHandle =
+        KeysetHandle.generateNew(PredefinedAeadParameters.AES256_GCM, AeadConfig2026.get());
+    Aead aead = keysetHandle.getPrimitive(AeadConfig2026.get(), Aead.class);
     byte[] ciphertext = aead.encrypt(plaintext, new byte[] {1, 2, 3});
     byte[] decryption = aead.decrypt(ciphertext, new byte[] {1, 2, 3});
   }

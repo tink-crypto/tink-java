@@ -20,7 +20,7 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
-import com.google.crypto.tink.aead.AeadConfig;
+import com.google.crypto.tink.aead.AeadConfig2026;
 import com.google.crypto.tink.aead.PredefinedAeadParameters;
 import java.security.GeneralSecurityException;
 import org.junit.jupiter.api.Test;
@@ -32,11 +32,14 @@ import org.junit.jupiter.api.Test;
 public class ParsingTest {
   @Test
   public void serializeAndParseProtobuf() throws GeneralSecurityException {
-    AeadConfig.register();
-    KeysetHandle keysetHandle = KeysetHandle.generateNew(PredefinedAeadParameters.AES256_GCM);
+    KeysetHandle keysetHandle =
+        KeysetHandle.generateNew(PredefinedAeadParameters.AES256_GCM, AeadConfig2026.get());
 
-    byte[] b = TinkProtoKeysetFormat.serializeKeyset(keysetHandle, InsecureSecretKeyAccess.get());
-    KeysetHandle parsed = TinkProtoKeysetFormat.parseKeyset(b, InsecureSecretKeyAccess.get());
+    byte[] b =
+        TinkProtoKeysetFormat.serializeKeyset(
+            keysetHandle, InsecureSecretKeyAccess.get(), AeadConfig2026.get());
+    KeysetHandle parsed =
+        TinkProtoKeysetFormat.parseKeyset(b, InsecureSecretKeyAccess.get(), AeadConfig2026.get());
     if (!keysetHandle.equalsKeyset(parsed)) {
       throw new GeneralSecurityException("Differences found!");
     }
@@ -44,12 +47,15 @@ public class ParsingTest {
 
   @Test
   public void serializeAndParseJsonProto() throws GeneralSecurityException {
-    AeadConfig.register();
-    KeysetHandle keysetHandle = KeysetHandle.generateNew(PredefinedAeadParameters.AES256_GCM);
+    KeysetHandle keysetHandle =
+        KeysetHandle.generateNew(PredefinedAeadParameters.AES256_GCM, AeadConfig2026.get());
 
     String s =
-        TinkJsonProtoKeysetFormat.serializeKeyset(keysetHandle, InsecureSecretKeyAccess.get());
-    KeysetHandle parsed = TinkJsonProtoKeysetFormat.parseKeyset(s, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.serializeKeyset(
+            keysetHandle, AeadConfig2026.get(), InsecureSecretKeyAccess.get());
+    KeysetHandle parsed =
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            s, AeadConfig2026.get(), InsecureSecretKeyAccess.get());
     if (!keysetHandle.equalsKeyset(parsed)) {
       throw new GeneralSecurityException("Differences found!");
     }

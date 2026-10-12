@@ -20,18 +20,17 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.KeysetHandle;
-import com.google.crypto.tink.RegistryConfiguration;
-import com.google.crypto.tink.aead.AeadConfig;
+import com.google.crypto.tink.aead.AeadConfig2026;
 import com.google.crypto.tink.aead.PredefinedAeadParameters;
 import java.security.GeneralSecurityException;
 
 /** A simple main class for using Tink. */
 public class MainClass {
   public static void main(String[] args) throws GeneralSecurityException {
-    AeadConfig.register();
     byte[] plaintext = "Hello World".getBytes(UTF_8);
-    KeysetHandle keysetHandle = KeysetHandle.generateNew(PredefinedAeadParameters.AES256_GCM);
-    Aead aead = keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
+    KeysetHandle keysetHandle =
+        KeysetHandle.generateNew(PredefinedAeadParameters.AES256_GCM, AeadConfig2026.get());
+    Aead aead = keysetHandle.getPrimitive(AeadConfig2026.get(), Aead.class);
     byte[] ciphertext = aead.encrypt(plaintext, new byte[] {});
     byte[] decryption = aead.decrypt(ciphertext, new byte[] {});
     System.out.println(new String(decryption, UTF_8));
