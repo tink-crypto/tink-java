@@ -161,14 +161,16 @@ public class HybridEncryptWrapperTest {
     KeysetHandle handle = KeysetHandle.generateNew(parameters).getPublicKeysetHandle();
     Keyset keyset =
         Keyset.parseFrom(
-            TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle),
+            TinkProtoKeysetFormat.serializeKeysetWithoutSecret(
+                handle, RegistryConfiguration.get()),
             ExtensionRegistryLite.getEmptyRegistry());
     Keyset keysetWithoutPrimary = keyset.toBuilder().clearPrimaryKeyId().build();
     // This will throw with an GeneralSecurityException in getPrimitive (since the flag is set).
     assertThrows(
         GeneralSecurityException.class,
         () ->
-            TinkProtoKeysetFormat.parseKeysetWithoutSecret(keysetWithoutPrimary.toByteArray())
+            TinkProtoKeysetFormat.parseKeysetWithoutSecret(
+                    keysetWithoutPrimary.toByteArray(), RegistryConfiguration.get())
                 .getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class));
   }
 

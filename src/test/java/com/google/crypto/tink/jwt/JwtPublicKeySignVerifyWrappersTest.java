@@ -113,14 +113,17 @@ public class JwtPublicKeySignVerifyWrappersTest {
     KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get("JWT_ES256_RAW"));
     Keyset keyset =
         Keyset.parseFrom(
-            TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get()),
+            TinkProtoKeysetFormat.serializeKeyset(
+                handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get()),
             ExtensionRegistryLite.getEmptyRegistry());
     Keyset.Builder legacyKeysetBuilder = keyset.toBuilder();
     legacyKeysetBuilder.setKey(
         0, legacyKeysetBuilder.getKey(0).toBuilder().setOutputPrefixType(OutputPrefixType.LEGACY));
     KeysetHandle legacyHandle =
         TinkProtoKeysetFormat.parseKeyset(
-            legacyKeysetBuilder.build().toByteArray(), InsecureSecretKeyAccess.get());
+            legacyKeysetBuilder.build().toByteArray(),
+            InsecureSecretKeyAccess.get(),
+            RegistryConfiguration.get());
     assertThrows(
         GeneralSecurityException.class,
         () -> legacyHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class));
@@ -393,12 +396,14 @@ public class JwtPublicKeySignVerifyWrappersTest {
     KeysetHandle publicHandle = handle.getPublicKeysetHandle();
     Keyset publicKeyset =
         Keyset.parseFrom(
-            TinkProtoKeysetFormat.serializeKeysetWithoutSecret(publicHandle),
+            TinkProtoKeysetFormat.serializeKeysetWithoutSecret(
+                publicHandle, RegistryConfiguration.get()),
             ExtensionRegistryLite.getEmptyRegistry());
     Keyset publicKeysetWithoutPrimary = publicKeyset.toBuilder().setPrimaryKeyId(0).build();
     // TODO(b/252792776): Optimally, this would throw.
     KeysetHandle publicHandleWithoutPrimary =
-        TinkProtoKeysetFormat.parseKeysetWithoutSecret(publicKeysetWithoutPrimary.toByteArray());
+        TinkProtoKeysetFormat.parseKeysetWithoutSecret(
+            publicKeysetWithoutPrimary.toByteArray(), RegistryConfiguration.get());
 
     JwtPublicKeySign signer =
         handle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);

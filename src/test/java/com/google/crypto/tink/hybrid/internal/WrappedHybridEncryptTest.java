@@ -163,14 +163,16 @@ public class WrappedHybridEncryptTest {
     KeysetHandle handle = KeysetHandle.generateNew(parameters).getPublicKeysetHandle();
     Keyset keyset =
         Keyset.parseFrom(
-            TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle),
+            TinkProtoKeysetFormat.serializeKeysetWithoutSecret(
+                handle, RegistryConfiguration.get()),
             ExtensionRegistryLite.getEmptyRegistry());
     Keyset keysetWithoutPrimary = keyset.toBuilder().clearPrimaryKeyId().build();
     // Test that one of parsing or getPrimitive throws (depends on validateKeysetsOnParsing)
     assertThrows(
         GeneralSecurityException.class,
         () ->
-            TinkProtoKeysetFormat.parseKeysetWithoutSecret(keysetWithoutPrimary.toByteArray())
+            TinkProtoKeysetFormat.parseKeysetWithoutSecret(
+                    keysetWithoutPrimary.toByteArray(), RegistryConfiguration.get())
                 .getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class));
   }
 

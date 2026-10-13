@@ -407,7 +407,8 @@ public class HybridDecryptWrapperTest {
             .build();
     KeysetHandle handle = KeysetHandle.generateNew(parameters);
     byte[] serialized =
-        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     Keyset keyset = Keyset.parseFrom(serialized, ExtensionRegistryLite.getEmptyRegistry());
     Keyset keysetWithoutPrimary =
         Keyset.newBuilder()
@@ -421,7 +422,9 @@ public class HybridDecryptWrapperTest {
         GeneralSecurityException.class,
         () ->
             TinkProtoKeysetFormat.parseKeyset(
-                    keysetWithoutPrimary.toByteArray(), InsecureSecretKeyAccess.get())
+                    keysetWithoutPrimary.toByteArray(),
+                    InsecureSecretKeyAccess.get(),
+                    RegistryConfiguration.get())
                 .getPrimitive(configuration, HybridDecrypt.class));
   }
 }

@@ -476,7 +476,9 @@ public final class KeysetDeriverWrapperTest {
         GeneralSecurityException.class,
         () ->
             TinkProtoKeysetFormat.parseKeyset(
-                    keysetProto.toByteArray(), InsecureSecretKeyAccess.get())
+                    keysetProto.toByteArray(),
+                    InsecureSecretKeyAccess.get(),
+                    RegistryConfiguration.get())
                 .getPrimitive(RegistryConfiguration.get(), KeysetDeriver.class));
   }
 }

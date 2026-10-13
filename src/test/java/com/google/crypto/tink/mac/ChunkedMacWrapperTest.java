@@ -486,7 +486,8 @@ public class ChunkedMacWrapperTest {
             .addEntry(KeysetHandle.importKey(rawKey0).withFixedId(1234).makePrimary())
             .build();
     byte[] serialized =
-        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     Keyset keyset = Keyset.parseFrom(serialized, ExtensionRegistryLite.getEmptyRegistry());
     Keyset keysetWithoutPrimary =
         Keyset.newBuilder()
@@ -499,7 +500,9 @@ public class ChunkedMacWrapperTest {
         GeneralSecurityException.class,
         () ->
             TinkProtoKeysetFormat.parseKeyset(
-                    keysetWithoutPrimary.toByteArray(), InsecureSecretKeyAccess.get())
+                    keysetWithoutPrimary.toByteArray(),
+                    InsecureSecretKeyAccess.get(),
+                    RegistryConfiguration.get())
                 .getPrimitive(RegistryConfiguration.get(), ChunkedMac.class));
   }
 }

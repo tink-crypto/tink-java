@@ -77,14 +77,17 @@ public class JwtMacWrapperTest {
     KeysetHandle handle = KeysetHandle.generateNew(rawTemplate);
     Keyset keyset =
         Keyset.parseFrom(
-            TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get()),
+            TinkProtoKeysetFormat.serializeKeyset(
+                handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get()),
             ExtensionRegistryLite.getEmptyRegistry());
     Keyset.Builder legacyKeysetBuilder = keyset.toBuilder();
     legacyKeysetBuilder.setKey(
         0, legacyKeysetBuilder.getKey(0).toBuilder().setOutputPrefixType(OutputPrefixType.LEGACY));
     KeysetHandle legacyHandle =
         TinkProtoKeysetFormat.parseKeyset(
-            legacyKeysetBuilder.build().toByteArray(), InsecureSecretKeyAccess.get());
+            legacyKeysetBuilder.build().toByteArray(),
+            InsecureSecretKeyAccess.get(),
+            RegistryConfiguration.get());
     assertThrows(
         GeneralSecurityException.class,
         () -> legacyHandle.getPrimitive(RegistryConfiguration.get(), JwtMac.class));

@@ -182,7 +182,8 @@ public class PublicKeySignWrapperTest {
     KeysetHandle handle = KeysetHandle.generateNew(parameters);
     Keyset keyset =
         Keyset.parseFrom(
-            TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get()),
+            TinkProtoKeysetFormat.serializeKeyset(
+                handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get()),
             ExtensionRegistryLite.getEmptyRegistry());
     Keyset keysetWithoutPrimary = keyset.toBuilder().clearPrimaryKeyId().build();
 
@@ -191,7 +192,9 @@ public class PublicKeySignWrapperTest {
         GeneralSecurityException.class,
         () ->
             TinkProtoKeysetFormat.parseKeyset(
-                    keysetWithoutPrimary.toByteArray(), InsecureSecretKeyAccess.get())
+                    keysetWithoutPrimary.toByteArray(),
+                    InsecureSecretKeyAccess.get(),
+                    RegistryConfiguration.get())
                 .getPrimitive(RegistryConfiguration.get(), PublicKeySign.class));
   }
 

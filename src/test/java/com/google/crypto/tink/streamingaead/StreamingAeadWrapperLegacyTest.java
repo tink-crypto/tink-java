@@ -90,7 +90,8 @@ public class StreamingAeadWrapperLegacyTest {
     KeysetHandle keysetHandle =
         TinkProtoKeysetFormat.parseKeyset(
             Keyset.newBuilder().addKey(rawKeysetKey).setPrimaryKeyId(42).build().toByteArray(),
-            InsecureSecretKeyAccess.get());
+            InsecureSecretKeyAccess.get(),
+            RegistryConfiguration.get());
 
     StreamingAead streamingAead =
         keysetHandle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
@@ -140,7 +141,8 @@ public class StreamingAeadWrapperLegacyTest {
     KeysetHandle legacyKeysKeysetHandle =
         TinkProtoKeysetFormat.parseKeyset(
             Keyset.newBuilder().addKey(rawKeysetKey).setPrimaryKeyId(42).build().toByteArray(),
-            InsecureSecretKeyAccess.get());
+            InsecureSecretKeyAccess.get(),
+            RegistryConfiguration.get());
     AesCtrHmacStreamingParameters programmaticParams =
         AesCtrHmacStreamingParameters.builder()
             .setKeySizeBytes(32)

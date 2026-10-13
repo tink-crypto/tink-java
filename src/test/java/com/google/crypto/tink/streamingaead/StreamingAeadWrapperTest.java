@@ -290,7 +290,8 @@ public class StreamingAeadWrapperTest {
     Keyset keyset =
         Keyset.newBuilder().addKey(keysetKey1).addKey(keysetKey2).setPrimaryKeyId(1).build();
     KeysetHandle keysetHandle =
-        TinkProtoKeysetFormat.parseKeyset(keyset.toByteArray(), InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            keyset.toByteArray(), InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     StreamingAead streamingAead =
         keysetHandle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
 
@@ -374,7 +375,8 @@ public class StreamingAeadWrapperTest {
             .addEntry(KeysetHandle.importKey(key).withFixedId(42).makePrimary())
             .build();
     byte[] serialized =
-        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     Keyset keyset = Keyset.parseFrom(serialized, ExtensionRegistryLite.getEmptyRegistry());
     Keyset keysetWithoutPrimary =
         Keyset.newBuilder()
@@ -387,7 +389,9 @@ public class StreamingAeadWrapperTest {
         GeneralSecurityException.class,
         () ->
             TinkProtoKeysetFormat.parseKeyset(
-                    keysetWithoutPrimary.toByteArray(), InsecureSecretKeyAccess.get())
+                    keysetWithoutPrimary.toByteArray(),
+                    InsecureSecretKeyAccess.get(),
+                    RegistryConfiguration.get())
                 .getPrimitive(RegistryConfiguration.get(), StreamingAead.class));
   }
 }

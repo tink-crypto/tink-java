@@ -24,6 +24,7 @@ import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.KeysetHandleInterface;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.StreamingAead;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.proto.HashType;
@@ -304,7 +305,8 @@ public class WrappedStreamingAeadTest {
     Keyset keyset =
         Keyset.newBuilder().addKey(keysetKey1).addKey(keysetKey2).setPrimaryKeyId(1).build();
     KeysetHandle keysetHandle =
-        TinkProtoKeysetFormat.parseKeyset(keyset.toByteArray(), InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            keyset.toByteArray(), InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     StreamingAead streamingAead =
         WrappedStreamingAead.wrap(keysetHandle, WrappedStreamingAeadTest::primitiveFactory);
 
