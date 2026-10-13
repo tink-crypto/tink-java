@@ -19,9 +19,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
-import com.google.crypto.tink.mac.MacConfig;
+import com.google.crypto.tink.mac.MacConfig2026;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -55,16 +54,15 @@ public final class MacExample {
     byte[] msg = Files.readAllBytes(Paths.get(args[2]));
     Path macFile = Paths.get(args[3]);
 
-    // Register all MAC key types with the Tink runtime.
-    MacConfig.register();
-
     // Read the keyset into a KeysetHandle.
     KeysetHandle handle =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            new String(Files.readAllBytes(keyFile), UTF_8), InsecureSecretKeyAccess.get());
+            new String(Files.readAllBytes(keyFile), UTF_8),
+            MacConfig2026.get(),
+            InsecureSecretKeyAccess.get());
 
     // Get the primitive.
-    Mac macPrimitive = handle.getPrimitive(RegistryConfiguration.get(), Mac.class);
+    Mac macPrimitive = handle.getPrimitive(MacConfig2026.get(), Mac.class);
 
     if (mode.equals("compute")) {
       byte[] macTag = macPrimitive.computeMac(msg);

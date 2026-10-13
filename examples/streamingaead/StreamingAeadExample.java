@@ -18,10 +18,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.StreamingAead;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
-import com.google.crypto.tink.streamingaead.StreamingAeadConfig;
+import com.google.crypto.tink.streamingaead.StreamingAeadConfig2026;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -69,17 +68,16 @@ public final class StreamingAeadExample {
       associatedData = args[4].getBytes(UTF_8);
     }
 
-    // Initialize Tink: register all Streaming AEAD key types with the Tink runtime
-    StreamingAeadConfig.register();
-
     // Read the keyset into a KeysetHandle
     KeysetHandle handle =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            new String(Files.readAllBytes(keyFile), UTF_8), InsecureSecretKeyAccess.get());
+            new String(Files.readAllBytes(keyFile), UTF_8),
+            StreamingAeadConfig2026.get(),
+            InsecureSecretKeyAccess.get());
 
     // Get the primitive
     StreamingAead streamingAead =
-        handle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
+        handle.getPrimitive(StreamingAeadConfig2026.get(), StreamingAead.class);
 
     // Use the primitive to encrypt/decrypt files
     if (mode.equals(MODE_ENCRYPT)) {

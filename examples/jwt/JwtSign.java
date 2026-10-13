@@ -18,10 +18,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
+import com.google.crypto.tink.jwt.JwtConfig2026;
 import com.google.crypto.tink.jwt.JwtPublicKeySign;
-import com.google.crypto.tink.jwt.JwtSignatureConfig;
 import com.google.crypto.tink.jwt.RawJwt;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -52,18 +51,16 @@ public final class JwtSign {
     String audience = args[1];
     Path tokenFile = Paths.get(args[2]);
 
-    // Register all JWT signature key types with the Tink runtime.
-    JwtSignatureConfig.register();
-
     // Read the private keyset into a KeysetHandle.
     KeysetHandle privateKeysetHandle =
         TinkJsonProtoKeysetFormat.parseKeyset(
             new String(Files.readAllBytes(privateKeysetFile), UTF_8),
+            JwtConfig2026.get(),
             InsecureSecretKeyAccess.get());
 
     // Get the primitive.
     JwtPublicKeySign signer =
-        privateKeysetHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
+        privateKeysetHandle.getPrimitive(JwtConfig2026.get(), JwtPublicKeySign.class);
 
     // Use the primitive to sign a token that expires in 100 seconds.
     RawJwt rawJwt =

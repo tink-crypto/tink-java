@@ -19,9 +19,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
-import com.google.crypto.tink.daead.DeterministicAeadConfig;
+import com.google.crypto.tink.daead.DeterministicAeadConfig2026;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -61,17 +60,16 @@ public final class DeterministicAeadExample {
       associatedData = args[4].getBytes(UTF_8);
     }
 
-    // Initialise Tink: register all Deterministic AEAD key types with the Tink runtime
-    DeterministicAeadConfig.register();
-
     // Read the keyset into a KeysetHandle
     KeysetHandle handle =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            new String(Files.readAllBytes(keyFile), UTF_8), InsecureSecretKeyAccess.get());
+            new String(Files.readAllBytes(keyFile), UTF_8),
+            DeterministicAeadConfig2026.get(),
+            InsecureSecretKeyAccess.get());
 
     // Get the primitive
     DeterministicAead daead =
-        handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
+        handle.getPrimitive(DeterministicAeadConfig2026.get(), DeterministicAead.class);
 
     // Use the primitive to encrypt/decrypt files.
     if (MODE_ENCRYPT.equals(mode)) {

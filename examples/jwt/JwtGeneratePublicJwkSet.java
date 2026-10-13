@@ -20,7 +20,7 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
 import com.google.crypto.tink.jwt.JwkSetConverter;
-import com.google.crypto.tink.jwt.JwtSignatureConfig;
+import com.google.crypto.tink.jwt.JwtConfig2026;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -48,13 +48,11 @@ public final class JwtGeneratePublicJwkSet {
     Path privateKeysetFile = Paths.get(args[0]);
     Path publicJwkSetFile = Paths.get(args[1]);
 
-    // Register all JWT signature key types with the Tink runtime.
-    JwtSignatureConfig.register();
-
     // Read the keyset into a KeysetHandle.
     KeysetHandle privateKeysetHandle =
         TinkJsonProtoKeysetFormat.parseKeyset(
             new String(Files.readAllBytes(privateKeysetFile), UTF_8),
+            JwtConfig2026.get(),
             InsecureSecretKeyAccess.get());
 
     // Export the public keyset as JWK set.

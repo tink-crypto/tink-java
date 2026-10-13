@@ -20,9 +20,8 @@ import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
-import com.google.crypto.tink.hybrid.HybridConfig;
+import com.google.crypto.tink.hybrid.HybridConfig2026;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -64,25 +63,22 @@ public final class HybridExample {
       contextInfo = args[4].getBytes(UTF_8);
     }
 
-    // Register all hybrid encryption key types with the Tink runtime.
-    HybridConfig.register();
-
     // Read the keyset into a KeysetHandle.
     KeysetHandle handle =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            new String(Files.readAllBytes(keyFile), UTF_8), InsecureSecretKeyAccess.get());
+            new String(Files.readAllBytes(keyFile), UTF_8),
+            HybridConfig2026.get(),
+            InsecureSecretKeyAccess.get());
 
     if (mode.equals("encrypt")) {
       // Get the primitive.
-      HybridEncrypt encryptor =
-          handle.getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class);
+      HybridEncrypt encryptor = handle.getPrimitive(HybridConfig2026.get(), HybridEncrypt.class);
 
       // Use the primitive to encrypt data.
       byte[] ciphertext = encryptor.encrypt(input, contextInfo);
       Files.write(outputFile, ciphertext);
     } else {
-      HybridDecrypt decryptor =
-          handle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
+      HybridDecrypt decryptor = handle.getPrimitive(HybridConfig2026.get(), HybridDecrypt.class);
 
       // Use the primitive to decrypt data.
       byte[] plaintext = decryptor.decrypt(input, contextInfo);

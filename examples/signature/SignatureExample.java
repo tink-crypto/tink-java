@@ -20,9 +20,8 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
-import com.google.crypto.tink.signature.SignatureConfig;
+import com.google.crypto.tink.signature.SignatureConfig2026;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -58,17 +57,16 @@ public final class SignatureExample {
     byte[] msg = Files.readAllBytes(Paths.get(args[2]));
     Path signatureFile = Paths.get(args[3]);
 
-    // Register all signature key types with the Tink runtime.
-    SignatureConfig.register();
-
     // Read the keyset into a KeysetHandle.
     KeysetHandle handle =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            new String(Files.readAllBytes(keyFile), UTF_8), InsecureSecretKeyAccess.get());
+            new String(Files.readAllBytes(keyFile), UTF_8),
+            SignatureConfig2026.get(),
+            InsecureSecretKeyAccess.get());
 
     if (mode.equals("sign")) {
       // Get the primitive.
-      PublicKeySign signer = handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
+      PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
 
       // Use the primitive to sign data.
       byte[] signature = signer.sign(msg);
@@ -78,7 +76,7 @@ public final class SignatureExample {
 
       // Get the primitive.
       PublicKeyVerify verifier =
-          handle.getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
+          handle.getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
 
       verifier.verify(signature, msg);
     }
