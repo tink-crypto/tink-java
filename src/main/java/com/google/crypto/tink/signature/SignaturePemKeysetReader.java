@@ -164,7 +164,8 @@ public final class SignaturePemKeysetReader implements KeysetReader {
       IOException exception = null;
       try {
         KeysetHandle handle = buildPublicKeysetHandle();
-        byte[] bytes = TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle);
+        byte[] bytes =
+            TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle, SignatureConfig2026.get());
         keyset = Keyset.parseFrom(bytes, ExtensionRegistryLite.getEmptyRegistry());
       } catch (GeneralSecurityException e) {
         exception = new IOException(e);
