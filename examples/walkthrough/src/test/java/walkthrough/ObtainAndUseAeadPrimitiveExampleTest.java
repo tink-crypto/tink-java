@@ -19,7 +19,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
-import com.google.crypto.tink.aead.AeadConfig;
+import com.google.crypto.tink.aead.AeadConfig2026;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -46,9 +46,9 @@ public final class ObtainAndUseAeadPrimitiveExampleTest {
 
   @Test
   public void encryptDecrypt_succeeds() throws Exception {
-    AeadConfig.register();
     KeysetHandle keysetHandle =
-        TinkJsonProtoKeysetFormat.parseKeyset(SERIALIZED_KEYSET, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            SERIALIZED_KEYSET, AeadConfig2026.get(), InsecureSecretKeyAccess.get());
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "associatedData".getBytes(UTF_8);
 

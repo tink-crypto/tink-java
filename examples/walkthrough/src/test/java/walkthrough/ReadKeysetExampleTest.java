@@ -21,7 +21,7 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.KmsClient;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
-import com.google.crypto.tink.aead.AeadConfig;
+import com.google.crypto.tink.aead.AeadConfig2026;
 import com.google.crypto.tink.testing.FakeKmsClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,8 +48,6 @@ public final class ReadKeysetExampleTest {
 
   @Test
   public void readEncryptedKeyset_succeedsWithValidInputs() throws Exception {
-    AeadConfig.register();
-
     KmsClient kmsClient = new FakeKmsClient();
     String keyEncryptionKeyUri = FakeKmsClient.createFakeKeyUri();
     Aead keyEncryptionAead = kmsClient.getAead(keyEncryptionKeyUri);
@@ -59,10 +57,11 @@ public final class ReadKeysetExampleTest {
     byte[] keysetAssociatedData = "keysetAssociatedData".getBytes(UTF_8);
 
     KeysetHandle keysetHandle =
-        TinkJsonProtoKeysetFormat.parseKeyset(KEYSET_TO_SERIALIZE, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            KEYSET_TO_SERIALIZE, AeadConfig2026.get(), InsecureSecretKeyAccess.get());
     String serializedEncryptedKeyset =
         TinkJsonProtoKeysetFormat.serializeEncryptedKeyset(
-            keysetHandle, keyEncryptionAead, keysetAssociatedData);
+            keysetHandle, keyEncryptionAead, keysetAssociatedData, AeadConfig2026.get());
 
     KeysetHandle deserializedKeyset =
         ReadKeysetExample.readEncryptedKeyset(

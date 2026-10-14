@@ -17,6 +17,7 @@ package walkthrough;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
+import com.google.crypto.tink.aead.AeadConfig2026;
 import java.security.GeneralSecurityException;
 
 // [START_EXCLUDE]
@@ -40,7 +41,8 @@ final class ReadCleartextKeysetExample {
   static KeysetHandle readKeyset(String serializedKeyset) throws GeneralSecurityException {
     // NOTE: If the keyset does not contain secrets it is possible to parse without a
     // SecretKeyAccess token using TinkJsonProtoKeysetFormat.parseKeysetWithoutSecret().
-    return TinkJsonProtoKeysetFormat.parseKeyset(serializedKeyset, InsecureSecretKeyAccess.get());
+    return TinkJsonProtoKeysetFormat.parseKeyset(
+        serializedKeyset, AeadConfig2026.get(), InsecureSecretKeyAccess.get());
   }
   // [END tink_walkthrough_load_cleartext_keyset]
 }

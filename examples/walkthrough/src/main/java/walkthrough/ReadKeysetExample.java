@@ -17,6 +17,7 @@ package walkthrough;
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
+import com.google.crypto.tink.aead.AeadConfig2026;
 import java.security.GeneralSecurityException;
 
 // [START_EXCLUDE]
@@ -33,7 +34,6 @@ final class ReadKeysetExample {
    * <p>Prerequisites for this example:
    *
    * <ul>
-   *   <li>Register AEAD implementations of Tink.
    *   <li>Create a key encryption AEAD primitive. This is usually a remote AEAD provided by a Key
    *       Management Service (KMS).
    *   <li>Create a keyset and serialize it encrypted using the key encryption AEAD.
@@ -47,7 +47,7 @@ final class ReadKeysetExample {
       String serializedKeyset, Aead keyEncryptionAead, byte[] associatedData)
       throws GeneralSecurityException {
     return TinkJsonProtoKeysetFormat.parseEncryptedKeyset(
-        serializedKeyset, keyEncryptionAead, associatedData);
+        serializedKeyset, keyEncryptionAead, associatedData, AeadConfig2026.get());
   }
   // [END tink_walkthrough_read_keyset]
 }

@@ -19,7 +19,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
-import com.google.crypto.tink.aead.AeadConfig;
+import com.google.crypto.tink.aead.AeadConfig2026;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -45,18 +45,18 @@ public final class WriteCleartextKeysetExampleTest {
 
   @Test
   public void writeKeyset_succeedsWithValidInputs() throws Exception {
-    AeadConfig.register();
-
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "associatedData".getBytes(UTF_8);
 
     KeysetHandle keysetHandle =
-        TinkJsonProtoKeysetFormat.parseKeyset(KEYSET_TO_SERIALIZE, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            KEYSET_TO_SERIALIZE, AeadConfig2026.get(), InsecureSecretKeyAccess.get());
     String serialized = WriteCleartextKeysetExample.writeKeyset(keysetHandle);
 
     // Make sure the serialized keyset was written correctly by loading and encrypt/decrypt.
     KeysetHandle loadedKeysetHandle =
-        TinkJsonProtoKeysetFormat.parseKeyset(serialized, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            serialized, AeadConfig2026.get(), InsecureSecretKeyAccess.get());
     byte[] decrypted =
         ObtainAndUseAeadPrimitiveExample.aeadEncryptDecrypt(
             loadedKeysetHandle, plaintext, associatedData);

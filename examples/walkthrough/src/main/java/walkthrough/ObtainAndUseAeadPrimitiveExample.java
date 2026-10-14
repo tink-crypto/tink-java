@@ -16,7 +16,7 @@ package walkthrough;
 // [START tink_walkthrough_obtain_and_use_aead_primitive]
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.KeysetHandle;
-import com.google.crypto.tink.RegistryConfiguration;
+import com.google.crypto.tink.aead.AeadConfig2026;
 import java.security.GeneralSecurityException;
 
 // [START_EXCLUDE]
@@ -31,7 +31,6 @@ final class ObtainAndUseAeadPrimitiveExample {
    * <p>Prerequisites for this example:
    *
    * <ul>
-   *   <li>Register AEAD implementations of Tink.
    *   <li>Create a keyset and wrap it with a {@link KeysetHandle}.
    * </ul>
    *
@@ -42,7 +41,7 @@ final class ObtainAndUseAeadPrimitiveExample {
   static byte[] aeadEncryptDecrypt(
       KeysetHandle keysetHandle, byte[] plaintext, byte[] associatedData)
       throws GeneralSecurityException {
-    Aead aead = keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
+    Aead aead = keysetHandle.getPrimitive(AeadConfig2026.get(), Aead.class);
     byte[] ciphertext = aead.encrypt(plaintext, associatedData);
     return aead.decrypt(ciphertext, associatedData);
   }

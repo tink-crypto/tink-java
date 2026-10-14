@@ -17,6 +17,7 @@ package walkthrough;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
+import com.google.crypto.tink.aead.AeadConfig2026;
 import java.security.GeneralSecurityException;
 
 // [START_EXCLUDE]
@@ -40,7 +41,8 @@ final class WriteCleartextKeysetExample {
   static String writeKeyset(KeysetHandle keysetHandle) throws GeneralSecurityException {
     // NOTE: If the keyset does not contain secrets it is possible to serialize without a
     // SecretKeyAccess token using TinkJsonProtoKeysetFormat.serializeKeysetWithoutSecret().
-    return TinkJsonProtoKeysetFormat.serializeKeyset(keysetHandle, InsecureSecretKeyAccess.get());
+    return TinkJsonProtoKeysetFormat.serializeKeyset(
+        keysetHandle, AeadConfig2026.get(), InsecureSecretKeyAccess.get());
   }
   // [END tink_walkthrough_write_cleartext_keyset]
 }

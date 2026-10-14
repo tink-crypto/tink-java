@@ -14,8 +14,7 @@ java_test(
         "@maven//:junit_junit",
         "@tink_java//src/main/java/com/google/crypto/tink:aead",
         "@tink_java//src/main/java/com/google/crypto/tink:registry_cluster",
-        "@tink_java//src/main/java/com/google/crypto/tink:registry_configuration",
-        "@tink_java//src/main/java/com/google/crypto/tink/aead:aead_config",
+        "@tink_java//src/main/java/com/google/crypto/tink/aead:aead_config2026",
     ],
 )
 
@@ -30,7 +29,7 @@ java_test(
         "@tink_java//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "@tink_java//src/main/java/com/google/crypto/tink:registry_cluster",
         "@tink_java//src/main/java/com/google/crypto/tink:tink_json_proto_keyset_format",
-        "@tink_java//src/main/java/com/google/crypto/tink/aead:aead_config",
+        "@tink_java//src/main/java/com/google/crypto/tink/aead:aead_config2026",
     ],
 )
 
@@ -48,7 +47,7 @@ java_test(
         "@tink_java//src/main/java/com/google/crypto/tink:kms_client",
         "@tink_java//src/main/java/com/google/crypto/tink:registry_cluster",
         "@tink_java//src/main/java/com/google/crypto/tink:tink_json_proto_keyset_format",
-        "@tink_java//src/main/java/com/google/crypto/tink/aead:aead_config",
+        "@tink_java//src/main/java/com/google/crypto/tink/aead:aead_config2026",
         "@tink_java//src/main/java/com/google/crypto/tink/testing:fake_kms_client",
     ],
 )
@@ -67,7 +66,7 @@ java_test(
         "@tink_java//src/main/java/com/google/crypto/tink:kms_client",
         "@tink_java//src/main/java/com/google/crypto/tink:registry_cluster",
         "@tink_java//src/main/java/com/google/crypto/tink:tink_json_proto_keyset_format",
-        "@tink_java//src/main/java/com/google/crypto/tink/aead:aead_config",
+        "@tink_java//src/main/java/com/google/crypto/tink/aead:aead_config2026",
         "@tink_java//src/main/java/com/google/crypto/tink/testing:fake_kms_client",
     ],
 )
@@ -82,7 +81,6 @@ java_test(
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
         "@tink_java//src/main/java/com/google/crypto/tink:registry_cluster",
-        "@tink_java//src/main/java/com/google/crypto/tink/aead:aead_config",
     ],
 )
 
@@ -98,6 +96,6 @@ java_test(
         "@tink_java//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "@tink_java//src/main/java/com/google/crypto/tink:registry_cluster",
         "@tink_java//src/main/java/com/google/crypto/tink:tink_json_proto_keyset_format",
-        "@tink_java//src/main/java/com/google/crypto/tink/aead:aead_config",
+        "@tink_java//src/main/java/com/google/crypto/tink/aead:aead_config2026",
     ],
 )

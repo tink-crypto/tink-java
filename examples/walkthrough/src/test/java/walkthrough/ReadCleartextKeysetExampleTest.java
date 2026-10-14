@@ -17,7 +17,6 @@ import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.crypto.tink.KeysetHandle;
-import com.google.crypto.tink.aead.AeadConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -43,8 +42,6 @@ public final class ReadCleartextKeysetExampleTest {
 
   @Test
   public void readKeyset_succeedsWithValidInputs() throws Exception {
-    AeadConfig.register();
-
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "associatedData".getBytes(UTF_8);
 
