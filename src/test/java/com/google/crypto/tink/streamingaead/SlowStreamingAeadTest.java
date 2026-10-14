@@ -19,7 +19,6 @@ package com.google.crypto.tink.streamingaead;
 import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.StreamingAead;
 import java.io.ByteArrayInputStream;
@@ -29,7 +28,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -40,11 +38,6 @@ import org.junit.runner.RunWith;
 /** Unit tests for the StreamingAead where the channel only reads/writes a small number of bytes. */
 @RunWith(Theories.class)
 public final class SlowStreamingAeadTest {
-
-  @BeforeClass
-  public static void setUp() throws Exception {
-    StreamingAeadConfig.register();
-  }
 
   /**
    * A {@link WritableByteChannel} that writes at most 2 bytes at a time.
@@ -122,19 +115,17 @@ public final class SlowStreamingAeadTest {
     }
   }
 
-  @DataPoints("templates")
-  public static final String[] templates =
-      new String[] {
-        "AES128_GCM_HKDF_4KB",
-        "AES128_CTR_HMAC_SHA256_4KB",
+  @DataPoints("parameters")
+  public static final StreamingAeadParameters[] PARAMETERS =
+      new StreamingAeadParameters[] {
+        PredefinedStreamingAeadParameters.AES128_GCM_HKDF_4KB,
+        PredefinedStreamingAeadParameters.AES128_CTR_HMAC_SHA256_4KB,
       };
 
   @Theory
   public void encryptDecrypt_withSlowChannels_works(
-      @FromDataPoints("templates") String templateName) throws Exception {
-    KeysetHandle handle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), StreamingAeadConfig2026.get());
+      @FromDataPoints("parameters") StreamingAeadParameters parameters) throws Exception {
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, StreamingAeadConfig2026.get());
     StreamingAead streamingAead =
         handle.getPrimitive(StreamingAeadConfig2026.get(), StreamingAead.class);
 

@@ -20,7 +20,6 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeysetHandle;
-import org.junit.BeforeClass;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
 import org.junit.experimental.theories.Theories;
@@ -29,11 +28,6 @@ import org.junit.runner.RunWith;
 
 @RunWith(Theories.class)
 public final class PredefinedStreamingAeadParametersTest {
-  @BeforeClass
-  public static void setUp() throws Exception {
-    StreamingAeadConfig.register();
-  }
-
   @DataPoints("AllParameters")
   public static final StreamingAeadParameters[] TEMPLATES =
       new StreamingAeadParameters[] {
@@ -50,7 +44,8 @@ public final class PredefinedStreamingAeadParametersTest {
   @Theory
   public void testInstantiation(@FromDataPoints("AllParameters") StreamingAeadParameters parameters)
       throws Exception {
-    Key key = KeysetHandle.generateNew(parameters).getAt(0).getKey();
+    Key key =
+        KeysetHandle.generateNew(parameters, StreamingAeadConfig2026.get()).getAt(0).getKey();
     assertThat(key.getParameters()).isEqualTo(parameters);
   }
 }

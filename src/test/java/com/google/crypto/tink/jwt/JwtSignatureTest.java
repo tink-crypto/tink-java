@@ -24,9 +24,8 @@ import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
-import com.google.crypto.tink.daead.DeterministicAeadConfig;
+import com.google.crypto.tink.daead.DeterministicAeadConfig2026;
 import com.google.crypto.tink.testing.TestUtil;
 import java.security.GeneralSecurityException;
 import java.time.Clock;
@@ -45,7 +44,6 @@ public final class JwtSignatureTest {
   @BeforeClass
   public static void setUp() throws Exception {
     JwtSignatureConfig.register();
-    DeterministicAeadConfig.register(); // Needed for getPrimitiveFromIncompatbileKeyset_throws.
   }
 
   @DataPoints("jwt_signature_templates")
@@ -63,7 +61,7 @@ public final class JwtSignatureTest {
     }
     KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
     JwtPublicKeySign jwtPublicKeySign =
-        handle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
+        handle.getPrimitive(JwtConfig2026.get(), JwtPublicKeySign.class);
     Instant now = Clock.systemUTC().instant();
     RawJwt rawJwt =
         RawJwt.newBuilder()
@@ -78,7 +76,7 @@ public final class JwtSignatureTest {
     JwtPublicKeyVerify jwtPublicKeyVerify =
         handle
             .getPublicKeysetHandle()
-            .getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
+            .getPrimitive(JwtConfig2026.get(), JwtPublicKeyVerify.class);
 
     JwtValidator validator =
         JwtValidator.newBuilder().expectIssuer("issuer").expectAudience("audience").build();
@@ -127,7 +125,7 @@ public final class JwtSignatureTest {
     JwtPublicKeyVerify otherJwtPublicKeyVerify =
         otherHandle
             .getPublicKeysetHandle()
-            .getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
+            .getPrimitive(JwtConfig2026.get(), JwtPublicKeyVerify.class);
     assertThrows(
         GeneralSecurityException.class,
         () -> otherJwtPublicKeyVerify.verifyAndDecode(token, validator));
@@ -161,10 +159,12 @@ public final class JwtSignatureTest {
   public void readKeysetSignVerifyJwt_success() throws Exception {
     KeysetHandle privateHandle =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            JSON_JWT_PUBLIC_KEY_SIGN_KEYSET, InsecureSecretKeyAccess.get());
+            JSON_JWT_PUBLIC_KEY_SIGN_KEYSET,
+            JwtConfig2026.get(),
+            InsecureSecretKeyAccess.get());
     Instant now = Clock.systemUTC().instant();
     JwtPublicKeySign jwtPublicKeySign =
-        privateHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
+        privateHandle.getPrimitive(JwtConfig2026.get(), JwtPublicKeySign.class);
     RawJwt rawJwt =
         RawJwt.newBuilder()
             .setIssuer("issuer")
@@ -176,9 +176,11 @@ public final class JwtSignatureTest {
 
     KeysetHandle publicHandle =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            JSON_JWT_PUBLIC_KEY_VERIFY_KEYSET, InsecureSecretKeyAccess.get());
+            JSON_JWT_PUBLIC_KEY_VERIFY_KEYSET,
+            JwtConfig2026.get(),
+            InsecureSecretKeyAccess.get());
     JwtPublicKeyVerify jwtPublicKeyVerify =
-        publicHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
+        publicHandle.getPrimitive(JwtConfig2026.get(), JwtPublicKeyVerify.class);
     JwtValidator validator =
         JwtValidator.newBuilder().expectIssuer("issuer").expectAudience("audience").build();
     VerifiedJwt verifiedJwt = jwtPublicKeyVerify.verifyAndDecode(token, validator);
@@ -209,13 +211,17 @@ public final class JwtSignatureTest {
   @Theory
   public void getPrimitiveFromIncompatbileKeyset_throws() throws Exception {
     KeysetHandle handle =
-        TinkJsonProtoKeysetFormat.parseKeyset(JSON_DAEAD_KEYSET, InsecureSecretKeyAccess.get());
-    Object unused = handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            JSON_DAEAD_KEYSET,
+            DeterministicAeadConfig2026.get(),
+            InsecureSecretKeyAccess.get());
+    Object unused =
+        handle.getPrimitive(DeterministicAeadConfig2026.get(), DeterministicAead.class);
     assertThrows(
         GeneralSecurityException.class,
-        () -> handle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class));
+        () -> handle.getPrimitive(JwtConfig2026.get(), JwtPublicKeySign.class));
     assertThrows(
         GeneralSecurityException.class,
-        () -> handle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class));
+        () -> handle.getPrimitive(JwtConfig2026.get(), JwtPublicKeyVerify.class));
   }
 }

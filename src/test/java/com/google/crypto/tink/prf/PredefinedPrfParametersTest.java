@@ -20,7 +20,6 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeysetHandle;
-import org.junit.BeforeClass;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
 import org.junit.experimental.theories.Theories;
@@ -29,11 +28,6 @@ import org.junit.runner.RunWith;
 
 @RunWith(Theories.class)
 public final class PredefinedPrfParametersTest {
-  @BeforeClass
-  public static void setUp() throws Exception {
-    PrfConfig.register();
-  }
-
   @DataPoints("AllParameters")
   public static final PrfParameters[] TEMPLATES =
       new PrfParameters[] {
@@ -46,7 +40,7 @@ public final class PredefinedPrfParametersTest {
   @Theory
   public void testInstantiation(@FromDataPoints("AllParameters") PrfParameters parameters)
       throws Exception {
-    Key key = KeysetHandle.generateNew(parameters).getAt(0).getKey();
+    Key key = KeysetHandle.generateNew(parameters, PrfConfig2026.get()).getAt(0).getKey();
     assertThat(key.getParameters()).isEqualTo(parameters);
   }
 }

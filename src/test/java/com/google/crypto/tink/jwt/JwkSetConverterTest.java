@@ -23,7 +23,6 @@ import static org.junit.Assume.assumeTrue;
 
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.subtle.Base64;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.testing.TestUtil;
@@ -825,9 +824,9 @@ public final class JwkSetConverterTest {
     KeysetHandle publicKeysetHandle = JwkSetConverter.toPublicKeysetHandle(jwksString);
 
     JwtPublicKeySign signer =
-        keysetHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
+        keysetHandle.getPrimitive(JwtConfig2026.get(), JwtPublicKeySign.class);
     JwtPublicKeyVerify verifier =
-        publicKeysetHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeyVerify.class);
+        publicKeysetHandle.getPrimitive(JwtConfig2026.get(), JwtPublicKeyVerify.class);
 
     RawJwt rawToken = RawJwt.newBuilder().setJwtId("jwtId").withoutExpiration().build();
     String signedCompact = signer.signAndEncode(rawToken);
@@ -843,7 +842,8 @@ public final class JwkSetConverterTest {
             JwtEcdsaParameters.builder()
                 .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
                 .setKidStrategy(JwtEcdsaParameters.KidStrategy.IGNORED)
-                .build());
+                .build(),
+            JwtConfig2026.get());
     assertThrows(
         GeneralSecurityException.class,
         () -> JwkSetConverter.fromPublicKeysetHandle(privateKeyset));

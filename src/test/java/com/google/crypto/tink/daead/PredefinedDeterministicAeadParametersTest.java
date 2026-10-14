@@ -20,18 +20,12 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeysetHandle;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public final class PredefinedDeterministicAeadParametersTest {
-  @BeforeClass
-  public static void setUp() throws Exception {
-    DeterministicAeadConfig.register();
-  }
-
   @Test
   public void testNotNull() {
     assertThat(PredefinedDeterministicAeadParameters.AES256_SIV).isNotNull();
@@ -41,7 +35,9 @@ public final class PredefinedDeterministicAeadParametersTest {
   public void testInstantiation()
       throws Exception {
     Key key =
-        KeysetHandle.generateNew(PredefinedDeterministicAeadParameters.AES256_SIV)
+        KeysetHandle.generateNew(
+                PredefinedDeterministicAeadParameters.AES256_SIV,
+                DeterministicAeadConfig2026.get())
             .getAt(0)
             .getKey();
     assertThat(key.getParameters()).isEqualTo(PredefinedDeterministicAeadParameters.AES256_SIV);

@@ -545,7 +545,7 @@ java_test(
     deps = [
         "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink:registry_cluster",
-        "//src/main/java/com/google/crypto/tink/aead:aead_config",
+        "//src/main/java/com/google/crypto/tink/aead:aead_config2026",
         "//src/main/java/com/google/crypto/tink/aead:aead_parameters",
         "//src/main/java/com/google/crypto/tink/aead:predefined_aead_parameters",
         "@maven//:com_google_truth_truth",

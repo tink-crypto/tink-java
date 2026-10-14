@@ -20,7 +20,6 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeysetHandle;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -30,11 +29,6 @@ import org.junit.runner.RunWith;
 
 @RunWith(Theories.class)
 public final class PredefinedMacParametersTest {
-  @BeforeClass
-  public static void setUp() throws Exception {
-    MacConfig.register();
-  }
-
   @DataPoints("AllParameters")
   public static final MacParameters[] TEMPLATES =
       new MacParameters[] {
@@ -50,7 +44,7 @@ public final class PredefinedMacParametersTest {
   @Theory
   public void testInstantiation(@FromDataPoints("AllParameters") MacParameters parameters)
       throws Exception {
-    Key key = KeysetHandle.generateNew(parameters).getAt(0).getKey();
+    Key key = KeysetHandle.generateNew(parameters, MacConfig2026.get()).getAt(0).getKey();
     assertThat(key.getParameters()).isEqualTo(parameters);
   }
 

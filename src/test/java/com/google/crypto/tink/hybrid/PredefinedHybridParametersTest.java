@@ -37,7 +37,6 @@ import org.junit.runner.RunWith;
 public final class PredefinedHybridParametersTest {
   @BeforeClass
   public static void setUp() throws Exception {
-    HybridConfig.register();
     try {
       Conscrypt.checkAvailability();
       Security.addProvider(Conscrypt.newProvider());
@@ -59,7 +58,7 @@ public final class PredefinedHybridParametersTest {
   @Theory
   public void testInstantiation(@FromDataPoints("AllParameters") HybridParameters parameters)
       throws Exception {
-    Key key = KeysetHandle.generateNew(parameters).getAt(0).getKey();
+    Key key = KeysetHandle.generateNew(parameters, HybridConfig2026.get()).getAt(0).getKey();
     assertThat(key.getParameters()).isEqualTo(parameters);
   }
 

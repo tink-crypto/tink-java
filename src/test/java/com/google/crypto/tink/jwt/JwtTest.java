@@ -23,9 +23,8 @@ import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
-import com.google.crypto.tink.daead.DeterministicAeadConfig;
+import com.google.crypto.tink.daead.DeterministicAeadConfig2026;
 import java.security.GeneralSecurityException;
 import java.time.Clock;
 import java.time.Instant;
@@ -43,7 +42,6 @@ public final class JwtTest {
   @BeforeClass
   public static void setUp() throws Exception {
     JwtMacConfig.register();
-    DeterministicAeadConfig.register(); // Needed for getPrimitiveFromNonMacKeyset_throws.
   }
 
   @DataPoints("jwt_mac_templates")
@@ -61,7 +59,7 @@ public final class JwtTest {
   public void createComputeVerifyJwtMac(@FromDataPoints("jwt_mac_templates") String templateName)
       throws Exception {
     KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
-    JwtMac jwtMac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
+    JwtMac jwtMac = handle.getPrimitive(JwtConfig2026.get(), JwtMac.class);
     Instant now = Clock.systemUTC().instant();
     RawJwt rawJwt =
         RawJwt.newBuilder()
@@ -116,7 +114,7 @@ public final class JwtTest {
         () -> jwtMac.verifyMacAndDecode(tokenWithInvalidAudience, validator));
 
     KeysetHandle otherHandle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
-    JwtMac otherJwtMac = otherHandle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
+    JwtMac otherJwtMac = otherHandle.getPrimitive(JwtConfig2026.get(), JwtMac.class);
     assertThrows(
         GeneralSecurityException.class, () -> otherJwtMac.verifyMacAndDecode(token, validator));
 
@@ -148,9 +146,10 @@ public final class JwtTest {
   @Theory
   public void readKeysetComputeVerifyJwtMac_success() throws Exception {
     KeysetHandle handle =
-        TinkJsonProtoKeysetFormat.parseKeyset(JSON_JWT_MAC_KEYSET, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            JSON_JWT_MAC_KEYSET, JwtConfig2026.get(), InsecureSecretKeyAccess.get());
     Instant now = Clock.systemUTC().instant();
-    JwtMac jwtMac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
+    JwtMac jwtMac = handle.getPrimitive(JwtConfig2026.get(), JwtMac.class);
     RawJwt rawJwt =
         RawJwt.newBuilder()
             .setIssuer("issuer")
@@ -212,9 +211,11 @@ public final class JwtTest {
       throws Exception {
     KeysetHandle handle =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            JSON_JWT_MAC_KEYSET_WITH_MULTIPLE_KEYS, InsecureSecretKeyAccess.get());
+            JSON_JWT_MAC_KEYSET_WITH_MULTIPLE_KEYS,
+            JwtConfig2026.get(),
+            InsecureSecretKeyAccess.get());
     Instant now = Clock.systemUTC().instant();
-    JwtMac jwtMac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
+    JwtMac jwtMac = handle.getPrimitive(JwtConfig2026.get(), JwtMac.class);
     RawJwt rawJwt =
         RawJwt.newBuilder()
             .setIssuer("issuer")
@@ -232,8 +233,8 @@ public final class JwtTest {
     // JSON_JWT_MAC_KEYSET to compute a tag with the first key.
     KeysetHandle handle1 =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            JSON_JWT_MAC_KEYSET, InsecureSecretKeyAccess.get());
-    JwtMac jwtMac1 = handle1.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
+            JSON_JWT_MAC_KEYSET, JwtConfig2026.get(), InsecureSecretKeyAccess.get());
+    JwtMac jwtMac1 = handle1.getPrimitive(JwtConfig2026.get(), JwtMac.class);
     String token1 = jwtMac1.computeMacAndEncode(rawJwt);
     assertThat(jwtMac.verifyMacAndDecode(token1, validator).getSubject()).isEqualTo("subject");
   }
@@ -262,12 +263,15 @@ public final class JwtTest {
   public void getPrimitiveFromNonMacKeyset_throws() throws Exception {
     KeysetHandle handle =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            JSON_DAEAD_KEYSET, InsecureSecretKeyAccess.get());
+            JSON_DAEAD_KEYSET,
+            DeterministicAeadConfig2026.get(),
+            InsecureSecretKeyAccess.get());
     // Test that the keyset can create a DeterministicAead primitive, but not a JwtMac.
-    Object unused = handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
+    Object unused =
+        handle.getPrimitive(DeterministicAeadConfig2026.get(), DeterministicAead.class);
     assertThrows(
         GeneralSecurityException.class,
-        () -> handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class));
+        () -> handle.getPrimitive(JwtConfig2026.get(), JwtMac.class));
   }
 
 }
