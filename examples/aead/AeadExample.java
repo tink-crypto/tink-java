@@ -19,9 +19,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
-import com.google.crypto.tink.aead.AeadConfig;
+import com.google.crypto.tink.aead.AeadConfig2026;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -60,16 +59,15 @@ public final class AeadExample {
     if (args.length == 5) {
       associatedData = args[4].getBytes(UTF_8);
     }
-    // Register all AEAD key types with the Tink runtime.
-    AeadConfig.register();
-
     // Read the keyset into a KeysetHandle.
     KeysetHandle handle =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            new String(Files.readAllBytes(keyFile), UTF_8), InsecureSecretKeyAccess.get());
+            new String(Files.readAllBytes(keyFile), UTF_8),
+            AeadConfig2026.get(),
+            InsecureSecretKeyAccess.get());
 
     // Get the primitive.
-    Aead aead = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
+    Aead aead = handle.getPrimitive(AeadConfig2026.get(), Aead.class);
 
     // Use the primitive to encrypt/decrypt files.
     if (MODE_ENCRYPT.equals(mode)) {

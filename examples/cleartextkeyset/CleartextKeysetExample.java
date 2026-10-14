@@ -19,9 +19,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
-import com.google.crypto.tink.aead.AeadConfig;
+import com.google.crypto.tink.aead.AeadConfig2026;
 import com.google.crypto.tink.aead.PredefinedAeadParameters;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -64,17 +63,16 @@ public final class CleartextKeysetExample {
     }
     Path keyFile = Paths.get(args[1]);
 
-    // Initialise Tink: register all AEAD key types with the Tink runtime
-    AeadConfig.register();
-
     if (MODE_GENERATE.equals(mode)) {
       // [START generate-a-new-keyset]
-      KeysetHandle handle = KeysetHandle.generateNew(PredefinedAeadParameters.AES128_GCM);
+      KeysetHandle handle =
+          KeysetHandle.generateNew(PredefinedAeadParameters.AES128_GCM, AeadConfig2026.get());
       // [END generate-a-new-keyset]
 
       // [START store-a-cleartext-keyset]
       String serializedKeyset =
-          TinkJsonProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+          TinkJsonProtoKeysetFormat.serializeKeyset(
+              handle, AeadConfig2026.get(), InsecureSecretKeyAccess.get());
       Files.write(keyFile, serializedKeyset.getBytes(UTF_8));
       // [END store-a-cleartext-keyset]
       return;
@@ -85,10 +83,11 @@ public final class CleartextKeysetExample {
     // Read the keyset from disk
     String serializedKeyset = new String(Files.readAllBytes(keyFile), UTF_8);
     KeysetHandle handle =
-        TinkJsonProtoKeysetFormat.parseKeyset(serializedKeyset, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            serializedKeyset, AeadConfig2026.get(), InsecureSecretKeyAccess.get());
 
     // Get the primitive
-    Aead aead = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
+    Aead aead = handle.getPrimitive(AeadConfig2026.get(), Aead.class);
 
     byte[] input = Files.readAllBytes(Paths.get(args[2]));
     Path outputFile = Paths.get(args[3]);
