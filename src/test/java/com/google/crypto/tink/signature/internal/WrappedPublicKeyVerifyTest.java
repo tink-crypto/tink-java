@@ -31,20 +31,15 @@ import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
 import com.google.crypto.tink.signature.EcdsaParameters;
 import com.google.crypto.tink.signature.EcdsaPrivateKey;
 import com.google.crypto.tink.signature.EcdsaPublicKey;
-import com.google.crypto.tink.signature.SignatureConfig;
+import com.google.crypto.tink.signature.SignatureConfig2026;
 import java.security.GeneralSecurityException;
 import java.util.List;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public final class WrappedPublicKeyVerifyTest {
-  @BeforeClass
-  public static void setUp() throws Exception {
-    SignatureConfig.register();
-  }
 
   private static PublicKeyVerify createPublicKeyVerify(KeysetHandleInterface.Entry entry)
       throws GeneralSecurityException {
@@ -64,7 +59,7 @@ public final class WrappedPublicKeyVerifyTest {
             .setHashType(EcdsaParameters.HashType.SHA256)
             .setVariant(EcdsaParameters.Variant.NO_PREFIX)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, SignatureConfig2026.get());
     PublicKeySign signer = EcdsaSignJce.create((EcdsaPrivateKey) handle.getAt(0).getKey());
     PublicKeyVerify verifier =
         WrappedPublicKeyVerify.create(
@@ -85,7 +80,7 @@ public final class WrappedPublicKeyVerifyTest {
             .setHashType(EcdsaParameters.HashType.SHA256)
             .setVariant(EcdsaParameters.Variant.TINK)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, SignatureConfig2026.get());
     PublicKeySign signer = EcdsaSignJce.create((EcdsaPrivateKey) handle.getAt(0).getKey());
     PublicKeyVerify verifier =
         WrappedPublicKeyVerify.create(
@@ -108,6 +103,7 @@ public final class WrappedPublicKeyVerifyTest {
             .build();
     KeysetHandle privateHandle =
         KeysetHandle.newBuilder()
+            .setConfiguration(SignatureConfig2026.get())
             .addEntry(
                 KeysetHandle.generateEntryFromParameters(parameters).withRandomId().makePrimary())
             .addEntry(KeysetHandle.generateEntryFromParameters(parameters).withRandomId())
@@ -146,6 +142,7 @@ public final class WrappedPublicKeyVerifyTest {
         MonitoringAnnotations.newBuilder().add("annotation_name", "annotation_value").build();
     KeysetHandle handle =
         KeysetHandle.newBuilder()
+            .setConfiguration(SignatureConfig2026.get())
             .addEntry(
                 KeysetHandle.generateEntryFromParameters(parameters).withFixedId(42).makePrimary())
             .addAnnotations(MonitoringAnnotations.class, annotations)

@@ -24,7 +24,6 @@ import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.KeysetHandleInterface;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.StreamingAead;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.proto.HashType;
@@ -37,7 +36,7 @@ import com.google.crypto.tink.streamingaead.AesCtrHmacStreamingKey;
 import com.google.crypto.tink.streamingaead.AesCtrHmacStreamingParameters;
 import com.google.crypto.tink.streamingaead.AesGcmHkdfStreamingKey;
 import com.google.crypto.tink.streamingaead.AesGcmHkdfStreamingParameters;
-import com.google.crypto.tink.streamingaead.StreamingAeadConfig;
+import com.google.crypto.tink.streamingaead.StreamingAeadConfig2026;
 import com.google.crypto.tink.subtle.AesCtrHmacStreaming;
 import com.google.crypto.tink.subtle.AesGcmHkdfStreaming;
 import com.google.crypto.tink.subtle.Hex;
@@ -48,7 +47,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
 import java.security.GeneralSecurityException;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -60,11 +58,6 @@ import org.junit.runners.JUnit4;
 public class WrappedStreamingAeadTest {
   private static final String AES_GCM_HKDF_TYPE_URL =
       "type.googleapis.com/google.crypto.tink.AesGcmHkdfStreamingKey";
-
-  @BeforeClass
-  public static void setUp() throws Exception {
-    StreamingAeadConfig.register();
-  }
 
   @Test
   public void encryptDecrypt_works() throws Exception {
@@ -306,7 +299,7 @@ public class WrappedStreamingAeadTest {
         Keyset.newBuilder().addKey(keysetKey1).addKey(keysetKey2).setPrimaryKeyId(1).build();
     KeysetHandle keysetHandle =
         TinkProtoKeysetFormat.parseKeyset(
-            keyset.toByteArray(), InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
+            keyset.toByteArray(), InsecureSecretKeyAccess.get(), StreamingAeadConfig2026.get());
     StreamingAead streamingAead =
         WrappedStreamingAead.wrap(keysetHandle, WrappedStreamingAeadTest::primitiveFactory);
 

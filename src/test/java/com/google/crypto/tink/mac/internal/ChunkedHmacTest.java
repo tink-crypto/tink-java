@@ -22,7 +22,6 @@ import static org.junit.Assume.assumeTrue;
 
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.mac.ChunkedMac;
@@ -32,7 +31,7 @@ import com.google.crypto.tink.mac.HmacKey;
 import com.google.crypto.tink.mac.HmacParameters;
 import com.google.crypto.tink.mac.HmacParameters.HashType;
 import com.google.crypto.tink.mac.HmacParameters.Variant;
-import com.google.crypto.tink.mac.MacConfig;
+import com.google.crypto.tink.mac.MacConfig2026;
 import com.google.crypto.tink.mac.internal.HmacTestUtil.HmacTestVector;
 import com.google.crypto.tink.subtle.Random;
 import com.google.crypto.tink.util.SecretBytes;
@@ -53,8 +52,6 @@ import org.junit.runner.RunWith;
 public class ChunkedHmacTest {
   @BeforeClass
   public static void setUp() throws Exception {
-    MacConfig.register();
-
     // If Tink is built in FIPS-only mode, register Conscrypt for the tests.
     if (TinkFips.useOnlyFips()) {
       try {
@@ -159,15 +156,12 @@ public class ChunkedHmacTest {
       throws Exception {
     assumeTrue(!TinkFips.useOnlyFips() || TinkFipsUtil.fipsModuleAvailable());
     KeysetHandle keysetHandle =
-        KeysetHandle
-            .newBuilder()
+        KeysetHandle.newBuilder()
+            .setConfiguration(MacConfig2026.get())
             .addEntry(
-                KeysetHandle
-                    .generateEntryFromParameters(params)
-                    .withFixedId(1234)
-                    .makePrimary()
-            ).build();
-    Mac mac = keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
+                KeysetHandle.generateEntryFromParameters(params).withFixedId(1234).makePrimary())
+            .build();
+    Mac mac = keysetHandle.getPrimitive(MacConfig2026.get(), Mac.class);
     HmacKey key = (HmacKey) keysetHandle.getAt(0).getKey();
     ChunkedMac chunkedMac = new ChunkedHmacImpl(key);
     ChunkedMacComputation chunkedMacComputation = chunkedMac.createComputation();

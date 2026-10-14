@@ -24,22 +24,19 @@ import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.KeysetHandleInterface;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.hybrid.HpkeParameters;
 import com.google.crypto.tink.hybrid.HpkePrivateKey;
 import com.google.crypto.tink.hybrid.HpkePublicKey;
-import com.google.crypto.tink.hybrid.HybridConfig;
+import com.google.crypto.tink.hybrid.HybridConfig2026;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
-import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
 import com.google.crypto.tink.internal.testing.SetTinkFlag;
 import com.google.crypto.tink.proto.Keyset;
 import com.google.protobuf.ExtensionRegistryLite;
 import java.security.GeneralSecurityException;
 import java.util.List;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,12 +47,6 @@ import org.junit.runners.JUnit4;
 public class WrappedHybridEncryptTest {
 
   @Rule public SetTinkFlag setTinkFlag = new SetTinkFlag();
-
-  @Before
-  public void setUp() throws Exception {
-    MutablePrimitiveRegistry.resetGlobalInstanceTestOnly();
-    HybridConfig.register();
-  }
 
   private static HybridEncrypt primitiveFactory(KeysetHandleInterface.Entry entry)
       throws GeneralSecurityException {
@@ -71,7 +62,7 @@ public class WrappedHybridEncryptTest {
             .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
             .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, HybridConfig2026.get());
     HybridEncrypt encrypter =
         WrappedHybridEncrypt.create(
             handle.getPublicKeysetHandle(), WrappedHybridEncryptTest::primitiveFactory);
@@ -91,7 +82,7 @@ public class WrappedHybridEncryptTest {
             .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
             .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, HybridConfig2026.get());
     HybridEncrypt encrypter =
         WrappedHybridEncrypt.create(
             handle.getPublicKeysetHandle(), WrappedHybridEncryptTest::primitiveFactory);
@@ -111,7 +102,7 @@ public class WrappedHybridEncryptTest {
             .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
             .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, HybridConfig2026.get());
     HybridEncrypt encrypter =
         WrappedHybridEncrypt.create(
             handle.getPublicKeysetHandle(), WrappedHybridEncryptTest::primitiveFactory);
@@ -133,6 +124,7 @@ public class WrappedHybridEncryptTest {
             .build();
     KeysetHandle handle =
         KeysetHandle.newBuilder()
+            .setConfiguration(HybridConfig2026.get())
             .addEntry(KeysetHandle.generateEntryFromParameters(parameters).withRandomId())
             .addEntry(
                 KeysetHandle.generateEntryFromParameters(parameters).withRandomId().makePrimary())
@@ -160,11 +152,11 @@ public class WrappedHybridEncryptTest {
             .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
             .build();
 
-    KeysetHandle handle = KeysetHandle.generateNew(parameters).getPublicKeysetHandle();
+    KeysetHandle handle =
+        KeysetHandle.generateNew(parameters, HybridConfig2026.get()).getPublicKeysetHandle();
     Keyset keyset =
         Keyset.parseFrom(
-            TinkProtoKeysetFormat.serializeKeysetWithoutSecret(
-                handle, RegistryConfiguration.get()),
+            TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle, HybridConfig2026.get()),
             ExtensionRegistryLite.getEmptyRegistry());
     Keyset keysetWithoutPrimary = keyset.toBuilder().clearPrimaryKeyId().build();
     // Test that one of parsing or getPrimitive throws (depends on validateKeysetsOnParsing)
@@ -172,8 +164,8 @@ public class WrappedHybridEncryptTest {
         GeneralSecurityException.class,
         () ->
             TinkProtoKeysetFormat.parseKeysetWithoutSecret(
-                    keysetWithoutPrimary.toByteArray(), RegistryConfiguration.get())
-                .getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class));
+                    keysetWithoutPrimary.toByteArray(), HybridConfig2026.get())
+                .getPrimitive(HybridConfig2026.get(), HybridEncrypt.class));
   }
 
   @Test
@@ -190,7 +182,7 @@ public class WrappedHybridEncryptTest {
             .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
             .build();
 
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, HybridConfig2026.get());
     HybridEncrypt encrypt =
         WrappedHybridEncrypt.create(
             handle.getPublicKeysetHandle(), WrappedHybridEncryptTest::primitiveFactory);
@@ -222,6 +214,7 @@ public class WrappedHybridEncryptTest {
 
     KeysetHandle privateHandle =
         KeysetHandle.newBuilder()
+            .setConfiguration(HybridConfig2026.get())
             .addEntry(
                 KeysetHandle.generateEntryFromParameters(parameters).withFixedId(123).makePrimary())
             .build();
@@ -266,6 +259,7 @@ public class WrappedHybridEncryptTest {
 
     KeysetHandle privateHandle1 =
         KeysetHandle.newBuilder()
+            .setConfiguration(HybridConfig2026.get())
             .addEntry(
                 KeysetHandle.generateEntryFromParameters(parameters).withFixedId(123).makePrimary())
             .build();
@@ -275,6 +269,7 @@ public class WrappedHybridEncryptTest {
             .build();
     KeysetHandle privateHandle2 =
         KeysetHandle.newBuilder()
+            .setConfiguration(HybridConfig2026.get())
             .addEntry(
                 KeysetHandle.generateEntryFromParameters(parameters).withFixedId(456).makePrimary())
             .build();
@@ -327,7 +322,6 @@ public class WrappedHybridEncryptTest {
     FakeMonitoringClient fakeMonitoringClient = new FakeMonitoringClient();
     MutableMonitoringRegistry.globalInstance().clear();
     MutableMonitoringRegistry.globalInstance().registerMonitoringClient(fakeMonitoringClient);
-    MutablePrimitiveRegistry.resetGlobalInstanceTestOnly();
 
     MonitoringAnnotations annotations =
         MonitoringAnnotations.newBuilder().add("annotation_name", "annotation_value").build();
@@ -340,6 +334,7 @@ public class WrappedHybridEncryptTest {
             .build();
     KeysetHandle privateHandle =
         KeysetHandle.newBuilder()
+            .setConfiguration(HybridConfig2026.get())
             .addEntry(
                 KeysetHandle.generateEntryFromParameters(parameters).withFixedId(123).makePrimary())
             .build();

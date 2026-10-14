@@ -24,7 +24,6 @@ import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.PublicKeySign;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.jwt.JwtInvalidException;
 import com.google.crypto.tink.jwt.JwtPublicKeySign;
 import com.google.crypto.tink.jwt.JwtPublicKeyVerify;
@@ -40,7 +39,7 @@ import com.google.crypto.tink.jwt.internal.JwtFormat;
 import com.google.crypto.tink.signature.RsaSsaPssParameters;
 import com.google.crypto.tink.signature.RsaSsaPssPrivateKey;
 import com.google.crypto.tink.signature.RsaSsaPssPublicKey;
-import com.google.crypto.tink.signature.SignatureConfig;
+import com.google.crypto.tink.signature.SignatureConfig2026;
 import com.google.crypto.tink.subtle.Base64;
 import com.google.crypto.tink.testing.TestUtil;
 import com.google.gson.JsonObject;
@@ -59,7 +58,6 @@ public class JwtRsaSsaPssPublicKeySignTest {
 
   @BeforeClass
   public static void setUp() throws Exception {
-    SignatureConfig.register();
     JwtSignatureConfig.register();
   }
 
@@ -232,7 +230,7 @@ public class JwtRsaSsaPssPublicKeySignTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(nonJwtPrivateKey).makePrimary().withRandomId())
             .build()
-            .getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
+            .getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
 
     JwtPublicKeyVerify verifier = JwtRsaSsaPssPublicKeyVerify.create(key.getPublicKey());
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
@@ -311,7 +309,7 @@ public class JwtRsaSsaPssPublicKeySignTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(nonJwtPrivateKey).makePrimary().withRandomId())
             .build()
-            .getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
+            .getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
 
     JwtPublicKeyVerify verifier = JwtRsaSsaPssPublicKeyVerify.create(key.getPublicKey());
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();

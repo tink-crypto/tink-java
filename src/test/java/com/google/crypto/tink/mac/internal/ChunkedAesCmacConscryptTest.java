@@ -23,7 +23,6 @@ import static org.junit.Assume.assumeTrue;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.mac.AesCmacKey;
@@ -32,7 +31,7 @@ import com.google.crypto.tink.mac.AesCmacParameters.Variant;
 import com.google.crypto.tink.mac.ChunkedMac;
 import com.google.crypto.tink.mac.ChunkedMacComputation;
 import com.google.crypto.tink.mac.ChunkedMacVerification;
-import com.google.crypto.tink.mac.MacConfig;
+import com.google.crypto.tink.mac.MacConfig2026;
 import com.google.crypto.tink.mac.internal.AesCmacTestUtil.AesCmacTestVector;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.testing.WycheproofTestUtil;
@@ -47,7 +46,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import javax.annotation.Nullable;
 import org.conscrypt.Conscrypt;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -57,11 +55,6 @@ import org.junit.runner.RunWith;
 
 @RunWith(Theories.class)
 public class ChunkedAesCmacConscryptTest {
-
-  @BeforeClass
-  public static void setUp() throws Exception {
-    MacConfig.register();
-  }
 
   private static boolean conscryptIsAvailable() {
     try {
@@ -126,12 +119,13 @@ public class ChunkedAesCmacConscryptTest {
     byte[] data = new byte[] {1, 2, 3, 4, 5, 6};  // concat of data0 and data1
     KeysetHandle keysetHandle =
         KeysetHandle.newBuilder()
+            .setConfiguration(MacConfig2026.get())
             .addEntry(
                 KeysetHandle.generateEntryFromParameters(parameters)
                     .withFixedId(1234)
                     .makePrimary())
             .build();
-    Mac mac = keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
+    Mac mac = keysetHandle.getPrimitive(MacConfig2026.get(), Mac.class);
     byte[] expectedTag = mac.computeMac(data);
     AesCmacKey key = (AesCmacKey) keysetHandle.getAt(0).getKey();
     ChunkedMac chunkedMac = ChunkedAesCmacConscrypt.create(key, CONSCRYPT);

@@ -29,11 +29,10 @@ import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.ProtoKeySerialization;
 import com.google.crypto.tink.ProtoKeySerializer;
 import com.google.crypto.tink.ProtoParametersSerialization;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.SecretKeyAccess;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.TinkProtoParametersFormat;
-import com.google.crypto.tink.aead.AeadConfig;
+import com.google.crypto.tink.aead.AeadConfig2026;
 import com.google.crypto.tink.aead.AesGcmKey;
 import com.google.crypto.tink.aead.AesGcmParameters;
 import com.google.crypto.tink.aead.subtle.AesGcmProtoSerialization;
@@ -54,18 +53,12 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import javax.annotation.Nullable;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public final class PrfBasedKeyDerivationKeyConfigBuilderTest {
-
-  @BeforeClass
-  public static void setUp() throws Exception {
-    AeadConfig.register();
-  }
 
   @AccessesPartialKey
   private static Key createAesGcmKey(
@@ -443,7 +436,7 @@ public final class PrfBasedKeyDerivationKeyConfigBuilderTest {
     KeysetDeriver deriver = keysetHandle.getPrimitive(config, KeysetDeriver.class);
     KeysetHandle derivedKeysetHandle = deriver.deriveKeyset(new byte[] {1, 2, 3});
 
-    Aead aead = derivedKeysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
+    Aead aead = derivedKeysetHandle.getPrimitive(AeadConfig2026.get(), Aead.class);
     byte[] plaintext = new byte[] {4, 5, 6};
     byte[] associatedData = new byte[] {7, 8, 9};
     byte[] ciphertext = aead.encrypt(plaintext, associatedData);

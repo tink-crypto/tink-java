@@ -25,15 +25,12 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.KeysetHandleInterface;
-import com.google.crypto.tink.RegistryConfiguration;
-import com.google.crypto.tink.aead.AeadConfig;
 import com.google.crypto.tink.aead.AesCtrHmacAeadKey;
 import com.google.crypto.tink.aead.AesCtrHmacAeadParameters;
 import com.google.crypto.tink.aead.AesCtrHmacAeadParameters.HashType;
 import com.google.crypto.tink.aead.AesCtrHmacAeadParameters.Variant;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
-import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
 import com.google.crypto.tink.subtle.Bytes;
 import com.google.crypto.tink.subtle.EncryptThenAuthenticate;
@@ -68,7 +65,6 @@ public class WrappedAeadTest {
 
   @BeforeClass
   public static void setUpClass() throws Exception {
-    AeadConfig.register();
     AesCtrHmacAeadParameters tinkParameters =
         AesCtrHmacAeadParameters.builder()
             .setAesKeySizeBytes(32)
@@ -220,7 +216,7 @@ public class WrappedAeadTest {
             .addEntry(KeysetHandle.importKey(tinkFixedKey).setStatus(KeyStatus.DISABLED))
             .addEntry(KeysetHandle.importKey(rawKey0).withRandomId().makePrimary())
             .build();
-    Aead aead = handleWithDisabledKey.getPrimitive(RegistryConfiguration.get(), Aead.class);
+    Aead aead = WrappedAead.create(handleWithDisabledKey, WrappedAeadTest::primitiveFactory);
 
     assertThrows(
         GeneralSecurityException.class, () -> aead.decrypt(fixedKeyCiphertext, associatedData));
@@ -311,7 +307,7 @@ public class WrappedAeadTest {
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(rawKey0).withRandomId().makePrimary())
             .build();
-    Aead aead0 = keysetHandle0.getPrimitive(RegistryConfiguration.get(), Aead.class);
+    Aead aead0 = WrappedAead.create(keysetHandle0, WrappedAeadTest::primitiveFactory);
     KeysetHandle keysetHandle1 =
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(rawKey1).withRandomId().makePrimary())
@@ -332,9 +328,6 @@ public class WrappedAeadTest {
 
   @Test
   public void encryptUsesPrimaryPrimitive() throws Exception {
-    MutablePrimitiveRegistry.resetGlobalInstanceTestOnly();
-    AeadConfig.register();
-
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "associatedData".getBytes(UTF_8);
 
@@ -407,9 +400,6 @@ public class WrappedAeadTest {
 
   @Test
   public void rawKeysWithSameKeyMaterialButDifferentKeyIds_decryptWorks() throws Exception {
-    MutablePrimitiveRegistry.resetGlobalInstanceTestOnly();
-    AeadConfig.register();
-
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "associatedData".getBytes(UTF_8);
 
