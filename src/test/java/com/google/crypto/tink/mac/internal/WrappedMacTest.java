@@ -33,7 +33,6 @@ import com.google.crypto.tink.mac.AesCmacParameters;
 import com.google.crypto.tink.mac.HmacKey;
 import com.google.crypto.tink.mac.HmacParameters;
 import com.google.crypto.tink.mac.HmacParameters.HashType;
-import com.google.crypto.tink.mac.MacConfig;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.subtle.PrfMac;
 import com.google.crypto.tink.util.SecretBytes;
@@ -65,9 +64,6 @@ public class WrappedMacTest {
 
   @BeforeClass
   public static void setUp() throws Exception {
-    MacConfig.register();
-    AesCmacProtoSerialization.register();
-    HmacProtoSerialization.register();
     createTestKeys();
   }
 

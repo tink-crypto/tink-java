@@ -24,7 +24,6 @@ import com.google.crypto.tink.proto.HkdfPrfKeyFormat;
 import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.protobuf.ExtensionRegistryLite;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -36,10 +35,6 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("deprecation") // Testing a deprecated class.
 @RunWith(Theories.class)
 public final class PrfKeyTemplatesTest {
-  @BeforeClass
-  public static void setUp() throws Exception {
-    PrfConfig.register();
-  }
 
   @Test
   public void hkdfSha256() throws Exception {
@@ -78,6 +73,7 @@ public final class PrfKeyTemplatesTest {
   @Theory
   public void testParametersEqualsKeyTemplate(@FromDataPoints("EquivalentPairs") Pair p)
       throws Exception {
-    assertThat(TinkProtoParametersFormat.parse(p.template.toByteArray())).isEqualTo(p.parameters);
+    assertThat(TinkProtoParametersFormat.parse(p.template.toByteArray(), PrfConfig2026.get()))
+        .isEqualTo(p.parameters);
   }
 }

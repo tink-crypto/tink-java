@@ -25,7 +25,6 @@ import com.google.crypto.tink.proto.HmacKeyFormat;
 import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.protobuf.ExtensionRegistryLite;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -36,10 +35,6 @@ import org.junit.runner.RunWith;
 /** Tests for MacKeyTemplates. */
 @RunWith(Theories.class)
 public class MacKeyTemplatesTest {
-  @BeforeClass
-  public static void setUp() throws Exception {
-    MacConfig.register();
-  }
 
   @Test
   public void hmacSha256_128BitTag() throws Exception {
@@ -138,6 +133,7 @@ public class MacKeyTemplatesTest {
   @Theory
   public void testParametersEqualsKeyTemplate(@FromDataPoints("EquivalentPairs") Pair p)
       throws Exception {
-    assertThat(TinkProtoParametersFormat.parse(p.template.toByteArray())).isEqualTo(p.parameters);
+    assertThat(TinkProtoParametersFormat.parse(p.template.toByteArray(), MacConfig2026.get()))
+        .isEqualTo(p.parameters);
   }
 }

@@ -25,9 +25,8 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
-import com.google.crypto.tink.daead.DeterministicAeadConfig;
+import com.google.crypto.tink.daead.DeterministicAeadConfig2026;
 import java.security.GeneralSecurityException;
 import org.junit.BeforeClass;
 import org.junit.experimental.theories.DataPoints;
@@ -43,7 +42,6 @@ public final class PrfTest {
   @BeforeClass
   public static void setUp() throws Exception {
     PrfConfig.register();
-    DeterministicAeadConfig.register(); // Needed for getPrimitiveFromNonMacKeyset_throws.
   }
 
   @DataPoints("templates")
@@ -60,7 +58,7 @@ public final class PrfTest {
       throws Exception {
     KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
     int primaryId = handle.getPrimary().getId();
-    PrfSet prfSet = handle.getPrimitive(RegistryConfiguration.get(), PrfSet.class);
+    PrfSet prfSet = handle.getPrimitive(PrfConfig2026.get(), PrfSet.class);
 
     byte[] data = "data".getBytes(UTF_8);
     byte[] outputPrimary = prfSet.computePrimary(data, 12);
@@ -95,8 +93,9 @@ public final class PrfTest {
   public void readKeysetEncryptDecrypt()
       throws Exception {
     KeysetHandle handle =
-        TinkJsonProtoKeysetFormat.parseKeyset(JSON_PRF_KEYSET, InsecureSecretKeyAccess.get());
-    PrfSet prfSet = handle.getPrimitive(RegistryConfiguration.get(), PrfSet.class);
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            JSON_PRF_KEYSET, PrfConfig2026.get(), InsecureSecretKeyAccess.get());
+    PrfSet prfSet = handle.getPrimitive(PrfConfig2026.get(), PrfSet.class);
 
     byte[] data = "data".getBytes(UTF_8);
     byte[] output1 = prfSet.computePrimary(data, 12);
@@ -149,9 +148,11 @@ public final class PrfTest {
       throws Exception {
     KeysetHandle handle =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            JSON_PRF_KEYSET_WITH_MULTIPLE_KEYS, InsecureSecretKeyAccess.get());
+            JSON_PRF_KEYSET_WITH_MULTIPLE_KEYS,
+            PrfConfig2026.get(),
+            InsecureSecretKeyAccess.get());
 
-    PrfSet prfSet = handle.getPrimitive(RegistryConfiguration.get(), PrfSet.class);
+    PrfSet prfSet = handle.getPrimitive(PrfConfig2026.get(), PrfSet.class);
 
     byte[] data = "data".getBytes(UTF_8);
     byte[] outputPrimary = prfSet.computePrimary(data, 12);
@@ -188,11 +189,13 @@ public final class PrfTest {
   @Theory
   public void getPrimitiveFromNonMacKeyset_throws() throws Exception {
     KeysetHandle handle =
-        TinkJsonProtoKeysetFormat.parseKeyset(JSON_DAEAD_KEYSET, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            JSON_DAEAD_KEYSET, DeterministicAeadConfig2026.get(), InsecureSecretKeyAccess.get());
     // Test that the keyset can create a DeterministicAead primitive, but not a Mac.
-    Object unused = handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
+    Object unused =
+        handle.getPrimitive(DeterministicAeadConfig2026.get(), DeterministicAead.class);
     assertThrows(
         GeneralSecurityException.class,
-        () -> handle.getPrimitive(RegistryConfiguration.get(), Mac.class));
+        () -> handle.getPrimitive(PrfConfig2026.get(), Mac.class));
   }
 }

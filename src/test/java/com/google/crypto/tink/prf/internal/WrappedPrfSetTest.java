@@ -26,14 +26,11 @@ import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
-import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
-import com.google.crypto.tink.internal.PrimitiveConstructor;
 import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
 import com.google.crypto.tink.prf.HkdfPrfKey;
 import com.google.crypto.tink.prf.HkdfPrfParameters;
 import com.google.crypto.tink.prf.HkdfPrfParameters.HashType;
 import com.google.crypto.tink.prf.Prf;
-import com.google.crypto.tink.prf.PrfConfig;
 import com.google.crypto.tink.prf.PrfSet;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.subtle.prf.HkdfStreamingPrf;
@@ -100,9 +97,6 @@ public class WrappedPrfSetTest {
 
   @Test
   public void compute_works() throws Exception {
-    MutablePrimitiveRegistry.resetGlobalInstanceTestOnly();
-    PrfConfig.register();
-
     KeysetHandle keysetHandle =
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(hkdfPrfKeyFixed).withFixedId(42).makePrimary())
@@ -118,9 +112,6 @@ public class WrappedPrfSetTest {
 
   @Test
   public void compute_usesPrimaryKey() throws Exception {
-    MutablePrimitiveRegistry.resetGlobalInstanceTestOnly();
-    PrfConfig.register();
-
     KeysetHandle keysetHandle =
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(hkdfPrfKey0).withFixedId(42).makePrimary())
@@ -138,9 +129,6 @@ public class WrappedPrfSetTest {
 
   @Test
   public void prfsCorrespondToCorrectKeys() throws Exception {
-    MutablePrimitiveRegistry.resetGlobalInstanceTestOnly();
-    PrfConfig.register();
-
     KeysetHandle keysetHandle =
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(hkdfPrfKey0).withFixedId(42).makePrimary())
@@ -163,9 +151,6 @@ public class WrappedPrfSetTest {
 
   @Test
   public void getPrfs_containsOnlyEnabledKeys() throws Exception {
-    MutablePrimitiveRegistry.resetGlobalInstanceTestOnly();
-    PrfConfig.register();
-
     KeysetHandle keysetHandle =
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(hkdfPrfKey0).withFixedId(42).makePrimary())
@@ -182,10 +167,6 @@ public class WrappedPrfSetTest {
 
   @Test
   public void getPrfs_isUnmodifiableMap() throws Exception {
-    MutablePrimitiveRegistry.resetGlobalInstanceTestOnly();
-    com.google.crypto.tink.prf.PrfSetWrapper.register();
-    PrfConfig.register();
-
     KeysetHandle keysetHandle =
         KeysetHandle.newBuilder()
             .addEntry(KeysetHandle.importKey(hkdfPrfKey0).withFixedId(42).makePrimary())
@@ -197,8 +178,6 @@ public class WrappedPrfSetTest {
 
   @Test
   public void testWithEmptyAnnotations_noMonitoring() throws Exception {
-    MutablePrimitiveRegistry.resetGlobalInstanceTestOnly();
-    PrfConfig.register();
     FakeMonitoringClient fakeMonitoringClient = new FakeMonitoringClient();
     MutableMonitoringRegistry.globalInstance().clear();
     MutableMonitoringRegistry.globalInstance().registerMonitoringClient(fakeMonitoringClient);
@@ -222,9 +201,6 @@ public class WrappedPrfSetTest {
 
   @Test
   public void testWithAnnotations_hasMonitoring() throws Exception {
-    MutablePrimitiveRegistry.resetGlobalInstanceTestOnly();
-    PrfConfig.register();
-
     FakeMonitoringClient fakeMonitoringClient = new FakeMonitoringClient();
     MutableMonitoringRegistry.globalInstance().clear();
     MutableMonitoringRegistry.globalInstance().registerMonitoringClient(fakeMonitoringClient);
@@ -283,20 +259,8 @@ public class WrappedPrfSetTest {
     }
   }
 
-  /** Perform registrations such as HkdfKeyManager.register, but with a failing PRF */
-  private static void doHkdfKeyManagerRegistrationWithFailingPrf() throws Exception {
-    HkdfPrfProtoSerialization.register();
-    MutablePrimitiveRegistry.globalInstance()
-        .registerPrimitiveConstructor(
-            PrimitiveConstructor.create(AlwaysFailingPrf::new, HkdfPrfKey.class, Prf.class));
-  }
-
   @Test
   public void testAlwaysFailingPrfWithAnnotations_hasMonitoring() throws Exception {
-    MutablePrimitiveRegistry.resetGlobalInstanceTestOnly();
-    com.google.crypto.tink.prf.PrfSetWrapper.register();
-    doHkdfKeyManagerRegistrationWithFailingPrf();
-
     FakeMonitoringClient fakeMonitoringClient = new FakeMonitoringClient();
     MutableMonitoringRegistry.globalInstance().clear();
     MutableMonitoringRegistry.globalInstance().registerMonitoringClient(fakeMonitoringClient);

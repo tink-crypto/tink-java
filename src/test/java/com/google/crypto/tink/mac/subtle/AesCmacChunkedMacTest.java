@@ -23,14 +23,13 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.LowLevelCryptoCaller;
 import com.google.crypto.tink.Mac;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.mac.AesCmacKey;
 import com.google.crypto.tink.mac.AesCmacParameters;
 import com.google.crypto.tink.mac.AesCmacParameters.Variant;
 import com.google.crypto.tink.mac.ChunkedMac;
 import com.google.crypto.tink.mac.ChunkedMacComputation;
 import com.google.crypto.tink.mac.ChunkedMacVerification;
-import com.google.crypto.tink.mac.MacConfig;
+import com.google.crypto.tink.mac.MacConfig2026;
 import com.google.crypto.tink.mac.internal.AesCmacTestUtil;
 import com.google.crypto.tink.mac.internal.AesCmacTestUtil.AesCmacTestVector;
 import com.google.crypto.tink.subtle.Hex;
@@ -43,7 +42,6 @@ import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -55,10 +53,6 @@ import org.junit.runner.RunWith;
 @RunWith(Theories.class)
 @LowLevelCryptoCaller
 public class AesCmacChunkedMacTest {
-  @BeforeClass
-  public static void setUp() throws Exception {
-    MacConfig.register();
-  }
 
   // Test data from https://tools.ietf.org/html/rfc4493#section-4.
   private static final AesCmacTestVector[] cmacTestVectorsFromRfc =
@@ -127,12 +121,13 @@ public class AesCmacChunkedMacTest {
       throws Exception {
     KeysetHandle keysetHandle =
         KeysetHandle.newBuilder()
+            .setConfiguration(MacConfig2026.get())
             .addEntry(
                 KeysetHandle.generateEntryFromParameters(parameters)
                     .withFixedId(1234)
                     .makePrimary())
             .build();
-    Mac mac = keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class);
+    Mac mac = keysetHandle.getPrimitive(MacConfig2026.get(), Mac.class);
     AesCmacKey key = (AesCmacKey) keysetHandle.getAt(0).getKey();
     ChunkedMac chunkedMac = AesCmacChunkedMac.create(key);
     ChunkedMacComputation chunkedMacComputation = chunkedMac.createComputation();
