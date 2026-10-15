@@ -18,9 +18,12 @@ syntax = "proto3";
 
 package google.crypto.tink;
 
+// Placeholder for Tink proto options import.
+
 option java_package = "com.google.crypto.tink.proto";
 option java_multiple_files = true;
 option go_package = "github.com/tink-crypto/tink-go/v2/proto/hpke_proto";
+// Placeholder for tink proto custom namespace option.
 
 enum HpkeKem {
   KEM_UNKNOWN = 0;
@@ -60,6 +63,8 @@ message HpkeParams {
 }
 
 message HpkePublicKey {
+  // Placeholder for tink proto message_option to generate SerializeAsString.
+
   uint32 version = 1;
   HpkeParams params = 2;
   // KEM-encoding of the public key (i.e., SerializePublicKey() ):
@@ -82,9 +87,11 @@ message HpkePrivateKey {
   //
   // For X_WING, the KEM-encoding of the private key is described in
   // https://www.ietf.org/archive/id/draft-connolly-cfrg-xwing-kem-09.html#name-use-in-hpke.
-  bytes private_key = 3;  // Placeholder for debug_redact.
+  bytes private_key = 3;  // Placeholder for debug_redact and bytes_field_type.
 }
 
 message HpkeKeyFormat {
+  // Placeholder for tink proto message_option to generate SerializeAsString.
+
   HpkeParams params = 1;
 }
