@@ -27,7 +27,9 @@ import com.google.crypto.tink.PemKeyType;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.proto.Keyset;
-import com.google.crypto.tink.signature.internal.MlDsaProtoSerialization;
+import com.google.crypto.tink.signature.internal.EcdsaProtoSerialization;
+import com.google.crypto.tink.signature.internal.RsaSsaPkcs1ProtoSerialization;
+import com.google.crypto.tink.signature.internal.RsaSsaPssProtoSerialization;
 import com.google.crypto.tink.subtle.Base64;
 import com.google.crypto.tink.subtle.Hex;
 import java.io.IOException;
@@ -68,8 +70,6 @@ public final class SignaturePemKeysetReaderTest {
 
   @BeforeClass
   public static void setUp() throws Exception {
-    SignatureConfig.register();
-    MlDsaProtoSerialization.register();
     if (!Util.isAndroid() && conscryptIsAvailable()) {
       Security.addProvider(Conscrypt.newProvider());
     }
@@ -625,6 +625,9 @@ public final class SignaturePemKeysetReaderTest {
     assertThat(ecdsaKey.getParameters()).isEqualTo(expectedEcdsaParams);
     assertThat(ecdsaKey.getPublicPoint()).isEqualTo(expectedPoint);
 
+    EcdsaProtoSerialization.register();
+    RsaSsaPkcs1ProtoSerialization.register();
+    RsaSsaPssProtoSerialization.register();
     KeysetReader keysetReader =
         SignaturePemKeysetReader.newBuilder()
             .addPem(rsaPem, PemKeyType.RSA_PSS_2048_SHA256)

@@ -23,7 +23,6 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.PublicKeyVerify;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.internal.JsonParser;
 import com.google.crypto.tink.signature.internal.testing.EcdsaTestUtil;
 import com.google.crypto.tink.signature.internal.testing.Ed25519TestUtil;
@@ -40,7 +39,6 @@ import java.security.spec.ECPoint;
 import java.util.Arrays;
 import java.util.stream.Stream;
 import org.junit.Assume;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -50,11 +48,6 @@ import org.junit.runner.RunWith;
 
 @RunWith(Theories.class)
 public final class SignatureJwkSetConverterTest {
-
-  @BeforeClass
-  public static void setUp() throws Exception {
-    SignatureConfig.register();
-  }
 
   @Test
   public void convertEcdsaJwkSet() throws Exception {
@@ -133,7 +126,9 @@ public final class SignatureJwkSetConverterTest {
 
   @Test
   public void testExportTinkVariantThrows() throws Exception {
-    KeysetHandle privateHandle = KeysetHandle.generateNew(PredefinedSignatureParameters.ECDSA_P256);
+    KeysetHandle privateHandle =
+        KeysetHandle.generateNew(
+            PredefinedSignatureParameters.ECDSA_P256, SignatureConfig2026.get());
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
 
     assertThrows(
@@ -151,7 +146,7 @@ public final class SignatureJwkSetConverterTest {
             .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
             .setVariant(EcdsaParameters.Variant.NO_PREFIX)
             .build();
-    KeysetHandle privateHandle = KeysetHandle.generateNew(derParams);
+    KeysetHandle privateHandle = KeysetHandle.generateNew(derParams, SignatureConfig2026.get());
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
 
     assertThrows(
@@ -163,7 +158,8 @@ public final class SignatureJwkSetConverterTest {
     // Create a valid JWK but add a custom kid to it.
     KeysetHandle privateHandle =
         KeysetHandle.generateNew(
-            PredefinedSignatureParameters.ECDSA_P256_IEEE_P1363_WITHOUT_PREFIX);
+            PredefinedSignatureParameters.ECDSA_P256_IEEE_P1363_WITHOUT_PREFIX,
+            SignatureConfig2026.get());
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
     String jwkSet = SignatureJwkSetConverter.fromPublicKeysetHandle(publicHandle);
 
@@ -300,7 +296,7 @@ public final class SignatureJwkSetConverterTest {
 
     // Also verify the signature in the test vector using the imported key
     PublicKeyVerify verifier =
-        importedHandle.getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
+        importedHandle.getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
     verifier.verify(testVector.getSignature(), testVector.getMessage());
   }
 

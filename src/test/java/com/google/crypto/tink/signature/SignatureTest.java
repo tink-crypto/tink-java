@@ -25,9 +25,8 @@ import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
-import com.google.crypto.tink.daead.DeterministicAeadConfig;
+import com.google.crypto.tink.daead.DeterministicAeadConfig2026;
 import com.google.crypto.tink.testing.TestUtil;
 import java.security.GeneralSecurityException;
 import org.junit.BeforeClass;
@@ -44,7 +43,6 @@ public final class SignatureTest {
   @BeforeClass
   public static void setUp() throws Exception {
     SignatureConfig.register();
-    DeterministicAeadConfig.register(); // Needed for getPrimitiveFromNonSignatureKeyset_throws.
   }
 
   @DataPoints("templates")
@@ -73,9 +71,9 @@ public final class SignatureTest {
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
 
     PublicKeySign signer =
-        privateHandle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
+        privateHandle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
-        publicHandle.getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
+        publicHandle.getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
 
     byte[] data = "data".getBytes(UTF_8);
     byte[] sig = signer.sign(data);
@@ -85,7 +83,7 @@ public final class SignatureTest {
     PublicKeyVerify otherVerifier =
         otherPrivateHandle
             .getPublicKeysetHandle()
-            .getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
+            .getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
     assertThrows(
         GeneralSecurityException.class, () -> otherVerifier.verify(sig, data));
 
@@ -140,14 +138,16 @@ public final class SignatureTest {
   public void readKeysetEncryptDecrypt()
       throws Exception {
     KeysetHandle privateHandle =
-        TinkJsonProtoKeysetFormat.parseKeyset(JSON_PRIVATE_KEYSET, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            JSON_PRIVATE_KEYSET, SignatureConfig2026.get(), InsecureSecretKeyAccess.get());
     KeysetHandle publicHandle =
-        TinkJsonProtoKeysetFormat.parseKeyset(JSON_PUBLIC_KEYSET, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            JSON_PUBLIC_KEYSET, SignatureConfig2026.get(), InsecureSecretKeyAccess.get());
 
     PublicKeySign signer =
-        privateHandle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
+        privateHandle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
-        publicHandle.getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
+        publicHandle.getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
 
     byte[] data = "data".getBytes(UTF_8);
     byte[] sig = signer.sign(data);
@@ -293,15 +293,19 @@ public final class SignatureTest {
       throws Exception {
     KeysetHandle privateHandle =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            JSON_PRIVATE_KEYSET_WITH_MULTIPLE_KEYS, InsecureSecretKeyAccess.get());
+            JSON_PRIVATE_KEYSET_WITH_MULTIPLE_KEYS,
+            SignatureConfig2026.get(),
+            InsecureSecretKeyAccess.get());
     KeysetHandle publicHandle =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            JSON_PUBLIC_KEYSET_WITH_MULTIPLE_KEYS, InsecureSecretKeyAccess.get());
+            JSON_PUBLIC_KEYSET_WITH_MULTIPLE_KEYS,
+            SignatureConfig2026.get(),
+            InsecureSecretKeyAccess.get());
 
     PublicKeySign signer =
-        privateHandle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
+        privateHandle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
-        publicHandle.getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
+        publicHandle.getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
 
     byte[] data = "data".getBytes(UTF_8);
     byte[] sig = signer.sign(data);
@@ -310,9 +314,10 @@ public final class SignatureTest {
     // Also test that verifier can verify signatures of a non-primary key. We use
     // JSON_PRIVATE_KEYSET to sign with the first key.
     KeysetHandle privateHandle1 =
-        TinkJsonProtoKeysetFormat.parseKeyset(JSON_PRIVATE_KEYSET, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            JSON_PRIVATE_KEYSET, SignatureConfig2026.get(), InsecureSecretKeyAccess.get());
     PublicKeySign signer1 =
-        privateHandle1.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
+        privateHandle1.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
 
     byte[] data1 = "data1".getBytes(UTF_8);
     byte[] sig1 = signer1.sign(data1);
@@ -345,16 +350,17 @@ public final class SignatureTest {
       throws Exception {
     KeysetHandle handle =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            JSON_DAEAD_KEYSET, InsecureSecretKeyAccess.get());
+            JSON_DAEAD_KEYSET, DeterministicAeadConfig2026.get(), InsecureSecretKeyAccess.get());
 
     // Test that the keyset can create a DeterministicAead primitive, but neither PublicKeySign
     // nor PublicKeyVerify primitives.
-    Object unused = handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
+    Object unused =
+        handle.getPrimitive(DeterministicAeadConfig2026.get(), DeterministicAead.class);
     assertThrows(
         GeneralSecurityException.class,
-        () -> handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class));
+        () -> handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class));
     assertThrows(
         GeneralSecurityException.class,
-        () -> handle.getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class));
+        () -> handle.getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class));
   }
 }

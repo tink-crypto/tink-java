@@ -46,11 +46,8 @@ public final class PredefinedSignatureParametersTest {
 
   @BeforeClass
   public static void setUp() throws Exception {
-    SignatureConfig.register();
     if (!TestUtil.isAndroid() && conscryptIsAvailable()) {
       Security.addProvider(Conscrypt.newProvider());
-      MlDsaSignKeyManager.registerPair();
-      SlhDsaSignKeyManager.registerPair();
     }
   }
 
@@ -81,7 +78,7 @@ public final class PredefinedSignatureParametersTest {
       assume().that(parameters).isInstanceOf(Ed25519Parameters.class);
     }
 
-    Key key = KeysetHandle.generateNew(parameters).getAt(0).getKey();
+    Key key = KeysetHandle.generateNew(parameters, SignatureConfig2026.get()).getAt(0).getKey();
     assertThat(key.getParameters()).isEqualTo(parameters);
   }
 
@@ -128,7 +125,7 @@ public final class PredefinedSignatureParametersTest {
       return;
     }
 
-    Key key = KeysetHandle.generateNew(parameters).getAt(0).getKey();
+    Key key = KeysetHandle.generateNew(parameters, SignatureConfig2026.get()).getAt(0).getKey();
     assertThat(key.getParameters()).isEqualTo(parameters);
   }
 

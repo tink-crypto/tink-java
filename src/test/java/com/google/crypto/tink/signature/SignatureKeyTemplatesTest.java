@@ -31,7 +31,6 @@ import com.google.crypto.tink.proto.RsaSsaPkcs1KeyFormat;
 import com.google.crypto.tink.proto.RsaSsaPssKeyFormat;
 import com.google.protobuf.ExtensionRegistryLite;
 import java.math.BigInteger;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -42,10 +41,6 @@ import org.junit.runner.RunWith;
 /** Tests for SignatureKeyTemplates. */
 @RunWith(Theories.class)
 public class SignatureKeyTemplatesTest {
-  @BeforeClass
-  public static void setUp() throws Exception {
-    SignatureConfig.register();
-  }
 
   @Test
   public void ecdsaP256() throws Exception {
@@ -285,6 +280,7 @@ public class SignatureKeyTemplatesTest {
   @Theory
   public void testParametersEqualsKeyTemplate(@FromDataPoints("EquivalentPairs") Pair p)
       throws Exception {
-    assertThat(TinkProtoParametersFormat.parse(p.template.toByteArray())).isEqualTo(p.parameters);
+    assertThat(TinkProtoParametersFormat.parse(p.template.toByteArray(), SignatureConfig2026.get()))
+        .isEqualTo(p.parameters);
   }
 }

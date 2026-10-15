@@ -20,11 +20,9 @@ import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.util.SecretBigInteger;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -38,18 +36,12 @@ import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPrivateCrtKeySpec;
 import java.security.spec.RSAPublicKeySpec;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public final class KeyConversionTest {
-
-  @BeforeClass
-  public static void setUp() throws Exception {
-    SignatureConfig.register();
-  }
 
   @Test
   public void signAndVerifyWithEcdsaUsingJavaECKeys() throws Exception {
@@ -99,7 +91,7 @@ public final class KeyConversionTest {
             .addEntry(KeysetHandle.importKey(ecdsaPrivateKey).withRandomId().makePrimary())
             .build();
     PublicKeySign signer =
-        privateHandle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
+        privateHandle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     byte[] data = "data".getBytes(UTF_8);
     byte[] sig = signer.sign(data);
 
@@ -109,7 +101,7 @@ public final class KeyConversionTest {
             .addEntry(KeysetHandle.importKey(ecdsaPublicKey).withRandomId().makePrimary())
             .build();
     PublicKeyVerify verifier =
-        publicHandle.getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
+        publicHandle.getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
     verifier.verify(sig, data);
   }
 
@@ -169,7 +161,7 @@ public final class KeyConversionTest {
             .addEntry(KeysetHandle.importKey(rsaSsaPkcs1PrivateKey).withRandomId().makePrimary())
             .build();
     PublicKeySign signer =
-        privateHandle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
+        privateHandle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     byte[] data = "data".getBytes(UTF_8);
     byte[] sig = signer.sign(data);
 
@@ -179,7 +171,7 @@ public final class KeyConversionTest {
             .addEntry(KeysetHandle.importKey(rsaSsaPkcs1PublicKey).withRandomId().makePrimary())
             .build();
     PublicKeyVerify verifier =
-        publicHandle.getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
+        publicHandle.getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
     verifier.verify(sig, data);
 
     // Verify using java.security.Signature.
@@ -193,11 +185,13 @@ public final class KeyConversionTest {
   @Test
   public void exportToJavaRSAKey() throws Exception {
     KeysetHandle privateHandle =
-        KeysetHandle.generateNew(KeyTemplates.get("RSA_SSA_PKCS1_3072_SHA256_F4_RAW"));
+        KeysetHandle.generateNew(
+            PredefinedSignatureParameters.RSA_SSA_PKCS1_3072_SHA256_F4_WITHOUT_PREFIX,
+            SignatureConfig2026.get());
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
 
     PublicKeySign signer =
-        privateHandle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
+        privateHandle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     byte[] data = "data".getBytes(UTF_8);
     byte[] sig = signer.sign(data);
 
