@@ -113,7 +113,6 @@ public final class XWingHpkeTest {
 
   @BeforeClass
   public static void setUp() throws Exception {
-    HybridConfig.register();
     try {
       Conscrypt.checkAvailability();
       Security.addProvider(Conscrypt.newProvider());

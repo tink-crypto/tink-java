@@ -24,14 +24,10 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeysetHandle;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.aead.AesGcmKey;
 import com.google.crypto.tink.aead.AesGcmParameters;
-import com.google.crypto.tink.config.TinkConfig;
 import com.google.crypto.tink.internal.Util;
-import com.google.crypto.tink.jwt.JwtMacConfig;
-import com.google.crypto.tink.jwt.JwtSignatureConfig;
-import com.google.crypto.tink.keyderivation.KeyDerivationConfig;
+import com.google.crypto.tink.keyderivation.KeyDerivationConfig2026;
 import com.google.crypto.tink.keyderivation.KeysetDeriver;
 import com.google.crypto.tink.keyderivation.PrfBasedKeyDerivationKey;
 import com.google.crypto.tink.keyderivation.PrfBasedKeyDerivationParameters;
@@ -69,14 +65,10 @@ import org.junit.runner.RunWith;
 public final class PrfBasedDeriverSecondTest {
 
   @BeforeClass
-  public static void registerAll() throws Exception {
+  public static void setUpConscrypt() throws Exception {
     if (!Util.isAndroid() && Conscrypt.isAvailable()) {
       Security.addProvider(Conscrypt.newProvider());
     }
-    TinkConfig.register();
-    KeyDerivationConfig.register();
-    JwtSignatureConfig.register();
-    JwtMacConfig.register();
   }
 
   @Test
@@ -114,7 +106,8 @@ public final class PrfBasedDeriverSecondTest {
             .addEntry(KeysetHandle.importKey(keyDerivationKey).withFixedId(123).makePrimary())
             .build();
 
-    KeysetDeriver deriver = keyset.getPrimitive(RegistryConfiguration.get(), KeysetDeriver.class);
+    KeysetDeriver deriver =
+        keyset.getPrimitive(KeyDerivationConfig2026.get(), KeysetDeriver.class);
 
     KeysetHandle derivedKeyset = deriver.deriveKeyset(new byte[] {1});
     Key expectedKey =
@@ -238,7 +231,8 @@ public final class PrfBasedDeriverSecondTest {
             .addEntry(KeysetHandle.importKey(keyDerivationKey1).withFixedId(557).makePrimary())
             .addEntry(KeysetHandle.importKey(keyDerivationKey2).withFixedId(555))
             .build();
-    KeysetDeriver deriver = keyset.getPrimitive(RegistryConfiguration.get(), KeysetDeriver.class);
+    KeysetDeriver deriver =
+        keyset.getPrimitive(KeyDerivationConfig2026.get(), KeysetDeriver.class);
     KeysetHandle derivedKeyset = deriver.deriveKeyset(new byte[] {1, 0, 1});
 
     Key expectedKey0 =
@@ -301,7 +295,8 @@ public final class PrfBasedDeriverSecondTest {
                     .withFixedId(idRequirement == null ? 789789 : idRequirement)
                     .makePrimary())
             .build();
-    KeysetDeriver deriver = keyset.getPrimitive(RegistryConfiguration.get(), KeysetDeriver.class);
+    KeysetDeriver deriver =
+        keyset.getPrimitive(KeyDerivationConfig2026.get(), KeysetDeriver.class);
 
     KeysetHandle derivedKeyset = deriver.deriveKeyset(Hex.decode(t.inputHex));
 
@@ -335,7 +330,8 @@ public final class PrfBasedDeriverSecondTest {
                     .withFixedId(idRequirement == null ? 789789 : idRequirement)
                     .makePrimary())
             .build();
-    KeysetDeriver deriver = keyset.getPrimitive(RegistryConfiguration.get(), KeysetDeriver.class);
+    KeysetDeriver deriver =
+        keyset.getPrimitive(KeyDerivationConfig2026.get(), KeysetDeriver.class);
 
     KeysetHandle derivedKeyset = deriver.deriveKeyset(Hex.decode(t.inputHex));
 

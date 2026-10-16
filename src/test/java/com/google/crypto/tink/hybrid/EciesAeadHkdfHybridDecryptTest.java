@@ -49,7 +49,6 @@ import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
 import java.util.Arrays;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -60,11 +59,6 @@ import org.junit.runner.RunWith;
 /** Unit tests for {@link EciesAeadHkdfHybridDecrypt}. */
 @RunWith(Theories.class)
 public class EciesAeadHkdfHybridDecryptTest {
-  @Before
-  public void setUp() throws GeneralSecurityException {
-    HybridConfig.register();
-  }
-
   private static final AesCtrHmacAeadParameters AES128_CTR_HMAC_SHA256_RAW =
       exceptionIsBug(
           () ->

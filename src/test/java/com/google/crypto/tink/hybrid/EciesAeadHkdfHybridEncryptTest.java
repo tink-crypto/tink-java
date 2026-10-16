@@ -43,7 +43,6 @@ import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
 import java.util.Set;
 import java.util.TreeSet;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -55,11 +54,6 @@ import org.junit.runners.JUnit4;
  */
 @RunWith(JUnit4.class)
 public class EciesAeadHkdfHybridEncryptTest {
-  @Before
-  public void setUp() throws GeneralSecurityException {
-    HybridConfig.register();
-  }
-
   private static final AesCtrHmacAeadParameters AES128_CTR_HMAC_SHA256_RAW =
       exceptionIsBug(
           () ->

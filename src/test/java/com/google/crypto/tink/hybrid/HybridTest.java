@@ -26,9 +26,8 @@ import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
-import com.google.crypto.tink.daead.DeterministicAeadConfig;
+import com.google.crypto.tink.daead.DeterministicAeadConfig2026;
 import com.google.crypto.tink.testing.TestUtil;
 import java.security.GeneralSecurityException;
 import org.junit.BeforeClass;
@@ -45,7 +44,6 @@ public final class HybridTest {
   @BeforeClass
   public static void setUp() throws Exception {
     HybridConfig.register();
-    DeterministicAeadConfig.register(); // Needed for getPrimitiveFromNonSignatureKeyset_throws.
   }
 
   @DataPoints("templates")
@@ -73,9 +71,9 @@ public final class HybridTest {
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
 
     HybridEncrypt encrypter =
-        publicHandle.getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class);
+        publicHandle.getPrimitive(HybridConfig2026.get(), HybridEncrypt.class);
     HybridDecrypt decrypter =
-        privateHandle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
+        privateHandle.getPrimitive(HybridConfig2026.get(), HybridDecrypt.class);
 
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] contextInfo = "contextInfo".getBytes(UTF_8);
@@ -84,7 +82,7 @@ public final class HybridTest {
 
     KeysetHandle otherPrivateHandle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
     HybridDecrypt otherDecrypter =
-        otherPrivateHandle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
+        otherPrivateHandle.getPrimitive(HybridConfig2026.get(), HybridDecrypt.class);
     assertThrows(
         GeneralSecurityException.class, () -> otherDecrypter.decrypt(ciphertext, contextInfo));
 
@@ -139,14 +137,16 @@ public final class HybridTest {
   public void readKeysetEncryptDecrypt_success()
       throws Exception {
     KeysetHandle privateHandle =
-        TinkJsonProtoKeysetFormat.parseKeyset(JSON_PRIVATE_KEYSET, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            JSON_PRIVATE_KEYSET, HybridConfig2026.get(), InsecureSecretKeyAccess.get());
     KeysetHandle publicHandle =
-        TinkJsonProtoKeysetFormat.parseKeyset(JSON_PUBLIC_KEYSET, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            JSON_PUBLIC_KEYSET, HybridConfig2026.get(), InsecureSecretKeyAccess.get());
 
     HybridEncrypt encrypter =
-        publicHandle.getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class);
+        publicHandle.getPrimitive(HybridConfig2026.get(), HybridEncrypt.class);
     HybridDecrypt decrypter =
-        privateHandle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
+        privateHandle.getPrimitive(HybridConfig2026.get(), HybridDecrypt.class);
 
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] contextInfo = "contextInfo".getBytes(UTF_8);
@@ -247,15 +247,19 @@ public final class HybridTest {
       throws Exception {
     KeysetHandle privateHandle =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            JSON_PRIVATE_KEYSET_WITH_MULTIPLE_KEYS, InsecureSecretKeyAccess.get());
+            JSON_PRIVATE_KEYSET_WITH_MULTIPLE_KEYS,
+            HybridConfig2026.get(),
+            InsecureSecretKeyAccess.get());
     KeysetHandle publicHandle =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            JSON_PUBLIC_KEYSET_WITH_MULTIPLE_KEYS, InsecureSecretKeyAccess.get());
+            JSON_PUBLIC_KEYSET_WITH_MULTIPLE_KEYS,
+            HybridConfig2026.get(),
+            InsecureSecretKeyAccess.get());
 
     HybridEncrypt encrypter =
-        publicHandle.getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class);
+        publicHandle.getPrimitive(HybridConfig2026.get(), HybridEncrypt.class);
     HybridDecrypt decrypter =
-        privateHandle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
+        privateHandle.getPrimitive(HybridConfig2026.get(), HybridDecrypt.class);
 
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] contextInfo = "contextInfo".getBytes(UTF_8);
@@ -266,9 +270,9 @@ public final class HybridTest {
     // JSON_PUBLIC_KEYSET to create a ciphertext with the first key.
     KeysetHandle publicHandle1 =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            JSON_PUBLIC_KEYSET, InsecureSecretKeyAccess.get());
+            JSON_PUBLIC_KEYSET, HybridConfig2026.get(), InsecureSecretKeyAccess.get());
     HybridEncrypt encrypter1 =
-        publicHandle1.getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class);
+        publicHandle1.getPrimitive(HybridConfig2026.get(), HybridEncrypt.class);
     byte[] ciphertext1 = encrypter1.encrypt(plaintext, contextInfo);
     assertThat(decrypter.decrypt(ciphertext1, contextInfo)).isEqualTo(plaintext);
   }
@@ -298,15 +302,16 @@ public final class HybridTest {
   public void getPrimitiveFromNonSignatureKeyset_throws()
       throws Exception {
     KeysetHandle handle =
-        TinkJsonProtoKeysetFormat.parseKeyset(JSON_DAEAD_KEYSET, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            JSON_DAEAD_KEYSET, DeterministicAeadConfig2026.get(), InsecureSecretKeyAccess.get());
     // Test that the keyset can create a DeterministicAead primitive, but neither HybridEncrypt
     // nor HybridDecrypt primitives.
-    Object unused = handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
+    Object unused = handle.getPrimitive(DeterministicAeadConfig2026.get(), DeterministicAead.class);
     assertThrows(
         GeneralSecurityException.class,
-        () -> handle.getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class));
+        () -> handle.getPrimitive(HybridConfig2026.get(), HybridEncrypt.class));
     assertThrows(
         GeneralSecurityException.class,
-        () -> handle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class));
+        () -> handle.getPrimitive(HybridConfig2026.get(), HybridDecrypt.class));
   }
 }

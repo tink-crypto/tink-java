@@ -21,11 +21,9 @@ import static com.google.crypto.tink.internal.TinkBugException.exceptionIsBug;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.Parameters;
-import com.google.crypto.tink.aead.AeadConfig;
 import com.google.crypto.tink.aead.AesCtrHmacAeadParameters;
 import com.google.crypto.tink.aead.AesGcmParameters;
 import com.google.crypto.tink.daead.AesSivParameters;
-import com.google.crypto.tink.daead.DeterministicAeadConfig;
 import com.google.crypto.tink.hybrid.EciesParameters;
 import com.google.crypto.tink.hybrid.internal.testing.EciesAeadHkdfTestUtil;
 import com.google.crypto.tink.hybrid.internal.testing.HybridTestVector;
@@ -33,7 +31,6 @@ import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.subtle.Random;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
-import org.junit.Before;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
 import org.junit.experimental.theories.Theories;
@@ -43,12 +40,6 @@ import org.junit.runner.RunWith;
 /** Unit tests for {@link EciesDemHelper}. */
 @RunWith(Theories.class)
 public final class EciesDemHelperTest {
-
-  @Before
-  public void doBeforeEachTest() throws Exception {
-    AeadConfig.register();
-    DeterministicAeadConfig.register();
-  }
 
   private static Parameters[] validDemParameters() throws GeneralSecurityException {
     return new Parameters[] {
