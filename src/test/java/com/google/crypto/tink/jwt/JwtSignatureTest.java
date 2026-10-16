@@ -59,7 +59,9 @@ public final class JwtSignatureTest {
       // Only run for JWT_E256 under TSAN -- too slow otherwise.
       assumeTrue(templateName.equals("JWT_ES256"));
     }
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), JwtConfig2026.get());
     JwtPublicKeySign jwtPublicKeySign =
         handle.getPrimitive(JwtConfig2026.get(), JwtPublicKeySign.class);
     Instant now = Clock.systemUTC().instant();
@@ -121,7 +123,9 @@ public final class JwtSignatureTest {
         GeneralSecurityException.class,
         () -> jwtPublicKeyVerify.verifyAndDecode(tokenWithInvalidAudience, validator));
 
-    KeysetHandle otherHandle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle otherHandle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), JwtConfig2026.get());
     JwtPublicKeyVerify otherJwtPublicKeyVerify =
         otherHandle
             .getPublicKeysetHandle()

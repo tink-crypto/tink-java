@@ -58,7 +58,9 @@ public final class JwtTest {
   @Theory
   public void createComputeVerifyJwtMac(@FromDataPoints("jwt_mac_templates") String templateName)
       throws Exception {
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), JwtConfig2026.get());
     JwtMac jwtMac = handle.getPrimitive(JwtConfig2026.get(), JwtMac.class);
     Instant now = Clock.systemUTC().instant();
     RawJwt rawJwt =
@@ -113,7 +115,9 @@ public final class JwtTest {
         GeneralSecurityException.class,
         () -> jwtMac.verifyMacAndDecode(tokenWithInvalidAudience, validator));
 
-    KeysetHandle otherHandle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle otherHandle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), JwtConfig2026.get());
     JwtMac otherJwtMac = otherHandle.getPrimitive(JwtConfig2026.get(), JwtMac.class);
     assertThrows(
         GeneralSecurityException.class, () -> otherJwtMac.verifyMacAndDecode(token, validator));

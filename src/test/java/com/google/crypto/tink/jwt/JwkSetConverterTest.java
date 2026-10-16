@@ -816,7 +816,9 @@ public final class JwkSetConverterTest {
       // KeysetHandle.generateNew is too slow in Tsan.
       return;
     }
-    KeysetHandle keysetHandle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle keysetHandle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), JwtConfig2026.get());
 
     String jwksString =
         JwkSetConverter.fromPublicKeysetHandle(keysetHandle.getPublicKeysetHandle());
