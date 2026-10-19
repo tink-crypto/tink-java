@@ -43,9 +43,12 @@ import com.google.crypto.tink.mac.HmacParameters;
 import com.google.crypto.tink.mac.PredefinedMacParameters;
 import com.google.crypto.tink.prf.PredefinedPrfParameters;
 import com.google.crypto.tink.signature.EcdsaParameters;
+import com.google.crypto.tink.signature.MlDsaParameters;
+import com.google.crypto.tink.signature.MlDsaSignKeyManager;
 import com.google.crypto.tink.signature.PredefinedSignatureParameters;
 import com.google.crypto.tink.signature.RsaSsaPkcs1Parameters;
 import com.google.crypto.tink.signature.RsaSsaPssParameters;
+import com.google.crypto.tink.signature.SlhDsaSignKeyManager;
 import com.google.crypto.tink.streamingaead.PredefinedStreamingAeadParameters;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -91,6 +94,8 @@ public final class KeyTemplatesAsParametersTest {
     JwtMacConfig.register();
     JwtSignatureConfig.register();
     TinkConfig.register();
+    MlDsaSignKeyManager.registerPair();
+    SlhDsaSignKeyManager.registerPair();
   }
 
   private static final List<Pair> createTemplates() throws GeneralSecurityException {
@@ -421,6 +426,32 @@ public final class KeyTemplatesAsParametersTest {
         new Pair(
             "RSA_SSA_PSS_4096_SHA512_SHA512_64_F4",
             PredefinedSignatureParameters.RSA_SSA_PSS_4096_SHA512_SHA512_64_F4));
+    result.add(
+        new Pair(
+            "ML_DSA_44",
+            MlDsaParameters.create(
+                MlDsaParameters.MlDsaInstance.ML_DSA_44, MlDsaParameters.Variant.TINK)));
+    result.add(
+        new Pair(
+            "ML_DSA_44_RAW",
+            MlDsaParameters.create(
+                MlDsaParameters.MlDsaInstance.ML_DSA_44, MlDsaParameters.Variant.NO_PREFIX)));
+    result.add(new Pair("ML_DSA_65", PredefinedSignatureParameters.ML_DSA_65));
+    result.add(new Pair("ML_DSA_65_RAW", PredefinedSignatureParameters.ML_DSA_65_NO_PREFIX));
+    result.add(
+        new Pair(
+            "ML_DSA_87",
+            MlDsaParameters.create(
+                MlDsaParameters.MlDsaInstance.ML_DSA_87, MlDsaParameters.Variant.TINK)));
+    result.add(
+        new Pair(
+            "ML_DSA_87_RAW",
+            MlDsaParameters.create(
+                MlDsaParameters.MlDsaInstance.ML_DSA_87, MlDsaParameters.Variant.NO_PREFIX)));
+    result.add(new Pair("SLH_DSA_SHA2_128S", PredefinedSignatureParameters.SLH_DSA_SHA2_128S));
+    result.add(
+        new Pair(
+            "SLH_DSA_SHA2_128S_RAW", PredefinedSignatureParameters.SLH_DSA_SHA2_128S_NO_PREFIX));
     result.add(
         new Pair(
             "AES128_GCM_SIV",
