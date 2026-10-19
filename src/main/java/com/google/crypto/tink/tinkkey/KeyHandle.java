@@ -20,6 +20,7 @@ import static com.google.crypto.tink.internal.KeyTemplateProtoConverter.getOutpu
 import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeyTemplate.OutputPrefixType;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoParametersFormat;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.Util;
@@ -35,8 +36,8 @@ import java.security.GeneralSecurityException;
  * KeyAccess}. Specifically, if the underlying {@link TinkKey} has a secret, then one can only get
  * it with a {@link SecretKeyAccess} instance.
  *
- * <p>Do not use this in new code. Instead, use {@link com.google.crypto.tink.Key} and
- * these facilities.
+ * <p>Do not use this in new code. Instead, use {@link com.google.crypto.tink.Key} and these
+ * facilities.
  */
 @Immutable
 public class KeyHandle {
@@ -44,7 +45,8 @@ public class KeyHandle {
       throws GeneralSecurityException {
     try {
       byte[] serializedKeyTemplate =
-          TinkProtoParametersFormat.serialize(keyTemplate.toParameters());
+          TinkProtoParametersFormat.serialize(
+              keyTemplate.toParameters(), RegistryConfiguration.get());
       com.google.crypto.tink.proto.KeyTemplate protoTemplate =
           com.google.crypto.tink.proto.KeyTemplate.parseFrom(
               serializedKeyTemplate, ExtensionRegistryLite.getEmptyRegistry());
