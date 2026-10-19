@@ -337,7 +337,9 @@ public final class Registry {
   @Deprecated
   public static synchronized KeyData newKeyData(
       com.google.crypto.tink.KeyTemplate keyTemplate) throws GeneralSecurityException {
-    byte[] serializedKeyTemplate = TinkProtoParametersFormat.serialize(keyTemplate.toParameters());
+    byte[] serializedKeyTemplate =
+        TinkProtoParametersFormat.serialize(
+            keyTemplate.toParameters(), RegistryConfiguration.get());
     try {
       return newKeyData(
           com.google.crypto.tink.proto.KeyTemplate.parseFrom(

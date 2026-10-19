@@ -184,6 +184,6 @@ public final class KeyTemplate {
     if (parameters != null) {
       return parameters;
     }
-    return TinkProtoParametersFormat.parse(getProto().toByteArray());
+    return TinkProtoParametersFormat.parse(getProto().toByteArray(), RegistryConfiguration.get());
   }
 }

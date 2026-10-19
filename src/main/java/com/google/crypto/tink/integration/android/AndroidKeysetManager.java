@@ -31,6 +31,7 @@ import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.KeysetManager;
 import com.google.crypto.tink.KeysetWriter;
 import com.google.crypto.tink.LegacyKeysetSerialization;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoParametersFormat;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -207,9 +208,7 @@ public final class AndroidKeysetManager {
       return this;
     }
 
-    /**
-     * If the keyset is not found or valid, generates a new one using {@code val}.
-     */
+    /** If the keyset is not found or valid, generates a new one using {@code val}. */
     @CanIgnoreReturnValue
     public Builder withKeyTemplate(com.google.crypto.tink.proto.KeyTemplate val) {
       this.keyTemplateProto = val;
@@ -289,7 +288,9 @@ public final class AndroidKeysetManager {
       }
       if (keyTemplateProto != null && keyTemplate == null) {
         keyTemplate =
-            KeyTemplate.createFrom(TinkProtoParametersFormat.parse(keyTemplateProto.toByteArray()));
+            KeyTemplate.createFrom(
+                TinkProtoParametersFormat.parse(
+                    keyTemplateProto.toByteArray(), RegistryConfiguration.get()));
       }
       // readKeysetFromPrefs(), readOrGenerateNewMasterKey() and generateNewKeyset() involve shared
       // pref filesystem operations. To control access to this global state in multi-threaded
