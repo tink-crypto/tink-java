@@ -21,9 +21,9 @@ import static com.google.common.truth.Truth.assertThat;
 import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.TinkProtoParametersFormat;
-import com.google.crypto.tink.aead.AeadConfig;
+import com.google.crypto.tink.aead.AeadConfig2026;
 import com.google.crypto.tink.aead.AesGcmKeyManager;
-import org.junit.BeforeClass;
+import com.google.crypto.tink.aead.internal.AesGcmProtoSerialization;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -31,16 +31,12 @@ import org.junit.runners.JUnit4;
 /** Tests KeyTemplateProtoConverter. */
 @RunWith(JUnit4.class)
 public final class KeyTemplateProtoConverterTest {
-  @BeforeClass
-  public static void registerTink() throws Exception {
-    AeadConfig.register();
-  }
-
   @Test
   public void toByteArrayTheParse_sameValues() throws Exception {
+    AesGcmProtoSerialization.register();
     KeyTemplate template = AesGcmKeyManager.aes128GcmTemplate();
     byte[] bytes = KeyTemplateProtoConverter.toByteArray(template);
-    Parameters parameters = TinkProtoParametersFormat.parse(bytes);
+    Parameters parameters = TinkProtoParametersFormat.parse(bytes, AeadConfig2026.get());
     assertThat(template.toParameters()).isEqualTo(parameters);
   }
 }

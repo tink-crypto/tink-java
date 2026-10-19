@@ -26,7 +26,6 @@ import com.google.crypto.tink.proto.HashType;
 import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.protobuf.ExtensionRegistryLite;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -37,11 +36,6 @@ import org.junit.runner.RunWith;
 /** Tests for StreamingAeadKeyTemplates. */
 @RunWith(Theories.class)
 public class StreamingAeadKeyTemplatesTest {
-  @BeforeClass
-  public static void setUp() throws Exception {
-    StreamingAeadConfig.register();
-  }
-
   @Test
   public void testAes128CtrHmacSha256_4KB() throws Exception {
     KeyTemplate template = StreamingAeadKeyTemplates.AES128_CTR_HMAC_SHA256_4KB;
@@ -261,6 +255,9 @@ public class StreamingAeadKeyTemplatesTest {
   @Theory
   public void testParametersEqualsKeyTemplate(@FromDataPoints("EquivalentPairs") Pair p)
       throws Exception {
-    assertThat(TinkProtoParametersFormat.parse(p.template.toByteArray())).isEqualTo(p.parameters);
+    assertThat(
+            TinkProtoParametersFormat.parse(
+                p.template.toByteArray(), StreamingAeadConfig2026.get()))
+        .isEqualTo(p.parameters);
   }
 }

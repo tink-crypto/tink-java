@@ -24,7 +24,6 @@ import com.google.crypto.tink.proto.AesSivKeyFormat;
 import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.protobuf.ExtensionRegistryLite;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -32,11 +31,6 @@ import org.junit.runners.JUnit4;
 /** Tests for DeterministicAeadKeyTemplates. */
 @RunWith(JUnit4.class)
 public class DeterministicAeadKeyTemplatesTest {
-  @BeforeClass
-  public static void setUp() throws Exception {
-    DeterministicAeadConfig.register();
-  }
-
   @Test
   public void aes256Siv() throws Exception {
     KeyTemplate template = DeterministicAeadKeyTemplates.AES256_SIV;
@@ -65,7 +59,9 @@ public class DeterministicAeadKeyTemplatesTest {
   @Test
   public void testAesSivParametersEqualsKeyTemplate() throws Exception {
     assertThat(
-            TinkProtoParametersFormat.parse(DeterministicAeadKeyTemplates.AES256_SIV.toByteArray()))
+            TinkProtoParametersFormat.parse(
+                DeterministicAeadKeyTemplates.AES256_SIV.toByteArray(),
+                DeterministicAeadConfig2026.get()))
         .isEqualTo(PredefinedDeterministicAeadParameters.AES256_SIV);
   }
 }

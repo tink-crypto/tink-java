@@ -24,10 +24,9 @@ import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.StreamingAead;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
-import com.google.crypto.tink.daead.DeterministicAeadConfig;
+import com.google.crypto.tink.daead.DeterministicAeadConfig2026;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -50,7 +49,6 @@ public final class StreamingAeadTest {
   @BeforeClass
   public static void setUp() throws Exception {
     StreamingAeadConfig.register();
-    DeterministicAeadConfig.register(); // Needed for getPrimitiveFromNonStreamingAeadKeyset_throws.
   }
 
   @DataPoints("templates")
@@ -111,7 +109,7 @@ public final class StreamingAeadTest {
       throws Exception {
     KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
     StreamingAead streamingAead =
-        handle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
+        handle.getPrimitive(StreamingAeadConfig2026.get(), StreamingAead.class);
 
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "associatedData".getBytes(UTF_8);
@@ -170,9 +168,11 @@ public final class StreamingAeadTest {
   public void readKeyset_encryptDecrypt_success() throws Exception {
     KeysetHandle handle =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            JSON_STREAMING_AEAD_KEYSET, InsecureSecretKeyAccess.get());
+            JSON_STREAMING_AEAD_KEYSET,
+            StreamingAeadConfig2026.get(),
+            InsecureSecretKeyAccess.get());
     StreamingAead streamingAead =
-        handle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
+        handle.getPrimitive(StreamingAeadConfig2026.get(), StreamingAead.class);
 
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "associatedData".getBytes(UTF_8);
@@ -243,9 +243,11 @@ public final class StreamingAeadTest {
   public void multipleKeysReadKeyset_encryptDecrypt_success() throws Exception {
     KeysetHandle handle =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            JSON_STREAMING_AEAD_KEYSET_WITH_MULTIPLE_KEYS, InsecureSecretKeyAccess.get());
+            JSON_STREAMING_AEAD_KEYSET_WITH_MULTIPLE_KEYS,
+            StreamingAeadConfig2026.get(),
+            InsecureSecretKeyAccess.get());
     StreamingAead streamingAead =
-        handle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
+        handle.getPrimitive(StreamingAeadConfig2026.get(), StreamingAead.class);
 
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "associatedData".getBytes(UTF_8);
@@ -294,11 +296,12 @@ public final class StreamingAeadTest {
       throws Exception {
     KeysetHandle handle =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            JSON_DAEAD_KEYSET, InsecureSecretKeyAccess.get());
+            JSON_DAEAD_KEYSET, DeterministicAeadConfig2026.get(), InsecureSecretKeyAccess.get());
     // Test that the keyset can create a DeterministicAead primitive, but not a StreamingAead.
-    Object unused = handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
+    Object unused =
+        handle.getPrimitive(DeterministicAeadConfig2026.get(), DeterministicAead.class);
     assertThrows(
         GeneralSecurityException.class,
-        () -> handle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class));
+        () -> handle.getPrimitive(StreamingAeadConfig2026.get(), StreamingAead.class));
   }
 }

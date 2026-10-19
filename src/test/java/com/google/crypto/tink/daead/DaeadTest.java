@@ -23,13 +23,10 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
-import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
-import com.google.crypto.tink.aead.AeadConfig;
+import com.google.crypto.tink.aead.AeadConfig2026;
 import java.security.GeneralSecurityException;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
@@ -39,18 +36,14 @@ import org.junit.runner.RunWith;
 @RunWith(Theories.class)
 public final class DaeadTest {
 
-  @BeforeClass
-  public static void setUp() throws Exception {
-    DeterministicAeadConfig.register();
-    AeadConfig.register(); // Needed for getPrimitiveFromNonDeterministicAeadKeyset_throws.
-  }
-
   @Test
   public void createEncryptDecryptDeterministically()
       throws Exception {
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get("AES256_SIV"));
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            PredefinedDeterministicAeadParameters.AES256_SIV, DeterministicAeadConfig2026.get());
     DeterministicAead daead =
-        handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
+        handle.getPrimitive(DeterministicAeadConfig2026.get(), DeterministicAead.class);
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "associatedData".getBytes(UTF_8);
     byte[] ciphertext = daead.encryptDeterministically(plaintext, associatedData);
@@ -59,9 +52,11 @@ public final class DaeadTest {
 
     assertThat(daead.encryptDeterministically(plaintext, associatedData)).isEqualTo(ciphertext);
 
-    KeysetHandle otherHandle = KeysetHandle.generateNew(KeyTemplates.get("AES256_SIV"));
+    KeysetHandle otherHandle =
+        KeysetHandle.generateNew(
+            PredefinedDeterministicAeadParameters.AES256_SIV, DeterministicAeadConfig2026.get());
     DeterministicAead otherAead =
-        otherHandle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
+        otherHandle.getPrimitive(DeterministicAeadConfig2026.get(), DeterministicAead.class);
     assertThrows(
         GeneralSecurityException.class,
         () -> otherAead.decryptDeterministically(ciphertext, associatedData));
@@ -109,10 +104,11 @@ public final class DaeadTest {
   public void readKeyset_EncryptDecryptDeterministically_success()
       throws Exception {
     KeysetHandle handle =
-        TinkJsonProtoKeysetFormat.parseKeyset(JSON_DAEAD_KEYSET, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            JSON_DAEAD_KEYSET, DeterministicAeadConfig2026.get(), InsecureSecretKeyAccess.get());
 
     DeterministicAead daead =
-        handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
+        handle.getPrimitive(DeterministicAeadConfig2026.get(), DeterministicAead.class);
 
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "associatedData".getBytes(UTF_8);
@@ -166,10 +162,12 @@ public final class DaeadTest {
       throws Exception {
     KeysetHandle handle =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            JSON_DAEAD_KEYSET_WITH_MULTIPLE_KEYS, InsecureSecretKeyAccess.get());
+            JSON_DAEAD_KEYSET_WITH_MULTIPLE_KEYS,
+            DeterministicAeadConfig2026.get(),
+            InsecureSecretKeyAccess.get());
 
     DeterministicAead daead =
-        handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
+        handle.getPrimitive(DeterministicAeadConfig2026.get(), DeterministicAead.class);
 
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "associatedData".getBytes(UTF_8);
@@ -179,9 +177,10 @@ public final class DaeadTest {
     // Also test that daead can decrypt ciphertexts encrypted with a non-primary key. We use
     // JSON_DAEAD_KEYSET to encrypt with the first key.
     KeysetHandle handle1 =
-        TinkJsonProtoKeysetFormat.parseKeyset(JSON_DAEAD_KEYSET, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            JSON_DAEAD_KEYSET, DeterministicAeadConfig2026.get(), InsecureSecretKeyAccess.get());
     DeterministicAead daead1 =
-        handle1.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
+        handle1.getPrimitive(DeterministicAeadConfig2026.get(), DeterministicAead.class);
     byte[] ciphertext1 = daead1.encryptDeterministically(plaintext, associatedData);
     assertThat(daead.decryptDeterministically(ciphertext1, associatedData)).isEqualTo(plaintext);
   }
@@ -208,11 +207,12 @@ public final class DaeadTest {
   @Theory
   public void getPrimitiveFromNonDeterministicAeadKeyset_throws() throws Exception {
     KeysetHandle handle =
-        TinkJsonProtoKeysetFormat.parseKeyset(JSON_AEAD_KEYSET, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            JSON_AEAD_KEYSET, AeadConfig2026.get(), InsecureSecretKeyAccess.get());
     // Test that the keyset can create a Aead primitive, but not a DeterministicAead.
-    Object unused = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
+    Object unused = handle.getPrimitive(AeadConfig2026.get(), Aead.class);
     assertThrows(
         GeneralSecurityException.class,
-        () -> handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class));
+        () -> handle.getPrimitive(DeterministicAeadConfig2026.get(), DeterministicAead.class));
   }
 }

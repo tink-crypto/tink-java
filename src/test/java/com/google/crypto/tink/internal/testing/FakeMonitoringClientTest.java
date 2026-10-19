@@ -24,23 +24,16 @@ import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.aead.ChaCha20Poly1305Key;
 import com.google.crypto.tink.aead.ChaCha20Poly1305Parameters;
-import com.google.crypto.tink.config.TinkConfig;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MonitoringClient;
 import com.google.crypto.tink.util.SecretBytes;
 import java.util.List;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public final class FakeMonitoringClientTest {
-  @BeforeClass
-  public static void register() throws Exception {
-    TinkConfig.register();
-  }
-
   @Test
   public void log() throws Exception {
     FakeMonitoringClient client = new FakeMonitoringClient();

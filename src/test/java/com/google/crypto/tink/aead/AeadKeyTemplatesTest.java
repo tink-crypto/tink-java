@@ -29,7 +29,6 @@ import com.google.crypto.tink.proto.KeyTemplate;
 import com.google.crypto.tink.proto.KmsEnvelopeAeadKeyFormat;
 import com.google.crypto.tink.proto.OutputPrefixType;
 import com.google.protobuf.ExtensionRegistryLite;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -40,11 +39,6 @@ import org.junit.runner.RunWith;
 /** Tests for AeadKeyTemplates. */
 @RunWith(Theories.class)
 public class AeadKeyTemplatesTest {
-  @BeforeClass
-  public static void setUp() throws Exception {
-    AeadConfig.register();
-  }
-
   @Test
   public void aes128Gcm() throws Exception {
     KeyTemplate template = AeadKeyTemplates.AES128_GCM;
@@ -255,6 +249,7 @@ public class AeadKeyTemplatesTest {
   @Theory
   public void testParametersEqualsKeyTemplate(@FromDataPoints("EquivalentPairs") Pair p)
       throws Exception {
-    assertThat(TinkProtoParametersFormat.parse(p.template.toByteArray())).isEqualTo(p.parameters);
+    assertThat(TinkProtoParametersFormat.parse(p.template.toByteArray(), AeadConfig2026.get()))
+        .isEqualTo(p.parameters);
   }
 }

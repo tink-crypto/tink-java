@@ -12,7 +12,6 @@ java_test(
         "//src/main/java/com/google/crypto/tink:registry_cluster",
         "//src/main/java/com/google/crypto/tink/aead:cha_cha20_poly1305_key",
         "//src/main/java/com/google/crypto/tink/aead:cha_cha20_poly1305_parameters",
-        "//src/main/java/com/google/crypto/tink/config:tink_config",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_annotations",
         "//src/main/java/com/google/crypto/tink/internal:monitoring_client",
         "//src/main/java/com/google/crypto/tink/internal/testing:fake_monitoring_client",

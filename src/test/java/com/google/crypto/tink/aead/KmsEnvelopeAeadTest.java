@@ -51,8 +51,9 @@ public final class KmsEnvelopeAeadTest {
   }
 
   private Aead generateNewRemoteAead() throws GeneralSecurityException {
-    KeysetHandle keysetHandle = KeysetHandle.generateNew(KeyTemplates.get("AES128_EAX"));
-    return keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
+    KeysetHandle keysetHandle =
+        KeysetHandle.generateNew(PredefinedAeadParameters.AES128_EAX, AeadConfig2026.get());
+    return keysetHandle.getPrimitive(AeadConfig2026.get(), Aead.class);
   }
 
   @DataPoints("dekParameters")
