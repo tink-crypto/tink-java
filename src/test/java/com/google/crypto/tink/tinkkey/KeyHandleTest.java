@@ -24,6 +24,7 @@ import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.PrivateKeyManager;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoParametersFormat;
 import com.google.crypto.tink.aead.AesEaxKeyManager;
 import com.google.crypto.tink.aead.AesEaxParameters;
@@ -52,7 +53,8 @@ public final class KeyHandleTest {
       throws GeneralSecurityException {
     try {
       byte[] serializedKeyTemplate =
-          TinkProtoParametersFormat.serialize(keyTemplate.toParameters());
+          TinkProtoParametersFormat.serialize(
+              keyTemplate.toParameters(), RegistryConfiguration.get());
       com.google.crypto.tink.proto.KeyTemplate protoTemplate =
           com.google.crypto.tink.proto.KeyTemplate.parseFrom(
               serializedKeyTemplate, ExtensionRegistryLite.getEmptyRegistry());
