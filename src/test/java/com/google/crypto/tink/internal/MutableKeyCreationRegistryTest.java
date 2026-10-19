@@ -22,6 +22,7 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoParametersFormat;
 import com.google.crypto.tink.aead.AesEaxKey;
 import com.google.crypto.tink.aead.AesEaxParameters;
@@ -160,7 +161,8 @@ public final class MutableKeyCreationRegistryTest {
   public void globalInstanceCanCreateLegacyKeyManagerKeys() throws Exception {
     Parameters legacyAesCtrHmacParameters =
         TinkProtoParametersFormat.parse(
-            LegacyAesCtrHmacTestKeyManager.templateWithTinkPrefix().toByteArray());
+            LegacyAesCtrHmacTestKeyManager.templateWithTinkPrefix().toByteArray(),
+            RegistryConfiguration.get());
     Key key =
         MutableKeyCreationRegistry.globalInstance().createKey(legacyAesCtrHmacParameters, 123);
     assertThat(key.getIdRequirementOrNull()).isEqualTo(123);

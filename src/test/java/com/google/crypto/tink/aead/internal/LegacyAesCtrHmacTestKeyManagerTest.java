@@ -69,7 +69,8 @@ public class LegacyAesCtrHmacTestKeyManagerTest {
   public void generateNewWithTemplateWithTinkPrefix_works(
       @FromDataPoints("templates") KeyTemplate template) throws Exception {
     KeysetHandle handle =
-        KeysetHandle.generateNew(TinkProtoParametersFormat.parse(template.toByteArray()));
+        KeysetHandle.generateNew(
+            TinkProtoParametersFormat.parse(template.toByteArray(), RegistryConfiguration.get()));
     Aead aead = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     byte[] plaintext = "plaintext".getBytes(UTF_8);
@@ -88,11 +89,13 @@ public class LegacyAesCtrHmacTestKeyManagerTest {
     KeysetHandle handleWithPrefix =
         KeysetHandle.generateNew(
             TinkProtoParametersFormat.parse(
-                LegacyAesCtrHmacTestKeyManager.templateWithTinkPrefix().toByteArray()));
+                LegacyAesCtrHmacTestKeyManager.templateWithTinkPrefix().toByteArray(),
+                RegistryConfiguration.get()));
     KeysetHandle handleWithoutPrefix =
         KeysetHandle.generateNew(
             TinkProtoParametersFormat.parse(
-                LegacyAesCtrHmacTestKeyManager.templateWithoutPrefix().toByteArray()));
+                LegacyAesCtrHmacTestKeyManager.templateWithoutPrefix().toByteArray(),
+                RegistryConfiguration.get()));
     Aead aeadWithPrefix = handleWithPrefix.getPrimitive(RegistryConfiguration.get(), Aead.class);
     Aead aeadWithoutPrefix =
         handleWithoutPrefix.getPrimitive(RegistryConfiguration.get(), Aead.class);

@@ -120,7 +120,7 @@ public final class CustomAeadKeyManagerTest {
               .setTypeUrl(TYPE_URL)
               .setOutputPrefixType(OutputPrefixType.RAW)
               .build();
-      return TinkProtoParametersFormat.parse(template.toByteArray());
+      return TinkProtoParametersFormat.parse(template.toByteArray(), RegistryConfiguration.get());
     }
 
     static KeysetHandle aesGcm128KeyToKeysetHandle(

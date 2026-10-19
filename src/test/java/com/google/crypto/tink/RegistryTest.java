@@ -89,10 +89,7 @@ public class RegistryTest {
 
     @Override
     public KeyData newKeyData(ByteString serializedKeyFormat) throws GeneralSecurityException {
-      return KeyData.newBuilder()
-            .setTypeUrl(typeUrl)
-            .setValue(serializedKeyFormat)
-            .build();
+      return KeyData.newBuilder().setTypeUrl(typeUrl).setValue(serializedKeyFormat).build();
     }
 
     @Override
@@ -397,8 +394,8 @@ public class RegistryTest {
     Assume.assumeFalse(TinkFips.useOnlyFips());
 
     KeyData privateKeyData = Registry.newKeyData(SignatureKeyTemplates.ECDSA_P256);
-    KeyData publicKeyData = Registry.getPublicKeyData(privateKeyData.getTypeUrl(),
-        privateKeyData.getValue());
+    KeyData publicKeyData =
+        Registry.getPublicKeyData(privateKeyData.getTypeUrl(), privateKeyData.getValue());
     PublicKeyVerify verifier = Registry.getPrimitive(publicKeyData, PublicKeyVerify.class);
     PublicKeySign signer = Registry.getPrimitive(privateKeyData, PublicKeySign.class);
     byte[] message = "Nice test message".getBytes(UTF_8);
@@ -410,7 +407,8 @@ public class RegistryTest {
     KeyData keyData =
         Registry.newKeyData(
             com.google.crypto.tink.proto.KeyTemplate.parseFrom(
-                TinkProtoParametersFormat.serialize(PredefinedMacParameters.HMAC_SHA256_128BITTAG),
+                TinkProtoParametersFormat.serialize(
+                    PredefinedMacParameters.HMAC_SHA256_128BITTAG, RegistryConfiguration.get()),
                 ExtensionRegistryLite.getEmptyRegistry()));
     GeneralSecurityException e =
         assertThrows(
@@ -442,7 +440,8 @@ public class RegistryTest {
 
     com.google.crypto.tink.proto.KeyTemplate template =
         com.google.crypto.tink.proto.KeyTemplate.parseFrom(
-            TinkProtoParametersFormat.serialize(PredefinedMacParameters.HMAC_SHA256_128BITTAG),
+            TinkProtoParametersFormat.serialize(
+                PredefinedMacParameters.HMAC_SHA256_128BITTAG, RegistryConfiguration.get()),
             ExtensionRegistryLite.getEmptyRegistry());
     HmacKey hmacKey = (HmacKey) Registry.newKey(template);
     KeyData hmacKeyData = Registry.newKeyData(template);
@@ -469,10 +468,10 @@ public class RegistryTest {
     Registry.registerKeyManager(km);
     com.google.crypto.tink.proto.KeyTemplate template =
         com.google.crypto.tink.proto.KeyTemplate.newBuilder()
-        .setValue(keyformat)
-        .setTypeUrl(typeUrl)
-        .setOutputPrefixType(OutputPrefixType.TINK)
-        .build();
+            .setValue(keyformat)
+            .setTypeUrl(typeUrl)
+            .setOutputPrefixType(OutputPrefixType.TINK)
+            .build();
 
     assertThat(Registry.newKeyData(template)).isEqualTo(km.newKeyData(keyformat));
   }
@@ -489,10 +488,10 @@ public class RegistryTest {
     Registry.registerKeyManager(km, false);
     com.google.crypto.tink.proto.KeyTemplate template =
         com.google.crypto.tink.proto.KeyTemplate.newBuilder()
-        .setValue(keyformat)
-        .setTypeUrl(typeUrl)
-        .setOutputPrefixType(OutputPrefixType.TINK)
-        .build();
+            .setValue(keyformat)
+            .setTypeUrl(typeUrl)
+            .setOutputPrefixType(OutputPrefixType.TINK)
+            .build();
 
     assertThrows(GeneralSecurityException.class, () -> Registry.newKeyData(template));
   }
@@ -504,10 +503,10 @@ public class RegistryTest {
     ByteString keyformat = ByteString.copyFromUtf8("testNewKeyDataKeyFormat");
     com.google.crypto.tink.proto.KeyTemplate template =
         com.google.crypto.tink.proto.KeyTemplate.newBuilder()
-        .setValue(keyformat)
-        .setTypeUrl(typeUrl)
-        .setOutputPrefixType(OutputPrefixType.TINK)
-        .build();
+            .setValue(keyformat)
+            .setTypeUrl(typeUrl)
+            .setOutputPrefixType(OutputPrefixType.TINK)
+            .build();
 
     assertThrows(GeneralSecurityException.class, () -> Registry.newKeyData(template));
   }
@@ -525,7 +524,8 @@ public class RegistryTest {
     Registry.registerKeyManager(km);
     com.google.crypto.tink.KeyTemplate template =
         com.google.crypto.tink.KeyTemplate.create(
-            typeUrl, keyformat.toByteArray(),
+            typeUrl,
+            keyformat.toByteArray(),
             com.google.crypto.tink.KeyTemplate.OutputPrefixType.TINK);
 
     assertThat(Registry.newKeyData(template)).isEqualTo(km.newKeyData(keyformat));
@@ -543,7 +543,8 @@ public class RegistryTest {
     Registry.registerKeyManager(km, false);
     com.google.crypto.tink.KeyTemplate template =
         com.google.crypto.tink.KeyTemplate.create(
-            typeUrl, keyformat.toByteArray(),
+            typeUrl,
+            keyformat.toByteArray(),
             com.google.crypto.tink.KeyTemplate.OutputPrefixType.TINK);
 
     assertThrows(GeneralSecurityException.class, () -> Registry.newKeyData(template));
@@ -556,7 +557,8 @@ public class RegistryTest {
     ByteString keyformat = ByteString.copyFromUtf8("testNewKeyDataKeyFormat");
     com.google.crypto.tink.KeyTemplate template =
         com.google.crypto.tink.KeyTemplate.create(
-            typeUrl, keyformat.toByteArray(),
+            typeUrl,
+            keyformat.toByteArray(),
             com.google.crypto.tink.KeyTemplate.OutputPrefixType.TINK);
 
     assertThrows(GeneralSecurityException.class, () -> Registry.newKeyData(template));
@@ -781,8 +783,6 @@ public class RegistryTest {
 
     String typeUrl = "testNewKeyDataTypeUrl";
     CustomAeadKeyManager km = new CustomAeadKeyManager(typeUrl);
-    assertThrows(
-        GeneralSecurityException.class, () -> Registry.registerKeyManager(km));
+    assertThrows(GeneralSecurityException.class, () -> Registry.registerKeyManager(km));
   }
-
 }

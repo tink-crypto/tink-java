@@ -75,8 +75,8 @@ public class LegacyFullAeadIntegrationTest {
                 ByteString.copyFrom(
                     Hex.decode("abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd")))
             .build();
-    AesCtrHmacAeadKey protoKey = AesCtrHmacAeadKey.newBuilder().setAesCtrKey(aesCtrKey)
-        .setHmacKey(hmacKey).build();
+    AesCtrHmacAeadKey protoKey =
+        AesCtrHmacAeadKey.newBuilder().setAesCtrKey(aesCtrKey).setHmacKey(hmacKey).build();
     KeyData keyData =
         KeyData.newBuilder()
             .setKeyMaterialType(KeyMaterialType.SYMMETRIC)
@@ -157,7 +157,8 @@ public class LegacyFullAeadIntegrationTest {
   public void generateNew_works() throws Exception {
     KeyTemplate template = LegacyAesCtrHmacTestKeyManager.templateWithTinkPrefix();
     KeysetHandle handle =
-        KeysetHandle.generateNew(TinkProtoParametersFormat.parse(template.toByteArray()));
+        KeysetHandle.generateNew(
+            TinkProtoParametersFormat.parse(template.toByteArray(), RegistryConfiguration.get()));
     Aead aead = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     byte[] plaintext = "plaintext".getBytes(UTF_8);
@@ -262,9 +263,9 @@ public class LegacyFullAeadIntegrationTest {
     Aead aead = crunchyKeysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     assertThat(
-        Hex.encode(
-            Arrays.copyOfRange(
-                aead.encrypt(plaintext, associatedData), 0, CryptoFormat.NON_RAW_PREFIX_SIZE)))
+            Hex.encode(
+                Arrays.copyOfRange(
+                    aead.encrypt(plaintext, associatedData), 0, CryptoFormat.NON_RAW_PREFIX_SIZE)))
         .isEqualTo("000000002a");
   }
 
@@ -276,9 +277,9 @@ public class LegacyFullAeadIntegrationTest {
     Aead aead = legacyKeysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     assertThat(
-        Hex.encode(
-            Arrays.copyOfRange(
-                aead.encrypt(plaintext, associatedData), 0, CryptoFormat.NON_RAW_PREFIX_SIZE)))
+            Hex.encode(
+                Arrays.copyOf(
+                    aead.encrypt(plaintext, associatedData), CryptoFormat.NON_RAW_PREFIX_SIZE)))
         .isEqualTo("000000002a");
   }
 

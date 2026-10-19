@@ -557,6 +557,7 @@ java_test(
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
         "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink:parameters",
+        "//src/main/java/com/google/crypto/tink:registry_configuration",
         "//src/main/java/com/google/crypto/tink:tink_proto_parameters_format",
         "//src/main/java/com/google/crypto/tink/aead:aes_eax_key",
         "//src/main/java/com/google/crypto/tink/aead:aes_eax_parameters",

@@ -284,7 +284,9 @@ public final class KeyManagerIntegrationTest {
             .setTypeUrl(PRIVATE_TYPE_URL)
             .setValue(Ed25519KeyFormat.getDefaultInstance().toByteString())
             .build();
-    Parameters parameters = TinkProtoParametersFormat.parse(protoKeyTemplate.toByteArray());
+    Parameters parameters =
+        TinkProtoParametersFormat.parse(
+            protoKeyTemplate.toByteArray(), RegistryConfiguration.get());
 
     Set<String> keys = new TreeSet<>();
     int numKeys = 20;
