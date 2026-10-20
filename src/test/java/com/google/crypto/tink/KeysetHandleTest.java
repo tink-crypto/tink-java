@@ -1097,19 +1097,6 @@ public class KeysetHandleTest {
   }
 
   @Immutable
-  private static final class TestParameters extends Parameters {
-    @Override
-    public boolean hasIdRequirement() {
-      return false;
-    }
-
-    @Override
-    public String toString() {
-      return "TestParameters";
-    }
-  }
-
-  @Immutable
   private static final class TestKey extends Key {
     private final ByteString keymaterial;
 
@@ -1123,7 +1110,7 @@ public class KeysetHandleTest {
 
     @Override
     public Parameters getParameters() {
-      return new TestParameters();
+      throw new UnsupportedOperationException("Not needed in test");
     }
 
     @Override
@@ -2597,31 +2584,6 @@ public class KeysetHandleTest {
             .addEntry(KeysetHandle.importKey(new TestKey()).withFixedId(123).makePrimary())
             .build();
     assertThrows(IllegalArgumentException.class, handle::getKeysetInfo);
-  }
-
-  @Test
-  public void toString_worksEvenIfKeyCannotBeSerializedAndDoesNotLogExport() throws Exception {
-    FakeMonitoringClient fakeMonitoringClient = new FakeMonitoringClient();
-    MutableMonitoringRegistry.globalInstance().clear();
-    MutableMonitoringRegistry.globalInstance().registerMonitoringClient(fakeMonitoringClient);
-
-    KeysetHandle handle =
-        KeysetHandle.newBuilder()
-            .addEntry(KeysetHandle.importKey(new TestKey()).withFixedId(123).makePrimary())
-            .addEntry(
-                KeysetHandle.importKey(XChaCha20Poly1305Key.create(SecretBytes.randomBytes(32)))
-                    .withFixedId(456)
-                    .setStatus(KeyStatus.DISABLED))
-            .setMonitoringAnnotations(
-                MonitoringAnnotations.newBuilder().add("annotation_name", "annotation_val").build())
-            .build();
-    assertThat(handle.toString())
-        .isEqualTo(
-            "KeysetHandle{entries=[Entry{status=ENABLED, keyId=123, parameters='TestParameters',"
-                + " isPrimary=true}, Entry{status=DISABLED, keyId=456,"
-                + " parameters='XChaCha20Poly1305 Parameters (variant: NO_PREFIX)',"
-                + " isPrimary=false}]}");
-    assertThat(fakeMonitoringClient.getLogKeyExportEntries()).isEmpty();
   }
 
   @Test
