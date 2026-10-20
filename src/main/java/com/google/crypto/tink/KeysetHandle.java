@@ -90,6 +90,9 @@ public final class KeysetHandle implements KeysetHandleInterface {
    *
    * <p>It is possible to set whether an entry is the primary by calling {@link Entry#makePrimary}.
    * The user must ensure that once {@link #build} is called, a primary has been set.
+   *
+   * <p>When generating keys from {@link Parameters}, a {@link Configuration} should be provided via
+   * {@link #setConfiguration}.
    */
   public static final class Builder {
     private static class KeyIdStrategy {
@@ -1003,12 +1006,14 @@ public final class KeysetHandle implements KeysetHandleInterface {
    * Generates a new {@link KeysetHandle} that contains a single fresh key generated according to
    * {@code keyTemplate}.
    *
-   * <p>Please do not use this function. Instead, use {@link #generateNew(Parameters)}.
+   * <p>Please do not use this function. Instead, use {@link #generateNew(Parameters,
+   * Configuration)}.
    *
    * <p>For existing usage, try to use refaster
    * https://github.com/tink-crypto/tink-java/tree/main/tools/refaster to replace usage
    * automatically. This will replaces calls {@code KeysetHandle.generateNew(XYZKeyTemplates.ABC);}
-   * with {@code KeysetHandle.generateNew(PredefinedXYZParameters.ABC);} which is a NO-OP.
+   * with {@code KeysetHandle.generateNew(PredefinedXYZParameters.ABC,
+   * RegistryConfiguration.get());} which is a NO-OP.
    *
    * <p>If this is not possible, please inline the function in your code.
    *
@@ -1037,7 +1042,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
    * {@code keyTemplate}.
    *
    * <p>Please do not use this function. Instead, inline it: replace calls with {@code
-   * generateNew(t)} with {@code generateNew(t.toParameters())}.
+   * generateNew(t)} with {@code generateNew(t.toParameters(), RegistryConfiguration.get())}.
    *
    * @throws GeneralSecurityException if the key template is invalid.
    * @deprecated This function should be inlined.
@@ -1170,11 +1175,13 @@ public final class KeysetHandle implements KeysetHandleInterface {
    * <p>This can be used to load public keysets or envelope encryption keysets. Users that need to
    * load cleartext keysets can use {@link CleartextKeysetHandle}.
    *
-   * <p>Note: new code should call {@code TinkProtoKeysetFormat(serialized)} instead.
+   * <p>Note: new code should call {@code TinkProtoKeysetFormat.parseKeysetWithoutSecret(serialized,
+   * configuration)} instead.
    *
    * @return a new {@link KeysetHandle} from {@code serialized} that is a serialized {@link Keyset}
    * @throws GeneralSecurityException if the keyset is invalid
-   * @deprecated Call {TinkProtoKeysetFormat.parseKeysetWithoutSecret} instead.
+   * @deprecated Call {@link TinkProtoKeysetFormat#parseKeysetWithoutSecret(byte[], Configuration)}
+   *     instead.
    */
   @Deprecated
   public static final KeysetHandle readNoSecret(final byte[] serialized)

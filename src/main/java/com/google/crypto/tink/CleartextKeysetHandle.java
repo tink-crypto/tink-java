@@ -39,7 +39,8 @@ public final class CleartextKeysetHandle {
    * @return a new {@link KeysetHandle} from {@code serialized} that is a serialized {@link Keyset}
    * @throws GeneralSecurityException
    * @deprecated Call {@code TinkProtoKeysetFormat.parseKeyset(serialized,
-   *     InsecureSecretKeyAccess.get())} which has the same semantics.
+   *     InsecureSecretKeyAccess.get(), RegistryConfiguration.get())} which has the same semantics,
+   *     or pass an explicit {@link Configuration} such as {@code TinkConfig2026.get()}.
    */
   @SuppressWarnings("UnusedException")
   @Deprecated
