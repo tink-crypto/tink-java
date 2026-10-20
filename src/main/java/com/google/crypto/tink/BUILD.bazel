@@ -1427,7 +1427,17 @@ android_library(
     srcs = ["Prehash.java"],
 )
 
+android_library(
+    name = "sign_prehash-android",
+    srcs = ["SignPrehash.java"],
+)
+
 java_library(
     name = "prehash",
     srcs = ["Prehash.java"],
+)
+
+java_library(
+    name = "sign_prehash",
+    srcs = ["SignPrehash.java"],
 )
