@@ -101,6 +101,9 @@ public final class StreamingAeadConfig2026 {
   private static AesCtrHmacStreamingKey createAesCtrHmacStreamingKey(
       AesCtrHmacStreamingParameters parameters, @Nullable Integer idRequirement)
       throws GeneralSecurityException {
+    if (!TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS.isCompatible()) {
+      throw new GeneralSecurityException("Cannot create AES-CTR-HMAC streaming keys in FIPS-mode.");
+    }
     if (idRequirement != null) {
       throw new GeneralSecurityException("idRequirement must be null");
     }
@@ -112,6 +115,9 @@ public final class StreamingAeadConfig2026 {
   private static AesGcmHkdfStreamingKey createAesGcmHkdfStreamingKey(
       AesGcmHkdfStreamingParameters parameters, @Nullable Integer idRequirement)
       throws GeneralSecurityException {
+    if (!TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS.isCompatible()) {
+      throw new GeneralSecurityException("Cannot create AES-GCM-HKDF streaming keys in FIPS-mode.");
+    }
     if (idRequirement != null) {
       throw new GeneralSecurityException("idRequirement must be null");
     }

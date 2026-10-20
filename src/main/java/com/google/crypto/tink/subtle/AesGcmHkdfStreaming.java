@@ -19,6 +19,7 @@ package com.google.crypto.tink.subtle;
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.StreamingAead;
+import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.streamingaead.AesGcmHkdfStreamingKey;
 import com.google.crypto.tink.streamingaead.AesGcmHkdfStreamingParameters.HashType;
 import java.nio.Buffer;
@@ -110,6 +111,13 @@ public final class AesGcmHkdfStreaming extends NonceBasedStreamingAead {
   public AesGcmHkdfStreaming(byte[] ikm, String hkdfAlg, int keySizeInBytes,
       int ciphertextSegmentSize, int firstSegmentOffset)
       throws InvalidAlgorithmParameterException {
+    if (!TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS.isCompatible()) {
+      // This should be a GeneralSecurityException, however as external users rely on this
+      // constructor not throwing a GeneralSecurityException we use a runtime exception here
+      // instead.
+      throw new IllegalStateException(
+          new GeneralSecurityException("Cannot use AES-GCM-HKDF streaming in FIPS-mode."));
+    }
     if (ikm.length < 16 || ikm.length < keySizeInBytes) {
       throw new InvalidAlgorithmParameterException(
           "ikm too short, must be >= " + Math.max(16, keySizeInBytes));
@@ -128,6 +136,9 @@ public final class AesGcmHkdfStreaming extends NonceBasedStreamingAead {
 
   private AesGcmHkdfStreaming(AesGcmHkdfStreamingKey key)
       throws GeneralSecurityException {
+    if (!TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS.isCompatible()) {
+      throw new GeneralSecurityException("Cannot use AES-GCM-HKDF streaming in FIPS-mode.");
+    }
     this.ikm = key.getInitialKeyMaterial().toByteArray(InsecureSecretKeyAccess.get());
     String hkdfAlgString = "";
     if (key.getParameters().getHkdfHashType().equals(HashType.SHA1)) {
