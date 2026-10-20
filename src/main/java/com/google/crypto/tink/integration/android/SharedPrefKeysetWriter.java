@@ -46,7 +46,7 @@ import java.io.IOException;
  * <pre>{@code
  * byte[] encryptedKeyset =
  *     TinkProtoKeysetFormat.serializeEncryptedKeyset(
- *         handle, keysetEncryptionAead, new byte[0]);
+ *         handle, keysetEncryptionAead, new byte[0], TinkConfig2026.get());
  * SharedPreferences.Editor editor =
  *     PreferenceManager.getDefaultSharedPreferences(
  *             ApplicationProvider.getApplicationContext().getApplicationContext())
@@ -67,7 +67,8 @@ import java.io.IOException;
  *
  * <pre>{@code
  * byte[] serializedKeyset =
- *     TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+ *     TinkProtoKeysetFormat.serializeKeyset(
+ *         handle, InsecureSecretKeyAccess.get(), TinkConfig2026.get());
  * SharedPreferences.Editor editor =
  *     PreferenceManager.getDefaultSharedPreferences(
  *         ApplicationProvider.getApplicationContext().getApplicationContext())
