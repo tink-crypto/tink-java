@@ -29,11 +29,15 @@ import java.security.GeneralSecurityException;
  * <p>To register all StreamingAead key types provided in the latest Tink version one can do:
  *
  * <pre>{@code
- * StreamingAeadConfig.init();
+ * StreamingAeadConfig.register();
  * }</pre>
  *
  * <p>For more information on how to obtain and use instances of StreamingAead, see {@link
- * StreamingAeadFactory}.
+ * com.google.crypto.tink.KeysetHandle#getPrimitive}.
+ *
+ * <p>Note: New code should prefer passing {@code TinkConfig2026.get()} or {@code
+ * StreamingAeadConfig2026.get()} to {@link com.google.crypto.tink.KeysetHandle} and {@link
+ * com.google.crypto.tink.TinkProtoKeysetFormat} methods instead of relying on global registration.
  *
  * @since 1.1.0
  */

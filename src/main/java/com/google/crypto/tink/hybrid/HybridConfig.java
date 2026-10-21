@@ -37,7 +37,11 @@ import java.security.GeneralSecurityException;
  * }</pre>
  *
  * <p>For more information on how to obtain and use instances of HybridEncrypt or HybridDecrypt, see
- * {@link HybridEncryptFactory} or {@link HybridDecryptFactory}.
+ * {@link com.google.crypto.tink.KeysetHandle#getPrimitive}.
+ *
+ * <p>Note: New code should prefer passing {@code TinkConfig2026.get()} or {@code
+ * HybridConfig2026.get()} to {@link com.google.crypto.tink.KeysetHandle} and {@link
+ * com.google.crypto.tink.TinkProtoKeysetFormat} methods instead of relying on global registration.
  *
  * @since 1.0.0
  */

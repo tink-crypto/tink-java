@@ -33,6 +33,10 @@ import java.security.GeneralSecurityException;
  * <pre>{@code
  * JwtSignatureConfig.register();
  * }</pre>
+ *
+ * <p>Note: New code should prefer passing {@code TinkConfig2026.get()} or {@code
+ * JwtConfig2026.get()} to {@link com.google.crypto.tink.KeysetHandle} and {@link
+ * com.google.crypto.tink.TinkProtoKeysetFormat} methods instead of relying on global registration.
  */
 public final class JwtSignatureConfig {
   public static final String JWT_ECDSA_PUBLIC_KEY_TYPE_URL = JwtEcdsaVerifyKeyManager.getKeyType();

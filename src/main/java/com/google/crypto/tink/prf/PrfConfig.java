@@ -19,9 +19,12 @@ import com.google.crypto.tink.config.TinkFips;
 import java.security.GeneralSecurityException;
 
 /**
- * Static methods and registering with the {@link Registry} all instances of {@link
- * com.google.crypto.tink.subtle.prf.StreamingPrf} key types supported in a particular release of
- * Tink.
+ * Static methods for registering with the {@link com.google.crypto.tink.Registry} all instances of
+ * {@link Prf} key types supported in a particular release of Tink.
+ *
+ * <p>Note: New code should prefer passing {@code TinkConfig2026.get()} or {@code
+ * PrfConfig2026.get()} to {@link com.google.crypto.tink.KeysetHandle} and {@link
+ * com.google.crypto.tink.TinkProtoKeysetFormat} methods instead of relying on global registration.
  */
 public final class PrfConfig {
   public static final String PRF_TYPE_URL = HkdfPrfKeyManager.getKeyType();
