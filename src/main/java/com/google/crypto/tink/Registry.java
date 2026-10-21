@@ -51,9 +51,10 @@ import java.util.logging.Logger;
  *
  * <p>Registry is initialized at startup, and is later used to instantiate primitives for given keys
  * or keysets. Note that regular users will usually not work directly with Registry, but rather via
- * {@link TinkConfig} and {@link KeysetHandle#getPrimitive(Class)}-methods, which in the background
- * register and query the Registry for specific KeyManagers and PrimitiveWrappers. Registry is
- * public though, to enable configurations with custom catalogues, primitives or KeyManagers.
+ * {@link TinkConfig} and {@link KeysetHandle#getPrimitive(Configuration, Class)}-methods, which in
+ * the background register and query the Registry for specific KeyManagers and PrimitiveWrappers.
+ * Registry is public though, to enable configurations with custom catalogues, primitives or
+ * KeyManagers.
  *
  * <p>To initialize the Registry with all key managers:
  *
@@ -305,9 +306,9 @@ public final class Registry {
    * <p>This method should be used solely for key management.
    *
    * @return a new {@link KeyData}
-   * @deprecated Use {@code KeysetHandle.generateNew} with a Parameters object instead. To convert a
-   *     proto KeyTemplate to a parameters one can use {@code
-   *     TinkProtoParametersFormat.parse(t.toByteArray());}
+   * @deprecated Use {@code KeysetHandle.generateNew} with a Parameters object and a Configuration
+   *     instead. To convert a proto KeyTemplate to a Parameters object one can use {@code
+   *     TinkProtoParametersFormat.parse(t.toByteArray(), RegistryConfiguration.get());}
    */
   @Deprecated
   public static synchronized KeyData newKeyData(
@@ -331,8 +332,8 @@ public final class Registry {
    * <p>This method should be used solely for key management.
    *
    * @return a new {@link KeyData}
-   * @deprecated Use {@code KeysetHandle.generateNew(keyTemplate.toParameters())} instead and use
-   *     the Keyset Handle API.
+   * @deprecated Use {@code KeysetHandle.generateNew(keyTemplate.toParameters(),
+   *     RegistryConfiguration.get())} instead and use the Keyset Handle API.
    */
   @Deprecated
   public static synchronized KeyData newKeyData(
