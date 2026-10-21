@@ -80,6 +80,9 @@ public final class DeterministicAeadConfig2026 {
   private static AesSivKey createAesSivKey(
       AesSivParameters parameters, @Nullable Integer idRequirement)
       throws GeneralSecurityException {
+    if (!TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS.isCompatible()) {
+      throw new GeneralSecurityException("Cannot create AES-SIV key in FIPS-mode.");
+    }
     return AesSivKey.builder()
         .setParameters(parameters)
         .setKeyBytes(SecretBytes.randomBytes(parameters.getKeySizeBytes()))
