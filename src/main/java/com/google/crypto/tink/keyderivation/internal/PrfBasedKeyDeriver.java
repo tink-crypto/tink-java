@@ -21,6 +21,7 @@ import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.SecretKeyAccess;
+import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.keyderivation.PrfBasedKeyDerivationKey;
 import com.google.crypto.tink.subtle.prf.StreamingPrf;
 import com.google.errorprone.annotations.Immutable;
@@ -67,6 +68,9 @@ public final class PrfBasedKeyDeriver implements KeyDeriver {
   public static KeyDeriver create(
       PrfGetter prfGetter, KeyFromRandomness keyFromRandomness, PrfBasedKeyDerivationKey key)
       throws GeneralSecurityException {
+    if (!TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS.isCompatible()) {
+      throw new GeneralSecurityException("Cannot use PrfBasedKeyDeriver in FIPS-mode.");
+    }
     StreamingPrf prf = prfGetter.get(key.getPrfKey());
     PrfBasedKeyDeriver deriver = new PrfBasedKeyDeriver(prf, keyFromRandomness, key);
     Object unused = deriver.deriveKey(new byte[] {1});

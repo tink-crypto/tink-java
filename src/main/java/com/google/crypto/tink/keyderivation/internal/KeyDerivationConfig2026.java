@@ -413,6 +413,9 @@ public final class KeyDerivationConfig2026 {
   private static PrfBasedKeyDerivationKey createPrfBasedKeyDerivationKey(
       PrfBasedKeyDerivationParameters parameters, @Nullable Integer idRequirement)
       throws GeneralSecurityException {
+    if (!TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS.isCompatible()) {
+      throw new GeneralSecurityException("Cannot create PrfBasedKeyDerivationKey in FIPS-mode.");
+    }
     Parameters prfParameters = parameters.getPrfParameters();
     if (prfParameters instanceof HkdfPrfParameters) {
       HkdfPrfKey prfKey =
