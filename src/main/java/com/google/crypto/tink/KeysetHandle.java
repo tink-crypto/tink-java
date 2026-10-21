@@ -1339,13 +1339,33 @@ public final class KeysetHandle implements KeysetHandleInterface {
   }
 
   /**
-   * Extracts and returns the string representation of the {@link
-   * com.google.crypto.tink.proto.KeysetInfo} of the managed keyset.
+   * Returns a string representation of the managed keyset.
+   *
+   * <p>The result does not contain any sensitive key material. The exact details of the
+   * representation are unspecified and subject to change.
    */
-  @SuppressWarnings("LiteProtoToString") // main purpose of toString is for debugging
   @Override
   public String toString() {
-    return getKeysetInfo().toString();
+    StringBuilder builder = new StringBuilder();
+    builder.append("KeysetHandle{entries=[");
+    for (int i = 0; i < entries.size(); ++i) {
+      if (i > 0) {
+        builder.append(", ");
+      }
+      Entry entry = entries.get(i);
+      builder
+          .append("Entry{status=")
+          .append(entry.getStatus())
+          .append(", keyId=")
+          .append(entry.getId())
+          .append(", parameters='")
+          .append(entry.key.getParameters())
+          .append("', isPrimary=")
+          .append(entry.isPrimary())
+          .append("}");
+    }
+    builder.append("]}");
+    return builder.toString();
   }
 
   /**
