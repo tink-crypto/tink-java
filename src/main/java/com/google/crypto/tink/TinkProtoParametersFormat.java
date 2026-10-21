@@ -39,8 +39,8 @@ public final class TinkProtoParametersFormat {
         "com.google.crypto.tink.RegistryConfiguration",
         "com.google.crypto.tink.TinkProtoParametersFormat"
       })
-  @Deprecated // This function should be inlined.
   @LowLevelCryptoCaller
+  @Deprecated
   public static byte[] serialize(Parameters parameters) throws GeneralSecurityException {
     return serialize(parameters, RegistryConfiguration.get());
   }
@@ -79,9 +79,10 @@ public final class TinkProtoParametersFormat {
         "com.google.crypto.tink.RegistryConfiguration",
         "com.google.crypto.tink.TinkProtoParametersFormat"
       })
-  @Deprecated // This function should be inlined.
   @LowLevelCryptoCaller
-  public static Parameters parse(byte[] serializedParameters) throws GeneralSecurityException {
+  @Deprecated
+  public static Parameters parse(byte[] serializedParameters)
+      throws GeneralSecurityException {
     return parse(serializedParameters, RegistryConfiguration.get());
   }
 
