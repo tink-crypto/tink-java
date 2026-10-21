@@ -236,7 +236,10 @@ public final class LegacyKeysetSerialization {
    *
    * <p>Note: in most cases you can get more information by calling {@code handle.getAt(i).getKey()}
    * and casting the result to the appropriate key type.
+   *
+   * @deprecated This function should be inlined.
    */
+  @Deprecated // This function should be inlined.
   public static KeysetInfo getKeysetInfo(KeysetHandle handle) {
     try {
       return getKeysetInfo(handle, RegistryConfiguration.get());
