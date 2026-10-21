@@ -159,6 +159,7 @@ android_library(
     deps = [
         "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access-android",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util-android",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_rsa_ssa_pkcs1_parameters-android",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_rsa_ssa_pkcs1_private_key-android",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_rsa_ssa_pkcs1_public_key-android",
@@ -174,6 +175,7 @@ java_library(
     deps = [
         "//src/main/java/com/google/crypto/tink:accesses_partial_key",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_rsa_ssa_pkcs1_parameters",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_rsa_ssa_pkcs1_private_key",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_rsa_ssa_pkcs1_public_key",
@@ -189,6 +191,7 @@ android_library(
     deps = [
         "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access-android",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util-android",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_rsa_ssa_pss_parameters-android",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_rsa_ssa_pss_private_key-android",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_rsa_ssa_pss_public_key-android",
@@ -204,6 +207,7 @@ java_library(
     deps = [
         "//src/main/java/com/google/crypto/tink:accesses_partial_key",
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_rsa_ssa_pss_parameters",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_rsa_ssa_pss_private_key",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_rsa_ssa_pss_public_key",

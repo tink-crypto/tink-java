@@ -140,7 +140,7 @@ public final class JwtConfig2026 {
             JwtRsaSsaPkcs1ProtoSerialization::parsePublicKey)
         .addParametersSerializer(
             JwtRsaSsaPkcs1Parameters.class, JwtRsaSsaPkcs1ProtoSerialization::serializeParameters)
-        .addKeyCreator(JwtRsaSsaPkcs1Parameters.class, JwtConfig2026::createRsaSsaPkcs1Key)
+        .addKeyCreator(JwtRsaSsaPkcs1Parameters.class, JwtRsaSsaPkcs1KeyCreator::createKey)
         .addParametersParser(
             "type.googleapis.com/google.crypto.tink.JwtRsaSsaPkcs1PrivateKey",
             JwtRsaSsaPkcs1ProtoSerialization::parseParameters)
@@ -163,7 +163,7 @@ public final class JwtConfig2026 {
             JwtRsaSsaPssProtoSerialization::parsePublicKey)
         .addParametersSerializer(
             JwtRsaSsaPssParameters.class, JwtRsaSsaPssProtoSerialization::serializeParameters)
-        .addKeyCreator(JwtRsaSsaPssParameters.class, JwtConfig2026::createRsaSsaPssKey)
+        .addKeyCreator(JwtRsaSsaPssParameters.class, JwtRsaSsaPssKeyCreator::createKey)
         .addParametersParser(
             "type.googleapis.com/google.crypto.tink.JwtRsaSsaPssPrivateKey",
             JwtRsaSsaPssProtoSerialization::parseParameters)
@@ -204,37 +204,5 @@ public final class JwtConfig2026 {
       builder.setIdRequirement(idRequirement);
     }
     return builder.build();
-  }
-
-  private static JwtRsaSsaPkcs1PrivateKey createRsaSsaPkcs1Key(
-      JwtRsaSsaPkcs1Parameters parameters, @Nullable Integer idRequirement)
-      throws GeneralSecurityException {
-    if (TinkFipsUtil.useOnlyFips()) {
-      if (!TinkFipsUtil.fipsModuleAvailable()) {
-        throw new GeneralSecurityException(
-            "Cannot create JwtRsaSsaPkcs1Key with non-FIPS modulus in FIPS mode");
-      }
-      if (parameters.getModulusSizeBits() != 2048 && parameters.getModulusSizeBits() != 3072) {
-        throw new GeneralSecurityException(
-            "Cannot create FIPS compatible JwtRsaSsaPkcs1Key: wrong key modulus size");
-      }
-    }
-    return JwtRsaSsaPkcs1KeyCreator.createKey(parameters, idRequirement);
-  }
-
-  private static JwtRsaSsaPssPrivateKey createRsaSsaPssKey(
-      JwtRsaSsaPssParameters parameters, @Nullable Integer idRequirement)
-      throws GeneralSecurityException {
-    if (TinkFipsUtil.useOnlyFips()) {
-      if (!TinkFipsUtil.fipsModuleAvailable()) {
-        throw new GeneralSecurityException(
-            "Cannot create JwtRsaSsaPssKey with non-FIPS modulus in FIPS mode");
-      }
-      if (parameters.getModulusSizeBits() != 2048 && parameters.getModulusSizeBits() != 3072) {
-        throw new GeneralSecurityException(
-            "Cannot create FIPS compatible JwtRsaSsaPssKey: wrong key modulus size");
-      }
-    }
-    return JwtRsaSsaPssKeyCreator.createKey(parameters, idRequirement);
   }
 }

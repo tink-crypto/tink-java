@@ -18,6 +18,7 @@ package com.google.crypto.tink.jwt.internal;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.jwt.JwtRsaSsaPkcs1Parameters;
 import com.google.crypto.tink.jwt.JwtRsaSsaPkcs1PrivateKey;
 import com.google.crypto.tink.jwt.JwtRsaSsaPkcs1PublicKey;
@@ -39,6 +40,16 @@ public final class JwtRsaSsaPkcs1KeyCreator {
   public static JwtRsaSsaPkcs1PrivateKey createKey(
       JwtRsaSsaPkcs1Parameters parameters, @Nullable Integer idRequirement)
       throws GeneralSecurityException {
+    if (TinkFipsUtil.useOnlyFips()) {
+      if (!TinkFipsUtil.fipsModuleAvailable()) {
+        throw new GeneralSecurityException(
+            "Cannot create JwtRsaSsaPkcs1Key with non-FIPS modulus in FIPS mode");
+      }
+      if (parameters.getModulusSizeBits() != 2048 && parameters.getModulusSizeBits() != 3072) {
+        throw new GeneralSecurityException(
+            "Cannot create FIPS compatible JwtRsaSsaPkcs1Key: wrong key modulus size");
+      }
+    }
     KeyPairGenerator keyGen = EngineFactory.KEY_PAIR_GENERATOR.getInstance("RSA");
     RSAKeyGenParameterSpec spec =
         new RSAKeyGenParameterSpec(
