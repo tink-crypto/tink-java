@@ -186,7 +186,7 @@ public final class RsaSsaPssVerifyJce implements PublicKeyVerify {
       }
 
       // Step 9. Set the leftmost 8*emLen - emBits bits of the leftmost octet in DB to zero.
-      for (int i = 0; i <= (long) emLen * 8 - emBits; i++) {
+      for (int i = 0; i < (long) emLen * 8 - emBits; i++) {
         int bytePos = i / 8;
         int bitPos = 7 - i % 8;
         db[bytePos] = (byte) (db[bytePos] & ~(1 << bitPos));

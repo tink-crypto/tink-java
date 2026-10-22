@@ -257,4 +257,56 @@ public class RsaSsaPssVerifyJceTest {
 
     Security.removeProvider(conscrypt.getName());
   }
+
+  @Test
+  public void verify_maxSaltLengthWithModulusBitLengthMod8Equals2_works() throws Exception {
+    // 2050-bit RSA modulus (bitLength % 8 == 2 => emBits = 2049, emLen = 257, 8*emLen - emBits = 7)
+    // with maximum salt length for SHA-256 (emLen - hLen - 2 = 257 - 32 - 2 = 223), so that the
+    // 0x01 separator in DB is at db[0].
+    BigInteger modulus =
+        new BigInteger(
+            1,
+            Hex.decode(
+                "034db288b4f23f071010e1e9537cb84a2ae5a3dbb858241ba3510d7c5d4433933efb24aa6532e61297"
+                    + "61556374aa46dad2a9195c64c77899388808bfb8e1bf7fa1a896cc15738d1e1eb1c8dd95d7d5"
+                    + "6b7a6c8edd1136cd16cdbf0403147f4b6c045608edc5b43429a6023c57b70563fc2230045dbd"
+                    + "a6219462f5ff46701cd7747b52d105900128f4fc50aa623f9a64bc15b70720932161e9bd6fde"
+                    + "d2f9ae3dff38255ee3dfc081e9750036e81e6cd62b6df3919fe6b20d6c2838e38f9e10b212d5"
+                    + "77ecc22f7fdaddedafc36dfd3f479ac6301c1f3a42b8ee9301e84c4273262672ca7aa07f3f33"
+                    + "d2665f4ff3dc11b90a1e6ca69e8dd36470fdcaed08e6d5d51661"));
+    RsaSsaPssParameters parameters =
+        RsaSsaPssParameters.builder()
+            .setModulusSizeBits(2050)
+            .setPublicExponent(RsaSsaPssParameters.F4)
+            .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
+            .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
+            .setSaltLengthBytes(223)
+            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+            .build();
+    RsaSsaPssPublicKey publicKey =
+        RsaSsaPssPublicKey.builder().setParameters(parameters).setModulus(modulus).build();
+    byte[] message = Hex.decode("aa");
+    byte[] signature =
+        Hex.decode(
+            "01d8971bb548b3a417c5224fed63af53d8c6f480771c73f37b9191671a8a29e76b6134402ab9dd083c75f1"
+                + "2f81583f9b5c92d2cb1ea0ca59d4dda310d6e8beb560843a9122f84ea20c0f28b2665a40e951bf88"
+                + "b0156edaf07a787dcc750e25ff17c0748cd3f250c0d37b7265753edf0849d365b6e7674009a9c2c2"
+                + "015cbeaab27aea3a22d5c418fc66c3b90a32cef362c9b2da34a329423909b261eb76386777940864"
+                + "98b2473bd6f823c42f6fcf270acfaa8b09e13c0d0b5f0782873e1d16ffefaabfd6beca518e01bffe"
+                + "7fc3b84b0f825b4f87c997b0ab664aa285d3a298f9f238f9ea486d966d66c1fab85acd991e87398b"
+                + "7d5d63e50e31c72d124f8d7c1b0f");
+
+    PublicKeyVerify verifier = RsaSsaPssVerifyJce.create(publicKey);
+    verifier.verify(signature, message);
+
+    byte[] modifiedMessage = Bytes.concat(message, new byte[] {1});
+    GeneralSecurityException e =
+        assertThrows(
+            GeneralSecurityException.class, () -> verifier.verify(signature, modifiedMessage));
+    if (Util.isAndroid()) {
+      assertThat(e).hasMessageThat().isEqualTo("signature verification failed");
+    } else {
+      assertThat(e).hasMessageThat().isEqualTo("inconsistent");
+    }
+  }
 }
