@@ -17,6 +17,7 @@
 package com.google.crypto.tink;
 
 import com.google.crypto.tink.internal.KeyStatusTypeProtoConverter;
+import com.google.crypto.tink.internal.ProtoConversions;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.proto.KeyData;
 import com.google.crypto.tink.proto.KeyStatusType;
@@ -29,6 +30,7 @@ import com.google.crypto.tink.tinkkey.internal.ProtoKey;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.InlineMe;
 import java.security.GeneralSecurityException;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 
 /**
@@ -307,14 +309,35 @@ public final class KeysetManager {
     throw new GeneralSecurityException("key not found: " + keyId);
   }
 
+  @AccessesPartialKey
+  @LowLevelCryptoCaller
   private synchronized Keyset.Key newKey(com.google.crypto.tink.proto.KeyTemplate keyTemplate)
       throws GeneralSecurityException {
-    return createKeysetKey(Registry.newKeyData(keyTemplate), keyTemplate.getOutputPrefixType());
+    Configuration configuration = RegistryConfiguration.get();
+    Parameters parameters =
+        TinkProtoParametersFormat.parse(keyTemplate.toByteArray(), configuration);
+    @Nullable ProtoKeySerializer serializer = configuration.getOrNull(ProtoKeySerializer.class);
+    if (serializer == null) {
+      throw new GeneralSecurityException(
+          "Cannot create key: configuration does not support ProtoKeySerializer.");
+    }
+    int keyId = newKeyId();
+    Integer idRequirement = parameters.hasIdRequirement() ? keyId : null;
+    Key key = configuration.createKey(parameters, idRequirement);
+    ProtoKeySerialization serializedKey =
+        serializer.serializeKey(key, InsecureSecretKeyAccess.get());
+    KeyData keyData =
+        KeyData.newBuilder()
+            .setTypeUrl(serializedKey.getTypeUrl())
+            .setValue(serializedKey.getValue())
+            .setKeyMaterialType(ProtoConversions.toProto(serializedKey.getKeyMaterialType()))
+            .build();
+    return createKeysetKey(keyData, keyTemplate.getOutputPrefixType(), keyId);
   }
 
   private synchronized Keyset.Key createKeysetKey(
-      KeyData keyData, OutputPrefixType outputPrefixType) throws GeneralSecurityException {
-    int keyId = newKeyId();
+      KeyData keyData, OutputPrefixType outputPrefixType, int keyId)
+      throws GeneralSecurityException {
     if (outputPrefixType == OutputPrefixType.UNKNOWN_PREFIX) {
       throw new GeneralSecurityException("unknown output prefix type");
     }

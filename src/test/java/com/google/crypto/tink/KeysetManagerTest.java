@@ -660,7 +660,7 @@ public class KeysetManagerTest {
   @Test
   public void testAdd_bogusKeyTemplate_shouldThrowException() throws Exception {
     KeyTemplate bogus =
-        KeyTemplate.create("does not exist", new byte[0], KeyTemplate.OutputPrefixType.TINK);
+        KeyTemplate.create("does-not-exist", new byte[0], KeyTemplate.OutputPrefixType.TINK);
 
     GeneralSecurityException e =
         assertThrows(
