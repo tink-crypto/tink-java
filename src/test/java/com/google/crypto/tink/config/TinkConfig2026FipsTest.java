@@ -34,7 +34,7 @@ import org.junit.runners.JUnit4;
  *       //third_party/tink/java_src/src/main/java/com/google/crypto/tink/config:use_only_fips=True}
  *   <li>{@code
  *       //third_party/tink/java_src/src/main/java/com/google/crypto/tink/config:use_only_fips=True}
- *       and {@code BORINGSSL_FIPS=0} in C++
+ *       and {@code BORINGSSL_FIPS=0} in C++.
  * </ul>
  */
 @RunWith(JUnit4.class)

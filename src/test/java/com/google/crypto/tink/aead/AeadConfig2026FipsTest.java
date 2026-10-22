@@ -43,12 +43,19 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 /**
- * Tests for AeadConfig2026 which run under fips mode.
+ * Tests for AeadConfig2026 which run under FIPS mode.
  *
- * <p>We test this by tagging the test with "fips" which will run it three configurations: *
- * `//src/main/java/com/google/crypto/tink/config:use_only_fips=False,`
- * `//src/main/java/com/google/crypto/tink/config:use_only_fips=True,`
- * `//src/main/java/com/google/crypto/tink/config:use_only_fips=True and BORINGSSL_FIPS=0 in C++.`
+ * <p>We test this by tagging the test with "fips" which runs it under three build configurations:
+ *
+ * <ul>
+ *   <li>{@code
+ *       //third_party/tink/java_src/src/main/java/com/google/crypto/tink/config:use_only_fips=False}
+ *   <li>{@code
+ *       //third_party/tink/java_src/src/main/java/com/google/crypto/tink/config:use_only_fips=True}
+ *   <li>{@code
+ *       //third_party/tink/java_src/src/main/java/com/google/crypto/tink/config:use_only_fips=True}
+ *       and {@code BORINGSSL_FIPS=0} in C++.
+ * </ul>
  */
 @RunWith(JUnit4.class)
 public class AeadConfig2026FipsTest {
@@ -173,11 +180,14 @@ public class AeadConfig2026FipsTest {
   /**
    * Returns Keys which should work.
    *
-   * <p>If `//src/main/java/com/google/crypto/tink/config:use_only_fips=False` then this is all
-   * keys. If `//src/main/java/com/google/crypto/tink/config:use_only_fips=True` and BoringSSL was
-   * compiled with `BORINGSSL_FIPS` then these are the FIPS keys in BoringSSL. If
-   * `//src/main/java/com/google/crypto/tink/config:use_only_fips=True` and `BORINGSSL_FIPS=0` then
-   * this is the empty list.
+   * <p>If {@code
+   * //third_party/tink/java_src/src/main/java/com/google/crypto/tink/config:use_only_fips=False}
+   * then this is all keys. If {@code
+   * //third_party/tink/java_src/src/main/java/com/google/crypto/tink/config:use_only_fips=True} and
+   * BoringSSL was compiled with {@code BORINGSSL_FIPS} then these are the FIPS keys in BoringSSL.
+   * If {@code
+   * //third_party/tink/java_src/src/main/java/com/google/crypto/tink/config:use_only_fips=True} and
+   * {@code BORINGSSL_FIPS=0} then this is the empty list.
    */
   private static List<AeadKey> createKeysWhichShouldWork() {
     ArrayList<AeadKey> result = new ArrayList<>();
@@ -203,12 +213,15 @@ public class AeadConfig2026FipsTest {
   /**
    * Returns Keys which should fail.
    *
-   * <p>If `//src/main/java/com/google/crypto/tink/config:use_only_fips=False` then this is empty.
-   * If `//src/main/java/com/google/crypto/tink/config:use_only_fips=True` and BoringSSL was
-   * compiled with `BORINGSSL_FIPS` then these are the keys which can still be created in Tink, and
-   * which are not FIPS. (Note that it is acceptable if creating the key fails in this case, then we
-   * simply ignore the key). If `//src/main/java/com/google/crypto/tink/config:use_only_fips=True`
-   * and `BORINGSSL_FIPS=0` then this is all keys which can still be created.
+   * <p>If {@code
+   * //third_party/tink/java_src/src/main/java/com/google/crypto/tink/config:use_only_fips=False}
+   * then this is empty. If {@code
+   * //third_party/tink/java_src/src/main/java/com/google/crypto/tink/config:use_only_fips=True} and
+   * BoringSSL was compiled with {@code BORINGSSL_FIPS} then these are the keys which can still be
+   * created in Tink, and which are not FIPS. (Note that it is acceptable if creating the key fails
+   * in this case, then we simply ignore the key). If {@code
+   * //third_party/tink/java_src/src/main/java/com/google/crypto/tink/config:use_only_fips=True} and
+   * {@code BORINGSSL_FIPS=0} then this is all keys which can still be created.
    */
   private static List<AeadKey> createKeysWhichShouldFail() {
     ArrayList<AeadKey> result = new ArrayList<>();

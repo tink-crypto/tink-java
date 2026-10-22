@@ -34,13 +34,16 @@ import org.junit.runners.JUnit4;
 /**
  * Tests for DeterministicAead which run under FIPS mode.
  *
- * <p>We test this by tagging the test with "fips" which runs it under two build configurations:
+ * <p>We test this by tagging the test with "fips" which runs it under three build configurations:
  *
  * <ul>
  *   <li>{@code
  *       //third_party/tink/java_src/src/main/java/com/google/crypto/tink/config:use_only_fips=False}
  *   <li>{@code
  *       //third_party/tink/java_src/src/main/java/com/google/crypto/tink/config:use_only_fips=True}
+ *   <li>{@code
+ *       //third_party/tink/java_src/src/main/java/com/google/crypto/tink/config:use_only_fips=True}
+ *       and {@code BORINGSSL_FIPS=0} in C++.
  * </ul>
  */
 @RunWith(JUnit4.class)
