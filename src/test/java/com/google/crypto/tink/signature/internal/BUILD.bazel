@@ -883,3 +883,15 @@ java_test(
         "@maven//:junit_junit",
     ],
 )
+
+java_test(
+    name = "PrehashFormatTest",
+    size = "small",
+    srcs = ["PrehashFormatTest.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/signature/internal:prehash_format",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)

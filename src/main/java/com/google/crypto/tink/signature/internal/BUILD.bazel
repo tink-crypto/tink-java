@@ -1468,3 +1468,13 @@ android_library(
         "//src/main/java/com/google/crypto/tink/util:secret_big_integer-android",
     ],
 )
+
+android_library(
+    name = "prehash_format-android",
+    srcs = ["PrehashFormat.java"],
+)
+
+java_library(
+    name = "prehash_format",
+    srcs = ["PrehashFormat.java"],
+)
