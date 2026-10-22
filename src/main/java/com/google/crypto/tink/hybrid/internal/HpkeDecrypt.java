@@ -21,6 +21,7 @@ import static com.google.crypto.tink.internal.Util.isPrefix;
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.hybrid.HpkeParameters;
 import com.google.crypto.tink.hybrid.HpkePrivateKey;
 import com.google.crypto.tink.util.Bytes;
@@ -98,6 +99,9 @@ public final class HpkeDecrypt implements HybridDecrypt {
   }
 
   public static HybridDecrypt create(HpkePrivateKey privateKey) throws GeneralSecurityException {
+    if (!TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS.isCompatible()) {
+      throw new GeneralSecurityException("Cannot use HPKE in FIPS-mode.");
+    }
     HpkeParameters parameters = privateKey.getParameters();
     if (parameters.getKemId() == HpkeParameters.KemId.X_WING) {
       return XWingHpkeConscryptDecrypt.create(privateKey);

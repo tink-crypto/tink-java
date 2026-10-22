@@ -18,6 +18,7 @@ package com.google.crypto.tink.hybrid.internal;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.hybrid.HpkeParameters;
 import com.google.crypto.tink.hybrid.HpkePrivateKey;
 import com.google.crypto.tink.hybrid.HpkePublicKey;
@@ -59,6 +60,9 @@ public final class HpkeKeyCreator {
   @AccessesPartialKey
   public static HpkePrivateKey createKey(
       HpkeParameters parameters, @Nullable Integer idRequirement) throws GeneralSecurityException {
+    if (!TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS.isCompatible()) {
+      throw new GeneralSecurityException("Cannot create HPKE keys in FIPS-mode.");
+    }
     SecretBytes privateKeyBytes;
     Bytes publicKeyBytes;
 

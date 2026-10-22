@@ -18,6 +18,7 @@ package com.google.crypto.tink.hybrid.internal;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.HybridEncrypt;
+import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.hybrid.HpkeParameters;
 import com.google.crypto.tink.hybrid.HpkePublicKey;
 import com.google.crypto.tink.util.Bytes;
@@ -54,6 +55,9 @@ public final class HpkeEncrypt implements HybridEncrypt {
 
   @AccessesPartialKey
   public static HybridEncrypt create(HpkePublicKey key) throws GeneralSecurityException {
+    if (!TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS.isCompatible()) {
+      throw new GeneralSecurityException("Cannot use HPKE in FIPS-mode.");
+    }
     HpkeParameters parameters = key.getParameters();
     if (parameters.getKemId() == HpkeParameters.KemId.X_WING) {
       return XWingHpkeConscryptEncrypt.create(key);

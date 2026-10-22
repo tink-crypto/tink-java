@@ -18,6 +18,7 @@ package com.google.crypto.tink.hybrid.internal;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.hybrid.EciesParameters;
 import com.google.crypto.tink.hybrid.EciesPrivateKey;
 import com.google.crypto.tink.hybrid.EciesPublicKey;
@@ -51,6 +52,9 @@ public final class EciesKeyCreator {
   @AccessesPartialKey
   public static EciesPrivateKey createKey(
       EciesParameters parameters, @Nullable Integer idRequirement) throws GeneralSecurityException {
+    if (!TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS.isCompatible()) {
+      throw new GeneralSecurityException("Cannot create ECIES keys in FIPS-mode.");
+    }
     // toParameterSpec throws for curve X25519
     KeyPair keyPair = EllipticCurves.generateKeyPair(toParameterSpec(parameters.getCurveType()));
     ECPublicKey ecPubKey = (ECPublicKey) keyPair.getPublic();

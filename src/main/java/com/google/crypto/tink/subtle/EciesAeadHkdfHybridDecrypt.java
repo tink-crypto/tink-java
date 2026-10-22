@@ -21,6 +21,7 @@ import static com.google.crypto.tink.internal.Util.isPrefix;
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.hybrid.EciesPrivateKey;
 import com.google.crypto.tink.hybrid.internal.EciesDemHelper;
 import com.google.crypto.tink.internal.BigIntegerEncoding;
@@ -62,6 +63,9 @@ public final class EciesAeadHkdfHybridDecrypt implements HybridDecrypt {
 
   @AccessesPartialKey
   public static HybridDecrypt create(EciesPrivateKey key) throws GeneralSecurityException {
+    if (!TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS.isCompatible()) {
+      throw new GeneralSecurityException("Cannot use ECIES in FIPS-mode.");
+    }
     EllipticCurves.CurveType curveType =
         EciesAeadHkdfHybridEncrypt.CURVE_TYPE_CONVERTER.toProtoEnum(
             key.getParameters().getCurveType());

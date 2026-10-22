@@ -18,6 +18,7 @@ package com.google.crypto.tink.subtle;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.HybridEncrypt;
+import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.hybrid.EciesParameters;
 import com.google.crypto.tink.hybrid.EciesPublicKey;
 import com.google.crypto.tink.hybrid.internal.EciesDemHelper;
@@ -97,6 +98,9 @@ public final class EciesAeadHkdfHybridEncrypt implements HybridEncrypt {
 
   @AccessesPartialKey
   public static HybridEncrypt create(EciesPublicKey key) throws GeneralSecurityException {
+    if (!TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS.isCompatible()) {
+      throw new GeneralSecurityException("Cannot use ECIES in FIPS-mode.");
+    }
     EllipticCurves.CurveType curveType =
         CURVE_TYPE_CONVERTER.toProtoEnum(key.getParameters().getCurveType());
     ECPublicKey recipientPublicKey =
