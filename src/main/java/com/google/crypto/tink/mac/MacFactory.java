@@ -22,28 +22,22 @@ import com.google.crypto.tink.RegistryConfiguration;
 import java.security.GeneralSecurityException;
 
 /**
- * Deprecated class to create {@code Mac} primitives. Instead of using this class, make sure that
- * the {@code MacWrapper} is registered in your binary, then call {@code
- * keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class)} instead. The required
- * registration happens automatically if you called one of the following in your binary:
+ * Deprecated class to create {@code Mac} primitives. Instead of using this class, call {@code
+ * keysetHandle.getPrimitive(MacConfig2026.get(), Mac.class)} (or {@code
+ * keysetHandle.getPrimitive(TinkConfig2026.get(), Mac.class)}).
  *
- * <ul>
- *   <li>{@code MacConfig.register()}
- *   <li>{@code HybridConfig.register()}
- *   <li>{@code AeadConfig.register()}
- *   <li>{@code TinkConfig.register()}
- * </ul>
+ * <p>Alternatively, if you rely on global registration (via {@code MacConfig.register()}, {@code
+ * HybridConfig.register()}, {@code AeadConfig.register()}, or {@code TinkConfig.register()}), call
+ * {@code keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class)}.
  *
- * @deprecated Use {@code keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class)} after
- *     registering the {@code MacWrapper} instead.
+ * @deprecated Use {@code keysetHandle.getPrimitive(MacConfig2026.get(), Mac.class)} instead.
  * @since 1.0.0
  */
 @Deprecated
 public final class MacFactory {
   /**
    * @return a Mac primitive from a {@code keysetHandle}.
-   * @deprecated Use {@code keysetHandle.getPrimitive(RegistryConfiguration.get(), Mac.class)} after
-   *     registering the {@code MacWrapper} instead.
+   * @deprecated Use {@code keysetHandle.getPrimitive(MacConfig2026.get(), Mac.class)} instead.
    */
   @Deprecated
   public static Mac getPrimitive(KeysetHandle keysetHandle)

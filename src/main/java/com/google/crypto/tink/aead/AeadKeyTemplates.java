@@ -44,17 +44,14 @@ import com.google.crypto.tink.proto.OutputPrefixType;
  * class is loaded. This implies that static analysis and code minimization tools (such as proguard)
  * cannot remove the usages either.
  *
- * <p>Instead, we recommend to use {@code KeysetHandle.generateEntryFromParametersName} or {@code
- * KeysetHandle.generateEntryFromParameters}.
- *
- * <p>One can use these templates to generate new {@link com.google.crypto.tink.proto.Keyset} with
- * {@link com.google.crypto.tink.KeysetHandle#generateNew}. To generate a new keyset that contains a
- * single {@link com.google.crypto.tink.proto.AesGcmKey}, one can do:
+ * <p>Instead, we recommend to use {@link PredefinedAeadParameters} with {@link
+ * com.google.crypto.tink.KeysetHandle#generateNew(com.google.crypto.tink.Parameters,
+ * com.google.crypto.tink.Configuration)}:
  *
  * <pre>{@code
- * AeadConfig.register();
- * KeysetHandle handle = KeysetHandle.generateNew(AeadKeyTemplates.AES128_GCM);
- * Aead aead = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
+ * KeysetHandle handle =
+ *     KeysetHandle.generateNew(PredefinedAeadParameters.AES128_GCM, AeadConfig2026.get());
+ * Aead aead = handle.getPrimitive(AeadConfig2026.get(), Aead.class);
  * }</pre>
  *
  * @since 1.0.0

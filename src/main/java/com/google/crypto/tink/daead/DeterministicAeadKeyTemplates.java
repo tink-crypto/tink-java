@@ -35,18 +35,17 @@ import com.google.crypto.tink.proto.OutputPrefixType;
  * class is loaded. This implies that static analysis and code minimization tools (such as proguard)
  * cannot remove the usages either.
  *
- * <p>Instead, we recommend to use {@code KeysetHandle.generateEntryFromParametersName} or {@code
- * KeysetHandle.generateEntryFromParameters}.
+ * <p>Instead, we recommend to use {@link PredefinedDeterministicAeadParameters} with {@link
+ * com.google.crypto.tink.KeysetHandle#generateNew(com.google.crypto.tink.Parameters,
+ * com.google.crypto.tink.Configuration)}:
  *
- * <p>One can use these templates to generate new {@code Keyset} with {@code KeysetHandle}. To
- * generate a new keyset that contains a single {@code AesSivKey}, one can do:
- *
- * <pre>
- *   DeterministicAeadConfig.register();
- *   KeysetHandle handle = KeysetHandle.generateNew(DeterministicAeadKeyTemplates.AES256_SIV);
- *   DeterministicAead daead =
- *       handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
- * </pre>
+ * <pre>{@code
+ * KeysetHandle handle =
+ *     KeysetHandle.generateNew(
+ *         PredefinedDeterministicAeadParameters.AES256_SIV, DeterministicAeadConfig2026.get());
+ * DeterministicAead daead =
+ *     handle.getPrimitive(DeterministicAeadConfig2026.get(), DeterministicAead.class);
+ * }</pre>
  *
  * @since 1.1.0
  * @deprecated Use {@link PredefinedDeterministicAeadParameters} instead.

@@ -40,17 +40,15 @@ import com.google.crypto.tink.proto.OutputPrefixType;
  * class is loaded. This implies that static analysis and code minimization tools (such as proguard)
  * cannot remove the usages either.
  *
- * <p>Instead, we recommend to use {@code KeysetHandle.generateEntryFromParametersName} or {@code
- * KeysetHandle.generateEntryFromParameters}.
- *
- * <p>One can use these templates to generate new {@link com.google.crypto.tink.proto.Keyset} with
- * {@code KeysetHandle}. To generate a new keyset that contains a {@link AesGcmHkdfStreamingKey},
- * one can do:
+ * <p>Instead, we recommend to use {@link PredefinedStreamingAeadParameters} with {@link
+ * com.google.crypto.tink.KeysetHandle#generateNew(com.google.crypto.tink.Parameters,
+ * com.google.crypto.tink.Configuration)}:
  *
  * <pre>{@code
- * StreamingAeadConfig.register();
- * KeysetHandle handle = KeysetHandle.generateNew(StreamingAeadKeyTemplates.AES128_GCM_HKDF_4KB);
- * StreamingAead ags = handle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
+ * KeysetHandle handle =
+ *     KeysetHandle.generateNew(
+ *         PredefinedStreamingAeadParameters.AES128_GCM_HKDF_4KB, StreamingAeadConfig2026.get());
+ * StreamingAead ags = handle.getPrimitive(StreamingAeadConfig2026.get(), StreamingAead.class);
  * }</pre>
  *
  * @deprecated Try using our refaster templates to replace them (see

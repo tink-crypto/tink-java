@@ -22,27 +22,22 @@ import com.google.crypto.tink.RegistryConfiguration;
 import java.security.GeneralSecurityException;
 
 /**
- * Deprecated class to create {@code Aead} primitives. Instead of using this class, make sure that
- * the {@code AeadWrapper} is registered in your binary, then call {@code
- * keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class)} instead. The required
- * registration happens automatically if you called one of the following in your binary:
+ * Deprecated class to create {@code Aead} primitives. Instead of using this class, call {@code
+ * keysetHandle.getPrimitive(AeadConfig2026.get(), Aead.class)} (or {@code
+ * keysetHandle.getPrimitive(TinkConfig2026.get(), Aead.class)}).
  *
- * <ul>
- *   <li>{@code HybridConfig.register()}
- *   <li>{@code AeadConfig.register()}
- *   <li>{@code TinkConfig.register()}
- * </ul>
+ * <p>Alternatively, if you rely on global registration (via {@code AeadConfig.register()}, {@code
+ * HybridConfig.register()}, or {@code TinkConfig.register()}), call {@code
+ * keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class)}.
  *
- * @deprecated Use {@code keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class)} after
- *     registering the {@code AeadWrapper} instead.
+ * @deprecated Use {@code keysetHandle.getPrimitive(AeadConfig2026.get(), Aead.class)} instead.
  * @since 1.0.0
  */
 @Deprecated
 public final class AeadFactory {
   /**
    * @return a Aead primitive from a {@code keysetHandle}.
-   * @deprecated Use {@code keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class)}
-   *     after registering the {@code AeadWrapper} instead.
+   * @deprecated Use {@code keysetHandle.getPrimitive(AeadConfig2026.get(), Aead.class)} instead.
    */
   @Deprecated
   public static Aead getPrimitive(KeysetHandle keysetHandle)

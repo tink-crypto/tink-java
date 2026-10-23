@@ -43,21 +43,18 @@ import com.google.protobuf.ByteString;
  * class is loaded. This implies that static analysis and code minimization tools (such as proguard)
  * cannot remove the usages either.
  *
- * <p>Instead, we recommend to use {@code KeysetHandle.generateEntryFromParametersName} or {@code
- * KeysetHandle.generateEntryFromParameters}.
- *
- * <p>One can use these templates to generate new {@link com.google.crypto.tink.proto.Keyset} with
- * {@link KeysetHandle#generateNew}. To generate a new keyset that contains a single {@link
- * com.google.crypto.tink.proto.EciesAeadHkdfPrivateKey}, one can do:
+ * <p>Instead, we recommend to use {@link PredefinedHybridParameters} with {@link
+ * com.google.crypto.tink.KeysetHandle#generateNew(com.google.crypto.tink.Parameters,
+ * com.google.crypto.tink.Configuration)}:
  *
  * <pre>{@code
- * HybridConfig.register();
- * KeysetHandle handle = KeysetHandle.generateNew(
- *     HybridKeyTemplates.ECIES_P256_HKDF_HMAC_SHA256_AES128_GCM);
- * HybridDecrypt decrypter = handle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
+ * KeysetHandle handle =
+ *     KeysetHandle.generateNew(
+ *         PredefinedHybridParameters.ECIES_P256_HKDF_HMAC_SHA256_AES128_GCM,
+ *         HybridConfig2026.get());
+ * HybridDecrypt decrypter = handle.getPrimitive(HybridConfig2026.get(), HybridDecrypt.class);
  * HybridEncrypt encrypter =
- *     handle.getPublicKeysetHandle()
- *         .getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
+ *     handle.getPublicKeysetHandle().getPrimitive(HybridConfig2026.get(), HybridEncrypt.class);
  * }</pre>
  *
  * @since 1.0.0

@@ -22,18 +22,16 @@ import com.google.crypto.tink.StreamingAead;
 import java.security.GeneralSecurityException;
 
 /**
- * Deprecated class to create {@code StreamingAead} primitives. Instead of using this class, make
- * sure that the {@code StreamingAeadWrapper} is registered in your binary, then call {@code
- * keysetHandle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class)}. The required
- * registration happens automatically if you called one of the following in your binary:
+ * Deprecated class to create {@code StreamingAead} primitives. Instead of using this class, call
+ * {@code keysetHandle.getPrimitive(StreamingAeadConfig2026.get(), StreamingAead.class)} (or {@code
+ * keysetHandle.getPrimitive(TinkConfig2026.get(), StreamingAead.class)}).
  *
- * <ul>
- *   <li>{@code StreamingAeadConfig.register()}
- *   <li>{@code TinkConfig.register()}
- * </ul>
+ * <p>Alternatively, if you rely on global registration (via {@code StreamingAeadConfig.register()}
+ * or {@code TinkConfig.register()}), call {@code
+ * keysetHandle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class)}.
  *
- * @deprecated Use {@code keysetHandle.getPrimitive(RegistryConfiguration.get(),
- *     StreamingAead.class)} after registering the {@code StreamingAeadWrapper} instead.
+ * @deprecated Use {@code keysetHandle.getPrimitive(StreamingAeadConfig2026.get(),
+ *     StreamingAead.class)} instead.
  * @since 1.1.0
  */
 @Deprecated

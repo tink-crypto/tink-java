@@ -21,18 +21,16 @@ import com.google.crypto.tink.RegistryConfiguration;
 import java.security.GeneralSecurityException;
 
 /**
- * Deprecated class to create {@code HybridEncrypt} primitives. Instead of using this class, make
- * sure that the {@code HybridEncryptWrapper} is registered in your binary, then call {@code
- * keysetHandle.getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class)} instead. The
- * required registration happens automatically if you called one of the following in your binary:
+ * Deprecated class to create {@code HybridEncrypt} primitives. Instead of using this class, call
+ * {@code keysetHandle.getPrimitive(HybridConfig2026.get(), HybridEncrypt.class)} (or {@code
+ * keysetHandle.getPrimitive(TinkConfig2026.get(), HybridEncrypt.class)}).
  *
- * <ul>
- *   <li>{@code HybridConfig.register()}
- *   <li>{@code TinkConfig.register()}
- * </ul>
+ * <p>Alternatively, if you rely on global registration (via {@code HybridConfig.register()} or
+ * {@code TinkConfig.register()}), call {@code
+ * keysetHandle.getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class)}.
  *
- * @deprecated Use {@code keysetHandle.getPrimitive(RegistryConfiguration.get(),
- *     HybridEncrypt.class)} after registering the {@code HybridEncryptWrapper} instead.
+ * @deprecated Use {@code keysetHandle.getPrimitive(HybridConfig2026.get(), HybridEncrypt.class)}
+ *     instead.
  * @since 1.0.0
  */
 @Deprecated
@@ -40,8 +38,8 @@ public final class HybridEncryptFactory {
   /**
    * @return a HybridEncrypt primitive from a {@code keysetHandle}.
    * @throws GeneralSecurityException
-   * @deprecated Use {@code keysetHandle.getPrimitive(RegistryConfiguration.get(),
-   *     HybridEncrypt.class)} after registering the {@code HybridEncryptWrapper} instead.
+   * @deprecated Use {@code keysetHandle.getPrimitive(HybridConfig2026.get(), HybridEncrypt.class)}
+   *     instead.
    */
   @Deprecated
   public static HybridEncrypt getPrimitive(KeysetHandle keysetHandle)

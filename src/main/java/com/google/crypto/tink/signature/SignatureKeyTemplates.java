@@ -47,19 +47,19 @@ import java.security.spec.RSAKeyGenParameterSpec;
  * class is loaded. This implies that static analysis and code minimization tools (such as proguard)
  * cannot remove the usages either.
  *
- * <p>Instead, we recommend to use {@code KeysetHandle.generateEntryFromParametersName} or {@code
- * KeysetHandle.generateEntryFromParameters}.
- *
- * <p>One can use these templates to generate new {@link com.google.crypto.tink.proto.Keyset} with
- * {@link com.google.crypto.tink.KeysetHandle}. To generate a new keyset that contains a single
- * {@code EcdsaPrivateKey}, one can do:
+ * <p>Instead, we recommend to use {@link PredefinedSignatureParameters} with {@link
+ * com.google.crypto.tink.KeysetHandle#generateNew(com.google.crypto.tink.Parameters,
+ * com.google.crypto.tink.Configuration)}:
  *
  * <pre>{@code
- * SignatureConfig.register();
- * KeysetHandle handle = KeysetHandle.generateNew(SignatureKeyTemplates.ECDSA_P256);
- * PublicKeySign signer = handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
+ * KeysetHandle handle =
+ *     KeysetHandle.generateNew(
+ *         PredefinedSignatureParameters.ECDSA_P256, SignatureConfig2026.get());
+ * PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
  * PublicKeyVerify verifier =
- *     handle.getPublicKeyset().getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class);
+ *     handle
+ *         .getPublicKeysetHandle()
+ *         .getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
  * }</pre>
  *
  * @since 1.0.0

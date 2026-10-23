@@ -22,26 +22,24 @@ import com.google.crypto.tink.RegistryConfiguration;
 import java.security.GeneralSecurityException;
 
 /**
- * Deprecated class to create {@code PublicKeyVerify} primitives. Instead of using this class, make
- * sure that the {@code PublicKeyVerifyWrapper} is registered in your binary, then call {@code
- * keysetHandle.getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class)} instead. The
- * required registration happens automatically if you called one of the following in your binary:
+ * Deprecated class to create {@code PublicKeyVerify} primitives. Instead of using this class, call
+ * {@code keysetHandle.getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class)} (or {@code
+ * keysetHandle.getPrimitive(TinkConfig2026.get(), PublicKeyVerify.class)}).
  *
- * <ul>
- *   <li>{@code SignatureConfig.register()}
- *   <li>{@code TinkConfig.register()}
- * </ul>
+ * <p>Alternatively, if you rely on global registration (via {@code SignatureConfig.register()} or
+ * {@code TinkConfig.register()}), call {@code
+ * keysetHandle.getPrimitive(RegistryConfiguration.get(), PublicKeyVerify.class)}.
  *
- * @deprecated Use {@code keysetHandle.getPrimitive(RegistryConfiguration.get(),
- *     PublicKeyVerify.class)} after registering the {@code PublicKeyVerifyWrapper} instead.
+ * @deprecated Use {@code keysetHandle.getPrimitive(SignatureConfig2026.get(),
+ *     PublicKeyVerify.class)} instead.
  * @since 1.0.0
  */
 @Deprecated
 public final class PublicKeyVerifyFactory {
   /**
    * @return a PublicKeyVerify primitive from a {@code keysetHandle}.
-   * @deprecated Use {@code keysetHandle.getPrimitive(RegistryConfiguration.get(),
-   *     PublicKeyVerify.class)} after registering the {@code PublicKeyVerifyWrapper} instead.
+   * @deprecated Use {@code keysetHandle.getPrimitive(SignatureConfig2026.get(),
+   *     PublicKeyVerify.class)} instead.
    */
   @Deprecated
   public static PublicKeyVerify getPrimitive(KeysetHandle keysetHandle)
