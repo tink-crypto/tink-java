@@ -20,6 +20,7 @@ import static java.lang.Math.min;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.EnumTypeProtoConverter;
 import com.google.crypto.tink.prf.HkdfPrfKey;
 import com.google.crypto.tink.prf.HkdfPrfParameters;
@@ -77,12 +78,22 @@ public class HkdfStreamingPrf implements StreamingPrf {
   }
 
   public HkdfStreamingPrf(final HashType hashType, final byte[] ikm, final byte[] salt) {
+    if (!TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS.isCompatible()) {
+      // This should be a GeneralSecurityException, however as external users rely on this
+      // constructor not throwing a GeneralSecurityException we use a runtime exception here
+      // instead.
+      throw new IllegalStateException(
+          new GeneralSecurityException("Cannot use HKDF in FIPS-mode."));
+    }
     this.hashType = hashType;
     this.ikm = Arrays.copyOf(ikm, ikm.length);
     this.salt = Arrays.copyOf(salt, salt.length);
   }
 
   public static StreamingPrf create(HkdfPrfKey key) throws GeneralSecurityException {
+    if (!TinkFipsUtil.AlgorithmFipsCompatibility.ALGORITHM_NOT_FIPS.isCompatible()) {
+      throw new GeneralSecurityException("Cannot use HKDF in FIPS-mode.");
+    }
     Bytes saltFromKey = key.getParameters().getSalt();
     return new HkdfStreamingPrf(
         HASH_TYPE_CONVERTER.toProtoEnum(key.getParameters().getHashType()),
