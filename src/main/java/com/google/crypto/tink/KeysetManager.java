@@ -47,20 +47,47 @@ public final class KeysetManager {
   @GuardedBy("this")
   private final Keyset.Builder keysetBuilder;
 
-  private KeysetManager(Keyset.Builder val) {
+  private final Configuration configuration;
+
+  private KeysetManager(Keyset.Builder val, Configuration configuration) {
     keysetBuilder = val;
+    this.configuration = configuration;
   }
 
   /**
+   * Returns a KeysetManager with the same keyset as the given {code val}.
+   *
+   * <p>Note that the KeysetManager APIs mix proto-serialized and non-serialized keys, Because of
+   * this, we recommend {@code KeysetHandle.Builder} instead. However, for legacy code {@code
+   * KeysetManager} can be useful. In order to convert back and forth from the serialized and
+   * non-serialized form we use the given {@code Configuration}.
+   *
+   * @return a {@link KeysetManager} for the keyset managed by {@code val}
+   * @throws GeneralSecurityException if {@code val} contains keys that cannot be serialized into
+   *     the Tink proto format (for example, custom {@link Key} subclasses without a registered
+   *     serializer in {@code configuration}).
+   */
+  public static KeysetManager withKeysetHandle(KeysetHandle val, Configuration configuration)
+      throws GeneralSecurityException {
+    return new KeysetManager(val.getKeyset(configuration).toBuilder(), configuration);
+  }
+
+  /**
+   * Returns a KeysetManager with the same keyset as the given {code val}.
+   *
+   * <p>This should not be used, instead use the overload which also takes a {@code Configuration}.
+   * For full compatibility, pass in {@code RegistryConfiguration.get()}.
+   *
    * @return a {@link KeysetManager} for the keyset manged by {@code val}
    * @throws IllegalArgumentException if {@code val} contains keys that cannot be serialized into
    *     the Tink proto format (for example, custom {@link Key} subclasses without a registered
    *     serializer).
+   * @deprecated This function should be inlined.
    */
+  @Deprecated // This function should be inlined.
   public static KeysetManager withKeysetHandle(KeysetHandle val) {
     try {
-      Configuration configuration = RegistryConfiguration.get();
-      return new KeysetManager(val.getKeyset(configuration).toBuilder());
+      return withKeysetHandle(val, RegistryConfiguration.get());
     } catch (GeneralSecurityException e) {
       throw new IllegalArgumentException(
           "Cannot create KeysetManager: key cannot be serialized", e);
@@ -68,13 +95,26 @@ public final class KeysetManager {
   }
 
   /** @return a {@link KeysetManager} for an empty keyset. */
+  public static KeysetManager withEmptyKeyset(Configuration configuration) {
+    return new KeysetManager(Keyset.newBuilder(), configuration);
+  }
+
+  /**
+   * @return a {@link KeysetManager} for an empty keyset.
+   * @deprecated This function should be inlined.
+   */
+  @Deprecated // This function should be inlined.
   public static KeysetManager withEmptyKeyset() {
-    return new KeysetManager(Keyset.newBuilder());
+    try {
+      return withEmptyKeyset(RegistryConfiguration.get());
+    } catch (GeneralSecurityException e) {
+      throw new IllegalStateException(e);
+    }
   }
 
   /** @return a {@link KeysetHandle} of the managed keyset */
   public synchronized KeysetHandle getKeysetHandle() throws GeneralSecurityException {
-    return KeysetHandle.fromKeyset(keysetBuilder.build(), RegistryConfiguration.get());
+    return KeysetHandle.fromKeyset(keysetBuilder.build(), configuration);
   }
 
   /**
@@ -313,7 +353,6 @@ public final class KeysetManager {
   @LowLevelCryptoCaller
   private synchronized Keyset.Key newKey(com.google.crypto.tink.proto.KeyTemplate keyTemplate)
       throws GeneralSecurityException {
-    Configuration configuration = RegistryConfiguration.get();
     Parameters parameters =
         TinkProtoParametersFormat.parse(keyTemplate.toByteArray(), configuration);
     @Nullable ProtoKeySerializer serializer = configuration.getOrNull(ProtoKeySerializer.class);

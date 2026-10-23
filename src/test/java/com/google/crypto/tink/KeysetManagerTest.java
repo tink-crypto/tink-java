@@ -26,11 +26,13 @@ import com.google.crypto.tink.aead.AesGcmKeyManager;
 import com.google.crypto.tink.config.GlobalTinkFlags;
 import com.google.crypto.tink.config.TinkConfig;
 import com.google.crypto.tink.internal.testing.SetTinkFlag;
+import com.google.crypto.tink.mac.MacConfig2026;
 import com.google.crypto.tink.mac.PredefinedMacParameters;
 import com.google.crypto.tink.proto.KeyStatusType;
 import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.proto.Keyset.Key;
 import com.google.crypto.tink.proto.OutputPrefixType;
+import com.google.crypto.tink.signature.SignatureConfig2026;
 import com.google.crypto.tink.testing.TestUtil;
 import com.google.crypto.tink.tinkkey.KeyAccess;
 import com.google.crypto.tink.tinkkey.KeyHandle;
@@ -1229,5 +1231,97 @@ public class KeysetManagerTest {
             .addEntry(KeysetHandle.importKey(new TestKey()).withFixedId(123).makePrimary())
             .build();
     assertThrows(IllegalArgumentException.class, () -> KeysetManager.withKeysetHandle(handle));
+  }
+
+  @Test
+  public void withEmptyKeyset_withConfiguration_addAndRotateWorks() throws Exception {
+    com.google.crypto.tink.proto.KeyTemplate protoTemplate =
+        com.google.crypto.tink.proto.KeyTemplate.parseFrom(
+            TinkProtoParametersFormat.serialize(
+                PredefinedMacParameters.HMAC_SHA256_128BITTAG, MacConfig2026.get()),
+            ExtensionRegistryLite.getEmptyRegistry());
+    KeyTemplate keyTemplate = KeyTemplate.createFrom(PredefinedMacParameters.HMAC_SHA256_256BITTAG);
+
+    KeysetHandle keyset =
+        KeysetManager.withEmptyKeyset(MacConfig2026.get())
+            .rotate(protoTemplate)
+            .add(keyTemplate)
+            .getKeysetHandle();
+
+    assertThat(keyset.size()).isEqualTo(2);
+    assertThat(keyset.getAt(0).isPrimary()).isTrue();
+    assertThat(keyset.getAt(0).getKey().getParameters())
+        .isEqualTo(PredefinedMacParameters.HMAC_SHA256_128BITTAG);
+    assertThat(keyset.getAt(1).isPrimary()).isFalse();
+    assertThat(keyset.getAt(1).getKey().getParameters())
+        .isEqualTo(PredefinedMacParameters.HMAC_SHA256_256BITTAG);
+  }
+
+  @Test
+  public void withEmptyKeyset_withConfiguration_failsIfConfigurationDoesNotSupportParameters()
+      throws Exception {
+    com.google.crypto.tink.proto.KeyTemplate protoTemplate =
+        com.google.crypto.tink.proto.KeyTemplate.parseFrom(
+            TinkProtoParametersFormat.serialize(
+                PredefinedMacParameters.HMAC_SHA256_128BITTAG, MacConfig2026.get()),
+            ExtensionRegistryLite.getEmptyRegistry());
+    KeyTemplate keyTemplate = KeyTemplate.createFrom(PredefinedMacParameters.HMAC_SHA256_128BITTAG);
+
+    // SignatureConfig2026 does not support HMAC parameters; ensures we do not fall back to
+    // RegistryConfiguration.
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> KeysetManager.withEmptyKeyset(SignatureConfig2026.get()).rotate(protoTemplate));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> KeysetManager.withEmptyKeyset(SignatureConfig2026.get()).add(keyTemplate));
+  }
+
+  @Test
+  public void withEmptyKeyset_withConfigurationWithoutProtoKeySerializer_fails() throws Exception {
+    KeyTemplate keyTemplate = KeyTemplate.createFrom(PredefinedMacParameters.HMAC_SHA256_128BITTAG);
+
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> KeysetManager.withEmptyKeyset(new Configuration() {}).add(keyTemplate));
+  }
+
+  @Test
+  public void withKeysetHandle_withConfiguration_works() throws Exception {
+    KeysetHandle existing =
+        KeysetHandle.generateNew(
+            PredefinedMacParameters.HMAC_SHA256_128BITTAG, MacConfig2026.get());
+    KeyTemplate keyTemplate = KeyTemplate.createFrom(PredefinedMacParameters.HMAC_SHA256_256BITTAG);
+
+    KeysetManager manager = KeysetManager.withKeysetHandle(existing, MacConfig2026.get());
+    manager.add(keyTemplate);
+    int secondKeyId = manager.getKeysetHandle().getAt(1).getId();
+    KeysetHandle keyset =
+        manager.setPrimary(secondKeyId).disable(existing.getAt(0).getId()).getKeysetHandle();
+
+    assertThat(keyset.size()).isEqualTo(2);
+    assertThat(keyset.getAt(0).getStatus()).isEqualTo(KeyStatus.DISABLED);
+    assertThat(keyset.getAt(0).getKey().getParameters())
+        .isEqualTo(PredefinedMacParameters.HMAC_SHA256_128BITTAG);
+    assertThat(keyset.getAt(1).isPrimary()).isTrue();
+    assertThat(keyset.getAt(1).getKey().getParameters())
+        .isEqualTo(PredefinedMacParameters.HMAC_SHA256_256BITTAG);
+  }
+
+  @Test
+  public void
+      withKeysetHandle_withConfiguration_throwsGeneralSecurityExceptionIfKeyCannotBeSerialized()
+          throws Exception {
+    KeysetHandle existing =
+        KeysetHandle.generateNew(
+            PredefinedMacParameters.HMAC_SHA256_128BITTAG, MacConfig2026.get());
+
+    // SignatureConfig2026 cannot serialize an HmacKey.
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> KeysetManager.withKeysetHandle(existing, SignatureConfig2026.get()));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> KeysetManager.withKeysetHandle(existing, new Configuration() {}));
   }
 }

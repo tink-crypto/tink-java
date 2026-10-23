@@ -95,6 +95,7 @@ java_test(
     srcs = ["KeysetManagerTest.java"],
     deps = [
         "//proto:tink_java_proto",
+        "//src/main/java/com/google/crypto/tink:configuration",
         "//src/main/java/com/google/crypto/tink:key",
         "//src/main/java/com/google/crypto/tink:key_status",
         "//src/main/java/com/google/crypto/tink:key_template",
@@ -108,7 +109,9 @@ java_test(
         "//src/main/java/com/google/crypto/tink/config:global_tink_flags",
         "//src/main/java/com/google/crypto/tink/config:tink_config",
         "//src/main/java/com/google/crypto/tink/internal/testing:set_tink_flag",
+        "//src/main/java/com/google/crypto/tink/mac:mac_config2026",
         "//src/main/java/com/google/crypto/tink/mac:predefined_mac_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:signature_config_2026",
         "//src/main/java/com/google/crypto/tink/testing:test_util",
         "//src/main/java/com/google/crypto/tink/tinkkey:key_access",
         "//src/main/java/com/google/crypto/tink/tinkkey:key_handle",
