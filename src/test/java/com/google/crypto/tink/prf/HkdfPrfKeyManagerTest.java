@@ -79,7 +79,12 @@ public class HkdfPrfKeyManagerTest {
   @Test
   public void testKeyTemplateAndManagerCompatibility() throws Exception {
     Parameters p = HkdfPrfKeyManager.hkdfSha256Template().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
   }
 
   @DataPoints("templateNames")
@@ -90,7 +95,9 @@ public class HkdfPrfKeyManagerTest {
 
   @Theory
   public void testTemplates(@FromDataPoints("templateNames") String templateName) throws Exception {
-    KeysetHandle h = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle h =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
         .isEqualTo(KeyTemplates.get(templateName).toParameters());
@@ -150,7 +157,7 @@ public class HkdfPrfKeyManagerTest {
             .setHashType(HkdfPrfParameters.HashType.SHA256)
             .setKeySizeBytes(32)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(params);
+    KeysetHandle handle = KeysetHandle.generateNew(params, RegistryConfiguration.get());
     assertThat(handle.size()).isEqualTo(1);
     com.google.crypto.tink.prf.HkdfPrfKey key =
         (com.google.crypto.tink.prf.HkdfPrfKey) handle.getAt(0).getKey();
@@ -164,7 +171,7 @@ public class HkdfPrfKeyManagerTest {
             .setHashType(HkdfPrfParameters.HashType.SHA512)
             .setKeySizeBytes(32)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(params);
+    KeysetHandle handle = KeysetHandle.generateNew(params, RegistryConfiguration.get());
     assertThat(handle.size()).isEqualTo(1);
     com.google.crypto.tink.prf.HkdfPrfKey key =
         (com.google.crypto.tink.prf.HkdfPrfKey) handle.getAt(0).getKey();
@@ -182,7 +189,7 @@ public class HkdfPrfKeyManagerTest {
     int numKeys = 100;
     Set<String> keys = new TreeSet<>();
     for (int i = 0; i < numKeys; i++) {
-      KeysetHandle handle = KeysetHandle.generateNew(params);
+      KeysetHandle handle = KeysetHandle.generateNew(params, RegistryConfiguration.get());
       assertThat(handle.size()).isEqualTo(1);
       com.google.crypto.tink.prf.HkdfPrfKey key =
           (com.google.crypto.tink.prf.HkdfPrfKey) handle.getAt(0).getKey();
@@ -198,7 +205,7 @@ public class HkdfPrfKeyManagerTest {
             .setHashType(HkdfPrfParameters.HashType.SHA512)
             .setKeySizeBytes(32)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(params);
+    KeysetHandle handle = KeysetHandle.generateNew(params, RegistryConfiguration.get());
     assertThat(handle.size()).isEqualTo(1);
     PrfSet prfSet = handle.getPrimitive(RegistryConfiguration.get(), PrfSet.class);
     Prf directPrf =
@@ -216,19 +223,23 @@ public class HkdfPrfKeyManagerTest {
             .setHashType(HkdfPrfParameters.HashType.SHA512)
             .setKeySizeBytes(32)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(params);
+    KeysetHandle handle = KeysetHandle.generateNew(params, RegistryConfiguration.get());
 
     byte[] serializedKeyset =
-        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     KeysetHandle parsed =
-        TinkProtoKeysetFormat.parseKeyset(serializedKeyset, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            serializedKeyset, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     assertTrue(parsed.equalsKeyset(handle));
   }
 
   @Theory
   public void createKeyWithRejectedParameters_throws(
       @FromDataPoints("KeyManager rejected") HkdfPrfParameters params) throws Exception {
-    assertThrows(GeneralSecurityException.class, () -> KeysetHandle.generateNew(params));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> KeysetHandle.generateNew(params, RegistryConfiguration.get()));
   }
 
   @Theory
@@ -262,9 +273,11 @@ public class HkdfPrfKeyManagerTest {
             .addEntry(KeysetHandle.importKey(key).withFixedId(1).makePrimary())
             .build();
     byte[] serializedKeyset =
-        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     KeysetHandle parsed =
-        TinkProtoKeysetFormat.parseKeyset(serializedKeyset, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            serializedKeyset, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     assertTrue(parsed.equalsKeyset(handle));
   }
 

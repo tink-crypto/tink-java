@@ -47,16 +47,15 @@ public final class PrfTest {
   @DataPoints("templates")
   public static final String[] TEMPLATES =
       new String[] {
-        "AES_CMAC_PRF",
-        "HMAC_SHA256_PRF",
-        "HMAC_SHA512_PRF",
-        "HKDF_SHA256",
+        "AES_CMAC_PRF", "HMAC_SHA256_PRF", "HMAC_SHA512_PRF", "HKDF_SHA256",
       };
 
   @Theory
   public void create_computeVerify(@FromDataPoints("templates") String templateName)
       throws Exception {
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), PrfConfig2026.get());
     int primaryId = handle.getPrimary().getId();
     PrfSet prfSet = handle.getPrimitive(PrfConfig2026.get(), PrfSet.class);
 

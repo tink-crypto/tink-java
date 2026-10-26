@@ -20,6 +20,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import java.security.GeneralSecurityException;
@@ -38,9 +39,18 @@ public class PrfConfigTest {
 
     PrfConfig.register();
 
-    assertThat(KeysetHandle.generateNew(PredefinedPrfParameters.HMAC_SHA256_PRF)).isNotNull();
-    assertThat(KeysetHandle.generateNew(PredefinedPrfParameters.HKDF_SHA256)).isNotNull();
-    assertThat(KeysetHandle.generateNew(PredefinedPrfParameters.AES_CMAC_PRF)).isNotNull();
+    assertThat(
+            KeysetHandle.generateNew(
+                PredefinedPrfParameters.HMAC_SHA256_PRF, RegistryConfiguration.get()))
+        .isNotNull();
+    assertThat(
+            KeysetHandle.generateNew(
+                PredefinedPrfParameters.HKDF_SHA256, RegistryConfiguration.get()))
+        .isNotNull();
+    assertThat(
+            KeysetHandle.generateNew(
+                PredefinedPrfParameters.AES_CMAC_PRF, RegistryConfiguration.get()))
+        .isNotNull();
   }
 
   @Test
@@ -50,7 +60,10 @@ public class PrfConfigTest {
 
     PrfConfig.register();
 
-    assertThat(KeysetHandle.generateNew(PredefinedPrfParameters.HMAC_SHA256_PRF)).isNotNull();
+    assertThat(
+            KeysetHandle.generateNew(
+                PredefinedPrfParameters.HMAC_SHA256_PRF, RegistryConfiguration.get()))
+        .isNotNull();
   }
 
   @Test
@@ -61,9 +74,13 @@ public class PrfConfigTest {
     PrfConfig.register();
     assertThrows(
         GeneralSecurityException.class,
-        () -> KeysetHandle.generateNew(PredefinedPrfParameters.HKDF_SHA256));
+        () ->
+            KeysetHandle.generateNew(
+                PredefinedPrfParameters.HKDF_SHA256, RegistryConfiguration.get()));
     assertThrows(
         GeneralSecurityException.class,
-        () -> KeysetHandle.generateNew(PredefinedPrfParameters.AES_CMAC_PRF));
+        () ->
+            KeysetHandle.generateNew(
+                PredefinedPrfParameters.AES_CMAC_PRF, RegistryConfiguration.get()));
   }
 }

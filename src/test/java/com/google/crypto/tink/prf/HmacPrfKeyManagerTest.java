@@ -83,10 +83,20 @@ public class HmacPrfKeyManagerTest {
   @Test
   public void testKeyTemplateAndManagerCompatibility() throws Exception {
     Parameters p = HmacPrfKeyManager.hmacSha256Template().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
 
     p = HmacPrfKeyManager.hmacSha256Template().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
   }
 
   @DataPoints("templateNames")
@@ -94,7 +104,9 @@ public class HmacPrfKeyManagerTest {
 
   @Theory
   public void testTemplates(@FromDataPoints("templateNames") String templateName) throws Exception {
-    KeysetHandle h = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle h =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
         .isEqualTo(KeyTemplates.get(templateName).toParameters());
@@ -181,7 +193,7 @@ public class HmacPrfKeyManagerTest {
             .setHashType(HmacPrfParameters.HashType.SHA256)
             .setKeySizeBytes(32)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(params);
+    KeysetHandle handle = KeysetHandle.generateNew(params, RegistryConfiguration.get());
     assertThat(handle.size()).isEqualTo(1);
     com.google.crypto.tink.prf.HmacPrfKey key =
         (com.google.crypto.tink.prf.HmacPrfKey) handle.getAt(0).getKey();
@@ -195,7 +207,7 @@ public class HmacPrfKeyManagerTest {
             .setHashType(HmacPrfParameters.HashType.SHA512)
             .setKeySizeBytes(32)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(params);
+    KeysetHandle handle = KeysetHandle.generateNew(params, RegistryConfiguration.get());
     assertThat(handle.size()).isEqualTo(1);
     com.google.crypto.tink.prf.HmacPrfKey key =
         (com.google.crypto.tink.prf.HmacPrfKey) handle.getAt(0).getKey();
@@ -213,7 +225,7 @@ public class HmacPrfKeyManagerTest {
     int numKeys = 100;
     Set<String> keys = new TreeSet<>();
     for (int i = 0; i < numKeys; i++) {
-      KeysetHandle handle = KeysetHandle.generateNew(params);
+      KeysetHandle handle = KeysetHandle.generateNew(params, RegistryConfiguration.get());
       assertThat(handle.size()).isEqualTo(1);
       com.google.crypto.tink.prf.HmacPrfKey key =
           (com.google.crypto.tink.prf.HmacPrfKey) handle.getAt(0).getKey();
@@ -229,7 +241,7 @@ public class HmacPrfKeyManagerTest {
             .setHashType(HmacPrfParameters.HashType.SHA512)
             .setKeySizeBytes(32)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(params);
+    KeysetHandle handle = KeysetHandle.generateNew(params, RegistryConfiguration.get());
     assertThat(handle.size()).isEqualTo(1);
     PrfSet prfSet = handle.getPrimitive(RegistryConfiguration.get(), PrfSet.class);
     Prf directPrf =
@@ -245,12 +257,14 @@ public class HmacPrfKeyManagerTest {
             .setHashType(HmacPrfParameters.HashType.SHA512)
             .setKeySizeBytes(32)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(params);
+    KeysetHandle handle = KeysetHandle.generateNew(params, RegistryConfiguration.get());
 
     byte[] serializedKeyset =
-        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     KeysetHandle parsed =
-        TinkProtoKeysetFormat.parseKeyset(serializedKeyset, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            serializedKeyset, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     assertTrue(parsed.equalsKeyset(handle));
   }
 

@@ -60,7 +60,12 @@ public class AesCmacPrfKeyManagerTest {
   @Test
   public void testKeyTemplateAndManagerCompatibility() throws Exception {
     Parameters p = AesCmacPrfKeyManager.aes256CmacTemplate().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
   }
 
   @DataPoints("templateNames")
@@ -71,7 +76,9 @@ public class AesCmacPrfKeyManagerTest {
 
   @Theory
   public void testTemplates(@FromDataPoints("templateNames") String templateName) throws Exception {
-    KeysetHandle h = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle h =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
         .isEqualTo(KeyTemplates.get(templateName).toParameters());
@@ -88,7 +95,7 @@ public class AesCmacPrfKeyManagerTest {
   @Test
   public void createKey_works() throws Exception {
     AesCmacPrfParameters params = AesCmacPrfParameters.create(32);
-    KeysetHandle handle = KeysetHandle.generateNew(params);
+    KeysetHandle handle = KeysetHandle.generateNew(params, RegistryConfiguration.get());
     assertThat(handle.size()).isEqualTo(1);
     AesCmacPrfKey key = (AesCmacPrfKey) handle.getAt(0).getKey();
     assertThat(key.getParameters()).isEqualTo(params);
@@ -101,7 +108,7 @@ public class AesCmacPrfKeyManagerTest {
     int numKeys = 100;
     Set<String> keys = new TreeSet<>();
     for (int i = 0; i < numKeys; i++) {
-      KeysetHandle handle = KeysetHandle.generateNew(params);
+      KeysetHandle handle = KeysetHandle.generateNew(params, RegistryConfiguration.get());
       assertThat(handle.size()).isEqualTo(1);
       AesCmacPrfKey key = (AesCmacPrfKey) handle.getAt(0).getKey();
       keys.add(Hex.encode(key.getKeyBytes().toByteArray(InsecureSecretKeyAccess.get())));
@@ -112,7 +119,7 @@ public class AesCmacPrfKeyManagerTest {
   @Test
   public void createPrimitiveAndUseIt_works() throws Exception {
     AesCmacPrfParameters params = AesCmacPrfParameters.create(32);
-    KeysetHandle handle = KeysetHandle.generateNew(params);
+    KeysetHandle handle = KeysetHandle.generateNew(params, RegistryConfiguration.get());
     assertThat(handle.size()).isEqualTo(1);
     PrfSet prfSet = handle.getPrimitive(RegistryConfiguration.get(), PrfSet.class);
     Prf directPrf = PrfAesCmac.create((AesCmacPrfKey) handle.getAt(0).getKey());
@@ -123,19 +130,23 @@ public class AesCmacPrfKeyManagerTest {
   @Test
   public void serializeAndDeserializeKeysets() throws Exception {
     AesCmacPrfParameters params = AesCmacPrfParameters.create(32);
-    KeysetHandle handle = KeysetHandle.generateNew(params);
+    KeysetHandle handle = KeysetHandle.generateNew(params, RegistryConfiguration.get());
 
     byte[] serializedKeyset =
-        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     KeysetHandle parsed =
-        TinkProtoKeysetFormat.parseKeyset(serializedKeyset, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            serializedKeyset, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     assertTrue(parsed.equalsKeyset(handle));
   }
 
   @Test
   public void createKeyWith16Bytes_throws() throws Exception {
     AesCmacPrfParameters params = AesCmacPrfParameters.create(16);
-    assertThrows(GeneralSecurityException.class, () -> KeysetHandle.generateNew(params));
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> KeysetHandle.generateNew(params, RegistryConfiguration.get()));
   }
 
   @Test
@@ -160,9 +171,11 @@ public class AesCmacPrfKeyManagerTest {
             .addEntry(KeysetHandle.importKey(key).withFixedId(1).makePrimary())
             .build();
     byte[] serializedKeyset =
-        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     KeysetHandle parsed =
-        TinkProtoKeysetFormat.parseKeyset(serializedKeyset, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            serializedKeyset, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     assertTrue(parsed.equalsKeyset(handle));
   }
 }
