@@ -24,6 +24,7 @@ import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.PublicKeySign;
+import com.google.crypto.tink.jwt.JwtConfig2026;
 import com.google.crypto.tink.jwt.JwtInvalidException;
 import com.google.crypto.tink.jwt.JwtPublicKeySign;
 import com.google.crypto.tink.jwt.JwtPublicKeyVerify;
@@ -82,7 +83,9 @@ public class JwtRsaSsaPssPublicKeySignTest {
       // We do not use assume because Theories expects to find something which is not skipped.
       return;
     }
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), JwtConfig2026.get());
     JwtRsaSsaPssPrivateKey key = (JwtRsaSsaPssPrivateKey) handle.getAt(0).getKey();
     JwtPublicKeySign signer = JwtRsaSsaPssPublicKeySign.create(key);
     JwtPublicKeyVerify verifier = JwtRsaSsaPssPublicKeyVerify.create(key.getPublicKey());
@@ -117,13 +120,14 @@ public class JwtRsaSsaPssPublicKeySignTest {
       return;
     }
     KeyTemplate template = KeyTemplates.get(templateName);
-    KeysetHandle handle = KeysetHandle.generateNew(template);
+    KeysetHandle handle = KeysetHandle.generateNew(template.toParameters(), JwtConfig2026.get());
     JwtRsaSsaPssPrivateKey key = (JwtRsaSsaPssPrivateKey) handle.getAt(0).getKey();
     JwtPublicKeySign signer = JwtRsaSsaPssPublicKeySign.create(key);
     RawJwt rawToken = RawJwt.newBuilder().setJwtId("id123").withoutExpiration().build();
     String signedCompact = signer.signAndEncode(rawToken);
 
-    KeysetHandle otherHandle = KeysetHandle.generateNew(template);
+    KeysetHandle otherHandle =
+        KeysetHandle.generateNew(template.toParameters(), JwtConfig2026.get());
     JwtRsaSsaPssPrivateKey otherKey = (JwtRsaSsaPssPrivateKey) otherHandle.getAt(0).getKey();
     JwtPublicKeyVerify otherVerifier = JwtRsaSsaPssPublicKeyVerify.create(otherKey.getPublicKey());
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
@@ -141,7 +145,9 @@ public class JwtRsaSsaPssPublicKeySignTest {
       // We do not use assume because Theories expects to find something which is not skipped.
       return;
     }
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), JwtConfig2026.get());
     JwtRsaSsaPssPrivateKey key = (JwtRsaSsaPssPrivateKey) handle.getAt(0).getKey();
     JwtPublicKeySign signer = JwtRsaSsaPssPublicKeySign.create(key);
     JwtPublicKeyVerify verifier = JwtRsaSsaPssPublicKeyVerify.create(key.getPublicKey());
@@ -168,7 +174,9 @@ public class JwtRsaSsaPssPublicKeySignTest {
       // We do not use assume because Theories expects to find something which is not skipped.
       return;
     }
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), JwtConfig2026.get());
     JwtRsaSsaPssPrivateKey key = (JwtRsaSsaPssPrivateKey) handle.getAt(0).getKey();
     JwtPublicKeySign signer = JwtRsaSsaPssPublicKeySign.create(key);
     JwtPublicKeyVerify verifier = JwtRsaSsaPssPublicKeyVerify.create(key.getPublicKey());
@@ -200,7 +208,7 @@ public class JwtRsaSsaPssPublicKeySignTest {
   public void createSignVerify_withDifferentHeaders() throws Exception {
     assumeFalse(TestUtil.isTsan()); // creating keys is too slow in Tsan.
     KeyTemplate template = KeyTemplates.get("JWT_PS256_2048_F4_RAW");
-    KeysetHandle handle = KeysetHandle.generateNew(template);
+    KeysetHandle handle = KeysetHandle.generateNew(template.toParameters(), JwtConfig2026.get());
     JwtRsaSsaPssPrivateKey key = (JwtRsaSsaPssPrivateKey) handle.getAt(0).getKey();
     RsaSsaPssParameters nonJwtParameters =
         RsaSsaPssParameters.builder()
@@ -278,7 +286,7 @@ public class JwtRsaSsaPssPublicKeySignTest {
   public void createSignVerifyTink_withDifferentHeaders() throws Exception {
     assumeFalse(TestUtil.isTsan()); // creating keys is too slow in Tsan.
     KeyTemplate template = KeyTemplates.get("JWT_PS256_2048_F4");
-    KeysetHandle handle = KeysetHandle.generateNew(template);
+    KeysetHandle handle = KeysetHandle.generateNew(template.toParameters(), JwtConfig2026.get());
 
     JwtRsaSsaPssPrivateKey key = (JwtRsaSsaPssPrivateKey) handle.getAt(0).getKey();
     RsaSsaPssParameters nonJwtParameters =
@@ -391,7 +399,8 @@ public class JwtRsaSsaPssPublicKeySignTest {
   public void signAndVerifyWithCustomKid() throws Exception {
     assumeFalse(TestUtil.isTsan()); // KeysetHandle.generateNew is too slow in Tsan.
     KeyTemplate template = KeyTemplates.get("JWT_PS256_2048_F4_RAW");
-    KeysetHandle handleWithoutKid = KeysetHandle.generateNew(template);
+    KeysetHandle handleWithoutKid =
+        KeysetHandle.generateNew(template.toParameters(), JwtConfig2026.get());
     KeysetHandle handleWithKid =
         withCustomKid(handleWithoutKid, "Lorem ipsum dolor sit amet, consectetur adipiscing elit");
 
@@ -434,7 +443,8 @@ public class JwtRsaSsaPssPublicKeySignTest {
     assumeFalse(TestUtil.isTsan()); // KeysetHandle.generateNew is too slow in Tsan.
 
     KeyTemplate template = KeyTemplates.get("JWT_PS256_2048_F4_RAW");
-    KeysetHandle handleWithoutKid = KeysetHandle.generateNew(template);
+    KeysetHandle handleWithoutKid =
+        KeysetHandle.generateNew(template.toParameters(), JwtConfig2026.get());
     KeysetHandle handleWithKid = withCustomKid(handleWithoutKid, "kid");
     KeysetHandle handleWithWrongKid = withCustomKid(handleWithoutKid, "wrong kid");
 
