@@ -21,6 +21,7 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.config.TinkFips;
 import java.security.GeneralSecurityException;
 import org.junit.Assume;
@@ -38,8 +39,15 @@ public class StreamingAeadConfigTest {
 
     StreamingAeadConfig.register();
 
-    assertThat(KeysetHandle.generateNew(KeyTemplates.get("AES128_GCM_HKDF_4KB"))).isNotNull();
-    assertThat(KeysetHandle.generateNew(KeyTemplates.get("AES128_CTR_HMAC_SHA256_4KB")))
+    assertThat(
+            KeysetHandle.generateNew(
+                KeyTemplates.get("AES128_GCM_HKDF_4KB").toParameters(),
+                RegistryConfiguration.get()))
+        .isNotNull();
+    assertThat(
+            KeysetHandle.generateNew(
+                KeyTemplates.get("AES128_CTR_HMAC_SHA256_4KB").toParameters(),
+                RegistryConfiguration.get()))
         .isNotNull();
   }
 
@@ -51,9 +59,15 @@ public class StreamingAeadConfigTest {
 
     assertThrows(
         GeneralSecurityException.class,
-        () -> KeysetHandle.generateNew(KeyTemplates.get("AES128_GCM_HKDF_4KB")));
+        () ->
+            KeysetHandle.generateNew(
+                KeyTemplates.get("AES128_GCM_HKDF_4KB").toParameters(),
+                RegistryConfiguration.get()));
     assertThrows(
         GeneralSecurityException.class,
-        () -> KeysetHandle.generateNew(KeyTemplates.get("AES128_CTR_HMAC_SHA256_4KB")));
+        () ->
+            KeysetHandle.generateNew(
+                KeyTemplates.get("AES128_CTR_HMAC_SHA256_4KB").toParameters(),
+                RegistryConfiguration.get()));
   }
 }

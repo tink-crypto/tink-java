@@ -87,7 +87,7 @@ public class AesGcmHkdfStreamingKeyManagerTest {
   @Test
   public void getPrimitive_works() throws Exception {
     Parameters parameters = AesGcmHkdfStreamingKeyManager.aes128GcmHkdf4KBTemplate().toParameters();
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     StreamingAead streamingAead =
         handle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
     StreamingAead directAead =
@@ -102,7 +102,8 @@ public class AesGcmHkdfStreamingKeyManagerTest {
   public void testSkip() throws Exception {
     KeysetHandle handle =
         KeysetHandle.generateNew(
-            AesGcmHkdfStreamingKeyManager.aes128GcmHkdf4KBTemplate().toParameters());
+            AesGcmHkdfStreamingKeyManager.aes128GcmHkdf4KBTemplate().toParameters(),
+            RegistryConfiguration.get());
     StreamingAead streamingAead =
         handle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
     int offset = 0;
@@ -120,7 +121,7 @@ public class AesGcmHkdfStreamingKeyManagerTest {
     // Calls newKey multiple times and make sure that they generate different keys.
     int numTests = 100;
     for (int i = 0; i < numTests; i++) {
-      KeysetHandle handle = KeysetHandle.generateNew(parameters);
+      KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
       com.google.crypto.tink.streamingaead.AesGcmHkdfStreamingKey key =
           (com.google.crypto.tink.streamingaead.AesGcmHkdfStreamingKey) handle.getAt(0).getKey();
       keys.add(Hex.encode(key.getInitialKeyMaterial().toByteArray(InsecureSecretKeyAccess.get())));
@@ -189,7 +190,9 @@ public class AesGcmHkdfStreamingKeyManagerTest {
 
   @Theory
   public void testTemplates(@FromDataPoints("templateNames") String templateName) throws Exception {
-    KeysetHandle h = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle h =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
         .isEqualTo(KeyTemplates.get(templateName).toParameters());
@@ -294,11 +297,13 @@ public class AesGcmHkdfStreamingKeyManagerTest {
   @Test
   public void serializeAndParse_works() throws Exception {
     Parameters parameters = AesGcmHkdfStreamingKeyManager.aes128GcmHkdf4KBTemplate().toParameters();
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     byte[] serializedHandle =
-        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     KeysetHandle parsedHandle =
-        TinkProtoKeysetFormat.parseKeyset(serializedHandle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            serializedHandle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     assertThat(parsedHandle.equalsKeyset(handle)).isTrue();
   }
 

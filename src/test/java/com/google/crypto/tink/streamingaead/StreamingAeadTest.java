@@ -74,7 +74,7 @@ public final class StreamingAeadTest {
     }
   }
 
-  /** Reads all bytes from a {@code readableChannel} of size {@code bytesToRead}.*/
+  /** Reads all bytes from a {@code readableChannel} of size {@code bytesToRead}. */
   private byte[] readAllFromChannel(ReadableByteChannel readableChannel, int bytesToRead)
       throws IOException {
     ByteBuffer buffer = ByteBuffer.allocate(bytesToRead);
@@ -107,7 +107,9 @@ public final class StreamingAeadTest {
   @Theory
   public void createEncryptDecrypt(@FromDataPoints("templates") String templateName)
       throws Exception {
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), StreamingAeadConfig2026.get());
     StreamingAead streamingAead =
         handle.getPrimitive(StreamingAeadConfig2026.get(), StreamingAead.class);
 

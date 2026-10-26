@@ -18,6 +18,7 @@ package com.google.crypto.tink.streamingaead;
 
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.StreamingAead;
 import com.google.crypto.tink.testing.StreamingTestUtil;
 import org.junit.Test;
@@ -39,7 +40,10 @@ public class StreamingAeadFactoryWithoutWrapperRegisteredTest {
       throws Exception {
     // Only register AesCtrHmacStreamingKeyManager, but not the StreamingAeadWrapper.
     AesCtrHmacStreamingKeyManager.register(/* newKeyAllowed = */ true);
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get("AES128_CTR_HMAC_SHA256_4KB"));
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get("AES128_CTR_HMAC_SHA256_4KB").toParameters(),
+            RegistryConfiguration.get());
 
     StreamingAead streamingAead = StreamingAeadFactory.getPrimitive(handle);
 

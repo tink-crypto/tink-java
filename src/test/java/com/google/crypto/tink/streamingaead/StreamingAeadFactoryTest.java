@@ -38,7 +38,10 @@ public class StreamingAeadFactoryTest {
   @Test
   @SuppressWarnings("deprecation") // This is a test that the deprecated function works.
   public void deprecatedMacFactoryGetPrimitive_sameAs_keysetHandleGetPrimitive() throws Exception {
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get("AES128_CTR_HMAC_SHA256_4KB"));
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get("AES128_CTR_HMAC_SHA256_4KB").toParameters(),
+            RegistryConfiguration.get());
 
     StreamingAead streamingAead =
         handle.getPrimitive(RegistryConfiguration.get(), StreamingAead.class);
