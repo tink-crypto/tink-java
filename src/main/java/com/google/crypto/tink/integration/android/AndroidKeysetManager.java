@@ -25,6 +25,7 @@ import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.Nullable;
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.BinaryKeysetReader;
+import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeysetHandle;
@@ -134,6 +135,7 @@ public final class AndroidKeysetManager {
   private static final String TAG = AndroidKeysetManager.class.getSimpleName();
   private final KeysetWriter writer;
   private final Aead masterAead;
+  private final Configuration configuration;
 
   @GuardedBy("this")
   private KeysetManager keysetManager;
@@ -142,6 +144,7 @@ public final class AndroidKeysetManager {
     writer = new SharedPrefKeysetWriter(builder.context, builder.keysetName, builder.prefFileName);
     masterAead = builder.masterAead;
     keysetManager = builder.keysetManager;
+    configuration = builder.configuration;
   }
 
   /**
@@ -161,6 +164,7 @@ public final class AndroidKeysetManager {
     // Otherwise, when build() is called we convert "keyTemplateProto" to keyTemplate first.
     private KeyTemplate keyTemplate = null;
     private com.google.crypto.tink.proto.KeyTemplate keyTemplateProto = null;
+    private Configuration configuration = null;
 
     @GuardedBy("this")
     private KeysetManager keysetManager;
@@ -223,6 +227,16 @@ public final class AndroidKeysetManager {
     }
 
     /**
+     * Sets the {@link Configuration} to use. If not called, defaults to {@link
+     * RegistryConfiguration}.
+     */
+    @CanIgnoreReturnValue
+    public Builder setConfiguration(Configuration configuration) {
+      this.configuration = configuration;
+      return this;
+    }
+
+    /**
      * Does not use Android Keystore which might not work well in some phones.
      *
      * <p><b>Warning:</b> When Android Keystore is disabled, keys are stored in cleartext. This
@@ -272,7 +286,10 @@ public final class AndroidKeysetManager {
         throws GeneralSecurityException, IOException {
       return KeysetManager.withKeysetHandle(
           LegacyKeysetSerialization.parseKeyset(
-              BinaryKeysetReader.withBytes(serializedKeyset), InsecureSecretKeyAccess.get()));
+              BinaryKeysetReader.withBytes(serializedKeyset),
+              InsecureSecretKeyAccess.get(),
+              configuration),
+          configuration);
     }
 
     /**
@@ -286,11 +303,14 @@ public final class AndroidKeysetManager {
       if (keysetName == null) {
         throw new IllegalArgumentException("keysetName cannot be null");
       }
+      if (configuration == null) {
+        configuration = RegistryConfiguration.get();
+      }
       if (keyTemplateProto != null && keyTemplate == null) {
         keyTemplate =
             KeyTemplate.createFrom(
                 TinkProtoParametersFormat.parse(
-                    keyTemplateProto.toByteArray(), RegistryConfiguration.get()));
+                    keyTemplateProto.toByteArray(), configuration));
       }
       // readKeysetFromPrefs(), readOrGenerateNewMasterKey() and generateNewKeyset() involve shared
       // pref filesystem operations. To control access to this global state in multi-threaded
@@ -357,10 +377,11 @@ public final class AndroidKeysetManager {
         throw new GeneralSecurityException("cannot read or generate keyset");
       }
 
-      KeysetHandle keysetHandle = KeysetHandle.generateNew(keyTemplate);
+      KeysetHandle keysetHandle =
+          KeysetHandle.generateNew(keyTemplate.toParameters(), configuration);
       KeysetWriter writer = new SharedPrefKeysetWriter(context, keysetName, prefFileName);
-      write(keysetHandle, writer, masterAead);
-      return KeysetManager.withKeysetHandle(keysetHandle);
+      write(keysetHandle, writer, masterAead, configuration);
+      return KeysetManager.withKeysetHandle(keysetHandle, configuration);
     }
 
     @SuppressWarnings("UnusedException")
@@ -386,7 +407,11 @@ public final class AndroidKeysetManager {
         byte[] emptyAssociatedData = new byte[0];
         return KeysetManager.withKeysetHandle(
             LegacyKeysetSerialization.parseEncryptedKeyset(
-                BinaryKeysetReader.withBytes(serializedKeyset), masterAead, emptyAssociatedData));
+                BinaryKeysetReader.withBytes(serializedKeyset),
+                masterAead,
+                emptyAssociatedData,
+                configuration),
+            configuration);
       } catch (IOException | GeneralSecurityException ex) {
         // Attempt to read the keyset in cleartext.
         // This edge case may happen when either
@@ -428,7 +453,7 @@ public final class AndroidKeysetManager {
   public synchronized AndroidKeysetManager rotate(
       com.google.crypto.tink.proto.KeyTemplate keyTemplate) throws GeneralSecurityException {
     keysetManager = keysetManager.rotate(keyTemplate);
-    write(keysetManager.getKeysetHandle(), writer, masterAead);
+    write(keysetManager.getKeysetHandle(), writer, masterAead, configuration);
     return this;
   }
 
@@ -443,7 +468,7 @@ public final class AndroidKeysetManager {
   public synchronized AndroidKeysetManager add(com.google.crypto.tink.proto.KeyTemplate keyTemplate)
       throws GeneralSecurityException {
     keysetManager = keysetManager.add(keyTemplate);
-    write(keysetManager.getKeysetHandle(), writer, masterAead);
+    write(keysetManager.getKeysetHandle(), writer, masterAead, configuration);
     return this;
   }
 
@@ -458,7 +483,7 @@ public final class AndroidKeysetManager {
   public synchronized AndroidKeysetManager add(KeyTemplate keyTemplate)
       throws GeneralSecurityException {
     keysetManager = keysetManager.add(keyTemplate);
-    write(keysetManager.getKeysetHandle(), writer, masterAead);
+    write(keysetManager.getKeysetHandle(), writer, masterAead, configuration);
     return this;
   }
 
@@ -470,7 +495,7 @@ public final class AndroidKeysetManager {
   @CanIgnoreReturnValue
   public synchronized AndroidKeysetManager setPrimary(int keyId) throws GeneralSecurityException {
     keysetManager = keysetManager.setPrimary(keyId);
-    write(keysetManager.getKeysetHandle(), writer, masterAead);
+    write(keysetManager.getKeysetHandle(), writer, masterAead, configuration);
     return this;
   }
 
@@ -496,7 +521,7 @@ public final class AndroidKeysetManager {
   @CanIgnoreReturnValue
   public synchronized AndroidKeysetManager enable(int keyId) throws GeneralSecurityException {
     keysetManager = keysetManager.enable(keyId);
-    write(keysetManager.getKeysetHandle(), writer, masterAead);
+    write(keysetManager.getKeysetHandle(), writer, masterAead, configuration);
     return this;
   }
 
@@ -508,7 +533,7 @@ public final class AndroidKeysetManager {
   @CanIgnoreReturnValue
   public synchronized AndroidKeysetManager disable(int keyId) throws GeneralSecurityException {
     keysetManager = keysetManager.disable(keyId);
-    write(keysetManager.getKeysetHandle(), writer, masterAead);
+    write(keysetManager.getKeysetHandle(), writer, masterAead, configuration);
     return this;
   }
 
@@ -520,7 +545,7 @@ public final class AndroidKeysetManager {
   @CanIgnoreReturnValue
   public synchronized AndroidKeysetManager delete(int keyId) throws GeneralSecurityException {
     keysetManager = keysetManager.delete(keyId);
-    write(keysetManager.getKeysetHandle(), writer, masterAead);
+    write(keysetManager.getKeysetHandle(), writer, masterAead, configuration);
     return this;
   }
 
@@ -532,7 +557,7 @@ public final class AndroidKeysetManager {
   @CanIgnoreReturnValue
   public synchronized AndroidKeysetManager destroy(int keyId) throws GeneralSecurityException {
     keysetManager = keysetManager.destroy(keyId);
-    write(keysetManager.getKeysetHandle(), writer, masterAead);
+    write(keysetManager.getKeysetHandle(), writer, masterAead, configuration);
     return this;
   }
 
@@ -541,14 +566,16 @@ public final class AndroidKeysetManager {
     return masterAead != null;
   }
 
-  private static void write(KeysetHandle handle, KeysetWriter writer, Aead masterAead)
+  private static void write(
+      KeysetHandle handle, KeysetWriter writer, Aead masterAead, Configuration configuration)
       throws GeneralSecurityException {
     try {
       if (masterAead != null) {
         LegacyKeysetSerialization.serializeEncryptedKeyset(
-            handle, writer, masterAead, /* associatedData= */ new byte[0]);
+            handle, writer, masterAead, /* associatedData= */ new byte[0], configuration);
       } else {
-        LegacyKeysetSerialization.serializeKeyset(handle, writer, InsecureSecretKeyAccess.get());
+        LegacyKeysetSerialization.serializeKeyset(
+            handle, writer, InsecureSecretKeyAccess.get(), configuration);
       }
     } catch (IOException e) {
       throw new GeneralSecurityException(e);
