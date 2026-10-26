@@ -80,7 +80,11 @@ public class AesGcmSivKeyManagerTest {
             .setKeySizeBytes(32)
             .setVariant(AesGcmSivParameters.Variant.TINK)
             .build();
-    assertThat(KeysetHandle.generateNew(validParameters).getAt(0).getKey().getParameters())
+    assertThat(
+            KeysetHandle.generateNew(validParameters, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
         .isEqualTo(validParameters);
   }
 
@@ -157,16 +161,36 @@ public class AesGcmSivKeyManagerTest {
   @Test
   public void testKeyTemplatesWork() throws Exception {
     Parameters p = AesGcmSivKeyManager.aes128GcmSivTemplate().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
 
     p = AesGcmSivKeyManager.rawAes128GcmSivTemplate().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
 
     p = AesGcmSivKeyManager.aes256GcmSivTemplate().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
 
     p = AesGcmSivKeyManager.rawAes256GcmSivTemplate().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
   }
 
   @DataPoints("templateNames")
@@ -175,7 +199,9 @@ public class AesGcmSivKeyManagerTest {
 
   @Theory
   public void testTemplates(@FromDataPoints("templateNames") String templateName) throws Exception {
-    KeysetHandle h = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle h =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
         .isEqualTo(KeyTemplates.get(templateName).toParameters());

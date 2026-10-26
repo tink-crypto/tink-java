@@ -57,7 +57,9 @@ public class KmsAeadKeyManagerTest {
   public void testKmsAead_success() throws Exception {
     String keyUri = FakeKmsClient.createFakeKeyUri();
     KeysetHandle keysetHandle =
-        KeysetHandle.generateNew(KmsAeadKeyManager.createKeyTemplate(keyUri));
+        KeysetHandle.generateNew(
+            KmsAeadKeyManager.createKeyTemplate(keyUri).toParameters(),
+            RegistryConfiguration.get());
     TestUtil.runBasicAeadTests(keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class));
   }
 
@@ -134,7 +136,9 @@ public class KmsAeadKeyManagerTest {
     // Create Aead primitive using createKeyTemplate, generateNew, and getPrimitive.
     // This requires that a KmsClient that supports keyUri is registered.
     KeysetHandle keysetHandle =
-        KeysetHandle.generateNew(KmsAeadKeyManager.createKeyTemplate(keyUri));
+        KeysetHandle.generateNew(
+            KmsAeadKeyManager.createKeyTemplate(keyUri).toParameters(),
+            RegistryConfiguration.get());
     Aead aead1 = keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     // Create Aead using FakeKmsClient.getAead.
@@ -159,8 +163,8 @@ public class KmsAeadKeyManagerTest {
   @Test
   public void generateNewFromParams_works() throws Exception {
     LegacyKmsAeadParameters parameters = LegacyKmsAeadParameters.create("some example KEK URI");
-    KeysetHandle keysetHandle1 = KeysetHandle.generateNew(parameters);
-    KeysetHandle keysetHandle2 = KeysetHandle.generateNew(parameters);
+    KeysetHandle keysetHandle1 = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
+    KeysetHandle keysetHandle2 = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     // For LegacyKmsAeadParameters we expect both keysets to be the same -- however, the ID of the
     // keys may differ.
     assertThat(keysetHandle1.getAt(0).getKey().equalsKey(keysetHandle2.getAt(0).getKey())).isTrue();
@@ -169,9 +173,12 @@ public class KmsAeadKeyManagerTest {
   @Test
   public void serializeAndParse_works() throws Exception {
     LegacyKmsAeadParameters parameters = LegacyKmsAeadParameters.create("some example KEK URI");
-    KeysetHandle keysetHandle1 = KeysetHandle.generateNew(parameters);
-    byte[] serialized = TinkProtoKeysetFormat.serializeKeysetWithoutSecret(keysetHandle1);
-    KeysetHandle keysetHandle2 = TinkProtoKeysetFormat.parseKeysetWithoutSecret(serialized);
+    KeysetHandle keysetHandle1 = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
+    byte[] serialized =
+        TinkProtoKeysetFormat.serializeKeysetWithoutSecret(
+            keysetHandle1, RegistryConfiguration.get());
+    KeysetHandle keysetHandle2 =
+        TinkProtoKeysetFormat.parseKeysetWithoutSecret(serialized, RegistryConfiguration.get());
     assertThat(keysetHandle1.equalsKeyset(keysetHandle2)).isTrue();
   }
 }

@@ -243,7 +243,9 @@ public final class KmsEnvelopeAeadTest {
     KmsClient kmsClient1 = new FakeKmsClient(kekUri);
     KmsClients.add(kmsClient1);
     KeysetHandle handle1 =
-        KeysetHandle.generateNew(KmsEnvelopeAeadKeyManager.createKeyTemplate(kekUri, dekTemplate));
+        KeysetHandle.generateNew(
+            KmsEnvelopeAeadKeyManager.createKeyTemplate(kekUri, dekTemplate).toParameters(),
+            RegistryConfiguration.get());
     Aead aead1 = handle1.getPrimitive(RegistryConfiguration.get(), Aead.class);
 
     // Get Aead object from the kmsClient, and create the envelope AEAD without the registry.

@@ -68,7 +68,9 @@ public final class AeadTest {
   @Theory
   public void createEncryptDecrypt(@FromDataPoints("templates") String templateName)
       throws Exception {
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), AeadConfig2026.get());
     Aead aead = handle.getPrimitive(AeadConfig2026.get(), Aead.class);
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "associatedData".getBytes(UTF_8);
@@ -76,7 +78,9 @@ public final class AeadTest {
     byte[] decrypted = aead.decrypt(ciphertext, associatedData);
     assertThat(decrypted).isEqualTo(plaintext);
 
-    KeysetHandle otherHandle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle otherHandle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), AeadConfig2026.get());
     Aead otherAead = otherHandle.getPrimitive(AeadConfig2026.get(), Aead.class);
     assertThrows(
         GeneralSecurityException.class, () -> otherAead.decrypt(ciphertext, associatedData));

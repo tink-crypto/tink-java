@@ -49,7 +49,11 @@ public final class AesGcmSivKeyManagerWithoutConscryptTest {
             .setKeySizeBytes(32)
             .setVariant(AesGcmSivParameters.Variant.TINK)
             .build();
-    assertThat(KeysetHandle.generateNew(validParameters).getAt(0).getKey().getParameters())
+    assertThat(
+            KeysetHandle.generateNew(validParameters, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
         .isEqualTo(validParameters);
   }
 

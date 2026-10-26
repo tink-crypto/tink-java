@@ -71,10 +71,20 @@ public class ChaCha20Poly1305KeyManagerTest {
   @Test
   public void testKeyTemplatesWork() throws Exception {
     Parameters p = ChaCha20Poly1305KeyManager.chaCha20Poly1305Template().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
 
     p = ChaCha20Poly1305KeyManager.rawChaCha20Poly1305Template().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
   }
 
   @DataPoints("templateNames")
@@ -83,7 +93,9 @@ public class ChaCha20Poly1305KeyManagerTest {
 
   @Theory
   public void testTemplates(@FromDataPoints("templateNames") String templateName) throws Exception {
-    KeysetHandle h = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle h =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
         .isEqualTo(KeyTemplates.get(templateName).toParameters());
@@ -92,9 +104,14 @@ public class ChaCha20Poly1305KeyManagerTest {
   @Test
   public void callingCreateTwiceGivesDifferentKeys() throws Exception {
     Parameters p = ChaCha20Poly1305KeyManager.chaCha20Poly1305Template().toParameters();
-    Key key = KeysetHandle.generateNew(p).getAt(0).getKey();
+    Key key = KeysetHandle.generateNew(p, RegistryConfiguration.get()).getAt(0).getKey();
     for (int i = 0; i < 1000; ++i) {
-      assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().equalsKey(key)).isFalse();
+      assertThat(
+              KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                  .getAt(0)
+                  .getKey()
+                  .equalsKey(key))
+          .isFalse();
     }
   }
 

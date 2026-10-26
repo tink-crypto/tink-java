@@ -198,10 +198,20 @@ public class AesCtrHmacAeadKeyManagerTest {
   @Test
   public void testKeyTemplatesWork() throws Exception {
     Parameters p = AesCtrHmacAeadKeyManager.aes256CtrHmacSha256Template().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
 
     p = AesCtrHmacAeadKeyManager.aes128CtrHmacSha256Template().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
   }
 
   @DataPoints("templateNames")
@@ -215,7 +225,9 @@ public class AesCtrHmacAeadKeyManagerTest {
 
   @Theory
   public void testTemplates(@FromDataPoints("templateNames") String templateName) throws Exception {
-    KeysetHandle h = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle h =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
         .isEqualTo(KeyTemplates.get(templateName).toParameters());
@@ -224,9 +236,14 @@ public class AesCtrHmacAeadKeyManagerTest {
   @Test
   public void callingCreateTwiceGivesDifferentKeys() throws Exception {
     Parameters p = AesCtrHmacAeadKeyManager.aes256CtrHmacSha256Template().toParameters();
-    Key key = KeysetHandle.generateNew(p).getAt(0).getKey();
+    Key key = KeysetHandle.generateNew(p, RegistryConfiguration.get()).getAt(0).getKey();
     for (int i = 0; i < 1000; ++i) {
-      assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().equalsKey(key)).isFalse();
+      assertThat(
+              KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                  .getAt(0)
+                  .getKey()
+                  .equalsKey(key))
+          .isFalse();
     }
   }
 
@@ -397,7 +414,8 @@ public class AesCtrHmacAeadKeyManagerTest {
             .setVariant(AesCtrHmacAeadParameters.Variant.TINK)
             .build();
     assertThrows(
-        GeneralSecurityException.class, () -> KeysetHandle.generateNew(rejectedParameters));
+        GeneralSecurityException.class,
+        () -> KeysetHandle.generateNew(rejectedParameters, RegistryConfiguration.get()));
   }
 
   @Test
@@ -430,12 +448,14 @@ public class AesCtrHmacAeadKeyManagerTest {
   @Test
   public void serializeAndParse_works() throws Exception {
     Parameters p = AesCtrHmacAeadKeyManager.aes256CtrHmacSha256Template().toParameters();
-    KeysetHandle handle = KeysetHandle.generateNew(p);
+    KeysetHandle handle = KeysetHandle.generateNew(p, RegistryConfiguration.get());
 
     byte[] serialized =
-        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     KeysetHandle parsed =
-        TinkProtoKeysetFormat.parseKeyset(serialized, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            serialized, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     assertThat(parsed.equalsKeyset(handle)).isTrue();
   }
 }

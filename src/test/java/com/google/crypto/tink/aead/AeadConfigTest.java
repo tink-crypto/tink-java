@@ -20,6 +20,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import java.security.GeneralSecurityException;
@@ -44,14 +45,26 @@ public class AeadConfigTest {
 
     AeadConfig.register();
 
-    assertNotNull(KeysetHandle.generateNew(PredefinedAeadParameters.AES128_CTR_HMAC_SHA256));
-    assertNotNull(KeysetHandle.generateNew(PredefinedAeadParameters.AES128_GCM));
-    assertNotNull(KeysetHandle.generateNew(PredefinedAeadParameters.AES128_EAX));
-    assertNotNull(KeysetHandle.generateNew(PredefinedAeadParameters.CHACHA20_POLY1305));
-    assertNotNull(KeysetHandle.generateNew(PredefinedAeadParameters.XCHACHA20_POLY1305));
-    assertNotNull(KeysetHandle.generateNew(PredefinedAeadParameters.XAES_256_GCM_192_BIT_NONCE));
     assertNotNull(
-        KeysetHandle.generateNew(PredefinedAeadParameters.XAES_256_GCM_160_BIT_NONCE_NO_PREFIX));
+        KeysetHandle.generateNew(
+            PredefinedAeadParameters.AES128_CTR_HMAC_SHA256, RegistryConfiguration.get()));
+    assertNotNull(
+        KeysetHandle.generateNew(PredefinedAeadParameters.AES128_GCM, RegistryConfiguration.get()));
+    assertNotNull(
+        KeysetHandle.generateNew(PredefinedAeadParameters.AES128_EAX, RegistryConfiguration.get()));
+    assertNotNull(
+        KeysetHandle.generateNew(
+            PredefinedAeadParameters.CHACHA20_POLY1305, RegistryConfiguration.get()));
+    assertNotNull(
+        KeysetHandle.generateNew(
+            PredefinedAeadParameters.XCHACHA20_POLY1305, RegistryConfiguration.get()));
+    assertNotNull(
+        KeysetHandle.generateNew(
+            PredefinedAeadParameters.XAES_256_GCM_192_BIT_NONCE, RegistryConfiguration.get()));
+    assertNotNull(
+        KeysetHandle.generateNew(
+            PredefinedAeadParameters.XAES_256_GCM_160_BIT_NONCE_NO_PREFIX,
+            RegistryConfiguration.get()));
   }
 
   @Test
@@ -61,8 +74,11 @@ public class AeadConfigTest {
 
     AeadConfig.register();
 
-    assertNotNull(KeysetHandle.generateNew(PredefinedAeadParameters.AES128_CTR_HMAC_SHA256));
-    assertNotNull(KeysetHandle.generateNew(PredefinedAeadParameters.AES128_GCM));
+    assertNotNull(
+        KeysetHandle.generateNew(
+            PredefinedAeadParameters.AES128_CTR_HMAC_SHA256, RegistryConfiguration.get()));
+    assertNotNull(
+        KeysetHandle.generateNew(PredefinedAeadParameters.AES128_GCM, RegistryConfiguration.get()));
   }
 
   @Test
@@ -74,21 +90,35 @@ public class AeadConfigTest {
 
     assertThrows(
         GeneralSecurityException.class,
-        () -> KeysetHandle.generateNew(PredefinedAeadParameters.AES128_EAX));
+        () ->
+            KeysetHandle.generateNew(
+                PredefinedAeadParameters.AES128_EAX, RegistryConfiguration.get()));
     assertThrows(
         GeneralSecurityException.class,
-        () -> KeysetHandle.generateNew(AesGcmSivParameters.builder().setKeySizeBytes(16).build()));
+        () ->
+            KeysetHandle.generateNew(
+                AesGcmSivParameters.builder().setKeySizeBytes(16).build(),
+                RegistryConfiguration.get()));
     assertThrows(
         GeneralSecurityException.class,
-        () -> KeysetHandle.generateNew(PredefinedAeadParameters.CHACHA20_POLY1305));
+        () ->
+            KeysetHandle.generateNew(
+                PredefinedAeadParameters.CHACHA20_POLY1305, RegistryConfiguration.get()));
     assertThrows(
         GeneralSecurityException.class,
-        () -> KeysetHandle.generateNew(PredefinedAeadParameters.XCHACHA20_POLY1305));
+        () ->
+            KeysetHandle.generateNew(
+                PredefinedAeadParameters.XCHACHA20_POLY1305, RegistryConfiguration.get()));
     assertThrows(
         GeneralSecurityException.class,
-        () -> KeysetHandle.generateNew(PredefinedAeadParameters.XAES_256_GCM_192_BIT_NONCE));
+        () ->
+            KeysetHandle.generateNew(
+                PredefinedAeadParameters.XAES_256_GCM_192_BIT_NONCE, RegistryConfiguration.get()));
     assertThrows(
         GeneralSecurityException.class,
-        () -> KeysetHandle.generateNew(PredefinedAeadParameters.X_AES_GCM_8_BYTE_SALT_NO_PREFIX));
+        () ->
+            KeysetHandle.generateNew(
+                PredefinedAeadParameters.X_AES_GCM_8_BYTE_SALT_NO_PREFIX,
+                RegistryConfiguration.get()));
   }
 }

@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.google.crypto.tink.Aead;
+import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyTemplate;
@@ -339,16 +340,36 @@ public class AesGcmKeyManagerTest {
   @Test
   public void testKeyTemplatesWork() throws Exception {
     Parameters p = AesGcmKeyManager.aes128GcmTemplate().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
 
     p = AesGcmKeyManager.rawAes128GcmTemplate().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
 
     p = AesGcmKeyManager.aes256GcmTemplate().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
 
     p = AesGcmKeyManager.rawAes256GcmTemplate().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
   }
 
   @DataPoints("templateNames")
@@ -359,7 +380,9 @@ public class AesGcmKeyManagerTest {
 
   @Theory
   public void testTemplates(@FromDataPoints("templateNames") String templateName) throws Exception {
-    KeysetHandle h = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle h =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
         .isEqualTo(KeyTemplates.get(templateName).toParameters());
@@ -393,9 +416,14 @@ public class AesGcmKeyManagerTest {
   @Test
   public void callingCreateTwiceGivesDifferentKeys() throws Exception {
     Parameters p = AesGcmKeyManager.aes128GcmTemplate().toParameters();
-    Key key = KeysetHandle.generateNew(p).getAt(0).getKey();
+    Key key = KeysetHandle.generateNew(p, RegistryConfiguration.get()).getAt(0).getKey();
     for (int i = 0; i < 1000; ++i) {
-      assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().equalsKey(key)).isFalse();
+      assertThat(
+              KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                  .getAt(0)
+                  .getKey()
+                  .equalsKey(key))
+          .isFalse();
     }
   }
 
@@ -409,7 +437,8 @@ public class AesGcmKeyManagerTest {
             .setTagSizeBytes(16)
             .setKeySizeBytes(24)
             .build();
-    assertThrows(GeneralSecurityException.class, () -> KeysetHandle.generateNew(p));
+    Configuration configuration = RegistryConfiguration.get();
+    assertThrows(GeneralSecurityException.class, () -> KeysetHandle.generateNew(p, configuration));
   }
 
   @Test

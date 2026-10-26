@@ -42,7 +42,9 @@ public class AeadFactoryTest {
   @Test
   @SuppressWarnings("deprecation") // This is a test that the deprecated function works.
   public void deprecatedAeadFactoryGetPrimitive_sameAs_keysetHandleGetPrimitive() throws Exception {
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get("AES128_CTR_HMAC_SHA256"));
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get("AES128_CTR_HMAC_SHA256").toParameters(), RegistryConfiguration.get());
 
     Aead aead = handle.getPrimitive(RegistryConfiguration.get(), Aead.class);
     Aead factoryAead = AeadFactory.getPrimitive(handle);
