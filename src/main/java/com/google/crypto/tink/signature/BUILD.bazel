@@ -1122,7 +1122,6 @@ android_library(
         "//src/main/java/com/google/crypto/tink:low_level_crypto_caller-android",
         "//src/main/java/com/google/crypto/tink:public_key_sign-android",
         "//src/main/java/com/google/crypto/tink:public_key_verify-android",
-        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util-android",
         "//src/main/java/com/google/crypto/tink/internal:proto_based_configuration_builder-android",
         "//src/main/java/com/google/crypto/tink/signature/internal:composite_ml_dsa_key_creator-android",
         "//src/main/java/com/google/crypto/tink/signature/internal:ecdsa_key_creator-android",
@@ -1152,7 +1151,6 @@ android_library(
         "//src/main/java/com/google/crypto/tink/signature/subtle:slh_dsa_proto_serialization-android",
         "//src/main/java/com/google/crypto/tink/signature/subtle:slh_dsa_signer-android",
         "//src/main/java/com/google/crypto/tink/signature/subtle:slh_dsa_verifier-android",
-        "@maven//:com_google_code_findbugs_jsr305",
     ],
 )
 
@@ -1187,7 +1185,6 @@ java_library(
         "//src/main/java/com/google/crypto/tink:low_level_crypto_caller",
         "//src/main/java/com/google/crypto/tink:public_key_sign",
         "//src/main/java/com/google/crypto/tink:public_key_verify",
-        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
         "//src/main/java/com/google/crypto/tink/internal:proto_based_configuration_builder",
         "//src/main/java/com/google/crypto/tink/signature/internal:composite_ml_dsa_key_creator",
         "//src/main/java/com/google/crypto/tink/signature/internal:ecdsa_key_creator",
@@ -1217,7 +1214,6 @@ java_library(
         "//src/main/java/com/google/crypto/tink/signature/subtle:slh_dsa_proto_serialization",
         "//src/main/java/com/google/crypto/tink/signature/subtle:slh_dsa_signer",
         "//src/main/java/com/google/crypto/tink/signature/subtle:slh_dsa_verifier",
-        "@maven//:com_google_code_findbugs_jsr305",
     ],
 )
 
