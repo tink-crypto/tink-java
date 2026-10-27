@@ -110,7 +110,9 @@ public class JwtPublicKeySignVerifyWrappersTest {
   @Test
   public void test_wrapLegacy_throws() throws Exception {
     setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get("JWT_ES256_RAW"));
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get("JWT_ES256_RAW").toParameters(), RegistryConfiguration.get());
     Keyset keyset =
         Keyset.parseFrom(
             TinkProtoKeysetFormat.serializeKeyset(
@@ -138,7 +140,8 @@ public class JwtPublicKeySignVerifyWrappersTest {
   public void test_wrapSingleTinkKey_works() throws Exception {
     KeyTemplate tinkTemplate = KeyTemplates.get("JWT_ES256");
 
-    KeysetHandle handle = KeysetHandle.generateNew(tinkTemplate);
+    KeysetHandle handle =
+        KeysetHandle.generateNew(tinkTemplate.toParameters(), RegistryConfiguration.get());
 
     JwtPublicKeySign signer =
         handle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
@@ -156,7 +159,8 @@ public class JwtPublicKeySignVerifyWrappersTest {
   @Test
   public void test_wrapSingleRawKey_works() throws Exception {
     KeyTemplate template = KeyTemplates.get("JWT_ES256_RAW");
-    KeysetHandle handle = KeysetHandle.generateNew(template);
+    KeysetHandle handle =
+        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
 
     JwtPublicKeySign signer =
         handle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
@@ -307,14 +311,16 @@ public class JwtPublicKeySignVerifyWrappersTest {
       return;
     }
     KeyTemplate template = KeyTemplates.get(templateName);
-    KeysetHandle keysetHandle = KeysetHandle.generateNew(template);
+    KeysetHandle keysetHandle =
+        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
     JwtPublicKeySign jwtSign =
         keysetHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     RawJwt rawJwt = RawJwt.newBuilder().withoutExpiration().build();
     String compact = jwtSign.signAndEncode(rawJwt);
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
 
-    KeysetHandle wrongKeysetHandle = KeysetHandle.generateNew(template);
+    KeysetHandle wrongKeysetHandle =
+        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
     KeysetHandle wrongPublicKeysetHandle = wrongKeysetHandle.getPublicKeysetHandle();
 
     JwtPublicKeyVerify wrongJwtVerify =
@@ -326,7 +332,8 @@ public class JwtPublicKeySignVerifyWrappersTest {
   @Test
   public void wrongIssuer_throwsInvalidException() throws Exception {
     KeyTemplate template = KeyTemplates.get("JWT_ES256");
-    KeysetHandle keysetHandle = KeysetHandle.generateNew(template);
+    KeysetHandle keysetHandle =
+        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
     JwtPublicKeySign jwtSigner =
         keysetHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     KeysetHandle publicHandle = keysetHandle.getPublicKeysetHandle();
@@ -342,7 +349,8 @@ public class JwtPublicKeySignVerifyWrappersTest {
   @Test
   public void expiredCompact_throwsInvalidException() throws Exception {
     KeyTemplate template = KeyTemplates.get("JWT_ES256");
-    KeysetHandle keysetHandle = KeysetHandle.generateNew(template);
+    KeysetHandle keysetHandle =
+        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
     JwtPublicKeySign jwtSigner =
         keysetHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     KeysetHandle publicHandle = keysetHandle.getPublicKeysetHandle();
@@ -363,7 +371,8 @@ public class JwtPublicKeySignVerifyWrappersTest {
   @Test
   public void notYetValidCompact_throwsInvalidException() throws Exception {
     KeyTemplate template = KeyTemplates.get("JWT_ES256");
-    KeysetHandle keysetHandle = KeysetHandle.generateNew(template);
+    KeysetHandle keysetHandle =
+        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
     JwtPublicKeySign jwtSigner =
         keysetHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     KeysetHandle publicHandle = keysetHandle.getPublicKeysetHandle();

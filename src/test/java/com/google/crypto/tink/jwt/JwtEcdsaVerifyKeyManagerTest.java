@@ -48,7 +48,9 @@ public final class JwtEcdsaVerifyKeyManagerTest {
   @Test
   public void serializeAndDeserializeKeysets() throws Exception {
     KeyTemplate template = KeyTemplates.get("JWT_ES256_RAW");
-    KeysetHandle handle = KeysetHandle.generateNew(template).getPublicKeysetHandle();
+    KeysetHandle handle =
+        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get())
+            .getPublicKeysetHandle();
 
     byte[] serializedKeyset =
         TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle, RegistryConfiguration.get());

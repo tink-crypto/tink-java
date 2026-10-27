@@ -49,7 +49,9 @@ public final class JwtRsaSsaPssVerifyKeyManagerTest {
   @Test
   public void serializeAndDeserializeKeysets() throws Exception {
     KeyTemplate template = KeyTemplates.get("JWT_PS256_2048_F4");
-    KeysetHandle handle = KeysetHandle.generateNew(template).getPublicKeysetHandle();
+    KeysetHandle handle =
+        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get())
+            .getPublicKeysetHandle();
 
     byte[] serializedKeyset =
         TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle, RegistryConfiguration.get());

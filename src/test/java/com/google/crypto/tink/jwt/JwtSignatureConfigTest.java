@@ -21,6 +21,7 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.signature.internal.MlDsaVerifyConscrypt;
@@ -58,19 +59,33 @@ public class JwtSignatureConfigTest {
       assertThrows(GeneralSecurityException.class, JwtSignatureConfig::register);
       assertThrows(
           GeneralSecurityException.class,
-          () -> KeysetHandle.generateNew(KeyTemplates.get("JWT_ES256")));
+          () ->
+              KeysetHandle.generateNew(
+                  KeyTemplates.get("JWT_ES256").toParameters(), RegistryConfiguration.get()));
       assertThrows(
           GeneralSecurityException.class,
-          () -> KeysetHandle.generateNew(KeyTemplates.get("JWT_RS256_2048_F4")));
+          () ->
+              KeysetHandle.generateNew(
+                  KeyTemplates.get("JWT_RS256_2048_F4").toParameters(),
+                  RegistryConfiguration.get()));
       assertThrows(
           GeneralSecurityException.class,
-          () -> KeysetHandle.generateNew(KeyTemplates.get("JWT_PS256_2048_F4")));
+          () ->
+              KeysetHandle.generateNew(
+                  KeyTemplates.get("JWT_PS256_2048_F4").toParameters(),
+                  RegistryConfiguration.get()));
 
     } else {
       JwtSignatureConfig.register();
-      assertNotNull(KeysetHandle.generateNew(KeyTemplates.get("JWT_ES256")));
-      assertNotNull(KeysetHandle.generateNew(KeyTemplates.get("JWT_RS256_2048_F4")));
-      assertNotNull(KeysetHandle.generateNew(KeyTemplates.get("JWT_PS256_2048_F4")));
+      assertNotNull(
+          KeysetHandle.generateNew(
+              KeyTemplates.get("JWT_ES256").toParameters(), RegistryConfiguration.get()));
+      assertNotNull(
+          KeysetHandle.generateNew(
+              KeyTemplates.get("JWT_RS256_2048_F4").toParameters(), RegistryConfiguration.get()));
+      assertNotNull(
+          KeysetHandle.generateNew(
+              KeyTemplates.get("JWT_PS256_2048_F4").toParameters(), RegistryConfiguration.get()));
     }
   }
 
@@ -82,6 +97,8 @@ public class JwtSignatureConfigTest {
     }
 
     JwtSignatureConfig.register();
-    assertNotNull(KeysetHandle.generateNew(KeyTemplates.get("JWT_ML_DSA_44")));
+    assertNotNull(
+        KeysetHandle.generateNew(
+            KeyTemplates.get("JWT_ML_DSA_44").toParameters(), RegistryConfiguration.get()));
   }
 }

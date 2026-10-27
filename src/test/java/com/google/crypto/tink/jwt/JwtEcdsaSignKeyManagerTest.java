@@ -73,7 +73,9 @@ public class JwtEcdsaSignKeyManagerTest {
     Parameters p = KeyTemplates.get("JWT_ES256").toParameters();
     Set<BigInteger> keys = new TreeSet<>();
     for (int i = 0; i < numKeys; ++i) {
-      JwtEcdsaPrivateKey key = (JwtEcdsaPrivateKey) KeysetHandle.generateNew(p).getAt(0).getKey();
+      JwtEcdsaPrivateKey key =
+          (JwtEcdsaPrivateKey)
+              KeysetHandle.generateNew(p, RegistryConfiguration.get()).getAt(0).getKey();
       keys.add(key.getPrivateValue().getBigInteger(InsecureSecretKeyAccess.get()));
     }
     assertThat(keys).hasSize(numKeys);
@@ -147,7 +149,9 @@ public class JwtEcdsaSignKeyManagerTest {
 
   @Theory
   public void testTemplates(@FromDataPoints("templates") String templateName) throws Exception {
-    KeysetHandle h = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle h =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
         .isEqualTo(KeyTemplates.get(templateName).toParameters());
@@ -222,7 +226,9 @@ public class JwtEcdsaSignKeyManagerTest {
       // We do not use assume because Theories expects to find something which is not skipped.
       return;
     }
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
     JwtPublicKeySign signer =
         handle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     JwtPublicKeyVerify verifier =
@@ -253,7 +259,8 @@ public class JwtEcdsaSignKeyManagerTest {
   @Test
   public void serializeAndDeserializeKeysets() throws Exception {
     KeyTemplate template = KeyTemplates.get("JWT_ES256_RAW");
-    KeysetHandle handle = KeysetHandle.generateNew(template);
+    KeysetHandle handle =
+        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
 
     byte[] serializedKeyset =
         TinkProtoKeysetFormat.serializeKeyset(

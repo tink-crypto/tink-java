@@ -70,7 +70,9 @@ public class JwtRsaSsaPssSignKeyManagerTest {
       // We do not use assume because Theories expects to find something which is not skipped.
       return;
     }
-    KeysetHandle h = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle h =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
         .isEqualTo(KeyTemplates.get(templateName).toParameters());
@@ -98,7 +100,10 @@ public class JwtRsaSsaPssSignKeyManagerTest {
     int numTests = 5;
     for (int i = 0; i < numTests; i++) {
       JwtRsaSsaPssPrivateKey key =
-          (JwtRsaSsaPssPrivateKey) KeysetHandle.generateNew(parameters).getPrimary().getKey();
+          (JwtRsaSsaPssPrivateKey)
+              KeysetHandle.generateNew(parameters, RegistryConfiguration.get())
+                  .getPrimary()
+                  .getKey();
       keys.add(key.getPrimeP().getBigInteger(InsecureSecretKeyAccess.get()));
       keys.add(key.getPrimeQ().getBigInteger(InsecureSecretKeyAccess.get()));
     }
@@ -191,7 +196,9 @@ public class JwtRsaSsaPssSignKeyManagerTest {
       // factory.createKey is too slow in Tsan.
       return;
     }
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get("JWT_PS256_2048_F4"));
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get("JWT_PS256_2048_F4").toParameters(), RegistryConfiguration.get());
 
     com.google.crypto.tink.Key key = handle.getAt(0).getKey();
     assertThat(key).isInstanceOf(com.google.crypto.tink.jwt.JwtRsaSsaPssPrivateKey.class);
@@ -217,7 +224,9 @@ public class JwtRsaSsaPssSignKeyManagerTest {
       // We do not use assume because Theories expects to find something which is not skipped.
       return;
     }
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
     JwtPublicKeySign signer =
         handle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     JwtPublicKeyVerify verifier =
@@ -248,7 +257,8 @@ public class JwtRsaSsaPssSignKeyManagerTest {
   @Test
   public void serializeAndDeserializeKeysets() throws Exception {
     KeyTemplate template = KeyTemplates.get("JWT_PS256_2048_F4_RAW");
-    KeysetHandle handle = KeysetHandle.generateNew(template);
+    KeysetHandle handle =
+        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
 
     byte[] serializedKeyset =
         TinkProtoKeysetFormat.serializeKeyset(

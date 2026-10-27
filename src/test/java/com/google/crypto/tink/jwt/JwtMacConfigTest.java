@@ -22,6 +22,7 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
@@ -49,13 +50,17 @@ public class JwtMacConfigTest {
       assertThrows(GeneralSecurityException.class, JwtMacConfig::register);
       assertThrows(
           GeneralSecurityException.class,
-          () -> KeysetHandle.generateNew(KeyTemplates.get("JWT_HS256")));
+          () ->
+              KeysetHandle.generateNew(
+                  KeyTemplates.get("JWT_HS256").toParameters(), RegistryConfiguration.get()));
       assertThrows(
           GeneralSecurityException.class,
           () -> MutableKeyCreationRegistry.globalInstance().createKey(hs256Parameters, null));
     } else {
       JwtMacConfig.register();
-      assertNotNull(KeysetHandle.generateNew(KeyTemplates.get("JWT_HS256")));
+      assertNotNull(
+          KeysetHandle.generateNew(
+              KeyTemplates.get("JWT_HS256").toParameters(), RegistryConfiguration.get()));
       assertNotNull(MutableKeyCreationRegistry.globalInstance().createKey(hs256Parameters, null));
     }
   }
