@@ -19,6 +19,7 @@ package com.google.crypto.tink.mac;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
+import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.KeyTemplate;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
@@ -60,7 +61,11 @@ public class AesCmacKeyManagerTest {
             .setTagSizeBytes(16)
             .setVariant(AesCmacParameters.Variant.TINK)
             .build();
-    assertThat(KeysetHandle.generateNew(validParameters).getAt(0).getKey().getParameters())
+    assertThat(
+            KeysetHandle.generateNew(validParameters, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
         .isEqualTo(validParameters);
   }
 
@@ -73,7 +78,10 @@ public class AesCmacKeyManagerTest {
             .setTagSizeBytes(16)
             .setVariant(AesCmacParameters.Variant.TINK)
             .build();
-    assertThrows(GeneralSecurityException.class, () -> KeysetHandle.generateNew(validParameters));
+    Configuration configuration = RegistryConfiguration.get();
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> KeysetHandle.generateNew(validParameters, configuration));
   }
 
   @Test
@@ -186,10 +194,20 @@ public class AesCmacKeyManagerTest {
   @Test
   public void testKeyTemplatesWork() throws Exception {
     Parameters p = AesCmacKeyManager.aes256CmacTemplate().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
 
     p = AesCmacKeyManager.rawAes256CmacTemplate().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
   }
 
   @DataPoints("templateNames")
@@ -197,7 +215,9 @@ public class AesCmacKeyManagerTest {
 
   @Theory
   public void testTemplates(@FromDataPoints("templateNames") String templateName) throws Exception {
-    KeysetHandle h = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle h =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
         .isEqualTo(KeyTemplates.get(templateName).toParameters());

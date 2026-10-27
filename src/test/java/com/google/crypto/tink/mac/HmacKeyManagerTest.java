@@ -76,7 +76,7 @@ public class HmacKeyManagerTest {
     int numKeys = 100;
     Set<String> keys = new TreeSet<>();
     for (int i = 0; i < numKeys; ++i) {
-      KeysetHandle handle = KeysetHandle.generateNew(parameters);
+      KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
       com.google.crypto.tink.mac.HmacKey macKey =
           (com.google.crypto.tink.mac.HmacKey) handle.getAt(0).getKey();
       keys.add(Hex.encode(macKey.getKeyBytes().toByteArray(InsecureSecretKeyAccess.get())));
@@ -139,16 +139,36 @@ public class HmacKeyManagerTest {
   @Test
   public void testKeyTemplatesWork() throws Exception {
     Parameters p = HmacKeyManager.hmacSha256Template().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
 
     p = HmacKeyManager.hmacSha256HalfDigestTemplate().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
 
     p = HmacKeyManager.hmacSha512Template().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
 
     p = HmacKeyManager.hmacSha512HalfDigestTemplate().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
   }
 
   @DataPoints("templateNames")
@@ -168,7 +188,9 @@ public class HmacKeyManagerTest {
 
   @Theory
   public void testTemplates(@FromDataPoints("templateNames") String templateName) throws Exception {
-    KeysetHandle h = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle h =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
         .isEqualTo(KeyTemplates.get(templateName).toParameters());
@@ -279,11 +301,13 @@ public class HmacKeyManagerTest {
             .setHashType(HmacParameters.HashType.SHA512)
             .setVariant(HmacParameters.Variant.TINK)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     byte[] serialized =
-        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     KeysetHandle parsed =
-        TinkProtoKeysetFormat.parseKeyset(serialized, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            serialized, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
 
     assertTrue(handle.equalsKeyset(parsed));
   }

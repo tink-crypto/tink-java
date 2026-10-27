@@ -20,6 +20,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import java.security.GeneralSecurityException;
@@ -38,8 +39,13 @@ public class MacConfigTest {
 
     MacConfig.register();
 
-    assertThat(KeysetHandle.generateNew(PredefinedMacParameters.HMAC_SHA256_128BITTAG)).isNotNull();
-    assertThat(KeysetHandle.generateNew(PredefinedMacParameters.AES_CMAC)).isNotNull();
+    assertThat(
+            KeysetHandle.generateNew(
+                PredefinedMacParameters.HMAC_SHA256_128BITTAG, RegistryConfiguration.get()))
+        .isNotNull();
+    assertThat(
+            KeysetHandle.generateNew(PredefinedMacParameters.AES_CMAC, RegistryConfiguration.get()))
+        .isNotNull();
   }
 
   @Test
@@ -49,7 +55,10 @@ public class MacConfigTest {
 
     MacConfig.register();
 
-    assertThat(KeysetHandle.generateNew(PredefinedMacParameters.HMAC_SHA256_128BITTAG)).isNotNull();
+    assertThat(
+            KeysetHandle.generateNew(
+                PredefinedMacParameters.HMAC_SHA256_128BITTAG, RegistryConfiguration.get()))
+        .isNotNull();
   }
 
   @Test
@@ -61,6 +70,8 @@ public class MacConfigTest {
 
     assertThrows(
         GeneralSecurityException.class,
-        () -> KeysetHandle.generateNew(PredefinedMacParameters.AES_CMAC));
+        () ->
+            KeysetHandle.generateNew(
+                PredefinedMacParameters.AES_CMAC, RegistryConfiguration.get()));
   }
 }

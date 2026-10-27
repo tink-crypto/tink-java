@@ -33,6 +33,7 @@ java_test(
     tags = ["fips"],
     deps = [
         "//src/main/java/com/google/crypto/tink:registry_cluster",
+        "//src/main/java/com/google/crypto/tink:registry_configuration",
         "//src/main/java/com/google/crypto/tink/config:tink_fips",
         "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
         "//src/main/java/com/google/crypto/tink/mac:mac_config",
@@ -65,6 +66,7 @@ java_test(
         "//src/main/java/com/google/crypto/tink:key_templates",
         "//src/main/java/com/google/crypto/tink:mac",
         "//src/main/java/com/google/crypto/tink:registry_cluster",
+        "//src/main/java/com/google/crypto/tink:registry_configuration",
         "//src/main/java/com/google/crypto/tink/mac:hmac_key_manager",
         "//src/main/java/com/google/crypto/tink/mac:mac_factory",
         "@maven//:junit_junit",
@@ -164,6 +166,7 @@ java_test(
     size = "small",
     srcs = ["AesCmacKeyManagerTest.java"],
     deps = [
+        "//src/main/java/com/google/crypto/tink:configuration",
         "//src/main/java/com/google/crypto/tink:key_template",
         "//src/main/java/com/google/crypto/tink:key_templates",
         "//src/main/java/com/google/crypto/tink:mac",

@@ -40,8 +40,12 @@ public class MacFactoryTest {
 
   @Test
   @SuppressWarnings("deprecation") // This is a test that the deprecated function works.
-  public void deprecatedMacFactoryGetPrimitive_sameAs_keysetHandleGetPrimitive() throws Exception {
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get("HMAC_SHA256_128BITTAG"));
+  public void
+      deprecatedMacFactoryGetPrimitive_sameAs_keysetHandleGetPrimitiveWithRegistryConfiguration()
+          throws Exception {
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get("HMAC_SHA256_128BITTAG").toParameters(), RegistryConfiguration.get());
 
     Mac mac = handle.getPrimitive(RegistryConfiguration.get(), Mac.class);
     Mac factoryMac = MacFactory.getPrimitive(handle);

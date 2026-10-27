@@ -21,6 +21,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
+import com.google.crypto.tink.RegistryConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -40,7 +41,9 @@ public class MacFactoryWithoutWrapperRegisteredTest {
       throws Exception {
     // Only register HmacKeyManager, but not the MacWrapper.
     HmacKeyManager.register(/* newKeyAllowed = */ true);
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get("HMAC_SHA256_128BITTAG"));
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get("HMAC_SHA256_128BITTAG").toParameters(), RegistryConfiguration.get());
 
     Mac mac = MacFactory.getPrimitive(handle);
 

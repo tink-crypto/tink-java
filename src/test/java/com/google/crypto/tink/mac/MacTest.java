@@ -65,14 +65,18 @@ public final class MacTest {
   @Theory
   public void create_computeVerify(@FromDataPoints("templates") String templateName)
       throws Exception {
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), MacConfig2026.get());
     Mac mac = handle.getPrimitive(MacConfig2026.get(), Mac.class);
 
     byte[] data = "data".getBytes(UTF_8);
     byte[] tag = mac.computeMac(data);
     mac.verifyMac(tag, data);
 
-    KeysetHandle otherHandle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle otherHandle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), MacConfig2026.get());
     Mac otherMac = otherHandle.getPrimitive(MacConfig2026.get(), Mac.class);
     assertThrows(GeneralSecurityException.class, () -> otherMac.verifyMac(tag, data));
 
