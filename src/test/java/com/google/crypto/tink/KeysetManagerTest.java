@@ -1324,4 +1324,48 @@ public class KeysetManagerTest {
         GeneralSecurityException.class,
         () -> KeysetManager.withKeysetHandle(existing, new Configuration() {}));
   }
+
+  private static final class UnregisteredParameters extends Parameters {
+    @Override
+    public boolean hasIdRequirement() {
+      return true;
+    }
+  }
+
+  @Test
+  public void add_keyTemplateWithParametersNotInGlobalRegistry_works() throws Exception {
+    Configuration customConfig =
+        new Configuration() {
+          @Override
+          @Nullable
+          public <P> P getOrNull(Class<P> clazz) {
+            return MacConfig2026.get().getOrNull(clazz);
+          }
+
+          @Override
+          public com.google.crypto.tink.Key createKey(
+              Parameters parameters, @Nullable Integer idRequirement)
+              throws GeneralSecurityException {
+            if (parameters instanceof UnregisteredParameters) {
+              return MacConfig2026.get()
+                  .createKey(PredefinedMacParameters.HMAC_SHA256_256BITTAG, idRequirement);
+            }
+            return MacConfig2026.get().createKey(parameters, idRequirement);
+          }
+        };
+    KeysetHandle existing =
+        KeysetHandle.generateNew(
+            PredefinedMacParameters.HMAC_SHA256_128BITTAG, MacConfig2026.get());
+
+    KeysetHandle keyset =
+        KeysetManager.withKeysetHandle(existing, customConfig)
+            .add(KeyTemplate.createFrom(new UnregisteredParameters()))
+            .getKeysetHandle();
+
+    assertThat(keyset.size()).isEqualTo(2);
+    assertThat(keyset.getAt(0).getKey().getParameters())
+        .isEqualTo(PredefinedMacParameters.HMAC_SHA256_128BITTAG);
+    assertThat(keyset.getAt(1).getKey().getParameters())
+        .isEqualTo(PredefinedMacParameters.HMAC_SHA256_256BITTAG);
+  }
 }

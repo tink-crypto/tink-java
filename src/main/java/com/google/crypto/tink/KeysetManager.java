@@ -152,7 +152,8 @@ public final class KeysetManager {
    */
   @CanIgnoreReturnValue
   public synchronized KeysetManager add(KeyTemplate keyTemplate) throws GeneralSecurityException {
-    addNewKey(keyTemplate.getProtoMaybeThrow(), false);
+    Keyset.Key key = newKey(keyTemplate.toParameters());
+    keysetBuilder.addKey(key);
     return this;
   }
 
@@ -217,7 +218,8 @@ public final class KeysetManager {
   public synchronized int addNewKey(
       com.google.crypto.tink.proto.KeyTemplate keyTemplate, boolean asPrimary)
       throws GeneralSecurityException {
-    Keyset.Key key = newKey(keyTemplate);
+    Keyset.Key key =
+        newKey(TinkProtoParametersFormat.parse(keyTemplate.toByteArray(), configuration));
     keysetBuilder.addKey(key);
     if (asPrimary) {
       keysetBuilder.setPrimaryKeyId(key.getKeyId());
@@ -351,10 +353,7 @@ public final class KeysetManager {
 
   @AccessesPartialKey
   @LowLevelCryptoCaller
-  private synchronized Keyset.Key newKey(com.google.crypto.tink.proto.KeyTemplate keyTemplate)
-      throws GeneralSecurityException {
-    Parameters parameters =
-        TinkProtoParametersFormat.parse(keyTemplate.toByteArray(), configuration);
+  private synchronized Keyset.Key newKey(Parameters parameters) throws GeneralSecurityException {
     @Nullable ProtoKeySerializer serializer = configuration.getOrNull(ProtoKeySerializer.class);
     if (serializer == null) {
       throw new GeneralSecurityException(
@@ -371,7 +370,8 @@ public final class KeysetManager {
             .setValue(serializedKey.getValue())
             .setKeyMaterialType(ProtoConversions.toProto(serializedKey.getKeyMaterialType()))
             .build();
-    return createKeysetKey(keyData, keyTemplate.getOutputPrefixType(), keyId);
+    return createKeysetKey(
+        keyData, ProtoConversions.toProto(serializedKey.getOutputPrefixType()), keyId);
   }
 
   private synchronized Keyset.Key createKeysetKey(
