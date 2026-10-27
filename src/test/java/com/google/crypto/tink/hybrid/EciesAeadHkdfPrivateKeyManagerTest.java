@@ -19,6 +19,7 @@ package com.google.crypto.tink.hybrid;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
+import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
@@ -158,23 +159,43 @@ public class EciesAeadHkdfPrivateKeyManagerTest {
   public void testKeyTemplatesWork() throws Exception {
     Parameters p =
         EciesAeadHkdfPrivateKeyManager.eciesP256HkdfHmacSha256Aes128GcmTemplate().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
 
     p =
         EciesAeadHkdfPrivateKeyManager.rawEciesP256HkdfHmacSha256Aes128GcmCompressedTemplate()
             .toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
 
     p =
         EciesAeadHkdfPrivateKeyManager.eciesP256HkdfHmacSha256Aes128CtrHmacSha256Template()
             .toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
 
     p =
         EciesAeadHkdfPrivateKeyManager
             .rawEciesP256HkdfHmacSha256Aes128CtrHmacSha256CompressedTemplate()
             .toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
   }
 
   @DataPoints("templateNames")
@@ -192,7 +213,9 @@ public class EciesAeadHkdfPrivateKeyManagerTest {
 
   @Theory
   public void testTemplates(@FromDataPoints("templateNames") String templateName) throws Exception {
-    KeysetHandle h = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle h =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
         .isEqualTo(KeyTemplates.get(templateName).toParameters());
@@ -205,7 +228,7 @@ public class EciesAeadHkdfPrivateKeyManagerTest {
     int numKeys = 10;
     Set<BigInteger> keys = new TreeSet<>();
     for (int i = 0; i < numKeys; i++) {
-      KeysetHandle handle = KeysetHandle.generateNew(params);
+      KeysetHandle handle = KeysetHandle.generateNew(params, RegistryConfiguration.get());
       assertThat(handle.size()).isEqualTo(1);
       EciesPrivateKey key = (EciesPrivateKey) handle.getPrimary().getKey();
       keys.add(key.getNistPrivateKeyValue().getBigInteger(InsecureSecretKeyAccess.get()));
@@ -228,7 +251,9 @@ public class EciesAeadHkdfPrivateKeyManagerTest {
                     .setVariant(AesGcmParameters.Variant.NO_PREFIX)
                     .build())
             .build();
-    assertThrows(GeneralSecurityException.class, () -> KeysetHandle.generateNew(params));
+    Configuration configuration = RegistryConfiguration.get();
+    assertThrows(
+        GeneralSecurityException.class, () -> KeysetHandle.generateNew(params, configuration));
   }
 
   @Test
@@ -336,9 +361,11 @@ public class EciesAeadHkdfPrivateKeyManagerTest {
     KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
 
     byte[] serializedHandle =
-        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     KeysetHandle parsedHandle =
-        TinkProtoKeysetFormat.parseKeyset(serializedHandle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            serializedHandle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     assertThat(parsedHandle.equalsKeyset(handle)).isTrue();
   }
 
@@ -349,8 +376,11 @@ public class EciesAeadHkdfPrivateKeyManagerTest {
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).withFixedId(1216).makePrimary();
     KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build().getPublicKeysetHandle();
 
-    byte[] serializedHandle = TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle);
-    KeysetHandle parsedHandle = TinkProtoKeysetFormat.parseKeysetWithoutSecret(serializedHandle);
+    byte[] serializedHandle =
+        TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle, RegistryConfiguration.get());
+    KeysetHandle parsedHandle =
+        TinkProtoKeysetFormat.parseKeysetWithoutSecret(
+            serializedHandle, RegistryConfiguration.get());
     assertThat(parsedHandle.equalsKeyset(handle)).isTrue();
   }
 

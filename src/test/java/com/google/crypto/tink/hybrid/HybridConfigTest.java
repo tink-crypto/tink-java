@@ -21,6 +21,7 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import java.security.GeneralSecurityException;
@@ -39,11 +40,15 @@ public class HybridConfigTest {
 
     HybridConfig.register();
 
-    assertThat(KeysetHandle.generateNew(KeyTemplates.get("ECIES_P256_HKDF_HMAC_SHA256_AES128_GCM")))
+    assertThat(
+            KeysetHandle.generateNew(
+                KeyTemplates.get("ECIES_P256_HKDF_HMAC_SHA256_AES128_GCM").toParameters(),
+                RegistryConfiguration.get()))
         .isNotNull();
     assertThat(
             KeysetHandle.generateNew(
-                KeyTemplates.get("DHKEM_X25519_HKDF_SHA256_HKDF_SHA256_AES_128_GCM")))
+                KeyTemplates.get("DHKEM_X25519_HKDF_SHA256_HKDF_SHA256_AES_128_GCM").toParameters(),
+                RegistryConfiguration.get()))
         .isNotNull();
   }
 
@@ -56,11 +61,15 @@ public class HybridConfigTest {
 
     assertThrows(
         GeneralSecurityException.class,
-        () -> KeysetHandle.generateNew(KeyTemplates.get("ECIES_P256_HKDF_HMAC_SHA256_AES128_GCM")));
+        () ->
+            KeysetHandle.generateNew(
+                KeyTemplates.get("ECIES_P256_HKDF_HMAC_SHA256_AES128_GCM").toParameters(),
+                RegistryConfiguration.get()));
     assertThrows(
         GeneralSecurityException.class,
         () ->
             KeysetHandle.generateNew(
-                KeyTemplates.get("DHKEM_X25519_HKDF_SHA256_HKDF_SHA256_AES_128_GCM")));
+                KeyTemplates.get("DHKEM_X25519_HKDF_SHA256_HKDF_SHA256_AES_128_GCM").toParameters(),
+                RegistryConfiguration.get()));
   }
 }

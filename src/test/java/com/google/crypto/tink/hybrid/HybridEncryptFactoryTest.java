@@ -42,7 +42,9 @@ public class HybridEncryptFactoryTest {
   public void deprecatedHybridEncryptFactoryGetPrimitive_sameAs_keysetHandleGetPrimitive()
       throws Exception {
     KeysetHandle privateHandle =
-        KeysetHandle.generateNew(KeyTemplates.get("ECIES_P256_HKDF_HMAC_SHA256_AES128_GCM"));
+        KeysetHandle.generateNew(
+            KeyTemplates.get("ECIES_P256_HKDF_HMAC_SHA256_AES128_GCM").toParameters(),
+            RegistryConfiguration.get());
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
 
     HybridEncrypt factoryEncrypter = HybridEncryptFactory.getPrimitive(publicHandle);

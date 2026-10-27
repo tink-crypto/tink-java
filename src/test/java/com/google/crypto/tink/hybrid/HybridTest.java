@@ -67,7 +67,9 @@ public final class HybridTest {
       // KeysetHandle.generateNew is too slow in Tsan.
       return;
     }
-    KeysetHandle privateHandle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle privateHandle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), HybridConfig2026.get());
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
 
     HybridEncrypt encrypter =
@@ -80,7 +82,9 @@ public final class HybridTest {
     byte[] ciphertext = encrypter.encrypt(plaintext, contextInfo);
     assertThat(decrypter.decrypt(ciphertext, contextInfo)).isEqualTo(plaintext);
 
-    KeysetHandle otherPrivateHandle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle otherPrivateHandle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), HybridConfig2026.get());
     HybridDecrypt otherDecrypter =
         otherPrivateHandle.getPrimitive(HybridConfig2026.get(), HybridDecrypt.class);
     assertThrows(

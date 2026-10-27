@@ -64,7 +64,7 @@ public class HybridEncryptWrapperTest {
             .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
             .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     HybridEncrypt encrypter =
         handle
             .getPublicKeysetHandle()
@@ -85,7 +85,7 @@ public class HybridEncryptWrapperTest {
             .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
             .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     HybridEncrypt encrypter =
         handle
             .getPublicKeysetHandle()
@@ -106,7 +106,7 @@ public class HybridEncryptWrapperTest {
             .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
             .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     HybridEncrypt encrypter =
         handle
             .getPublicKeysetHandle()
@@ -158,7 +158,8 @@ public class HybridEncryptWrapperTest {
             .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
             .build();
 
-    KeysetHandle handle = KeysetHandle.generateNew(parameters).getPublicKeysetHandle();
+    KeysetHandle handle =
+        KeysetHandle.generateNew(parameters, RegistryConfiguration.get()).getPublicKeysetHandle();
     Keyset keyset =
         Keyset.parseFrom(
             TinkProtoKeysetFormat.serializeKeysetWithoutSecret(
@@ -189,7 +190,7 @@ public class HybridEncryptWrapperTest {
             .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
             .build();
 
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     HybridEncrypt encrypt =
         handle
             .getPublicKeysetHandle()

@@ -23,6 +23,7 @@ import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.aead.AeadConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,7 +47,9 @@ public class HybridEncryptDecryptFactoryWithoutWrapperRegisteredTest {
     // HybridDecryptWrapper.
     EciesAeadHkdfPrivateKeyManager.registerPair(/*newKeyAllowed=*/ true);
     KeysetHandle privateHandle =
-        KeysetHandle.generateNew(KeyTemplates.get("ECIES_P256_HKDF_HMAC_SHA256_AES128_GCM"));
+        KeysetHandle.generateNew(
+            KeyTemplates.get("ECIES_P256_HKDF_HMAC_SHA256_AES128_GCM").toParameters(),
+            RegistryConfiguration.get());
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
 
     HybridEncrypt encrypter = HybridEncryptFactory.getPrimitive(publicHandle);

@@ -67,7 +67,7 @@ public class HybridDecryptWrapperTest {
             .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
             .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     HybridDecrypt decrypter = handle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
     HybridEncrypt encrypter =
         HpkeEncrypt.create((HpkePublicKey) handle.getPublicKeysetHandle().getPrimary().getKey());
@@ -86,7 +86,7 @@ public class HybridDecryptWrapperTest {
             .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
             .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     HybridDecrypt decrypter = handle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
     HybridEncrypt encrypter =
         HpkeEncrypt.create((HpkePublicKey) handle.getPublicKeysetHandle().getPrimary().getKey());
@@ -105,7 +105,7 @@ public class HybridDecryptWrapperTest {
             .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
             .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     HybridDecrypt decrypter = handle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class);
     HybridEncrypt encrypter =
         HpkeEncrypt.create((HpkePublicKey) handle.getPublicKeysetHandle().getPrimary().getKey());
@@ -405,7 +405,7 @@ public class HybridDecryptWrapperTest {
             .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
             .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     byte[] serialized =
         TinkProtoKeysetFormat.serializeKeyset(
             handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
