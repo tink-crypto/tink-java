@@ -25,6 +25,7 @@ import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.signature.MlDsaParameters.MlDsaInstance;
@@ -81,7 +82,9 @@ public class MlDsaSignKeyManagerConscryptTest {
       return;
     }
 
-    KeysetHandle h = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle h =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
 
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
@@ -96,7 +99,9 @@ public class MlDsaSignKeyManagerConscryptTest {
       return;
     }
 
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
     PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
         handle
@@ -117,7 +122,9 @@ public class MlDsaSignKeyManagerConscryptTest {
       return;
     }
 
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
     PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
         handle
@@ -140,8 +147,12 @@ public class MlDsaSignKeyManagerConscryptTest {
 
     MlDsaParameters parameters = MlDsaParameters.create(MlDsaInstance.ML_DSA_44, Variant.NO_PREFIX);
 
-    MlDsaPrivateKey key0 = (MlDsaPrivateKey) KeysetHandle.generateNew(parameters).getAt(0).getKey();
-    MlDsaPrivateKey key1 = (MlDsaPrivateKey) KeysetHandle.generateNew(parameters).getAt(0).getKey();
+    MlDsaPrivateKey key0 =
+        (MlDsaPrivateKey)
+            KeysetHandle.generateNew(parameters, RegistryConfiguration.get()).getAt(0).getKey();
+    MlDsaPrivateKey key1 =
+        (MlDsaPrivateKey)
+            KeysetHandle.generateNew(parameters, RegistryConfiguration.get()).getAt(0).getKey();
 
     assertFalse(key0.equalsKey(key1));
   }
@@ -155,8 +166,12 @@ public class MlDsaSignKeyManagerConscryptTest {
 
     MlDsaParameters parameters = MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.NO_PREFIX);
 
-    MlDsaPrivateKey key0 = (MlDsaPrivateKey) KeysetHandle.generateNew(parameters).getAt(0).getKey();
-    MlDsaPrivateKey key1 = (MlDsaPrivateKey) KeysetHandle.generateNew(parameters).getAt(0).getKey();
+    MlDsaPrivateKey key0 =
+        (MlDsaPrivateKey)
+            KeysetHandle.generateNew(parameters, RegistryConfiguration.get()).getAt(0).getKey();
+    MlDsaPrivateKey key1 =
+        (MlDsaPrivateKey)
+            KeysetHandle.generateNew(parameters, RegistryConfiguration.get()).getAt(0).getKey();
 
     assertFalse(key0.equalsKey(key1));
   }
@@ -170,8 +185,12 @@ public class MlDsaSignKeyManagerConscryptTest {
 
     MlDsaParameters parameters = MlDsaParameters.create(MlDsaInstance.ML_DSA_87, Variant.NO_PREFIX);
 
-    MlDsaPrivateKey key0 = (MlDsaPrivateKey) KeysetHandle.generateNew(parameters).getAt(0).getKey();
-    MlDsaPrivateKey key1 = (MlDsaPrivateKey) KeysetHandle.generateNew(parameters).getAt(0).getKey();
+    MlDsaPrivateKey key0 =
+        (MlDsaPrivateKey)
+            KeysetHandle.generateNew(parameters, RegistryConfiguration.get()).getAt(0).getKey();
+    MlDsaPrivateKey key1 =
+        (MlDsaPrivateKey)
+            KeysetHandle.generateNew(parameters, RegistryConfiguration.get()).getAt(0).getKey();
 
     assertFalse(key0.equalsKey(key1));
   }
@@ -184,7 +203,7 @@ public class MlDsaSignKeyManagerConscryptTest {
     }
 
     MlDsaParameters parameters = MlDsaParameters.create(MlDsaInstance.ML_DSA_44, Variant.NO_PREFIX);
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
         handle
@@ -205,7 +224,7 @@ public class MlDsaSignKeyManagerConscryptTest {
     }
 
     MlDsaParameters parameters = MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.NO_PREFIX);
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
         handle
@@ -226,7 +245,7 @@ public class MlDsaSignKeyManagerConscryptTest {
     }
 
     MlDsaParameters parameters = MlDsaParameters.create(MlDsaInstance.ML_DSA_87, Variant.NO_PREFIX);
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
         handle
@@ -247,7 +266,7 @@ public class MlDsaSignKeyManagerConscryptTest {
     }
 
     MlDsaParameters parameters = MlDsaParameters.create(MlDsaInstance.ML_DSA_44, Variant.NO_PREFIX);
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
         handle
@@ -269,7 +288,7 @@ public class MlDsaSignKeyManagerConscryptTest {
     }
 
     MlDsaParameters parameters = MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.NO_PREFIX);
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
         handle
@@ -291,7 +310,7 @@ public class MlDsaSignKeyManagerConscryptTest {
     }
 
     MlDsaParameters parameters = MlDsaParameters.create(MlDsaInstance.ML_DSA_87, Variant.NO_PREFIX);
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
         handle

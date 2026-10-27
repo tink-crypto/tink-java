@@ -43,7 +43,9 @@ public class PublicKeyVerifyFactoryTest {
   @SuppressWarnings("deprecation") // This is a test that the deprecated function works.
   public void deprecatedPublicKeyVerifyFactoryGetPrimitive_sameAs_keysetHandleGetPrimitive()
       throws Exception {
-    KeysetHandle privateHandle = KeysetHandle.generateNew(KeyTemplates.get("ECDSA_P256"));
+    KeysetHandle privateHandle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get("ECDSA_P256").toParameters(), RegistryConfiguration.get());
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
 
     PublicKeySign signer =

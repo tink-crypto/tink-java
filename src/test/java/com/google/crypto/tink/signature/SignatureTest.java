@@ -61,13 +61,14 @@ public final class SignatureTest {
       };
 
   @Theory
-  public void createSignVerify(@FromDataPoints("templates") String templateName)
-      throws Exception {
+  public void createSignVerify(@FromDataPoints("templates") String templateName) throws Exception {
     if (TestUtil.isTsan()) {
       // KeysetHandle.generateNew is too slow in Tsan.
       return;
     }
-    KeysetHandle privateHandle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle privateHandle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), SignatureConfig2026.get());
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
 
     PublicKeySign signer =
@@ -79,13 +80,14 @@ public final class SignatureTest {
     byte[] sig = signer.sign(data);
     verifier.verify(sig, data);
 
-    KeysetHandle otherPrivateHandle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle otherPrivateHandle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), SignatureConfig2026.get());
     PublicKeyVerify otherVerifier =
         otherPrivateHandle
             .getPublicKeysetHandle()
             .getPrimitive(SignatureConfig2026.get(), PublicKeyVerify.class);
-    assertThrows(
-        GeneralSecurityException.class, () -> otherVerifier.verify(sig, data));
+    assertThrows(GeneralSecurityException.class, () -> otherVerifier.verify(sig, data));
 
     byte[] invalid = "invalid".getBytes(UTF_8);
     byte[] empty = "".getBytes(UTF_8);

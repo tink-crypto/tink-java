@@ -62,7 +62,8 @@ public class Ed25519PrivateKeyManagerTest {
     Set<String> keys = new TreeSet<>();
     int numTests = 100;
     for (int i = 0; i < numTests; i++) {
-      KeysetHandle handle = KeysetHandle.generateNew(Ed25519Parameters.create());
+      KeysetHandle handle =
+          KeysetHandle.generateNew(Ed25519Parameters.create(), RegistryConfiguration.get());
       assertThat(handle.size()).isEqualTo(1);
       assertThat(handle.getAt(0).getKey().getParameters()).isEqualTo(Ed25519Parameters.create());
       com.google.crypto.tink.signature.Ed25519PrivateKey key =
@@ -89,10 +90,20 @@ public class Ed25519PrivateKeyManagerTest {
   @Test
   public void testKeyTemplateAndManagerCompatibility() throws Exception {
     Parameters p = Ed25519PrivateKeyManager.ed25519Template().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
 
     p = Ed25519PrivateKeyManager.rawEd25519Template().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
   }
 
   @DataPoints("templateNames")
@@ -103,7 +114,9 @@ public class Ed25519PrivateKeyManagerTest {
 
   @Theory
   public void testTemplates(@FromDataPoints("templateNames") String templateName) throws Exception {
-    KeysetHandle h = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle h =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
         .isEqualTo(KeyTemplates.get(templateName).toParameters());
@@ -248,7 +261,8 @@ public class Ed25519PrivateKeyManagerTest {
 
   @Test
   public void test_serializeAndParse_works() throws Exception {
-    KeysetHandle handle = KeysetHandle.generateNew(Ed25519Parameters.create());
+    KeysetHandle handle =
+        KeysetHandle.generateNew(Ed25519Parameters.create(), RegistryConfiguration.get());
     byte[] serializedHandle =
         TinkProtoKeysetFormat.serializeKeyset(
             handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());

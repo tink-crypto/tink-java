@@ -49,7 +49,8 @@ public class Ed25519PublicKeyManagerTest {
   @Test
   public void test_serializeAndParse_works() throws Exception {
     KeysetHandle handle =
-        KeysetHandle.generateNew(Ed25519Parameters.create()).getPublicKeysetHandle();
+        KeysetHandle.generateNew(Ed25519Parameters.create(), RegistryConfiguration.get())
+            .getPublicKeysetHandle();
     byte[] serializedHandle =
         TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle, RegistryConfiguration.get());
     KeysetHandle parsedHandle =

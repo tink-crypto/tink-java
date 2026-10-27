@@ -60,7 +60,7 @@ public class PublicKeySignWrapperTest {
             .setHashType(EcdsaParameters.HashType.SHA256)
             .setVariant(EcdsaParameters.Variant.NO_PREFIX)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     PublicKeySign signer = handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
 
     PublicKeyVerify verifier =
@@ -83,7 +83,7 @@ public class PublicKeySignWrapperTest {
             .setVariant(EcdsaParameters.Variant.TINK)
             .build();
 
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     PublicKeySign signer = handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
 
     PublicKeyVerify verifier =
@@ -105,7 +105,7 @@ public class PublicKeySignWrapperTest {
             .setVariant(EcdsaParameters.Variant.CRUNCHY)
             .build();
 
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     PublicKeySign signer = handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
 
     PublicKeyVerify rawVerifier =
@@ -127,7 +127,7 @@ public class PublicKeySignWrapperTest {
             .setVariant(EcdsaParameters.Variant.LEGACY)
             .build();
 
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     PublicKeySign signer = handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
 
     PublicKeyVerify verifier =
@@ -179,7 +179,7 @@ public class PublicKeySignWrapperTest {
             .setVariant(EcdsaParameters.Variant.LEGACY)
             .build();
 
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     Keyset keyset =
         Keyset.parseFrom(
             TinkProtoKeysetFormat.serializeKeyset(
@@ -213,7 +213,7 @@ public class PublicKeySignWrapperTest {
             .setVariant(EcdsaParameters.Variant.LEGACY)
             .build();
 
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     PublicKeySign signer = handle.getPrimitive(RegistryConfiguration.get(), PublicKeySign.class);
 
     byte[] data = "data".getBytes(UTF_8);

@@ -20,6 +20,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.testing.TestUtil;
@@ -54,14 +55,24 @@ public class SignatureConfigTest {
 
     SignatureConfig.register();
 
-    assertThat(KeysetHandle.generateNew(PredefinedSignatureParameters.RSA_SSA_PKCS1_3072_SHA256_F4))
+    assertThat(
+            KeysetHandle.generateNew(
+                PredefinedSignatureParameters.RSA_SSA_PKCS1_3072_SHA256_F4,
+                RegistryConfiguration.get()))
         .isNotNull();
     assertThat(
             KeysetHandle.generateNew(
-                PredefinedSignatureParameters.RSA_SSA_PSS_3072_SHA256_SHA256_32_F4))
+                PredefinedSignatureParameters.RSA_SSA_PSS_3072_SHA256_SHA256_32_F4,
+                RegistryConfiguration.get()))
         .isNotNull();
-    assertThat(KeysetHandle.generateNew(PredefinedSignatureParameters.ECDSA_P256)).isNotNull();
-    assertThat(KeysetHandle.generateNew(PredefinedSignatureParameters.ED25519)).isNotNull();
+    assertThat(
+            KeysetHandle.generateNew(
+                PredefinedSignatureParameters.ECDSA_P256, RegistryConfiguration.get()))
+        .isNotNull();
+    assertThat(
+            KeysetHandle.generateNew(
+                PredefinedSignatureParameters.ED25519, RegistryConfiguration.get()))
+        .isNotNull();
   }
 
   @Test
@@ -72,13 +83,20 @@ public class SignatureConfigTest {
 
     SignatureConfig.register();
 
-    assertThat(KeysetHandle.generateNew(PredefinedSignatureParameters.RSA_SSA_PKCS1_3072_SHA256_F4))
+    assertThat(
+            KeysetHandle.generateNew(
+                PredefinedSignatureParameters.RSA_SSA_PKCS1_3072_SHA256_F4,
+                RegistryConfiguration.get()))
         .isNotNull();
     assertThat(
             KeysetHandle.generateNew(
-                PredefinedSignatureParameters.RSA_SSA_PSS_3072_SHA256_SHA256_32_F4))
+                PredefinedSignatureParameters.RSA_SSA_PSS_3072_SHA256_SHA256_32_F4,
+                RegistryConfiguration.get()))
         .isNotNull();
-    assertThat(KeysetHandle.generateNew(PredefinedSignatureParameters.ECDSA_P256)).isNotNull();
+    assertThat(
+            KeysetHandle.generateNew(
+                PredefinedSignatureParameters.ECDSA_P256, RegistryConfiguration.get()))
+        .isNotNull();
   }
 
   @Test
@@ -91,6 +109,8 @@ public class SignatureConfigTest {
 
     assertThrows(
         GeneralSecurityException.class,
-        () -> KeysetHandle.generateNew(PredefinedSignatureParameters.ED25519));
+        () ->
+            KeysetHandle.generateNew(
+                PredefinedSignatureParameters.ED25519, RegistryConfiguration.get()));
   }
 }

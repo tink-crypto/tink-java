@@ -68,7 +68,7 @@ public class RsaSsaPkcs1SignKeyManagerTest {
             .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
             .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     com.google.crypto.tink.Key key = handle.getAt(0).getKey();
     assertThat(key).isInstanceOf(com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey.class);
     com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey privateKey =
@@ -97,7 +97,7 @@ public class RsaSsaPkcs1SignKeyManagerTest {
     // second per key.
     int numTests = 5;
     for (int i = 0; i < numTests; i++) {
-      KeysetHandle handle = KeysetHandle.generateNew(parameters);
+      KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
       assertThat(handle.size()).isEqualTo(1);
       com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey key =
           (com.google.crypto.tink.signature.RsaSsaPkcs1PrivateKey) handle.getAt(0).getKey();
@@ -166,7 +166,12 @@ public class RsaSsaPkcs1SignKeyManagerTest {
       return;
     }
     Parameters p = RsaSsaPkcs1SignKeyManager.rsa3072SsaPkcs1Sha256F4Template().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
   }
 
   @Test
@@ -176,7 +181,12 @@ public class RsaSsaPkcs1SignKeyManagerTest {
       return;
     }
     Parameters p = RsaSsaPkcs1SignKeyManager.rawRsa3072SsaPkcs1Sha256F4Template().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
   }
 
   @Test
@@ -186,7 +196,12 @@ public class RsaSsaPkcs1SignKeyManagerTest {
       return;
     }
     Parameters p = RsaSsaPkcs1SignKeyManager.rsa4096SsaPkcs1Sha512F4Template().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
   }
 
   @Test
@@ -196,7 +211,12 @@ public class RsaSsaPkcs1SignKeyManagerTest {
       return;
     }
     Parameters p = RsaSsaPkcs1SignKeyManager.rawRsa4096SsaPkcs1Sha512F4Template().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
   }
 
   @DataPoints("templateNames")
@@ -215,7 +235,9 @@ public class RsaSsaPkcs1SignKeyManagerTest {
       // factory.createKey is too slow in Tsan.
       return;
     }
-    KeysetHandle h = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle h =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
         .isEqualTo(KeyTemplates.get(templateName).toParameters());

@@ -55,7 +55,7 @@ public class PublicKeyVerifyWrapperTest {
             .setHashType(EcdsaParameters.HashType.SHA256)
             .setVariant(EcdsaParameters.Variant.NO_PREFIX)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     PublicKeySign signer = EcdsaSignJce.create((EcdsaPrivateKey) handle.getAt(0).getKey());
     PublicKeyVerify verifier =
         handle
@@ -79,7 +79,7 @@ public class PublicKeyVerifyWrapperTest {
             .setVariant(EcdsaParameters.Variant.TINK)
             .build();
 
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     PublicKeySign signer = EcdsaSignJce.create((EcdsaPrivateKey) handle.getAt(0).getKey());
     PublicKeyVerify verifier =
         handle
@@ -102,7 +102,7 @@ public class PublicKeyVerifyWrapperTest {
             .setVariant(EcdsaParameters.Variant.CRUNCHY)
             .build();
 
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     PublicKeySign signer = EcdsaSignJce.create((EcdsaPrivateKey) handle.getAt(0).getKey());
     PublicKeyVerify verifier =
         handle
@@ -125,7 +125,7 @@ public class PublicKeyVerifyWrapperTest {
             .setVariant(EcdsaParameters.Variant.LEGACY)
             .build();
 
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     PublicKeySign signer = EcdsaSignJce.create((EcdsaPrivateKey) handle.getAt(0).getKey());
     PublicKeyVerify verifier =
         handle

@@ -102,7 +102,9 @@ public class EcdsaSignKeyManagerTest {
     Parameters p = EcdsaSignKeyManager.ecdsaP256Template().toParameters();
     Set<BigInteger> keys = new TreeSet<>();
     for (int i = 0; i < numKeys; ++i) {
-      EcdsaPrivateKey key = (EcdsaPrivateKey) KeysetHandle.generateNew(p).getAt(0).getKey();
+      EcdsaPrivateKey key =
+          (EcdsaPrivateKey)
+              KeysetHandle.generateNew(p, RegistryConfiguration.get()).getAt(0).getKey();
       keys.add(key.getPrivateValue().getBigInteger(InsecureSecretKeyAccess.get()));
     }
     assertThat(keys).hasSize(numKeys);
@@ -111,10 +113,20 @@ public class EcdsaSignKeyManagerTest {
   @Test
   public void testKeyTemplateAndManagerCompatibility() throws Exception {
     Parameters p = EcdsaSignKeyManager.ecdsaP256Template().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
 
     p = EcdsaSignKeyManager.rawEcdsaP256Template().toParameters();
-    assertThat(KeysetHandle.generateNew(p).getAt(0).getKey().getParameters()).isEqualTo(p);
+    assertThat(
+            KeysetHandle.generateNew(p, RegistryConfiguration.get())
+                .getAt(0)
+                .getKey()
+                .getParameters())
+        .isEqualTo(p);
   }
 
   @DataPoints("templateNames")
@@ -133,7 +145,9 @@ public class EcdsaSignKeyManagerTest {
 
   @Theory
   public void testTemplates(@FromDataPoints("templateNames") String templateName) throws Exception {
-    KeysetHandle h = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle h =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
         .isEqualTo(KeyTemplates.get(templateName).toParameters());

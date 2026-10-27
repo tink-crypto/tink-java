@@ -22,6 +22,7 @@ import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
+import com.google.crypto.tink.RegistryConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -41,7 +42,9 @@ public class PublicKeySignVerifyFactoryWithoutWrapperRegisteredTest {
       throws Exception {
     // Only register EcdsaSignKeyManager, but not the Sign and Verify wrappers.
     EcdsaSignKeyManager.registerPair(/*newKeyAllowed=*/ true);
-    KeysetHandle privateHandle = KeysetHandle.generateNew(KeyTemplates.get("ECDSA_P256"));
+    KeysetHandle privateHandle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get("ECDSA_P256").toParameters(), RegistryConfiguration.get());
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
 
     PublicKeySign signer = PublicKeySignFactory.getPrimitive(privateHandle);

@@ -25,6 +25,7 @@ import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.signature.SlhDsaParameters.Variant;
@@ -78,7 +79,9 @@ public class SlhDsaSignKeyManagerConscryptTest {
       return;
     }
 
-    KeysetHandle h = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle h =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
 
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
@@ -93,7 +96,9 @@ public class SlhDsaSignKeyManagerConscryptTest {
       return;
     }
 
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
     PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
         handle
@@ -114,7 +119,9 @@ public class SlhDsaSignKeyManagerConscryptTest {
       return;
     }
 
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
     PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
         handle
@@ -138,8 +145,12 @@ public class SlhDsaSignKeyManagerConscryptTest {
     SlhDsaParameters parameters =
         SlhDsaParameters.createSlhDsaWithSha2And128S(Variant.NO_PREFIX);
 
-    SlhDsaPrivateKey key0 = (SlhDsaPrivateKey) KeysetHandle.generateNew(parameters).getAt(0).getKey();
-    SlhDsaPrivateKey key1 = (SlhDsaPrivateKey) KeysetHandle.generateNew(parameters).getAt(0).getKey();
+    SlhDsaPrivateKey key0 =
+        (SlhDsaPrivateKey)
+            KeysetHandle.generateNew(parameters, RegistryConfiguration.get()).getAt(0).getKey();
+    SlhDsaPrivateKey key1 =
+        (SlhDsaPrivateKey)
+            KeysetHandle.generateNew(parameters, RegistryConfiguration.get()).getAt(0).getKey();
 
     assertFalse(key0.equalsKey(key1));
   }
@@ -153,7 +164,7 @@ public class SlhDsaSignKeyManagerConscryptTest {
 
     SlhDsaParameters parameters =
         SlhDsaParameters.createSlhDsaWithSha2And128S(Variant.NO_PREFIX);
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
         handle
@@ -175,7 +186,7 @@ public class SlhDsaSignKeyManagerConscryptTest {
 
     SlhDsaParameters parameters =
         SlhDsaParameters.createSlhDsaWithSha2And128S(Variant.NO_PREFIX);
-    KeysetHandle handle = KeysetHandle.generateNew(parameters);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
         handle
