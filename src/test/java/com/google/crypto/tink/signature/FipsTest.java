@@ -26,12 +26,26 @@ import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.config.TinkFips;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.signature.internal.CompositeMlDsaKeyCreator;
+import com.google.crypto.tink.signature.internal.CompositeMlDsaSignConscrypt;
+import com.google.crypto.tink.signature.internal.CompositeMlDsaVerifyConscrypt;
 import com.google.crypto.tink.signature.internal.EcdsaKeyCreator;
+import com.google.crypto.tink.signature.internal.EcdsaSignJce;
+import com.google.crypto.tink.signature.internal.EcdsaVerifyJce;
 import com.google.crypto.tink.signature.internal.Ed25519KeyCreator;
+import com.google.crypto.tink.signature.internal.Ed25519SignJce;
+import com.google.crypto.tink.signature.internal.Ed25519VerifyJce;
 import com.google.crypto.tink.signature.internal.MlDsaKeyCreator;
+import com.google.crypto.tink.signature.internal.MlDsaSignConscrypt;
+import com.google.crypto.tink.signature.internal.MlDsaVerifyConscrypt;
 import com.google.crypto.tink.signature.internal.RsaSsaPkcs1KeyCreator;
+import com.google.crypto.tink.signature.internal.RsaSsaPkcs1SignJce;
+import com.google.crypto.tink.signature.internal.RsaSsaPkcs1VerifyConscrypt;
 import com.google.crypto.tink.signature.internal.RsaSsaPssKeyCreator;
+import com.google.crypto.tink.signature.internal.RsaSsaPssSignConscrypt;
+import com.google.crypto.tink.signature.internal.RsaSsaPssVerifyConscrypt;
 import com.google.crypto.tink.signature.internal.SlhDsaKeyCreator;
+import com.google.crypto.tink.signature.internal.SlhDsaSignConscrypt;
+import com.google.crypto.tink.signature.internal.SlhDsaVerifyConscrypt;
 import com.google.crypto.tink.signature.internal.testing.CompositeMlDsaTestUtil;
 import com.google.crypto.tink.signature.internal.testing.EcdsaTestUtil;
 import com.google.crypto.tink.signature.internal.testing.Ed25519TestUtil;
@@ -55,6 +69,7 @@ import com.google.crypto.tink.signature.subtle.SlhDsaSigner;
 import com.google.crypto.tink.signature.subtle.SlhDsaVerifier;
 import com.google.crypto.tink.testing.TestUtil;
 import java.security.GeneralSecurityException;
+import java.security.Provider;
 import java.security.Security;
 import org.conscrypt.Conscrypt;
 import org.junit.BeforeClass;
@@ -443,6 +458,26 @@ public final class FipsTest {
   }
 
   @Test
+  public void ecdsaSignAndVerifyJceCreateWithProvider() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
+    Provider provider = Conscrypt.newProvider();
+    EcdsaPrivateKey privateKey =
+        (EcdsaPrivateKey) EcdsaTestUtil.createEcdsaTestVectors()[0].getPrivateKey();
+    EcdsaPublicKey publicKey = privateKey.getPublicKey();
+    if (TinkFips.useOnlyFips() && !TinkFipsUtil.fipsModuleAvailable()) {
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> EcdsaSignJce.createWithProvider(privateKey, provider));
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> EcdsaVerifyJce.createWithProvider(publicKey, provider));
+    } else {
+      assertThat(EcdsaSignJce.createWithProvider(privateKey, provider)).isNotNull();
+      assertThat(EcdsaVerifyJce.createWithProvider(publicKey, provider)).isNotNull();
+    }
+  }
+
+  @Test
   public void ecdsaKeyCreatorCreateKey() throws Exception {
     assumeFalse(TestUtil.isAndroid());
     if (TinkFips.useOnlyFips() && !TinkFipsUtil.fipsModuleAvailable()) {
@@ -510,6 +545,53 @@ public final class FipsTest {
     } else {
       assertThat(RsaSsaPkcs1Signer.create(privateKey4096)).isNotNull();
       assertThat(RsaSsaPkcs1Verifier.create(publicKey4096)).isNotNull();
+    }
+  }
+
+  @Test
+  public void rsaSsaPkcs1SignJceAndVerifyConscryptCreateWithProvider() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
+    Provider provider = Conscrypt.newProvider();
+    RsaSsaPkcs1PrivateKey privateKey2048 =
+        (RsaSsaPkcs1PrivateKey)
+            RsaSsaPkcs1TestUtil.createRsaSsaPkcs1TestVectors()[0].getPrivateKey();
+    RsaSsaPkcs1PublicKey publicKey2048 = privateKey2048.getPublicKey();
+
+    RsaSsaPkcs1Parameters parameters4096 =
+        RsaSsaPkcs1Parameters.builder()
+            .setModulusSizeBits(4096)
+            .setPublicExponent(RsaSsaPkcs1Parameters.F4)
+            .setHashType(RsaSsaPkcs1Parameters.HashType.SHA256)
+            .setVariant(RsaSsaPkcs1Parameters.Variant.NO_PREFIX)
+            .build();
+    RsaSsaPkcs1PrivateKey privateKey4096 =
+        RsaSsaPkcs1TestUtil.privateKeyFor4096BitParameters(parameters4096, null);
+    RsaSsaPkcs1PublicKey publicKey4096 = privateKey4096.getPublicKey();
+
+    if (TinkFips.useOnlyFips() && !TinkFipsUtil.fipsModuleAvailable()) {
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> RsaSsaPkcs1SignJce.createWithProvider(privateKey2048, provider));
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> RsaSsaPkcs1VerifyConscrypt.createWithProvider(publicKey2048, provider));
+    } else {
+      assertThat(RsaSsaPkcs1SignJce.createWithProvider(privateKey2048, provider)).isNotNull();
+      assertThat(RsaSsaPkcs1VerifyConscrypt.createWithProvider(publicKey2048, provider))
+          .isNotNull();
+    }
+
+    if (TinkFips.useOnlyFips()) {
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> RsaSsaPkcs1SignJce.createWithProvider(privateKey4096, provider));
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> RsaSsaPkcs1VerifyConscrypt.createWithProvider(publicKey4096, provider));
+    } else {
+      assertThat(RsaSsaPkcs1SignJce.createWithProvider(privateKey4096, provider)).isNotNull();
+      assertThat(RsaSsaPkcs1VerifyConscrypt.createWithProvider(publicKey4096, provider))
+          .isNotNull();
     }
   }
 
@@ -590,6 +672,52 @@ public final class FipsTest {
   }
 
   @Test
+  public void rsaSsaPssSignAndVerifyConscryptCreateWithProvider() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
+    Provider provider = Conscrypt.newProvider();
+    RsaSsaPssPrivateKey privateKey2048 =
+        (RsaSsaPssPrivateKey) RsaSsaPssTestUtil.createRsaPssTestVectors()[0].getPrivateKey();
+    RsaSsaPssPublicKey publicKey2048 = privateKey2048.getPublicKey();
+
+    RsaSsaPssParameters parameters4096 =
+        RsaSsaPssParameters.builder()
+            .setModulusSizeBits(4096)
+            .setPublicExponent(RsaSsaPssParameters.F4)
+            .setSigHashType(RsaSsaPssParameters.HashType.SHA256)
+            .setMgf1HashType(RsaSsaPssParameters.HashType.SHA256)
+            .setVariant(RsaSsaPssParameters.Variant.NO_PREFIX)
+            .setSaltLengthBytes(32)
+            .build();
+    RsaSsaPssPrivateKey privateKey4096 =
+        RsaSsaPssTestUtil.privateKeyFor4096BitParameters(parameters4096, null);
+    RsaSsaPssPublicKey publicKey4096 = privateKey4096.getPublicKey();
+
+    if (TinkFips.useOnlyFips() && !TinkFipsUtil.fipsModuleAvailable()) {
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> RsaSsaPssSignConscrypt.createWithProvider(privateKey2048, provider));
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> RsaSsaPssVerifyConscrypt.createWithProvider(publicKey2048, provider));
+    } else {
+      assertThat(RsaSsaPssSignConscrypt.createWithProvider(privateKey2048, provider)).isNotNull();
+      assertThat(RsaSsaPssVerifyConscrypt.createWithProvider(publicKey2048, provider)).isNotNull();
+    }
+
+    if (TinkFips.useOnlyFips()) {
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> RsaSsaPssSignConscrypt.createWithProvider(privateKey4096, provider));
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> RsaSsaPssVerifyConscrypt.createWithProvider(publicKey4096, provider));
+    } else {
+      assertThat(RsaSsaPssSignConscrypt.createWithProvider(privateKey4096, provider)).isNotNull();
+      assertThat(RsaSsaPssVerifyConscrypt.createWithProvider(publicKey4096, provider)).isNotNull();
+    }
+  }
+
+  @Test
   public void rsaSsaPssKeyCreatorCreateKey() throws Exception {
     assumeFalse(TestUtil.isAndroid());
     RsaSsaPssParameters parameters2048 =
@@ -646,6 +774,26 @@ public final class FipsTest {
   }
 
   @Test
+  public void ed25519SignAndVerifyJceCreateWithProvider() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
+    Provider provider = Conscrypt.newProvider();
+    Ed25519PrivateKey privateKey =
+        (Ed25519PrivateKey) Ed25519TestUtil.createTestVector0().getPrivateKey();
+    Ed25519PublicKey publicKey = privateKey.getPublicKey();
+    if (TinkFips.useOnlyFips()) {
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> Ed25519SignJce.createWithProvider(privateKey, provider));
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> Ed25519VerifyJce.createWithProvider(publicKey, provider));
+    } else {
+      assertThat(Ed25519SignJce.createWithProvider(privateKey, provider)).isNotNull();
+      assertThat(Ed25519VerifyJce.createWithProvider(publicKey, provider)).isNotNull();
+    }
+  }
+
+  @Test
   public void ed25519KeyCreatorCreateKey() throws Exception {
     assumeFalse(TestUtil.isAndroid());
     if (TinkFips.useOnlyFips()) {
@@ -678,6 +826,30 @@ public final class FipsTest {
     } else {
       assertThat(MlDsaSigner.create(privateKey)).isNotNull();
       assertThat(MlDsaVerifier.create(publicKey)).isNotNull();
+    }
+  }
+
+  @Test
+  public void mlDsaSignAndVerifyConscryptCreateWithProvider() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
+    Provider provider = Conscrypt.newProvider();
+    MlDsaParameters parameters =
+        MlDsaParameters.create(
+            MlDsaParameters.MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.NO_PREFIX);
+    MlDsaPrivateKey privateKey =
+        (MlDsaPrivateKey)
+            MlDsaTestUtil.getMlDsaValidSignatureTestVector(parameters).getPrivateKey();
+    MlDsaPublicKey publicKey = privateKey.getPublicKey();
+    if (TinkFips.useOnlyFips()) {
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> MlDsaSignConscrypt.createWithProvider(privateKey, provider));
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> MlDsaVerifyConscrypt.createWithProvider(publicKey, provider));
+    } else {
+      assertThat(MlDsaSignConscrypt.createWithProvider(privateKey, provider)).isNotNull();
+      assertThat(MlDsaVerifyConscrypt.createWithProvider(publicKey, provider)).isNotNull();
     }
   }
 
@@ -716,6 +888,30 @@ public final class FipsTest {
   }
 
   @Test
+  public void slhDsaSignAndVerifyConscryptCreateWithProvider() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
+    Provider provider = Conscrypt.newProvider();
+    SlhDsaPrivateKey privateKey =
+        (SlhDsaPrivateKey)
+            SlhDsaTestUtil.createSlhDsaValidSignatureTestVectors()
+                .findFirst()
+                .get()
+                .getPrivateKey();
+    SlhDsaPublicKey publicKey = privateKey.getPublicKey();
+    if (TinkFips.useOnlyFips()) {
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> SlhDsaSignConscrypt.createWithProvider(privateKey, provider));
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> SlhDsaVerifyConscrypt.createWithProvider(publicKey, provider));
+    } else {
+      assertThat(SlhDsaSignConscrypt.createWithProvider(privateKey, provider)).isNotNull();
+      assertThat(SlhDsaVerifyConscrypt.createWithProvider(publicKey, provider)).isNotNull();
+    }
+  }
+
+  @Test
   public void slhDsaKeyCreatorCreateKey() throws Exception {
     assumeFalse(TestUtil.isAndroid());
     SlhDsaParameters parameters =
@@ -742,6 +938,27 @@ public final class FipsTest {
     } else {
       assertThat(CompositeMlDsaSigner.create(privateKey)).isNotNull();
       assertThat(CompositeMlDsaVerifier.create(publicKey)).isNotNull();
+    }
+  }
+
+  @Test
+  public void compositeMlDsaSignAndVerifyConscryptCreateWithProvider() throws Exception {
+    assumeFalse(TestUtil.isAndroid());
+    Provider provider = Conscrypt.newProvider();
+    CompositeMlDsaPrivateKey privateKey =
+        CompositeMlDsaTestUtil.createCompositeKeyFromTestVector(
+            CompositeMlDsaTestUtil.compositeMlDsaTestVectors.get(2));
+    CompositeMlDsaPublicKey publicKey = privateKey.getPublicKey();
+    if (TinkFips.useOnlyFips()) {
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> CompositeMlDsaSignConscrypt.createWithProvider(privateKey, provider));
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> CompositeMlDsaVerifyConscrypt.createWithProvider(publicKey, provider));
+    } else {
+      assertThat(CompositeMlDsaSignConscrypt.createWithProvider(privateKey, provider)).isNotNull();
+      assertThat(CompositeMlDsaVerifyConscrypt.createWithProvider(publicKey, provider)).isNotNull();
     }
   }
 
