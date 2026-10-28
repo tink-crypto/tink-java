@@ -23,6 +23,7 @@ import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.KeysetHandleInterface;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.aead.AeadConfig;
 import com.google.crypto.tink.aead.PredefinedAeadParameters;
 import com.google.errorprone.annotations.Immutable;
@@ -46,7 +47,8 @@ public final class MutablePrimitiveRegistryTest {
   @BeforeClass
   public static void setUpKeyset() throws Exception {
     AeadConfig.register();
-    arbitraryKeyset = KeysetHandle.generateNew(PredefinedAeadParameters.AES128_GCM);
+    arbitraryKeyset =
+        KeysetHandle.generateNew(PredefinedAeadParameters.AES128_GCM, RegistryConfiguration.get());
   }
 
   @Immutable

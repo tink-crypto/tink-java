@@ -80,7 +80,9 @@ public final class HpkePrivateKeyManagerTest {
       // key generation is too slow in Tsan.
       return;
     }
-    KeysetHandle h = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle h =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
         .isEqualTo(KeyTemplates.get(templateName).toParameters());
@@ -95,7 +97,8 @@ public final class HpkePrivateKeyManagerTest {
 
     KeysetHandle privateHandle =
         KeysetHandle.generateNew(
-            KeyTemplates.get("DHKEM_X25519_HKDF_SHA256_HKDF_SHA256_AES_128_GCM"));
+            KeyTemplates.get("DHKEM_X25519_HKDF_SHA256_HKDF_SHA256_AES_128_GCM").toParameters(),
+            RegistryConfiguration.get());
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
     assertNotNull(privateHandle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class));
     assertNotNull(publicHandle.getPrimitive(RegistryConfiguration.get(), HybridEncrypt.class));
@@ -195,7 +198,7 @@ public final class HpkePrivateKeyManagerTest {
     int numKeys = 10;
     Set<String> keys = new TreeSet<>();
     for (int i = 0; i < numKeys; i++) {
-      KeysetHandle handle = KeysetHandle.generateNew(params);
+      KeysetHandle handle = KeysetHandle.generateNew(params, RegistryConfiguration.get());
       assertThat(handle.size()).isEqualTo(1);
       HpkePrivateKey key = (HpkePrivateKey) handle.getPrimary().getKey();
       keys.add(Hex.encode(key.getPrivateKeyBytes().toByteArray(InsecureSecretKeyAccess.get())));
@@ -211,7 +214,7 @@ public final class HpkePrivateKeyManagerTest {
     int numKeys = 10;
     Set<String> keys = new TreeSet<>();
     for (int i = 0; i < numKeys; i++) {
-      KeysetHandle handle = KeysetHandle.generateNew(params);
+      KeysetHandle handle = KeysetHandle.generateNew(params, RegistryConfiguration.get());
       assertThat(handle.size()).isEqualTo(1);
       HpkePrivateKey key = (HpkePrivateKey) handle.getPrimary().getKey();
       keys.add(Hex.encode(key.getPrivateKeyBytes().toByteArray(InsecureSecretKeyAccess.get())));
@@ -233,7 +236,7 @@ public final class HpkePrivateKeyManagerTest {
     int numKeys = 10;
     Set<String> keys = new TreeSet<>();
     for (int i = 0; i < numKeys; i++) {
-      KeysetHandle handle = KeysetHandle.generateNew(params);
+      KeysetHandle handle = KeysetHandle.generateNew(params, RegistryConfiguration.get());
       assertThat(handle.size()).isEqualTo(1);
       HpkePrivateKey key = (HpkePrivateKey) handle.getPrimary().getKey();
       keys.add(Hex.encode(key.getPrivateKeyBytes().toByteArray(InsecureSecretKeyAccess.get())));
@@ -249,9 +252,11 @@ public final class HpkePrivateKeyManagerTest {
     KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
 
     byte[] serializedHandle =
-        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     KeysetHandle parsedHandle =
-        TinkProtoKeysetFormat.parseKeyset(serializedHandle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            serializedHandle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     assertThat(parsedHandle.equalsKeyset(handle)).isTrue();
   }
 
@@ -262,8 +267,11 @@ public final class HpkePrivateKeyManagerTest {
     KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).withFixedId(1216).makePrimary();
     KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build().getPublicKeysetHandle();
 
-    byte[] serializedHandle = TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle);
-    KeysetHandle parsedHandle = TinkProtoKeysetFormat.parseKeysetWithoutSecret(serializedHandle);
+    byte[] serializedHandle =
+        TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle, RegistryConfiguration.get());
+    KeysetHandle parsedHandle =
+        TinkProtoKeysetFormat.parseKeysetWithoutSecret(
+            serializedHandle, RegistryConfiguration.get());
     assertThat(parsedHandle.equalsKeyset(handle)).isTrue();
   }
 

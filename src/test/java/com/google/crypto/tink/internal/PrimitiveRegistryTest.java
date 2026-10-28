@@ -28,6 +28,7 @@ import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.ProtoKeySerialization;
 import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
 import com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.aead.AeadConfig;
 import com.google.crypto.tink.aead.PredefinedAeadParameters;
 import com.google.crypto.tink.mac.AesCmacKey;
@@ -51,7 +52,8 @@ public final class PrimitiveRegistryTest {
   @BeforeClass
   public static void setUpKeyset() throws Exception {
     AeadConfig.register();
-    arbitraryKeyset = KeysetHandle.generateNew(PredefinedAeadParameters.AES128_GCM);
+    arbitraryKeyset =
+        KeysetHandle.generateNew(PredefinedAeadParameters.AES128_GCM, RegistryConfiguration.get());
   }
 
   // ===============================================================================================
