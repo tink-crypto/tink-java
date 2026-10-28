@@ -43,7 +43,9 @@ public class DeterministicAeadFactoryTest {
   @SuppressWarnings("deprecation") // This is a test that the deprecated function works.
   public void deprecatedDeterministicAeadFactoryGetPrimitive_sameAs_keysetHandleGetPrimitive()
       throws Exception {
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get("AES256_SIV"));
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get("AES256_SIV").toParameters(), RegistryConfiguration.get());
 
     DeterministicAead daead =
         handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);

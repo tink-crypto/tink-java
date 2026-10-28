@@ -22,6 +22,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -41,7 +42,9 @@ public class DeterministicAeadFactoryWithoutWrapperRegisteredTest {
       throws Exception {
     // Only register AesSivKeyManager, but not the DeterministicAeadWrapper.
     AesSivKeyManager.register(/* newKeyAllowed = */ true);
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get("AES256_SIV"));
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get("AES256_SIV").toParameters(), RegistryConfiguration.get());
 
     DeterministicAead daead = DeterministicAeadFactory.getPrimitive(handle);
 

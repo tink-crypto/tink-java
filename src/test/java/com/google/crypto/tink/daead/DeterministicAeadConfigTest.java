@@ -20,6 +20,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.config.TinkFips;
 import java.security.GeneralSecurityException;
 import org.junit.Assume;
@@ -37,7 +38,9 @@ public class DeterministicAeadConfigTest {
 
     DeterministicAeadConfig.register();
 
-    assertThat(KeysetHandle.generateNew(PredefinedDeterministicAeadParameters.AES256_SIV))
+    assertThat(
+            KeysetHandle.generateNew(
+                PredefinedDeterministicAeadParameters.AES256_SIV, RegistryConfiguration.get()))
         .isNotNull();
   }
 
@@ -49,6 +52,8 @@ public class DeterministicAeadConfigTest {
 
     assertThrows(
         GeneralSecurityException.class,
-        () -> KeysetHandle.generateNew(PredefinedDeterministicAeadParameters.AES256_SIV));
+        () ->
+            KeysetHandle.generateNew(
+                PredefinedDeterministicAeadParameters.AES256_SIV, RegistryConfiguration.get()));
   }
 }

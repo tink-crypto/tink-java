@@ -21,6 +21,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
+import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
@@ -94,7 +95,9 @@ public class AesSivKeyManagerTest {
 
   @Theory
   public void testTemplates(@FromDataPoints("templateNames") String templateName) throws Exception {
-    KeysetHandle h = KeysetHandle.generateNew(KeyTemplates.get(templateName));
+    KeysetHandle h =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
         .isEqualTo(KeyTemplates.get(templateName).toParameters());
@@ -199,7 +202,7 @@ public class AesSivKeyManagerTest {
             .setKeySizeBytes(64)
             .setVariant(AesSivParameters.Variant.TINK)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(params);
+    KeysetHandle handle = KeysetHandle.generateNew(params, RegistryConfiguration.get());
     assertThat(handle.size()).isEqualTo(1);
     com.google.crypto.tink.daead.AesSivKey key =
         (com.google.crypto.tink.daead.AesSivKey) handle.getAt(0).getKey();
@@ -217,7 +220,7 @@ public class AesSivKeyManagerTest {
     int numKeys = 100;
     Set<String> keys = new TreeSet<>();
     for (int i = 0; i < numKeys; i++) {
-      KeysetHandle handle = KeysetHandle.generateNew(params);
+      KeysetHandle handle = KeysetHandle.generateNew(params, RegistryConfiguration.get());
       assertThat(handle.size()).isEqualTo(1);
       com.google.crypto.tink.daead.AesSivKey key =
           (com.google.crypto.tink.daead.AesSivKey) handle.getAt(0).getKey();
@@ -233,7 +236,7 @@ public class AesSivKeyManagerTest {
             .setKeySizeBytes(64)
             .setVariant(AesSivParameters.Variant.TINK)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(params);
+    KeysetHandle handle = KeysetHandle.generateNew(params, RegistryConfiguration.get());
     assertThat(handle.size()).isEqualTo(1);
     DeterministicAead daead =
         handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
@@ -251,12 +254,14 @@ public class AesSivKeyManagerTest {
             .setKeySizeBytes(64)
             .setVariant(AesSivParameters.Variant.TINK)
             .build();
-    KeysetHandle handle = KeysetHandle.generateNew(params);
+    KeysetHandle handle = KeysetHandle.generateNew(params, RegistryConfiguration.get());
 
     byte[] serializedKeyset =
-        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     KeysetHandle parsed =
-        TinkProtoKeysetFormat.parseKeyset(serializedKeyset, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            serializedKeyset, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     assertTrue(parsed.equalsKeyset(handle));
   }
 
@@ -267,7 +272,9 @@ public class AesSivKeyManagerTest {
             .setKeySizeBytes(32)
             .setVariant(AesSivParameters.Variant.TINK)
             .build();
-    assertThrows(GeneralSecurityException.class, () -> KeysetHandle.generateNew(params));
+    Configuration configuration = RegistryConfiguration.get();
+    assertThrows(
+        GeneralSecurityException.class, () -> KeysetHandle.generateNew(params, configuration));
   }
 
   @Test
@@ -310,9 +317,11 @@ public class AesSivKeyManagerTest {
             .addEntry(KeysetHandle.importKey(key).withFixedId(3133).makePrimary())
             .build();
     byte[] serializedKeyset =
-        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     KeysetHandle parsed =
-        TinkProtoKeysetFormat.parseKeyset(serializedKeyset, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            serializedKeyset, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     assertTrue(parsed.equalsKeyset(handle));
   }
 
