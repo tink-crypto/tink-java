@@ -62,7 +62,8 @@ public class JwtMacWrapperTest {
     // The old KeysetManager API allows keysets without primary key.
     // The KeysetHandle.Builder does not allow this and can't be used in this test.
     KeyTemplate template = KeyTemplates.get("JWT_HS256");
-    KeysetManager manager = KeysetManager.withEmptyKeyset().add(template);
+    KeysetManager manager =
+        KeysetManager.withEmptyKeyset(RegistryConfiguration.get()).add(template);
     KeysetHandle handle = manager.getKeysetHandle();
     assertThrows(
         GeneralSecurityException.class,
