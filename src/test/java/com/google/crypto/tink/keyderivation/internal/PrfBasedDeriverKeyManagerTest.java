@@ -254,7 +254,7 @@ public class PrfBasedDeriverKeyManagerTest {
             .setDerivedKeyParameters(XChaCha20Poly1305Parameters.create())
             .build();
 
-    KeysetHandle handle = KeysetHandle.generateNew(params);
+    KeysetHandle handle = KeysetHandle.generateNew(params, RegistryConfiguration.get());
     assertThat(handle.size()).isEqualTo(1);
     PrfBasedKeyDerivationKey key = (PrfBasedKeyDerivationKey) handle.getAt(0).getKey();
     assertThat(key.getParameters()).isEqualTo(params);
@@ -275,7 +275,7 @@ public class PrfBasedDeriverKeyManagerTest {
                 XChaCha20Poly1305Parameters.create(XChaCha20Poly1305Parameters.Variant.TINK))
             .build();
 
-    KeysetHandle handle = KeysetHandle.generateNew(params);
+    KeysetHandle handle = KeysetHandle.generateNew(params, RegistryConfiguration.get());
     assertThat(handle.size()).isEqualTo(1);
     PrfBasedKeyDerivationKey key = (PrfBasedKeyDerivationKey) handle.getAt(0).getKey();
     assertThat(key.getParameters()).isEqualTo(params);
@@ -296,7 +296,7 @@ public class PrfBasedDeriverKeyManagerTest {
     int numKeys = 100;
     Set<String> keys = new TreeSet<>();
     for (int i = 0; i < numKeys; i++) {
-      KeysetHandle handle = KeysetHandle.generateNew(params);
+      KeysetHandle handle = KeysetHandle.generateNew(params, RegistryConfiguration.get());
       assertThat(handle.size()).isEqualTo(1);
       PrfBasedKeyDerivationKey key = (PrfBasedKeyDerivationKey) handle.getAt(0).getKey();
       com.google.crypto.tink.prf.HkdfPrfKey prfKey =
@@ -347,12 +347,14 @@ public class PrfBasedDeriverKeyManagerTest {
             .setDerivedKeyParameters(XChaCha20Poly1305Parameters.create())
             .build();
 
-    KeysetHandle handle = KeysetHandle.generateNew(params);
+    KeysetHandle handle = KeysetHandle.generateNew(params, RegistryConfiguration.get());
 
     byte[] serialized =
-        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     KeysetHandle parsed =
-        TinkProtoKeysetFormat.parseKeyset(serialized, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            serialized, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
 
     assertTrue(parsed.equalsKeyset(handle));
   }

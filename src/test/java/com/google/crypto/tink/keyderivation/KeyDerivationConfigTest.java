@@ -20,6 +20,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.aead.AeadConfig;
 import com.google.crypto.tink.aead.PredefinedAeadParameters;
 import com.google.crypto.tink.config.TinkFips;
@@ -47,7 +48,8 @@ public class KeyDerivationConfigTest {
             .setPrfParameters(PredefinedPrfParameters.HKDF_SHA256)
             .setDerivedKeyParameters(PredefinedAeadParameters.AES128_GCM)
             .build();
-    assertThat(KeysetHandle.generateNew(prfBasedParameters)).isNotNull();
+    assertThat(KeysetHandle.generateNew(prfBasedParameters, RegistryConfiguration.get()))
+        .isNotNull();
   }
 
   @Test
@@ -61,13 +63,16 @@ public class KeyDerivationConfigTest {
     // Check that this by verifying that key generation fails.
     assertThrows(
         GeneralSecurityException.class,
-        () -> KeysetHandle.generateNew(PredefinedPrfParameters.HKDF_SHA256));
+        () ->
+            KeysetHandle.generateNew(
+                PredefinedPrfParameters.HKDF_SHA256, RegistryConfiguration.get()));
     PrfBasedKeyDerivationParameters prfBasedParameters =
         PrfBasedKeyDerivationParameters.builder()
             .setPrfParameters(PredefinedPrfParameters.HKDF_SHA256)
             .setDerivedKeyParameters(PredefinedAeadParameters.AES128_GCM)
             .build();
     assertThrows(
-        GeneralSecurityException.class, () -> KeysetHandle.generateNew(prfBasedParameters));
+        GeneralSecurityException.class,
+        () -> KeysetHandle.generateNew(prfBasedParameters, RegistryConfiguration.get()));
   }
 }

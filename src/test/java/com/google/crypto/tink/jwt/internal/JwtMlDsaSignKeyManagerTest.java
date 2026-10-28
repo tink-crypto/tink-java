@@ -132,7 +132,9 @@ public class JwtMlDsaSignKeyManagerTest {
     Parameters p = KeyTemplates.get("JWT_ML_DSA_44").toParameters();
     Set<Bytes> keys = new HashSet<>();
     for (int i = 0; i < numKeys; ++i) {
-      JwtMlDsaPrivateKey key = (JwtMlDsaPrivateKey) KeysetHandle.generateNew(p).getAt(0).getKey();
+      JwtMlDsaPrivateKey key =
+          (JwtMlDsaPrivateKey)
+              KeysetHandle.generateNew(p, RegistryConfiguration.get()).getAt(0).getKey();
       keys.add(Bytes.copyFrom(key.getPrivateSeed().toByteArray(InsecureSecretKeyAccess.get())));
     }
     assertThat(keys).hasSize(numKeys);
@@ -153,7 +155,9 @@ public class JwtMlDsaSignKeyManagerTest {
       // createKey is too slow in Tsan.
       return;
     }
-    KeysetHandle h = KeysetHandle.generateNew(KeyTemplates.get(testVector.template));
+    KeysetHandle h =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(testVector.template).toParameters(), RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
         .isEqualTo(KeyTemplates.get(testVector.template).toParameters());
@@ -209,7 +213,9 @@ public class JwtMlDsaSignKeyManagerTest {
       return;
     }
 
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get(testVector.template));
+    KeysetHandle handle =
+        KeysetHandle.generateNew(
+            KeyTemplates.get(testVector.template).toParameters(), RegistryConfiguration.get());
     JwtPublicKeySign signer =
         handle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     JwtPublicKeyVerify verifier =
@@ -245,7 +251,8 @@ public class JwtMlDsaSignKeyManagerTest {
     }
 
     KeyTemplate template = KeyTemplates.get("JWT_ML_DSA_44_RAW");
-    KeysetHandle handle = KeysetHandle.generateNew(template);
+    KeysetHandle handle =
+        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
 
     byte[] serializedKeyset =
         TinkProtoKeysetFormat.serializeKeyset(
