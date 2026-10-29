@@ -22,12 +22,12 @@ import static org.junit.Assert.assertTrue;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyTemplate;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
+import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.internal.MutablePrimitiveRegistry;
 import com.google.crypto.tink.internal.SlowInputStream;
 import com.google.crypto.tink.keyderivation.KeyDerivationConfig;
@@ -106,10 +106,11 @@ public class HmacPrfKeyManagerTest {
   public void testTemplates(@FromDataPoints("templateNames") String templateName) throws Exception {
     KeysetHandle h =
         KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
+            MutableParametersRegistry.globalInstance().get(templateName),
+            RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
-        .isEqualTo(KeyTemplates.get(templateName).toParameters());
+        .isEqualTo(MutableParametersRegistry.globalInstance().get(templateName));
   }
 
   @Test
@@ -130,8 +131,14 @@ public class HmacPrfKeyManagerTest {
     assertThat(prf).isInstanceOf(PrfHmacJce.class);
   }
 
+  @DataPoints("parameters")
+  public static final HmacPrfParameters[] PARAMETERS =
+      new HmacPrfParameters[] {
+        PredefinedPrfParameters.HMAC_SHA256_PRF, PredefinedPrfParameters.HMAC_SHA512_PRF
+      };
+
   @Theory
-  public void testCreateKeyFromRandomness(@FromDataPoints("templateNames") String templateName)
+  public void testCreateKeyFromRandomness(@FromDataPoints("parameters") HmacPrfParameters parameters)
       throws Exception {
     byte[] keyMaterial =
         new byte[] {
@@ -139,8 +146,6 @@ public class HmacPrfKeyManagerTest {
           25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46,
           47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68,
         };
-    HmacPrfParameters parameters =
-        (HmacPrfParameters) KeyTemplates.get(templateName).toParameters();
     com.google.crypto.tink.prf.HmacPrfKey key =
         HmacPrfKeyManager.createHmacKeyFromRandomness(
             parameters, new ByteArrayInputStream(keyMaterial), null, InsecureSecretKeyAccess.get());

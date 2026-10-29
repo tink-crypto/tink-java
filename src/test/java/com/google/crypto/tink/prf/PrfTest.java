@@ -22,7 +22,6 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
@@ -44,18 +43,19 @@ public final class PrfTest {
     PrfConfig.register();
   }
 
-  @DataPoints("templates")
-  public static final String[] TEMPLATES =
-      new String[] {
-        "AES_CMAC_PRF", "HMAC_SHA256_PRF", "HMAC_SHA512_PRF", "HKDF_SHA256",
+  @DataPoints("parameters")
+  public static final PrfParameters[] PARAMETERS =
+      new PrfParameters[] {
+        PredefinedPrfParameters.AES_CMAC_PRF,
+        PredefinedPrfParameters.HMAC_SHA256_PRF,
+        PredefinedPrfParameters.HMAC_SHA512_PRF,
+        PredefinedPrfParameters.HKDF_SHA256,
       };
 
   @Theory
-  public void create_computeVerify(@FromDataPoints("templates") String templateName)
+  public void create_computeVerify(@FromDataPoints("parameters") PrfParameters parameters)
       throws Exception {
-    KeysetHandle handle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), PrfConfig2026.get());
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, PrfConfig2026.get());
     int primaryId = handle.getPrimary().getId();
     PrfSet prfSet = handle.getPrimitive(PrfConfig2026.get(), PrfSet.class);
 
