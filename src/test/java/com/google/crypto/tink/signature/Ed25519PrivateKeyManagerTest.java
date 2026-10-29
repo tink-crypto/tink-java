@@ -21,7 +21,6 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyTemplate;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.PublicKeySign;
@@ -29,6 +28,7 @@ import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
+import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.internal.SlowInputStream;
 import com.google.crypto.tink.signature.internal.testing.Ed25519TestUtil;
 import com.google.crypto.tink.signature.internal.testing.SignatureTestVector;
@@ -114,12 +114,10 @@ public class Ed25519PrivateKeyManagerTest {
 
   @Theory
   public void testTemplates(@FromDataPoints("templateNames") String templateName) throws Exception {
-    KeysetHandle h =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
+    Parameters parameters = MutableParametersRegistry.globalInstance().get(templateName);
+    KeysetHandle h = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
-    assertThat(h.getAt(0).getKey().getParameters())
-        .isEqualTo(KeyTemplates.get(templateName).toParameters());
+    assertThat(h.getAt(0).getKey().getParameters()).isEqualTo(parameters);
   }
 
   @Test

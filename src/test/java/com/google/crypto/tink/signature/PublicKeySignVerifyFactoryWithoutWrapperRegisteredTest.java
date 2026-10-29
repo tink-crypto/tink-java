@@ -18,7 +18,6 @@ package com.google.crypto.tink.signature;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
@@ -44,7 +43,7 @@ public class PublicKeySignVerifyFactoryWithoutWrapperRegisteredTest {
     EcdsaSignKeyManager.registerPair(/*newKeyAllowed=*/ true);
     KeysetHandle privateHandle =
         KeysetHandle.generateNew(
-            KeyTemplates.get("ECDSA_P256").toParameters(), RegistryConfiguration.get());
+            PredefinedSignatureParameters.ECDSA_P256, RegistryConfiguration.get());
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
 
     PublicKeySign signer = PublicKeySignFactory.getPrimitive(privateHandle);

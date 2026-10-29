@@ -21,12 +21,13 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.signature.SlhDsaParameters.Variant;
 import com.google.crypto.tink.signature.internal.SlhDsaVerifyConscrypt;
@@ -72,6 +73,13 @@ public class SlhDsaSignKeyManagerConscryptTest {
   public static final String[] keyTemplates =
       new String[] {"SLH_DSA_SHA2_128S", "SLH_DSA_SHA2_128S_RAW"};
 
+  @DataPoints("parameters")
+  public static final SlhDsaParameters[] parameters =
+      new SlhDsaParameters[] {
+        SlhDsaParameters.createSlhDsaWithSha2And128S(Variant.TINK),
+        SlhDsaParameters.createSlhDsaWithSha2And128S(Variant.NO_PREFIX),
+      };
+
   @Theory
   public void testTemplates(@FromDataPoints("templateNames") String templateName) throws Exception {
     // TODO(b/464496555): remove this check once SLH-DSA is available on Android and OSS Conscrypt.
@@ -79,26 +87,22 @@ public class SlhDsaSignKeyManagerConscryptTest {
       return;
     }
 
-    KeysetHandle h =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
+    Parameters parameters = MutableParametersRegistry.globalInstance().get(templateName);
+    KeysetHandle h = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
 
     assertThat(h.size()).isEqualTo(1);
-    assertThat(h.getAt(0).getKey().getParameters())
-        .isEqualTo(KeyTemplates.get(templateName).toParameters());
+    assertThat(h.getAt(0).getKey().getParameters()).isEqualTo(parameters);
   }
 
   @Theory
   public void testCreateSignAndVerifyFromTemplate(
-      @FromDataPoints("templateNames") String templateName) throws Exception {
+      @FromDataPoints("parameters") SlhDsaParameters parameters) throws Exception {
     // TODO(b/464496555): remove this check once SLH-DSA is available on Android and OSS Conscrypt.
     if (!SlhDsaVerifyConscrypt.isSupported()) {
       return;
     }
 
-    KeysetHandle handle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
         handle
@@ -113,15 +117,13 @@ public class SlhDsaSignKeyManagerConscryptTest {
 
   @Theory
   public void testCreateSignAndVerifyFromTemplate_wrongMessage_throws(
-      @FromDataPoints("templateNames") String templateName) throws Exception {
+      @FromDataPoints("parameters") SlhDsaParameters parameters) throws Exception {
     // TODO(b/464496555): remove this check once SLH-DSA is available on Android and OSS Conscrypt.
     if (!SlhDsaVerifyConscrypt.isSupported()) {
       return;
     }
 
-    KeysetHandle handle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
         handle

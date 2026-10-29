@@ -21,12 +21,13 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
+import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.signature.MlDsaParameters.MlDsaInstance;
 import com.google.crypto.tink.signature.MlDsaParameters.Variant;
@@ -75,6 +76,17 @@ public class MlDsaSignKeyManagerConscryptTest {
         "ML_DSA_44", "ML_DSA_44_RAW", "ML_DSA_65", "ML_DSA_65_RAW", "ML_DSA_87", "ML_DSA_87_RAW"
       };
 
+  @DataPoints("parameters")
+  public static final MlDsaParameters[] parameters =
+      new MlDsaParameters[] {
+        MlDsaParameters.create(MlDsaInstance.ML_DSA_44, Variant.TINK),
+        MlDsaParameters.create(MlDsaInstance.ML_DSA_44, Variant.NO_PREFIX),
+        MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.TINK),
+        MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.NO_PREFIX),
+        MlDsaParameters.create(MlDsaInstance.ML_DSA_87, Variant.TINK),
+        MlDsaParameters.create(MlDsaInstance.ML_DSA_87, Variant.NO_PREFIX),
+      };
+
   @Theory
   public void testTemplates(@FromDataPoints("templateNames") String templateName) throws Exception {
     // TODO(b/458349867): remove this check once ML-DSA is available on Android and OSS Conscrypt.
@@ -82,26 +94,22 @@ public class MlDsaSignKeyManagerConscryptTest {
       return;
     }
 
-    KeysetHandle h =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
+    Parameters parameters = MutableParametersRegistry.globalInstance().get(templateName);
+    KeysetHandle h = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
 
     assertThat(h.size()).isEqualTo(1);
-    assertThat(h.getAt(0).getKey().getParameters())
-        .isEqualTo(KeyTemplates.get(templateName).toParameters());
+    assertThat(h.getAt(0).getKey().getParameters()).isEqualTo(parameters);
   }
 
   @Theory
   public void testCreateSignAndVerifyFromTemplate(
-      @FromDataPoints("templateNames") String templateName) throws Exception {
+      @FromDataPoints("parameters") MlDsaParameters parameters) throws Exception {
     // TODO(b/458349867): remove this check once ML-DSA is available on Android and OSS Conscrypt.
     if (!MlDsaVerifyConscrypt.isSupported()) {
       return;
     }
 
-    KeysetHandle handle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
         handle
@@ -116,15 +124,13 @@ public class MlDsaSignKeyManagerConscryptTest {
 
   @Theory
   public void testCreateSignAndVerifyFromTemplate_wrongMessage_throws(
-      @FromDataPoints("templateNames") String templateName) throws Exception {
+      @FromDataPoints("parameters") MlDsaParameters parameters) throws Exception {
     // TODO(b/458349867): remove this check once ML-DSA is available on Android and OSS Conscrypt.
     if (!MlDsaVerifyConscrypt.isSupported()) {
       return;
     }
 
-    KeysetHandle handle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     PublicKeySign signer = handle.getPrimitive(SignatureConfig2026.get(), PublicKeySign.class);
     PublicKeyVerify verifier =
         handle

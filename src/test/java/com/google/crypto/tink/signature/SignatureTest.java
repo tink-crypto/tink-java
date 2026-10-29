@@ -16,12 +16,12 @@
 
 package com.google.crypto.tink.signature;
 
+import static com.google.crypto.tink.internal.TinkBugException.exceptionIsBug;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
@@ -45,30 +45,37 @@ public final class SignatureTest {
     SignatureConfig.register();
   }
 
-  @DataPoints("templates")
-  public static final String[] TEMPLATES =
-      new String[] {
-        // Only use one key template from the RSA key managers because key generation is slow.
-        "RSA_SSA_PKCS1_3072_SHA256_F4",
-        "RSA_SSA_PSS_3072_SHA256_F4",
-        "ECDSA_P256",
-        "ECDSA_P256_RAW",
-        "ECDSA_P384_SHA384",
-        "ECDSA_P384_SHA512",
-        "ECDSA_P521",
-        "ED25519",
-        "ED25519_RAW",
-      };
+  @DataPoints("parameters")
+  public static final SignatureParameters[] parameters =
+      exceptionIsBug(
+          () ->
+              new SignatureParameters[] {
+                // Only use one key parameters from the RSA key managers because key generation is
+                // slow.
+                PredefinedSignatureParameters.RSA_SSA_PKCS1_3072_SHA256_F4,
+                PredefinedSignatureParameters.RSA_SSA_PSS_3072_SHA256_SHA256_32_F4,
+                PredefinedSignatureParameters.ECDSA_P256,
+                PredefinedSignatureParameters.ECDSA_P256_IEEE_P1363_WITHOUT_PREFIX,
+                EcdsaParameters.builder()
+                    .setHashType(EcdsaParameters.HashType.SHA384)
+                    .setCurveType(EcdsaParameters.CurveType.NIST_P384)
+                    .setSignatureEncoding(EcdsaParameters.SignatureEncoding.DER)
+                    .setVariant(EcdsaParameters.Variant.TINK)
+                    .build(),
+                PredefinedSignatureParameters.ECDSA_P384,
+                PredefinedSignatureParameters.ECDSA_P521,
+                PredefinedSignatureParameters.ED25519,
+                PredefinedSignatureParameters.ED25519WithRawOutput,
+              });
 
   @Theory
-  public void createSignVerify(@FromDataPoints("templates") String templateName) throws Exception {
+  public void createSignVerify(@FromDataPoints("parameters") SignatureParameters parameters)
+      throws Exception {
     if (TestUtil.isTsan()) {
       // KeysetHandle.generateNew is too slow in Tsan.
       return;
     }
-    KeysetHandle privateHandle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), SignatureConfig2026.get());
+    KeysetHandle privateHandle = KeysetHandle.generateNew(parameters, SignatureConfig2026.get());
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
 
     PublicKeySign signer =
@@ -81,8 +88,7 @@ public final class SignatureTest {
     verifier.verify(sig, data);
 
     KeysetHandle otherPrivateHandle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), SignatureConfig2026.get());
+        KeysetHandle.generateNew(parameters, SignatureConfig2026.get());
     PublicKeyVerify otherVerifier =
         otherPrivateHandle
             .getPublicKeysetHandle()
