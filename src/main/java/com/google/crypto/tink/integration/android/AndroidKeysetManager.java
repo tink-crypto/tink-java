@@ -62,7 +62,8 @@ import javax.annotation.concurrent.GuardedBy;
  * // later use.
  * AndroidKeysetManager manager = AndroidKeysetManager.Builder()
  *    .withSharedPref(getApplicationContext(), "my_keyset_name", "my_pref_file_name")
- *    .withKeyTemplate(KeyTemplates.get("AES128_GCM_HKDF_4KB"))
+ *    .withKeyTemplate(
+ *        KeyTemplate.createFrom(PredefinedStreamingAeadParameters.AES128_GCM_HKDF_4KB))
  *    .build();
  * StreamingAead streamingAead =
  *     manager.getKeysetHandle().getPrimitive(TinkConfig2026.get(), StreamingAead.class);
@@ -90,7 +91,7 @@ import javax.annotation.concurrent.GuardedBy;
  * to add a key to the keyset, you can do:
  *
  * <pre>{@code
- * manager.add(KeyTemplates.get("AES128_GCM_HKDF_4KB"));
+ * manager.add(KeyTemplate.createFrom(PredefinedStreamingAeadParameters.AES128_GCM_HKDF_4KB));
  * }</pre>
  *
  * <p>All operations that manipulate the keyset would automatically persist the new keyset to
