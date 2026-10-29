@@ -17,12 +17,12 @@
 package com.google.crypto.tink.aead;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.crypto.tink.internal.TinkBugException.exceptionIsBug;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.KeyTemplate;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.KmsClient;
 import com.google.crypto.tink.KmsClients;
@@ -83,27 +83,34 @@ public final class KmsEnvelopeAeadTest {
         .isEqualTo(plaintext);
   }
 
-  @DataPoints("tinkDekTemplates")
-  public static final String[] TINK_DEK_TEMPLATES =
-      new String[] {
-        "AES128_GCM",
-        "AES256_GCM",
-        "AES128_EAX",
-        "AES256_EAX",
-        "AES128_CTR_HMAC_SHA256",
-        "AES256_CTR_HMAC_SHA256",
-        "CHACHA20_POLY1305",
-        "XCHACHA20_POLY1305",
-        "AES128_GCM_RAW",
-      };
+  @DataPoints("tinkDekParameters")
+  public static final AeadParameters[] tinkDekParameters =
+      exceptionIsBug(
+          () ->
+              new AeadParameters[] {
+                PredefinedAeadParameters.AES128_GCM,
+                PredefinedAeadParameters.AES256_GCM,
+                PredefinedAeadParameters.AES128_EAX,
+                PredefinedAeadParameters.AES256_EAX,
+                PredefinedAeadParameters.AES128_CTR_HMAC_SHA256,
+                PredefinedAeadParameters.AES256_CTR_HMAC_SHA256,
+                PredefinedAeadParameters.CHACHA20_POLY1305,
+                PredefinedAeadParameters.XCHACHA20_POLY1305,
+                AesGcmParameters.builder()
+                    .setIvSizeBytes(12)
+                    .setKeySizeBytes(16)
+                    .setTagSizeBytes(16)
+                    .setVariant(AesGcmParameters.Variant.NO_PREFIX)
+                    .build(),
+              });
 
   @Theory
   public void legacyConstructorEncryptDecrypt_works(
-      @FromDataPoints("tinkDekTemplates") String dekTemplateName) throws Exception {
+      @FromDataPoints("tinkDekParameters") AeadParameters dekParameters) throws Exception {
     Aead remoteAead = this.generateNewRemoteAead();
     Aead envAead =
         new KmsEnvelopeAead(
-            KeyTemplateProtoConverter.toProto(KeyTemplates.get(dekTemplateName)), remoteAead);
+            KeyTemplateProtoConverter.toProto(KeyTemplate.createFrom(dekParameters)), remoteAead);
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "associatedData".getBytes(UTF_8);
     byte[] ciphertext = envAead.encrypt(plaintext, associatedData);

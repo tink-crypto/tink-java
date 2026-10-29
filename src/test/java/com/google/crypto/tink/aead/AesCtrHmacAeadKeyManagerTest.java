@@ -17,6 +17,7 @@
 package com.google.crypto.tink.aead;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.crypto.tink.internal.TinkBugException.exceptionIsBug;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
@@ -25,12 +26,12 @@ import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyTemplate;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
+import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.internal.SlowInputStream;
 import com.google.crypto.tink.keyderivation.KeyDerivationConfig;
 import com.google.crypto.tink.keyderivation.KeysetDeriver;
@@ -227,10 +228,11 @@ public class AesCtrHmacAeadKeyManagerTest {
   public void testTemplates(@FromDataPoints("templateNames") String templateName) throws Exception {
     KeysetHandle h =
         KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
+            MutableParametersRegistry.globalInstance().get(templateName),
+            RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
-        .isEqualTo(KeyTemplates.get(templateName).toParameters());
+        .isEqualTo(MutableParametersRegistry.globalInstance().get(templateName));
   }
 
   @Test
@@ -247,17 +249,40 @@ public class AesCtrHmacAeadKeyManagerTest {
     }
   }
 
+  @DataPoints("parameters")
+  public static final AesCtrHmacAeadParameters[] parameters =
+      exceptionIsBug(
+          () ->
+              new AesCtrHmacAeadParameters[] {
+                PredefinedAeadParameters.AES128_CTR_HMAC_SHA256,
+                AesCtrHmacAeadParameters.builder()
+                    .setAesKeySizeBytes(16)
+                    .setHmacKeySizeBytes(32)
+                    .setTagSizeBytes(16)
+                    .setIvSizeBytes(16)
+                    .setHashType(AesCtrHmacAeadParameters.HashType.SHA256)
+                    .setVariant(AesCtrHmacAeadParameters.Variant.NO_PREFIX)
+                    .build(),
+                PredefinedAeadParameters.AES256_CTR_HMAC_SHA256,
+                AesCtrHmacAeadParameters.builder()
+                    .setAesKeySizeBytes(32)
+                    .setHmacKeySizeBytes(32)
+                    .setTagSizeBytes(32)
+                    .setIvSizeBytes(16)
+                    .setHashType(AesCtrHmacAeadParameters.HashType.SHA256)
+                    .setVariant(AesCtrHmacAeadParameters.Variant.NO_PREFIX)
+                    .build(),
+              });
+
   @Theory
-  public void testCreateKeyFromRandomness(@FromDataPoints("templateNames") String templateName)
-      throws Exception {
+  public void testCreateKeyFromRandomness(
+      @FromDataPoints("parameters") AesCtrHmacAeadParameters parameters) throws Exception {
     byte[] keyMaterial =
         new byte[] {
           0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
           25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46,
           47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68,
         };
-    AesCtrHmacAeadParameters parameters =
-        (AesCtrHmacAeadParameters) KeyTemplates.get(templateName).toParameters();
     com.google.crypto.tink.aead.AesCtrHmacAeadKey key =
         AesCtrHmacAeadKeyManager.createAesCtrHmacAeadKeyFromRandomness(
             parameters,

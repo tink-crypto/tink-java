@@ -28,6 +28,7 @@ import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.KeysetWriter;
 import com.google.crypto.tink.LegacyKeysetSerialization;
 import com.google.crypto.tink.RegistryConfiguration;
+import com.google.crypto.tink.internal.MutableParametersRegistry;
 import java.io.ByteArrayOutputStream;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -75,7 +76,9 @@ public final class XAesGcmKeyManagerTest {
     assertNotNull(
         KeysetHandle.newBuilder()
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("XAES_256_GCM_160_BIT_NONCE_NO_PREFIX")
+                KeysetHandle.generateEntryFromParameters(
+                        MutableParametersRegistry.globalInstance()
+                            .get("XAES_256_GCM_160_BIT_NONCE_NO_PREFIX"))
                     .withRandomId()
                     .makePrimary())
             .build());

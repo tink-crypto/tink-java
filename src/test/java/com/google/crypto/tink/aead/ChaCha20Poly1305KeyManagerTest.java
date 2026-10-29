@@ -22,12 +22,12 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyTemplate;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.aead.ChaCha20Poly1305Parameters.Variant;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
+import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.subtle.ChaCha20Poly1305;
 import com.google.crypto.tink.util.SecretBytes;
 import org.junit.Before;
@@ -95,10 +95,11 @@ public class ChaCha20Poly1305KeyManagerTest {
   public void testTemplates(@FromDataPoints("templateNames") String templateName) throws Exception {
     KeysetHandle h =
         KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
+            MutableParametersRegistry.globalInstance().get(templateName),
+            RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
-        .isEqualTo(KeyTemplates.get(templateName).toParameters());
+        .isEqualTo(MutableParametersRegistry.globalInstance().get(templateName));
   }
 
   @Test

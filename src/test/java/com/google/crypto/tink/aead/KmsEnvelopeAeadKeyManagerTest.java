@@ -24,7 +24,6 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.KeyTemplate;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.KmsClients;
 import com.google.crypto.tink.RegistryConfiguration;
@@ -273,10 +272,19 @@ public class KmsEnvelopeAeadKeyManagerTest {
     // passed in dek Template is ignored.
     KeyTemplate template1 =
         KmsEnvelopeAeadKeyManager.createKeyTemplate(
-            "some URI", KeyTemplates.get("AES128_CTR_HMAC_SHA256"));
+            "some URI", KeyTemplate.createFrom(PredefinedAeadParameters.AES128_CTR_HMAC_SHA256));
     KeyTemplate template2 =
         KmsEnvelopeAeadKeyManager.createKeyTemplate(
-            "some URI", KeyTemplates.get("AES128_CTR_HMAC_SHA256_RAW"));
+            "some URI",
+            KeyTemplate.createFrom(
+                AesCtrHmacAeadParameters.builder()
+                    .setAesKeySizeBytes(16)
+                    .setHmacKeySizeBytes(32)
+                    .setTagSizeBytes(16)
+                    .setIvSizeBytes(16)
+                    .setHashType(AesCtrHmacAeadParameters.HashType.SHA256)
+                    .setVariant(AesCtrHmacAeadParameters.Variant.NO_PREFIX)
+                    .build()));
     assertThat(template1.toParameters()).isEqualTo(template2.toParameters());
   }
 
@@ -299,12 +307,19 @@ public class KmsEnvelopeAeadKeyManagerTest {
     // Check with both NO_PREFIX as well as TINK to ensure the Variant is ignored.
     KeyTemplate template1 =
         KmsEnvelopeAeadKeyManager.createKeyTemplate(
-            "SomeMatchingKekUri", KeyTemplates.get("AES128_GCM"));
+            "SomeMatchingKekUri", KeyTemplate.createFrom(PredefinedAeadParameters.AES128_GCM));
     assertThat(template1.toParameters()).isEqualTo(parameters);
 
     KeyTemplate template2 =
         KmsEnvelopeAeadKeyManager.createKeyTemplate(
-            "SomeMatchingKekUri", KeyTemplates.get("AES128_GCM_RAW"));
+            "SomeMatchingKekUri",
+            KeyTemplate.createFrom(
+                AesGcmParameters.builder()
+                    .setIvSizeBytes(12)
+                    .setKeySizeBytes(16)
+                    .setTagSizeBytes(16)
+                    .setVariant(AesGcmParameters.Variant.NO_PREFIX)
+                    .build()));
     assertThat(template2.toParameters()).isEqualTo(parameters);
   }
 
@@ -381,12 +396,19 @@ public class KmsEnvelopeAeadKeyManagerTest {
     // Check with both NO_PREFIX as well as TINK to ensure the Variant is ignored.
     KeyTemplate template1 =
         KmsEnvelopeAeadKeyManager.createKeyTemplate(
-            "SomeOtherKekUri", KeyTemplates.get("AES128_EAX_RAW"));
+            "SomeOtherKekUri",
+            KeyTemplate.createFrom(
+                AesEaxParameters.builder()
+                    .setIvSizeBytes(16)
+                    .setKeySizeBytes(16)
+                    .setTagSizeBytes(16)
+                    .setVariant(AesEaxParameters.Variant.NO_PREFIX)
+                    .build()));
     assertThat(template1.toParameters()).isEqualTo(parameters);
 
     KeyTemplate template2 =
         KmsEnvelopeAeadKeyManager.createKeyTemplate(
-            "SomeOtherKekUri", KeyTemplates.get("AES128_EAX"));
+            "SomeOtherKekUri", KeyTemplate.createFrom(PredefinedAeadParameters.AES128_EAX));
     assertThat(template2.toParameters()).isEqualTo(parameters);
   }
 
@@ -484,7 +506,8 @@ public class KmsEnvelopeAeadKeyManagerTest {
     // Create Aead primitive using createKeyTemplate, generateNew, and getPrimitive.
     // This requires that a KmsClient that supports keyUri is registered.
     KeyTemplate template =
-        KmsEnvelopeAeadKeyManager.createKeyTemplate(keyUri, KeyTemplates.get("AES128_GCM"));
+        KmsEnvelopeAeadKeyManager.createKeyTemplate(
+            keyUri, KeyTemplate.createFrom(PredefinedAeadParameters.AES128_GCM));
     KeysetHandle keysetHandle =
         KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
     Aead aead1 = keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead.class);

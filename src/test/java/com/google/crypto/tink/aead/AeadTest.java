@@ -17,13 +17,13 @@
 package com.google.crypto.tink.aead;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.crypto.tink.internal.TinkBugException.exceptionIsBug;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
 import com.google.crypto.tink.daead.DeterministicAeadConfig2026;
@@ -44,33 +44,67 @@ public final class AeadTest {
     AeadConfig.register();
   }
 
-  @DataPoints("templates")
-  public static final String[] TEMPLATES =
-      new String[] {
-        "AES128_EAX",
-        "AES128_EAX_RAW",
-        "AES256_EAX",
-        "AES256_EAX_RAW",
-        "AES128_GCM",
-        "AES128_GCM_RAW",
-        "AES256_GCM",
-        "AES256_GCM_RAW",
-        "AES128_CTR_HMAC_SHA256",
-        "AES128_CTR_HMAC_SHA256_RAW",
-        "AES256_CTR_HMAC_SHA256",
-        "AES256_CTR_HMAC_SHA256_RAW",
-        "CHACHA20_POLY1305",
-        "CHACHA20_POLY1305_RAW",
-        "XCHACHA20_POLY1305",
-        "XCHACHA20_POLY1305_RAW"
-      };
+  @DataPoints("parameters")
+  public static final AeadParameters[] parameters =
+      exceptionIsBug(
+          () ->
+              new AeadParameters[] {
+                PredefinedAeadParameters.AES128_EAX,
+                AesEaxParameters.builder()
+                    .setIvSizeBytes(16)
+                    .setKeySizeBytes(16)
+                    .setTagSizeBytes(16)
+                    .setVariant(AesEaxParameters.Variant.NO_PREFIX)
+                    .build(),
+                PredefinedAeadParameters.AES256_EAX,
+                AesEaxParameters.builder()
+                    .setIvSizeBytes(16)
+                    .setKeySizeBytes(32)
+                    .setTagSizeBytes(16)
+                    .setVariant(AesEaxParameters.Variant.NO_PREFIX)
+                    .build(),
+                PredefinedAeadParameters.AES128_GCM,
+                AesGcmParameters.builder()
+                    .setIvSizeBytes(12)
+                    .setKeySizeBytes(16)
+                    .setTagSizeBytes(16)
+                    .setVariant(AesGcmParameters.Variant.NO_PREFIX)
+                    .build(),
+                PredefinedAeadParameters.AES256_GCM,
+                AesGcmParameters.builder()
+                    .setIvSizeBytes(12)
+                    .setKeySizeBytes(32)
+                    .setTagSizeBytes(16)
+                    .setVariant(AesGcmParameters.Variant.NO_PREFIX)
+                    .build(),
+                PredefinedAeadParameters.AES128_CTR_HMAC_SHA256,
+                AesCtrHmacAeadParameters.builder()
+                    .setAesKeySizeBytes(16)
+                    .setHmacKeySizeBytes(32)
+                    .setTagSizeBytes(16)
+                    .setIvSizeBytes(16)
+                    .setHashType(AesCtrHmacAeadParameters.HashType.SHA256)
+                    .setVariant(AesCtrHmacAeadParameters.Variant.NO_PREFIX)
+                    .build(),
+                PredefinedAeadParameters.AES256_CTR_HMAC_SHA256,
+                AesCtrHmacAeadParameters.builder()
+                    .setAesKeySizeBytes(32)
+                    .setHmacKeySizeBytes(32)
+                    .setTagSizeBytes(32)
+                    .setIvSizeBytes(16)
+                    .setHashType(AesCtrHmacAeadParameters.HashType.SHA256)
+                    .setVariant(AesCtrHmacAeadParameters.Variant.NO_PREFIX)
+                    .build(),
+                PredefinedAeadParameters.CHACHA20_POLY1305,
+                ChaCha20Poly1305Parameters.create(ChaCha20Poly1305Parameters.Variant.NO_PREFIX),
+                PredefinedAeadParameters.XCHACHA20_POLY1305,
+                XChaCha20Poly1305Parameters.create(XChaCha20Poly1305Parameters.Variant.NO_PREFIX),
+              });
 
   @Theory
-  public void createEncryptDecrypt(@FromDataPoints("templates") String templateName)
+  public void createEncryptDecrypt(@FromDataPoints("parameters") AeadParameters parameters)
       throws Exception {
-    KeysetHandle handle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), AeadConfig2026.get());
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, AeadConfig2026.get());
     Aead aead = handle.getPrimitive(AeadConfig2026.get(), Aead.class);
     byte[] plaintext = "plaintext".getBytes(UTF_8);
     byte[] associatedData = "associatedData".getBytes(UTF_8);
@@ -78,9 +112,7 @@ public final class AeadTest {
     byte[] decrypted = aead.decrypt(ciphertext, associatedData);
     assertThat(decrypted).isEqualTo(plaintext);
 
-    KeysetHandle otherHandle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), AeadConfig2026.get());
+    KeysetHandle otherHandle = KeysetHandle.generateNew(parameters, AeadConfig2026.get());
     Aead otherAead = otherHandle.getPrimitive(AeadConfig2026.get(), Aead.class);
     assertThrows(
         GeneralSecurityException.class, () -> otherAead.decrypt(ciphertext, associatedData));

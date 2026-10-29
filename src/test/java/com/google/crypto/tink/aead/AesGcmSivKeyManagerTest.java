@@ -17,6 +17,7 @@
 package com.google.crypto.tink.aead;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.crypto.tink.internal.TinkBugException.exceptionIsBug;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
@@ -25,13 +26,13 @@ import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
 import com.google.crypto.tink.KeyTemplate;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.aead.AesGcmSivParameters.Variant;
 import com.google.crypto.tink.aead.subtle.AesGcmSiv;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
+import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.internal.SlowInputStream;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.subtle.Hex;
@@ -201,22 +202,44 @@ public class AesGcmSivKeyManagerTest {
   public void testTemplates(@FromDataPoints("templateNames") String templateName) throws Exception {
     KeysetHandle h =
         KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
+            MutableParametersRegistry.globalInstance().get(templateName),
+            RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
-        .isEqualTo(KeyTemplates.get(templateName).toParameters());
+        .isEqualTo(MutableParametersRegistry.globalInstance().get(templateName));
   }
 
+  @DataPoints("parameters")
+  public static final AesGcmSivParameters[] parameters =
+      exceptionIsBug(
+          () ->
+              new AesGcmSivParameters[] {
+                AesGcmSivParameters.builder()
+                    .setKeySizeBytes(16)
+                    .setVariant(AesGcmSivParameters.Variant.TINK)
+                    .build(),
+                AesGcmSivParameters.builder()
+                    .setKeySizeBytes(32)
+                    .setVariant(AesGcmSivParameters.Variant.TINK)
+                    .build(),
+                AesGcmSivParameters.builder()
+                    .setKeySizeBytes(32)
+                    .setVariant(AesGcmSivParameters.Variant.NO_PREFIX)
+                    .build(),
+                AesGcmSivParameters.builder()
+                    .setKeySizeBytes(16)
+                    .setVariant(AesGcmSivParameters.Variant.NO_PREFIX)
+                    .build(),
+              });
+
   @Theory
-  public void testCreateKeyFromRandomness(@FromDataPoints("templateNames") String templateName)
-      throws Exception {
+  public void testCreateKeyFromRandomness(
+      @FromDataPoints("parameters") AesGcmSivParameters parameters) throws Exception {
     byte[] keyMaterial =
         new byte[] {
           0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
           25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35
         };
-    AesGcmSivParameters parameters =
-        (AesGcmSivParameters) KeyTemplates.get(templateName).toParameters();
     AesGcmSivKey key =
         AesGcmSivKeyManager.createAesGcmSivKeyFromRandomness(
             parameters,

@@ -20,7 +20,6 @@ import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.crypto.tink.Aead;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.RegistryConfiguration;
 import org.junit.Test;
@@ -44,7 +43,7 @@ public class AeadFactoryWithoutWrapperRegisteredTest {
     AesCtrHmacAeadKeyManager.register(/*newKeyAllowed=*/ true);
     KeysetHandle handle =
         KeysetHandle.generateNew(
-            KeyTemplates.get("AES128_CTR_HMAC_SHA256").toParameters(), RegistryConfiguration.get());
+            PredefinedAeadParameters.AES128_CTR_HMAC_SHA256, RegistryConfiguration.get());
 
     Aead aead = AeadFactory.getPrimitive(handle);
 
