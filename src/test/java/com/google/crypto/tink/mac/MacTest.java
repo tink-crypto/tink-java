@@ -17,12 +17,12 @@
 package com.google.crypto.tink.mac;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.crypto.tink.internal.TinkBugException.exceptionIsBug;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
@@ -45,38 +45,70 @@ public final class MacTest {
     MacConfig.register();
   }
 
-  @DataPoints("templates")
-  public static final String[] TEMPLATES =
-      new String[] {
-        "AES256_CMAC",
-        "AES256_CMAC_RAW",
-        "HMAC_SHA256_128BITTAG",
-        "HMAC_SHA256_128BITTAG_RAW",
-        "HMAC_SHA256_256BITTAG",
-        "HMAC_SHA256_256BITTAG_RAW",
-        "HMAC_SHA512_128BITTAG",
-        "HMAC_SHA512_128BITTAG_RAW",
-        "HMAC_SHA512_256BITTAG",
-        "HMAC_SHA512_256BITTAG_RAW",
-        "HMAC_SHA512_512BITTAG",
-        "HMAC_SHA512_512BITTAG_RAW",
-      };
+  @DataPoints("parameters")
+  public static final MacParameters[] parameters =
+      exceptionIsBug(
+          () ->
+              new MacParameters[] {
+                PredefinedMacParameters.AES_CMAC,
+                AesCmacParameters.builder()
+                    .setKeySizeBytes(32)
+                    .setTagSizeBytes(16)
+                    .setVariant(AesCmacParameters.Variant.NO_PREFIX)
+                    .build(),
+                PredefinedMacParameters.HMAC_SHA256_128BITTAG,
+                HmacParameters.builder()
+                    .setKeySizeBytes(32)
+                    .setTagSizeBytes(16)
+                    .setVariant(HmacParameters.Variant.NO_PREFIX)
+                    .setHashType(HmacParameters.HashType.SHA256)
+                    .build(),
+                PredefinedMacParameters.HMAC_SHA256_256BITTAG,
+                HmacParameters.builder()
+                    .setKeySizeBytes(32)
+                    .setTagSizeBytes(32)
+                    .setVariant(HmacParameters.Variant.NO_PREFIX)
+                    .setHashType(HmacParameters.HashType.SHA256)
+                    .build(),
+                HmacParameters.builder()
+                    .setKeySizeBytes(64)
+                    .setTagSizeBytes(16)
+                    .setVariant(HmacParameters.Variant.TINK)
+                    .setHashType(HmacParameters.HashType.SHA512)
+                    .build(),
+                HmacParameters.builder()
+                    .setKeySizeBytes(64)
+                    .setTagSizeBytes(16)
+                    .setVariant(HmacParameters.Variant.NO_PREFIX)
+                    .setHashType(HmacParameters.HashType.SHA512)
+                    .build(),
+                PredefinedMacParameters.HMAC_SHA512_256BITTAG,
+                HmacParameters.builder()
+                    .setKeySizeBytes(64)
+                    .setTagSizeBytes(32)
+                    .setVariant(HmacParameters.Variant.NO_PREFIX)
+                    .setHashType(HmacParameters.HashType.SHA512)
+                    .build(),
+                PredefinedMacParameters.HMAC_SHA512_512BITTAG,
+                HmacParameters.builder()
+                    .setKeySizeBytes(64)
+                    .setTagSizeBytes(64)
+                    .setVariant(HmacParameters.Variant.NO_PREFIX)
+                    .setHashType(HmacParameters.HashType.SHA512)
+                    .build(),
+              });
 
   @Theory
-  public void create_computeVerify(@FromDataPoints("templates") String templateName)
+  public void create_computeVerify(@FromDataPoints("parameters") MacParameters parameters)
       throws Exception {
-    KeysetHandle handle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), MacConfig2026.get());
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, MacConfig2026.get());
     Mac mac = handle.getPrimitive(MacConfig2026.get(), Mac.class);
 
     byte[] data = "data".getBytes(UTF_8);
     byte[] tag = mac.computeMac(data);
     mac.verifyMac(tag, data);
 
-    KeysetHandle otherHandle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), MacConfig2026.get());
+    KeysetHandle otherHandle = KeysetHandle.generateNew(parameters, MacConfig2026.get());
     Mac otherMac = otherHandle.getPrimitive(MacConfig2026.get(), Mac.class);
     assertThrows(GeneralSecurityException.class, () -> otherMac.verifyMac(tag, data));
 

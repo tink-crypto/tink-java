@@ -19,7 +19,6 @@ package com.google.crypto.tink.mac;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
 import com.google.crypto.tink.RegistryConfiguration;
@@ -45,7 +44,7 @@ public class MacFactoryTest {
           throws Exception {
     KeysetHandle handle =
         KeysetHandle.generateNew(
-            KeyTemplates.get("HMAC_SHA256_128BITTAG").toParameters(), RegistryConfiguration.get());
+            PredefinedMacParameters.HMAC_SHA256_128BITTAG, RegistryConfiguration.get());
 
     Mac mac = handle.getPrimitive(RegistryConfiguration.get(), Mac.class);
     Mac factoryMac = MacFactory.getPrimitive(handle);

@@ -18,7 +18,6 @@ package com.google.crypto.tink.mac;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Mac;
 import com.google.crypto.tink.RegistryConfiguration;
@@ -43,7 +42,7 @@ public class MacFactoryWithoutWrapperRegisteredTest {
     HmacKeyManager.register(/* newKeyAllowed = */ true);
     KeysetHandle handle =
         KeysetHandle.generateNew(
-            KeyTemplates.get("HMAC_SHA256_128BITTAG").toParameters(), RegistryConfiguration.get());
+            PredefinedMacParameters.HMAC_SHA256_128BITTAG, RegistryConfiguration.get());
 
     Mac mac = MacFactory.getPrimitive(handle);
 
