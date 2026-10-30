@@ -56,8 +56,6 @@ public final class SlhDsaSignKeyManager {
    * <ul>
    *   <li> parsing and serializing SLH-DSA keys with {@code TinkProtoKeysetFormat}
    *   <li> creation of new SLH-DSA keys with {@code KeysetHandle#generateEntryFromParameters}
-   *   <li> creation of new SLH-DSA keys with {@code KeysetHandle#generateEntryFromParametersName}
-   *        (currently "SLH_DSA_SHA2_128S" and "SLH_DSA_SHA2_128S_RAW" available)
    * </ul>
    *
    * Currently the key creation functionality will only work if the Conscrypt provider was
