@@ -22,7 +22,6 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.StreamingAead;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
@@ -51,17 +50,17 @@ public final class StreamingAeadTest {
     StreamingAeadConfig.register();
   }
 
-  @DataPoints("templates")
-  public static final String[] templates =
-      new String[] {
-        "AES128_GCM_HKDF_4KB",
-        "AES128_GCM_HKDF_1MB",
-        "AES256_GCM_HKDF_4KB",
-        "AES256_GCM_HKDF_1MB",
-        "AES128_CTR_HMAC_SHA256_4KB",
-        "AES128_CTR_HMAC_SHA256_1MB",
-        "AES256_CTR_HMAC_SHA256_4KB",
-        "AES256_CTR_HMAC_SHA256_1MB"
+  @DataPoints("parameters")
+  public static final StreamingAeadParameters[] parameters =
+      new StreamingAeadParameters[] {
+        PredefinedStreamingAeadParameters.AES128_GCM_HKDF_4KB,
+        PredefinedStreamingAeadParameters.AES128_GCM_HKDF_1MB,
+        PredefinedStreamingAeadParameters.AES256_GCM_HKDF_4KB,
+        PredefinedStreamingAeadParameters.AES256_GCM_HKDF_1MB,
+        PredefinedStreamingAeadParameters.AES128_CTR_HMAC_SHA256_4KB,
+        PredefinedStreamingAeadParameters.AES128_CTR_HMAC_SHA256_1MB,
+        PredefinedStreamingAeadParameters.AES256_CTR_HMAC_SHA256_4KB,
+        PredefinedStreamingAeadParameters.AES256_CTR_HMAC_SHA256_1MB
       };
 
   /** Writes {@code data} to {@code writeableChannel}. */
@@ -105,11 +104,9 @@ public final class StreamingAeadTest {
   }
 
   @Theory
-  public void createEncryptDecrypt(@FromDataPoints("templates") String templateName)
+  public void createEncryptDecrypt(@FromDataPoints("parameters") StreamingAeadParameters params)
       throws Exception {
-    KeysetHandle handle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), StreamingAeadConfig2026.get());
+    KeysetHandle handle = KeysetHandle.generateNew(params, StreamingAeadConfig2026.get());
     StreamingAead streamingAead =
         handle.getPrimitive(StreamingAeadConfig2026.get(), StreamingAead.class);
 
