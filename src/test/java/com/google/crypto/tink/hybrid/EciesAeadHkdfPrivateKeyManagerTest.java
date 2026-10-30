@@ -24,7 +24,6 @@ import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyTemplate;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.RegistryConfiguration;
@@ -36,6 +35,7 @@ import com.google.crypto.tink.aead.XChaCha20Poly1305Parameters;
 import com.google.crypto.tink.hybrid.internal.testing.EciesAeadHkdfTestUtil;
 import com.google.crypto.tink.hybrid.internal.testing.HybridTestVector;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
+import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.subtle.X25519;
 import com.google.crypto.tink.util.Bytes;
@@ -215,15 +215,16 @@ public class EciesAeadHkdfPrivateKeyManagerTest {
   public void testTemplates(@FromDataPoints("templateNames") String templateName) throws Exception {
     KeysetHandle h =
         KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
+            MutableParametersRegistry.globalInstance().get(templateName),
+            RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
-        .isEqualTo(KeyTemplates.get(templateName).toParameters());
+        .isEqualTo(MutableParametersRegistry.globalInstance().get(templateName));
   }
 
   @Test
   public void createKey_nistCurve_alwaysDifferent() throws Exception {
-    Parameters params = KeyTemplates.get("ECIES_P256_HKDF_HMAC_SHA256_AES128_GCM").toParameters();
+    Parameters params = PredefinedHybridParameters.ECIES_P256_HKDF_HMAC_SHA256_AES128_GCM;
 
     int numKeys = 10;
     Set<BigInteger> keys = new TreeSet<>();

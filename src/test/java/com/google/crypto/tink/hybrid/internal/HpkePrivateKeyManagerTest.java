@@ -23,7 +23,6 @@ import static org.junit.Assert.assertThrows;
 import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.RegistryConfiguration;
@@ -32,10 +31,12 @@ import com.google.crypto.tink.config.internal.TinkFipsUtil.AlgorithmFipsCompatib
 import com.google.crypto.tink.hybrid.HpkeParameters;
 import com.google.crypto.tink.hybrid.HpkePrivateKey;
 import com.google.crypto.tink.hybrid.HybridConfig;
+import com.google.crypto.tink.hybrid.PredefinedHybridParameters;
 import com.google.crypto.tink.hybrid.internal.testing.HpkeTestUtil;
 import com.google.crypto.tink.hybrid.internal.testing.HybridTestVector;
 import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
+import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.testing.TestUtil;
 import java.security.GeneralSecurityException;
@@ -82,10 +83,11 @@ public final class HpkePrivateKeyManagerTest {
     }
     KeysetHandle h =
         KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
+            MutableParametersRegistry.globalInstance().get(templateName),
+            RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
     assertThat(h.getAt(0).getKey().getParameters())
-        .isEqualTo(KeyTemplates.get(templateName).toParameters());
+        .isEqualTo(MutableParametersRegistry.globalInstance().get(templateName));
   }
 
   @Test
@@ -97,7 +99,7 @@ public final class HpkePrivateKeyManagerTest {
 
     KeysetHandle privateHandle =
         KeysetHandle.generateNew(
-            KeyTemplates.get("DHKEM_X25519_HKDF_SHA256_HKDF_SHA256_AES_128_GCM").toParameters(),
+            PredefinedHybridParameters.HPKE_X25519_HKDF_SHA256_AES_128_GCM,
             RegistryConfiguration.get());
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
     assertNotNull(privateHandle.getPrimitive(RegistryConfiguration.get(), HybridDecrypt.class));
@@ -192,8 +194,7 @@ public final class HpkePrivateKeyManagerTest {
 
   @Test
   public void createKey_x25519_alwaysDifferent() throws Exception {
-    Parameters params =
-        KeyTemplates.get("DHKEM_X25519_HKDF_SHA256_HKDF_SHA256_AES_128_GCM").toParameters();
+    Parameters params = PredefinedHybridParameters.HPKE_X25519_HKDF_SHA256_AES_128_GCM;
 
     int numKeys = 10;
     Set<String> keys = new TreeSet<>();
@@ -209,7 +210,12 @@ public final class HpkePrivateKeyManagerTest {
   @Test
   public void createKey_nistCurve_alwaysDifferent() throws Exception {
     Parameters params =
-        KeyTemplates.get("DHKEM_P256_HKDF_SHA256_HKDF_SHA256_AES_128_GCM_RAW").toParameters();
+        HpkeParameters.builder()
+            .setVariant(HpkeParameters.Variant.NO_PREFIX)
+            .setKemId(HpkeParameters.KemId.DHKEM_P256_HKDF_SHA256)
+            .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+            .setAeadId(HpkeParameters.AeadId.AES_128_GCM)
+            .build();
 
     int numKeys = 10;
     Set<String> keys = new TreeSet<>();

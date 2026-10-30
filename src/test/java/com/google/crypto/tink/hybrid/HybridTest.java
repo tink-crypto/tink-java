@@ -17,6 +17,7 @@
 package com.google.crypto.tink.hybrid;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.crypto.tink.internal.TinkBugException.exceptionIsBug;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
@@ -24,9 +25,9 @@ import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.HybridDecrypt;
 import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
+import com.google.crypto.tink.aead.AesCtrHmacAeadParameters;
 import com.google.crypto.tink.daead.DeterministicAeadConfig2026;
 import com.google.crypto.tink.testing.TestUtil;
 import java.security.GeneralSecurityException;
@@ -46,30 +47,84 @@ public final class HybridTest {
     HybridConfig.register();
   }
 
-  @DataPoints("templates")
-  public static final String[] TEMPLATES =
-      new String[] {
-        "ECIES_P256_HKDF_HMAC_SHA256_AES128_GCM",
-        "ECIES_P256_COMPRESSED_HKDF_HMAC_SHA256_AES128_GCM_RAW",
-        "ECIES_P256_HKDF_HMAC_SHA256_AES128_CTR_HMAC_SHA256_RAW",
-        "ECIES_P256_COMPRESSED_HKDF_HMAC_SHA256_AES128_CTR_HMAC_SHA256",
-        "DHKEM_X25519_HKDF_SHA256_HKDF_SHA256_AES_256_GCM_RAW",
-        "DHKEM_X25519_HKDF_SHA256_HKDF_SHA256_CHACHA20_POLY1305",
-        "DHKEM_P256_HKDF_SHA256_HKDF_SHA256_AES_256_GCM",
-        "DHKEM_P384_HKDF_SHA384_HKDF_SHA384_AES_256_GCM_RAW",
-        "DHKEM_P521_HKDF_SHA512_HKDF_SHA512_AES_128_GCM"
-      };
+  @DataPoints("parameters")
+  public static final HybridParameters[] parameters =
+      exceptionIsBug(
+          () ->
+              new HybridParameters[] {
+                PredefinedHybridParameters.ECIES_P256_HKDF_HMAC_SHA256_AES128_GCM,
+                PredefinedHybridParameters
+                    .ECIES_P256_HKDF_HMAC_SHA256_AES128_GCM_COMPRESSED_WITHOUT_PREFIX,
+                EciesParameters.builder()
+                    .setCurveType(EciesParameters.CurveType.NIST_P256)
+                    .setHashType(EciesParameters.HashType.SHA256)
+                    .setNistCurvePointFormat(EciesParameters.PointFormat.UNCOMPRESSED)
+                    .setVariant(EciesParameters.Variant.NO_PREFIX)
+                    .setDemParameters(
+                        AesCtrHmacAeadParameters.builder()
+                            .setAesKeySizeBytes(16)
+                            .setHmacKeySizeBytes(32)
+                            .setTagSizeBytes(16)
+                            .setIvSizeBytes(16)
+                            .setHashType(AesCtrHmacAeadParameters.HashType.SHA256)
+                            .setVariant(AesCtrHmacAeadParameters.Variant.NO_PREFIX)
+                            .build())
+                    .build(),
+                EciesParameters.builder()
+                    .setCurveType(EciesParameters.CurveType.NIST_P256)
+                    .setHashType(EciesParameters.HashType.SHA256)
+                    .setNistCurvePointFormat(EciesParameters.PointFormat.COMPRESSED)
+                    .setVariant(EciesParameters.Variant.TINK)
+                    .setDemParameters(
+                        AesCtrHmacAeadParameters.builder()
+                            .setAesKeySizeBytes(16)
+                            .setHmacKeySizeBytes(32)
+                            .setTagSizeBytes(16)
+                            .setIvSizeBytes(16)
+                            .setHashType(AesCtrHmacAeadParameters.HashType.SHA256)
+                            .setVariant(AesCtrHmacAeadParameters.Variant.NO_PREFIX)
+                            .build())
+                    .build(),
+                HpkeParameters.builder()
+                    .setVariant(HpkeParameters.Variant.NO_PREFIX)
+                    .setKemId(HpkeParameters.KemId.DHKEM_X25519_HKDF_SHA256)
+                    .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+                    .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
+                    .build(),
+                HpkeParameters.builder()
+                    .setVariant(HpkeParameters.Variant.TINK)
+                    .setKemId(HpkeParameters.KemId.DHKEM_X25519_HKDF_SHA256)
+                    .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+                    .setAeadId(HpkeParameters.AeadId.CHACHA20_POLY1305)
+                    .build(),
+                HpkeParameters.builder()
+                    .setVariant(HpkeParameters.Variant.TINK)
+                    .setKemId(HpkeParameters.KemId.DHKEM_P256_HKDF_SHA256)
+                    .setKdfId(HpkeParameters.KdfId.HKDF_SHA256)
+                    .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
+                    .build(),
+                HpkeParameters.builder()
+                    .setVariant(HpkeParameters.Variant.NO_PREFIX)
+                    .setKemId(HpkeParameters.KemId.DHKEM_P384_HKDF_SHA384)
+                    .setKdfId(HpkeParameters.KdfId.HKDF_SHA384)
+                    .setAeadId(HpkeParameters.AeadId.AES_256_GCM)
+                    .build(),
+                HpkeParameters.builder()
+                    .setVariant(HpkeParameters.Variant.TINK)
+                    .setKemId(HpkeParameters.KemId.DHKEM_P521_HKDF_SHA512)
+                    .setKdfId(HpkeParameters.KdfId.HKDF_SHA512)
+                    .setAeadId(HpkeParameters.AeadId.AES_128_GCM)
+                    .build()
+              });
 
   @Theory
-  public void createEncryptDecrypt(@FromDataPoints("templates") String templateName)
+  public void createEncryptDecrypt(@FromDataPoints("parameters") HybridParameters parameters)
       throws Exception {
     if (TestUtil.isTsan()) {
       // KeysetHandle.generateNew is too slow in Tsan.
       return;
     }
-    KeysetHandle privateHandle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), HybridConfig2026.get());
+    KeysetHandle privateHandle = KeysetHandle.generateNew(parameters, HybridConfig2026.get());
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
 
     HybridEncrypt encrypter =
@@ -82,9 +137,7 @@ public final class HybridTest {
     byte[] ciphertext = encrypter.encrypt(plaintext, contextInfo);
     assertThat(decrypter.decrypt(ciphertext, contextInfo)).isEqualTo(plaintext);
 
-    KeysetHandle otherPrivateHandle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), HybridConfig2026.get());
+    KeysetHandle otherPrivateHandle = KeysetHandle.generateNew(parameters, HybridConfig2026.get());
     HybridDecrypt otherDecrypter =
         otherPrivateHandle.getPrimitive(HybridConfig2026.get(), HybridDecrypt.class);
     assertThrows(

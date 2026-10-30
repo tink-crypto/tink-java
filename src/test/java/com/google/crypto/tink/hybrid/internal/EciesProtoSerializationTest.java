@@ -22,7 +22,6 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.ProtoKeySerialization;
 import com.google.crypto.tink.ProtoKeySerialization.KeyMaterialType;
@@ -140,7 +139,11 @@ public final class EciesProtoSerializationTest {
 
   private static final KeyTemplate DEM_KEY_TEMPLATE =
       exceptionIsBug(
-          () -> KeyTemplateProtoConverter.toProto(KeyTemplates.get("XCHACHA20_POLY1305_RAW")));
+          () ->
+              KeyTemplateProtoConverter.toProto(
+                  com.google.crypto.tink.KeyTemplate.createFrom(
+                      XChaCha20Poly1305Parameters.create(
+                          XChaCha20Poly1305Parameters.Variant.NO_PREFIX))));
 
   @Test
   public void register_calledTwice_succeedsAndSecondCallHasNoEffect() throws Exception {
