@@ -18,8 +18,6 @@ package com.google.crypto.tink.jwt;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import com.google.crypto.tink.KeyTemplate;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
@@ -47,9 +45,13 @@ public final class JwtEcdsaVerifyKeyManagerTest {
 
   @Test
   public void serializeAndDeserializeKeysets() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_ES256_RAW");
+    JwtEcdsaParameters parameters =
+        JwtEcdsaParameters.builder()
+            .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
+            .setKidStrategy(JwtEcdsaParameters.KidStrategy.IGNORED)
+            .build();
     KeysetHandle handle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get())
+        KeysetHandle.generateNew(parameters, RegistryConfiguration.get())
             .getPublicKeysetHandle();
 
     byte[] serializedKeyset =

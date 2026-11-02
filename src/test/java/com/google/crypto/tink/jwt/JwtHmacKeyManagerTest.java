@@ -23,13 +23,12 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
-import com.google.crypto.tink.KeyTemplate;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
+import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.jwt.internal.JsonUtil;
 import com.google.crypto.tink.jwt.internal.JwtFormat;
 import com.google.crypto.tink.proto.JwtHmacKey;
@@ -54,7 +53,6 @@ import java.util.TreeSet;
 import javax.crypto.spec.SecretKeySpec;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.theories.DataPoint;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
 import org.junit.experimental.theories.Theories;
@@ -78,11 +76,52 @@ public class JwtHmacKeyManagerTest {
         .isNotNull();
   }
 
-  @DataPoint public static final String JWT_HS256 = "JWT_HS256";
-  @DataPoint public static final String JWT_HS384 = "JWT_HS384";
-  @DataPoint public static final String JWT_HS512 = "JWT_HS512";
-  @DataPoint public static final String JWT_HS256_RAW = "JWT_HS256_RAW";
+  private static final JwtHmacParameters JWT_HS256_PARAMS =
+      exceptionIsBug(
+          () ->
+              JwtHmacParameters.builder()
+                  .setKeySizeBytes(32)
+                  .setAlgorithm(JwtHmacParameters.Algorithm.HS256)
+                  .setKidStrategy(JwtHmacParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                  .build());
+  private static final JwtHmacParameters JWT_HS384_PARAMS =
+      exceptionIsBug(
+          () ->
+              JwtHmacParameters.builder()
+                  .setKeySizeBytes(48)
+                  .setAlgorithm(JwtHmacParameters.Algorithm.HS384)
+                  .setKidStrategy(JwtHmacParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                  .build());
+  private static final JwtHmacParameters JWT_HS512_PARAMS =
+      exceptionIsBug(
+          () ->
+              JwtHmacParameters.builder()
+                  .setKeySizeBytes(64)
+                  .setAlgorithm(JwtHmacParameters.Algorithm.HS512)
+                  .setKidStrategy(JwtHmacParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                  .build());
+  private static final JwtHmacParameters JWT_HS256_RAW_PARAMS =
+      exceptionIsBug(
+          () ->
+              JwtHmacParameters.builder()
+                  .setKeySizeBytes(32)
+                  .setAlgorithm(JwtHmacParameters.Algorithm.HS256)
+                  .setKidStrategy(JwtHmacParameters.KidStrategy.IGNORED)
+                  .build());
+  private static final JwtHmacParameters JWT_HS512_RAW_PARAMS =
+      exceptionIsBug(
+          () ->
+              JwtHmacParameters.builder()
+                  .setKeySizeBytes(64)
+                  .setAlgorithm(JwtHmacParameters.Algorithm.HS512)
+                  .setKidStrategy(JwtHmacParameters.KidStrategy.IGNORED)
+                  .build());
 
+  @DataPoints("validParameters")
+  public static final JwtHmacParameters[] validParameters =
+      new JwtHmacParameters[] {
+        JWT_HS256_PARAMS, JWT_HS384_PARAMS, JWT_HS512_PARAMS, JWT_HS256_RAW_PARAMS,
+      };
 
   @DataPoints("templateNames")
   public static final String[] KEY_TEMPLATES =
@@ -92,12 +131,10 @@ public class JwtHmacKeyManagerTest {
 
   @Theory
   public void testTemplates(@FromDataPoints("templateNames") String templateName) throws Exception {
-    KeysetHandle h =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
+    Parameters p = MutableParametersRegistry.globalInstance().get(templateName);
+    KeysetHandle h = KeysetHandle.generateNew(p, RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
-    assertThat(h.getAt(0).getKey().getParameters())
-        .isEqualTo(KeyTemplates.get(templateName).toParameters());
+    assertThat(h.getAt(0).getKey().getParameters()).isEqualTo(p);
   }
 
   @Test
@@ -121,8 +158,7 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void testHs256Template() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_HS256");
-    assertThat(template.toParameters())
+    assertThat(MutableParametersRegistry.globalInstance().get("JWT_HS256"))
         .isEqualTo(
             JwtHmacParameters.builder()
                 .setKeySizeBytes(32)
@@ -144,8 +180,7 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void testHs384Template() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_HS384");
-    assertThat(template.toParameters())
+    assertThat(MutableParametersRegistry.globalInstance().get("JWT_HS384"))
         .isEqualTo(
             JwtHmacParameters.builder()
                 .setKeySizeBytes(48)
@@ -167,8 +202,7 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void testHs512Template() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_HS512");
-    assertThat(template.toParameters())
+    assertThat(MutableParametersRegistry.globalInstance().get("JWT_HS512"))
         .isEqualTo(
             JwtHmacParameters.builder()
                 .setKeySizeBytes(64)
@@ -190,8 +224,7 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void testHs256RawTemplate() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_HS256_RAW");
-    assertThat(template.toParameters())
+    assertThat(MutableParametersRegistry.globalInstance().get("JWT_HS256_RAW"))
         .isEqualTo(
             JwtHmacParameters.builder()
                 .setKeySizeBytes(32)
@@ -202,8 +235,7 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void testHs384RawTemplate() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_HS384_RAW");
-    assertThat(template.toParameters())
+    assertThat(MutableParametersRegistry.globalInstance().get("JWT_HS384_RAW"))
         .isEqualTo(
             JwtHmacParameters.builder()
                 .setKeySizeBytes(48)
@@ -214,8 +246,7 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void testHs512RawTemplate() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_HS512_RAW");
-    assertThat(template.toParameters())
+    assertThat(MutableParametersRegistry.globalInstance().get("JWT_HS512_RAW"))
         .isEqualTo(
             JwtHmacParameters.builder()
                 .setKeySizeBytes(64)
@@ -226,7 +257,7 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void testKeyTemplatesWork() throws Exception {
-    Parameters p = KeyTemplates.get("JWT_HS256").toParameters();
+    Parameters p = JWT_HS256_PARAMS;
     assertThat(
             KeysetHandle.generateNew(p, RegistryConfiguration.get())
                 .getAt(0)
@@ -234,7 +265,7 @@ public class JwtHmacKeyManagerTest {
                 .getParameters())
         .isEqualTo(p);
 
-    p = KeyTemplates.get("JWT_HS384").toParameters();
+    p = JWT_HS384_PARAMS;
     assertThat(
             KeysetHandle.generateNew(p, RegistryConfiguration.get())
                 .getAt(0)
@@ -242,7 +273,7 @@ public class JwtHmacKeyManagerTest {
                 .getParameters())
         .isEqualTo(p);
 
-    p = KeyTemplates.get("JWT_HS512").toParameters();
+    p = JWT_HS512_PARAMS;
     assertThat(
             KeysetHandle.generateNew(p, RegistryConfiguration.get())
                 .getAt(0)
@@ -250,7 +281,7 @@ public class JwtHmacKeyManagerTest {
                 .getParameters())
         .isEqualTo(p);
 
-    p = KeyTemplates.get("JWT_HS512_RAW").toParameters();
+    p = JWT_HS512_RAW_PARAMS;
     assertThat(
             KeysetHandle.generateNew(p, RegistryConfiguration.get())
                 .getAt(0)
@@ -261,27 +292,18 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void createKeysetHandle_works() throws Exception {
-    KeysetHandle handle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get("JWT_HS256").toParameters(), RegistryConfiguration.get());
+    KeysetHandle handle = KeysetHandle.generateNew(JWT_HS256_PARAMS, RegistryConfiguration.get());
     Key key = handle.getAt(0).getKey();
     assertThat(key).isInstanceOf(com.google.crypto.tink.jwt.JwtHmacKey.class);
     com.google.crypto.tink.jwt.JwtHmacKey jwtHmacKey = (com.google.crypto.tink.jwt.JwtHmacKey) key;
-    assertThat(jwtHmacKey.getParameters())
-        .isEqualTo(
-            JwtHmacParameters.builder()
-                .setKeySizeBytes(32)
-                .setAlgorithm(JwtHmacParameters.Algorithm.HS256)
-                .setKidStrategy(JwtHmacParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
-                .build());
+    assertThat(jwtHmacKey.getParameters()).isEqualTo(JWT_HS256_PARAMS);
   }
 
   // Note: we use Theory as a parametrized test -- different from what the Theory framework intends.
   @Theory
-  public void createSignVerify_success(String templateNames) throws Exception {
-    KeysetHandle handle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateNames).toParameters(), RegistryConfiguration.get());
+  public void createSignVerify_success(
+      @FromDataPoints("validParameters") JwtHmacParameters parameters) throws Exception {
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     JwtMac primitive = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
     RawJwt rawToken = RawJwt.newBuilder().setJwtId("jwtId").withoutExpiration().build();
     String signedCompact = primitive.computeMacAndEncode(rawToken);
@@ -292,16 +314,14 @@ public class JwtHmacKeyManagerTest {
 
   // Note: we use Theory as a parametrized test -- different from what the Theory framework intends.
   @Theory
-  public void createSignVerifyDifferentKey_throw(String templateNames) throws Exception {
-    KeyTemplate template = KeyTemplates.get(templateNames);
-    KeysetHandle handle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+  public void createSignVerifyDifferentKey_throw(
+      @FromDataPoints("validParameters") JwtHmacParameters parameters) throws Exception {
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     JwtMac primitive = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
     RawJwt rawToken = RawJwt.newBuilder().setJwtId("jwtId").withoutExpiration().build();
     String compact = primitive.computeMacAndEncode(rawToken);
 
-    KeysetHandle otherHandle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+    KeysetHandle otherHandle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     JwtMac otherPrimitive = otherHandle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
     assertThrows(
@@ -311,10 +331,9 @@ public class JwtHmacKeyManagerTest {
 
   // Note: we use Theory as a parametrized test -- different from what the Theory framework intends.
   @Theory
-  public void createSignVerify_modifiedHeader_throw(String templateNames) throws Exception {
-    KeysetHandle handle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateNames).toParameters(), RegistryConfiguration.get());
+  public void createSignVerify_modifiedHeader_throw(
+      @FromDataPoints("validParameters") JwtHmacParameters parameters) throws Exception {
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     String jwtId = "user123";
@@ -336,10 +355,9 @@ public class JwtHmacKeyManagerTest {
 
   // Note: we use Theory as a parametrized test -- different from what the Theory framework intends.
   @Theory
-  public void createSignVerify_modifiedPayload_throw(String templateNames) throws Exception {
-    KeysetHandle handle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateNames).toParameters(), RegistryConfiguration.get());
+  public void createSignVerify_modifiedPayload_throw(
+      @FromDataPoints("validParameters") JwtHmacParameters parameters) throws Exception {
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     String jwtId = "user123";
@@ -361,10 +379,9 @@ public class JwtHmacKeyManagerTest {
 
   // Note: we use Theory as a parametrized test -- different from what the Theory framework intends.
   @Theory
-  public void verify_modifiedSignature_shouldThrow(String templateNames) throws Exception {
-    KeysetHandle handle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateNames).toParameters(), RegistryConfiguration.get());
+  public void verify_modifiedSignature_shouldThrow(
+      @FromDataPoints("validParameters") JwtHmacParameters parameters) throws Exception {
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     String jwtId = "user123";
@@ -386,9 +403,7 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void computeVerify_canGetData() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_HS256");
-    KeysetHandle handle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+    KeysetHandle handle = KeysetHandle.generateNew(JWT_HS256_PARAMS, RegistryConfiguration.get());
     JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     String issuer = "google";
@@ -423,9 +438,7 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void verify_expired_shouldThrow() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_HS256");
-    KeysetHandle handle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+    KeysetHandle handle = KeysetHandle.generateNew(JWT_HS256_PARAMS, RegistryConfiguration.get());
     JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     Clock clock1 = Clock.systemUTC();
@@ -445,9 +458,7 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void verify_notExpired_success() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_HS256");
-    KeysetHandle handle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+    KeysetHandle handle = KeysetHandle.generateNew(JWT_HS256_PARAMS, RegistryConfiguration.get());
     JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     Clock clock = Clock.systemUTC();
@@ -464,9 +475,7 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void verify_notExpired_clockSkew_success() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_HS256");
-    KeysetHandle handle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+    KeysetHandle handle = KeysetHandle.generateNew(JWT_HS256_PARAMS, RegistryConfiguration.get());
     JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     Clock clock1 = Clock.systemUTC();
@@ -485,9 +494,7 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void verify_before_shouldThrow() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_HS256");
-    KeysetHandle handle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+    KeysetHandle handle = KeysetHandle.generateNew(JWT_HS256_PARAMS, RegistryConfiguration.get());
     JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     Clock clock = Clock.systemUTC();
@@ -504,9 +511,7 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void validate_notBefore_success() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_HS256");
-    KeysetHandle handle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+    KeysetHandle handle = KeysetHandle.generateNew(JWT_HS256_PARAMS, RegistryConfiguration.get());
     JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     Clock clock1 = Clock.systemUTC();
@@ -527,9 +532,7 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void validate_notBefore_clockSkew_success() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_HS256");
-    KeysetHandle handle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+    KeysetHandle handle = KeysetHandle.generateNew(JWT_HS256_PARAMS, RegistryConfiguration.get());
     JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     Clock clock1 = Clock.systemUTC();
@@ -552,9 +555,7 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void verify_noAudienceInJwt_shouldThrow() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_HS256");
-    KeysetHandle handle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+    KeysetHandle handle = KeysetHandle.generateNew(JWT_HS256_PARAMS, RegistryConfiguration.get());
     JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     RawJwt unverified = RawJwt.newBuilder().withoutExpiration().build();
@@ -567,9 +568,7 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void verify_noAudienceInValidator_shouldThrow() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_HS256");
-    KeysetHandle handle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+    KeysetHandle handle = KeysetHandle.generateNew(JWT_HS256_PARAMS, RegistryConfiguration.get());
     JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     RawJwt unverified =
@@ -582,9 +581,7 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void verify_wrongAudience_shouldThrow() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_HS256");
-    KeysetHandle handle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+    KeysetHandle handle = KeysetHandle.generateNew(JWT_HS256_PARAMS, RegistryConfiguration.get());
     JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     RawJwt unverified =
@@ -598,9 +595,7 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void verify_audience_success() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_HS256");
-    KeysetHandle handle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+    KeysetHandle handle = KeysetHandle.generateNew(JWT_HS256_PARAMS, RegistryConfiguration.get());
     JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     RawJwt unverified =
@@ -615,9 +610,7 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void verify_multipleAudiences_success() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_HS256");
-    KeysetHandle handle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+    KeysetHandle handle = KeysetHandle.generateNew(JWT_HS256_PARAMS, RegistryConfiguration.get());
     JwtMac mac = handle.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
 
     RawJwt unverified =
@@ -644,9 +637,8 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void createSignVerifyRaw_withDifferentHeaders() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_HS256_RAW");
     KeysetHandle handle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+        KeysetHandle.generateNew(JWT_HS256_RAW_PARAMS, RegistryConfiguration.get());
     com.google.crypto.tink.jwt.JwtHmacKey key =
         (com.google.crypto.tink.jwt.JwtHmacKey) handle.getAt(0).getKey();
 
@@ -705,9 +697,7 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void createSignVerifyTink_withDifferentHeaders() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_HS256");
-    KeysetHandle handle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+    KeysetHandle handle = KeysetHandle.generateNew(JWT_HS256_PARAMS, RegistryConfiguration.get());
     com.google.crypto.tink.jwt.JwtHmacKey key =
         (com.google.crypto.tink.jwt.JwtHmacKey) handle.getAt(0).getKey();
 
@@ -863,9 +853,8 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void macWithCustomKid() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_HS256_RAW");
     KeysetHandle handleWithoutKid =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+        KeysetHandle.generateNew(JWT_HS256_RAW_PARAMS, RegistryConfiguration.get());
     KeysetHandle handleWithKid =
         withCustomKid(handleWithoutKid, "Lorem ipsum dolor sit amet, consectetur adipiscing elit");
     JwtMac jwtMacWithoutKid =
@@ -898,9 +887,8 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void macWithWrongCustomKid() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_HS256_RAW");
     KeysetHandle handleWithoutKid =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+        KeysetHandle.generateNew(JWT_HS256_RAW_PARAMS, RegistryConfiguration.get());
     KeysetHandle handleWithKid = withCustomKid(handleWithoutKid, "kid");
     KeysetHandle handleWithWrongKid = withCustomKid(handleWithoutKid, "wrong kid");
     JwtMac jwtMacWithKid = handleWithKid.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
@@ -918,9 +906,8 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void keyWithKid_tokenWithoutKid() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_HS256_RAW");
     KeysetHandle handleWithoutKid =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+        KeysetHandle.generateNew(JWT_HS256_RAW_PARAMS, RegistryConfiguration.get());
 
     com.google.crypto.tink.jwt.JwtHmacKey key =
         (com.google.crypto.tink.jwt.JwtHmacKey) handleWithoutKid.getAt(0).getKey();
@@ -959,9 +946,7 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void macWithTinkKeyAndCustomKid_fails() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_HS256");
-    KeysetHandle handle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+    KeysetHandle handle = KeysetHandle.generateNew(JWT_HS256_PARAMS, RegistryConfiguration.get());
 
     // Create a new handle with the "kid" value set.
     Keyset keyset =
@@ -998,9 +983,8 @@ public class JwtHmacKeyManagerTest {
 
   @Test
   public void serializeAndDeserialize_works() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_HS256_RAW");
     KeysetHandle handle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+        KeysetHandle.generateNew(JWT_HS256_RAW_PARAMS, RegistryConfiguration.get());
     byte[] serialized =
         TinkProtoKeysetFormat.serializeKeyset(
             handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());

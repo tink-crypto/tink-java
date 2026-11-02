@@ -16,19 +16,19 @@
 package com.google.crypto.tink.jwt;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.crypto.tink.internal.TinkBugException.exceptionIsBug;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
-import com.google.crypto.tink.KeyTemplate;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
+import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.signature.SignatureConfig;
 import com.google.crypto.tink.testing.TestUtil;
 import java.math.BigInteger;
@@ -61,6 +61,25 @@ public class JwtEcdsaSignKeyManagerTest {
         JwtEcdsaParameters.Algorithm.ES512
       };
 
+  @DataPoints("parameters")
+  public static final JwtEcdsaParameters[] parameters =
+      exceptionIsBug(
+          () ->
+              new JwtEcdsaParameters[] {
+                JwtEcdsaParameters.builder()
+                    .setKidStrategy(JwtEcdsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
+                    .build(),
+                JwtEcdsaParameters.builder()
+                    .setKidStrategy(JwtEcdsaParameters.KidStrategy.IGNORED)
+                    .setAlgorithm(JwtEcdsaParameters.Algorithm.ES384)
+                    .build(),
+                JwtEcdsaParameters.builder()
+                    .setKidStrategy(JwtEcdsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .setAlgorithm(JwtEcdsaParameters.Algorithm.ES512)
+                    .build(),
+              });
+
   @DataPoints("templates")
   public static final String[] TEMPLATES =
       new String[] {
@@ -70,7 +89,11 @@ public class JwtEcdsaSignKeyManagerTest {
   @Test
   public void callingCreateTwiceGivesDifferentKeys() throws Exception {
     int numKeys = 10;
-    Parameters p = KeyTemplates.get("JWT_ES256").toParameters();
+    Parameters p =
+        JwtEcdsaParameters.builder()
+            .setKidStrategy(JwtEcdsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+            .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
+            .build();
     Set<BigInteger> keys = new TreeSet<>();
     for (int i = 0; i < numKeys; ++i) {
       JwtEcdsaPrivateKey key =
@@ -83,8 +106,7 @@ public class JwtEcdsaSignKeyManagerTest {
 
   @Test
   public void testJwtES256RawTemplate_ok() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_ES256_RAW");
-    assertThat(template.toParameters())
+    assertThat(MutableParametersRegistry.globalInstance().get("JWT_ES256_RAW"))
         .isEqualTo(
             JwtEcdsaParameters.builder()
                 .setKidStrategy(JwtEcdsaParameters.KidStrategy.IGNORED)
@@ -94,8 +116,7 @@ public class JwtEcdsaSignKeyManagerTest {
 
   @Test
   public void testJwtES384RawTemplate_ok() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_ES384_RAW");
-    assertThat(template.toParameters())
+    assertThat(MutableParametersRegistry.globalInstance().get("JWT_ES384_RAW"))
         .isEqualTo(
             JwtEcdsaParameters.builder()
                 .setKidStrategy(JwtEcdsaParameters.KidStrategy.IGNORED)
@@ -105,8 +126,7 @@ public class JwtEcdsaSignKeyManagerTest {
 
   @Test
   public void testJwtES512RawTemplate_ok() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_ES512_RAW");
-    assertThat(template.toParameters())
+    assertThat(MutableParametersRegistry.globalInstance().get("JWT_ES512_RAW"))
         .isEqualTo(
             JwtEcdsaParameters.builder()
                 .setKidStrategy(JwtEcdsaParameters.KidStrategy.IGNORED)
@@ -116,8 +136,7 @@ public class JwtEcdsaSignKeyManagerTest {
 
   @Test
   public void testJwtES256Template_ok() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_ES256");
-    assertThat(template.toParameters())
+    assertThat(MutableParametersRegistry.globalInstance().get("JWT_ES256"))
         .isEqualTo(
             JwtEcdsaParameters.builder()
                 .setKidStrategy(JwtEcdsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
@@ -127,8 +146,7 @@ public class JwtEcdsaSignKeyManagerTest {
 
   @Test
   public void testJwtES384Template_ok() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_ES384");
-    assertThat(template.toParameters())
+    assertThat(MutableParametersRegistry.globalInstance().get("JWT_ES384"))
         .isEqualTo(
             JwtEcdsaParameters.builder()
                 .setKidStrategy(JwtEcdsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
@@ -138,8 +156,7 @@ public class JwtEcdsaSignKeyManagerTest {
 
   @Test
   public void testJwtES512Template_ok() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_ES512");
-    assertThat(template.toParameters())
+    assertThat(MutableParametersRegistry.globalInstance().get("JWT_ES512"))
         .isEqualTo(
             JwtEcdsaParameters.builder()
                 .setKidStrategy(JwtEcdsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
@@ -149,12 +166,10 @@ public class JwtEcdsaSignKeyManagerTest {
 
   @Theory
   public void testTemplates(@FromDataPoints("templates") String templateName) throws Exception {
-    KeysetHandle h =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
+    Parameters p = MutableParametersRegistry.globalInstance().get(templateName);
+    KeysetHandle h = KeysetHandle.generateNew(p, RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
-    assertThat(h.getAt(0).getKey().getParameters())
-        .isEqualTo(KeyTemplates.get(templateName).toParameters());
+    assertThat(h.getAt(0).getKey().getParameters()).isEqualTo(p);
   }
 
   @Test
@@ -219,16 +234,14 @@ public class JwtEcdsaSignKeyManagerTest {
 
   // Note: we use Theory as a parametrized test -- different from what the Theory framework intends.
   @Theory
-  public void createSignVerify_success(@FromDataPoints("templates") String templateName)
+  public void createSignVerify_success(@FromDataPoints("parameters") JwtEcdsaParameters parameters)
       throws Exception {
     if (TestUtil.isTsan()) {
       // KeysetHandle.generateNew is too slow in Tsan.
       // We do not use assume because Theories expects to find something which is not skipped.
       return;
     }
-    KeysetHandle handle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     JwtPublicKeySign signer =
         handle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     JwtPublicKeyVerify verifier =
@@ -258,9 +271,12 @@ public class JwtEcdsaSignKeyManagerTest {
 
   @Test
   public void serializeAndDeserializeKeysets() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_ES256_RAW");
-    KeysetHandle handle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+    JwtEcdsaParameters parameters =
+        JwtEcdsaParameters.builder()
+            .setKidStrategy(JwtEcdsaParameters.KidStrategy.IGNORED)
+            .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
+            .build();
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
 
     byte[] serializedKeyset =
         TinkProtoKeysetFormat.serializeKeyset(

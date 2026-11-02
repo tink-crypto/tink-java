@@ -16,15 +16,16 @@
 package com.google.crypto.tink.jwt;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.crypto.tink.internal.TinkBugException.exceptionIsBug;
 import static org.junit.Assert.assertTrue;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.KeyTemplate;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
+import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.signature.SignatureConfig;
 import com.google.crypto.tink.testing.TestUtil;
 import java.math.BigInteger;
@@ -50,6 +51,70 @@ public class JwtRsaSsaPssSignKeyManagerTest {
   @DataPoints("sizes")
   public static final int[] SIZE = new int[] {2048, 3072, 4096};
 
+  private static final JwtRsaSsaPssParameters JWT_PS256_2048_F4_RAW_PARAMS =
+      exceptionIsBug(
+          () ->
+              JwtRsaSsaPssParameters.builder()
+                  .setModulusSizeBits(2048)
+                  .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                  .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
+                  .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.IGNORED)
+                  .build());
+  private static final JwtRsaSsaPssParameters JWT_PS256_2048_F4_PARAMS =
+      exceptionIsBug(
+          () ->
+              JwtRsaSsaPssParameters.builder()
+                  .setModulusSizeBits(2048)
+                  .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                  .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
+                  .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                  .build());
+
+  @DataPoints("parameters")
+  public static final JwtRsaSsaPssParameters[] parameters =
+      exceptionIsBug(
+          () ->
+              new JwtRsaSsaPssParameters[] {
+                JWT_PS256_2048_F4_RAW_PARAMS,
+                JWT_PS256_2048_F4_PARAMS,
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(3072)
+                    .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.IGNORED)
+                    .build(),
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(3072)
+                    .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(3072)
+                    .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS384)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.IGNORED)
+                    .build(),
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(3072)
+                    .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS384)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(4096)
+                    .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS512)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.IGNORED)
+                    .build(),
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(4096)
+                    .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS512)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+              });
+
   @DataPoints("templates")
   public static final String[] TEMPLATES =
       new String[] {
@@ -70,12 +135,10 @@ public class JwtRsaSsaPssSignKeyManagerTest {
       // We do not use assume because Theories expects to find something which is not skipped.
       return;
     }
-    KeysetHandle h =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
+    Parameters p = MutableParametersRegistry.globalInstance().get(templateName);
+    KeysetHandle h = KeysetHandle.generateNew(p, RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
-    assertThat(h.getAt(0).getKey().getParameters())
-        .isEqualTo(KeyTemplates.get(templateName).toParameters());
+    assertThat(h.getAt(0).getKey().getParameters()).isEqualTo(p);
   }
 
   // This test needs to create several new keys, which is expensive. Therefore, we only do it for
@@ -112,7 +175,7 @@ public class JwtRsaSsaPssSignKeyManagerTest {
 
   @Test
   public void testJwtRsa2048AlgoRS256F4Template_ok() throws Exception {
-    assertThat(KeyTemplates.get("JWT_PS256_2048_F4").toParameters())
+    assertThat(MutableParametersRegistry.globalInstance().get("JWT_PS256_2048_F4"))
         .isEqualTo(
             JwtRsaSsaPssParameters.builder()
                 .setModulusSizeBits(2048)
@@ -120,7 +183,7 @@ public class JwtRsaSsaPssSignKeyManagerTest {
                 .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
                 .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
                 .build());
-    assertThat(KeyTemplates.get("JWT_PS256_2048_F4_RAW").toParameters())
+    assertThat(MutableParametersRegistry.globalInstance().get("JWT_PS256_2048_F4_RAW"))
         .isEqualTo(
             JwtRsaSsaPssParameters.builder()
                 .setModulusSizeBits(2048)
@@ -132,7 +195,7 @@ public class JwtRsaSsaPssSignKeyManagerTest {
 
   @Test
   public void testJwtRsa4096AlgoRS512F4Template_ok() throws Exception {
-    assertThat(KeyTemplates.get("JWT_PS512_4096_F4").toParameters())
+    assertThat(MutableParametersRegistry.globalInstance().get("JWT_PS512_4096_F4"))
         .isEqualTo(
             JwtRsaSsaPssParameters.builder()
                 .setModulusSizeBits(4096)
@@ -140,7 +203,7 @@ public class JwtRsaSsaPssSignKeyManagerTest {
                 .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS512)
                 .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
                 .build());
-    assertThat(KeyTemplates.get("JWT_PS512_4096_F4_RAW").toParameters())
+    assertThat(MutableParametersRegistry.globalInstance().get("JWT_PS512_4096_F4_RAW"))
         .isEqualTo(
             JwtRsaSsaPssParameters.builder()
                 .setModulusSizeBits(4096)
@@ -152,7 +215,7 @@ public class JwtRsaSsaPssSignKeyManagerTest {
 
   @Test
   public void testJwtRsa3072AlgoRS384F4Template_ok() throws Exception {
-    assertThat(KeyTemplates.get("JWT_PS384_3072_F4").toParameters())
+    assertThat(MutableParametersRegistry.globalInstance().get("JWT_PS384_3072_F4"))
         .isEqualTo(
             JwtRsaSsaPssParameters.builder()
                 .setModulusSizeBits(3072)
@@ -160,7 +223,7 @@ public class JwtRsaSsaPssSignKeyManagerTest {
                 .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS384)
                 .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
                 .build());
-    assertThat(KeyTemplates.get("JWT_PS384_3072_F4_RAW").toParameters())
+    assertThat(MutableParametersRegistry.globalInstance().get("JWT_PS384_3072_F4_RAW"))
         .isEqualTo(
             JwtRsaSsaPssParameters.builder()
                 .setModulusSizeBits(3072)
@@ -172,7 +235,7 @@ public class JwtRsaSsaPssSignKeyManagerTest {
 
   @Test
   public void testJwtRsa3072AlgoRS256F4Template_ok() throws Exception {
-    assertThat(KeyTemplates.get("JWT_PS256_3072_F4").toParameters())
+    assertThat(MutableParametersRegistry.globalInstance().get("JWT_PS256_3072_F4"))
         .isEqualTo(
             JwtRsaSsaPssParameters.builder()
                 .setModulusSizeBits(3072)
@@ -180,7 +243,7 @@ public class JwtRsaSsaPssSignKeyManagerTest {
                 .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
                 .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
                 .build());
-    assertThat(KeyTemplates.get("JWT_PS256_3072_F4_RAW").toParameters())
+    assertThat(MutableParametersRegistry.globalInstance().get("JWT_PS256_3072_F4_RAW"))
         .isEqualTo(
             JwtRsaSsaPssParameters.builder()
                 .setModulusSizeBits(3072)
@@ -197,36 +260,26 @@ public class JwtRsaSsaPssSignKeyManagerTest {
       return;
     }
     KeysetHandle handle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get("JWT_PS256_2048_F4").toParameters(), RegistryConfiguration.get());
+        KeysetHandle.generateNew(JWT_PS256_2048_F4_PARAMS, RegistryConfiguration.get());
 
     com.google.crypto.tink.Key key = handle.getAt(0).getKey();
     assertThat(key).isInstanceOf(com.google.crypto.tink.jwt.JwtRsaSsaPssPrivateKey.class);
     com.google.crypto.tink.jwt.JwtRsaSsaPssPrivateKey jwtPrivateKey =
         (com.google.crypto.tink.jwt.JwtRsaSsaPssPrivateKey) key;
 
-    assertThat(jwtPrivateKey.getParameters())
-        .isEqualTo(
-            JwtRsaSsaPssParameters.builder()
-                .setModulusSizeBits(2048)
-                .setPublicExponent(JwtRsaSsaPssParameters.F4)
-                .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
-                .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
-                .build());
+    assertThat(jwtPrivateKey.getParameters()).isEqualTo(JWT_PS256_2048_F4_PARAMS);
   }
 
   // Note: we use Theory as a parametrized test -- different from what the Theory framework intends.
   @Theory
-  public void createSignVerify_success(@FromDataPoints("templates") String templateName)
-      throws Exception {
+  public void createSignVerify_success(
+      @FromDataPoints("parameters") JwtRsaSsaPssParameters parameters) throws Exception {
     if (TestUtil.isTsan()) {
       // creating keys is too slow in Tsan.
       // We do not use assume because Theories expects to find something which is not skipped.
       return;
     }
-    KeysetHandle handle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), RegistryConfiguration.get());
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     JwtPublicKeySign signer =
         handle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     JwtPublicKeyVerify verifier =
@@ -256,9 +309,8 @@ public class JwtRsaSsaPssSignKeyManagerTest {
 
   @Test
   public void serializeAndDeserializeKeysets() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_PS256_2048_F4_RAW");
     KeysetHandle handle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+        KeysetHandle.generateNew(JWT_PS256_2048_F4_RAW_PARAMS, RegistryConfiguration.get());
 
     byte[] serializedKeyset =
         TinkProtoKeysetFormat.serializeKeyset(
