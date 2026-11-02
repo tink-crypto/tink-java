@@ -21,7 +21,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.DeterministicAead;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.RegistryConfiguration;
 import java.security.GeneralSecurityException;
@@ -45,7 +44,7 @@ public class DeterministicAeadFactoryTest {
       throws Exception {
     KeysetHandle handle =
         KeysetHandle.generateNew(
-            KeyTemplates.get("AES256_SIV").toParameters(), RegistryConfiguration.get());
+            PredefinedDeterministicAeadParameters.AES256_SIV, RegistryConfiguration.get());
 
     DeterministicAead daead =
         handle.getPrimitive(RegistryConfiguration.get(), DeterministicAead.class);
