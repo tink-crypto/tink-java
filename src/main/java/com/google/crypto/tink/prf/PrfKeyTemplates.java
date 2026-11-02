@@ -40,8 +40,15 @@ import com.google.crypto.tink.proto.OutputPrefixType;
  * class is loaded. This implies that static analysis and code minimization tools (such as proguard)
  * cannot remove the usages either.
  *
- * <p>Instead, we recommend to use {@code KeysetHandle.generateEntryFromParametersName} or {@code
- * KeysetHandle.generateEntryFromParameters}.
+ * <p>Instead, we recommend to use {@link PredefinedPrfParameters} with {@link
+ * com.google.crypto.tink.KeysetHandle#generateNew(com.google.crypto.tink.Parameters,
+ * com.google.crypto.tink.Configuration)}:
+ *
+ * <pre>{@code
+ * KeysetHandle handle =
+ *     KeysetHandle.generateNew(PredefinedPrfParameters.HMAC_SHA256_PRF, PrfConfig2026.get());
+ * PrfSet prfSet = handle.getPrimitive(PrfConfig2026.get(), PrfSet.class);
+ * }</pre>
  *
  * @deprecated Use PredefinedPrfParameters instead.
  */
