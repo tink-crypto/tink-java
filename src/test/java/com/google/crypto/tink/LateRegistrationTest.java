@@ -62,19 +62,24 @@ public final class LateRegistrationTest {
   @Test
   public void serializeAndParseBeforeRegistering() throws Exception {
     KeysetHandle handle =
-        TinkJsonProtoKeysetFormat.parseKeyset(JSON_AEAD_KEYSET, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            JSON_AEAD_KEYSET, RegistryConfiguration.get(), InsecureSecretKeyAccess.get());
 
     // serializing and parsing keysets should work without registration.
     byte[] binarySerializedKeyset =
-        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     KeysetHandle binaryParsedHandle =
-        TinkProtoKeysetFormat.parseKeyset(binarySerializedKeyset, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            binarySerializedKeyset, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     assertThat(binaryParsedHandle.equalsKeyset(handle)).isTrue();
 
     String jsonSerializedKeyset =
-        TinkJsonProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.serializeKeyset(
+            handle, RegistryConfiguration.get(), InsecureSecretKeyAccess.get());
     KeysetHandle jsonParsedHandle =
-        TinkJsonProtoKeysetFormat.parseKeyset(jsonSerializedKeyset, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            jsonSerializedKeyset, RegistryConfiguration.get(), InsecureSecretKeyAccess.get());
     assertThat(jsonParsedHandle.equalsKeyset(handle)).isTrue();
 
     // Creating a primitive without registration should fail.
@@ -115,19 +120,24 @@ public final class LateRegistrationTest {
   @Test
   public void serializeAndParseJwtKeysetBeforeRegistering() throws Exception {
     KeysetHandle handle =
-        TinkJsonProtoKeysetFormat.parseKeyset(JSON_JWT_MAC_KEYSET, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            JSON_JWT_MAC_KEYSET, RegistryConfiguration.get(), InsecureSecretKeyAccess.get());
 
     // Serializing and parsing keysets should work without registration.
     byte[] binarySerializedKeyset =
-        TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     KeysetHandle binaryParsedHandle =
-        TinkProtoKeysetFormat.parseKeyset(binarySerializedKeyset, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            binarySerializedKeyset, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     assertThat(binaryParsedHandle.equalsKeyset(handle)).isTrue();
 
     String jsonSerializedKeyset =
-        TinkJsonProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.serializeKeyset(
+            handle, RegistryConfiguration.get(), InsecureSecretKeyAccess.get());
     KeysetHandle jsonParsedHandle =
-        TinkJsonProtoKeysetFormat.parseKeyset(jsonSerializedKeyset, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            jsonSerializedKeyset, RegistryConfiguration.get(), InsecureSecretKeyAccess.get());
     assertThat(jsonParsedHandle.equalsKeyset(handle)).isTrue();
 
     // Creating a primitive without registration should fail.
@@ -149,7 +159,8 @@ public final class LateRegistrationTest {
 
     // but this now works.
     KeysetHandle handle2 =
-        TinkJsonProtoKeysetFormat.parseKeyset(JSON_JWT_MAC_KEYSET, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            JSON_JWT_MAC_KEYSET, RegistryConfiguration.get(), InsecureSecretKeyAccess.get());
     Instant now = Clock.systemUTC().instant();
     JwtMac jwtMac = handle2.getPrimitive(RegistryConfiguration.get(), JwtMac.class);
     RawJwt rawJwt =
@@ -210,36 +221,46 @@ public final class LateRegistrationTest {
   public void serializeAndParseSignatureKeysetBeforeRegistering() throws Exception {
     KeysetHandle privateHandle =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            JSON_ECDSA_PRIVATE_KEYSET, InsecureSecretKeyAccess.get());
+            JSON_ECDSA_PRIVATE_KEYSET, RegistryConfiguration.get(), InsecureSecretKeyAccess.get());
     KeysetHandle publicHandle =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            JSON_ECDSA_PUBLIC_KEYSET, InsecureSecretKeyAccess.get());
+            JSON_ECDSA_PUBLIC_KEYSET, RegistryConfiguration.get(), InsecureSecretKeyAccess.get());
 
     // serializing and parsing keysets should work without registration.
     byte[] binarySerializedKeyset =
-        TinkProtoKeysetFormat.serializeKeyset(privateHandle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            privateHandle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     KeysetHandle binaryParsedHandle =
-        TinkProtoKeysetFormat.parseKeyset(binarySerializedKeyset, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            binarySerializedKeyset, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     assertThat(binaryParsedHandle.equalsKeyset(privateHandle)).isTrue();
 
     String jsonSerializedKeyset =
-        TinkJsonProtoKeysetFormat.serializeKeyset(privateHandle, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.serializeKeyset(
+            privateHandle, RegistryConfiguration.get(), InsecureSecretKeyAccess.get());
     KeysetHandle jsonParsedHandle =
-        TinkJsonProtoKeysetFormat.parseKeyset(jsonSerializedKeyset, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            jsonSerializedKeyset, RegistryConfiguration.get(), InsecureSecretKeyAccess.get());
     assertThat(jsonParsedHandle.equalsKeyset(privateHandle)).isTrue();
 
     byte[] binarySerializedPublicKeyset =
-        TinkProtoKeysetFormat.serializeKeyset(publicHandle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            publicHandle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     KeysetHandle binaryParsedPublicHandle =
         TinkProtoKeysetFormat.parseKeyset(
-            binarySerializedPublicKeyset, InsecureSecretKeyAccess.get());
+            binarySerializedPublicKeyset,
+            InsecureSecretKeyAccess.get(),
+            RegistryConfiguration.get());
     assertThat(binaryParsedPublicHandle.equalsKeyset(publicHandle)).isTrue();
 
     String jsonSerializedPublicKeyset =
-        TinkJsonProtoKeysetFormat.serializeKeyset(publicHandle, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.serializeKeyset(
+            publicHandle, RegistryConfiguration.get(), InsecureSecretKeyAccess.get());
     KeysetHandle jsonParsedPublicHandle =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            jsonSerializedPublicKeyset, InsecureSecretKeyAccess.get());
+            jsonSerializedPublicKeyset,
+            RegistryConfiguration.get(),
+            InsecureSecretKeyAccess.get());
     assertThat(jsonParsedPublicHandle.equalsKeyset(publicHandle)).isTrue();
 
     // Before registration, this should fail.
@@ -291,36 +312,50 @@ public final class LateRegistrationTest {
   public void readKeysetSignVerifyJwt_success() throws Exception {
     KeysetHandle privateHandle =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            JSON_JWT_PUBLIC_KEY_SIGN_KEYSET, InsecureSecretKeyAccess.get());
+            JSON_JWT_PUBLIC_KEY_SIGN_KEYSET,
+            RegistryConfiguration.get(),
+            InsecureSecretKeyAccess.get());
     KeysetHandle publicHandle =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            JSON_JWT_PUBLIC_KEY_VERIFY_KEYSET, InsecureSecretKeyAccess.get());
+            JSON_JWT_PUBLIC_KEY_VERIFY_KEYSET,
+            RegistryConfiguration.get(),
+            InsecureSecretKeyAccess.get());
 
     // serializing and parsing keysets should work without registration.
     byte[] binarySerializedKeyset =
-        TinkProtoKeysetFormat.serializeKeyset(privateHandle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            privateHandle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     KeysetHandle binaryParsedHandle =
-        TinkProtoKeysetFormat.parseKeyset(binarySerializedKeyset, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.parseKeyset(
+            binarySerializedKeyset, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     assertThat(binaryParsedHandle.equalsKeyset(privateHandle)).isTrue();
 
     String jsonSerializedKeyset =
-        TinkJsonProtoKeysetFormat.serializeKeyset(privateHandle, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.serializeKeyset(
+            privateHandle, RegistryConfiguration.get(), InsecureSecretKeyAccess.get());
     KeysetHandle jsonParsedHandle =
-        TinkJsonProtoKeysetFormat.parseKeyset(jsonSerializedKeyset, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.parseKeyset(
+            jsonSerializedKeyset, RegistryConfiguration.get(), InsecureSecretKeyAccess.get());
     assertThat(jsonParsedHandle.equalsKeyset(privateHandle)).isTrue();
 
     byte[] binarySerializedPublicKeyset =
-        TinkProtoKeysetFormat.serializeKeyset(publicHandle, InsecureSecretKeyAccess.get());
+        TinkProtoKeysetFormat.serializeKeyset(
+            publicHandle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
     KeysetHandle binaryParsedPublicHandle =
         TinkProtoKeysetFormat.parseKeyset(
-            binarySerializedPublicKeyset, InsecureSecretKeyAccess.get());
+            binarySerializedPublicKeyset,
+            InsecureSecretKeyAccess.get(),
+            RegistryConfiguration.get());
     assertThat(binaryParsedPublicHandle.equalsKeyset(publicHandle)).isTrue();
 
     String jsonSerializedPublicKeyset =
-        TinkJsonProtoKeysetFormat.serializeKeyset(publicHandle, InsecureSecretKeyAccess.get());
+        TinkJsonProtoKeysetFormat.serializeKeyset(
+            publicHandle, RegistryConfiguration.get(), InsecureSecretKeyAccess.get());
     KeysetHandle jsonParsedPublicHandle =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            jsonSerializedPublicKeyset, InsecureSecretKeyAccess.get());
+            jsonSerializedPublicKeyset,
+            RegistryConfiguration.get(),
+            InsecureSecretKeyAccess.get());
     assertThat(jsonParsedPublicHandle.equalsKeyset(publicHandle)).isTrue();
 
     // Before registration, this should fail.
@@ -352,10 +387,14 @@ public final class LateRegistrationTest {
     // But parsing and then calling getPrimitive works.
     KeysetHandle privateHandle2 =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            JSON_JWT_PUBLIC_KEY_SIGN_KEYSET, InsecureSecretKeyAccess.get());
+            JSON_JWT_PUBLIC_KEY_SIGN_KEYSET,
+            RegistryConfiguration.get(),
+            InsecureSecretKeyAccess.get());
     KeysetHandle publicHandle2 =
         TinkJsonProtoKeysetFormat.parseKeyset(
-            JSON_JWT_PUBLIC_KEY_VERIFY_KEYSET, InsecureSecretKeyAccess.get());
+            JSON_JWT_PUBLIC_KEY_VERIFY_KEYSET,
+            RegistryConfiguration.get(),
+            InsecureSecretKeyAccess.get());
     JwtPublicKeySign jwtPublicKeySign =
         privateHandle2.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     JwtPublicKeyVerify jwtVerifier =
