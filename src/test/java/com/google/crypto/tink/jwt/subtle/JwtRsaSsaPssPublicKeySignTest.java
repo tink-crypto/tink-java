@@ -16,12 +16,11 @@
 package com.google.crypto.tink.jwt.subtle;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.crypto.tink.internal.TinkBugException.exceptionIsBug;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assume.assumeFalse;
 
-import com.google.crypto.tink.KeyTemplate;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.jwt.JwtConfig2026;
@@ -62,30 +61,80 @@ public class JwtRsaSsaPssPublicKeySignTest {
     JwtSignatureConfig.register();
   }
 
-  @DataPoints("templates")
-  public static final String[] templates =
-      new String[] {
-        "JWT_PS256_2048_F4_RAW",
-        "JWT_PS256_2048_F4",
-        "JWT_PS256_3072_F4_RAW",
-        "JWT_PS256_3072_F4",
-        "JWT_PS384_3072_F4_RAW",
-        "JWT_PS384_3072_F4",
-        "JWT_PS512_4096_F4_RAW",
-        "JWT_PS512_4096_F4",
-      };
+  private static final JwtRsaSsaPssParameters JWT_PS256_2048_F4_RAW_PARAMS =
+      exceptionIsBug(
+          () ->
+              JwtRsaSsaPssParameters.builder()
+                  .setModulusSizeBits(2048)
+                  .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                  .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
+                  .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.IGNORED)
+                  .build());
+
+  private static final JwtRsaSsaPssParameters JWT_PS256_2048_F4_PARAMS =
+      exceptionIsBug(
+          () ->
+              JwtRsaSsaPssParameters.builder()
+                  .setModulusSizeBits(2048)
+                  .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                  .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
+                  .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                  .build());
+
+  @DataPoints("allParameters")
+  public static final JwtRsaSsaPssParameters[] allParameters =
+      exceptionIsBug(
+          () ->
+              new JwtRsaSsaPssParameters[] {
+                JWT_PS256_2048_F4_RAW_PARAMS,
+                JWT_PS256_2048_F4_PARAMS,
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(3072)
+                    .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.IGNORED)
+                    .build(),
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(3072)
+                    .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(3072)
+                    .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS384)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.IGNORED)
+                    .build(),
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(3072)
+                    .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS384)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(4096)
+                    .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS512)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.IGNORED)
+                    .build(),
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(4096)
+                    .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS512)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+              });
 
   @Theory
-  public void createSignVerify_success(@FromDataPoints("templates") String templateName)
-      throws Exception {
+  public void createSignVerify_success(
+      @FromDataPoints("allParameters") JwtRsaSsaPssParameters parameters) throws Exception {
     if (TestUtil.isTsan()) {
       // creating keys is too slow in Tsan.
       // We do not use assume because Theories expects to find something which is not skipped.
       return;
     }
-    KeysetHandle handle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), JwtConfig2026.get());
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, JwtConfig2026.get());
     JwtRsaSsaPssPrivateKey key = (JwtRsaSsaPssPrivateKey) handle.getAt(0).getKey();
     JwtPublicKeySign signer = JwtRsaSsaPssPublicKeySign.create(key);
     JwtPublicKeyVerify verifier = JwtRsaSsaPssPublicKeyVerify.create(key.getPublicKey());
@@ -112,22 +161,20 @@ public class JwtRsaSsaPssPublicKeySignTest {
 
   // Note: we use Theory as a parametrized test -- different from what the Theory framework intends.
   @Theory
-  public void createSignVerifyDifferentKey_throw(@FromDataPoints("templates") String templateName)
-      throws Exception {
+  public void createSignVerifyDifferentKey_throw(
+      @FromDataPoints("allParameters") JwtRsaSsaPssParameters parameters) throws Exception {
     if (TestUtil.isTsan()) {
       // creating keys is too slow in Tsan.
       // We do not use assume because Theories expects to find something which is not skipped.
       return;
     }
-    KeyTemplate template = KeyTemplates.get(templateName);
-    KeysetHandle handle = KeysetHandle.generateNew(template.toParameters(), JwtConfig2026.get());
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, JwtConfig2026.get());
     JwtRsaSsaPssPrivateKey key = (JwtRsaSsaPssPrivateKey) handle.getAt(0).getKey();
     JwtPublicKeySign signer = JwtRsaSsaPssPublicKeySign.create(key);
     RawJwt rawToken = RawJwt.newBuilder().setJwtId("id123").withoutExpiration().build();
     String signedCompact = signer.signAndEncode(rawToken);
 
-    KeysetHandle otherHandle =
-        KeysetHandle.generateNew(template.toParameters(), JwtConfig2026.get());
+    KeysetHandle otherHandle = KeysetHandle.generateNew(parameters, JwtConfig2026.get());
     JwtRsaSsaPssPrivateKey otherKey = (JwtRsaSsaPssPrivateKey) otherHandle.getAt(0).getKey();
     JwtPublicKeyVerify otherVerifier = JwtRsaSsaPssPublicKeyVerify.create(otherKey.getPublicKey());
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
@@ -139,15 +186,13 @@ public class JwtRsaSsaPssPublicKeySignTest {
   // Note: we use Theory as a parametrized test -- different from what the Theory framework intends.
   @Theory
   public void createSignVerify_header_modification_throw(
-      @FromDataPoints("templates") String templateName) throws Exception {
+      @FromDataPoints("allParameters") JwtRsaSsaPssParameters parameters) throws Exception {
     if (TestUtil.isTsan()) {
       // creating keys is too slow in Tsan.
       // We do not use assume because Theories expects to find something which is not skipped.
       return;
     }
-    KeysetHandle handle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), JwtConfig2026.get());
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, JwtConfig2026.get());
     JwtRsaSsaPssPrivateKey key = (JwtRsaSsaPssPrivateKey) handle.getAt(0).getKey();
     JwtPublicKeySign signer = JwtRsaSsaPssPublicKeySign.create(key);
     JwtPublicKeyVerify verifier = JwtRsaSsaPssPublicKeyVerify.create(key.getPublicKey());
@@ -168,15 +213,13 @@ public class JwtRsaSsaPssPublicKeySignTest {
   // Note: we use Theory as a parametrized test -- different from what the Theory framework intends.
   @Theory
   public void createSignVerify_payload_modification_throw(
-      @FromDataPoints("templates") String templateName) throws Exception {
+      @FromDataPoints("allParameters") JwtRsaSsaPssParameters parameters) throws Exception {
     if (TestUtil.isTsan()) {
       // creating keys is too slow in Tsan.
       // We do not use assume because Theories expects to find something which is not skipped.
       return;
     }
-    KeysetHandle handle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), JwtConfig2026.get());
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, JwtConfig2026.get());
     JwtRsaSsaPssPrivateKey key = (JwtRsaSsaPssPrivateKey) handle.getAt(0).getKey();
     JwtPublicKeySign signer = JwtRsaSsaPssPublicKeySign.create(key);
     JwtPublicKeyVerify verifier = JwtRsaSsaPssPublicKeyVerify.create(key.getPublicKey());
@@ -207,8 +250,8 @@ public class JwtRsaSsaPssPublicKeySignTest {
   @Test
   public void createSignVerify_withDifferentHeaders() throws Exception {
     assumeFalse(TestUtil.isTsan()); // creating keys is too slow in Tsan.
-    KeyTemplate template = KeyTemplates.get("JWT_PS256_2048_F4_RAW");
-    KeysetHandle handle = KeysetHandle.generateNew(template.toParameters(), JwtConfig2026.get());
+    KeysetHandle handle =
+        KeysetHandle.generateNew(JWT_PS256_2048_F4_RAW_PARAMS, JwtConfig2026.get());
     JwtRsaSsaPssPrivateKey key = (JwtRsaSsaPssPrivateKey) handle.getAt(0).getKey();
     RsaSsaPssParameters nonJwtParameters =
         RsaSsaPssParameters.builder()
@@ -285,8 +328,7 @@ public class JwtRsaSsaPssPublicKeySignTest {
   @Test
   public void createSignVerifyTink_withDifferentHeaders() throws Exception {
     assumeFalse(TestUtil.isTsan()); // creating keys is too slow in Tsan.
-    KeyTemplate template = KeyTemplates.get("JWT_PS256_2048_F4");
-    KeysetHandle handle = KeysetHandle.generateNew(template.toParameters(), JwtConfig2026.get());
+    KeysetHandle handle = KeysetHandle.generateNew(JWT_PS256_2048_F4_PARAMS, JwtConfig2026.get());
 
     JwtRsaSsaPssPrivateKey key = (JwtRsaSsaPssPrivateKey) handle.getAt(0).getKey();
     RsaSsaPssParameters nonJwtParameters =
@@ -398,9 +440,8 @@ public class JwtRsaSsaPssPublicKeySignTest {
   @Test
   public void signAndVerifyWithCustomKid() throws Exception {
     assumeFalse(TestUtil.isTsan()); // KeysetHandle.generateNew is too slow in Tsan.
-    KeyTemplate template = KeyTemplates.get("JWT_PS256_2048_F4_RAW");
     KeysetHandle handleWithoutKid =
-        KeysetHandle.generateNew(template.toParameters(), JwtConfig2026.get());
+        KeysetHandle.generateNew(JWT_PS256_2048_F4_RAW_PARAMS, JwtConfig2026.get());
     KeysetHandle handleWithKid =
         withCustomKid(handleWithoutKid, "Lorem ipsum dolor sit amet, consectetur adipiscing elit");
 
@@ -442,9 +483,8 @@ public class JwtRsaSsaPssPublicKeySignTest {
   public void signAndVerifyWithWrongCustomKid_fails() throws Exception {
     assumeFalse(TestUtil.isTsan()); // KeysetHandle.generateNew is too slow in Tsan.
 
-    KeyTemplate template = KeyTemplates.get("JWT_PS256_2048_F4_RAW");
     KeysetHandle handleWithoutKid =
-        KeysetHandle.generateNew(template.toParameters(), JwtConfig2026.get());
+        KeysetHandle.generateNew(JWT_PS256_2048_F4_RAW_PARAMS, JwtConfig2026.get());
     KeysetHandle handleWithKid = withCustomKid(handleWithoutKid, "kid");
     KeysetHandle handleWithWrongKid = withCustomKid(handleWithoutKid, "wrong kid");
 

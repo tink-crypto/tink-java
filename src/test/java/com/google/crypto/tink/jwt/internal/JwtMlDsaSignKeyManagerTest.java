@@ -22,13 +22,12 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.Key;
-import com.google.crypto.tink.KeyTemplate;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.internal.MutableKeyCreationRegistry;
+import com.google.crypto.tink.internal.MutableParametersRegistry;
 import com.google.crypto.tink.jwt.JwtMlDsaParameters;
 import com.google.crypto.tink.jwt.JwtMlDsaPrivateKey;
 import com.google.crypto.tink.jwt.JwtPublicKeySign;
@@ -129,7 +128,10 @@ public class JwtMlDsaSignKeyManagerTest {
     }
 
     int numKeys = 10;
-    Parameters p = KeyTemplates.get("JWT_ML_DSA_44").toParameters();
+    Parameters p =
+        JwtMlDsaParameters.create(
+            JwtMlDsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID,
+            JwtMlDsaParameters.Algorithm.ML_DSA_44);
     Set<Bytes> keys = new HashSet<>();
     for (int i = 0; i < numKeys; ++i) {
       JwtMlDsaPrivateKey key =
@@ -143,9 +145,8 @@ public class JwtMlDsaSignKeyManagerTest {
   @Theory
   public void namedParameters(@FromDataPoints("testVectors") TestVector testVector)
       throws Exception {
-    KeyTemplate template = KeyTemplates.get(testVector.template);
-    assertThat(template.toParameters())
-        .isEqualTo(JwtMlDsaParameters.create(testVector.kidStrategy, testVector.algorithm));
+    Parameters p = MutableParametersRegistry.globalInstance().get(testVector.template);
+    assertThat(p).isEqualTo(JwtMlDsaParameters.create(testVector.kidStrategy, testVector.algorithm));
   }
 
   @Theory
@@ -155,12 +156,10 @@ public class JwtMlDsaSignKeyManagerTest {
       // createKey is too slow in Tsan.
       return;
     }
-    KeysetHandle h =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(testVector.template).toParameters(), RegistryConfiguration.get());
+    Parameters p = MutableParametersRegistry.globalInstance().get(testVector.template);
+    KeysetHandle h = KeysetHandle.generateNew(p, RegistryConfiguration.get());
     assertThat(h.size()).isEqualTo(1);
-    assertThat(h.getAt(0).getKey().getParameters())
-        .isEqualTo(KeyTemplates.get(testVector.template).toParameters());
+    assertThat(h.getAt(0).getKey().getParameters()).isEqualTo(p);
   }
 
   @Theory
@@ -213,9 +212,8 @@ public class JwtMlDsaSignKeyManagerTest {
       return;
     }
 
-    KeysetHandle handle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(testVector.template).toParameters(), RegistryConfiguration.get());
+    Parameters parameters = JwtMlDsaParameters.create(testVector.kidStrategy, testVector.algorithm);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     JwtPublicKeySign signer =
         handle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     JwtPublicKeyVerify verifier =
@@ -250,9 +248,10 @@ public class JwtMlDsaSignKeyManagerTest {
       return;
     }
 
-    KeyTemplate template = KeyTemplates.get("JWT_ML_DSA_44_RAW");
-    KeysetHandle handle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+    JwtMlDsaParameters parameters =
+        JwtMlDsaParameters.create(
+            JwtMlDsaParameters.KidStrategy.IGNORED, JwtMlDsaParameters.Algorithm.ML_DSA_44);
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
 
     byte[] serializedKeyset =
         TinkProtoKeysetFormat.serializeKeyset(

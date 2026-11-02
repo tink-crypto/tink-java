@@ -73,10 +73,9 @@ java_test(
     name = "JwtRsaSsaPkcs1PublicKeySignTest",
     srcs = ["JwtRsaSsaPkcs1PublicKeySignTest.java"],
     deps = [
-        "//src/main/java/com/google/crypto/tink:key_template",
-        "//src/main/java/com/google/crypto/tink:key_templates",
         "//src/main/java/com/google/crypto/tink:public_key_sign",
         "//src/main/java/com/google/crypto/tink:registry_cluster",
+        "//src/main/java/com/google/crypto/tink/internal:tink_bug_exception",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_config2026",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_invalid_exception",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_public_key_sign",
@@ -108,10 +107,9 @@ java_test(
     name = "JwtRsaSsaPssPublicKeySignTest",
     srcs = ["JwtRsaSsaPssPublicKeySignTest.java"],
     deps = [
-        "//src/main/java/com/google/crypto/tink:key_template",
-        "//src/main/java/com/google/crypto/tink:key_templates",
         "//src/main/java/com/google/crypto/tink:public_key_sign",
         "//src/main/java/com/google/crypto/tink:registry_cluster",
+        "//src/main/java/com/google/crypto/tink/internal:tink_bug_exception",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_config2026",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_invalid_exception",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_public_key_sign",
@@ -145,8 +143,6 @@ java_test(
     srcs = ["JwtHmacTest.java"],
     deps = [
         "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
-        "//src/main/java/com/google/crypto/tink:key_template",
-        "//src/main/java/com/google/crypto/tink:key_templates",
         "//src/main/java/com/google/crypto/tink:registry_cluster",
         "//src/main/java/com/google/crypto/tink/internal:tink_bug_exception",
         "//src/main/java/com/google/crypto/tink/jwt:jwt_config2026",

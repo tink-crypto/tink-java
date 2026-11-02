@@ -18,11 +18,10 @@ package com.google.crypto.tink.jwt.internal;
 
 import static org.junit.Assert.assertTrue;
 
-import com.google.crypto.tink.KeyTemplate;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
+import com.google.crypto.tink.jwt.JwtMlDsaParameters;
 import com.google.crypto.tink.jwt.JwtSignatureConfig;
 import com.google.crypto.tink.signature.internal.MlDsaVerifyConscrypt;
 import com.google.crypto.tink.testing.TestUtil;
@@ -55,10 +54,11 @@ public final class JwtMlDsaVerifyKeyManagerTest {
       return;
     }
 
-    KeyTemplate template = KeyTemplates.get("JWT_ML_DSA_44_RAW");
+    JwtMlDsaParameters parameters =
+        JwtMlDsaParameters.create(
+            JwtMlDsaParameters.KidStrategy.IGNORED, JwtMlDsaParameters.Algorithm.ML_DSA_44);
     KeysetHandle handle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get())
-            .getPublicKeysetHandle();
+        KeysetHandle.generateNew(parameters, RegistryConfiguration.get()).getPublicKeysetHandle();
 
     byte[] serializedKeyset =
         TinkProtoKeysetFormat.serializeKeysetWithoutSecret(handle, RegistryConfiguration.get());
