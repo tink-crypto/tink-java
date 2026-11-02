@@ -239,7 +239,7 @@ public final class LegacyKeysetSerialization {
    *
    * @deprecated This function should be inlined.
    */
-  @Deprecated // This function should be inlined.
+  @Deprecated
   public static KeysetInfo getKeysetInfo(KeysetHandle handle) {
     try {
       return getKeysetInfo(handle, RegistryConfiguration.get());
