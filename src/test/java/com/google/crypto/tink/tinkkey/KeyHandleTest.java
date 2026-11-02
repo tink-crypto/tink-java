@@ -22,16 +22,17 @@ import static org.junit.Assert.assertThrows;
 import com.google.common.truth.Expect;
 import com.google.crypto.tink.KeyManager;
 import com.google.crypto.tink.KeyTemplate;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.PrivateKeyManager;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoParametersFormat;
 import com.google.crypto.tink.aead.AesEaxKeyManager;
 import com.google.crypto.tink.aead.AesEaxParameters;
+import com.google.crypto.tink.aead.PredefinedAeadParameters;
 import com.google.crypto.tink.internal.KeyManagerRegistry;
 import com.google.crypto.tink.proto.AesEaxKey;
 import com.google.crypto.tink.proto.KeyData;
 import com.google.crypto.tink.signature.Ed25519PrivateKeyManager;
+import com.google.crypto.tink.signature.PredefinedSignatureParameters;
 import com.google.crypto.tink.tinkkey.internal.ProtoKey;
 import com.google.errorprone.annotations.Immutable;
 import com.google.protobuf.ByteString;
@@ -130,7 +131,7 @@ public final class KeyHandleTest {
 
   @Test
   public void createFromKey_keyDataSymmetric_shouldHaveSecret() throws Exception {
-    KeyTemplate kt = KeyTemplates.get("AES128_EAX");
+    KeyTemplate kt = KeyTemplate.createFrom(PredefinedAeadParameters.AES128_EAX);
     KeyData kd = newKeyData(kt);
 
     KeyHandle kh = KeyHandle.createFromKey(kd, getOutputPrefixType(kt));
@@ -140,7 +141,7 @@ public final class KeyHandleTest {
 
   @Test
   public void createFromKey_keyDataAsymmetricPrivate_shouldHaveSecret() throws Exception {
-    KeyTemplate kt = KeyTemplates.get("ED25519");
+    KeyTemplate kt = KeyTemplate.createFrom(PredefinedSignatureParameters.ED25519);
     KeyData kd = newKeyData(kt);
 
     KeyHandle kh = KeyHandle.createFromKey(kd, getOutputPrefixType(kt));
@@ -150,7 +151,7 @@ public final class KeyHandleTest {
 
   @Test
   public void createFromKey_keyDataUnknown_shouldHaveSecret() throws Exception {
-    KeyTemplate kt = KeyTemplates.get("ED25519");
+    KeyTemplate kt = KeyTemplate.createFrom(PredefinedSignatureParameters.ED25519);
     KeyData kd =
         newKeyData(kt).toBuilder()
             .setKeyMaterialType(KeyData.KeyMaterialType.UNKNOWN_KEYMATERIAL)
@@ -163,7 +164,7 @@ public final class KeyHandleTest {
 
   @Test
   public void createFromKey_keyDataAsymmetricPublic_shouldNotHaveSecret() throws Exception {
-    KeyTemplate kt = KeyTemplates.get("ED25519");
+    KeyTemplate kt = KeyTemplate.createFrom(PredefinedSignatureParameters.ED25519);
     KeyData privateKeyData = newKeyData(kt);
 
     KeyData kd = getPublicKeyData(privateKeyData.getTypeUrl(), privateKeyData.getValue());
@@ -175,7 +176,7 @@ public final class KeyHandleTest {
 
   @Test
   public void createFromKey_keyDataRemote_shouldNotHaveSecret() throws Exception {
-    KeyTemplate kt = KeyTemplates.get("ED25519");
+    KeyTemplate kt = KeyTemplate.createFrom(PredefinedSignatureParameters.ED25519);
     KeyData kd =
         newKeyData(kt).toBuilder().setKeyMaterialType(KeyData.KeyMaterialType.REMOTE).build();
 
@@ -186,7 +187,7 @@ public final class KeyHandleTest {
 
   @Test
   public void generateNew_shouldWork() throws Exception {
-    KeyTemplate template = KeyTemplates.get("AES128_EAX");
+    KeyTemplate template = KeyTemplate.createFrom(PredefinedAeadParameters.AES128_EAX);
 
     KeyHandle handle = KeyHandle.generateNew(template);
 
@@ -205,7 +206,7 @@ public final class KeyHandleTest {
 
   @Test
   public void generateNew_compareWith_createFromKeyViaProtoKey_shouldBeEqual() throws Exception {
-    KeyTemplate template = KeyTemplates.get("AES128_EAX");
+    KeyTemplate template = KeyTemplate.createFrom(PredefinedAeadParameters.AES128_EAX);
     KeyData keyData = newKeyData(template);
     ProtoKey protoKey = new ProtoKey(keyData, KeyTemplate.OutputPrefixType.TINK);
 
@@ -223,7 +224,7 @@ public final class KeyHandleTest {
 
   @Test
   public void generateNew_generatesDifferentKeys() throws Exception {
-    KeyTemplate template = KeyTemplates.get("AES128_EAX");
+    KeyTemplate template = KeyTemplate.createFrom(PredefinedAeadParameters.AES128_EAX);
     Set<String> keys = new TreeSet<>();
 
     int numKeys = 2;
@@ -294,7 +295,8 @@ public final class KeyHandleTest {
 
   @Test
   public void getKeyTemplate() throws Exception {
-    KeyTemplate keyTemplate = KeyTemplates.get("ED25519_RAW");
+    KeyTemplate keyTemplate =
+        KeyTemplate.createFrom(PredefinedSignatureParameters.ED25519WithRawOutput);
     TinkKey key = new DummyTinkKey(/* hasSecret= */ false, keyTemplate);
     KeyHandle keyHandle = KeyHandle.createFromKey(key, KeyAccess.publicAccess());
 
