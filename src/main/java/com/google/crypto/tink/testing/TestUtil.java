@@ -137,7 +137,11 @@ public final class TestUtil {
     }
   }
 
-  /** @return a keyset handle from a {@code keyset}. */
+  /**
+   * @return a keyset handle from a {@code keyset}.
+   * @deprecated Do not use this function.
+   */
+  @Deprecated
   public static KeysetHandle createKeysetHandle(Keyset keyset) throws Exception {
     return TinkProtoKeysetFormat.parseKeyset(keyset.toByteArray(), InsecureSecretKeyAccess.get());
   }
