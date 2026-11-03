@@ -27,6 +27,7 @@ import com.google.crypto.tink.config.TinkConfig;
 import com.google.crypto.tink.internal.MonitoringAnnotations;
 import com.google.crypto.tink.internal.MutableMonitoringRegistry;
 import com.google.crypto.tink.internal.testing.FakeMonitoringClient;
+import com.google.crypto.tink.mac.PredefinedMacParameters;
 import com.google.crypto.tink.proto.Keyset;
 import com.google.errorprone.annotations.Immutable;
 import java.io.ByteArrayInputStream;
@@ -53,8 +54,7 @@ public class CleartextKeysetHandleTest {
   @Test
   public void testParse() throws Exception {
     // Create a keyset that contains a single HmacKey.
-    KeyTemplate template = KeyTemplates.get("HMAC_SHA256_128BITTAG");
-    KeysetHandle handle = KeysetHandle.generateNew(template);
+    KeysetHandle handle = KeysetHandle.generateNew(PredefinedMacParameters.HMAC_SHA256_128BITTAG);
     Keyset keyset = CleartextKeysetHandle.getKeyset(handle);
     handle = CleartextKeysetHandle.parseFrom(keyset.toByteArray());
     assertEquals(keyset, handle.getKeyset(RegistryConfiguration.get()));
@@ -64,8 +64,7 @@ public class CleartextKeysetHandleTest {
   @Test
   public void testRead() throws Exception {
     // Create a keyset that contains a single HmacKey.
-    KeyTemplate template = KeyTemplates.get("HMAC_SHA256_128BITTAG");
-    KeysetHandle handle = KeysetHandle.generateNew(template);
+    KeysetHandle handle = KeysetHandle.generateNew(PredefinedMacParameters.HMAC_SHA256_128BITTAG);
     Keyset keyset1 = handle.getKeyset(RegistryConfiguration.get());
 
     KeysetHandle handle1 =
@@ -81,7 +80,7 @@ public class CleartextKeysetHandleTest {
   @Test
   public void testWriteRead_samePrimitive() throws Exception {
     // Create a keyset that contains a single HmacKey.
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get("HMAC_SHA256_128BITTAG"));
+    KeysetHandle handle = KeysetHandle.generateNew(PredefinedMacParameters.HMAC_SHA256_128BITTAG);
 
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     KeysetWriter writer = BinaryKeysetWriter.withOutputStream(outputStream);
@@ -108,8 +107,9 @@ public class CleartextKeysetHandleTest {
   @Test
   public void testReadInvalidKeyset() throws Exception {
     // Create a keyset that contains a single HmacKey.
-    KeyTemplate template = KeyTemplates.get("HMAC_SHA256_128BITTAG");
-    Keyset keyset = KeysetHandle.generateNew(template).getKeyset(RegistryConfiguration.get());
+    Keyset keyset =
+        KeysetHandle.generateNew(PredefinedMacParameters.HMAC_SHA256_128BITTAG)
+            .getKeyset(RegistryConfiguration.get());
 
     byte[] proto = keyset.toByteArray();
     proto[0] = (byte) ~proto[0];
@@ -158,7 +158,7 @@ public class CleartextKeysetHandleTest {
     // Generate a serialized keyset
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     CleartextKeysetHandle.write(
-        KeysetHandle.generateNew(KeyTemplates.get("HMAC_SHA256_128BITTAG")),
+        KeysetHandle.generateNew(PredefinedMacParameters.HMAC_SHA256_128BITTAG),
         BinaryKeysetWriter.withOutputStream(outputStream));
     byte[] serializedKeyset = outputStream.toByteArray();
 

@@ -27,6 +27,7 @@ import static org.junit.Assume.assumeFalse;
 import com.google.common.truth.Expect;
 import com.google.crypto.tink.aead.AeadConfig;
 import com.google.crypto.tink.aead.AesEaxKeyManager;
+import com.google.crypto.tink.aead.AesEaxParameters;
 import com.google.crypto.tink.aead.PredefinedAeadParameters;
 import com.google.crypto.tink.aead.XChaCha20Poly1305Key;
 import com.google.crypto.tink.aead.XChaCha20Poly1305Parameters;
@@ -52,6 +53,7 @@ import com.google.crypto.tink.mac.HmacKey;
 import com.google.crypto.tink.mac.HmacParameters;
 import com.google.crypto.tink.mac.MacConfig;
 import com.google.crypto.tink.mac.MacConfig2026;
+import com.google.crypto.tink.mac.PredefinedMacParameters;
 import com.google.crypto.tink.prf.PrfConfig;
 import com.google.crypto.tink.proto.AesEaxKey;
 import com.google.crypto.tink.proto.EcdsaPrivateKey;
@@ -202,12 +204,16 @@ public class KeysetHandleTest {
   public void deprecated_getKeys() throws Exception {
     KeysetHandle handle =
         KeysetHandle.newBuilder()
-            .addEntry(KeysetHandle.generateEntryFromParametersName("AES128_EAX").withRandomId())
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("AES128_EAX")
+                KeysetHandle.generateEntryFromParameters(PredefinedAeadParameters.AES128_EAX)
+                    .withRandomId())
+            .addEntry(
+                KeysetHandle.generateEntryFromParameters(PredefinedAeadParameters.AES128_EAX)
                     .withRandomId()
                     .makePrimary())
-            .addEntry(KeysetHandle.generateEntryFromParametersName("AES128_EAX").withRandomId())
+            .addEntry(
+                KeysetHandle.generateEntryFromParameters(PredefinedAeadParameters.AES128_EAX)
+                    .withRandomId())
             .build();
     Keyset keyset = handle.getKeyset(RegistryConfiguration.get());
 
@@ -231,7 +237,7 @@ public class KeysetHandleTest {
   @SuppressWarnings("deprecation") // Need to test the deprecated function
   @Test
   public void generateNew_tink_shouldWork() throws Exception {
-    KeyTemplate template = KeyTemplates.get("AES128_EAX");
+    KeyTemplate template = KeyTemplate.createFrom(PredefinedAeadParameters.AES128_EAX);
 
     KeysetHandle handle = KeysetHandle.generateNew(template);
 
@@ -297,7 +303,14 @@ public class KeysetHandleTest {
   @SuppressWarnings("deprecation") // Need to test the deprecated function
   @Test
   public void generateNew_raw_shouldWork() throws Exception {
-    KeyTemplate template = KeyTemplates.get("AES128_EAX_RAW");
+    KeyTemplate template =
+        KeyTemplate.createFrom(
+            AesEaxParameters.builder()
+                .setIvSizeBytes(16)
+                .setKeySizeBytes(16)
+                .setTagSizeBytes(16)
+                .setVariant(AesEaxParameters.Variant.NO_PREFIX)
+                .build());
 
     KeysetHandle handle = KeysetHandle.generateNew(template);
 
@@ -307,7 +320,7 @@ public class KeysetHandleTest {
 
   @Test
   public void generateNew_withProtoKeyTemplate_shouldWork() throws Exception {
-    KeyTemplate template = KeyTemplates.get("AES128_EAX");
+    KeyTemplate template = KeyTemplate.createFrom(PredefinedAeadParameters.AES128_EAX);
     com.google.crypto.tink.proto.KeyTemplate protoTemplate = template.getProto();
 
     @SuppressWarnings("deprecation") // Need to test the deprecated function
@@ -319,7 +332,7 @@ public class KeysetHandleTest {
 
   @Test
   public void generateNew_generatesDifferentKeys() throws Exception {
-    KeyTemplate template = KeyTemplates.get("AES128_EAX");
+    KeyTemplate template = KeyTemplate.createFrom(PredefinedAeadParameters.AES128_EAX);
     Set<String> keys = new TreeSet<>();
 
     int numKeys = 2;
@@ -339,7 +352,7 @@ public class KeysetHandleTest {
   @Test
   public void deprecated_createFromKey_shouldWork() throws Exception {
     setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
-    KeyTemplate template = KeyTemplates.get("AES128_EAX");
+    KeyTemplate template = KeyTemplate.createFrom(PredefinedAeadParameters.AES128_EAX);
     KeyHandle keyHandle = KeyHandle.generateNew(template);
     KeyAccess token = SecretKeyAccess.insecureSecretAccess();
 
@@ -369,9 +382,11 @@ public class KeysetHandleTest {
 
   @Test
   public void writeThenRead_returnsSameKeyset() throws Exception {
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get("HMAC_SHA256_256BITTAG"));
+    KeysetHandle handle = KeysetHandle.generateNew(PredefinedMacParameters.HMAC_SHA256_256BITTAG);
     Aead masterKey =
-        Registry.getPrimitive(Registry.newKeyData(KeyTemplates.get("AES128_EAX")), Aead.class);
+        Registry.getPrimitive(
+            Registry.newKeyData(KeyTemplate.createFrom(PredefinedAeadParameters.AES128_EAX)),
+            Aead.class);
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     KeysetWriter writer = BinaryKeysetWriter.withOutputStream(outputStream);
 
@@ -386,9 +401,11 @@ public class KeysetHandleTest {
 
   @Test
   public void writeThenReadWithAssociatedData_returnsSameKeyset() throws Exception {
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get("HMAC_SHA256_256BITTAG"));
+    KeysetHandle handle = KeysetHandle.generateNew(PredefinedMacParameters.HMAC_SHA256_256BITTAG);
     Aead masterKey =
-        Registry.getPrimitive(Registry.newKeyData(KeyTemplates.get("AES128_EAX")), Aead.class);
+        Registry.getPrimitive(
+            Registry.newKeyData(KeyTemplate.createFrom(PredefinedAeadParameters.AES128_EAX)),
+            Aead.class);
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     KeysetWriter writer = BinaryKeysetWriter.withOutputStream(outputStream);
 
@@ -404,9 +421,11 @@ public class KeysetHandleTest {
 
   @Test
   public void writeThenReadWithDifferentAssociatedData_shouldThrow() throws Exception {
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get("HMAC_SHA256_256BITTAG"));
+    KeysetHandle handle = KeysetHandle.generateNew(PredefinedMacParameters.HMAC_SHA256_256BITTAG);
     Aead masterKey =
-        Registry.getPrimitive(Registry.newKeyData(KeyTemplates.get("AES128_EAX")), Aead.class);
+        Registry.getPrimitive(
+            Registry.newKeyData(KeyTemplate.createFrom(PredefinedAeadParameters.AES128_EAX)),
+            Aead.class);
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     KeysetWriter writer = BinaryKeysetWriter.withOutputStream(outputStream);
 
@@ -456,7 +475,8 @@ public class KeysetHandleTest {
 
   @Test
   public void getPublicKeysetHandle_shouldWork() throws Exception {
-    KeysetHandle privateHandle = KeysetHandle.generateNew(KeyTemplates.get("ECDSA_P256"));
+    KeysetHandle privateHandle =
+        KeysetHandle.generateNew(PredefinedSignatureParameters.ECDSA_P256);
     KeyData privateKeyData =
         privateHandle.getKeyset(RegistryConfiguration.get()).getKey(0).getKeyData();
     EcdsaPrivateKey privateKey =
@@ -489,7 +509,7 @@ public class KeysetHandleTest {
   /** Tests that when encryption failed an exception is thrown. */
   @Test
   public void write_withFaultyAead_shouldThrow() throws Exception {
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get("HMAC_SHA256_256BITTAG"));
+    KeysetHandle handle = KeysetHandle.generateNew(PredefinedMacParameters.HMAC_SHA256_256BITTAG);
     TestUtil.DummyAead faultyAead = new TestUtil.DummyAead();
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     KeysetWriter writer = BinaryKeysetWriter.withOutputStream(outputStream);
@@ -507,7 +527,7 @@ public class KeysetHandleTest {
 
   @Test
   public void getPrimitive_shouldWork() throws Exception {
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get("AES128_EAX"));
+    KeysetHandle handle = KeysetHandle.generateNew(PredefinedAeadParameters.AES128_EAX);
     byte[] message = Random.randBytes(20);
     byte[] aad = Random.randBytes(20);
 
@@ -546,11 +566,13 @@ public class KeysetHandleTest {
   // simply add a raw, non-primary key and encrypt directly with it.
   @Test
   public void getPrimitive_wrappingDoneCorrectly() throws Exception {
-    KeyData rawKeyData = Registry.newKeyData(KeyTemplates.get("AES128_EAX"));
+    KeyData rawKeyData =
+        Registry.newKeyData(KeyTemplate.createFrom(PredefinedAeadParameters.AES128_EAX));
     Keyset keyset =
         TestUtil.createKeyset(
             TestUtil.createKey(
-                Registry.newKeyData(KeyTemplates.get("AES128_EAX").getProto()),
+                Registry.newKeyData(
+                    KeyTemplate.createFrom(PredefinedAeadParameters.AES128_EAX).getProto()),
                 42,
                 KeyStatusType.ENABLED,
                 OutputPrefixType.TINK),
@@ -687,7 +709,8 @@ public class KeysetHandleTest {
   public void deprecated_readNoSecretWithBytesInput_sameAs_parseKeysetWithoutSecret()
       throws Exception {
     // Public keyset should have the same output
-    KeysetHandle privateHandle = KeysetHandle.generateNew(KeyTemplates.get("ECDSA_P256"));
+    KeysetHandle privateHandle =
+        KeysetHandle.generateNew(PredefinedSignatureParameters.ECDSA_P256);
     byte[] serializedPublicKeyset =
         privateHandle.getPublicKeysetHandle().getKeyset(RegistryConfiguration.get()).toByteArray();
 
@@ -738,7 +761,8 @@ public class KeysetHandleTest {
 
   @Test
   public void readNoSecretWithBinaryKeysetReader_shouldWork() throws Exception {
-    KeysetHandle privateHandle = KeysetHandle.generateNew(KeyTemplates.get("ECDSA_P256"));
+    KeysetHandle privateHandle =
+        KeysetHandle.generateNew(PredefinedSignatureParameters.ECDSA_P256);
     Keyset keyset = privateHandle.getPublicKeysetHandle().getKeyset(RegistryConfiguration.get());
     byte[] serializedKeyset = keyset.toByteArray();
 
@@ -769,7 +793,7 @@ public class KeysetHandleTest {
   public void readNoSecretWithBinaryKeysetReader_withTypeAsymmetricPrivate_shouldThrow()
       throws Exception {
     byte[] serializedKeyset =
-        KeysetHandle.generateNew(KeyTemplates.get("ECDSA_P256"))
+        KeysetHandle.generateNew(PredefinedSignatureParameters.ECDSA_P256)
             .getKeyset(RegistryConfiguration.get())
             .toByteArray();
 
@@ -796,7 +820,8 @@ public class KeysetHandleTest {
 
   @Test
   public void writeNoSecretThenReadNoSecret_returnsSameKeyset() throws Exception {
-    KeysetHandle privateHandle = KeysetHandle.generateNew(KeyTemplates.get("ECDSA_P256"));
+    KeysetHandle privateHandle =
+        KeysetHandle.generateNew(PredefinedSignatureParameters.ECDSA_P256);
     KeysetHandle publicHandle = privateHandle.getPublicKeysetHandle();
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     KeysetWriter writer = BinaryKeysetWriter.withOutputStream(outputStream);
@@ -827,7 +852,7 @@ public class KeysetHandleTest {
 
   @Test
   public void writeNoSecret_withTypeAsymmetricPrivate_shouldThrow() throws Exception {
-    KeysetHandle handle = KeysetHandle.generateNew(KeyTemplates.get("ECDSA_P256"));
+    KeysetHandle handle = KeysetHandle.generateNew(PredefinedSignatureParameters.ECDSA_P256);
 
     assertThrows(GeneralSecurityException.class, () -> handle.writeNoSecret(/* writer= */ null));
   }
@@ -837,12 +862,15 @@ public class KeysetHandleTest {
   public void deprecated_primaryKey_shouldWork() throws Exception {
     KeysetHandle handle =
         KeysetHandle.newBuilder()
-        .addEntry(
-            KeysetHandle.generateEntryFromParametersName("AES128_EAX").withFixedId(123))
-        .addEntry(
-            KeysetHandle.generateEntryFromParametersName("HMAC_SHA256_256BITTAG")
-                .withFixedId(234).makePrimary())
-        .build();
+            .addEntry(
+                KeysetHandle.generateEntryFromParameters(PredefinedAeadParameters.AES128_EAX)
+                    .withFixedId(123))
+            .addEntry(
+                KeysetHandle.generateEntryFromParameters(
+                        PredefinedMacParameters.HMAC_SHA256_256BITTAG)
+                    .withFixedId(234)
+                    .makePrimary())
+            .build();
 
     KeyHandle keyHandle = handle.primaryKey();
     assertThat(keyHandle.getId()).isEqualTo(234);
@@ -1177,7 +1205,8 @@ public class KeysetHandleTest {
     KeysetHandle keysetHandle =
         KeysetHandle.newBuilder()
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("AES256_CMAC_RAW")
+                KeysetHandle.generateEntryFromParameters(
+                        AesCmacParameters.builder().setKeySizeBytes(32).setTagSizeBytes(16).build())
                     .withRandomId()
                     .makePrimary())
             .build();
@@ -1188,11 +1217,40 @@ public class KeysetHandleTest {
   }
 
   @Test
+  public void generateEntryFromParametersName_works() throws Exception {
+    KeysetHandle keysetHandle =
+        KeysetHandle.newBuilder()
+            .addEntry(
+                KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withFixedId(42))
+            .addEntry(
+                KeysetHandle.generateEntryFromParametersName("AES256_CMAC_RAW")
+                    .withRandomId()
+                    .makePrimary())
+            .build();
+
+    assertThat(keysetHandle.size()).isEqualTo(2);
+    assertThat(keysetHandle.getAt(0).getKey().getParameters())
+        .isEqualTo(PredefinedMacParameters.AES_CMAC);
+    assertThat(keysetHandle.getAt(0).getId()).isEqualTo(42);
+    assertThat(keysetHandle.getAt(1).getKey().getParameters())
+        .isEqualTo(AesCmacParameters.builder().setKeySizeBytes(32).setTagSizeBytes(16).build());
+  }
+
+  @Test
+  public void generateEntryFromParametersName_unknownName_throws() throws Exception {
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> KeysetHandle.generateEntryFromParametersName("NON_EXISTENT_PARAMETERS_NAME"));
+  }
+
+  @Test
   public void keysetRotationWithBuilder_works() throws Exception {
+    AesCmacParameters aes256CmacRaw =
+        AesCmacParameters.builder().setKeySizeBytes(32).setTagSizeBytes(16).build();
     KeysetHandle oldKeyset =
         KeysetHandle.newBuilder()
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("AES256_CMAC_RAW")
+                KeysetHandle.generateEntryFromParameters(aes256CmacRaw)
                     .withRandomId()
                     .makePrimary())
             .build();
@@ -1200,8 +1258,7 @@ public class KeysetHandleTest {
     // Add new key.
     KeysetHandle keysetWithNewKey =
         KeysetHandle.newBuilder(oldKeyset)
-            .addEntry(
-                KeysetHandle.generateEntryFromParametersName("AES256_CMAC_RAW").withRandomId())
+            .addEntry(KeysetHandle.generateEntryFromParameters(aes256CmacRaw).withRandomId())
             .build();
 
     // Make latest key primary.
@@ -1225,7 +1282,8 @@ public class KeysetHandleTest {
     KeysetHandle keysetHandle =
         KeysetHandle.newBuilder()
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("AES256_CMAC_RAW")
+                KeysetHandle.generateEntryFromParameters(
+                        AesCmacParameters.builder().setKeySizeBytes(32).setTagSizeBytes(16).build())
                     .withRandomId()
                     .setStatus(KeyStatus.DISABLED))
             .addEntry(
@@ -1267,7 +1325,8 @@ public class KeysetHandleTest {
   @Test
   public void testBuilder_isPrimary_works() throws Exception {
     KeysetHandle.Builder builder = KeysetHandle.newBuilder();
-    builder.addEntry(KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withRandomId());
+    builder.addEntry(
+        KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC).withRandomId());
     assertThat(builder.getAt(0).isPrimary()).isFalse();
     builder.getAt(0).makePrimary();
     assertThat(builder.getAt(0).isPrimary()).isTrue();
@@ -1276,7 +1335,7 @@ public class KeysetHandleTest {
   @Test
   public void testBuilder_setStatus_getStatus_works() throws Exception {
     KeysetHandle.Builder.Entry entry =
-        KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withRandomId();
+        KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC).withRandomId();
     assertThat(entry.getStatus()).isEqualTo(KeyStatus.ENABLED);
     entry.setStatus(KeyStatus.DISABLED);
     assertThat(entry.getStatus()).isEqualTo(KeyStatus.DISABLED);
@@ -1293,9 +1352,13 @@ public class KeysetHandleTest {
     int numNonPrimaryKeys = 1 << 16;
     KeysetHandle.Builder builder = KeysetHandle.newBuilder();
     builder.addEntry(
-        KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withRandomId().makePrimary());
+        KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
+            .withRandomId()
+            .makePrimary());
     for (int i = 0; i < numNonPrimaryKeys; i++) {
-      builder.addEntry(KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withRandomId());
+      builder.addEntry(
+          KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
+              .withRandomId());
     }
     KeysetHandle handle = builder.build();
     Set<Integer> idSet = new HashSet<>();
@@ -1309,9 +1372,11 @@ public class KeysetHandleTest {
   public void testBuilder_randomIdAfterFixedId_works() throws Exception {
     KeysetHandle handle =
         KeysetHandle.newBuilder()
-            .addEntry(KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withFixedId(777))
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("AES256_CMAC")
+                KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
+                    .withFixedId(777))
+            .addEntry(
+                KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
                     .withRandomId()
                     .makePrimary())
             .build();
@@ -1323,8 +1388,12 @@ public class KeysetHandleTest {
   public void testBuilder_fixedIdAfterRandomId_throws() throws Exception {
     KeysetHandle.Builder builder = KeysetHandle.newBuilder();
     builder.addEntry(
-        KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withRandomId().makePrimary());
-    builder.addEntry(KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withFixedId(777));
+        KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
+            .withRandomId()
+            .makePrimary());
+    builder.addEntry(
+        KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
+            .withFixedId(777));
     assertThrows(GeneralSecurityException.class, builder::build);
   }
 
@@ -1332,7 +1401,7 @@ public class KeysetHandleTest {
   public void testBuilder_deprecated_removeAt_works() throws Exception {
     KeysetHandle.Builder builder = KeysetHandle.newBuilder();
     builder.addEntry(
-        KeysetHandle.generateEntryFromParametersName("AES256_CMAC")
+        KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
             .withRandomId()
             .setStatus(KeyStatus.DISABLED));
     builder.addEntry(
@@ -1352,9 +1421,12 @@ public class KeysetHandleTest {
   @Test
   public void testBuilder_deprecated_removeAtInvalidIndex_throws() throws Exception {
     KeysetHandle.Builder builder = KeysetHandle.newBuilder();
-    builder.addEntry(KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withRandomId());
     builder.addEntry(
-        KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withRandomId().makePrimary());
+        KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC).withRandomId());
+    builder.addEntry(
+        KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
+            .withRandomId()
+            .makePrimary());
     assertThrows(IndexOutOfBoundsException.class, () -> builder.removeAt(2));
   }
 
@@ -1362,7 +1434,9 @@ public class KeysetHandleTest {
   public void testBuilder_deleteAt_works() throws Exception {
     KeysetHandle handle =
         KeysetHandle.newBuilder()
-            .addEntry(KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withRandomId())
+            .addEntry(
+                KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
+                    .withRandomId())
             .addEntry(
                 KeysetHandle.generateEntryFromParameters(
                         AesCmacParameters.builder().setKeySizeBytes(32).setTagSizeBytes(13).build())
@@ -1382,9 +1456,11 @@ public class KeysetHandleTest {
   public void testBuilder_deleteAtInvalidIndex_works() throws Exception {
     KeysetHandle handle =
         KeysetHandle.newBuilder()
-            .addEntry(KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withRandomId())
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("AES256_CMAC")
+                KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
+                    .withRandomId())
+            .addEntry(
+                KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
                     .withRandomId()
                     .makePrimary())
             .build();
@@ -1399,17 +1475,22 @@ public class KeysetHandleTest {
     KeysetHandle.Builder builder = KeysetHandle.newBuilder();
     assertThat(builder.size()).isEqualTo(0);
     builder.addEntry(
-        KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withRandomId().makePrimary());
+        KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
+            .withRandomId()
+            .makePrimary());
     assertThat(builder.size()).isEqualTo(1);
-    builder.addEntry(KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withRandomId());
+    builder.addEntry(
+        KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC).withRandomId());
     assertThat(builder.size()).isEqualTo(2);
   }
 
   @Test
   public void testBuilder_noPrimary_throws() throws Exception {
     KeysetHandle.Builder builder = KeysetHandle.newBuilder();
-    builder.addEntry(KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withRandomId());
-    builder.addEntry(KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withRandomId());
+    builder.addEntry(
+        KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC).withRandomId());
+    builder.addEntry(
+        KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC).withRandomId());
     assertThrows(GeneralSecurityException.class, builder::build);
   }
 
@@ -1417,7 +1498,7 @@ public class KeysetHandleTest {
   public void testBuilder_primaryNotEnabled_throws() throws Exception {
     KeysetHandle.Builder builder = KeysetHandle.newBuilder();
     builder.addEntry(
-        KeysetHandle.generateEntryFromParametersName("AES256_CMAC")
+        KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
             .withRandomId()
             .setStatus(KeyStatus.DISABLED)
             .makePrimary());
@@ -1428,8 +1509,11 @@ public class KeysetHandleTest {
   public void testBuilder_removedPrimary_throws() throws Exception {
     KeysetHandle.Builder builder = KeysetHandle.newBuilder();
     builder.addEntry(
-        KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withRandomId().makePrimary());
-    builder.addEntry(KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withRandomId());
+        KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
+            .withRandomId()
+            .makePrimary());
+    builder.addEntry(
+        KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC).withRandomId());
     builder.removeAt(0);
     assertThrows(GeneralSecurityException.class, builder::build);
   }
@@ -1439,10 +1523,12 @@ public class KeysetHandleTest {
     KeysetHandle.Builder builder =
         KeysetHandle.newBuilder()
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("AES256_CMAC")
+                KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
                     .withRandomId()
                     .makePrimary())
-            .addEntry(KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withRandomId())
+            .addEntry(
+                KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
+                    .withRandomId())
             .deleteAt(0);
     assertThrows(GeneralSecurityException.class, builder::build);
   }
@@ -1451,9 +1537,13 @@ public class KeysetHandleTest {
   public void testBuilder_addPrimary_clearsOtherPrimary() throws Exception {
     KeysetHandle.Builder builder = KeysetHandle.newBuilder();
     builder.addEntry(
-        KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withRandomId().makePrimary());
+        KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
+            .withRandomId()
+            .makePrimary());
     builder.addEntry(
-        KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withRandomId().makePrimary());
+        KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
+            .withRandomId()
+            .makePrimary());
     assertThat(builder.getAt(0).isPrimary()).isFalse();
   }
 
@@ -1461,8 +1551,11 @@ public class KeysetHandleTest {
   public void testBuilder_setPrimary_clearsOtherPrimary() throws Exception {
     KeysetHandle.Builder builder = KeysetHandle.newBuilder();
     builder.addEntry(
-        KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withRandomId().makePrimary());
-    builder.addEntry(KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withRandomId());
+        KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
+            .withRandomId()
+            .makePrimary());
+    builder.addEntry(
+        KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC).withRandomId());
     builder.getAt(1).makePrimary();
     assertThat(builder.getAt(0).isPrimary()).isFalse();
   }
@@ -1470,7 +1563,8 @@ public class KeysetHandleTest {
   @Test
   public void testBuilder_noIdSet_throws() throws Exception {
     KeysetHandle.Builder builder = KeysetHandle.newBuilder();
-    builder.addEntry(KeysetHandle.generateEntryFromParametersName("AES256_CMAC").makePrimary());
+    builder.addEntry(
+        KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC).makePrimary());
     assertThrows(GeneralSecurityException.class, builder::build);
   }
 
@@ -1478,8 +1572,12 @@ public class KeysetHandleTest {
   public void testBuilder_doubleId_throws() throws Exception {
     KeysetHandle.Builder builder = KeysetHandle.newBuilder();
     builder.addEntry(
-        KeysetHandle.generateEntryFromParametersName("AES256_CMAC").makePrimary().withFixedId(777));
-    builder.addEntry(KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withFixedId(777));
+        KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
+            .makePrimary()
+            .withFixedId(777));
+    builder.addEntry(
+        KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
+            .withFixedId(777));
     assertThrows(GeneralSecurityException.class, builder::build);
   }
 
@@ -1487,8 +1585,11 @@ public class KeysetHandleTest {
   public void testBuilder_createFromKeysetHandle_works() throws Exception {
     KeysetHandle.Builder builder = KeysetHandle.newBuilder();
     builder.addEntry(
-        KeysetHandle.generateEntryFromParametersName("AES256_CMAC").makePrimary().withRandomId());
-    builder.addEntry(KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withRandomId());
+        KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
+            .makePrimary()
+            .withRandomId());
+    builder.addEntry(
+        KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC).withRandomId());
     KeysetHandle originalKeyset = builder.build();
 
     builder = KeysetHandle.newBuilder(originalKeyset);
@@ -1506,9 +1607,11 @@ public class KeysetHandleTest {
   public void testBuilder_copyKeyset_works() throws Exception {
     KeysetHandle original =
         KeysetHandle.newBuilder()
-            .addEntry(KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withFixedId(777))
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("AES256_CMAC")
+                KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
+                    .withFixedId(777))
+            .addEntry(
+                KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
                     .makePrimary()
                     .withFixedId(778))
             .build();
@@ -1552,7 +1655,7 @@ public class KeysetHandleTest {
     KeysetHandle original =
         KeysetHandle.newBuilder()
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("AES256_CMAC")
+                KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
                     .makePrimary()
                     .withFixedId(778))
             .build();
@@ -1571,7 +1674,8 @@ public class KeysetHandleTest {
     KeysetHandle.Builder builder =
         KeysetHandle.newBuilder()
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("AES256_CMAC_RAW")
+                KeysetHandle.generateEntryFromParameters(
+                        AesCmacParameters.builder().setKeySizeBytes(32).setTagSizeBytes(16).build())
                     .withRandomId()
                     .makePrimary());
 
@@ -1698,7 +1802,9 @@ public class KeysetHandleTest {
   public void testAddEntry_addTwice_throws() throws Exception {
     KeysetHandle.Builder builder = KeysetHandle.newBuilder();
     KeysetHandle.Builder.Entry entry =
-        KeysetHandle.generateEntryFromParametersName("AES256_CMAC").makePrimary().withRandomId();
+        KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
+            .makePrimary()
+            .withRandomId();
     builder.addEntry(entry);
     assertThrows(IllegalStateException.class, () -> builder.addEntry(entry));
   }
@@ -1707,7 +1813,7 @@ public class KeysetHandleTest {
   public void testSetStatusNull_throws() throws Exception {
     KeysetHandle.Builder builder = KeysetHandle.newBuilder();
     builder.addEntry(
-        KeysetHandle.generateEntryFromParametersName("AES256_CMAC")
+        KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
             .makePrimary()
             .withRandomId()
             .setStatus(null));
@@ -2632,7 +2738,7 @@ public class KeysetHandleTest {
             .addEntry(KeysetHandle.importKey(new TestKey()).withFixedId(123).makePrimary())
             .build();
     Aead aead =
-        KeysetHandle.generateNew(KeyTemplates.get("AES128_GCM"))
+        KeysetHandle.generateNew(PredefinedAeadParameters.AES128_GCM)
             .getPrimitive(RegistryConfiguration.get(), Aead.class);
     assertThrows(
         GeneralSecurityException.class,

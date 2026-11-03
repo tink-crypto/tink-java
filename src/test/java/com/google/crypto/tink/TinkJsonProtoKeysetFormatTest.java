@@ -21,15 +21,19 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.aead.AeadConfig;
+import com.google.crypto.tink.aead.PredefinedAeadParameters;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.daead.AesSivKey;
 import com.google.crypto.tink.daead.AesSivParameters;
 import com.google.crypto.tink.daead.DeterministicAeadConfig;
 import com.google.crypto.tink.daead.DeterministicAeadConfig2026;
+import com.google.crypto.tink.mac.HmacParameters;
 import com.google.crypto.tink.mac.MacConfig;
 import com.google.crypto.tink.mac.MacConfig2026;
+import com.google.crypto.tink.mac.PredefinedMacParameters;
 import com.google.crypto.tink.signature.EcdsaParameters;
 import com.google.crypto.tink.signature.EcdsaPublicKey;
+import com.google.crypto.tink.signature.PredefinedSignatureParameters;
 import com.google.crypto.tink.signature.SignatureConfig;
 import com.google.crypto.tink.signature.SignatureConfig2026;
 import com.google.crypto.tink.subtle.Hex;
@@ -63,34 +67,56 @@ public final class TinkJsonProtoKeysetFormatTest {
   private KeysetHandle generateKeyset() throws GeneralSecurityException {
     return KeysetHandle.newBuilder()
         .addEntry(
-            KeysetHandle.generateEntryFromParametersName("HMAC_SHA256_128BITTAG")
+            KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.HMAC_SHA256_128BITTAG)
                 .withRandomId()
                 .makePrimary())
         .addEntry(
-            KeysetHandle.generateEntryFromParametersName("HMAC_SHA256_128BITTAG_RAW")
+            KeysetHandle.generateEntryFromParameters(
+                    HmacParameters.builder()
+                        .setKeySizeBytes(32)
+                        .setTagSizeBytes(16)
+                        .setVariant(HmacParameters.Variant.NO_PREFIX)
+                        .setHashType(HmacParameters.HashType.SHA256)
+                        .build())
                 .withRandomId())
         .addEntry(
-            KeysetHandle.generateEntryFromParametersName("HMAC_SHA256_256BITTAG")
+            KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.HMAC_SHA256_256BITTAG)
                 .withRandomId()
                 .setStatus(KeyStatus.DESTROYED))
         .addEntry(
-            KeysetHandle.generateEntryFromParametersName("HMAC_SHA256_256BITTAG_RAW")
+            KeysetHandle.generateEntryFromParameters(
+                    HmacParameters.builder()
+                        .setKeySizeBytes(32)
+                        .setTagSizeBytes(32)
+                        .setVariant(HmacParameters.Variant.NO_PREFIX)
+                        .setHashType(HmacParameters.HashType.SHA256)
+                        .build())
                 .withRandomId()
                 .setStatus(KeyStatus.DISABLED))
-        .addEntry(KeysetHandle.generateEntryFromParametersName("AES256_CMAC").withRandomId())
+        .addEntry(
+            KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
+                .withRandomId())
         .build();
   }
 
   private KeysetHandle generatePublicKeyset() throws GeneralSecurityException {
     return KeysetHandle.newBuilder()
         .addEntry(
-            KeysetHandle.generateEntryFromParametersName("ECDSA_P256_RAW")
+            KeysetHandle.generateEntryFromParameters(
+                    EcdsaParameters.builder()
+                        .setHashType(EcdsaParameters.HashType.SHA256)
+                        .setCurveType(EcdsaParameters.CurveType.NIST_P256)
+                        .setSignatureEncoding(EcdsaParameters.SignatureEncoding.IEEE_P1363)
+                        .setVariant(EcdsaParameters.Variant.NO_PREFIX)
+                        .build())
                 .withRandomId()
                 .setStatus(KeyStatus.DISABLED))
         .addEntry(
-            KeysetHandle.generateEntryFromParametersName("ECDSA_P256").withRandomId().makePrimary())
+            KeysetHandle.generateEntryFromParameters(PredefinedSignatureParameters.ECDSA_P256)
+                .withRandomId()
+                .makePrimary())
         .addEntry(
-            KeysetHandle.generateEntryFromParametersName("ECDSA_P521")
+            KeysetHandle.generateEntryFromParameters(PredefinedSignatureParameters.ECDSA_P521)
                 .withRandomId()
                 .setStatus(KeyStatus.DESTROYED))
         .build()
@@ -101,7 +127,8 @@ public final class TinkJsonProtoKeysetFormatTest {
     KeysetHandle handle =
         KeysetHandle.newBuilder()
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("AES128_CTR_HMAC_SHA256")
+                KeysetHandle.generateEntryFromParameters(
+                        PredefinedAeadParameters.AES128_CTR_HMAC_SHA256)
                     .withRandomId()
                     .makePrimary())
             .build();

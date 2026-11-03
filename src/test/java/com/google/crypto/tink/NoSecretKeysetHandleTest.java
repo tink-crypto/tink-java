@@ -24,6 +24,7 @@ import com.google.crypto.tink.config.TinkConfig;
 import com.google.crypto.tink.proto.KeyStatusType;
 import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.proto.OutputPrefixType;
+import com.google.crypto.tink.signature.PredefinedSignatureParameters;
 import com.google.crypto.tink.testing.TestUtil;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -47,7 +48,8 @@ public class NoSecretKeysetHandleTest {
   @Test
   public void withTypeAsymmetricPublic_deprecated_noSecretKeysetHandle_sameAs_readNoSecret()
       throws Exception {
-    KeysetHandle privateHandle = KeysetHandle.generateNew(KeyTemplates.get("ECDSA_P256"));
+    KeysetHandle privateHandle =
+        KeysetHandle.generateNew(PredefinedSignatureParameters.ECDSA_P256);
     Keyset keyset = privateHandle.getPublicKeysetHandle().getKeyset(RegistryConfiguration.get());
 
     Keyset keyset2 =
@@ -99,7 +101,7 @@ public class NoSecretKeysetHandleTest {
   public void withTypeAsymmetricPrivate_deprecated_noSecretKeysetHandle_sameAs_readNoSecret()
       throws Exception {
     Keyset keyset =
-        KeysetHandle.generateNew(KeyTemplates.get("ECDSA_P256"))
+        KeysetHandle.generateNew(PredefinedSignatureParameters.ECDSA_P256)
             .getKeyset(RegistryConfiguration.get());
 
     assertThrows(

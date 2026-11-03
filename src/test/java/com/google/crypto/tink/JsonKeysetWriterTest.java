@@ -72,14 +72,17 @@ public class JsonKeysetWriterTest {
     KeysetHandle handle1 =
         KeysetHandle.newBuilder()
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("HMAC_SHA256_128BITTAG")
+                KeysetHandle.generateEntryFromParameters(
+                    PredefinedMacParameters.HMAC_SHA256_128BITTAG)
                     .withRandomId()
                     .makePrimary())
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("HMAC_SHA256_128BITTAG")
+                KeysetHandle.generateEntryFromParameters(
+                    PredefinedMacParameters.HMAC_SHA256_128BITTAG)
                     .withRandomId())
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("HMAC_SHA256_128BITTAG")
+                KeysetHandle.generateEntryFromParameters(
+                    PredefinedMacParameters.HMAC_SHA256_128BITTAG)
                     .withRandomId())
             .build();
     testWrite_shouldWork(handle1);
@@ -114,14 +117,17 @@ public class JsonKeysetWriterTest {
     KeysetHandle handle1 =
         KeysetHandle.newBuilder()
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("HMAC_SHA256_128BITTAG")
+                KeysetHandle.generateEntryFromParameters(
+                    PredefinedMacParameters.HMAC_SHA256_128BITTAG)
                     .withRandomId()
                     .makePrimary())
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("HMAC_SHA256_128BITTAG")
+                KeysetHandle.generateEntryFromParameters(
+                    PredefinedMacParameters.HMAC_SHA256_128BITTAG)
                     .withRandomId())
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("HMAC_SHA256_128BITTAG")
+                KeysetHandle.generateEntryFromParameters(
+                    PredefinedMacParameters.HMAC_SHA256_128BITTAG)
                     .withRandomId())
             .build();
     testWriteEncrypted_shouldWork(handle1);
@@ -151,7 +157,7 @@ public class JsonKeysetWriterTest {
 
     // Write encrypted keyset
     Aead keysetEncryptionAead =
-        KeysetHandle.generateNew(KeyTemplates.get("AES128_EAX"))
+        KeysetHandle.generateNew(PredefinedAeadParameters.AES128_EAX)
             .getPrimitive(RegistryConfiguration.get(), Aead.class);
     ByteArrayOutputStream outputStream2 = new ByteArrayOutputStream();
     modifiedHandle.write(JsonKeysetWriter.withOutputStream(outputStream2), keysetEncryptionAead);

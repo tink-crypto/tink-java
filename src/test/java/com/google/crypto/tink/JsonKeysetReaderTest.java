@@ -22,6 +22,7 @@ import static org.junit.Assert.fail;
 
 import com.google.crypto.tink.aead.PredefinedAeadParameters;
 import com.google.crypto.tink.config.TinkConfig;
+import com.google.crypto.tink.mac.HmacParameters;
 import com.google.crypto.tink.mac.PredefinedMacParameters;
 import com.google.crypto.tink.proto.Keyset;
 import com.google.crypto.tink.subtle.Hex;
@@ -107,14 +108,17 @@ public class JsonKeysetReaderTest {
     KeysetHandle handle1 =
         KeysetHandle.newBuilder()
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("HMAC_SHA256_128BITTAG")
+                KeysetHandle.generateEntryFromParameters(
+                        PredefinedMacParameters.HMAC_SHA256_128BITTAG)
                     .withRandomId()
                     .makePrimary())
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("HMAC_SHA256_128BITTAG")
+                KeysetHandle.generateEntryFromParameters(
+                        PredefinedMacParameters.HMAC_SHA256_128BITTAG)
                     .withRandomId())
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("HMAC_SHA256_128BITTAG")
+                KeysetHandle.generateEntryFromParameters(
+                        PredefinedMacParameters.HMAC_SHA256_128BITTAG)
                     .withRandomId())
             .build();
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -329,27 +333,41 @@ public class JsonKeysetReaderTest {
   @Test
   public void testReadEncrypted_multipleKeys_shouldWork() throws Exception {
     Aead keysetEncryptionAead =
-        KeysetHandle.generateNew(KeyTemplates.get("AES128_EAX"))
+        KeysetHandle.generateNew(PredefinedAeadParameters.AES128_EAX)
             .getPrimitive(RegistryConfiguration.get(), Aead.class);
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     KeysetHandle handle1 =
         KeysetHandle.newBuilder()
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("HMAC_SHA256_128BITTAG")
+                KeysetHandle.generateEntryFromParameters(
+                        PredefinedMacParameters.HMAC_SHA256_128BITTAG)
                     .withRandomId())
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("HMAC_SHA256_128BITTAG_RAW")
+                KeysetHandle.generateEntryFromParameters(
+                        HmacParameters.builder()
+                            .setKeySizeBytes(32)
+                            .setTagSizeBytes(16)
+                            .setVariant(HmacParameters.Variant.NO_PREFIX)
+                            .setHashType(HmacParameters.HashType.SHA256)
+                            .build())
                     .withRandomId()
                     .makePrimary())
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("HMAC_SHA256_256BITTAG")
+                KeysetHandle.generateEntryFromParameters(
+                        PredefinedMacParameters.HMAC_SHA256_256BITTAG)
                     .withRandomId())
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("HMAC_SHA256_256BITTAG_RAW")
+                KeysetHandle.generateEntryFromParameters(
+                        HmacParameters.builder()
+                            .setKeySizeBytes(32)
+                            .setTagSizeBytes(32)
+                            .setVariant(HmacParameters.Variant.NO_PREFIX)
+                            .setHashType(HmacParameters.HashType.SHA256)
+                            .build())
                     .withRandomId()
                     .setStatus(KeyStatus.DESTROYED))
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("AES256_CMAC")
+                KeysetHandle.generateEntryFromParameters(PredefinedMacParameters.AES_CMAC)
                     .withRandomId()
                     .setStatus(KeyStatus.DISABLED))
             .build();
@@ -365,10 +383,10 @@ public class JsonKeysetReaderTest {
   @Test
   public void testReadEncrypted_missingKeysetInfo_shouldSucceed() throws Exception {
     Aead keysetEncryptionAead =
-        KeysetHandle.generateNew(KeyTemplates.get("AES128_EAX"))
+        KeysetHandle.generateNew(PredefinedAeadParameters.AES128_EAX)
             .getPrimitive(RegistryConfiguration.get(), Aead.class);
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-    KeysetHandle handle1 = KeysetHandle.generateNew(KeyTemplates.get("HMAC_SHA256_128BITTAG"));
+    KeysetHandle handle1 = KeysetHandle.generateNew(PredefinedMacParameters.HMAC_SHA256_128BITTAG);
 
     // Generate a valid encrypted keyset in JSON format, and delete "keysetInfo".
     handle1.write(JsonKeysetWriter.withOutputStream(outputStream), keysetEncryptionAead);
