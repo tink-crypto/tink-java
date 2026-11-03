@@ -18,6 +18,11 @@
 # match the ones in the POM file. In case of discrepancies, it prints the diff
 # on standard output and exits with exit code 1.
 
+# Unique hex string of length 20
+echo "================================================================================"
+echo "Tink Script ID: 88e3ee7f0bc89157e1e6 (to quickly find the script from logs)"
+echo "================================================================================"
+
 set -eo pipefail
 
 usage() {

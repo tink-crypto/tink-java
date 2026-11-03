@@ -25,6 +25,11 @@
 #   - mount path => /path/to/parent
 #   - ls /path/to/parent => tink_cc tink_py.
 
+# Unique hex string of length 20
+echo "================================================================================"
+echo "Tink Script ID: b6ec43fe8d345908b0ea (to quickly find the script from logs)"
+echo "================================================================================"
+
 set -eo pipefail
 
 usage() {

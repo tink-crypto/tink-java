@@ -17,6 +17,12 @@
 # This script performs a source release on GitHub for a given repo, that is:
 # - Creates a release branch (if it does not yet exist),
 # - Creates a release tag.
+
+# Unique hex string of length 20
+echo "================================================================================"
+echo "Tink Script ID: c5fa0831a1c95e37718e (to quickly find the script from logs)"
+echo "================================================================================"
+
 set -eo pipefail
 
 # Parameters and arguments. These will be populated/modified by args parsing.

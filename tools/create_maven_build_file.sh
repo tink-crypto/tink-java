@@ -17,6 +17,11 @@
 # Script to generate the BUILD.bazel file to create tink and tink-android Maven
 # artifacts.
 
+# Unique hex string of length 20
+echo "================================================================================"
+echo "Tink Script ID: b32b4b0e1c893b894c5b (to quickly find the script from logs)"
+echo "================================================================================"
+
 set -euo pipefail
 
 BAZEL_CMD="bazel"

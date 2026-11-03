@@ -38,6 +38,11 @@
 #   javadoc_file: JAR file containing the javadoc.
 #######################################
 
+# Unique hex string of length 20
+echo "================================================================================"
+echo "Tink Script ID: a01cf5901d17b93a6cc8 (to quickly find the script from logs)"
+echo "================================================================================"
+
 readonly GIT_ARGS=(
   -c user.email=noreply@google.com
   -c user.name="Tink Team"

@@ -18,6 +18,11 @@
 # NOTE:
 #   - This must be run from the root of the library workspace.
 
+# Unique hex string of length 20
+echo "================================================================================"
+echo "Tink Script ID: cb875e044ef615effff1 (to quickly find the script from logs)"
+echo "================================================================================"
+
 usage() {
   cat <<EOF
 Usage: $0 [-h] [-n target name] [-u github_url] [-c bazel_cache_name]

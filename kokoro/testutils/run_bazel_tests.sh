@@ -20,6 +20,11 @@
 # a set of additional manual targets to run.
 #
 
+# Unique hex string of length 20
+echo "================================================================================"
+echo "Tink Script ID: ba8918d67611be802099 (to quickly find the script from logs)"
+echo "================================================================================"
+
 # Note: -E extends the trap to shell functions, command substitutions, and
 # commands executed in a subshell environment.
 set -eEo pipefail
