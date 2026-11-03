@@ -17,12 +17,12 @@
 package com.google.crypto.tink.jwt;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.crypto.tink.internal.TinkBugException.exceptionIsBug;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assume.assumeTrue;
 
 import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
 import com.google.crypto.tink.daead.DeterministicAeadConfig2026;
@@ -46,22 +46,47 @@ public final class JwtSignatureTest {
     JwtSignatureConfig.register();
   }
 
-  @DataPoints("jwt_signature_templates")
-  public static final String[] TEMPLATES =
-      new String[] {
-        "JWT_ES256", "JWT_ES512_RAW", "JWT_RS256_2048_F4", "JWT_PS256_3072_F4_RAW",
-      };
+  private static final JwtEcdsaParameters JWT_ES256_PARAMETERS =
+      exceptionIsBug(
+          () ->
+              JwtEcdsaParameters.builder()
+                  .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
+                  .setKidStrategy(JwtEcdsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                  .build());
+
+  @DataPoints("jwt_signature_parameters")
+  public static final JwtSignatureParameters[] parameters =
+      exceptionIsBug(
+          () ->
+              new JwtSignatureParameters[] {
+                JWT_ES256_PARAMETERS,
+                JwtEcdsaParameters.builder()
+                    .setAlgorithm(JwtEcdsaParameters.Algorithm.ES512)
+                    .setKidStrategy(JwtEcdsaParameters.KidStrategy.IGNORED)
+                    .build(),
+                JwtRsaSsaPkcs1Parameters.builder()
+                    .setModulusSizeBits(2048)
+                    .setPublicExponent(JwtRsaSsaPkcs1Parameters.F4)
+                    .setAlgorithm(JwtRsaSsaPkcs1Parameters.Algorithm.RS256)
+                    .setKidStrategy(JwtRsaSsaPkcs1Parameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(3072)
+                    .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.IGNORED)
+                    .build(),
+              });
 
   @Theory
-  public void createSignVerifyJwt(@FromDataPoints("jwt_signature_templates") String templateName)
+  public void createSignVerifyJwt(
+      @FromDataPoints("jwt_signature_parameters") JwtSignatureParameters parameters)
       throws Exception {
     if (TestUtil.isTsan()) {
       // Only run for JWT_E256 under TSAN -- too slow otherwise.
-      assumeTrue(templateName.equals("JWT_ES256"));
+      assumeTrue(parameters.equals(JWT_ES256_PARAMETERS));
     }
-    KeysetHandle handle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), JwtConfig2026.get());
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, JwtConfig2026.get());
     JwtPublicKeySign jwtPublicKeySign =
         handle.getPrimitive(JwtConfig2026.get(), JwtPublicKeySign.class);
     Instant now = Clock.systemUTC().instant();
@@ -123,9 +148,7 @@ public final class JwtSignatureTest {
         GeneralSecurityException.class,
         () -> jwtPublicKeyVerify.verifyAndDecode(tokenWithInvalidAudience, validator));
 
-    KeysetHandle otherHandle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), JwtConfig2026.get());
+    KeysetHandle otherHandle = KeysetHandle.generateNew(parameters, JwtConfig2026.get());
     JwtPublicKeyVerify otherJwtPublicKeyVerify =
         otherHandle
             .getPublicKeysetHandle()

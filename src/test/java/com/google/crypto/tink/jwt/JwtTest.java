@@ -17,11 +17,11 @@
 package com.google.crypto.tink.jwt;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.crypto.tink.internal.TinkBugException.exceptionIsBug;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.DeterministicAead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.TinkJsonProtoKeysetFormat;
 import com.google.crypto.tink.daead.DeterministicAeadConfig2026;
@@ -44,23 +44,47 @@ public final class JwtTest {
     JwtMacConfig.register();
   }
 
-  @DataPoints("jwt_mac_templates")
-  public static final String[] TEMPLATES =
-      new String[] {
-        "JWT_HS256",
-        "JWT_HS256_RAW",
-        "JWT_HS384",
-        "JWT_HS384_RAW",
-        "JWT_HS512",
-        "JWT_HS512_RAW",
-      };
+  @DataPoints("jwt_mac_parameters")
+  public static final JwtHmacParameters[] parameters =
+      exceptionIsBug(
+          () ->
+              new JwtHmacParameters[] {
+                JwtHmacParameters.builder()
+                    .setKeySizeBytes(32)
+                    .setAlgorithm(JwtHmacParameters.Algorithm.HS256)
+                    .setKidStrategy(JwtHmacParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtHmacParameters.builder()
+                    .setKeySizeBytes(32)
+                    .setAlgorithm(JwtHmacParameters.Algorithm.HS256)
+                    .setKidStrategy(JwtHmacParameters.KidStrategy.IGNORED)
+                    .build(),
+                JwtHmacParameters.builder()
+                    .setKeySizeBytes(48)
+                    .setAlgorithm(JwtHmacParameters.Algorithm.HS384)
+                    .setKidStrategy(JwtHmacParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtHmacParameters.builder()
+                    .setKeySizeBytes(48)
+                    .setAlgorithm(JwtHmacParameters.Algorithm.HS384)
+                    .setKidStrategy(JwtHmacParameters.KidStrategy.IGNORED)
+                    .build(),
+                JwtHmacParameters.builder()
+                    .setKeySizeBytes(64)
+                    .setAlgorithm(JwtHmacParameters.Algorithm.HS512)
+                    .setKidStrategy(JwtHmacParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtHmacParameters.builder()
+                    .setKeySizeBytes(64)
+                    .setAlgorithm(JwtHmacParameters.Algorithm.HS512)
+                    .setKidStrategy(JwtHmacParameters.KidStrategy.IGNORED)
+                    .build(),
+              });
 
   @Theory
-  public void createComputeVerifyJwtMac(@FromDataPoints("jwt_mac_templates") String templateName)
-      throws Exception {
-    KeysetHandle handle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), JwtConfig2026.get());
+  public void createComputeVerifyJwtMac(
+      @FromDataPoints("jwt_mac_parameters") JwtHmacParameters parameters) throws Exception {
+    KeysetHandle handle = KeysetHandle.generateNew(parameters, JwtConfig2026.get());
     JwtMac jwtMac = handle.getPrimitive(JwtConfig2026.get(), JwtMac.class);
     Instant now = Clock.systemUTC().instant();
     RawJwt rawJwt =
@@ -115,9 +139,7 @@ public final class JwtTest {
         GeneralSecurityException.class,
         () -> jwtMac.verifyMacAndDecode(tokenWithInvalidAudience, validator));
 
-    KeysetHandle otherHandle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), JwtConfig2026.get());
+    KeysetHandle otherHandle = KeysetHandle.generateNew(parameters, JwtConfig2026.get());
     JwtMac otherJwtMac = otherHandle.getPrimitive(JwtConfig2026.get(), JwtMac.class);
     assertThrows(
         GeneralSecurityException.class, () -> otherJwtMac.verifyMacAndDecode(token, validator));

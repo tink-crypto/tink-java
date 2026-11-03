@@ -17,12 +17,12 @@
 package com.google.crypto.tink.jwt;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.crypto.tink.internal.TinkBugException.exceptionIsBug;
 import static org.junit.Assert.assertThrows;
 
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeyStatus;
 import com.google.crypto.tink.KeyTemplate;
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.KeysetManager;
 import com.google.crypto.tink.Parameters;
@@ -56,24 +56,97 @@ import org.junit.runner.RunWith;
 public class JwtPublicKeySignVerifyWrappersTest {
   @Rule public SetTinkFlag setTinkFlag = new SetTinkFlag();
 
-  @DataPoints("templateNames")
-  public static final String[] TEMPLATE_NAMES =
-      new String[] {
-        "JWT_ES256",
-        "JWT_ES384",
-        "JWT_ES512",
-        "JWT_ES256_RAW",
-        "JWT_RS256_2048_F4",
-        "JWT_RS256_3072_F4",
-        "JWT_RS384_3072_F4",
-        "JWT_RS512_4096_F4",
-        "JWT_RS256_2048_F4_RAW",
-        "JWT_PS256_2048_F4",
-        "JWT_PS256_3072_F4",
-        "JWT_PS384_3072_F4",
-        "JWT_PS512_4096_F4",
-        "JWT_PS256_2048_F4_RAW",
-      };
+  private static final JwtEcdsaParameters JWT_ES256_PARAMS =
+      exceptionIsBug(
+          () ->
+              JwtEcdsaParameters.builder()
+                  .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
+                  .setKidStrategy(JwtEcdsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                  .build());
+  private static final JwtEcdsaParameters JWT_ES256_RAW_PARAMS =
+      exceptionIsBug(
+          () ->
+              JwtEcdsaParameters.builder()
+                  .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
+                  .setKidStrategy(JwtEcdsaParameters.KidStrategy.IGNORED)
+                  .build());
+
+  @DataPoints("parameters")
+  public static final JwtSignatureParameters[] parameters =
+      exceptionIsBug(
+          () ->
+              new JwtSignatureParameters[] {
+                JWT_ES256_PARAMS,
+                JwtEcdsaParameters.builder()
+                    .setAlgorithm(JwtEcdsaParameters.Algorithm.ES384)
+                    .setKidStrategy(JwtEcdsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtEcdsaParameters.builder()
+                    .setAlgorithm(JwtEcdsaParameters.Algorithm.ES512)
+                    .setKidStrategy(JwtEcdsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JWT_ES256_RAW_PARAMS,
+                JwtRsaSsaPkcs1Parameters.builder()
+                    .setModulusSizeBits(2048)
+                    .setPublicExponent(JwtRsaSsaPkcs1Parameters.F4)
+                    .setAlgorithm(JwtRsaSsaPkcs1Parameters.Algorithm.RS256)
+                    .setKidStrategy(JwtRsaSsaPkcs1Parameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtRsaSsaPkcs1Parameters.builder()
+                    .setModulusSizeBits(3072)
+                    .setPublicExponent(JwtRsaSsaPkcs1Parameters.F4)
+                    .setAlgorithm(JwtRsaSsaPkcs1Parameters.Algorithm.RS256)
+                    .setKidStrategy(JwtRsaSsaPkcs1Parameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtRsaSsaPkcs1Parameters.builder()
+                    .setModulusSizeBits(3072)
+                    .setPublicExponent(JwtRsaSsaPkcs1Parameters.F4)
+                    .setAlgorithm(JwtRsaSsaPkcs1Parameters.Algorithm.RS384)
+                    .setKidStrategy(JwtRsaSsaPkcs1Parameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtRsaSsaPkcs1Parameters.builder()
+                    .setModulusSizeBits(4096)
+                    .setPublicExponent(JwtRsaSsaPkcs1Parameters.F4)
+                    .setAlgorithm(JwtRsaSsaPkcs1Parameters.Algorithm.RS512)
+                    .setKidStrategy(JwtRsaSsaPkcs1Parameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtRsaSsaPkcs1Parameters.builder()
+                    .setModulusSizeBits(2048)
+                    .setPublicExponent(JwtRsaSsaPkcs1Parameters.F4)
+                    .setAlgorithm(JwtRsaSsaPkcs1Parameters.Algorithm.RS256)
+                    .setKidStrategy(JwtRsaSsaPkcs1Parameters.KidStrategy.IGNORED)
+                    .build(),
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(2048)
+                    .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(3072)
+                    .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(3072)
+                    .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS384)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(4096)
+                    .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS512)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(2048)
+                    .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.IGNORED)
+                    .build(),
+              });
 
   @Before
   public void setUp() throws GeneralSecurityException {
@@ -85,7 +158,7 @@ public class JwtPublicKeySignVerifyWrappersTest {
     setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     // The old KeysetManager API allows keysets without primary key.
     // The KeysetHandle.Builder does not allow this and can't be used in this test.
-    KeyTemplate template = KeyTemplates.get("JWT_ES256");
+    KeyTemplate template = KeyTemplate.createFrom(JWT_ES256_PARAMS);
     KeysetManager manager =
         KeysetManager.withEmptyKeyset(RegistryConfiguration.get()).add(template);
     KeysetHandle handle = manager.getKeysetHandle();
@@ -99,7 +172,11 @@ public class JwtPublicKeySignVerifyWrappersTest {
     KeysetHandle privateKeysetHandle =
         KeysetHandle.newBuilder()
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("JWT_ES256")
+                KeysetHandle.generateEntryFromParameters(
+                        JwtEcdsaParameters.builder()
+                            .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
+                            .setKidStrategy(JwtEcdsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                            .build())
                     .withRandomId()
                     .makePrimary())
             .build();
@@ -112,8 +189,7 @@ public class JwtPublicKeySignVerifyWrappersTest {
   public void test_wrapLegacy_throws() throws Exception {
     setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
     KeysetHandle handle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get("JWT_ES256_RAW").toParameters(), RegistryConfiguration.get());
+        KeysetHandle.generateNew(JWT_ES256_RAW_PARAMS, RegistryConfiguration.get());
     Keyset keyset =
         Keyset.parseFrom(
             TinkProtoKeysetFormat.serializeKeyset(
@@ -139,10 +215,7 @@ public class JwtPublicKeySignVerifyWrappersTest {
 
   @Test
   public void test_wrapSingleTinkKey_works() throws Exception {
-    KeyTemplate tinkTemplate = KeyTemplates.get("JWT_ES256");
-
-    KeysetHandle handle =
-        KeysetHandle.generateNew(tinkTemplate.toParameters(), RegistryConfiguration.get());
+    KeysetHandle handle = KeysetHandle.generateNew(JWT_ES256_PARAMS, RegistryConfiguration.get());
 
     JwtPublicKeySign signer =
         handle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
@@ -159,9 +232,8 @@ public class JwtPublicKeySignVerifyWrappersTest {
 
   @Test
   public void test_wrapSingleRawKey_works() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_ES256_RAW");
     KeysetHandle handle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+        KeysetHandle.generateNew(JWT_ES256_RAW_PARAMS, RegistryConfiguration.get());
 
     JwtPublicKeySign signer =
         handle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
@@ -178,19 +250,20 @@ public class JwtPublicKeySignVerifyWrappersTest {
 
   @Test
   public void test_wrapMultipleRawKeys() throws Exception {
+    JwtEcdsaParameters parameters =
+        JwtEcdsaParameters.builder()
+            .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
+            .setKidStrategy(JwtEcdsaParameters.KidStrategy.IGNORED)
+            .build();
     KeysetHandle oldHandle =
         KeysetHandle.newBuilder()
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("JWT_ES256_RAW")
-                    .withRandomId()
-                    .makePrimary())
+                KeysetHandle.generateEntryFromParameters(parameters).withRandomId().makePrimary())
             .build();
     KeysetHandle newHandle =
         KeysetHandle.newBuilder(oldHandle)
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("JWT_ES256_RAW")
-                    .withRandomId()
-                    .makePrimary())
+                KeysetHandle.generateEntryFromParameters(parameters).withRandomId().makePrimary())
             .build();
 
     JwtPublicKeySign oldSigner =
@@ -225,19 +298,20 @@ public class JwtPublicKeySignVerifyWrappersTest {
 
   @Test
   public void test_wrapMultipleTinkKeys() throws Exception {
+    JwtEcdsaParameters parameters =
+        JwtEcdsaParameters.builder()
+            .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
+            .setKidStrategy(JwtEcdsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+            .build();
     KeysetHandle oldHandle =
         KeysetHandle.newBuilder()
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("JWT_ES256")
-                    .withRandomId()
-                    .makePrimary())
+                KeysetHandle.generateEntryFromParameters(parameters).withRandomId().makePrimary())
             .build();
     KeysetHandle newHandle =
         KeysetHandle.newBuilder(oldHandle)
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("JWT_ES256")
-                    .withRandomId()
-                    .makePrimary())
+                KeysetHandle.generateEntryFromParameters(parameters).withRandomId().makePrimary())
             .build();
 
     JwtPublicKeySign oldSigner =
@@ -272,16 +346,19 @@ public class JwtPublicKeySignVerifyWrappersTest {
 
   @Test
   public void disabledKeyIgnoredWhenVerifying() throws Exception {
+    JwtEcdsaParameters parameters =
+        JwtEcdsaParameters.builder()
+            .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
+            .setKidStrategy(JwtEcdsaParameters.KidStrategy.IGNORED)
+            .build();
     KeysetHandle handle =
         KeysetHandle.newBuilder()
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("JWT_ES256_RAW")
+                KeysetHandle.generateEntryFromParameters(parameters)
                     .withRandomId()
                     .setStatus(KeyStatus.DISABLED))
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("JWT_ES256_RAW")
-                    .withRandomId()
-                    .makePrimary())
+                KeysetHandle.generateEntryFromParameters(parameters).withRandomId().makePrimary())
             .build();
 
     JwtPublicKeySign signerForDisabledKey =
@@ -305,15 +382,13 @@ public class JwtPublicKeySignVerifyWrappersTest {
   // Note: we use Theory as a parametrized test -- different from what the Theory framework intends.
   @Theory
   public void wrongKey_throwsInvalidSignatureException(
-      @FromDataPoints("templateNames") String templateName) throws Exception {
+      @FromDataPoints("parameters") JwtSignatureParameters parameters) throws Exception {
     if (TestUtil.isTsan()) {
       // KeysetHandle.generateNew is too slow in Tsan.
       // We do not use assume because Theories expects to find something which is not skipped.
       return;
     }
-    KeyTemplate template = KeyTemplates.get(templateName);
-    KeysetHandle keysetHandle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+    KeysetHandle keysetHandle = KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     JwtPublicKeySign jwtSign =
         keysetHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     RawJwt rawJwt = RawJwt.newBuilder().withoutExpiration().build();
@@ -321,7 +396,7 @@ public class JwtPublicKeySignVerifyWrappersTest {
     JwtValidator validator = JwtValidator.newBuilder().allowMissingExpiration().build();
 
     KeysetHandle wrongKeysetHandle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+        KeysetHandle.generateNew(parameters, RegistryConfiguration.get());
     KeysetHandle wrongPublicKeysetHandle = wrongKeysetHandle.getPublicKeysetHandle();
 
     JwtPublicKeyVerify wrongJwtVerify =
@@ -332,9 +407,8 @@ public class JwtPublicKeySignVerifyWrappersTest {
 
   @Test
   public void wrongIssuer_throwsInvalidException() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_ES256");
     KeysetHandle keysetHandle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+        KeysetHandle.generateNew(JWT_ES256_PARAMS, RegistryConfiguration.get());
     JwtPublicKeySign jwtSigner =
         keysetHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     KeysetHandle publicHandle = keysetHandle.getPublicKeysetHandle();
@@ -349,9 +423,8 @@ public class JwtPublicKeySignVerifyWrappersTest {
 
   @Test
   public void expiredCompact_throwsInvalidException() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_ES256");
     KeysetHandle keysetHandle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+        KeysetHandle.generateNew(JWT_ES256_PARAMS, RegistryConfiguration.get());
     JwtPublicKeySign jwtSigner =
         keysetHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     KeysetHandle publicHandle = keysetHandle.getPublicKeysetHandle();
@@ -371,9 +444,8 @@ public class JwtPublicKeySignVerifyWrappersTest {
 
   @Test
   public void notYetValidCompact_throwsInvalidException() throws Exception {
-    KeyTemplate template = KeyTemplates.get("JWT_ES256");
     KeysetHandle keysetHandle =
-        KeysetHandle.generateNew(template.toParameters(), RegistryConfiguration.get());
+        KeysetHandle.generateNew(JWT_ES256_PARAMS, RegistryConfiguration.get());
     JwtPublicKeySign jwtSigner =
         keysetHandle.getPrimitive(RegistryConfiguration.get(), JwtPublicKeySign.class);
     KeysetHandle publicHandle = keysetHandle.getPublicKeysetHandle();
@@ -396,7 +468,7 @@ public class JwtPublicKeySignVerifyWrappersTest {
   @Test
   public void test_verifyWithoutPrimary_works() throws Exception {
     setTinkFlag.untilTheEndOfThisTest(GlobalTinkFlags.validateKeysetsOnParsing, false);
-    Parameters parameters = KeyTemplates.get("JWT_ES256").toParameters();
+    Parameters parameters = JWT_ES256_PARAMS;
     KeysetHandle handle =
         KeysetHandle.newBuilder()
             .addEntry(
@@ -437,7 +509,11 @@ public class JwtPublicKeySignVerifyWrappersTest {
     KeysetHandle privateKeysetHandle =
         KeysetHandle.newBuilder()
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("JWT_ES256")
+                KeysetHandle.generateEntryFromParameters(
+                        JwtEcdsaParameters.builder()
+                            .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
+                            .setKidStrategy(JwtEcdsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                            .build())
                     .makePrimary()
                     .withFixedId(42))
             .build();
@@ -471,7 +547,11 @@ public class JwtPublicKeySignVerifyWrappersTest {
     KeysetHandle privateKeysetHandle =
         KeysetHandle.newBuilder()
             .addEntry(
-                KeysetHandle.generateEntryFromParametersName("JWT_ES256")
+                KeysetHandle.generateEntryFromParameters(
+                        JwtEcdsaParameters.builder()
+                            .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
+                            .setKidStrategy(JwtEcdsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                            .build())
                     .makePrimary()
                     .withFixedId(42))
             .addAnnotations(MonitoringAnnotations.class, annotations)

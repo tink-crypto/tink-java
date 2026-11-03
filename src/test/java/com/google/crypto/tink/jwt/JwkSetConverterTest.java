@@ -17,11 +17,11 @@
 package com.google.crypto.tink.jwt;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.crypto.tink.internal.TinkBugException.exceptionIsBug;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.subtle.Base64;
 import com.google.crypto.tink.subtle.Hex;
@@ -790,35 +790,97 @@ public final class JwkSetConverterTest {
         psWithEmptyKid);
   }
 
-  @DataPoints("templatesNames")
-  public static final String[] TEMPLATE_NAMES =
-      new String[] {
-        "JWT_ES256",
-        "JWT_ES384",
-        "JWT_ES512",
-        "JWT_ES256_RAW",
-        "JWT_RS256_2048_F4",
-        "JWT_RS256_3072_F4",
-        "JWT_RS384_3072_F4",
-        "JWT_RS512_4096_F4",
-        "JWT_RS256_2048_F4_RAW",
-        "JWT_PS256_2048_F4",
-        "JWT_PS256_3072_F4",
-        "JWT_PS384_3072_F4",
-        "JWT_PS512_4096_F4",
-        "JWT_PS256_2048_F4_RAW",
-      };
+  @DataPoints("parameters")
+  public static final JwtSignatureParameters[] parameters =
+      exceptionIsBug(
+          () ->
+              new JwtSignatureParameters[] {
+                JwtEcdsaParameters.builder()
+                    .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
+                    .setKidStrategy(JwtEcdsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtEcdsaParameters.builder()
+                    .setAlgorithm(JwtEcdsaParameters.Algorithm.ES384)
+                    .setKidStrategy(JwtEcdsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtEcdsaParameters.builder()
+                    .setAlgorithm(JwtEcdsaParameters.Algorithm.ES512)
+                    .setKidStrategy(JwtEcdsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtEcdsaParameters.builder()
+                    .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
+                    .setKidStrategy(JwtEcdsaParameters.KidStrategy.IGNORED)
+                    .build(),
+                JwtRsaSsaPkcs1Parameters.builder()
+                    .setModulusSizeBits(2048)
+                    .setPublicExponent(JwtRsaSsaPkcs1Parameters.F4)
+                    .setAlgorithm(JwtRsaSsaPkcs1Parameters.Algorithm.RS256)
+                    .setKidStrategy(JwtRsaSsaPkcs1Parameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtRsaSsaPkcs1Parameters.builder()
+                    .setModulusSizeBits(3072)
+                    .setPublicExponent(JwtRsaSsaPkcs1Parameters.F4)
+                    .setAlgorithm(JwtRsaSsaPkcs1Parameters.Algorithm.RS256)
+                    .setKidStrategy(JwtRsaSsaPkcs1Parameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtRsaSsaPkcs1Parameters.builder()
+                    .setModulusSizeBits(3072)
+                    .setPublicExponent(JwtRsaSsaPkcs1Parameters.F4)
+                    .setAlgorithm(JwtRsaSsaPkcs1Parameters.Algorithm.RS384)
+                    .setKidStrategy(JwtRsaSsaPkcs1Parameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtRsaSsaPkcs1Parameters.builder()
+                    .setModulusSizeBits(4096)
+                    .setPublicExponent(JwtRsaSsaPkcs1Parameters.F4)
+                    .setAlgorithm(JwtRsaSsaPkcs1Parameters.Algorithm.RS512)
+                    .setKidStrategy(JwtRsaSsaPkcs1Parameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtRsaSsaPkcs1Parameters.builder()
+                    .setModulusSizeBits(2048)
+                    .setPublicExponent(JwtRsaSsaPkcs1Parameters.F4)
+                    .setAlgorithm(JwtRsaSsaPkcs1Parameters.Algorithm.RS256)
+                    .setKidStrategy(JwtRsaSsaPkcs1Parameters.KidStrategy.IGNORED)
+                    .build(),
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(2048)
+                    .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(3072)
+                    .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(3072)
+                    .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS384)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(4096)
+                    .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS512)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+                    .build(),
+                JwtRsaSsaPssParameters.builder()
+                    .setModulusSizeBits(2048)
+                    .setPublicExponent(JwtRsaSsaPssParameters.F4)
+                    .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
+                    .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.IGNORED)
+                    .build(),
+              });
 
   @Theory
   public void convertTinkToJwksTokenVerification_success(
-      @FromDataPoints("templatesNames") String templateName) throws Exception {
+      @FromDataPoints("parameters") JwtSignatureParameters parameters) throws Exception {
     if (TestUtil.isTsan()) {
       // KeysetHandle.generateNew is too slow in Tsan.
       return;
     }
-    KeysetHandle keysetHandle =
-        KeysetHandle.generateNew(
-            KeyTemplates.get(templateName).toParameters(), JwtConfig2026.get());
+    KeysetHandle keysetHandle = KeysetHandle.generateNew(parameters, JwtConfig2026.get());
 
     String jwksString =
         JwkSetConverter.fromPublicKeysetHandle(keysetHandle.getPublicKeysetHandle());

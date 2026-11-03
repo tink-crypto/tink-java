@@ -19,7 +19,6 @@ package com.google.crypto.tink.jwt;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 
-import com.google.crypto.tink.KeyTemplates;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.config.TinkFips;
@@ -55,37 +54,43 @@ public class JwtSignatureConfigTest {
     Assume.assumeFalse(TestUtil.isTsan()); // KeysetHandle.generateNew is too slow in Tsan.
     boolean invalidFipsState = TinkFips.useOnlyFips() && !TinkFipsUtil.fipsModuleAvailable();
 
+    JwtEcdsaParameters es256Parameters =
+        JwtEcdsaParameters.builder()
+            .setAlgorithm(JwtEcdsaParameters.Algorithm.ES256)
+            .setKidStrategy(JwtEcdsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+            .build();
+    JwtRsaSsaPkcs1Parameters rs256Parameters =
+        JwtRsaSsaPkcs1Parameters.builder()
+            .setModulusSizeBits(2048)
+            .setPublicExponent(JwtRsaSsaPkcs1Parameters.F4)
+            .setAlgorithm(JwtRsaSsaPkcs1Parameters.Algorithm.RS256)
+            .setKidStrategy(JwtRsaSsaPkcs1Parameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+            .build();
+    JwtRsaSsaPssParameters ps256Parameters =
+        JwtRsaSsaPssParameters.builder()
+            .setModulusSizeBits(2048)
+            .setPublicExponent(JwtRsaSsaPssParameters.F4)
+            .setAlgorithm(JwtRsaSsaPssParameters.Algorithm.PS256)
+            .setKidStrategy(JwtRsaSsaPssParameters.KidStrategy.BASE64_ENCODED_KEY_ID)
+            .build();
+
     if (invalidFipsState) {
       assertThrows(GeneralSecurityException.class, JwtSignatureConfig::register);
       assertThrows(
           GeneralSecurityException.class,
-          () ->
-              KeysetHandle.generateNew(
-                  KeyTemplates.get("JWT_ES256").toParameters(), RegistryConfiguration.get()));
+          () -> KeysetHandle.generateNew(es256Parameters, RegistryConfiguration.get()));
       assertThrows(
           GeneralSecurityException.class,
-          () ->
-              KeysetHandle.generateNew(
-                  KeyTemplates.get("JWT_RS256_2048_F4").toParameters(),
-                  RegistryConfiguration.get()));
+          () -> KeysetHandle.generateNew(rs256Parameters, RegistryConfiguration.get()));
       assertThrows(
           GeneralSecurityException.class,
-          () ->
-              KeysetHandle.generateNew(
-                  KeyTemplates.get("JWT_PS256_2048_F4").toParameters(),
-                  RegistryConfiguration.get()));
+          () -> KeysetHandle.generateNew(ps256Parameters, RegistryConfiguration.get()));
 
     } else {
       JwtSignatureConfig.register();
-      assertNotNull(
-          KeysetHandle.generateNew(
-              KeyTemplates.get("JWT_ES256").toParameters(), RegistryConfiguration.get()));
-      assertNotNull(
-          KeysetHandle.generateNew(
-              KeyTemplates.get("JWT_RS256_2048_F4").toParameters(), RegistryConfiguration.get()));
-      assertNotNull(
-          KeysetHandle.generateNew(
-              KeyTemplates.get("JWT_PS256_2048_F4").toParameters(), RegistryConfiguration.get()));
+      assertNotNull(KeysetHandle.generateNew(es256Parameters, RegistryConfiguration.get()));
+      assertNotNull(KeysetHandle.generateNew(rs256Parameters, RegistryConfiguration.get()));
+      assertNotNull(KeysetHandle.generateNew(ps256Parameters, RegistryConfiguration.get()));
     }
   }
 
@@ -99,6 +104,9 @@ public class JwtSignatureConfigTest {
     JwtSignatureConfig.register();
     assertNotNull(
         KeysetHandle.generateNew(
-            KeyTemplates.get("JWT_ML_DSA_44").toParameters(), RegistryConfiguration.get()));
+            JwtMlDsaParameters.create(
+                JwtMlDsaParameters.KidStrategy.BASE64_ENCODED_KEY_ID,
+                JwtMlDsaParameters.Algorithm.ML_DSA_44),
+            RegistryConfiguration.get()));
   }
 }
