@@ -33,7 +33,9 @@ import java.util.Map;
  * restricted. Users can read encrypted keysets using {@link KeysetHandle#read}.
  *
  * @since 1.0.0
+ * @deprecated Use {@link TinkProtoKeysetFormat} or {@link TinkJsonProtoKeysetFormat} instead.
  */
+@Deprecated
 public final class CleartextKeysetHandle {
   /**
    * @return a new {@link KeysetHandle} from {@code serialized} that is a serialized {@link Keyset}
@@ -58,7 +60,12 @@ public final class CleartextKeysetHandle {
   /**
    * @return a new {@link KeysetHandle} from a {@link Keyset} read with {@code reader}.
    * @throws GeneralSecurityException when the keyset is invalid or can't be read.
+   * @deprecated Use {@link TinkProtoKeysetFormat#parseKeyset(byte[], SecretKeyAccess,
+   *     Configuration)} or {@link TinkJsonProtoKeysetFormat#parseKeyset(String, Configuration,
+   *     SecretKeyAccess)} instead, or call {@code LegacyKeysetSerialization.parseKeyset(reader,
+   *     InsecureSecretKeyAccess.get(), RegistryConfiguration.get())} for the same semantics.
    */
+  @Deprecated
   public static KeysetHandle read(KeysetReader reader)
       throws GeneralSecurityException, IOException {
     return KeysetHandle.fromKeyset(reader.read(), RegistryConfiguration.get());
@@ -119,8 +126,15 @@ public final class CleartextKeysetHandle {
    *     into the Tink proto format (for example, custom {@link Key} subclasses without a registered
    *     serializer).
    * @throws IOException
+   * @deprecated Use {@link TinkProtoKeysetFormat#serializeKeyset(KeysetHandle, SecretKeyAccess,
+   *     Configuration)} or {@link TinkJsonProtoKeysetFormat#serializeKeyset(KeysetHandle,
+   *     Configuration, SecretKeyAccess)} instead, or call {@code
+   *     LegacyKeysetSerialization.serializeKeyset(handle, keysetWriter,
+   *     InsecureSecretKeyAccess.get(), RegistryConfiguration.get())} for the same semantics.
    */
-  public static void write(KeysetHandle handle, KeysetWriter keysetWriter) throws IOException {
+  @Deprecated
+  public static void write(KeysetHandle handle, KeysetWriter keysetWriter)
+      throws IOException {
     try {
       Configuration configuration = RegistryConfiguration.get();
       keysetWriter.write(handle.getKeyset(configuration));
