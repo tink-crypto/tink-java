@@ -469,7 +469,6 @@ public final class MlDsaSignerTest {
     private final byte[] sig;
     private final String result;
     private final boolean isValidPublicKey;
-    private final boolean isValidSig;
 
     private MlDsaWycheproofTestVector(
         int id,
@@ -479,8 +478,7 @@ public final class MlDsaSignerTest {
         byte[] msg,
         byte[] sig,
         String result,
-        boolean isValidPublicKey,
-        boolean isValidSig) {
+        boolean isValidPublicKey) {
       this.id = id;
       this.instance = instance;
       this.comment = comment;
@@ -489,7 +487,6 @@ public final class MlDsaSignerTest {
       this.sig = sig;
       this.result = result;
       this.isValidPublicKey = isValidPublicKey;
-      this.isValidSig = isValidSig;
     }
 
     static MlDsaWycheproofTestVector create(
@@ -500,8 +497,7 @@ public final class MlDsaSignerTest {
         String msgHex,
         String sigHex,
         String result,
-        boolean isValidPublicKey,
-        boolean isValidSig) {
+        boolean isValidPublicKey) {
       return new MlDsaWycheproofTestVector(
           id,
           instance,
@@ -510,8 +506,7 @@ public final class MlDsaSignerTest {
           Hex.decode(msgHex),
           Hex.decode(sigHex),
           result,
-          isValidPublicKey,
-          isValidSig);
+          isValidPublicKey);
     }
 
     int getId() {
@@ -544,10 +539,6 @@ public final class MlDsaSignerTest {
 
     boolean isValidPublicKey() {
       return isValidPublicKey;
-    }
-
-    boolean isValidSig() {
-      return isValidSig;
     }
   }
 
@@ -584,7 +575,6 @@ public final class MlDsaSignerTest {
           String result = testCase.get("result").getAsString();
           boolean isValidPublicKey =
               !WycheproofTestUtil.checkFlags(testCase, "IncorrectPublicKeyLength");
-          boolean isValidSig = WycheproofTestUtil.checkFlags(testCase, "ValidSignature");
 
           MlDsaInstance instance;
           if (algorithm.equals("ML-DSA-44")) {
@@ -606,8 +596,7 @@ public final class MlDsaSignerTest {
                   msg,
                   sig,
                   result,
-                  isValidPublicKey,
-                  isValidSig));
+                  isValidPublicKey));
         }
       }
     }
@@ -655,9 +644,8 @@ public final class MlDsaSignerTest {
     PublicKeyVerify verifier = MlDsaVerifier.create(publicKey);
     try {
       verifier.verify(testVector.getSig(), testVector.getMsg());
-      assertTrue(label, testVector.isValidSig());
     } catch (GeneralSecurityException ex) {
-      assertFalse(label, testVector.isValidSig());
+      assertEquals(label, "invalid", testVector.getResult());
       return;
     }
     assertEquals(label, "valid", testVector.getResult());
