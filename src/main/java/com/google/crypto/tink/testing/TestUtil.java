@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 import com.google.crypto.tink.Aead;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.RegistryConfiguration;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.aead.AeadConfig;
 import com.google.crypto.tink.daead.DeterministicAeadConfig;
@@ -130,7 +131,8 @@ public final class TestUtil {
   public static Keyset getKeyset(final KeysetHandle handle) {
     try {
       return Keyset.parseFrom(
-          TinkProtoKeysetFormat.serializeKeyset(handle, InsecureSecretKeyAccess.get()),
+          TinkProtoKeysetFormat.serializeKeyset(
+              handle, InsecureSecretKeyAccess.get(), RegistryConfiguration.get()),
           ExtensionRegistryLite.getEmptyRegistry());
     } catch (GeneralSecurityException | IOException e) {
       throw new RuntimeException(e);
@@ -143,7 +145,8 @@ public final class TestUtil {
    */
   @Deprecated
   public static KeysetHandle createKeysetHandle(Keyset keyset) throws Exception {
-    return TinkProtoKeysetFormat.parseKeyset(keyset.toByteArray(), InsecureSecretKeyAccess.get());
+    return TinkProtoKeysetFormat.parseKeyset(
+        keyset.toByteArray(), InsecureSecretKeyAccess.get(), RegistryConfiguration.get());
   }
 
   /** @return a keyset from a list of keys. The first key is primary. */
