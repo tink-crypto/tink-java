@@ -101,9 +101,9 @@ public final class KeysetManager {
 
   /**
    * @return a {@link KeysetManager} for an empty keyset.
-   * @deprecated This function should be inlined.
+   * @deprecated Call {@link #withEmptyKeyset(Configuration)} instead.
    */
-  @Deprecated // This function should be inlined.
+  @Deprecated
   public static KeysetManager withEmptyKeyset() {
     try {
       return withEmptyKeyset(RegistryConfiguration.get());

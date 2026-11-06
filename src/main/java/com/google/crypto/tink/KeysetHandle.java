@@ -1086,7 +1086,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
    *     LegacyKeysetSerialization for exactly the same behavior.
    */
   @SuppressWarnings("UnusedException")
-  @Deprecated /* b/372397203 */
+  @Deprecated
   public static final KeysetHandle read(KeysetReader reader, Aead masterKey)
       throws GeneralSecurityException, IOException {
     return readWithAssociatedData(reader, masterKey, new byte[0]);
@@ -1106,7 +1106,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
    *     LegacyKeysetSerialization for exactly the same behavior.
    */
   @SuppressWarnings("UnusedException")
-  @Deprecated /* b/372397203 */
+  @Deprecated
   public static final KeysetHandle readWithAssociatedData(
       KeysetReader reader, Aead masterKey, byte[] associatedData)
       throws GeneralSecurityException, IOException {
@@ -1209,7 +1209,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
    *     LegacyKeysetSerialization for exactly the same behavior.
    */
   @SuppressWarnings("UnusedException")
-  @Deprecated /* b/372397203 */
+  @Deprecated
   public void write(KeysetWriter keysetWriter, Aead masterKey)
       throws GeneralSecurityException, IOException {
     writeWithAssociatedData(keysetWriter, masterKey, new byte[0]);
@@ -1227,7 +1227,7 @@ public final class KeysetHandle implements KeysetHandleInterface {
    *     LegacyKeysetSerialization for exactly the same behavior.
    */
   @SuppressWarnings("UnusedException")
-  @Deprecated /* b/372397203 */
+  @Deprecated
   public void writeWithAssociatedData(
       KeysetWriter keysetWriter, Aead masterKey, byte[] associatedData)
       throws GeneralSecurityException, IOException {
