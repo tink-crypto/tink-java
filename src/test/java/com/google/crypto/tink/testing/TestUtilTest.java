@@ -19,6 +19,12 @@ package com.google.crypto.tink.testing;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
+import com.google.crypto.tink.KeysetHandle;
+import com.google.crypto.tink.aead.AeadConfig;
+import com.google.crypto.tink.aead.PredefinedAeadParameters;
+import com.google.crypto.tink.proto.KeyStatusType;
+import com.google.crypto.tink.proto.Keyset;
+import com.google.crypto.tink.proto.OutputPrefixType;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -169,6 +175,47 @@ public class TestUtilTest {
                 })
             .getMessage();
     assertThat(msg).contains("Z test for uniformly distributed variable out of bounds");
+  }
+
+  @Test
+  @SuppressWarnings("deprecation") // Testing deprecated TestUtil methods.
+  public void getKeysetAndCreateKeysetHandle_roundTrip_succeeds() throws Exception {
+    AeadConfig.register();
+    KeysetHandle handle = KeysetHandle.generateNew(PredefinedAeadParameters.AES128_GCM);
+
+    Keyset keyset = TestUtil.getKeyset(handle);
+    KeysetHandle parsedHandle = TestUtil.createKeysetHandle(keyset);
+
+    assertThat(parsedHandle.size()).isEqualTo(1);
+    assertThat(parsedHandle.getPrimary().getId()).isEqualTo(handle.getPrimary().getId());
+    assertThat(parsedHandle.getPrimary().getKey().equalsKey(handle.getPrimary().getKey())).isTrue();
+    assertThat(TestUtil.getKeyset(parsedHandle)).isEqualTo(keyset);
+  }
+
+  @Test
+  @SuppressWarnings("deprecation") // Testing deprecated TestUtil methods.
+  public void createKeysetHandleAndGetKeyset_fromProtoKeyset_succeeds() throws Exception {
+    Keyset keyset =
+        TestUtil.createKeyset(
+            TestUtil.createKey(
+                TestUtil.createAesGcmKeyData(new byte[16]),
+                42,
+                KeyStatusType.ENABLED,
+                OutputPrefixType.TINK));
+
+    KeysetHandle handle = TestUtil.createKeysetHandle(keyset);
+
+    assertThat(handle.size()).isEqualTo(1);
+    assertThat(handle.getPrimary().getId()).isEqualTo(42);
+    assertThat(TestUtil.getKeyset(handle)).isEqualTo(keyset);
+  }
+
+  @Test
+  @SuppressWarnings("deprecation") // Testing deprecated TestUtil methods.
+  public void createKeysetHandle_emptyKeyset_throws() {
+    assertThrows(
+        GeneralSecurityException.class,
+        () -> TestUtil.createKeysetHandle(Keyset.getDefaultInstance()));
   }
 
   private void setValueForNBytes(byte[] input, int numberBytesToSet, byte valueToSet) {
