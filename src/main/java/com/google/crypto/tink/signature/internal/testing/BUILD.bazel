@@ -350,3 +350,43 @@ java_library(
         "//src/main/java/com/google/crypto/tink/util:secret_bytes",
     ],
 )
+
+android_library(
+    name = "ml_dsa_mu_test_util-android",
+    srcs = ["MlDsaMuTestUtil.java"],
+    deps = [
+        ":ml_dsa_mu_test_vector-android",
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_parameters-android",
+        "//src/main/java/com/google/crypto/tink/subtle:hex-android",
+    ],
+)
+
+android_library(
+    name = "ml_dsa_mu_test_vector-android",
+    srcs = ["MlDsaMuTestVector.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_parameters-android",
+        "//src/main/java/com/google/crypto/tink/util:bytes-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "ml_dsa_mu_test_util",
+    srcs = ["MlDsaMuTestUtil.java"],
+    deps = [
+        ":ml_dsa_mu_test_vector",
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_parameters",
+        "//src/main/java/com/google/crypto/tink/subtle:hex",
+    ],
+)
+
+java_library(
+    name = "ml_dsa_mu_test_vector",
+    srcs = ["MlDsaMuTestVector.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_parameters",
+        "//src/main/java/com/google/crypto/tink/util:bytes",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
