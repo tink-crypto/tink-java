@@ -71,6 +71,7 @@ process_args() {
       c) CACHE_FLAGS=(
            "--remote_cache=https://storage.googleapis.com/${OPTARG}"
            "--google_credentials=$(realpath ./cache_key)"
+           "--remote_download_minimal"
          );;
       *) usage ;;
     esac
@@ -133,22 +134,19 @@ main() {
     set -x
     cd "${workspace_dir}"
     if [[ "${MANUAL_ONLY}" == "false" ]]; then
-      time "${BAZEL_CMD}" build "${CACHE_FLAGS[@]}" "${BUILD_FLAGS[@]}" -- ...
       # Exit code 4 means targets build correctly but no tests were found. See
       # https://bazel.build/docs/scripts#exit-codes.
       bazel_test_return=0
-      time "${BAZEL_CMD}" test "${CACHE_FLAGS[@]}" "${TEST_FLAGS[@]}" -- ... \
-        || bazel_test_return="$?"
+      time "${BAZEL_CMD}" test --nobuild_tests_only "${CACHE_FLAGS[@]}" \
+        "${TEST_FLAGS[@]}" -- ... || bazel_test_return="$?"
       if (( $bazel_test_return != 0 && $bazel_test_return != 4 )); then
         return "${bazel_test_return}"
       fi
     fi
     # Run specific manual targets.
     if (( ${#MANUAL_TARGETS[@]} > 0 )); then
-      time "${BAZEL_CMD}" build "${CACHE_FLAGS[@]}" "${BUILD_FLAGS[@]}" -- \
-        "${MANUAL_TARGETS[@]}"
-      time "${BAZEL_CMD}" test "${CACHE_FLAGS[@]}" "${TEST_FLAGS[@]}"  -- \
-        "${MANUAL_TARGETS[@]}"
+      time "${BAZEL_CMD}" test --nobuild_tests_only "${CACHE_FLAGS[@]}" \
+        "${TEST_FLAGS[@]}" -- "${MANUAL_TARGETS[@]}"
     fi
   )
 }

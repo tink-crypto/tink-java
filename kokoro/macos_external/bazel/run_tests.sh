@@ -34,6 +34,9 @@ if [[ -n "${TINK_REMOTE_BAZEL_CACHE_GCS_BUCKET:-}" ]]; then
   cp "${TINK_REMOTE_BAZEL_CACHE_SERVICE_KEY}" ./cache_key
   CACHE_FLAGS+=("--remote_cache=https://storage.googleapis.com/${TINK_REMOTE_BAZEL_CACHE_GCS_BUCKET}/bazel/java-macos")
   CACHE_FLAGS+=("--google_credentials=$(realpath ./cache_key)")
+  # Avoid downloading cached intermediate/top-level build outputs unless needed
+  # by a local action.
+  CACHE_FLAGS+=("--remote_download_minimal")
 fi
 readonly CACHE_FLAGS
 
@@ -43,7 +46,7 @@ export ANDROID_HOME=/tmp/android-sdk-37
 
 echo "Java home: ${JAVA_HOME}"
 
-echo "---------- BUILDING MAIN (bzlmod)"
-time bazelisk build "${CACHE_FLAGS[@]}" -- ...
-echo "---------- TESTING MAIN (bzlmod)"
-time bazelisk test --test_output=errors "${CACHE_FLAGS[@]}" -- ...
+# --nobuild_tests_only ensures all non-test targets in '...' are built too.
+echo "---------- BUILDING AND TESTING MAIN (bzlmod)"
+time bazelisk test --nobuild_tests_only --test_output=errors \
+  ${CACHE_FLAGS[@]:+"${CACHE_FLAGS[@]}"} -- ...
