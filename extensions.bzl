@@ -17,13 +17,12 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 def _wycheproof_impl(_ctx):
-    # Commit from 2025-09-01.
-    # Corresponds to wycheproof-v0-vectors tag.
+    # Commit from 2026-10-23.
     http_archive(
         name = "wycheproof",
-        strip_prefix = "wycheproof-b51abcfb8dafa5316791e57cf48512a2147d9671",
-        url = "https://github.com/c2sp/wycheproof/archive/b51abcfb8dafa5316791e57cf48512a2147d9671.zip",
-        sha256 = "56ba9f3deba06b1cc33430a770a9b6bd6ddc8af69188ea0b46d10bda60176978",
+        strip_prefix = "wycheproof-d17cc89fa5c8f4f4d378b5385ebf75da5d0926c9",
+        url = "https://github.com/c2sp/wycheproof/archive/d17cc89fa5c8f4f4d378b5385ebf75da5d0926c9.zip",
+        sha256 = "8561d5afddd7ecbf92591f81f8b45da921e0444d7c2cc2fc84412802a7450ada",
         build_file = "@//third_party/wycheproof:wycheproof.BUILD.bazel",
     )
 
