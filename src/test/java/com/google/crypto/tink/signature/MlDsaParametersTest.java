@@ -52,6 +52,28 @@ public class MlDsaParametersTest {
   }
 
   @Test
+  public void createMlDsa_noPrefixWithPrehashId() {
+    MlDsaParameters parameters =
+        MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.NO_PREFIX_WITH_PREHASH_ID);
+
+    assertThat(parameters.getMlDsaInstance()).isEqualTo(MlDsaInstance.ML_DSA_65);
+    assertThat(parameters.getVariant()).isEqualTo(Variant.NO_PREFIX_WITH_PREHASH_ID);
+  }
+
+  @Test
+  public void hasIdRequirement() {
+    assertThat(
+            MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.NO_PREFIX).hasIdRequirement())
+        .isFalse();
+    assertThat(MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.TINK).hasIdRequirement())
+        .isTrue();
+    assertThat(
+            MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.NO_PREFIX_WITH_PREHASH_ID)
+                .hasIdRequirement())
+        .isTrue();
+  }
+
+  @Test
   public void equalsAndEqualHashCode() {
     MlDsaParameters parameters1 = MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.TINK);
     MlDsaParameters parameters2 = MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.TINK);
@@ -65,8 +87,12 @@ public class MlDsaParametersTest {
     MlDsaParameters parameters1 = MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.TINK);
     MlDsaParameters parameters2 =
         MlDsaParameters.create(MlDsaInstance.ML_DSA_87, Variant.NO_PREFIX);
+    MlDsaParameters parameters3 =
+        MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.NO_PREFIX_WITH_PREHASH_ID);
 
     assertThat(parameters1).isNotEqualTo(parameters2);
     assertThat(parameters1.hashCode()).isNotEqualTo(parameters2.hashCode());
+    assertThat(parameters1).isNotEqualTo(parameters3);
+    assertThat(parameters1.hashCode()).isNotEqualTo(parameters3.hashCode());
   }
 }

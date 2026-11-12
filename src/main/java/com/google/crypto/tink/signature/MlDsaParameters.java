@@ -25,12 +25,16 @@ public final class MlDsaParameters extends SignatureParameters {
    * Describes details of the ML-DSA signature format.
    *
    * <p>The standard ML-DSA key is used for variant "NO_PREFIX". "TINK" adds a prefix to every
-   * computation depending on the key id.
+   * computation depending on the key id. "NO_PREFIX_WITH_PREHASH_ID" is used for prehash signing
+   * scenarios: it adds no prefix to the signature, while requiring a key id for computing prehash
+   * values.
    */
   @Immutable
   public static final class Variant {
     public static final Variant TINK = new Variant("TINK");
     public static final Variant NO_PREFIX = new Variant("NO_PREFIX");
+    public static final Variant NO_PREFIX_WITH_PREHASH_ID =
+        new Variant("NO_PREFIX_WITH_PREHASH_ID");
 
     private final String name;
 
