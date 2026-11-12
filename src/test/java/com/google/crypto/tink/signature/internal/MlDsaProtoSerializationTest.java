@@ -204,6 +204,42 @@ public class MlDsaProtoSerializationTest {
                               .setMlDsaInstance(
                                   com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_87))
                       .build()
+                      .toByteString())),
+          new ParametersSerializationTestPair(
+              MlDsaParameters.create(MlDsaInstance.ML_DSA_44, Variant.NO_PREFIX_WITH_PREHASH_ID),
+              ProtoParametersSerialization.create(
+                  PRIVATE_TYPE_URL,
+                  OutputPrefixType.WITH_ID_REQUIREMENT,
+                  MlDsaKeyFormat.newBuilder()
+                      .setParams(
+                          MlDsaParams.newBuilder()
+                              .setMlDsaInstance(
+                                  com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_44))
+                      .build()
+                      .toByteString())),
+          new ParametersSerializationTestPair(
+              MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.NO_PREFIX_WITH_PREHASH_ID),
+              ProtoParametersSerialization.create(
+                  PRIVATE_TYPE_URL,
+                  OutputPrefixType.WITH_ID_REQUIREMENT,
+                  MlDsaKeyFormat.newBuilder()
+                      .setParams(
+                          MlDsaParams.newBuilder()
+                              .setMlDsaInstance(
+                                  com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_65))
+                      .build()
+                      .toByteString())),
+          new ParametersSerializationTestPair(
+              MlDsaParameters.create(MlDsaInstance.ML_DSA_87, Variant.NO_PREFIX_WITH_PREHASH_ID),
+              ProtoParametersSerialization.create(
+                  PRIVATE_TYPE_URL,
+                  OutputPrefixType.WITH_ID_REQUIREMENT,
+                  MlDsaKeyFormat.newBuilder()
+                      .setParams(
+                          MlDsaParams.newBuilder()
+                              .setMlDsaInstance(
+                                  com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_87))
+                      .build()
                       .toByteString())));
     } catch (GeneralSecurityException e) {
       throw new IllegalStateException(e);
@@ -353,6 +389,69 @@ public class MlDsaProtoSerializationTest {
                       .toByteString(),
                   KeyMaterialType.ASYMMETRIC_PUBLIC,
                   OutputPrefixType.TINK,
+                  /* idRequirement= */ 0x12345678)),
+          new PublicKeySerializationTestPair(
+              MlDsaPublicKey.builder()
+                  .setParameters(
+                      MlDsaParameters.create(
+                          MlDsaInstance.ML_DSA_44, Variant.NO_PREFIX_WITH_PREHASH_ID))
+                  .setSerializedPublicKey(PUBLIC_KEY_ML_DSA_44_BYTES)
+                  .setIdRequirement(0x12345678)
+                  .build(),
+              ProtoKeySerialization.create(
+                  PUBLIC_TYPE_URL,
+                  com.google.crypto.tink.proto.MlDsaPublicKey.newBuilder()
+                      .setParams(
+                          MlDsaParams.newBuilder()
+                              .setMlDsaInstance(
+                                  com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_44))
+                      .setKeyValue(PUBLIC_KEY_ML_DSA_44_BYTE_STRING)
+                      .build()
+                      .toByteString(),
+                  KeyMaterialType.ASYMMETRIC_PUBLIC,
+                  OutputPrefixType.WITH_ID_REQUIREMENT,
+                  /* idRequirement= */ 0x12345678)),
+          new PublicKeySerializationTestPair(
+              MlDsaPublicKey.builder()
+                  .setParameters(
+                      MlDsaParameters.create(
+                          MlDsaInstance.ML_DSA_65, Variant.NO_PREFIX_WITH_PREHASH_ID))
+                  .setSerializedPublicKey(PUBLIC_KEY_ML_DSA_65_BYTES)
+                  .setIdRequirement(0x12345678)
+                  .build(),
+              ProtoKeySerialization.create(
+                  PUBLIC_TYPE_URL,
+                  com.google.crypto.tink.proto.MlDsaPublicKey.newBuilder()
+                      .setParams(
+                          MlDsaParams.newBuilder()
+                              .setMlDsaInstance(
+                                  com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_65))
+                      .setKeyValue(PUBLIC_KEY_ML_DSA_65_BYTE_STRING)
+                      .build()
+                      .toByteString(),
+                  KeyMaterialType.ASYMMETRIC_PUBLIC,
+                  OutputPrefixType.WITH_ID_REQUIREMENT,
+                  /* idRequirement= */ 0x12345678)),
+          new PublicKeySerializationTestPair(
+              MlDsaPublicKey.builder()
+                  .setParameters(
+                      MlDsaParameters.create(
+                          MlDsaInstance.ML_DSA_87, Variant.NO_PREFIX_WITH_PREHASH_ID))
+                  .setSerializedPublicKey(PUBLIC_KEY_ML_DSA_87_BYTES)
+                  .setIdRequirement(0x12345678)
+                  .build(),
+              ProtoKeySerialization.create(
+                  PUBLIC_TYPE_URL,
+                  com.google.crypto.tink.proto.MlDsaPublicKey.newBuilder()
+                      .setParams(
+                          MlDsaParams.newBuilder()
+                              .setMlDsaInstance(
+                                  com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_87))
+                      .setKeyValue(PUBLIC_KEY_ML_DSA_87_BYTE_STRING)
+                      .build()
+                      .toByteString(),
+                  KeyMaterialType.ASYMMETRIC_PUBLIC,
+                  OutputPrefixType.WITH_ID_REQUIREMENT,
                   /* idRequirement= */ 0x12345678)));
     } catch (GeneralSecurityException e) {
       throw new IllegalStateException(e);
@@ -418,6 +517,30 @@ public class MlDsaProtoSerializationTest {
       MlDsaPublicKey tinkPublicKey87 =
           MlDsaPublicKey.builder()
               .setParameters(MlDsaParameters.create(MlDsaInstance.ML_DSA_87, Variant.TINK))
+              .setSerializedPublicKey(PUBLIC_KEY_ML_DSA_87_BYTES)
+              .setIdRequirement(0x12345678)
+              .build();
+      MlDsaPublicKey noPrefixWithPrehashIdPublicKey44 =
+          MlDsaPublicKey.builder()
+              .setParameters(
+                  MlDsaParameters.create(
+                      MlDsaInstance.ML_DSA_44, Variant.NO_PREFIX_WITH_PREHASH_ID))
+              .setSerializedPublicKey(PUBLIC_KEY_ML_DSA_44_BYTES)
+              .setIdRequirement(0x12345678)
+              .build();
+      MlDsaPublicKey noPrefixWithPrehashIdPublicKey65 =
+          MlDsaPublicKey.builder()
+              .setParameters(
+                  MlDsaParameters.create(
+                      MlDsaInstance.ML_DSA_65, Variant.NO_PREFIX_WITH_PREHASH_ID))
+              .setSerializedPublicKey(PUBLIC_KEY_ML_DSA_65_BYTES)
+              .setIdRequirement(0x12345678)
+              .build();
+      MlDsaPublicKey noPrefixWithPrehashIdPublicKey87 =
+          MlDsaPublicKey.builder()
+              .setParameters(
+                  MlDsaParameters.create(
+                      MlDsaInstance.ML_DSA_87, Variant.NO_PREFIX_WITH_PREHASH_ID))
               .setSerializedPublicKey(PUBLIC_KEY_ML_DSA_87_BYTES)
               .setIdRequirement(0x12345678)
               .build();
@@ -535,6 +658,63 @@ public class MlDsaProtoSerializationTest {
                       .toByteString(),
                   KeyMaterialType.ASYMMETRIC_PRIVATE,
                   OutputPrefixType.TINK,
+                  /* idRequirement= */ 0x12345678)),
+          new PrivateKeySerializationTestPair(
+              MlDsaPrivateKey.createWithoutVerification(
+                  noPrefixWithPrehashIdPublicKey44, PRIVATE_KEY_ML_DSA_44_SEED_SECRET_BYTES),
+              ProtoKeySerialization.create(
+                  PRIVATE_TYPE_URL,
+                  com.google.crypto.tink.proto.MlDsaPrivateKey.newBuilder()
+                      .setPublicKey(
+                          com.google.crypto.tink.proto.MlDsaPublicKey.newBuilder()
+                              .setParams(
+                                  MlDsaParams.newBuilder()
+                                      .setMlDsaInstance(
+                                          com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_44))
+                              .setKeyValue(PUBLIC_KEY_ML_DSA_44_BYTE_STRING))
+                      .setKeyValue(PRIVATE_KEY_ML_DSA_44_SEED_BYTE_STRING)
+                      .build()
+                      .toByteString(),
+                  KeyMaterialType.ASYMMETRIC_PRIVATE,
+                  OutputPrefixType.WITH_ID_REQUIREMENT,
+                  /* idRequirement= */ 0x12345678)),
+          new PrivateKeySerializationTestPair(
+              MlDsaPrivateKey.createWithoutVerification(
+                  noPrefixWithPrehashIdPublicKey65, PRIVATE_KEY_ML_DSA_65_SEED_SECRET_BYTES),
+              ProtoKeySerialization.create(
+                  PRIVATE_TYPE_URL,
+                  com.google.crypto.tink.proto.MlDsaPrivateKey.newBuilder()
+                      .setPublicKey(
+                          com.google.crypto.tink.proto.MlDsaPublicKey.newBuilder()
+                              .setParams(
+                                  MlDsaParams.newBuilder()
+                                      .setMlDsaInstance(
+                                          com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_65))
+                              .setKeyValue(PUBLIC_KEY_ML_DSA_65_BYTE_STRING))
+                      .setKeyValue(PRIVATE_KEY_ML_DSA_65_SEED_BYTE_STRING)
+                      .build()
+                      .toByteString(),
+                  KeyMaterialType.ASYMMETRIC_PRIVATE,
+                  OutputPrefixType.WITH_ID_REQUIREMENT,
+                  /* idRequirement= */ 0x12345678)),
+          new PrivateKeySerializationTestPair(
+              MlDsaPrivateKey.createWithoutVerification(
+                  noPrefixWithPrehashIdPublicKey87, PRIVATE_KEY_ML_DSA_87_SEED_SECRET_BYTES),
+              ProtoKeySerialization.create(
+                  PRIVATE_TYPE_URL,
+                  com.google.crypto.tink.proto.MlDsaPrivateKey.newBuilder()
+                      .setPublicKey(
+                          com.google.crypto.tink.proto.MlDsaPublicKey.newBuilder()
+                              .setParams(
+                                  MlDsaParams.newBuilder()
+                                      .setMlDsaInstance(
+                                          com.google.crypto.tink.proto.MlDsaInstance.ML_DSA_87))
+                              .setKeyValue(PUBLIC_KEY_ML_DSA_87_BYTE_STRING))
+                      .setKeyValue(PRIVATE_KEY_ML_DSA_87_SEED_BYTE_STRING)
+                      .build()
+                      .toByteString(),
+                  KeyMaterialType.ASYMMETRIC_PRIVATE,
+                  OutputPrefixType.WITH_ID_REQUIREMENT,
                   /* idRequirement= */ 0x12345678)));
     } catch (GeneralSecurityException e) {
       throw new IllegalStateException(e);

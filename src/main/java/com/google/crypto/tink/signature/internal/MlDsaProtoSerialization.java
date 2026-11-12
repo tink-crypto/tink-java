@@ -78,6 +78,9 @@ public final class MlDsaProtoSerialization {
     if (variant.equals(MlDsaParameters.Variant.NO_PREFIX)) {
       return com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW;
     }
+    if (variant.equals(MlDsaParameters.Variant.NO_PREFIX_WITH_PREHASH_ID)) {
+      return com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.WITH_ID_REQUIREMENT;
+    }
     if (variant.equals(MlDsaParameters.Variant.TINK)) {
       return com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK;
     }
@@ -90,6 +93,10 @@ public final class MlDsaProtoSerialization {
     if (outputPrefixType.equals(
         com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.RAW)) {
       return MlDsaParameters.Variant.NO_PREFIX;
+    }
+    if (outputPrefixType.equals(
+        com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.WITH_ID_REQUIREMENT)) {
+      return MlDsaParameters.Variant.NO_PREFIX_WITH_PREHASH_ID;
     }
     if (outputPrefixType.equals(
         com.google.crypto.tink.ProtoKeySerialization.OutputPrefixType.TINK)) {
