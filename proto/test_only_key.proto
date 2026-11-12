@@ -48,3 +48,12 @@ message TestOnlyPrivateKey {
   TestOnlyPublicKey public_key = 2;
   bytes key_value = 3;
 }
+
+// key_type: type.googleapis.com/google.crypto.tink.TestOnlyLegacyKey
+//
+// Never has a registered proto serialization, for tests of keys parsed as
+// `LegacyProtoKey`s.
+message TestOnlyLegacyKey {
+  uint32 version = 1;
+  bytes key_value = 2;
+}
