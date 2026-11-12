@@ -80,7 +80,8 @@ public class MlDsaPublicKey extends SignaturePublicKey {
 
     private Bytes getOutputPrefix() {
       // We do sanity checking before calling this method, thus preventing the NPEs.
-      if (parameters.getVariant() == MlDsaParameters.Variant.NO_PREFIX) {
+      if (parameters.getVariant() == MlDsaParameters.Variant.NO_PREFIX
+          || parameters.getVariant() == MlDsaParameters.Variant.NO_PREFIX_WITH_PREHASH_ID) {
         return OutputPrefixUtil.EMPTY_PREFIX;
       }
       if (parameters.getVariant() == MlDsaParameters.Variant.TINK) {
@@ -98,8 +99,9 @@ public class MlDsaPublicKey extends SignaturePublicKey {
         throw new GeneralSecurityException(
             "Id requirement present for parameters' variant NO_PREFIX");
       }
-      if (parameters.getVariant() == MlDsaParameters.Variant.TINK && idRequirement == null) {
-        throw new GeneralSecurityException("Id requirement missing for parameters' variant TINK");
+      if (parameters.hasIdRequirement() && idRequirement == null) {
+        throw new GeneralSecurityException(
+            "Id requirement missing for parameters' variant " + parameters.getVariant());
       }
       if (parameters.getMlDsaInstance() != MlDsaInstance.ML_DSA_44
           && parameters.getMlDsaInstance() != MlDsaInstance.ML_DSA_65

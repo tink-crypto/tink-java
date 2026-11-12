@@ -42,14 +42,23 @@ public final class MlDsaPrivateKeyTest {
       MlDsaParameters.create(MlDsaInstance.ML_DSA_44, MlDsaParameters.Variant.NO_PREFIX);
   private static final MlDsaParameters TINK_MLDSA44_PARAMS =
       MlDsaParameters.create(MlDsaInstance.ML_DSA_44, MlDsaParameters.Variant.TINK);
+  private static final MlDsaParameters NO_PREFIX_WITH_PREHASH_ID_MLDSA44_PARAMS =
+      MlDsaParameters.create(
+          MlDsaInstance.ML_DSA_44, MlDsaParameters.Variant.NO_PREFIX_WITH_PREHASH_ID);
   private static final MlDsaParameters NO_PREFIX_MLDSA65_PARAMS =
       MlDsaParameters.create(MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.NO_PREFIX);
   private static final MlDsaParameters TINK_MLDSA65_PARAMS =
       MlDsaParameters.create(MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.TINK);
+  private static final MlDsaParameters NO_PREFIX_WITH_PREHASH_ID_MLDSA65_PARAMS =
+      MlDsaParameters.create(
+          MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.NO_PREFIX_WITH_PREHASH_ID);
   private static final MlDsaParameters NO_PREFIX_MLDSA87_PARAMS =
       MlDsaParameters.create(MlDsaInstance.ML_DSA_87, MlDsaParameters.Variant.NO_PREFIX);
   private static final MlDsaParameters TINK_MLDSA87_PARAMS =
       MlDsaParameters.create(MlDsaInstance.ML_DSA_87, MlDsaParameters.Variant.TINK);
+  private static final MlDsaParameters NO_PREFIX_WITH_PREHASH_ID_MLDSA87_PARAMS =
+      MlDsaParameters.create(
+          MlDsaInstance.ML_DSA_87, MlDsaParameters.Variant.NO_PREFIX_WITH_PREHASH_ID);
 
   private static final Bytes FAKE_MLDSA44_PUBLIC_KEY_BYTES =
       Bytes.copyFrom(Hex.decode("01".repeat(MLDSA44_PUBLIC_KEY_BYTES)));
@@ -174,6 +183,63 @@ public final class MlDsaPrivateKeyTest {
     assertThat(privateKey.getPrivateSeed()).isEqualTo(PRIVATE_SEED);
     assertThat(privateKey.getParameters()).isEqualTo(TINK_MLDSA87_PARAMS);
     assertThat(privateKey.getOutputPrefix()).isEqualTo(Bytes.copyFrom(Hex.decode("0166AABBCC")));
+    assertThat(privateKey.getIdRequirementOrNull()).isEqualTo(0x66AABBCC);
+  }
+
+  @Test
+  @AccessesPartialKey
+  public void createNoPrefixWithPrehashIdMlDsa44AndGetProperties() throws Exception {
+    MlDsaPublicKey publicKey =
+        MlDsaPublicKey.builder()
+            .setParameters(NO_PREFIX_WITH_PREHASH_ID_MLDSA44_PARAMS)
+            .setSerializedPublicKey(FAKE_MLDSA44_PUBLIC_KEY_BYTES)
+            .setIdRequirement(0x66AABBCC)
+            .build();
+
+    MlDsaPrivateKey privateKey = MlDsaPrivateKey.createWithoutVerification(publicKey, PRIVATE_SEED);
+
+    assertThat(privateKey.getPublicKey()).isEqualTo(publicKey);
+    assertThat(privateKey.getPrivateSeed()).isEqualTo(PRIVATE_SEED);
+    assertThat(privateKey.getParameters()).isEqualTo(NO_PREFIX_WITH_PREHASH_ID_MLDSA44_PARAMS);
+    assertThat(privateKey.getOutputPrefix()).isEqualTo(Bytes.copyFrom(new byte[] {}));
+    assertThat(privateKey.getIdRequirementOrNull()).isEqualTo(0x66AABBCC);
+  }
+
+  @Test
+  @AccessesPartialKey
+  public void createNoPrefixWithPrehashIdMlDsa65AndGetProperties() throws Exception {
+    MlDsaPublicKey publicKey =
+        MlDsaPublicKey.builder()
+            .setParameters(NO_PREFIX_WITH_PREHASH_ID_MLDSA65_PARAMS)
+            .setSerializedPublicKey(FAKE_MLDSA65_PUBLIC_KEY_BYTES)
+            .setIdRequirement(0x66AABBCC)
+            .build();
+
+    MlDsaPrivateKey privateKey = MlDsaPrivateKey.createWithoutVerification(publicKey, PRIVATE_SEED);
+
+    assertThat(privateKey.getPublicKey()).isEqualTo(publicKey);
+    assertThat(privateKey.getPrivateSeed()).isEqualTo(PRIVATE_SEED);
+    assertThat(privateKey.getParameters()).isEqualTo(NO_PREFIX_WITH_PREHASH_ID_MLDSA65_PARAMS);
+    assertThat(privateKey.getOutputPrefix()).isEqualTo(Bytes.copyFrom(new byte[] {}));
+    assertThat(privateKey.getIdRequirementOrNull()).isEqualTo(0x66AABBCC);
+  }
+
+  @Test
+  @AccessesPartialKey
+  public void createNoPrefixWithPrehashIdMlDsa87AndGetProperties() throws Exception {
+    MlDsaPublicKey publicKey =
+        MlDsaPublicKey.builder()
+            .setParameters(NO_PREFIX_WITH_PREHASH_ID_MLDSA87_PARAMS)
+            .setSerializedPublicKey(FAKE_MLDSA87_PUBLIC_KEY_BYTES)
+            .setIdRequirement(0x66AABBCC)
+            .build();
+
+    MlDsaPrivateKey privateKey = MlDsaPrivateKey.createWithoutVerification(publicKey, PRIVATE_SEED);
+
+    assertThat(privateKey.getPublicKey()).isEqualTo(publicKey);
+    assertThat(privateKey.getPrivateSeed()).isEqualTo(PRIVATE_SEED);
+    assertThat(privateKey.getParameters()).isEqualTo(NO_PREFIX_WITH_PREHASH_ID_MLDSA87_PARAMS);
+    assertThat(privateKey.getOutputPrefix()).isEqualTo(Bytes.copyFrom(new byte[] {}));
     assertThat(privateKey.getIdRequirementOrNull()).isEqualTo(0x66AABBCC);
   }
 
