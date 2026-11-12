@@ -32,6 +32,35 @@ import java.security.GeneralSecurityException;
 @AccessesPartialKey
 public final class MlDsaTestUtil {
 
+  private static SignatureTestVector createTestVector(
+      MlDsaInstance instance,
+      Variant variant,
+      Bytes publicKeyBytes,
+      SecretBytes privateSeed,
+      String signatureHex,
+      byte[] message)
+      throws GeneralSecurityException {
+    MlDsaPublicKey.Builder publicKeyBuilder =
+        MlDsaPublicKey.builder()
+            .setSerializedPublicKey(publicKeyBytes)
+            .setParameters(MlDsaParameters.create(instance, variant));
+    byte[] prefixedSignature;
+    if (variant.equals(Variant.NO_PREFIX)) {
+      prefixedSignature = Hex.decode(signatureHex);
+    } else if (variant.equals(Variant.NO_PREFIX_WITH_PREHASH_ID)) {
+      publicKeyBuilder.setIdRequirement(0x12345678);
+      prefixedSignature = Hex.decode(signatureHex);
+    } else if (variant.equals(Variant.TINK)) {
+      publicKeyBuilder.setIdRequirement(0x12345678);
+      prefixedSignature = Hex.decode("0112345678" + signatureHex);
+    } else {
+      throw new IllegalArgumentException("Unsupported variant: " + variant);
+    }
+    MlDsaPrivateKey privateKey =
+        MlDsaPrivateKey.createWithoutVerification(publicKeyBuilder.build(), privateSeed);
+    return new SignatureTestVector(privateKey, prefixedSignature, message);
+  }
+
   private static SignatureTestVector createMlDsa65TestVector(Variant variant)
       throws GeneralSecurityException {
     Bytes publicKeyBytes =
@@ -219,36 +248,13 @@ public final class MlDsaTestUtil {
       + "63993636c754ce2b3c3f6a6b6d0b161e777b8296d7dce7fd162970496494"
       + "d4f60716244a5a7fb7cee40e1d565e6566697e8f93000000000000000000"
       + "00000005101318212b";
-    if (variant.equals(Variant.NO_PREFIX)) {
-      MlDsaPrivateKey noPrefixPrivateKey =
-          MlDsaPrivateKey.createWithoutVerification(
-              MlDsaPublicKey.builder()
-                  .setSerializedPublicKey(publicKeyBytes)
-                  .setParameters(
-                      MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.NO_PREFIX))
-                  .build(),
-              privateSeed);
-      return new SignatureTestVector(
-          noPrefixPrivateKey,
-          Hex.decode(signatureHex),
-          Hex.decode("48656c6c6f20776f726c64"));
-    }
-    if (variant.equals(Variant.TINK)) {
-      MlDsaPrivateKey tinkPrivateKey =
-          MlDsaPrivateKey.createWithoutVerification(
-              MlDsaPublicKey.builder()
-                  .setSerializedPublicKey(publicKeyBytes)
-                  .setParameters(
-                      MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.TINK))
-                  .setIdRequirement(0x12345678)
-                  .build(),
-              privateSeed);
-      return new SignatureTestVector(
-          tinkPrivateKey,
-          Hex.decode("0112345678" + signatureHex),
-          Hex.decode("48656c6c6f20776f726c64"));
-    }
-    throw new IllegalArgumentException("Unsupported variant: " + variant);
+    return createTestVector(
+        MlDsaInstance.ML_DSA_65,
+        variant,
+        publicKeyBytes,
+        privateSeed,
+        signatureHex,
+        Hex.decode("48656c6c6f20776f726c64"));
   }
 
   private static SignatureTestVector createMlDsa44TestVector(Variant variant)
@@ -386,36 +392,13 @@ public final class MlDsaTestUtil {
       + "677578808e90929697a9cecfd6ed1b303d4250738a97a0aabac6d91e283a"
       + "4b696f7181828493aec8cdcfe1eaecfc0227484957595badbcbfc8fa0000"
       + "00000000000000000000000000000000121f323e";
-    if (variant.equals(Variant.NO_PREFIX)) {
-      MlDsaPrivateKey noPrefixPrivateKey =
-          MlDsaPrivateKey.createWithoutVerification(
-              MlDsaPublicKey.builder()
-                  .setSerializedPublicKey(publicKeyBytes)
-                  .setParameters(
-                      MlDsaParameters.create(MlDsaInstance.ML_DSA_44, Variant.NO_PREFIX))
-                  .build(),
-              privateSeed);
-      return new SignatureTestVector(
-          noPrefixPrivateKey,
-          Hex.decode(signatureHex),
-          Hex.decode("48656c6c6f20776f726c64"));
-    }
-    if (variant.equals(Variant.TINK)) {
-      MlDsaPrivateKey tinkPrivateKey =
-          MlDsaPrivateKey.createWithoutVerification(
-              MlDsaPublicKey.builder()
-                  .setSerializedPublicKey(publicKeyBytes)
-                  .setParameters(
-                      MlDsaParameters.create(MlDsaInstance.ML_DSA_44, Variant.TINK))
-                  .setIdRequirement(0x12345678)
-                  .build(),
-              privateSeed);
-      return new SignatureTestVector(
-          tinkPrivateKey,
-          Hex.decode("0112345678" + signatureHex),
-          Hex.decode("48656c6c6f20776f726c64"));
-    }
-    throw new IllegalArgumentException("Unsupported variant: " + variant);
+    return createTestVector(
+        MlDsaInstance.ML_DSA_44,
+        variant,
+        publicKeyBytes,
+        privateSeed,
+        signatureHex,
+        Hex.decode("48656c6c6f20776f726c64"));
   }
 
   private static SignatureTestVector createMlDsa87TestVector(Variant variant)
@@ -670,38 +653,13 @@ public final class MlDsaTestUtil {
       + "bf19666aa6bdc0e2f808bcd0e3f4fc495e8caccfd2dfebf1f7f908445d96"
       + "b1b4c5c91d637175bc000000000000000000000000000000000000000005"
       + "0911191f2a3237";
-    if (variant.equals(Variant.NO_PREFIX)) {
-      MlDsaPrivateKey noPrefixPrivateKey =
-          MlDsaPrivateKey.createWithoutVerification(
-              MlDsaPublicKey.builder()
-                  .setSerializedPublicKey(publicKeyBytes)
-                  .setParameters(
-                      MlDsaParameters.create(MlDsaInstance.ML_DSA_87, Variant.NO_PREFIX))
-                  .build(),
-              privateSeed);
-      return new SignatureTestVector(
-          noPrefixPrivateKey,
-          Hex.decode(signatureHex),
-          Hex.decode(
-              "d81c4d8d734fcbfbeade3d3f8a039faa2a2c9957e835ad55b22e75bf57bb556ac8"));
-    }
-    if (variant.equals(Variant.TINK)) {
-      MlDsaPrivateKey tinkPrivateKey =
-          MlDsaPrivateKey.createWithoutVerification(
-              MlDsaPublicKey.builder()
-                  .setSerializedPublicKey(publicKeyBytes)
-                  .setParameters(
-                      MlDsaParameters.create(MlDsaInstance.ML_DSA_87, Variant.TINK))
-                  .setIdRequirement(0x12345678)
-                  .build(),
-              privateSeed);
-      return new SignatureTestVector(
-          tinkPrivateKey,
-          Hex.decode("0112345678" + signatureHex),
-          Hex.decode(
-              "d81c4d8d734fcbfbeade3d3f8a039faa2a2c9957e835ad55b22e75bf57bb556ac8"));
-    }
-    throw new IllegalArgumentException("Unsupported variant: " + variant);
+    return createTestVector(
+        MlDsaInstance.ML_DSA_87,
+        variant,
+        publicKeyBytes,
+        privateSeed,
+        signatureHex,
+        Hex.decode("d81c4d8d734fcbfbeade3d3f8a039faa2a2c9957e835ad55b22e75bf57bb556ac8"));
   }
 
   /**
