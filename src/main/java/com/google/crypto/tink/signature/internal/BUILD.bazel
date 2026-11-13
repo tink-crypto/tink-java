@@ -1499,6 +1499,27 @@ android_library(
     ],
 )
 
+android_library(
+    name = "ml_dsa_sign_prehash_conscrypt-android",
+    srcs = ["MlDsaSignPrehashConscrypt.java"],
+    deps = [
+        ":ml_dsa_prehash_conscrypt-android",
+        ":ml_dsa_verify_conscrypt-android",
+        ":prehash_format-android",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key-android",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access-android",
+        "//src/main/java/com/google/crypto/tink:prehash-android",
+        "//src/main/java/com/google/crypto/tink:public_key_verify-android",
+        "//src/main/java/com/google/crypto/tink:sign_prehash-android",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util-android",
+        "//src/main/java/com/google/crypto/tink/internal:conscrypt_util-android",
+        "//src/main/java/com/google/crypto/tink/internal:util-android",
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_parameters-android",
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_private_key-android",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
 java_library(
     name = "ml_dsa_prehash_conscrypt",
     srcs = ["MlDsaPrehashConscrypt.java"],
@@ -1511,6 +1532,27 @@ java_library(
         "//src/main/java/com/google/crypto/tink/internal:conscrypt_util",
         "//src/main/java/com/google/crypto/tink/signature:ml_dsa_public_key",
         "//src/main/java/com/google/crypto/tink/subtle:bytes",
+        "@maven//:com_google_errorprone_error_prone_annotations",
+    ],
+)
+
+java_library(
+    name = "ml_dsa_sign_prehash_conscrypt",
+    srcs = ["MlDsaSignPrehashConscrypt.java"],
+    deps = [
+        ":ml_dsa_prehash_conscrypt",
+        ":ml_dsa_verify_conscrypt",
+        ":prehash_format",
+        "//src/main/java/com/google/crypto/tink:accesses_partial_key",
+        "//src/main/java/com/google/crypto/tink:insecure_secret_key_access",
+        "//src/main/java/com/google/crypto/tink:prehash",
+        "//src/main/java/com/google/crypto/tink:public_key_verify",
+        "//src/main/java/com/google/crypto/tink:sign_prehash",
+        "//src/main/java/com/google/crypto/tink/config/internal:tink_fips_util",
+        "//src/main/java/com/google/crypto/tink/internal:conscrypt_util",
+        "//src/main/java/com/google/crypto/tink/internal:util",
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_parameters",
+        "//src/main/java/com/google/crypto/tink/signature:ml_dsa_private_key",
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
