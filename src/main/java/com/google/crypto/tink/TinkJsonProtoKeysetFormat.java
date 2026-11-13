@@ -80,10 +80,10 @@ public final class TinkJsonProtoKeysetFormat {
         "com.google.crypto.tink.RegistryConfiguration",
         "com.google.crypto.tink.TinkJsonProtoKeysetFormat"
       })
-  @Deprecated // This function should be inlined.
   @SuppressWarnings("UnusedException")
-  public static String serializeKeyset(KeysetHandle keysetHandle, SecretKeyAccess access)
-      throws GeneralSecurityException {
+  @Deprecated
+  public static String serializeKeyset(
+      KeysetHandle keysetHandle, SecretKeyAccess access) throws GeneralSecurityException {
     return serializeKeyset(keysetHandle, RegistryConfiguration.get(), access);
   }
 
@@ -195,7 +195,7 @@ public final class TinkJsonProtoKeysetFormat {
         "com.google.crypto.tink.RegistryConfiguration",
         "com.google.crypto.tink.TinkJsonProtoKeysetFormat"
       })
-  @Deprecated // This function should be inlined.
+  @Deprecated
   public static KeysetHandle parseEncryptedKeyset(
       String serializedEncryptedKeyset, Aead keysetEncryptionAead, byte[] associatedData)
       throws GeneralSecurityException {
@@ -242,7 +242,7 @@ public final class TinkJsonProtoKeysetFormat {
         "com.google.crypto.tink.RegistryConfiguration",
         "com.google.crypto.tink.TinkJsonProtoKeysetFormat"
       })
-  @Deprecated // This function should be inlined.
+  @Deprecated
   public static String serializeEncryptedKeyset(
       KeysetHandle keysetHandle, Aead keysetEncryptionAead, byte[] associatedData)
       throws GeneralSecurityException {
