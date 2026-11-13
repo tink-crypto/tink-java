@@ -37,7 +37,7 @@ public final class HpkePrimitiveFactory {
     } else if (Arrays.equals(kemId, HpkeUtil.P521_HKDF_SHA512_KEM_ID)) {
       return NistCurvesHpkeKem.fromCurve(EllipticCurves.CurveType.NIST_P521);
     }
-    throw new IllegalArgumentException("Unrecognized HPKE KEM identifier");
+    throw new GeneralSecurityException("Unrecognized HPKE KEM identifier");
   }
 
   /** Returns an {@link HpkeKem} primitive corresponding to {@code kemId}. */
@@ -51,11 +51,11 @@ public final class HpkePrimitiveFactory {
     } else if (kemId == HpkeParameters.KemId.DHKEM_P521_HKDF_SHA512) {
       return NistCurvesHpkeKem.fromCurve(EllipticCurves.CurveType.NIST_P521);
     }
-    throw new IllegalArgumentException("Unrecognized HPKE KEM identifier");
+    throw new GeneralSecurityException("Unrecognized HPKE KEM identifier");
   }
 
   /** Returns an {@link HpkeKdf} primitive corresponding to {@code kdfId}. */
-  public static HpkeKdf createKdf(byte[] kdfId) {
+  public static HpkeKdf createKdf(byte[] kdfId) throws GeneralSecurityException {
     if (Arrays.equals(kdfId, HpkeUtil.HKDF_SHA256_KDF_ID)) {
       return new HkdfHpkeKdf("HmacSha256");
     } else if (Arrays.equals(kdfId, HpkeUtil.HKDF_SHA384_KDF_ID)) {
@@ -63,11 +63,11 @@ public final class HpkePrimitiveFactory {
     } else if (Arrays.equals(kdfId, HpkeUtil.HKDF_SHA512_KDF_ID)) {
       return new HkdfHpkeKdf("HmacSha512");
     }
-    throw new IllegalArgumentException("Unrecognized HPKE KDF identifier");
+    throw new GeneralSecurityException("Unrecognized HPKE KDF identifier");
   }
 
   /** Returns an {@link HpkeKdf} primitive corresponding to {@code kdfId}. */
-  public static HpkeKdf createKdf(HpkeParameters.KdfId kdfId) {
+  public static HpkeKdf createKdf(HpkeParameters.KdfId kdfId) throws GeneralSecurityException {
     if (kdfId == HpkeParameters.KdfId.HKDF_SHA256) {
       return new HkdfHpkeKdf("HmacSha256");
     } else if (kdfId == HpkeParameters.KdfId.HKDF_SHA384) {
@@ -75,7 +75,7 @@ public final class HpkePrimitiveFactory {
     } else if (kdfId == HpkeParameters.KdfId.HKDF_SHA512) {
       return new HkdfHpkeKdf("HmacSha512");
     }
-    throw new IllegalArgumentException("Unrecognized HPKE KDF identifier");
+    throw new GeneralSecurityException("Unrecognized HPKE KDF identifier");
   }
 
   /** Returns an {@link HpkeAead} primitive corresponding to {@code aeadId}. */
@@ -87,7 +87,7 @@ public final class HpkePrimitiveFactory {
     } else if (Arrays.equals(aeadId, HpkeUtil.CHACHA20_POLY1305_AEAD_ID)) {
       return new ChaCha20Poly1305HpkeAead();
     }
-    throw new IllegalArgumentException("Unrecognized HPKE AEAD identifier");
+    throw new GeneralSecurityException("Unrecognized HPKE AEAD identifier");
   }
 
   /** Returns an {@link HpkeAead} primitive corresponding to {@code aeadId}. */
@@ -99,7 +99,7 @@ public final class HpkePrimitiveFactory {
     } else if (aeadId == HpkeParameters.AeadId.CHACHA20_POLY1305) {
       return new ChaCha20Poly1305HpkeAead();
     }
-    throw new IllegalArgumentException("Unrecognized HPKE AEAD identifier");
+    throw new GeneralSecurityException("Unrecognized HPKE AEAD identifier");
   }
 
   private HpkePrimitiveFactory() {}
