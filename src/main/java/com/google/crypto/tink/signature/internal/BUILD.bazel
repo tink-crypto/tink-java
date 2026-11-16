@@ -1556,3 +1556,35 @@ java_library(
         "@maven//:com_google_errorprone_error_prone_annotations",
     ],
 )
+
+android_library(
+    name = "prehash_wrapper-android",
+    srcs = ["PrehashWrapper.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:key_status-android",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface-android",
+        "//src/main/java/com/google/crypto/tink:prehash-android",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_annotations-android",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_client-android",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_util-android",
+        "//src/main/java/com/google/crypto/tink/internal:mutable_monitoring_registry-android",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper-android",
+        "//src/main/java/com/google/crypto/tink/internal:util-android",
+    ],
+)
+
+java_library(
+    name = "prehash_wrapper",
+    srcs = ["PrehashWrapper.java"],
+    deps = [
+        "//src/main/java/com/google/crypto/tink:key_status",
+        "//src/main/java/com/google/crypto/tink:keyset_handle_interface",
+        "//src/main/java/com/google/crypto/tink:prehash",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_annotations",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_client",
+        "//src/main/java/com/google/crypto/tink/internal:monitoring_util",
+        "//src/main/java/com/google/crypto/tink/internal:mutable_monitoring_registry",
+        "//src/main/java/com/google/crypto/tink/internal:primitive_wrapper",
+        "//src/main/java/com/google/crypto/tink/internal:util",
+    ],
+)
