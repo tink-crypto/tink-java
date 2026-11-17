@@ -30,10 +30,24 @@ if [[ -n "${KOKORO_ROOT:-}" ]] ; then
 fi
 
 CACHE_FLAGS=()
+# The remote cache key is staged in a private temporary directory instead of
+# the checkout. This job runs repository code as the same user, so this only
+# keeps the key out of the workspace tree and shortens its lifetime.
+CACHE_CREDS_DIR=""
+cleanup_cache_creds() {
+  if [[ -n "${CACHE_CREDS_DIR}" ]]; then
+    rm -rf "${CACHE_CREDS_DIR}"
+  fi
+}
+trap cleanup_cache_creds EXIT
+
 if [[ -n "${TINK_REMOTE_BAZEL_CACHE_GCS_BUCKET:-}" ]]; then
-  cp "${TINK_REMOTE_BAZEL_CACHE_SERVICE_KEY}" ./cache_key
+  CACHE_CREDS_DIR="$(mktemp -d "${TMPDIR:-/tmp}/tink_cache_creds.XXXXXXXX")"
+  chmod 700 "${CACHE_CREDS_DIR}"
+  cp "${TINK_REMOTE_BAZEL_CACHE_SERVICE_KEY}" "${CACHE_CREDS_DIR}/cache_key"
+  chmod 600 "${CACHE_CREDS_DIR}/cache_key"
   CACHE_FLAGS+=("--remote_cache=https://storage.googleapis.com/${TINK_REMOTE_BAZEL_CACHE_GCS_BUCKET}/bazel/java-macos")
-  CACHE_FLAGS+=("--google_credentials=$(realpath ./cache_key)")
+  CACHE_FLAGS+=("--google_credentials=${CACHE_CREDS_DIR}/cache_key")
   # Avoid downloading cached intermediate/top-level build outputs unless needed
   # by a local action.
   CACHE_FLAGS+=("--remote_download_minimal")
