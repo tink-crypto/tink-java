@@ -56,7 +56,7 @@ public final class PrehashWrapper {
     }
 
     @Override
-    public byte[] compute(final byte[] data) throws GeneralSecurityException {
+    public byte[] compute(byte[] data) throws GeneralSecurityException {
       try {
         byte[] output = primary.prehash.compute(data);
         logger.log(primary.id, data.length);
