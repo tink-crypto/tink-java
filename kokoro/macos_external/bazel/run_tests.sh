@@ -42,6 +42,11 @@ cleanup_cache_creds() {
 trap cleanup_cache_creds EXIT
 
 if [[ -n "${TINK_REMOTE_BAZEL_CACHE_GCS_BUCKET:-}" ]]; then
+  KEY_REAL="$(realpath "${TINK_REMOTE_BAZEL_CACHE_SERVICE_KEY}")"
+  if [[ "${KEY_REAL}" == "$(realpath "$(pwd)")"/* ]]; then
+    echo "Refusing to use a cache key stored inside the checkout: ${KEY_REAL}" >&2
+    exit 1
+  fi
   CACHE_CREDS_DIR="$(mktemp -d "${TMPDIR:-/tmp}/tink_cache_creds.XXXXXXXX")"
   chmod 700 "${CACHE_CREDS_DIR}"
   cp "${TINK_REMOTE_BAZEL_CACHE_SERVICE_KEY}" "${CACHE_CREDS_DIR}/cache_key"

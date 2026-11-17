@@ -71,6 +71,11 @@ cleanup_cache_creds() {
 trap cleanup_cache_creds EXIT
 
 if [[ -v TINK_REMOTE_BAZEL_CACHE_GCS_BUCKET ]]; then
+  KEY_REAL="$(realpath "${TINK_REMOTE_BAZEL_CACHE_SERVICE_KEY}")"
+  if [[ "${KEY_REAL}" == "$(realpath "$(pwd)")"/* ]]; then
+    echo "Refusing to use a cache key stored inside the checkout: ${KEY_REAL}" >&2
+    exit 1
+  fi
   CACHE_CREDS_DIR="$(mktemp -d "${TINK_BASE_DIR}/cache_creds.XXXXXXXX")"
   # ${TINK_BASE_DIR} is bind-mounted at /tink_orig_dir inside the container,
   # and the build user has to traverse this directory and read the key.
