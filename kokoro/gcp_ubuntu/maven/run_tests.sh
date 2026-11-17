@@ -48,6 +48,7 @@ echo "CONTAINER_IMAGE is ${CONTAINER_IMAGE}"
 cd "${TINK_BASE_DIR}/tink_java"
 
 if [[ -v TINK_REMOTE_BAZEL_CACHE_GCS_BUCKET ]]; then
+  rm -f ./cache_key
   cp "${TINK_REMOTE_BAZEL_CACHE_SERVICE_KEY}" ./cache_key
   cat <<EOF > /tmp/env_variables.txt
 BAZEL_REMOTE_CACHE_NAME=${TINK_REMOTE_BAZEL_CACHE_GCS_BUCKET}/bazel/${TINK_JAVA_BASE_IMAGE_HASH}
