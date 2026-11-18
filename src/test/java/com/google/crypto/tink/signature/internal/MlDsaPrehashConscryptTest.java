@@ -24,10 +24,14 @@ import com.google.crypto.tink.Prehash;
 import com.google.crypto.tink.config.internal.TinkFipsUtil;
 import com.google.crypto.tink.internal.ConscryptUtil;
 import com.google.crypto.tink.signature.MlDsaParameters;
+import com.google.crypto.tink.signature.MlDsaParameters.MlDsaInstance;
 import com.google.crypto.tink.signature.MlDsaParameters.Variant;
+import com.google.crypto.tink.signature.MlDsaPrivateKey;
 import com.google.crypto.tink.signature.MlDsaPublicKey;
 import com.google.crypto.tink.signature.internal.testing.MlDsaMuTestUtil;
 import com.google.crypto.tink.signature.internal.testing.MlDsaMuTestVector;
+import com.google.crypto.tink.signature.internal.testing.MlDsaTestUtil;
+import com.google.crypto.tink.signature.internal.testing.SignatureTestVector;
 import com.google.crypto.tink.subtle.Bytes;
 import com.google.crypto.tink.subtle.Hex;
 import java.security.GeneralSecurityException;
@@ -100,6 +104,43 @@ public final class MlDsaPrehashConscryptTest {
     // The prehash value is the prehash prefix of the key, followed by mu.
     assertThat(prehash.compute(testVector.getMessage()))
         .isEqualTo(Bytes.concat(Hex.decode(PREHASH_PREFIX_HEX), testVector.getMu()));
+  }
+
+  @DataPoints("signatureTestVectorsWithPrehash")
+  public static final SignatureTestVector[] signatureTestVectorsWithPrehash =
+      new SignatureTestVector[] {
+        MlDsaTestUtil.getMlDsaValidSignatureTestVector(
+            MlDsaParameters.create(MlDsaInstance.ML_DSA_44, Variant.TINK), KEY_ID),
+        MlDsaTestUtil.getMlDsaValidSignatureTestVector(
+            MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.TINK), KEY_ID),
+        MlDsaTestUtil.getMlDsaValidSignatureTestVector(
+            MlDsaParameters.create(MlDsaInstance.ML_DSA_87, Variant.TINK), KEY_ID),
+        MlDsaTestUtil.getMlDsaValidSignatureTestVector(
+            MlDsaParameters.create(MlDsaInstance.ML_DSA_44, Variant.NO_PREFIX_WITH_PREHASH_ID),
+            KEY_ID),
+        MlDsaTestUtil.getMlDsaValidSignatureTestVector(
+            MlDsaParameters.create(MlDsaInstance.ML_DSA_65, Variant.NO_PREFIX_WITH_PREHASH_ID),
+            KEY_ID),
+        MlDsaTestUtil.getMlDsaValidSignatureTestVector(
+            MlDsaParameters.create(MlDsaInstance.ML_DSA_87, Variant.NO_PREFIX_WITH_PREHASH_ID),
+            KEY_ID),
+      };
+
+  @Theory
+  public void compute_matchesPrehashOfSignatureTestVector(
+      @FromDataPoints("signatureTestVectorsWithPrehash") SignatureTestVector testVector)
+      throws Exception {
+    // TODO(b/458349867): remove this check once ML-DSA is available on Android and OSS Conscrypt.
+    // An early return is used instead of an assumption, because the Theories runner fails when
+    // the assumption is violated for all data points.
+    if (!MlDsaPrehashConscrypt.isSupported()) {
+      return;
+    }
+    Prehash prehash =
+        MlDsaPrehashConscrypt.create(((MlDsaPrivateKey) testVector.getPrivateKey()).getPublicKey());
+
+    assertThat(testVector.getPrehash()).isPresent();
+    assertThat(prehash.compute(testVector.getMessage())).isEqualTo(testVector.getPrehash().get());
   }
 
   @Theory

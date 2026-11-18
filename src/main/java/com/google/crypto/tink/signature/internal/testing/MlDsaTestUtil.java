@@ -18,51 +18,81 @@ package com.google.crypto.tink.signature.internal.testing;
 
 import com.google.crypto.tink.AccessesPartialKey;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
+import com.google.crypto.tink.internal.OutputPrefixUtil;
 import com.google.crypto.tink.signature.MlDsaParameters;
 import com.google.crypto.tink.signature.MlDsaParameters.MlDsaInstance;
 import com.google.crypto.tink.signature.MlDsaParameters.Variant;
 import com.google.crypto.tink.signature.MlDsaPrivateKey;
 import com.google.crypto.tink.signature.MlDsaPublicKey;
+import com.google.crypto.tink.signature.internal.PrehashFormat;
 import com.google.crypto.tink.subtle.Hex;
 import com.google.crypto.tink.util.Bytes;
 import com.google.crypto.tink.util.SecretBytes;
 import java.security.GeneralSecurityException;
+import javax.annotation.Nullable;
 
 /** Test utilities for ML-DSA. */
 @AccessesPartialKey
 public final class MlDsaTestUtil {
 
+  // The ID requirement of the keys of the test vectors returned by
+  // getMlDsaValidSignatureTestVector(MlDsaParameters), for variants with an ID requirement.
+  private static final int DEFAULT_ID_REQUIREMENT = 0x12345678;
+
+  /**
+   * Creates a test vector. If {@code idRequirement} is null, keys of variants with an ID
+   * requirement get the ID requirement {@link #DEFAULT_ID_REQUIREMENT}, and the test vector has no
+   * prehash value. Otherwise, the key gets the ID requirement {@code idRequirement}, and the test
+   * vector contains the prehash value of the message, {@code 0xff || idRequirement || mu}.
+   */
   private static SignatureTestVector createTestVector(
       MlDsaInstance instance,
       Variant variant,
+      @Nullable Integer idRequirement,
       Bytes publicKeyBytes,
       SecretBytes privateSeed,
       String signatureHex,
-      byte[] message)
+      byte[] message,
+      String muHex)
       throws GeneralSecurityException {
     MlDsaPublicKey.Builder publicKeyBuilder =
         MlDsaPublicKey.builder()
             .setSerializedPublicKey(publicKeyBytes)
             .setParameters(MlDsaParameters.create(instance, variant));
+    int keyId = DEFAULT_ID_REQUIREMENT;
+    if (idRequirement != null) {
+      keyId = idRequirement;
+    }
     byte[] prefixedSignature;
     if (variant.equals(Variant.NO_PREFIX)) {
+      if (idRequirement != null) {
+        throw new IllegalArgumentException("Variant NO_PREFIX has no ID requirement");
+      }
       prefixedSignature = Hex.decode(signatureHex);
     } else if (variant.equals(Variant.NO_PREFIX_WITH_PREHASH_ID)) {
-      publicKeyBuilder.setIdRequirement(0x12345678);
+      publicKeyBuilder.setIdRequirement(keyId);
       prefixedSignature = Hex.decode(signatureHex);
     } else if (variant.equals(Variant.TINK)) {
-      publicKeyBuilder.setIdRequirement(0x12345678);
-      prefixedSignature = Hex.decode("0112345678" + signatureHex);
+      publicKeyBuilder.setIdRequirement(keyId);
+      prefixedSignature =
+          com.google.crypto.tink.subtle.Bytes.concat(
+              OutputPrefixUtil.getTinkOutputPrefix(keyId).toByteArray(), Hex.decode(signatureHex));
     } else {
       throw new IllegalArgumentException("Unsupported variant: " + variant);
     }
     MlDsaPrivateKey privateKey =
         MlDsaPrivateKey.createWithoutVerification(publicKeyBuilder.build(), privateSeed);
-    return new SignatureTestVector(privateKey, prefixedSignature, message);
+    if (idRequirement == null) {
+      return new SignatureTestVector(privateKey, prefixedSignature, message);
+    }
+    byte[] prehash =
+        com.google.crypto.tink.subtle.Bytes.concat(
+            PrehashFormat.getPrehashPrefix(idRequirement), Hex.decode(muHex));
+    return new SignatureTestVector(privateKey, prefixedSignature, message, prehash);
   }
 
-  private static SignatureTestVector createMlDsa65TestVector(Variant variant)
-      throws GeneralSecurityException {
+  private static SignatureTestVector createMlDsa65TestVector(
+      Variant variant, @Nullable Integer idRequirement) throws GeneralSecurityException {
     Bytes publicKeyBytes =
         Bytes.copyFrom(
             Hex.decode(
@@ -251,14 +281,19 @@ public final class MlDsaTestUtil {
     return createTestVector(
         MlDsaInstance.ML_DSA_65,
         variant,
+        idRequirement,
         publicKeyBytes,
         privateSeed,
         signatureHex,
-        Hex.decode("48656c6c6f20776f726c64"));
+        Hex.decode("48656c6c6f20776f726c64"),
+        // mu = SHAKE256-512(SHAKE256-512(pk) || 0x00 || 0x00 || message), see FIPS 204,
+        // Algorithm 7, line 6.
+        "de30bd32395e1998bcdae79ad419cec6ea9e9a903fdc552c6e9801208174"
+            + "d80a9d2f3902a144e62f89d6e505cc9c69fb01de013fc1d0204ee4dcf5fcc25f1378");
   }
 
-  private static SignatureTestVector createMlDsa44TestVector(Variant variant)
-      throws GeneralSecurityException {
+  private static SignatureTestVector createMlDsa44TestVector(
+      Variant variant, @Nullable Integer idRequirement) throws GeneralSecurityException {
     Bytes publicKeyBytes =
         Bytes.copyFrom(
             Hex.decode(
@@ -395,14 +430,19 @@ public final class MlDsaTestUtil {
     return createTestVector(
         MlDsaInstance.ML_DSA_44,
         variant,
+        idRequirement,
         publicKeyBytes,
         privateSeed,
         signatureHex,
-        Hex.decode("48656c6c6f20776f726c64"));
+        Hex.decode("48656c6c6f20776f726c64"),
+        // mu = SHAKE256-512(SHAKE256-512(pk) || 0x00 || 0x00 || message), see FIPS 204,
+        // Algorithm 7, line 6.
+        "0ba2d90bc4fa5877844e47f7563eefccf658f898eaf4197b2a9a89d3df68"
+            + "3955c73a80895ac0a51cc9049d44cdc1d1c550ef3870c1126afdb3d52ee057cbbcdd");
   }
 
-  private static SignatureTestVector createMlDsa87TestVector(Variant variant)
-      throws GeneralSecurityException {
+  private static SignatureTestVector createMlDsa87TestVector(
+      Variant variant, @Nullable Integer idRequirement) throws GeneralSecurityException {
     Bytes publicKeyBytes =
         Bytes.copyFrom(
             Hex.decode(
@@ -656,32 +696,52 @@ public final class MlDsaTestUtil {
     return createTestVector(
         MlDsaInstance.ML_DSA_87,
         variant,
+        idRequirement,
         publicKeyBytes,
         privateSeed,
         signatureHex,
-        Hex.decode("d81c4d8d734fcbfbeade3d3f8a039faa2a2c9957e835ad55b22e75bf57bb556ac8"));
+        Hex.decode("d81c4d8d734fcbfbeade3d3f8a039faa2a2c9957e835ad55b22e75bf57bb556ac8"),
+        // mu = SHAKE256-512(SHAKE256-512(pk) || 0x00 || 0x00 || message), see FIPS 204,
+        // Algorithm 7, line 6.
+        "03ecf6029d3bd977eeb1840a87c601a8c8b2515827ce0eaccf86c6719f26"
+            + "77d677cac8e62a2718433daf806838a272fa62aa4899d2f45ae2a454a5090aed7778");
   }
 
-  /**
-   * Returns a valid signature test vector for the given ML-DSA {@code parameters}.
-   */
-  public static SignatureTestVector getMlDsaValidSignatureTestVector(
-      MlDsaParameters parameters) {
+  private static SignatureTestVector createMlDsaTestVector(
+      MlDsaParameters parameters, @Nullable Integer idRequirement) {
     try {
       if (parameters.getMlDsaInstance().equals(MlDsaInstance.ML_DSA_44)) {
-        return createMlDsa44TestVector(parameters.getVariant());
+        return createMlDsa44TestVector(parameters.getVariant(), idRequirement);
       }
       if (parameters.getMlDsaInstance().equals(MlDsaInstance.ML_DSA_65)) {
-        return createMlDsa65TestVector(parameters.getVariant());
+        return createMlDsa65TestVector(parameters.getVariant(), idRequirement);
       }
       if (parameters.getMlDsaInstance().equals(MlDsaInstance.ML_DSA_87)) {
-        return createMlDsa87TestVector(parameters.getVariant());
+        return createMlDsa87TestVector(parameters.getVariant(), idRequirement);
       }
       throw new IllegalArgumentException(
           "Unsupported instance: " + parameters.getMlDsaInstance());
     } catch (GeneralSecurityException e) {
       throw new IllegalStateException(e);
     }
+  }
+
+  /**
+   * Returns a valid signature test vector for the given ML-DSA {@code parameters}. It does not
+   * contain a prehash value.
+   */
+  public static SignatureTestVector getMlDsaValidSignatureTestVector(MlDsaParameters parameters) {
+    return createMlDsaTestVector(parameters, null);
+  }
+
+  /**
+   * Returns a valid signature test vector for the given ML-DSA {@code parameters}, which must have
+   * an ID requirement, with a key with the ID requirement {@code idRequirement}. The test vector
+   * contains the prehash value of its message.
+   */
+  public static SignatureTestVector getMlDsaValidSignatureTestVector(
+      MlDsaParameters parameters, int idRequirement) {
+    return createMlDsaTestVector(parameters, idRequirement);
   }
 
   private MlDsaTestUtil() {}

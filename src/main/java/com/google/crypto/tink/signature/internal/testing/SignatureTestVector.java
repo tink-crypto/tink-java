@@ -19,6 +19,7 @@ package com.google.crypto.tink.signature.internal.testing;
 import com.google.crypto.tink.signature.SignaturePrivateKey;
 import com.google.crypto.tink.util.Bytes;
 import com.google.errorprone.annotations.Immutable;
+import java.util.Optional;
 
 /** Test vectors for signatures. */
 @Immutable
@@ -27,11 +28,25 @@ public final class SignatureTestVector {
     this.privateKey = privateKey;
     this.signature = Bytes.copyFrom(signature);
     this.message = Bytes.copyFrom(message);
+    this.prehash = Optional.empty();
+  }
+
+  /**
+   * Creates a test vector which also contains the prehash value of {@code message}, i.e. the output
+   * of the {@code Prehash} primitive of the public key of {@code privateKey}.
+   */
+  public SignatureTestVector(
+      SignaturePrivateKey privateKey, byte[] signature, byte[] message, byte[] prehash) {
+    this.privateKey = privateKey;
+    this.signature = Bytes.copyFrom(signature);
+    this.message = Bytes.copyFrom(message);
+    this.prehash = Optional.of(Bytes.copyFrom(prehash));
   }
 
   private final SignaturePrivateKey privateKey;
   private final Bytes signature;
   private final Bytes message;
+  private final Optional<Bytes> prehash;
 
   public SignaturePrivateKey getPrivateKey() {
     return privateKey;
@@ -45,10 +60,18 @@ public final class SignatureTestVector {
     return message.toByteArray();
   }
 
+  /**
+   * Returns the prehash value of the message, if the test vector contains it. It is only set for
+   * keys which support the {@code Prehash} primitive.
+   */
+  public Optional<byte[]> getPrehash() {
+    return prehash.map(Bytes::toByteArray);
+  }
+
   @Override
   public String toString() {
     return String.format(
-        "SignatureTestVector(%s, signature=%s, message=%s)",
-        privateKey.getParameters(), signature, message);
+        "SignatureTestVector(%s, signature=%s, message=%s, prehash=%s)",
+        privateKey.getParameters(), signature, message, prehash);
   }
 }
