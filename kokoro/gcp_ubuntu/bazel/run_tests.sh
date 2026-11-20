@@ -55,13 +55,41 @@ echo "CONTAINER_IMAGE is ${CONTAINER_IMAGE}"
 
 cd "${TINK_BASE_DIR}/tink_java"
 
+# The remote cache service-account key is staged outside the checkout. The
+# checkout is copied into the test container and executed as the unprivileged
+# build user, so a key stored inside it is readable by repository test code.
+# The key still has to be readable by that same user, because the Bazel client
+# runs as that user and this directory is reachable from the container. This
+# therefore only limits where the key is written and how long it stays on
+# disk; it is not a security boundary on its own.
+CACHE_CREDS_DIR=""
+cleanup_cache_creds() {
+  if [[ -n "${CACHE_CREDS_DIR}" ]]; then
+    rm -rf "${CACHE_CREDS_DIR}"
+  fi
+}
+trap cleanup_cache_creds EXIT
+
 if [[ -v TINK_REMOTE_BAZEL_CACHE_GCS_BUCKET ]]; then
-  cp "${TINK_REMOTE_BAZEL_CACHE_SERVICE_KEY}" ./cache_key
+  KEY_REAL="$(realpath "${TINK_REMOTE_BAZEL_CACHE_SERVICE_KEY}")"
+  if [[ "${KEY_REAL}" == "$(realpath "$(pwd)")"/* ]]; then
+    echo "Refusing to use a cache key stored inside the checkout: ${KEY_REAL}" >&2
+    exit 1
+  fi
+  CACHE_CREDS_DIR="$(mktemp -d "${TINK_BASE_DIR}/cache_creds.XXXXXXXX")"
+  # ${TINK_BASE_DIR} is bind-mounted at /tink_orig_dir inside the container,
+  # and the build user has to traverse this directory and read the key.
+  chmod 755 "${CACHE_CREDS_DIR}"
+  cp "${TINK_REMOTE_BAZEL_CACHE_SERVICE_KEY}" "${CACHE_CREDS_DIR}/cache_key"
+  chmod 644 "${CACHE_CREDS_DIR}/cache_key"
   cat <<EOF > /tmp/env_variables.txt
 BAZEL_REMOTE_CACHE_NAME=${TINK_REMOTE_BAZEL_CACHE_GCS_BUCKET}/bazel/${TINK_JAVA_BASE_IMAGE_HASH}
+BAZEL_REMOTE_CACHE_KEY=/tink_orig_dir/$(basename "${CACHE_CREDS_DIR}")/cache_key
 EOF
 else
-  touch /tmp/env_variables.txt
+  # Truncate instead of touch: a stale file from an earlier run would
+  # otherwise leak its cache name into this run.
+  : > /tmp/env_variables.txt
 fi
 
 ### =========================================== EMBEDDED SCRIPT: _do_run_test.sh
@@ -81,7 +109,7 @@ fi
 CACHE_FLAGS=()
 if [[ -n "${BAZEL_REMOTE_CACHE_NAME:-}" ]]; then
   CACHE_FLAGS+=("--remote_cache=https://storage.googleapis.com/${BAZEL_REMOTE_CACHE_NAME}")
-  CACHE_FLAGS+=("--google_credentials=$(realpath ./cache_key)")
+  CACHE_FLAGS+=("--google_credentials=${BAZEL_REMOTE_CACHE_KEY:?BAZEL_REMOTE_CACHE_KEY is not set}")
   # Avoid downloading cached intermediate/top-level build outputs unless needed
   # by a local action.
   CACHE_FLAGS+=("--remote_download_minimal")
