@@ -24,18 +24,22 @@ import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.InsecureSecretKeyAccess;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.Parameters;
+import com.google.crypto.tink.Prehash;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
+import com.google.crypto.tink.SignPrehash;
 import com.google.crypto.tink.TinkProtoKeysetFormat;
 import com.google.crypto.tink.TinkProtoParametersFormat;
 import com.google.crypto.tink.internal.Util;
 import com.google.crypto.tink.signature.internal.CompositeMlDsaVerifyConscrypt;
+import com.google.crypto.tink.signature.internal.MlDsaPrehashConscrypt;
 import com.google.crypto.tink.signature.internal.testing.CompositeMlDsaTestUtil;
 import com.google.crypto.tink.signature.internal.testing.EcdsaTestUtil;
 import com.google.crypto.tink.signature.internal.testing.Ed25519TestUtil;
 import com.google.crypto.tink.signature.internal.testing.MlDsaTestUtil;
 import com.google.crypto.tink.signature.internal.testing.RsaSsaPkcs1TestUtil;
 import com.google.crypto.tink.signature.internal.testing.RsaSsaPssTestUtil;
+import com.google.crypto.tink.signature.internal.testing.SignatureTestVector;
 import com.google.crypto.tink.signature.internal.testing.SlhDsaTestUtil;
 import java.security.GeneralSecurityException;
 import org.junit.Test;
@@ -49,6 +53,13 @@ import org.junit.runner.RunWith;
 @RunWith(Theories.class)
 public class SignatureConfig2026Test {
 
+  // The only key in the list of keys which supports Prehash and SignPrehash.
+  private static final SignatureTestVector ML_DSA_WITH_ID_REQUIREMENT_TEST_VECTOR =
+      MlDsaTestUtil.getMlDsaValidSignatureTestVector(
+          MlDsaParameters.create(
+              MlDsaParameters.MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.TINK),
+          0x12345678);
+
   private static SignaturePrivateKey[] createKeys() {
     return new SignaturePrivateKey[] {
       EcdsaTestUtil.createEcdsaTestVectors()[0].getPrivateKey(),
@@ -59,6 +70,7 @@ public class SignatureConfig2026Test {
               MlDsaParameters.create(
                   MlDsaParameters.MlDsaInstance.ML_DSA_65, MlDsaParameters.Variant.NO_PREFIX))
           .getPrivateKey(),
+      ML_DSA_WITH_ID_REQUIREMENT_TEST_VECTOR.getPrivateKey(),
       SlhDsaTestUtil.createSlhDsaValidSignatureTestVectors().findFirst().get().getPrivateKey(),
       createCompositeMlDsaKey(),
     };
@@ -104,6 +116,13 @@ public class SignatureConfig2026Test {
     return true;
   }
 
+  private static boolean prehashShouldBeSupported(SignaturePrivateKey key) {
+    // Only ML-DSA keys with an ID requirement support Prehash and SignPrehash, and only with a
+    // Conscrypt version which supports External Mu ML-DSA.
+    return (key instanceof MlDsaPrivateKey)
+        && key.getIdRequirementOrNull() != null
+        && MlDsaPrehashConscrypt.isSupported();
+  }
 
   @Theory
   public void getPrimitive_signVerify_works(@FromDataPoints("keys") SignaturePrivateKey key)
@@ -136,6 +155,45 @@ public class SignatureConfig2026Test {
     byte[] message = "message".getBytes(UTF_8);
     byte[] signature = signer.sign(message);
     verifier.verify(signature, message);
+  }
+
+  @Theory
+  public void getPrimitive_prehashAndSignPrehash_works(
+      @FromDataPoints("keys") SignaturePrivateKey key) throws Exception {
+    KeysetHandle.Builder.Entry entry = KeysetHandle.importKey(key).makePrimary();
+    if (key.getIdRequirementOrNull() == null) {
+      entry.withRandomId();
+    } else {
+      entry.withFixedId(key.getIdRequirementOrNull());
+    }
+    KeysetHandle handle = KeysetHandle.newBuilder().addEntry(entry).build();
+    KeysetHandle publicKeyHandle = handle.getPublicKeysetHandle();
+    Configuration configuration = SignatureConfig2026.get();
+
+    if (!prehashShouldBeSupported(key)) {
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> publicKeyHandle.getPrimitive(configuration, Prehash.class));
+      assertThrows(
+          GeneralSecurityException.class,
+          () -> handle.getPrimitive(configuration, SignPrehash.class));
+      return;
+    }
+
+    Prehash prehash = publicKeyHandle.getPrimitive(configuration, Prehash.class);
+    SignPrehash signPrehash = handle.getPrimitive(configuration, SignPrehash.class);
+    PublicKeyVerify verifier = publicKeyHandle.getPrimitive(configuration, PublicKeyVerify.class);
+
+    // The prehash value of the message of the test vector is its precomputed prehash value, and a
+    // signature of it is a regular signature of the message.
+    assertThat(key.equalsKey(ML_DSA_WITH_ID_REQUIREMENT_TEST_VECTOR.getPrivateKey())).isTrue();
+    byte[] message = ML_DSA_WITH_ID_REQUIREMENT_TEST_VECTOR.getMessage();
+    byte[] precomputedPrehash = ML_DSA_WITH_ID_REQUIREMENT_TEST_VECTOR.getPrehash().get();
+    assertThat(prehash.compute(message)).isEqualTo(precomputedPrehash);
+    byte[] signature = signPrehash.sign(precomputedPrehash);
+    verifier.verify(signature, message);
+    assertThrows(
+        GeneralSecurityException.class, () -> verifier.verify(signature, new byte[] {1, 2, 3}));
   }
 
   @Theory

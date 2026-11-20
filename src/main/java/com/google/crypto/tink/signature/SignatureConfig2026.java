@@ -18,15 +18,21 @@ package com.google.crypto.tink.signature;
 
 import com.google.crypto.tink.Configuration;
 import com.google.crypto.tink.LowLevelCryptoCaller;
+import com.google.crypto.tink.Prehash;
 import com.google.crypto.tink.PublicKeySign;
 import com.google.crypto.tink.PublicKeyVerify;
+import com.google.crypto.tink.SignPrehash;
 import com.google.crypto.tink.internal.ProtoBasedConfigurationBuilder;
 import com.google.crypto.tink.signature.internal.CompositeMlDsaKeyCreator;
 import com.google.crypto.tink.signature.internal.EcdsaKeyCreator;
 import com.google.crypto.tink.signature.internal.Ed25519KeyCreator;
 import com.google.crypto.tink.signature.internal.MlDsaKeyCreator;
+import com.google.crypto.tink.signature.internal.MlDsaPrehashConscrypt;
+import com.google.crypto.tink.signature.internal.MlDsaSignPrehashConscrypt;
+import com.google.crypto.tink.signature.internal.PrehashWrapper;
 import com.google.crypto.tink.signature.internal.RsaSsaPkcs1KeyCreator;
 import com.google.crypto.tink.signature.internal.RsaSsaPssKeyCreator;
+import com.google.crypto.tink.signature.internal.SignPrehashWrapper;
 import com.google.crypto.tink.signature.internal.SlhDsaKeyCreator;
 import com.google.crypto.tink.signature.subtle.CompositeMlDsaProtoSerialization;
 import com.google.crypto.tink.signature.subtle.CompositeMlDsaSigner;
@@ -62,6 +68,8 @@ import com.google.crypto.tink.signature.subtle.SlhDsaVerifier;
  *   <li>SlhDsa
  *   <li>CompositeMlDsa
  * </ul>
+ *
+ * <p>Additionally, it supports Prehash/SignPrehash for MlDsa keys with an ID requirement.
  */
 public final class SignatureConfig2026 {
   private SignatureConfig2026() {}
@@ -118,6 +126,8 @@ public final class SignatureConfig2026 {
             PublicKeySign.class, PublicKeySign.class, PUBLIC_KEY_SIGN_WRAPPER::wrap)
         .addPrimitiveWrapper(
             PublicKeyVerify.class, PublicKeyVerify.class, PUBLIC_KEY_VERIFY_WRAPPER::wrap)
+        .addPrimitiveWrapper(Prehash.class, Prehash.class, PrehashWrapper::wrap)
+        .addPrimitiveWrapper(SignPrehash.class, SignPrehash.class, SignPrehashWrapper::wrap)
         // Ecdsa
         .addPrimitiveConstructor(EcdsaSigner::create, EcdsaPrivateKey.class, PublicKeySign.class)
         .addPrimitiveConstructor(EcdsaVerifier::create, EcdsaPublicKey.class, PublicKeyVerify.class)
@@ -146,6 +156,9 @@ public final class SignatureConfig2026 {
         // MlDsa
         .addPrimitiveConstructor(MlDsaSigner::create, MlDsaPrivateKey.class, PublicKeySign.class)
         .addPrimitiveConstructor(MlDsaVerifier::create, MlDsaPublicKey.class, PublicKeyVerify.class)
+        .addPrimitiveConstructor(MlDsaPrehashConscrypt::create, MlDsaPublicKey.class, Prehash.class)
+        .addPrimitiveConstructor(
+            MlDsaSignPrehashConscrypt::create, MlDsaPrivateKey.class, SignPrehash.class)
         .addKeySerializer(MlDsaPrivateKey.class, MlDsaProtoSerialization::serializePrivateKey)
         .addKeySerializer(MlDsaPublicKey.class, MlDsaProtoSerialization::serializePublicKey)
         .addParametersSerializer(
