@@ -42,6 +42,8 @@ fi
 readonly TINK_BASE_DIR
 echo "TINK_BASE_DIR is ${TINK_BASE_DIR}"
 
+rm -f "${TINK_BASE_DIR}/tink_java/gpg_pin.txt" \
+      "${TINK_BASE_DIR}/tink_java/gpg_key.asc"
 cp "${KOKORO_KEYSTORE_DIR}/70968_tink_dev_maven_pgp_passphrase" \
    "${TINK_BASE_DIR}/tink_java/gpg_pin.txt"
 cp "${KOKORO_KEYSTORE_DIR}/70968_tink_dev_maven_pgp_secret_key" \
